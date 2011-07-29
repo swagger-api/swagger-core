@@ -76,7 +76,7 @@ private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val
       case _ => for (method <- hostClass.getDeclaredMethods) parseMethod(method)
     }
     documentation.apiVersion = apiVersion
-    documentation.swagrVersion = swagrVersion
+    documentation.swaggerVersion = swagrVersion
     documentation.basePath = basePath
     documentation
   }

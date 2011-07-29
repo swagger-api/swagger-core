@@ -18,13 +18,13 @@ trait Help {
   def getHelp (@Context sc :ServletConfig, @Context rc:ResourceConfig,
                @Context headers: HttpHeaders, @Context uriInfo: UriInfo): Response = {
 
-    val apiVersion = if (sc != null) sc.getInitParameter("swagr.api.version") else null
-    val swagrVersion = if (sc != null) sc.getInitParameter("swagr.version") else null
-    val basePath = if (sc != null) sc.getInitParameter("swagr.api.basepath") else null
+    val apiVersion = if (sc != null) sc.getInitParameter("swagger.api.version") else null
+    val swagrVersion = if (sc != null) sc.getInitParameter("swagger.version") else null
+    val basePath = if (sc != null) sc.getInitParameter("swagger.api.basepath") else null
 
     val filterOutTopLevelApi = true
 
-    val apiFilterClassName = if (sc != null) sc.getInitParameter("swagr.security.filter") else null
+    val apiFilterClassName = if (sc != null) sc.getInitParameter("swagger.security.filter") else null
 
     val currentApiEndPoint = this.getClass.getAnnotation(classOf[Api])
     val currentApiPath = if (currentApiEndPoint != null && filterOutTopLevelApi) currentApiEndPoint.value else null
@@ -43,11 +43,11 @@ trait ApiListing {
   def getAllApis( @Context sc :ServletConfig, @Context rc:ResourceConfig,
                @Context headers: HttpHeaders, @Context uriInfo: UriInfo ) : Response = {
 
-    val apiVersion = if (sc != null) sc.getInitParameter("swagr.api.version") else null
-    val swagrVersion = if (sc != null) sc.getInitParameter("swagr.version") else null
-    val basePath = if (sc != null) sc.getInitParameter("swagr.api.basepath") else null
+    val apiVersion = if (sc != null) sc.getInitParameter("swagger.api.version") else null
+    val swagrVersion = if (sc != null) sc.getInitParameter("swagger.version") else null
+    val basePath = if (sc != null) sc.getInitParameter("swagger.api.basepath") else null
 
-    val apiFilterClassName = if (sc != null) sc.getInitParameter("swagr.security.filter") else null
+    val apiFilterClassName = if (sc != null) sc.getInitParameter("swagger.security.filter") else null
 
     val resources = rc.getRootResourceClasses
     val apiListingEndpoint = this.getClass.getAnnotation(classOf[Api])
@@ -69,7 +69,7 @@ trait ApiListing {
       }
     }
 
-    allApiDoc.swagrVersion = swagrVersion
+    allApiDoc.swaggerVersion = swagrVersion
     allApiDoc.basePath = basePath
     allApiDoc.apiVersion = apiVersion
 
