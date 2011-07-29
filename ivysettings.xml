@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivysettings>
+	<settings defaultResolver="chained" />
+	<property name="ivy.checksums" value=""/>
+	<property name="ivy.local.default.root" value="${ivy.default.ivy.user.dir}/local"
+		override="false" />
+	<property name="ivy.local.default.ivy.pattern"
+		value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]"
+		override="false" />
+	<property name="ivy.local.default.artifact.pattern"
+		value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]"
+		override="false" />
+   	<property name="maven.pattern"
+              value="[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"
+              override="false" />
+	<resolvers>
+        <chain name="chained" returnFirst="true">
+                <filesystem name="local">
+                    <ivy pattern="${ivy.local.default.root}/${ivy.local.default.ivy.pattern}" />
+                    <artifact pattern="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}" />
+                </filesystem>
+                <ibiblio name="wordnik-repo" root="https://ci.wordnik.com/artifactory/libs-snapshots" m2compatible="true" pattern="${maven.pattern}"/>
+                <ibiblio name="wordnik-remote-repos" root="https://ci.wordnik.com/artifactory/remote-repos" m2compatible="true"/>
+        </chain>
+	</resolvers>
+</ivysettings>
