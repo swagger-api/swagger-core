@@ -44,7 +44,7 @@ class Documentation (@BeanProperty var apiVersion: String,
   def setApis(ep: java.util.List[DocumentationEndPoint]) = {
     this._apis.clear()
     if (ep != null) {
-      for (n <- JavaConversions.asIterator(ep.iterator())) {
+      for (n <- ep) {
         _apis + n
       }
     }
@@ -108,7 +108,7 @@ class DocumentationEndPoint(@BeanProperty var path: String, @BeanProperty var de
   def setOperations(ep: java.util.List[DocumentationOperation]) = {
     this._ops.clear()
     if (ep != null) {
-      for (n <- JavaConversions.asIterator(ep.iterator())) {
+      for (n <- ep) {
         _ops + n
       }
     }
@@ -124,7 +124,7 @@ class DocumentationEndPoint(@BeanProperty var path: String, @BeanProperty var de
   def setErrorResponses(ep: java.util.List[DocumentationError]) = {
     this._errorResponses.clear()
     if (ep != null) {
-      for (n <- JavaConversions.asIterator(ep.iterator())) {
+      for (n <- ep) {
         _errorResponses + n
       }
     }
@@ -163,7 +163,7 @@ class DocumentationOperation(@BeanProperty var httpMethod: String,
   def setParameters(ep: java.util.List[DocumentationParameter]) = {
     this._parameters.clear()
     if (ep != null) {
-      for (n <- JavaConversions.asIterator(ep.iterator())) {
+      for (n <- ep) {
         _parameters + n
       }
     }
@@ -178,7 +178,7 @@ class DocumentationOperation(@BeanProperty var httpMethod: String,
   def setTags(tagList: java.util.List[String]) = {
     this._tags.clear()
     if (tagList != null && tagList.iterator != null) {
-      for (tag <- JavaConversions.asIterator(tagList.iterator())) {
+      for (tag <- tagList) {
         _tags + tag
       }
     }
@@ -275,7 +275,7 @@ class DocumentationResponse(
   def setErrorResponses(ep: java.util.List[DocumentationError]) = {
     this._errorResponses.clear()
     if (ep != null) {
-      for (n <- JavaConversions.asIterator(ep.iterator())) {
+      for (n <- ep) {
         _errorResponses + n
       }
     }
@@ -312,7 +312,7 @@ class DocumentationObject extends Name {
   def setFields(ep: java.util.List[DocumentationParameter]) = {
     this.fields.clear()
     if (ep != null) {
-      for (n <- JavaConversions.asIterator(ep.iterator())) {
+      for (n <- ep) {
         fields + n
       }
     }

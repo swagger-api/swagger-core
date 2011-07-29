@@ -7,6 +7,10 @@ import java.lang.reflect.Method;
  * @since 6/23/11 12:32 PM
  */
 public class ReflectionUtil {
+
+    /**
+     * determines which interface declared a given method on a class
+     */
     public static Class<?> getDeclaringInterface(final Method method) {
         for (Class<?> anInterface : method.getDeclaringClass().getInterfaces()) {
             final Method[] interfaceMethods = anInterface.getMethods();

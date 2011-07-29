@@ -18,11 +18,11 @@ import javax.ws.rs.core.{UriInfo, HttpHeaders}
 class HelpApi {
   private val LOGGER = LoggerFactory.getLogger(classOf[HelpApi])
 
-  var apiFilter : ApiAuthorizationFilter = null
+  var apiFilter: ApiAuthorizationFilter = null
 
   def this(apiFilterClassName: String) = {
-    this()
-    if(apiFilterClassName != null){
+    this ()
+    if (apiFilterClassName != null) {
       try {
         apiFilter = Class.forName(apiFilterClassName).newInstance.asInstanceOf[ApiAuthorizationFilter]
       }
@@ -35,14 +35,9 @@ class HelpApi {
 
   def filterDocs(doc: Documentation, headers: HttpHeaders, uriInfo: UriInfo, currentApiPath: String): Documentation = {
     //todo: apply auth and filter doc to only those which apply to current request/api-key
-    if(apiFilter != null){
+    if (apiFilter != null) {
       var apisToRemove = new ListBuffer[DocumentationEndPoint]
-      for (api <- JavaConversions.asIterator((doc.getApis).iterator())) {
-        if( !apiFilter.authorize(api.path, headers, uriInfo) || api.path.equals(currentApiPath)) {
-          //doc.removeApi( endPoint )
-          apisToRemove + api
-        }
-      }
+      doc.getApis().foreach(api =>  if (!apiFilter.authorize(api.path, headers, uriInfo) || api.path.equals(currentApiPath)) apisToRemove + api);
       for (api <- apisToRemove) doc.removeApi(api)
     }
     //todo: transform path?
@@ -57,9 +52,9 @@ class HelpApi {
       try {
         val clazz = Class.forName(t)
         val n = ApiPropertiesReader.read(clazz)
-        if (null != n && null != n.getFields && n.getFields.length > 0){
+        if (null != n && null != n.getFields && n.getFields.length > 0) {
           d.addModel(n)
-          d.addSchema( n.getName, n.toDocumentationSchema() )
+          d.addSchema(n.getName, n.toDocumentationSchema())
         }
       }
       catch {
@@ -73,9 +68,9 @@ class HelpApi {
     val l = new HashSet[String]
     if (d.getApis() != null) {
       //	endpoints
-      for (n <- JavaConversions.asIterator((d.getApis()).iterator())) {
+      for (n <- d.getApis()) {
         //	operations
-        for (o <- JavaConversions.asIterator((n.getOperations()).iterator())) {
+        for (o <- n.getOperations()) {
           if (StringUtils.isNotBlank(o.getResponseTypeInternal())) l += o.getResponseTypeInternal().replaceAll("\\[\\]", "")
         }
       }

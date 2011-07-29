@@ -1,7 +1,7 @@
 package com.wordnik.swagger.core
 
 import com.sun.jersey.api.core.ResourceConfig
-import collection.JavaConversions
+import scala.collection.JavaConversions._
 import javax.servlet.ServletConfig
 import javax.ws.rs.{Path, GET}
 import javax.ws.rs.core.{UriInfo, HttpHeaders, Context, Response}
@@ -52,14 +52,14 @@ trait ApiListing {
     val resources = rc.getRootResourceClasses
     val apiListingEndpoint = this.getClass.getAnnotation(classOf[Api])
     val allApiDoc = new Documentation
-    for (resource <- JavaConversions.asIterator( ( resources ).iterator() )) {
+    for (resource <- resources) {
       val doc = new HelpApi(apiFilterClassName).filterDocs( ApiReader.read(resource, apiVersion, swagrVersion, basePath) , headers, uriInfo, apiListingEndpoint.value)
 
       val apiEndpoint = resource.getAnnotation(classOf[Api])
 
 
       if( doc.getApis() != null ){
-        for( api <- JavaConversions.asIterator((doc.getApis).iterator())){
+        for( api <- doc.getApis()){
           if(!isApiAdded(allApiDoc, api) && api.path.equals(apiEndpoint.value)) {
             api.setErrorResponses(null)
             api.setOperations(null)
@@ -80,7 +80,7 @@ trait ApiListing {
   private def isApiAdded(allApiDoc: Documentation, endpoint: DocumentationEndPoint): Boolean = {
     var isAdded: Boolean = false
     if (allApiDoc.getApis != null) {
-      for (addedApi <- JavaConversions.asIterator((allApiDoc.getApis).iterator())) {
+      for (addedApi <- allApiDoc.getApis()) {
         if (endpoint.path.equals(addedApi.path)) isAdded = true
       }
     }

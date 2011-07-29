@@ -15,6 +15,9 @@ public class TypeUtil {
     private static final String WORDNIK_PACKAGES = "com.wordnik.";
     private static final Map<String, Set<String>> REFERENCED_CLASSES_CACHE = new HashMap<String, Set<String>>();
 
+    /**
+     * @return true if the passed type represents a paramterized list
+     */
     public static boolean isParameterizedList(Type genericType) {
         boolean isList = false; //List.class.isAssignableFrom(type.getClass()) || Collection.class.isAssignableFrom(type.getClass());
         final boolean isTypeParameterized = ParameterizedType.class.isAssignableFrom(genericType.getClass());
@@ -26,6 +29,9 @@ public class TypeUtil {
         return isList && isTypeParameterized;
     }
 
+    /**
+     * @return true if the passed type represents a paramterized set
+     */
     public static boolean isParameterizedSet(Type genericType) {
         boolean isSet = false; //List.class.isAssignableFrom(type.getClass()) || Collection.class.isAssignableFrom(type.getClass());
         final boolean isTypeParameterized = ParameterizedType.class.isAssignableFrom(genericType.getClass());
@@ -37,6 +43,9 @@ public class TypeUtil {
         return isSet && isTypeParameterized;
     }
 
+    /**
+     * @return true if the passed type represents a paramterized map
+     */
     public static boolean isParameterizedMap(Type genericType) {
         boolean isList = false; //List.class.isAssignableFrom(type.getClass()) || Collection.class.isAssignableFrom(type.getClass());
         final boolean isTypeParameterized = ParameterizedType.class.isAssignableFrom(genericType.getClass());
@@ -48,6 +57,9 @@ public class TypeUtil {
         return isList && isTypeParameterized;
     }
 
+    /**
+     * Gets a parameterized lists types if they are in com.wordnik.* packages
+     */
     private static List<String> getWordnikParameterTypes(Type genericType) {
         List<String> list = new ArrayList<String>();
 
@@ -63,6 +75,9 @@ public class TypeUtil {
         return list;
     }
 
+    /**
+     * Get all classes references by a given list of classes. This includes types of method params and fields
+     */
     public static Collection<String> getReferencedClasses(List<String> classNameList) throws ClassNotFoundException {
         final Set<String> referencedClasses = new HashSet<String>();
 
@@ -73,6 +88,9 @@ public class TypeUtil {
         return referencedClasses;
     }
 
+    /**
+     * Get all classes references by a given class. This includes types of method params and fields
+     */
     public static Collection<String> getReferencedClasses(String className) throws ClassNotFoundException {
         if (REFERENCED_CLASSES_CACHE.containsKey(className))
             return REFERENCED_CLASSES_CACHE.get(className);
