@@ -33,7 +33,7 @@ trait Name {
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "ApiDocumentation")
 class Documentation (@BeanProperty var apiVersion: String,
-                     @BeanProperty var swagrVersion: String, @BeanProperty var basePath: String){
+                     @BeanProperty var swaggerVersion: String, @BeanProperty var basePath: String){
 
   def this() = this (null, null, null)
   private var _apis = new ListBuffer[DocumentationEndPoint]
@@ -84,7 +84,7 @@ class Documentation (@BeanProperty var apiVersion: String,
   }
 
   override def clone(): Object = {
-    var doc = new Documentation(apiVersion, swagrVersion, basePath)
+    var doc = new Documentation(apiVersion, swaggerVersion, basePath)
     for (ep <- _apis) {
       doc.addApi((ep.clone()).asInstanceOf[DocumentationEndPoint])
     }

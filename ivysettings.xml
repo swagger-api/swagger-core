@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivysettings>
-	<settings defaultResolver="chained" />
+    <settings defaultResolver="chained">
+        <credentials host="ci.wordnik.com" username="mavenuser" passwd="m4v3np455" realm="Wordnik CI Server"/>
+    </settings>
+
 	<property name="ivy.checksums" value=""/>
 	<property name="ivy.local.default.root" value="${ivy.default.ivy.user.dir}/local"
 		override="false" />

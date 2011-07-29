@@ -62,7 +62,7 @@
 		</delete>
 	</target>
 	
-	<!-- copies ONLY the swagr-sandbox jar to dist-->
+	<!-- copies ONLY the swagger-sample jar to dist-->
 	<target name="fastdist" depends="fastcompile">
 		<copy todir="dist/lib">
 			<fileset dir="build">
@@ -159,13 +159,6 @@
 				<include name="*.sh"/>
 			</fileset>
 		</chmod>
-
-		<!-- clean up old dists -->
-		<delete quiet="true">
-			<fileset dir=".">
-				<include name="wordnik-rest-server-*.zip"/>
-			</fileset>
-		</delete>
 	</target>
 
     <target name="deploy" depends="dist">
