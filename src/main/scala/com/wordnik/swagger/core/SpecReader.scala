@@ -108,7 +108,7 @@ private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val
     val isDeprecated = method.getAnnotation(classOf[Deprecated])
     val wsPath = method.getAnnotation(classOf[javax.ws.rs.Path])
 
-    if (apiOperation != null) {
+    if (apiOperation != null && method.getName != "getHelp") {
 
       // Read the Operation
       val docOperation = new DocumentationOperation
