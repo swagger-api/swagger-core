@@ -53,19 +53,10 @@ trait ApiListing {
     val apiListingEndpoint = this.getClass.getAnnotation(classOf[Api])
     val allApiDoc = new Documentation
     for (resource <- resources) {
-      val doc = new HelpApi(apiFilterClassName).filterDocs( ApiReader.read(resource, apiVersion, swagrVersion, basePath) , headers, uriInfo, apiListingEndpoint.value)
-
-      val apiEndpoint = resource.getAnnotation(classOf[Api])
-
-
-      if( doc.getApis() != null ){
-        for( api <- doc.getApis()){
-          if(!isApiAdded(allApiDoc, api) && api.path.equals(apiEndpoint.value)) {
-            api.setErrorResponses(null)
-            api.setOperations(null)
-            allApiDoc.addApi(api)
-          }
-        }
+      val wsPath = resource.getAnnotation(classOf[Api])
+      var api = new DocumentationEndPoint(wsPath.value,"")
+      if(!isApiAdded(allApiDoc, api)) {
+        allApiDoc.addApi(api)
       }
     }
 
