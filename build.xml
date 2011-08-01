@@ -2,11 +2,11 @@
 <project name="swagger-core" xmlns:ivy="antlib:org.apache.ivy.ant" default="build.all" basedir=".">
 	<property environment="env" />
 	<property name="version.identifier" value="1.0" />
-    	<property name="artifact.ext" value="jar" />
-    	<property name="organization" value="wordnik" />
-    	<property name="rule.path" value="dist/data" />
-    	<property environment="env" />
-    	<property name="module" value="${ant.project.name}" />
+    <property name="artifact.ext" value="jar" />
+    <property name="organization" value="wordnik" />
+    <property name="rule.path" value="dist/data" />
+    <property environment="env" />
+    <property name="module" value="${ant.project.name}" />
 
 	<condition property="scala.home" value="${env.SCALA_HOME}">
 		<isset property="env.SCALA_HOME" />
@@ -19,7 +19,6 @@
 	</path>
 
     <ivy:settings file="ivysettings.xml" />
-    <ivy:buildnumber organisation="${organization}" module="${module}" revision="${version.identifier}" />
 
     <taskdef resource="scala/tools/ant/antlib.xml">
         <classpath>
@@ -113,7 +112,7 @@
 				<pathelement location="build/main/java" />
 			</classpath>
 		</javac>
-		<jar jarfile="build/${module}-${ivy.new.revision}.${artifact.ext}">
+		<jar jarfile="build/${module}-${version.identifier}.${artifact.ext}">
 			<fileset dir="build/main/java" />
 		</jar>
 	</target>
@@ -163,14 +162,14 @@
 
     <target name="deploy" depends="dist">
         <echo message="building pom file"/>
-        <property name="ivy.pom.version" value="${ivy.new.revision}"/>
-        <ivy:makepom ivyfile="ivy.xml" pomfile="build/${module}-${ivy.new.revision}.pom"/>
+        <property name="ivy.pom.version" value="${version.identifier}"/>
+        <ivy:makepom ivyfile="ivy.xml" pomfile="build/${module}-${version.identifier}.pom"/>
 
         <echo message="publishing module ${module}" />
-        <ivy:publish resolver="local" organisation="${organization}" conf="source,test,build,pom,common" pubrevision="${ivy.new.revision}" overwrite="false">
+        <ivy:publish resolver="local" organisation="${organization}" conf="source,test,build,pom,common" pubrevision="${version.identifier}" overwrite="true">
                 <artifacts pattern="build/[artifact]-[revision].[ext]" />
         </ivy:publish>
-        <echo message="project ${module} published locally with version lib/${ivy.new.revision}" />
+        <echo message="project ${module} published locally with version lib/${version.identifier}" />
     </target>
 
 	<target name="dependency.tree" description="builds a dependency diagram">
