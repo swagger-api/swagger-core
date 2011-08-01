@@ -149,13 +149,12 @@ class DocumentationEndPoint(@BeanProperty var path: String, @BeanProperty var de
 @XmlRootElement(name = "operation")
 class DocumentationOperation(@BeanProperty var httpMethod: String,
                              @BeanProperty var summary: String,
-                             @BeanProperty var notes: String,
-                             @BeanProperty var open: Boolean) {
-  @BeanProperty var deprecated: Boolean = false
+                             @BeanProperty var notes: String) {
+  @BeanProperty var deprecated: Boolean = _
   @BeanProperty var responseClass: String = _
   @BeanProperty var nickname: String = _
 
-  def this() = this (null, null, null, false)
+  def this() = this (null, null, null)
 
   private var _parameters = new ListBuffer[DocumentationParameter]
 
@@ -194,7 +193,7 @@ class DocumentationOperation(@BeanProperty var httpMethod: String,
   def getResponseTypeInternal() = this.responseTypeInternal
 
   override def clone(): Object = {
-    val cloned = new DocumentationOperation(httpMethod, summary, notes, open)
+    val cloned = new DocumentationOperation(httpMethod, summary, notes)
     cloned.deprecated = deprecated;
     cloned.nickname = nickname;
     cloned.responseClass = responseClass;
@@ -207,7 +206,7 @@ class DocumentationOperation(@BeanProperty var httpMethod: String,
   }
 
   def cloneExternal(): DocumentationOperation = {
-    val cloned = new DocumentationOperation(httpMethod, summary, notes, open)
+    val cloned = new DocumentationOperation(httpMethod, summary, notes)
     cloned.deprecated = deprecated;
     cloned.nickname = nickname;
     cloned.responseClass = responseClass;

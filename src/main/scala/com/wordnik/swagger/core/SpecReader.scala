@@ -114,7 +114,9 @@ private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val
       val docOperation = new DocumentationOperation
 
       // check if its deprecated
-      docOperation.deprecated = (isDeprecated != null)
+      if(isDeprecated != null){
+        docOperation.deprecated = true
+      }
 
       if (apiOperation != null) {
         docOperation.httpMethod = parseHttpMethod(method)
@@ -134,16 +136,6 @@ private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val
         }
         catch {
           case e: ClassNotFoundException => docOperation.responseClass = apiResponseValue
-        }
-
-        apiOperation.access match {
-          case INHERIT_FROM_ENDPOINT => docOperation.open = apiEndpoint.open
-
-          case OPEN => docOperation.open = true
-
-          case REQUIRE_AUTHENTICATION => docOperation.open = false
-
-          case _ => docOperation.open = apiEndpoint.open
         }
       }
 
@@ -292,7 +284,6 @@ object ApiPropertiesReader {
 private class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
   private val documentationObject = new DocumentationObject
   private val LOGGER = LoggerFactory.getLogger(classOf[ApiModelParser])
-  private val WORDNIK_PACKAGES_PREFIX = "com.wordnik."
 
   documentationObject.setName(readName(hostClass))
 
@@ -315,9 +306,7 @@ private class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
     } else if (hostClass.getName.indexOf(".") < 0) {
       hostClass.getName
     } else {
-      if (hostClass.getName.indexOf(WORDNIK_PACKAGES_PREFIX) > 0)
-        LOGGER.error("Class " + hostClass.getName + " is not annotated with a @XmlRootElement annotation, using " + hostClass.getSimpleName)
-
+      LOGGER.error("Class " + hostClass.getName + " is not annotated with a @XmlRootElement annotation, using " + hostClass.getSimpleName)
       hostClass.getSimpleName
     }
 

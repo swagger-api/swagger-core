@@ -17,13 +17,21 @@
               value="[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"
               override="false" />
 	<resolvers>
-        <chain name="chained" returnFirst="true">
+        <!-- chain name="chained" returnFirst="true">
                 <filesystem name="local">
                     <ivy pattern="${ivy.local.default.root}/${ivy.local.default.ivy.pattern}" />
                     <artifact pattern="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}" />
                 </filesystem>
                 <ibiblio name="wordnik-repo" root="https://ci.wordnik.com/artifactory/libs-snapshots" m2compatible="true" pattern="${maven.pattern}"/>
                 <ibiblio name="wordnik-remote-repos" root="https://ci.wordnik.com/artifactory/remote-repos" m2compatible="true"/>
-        </chain>
+        </chain -->
+		<chain name="chained" returnFirst="true">
+			<filesystem name="local">
+				<ivy pattern="${ivy.local.default.root}/${ivy.local.default.ivy.pattern}" />
+				<artifact pattern="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}" />
+			</filesystem>
+			<ibiblio name="ibiblio" m2compatible="true" />
+			<ibiblio name="javanet" root="http://download.java.net/maven/2/" m2compatible="true" />
+		</chain>
 	</resolvers>
 </ivysettings>

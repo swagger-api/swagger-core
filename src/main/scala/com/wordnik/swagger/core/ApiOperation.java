@@ -23,5 +23,4 @@ public @interface ApiOperation {
 
     String tags() default "";
 
-    int access() default ApiValues.INHERIT_FROM_ENDPOINT;
 }
