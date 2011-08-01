@@ -5,6 +5,7 @@ import scala.collection.JavaConversions._
 import javax.servlet.ServletConfig
 import javax.ws.rs.{Path, GET}
 import javax.ws.rs.core.{UriInfo, HttpHeaders, Context, Response}
+import org.slf4j.LoggerFactory
 
 /**
   * @author ayush
@@ -37,6 +38,9 @@ trait Help {
 }
 
 trait ApiListing {
+
+  private val LOGGER = LoggerFactory.getLogger(classOf[ApiListing])
+
   @GET
   @ApiOperation(value = "Returns list of all available api endpoints",
     responseClass="DocumentationEndPoint", mutiValueResponse = true )
@@ -48,6 +52,14 @@ trait ApiListing {
     val basePath = if (sc != null) sc.getInitParameter("swagger.api.basepath") else null
 
     val apiFilterClassName = if (sc != null) sc.getInitParameter("swagger.security.filter") else null
+    var apiFilter: ApiAuthorizationFilter = null
+    try {
+      apiFilter = Class.forName(apiFilterClassName).newInstance.asInstanceOf[ApiAuthorizationFilter]
+    }
+    catch {
+      case e: ClassNotFoundException => LOGGER.error("Unable to resolve apiFilter class " + apiFilterClassName);
+      case e: ClassCastException => LOGGER.error("Unable to cast to apiFilter class " + apiFilterClassName);
+    }
 
     val resources = rc.getRootResourceClasses
     val apiListingEndpoint = this.getClass.getAnnotation(classOf[Api])
@@ -56,7 +68,9 @@ trait ApiListing {
       val wsPath = resource.getAnnotation(classOf[Api])
       var api = new DocumentationEndPoint(wsPath.value,"")
       if(!isApiAdded(allApiDoc, api)) {
-        allApiDoc.addApi(api)
+        if (null != apiFilter && apiFilter.authorizeResource(api.path, headers, uriInfo)){
+          allApiDoc.addApi(api)
+        }
       }
     }
 

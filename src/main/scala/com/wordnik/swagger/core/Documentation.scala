@@ -116,6 +116,8 @@ class DocumentationEndPoint(@BeanProperty var path: String, @BeanProperty var de
 
   def addOperation(op: DocumentationOperation) = if (op != null) _ops += op
 
+  def removeOperation(op: DocumentationOperation) = if (op != null) _ops -= op
+
   private var _errorResponses = new ListBuffer[DocumentationError]
 
   @XmlElement

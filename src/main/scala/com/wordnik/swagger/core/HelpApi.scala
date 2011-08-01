@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory
 import util.TypeUtil
 import org.apache.commons.lang.StringUtils
 import javax.ws.rs.core.{UriInfo, HttpHeaders}
+import java.rmi.server.Operation
 
 class HelpApi {
   private val LOGGER = LoggerFactory.getLogger(classOf[HelpApi])
@@ -37,7 +38,22 @@ class HelpApi {
     //todo: apply auth and filter doc to only those which apply to current request/api-key
     if (apiFilter != null) {
       var apisToRemove = new ListBuffer[DocumentationEndPoint]
-      doc.getApis().foreach(api =>  if (!apiFilter.authorize(api.path, headers, uriInfo) || api.path.equals(currentApiPath)) apisToRemove + api);
+      doc.getApis().foreach(
+          api => {
+            if (api.getOperations() != null){
+              var operationsToRemove = new ListBuffer[DocumentationOperation]
+              api.getOperations().foreach( apiOperation  =>
+                if (!apiFilter.authorize(api.path, apiOperation.httpMethod,  headers, uriInfo)) {
+                  operationsToRemove += apiOperation
+                }
+              )
+              for(operation <- operationsToRemove)api.removeOperation(operation)
+              if(null == api.getOperations() || api.getOperations().size() == 0){
+                apisToRemove + api
+              }
+            }
+         }
+      );
       for (api <- apisToRemove) doc.removeApi(api)
     }
     //todo: transform path?
