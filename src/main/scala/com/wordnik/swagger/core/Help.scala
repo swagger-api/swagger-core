@@ -53,12 +53,14 @@ trait ApiListing {
 
     val apiFilterClassName = if (sc != null) sc.getInitParameter("swagger.security.filter") else null
     var apiFilter: ApiAuthorizationFilter = null
-    try {
-      apiFilter = Class.forName(apiFilterClassName).newInstance.asInstanceOf[ApiAuthorizationFilter]
-    }
-    catch {
-      case e: ClassNotFoundException => LOGGER.error("Unable to resolve apiFilter class " + apiFilterClassName);
-      case e: ClassCastException => LOGGER.error("Unable to cast to apiFilter class " + apiFilterClassName);
+    if(null != apiFilterClassName) {
+      try {
+        apiFilter = Class.forName(apiFilterClassName).newInstance.asInstanceOf[ApiAuthorizationFilter]
+      }
+      catch {
+        case e: ClassNotFoundException => LOGGER.error("Unable to resolve apiFilter class " + apiFilterClassName);
+        case e: ClassCastException => LOGGER.error("Unable to cast to apiFilter class " + apiFilterClassName);
+      }
     }
 
     val resources = rc.getRootResourceClasses
@@ -66,10 +68,12 @@ trait ApiListing {
     val allApiDoc = new Documentation
     for (resource <- resources) {
       val wsPath = resource.getAnnotation(classOf[Api])
-      var api = new DocumentationEndPoint(wsPath.value+"."+ApiReader.FORMAT_STRING,"")
-      if(!isApiAdded(allApiDoc, api)) {
-        if (null != apiFilter && apiFilter.authorizeResource(api.path, headers, uriInfo)){
-          allApiDoc.addApi(api)
+      if(null != wsPath){
+        var api = new DocumentationEndPoint(wsPath.value+"."+ApiReader.FORMAT_STRING,"")
+        if(!isApiAdded(allApiDoc, api)) {
+          if (null == apiFilter || apiFilter.authorizeResource(api.path, headers, uriInfo)){
+            allApiDoc.addApi(api)
+          }
         }
       }
     }
