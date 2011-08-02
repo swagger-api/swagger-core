@@ -1,14 +1,18 @@
 package com.wordnik.swagger.core
 
 import com.sun.jersey.api.core.ResourceConfig
-import scala.collection.JavaConversions._
+
+import org.slf4j.LoggerFactory
+
 import javax.servlet.ServletConfig
 import javax.ws.rs.{Path, GET}
 import javax.ws.rs.core.{UriInfo, HttpHeaders, Context, Response}
-import org.slf4j.LoggerFactory
+
+import scala.collection.JavaConversions._
 
 /**
   * @author ayush
+
   * @since 6/23/11 12:48 PM
   *
   */
@@ -19,8 +23,8 @@ trait Help {
   def getHelp (@Context sc :ServletConfig, @Context rc:ResourceConfig,
                @Context headers: HttpHeaders, @Context uriInfo: UriInfo): Response = {
 
-    val apiVersion = if (sc != null) sc.getInitParameter("swagger.api.version") else null
-    val swagrVersion = if (sc != null) sc.getInitParameter("swagger.version") else null
+    val apiVersion = if (sc != null) sc.getInitParameter("api.version") else null
+    val swaggerVersion = if (sc != null) sc.getInitParameter(SwaggerSpec.version) else null
     val basePath = if (sc != null) sc.getInitParameter("swagger.api.basepath") else null
 
     val filterOutTopLevelApi = true
@@ -31,7 +35,7 @@ trait Help {
     val currentApiPath = if (currentApiEndPoint != null && filterOutTopLevelApi) currentApiEndPoint.value else null
 
     val docs = new HelpApi(apiFilterClassName).filterDocs(
-      ApiReader.read(this.getClass, apiVersion, swagrVersion, basePath), headers, uriInfo, currentApiPath)
+      ApiReader.read(this.getClass, apiVersion, swaggerVersion, basePath), headers, uriInfo, currentApiPath)
     Response.ok.entity(docs).build
   }
 
@@ -47,8 +51,8 @@ trait ApiListing {
   def getAllApis( @Context sc :ServletConfig, @Context rc:ResourceConfig,
                @Context headers: HttpHeaders, @Context uriInfo: UriInfo ) : Response = {
 
-    val apiVersion = if (sc != null) sc.getInitParameter("swagger.api.version") else null
-    val swagrVersion = if (sc != null) sc.getInitParameter("swagger.version") else null
+    val apiVersion = if (sc != null) sc.getInitParameter("api.version") else null
+    val swaggerVersion = if (sc != null) sc.getInitParameter(SwaggerSpec.version) else null
     val basePath = if (sc != null) sc.getInitParameter("swagger.api.basepath") else null
 
     val apiFilterClassName = if (sc != null) sc.getInitParameter("swagger.security.filter") else null
@@ -74,7 +78,7 @@ trait ApiListing {
       }
     }
 
-    allApiDoc.swaggerVersion = swagrVersion
+    allApiDoc.swaggerVersion = swaggerVersion
     allApiDoc.basePath = basePath
     allApiDoc.apiVersion = apiVersion
 
