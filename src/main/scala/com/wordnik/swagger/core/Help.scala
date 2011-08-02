@@ -66,7 +66,7 @@ trait ApiListing {
     val allApiDoc = new Documentation
     for (resource <- resources) {
       val wsPath = resource.getAnnotation(classOf[Api])
-      var api = new DocumentationEndPoint(wsPath.value,"")
+      var api = new DocumentationEndPoint(wsPath.value+"."+ApiReader.FORMAT_STRING,"")
       if(!isApiAdded(allApiDoc, api)) {
         if (null != apiFilter && apiFilter.authorizeResource(api.path, headers, uriInfo)){
           allApiDoc.addApi(api)

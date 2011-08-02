@@ -24,6 +24,8 @@ object ApiReader {
   val POST = "POST";
   val HEAD = "HEAD";
 
+  val FORMAT_STRING = "{format}";
+
   private val endpointsCache = scala.collection.mutable.Map.empty[Class[_], Documentation]
 
   def read(hostClass: Class[_], apiVersion: String, swagrVersion: String, basePath: String): Documentation = {
@@ -218,7 +220,7 @@ private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val
       }
 
       // Get Endpoint
-      val docEndpoint = getEndPoint(documentation, apiEndpoint.value + (if (wsPath == null) "" else wsPath.value))
+      val docEndpoint = getEndPoint(documentation, apiEndpoint.value + "." + ApiReader.FORMAT_STRING + (if (wsPath == null) "" else wsPath.value))
 
       // Add Operation to Endpoint
       docEndpoint.addOperation(docOperation)

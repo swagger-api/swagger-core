@@ -1,7 +1,6 @@
 package com.wordnik.swagger.core
 
 import javax.ws.rs.{Produces, Path}
-import com.wordnik.swagger.core.{ApiListing, Api}
 
 @Path("/resources.json")
 @Api("/resources")
