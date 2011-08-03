@@ -12,5 +12,5 @@ for file in `ls build`;
 done
 
 export CLASSPATH=$(cat classpath.txt)
-export JAVA_OPTS="${JAVA_OPTS} -DrulePath=data -Xmx4096M -DloggerPath=$BUILD_COMMON/test-config/log4j.properties"
-scala $WORDNIK_OPTS $JAVA_CONFIG_OPTIONS  -cp $CLASSPATH "$@"
+export JAVA_OPTS="${JAVA_OPTS} -Xmx4096M -DloggerPath=conf/log4j.properties"
+scala $JAVA_CONFIG_OPTIONS  -cp $CLASSPATH "$@"
