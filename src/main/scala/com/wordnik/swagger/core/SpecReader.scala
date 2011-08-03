@@ -28,9 +28,9 @@ object ApiReader {
 
   private val endpointsCache = scala.collection.mutable.Map.empty[Class[_], Documentation]
 
-  def read(hostClass: Class[_], apiVersion: String, swagrVersion: String, basePath: String): Documentation = {
+  def read(hostClass: Class[_], apiVersion: String, swaggerVersion: String, basePath: String): Documentation = {
     endpointsCache.get(hostClass) match {
-      case None => val doc = new ApiSpecParser(hostClass, apiVersion, swagrVersion, basePath).parse; endpointsCache += hostClass -> doc.clone.asInstanceOf[Documentation]; doc
+      case None => val doc = new ApiSpecParser(hostClass, apiVersion, swaggerVersion, basePath).parse; endpointsCache += hostClass -> doc.clone.asInstanceOf[Documentation]; doc
       case doc: Option[Documentation] => doc.get.clone.asInstanceOf[Documentation]
       case _ => null
     }
@@ -64,7 +64,7 @@ trait BaseApiParser {
   }
 }
 
-private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagrVersion: String, val basePath: String) extends BaseApiParser {
+private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swaggerVersion: String, val basePath: String) extends BaseApiParser {
   private val LOGGER = LoggerFactory.getLogger("com.wordnik.swagger.core.ApiReader")
   private val TRAIT = "trait"
 
@@ -78,7 +78,7 @@ private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val
       case _ => for (method <- hostClass.getDeclaredMethods) parseMethod(method)
     }
     documentation.apiVersion = apiVersion
-    documentation.swaggerVersion = swagrVersion
+    documentation.swaggerVersion = swaggerVersion
     documentation.basePath = basePath
     documentation
   }

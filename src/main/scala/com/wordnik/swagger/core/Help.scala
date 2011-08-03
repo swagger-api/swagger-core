@@ -24,7 +24,7 @@ trait Help {
                @Context headers: HttpHeaders, @Context uriInfo: UriInfo): Response = {
 
     val apiVersion = if (sc != null) sc.getInitParameter("api.version") else null
-    val swaggerVersion = if (sc != null) sc.getInitParameter(SwaggerSpec.version) else null
+    val swaggerVersion = SwaggerSpec.version
     val basePath = if (sc != null) sc.getInitParameter("swagger.api.basepath") else null
 
     val filterOutTopLevelApi = true
@@ -52,7 +52,7 @@ trait ApiListing {
                @Context headers: HttpHeaders, @Context uriInfo: UriInfo ) : Response = {
 
     val apiVersion = if (sc != null) sc.getInitParameter("api.version") else null
-    val swaggerVersion = if (sc != null) sc.getInitParameter(SwaggerSpec.version) else null
+    val swaggerVersion = SwaggerSpec.version
     val basePath = if (sc != null) sc.getInitParameter("swagger.api.basepath") else null
 
     val apiFilterClassName = if (sc != null) sc.getInitParameter("swagger.security.filter") else null
