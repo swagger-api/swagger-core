@@ -2,11 +2,14 @@
 <project name="swagger-core" xmlns:ivy="antlib:org.apache.ivy.ant" default="build.all" basedir=".">
 	<property environment="env" />
 	<property name="version.identifier" value="1.0" />
-    <property name="artifact.ext" value="jar" />
-    <property name="organization" value="wordnik" />
-    <property name="rule.path" value="dist/data" />
-    <property environment="env" />
-    <property name="module" value="${ant.project.name}" />
+	<property name="artifact.ext" value="jar" />
+	<property name="organization" value="wordnik" />
+	<property environment="env" />
+	<property name="module" value="${ant.project.name}" />
+	
+	<!-- default dirs for the build -->
+	<mkdir dir="lib"/>
+	<mkdir dir="lib/ext"/>
 
 	<condition property="scala.home" value="${env.SCALA_HOME}">
 		<isset property="env.SCALA_HOME" />
@@ -18,25 +21,24 @@
 		</fileset>
 	</path>
 
-    <ivy:settings file="ivysettings.xml" />
+	<ivy:settings file="ivysettings.xml" />
 
-    <taskdef resource="scala/tools/ant/antlib.xml">
-        <classpath>
-                <fileset dir="lib">
-                    <include name="scala**.jar" />
-                </fileset>
-             <fileset dir="${scala.home}/lib">
-                    <include name="scala**.jar" />
-                </fileset>
-         </classpath>
-    </taskdef>
+	<taskdef resource="scala/tools/ant/antlib.xml">
+		<classpath>
+			<fileset dir="lib">
+				<include name="scala**.jar" />
+			</fileset>
+			<fileset dir="${scala.home}/lib">
+				<include name="scala**.jar" />
+			</fileset>
+		</classpath>
+	</taskdef>
 
 	<!-- this is the output module -->
 	<property name="module" value="${ant.project.name}" />
 
-	<target name="build.all" depends="clean, resolve, fastcompile"
-		description="builds the module (default target)" />
-	
+	<target name="build.all" depends="clean, resolve, fastcompile" description="builds the module (default target)" />
+
 	<target name="clean" description="cleans the project folder">
 		<mkdir dir="build" />
 		<echo message="deleting build files" />
@@ -60,22 +62,13 @@
 			</fileset>
 		</delete>
 	</target>
-	
-	<!-- copies ONLY the swagger-sample jar to dist-->
-	<target name="fastdist" depends="fastcompile">
-		<copy todir="dist/lib">
-			<fileset dir="build">
-				<include name="*.jar"/>
-			</fileset>
-		</copy>
-	</target>
-	
+
 	<!-- copies all dependencies into the lib folder -->
 	<target name="resolve" description="retreive dependencies with ivy">
 		<ivy:retrieve pattern="${basedir}/lib/[artifact]-[revision].[ext]" conf="build" />
 	</target>
 
-	<target name="fastcompile" description="builds the module without artifact resolution or cleaning" >
+	<target name="fastcompile" description="builds the module without artifact resolution or cleaning">
 		<delete quiet="true" file="build/${organization}-${artifact}-*.${artifact.ext}" />
 		<mkdir dir="build" />
 		<mkdir dir="build/main" />
@@ -85,9 +78,9 @@
 			<classpath>
 				<fileset dir="lib">
 					<include name="*.jar" />
-				    <exclude name="*compat-jbossweb*.jar"/>
-				    <exclude name="*compat-tomcat*.jar"/>
-				    <exclude name="*compat-weblogic*.jar"/>
+					<exclude name="*compat-jbossweb*.jar" />
+					<exclude name="*compat-tomcat*.jar" />
+					<exclude name="*compat-weblogic*.jar" />
 				</fileset>
 				<fileset dir="lib/ext">
 					<include name="*.jar" />
@@ -102,9 +95,9 @@
 			<classpath>
 				<fileset dir="lib">
 					<include name="*.jar" />
-				    <exclude name="*compat-jbossweb*.jar"/>
-				    <exclude name="*compat-tomcat*.jar"/>
-				    <exclude name="*compat-weblogic*.jar"/>
+					<exclude name="*compat-jbossweb*.jar" />
+					<exclude name="*compat-tomcat*.jar" />
+					<exclude name="*compat-weblogic*.jar" />
 				</fileset>
 				<fileset dir="lib/ext">
 					<include name="*.jar" />
@@ -117,63 +110,19 @@
 		</jar>
 	</target>
 
-	<!-- cleans up the dist -->
-	<target name="dist.clean">
-		<delete quiet="true" dir="dist"/>
-		<delete quiet="true" file="dist.zip"/>
+	<target name="deploy" depends="dist" description="builds and copies the artifact to the local ivy cache">
+		<echo message="building pom file" />
+		<property name="ivy.pom.version" value="${version.identifier}" />
+		<ivy:makepom ivyfile="ivy.xml" pomfile="build/${module}-${version.identifier}.pom" />
+
+		<echo message="publishing module ${module}" />
+		<ivy:publish resolver="local" organisation="${organization}" conf="source,test,build,pom,common" pubrevision="${version.identifier}" overwrite="true">
+			<artifacts pattern="build/[artifact]-[revision].[ext]" />
+		</ivy:publish>
+		<echo message="project ${module} published locally with version lib/${version.identifier}" />
 	</target>
 
-	<!-- creates a distribution of the api server -->
-	<target name="dist" depends="build.all">
-		<!-- make dist -->
-		<delete dir="dist"/>
-
-		<mkdir dir="dist"/>
-		<mkdir dir="dist/lib"/>
-		<mkdir dir="dist/logs"/>
-
-		<!-- copy all jars -->
-		<copy todir="dist/lib">
-			<fileset dir="lib">
-				<include name="*.jar"/>
-			</fileset>
-			<fileset dir="build">
-				<include name="*.jar"/>
-			</fileset>
-		</copy>
-		<copy todir="dist/lib">
-			<fileset dir="lib/ext"/>
-		</copy>
-
-		<mkdir dir="dist/conf"/>
-		<copy todir="dist/conf" file="conf/log4j.properties"/>
-
-		<!-- copy bin files -->
-		<copy todir="dist/bin">
-			<fileset dir="bin"/>
-		</copy>
-
-		<chmod perm="a+x">
-			<fileset dir="dist/bin">
-				<include name="*.sh"/>
-			</fileset>
-		</chmod>
+	<target name="dependency.tree" description="builds a graphml dependency diagram for viewing with yEd">
+		<ivy:report conf="build" graph="true" todir="." outputpattern="[artifact]-[revision].[ext]" />
 	</target>
-
-    <target name="deploy" depends="dist">
-        <echo message="building pom file"/>
-        <property name="ivy.pom.version" value="${version.identifier}"/>
-        <ivy:makepom ivyfile="ivy.xml" pomfile="build/${module}-${version.identifier}.pom"/>
-
-        <echo message="publishing module ${module}" />
-        <ivy:publish resolver="local" organisation="${organization}" conf="source,test,build,pom,common" pubrevision="${version.identifier}" overwrite="true">
-                <artifacts pattern="build/[artifact]-[revision].[ext]" />
-        </ivy:publish>
-        <echo message="project ${module} published locally with version lib/${version.identifier}" />
-    </target>
-
-	<target name="dependency.tree" description="builds a dependency diagram">
- 		<ivy:report conf="build" graph="true" todir="." outputpattern="[artifact]-[revision].[ext]" />
-	</target>
-
 </project>
