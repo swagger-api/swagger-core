@@ -51,8 +51,6 @@
 
 		<delete dir="build/main" quiet="true" />
 
-		<delete dir="dist" quiet="true" />
-
 		<!-- libraries handled by ivy -->
 		<echo message="deleting libs handled by ivy" />
 		<delete>
@@ -110,7 +108,7 @@
 		</jar>
 	</target>
 
-	<target name="deploy" depends="dist" description="builds and copies the artifact to the local ivy cache">
+	<target name="deploy" depends="build.all" description="builds and copies the artifact to the local ivy cache">
 		<echo message="building pom file" />
 		<property name="ivy.pom.version" value="${version.identifier}" />
 		<ivy:makepom ivyfile="ivy.xml" pomfile="build/${module}-${version.identifier}.pom" />
