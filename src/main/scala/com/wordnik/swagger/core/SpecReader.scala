@@ -40,6 +40,7 @@ object ApiReader {
   val HEAD = "HEAD";
 
   val FORMAT_STRING = "{format}";
+  val LIST_RESOURCES_PATH = "/resources";
 
   private val endpointsCache = scala.collection.mutable.Map.empty[Class[_], Documentation]
 

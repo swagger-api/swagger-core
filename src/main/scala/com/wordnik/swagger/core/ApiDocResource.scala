@@ -23,7 +23,7 @@ import javax.ws.rs.{Produces, Path}
 @Produces(Array("application/json"))
 class ApiListingResourceJSON extends ApiListing
 
-@Path("/reources.xml")
+@Path("/resources.xml")
 @Api("/resources")
 @Produces(Array("application/xml"))
 class ApiListingResourceXML extends ApiListing
