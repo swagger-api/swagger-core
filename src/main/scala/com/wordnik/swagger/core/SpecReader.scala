@@ -17,6 +17,7 @@
 package com.wordnik.swagger.core
 
 import com.wordnik.swagger.core.ApiValues._
+import com.wordnik.swagger.core.util.TypeUtil
 
 import org.slf4j.LoggerFactory
 
@@ -27,14 +28,10 @@ import util.ReflectionUtil
 import java.lang.reflect.{Type, Field, Modifier, Method}
 import java.lang.annotation.Annotation
 import javax.xml.bind.annotation._
-import util.TypeUtil
 
 import scala.collection.JavaConversions._
 import collection.mutable.ListBuffer
 
-  * @since 6/23/11 12:28 PM
-  *
-  */
 object ApiReader {
   val GET = "GET";
   val PUT = "PUT";
@@ -444,5 +441,4 @@ private class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
         documentationObject.addField(docParam)
     }
   }
-
 }
