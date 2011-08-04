@@ -161,7 +161,7 @@ class DocumentationEndPoint(@BeanProperty var path: String, @BeanProperty var de
 class DocumentationOperation(@BeanProperty var httpMethod: String,
                              @BeanProperty var summary: String,
                              @BeanProperty var notes: String) {
-  @BeanProperty var deprecated: Boolean = _
+  @BeanProperty var deprecated: java.lang.Boolean = null
   @BeanProperty var responseClass: String = _
   @BeanProperty var nickname: String = _
 
