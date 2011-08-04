@@ -68,7 +68,7 @@ class Documentation (@BeanProperty var apiVersion: String,
   private var _objs = new ListBuffer[DocumentationObject]
 
   @JsonIgnore
-  @XmlTransient
+  @XmlElement
   def getModels = if (_objs.size > 0) asList(_objs) else null
 
   def addModel(obj: DocumentationObject) = if (obj != null) _objs += obj
