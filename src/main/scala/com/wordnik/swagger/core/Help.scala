@@ -45,7 +45,7 @@ trait Help {
     val currentApiPath = if (currentApiEndPoint != null && filterOutTopLevelApi) currentApiEndPoint.value else null
 
     val docs = new HelpApi(apiFilterClassName).filterDocs(
-      ApiReader.read(this.getClass, apiVersion, swaggerVersion, basePath), headers, uriInfo, currentApiPath)
+      ApiReader.read(this.getClass, apiVersion, swaggerVersion, basePath, currentApiPath), headers, uriInfo, currentApiPath)
     Response.ok.entity(docs).build
   }
 

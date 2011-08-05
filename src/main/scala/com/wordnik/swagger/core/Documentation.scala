@@ -44,9 +44,11 @@ trait Name {
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "ApiDocumentation")
 class Documentation (@BeanProperty var apiVersion: String,
-                     @BeanProperty var swaggerVersion: String, @BeanProperty var basePath: String){
+                     @BeanProperty var swaggerVersion: String,
+                     @BeanProperty var basePath: String,
+                     @BeanProperty var resourcePath: String){
 
-  def this() = this (null, null, null)
+  def this() = this (null, null, null, null)
   private var _apis = new ListBuffer[DocumentationEndPoint]
 
   @XmlElement(name = "apis")
@@ -95,7 +97,7 @@ class Documentation (@BeanProperty var apiVersion: String,
   }
 
   override def clone(): Object = {
-    var doc = new Documentation(apiVersion, swaggerVersion, basePath)
+    var doc = new Documentation(apiVersion, swaggerVersion, basePath, resourcePath)
     for (ep <- _apis) {
       doc.addApi((ep.clone()).asInstanceOf[DocumentationEndPoint])
     }
@@ -129,29 +131,11 @@ class DocumentationEndPoint(@BeanProperty var path: String, @BeanProperty var de
 
   def removeOperation(op: DocumentationOperation) = if (op != null) _ops -= op
 
-  private var _errorResponses = new ListBuffer[DocumentationError]
-
-  @XmlElement
-  def getErrorResponses(): java.util.List[DocumentationError] = if (_errorResponses.size > 0) asList(_errorResponses) else null
-
-  def setErrorResponses(ep: java.util.List[DocumentationError]) = {
-    this._errorResponses.clear()
-    if (ep != null) {
-      for (n <- ep) {
-        _errorResponses + n
-      }
-    }
-  }
-
-  def addErrorResponse(error: DocumentationError) = if (error != null) _errorResponses += error
-
-
   override def clone(): Object = {
     var ep = new DocumentationEndPoint(path, description)
     for (op <- _ops) {
       ep.addOperation((op.clone()).asInstanceOf[DocumentationOperation])
     }
-    for (er <- _errorResponses) ep.addErrorResponse((er.clone()).asInstanceOf[DocumentationError])
     ep
   }
 }
@@ -203,6 +187,22 @@ class DocumentationOperation(@BeanProperty var httpMethod: String,
   @XmlTransient
   def getResponseTypeInternal() = this.responseTypeInternal
 
+  private var _errorResponses = new ListBuffer[DocumentationError]
+
+  @XmlElement
+  def getErrorResponses(): java.util.List[DocumentationError] = if (_errorResponses.size > 0) asList(_errorResponses) else null
+
+  def setErrorResponses(ep: java.util.List[DocumentationError]) = {
+    this._errorResponses.clear()
+    if (ep != null) {
+      for (n <- ep) {
+        _errorResponses + n
+      }
+    }
+  }
+
+  def addErrorResponse(error: DocumentationError) = if (error != null) _errorResponses += error
+
   override def clone(): Object = {
     val cloned = new DocumentationOperation(httpMethod, summary, notes)
     cloned.deprecated = deprecated;
@@ -212,6 +212,7 @@ class DocumentationOperation(@BeanProperty var httpMethod: String,
     cloned.setTags(this._tags)
 
     for (p <- _parameters) cloned.addParameter((p.clone()).asInstanceOf[DocumentationParameter])
+    for (er <- _errorResponses) cloned.addErrorResponse((er.clone()).asInstanceOf[DocumentationError])
 
     cloned
   }
@@ -223,6 +224,7 @@ class DocumentationOperation(@BeanProperty var httpMethod: String,
     cloned.responseClass = responseClass;
     cloned.responseTypeInternal = this.responseTypeInternal
     cloned.setTags(this._tags)
+    cloned.setErrorResponses(this._errorResponses)
 
     for (p <- _parameters) {
       if ("internal" != p.paramAccess) {
