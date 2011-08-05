@@ -172,6 +172,9 @@ private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val
           val paramTypeClass = paramTypes(counter)
           val paramTypeName = ApiPropertiesReader.readName(paramTypeClass)
           docParam.dataType = paramTypeName
+          if(!paramTypeClass.isPrimitive && !paramTypeClass.getName().contains("java.lang")){
+            docParam.setValueTypeInternal(paramTypeClass.getName)
+          }
         }
         catch {
           case e: Exception => LOGGER.error("Unable to determine datatype for param " + counter + " in method " + method, e)

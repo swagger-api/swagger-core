@@ -74,7 +74,7 @@ class HelpApi {
   }
 
   private def loadModel(d: Documentation): Unit = {
-    val directTypes = getReturnTypes(d)
+    val directTypes = getExpectedTypes(d)
     val types = TypeUtil.getReferencedClasses(directTypes)
     for (t <- types) {
       try {
@@ -92,14 +92,20 @@ class HelpApi {
     }
   }
 
-  private def getReturnTypes(d: Documentation): List[String] = {
+  private def getExpectedTypes(d: Documentation): List[String] = {
     val l = new HashSet[String]
     if (d.getApis() != null) {
       //	endpoints
       for (n <- d.getApis()) {
         //	operations
         for (o <- n.getOperations()) {
+          //return types
           if (StringUtils.isNotBlank(o.getResponseTypeInternal())) l += o.getResponseTypeInternal().replaceAll("\\[\\]", "")
+          //operation parameters -- for a POST we might have complex types
+          for (r <- JavaConversions.asIterator((o.getParameters()).iterator())) {
+            //	parameter types
+            if (StringUtils.isNotBlank(r.getValueTypeInternal())) l += r.getValueTypeInternal().replaceAll("\\[\\]", "")
+          }
         }
       }
     }

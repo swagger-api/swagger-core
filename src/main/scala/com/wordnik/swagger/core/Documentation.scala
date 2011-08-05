@@ -253,6 +253,13 @@ class DocumentationParameter(
 
   def this() = this (null, null, null,null, null, null, false, false)
 
+  private var valueTypeInternal: String = _
+
+  def setValueTypeInternal(s: String) = this.valueTypeInternal = s
+
+  @XmlTransient
+  def getValueTypeInternal() = this.valueTypeInternal
+
   override def clone(): Object = {
     val cloned = new DocumentationParameter(name, description, notes, paramType, defaultValue, allowableValues, required, allowMultiple)
 
@@ -260,6 +267,7 @@ class DocumentationParameter(
     cloned.internalDescription = internalDescription
     cloned.wrapperName = wrapperName
     cloned.dataType = dataType
+    cloned.valueTypeInternal = this.valueTypeInternal
 
     cloned
   }
