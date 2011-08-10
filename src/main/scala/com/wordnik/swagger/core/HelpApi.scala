@@ -102,9 +102,11 @@ class HelpApi {
           //return types
           if (StringUtils.isNotBlank(o.getResponseTypeInternal())) l += o.getResponseTypeInternal().replaceAll("\\[\\]", "")
           //operation parameters -- for a POST we might have complex types
-          for (r <- JavaConversions.asIterator((o.getParameters()).iterator())) {
-            //	parameter types
-            if (StringUtils.isNotBlank(r.getValueTypeInternal())) l += r.getValueTypeInternal().replaceAll("\\[\\]", "")
+          if(null != o.getParameters() && o.getParameters().size() > 0) {
+            for (r <- JavaConversions.asIterator((o.getParameters()).iterator())) {
+              //	parameter types
+              if (StringUtils.isNotBlank(r.getValueTypeInternal())) l += r.getValueTypeInternal().replaceAll("\\[\\]", "")
+            }
           }
         }
       }
