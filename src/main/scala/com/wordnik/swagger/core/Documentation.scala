@@ -382,7 +382,7 @@ class DocumentationObject extends Name {
     if(isList || isSet){
       currentSchema.setType("array")
       currentSchema.uniqueItems = isSet;
-      val arrayElementType = currentField.paramType.slice(currentField.paramType.indexOf("[") + 1, currentField.paramType.indexOf("]"))
+      val arrayElementType = currentField.paramType.substring(currentField.paramType.indexOf("[") + 1, currentField.paramType.indexOf("]"))
       val arrayItem = new DocumentationSchema
       if (currentSchema.simpleTypeList.find(item => arrayElementType.equals(item)) != None ) {
         arrayItem.setType(arrayElementType)
@@ -439,13 +439,17 @@ class DocumentationSchema ( ){
   @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
   @BeanProperty var default: String = null //TODO this should be object
 
+  @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
   @BeanProperty var additionalProperties: DocumentationSchema = null
 
+  @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
   @BeanProperty var items: DocumentationSchema = null
 
   /*If type is array this property sets if the 'items' are to be unique - together the three properties determine if it's a List or a Set*/
   @BeanProperty var uniqueItems: Boolean = false
 
+  @JsonProperty( value ="$ref")
+  @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
   @XmlElement(name = "$ref") var ref: String = null
 
   @XmlTransient
