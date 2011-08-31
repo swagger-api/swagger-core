@@ -144,7 +144,7 @@ private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val
         docOperation.setTags( toObjectList(apiOperation.tags) )
         docOperation.nickname = method.getName
         val apiResponseValue = readString(apiOperation.responseClass)
-        val isResponseMultiValue = apiOperation.mutiValueResponse
+        val isResponseMultiValue = apiOperation.multiValueResponse
 
         docOperation.setResponseTypeInternal(apiResponseValue)
         try {

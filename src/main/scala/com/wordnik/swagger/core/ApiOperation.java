@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 public @interface ApiOperation {
     String value();
     String responseClass() default "ok";
-    boolean mutiValueResponse() default false; //to indicate if return type will contain one or more of the response value
+    boolean multiValueResponse() default false; //to indicate if return type will contain one or more of the response value
     String notes() default "";
     String tags() default "";
 }

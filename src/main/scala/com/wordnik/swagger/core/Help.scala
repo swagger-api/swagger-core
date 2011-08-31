@@ -57,7 +57,7 @@ trait ApiListing {
 
   @GET
   @ApiOperation(value = "Returns list of all available api endpoints",
-    responseClass="DocumentationEndPoint", mutiValueResponse = true )
+    responseClass="DocumentationEndPoint", multiValueResponse = true )
   def getAllApis( @Context sc :ServletConfig, @Context rc:ResourceConfig,
                @Context headers: HttpHeaders, @Context uriInfo: UriInfo ) : Response = {
 
