@@ -50,23 +50,25 @@ class HelpApi {
     //todo: apply auth and filter doc to only those which apply to current request/api-key
     if (apiFilter != null) {
       var apisToRemove = new ListBuffer[DocumentationEndPoint]
-      doc.getApis().foreach(
-          api => {
-            if (api.getOperations() != null){
-              var operationsToRemove = new ListBuffer[DocumentationOperation]
-              api.getOperations().foreach( apiOperation  =>
-                if (!apiFilter.authorize(api.path, apiOperation.httpMethod,  headers, uriInfo)) {
-                  operationsToRemove += apiOperation
-                }
-              )
-              for(operation <- operationsToRemove)api.removeOperation(operation)
-              if(null == api.getOperations() || api.getOperations().size() == 0){
-                apisToRemove + api
-              }
-            }
-         }
-      );
-      for (api <- apisToRemove) doc.removeApi(api)
+      if(null != doc.getApis()){
+	      doc.getApis().foreach(
+	          api => {
+	            if (api.getOperations() != null){
+	              var operationsToRemove = new ListBuffer[DocumentationOperation]
+	              api.getOperations().foreach( apiOperation  =>
+	                if (!apiFilter.authorize(api.path, apiOperation.httpMethod,  headers, uriInfo)) {
+	                  operationsToRemove += apiOperation
+	                }
+	              )
+	              for(operation <- operationsToRemove)api.removeOperation(operation)
+	              if(null == api.getOperations() || api.getOperations().size() == 0){
+	                apisToRemove + api
+	              }
+	            }
+	         }
+	      );
+	      for (api <- apisToRemove) doc.removeApi(api)
+      }
     }
     //todo: transform path?
     loadModel(doc)
