@@ -91,7 +91,7 @@ private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val
   def parse(): Documentation = {
     apiEndpoint match {
       case null => null
-      case _ => for (method <- hostClass.getDeclaredMethods) parseMethod(method)
+      case _ => for (method <- hostClass.getMethods) parseMethod(method)
     }
     documentation.apiVersion = apiVersion
     documentation.swaggerVersion = swaggerVersion
