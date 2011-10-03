@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivysettings>
+	<settings defaultResolver="chained"/>
 	<property name="ivy.checksums" value=""/>
 	<property name="ivy.local.default.root" value="${ivy.default.ivy.user.dir}/local"
 		override="false" />
