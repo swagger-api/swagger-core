@@ -37,7 +37,7 @@ class HelpApi {
     this ()
     if (apiFilterClassName != null) {
       try {
-        apiFilter = Class.forName(apiFilterClassName).newInstance.asInstanceOf[ApiAuthorizationFilter]
+        apiFilter = SwaggerContext.loadClass(apiFilterClassName).newInstance.asInstanceOf[ApiAuthorizationFilter]
       }
       catch {
         case e: ClassNotFoundException => LOGGER.error("Unable to resolve apiFilter class " + apiFilterClassName);
@@ -80,7 +80,7 @@ class HelpApi {
     val types = TypeUtil.getReferencedClasses(directTypes)
     for (t <- types) {
       try {
-        val clazz = Class.forName(t)
+        val clazz = SwaggerContext.loadClass(t)
         val n = ApiPropertiesReader.read(clazz)
         if (null != n && null != n.getFields && n.getFields.length > 0) {
           d.addModel(n)

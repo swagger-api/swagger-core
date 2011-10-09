@@ -16,6 +16,7 @@
 
 package com.wordnik.swagger.core.util;
 
+import com.wordnik.swagger.core.SwaggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,8 +115,8 @@ public class TypeUtil {
 
                 Class clazz = null;
                 try {
-                    clazz = Class.forName(className);
-                } catch (ClassNotFoundException e) {
+                    clazz = SwaggerContext.loadClass(className);
+                } catch (Exception e) {
                     LOGGER.error("Unable to load class " + className);
                 }
 

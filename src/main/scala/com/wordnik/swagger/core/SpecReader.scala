@@ -80,7 +80,7 @@ trait BaseApiParser {
   }
 }
 
-private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swaggerVersion: String, val basePath: String, val resourcePath:String) extends BaseApiParser {
+class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swaggerVersion: String, val basePath: String, val resourcePath:String) extends BaseApiParser {
   private val LOGGER = LoggerFactory.getLogger("com.wordnik.swagger.core.ApiReader")
   private val TRAIT = "trait"
 
@@ -125,7 +125,6 @@ private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
     val apiErrors = method.getAnnotation(classOf[ApiErrors])
     val isDeprecated = method.getAnnotation(classOf[Deprecated])
-    val wsPath = method.getAnnotation(classOf[javax.ws.rs.Path])
 
     if (apiOperation != null && method.getName != "getHelp") {
 
@@ -148,7 +147,7 @@ private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val
 
         docOperation.setResponseTypeInternal(apiResponseValue)
         try {
-          val clazz = Class.forName(apiResponseValue)
+          val clazz = SwaggerContext.loadClass(apiResponseValue)
 
           val annotatedName = ApiPropertiesReader.readName(clazz)
           docOperation.responseClass = if (isResponseMultiValue) "List[" + annotatedName + "]" else annotatedName
@@ -240,10 +239,10 @@ private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val
       }
 
       // Get Endpoint
-      val docEndpoint = getEndPoint(documentation, apiEndpoint.value + "." + ApiReader.FORMAT_STRING + (if (wsPath == null) "" else wsPath.value))
+      val docEndpoint = getEndPoint(documentation, getPath(method))
 
       // Add Operation to Endpoint
-      docEndpoint.addOperation(docOperation)
+      docEndpoint.addOperation(processOperation(method, docOperation))
 
       // Read the Errors and add to Response
       if (apiErrors != null) {
@@ -256,6 +255,14 @@ private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val
       }
     }
 
+  }
+
+  protected def processOperation(method: Method, o: DocumentationOperation) = o
+
+  protected def getPath(method: Method): String = {
+    val wsPath = method.getAnnotation(classOf[javax.ws.rs.Path])
+    val path = apiEndpoint.value + "." + ApiReader.FORMAT_STRING + (if (wsPath == null) "" else wsPath.value)
+    path
   }
 
   private def getCategory(method: Method): String = {
