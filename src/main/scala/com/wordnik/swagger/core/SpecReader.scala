@@ -200,6 +200,7 @@ private class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val
 
             case wsParam: PathParam => {
               docParam.name = readString(wsParam.value, docParam.name)
+              docParam.required = true
               docParam.paramType = readString(TYPE_PATH, docParam.paramType)
             };
 
