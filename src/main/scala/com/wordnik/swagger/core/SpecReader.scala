@@ -363,6 +363,10 @@ private class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
       (methodFieldName.startsWith("get")) &&
       methodFieldName.length > 3) {
       methodFieldName.substring(3, 4).toLowerCase() + methodFieldName.substring(4, methodFieldName.length())
+    }else if (methodFieldName != null &&
+      (methodFieldName.startsWith("is")) &&
+      methodFieldName.length > 2) {
+      methodFieldName.substring(2, 3).toLowerCase() + methodFieldName.substring(3, methodFieldName.length())
     } else {
       null
     }
