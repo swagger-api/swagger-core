@@ -37,7 +37,7 @@ class HelpApi {
     this ()
     if (apiFilterClassName != null) {
       try {
-        apiFilter = Class.forName(apiFilterClassName).newInstance.asInstanceOf[ApiAuthorizationFilter]
+        apiFilter = SwaggerContext.loadClass(apiFilterClassName).newInstance.asInstanceOf[ApiAuthorizationFilter]
       }
       catch {
         case e: ClassNotFoundException => LOGGER.error("Unable to resolve apiFilter class " + apiFilterClassName);
@@ -50,23 +50,25 @@ class HelpApi {
     //todo: apply auth and filter doc to only those which apply to current request/api-key
     if (apiFilter != null) {
       var apisToRemove = new ListBuffer[DocumentationEndPoint]
-      doc.getApis().foreach(
-          api => {
-            if (api.getOperations() != null){
-              var operationsToRemove = new ListBuffer[DocumentationOperation]
-              api.getOperations().foreach( apiOperation  =>
-                if (!apiFilter.authorize(api.path, apiOperation.httpMethod,  headers, uriInfo)) {
-                  operationsToRemove += apiOperation
-                }
-              )
-              for(operation <- operationsToRemove)api.removeOperation(operation)
-              if(null == api.getOperations() || api.getOperations().size() == 0){
-                apisToRemove + api
-              }
-            }
-         }
-      );
-      for (api <- apisToRemove) doc.removeApi(api)
+      if(null != doc.getApis()){
+	      doc.getApis().foreach(
+	          api => {
+	            if (api.getOperations() != null){
+	              var operationsToRemove = new ListBuffer[DocumentationOperation]
+	              api.getOperations().foreach( apiOperation  =>
+	                if (!apiFilter.authorize(api.path, apiOperation.httpMethod,  headers, uriInfo)) {
+	                  operationsToRemove += apiOperation
+	                }
+	              )
+	              for(operation <- operationsToRemove)api.removeOperation(operation)
+	              if(null == api.getOperations() || api.getOperations().size() == 0){
+	                apisToRemove + api
+	              }
+	            }
+	         }
+	      );
+	      for (api <- apisToRemove) doc.removeApi(api)
+      }
     }
     //todo: transform path?
     loadModel(doc)
@@ -78,17 +80,11 @@ class HelpApi {
     val types = TypeUtil.getReferencedClasses(directTypes)
     for (t <- types) {
       try {
-        val clazz = Class.forName(t)
+        val clazz = SwaggerContext.loadClass(t)
         val n = ApiPropertiesReader.read(clazz)
         if (null != n && null != n.getFields && n.getFields.length > 0) {
           d.addModel(n)
           d.addSchema(n.getName, n.toDocumentationSchema())
-        } else {
-          if(null == n)
-            LOGGER.error("Skipping model " + t + ". Could not load the model.")
-          else
-            if(null == n.getFields || n.getFields.length == 0)
-            LOGGER.error("Skipping model " + t + ". Did not find any public properties in this model. If its a scala class, its declared properties should probably have @BeanProperty annotation added to its fields.")
         }
       }
       catch {
