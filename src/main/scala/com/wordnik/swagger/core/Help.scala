@@ -69,7 +69,7 @@ trait ApiListing {
     var apiFilter: ApiAuthorizationFilter = null
     if(null != apiFilterClassName) {
       try {
-        apiFilter = Class.forName(apiFilterClassName).newInstance.asInstanceOf[ApiAuthorizationFilter]
+        apiFilter = SwaggerContext.loadClass(apiFilterClassName).newInstance.asInstanceOf[ApiAuthorizationFilter]
       }
       catch {
         case e: ClassNotFoundException => LOGGER.error("Unable to resolve apiFilter class " + apiFilterClassName);
