@@ -1,5 +1,5 @@
 <ivy-module version="2.0">
-    <info organisation="wordnik" module="swagger-core"/>
+    <info organisation="com.wordnik" module="swagger-core"/>
     <configurations>
     	<conf name="build" description="build swagger-core"/>
     	<conf name="test" />
