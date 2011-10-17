@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project name="swagger-core" xmlns:ivy="antlib:org.apache.ivy.ant" default="build.all" basedir=".">
 	<property environment="env" />
-	<property name="version.identifier" value="1.0" />
+	<property name="version.identifier" value="1.1" />
 	<property name="artifact.ext" value="jar" />
 	<property name="organization" value="com.wordnik" />
 	<property environment="env" />
