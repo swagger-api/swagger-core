@@ -19,7 +19,7 @@ You need the following installed and available in your $PATH:
 If you don't have the Apache Ivy dependency manager installed, run this build script:
 
 <pre>
-ant -f install-ivy
+ant -f install-ivy.xml
 </pre>
 
 This will copy the ivy ant lib into your antlib directory.  Now you can build the artifact:
