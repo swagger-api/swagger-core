@@ -14,8 +14,21 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.core
+package com.wordnik.swagger.core;
 
-object SwaggerSpec {
-	val version = "1.1"
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.UriInfo;
+
+/**
+ * Implement this interface when the security API documents needs to be at individual input arguments
+ * User: ramesh
+ * Date: 10/18/11
+ * Time: 6:38 AM
+ */
+public interface FineGrainedApiAuthorizationFilter extends AuthorizationFilter{
+
+    public boolean authorizeOperation(String apiPath, DocumentationOperation operation, HttpHeaders headers, UriInfo uriInfo);
+
+    public boolean authorizeResource(String apiPath, DocumentationEndPoint endpoint,  HttpHeaders headers, UriInfo uriInfo);
+
 }

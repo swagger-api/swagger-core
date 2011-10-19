@@ -78,6 +78,32 @@ trait BaseApiParser {
       }
     }
   }
+
+  protected def convertToAllowableValues(csvString: String, paramType: String = null):DocumentationAllowableValues = {
+    if (csvString.toLowerCase.startsWith("range")){
+      if (csvString.toLowerCase.startsWith("rangeexclusive")){
+        val ranges = csvString.substring(15, csvString.length()-1).split(",")
+        val allowableValues = new DocumentationAllowableRangeValues(ranges(0),ranges(1), false)
+        allowableValues
+      }else{
+        val ranges = csvString.substring(6, csvString.length()-1).split(",")
+        val allowableValues = new DocumentationAllowableRangeValues(ranges(0),ranges(1), true)
+        allowableValues
+      }
+    }else{
+      if(csvString == null || csvString.length == 0){
+        null
+      }
+      else{
+        val params = csvString.split(",").toList
+        paramType match {
+          case null => new DocumentationAllowableListValues(params)
+          case "string" => new DocumentationAllowableListValues(params)
+        }
+      }
+    }
+  }
+
 }
 
 class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swaggerVersion: String, val basePath: String, val resourcePath:String) extends BaseApiParser {
@@ -186,7 +212,7 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
               docParam.name = readString(apiParam.name, docParam.name)
               docParam.description = readString(apiParam.value)
               docParam.defaultValue = readString(apiParam.defaultValue)
-              docParam.allowableValues = toObjectList(apiParam.allowableValues)
+              docParam.allowableValues = convertToAllowableValues(apiParam.allowableValues)
               docParam.required = apiParam.required
               docParam.allowMultiple = apiParam.allowMultiple
               docParam.paramAccess = readString(apiParam.access)
@@ -396,7 +422,7 @@ private class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
         case apiProperty: ApiProperty => {
           docParam.description = readString(apiProperty.value)
           docParam.notes = readString(apiProperty.notes)
-          docParam.allowableValues = toObjectList(apiProperty.allowableValues)
+          docParam.allowableValues = convertToAllowableValues(apiProperty.allowableValues)
           docParam.paramAccess = readString(apiProperty.access)
         };
 

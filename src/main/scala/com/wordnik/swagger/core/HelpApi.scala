@@ -31,13 +31,13 @@ import scala.collection.JavaConversions._
 class HelpApi {
   private val LOGGER = LoggerFactory.getLogger(classOf[HelpApi])
 
-  var apiFilter: ApiAuthorizationFilter = null
+  var apiFilter: AuthorizationFilter = null
 
   def this(apiFilterClassName: String) = {
     this ()
     if (apiFilterClassName != null) {
       try {
-        apiFilter = SwaggerContext.loadClass(apiFilterClassName).newInstance.asInstanceOf[ApiAuthorizationFilter]
+        apiFilter = SwaggerContext.loadClass(apiFilterClassName).newInstance.asInstanceOf[AuthorizationFilter]
       }
       catch {
         case e: ClassNotFoundException => LOGGER.error("Unable to resolve apiFilter class " + apiFilterClassName);
@@ -56,9 +56,19 @@ class HelpApi {
 	            if (api.getOperations() != null){
 	              var operationsToRemove = new ListBuffer[DocumentationOperation]
 	              api.getOperations().foreach( apiOperation  =>
-	                if (!apiFilter.authorize(api.path, apiOperation.httpMethod,  headers, uriInfo)) {
-	                  operationsToRemove += apiOperation
-	                }
+                  apiFilter match {
+                    case apiAuthFilter:ApiAuthorizationFilter => {
+                      if(!apiAuthFilter.authorize(api.path, apiOperation.httpMethod, headers, uriInfo)){
+                        operationsToRemove += apiOperation
+                      }
+                    }
+                    case fineGrainedApiAuthFilter:FineGrainedApiAuthorizationFilter => {
+                      if(fineGrainedApiAuthFilter.authorizeOperation(api.path, apiOperation, headers, uriInfo)){
+                        operationsToRemove += apiOperation
+                      }
+                    }
+                    case _ => {}
+                  }
 	              )
 	              for(operation <- operationsToRemove)api.removeOperation(operation)
 	              if(null == api.getOperations() || api.getOperations().size() == 0){

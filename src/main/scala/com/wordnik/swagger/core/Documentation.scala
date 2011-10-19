@@ -243,7 +243,7 @@ class DocumentationParameter(
                               @BeanProperty var notes: String,
                               @BeanProperty var paramType: String,
                               @BeanProperty var defaultValue: String,
-                              @BeanProperty var allowableValues: java.util.List[String],
+                              @BeanProperty var allowableValues: DocumentationAllowableValues,
                               @BeanProperty var required: Boolean,
                               @BeanProperty var allowMultiple: Boolean) {
   @BeanProperty var paramAccess: String = _
@@ -261,7 +261,12 @@ class DocumentationParameter(
   def getValueTypeInternal() = this.valueTypeInternal
 
   override def clone(): Object = {
-    val cloned = new DocumentationParameter(name, description, notes, paramType, defaultValue, allowableValues, required, allowMultiple)
+    var clonedAllowValues:DocumentationAllowableValues = null;
+    if (null != allowableValues){
+      clonedAllowValues = allowableValues.clone().asInstanceOf[DocumentationAllowableValues]
+    }
+    val cloned = new DocumentationParameter(name, description, notes, paramType, defaultValue, clonedAllowValues,
+      required, allowMultiple)
 
     cloned.paramAccess = paramAccess
     cloned.internalDescription = internalDescription
@@ -270,6 +275,41 @@ class DocumentationParameter(
     cloned.valueTypeInternal = this.valueTypeInternal
 
     cloned
+  }
+}
+
+/**
+ * Generic interface for allowable values
+ */
+trait DocumentationAllowableValues {
+  override def clone(): Object = {
+    this
+  }
+}
+
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@XmlRootElement(name = "allowableListValues")
+class DocumentationAllowableListValues (@BeanProperty var values: java.util.List[String]) extends DocumentationAllowableValues  {
+  val LIST_ALLOWABLE_VALUES = "LIST"
+  @BeanProperty var valueType: String = LIST_ALLOWABLE_VALUES
+  override def clone(): Object = {
+    val cloned = new DocumentationAllowableListValues(values)
+    return cloned
+  }
+}
+
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@XmlRootElement(name = "allowableRangeValues")
+class DocumentationAllowableRangeValues (@BeanProperty var min: String,
+                                         @BeanProperty var max: String,
+                                         @BeanProperty var inclusive: Boolean = true) extends DocumentationAllowableValues  {
+
+  val RANGE_ALLOWABLE_VALUES = "RANGE"
+  @BeanProperty var valueType: String = RANGE_ALLOWABLE_VALUES
+
+  override def clone(): Object = {
+    val cloned = new DocumentationAllowableRangeValues(min, max, inclusive)
+    return cloned
   }
 }
 
@@ -363,11 +403,8 @@ class DocumentationObject extends Name {
       fieldSchema.notes = currentField.notes
       fieldSchema.access = currentField.paramAccess
 
-      if(currentField.allowableValues != null && currentField.allowableValues.length > 0 ){
-        fieldSchema.enum = new ListBuffer[Object]
-        for(allowableValue <- currentField.allowableValues) {
-          fieldSchema.enum + allowableValue.asInstanceOf[AnyRef]
-        }
+      if(currentField.allowableValues != null){
+        fieldSchema.allowableValues = currentField.allowableValues
       }
       schemaObject.properties.put(currentField.getName, fieldSchema)
     }
@@ -425,7 +462,7 @@ class DocumentationSchema ( ){
   @BeanProperty var properties: java.util.Map[String, DocumentationSchema] = null
 
   @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
-  @BeanProperty var enum: java.util.List[Object] = null //TODO this should be object array
+  @BeanProperty var allowableValues: DocumentationAllowableValues  = null
 
   @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
   @BeanProperty var description: String = null

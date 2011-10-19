@@ -66,10 +66,10 @@ trait ApiListing {
     val basePath = if (sc != null) sc.getInitParameter("swagger.api.basepath") else null
 
     val apiFilterClassName = if (sc != null) sc.getInitParameter("swagger.security.filter") else null
-    var apiFilter: ApiAuthorizationFilter = null
+    var apiFilter: AuthorizationFilter = null
     if(null != apiFilterClassName) {
       try {
-        apiFilter = SwaggerContext.loadClass(apiFilterClassName).newInstance.asInstanceOf[ApiAuthorizationFilter]
+        apiFilter = SwaggerContext.loadClass(apiFilterClassName).newInstance.asInstanceOf[AuthorizationFilter]
       }
       catch {
         case e: ClassNotFoundException => LOGGER.error("Unable to resolve apiFilter class " + apiFilterClassName);
@@ -85,8 +85,20 @@ trait ApiListing {
       if(null != wsPath && wsPath.value != ApiReader.LIST_RESOURCES_PATH){
         var api = new DocumentationEndPoint(wsPath.value+"."+ApiReader.FORMAT_STRING, wsPath.description())
         if(!isApiAdded(allApiDoc, api)) {
-          if (null == apiFilter || apiFilter.authorizeResource(api.path, headers, uriInfo)){
-            allApiDoc.addApi(api)
+          if (null != apiFilter){
+            apiFilter match {
+              case apiAuthFilter:ApiAuthorizationFilter => {
+                if(apiAuthFilter.authorizeResource(api.path, headers, uriInfo)){
+                  allApiDoc.addApi(api)
+                }
+              }
+              case fineGrainedApiAuthFilter:FineGrainedApiAuthorizationFilter => {
+                if(fineGrainedApiAuthFilter.authorizeResource(api.path, api, headers, uriInfo)){
+                  allApiDoc.addApi(api)
+                }
+              }
+              case _ => {}
+            }
           }
         }
       }

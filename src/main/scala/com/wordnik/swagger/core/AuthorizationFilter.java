@@ -14,8 +14,12 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.core
+package com.wordnik.swagger.core;
 
-object SwaggerSpec {
-	val version = "1.1"
+/**
+ * User: ramesh
+ * Date: 10/18/11
+ * Time: 6:49 AM
+ */
+public interface AuthorizationFilter {
 }

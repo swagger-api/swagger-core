@@ -19,7 +19,7 @@ package com.wordnik.swagger.core;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
 
-public interface ApiAuthorizationFilter {
+public interface ApiAuthorizationFilter extends  AuthorizationFilter {
 
     public boolean authorize(String apiPath, String method, HttpHeaders headers, UriInfo uriInfo);
 
