@@ -39,8 +39,13 @@ object ApiReader {
   val POST = "POST";
   val HEAD = "HEAD";
 
+
   val FORMAT_STRING = "{format}";
   val LIST_RESOURCES_PATH = "/resources";
+
+  val POSITIVE_INFINITY_STRING = "Infinity"
+  val NEGATIVE_INFINITY_STRING = "-Infinity"
+
 
   private val endpointsCache = scala.collection.mutable.Map.empty[Class[_], Documentation]
 
@@ -80,16 +85,12 @@ trait BaseApiParser {
   }
 
   protected def convertToAllowableValues(csvString: String, paramType: String = null):DocumentationAllowableValues = {
-    if (csvString.toLowerCase.startsWith("range")){
-      if (csvString.toLowerCase.startsWith("rangeexclusive")){
-        val ranges = csvString.substring(15, csvString.length()-1).split(",")
-        val allowableValues = new DocumentationAllowableRangeValues(ranges(0),ranges(1), false)
-        allowableValues
-      }else{
-        val ranges = csvString.substring(6, csvString.length()-1).split(",")
-        val allowableValues = new DocumentationAllowableRangeValues(ranges(0),ranges(1), true)
-        allowableValues
-      }
+    if (csvString.toLowerCase.startsWith("range[")){
+      val ranges = csvString.substring(6, csvString.length()-1).split(",")
+      return buildAllowableRangeValues(ranges,csvString)
+    }else if (csvString.toLowerCase.startsWith("rangeexclusive[")){
+      val ranges = csvString.substring(15, csvString.length()-1).split(",")
+      return buildAllowableRangeValues(ranges,csvString)
     }else{
       if(csvString == null || csvString.length == 0){
         null
@@ -102,6 +103,33 @@ trait BaseApiParser {
         }
       }
     }
+  }
+
+  private def buildAllowableRangeValues(ranges:Array[String], inputStr:String):DocumentationAllowableRangeValues = {
+    var min:java.lang.Float = 0
+    var max:java.lang.Float = 0
+    if (ranges.size < 2){
+      throw new RuntimeException("Allowablevalues format " + inputStr + "is not right");
+    }
+    if (ranges(0).equalsIgnoreCase(ApiReader.POSITIVE_INFINITY_STRING)){
+      min = Float.PositiveInfinity
+    }
+    else if (ranges(0).equalsIgnoreCase(ApiReader.NEGATIVE_INFINITY_STRING)){
+      min = Float.NegativeInfinity
+    }else{
+      min = ranges(0).toFloat
+    }
+    if (ranges(1).equalsIgnoreCase(ApiReader.POSITIVE_INFINITY_STRING)){
+      max = Float.PositiveInfinity
+    }
+    else if (ranges(1).equalsIgnoreCase(ApiReader.NEGATIVE_INFINITY_STRING)){
+      max = Float.NegativeInfinity
+    }else{
+      max = ranges(1).toFloat
+    }
+    val allowableValues = new DocumentationAllowableRangeValues(min, max)
+    allowableValues
+
   }
 
 }
@@ -212,7 +240,12 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
               docParam.name = readString(apiParam.name, docParam.name)
               docParam.description = readString(apiParam.value)
               docParam.defaultValue = readString(apiParam.defaultValue)
-              docParam.allowableValues = convertToAllowableValues(apiParam.allowableValues)
+              try{
+                  docParam.allowableValues = convertToAllowableValues(apiParam.allowableValues)
+              }catch {
+                case e: RuntimeException => LOGGER.error("Allowable values annotation is wrong in method  " + method +
+                  "for parameter " + docParam.name)
+              }
               docParam.required = apiParam.required
               docParam.allowMultiple = apiParam.allowMultiple
               docParam.paramAccess = readString(apiParam.access)
@@ -422,7 +455,11 @@ private class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
         case apiProperty: ApiProperty => {
           docParam.description = readString(apiProperty.value)
           docParam.notes = readString(apiProperty.notes)
-          docParam.allowableValues = convertToAllowableValues(apiProperty.allowableValues)
+          try{
+            docParam.allowableValues = convertToAllowableValues(apiProperty.allowableValues)
+          }catch{
+            case e: RuntimeException => LOGGER.error("Allowable values annotation is wrong in for parameter " + docParam.name)
+          }
           docParam.paramAccess = readString(apiProperty.access)
         };
 

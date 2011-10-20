@@ -300,15 +300,14 @@ class DocumentationAllowableListValues (@BeanProperty var values: java.util.List
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "allowableRangeValues")
-class DocumentationAllowableRangeValues (@BeanProperty var min: String,
-                                         @BeanProperty var max: String,
-                                         @BeanProperty var inclusive: Boolean = true) extends DocumentationAllowableValues  {
+class DocumentationAllowableRangeValues (@BeanProperty var min: java.lang.Float,
+                                         @BeanProperty var max: java.lang.Float) extends DocumentationAllowableValues  {
 
   val RANGE_ALLOWABLE_VALUES = "RANGE"
   @BeanProperty var valueType: String = RANGE_ALLOWABLE_VALUES
 
   override def clone(): Object = {
-    val cloned = new DocumentationAllowableRangeValues(min, max, inclusive)
+    val cloned = new DocumentationAllowableRangeValues(min, max)
     return cloned
   }
 }

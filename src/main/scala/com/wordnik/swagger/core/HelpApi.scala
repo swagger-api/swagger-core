@@ -63,7 +63,7 @@ class HelpApi {
                       }
                     }
                     case fineGrainedApiAuthFilter:FineGrainedApiAuthorizationFilter => {
-                      if(fineGrainedApiAuthFilter.authorizeOperation(api.path, apiOperation, headers, uriInfo)){
+                      if(!fineGrainedApiAuthFilter.authorizeOperation(api.path, apiOperation, headers, uriInfo)){
                         operationsToRemove += apiOperation
                       }
                     }
