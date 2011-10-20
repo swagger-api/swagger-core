@@ -19,13 +19,13 @@ package com.wordnik.swagger.core
 import org.codehaus.jackson.map.annotate.JsonSerialize
 import org.codehaus.jackson.annotate.{JsonIgnore, JsonProperty}
 
-import javax.xml.bind.annotation.{XmlTransient, XmlRootElement, XmlElement}
 import java.util.HashMap
 
 import scala.reflect.BeanProperty
 import scala.collection._
 import mutable.{ListBuffer}
 import scala.collection.JavaConversions._
+import javax.xml.bind.annotation._
 
 trait Name {
 	private var name:String =_
@@ -281,17 +281,23 @@ class DocumentationParameter(
 /**
  * Generic interface for allowable values
  */
-trait DocumentationAllowableValues {
+@XmlSeeAlso(Array(classOf[DocumentationAllowableListValues], classOf[DocumentationAllowableRangeValues]))
+class DocumentationAllowableValues {
   override def clone(): Object = {
     this
   }
 }
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@XmlRootElement(name = "allowableListValues")
+@XmlRootElement(name="allowableListValues")
 class DocumentationAllowableListValues (@BeanProperty var values: java.util.List[String]) extends DocumentationAllowableValues  {
+
   val LIST_ALLOWABLE_VALUES = "LIST"
+
   @BeanProperty var valueType: String = LIST_ALLOWABLE_VALUES
+
+  def this() = this(null)
+
   override def clone(): Object = {
     val cloned = new DocumentationAllowableListValues(values)
     return cloned
@@ -299,12 +305,15 @@ class DocumentationAllowableListValues (@BeanProperty var values: java.util.List
 }
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@XmlRootElement(name = "allowableRangeValues")
+@XmlRootElement(name="allowableRangeValues")
 class DocumentationAllowableRangeValues (@BeanProperty var min: java.lang.Float,
                                          @BeanProperty var max: java.lang.Float) extends DocumentationAllowableValues  {
 
   val RANGE_ALLOWABLE_VALUES = "RANGE"
+
   @BeanProperty var valueType: String = RANGE_ALLOWABLE_VALUES
+
+  def this() = this(null, null)
 
   override def clone(): Object = {
     val cloned = new DocumentationAllowableRangeValues(min, max)

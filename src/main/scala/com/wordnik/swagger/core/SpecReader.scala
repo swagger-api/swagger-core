@@ -244,7 +244,7 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
                   docParam.allowableValues = convertToAllowableValues(apiParam.allowableValues)
               }catch {
                 case e: RuntimeException => LOGGER.error("Allowable values annotation is wrong in method  " + method +
-                  "for parameter " + docParam.name)
+                  "for parameter " + docParam.name); e.printStackTrace();
               }
               docParam.required = apiParam.required
               docParam.allowMultiple = apiParam.allowMultiple
@@ -458,7 +458,7 @@ private class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
           try{
             docParam.allowableValues = convertToAllowableValues(apiProperty.allowableValues)
           }catch{
-            case e: RuntimeException => LOGGER.error("Allowable values annotation is wrong in for parameter " + docParam.name)
+            case e: RuntimeException => LOGGER.error("Allowable values annotation is wrong in for parameter " + docParam.name); e.printStackTrace();
           }
           docParam.paramAccess = readString(apiProperty.access)
         };
