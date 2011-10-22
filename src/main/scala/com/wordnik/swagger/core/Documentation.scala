@@ -92,7 +92,8 @@ class Documentation (@BeanProperty var apiVersion: String,
 
   def addSchema(propertyName : String, obj: DocumentationSchema) = {
     if(propertyName != null && obj != null) {
-      _schemas.put(propertyName, obj)
+      //the property name is some times studely and some times lower, so make sure it is always sutdely
+      _schemas.put(propertyName.capitalize, obj)
     }
   }
 
