@@ -6,6 +6,12 @@ implementation of the Swagger spec.  You can find out more about both the spec a
 framework at http://swagger.wordnik.com.  For more information about Wordnik's APIs, please
 visit http://developer.wordnik.com.  
 
+## Version history
+Swagger v1.0 was released on Aug-10 2011
+
+Pre-release versions will be suffixed with SNAPSHOT and RC appropriately.  If you want the
+release version, please grab it by tag (i.e. v1.0 for the release)
+
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
