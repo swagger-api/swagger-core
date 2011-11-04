@@ -415,7 +415,12 @@ class DocumentationObject extends Name {
       if(currentField.allowableValues != null){
         fieldSchema.allowableValues = currentField.allowableValues
       }
-      schemaObject.properties.put(currentField.getName, fieldSchema)
+
+      val useWrapperName = currentField.getWrapperName != null && currentField.getWrapperName.trim().length() > 0
+      if(useWrapperName)
+        schemaObject.properties.put(currentField.getWrapperName(), fieldSchema)
+      else
+        schemaObject.properties.put(currentField.getName, fieldSchema)
     }
 
     schemaObject
