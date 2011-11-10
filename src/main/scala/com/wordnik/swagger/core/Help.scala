@@ -99,6 +99,8 @@ trait ApiListing {
               }
               case _ => {}
             }
+          }else{
+            allApiDoc.addApi(api)
           }
         }
       }
