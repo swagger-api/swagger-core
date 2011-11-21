@@ -19,7 +19,7 @@ You need the following installed and available in your $PATH:
 
 <li>- Apache ant 1.7 or greater (http://ant.apache.org/)
 
-<li>- Scala 2.8.1 or greater (http://www.scala-lang.org)
+<li>- Scala 2.8.1 (http://www.scala-lang.org).  If you run with Scala > 2.8.1, please update the ivy.xml to point to the same version as in your environment.
 
 ### To build
 If you don't have the Apache Ivy dependency manager installed, run this build script:
