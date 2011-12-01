@@ -16,6 +16,7 @@
 package com.wordnik.swagger.core;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 
 import javax.servlet.ServletConfig;
 import javax.ws.rs.core.*;
@@ -34,10 +35,11 @@ public abstract class JavaHelp {
 			@Context UriInfo uriInfo) throws JsonGenerationException,
 			JsonMappingException, IOException {
 
-		String apiVersion = servConfig != null ? servConfig.getInitParameter("api.version") : null;
-		String swaggerVersion = servConfig != null ? servConfig.getInitParameter("swagger.version") : null;
-		String basePath = servConfig != null ? servConfig.getInitParameter("swagger.api.basepath") : null;
-		String apiFilterClassName = servConfig != null ? servConfig.getInitParameter("swagger.security.filter") : null;
+        com.wordnik.swagger.core.ConfigReader configReader = ConfigReaderFactory.getConfigReader(servConfig);
+        String apiVersion = configReader.getApiVersion();
+        String swaggerVersion = configReader.getSwaggerVersion();
+        String basePath = configReader.getBasePath();
+        String apiFilterClassName = configReader.getApiFilterClassName();
 
 		boolean filterOutTopLevelApi = true;
 

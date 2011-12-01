@@ -33,13 +33,14 @@ trait Help {
   def getHelp (@Context sc :ServletConfig, @Context rc:ResourceConfig,
                @Context headers: HttpHeaders, @Context uriInfo: UriInfo): Response = {
 
-    val apiVersion = if (sc != null) sc.getInitParameter("api.version") else null
-    val swaggerVersion = SwaggerSpec.version
-    val basePath = if (sc != null) sc.getInitParameter("swagger.api.basepath") else null
+    val configReader = ConfigReaderFactory.getConfigReader(sc)
+    val apiVersion = configReader.getApiVersion()
+    val swaggerVersion = configReader.getSwaggerVersion()
+    val basePath = configReader.getBasePath()
+    val apiFilterClassName = configReader.getApiFilterClassName()
 
     val filterOutTopLevelApi = true
 
-    val apiFilterClassName = if (sc != null) sc.getInitParameter("swagger.security.filter") else null
 
     val currentApiEndPoint = this.getClass.getAnnotation(classOf[Api])
     val currentApiPath = if (currentApiEndPoint != null && filterOutTopLevelApi) currentApiEndPoint.value else null
@@ -61,11 +62,11 @@ trait ApiListing {
   def getAllApis( @Context sc :ServletConfig, @Context rc:ResourceConfig,
                @Context headers: HttpHeaders, @Context uriInfo: UriInfo ) : Response = {
 
-    val apiVersion = if (sc != null) sc.getInitParameter("api.version") else null
-    val swaggerVersion = SwaggerSpec.version
-    val basePath = if (sc != null) sc.getInitParameter("swagger.api.basepath") else null
-
-    val apiFilterClassName = if (sc != null) sc.getInitParameter("swagger.security.filter") else null
+    val configReader = ConfigReaderFactory.getConfigReader(sc)
+    val apiVersion = configReader.getApiVersion()
+    val swaggerVersion = configReader.getSwaggerVersion()
+    val basePath = configReader.getBasePath()
+    val apiFilterClassName = configReader.getApiFilterClassName()
     var apiFilter: AuthorizationFilter = null
     if(null != apiFilterClassName) {
       try {
@@ -124,6 +125,17 @@ trait ApiListing {
     isAdded
   }
 
+}
 
+object ConfigReaderFactory {
 
+  def getConfigReader(sc :ServletConfig):ConfigReader = {
+    var configReaderStr = sc.getInitParameter("swagger.config.reader")
+    if( null == configReaderStr){
+      configReaderStr = "com.wordnik.swagger.core.ConfigReader"
+    }
+    val constructor = SwaggerContext.loadClass(configReaderStr).getConstructor(classOf[ServletConfig])
+    val configReader = constructor.newInstance(sc).asInstanceOf[ConfigReader]
+    configReader
+  }
 }
