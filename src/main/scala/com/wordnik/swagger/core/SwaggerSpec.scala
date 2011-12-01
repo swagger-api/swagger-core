@@ -17,5 +17,5 @@
 package com.wordnik.swagger.core
 
 object SwaggerSpec {
-	val version = "1.1-SHAPSHOT.121026"
+	val version = "1.1-SNAPSHOT.121130"
 }
