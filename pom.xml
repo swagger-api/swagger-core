@@ -132,7 +132,7 @@
 				<executions>
 					<execution>
 						<id>sign-artifacts</id>
-						<phase>verify</phase>
+						<phase>deploy</phase>
 						<goals>
 							<goal>sign</goal>
 						</goals>
@@ -255,7 +255,7 @@
 			<id>release-sign-artifacts</id>
 			<activation>
 				<property>
-					<name>performRelease</name>
+					<name>deploy</name>
 					<value>true</value>
 				</property>
 			</activation>
@@ -282,7 +282,7 @@
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
-								<phase>verify</phase>
+								<phase>deploy</phase>
 								<goals>
 									<goal>sign</goal>
 								</goals>
