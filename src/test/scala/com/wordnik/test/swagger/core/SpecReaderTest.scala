@@ -1,23 +1,20 @@
 package com.wordnik.test.swagger.core
 
 import com.wordnik.swagger.core.ApiPropertiesReader
-
 import org.codehaus.jackson.map._
 import org.codehaus.jackson.map.DeserializationConfig.Feature
 import org.codehaus.jackson.map.annotate.JsonSerialize
 import org.codehaus.jackson.map.introspect.JacksonAnnotationIntrospector
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector
-
 import javax.xml.bind._
 import javax.xml.bind.annotation._
 import java.io.ByteArrayOutputStream
-
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
-
 import scala.reflect.BeanProperty
+import java.io.ByteArrayInputStream
 
 @RunWith(classOf[JUnitRunner])
 class SpecReaderTest extends FlatSpec with ShouldMatchers {
@@ -46,6 +43,15 @@ class JaxbSerializationTest extends FlatSpec with ShouldMatchers {
     e.setTestInt(5)
     val baos = new ByteArrayOutputStream
     m.marshal(e, baos)
+    assert(baos.toString == """<?xml version="1.0" encoding="UTF-8" standalone="yes"?><simplePojo><testInt>5</testInt></simplePojo>""")
+  }
+
+  it should "deserialize a SimplePojo" in {
+    val ctx = JAXBContext.newInstance(classOf[SimplePojo]);
+    var u = ctx.createUnmarshaller()
+    val b = new ByteArrayInputStream("""<?xml version="1.0" encoding="UTF-8" standalone="yes"?><simplePojo><testInt>5</testInt></simplePojo>""".getBytes)
+    val p = u.unmarshal(b).asInstanceOf[SimplePojo]
+    assert(p.getTestInt == 5)
   }
 
   it should "serialize a ScalaPojo" in {
@@ -57,6 +63,14 @@ class JaxbSerializationTest extends FlatSpec with ShouldMatchers {
     m.marshal(e, baos)
   }
 
+  it should "deserialize a ScalaPojo" in {
+    val ctx = JAXBContext.newInstance(classOf[ScalaPojo]);
+    var u = ctx.createUnmarshaller()
+    val b = new ByteArrayInputStream("""<?xml version="1.0" encoding="UTF-8" standalone="yes"?><scalaishPojo><testInt>5</testInt></scalaishPojo>""".getBytes)
+    val p = u.unmarshal(b).asInstanceOf[ScalaPojo]
+    assert(p.testInt == 5)
+  }
+
   it should "serialize a ScalaCaseClass" in {
     val ctx = JAXBContext.newInstance(classOf[ScalaCaseClass]);
     var m = ctx.createMarshaller()
@@ -64,6 +78,14 @@ class JaxbSerializationTest extends FlatSpec with ShouldMatchers {
     e.testInt = 5
     val baos = new ByteArrayOutputStream
     m.marshal(e, baos)
+  }
+
+  it should "deserialize a ScalaCaseClass" in {
+    val ctx = JAXBContext.newInstance(classOf[ScalaCaseClass]);
+    var u = ctx.createUnmarshaller()
+    val b = new ByteArrayInputStream("""<?xml version="1.0" encoding="UTF-8" standalone="yes"?><scalaCaseClass><testInt>5</testInt></scalaCaseClass>""".getBytes)
+    val p = u.unmarshal(b).asInstanceOf[ScalaCaseClass]
+    assert(p.testInt == 5)
   }
 }
 
@@ -138,5 +160,4 @@ case class ScalaCaseClass() {
   @XmlTransient
   @BeanProperty
   var testTransient:List[String] = _
-
 }
