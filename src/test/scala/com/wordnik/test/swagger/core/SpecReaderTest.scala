@@ -108,10 +108,16 @@ class JsonSerializationTest extends FlatSpec with ShouldMatchers {
 @XmlRootElement(name = "simplePojo")
 class SimplePojo {
   private var te: Int = 1
+  private var testString: String = _
 
   @XmlElement(name = "testInt")
   def getTestInt: Int = te
   def setTestInt(te: Int) = { this.te = te }
+
+  @XmlElement(name = "testString")
+  def getTestString: String = testString
+  def setTestString(testString: String) = { this.testString = testString}
+
 }
 
 @XmlRootElement(name = "scalaishPojo")
@@ -128,4 +134,9 @@ case class ScalaCaseClass() {
   @XmlElement(name = "testInt")
   @BeanProperty
   var testInt = 0
+
+  @XmlTransient
+  @BeanProperty
+  var testTransient:List[String] = _
+
 }
