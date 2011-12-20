@@ -103,7 +103,6 @@
 					</execution>
 				</executions>
 				<configuration>
-					<scalaVersion>${scala.version}</scalaVersion>
 					<jvmArgs>
 						<jvmArg>-Xmx384m</jvmArg>
 					</jvmArgs>
@@ -264,9 +263,7 @@
 								</goals>
 							</execution>
 						</executions>
-						<configuration>
-							<scalaVersion>${scala.version}</scalaVersion>
-						</configuration>
+						<configuration></configuration>
 					</plugin>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
@@ -310,9 +307,7 @@
 								</goals>
 							</execution>
 						</executions>
-						<configuration>
-							<scalaVersion>${scala.version}</scalaVersion>
-						</configuration>
+						<configuration></configuration>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
