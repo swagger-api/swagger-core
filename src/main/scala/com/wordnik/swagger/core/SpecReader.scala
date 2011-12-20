@@ -491,14 +491,19 @@ private class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
 
     //sometimes transient annotation is defined on property, so while looking at getter and setter make sure there is no transient annotation on property
     if(!isTransient && null != name){
-      val propertyAnnotations = this.hostClass.getDeclaredField(name).getAnnotations()
-      for( pa <- propertyAnnotations){
-        pa match {
-          case xmlTransient: XmlTransient => {
-            isTransient = true;
-          };
-          case _ => Unit
+      try{
+        val propertyAnnotations = this.hostClass.getDeclaredField(name).getAnnotations()
+        for( pa <- propertyAnnotations){
+          pa match {
+            case xmlTransient: XmlTransient => {
+              isTransient = true;
+            };
+            case _ => Unit
+          }
         }
+      }catch{
+        //this means there is no field declared to look for field level annotations.
+        case e:java.lang.NoSuchFieldException => isTransient = false;
       }
     }
 
