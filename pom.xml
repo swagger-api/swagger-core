@@ -12,7 +12,7 @@
 	<artifactId>swagger-core</artifactId>
 	<packaging>jar</packaging>
 	<name>swagger-core</name>
-	<version>1.1-SNAPSHOT.121130</version>
+	<version>1.1-SNAPSHOT.111219</version>
 	<url>https://github.com/wordnik/swagger-core</url>
 	<scm>
 		<connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
@@ -52,9 +52,8 @@
 		</license>
 	</licenses>
 	<build>
-		<!-- sourceDirectory>src/main/java:src/main/scala</sourceDirectory -->
 		<scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>
-		<testSourceDirectory>src/test/java:src/test/scala</testSourceDirectory>
+		<testSourceDirectory>src/test/scala</testSourceDirectory>
 		<outputDirectory>target/classes</outputDirectory>
 		<testOutputDirectory>target/test-classes</testOutputDirectory>
 		<extensions>
@@ -75,19 +74,58 @@
 			</extension>
 		</extensions>
 		<defaultGoal>install</defaultGoal>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-		</resources>
-		<testResources>
-			<testResource>
-				<directory>src/test/resources</directory>
-			</testResource>
-		</testResources>
 		<directory>target</directory>
 		<finalName>${artifactId}-${version}</finalName>
 		<plugins>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.scala-tools</groupId>
+				<artifactId>maven-scala-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<scalaVersion>${scala.version}</scalaVersion>
+					<jvmArgs>
+						<jvmArg>-Xmx384m</jvmArg>
+					</jvmArgs>
+					<args>
+						<arg>-target:jvm-1.5</arg>
+						<arg>-deprecation</arg>
+					</args>
+					<launchers>
+						<launcher>
+							<id>run-scalatest</id>
+							<mainClass>org.scalatest.tools.Runner</mainClass>
+							<args>
+								<arg>-p</arg>
+								<arg>${project.build.testOutputDirectory}</arg>
+							</args>
+							<jvmArgs>
+								<jvmArg>-Xmx512m</jvmArg>
+							</jvmArgs>
+						</launcher>
+					</launchers>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -132,7 +170,7 @@
 				<executions>
 					<execution>
 						<id>sign-artifacts</id>
-						<phase>deploy</phase>
+						<phase>release</phase>
 						<goals>
 							<goal>sign</goal>
 						</goals>
@@ -255,7 +293,7 @@
 			<id>release-sign-artifacts</id>
 			<activation>
 				<property>
-					<name>deploy</name>
+					<name>performRelease</name>
 					<value>true</value>
 				</property>
 			</activation>
@@ -306,7 +344,7 @@
 						<link>http://java.sun.com/javaee/5/docs/api</link>
 						<link>http://java.sun.com/j2se/1.5.0/docs/api</link>
 					</links>
-					<excludePackageNames/>
+					<excludePackageNames />
 				</configuration>
 			</plugin>
 			<plugin>
@@ -355,26 +393,7 @@
 			<url>http://scala-tools.org/repo-releases</url>
 		</pluginRepository>
 	</pluginRepositories>
-	<repositories>
-		<repository>
-			<id>oss.sonatype.org</id>
-			<url>http://oss.sonatype.org/content/repositories/releases</url>
-		</repository>
-		<repository>
-			<id>oss.sonatype.org-snapshot</id>
-			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
-		</repository>
-		<repository>
-			<id>scala-tools.org</id>
-			<name>Scala-Tools Maven2 Repository</name>
-			<url>http://scala-tools.org/repo-releases</url>
-		</repository>
-		<repository>
-			<id>codehaus</id>
-			<name>repository.codehaus.org</name>
-			<url>http://repository.codehaus.org</url>
-		</repository>
-	</repositories>
+	<repositories />
 	<dependencies>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -453,6 +472,18 @@
 			<artifactId>scala-library</artifactId>
 			<version>${scala-version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_2.8.1</artifactId>
+			<version>${scala-test-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit-version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<properties>
 		<servlet-api-version>2.5</servlet-api-version>
@@ -464,5 +495,6 @@
 		<commons-lang-version>2.4</commons-lang-version>
 		<scala.version>2.8.1</scala.version>
 		<slf4j-version>1.6.1</slf4j-version>
+		<scala-test-version>1.5.RC3</scala-test-version>
 	</properties>
 </project>
