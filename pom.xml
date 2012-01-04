@@ -142,8 +142,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
+				<version>${maven-javadoc-plugin-version}</version>
 				<configuration>
+					<sourcepath>${basedir}/src/main/java</sourcepath>
 					<aggregate>true</aggregate>
 					<source>1.6</source>
 					<encoding>UTF-8</encoding>
@@ -234,7 +235,7 @@
 				<plugin>
 					<groupId>org.scala-tools</groupId>
 					<artifactId>maven-scala-plugin</artifactId>
-					<version>2.9.1</version>
+					<version>${maven-scala-plugin-version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -335,6 +336,7 @@
 				<configuration>
 					<aggregate>true</aggregate>
 					<debug>true</debug>
+					<sourcepath>${basedir}/src/main/java</sourcepath>
 					<links>
 						<link>http://java.sun.com/javaee/5/docs/api</link>
 						<link>http://java.sun.com/j2se/1.5.0/docs/api</link>
@@ -345,7 +347,7 @@
 			<plugin>
 				<groupId>org.scala-tools</groupId>
 				<artifactId>maven-scala-plugin</artifactId>
-				<version>2.9.1</version>
+				<version>${maven-scala-plugin-version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -481,7 +483,9 @@
 		</dependency>
 	</dependencies>
 	<properties>
+		<maven-javadoc-plugin-version>2.8</maven-javadoc-plugin-version>
 		<servlet-api-version>2.5</servlet-api-version>
+		<maven-scala-plugin-version>2.15.2</maven-scala-plugin-version>
 		<jersey-version>1.7</jersey-version>
 		<jackson-version>1.7.7</jackson-version>
 		<junit-version>4.4</junit-version>
