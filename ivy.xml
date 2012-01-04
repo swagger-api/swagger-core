@@ -40,6 +40,6 @@
             <exclude org="asm" name="asm-tree"/>
             <exclude org="asm" name="asm"/>
         </dependency>
-        <dependency org="org.scalatest" name="scalatest_2.8.1" rev="1.5.1" conf="test->default"/>
+        <dependency org="org.scalatest" name="scalatest_2.9.1" rev="1.6.1" conf="test->default"/>
     </dependencies>
 </ivy-module>
