@@ -170,7 +170,7 @@
 				<executions>
 					<execution>
 						<id>sign-artifacts</id>
-						<phase>install</phase>
+						<phase>release</phase>
 						<goals>
 							<goal>sign</goal>
 						</goals>
