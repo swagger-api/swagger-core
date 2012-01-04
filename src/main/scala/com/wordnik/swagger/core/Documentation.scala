@@ -52,13 +52,13 @@ class Documentation (@BeanProperty var apiVersion: String,
   private var _apis = new ListBuffer[DocumentationEndPoint]
 
   @XmlElement(name = "apis")
-  def getApis(): java.util.List[DocumentationEndPoint] = if (_apis.size > 0) asList(_apis) else null
+  def getApis(): java.util.List[DocumentationEndPoint] = if (_apis.size > 0) bufferAsJavaList(_apis) else null
 
   def setApis(ep: java.util.List[DocumentationEndPoint]) = {
     this._apis.clear()
     if (ep != null) {
       for (n <- ep) {
-        _apis + n
+        _apis += n
       }
     }
   }
@@ -71,7 +71,7 @@ class Documentation (@BeanProperty var apiVersion: String,
 
   @JsonIgnore
   @XmlElement
-  def getModels = if (_objs.size > 0) asList(_objs) else null
+  def getModels = if (_objs.size > 0) bufferAsJavaList(_objs) else null
 
   def addModel(obj: DocumentationObject) = if (obj != null) _objs += obj
 
@@ -84,7 +84,7 @@ class Documentation (@BeanProperty var apiVersion: String,
 
   def setSchemas(sch: java.util.Map[String, DocumentationSchema]) = {
     this._schemas.clear();
-    for(sch <- JavaConversions.asIterator( sch.iterator )) {
+    for(sch <- JavaConversions.asJavaIterator( sch.iterator )) {
       _schemas += sch
     }
     /*this._schemas = sch*/
@@ -117,13 +117,13 @@ class DocumentationEndPoint(@BeanProperty var path: String, @BeanProperty var de
   private var _ops = new ListBuffer[DocumentationOperation]
 
   @XmlElement
-  def getOperations(): java.util.List[DocumentationOperation] = if (_ops.size > 0) asList(_ops) else null
+  def getOperations(): java.util.List[DocumentationOperation] = if (_ops.size > 0) bufferAsJavaList(_ops) else null
 
   def setOperations(ep: java.util.List[DocumentationOperation]) = {
     this._ops.clear()
     if (ep != null) {
       for (n <- ep) {
-        _ops + n
+        _ops += n
       }
     }
   }
@@ -155,13 +155,13 @@ class DocumentationOperation(@BeanProperty var httpMethod: String,
   private var _parameters = new ListBuffer[DocumentationParameter]
 
   @XmlElement
-  def getParameters(): java.util.List[DocumentationParameter] = if (_parameters.size > 0) asList(_parameters) else null
+  def getParameters(): java.util.List[DocumentationParameter] = if (_parameters.size > 0) bufferAsJavaList(_parameters) else null
 
   def setParameters(ep: java.util.List[DocumentationParameter]) = {
     this._parameters.clear()
     if (ep != null) {
       for (n <- ep) {
-        _parameters + n
+        _parameters += n
       }
     }
   }
@@ -170,13 +170,13 @@ class DocumentationOperation(@BeanProperty var httpMethod: String,
   private val _tags = new ListBuffer[String]
 
   @XmlElement
-  def getTags(): java.util.List[String] = if (_tags.size > 0) asList(_tags) else null
+  def getTags(): java.util.List[String] = if (_tags.size > 0) bufferAsJavaList(_tags) else null
 
   def setTags(tagList: java.util.List[String]) = {
     this._tags.clear()
     if (tagList != null && tagList.iterator != null) {
       for (tag <- tagList) {
-        _tags + tag
+        _tags += tag
       }
     }
   }
@@ -191,13 +191,13 @@ class DocumentationOperation(@BeanProperty var httpMethod: String,
   private var _errorResponses = new ListBuffer[DocumentationError]
 
   @XmlElement
-  def getErrorResponses(): java.util.List[DocumentationError] = if (_errorResponses.size > 0) asList(_errorResponses) else null
+  def getErrorResponses(): java.util.List[DocumentationError] = if (_errorResponses.size > 0) bufferAsJavaList(_errorResponses) else null
 
   def setErrorResponses(ep: java.util.List[DocumentationError]) = {
     this._errorResponses.clear()
     if (ep != null) {
       for (n <- ep) {
-        _errorResponses + n
+        _errorResponses += n
       }
     }
   }
@@ -341,13 +341,13 @@ class DocumentationResponse(
   private var _errorResponses = new ListBuffer[DocumentationError]
 
   @XmlElement
-  def getErrorResponses(): java.util.List[DocumentationError] = if (_errorResponses.size > 0) asList(_errorResponses) else null
+  def getErrorResponses(): java.util.List[DocumentationError] = if (_errorResponses.size > 0) bufferAsJavaList(_errorResponses) else null
 
   def setErrorResponses(ep: java.util.List[DocumentationError]) = {
     this._errorResponses.clear()
     if (ep != null) {
       for (n <- ep) {
-        _errorResponses + n
+        _errorResponses += n
       }
     }
   }
@@ -378,13 +378,13 @@ class DocumentationObject extends Name {
   @BeanProperty var uniqueFieldName: String = _
   private var fields = new ListBuffer[DocumentationParameter]
 
-  def getFields(): java.util.List[DocumentationParameter] = if (fields.size > 0) asList(fields) else null
+  def getFields(): java.util.List[DocumentationParameter] = if (fields.size > 0) bufferAsJavaList(fields) else null
 
   def setFields(ep: java.util.List[DocumentationParameter]) = {
     this.fields.clear()
     if (ep != null) {
       for (n <- ep) {
-        fields + n
+        fields += n
       }
     }
   }

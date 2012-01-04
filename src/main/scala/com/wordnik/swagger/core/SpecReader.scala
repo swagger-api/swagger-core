@@ -342,7 +342,7 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
     var ep: DocumentationEndPoint = null
 
     if (documentation.getApis != null)
-      for (endpoint <- asIterable(documentation.getApis)) {
+      for (endpoint <- collectionAsScalaIterable(documentation.getApis)) {
         if (endpoint.path == path) ep = endpoint
       }
 

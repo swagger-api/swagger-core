@@ -72,7 +72,7 @@ class HelpApi {
 	              )
 	              for(operation <- operationsToRemove)api.removeOperation(operation)
 	              if(null == api.getOperations() || api.getOperations().size() == 0){
-	                apisToRemove + api
+	                apisToRemove += api
 	              }
 	            }
 	         }
@@ -121,7 +121,7 @@ class HelpApi {
           if (StringUtils.isNotBlank(o.getResponseTypeInternal())) l += o.getResponseTypeInternal().replaceAll("\\[\\]", "")
           //operation parameters -- for a POST we might have complex types
           if(o.getParameters() != null) {
-            for (r <- JavaConversions.asIterator((o.getParameters()).iterator())) {
+            for (r <- JavaConversions.asScalaIterator((o.getParameters()).iterator())) {
               //	parameter types
               if (StringUtils.isNotBlank(r.getValueTypeInternal())) l += r.getValueTypeInternal().replaceAll("\\[\\]", "")
             }
