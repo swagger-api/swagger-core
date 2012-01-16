@@ -18,7 +18,7 @@ package com.wordnik.swagger.core
 
 import com.wordnik.swagger.core.ApiValues._
 import com.wordnik.swagger.core.util.TypeUtil
-
+import com.fusionsoft.annotation._
 import org.slf4j.LoggerFactory
 
 import javax.ws.rs._
@@ -138,14 +138,21 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
   private val LOGGER = LoggerFactory.getLogger("com.wordnik.swagger.core.ApiReader")
   private val TRAIT = "trait"
 
+  val annotationManager = new AnnotationManager
+
+  val annotatedClass = AnnotationManager.getAnnotatedClass(hostClass)
+
+//get all the annotated methods of the class
+  val annotatedMethods = annotatedClass.getAnnotatedMethods
+
   val documentation = new Documentation
 
-  val apiEndpoint = hostClass.getAnnotation(classOf[Api])
+  val apiEndpoint = annotatedClass.getAnnotation(classOf[Api])
 
   def parse(): Documentation = {
     apiEndpoint match {
       case null => null
-      case _ => for (method <- hostClass.getMethods) parseMethod(method)
+      case _ => for (method <- annotatedMethods) parseMethod(method)
     }
     documentation.apiVersion = apiVersion
     documentation.swaggerVersion = swaggerVersion
@@ -154,15 +161,16 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
     documentation
   }
 
-  private def parseHttpMethod(method: Method): String = {
+  private def parseHttpMethod(method: AnnotatedMethod): String = {
     val wsGet = method.getAnnotation(classOf[javax.ws.rs.GET])
     val wsDelete = method.getAnnotation(classOf[javax.ws.rs.DELETE])
     val wsPost = method.getAnnotation(classOf[javax.ws.rs.POST])
     val wsPut = method.getAnnotation(classOf[javax.ws.rs.PUT])
     val wsHead = method.getAnnotation(classOf[javax.ws.rs.HEAD])
 
-    if (wsGet != null)
+    if (wsGet != null) {
       ApiReader.GET
+}
     else if (wsDelete != null)
       ApiReader.DELETE
     else if (wsPost != null)
@@ -175,7 +183,7 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
       null
   }
 
-  private def parseMethod(method: Method): Any = {
+  private def parseMethod(method: AnnotatedMethod): Any = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
     val apiErrors = method.getAnnotation(classOf[ApiErrors])
     val isDeprecated = method.getAnnotation(classOf[Deprecated])
@@ -302,7 +310,7 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
       val docEndpoint = getEndPoint(documentation, getPath(method))
 
       // Add Operation to Endpoint
-      docEndpoint.addOperation(processOperation(method, docOperation))
+      docEndpoint.addOperation(processOperation(method.getMethod, docOperation))
 
       // Read the Errors and add to Response
       if (apiErrors != null) {
@@ -319,7 +327,7 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
 
   protected def processOperation(method: Method, o: DocumentationOperation) = o
 
-  protected def getPath(method: Method): String = {
+  protected def getPath(method: AnnotatedMethod): String = {
     val wsPath = method.getAnnotation(classOf[javax.ws.rs.Path])
     val path = apiEndpoint.value + "." + ApiReader.FORMAT_STRING + (if (wsPath == null) "" else wsPath.value)
     path
