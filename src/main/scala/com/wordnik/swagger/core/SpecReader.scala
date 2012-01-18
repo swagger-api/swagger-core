@@ -19,6 +19,7 @@ package com.wordnik.swagger.core
 import com.wordnik.swagger.core.ApiValues._
 import com.wordnik.swagger.core.util.TypeUtil
 import com.fusionsoft.annotation._
+import com.sun.jersey.multipart.FormDataParam
 import org.slf4j.LoggerFactory
 
 import javax.ws.rs._
@@ -283,6 +284,12 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
             case wsParam: FormParam => {
               docParam.name = readString(wsParam.value, docParam.name)
               docParam.paramType = readString(TYPE_FORM, docParam.paramType)
+            };
+
+
+            case wsParam: FormDataParam => {
+              docParam.name = readString(wsParam.value, docParam.name)
+              docParam.paramType = readString(TYPE_FORM_DATA, docParam.paramType)
             };
 
             case wsParam: CookieParam => {

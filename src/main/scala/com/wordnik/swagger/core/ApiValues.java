@@ -31,6 +31,7 @@ public interface ApiValues {
     public static final String TYPE_MATRIX = "matrix";
     public static final String TYPE_HEADER = "header";
     public static final String TYPE_FORM = "form";
+    public static final String TYPE_FORM_DATA = "data";
     public static final String TYPE_COOKIE = "cookie";
 
     public static final String ANY = "any";
