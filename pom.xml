@@ -12,7 +12,7 @@
 	<artifactId>swagger-core_2.9.1</artifactId>
 	<packaging>jar</packaging>
 	<name>swagger-core</name>
-	<version>1.1-SNAPSHOT.121132</version>
+	<version>1.1-SNAPSHOT.120119</version>
 	<url>https://github.com/wordnik/swagger-core</url>
 	<scm>
 		<connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
