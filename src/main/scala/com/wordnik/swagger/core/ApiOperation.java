@@ -29,4 +29,5 @@ public @interface ApiOperation {
     boolean multiValueResponse() default false; //to indicate if return type will contain one or more of the response value
     String notes() default "";
     String tags() default "";
+    String httpMethod() default "";
 }

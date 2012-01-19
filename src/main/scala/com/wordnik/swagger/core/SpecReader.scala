@@ -154,25 +154,45 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
     documentation
   }
 
-  private def parseHttpMethod(method: Method): String = {
-    val wsGet = method.getAnnotation(classOf[javax.ws.rs.GET])
-    val wsDelete = method.getAnnotation(classOf[javax.ws.rs.DELETE])
-    val wsPost = method.getAnnotation(classOf[javax.ws.rs.POST])
-    val wsPut = method.getAnnotation(classOf[javax.ws.rs.PUT])
-    val wsHead = method.getAnnotation(classOf[javax.ws.rs.HEAD])
+  private def parseHttpMethod(method: Method, apiOperation: ApiOperation): String = {
+    if(apiOperation.httpMethod() != null && apiOperation.httpMethod().trim().length() > 0)
+      apiOperation.httpMethod().trim()
+    else {
+      val wsGet = method.getAnnotation(classOf[javax.ws.rs.GET])
+      val wsDelete = method.getAnnotation(classOf[javax.ws.rs.DELETE])
+      val wsPost = method.getAnnotation(classOf[javax.ws.rs.POST])
+      val wsPut = method.getAnnotation(classOf[javax.ws.rs.PUT])
+      val wsHead = method.getAnnotation(classOf[javax.ws.rs.HEAD])
 
-    if (wsGet != null)
-      ApiReader.GET
-    else if (wsDelete != null)
-      ApiReader.DELETE
-    else if (wsPost != null)
-      ApiReader.POST
-    else if (wsPut != null)
-      ApiReader.PUT
-    else if (wsHead != null)
-      ApiReader.HEAD
-    else
-      null
+      if (wsGet != null)
+        ApiReader.GET
+      else if (wsDelete != null)
+        ApiReader.DELETE
+      else if (wsPost != null)
+        ApiReader.POST
+      else if (wsPut != null)
+        ApiReader.PUT
+      else if (wsHead != null)
+        ApiReader.HEAD
+      else
+        null
+    }
+  }
+
+  private def parseApiParam(docParam: DocumentationParameter, apiParam: ApiParam, method: Method) {
+    docParam.name = readString(apiParam.name, docParam.name)
+    docParam.description = readString(apiParam.value)
+    docParam.defaultValue = readString(apiParam.defaultValue)
+    try {
+      docParam.allowableValues = convertToAllowableValues(apiParam.allowableValues)
+    } catch {
+      case e: RuntimeException => LOGGER.error("Allowable values annotation is wrong in method  " + method +
+        "for parameter " + docParam.name);
+      e.printStackTrace();
+    }
+    docParam.required = apiParam.required
+    docParam.allowMultiple = apiParam.allowMultiple
+    docParam.paramAccess = readString(apiParam.access)
   }
 
   private def parseMethod(method: Method): Any = {
@@ -191,7 +211,7 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
       }
 
       if (apiOperation != null) {
-        docOperation.httpMethod = parseHttpMethod(method)
+        docOperation.httpMethod = parseHttpMethod(method, apiOperation)
         docOperation.summary = readString(apiOperation.value)
         docOperation.notes = readString(apiOperation.notes)
         docOperation.setTags( toObjectList(apiOperation.tags) )
@@ -208,6 +228,43 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
         }
         catch {
           case e: ClassNotFoundException => docOperation.responseClass = apiResponseValue
+        }
+      }
+
+      // Read method annotations for implicit api params which are not declared as actual argments to the method
+      // Essentially ApiParamImplicit annotations on method
+      val methodAnnotations = method.getAnnotations
+      for (ma <- methodAnnotations) {
+        ma match {
+          case pSet: ApiParamsImplicit => {
+            for (p <- pSet.value()) {
+
+              val docParam = new DocumentationParameter
+              docParam.paramType = TYPE_QUERY
+
+              docParam.name = readString(p.name)
+              docParam.description = readString(p.value)
+              docParam.defaultValue = readString(p.defaultValue)
+              try {
+                docParam.allowableValues = convertToAllowableValues(p.allowableValues)
+              } catch {
+                case e: RuntimeException => LOGGER.error("Allowable values annotation is wrong in method  " + method +
+                  "for parameter " + docParam.name);
+                e.printStackTrace();
+              }
+              docParam.required = p.required
+              docParam.allowMultiple = p.allowMultiple
+              docParam.paramAccess = readString(p.access)
+              docParam.internalDescription = readString(p.internalDescription)
+              docParam.dataType = readString(p.dataType)
+              docParam.paramType = readString(p.paramType)
+              docParam.paramType = if(docParam.paramType == null) TYPE_QUERY else docParam.paramType
+
+              docOperation.addParameter(docParam)
+            }
+          };
+
+          case _ => Unit
         }
       }
 
@@ -237,18 +294,7 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
           ignoreParam = false
           pa match {
             case apiParam: ApiParam => {
-              docParam.name = readString(apiParam.name, docParam.name)
-              docParam.description = readString(apiParam.value)
-              docParam.defaultValue = readString(apiParam.defaultValue)
-              try{
-                  docParam.allowableValues = convertToAllowableValues(apiParam.allowableValues)
-              }catch {
-                case e: RuntimeException => LOGGER.error("Allowable values annotation is wrong in method  " + method +
-                  "for parameter " + docParam.name); e.printStackTrace();
-              }
-              docParam.required = apiParam.required
-              docParam.allowMultiple = apiParam.allowMultiple
-              docParam.paramAccess = readString(apiParam.access)
+              parseApiParam(docParam, apiParam, method)
             };
 
             case wsParam: QueryParam => {
@@ -289,6 +335,10 @@ class ApiSpecParser(val hostClass: Class[_], val apiVersion: String, val swagger
             case _ => Unit
           }
 
+        }
+        
+        if(paramAnnotations.length == 0) {
+          ignoreParam = true
         }
 
         counter = counter + 1;
