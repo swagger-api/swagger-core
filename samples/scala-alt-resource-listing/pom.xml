@@ -10,7 +10,7 @@
     <artifactId>swagger-sample-scala-alt-resource-listing</artifactId>
     <packaging>war</packaging>
     <name>swagger-sample-scala-alt-resource-listing</name>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.01-SNAPSHOT</version>
     <build>
         <plugins>
             <plugin>

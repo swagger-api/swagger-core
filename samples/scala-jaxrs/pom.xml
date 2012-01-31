@@ -11,7 +11,7 @@
     <artifactId>swagger-scala-sample-app</artifactId>
     <packaging>war</packaging>
     <name>swagger-scala-sample-app</name>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.01-SNAPSHOT</version>
     <build>
         <plugins>
             <plugin>
