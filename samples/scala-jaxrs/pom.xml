@@ -1,9 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>com.wordnik</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.01-SNAPSHOT</version>
+        <version>1.01</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -11,7 +10,7 @@
     <artifactId>swagger-scala-sample-app</artifactId>
     <packaging>war</packaging>
     <name>swagger-scala-sample-app</name>
-    <version>1.01-SNAPSHOT</version>
+    <version>1.01</version>
     <build>
         <plugins>
             <plugin>

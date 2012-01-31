@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
@@ -11,7 +10,7 @@
     <artifactId>swagger-project</artifactId>
     <packaging>pom</packaging>
     <name>wordnik-swagger-project</name>
-    <version>1.01-SNAPSHOT</version>
+    <version>1.01</version>
     <url>https://github.com/wordnik/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
@@ -258,7 +257,7 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration/>
+                        <configuration />
                     </plugin>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
@@ -343,7 +342,7 @@
                         <link>http://java.sun.com/javaee/5/docs/api</link>
                         <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
                     </links>
-                    <excludePackageNames/>
+                    <excludePackageNames />
                 </configuration>
             </plugin>
             <plugin>
@@ -492,22 +491,21 @@
             <url>http://scala-tools.org/repo-releases</url>
         </pluginRepository>
     </pluginRepositories>
-    <repositories/>
+    <repositories />
     <properties>
         <swagger-core-version>1.1-SNAPSHOT</swagger-core-version>
         <felix-version>2.3.4</felix-version>
         <servlet-api-version>2.5</servlet-api-version>
-        <scala-version>2.9.1</scala-version>
-        <jersey-version>1.9.1</jersey-version>
-        <jackson-version>1.8.3</jackson-version>
+        <scala-version>2.8.1</scala-version>
+        <jersey-version>1.8.1</jersey-version>
         <junit-version>4.8.1</junit-version>
         <maven-plugin.version>1.0.0</maven-plugin.version>
         <commons-lang-version>2.4</commons-lang-version>
         <scala.version>2.8.1</scala.version>
         <slf4j-version>1.6.3</slf4j-version>
         <mongodb-version>2.6.2</mongodb-version>
-        <scala-test-version>1.6.1</scala-test-version>
-        <jetty.maven.version>7.1.6.v20100715</jetty.maven.version>
+        <scala-test-version>1.5.RC3</scala-test-version>
+        <jetty.maven.version>7.6.0.RC4</jetty.maven.version>
         <servlet-api-version>2.5</servlet-api-version>
         <jersey-version>1.7</jersey-version>
         <jackson-version>1.7.7</jackson-version>
