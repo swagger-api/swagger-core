@@ -283,7 +283,7 @@
             <id>release-sign-artifacts</id>
             <activation>
                 <property>
-                    <name>install</name>
+                    <name>performRelease</name>
                     <value>true</value>
                 </property>
             </activation>
@@ -295,7 +295,7 @@
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
-                                <phase>verify</phase>
+                                <phase>deploy</phase>
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
