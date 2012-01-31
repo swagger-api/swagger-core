@@ -12,7 +12,6 @@
     <version>1.02-SNAPSHOT</version>
     <name>swagger-jaxrs</name>
     <build>
-		<sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>install</defaultGoal>
         <resources>
             <resource>
