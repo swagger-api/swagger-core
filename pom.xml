@@ -283,7 +283,7 @@
             <id>release-sign-artifacts</id>
             <activation>
                 <property>
-                    <name>prepareRelease</name>
+                    <name>performRelease</name>
                     <value>true</value>
                 </property>
             </activation>
