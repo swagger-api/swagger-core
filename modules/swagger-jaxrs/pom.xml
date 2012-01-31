@@ -11,8 +11,8 @@
     <packaging>jar</packaging>
     <version>1.02-SNAPSHOT</version>
     <name>swagger-jaxrs</name>
-    <url>https://github.com/wordnik/swagger-core</url>
     <build>
+		<sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>install</defaultGoal>
         <resources>
             <resource>
@@ -24,21 +24,6 @@
                 <directory>src/test/resources</directory>
             </testResource>
         </testResources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>pre-site</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
     <dependencies>
         <dependency>
