@@ -7,7 +7,26 @@ framework at http://swagger.wordnik.com.  For more information about Wordnik's A
 visit http://developer.wordnik.com.  
 
 ## Version history
-Swagger v1.0 was released on Aug-10 2011
+
+v1.01 Jan-31 2012
+
+<li>- Transitioned build to Maven</li>
+
+<li>- Removed jaxrs dependencies from swagger-core</li>
+
+<li>- Moved sample server implementations into /samples directory</li>
+
+<li>- Added support for alternate API listing paths</li>
+
+<li>- Made .{format} optional</li>
+
+<li>- Added crazy scala versioning into artifact names (Scala 2.8.1 => ${artifact}_2.8.1)
+
+<li>- Added test and integration test through default maven integration-test lifecycle</li>
+
+v1.0 Aug-10 2011
+
+<li>- Initial release of swagger</li>
 
 Pre-release versions will be suffixed with SNAPSHOT and RC appropriately.  If you want the
 release version, please grab it by tag (i.e. v1.0 for the release)
@@ -17,26 +36,24 @@ You need the following installed and available in your $PATH:
 
 <li>- Java 1.6 or greater (http://java.oracle.com)
 
-<li>- Apache ant 1.7 or greater (http://ant.apache.org/)
+<li>- Apache maven 3.0.3 or greater (http://maven.apache.org/)
 
-<li>- Scala 2.8.1 (http://www.scala-lang.org).  If you run with Scala > 2.8.1, please update the ivy.xml to point to the same version as in your environment.
+<li>- Scala 2.8.1 (http://www.scala-lang.org).
 
 ### To build
-If you don't have the Apache Ivy dependency manager installed, run this build script:
-
 <pre>
-ant -f install-ivy.xml
+mvn package
 </pre>
 
-This will copy the ivy ant lib into your antlib directory.  Now you can build the artifact:
+This will build the modules and sample apps.  To run the sample apps:
 
 <pre>
-ant
+# run scala-jaxrs sample app
+cd samples/scala-jaxrs
+
+mvn jetty:run
 </pre>
 
-This will create the swagger-core library in your build folder.  You can optionally deploy the
-artifact to your local ivy repo so it's available to the swagger sample app:
+Of course if you don't want to build locally you can grab artifacts from maven central:
 
-<pre>
-ant deploy
-</pre>
+http://repo1.maven.org/maven2/com/wordnik/
