@@ -42,11 +42,16 @@ You need the following installed and available in your $PATH:
 
 ### To build
 <pre>
+# first time building locally
+mvn -N
+</pre>
+
+Subsequent builds
+<pre>
 mvn package
 </pre>
 
 This will build the modules and sample apps.  
-
 
 ## Sample Apps
 There are a number of sample apps in the 
