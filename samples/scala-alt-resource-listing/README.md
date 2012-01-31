@@ -12,10 +12,10 @@ get a tech support call.  You've been warned.
 The default ApiListingResource lives in swagger-jaxrs--it is included by adding the following to the web.xml:
 
 <pre>
-  <init-param>
-    <param-name>com.sun.jersey.config.property.packages</param-name>
-    <param-value>com.wordnik.swagger.sample.resource;com.wordnik.swagger.jaxrs;</param-value>
-  </init-param>
+  &lt;init-param&gt;
+    &lt;param-name&gt;com.sun.jersey.config.property.packages&lt;/param-name&gt;
+    &lt;param-value&gt;com.wordnik.swagger.sample.resource;com.wordnik.swagger.jaxrs;&lt;/param-value&gt;
+  &lt;/init-param&gt;
 </pre>
 
 Note the com.wordnik.swagger.jaxrs contains the default [resource listing](https://github.com/wordnik/swagger-core/blob/master/modules/swagger-jaxrs/src/main/scala/com/wordnik/swagger/jaxrs/ApiListing.scala).
