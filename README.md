@@ -19,7 +19,7 @@ You need the following installed and available in your $PATH:
 
 <li>- Apache ant 1.7 or greater (http://ant.apache.org/)
 
-<li>- Scala 2.8.1 (http://www.scala-lang.org).  Because of a regression in Scala 2.9.1, it currently does not work with swagger + Jersey integration (see https://github.com/scala/scala/commit/fe94bc7a14).  This will be addressed in Scala 2.9.2
+<li>- Scala 2.8.1 (http://www.scala-lang.org).  If you run with Scala > 2.8.1, please update the ivy.xml to point to the same version as in your environment.
 
 ### To build
 If you don't have the Apache Ivy dependency manager installed, run this build script:
