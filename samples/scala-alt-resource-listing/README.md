@@ -4,24 +4,30 @@
 This is a scala project to build a stand-alone server which implements the Swagger spec.  It demonstrates both
 removal of the .{format} in the path as well as placement of specific resource listings under an alternate path.
 
+DANGER!  Most clients lie about what format of data they want.  By requiring .{format} in the root api you
+are doing your clients a huge favor.  Otherwise they need to correctly pass Accept headers to the API.  That's 
+all good and fine but most client's don't do that.  And since you probably can't just support JSON, somebody will
+get a tech support call.  You've been warned.
+
 The default ApiListingResource lives in swagger-jaxrs--it is included by adding the following to the web.xml:
 
 <pre>
-<init-param>
-  <param-name>com.sun.jersey.config.property.packages</param-name>
-  <param-value>com.wordnik.swagger.sample.resource;com.wordnik.swagger.jaxrs;</param-value>
-</init-param>
+  <init-param>
+    <param-name>com.sun.jersey.config.property.packages</param-name>
+    <param-value>com.wordnik.swagger.sample.resource;com.wordnik.swagger.jaxrs;</param-value>
+  </init-param>
 </pre>
 
-Note the <pre>com.wordnik.swagger.jaxrs</pre> contains the default [resource listing](https://github.com/wordnik/swagger-core/blob/master/modules/swagger-jaxrs/src/main/scala/com/wordnik/swagger/jaxrs/ApiListing.scala).
+Note the com.wordnik.swagger.jaxrs contains the default [resource listing](https://github.com/wordnik/swagger-core/blob/master/modules/swagger-jaxrs/src/main/scala/com/wordnik/swagger/jaxrs/ApiListing.scala).
 When overriding the default resource listing, simply provide that functionality in a new resource and add it to
 the packages.  For this sample, the new resource listing class is [here](https://github.com/wordnik/swagger-core/blob/master/samples/scala-alt-resource-listing/src/main/scala/com/wordnik/swagger/sample/resource/ApiListingResource.scala).
 One other requirement is setting the JaxrsApiReader format string to an empty string in a [bootstrap servlet](https://github.com/wordnik/swagger-core/blob/master/samples/scala-alt-resource-listing/src/main/scala/com/wordnik/swagger/sample/Bootstrap.scala)
 
+
 <pre>
-class Bootstrap extends HttpServlet {
-  JaxrsApiReader.setFormatString("")
-}
+  class Bootstrap extends HttpServlet {
+    JaxrsApiReader.setFormatString("")
+  }
 </pre>
 
 The api resource paths are also modified to live in the /resources/{api} path.  This is done by declaring both a 
@@ -30,38 +36,40 @@ listing path and listing class to two resources:
 The actual class implementing the API:
 
 <pre>
-@Path("/pet")
-@Api(value = "/pet",
-  description = "Operations about pets",
-  listingPath = "/resources/pet")
-@Singleton
-@Produces(Array("application/json", "application/xml"))
-class PetResourceJSONXML extends PetResource
+  @Path("/pet")
+  @Api(value = "/pet",
+    description = "Operations about pets",
+    listingPath = "/resources/pet")
+  @Singleton
+  @Produces(Array("application/json", "application/xml"))
+  class PetResourceJSONXML extends PetResource
 </pre>
 
 And the class creating the resource listing:
 
-@Path("/resources/pet")
-@Api(value = "/pet",
-  description = "Operations about pets",
-  listingPath = "/resources/pet",
-  listingClass = "com.wordnik.swagger.sample.resource.PetResourceJSONXML")
-@Singleton
-@Produces(Array("application/json", "application/xml"))
-class PetResourceListingJSON extends Help
+<pre>
+  @Path("/resources/pet")
+  @Api(value = "/pet",
+    description = "Operations about pets",
+    listingPath = "/resources/pet",
+    listingClass = "com.wordnik.swagger.sample.resource.PetResourceJSONXML")
+  @Singleton
+  @Produces(Array("application/json", "application/xml"))
+  class PetResourceListingJSON extends Help
+</pre>
 
 Note in the above, the "listingClass" points to the implementing class.  It also implements the Help trait.
 
 ### To run (with Maven)
 To run the server, run this task:
 <pre>
-mvn package -Dlog4j.configuration=file:./conf/log4j.properties jetty:run
+  mvn package -Dlog4j.configuration=file:./conf/log4j.properties jetty:run
 </pre>
 
 This will start Jetty embedded on port 8002 and apply the logging configuration from conf/log4j.properties
 
 ### Testing the server
-Once started, you can navigate to http://localhost:8002/api/resources.json to view the Swagger Resource Listing.
+Once started, you can navigate to http://localhost:8002/api/resources to view the Swagger Resource Listing.
 This tells you that the server is up and ready to demonstrate Swagger.
 
 ### Using the UI
