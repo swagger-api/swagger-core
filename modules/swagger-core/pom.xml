@@ -2,14 +2,14 @@
     <parent>
         <groupId>com.wordnik</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.01</version>
+        <version>1.02-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-core_2.8.1</artifactId>
     <packaging>jar</packaging>
     <name>swagger-core</name>
-    <version>1.01</version>
+    <version>1.02-SNAPSHOT</version>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>install</defaultGoal>
