@@ -45,7 +45,20 @@ You need the following installed and available in your $PATH:
 mvn package
 </pre>
 
-This will build the modules and sample apps.  To run the sample apps:
+This will build the modules and sample apps.  
+
+
+## Sample Apps
+There are a number of sample apps in the 
+
+[java-jaxrs](/wordnik/swagger-core/tree/master/samples/java-jaxrs/README.md) Java-based swagger server with JAX-RS
+
+[scala-jaxrs](/wordnik/swagger-core/tree/master/samples/scala-jaxrs/README.md) Scala-based swagger server with JAX-RS
+
+[scala-alt-resource-listing](/wordnik/swagger-core/tree/master/samples/scala-alt-resource-listing/README.md) 
+Scala-based swagger server with JAX-RS with an alternate resource listing scheme
+
+To run a sample app:
 
 <pre>
 # run scala-jaxrs sample app
