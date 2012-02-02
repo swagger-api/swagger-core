@@ -63,6 +63,9 @@ There are a number of sample apps in the
 [scala-alt-resource-listing](/wordnik/swagger-core/tree/master/samples/scala-alt-resource-listing/README.md) 
 Scala-based swagger server with JAX-RS with an alternate resource listing scheme
 
+[scala-jaxrs-apm](/wordnik/swagger-core/tree/master/samples/scala-jaxrs-apm/README.md) 
+Scala-based swagger server using wordnik-oss utils for Application Performance Monitoring (APM)
+
 To run a sample app:
 
 <pre>
