@@ -307,6 +307,7 @@
 		<module>samples/java-jaxrs</module>
 		<module>samples/scala-jaxrs</module>
 		<module>samples/scala-alt-resource-listing</module>
+		<module>samples/scala-jaxrs-apm</module>
 	</modules>
 	<reporting>
 		<outputDirectory>target/site</outputDirectory>
@@ -476,7 +477,7 @@
 		<felix-version>2.3.4</felix-version>
 		<servlet-api-version>2.5</servlet-api-version>
 		<scala-version>2.8.1</scala-version>
-		<jersey-version>1.8.1</jersey-version>
+		<jersey-version>1.7</jersey-version>
 		<jackson-version>1.8.3</jackson-version>
 		<junit-version>4.8.1</junit-version>
 		<maven-plugin.version>1.0.0</maven-plugin.version>
