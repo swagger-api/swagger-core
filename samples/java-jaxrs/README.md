@@ -6,6 +6,9 @@ more about both the spec and the framework at http://swagger.wordnik.com.  For m
 about Wordnik's APIs, please visit http://developer.wordnik.com.  There is an online version of this
 server at http://petstore.swagger.wordnik.com/api/resources.json
 
+### To build from source
+Please follow instructions to build the top-level [swagger-core project](https://github.com/wordnik/swagger-core)
+
 ### To run (with Maven)
 To run the server, run this task:
 <pre>

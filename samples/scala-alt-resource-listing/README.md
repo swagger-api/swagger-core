@@ -60,6 +60,9 @@ And the class creating the resource listing:
 
 Note in the above, the "listingClass" points to the implementing class.  It also implements the Help trait.
 
+### To build from source
+Please follow instructions to build the top-level [swagger-core project](https://github.com/wordnik/swagger-core)
+
 ### To run (with Maven)
 To run the server, run this task:
 <pre>
