@@ -23,7 +23,7 @@ which has a profile operation:
 http://localhost:8002/api/health.json/profile
 </pre>
 
-You can see how the various API calls are calling the Profile utility and wrapping the response.  See [here]() for an example.
+You can see how the various API calls are calling the Profile utility and wrapping the response.  See [here](https://github.com/wordnik/swagger-core/blob/master/samples/scala-jaxrs-apm/src/main/scala/com/wordnik/swagger/sample/resource/PetResource.scala#L50) for an example.
 
 Sample output:
 <pre>
