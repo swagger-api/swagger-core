@@ -60,6 +60,9 @@ There are a number of sample apps in the
 
 [scala-jaxrs](/wordnik/swagger-core/tree/master/samples/scala-jaxrs/README.md) Scala-based swagger server with JAX-RS
 
+[java-alt-resource-listing](/wordnik/swagger-core/tree/master/samples/java-alt-resource-listing/README.md) 
+Scala-based swagger server with JAX-RS with an alternate resource listing scheme
+
 [scala-alt-resource-listing](/wordnik/swagger-core/tree/master/samples/scala-alt-resource-listing/README.md) 
 Scala-based swagger server with JAX-RS with an alternate resource listing scheme
 
