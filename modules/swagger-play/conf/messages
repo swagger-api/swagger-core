@@ -1,0 +1,5 @@
+# Default swagger-play messages
+# You can specialize this file for each language.
+# For example, for french create a messages.fr file
+
+#swagger-play.name=swagger-play

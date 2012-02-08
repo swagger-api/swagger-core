@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="swagger-play" default="build" basedir=".">
+    <property environment="env" />
+
+    <target name="check" unless="play.path">
+        <fail message="Please specify Play framework path using -Dplay.path=/path/to/framework/home" />
+    </target>
+
+    <path id="project.classpath">
+        <pathelement path="${play.path}/framework/classes"/>
+        <fileset dir="${play.path}/framework/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${play.path}/framework">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <condition property="scala.home" value="${env.SCALA_HOME}">
+        <isset property="env.SCALA_HOME" />
+    </condition>
+
+    <path id="scala.classpath">
+        <fileset dir="${scala.home}/lib">
+            <include name="scala**.jar" />
+        </fileset>
+    </path>
+
+    <taskdef resource="scala/tools/ant/antlib.xml">
+        <classpath>
+            <fileset dir="lib">
+                <include name="scala**.jar" />
+            </fileset>
+            <fileset dir="${scala.home}/lib">
+                <include name="scala**.jar" />
+            </fileset>
+        </classpath>
+    </taskdef>
+
+
+    <target name="build" depends="compile">
+        <mkdir dir="lib" />
+        <copy todir="tmp/classes">
+            <fileset dir="src">
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+                <include name="**/play.plugins"/>
+                <include name="**/play.static"/>
+            </fileset>
+        </copy>
+        <jar destfile="lib/play-swagger-play.jar" basedir="tmp/classes">
+            <manifest>
+                <section name="Play-module">
+                    <attribute name="Specification-Title" value="swagger-play"/>
+                </section>
+            </manifest>
+        </jar>
+        <delete dir="tmp" />
+    </target>
+
+    <target name="compile" depends="check">
+        <mkdir dir="tmp/classes" />
+
+        <scalac srcdir="src" destdir="tmp/classes">
+            <classpath>
+                <fileset dir="lib">
+                    <include name="*.jar" />
+                </fileset>
+                <path refid="scala.classpath" />
+                <path refid="project.classpath" />
+            </classpath>
+            <include name="**/*.scala" />
+            <include name="**/*.java" />
+        </scalac>
+
+        <javac srcdir="src" destdir="tmp/classes" target="1.5" debug="true">
+            <classpath refid="project.classpath" />
+        </javac>
+    </target>
+
+</project>
