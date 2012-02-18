@@ -72,6 +72,11 @@ trait Help {
         uriInfo,
         apiListingPath,
         apiPath)
+        
+        println("adding values: " + basePath, apiVersion, swaggerVersion)
+      docs.basePath = basePath
+      docs.apiVersion = apiVersion
+      docs.swaggerVersion = swaggerVersion
       Response.ok.entity(docs).build
     }
   }
@@ -80,8 +85,10 @@ trait Help {
 object ConfigReaderFactory {
   def getConfigReader(sc: ServletConfig): ConfigReader = {
     var configReaderStr = {
-      if (sc.getInitParameter("swagger.config.reader") == null) "com.wordnik.swagger.jaxrs.ConfigReader"
-      else sc.getInitParameter("swagger.config.reader")
+      sc.getInitParameter("swagger.config.reader") match {
+        case s: String => s
+        case _ => "com.wordnik.swagger.jaxrs.ConfigReader"
+      }
     }
     val constructor = SwaggerContext.loadClass(configReaderStr).getConstructor(classOf[ServletConfig])
     val configReader = constructor.newInstance(sc).asInstanceOf[ConfigReader]
