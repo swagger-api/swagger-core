@@ -46,5 +46,6 @@ class DocumentationSerializationTest extends FlatSpec with ShouldMatchers {
     val um = JsonUtil.getJsonMapper.readValue(json, classOf[Documentation])
     val json2 = JsonUtil.getJsonMapper.writeValueAsString(um)
     assert(json === json2)
+    assert(um.swaggerVersion === SwaggerSpec.version)
   }
 }

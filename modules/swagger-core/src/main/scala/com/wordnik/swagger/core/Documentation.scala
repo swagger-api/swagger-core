@@ -40,12 +40,29 @@ trait Name {
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "ApiDocumentation")
 @XmlAccessorType(XmlAccessType.NONE)
-class Documentation(@BeanProperty var apiVersion: String,
-  @BeanProperty var swaggerVersion: String,
-  @BeanProperty var basePath: String,
-  @BeanProperty var resourcePath: String) {
+class Documentation(var apiVersion: String,
+  var swaggerVersion: String,
+  var basePath: String,
+  var resourcePath: String) {
 
   def this() = this(null, null, null, null)
+  
+  @XmlElement 
+  def getApiVersion = apiVersion
+  def setApiVersion(apiVersion:String) = this.apiVersion = apiVersion
+  
+  @XmlElement
+  def getSwaggerVersion = swaggerVersion
+  def setSwaggerVersion(swaggerVersion:String) = this.swaggerVersion = swaggerVersion
+  
+  @XmlElement
+  def getBasePath = basePath
+  def setBasePath(basePath:String) = this.basePath = basePath
+  
+  @XmlElement
+  def getResourcePath = resourcePath
+  def setResourcePath(resourcePath:String) = this.resourcePath = resourcePath
+  
   private var apis = new ListBuffer[DocumentationEndPoint]
 
   @XmlElement(name = "apis")
@@ -61,18 +78,7 @@ class Documentation(@BeanProperty var apiVersion: String,
 
   def addApi(ep: DocumentationEndPoint) = if (ep != null) apis += ep
   def removeApi(ep: DocumentationEndPoint) = if (ep != null) apis -= ep
-  /*
-  private var objs = new ListBuffer[DocumentationObject]
 
-  @JsonIgnore
-  @XmlTransient
-  def getModels = objs.size match {
-    case 0 => null
-    case _ => objs
-  }
-
-  def addModel(obj: DocumentationObject) = if (obj != null) this.objs += obj
-*/
   private var models = new java.util.HashMap[String, DocumentationSchema]
 
   @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -88,7 +94,7 @@ class Documentation(@BeanProperty var apiVersion: String,
   }
 
   def addModel(propertyName: String, obj: DocumentationSchema) = {
-    //the property name is some times studely and some times lower, so make sure it is always sutdely
+    //the property name is some times studely and some times lower, so make sure it is always studely
     if (propertyName != null && obj != null) models += propertyName.capitalize -> obj
   }
 
@@ -96,7 +102,6 @@ class Documentation(@BeanProperty var apiVersion: String,
     var doc = new Documentation(apiVersion, swaggerVersion, basePath, resourcePath)
     apis.foreach(ep => doc.addApi((ep.clone()).asInstanceOf[DocumentationEndPoint]))
     for ((name, model) <- models) doc.addModel(name, (model.clone().asInstanceOf[DocumentationSchema]))
-    //    objs.foreach(obj => doc.addModel((obj.clone()).asInstanceOf[DocumentationObject]))
     doc
   }
 }
