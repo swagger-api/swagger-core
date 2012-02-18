@@ -73,7 +73,6 @@ trait Help {
         apiListingPath,
         apiPath)
         
-        println("adding values: " + basePath, apiVersion, swaggerVersion)
       docs.basePath = basePath
       docs.apiVersion = apiVersion
       docs.swaggerVersion = swaggerVersion
