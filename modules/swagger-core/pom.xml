@@ -3,6 +3,7 @@
 		<groupId>com.wordnik</groupId>
 		<artifactId>swagger-project</artifactId>
 		<version>1.02-SNAPSHOT</version>
+		<relativePath>../..</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wordnik</groupId>
