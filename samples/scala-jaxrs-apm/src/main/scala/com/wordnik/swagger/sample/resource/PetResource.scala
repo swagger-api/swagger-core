@@ -38,16 +38,6 @@ import com.sun.jersey.api.JResponse
 trait PetResource extends RestResourceUtil {
   var petData = new PetData
 
-  val triggerFunction = new Function1[ProfileCounter, Unit] {
-    def apply(counter: ProfileCounter): Unit = {
-      if (counter.maxDuration > 100)
-        println("wake tony up")
-      counter
-    }
-  }
-
-  Profile.triggers += triggerFunction
-
   @GET
   @Path("/{petId}")
   @ApiOperation(value = "Find pet by ID", notes = "Returns a pet when ID < 10. " +
@@ -60,8 +50,6 @@ trait PetResource extends RestResourceUtil {
     Profile("/pet/*", {
       var pet = petData.getPetbyId(getLong(0, 100000, 0, petId))
       if (null != pet) {
-        // make expensive call to database
-        Profile("get a user from database", Thread.sleep(1000))
         Response.ok.entity(pet).build
       } else {
         throw new NotFoundException(404, "Pet not found")
