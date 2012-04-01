@@ -4,7 +4,9 @@
 This is a project to build the swagger-core library, which is required for the Wordnik 
 implementation of the Swagger spec.  You can find out more about both the spec and the
 framework at http://swagger.wordnik.com.  For more information about Wordnik's APIs, please
-visit http://developer.wordnik.com.  
+visit http://developer.wordnik.com.
+
+The spec is documented here:  [swagger-spec](/wordnik/swagger-core/wiki)
 
 ## Version history
 
