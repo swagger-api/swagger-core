@@ -26,7 +26,7 @@ There is an HTML5-based API tool available in a separate project.  This lets you
 intuitive UI.  You can pull this code from here:  https://github.com/wordnik/swagger-ui
 
 You can then open the src/main/html/index.html file in any HTML5-enabled browser.  Open opening, enter the
-URL of your server in the top-centered input box (default is http://localhost:8002/api).  Click the "Explore" 
+URL of your server in the top-centered input box (default is http://localhost:8002/api/resources.json).  Click the "Explore" 
 button and you should see the resources available on the server.
 
 ### Applying an API key
