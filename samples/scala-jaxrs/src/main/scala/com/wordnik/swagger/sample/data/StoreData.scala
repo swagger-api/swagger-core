@@ -41,20 +41,13 @@ class StoreData {
   }
 
   def placeOrder(order:Order):Unit = {
-    for (currentOrder <- orders){
-      if (currentOrder.getId() == order.getId()){
-        orders -= order
-      }
-    }
+    // remove any pets with same id
+    orders --= orders.filter(o => o.getId == order.getId)
     orders += order
   }
 
   def deleteOrder(orderId:Long):Unit = {
-    for (order <- orders){
-      if (order.getId() == orderId){
-        orders -= order
-      }
-    }
+    orders --= orders.filter(o => o.getId == orderId)
   }
 
   private def createOrder(id:Long, petId:Long, quantity:Int, shipDate:Date, status:String):Order = {

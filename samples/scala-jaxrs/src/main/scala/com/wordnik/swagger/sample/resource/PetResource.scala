@@ -70,7 +70,7 @@ trait PetResource extends RestResourceUtil {
     new ApiError(code = 404, reason = "Pet not found"),
     new ApiError(code = 405, reason = "Validation exception")))
   def updatePet(
-    @ApiParam(value = "Pet object that needs to be added to the store", required = true) pet: Pet) = {
+    @ApiParam(value = "Pet object that needs to be updated in the store", required = true) pet: Pet) = {
     petData.addPet(pet)
     Response.ok.entity("SUCCESS").build
   }
