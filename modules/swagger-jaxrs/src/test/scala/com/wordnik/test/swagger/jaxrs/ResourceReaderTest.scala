@@ -52,8 +52,8 @@ class ResourceReaderTest extends FlatSpec with ShouldMatchers {
     assert(doc.swaggerVersion == "2.345")
     assert(doc.basePath == "http://my.host.com/basepath")
     assert(doc.resourcePath == "/sample")
-    assert(doc.getApis.size == 1)
-    assert(doc.getModels.size == 1)
+    assert(doc.getApis.size === 2)
+    assert(doc.getModels.size === 2)
     
     // verify the "howdy" model
     val props = doc.getModels().get("Howdy").properties.toMap
@@ -73,11 +73,14 @@ class ResourceReaderTest extends FlatSpec with ShouldMatchers {
     assert(doc.swaggerVersion === "2.345")
     assert(doc.basePath === "http://my.host.com/basepath")
     assert(doc.resourcePath === "/sample")
-    assert(doc.getApis.size === 1)
-    assert(doc.getModels.size === 1)
+    assert(doc.getApis.size === 2)
+    assert(doc.getModels.size === 2)
 
     val props = doc.getModels().get("Howdy").properties.toMap
     assert((props.map(key=>key._1).toSet & Set("id", "theName", "theValue")).size == 3)
+    val inputprops = doc.getModels().get("SampleInput").properties.toMap
+    assert((inputprops.map(key=>key._1).toSet & Set("name", "value")).size === 2)
+
   }
 
   it should "NOT read a resource class from a listing path" in {

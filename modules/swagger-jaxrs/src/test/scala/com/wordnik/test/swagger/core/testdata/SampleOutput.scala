@@ -16,12 +16,11 @@
 
 package com.wordnik.test.swagger.core.testdata
 
-import com.wordnik.swagger.core._
-
 
 import javax.xml.bind.annotation._
 
 import scala.reflect.BeanProperty
+import com.wordnik.swagger.core.ApiProperty
 
 @XmlRootElement (name="howdy")
 @XmlAccessorType(XmlAccessType.NONE)
