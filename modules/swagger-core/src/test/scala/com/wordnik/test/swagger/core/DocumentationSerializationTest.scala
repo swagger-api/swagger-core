@@ -19,6 +19,10 @@ package com.wordnik.test.swagger.core
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.core.util._
 
+import javax.xml.bind._
+import javax.xml.bind.annotation._
+import java.io.ByteArrayOutputStream
+
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
@@ -30,7 +34,28 @@ import scala.reflect.BeanProperty
 @RunWith(classOf[JUnitRunner])
 class DocumentationSerializationTest extends FlatSpec with ShouldMatchers {
   behavior of "documentation"
-  it should "serialize" in {
+  
+  it should "serialize to json" in {
+    val doc = getDoc
+    val json = JsonUtil.getJsonMapper.writeValueAsString(doc)
+    val um = JsonUtil.getJsonMapper.readValue(json, classOf[Documentation])
+    val json2 = JsonUtil.getJsonMapper.writeValueAsString(um)
+    assert(json === json2)
+    assert(um.swaggerVersion === SwaggerSpec.version)
+  }
+  
+  it should "serialize to xml" in {
+    val doc = getDoc
+    val ctx = JAXBContext.newInstance(classOf[Documentation])
+    var m = ctx.createMarshaller()
+    
+    val baos = new ByteArrayOutputStream
+    m.marshal(doc, baos)
+    
+    println(baos.toString)
+  }
+  
+  def getDoc = {
     val doc = new Documentation("api-12345",
       SwaggerSpec.version,
       "http://www.foo.com/api",
@@ -42,10 +67,6 @@ class DocumentationSerializationTest extends FlatSpec with ShouldMatchers {
     operation.setResponseTypeInternal("String")
     api.addOperation(operation)
     doc.addApi(api)
-    val json = JsonUtil.getJsonMapper.writeValueAsString(doc)
-    val um = JsonUtil.getJsonMapper.readValue(json, classOf[Documentation])
-    val json2 = JsonUtil.getJsonMapper.writeValueAsString(um)
-    assert(json === json2)
-    assert(um.swaggerVersion === SwaggerSpec.version)
+    doc
   }
 }
