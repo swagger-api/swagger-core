@@ -368,8 +368,8 @@ class DocumentationObject extends Name {
   }
 
   private def setSchemaTypeDef(currentField: DocumentationParameter, currentSchema: DocumentationSchema) = {
-    val isList = currentField.paramType.contains("List[");
-    val isSet = currentField.paramType.contains("Set[");
+    val isList = currentField.paramType.startsWith("List[");
+    val isSet = currentField.paramType.startsWith("Set[");
 
     if (isList || isSet) {
       currentSchema.setType("array")
