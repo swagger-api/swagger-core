@@ -28,4 +28,5 @@ public @interface ApiProperty {
     String allowableValues() default "";
     String access() default "";
     String notes() default "";
+    String dataType() default "";
 }
