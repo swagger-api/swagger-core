@@ -7,7 +7,7 @@ import java.util.List;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "allowableListValues")
-public class DocumentationAllowableListValues implements DocumentationAllowableValues {
+public class DocumentationAllowableListValues extends DocumentationAllowableValues {
 	private List<String> values = null;
 
 	public DocumentationAllowableListValues copy() {

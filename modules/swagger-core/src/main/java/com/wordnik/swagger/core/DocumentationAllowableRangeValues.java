@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.*;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "allowableRangeValues")
-public class DocumentationAllowableRangeValues implements DocumentationAllowableValues {
+public class DocumentationAllowableRangeValues extends DocumentationAllowableValues {
 	float min;
 	float max;
 

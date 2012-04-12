@@ -1,6 +1,6 @@
 package com.wordnik.swagger.core;
 
-import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.*;
 
 import org.codehaus.jackson.*;
 import org.codehaus.jackson.annotate.*;
@@ -16,10 +16,10 @@ import static org.codehaus.jackson.annotate.JsonTypeInfo.*;
 })  
 @XmlSeeAlso({ DocumentationAllowableListValues.class,
 		DocumentationAllowableRangeValues.class })
-public interface DocumentationAllowableValues {
-	public DocumentationAllowableValues copy();
+public abstract class DocumentationAllowableValues {
+	public abstract DocumentationAllowableValues copy();
 
-	public String getValueType();
+	public abstract String getValueType();
 
-	public void setValueType(String valueType);
+	public abstract void setValueType(String valueType);
 }
