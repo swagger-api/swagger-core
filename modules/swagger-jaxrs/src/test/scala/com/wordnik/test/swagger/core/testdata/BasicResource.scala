@@ -40,4 +40,20 @@ class BasicResource {
     out.value = "bar"
     Response.ok.entity(out).build
   }
+
+  @POST
+  @ApiOperation(value = "Post object",
+    notes = "No details provided",
+    responseClass = "com.wordnik.test.swagger.core.testdata.SampleOutput")
+  @ApiErrors(Array(
+    new ApiError(code = 400, reason = "Invalid ID"),
+    new ApiError(code = 404, reason = "object not found")))
+  def postTest(
+               @ApiParam(value = "sample input data", required = true)input: SampleInput) = {
+    val out = new SampleOutput
+    out.name = "foo"
+    out.value = "bar"
+    Response.ok.entity(out).build
+  }
+
 }

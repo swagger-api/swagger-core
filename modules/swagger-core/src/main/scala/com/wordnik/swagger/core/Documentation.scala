@@ -16,8 +16,10 @@
 
 package com.wordnik.swagger.core
 
-import org.codehaus.jackson.map.annotate.JsonSerialize
-import org.codehaus.jackson.annotate.{ JsonIgnore, JsonProperty }
+import org.codehaus.jackson._
+import org.codehaus.jackson.annotate._
+import org.codehaus.jackson.map._
+import org.codehaus.jackson.map.annotate._
 
 import java.util.HashMap
 
@@ -44,25 +46,24 @@ class Documentation(var apiVersion: String,
   var swaggerVersion: String,
   var basePath: String,
   var resourcePath: String) {
-
   def this() = this(null, null, null, null)
-  
-  @XmlElement 
+
+  @XmlElement
   def getApiVersion = apiVersion
-  def setApiVersion(apiVersion:String) = this.apiVersion = apiVersion
-  
+  def setApiVersion(apiVersion: String) = this.apiVersion = apiVersion
+
   @XmlElement
   def getSwaggerVersion = swaggerVersion
-  def setSwaggerVersion(swaggerVersion:String) = this.swaggerVersion = swaggerVersion
-  
+  def setSwaggerVersion(swaggerVersion: String) = this.swaggerVersion = swaggerVersion
+
   @XmlElement
   def getBasePath = basePath
-  def setBasePath(basePath:String) = this.basePath = basePath
-  
+  def setBasePath(basePath: String) = this.basePath = basePath
+
   @XmlElement
   def getResourcePath = resourcePath
-  def setResourcePath(resourcePath:String) = this.resourcePath = resourcePath
-  
+  def setResourcePath(resourcePath: String) = this.resourcePath = resourcePath
+
   private var apis = new ListBuffer[DocumentationEndPoint]
 
   @XmlElement(name = "apis")
@@ -135,15 +136,13 @@ class DocumentationEndPoint(@BeanProperty var path: String, @BeanProperty var de
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @XmlRootElement(name = "operation")
-class DocumentationOperation(@BeanProperty var httpMethod: String,
+class DocumentationOperation(
+  @BeanProperty var httpMethod: String,
   @BeanProperty var summary: String,
   @BeanProperty var notes: String) {
-  @BeanProperty
-  var deprecated: java.lang.Boolean = null
-  @BeanProperty
-  var responseClass: String = _
-  @BeanProperty
-  var nickname: String = _
+  @BeanProperty var deprecated: java.lang.Boolean = null
+  @BeanProperty var responseClass: String = _
+  @BeanProperty var nickname: String = _
 
   def this() = this(null, null, null)
 
@@ -236,14 +235,10 @@ class DocumentationParameter(
   @BeanProperty var allowableValues: DocumentationAllowableValues,
   @BeanProperty var required: Boolean,
   @BeanProperty var allowMultiple: Boolean) {
-  @BeanProperty
-  var paramAccess: String = _
-  @BeanProperty
-  var internalDescription: String = _
-  @BeanProperty
-  var wrapperName: String = _
-  @BeanProperty
-  var dataType: String = _
+  @BeanProperty var paramAccess: String = _
+  @BeanProperty var internalDescription: String = _
+  @BeanProperty var wrapperName: String = _
+  @BeanProperty var dataType: String = _
 
   def this() = this(null, null, null, null, null, null, false, false)
 
@@ -257,7 +252,7 @@ class DocumentationParameter(
   override def clone(): Object = {
     var clonedAllowValues: DocumentationAllowableValues = null;
     if (null != allowableValues) {
-      clonedAllowValues = allowableValues.clone().asInstanceOf[DocumentationAllowableValues]
+      clonedAllowValues = allowableValues.copy()
     }
     val cloned = new DocumentationParameter(name, description, notes, paramType, defaultValue, clonedAllowValues,
       required, allowMultiple)
@@ -270,43 +265,6 @@ class DocumentationParameter(
 
     cloned
   }
-}
-
-/**
- * Generic interface for allowable values
- */
-@XmlSeeAlso(Array(classOf[DocumentationAllowableListValues], classOf[DocumentationAllowableRangeValues]))
-class DocumentationAllowableValues {
-  override def clone(): Object = {
-    this
-  }
-}
-
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@XmlRootElement(name = "allowableListValues")
-class DocumentationAllowableListValues(@BeanProperty var values: java.util.List[String]) extends DocumentationAllowableValues {
-  val LIST_ALLOWABLE_VALUES = "LIST"
-
-  @BeanProperty
-  var valueType: String = LIST_ALLOWABLE_VALUES
-
-  def this() = this(null)
-  override def clone(): Object = new DocumentationAllowableListValues(values)
-}
-
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@XmlRootElement(name = "allowableRangeValues")
-class DocumentationAllowableRangeValues(@BeanProperty var min: java.lang.Float,
-  @BeanProperty var max: java.lang.Float) extends DocumentationAllowableValues {
-
-  val RANGE_ALLOWABLE_VALUES = "RANGE"
-
-  @BeanProperty
-  var valueType: String = RANGE_ALLOWABLE_VALUES
-
-  def this() = this(null, null)
-
-  override def clone(): Object = new DocumentationAllowableRangeValues(min, max)
 }
 
 //TODO - remove this Response class entirely as it is now catured in Operation
@@ -386,7 +344,7 @@ class DocumentationObject extends Name {
     if (fields.length > 0) schemaObject.properties = new HashMap[String, DocumentationSchema]() else return null
 
     fields.foreach(currentField => {
-      if(null != currentField.paramType) {
+      if (null != currentField.paramType) {
         val fieldSchema: DocumentationSchema = new DocumentationSchema()
         setSchemaTypeDef(currentField, fieldSchema)
         fieldSchema.required = currentField.required
@@ -410,8 +368,8 @@ class DocumentationObject extends Name {
   }
 
   private def setSchemaTypeDef(currentField: DocumentationParameter, currentSchema: DocumentationSchema) = {
-    val isList = currentField.paramType.contains("List[");
-    val isSet = currentField.paramType.contains("Set[");
+    val isList = currentField.paramType.startsWith("List[");
+    val isSet = currentField.paramType.startsWith("Set[");
 
     if (isList || isSet) {
       currentSchema.setType("array")

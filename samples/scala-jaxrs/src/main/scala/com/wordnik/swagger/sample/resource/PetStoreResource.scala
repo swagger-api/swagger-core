@@ -50,13 +50,13 @@ trait PetStoreResource extends RestResourceUtil {
 
   @POST
   @Path("/order")
-  @ApiOperation(value = "Place an order for a pet", responseClass = "com.wordnik.swagger.sample.model.Order")
+  @ApiOperation(value = "Place an order for a pet", responseClass = "void")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid order")))
   def placeOrder(
       @ApiParam(value="order placed for purchasing the pet",required=true)order: Order) = {
       storeData.placeOrder(order)
-      Response.ok.entity("").build
+      Response.ok.build
   }
 
   @DELETE
@@ -69,7 +69,7 @@ trait PetStoreResource extends RestResourceUtil {
   def deleteOrder(
       @ApiParam(value="ID of the order that needs to be deleted",required=true)@PathParam("orderId") orderId: String) = {
       storeData.deleteOrder(getLong(0, 10000, 0, orderId))
-      Response.ok.entity("").build
+      Response.ok.build
   }
 }
 

@@ -86,14 +86,12 @@ trait ApiListing {
           val resourceMediaType = {
             if (headers.getRequestHeaders().contains("Content-type")) {
               logger.debug("using content-type headers")
-
               val objs = new scala.collection.mutable.ListBuffer[String]
               headers.getRequestHeaders()("Content-type").foreach(h =>
                 h.split(",").foreach(str => objs += str.trim))
               objs.toSet
             } else if (headers.getRequestHeaders().contains("Accept")) {
               logger.debug("using accept headers")
-
               val objs = new scala.collection.mutable.ListBuffer[String]
               headers.getRequestHeaders()("Accept").foreach(h =>
                 h.split(",").foreach(str => objs += str.trim))
