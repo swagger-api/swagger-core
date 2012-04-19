@@ -32,6 +32,7 @@ The application will listen on port 9000 and respond to `http://localhost:9000/r
 Note the following limitations:
 
 <li>- only `/pet` is available</li>
+
 <li>- api_key filtering is not implemented</li>
 
 ### Applying an API key
