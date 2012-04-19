@@ -1,0 +1,1 @@
+java -Dhttp.port=80 "$@" -cp "`dirname $0`/lib/*" play.core.server.NettyServer `dirname $0`
