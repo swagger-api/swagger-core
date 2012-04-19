@@ -29,20 +29,8 @@ play run
 The application will listen on port 9000 and respond to `http://localhost:9000/resources.json`
 
 ### Limitations
-Note the following limitations:
+Note the following limitations (which will go away very, very soon):
 
 <li>- only `/pet` is available</li>
 
-<li>- api_key filtering is not implemented</li>
-
-### Applying an API key
-The sample app has an implementation of the Swagger ApiAuthorizationFilter.  This restricts access to resources
-based on api-key.  There are two keys defined in the sample app:
-
-<li>- default-key</li>
-
-<li>- special-key</li>
-
-When no key is applied, the "default-key" is applied to all operations.  If the "special-key" is entered, a
-number of other resources are shown in the UI, including sample CRUD operations.  Note this behavior is similar
-to that on http://developer.wordnik.com/docs but the behavior is entirely up to the implementor.
+<li>- `api_key` filtering is not implemented</li>
