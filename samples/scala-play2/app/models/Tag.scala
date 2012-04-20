@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package app.models
+package models
 
 import javax.xml.bind.annotation.XmlRootElement._
 import javax.xml.bind.annotation.{XmlRootElement, XmlElement}

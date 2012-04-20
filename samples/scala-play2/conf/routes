@@ -9,6 +9,7 @@ GET     /resources.json			                controllers.ApiHelpController.getResou
 GET     /pet.json				                    controllers.ApiHelpController.getResource(path = "/pet")
 
 POST    /pet.json                           controllers.PetApiController.addPet
+PUT    	/pet.json                           controllers.PetApiController.updatePet
 GET     /pet.json/findByStatus              controllers.PetApiController.findPetsByStatus(status)
 GET     /pet.json/findByTags	              controllers.PetApiController.findPetsByTags(tags)
 GET     /pet.json/:id	                      controllers.PetApiController.getPetById(id)
