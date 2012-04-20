@@ -41,6 +41,7 @@ class SwaggerBaseApiController extends Controller {
   protected def jaxbContext(): JAXBContext = JAXBContext.newInstance(classOf[String])
   protected def returnXml(request: Request[_]) = request.path.contains(".xml")
   protected val ok = "OK"
+  protected val AccessControlAllowOrigin = ("Access-Control-Allow-Origin", "*")
 
   protected def XmlResponse(o: Any) = {
     val xmlValue = {
@@ -56,7 +57,8 @@ class SwaggerBaseApiController extends Controller {
   }
 
   protected def returnValue(request: Request[_], obj: Any): Result = {
-    if (returnXml(request)) XmlResponse(obj) else JsonResponse(obj)
+    val response = if (returnXml(request)) XmlResponse(obj) else JsonResponse(obj)
+    response.withHeaders(AccessControlAllowOrigin)
   }
 
   protected def JsonResponse(data: Any) = {
