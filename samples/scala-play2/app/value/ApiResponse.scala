@@ -1,4 +1,4 @@
-package app.value
+package value
 
 import javax.xml.bind.annotation._
 
