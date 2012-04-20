@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package app.models
+package models
 
 import com.wordnik.swagger.core.ApiProperty
 import com.wordnik.swagger.core.ApiProperty._

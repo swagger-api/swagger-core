@@ -1,0 +1,44 @@
+Swagger for Play 2.0 Apps
+
+>>>>>INSTALLATION
+0. This works with Play 2.0 
+
+1. Clone, build and deploy this fork of swagger-core using "ant deploy". This fork works with scala 2.9.1 which Play 2.0 requires and has additional annotations for supporting Play 2.0 style controllers.
+https://github.com/ayush/swagger-core
+
+2. Clone swagger-play2 from https://github.com/ayush/swagger-play2
+
+3. Deploy swagger-play2 using play2's publish-local command
+
+4. In YOUR APP's Build.scala, add this dependency
+  	"swagger-play2" %% "swagger-play2" % "1.0"
+
+5. In YOUR APP, do reload/update and swagger-play2 should be present.
+
+>>>>>USAGE - routes file
+in YOUR APP's routes add these lines:
+# Swagger - Root Resources Listing
+GET  /resources.json  		controllers.ApiHelpController.getResources
+GET  /resources.xml				controllers.ApiHelpController.getResources
+
+# Swagger - Resources
+GET  /admin.json				controllers.ApiHelpController.getResource(path = "/admin")
+GET  /admin.xml					controllers.ApiHelpController.getResource(path = "/admin")
+
+GET  /admin.json/health			controllers.AdminController.getHealth()
+GET  /admin.xml/health			controllers.AdminController.getHealth()
+GET  /admin.json/ping			controllers.AdminController.ping()
+GET  /admin.xml/ping			controllers.AdminController.ping()
+
+>>>>>USAGE - controllers
+For Swagger to recognize your controller methods as API point, you can add the following annotations to a controller method:
+  @Path("/add-employee")  
+  @ApiOperation(value = "Add a new employee", notes = "", responseClass = "string", httpMethod = "POST")
+  @ApiParamsImplicit(Array( 
+  new ApiParamImplicit(name = "id", value = "id of employee", required = true, dataType = "string", paramType = "query"),
+  	new ApiParamImplicit(name = "name", value = "Name of employee", required = true, dataType = "string", paramType = "query"),
+  	new ApiParamImplicit(name = "salary", value = "The salary which the poor soul gets", required = true, dataType = "string", paramType = "query")
+  ))
+  def addEmployee() = Action { implicit request =>
+     // get the params and do the jig
+  }

@@ -1,6 +1,6 @@
-package app.api
+package api
 
-import app.models._
+import models._
 
 import java.util.ArrayList
 

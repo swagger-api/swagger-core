@@ -1,7 +1,7 @@
 package controllers
 
-import app.models._
-import app.api._
+import models._
+import api._
 
 import play.api._
 import play.api.mvc._
@@ -16,7 +16,6 @@ import javax.ws.rs.Path
 import java.io.StringWriter
 
 import play.api.data.format.Formats._
-import api._
 import com.wordnik.swagger.core._
 
 @Api(value = "/pet", description = "Operations about pets")
@@ -30,7 +29,7 @@ object PetApiController extends BaseApiController {
   def getPetById(id: String) = Action { implicit request =>
     petData.getPetbyId(getLong(0, 100000, 0, id)) match {
       case Some(pet) => JsonResponse(pet)
-      case _ => JsonResponse(new app.value.ApiResponse(404, "Pet not found"), 404)
+      case _ => JsonResponse(new value.ApiResponse(404, "Pet not found"), 404)
     }
   }
 
@@ -46,7 +45,7 @@ object PetApiController extends BaseApiController {
         petData.addPet(pet)
         Ok
       }
-      case None => JsonResponse(new app.value.ApiResponse(400, "Invalid input"))
+      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"))
     }
   }
 
@@ -63,13 +62,13 @@ object PetApiController extends BaseApiController {
         val pet = BaseApiController.mapper.readValue(e.toString, classOf[Pet]).asInstanceOf[Pet]
         JsonResponse(pet)
       }
-      case None => JsonResponse(new app.value.ApiResponse(404, "sorry"))
+      case None => JsonResponse(new value.ApiResponse(404, "sorry"))
     }
   }
 
   @ApiOperation(value = "Finds Pets by status",
     notes = "Multiple status values can be provided with comma seperated strings",
-    responseClass = "com.wordnik.swagger.sample.model.Pet", multiValueResponse = true)
+    responseClass = "models.Pet", multiValueResponse = true)
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid status value")))
   def findPetsByStatus(
@@ -82,7 +81,7 @@ object PetApiController extends BaseApiController {
   @Path("/findByTags")
   @ApiOperation(value = "Finds Pets by tags",
     notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
-    responseClass = "com.wordnik.swagger.sample.model.Pet", multiValueResponse = true)
+    responseClass = "models.Pet", multiValueResponse = true)
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid tag value")))
   @Deprecated
@@ -93,3 +92,4 @@ object PetApiController extends BaseApiController {
     JsonResponse(results)
   }
 }
+
