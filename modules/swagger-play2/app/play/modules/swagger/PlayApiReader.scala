@@ -32,6 +32,14 @@ object PlayApiReader {
   import play.core.Router.RoutesCompiler.RouteFileParser
   private val endpointsCache = scala.collection.mutable.Map.empty[Class[_], Documentation]
   lazy val routesCache: Map[String, Route] = populateRoutesCache
+  var FORMAT_STRING = ".{format}"
+  
+  def setFormatString(str: String) = {
+    if (FORMAT_STRING != str) {
+      endpointsCache.clear
+      FORMAT_STRING = str
+    }
+  }
 
   def read(hostClass: Class[_], apiVersion: String, swaggerVersion: String, basePath: String, apiPath: String): Documentation = {
     endpointsCache.get(hostClass) match {
@@ -75,13 +83,27 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
 
   val documentation = new Documentation
   val apiEndpoint = hostClass.getAnnotation(classOf[Api])
+  
+  var FORMAT_STRING = ".{format}"
+  val LIST_RESOURCES_PATH = "/resources"
+
+  def setFormatString(str: String) = {
+    Logger debug("setting format string")
+    if (FORMAT_STRING != str) {
+      Logger debug("clearing endpoint cache")
+      FORMAT_STRING = str
+    }
+  }
 
   override def getPath(method: Method) = {
     val fullMethodName = method.getDeclaringClass.getName + "." + method.getName
     val lookup = PlayApiReader.routesCache.get(fullMethodName)
-    lookup match {
-      case Some(route) => route.path.parts map { part =>
-        {
+
+    Logger debug (lookup.get.path.toString)
+
+    val str = lookup match {
+      case Some(route) => route.path.parts map { 
+        part => {
           part match {
             case DynamicPart(name, _) => "{" + name + "}"
             case StaticPart(name) => name
@@ -90,7 +112,14 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
       } mkString
       case None => Logger error "Cannot determine Path. Nothing defined in play routes file for api method " + method.toString; this.resourcePath
     }
+    val s = FORMAT_STRING match {
+      case "" => str
+      case e: String => str.replaceAll(".json", FORMAT_STRING).replaceAll(".xml", FORMAT_STRING)
+    }
+    Logger debug (s)
+    s
   }
+
   override protected def processOperation(method: Method, o: DocumentationOperation) = {
     val fullMethodName = method.getDeclaringClass.getCanonicalName + "." + method.getName
     val lookup = PlayApiReader.routesCache.get(fullMethodName)

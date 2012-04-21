@@ -1,21 +1,27 @@
 package controllers
 
+import com.wordnik.swagger.core._
+import com.wordnik.swagger.core.util.JsonUtil
+
+import org.slf4j.LoggerFactory
+
 import play.api._
 import play.api.mvc._
 import play.api.data._
-import format.Formats._
+import play.api.data.format.Formats._
 import play.api.data.validation.Constraints._
-import javax.xml.bind.JAXBContext
-import java.io.StringWriter
-import reflect.BeanProperty
+import play.api.Logger
+import play.modules.swagger.ApiHelpInventory
+
 import org.codehaus.jackson.map.ObjectMapper
 import org.codehaus.jackson.map.SerializationConfig
-import com.wordnik.swagger.core._
-import play.api.Logger
-import scala.collection.JavaConversions._
-import org.slf4j.LoggerFactory
-import play.modules.swagger.ApiHelpInventory
+
+import javax.xml.bind.JAXBContext
+import java.io.StringWriter
 import javax.ws.rs.Path
+
+import scala.reflect.BeanProperty
+import scala.collection.JavaConversions._
 
 /**
  * This controller exposes swagger compatiable help apis.<br/>
