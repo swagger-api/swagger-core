@@ -11,7 +11,7 @@ import play.api.data.Forms._
 import play.api.data.format.Formats._
 import play.api.Play.current
 
-import javax.ws.rs.Path
+import javax.ws.rs._
 
 import java.io.StringWriter
 
@@ -29,7 +29,7 @@ object StoreApiController extends BaseApiController {
     new ApiError(code = 400, reason = "Invalid ID supplied"),
     new ApiError(code = 404, reason = "Order not found")))
   def getOrderById(
-    @ApiParam(value = "ID of pet that needs to be fetched", required = true) orderId: String) = Action { implicit request =>
+    @ApiParam(value = "ID of pet that needs to be fetched", required = true)@PathParam("orderId") orderId: String) = Action { implicit request =>
     storeData.findOrderById(getLong(0, 10000, 0, orderId)) match {
       case Some(order) => JsonResponse(order)
       case _ => JsonResponse(new value.ApiResponse(404, "Order not found"), 404)
@@ -60,7 +60,7 @@ object StoreApiController extends BaseApiController {
     new ApiError(code = 400, reason = "Invalid ID supplied"),
     new ApiError(code = 404, reason = "Order not found")))
   def deleteOrder(
-    @ApiParam(value = "ID of the order that needs to be deleted", required = true) orderId: String) = Action { implicit request =>
+    @ApiParam(value = "ID of the order that needs to be deleted", required = true) @PathParam("orderId") orderId: String) = Action { implicit request =>
     storeData.deleteOrder(getLong(0, 10000, 0, orderId))
     Ok
   }

@@ -11,7 +11,7 @@ import play.api.data.Forms._
 import play.api.data.format.Formats._
 import play.api.Play.current
 
-import javax.ws.rs.Path
+import javax.ws.rs._
 
 import java.io.StringWriter
 
@@ -37,7 +37,7 @@ object UserApiController extends BaseApiController {
   }
 
   @Path("/createWithArray")
-  @ApiOperation(value = "Creates list of users with given input array")
+  @ApiOperation(value = "Creates list of users with given input array", responseClass = "void")
   @ApiParamsImplicit(Array(
     new ApiParamImplicit(name = "body", value = "List of user object", required = true, dataType = "Array[User]", paramType = "body")))
   def createUsersWithArrayInput = Action { implicit request =>
@@ -52,7 +52,7 @@ object UserApiController extends BaseApiController {
   }
 
   @Path("/createWithList")
-  @ApiOperation(value = "Creates list of users with given list input")
+  @ApiOperation(value = "Creates list of users with given list input", responseClass = "void")
   @ApiParamsImplicit(Array(
     new ApiParamImplicit(name = "body", value = "List of user object", required = true, dataType = "List[User]", paramType = "body")))
   def createUsersWithListInput = Action { implicit request =>
@@ -74,7 +74,7 @@ object UserApiController extends BaseApiController {
   @ApiParamsImplicit(Array(
     new ApiParamImplicit(name = "body", value = "Updated user object", required = true, dataType = "List[User]", paramType = "body")))
   def updateUser(
-    @ApiParam(value = "name that need to be deleted", required = true) username: String) = Action { implicit request =>
+    @ApiParam(value = "name that need to be updated", required = true)@PathParam("username") username: String) = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
         val user = BaseApiController.mapper.readValue(e.toString, classOf[User]).asInstanceOf[User]

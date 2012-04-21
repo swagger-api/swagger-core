@@ -11,7 +11,7 @@ import play.api.data.Forms._
 import play.api.data.format.Formats._
 import play.api.Play.current
 
-import javax.ws.rs.Path
+import javax.ws.rs.{ Path, QueryParam }
 
 import java.io.StringWriter
 
@@ -23,10 +23,14 @@ object PetApiController extends BaseApiController {
   var petData = new PetData
 
   @Path("/{id}")
-  @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5. " +
-    "Anything above 5 or nonintegers will generate API errors", responseClass = "Pet", httpMethod = "GET")
+  @ApiOperation(value = "Find pet by ID", notes = "Returns a pet when ID < 10. " +
+    "ID > 10 or nonintegers will simulate API error conditions", responseClass = "Pet", httpMethod = "GET")
   @ApiParamsImplicit(Array(
-    new ApiParamImplicit(name = "id", value = "ID of pet that needs to be fetched", required = true, dataType = "String", paramType = "path")))
+    new ApiParamImplicit(name = "id", value = "ID of pet that needs to be fetched", required = true, dataType = "String", paramType = "path",
+      allowableValues = "range[0,10]")))
+  @ApiErrors(Array(
+    new ApiError(code = 400, reason = "Invalid ID supplied"),
+    new ApiError(code = 404, reason = "Pet not found")))
   def getPetById(id: String) = Action { implicit request =>
     petData.getPetbyId(getLong(0, 100000, 0, id)) match {
       case Some(pet) => JsonResponse(pet)
@@ -34,7 +38,7 @@ object PetApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Add a new pet to the store")
+  @ApiOperation(value = "Add a new Pet", responseClass = "void")
   @ApiErrors(Array(
     new ApiError(code = 405, reason = "Invalid input")))
   @ApiParamsImplicit(Array(
@@ -50,7 +54,7 @@ object PetApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Add a new pet to the store")
+  @ApiOperation(value = "Update an existing Pet", responseClass = "void")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid ID supplied"),
     new ApiError(code = 404, reason = "Pet not found"),
@@ -74,7 +78,7 @@ object PetApiController extends BaseApiController {
     new ApiError(code = 400, reason = "Invalid status value")))
   def findPetsByStatus(
     @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available",
-      allowableValues = "available,pending,sold", allowMultiple = true) status: String) = Action { implicit request =>
+      allowableValues = "available,pending,sold", allowMultiple = true)@QueryParam("status") status: String) = Action { implicit request =>
     var results = petData.findPetByStatus(status)
     JsonResponse(results)
   }
@@ -85,10 +89,9 @@ object PetApiController extends BaseApiController {
     responseClass = "models.Pet", multiValueResponse = true)
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid tag value")))
-  @Deprecated
   def findPetsByTags(
     @ApiParam(value = "Tags to filter by", required = true,
-      allowMultiple = true) tags: String) = Action { implicit request =>
+      allowMultiple = true)@QueryParam("tags") tags: String) = Action { implicit request =>
     var results = petData.findPetByTags(tags)
     JsonResponse(results)
   }

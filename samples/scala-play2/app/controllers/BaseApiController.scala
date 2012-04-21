@@ -30,6 +30,7 @@ class BaseApiController extends Controller with RestResourceUtil {
 
     val jsonValue: String = w.toString()
     new SimpleResult[String](header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(jsonValue)).as("application-json")
+      .withHeaders(("Access-Control-Allow-Origin", "*"))
   }
 
   protected def JsonResponse(data: Object, code: Int) = {
@@ -39,5 +40,6 @@ class BaseApiController extends Controller with RestResourceUtil {
 
     val jsonValue: String = w.toString()
     new SimpleResult[String](header = ResponseHeader(code), body = play.api.libs.iteratee.Enumerator(jsonValue)).as("application-json")
+      .withHeaders(("Access-Control-Allow-Origin", "*"))
   }
 }
