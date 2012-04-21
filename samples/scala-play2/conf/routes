@@ -19,6 +19,7 @@ POST    /store.json                         controllers.StoreApiController.place
 GET     /store.json/:orderId	              controllers.StoreApiController.getOrderById(orderId)
 DELETE  /store.json/:orderId	              controllers.StoreApiController.deleteOrder(orderId)
 
+GET     /user.json				                  controllers.ApiHelpController.getResource(path = "/user")
 POST    /user.json                          controllers.UserApiController.createUser
 POST    /user.json/createWithArray          controllers.UserApiController.createUsersWithArrayInput
 POST    /user.json/createWithList           controllers.UserApiController.createUsersWithListInput
