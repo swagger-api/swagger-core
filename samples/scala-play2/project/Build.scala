@@ -7,13 +7,11 @@ object ApplicationBuild extends Build {
   val appName = "petstore"
   val appVersion = "1.0"
 
-  Credentials.add("wordnik-remote-repos", "ci.aws.wordnik.com", "mavenuser", "DEEaffe987a")
-
   val appDependencies: Seq[sbt.ModuleID] = Seq(
-    "org.codehaus.jackson" % "jackson-jaxrs" % "1.8.5",
-    "org.codehaus.jackson" % "jackson-xc" % "1.8.5",
-    "org.codehaus.jackson" % "jackson-mapper-asl" % "1.8.5",
-    "org.codehaus.jackson" % "jackson-core-asl" % "1.8.5",
+    "org.codehaus.jackson" % "jackson-jaxrs" % "1.9.5",
+    "org.codehaus.jackson" % "jackson-xc" % "1.9.5",
+    "org.codehaus.jackson" % "jackson-mapper-asl" % "1.9.5",
+    "org.codehaus.jackson" % "jackson-core-asl" % "1.9.5",
     "swagger-play2" %% "swagger-play2" % "1.1-SNAPSHOT")
 
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(

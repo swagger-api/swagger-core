@@ -23,7 +23,8 @@ object PetApiController extends BaseApiController {
   var petData = new PetData
 
   @Path("/{id}")
-  @ApiOperation(value = "Add a new employee", notes = "", responseClass = "string", httpMethod = "GET")
+  @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5. " +
+    "Anything above 5 or nonintegers will generate API errors", responseClass = "Pet", httpMethod = "GET")
   @ApiParamsImplicit(Array(
     new ApiParamImplicit(name = "id", value = "ID of pet that needs to be fetched", required = true, dataType = "String", paramType = "path")))
   def getPetById(id: String) = Action { implicit request =>

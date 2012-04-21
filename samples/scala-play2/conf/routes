@@ -14,3 +14,16 @@ GET     /pet.json/findByStatus              controllers.PetApiController.findPet
 GET     /pet.json/findByTags	              controllers.PetApiController.findPetsByTags(tags)
 GET     /pet.json/:id	                      controllers.PetApiController.getPetById(id)
 
+GET     /store.json				                  controllers.ApiHelpController.getResource(path = "/store")
+POST    /store.json                         controllers.StoreApiController.placeOrder
+GET     /store.json/:orderId	              controllers.StoreApiController.getOrderById(orderId)
+DELETE  /store.json/:orderId	              controllers.StoreApiController.deleteOrder(orderId)
+
+POST    /user.json                          controllers.UserApiController.createUser
+POST    /user.json/createWithArray          controllers.UserApiController.createUsersWithArrayInput
+POST    /user.json/createWithList           controllers.UserApiController.createUsersWithListInput
+PUT     /user.json/:username                controllers.UserApiController.updateUser(username)
+DELETE  /user.json/:username                controllers.UserApiController.deleteUser(username)
+GET     /user.json/:username                controllers.UserApiController.getUserByName(username)
+GET     /user.json/login                    controllers.UserApiController.loginUser(username,password)
+GET     /user.json/logout                   controllers.UserApiController.logoutUser

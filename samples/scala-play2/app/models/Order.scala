@@ -61,7 +61,7 @@ class Order {
   }
 
   @XmlElement(name="status")
-  @ApiProperty(value = "Order Status", allowableValues = "placed, approved, delivered")
+  @ApiProperty(value = "Order Status", allowableValues = "placed,approved,delivered")
   def getStatus():String = {
     status
   }
