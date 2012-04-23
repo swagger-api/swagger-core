@@ -7,6 +7,7 @@ import com.wordnik.swagger.play._
 import javax.xml.bind.JAXBContext
 import java.io.StringWriter
 
+import play.api.mvc.RequestHeader
 import play.api.Play.current
 import play.api.Logger
 
@@ -46,7 +47,7 @@ object ApiHelpInventory {
   /**
    * Get a list of all top level resources
    */
-  private def getRootResources(format: String) = {
+  private def getRootResources(format: String)(implicit requestHeader: RequestHeader) = {
     var apiFilter: ApiAuthorizationFilter = null
     if (null != apiFilterClassName) {
       try {
@@ -63,7 +64,7 @@ object ApiHelpInventory {
       if (null != apiAnnotation) {
         val api = new DocumentationEndPoint(apiAnnotation.value + ".{format}", apiAnnotation.description())
         if (!isApiAdded(allApiDoc, api)) {
-          if (null == apiFilter || apiFilter.authorizeResource(api.path, null, null)) {
+          if (null == apiFilter || apiFilter.authorizeResource(api.path)) {
             allApiDoc.addApi(api)
           }
         }
@@ -80,7 +81,7 @@ object ApiHelpInventory {
   /**
    * Get detailed API/models for a given resource
    */
-  private def getResource(resourceName: String) = {
+  private def getResource(resourceName: String)(implicit requestHeader: RequestHeader) = {
     println("getting resource " + resourceName)
     getResourceMap.get(resourceName) match {
       case Some(clazz) => {
@@ -89,22 +90,21 @@ object ApiHelpInventory {
 
         Logger.debug("Loading resource " + resourceName + " from " + clazz + " @ " + currentApiPath)
 
-        val docs = new HelpApi(apiFilterClassName).filterDocs(
-          PlayApiReader.read(clazz, apiVersion, swaggerVersion, basePath, currentApiPath), null, null, currentApiPath, null)
+        val docs = new HelpApi(apiFilterClassName).filterDocs(PlayApiReader.read(clazz, apiVersion, swaggerVersion, basePath, currentApiPath), currentApiPath)
         Option(docs)
       }
       case None => None
     }
   }
 
-  def getPathHelpJson(apiPath: String): String = {
+  def getPathHelpJson(apiPath: String)(implicit requestHeader: RequestHeader): String = {
     getResource(apiPath) match {
       case Some(docs) => JsonUtil.getJsonMapper.writeValueAsString(docs)
       case None => null
     }
   }
 
-  def getPathHelpXml(apiPath: String): String = {
+  def getPathHelpXml(apiPath: String)(implicit requestHeader: RequestHeader): String = {
     getResource(apiPath) match {
       case Some(docs) => {
         val stringWriter = new StringWriter()
@@ -115,11 +115,11 @@ object ApiHelpInventory {
     }
   }
 
-  def getRootHelpJson(): String = {
+  def getRootHelpJson()(implicit requestHeader: RequestHeader): String = {
     JsonUtil.getJsonMapper.writeValueAsString(getRootResources("json"))
   }
 
-  def getRootHelpXml(): String = {
+  def getRootHelpXml()(implicit requestHeader: RequestHeader): String = {
     val stringWriter = new StringWriter()
     jaxbContext.createMarshaller().marshal(getRootResources("xml"), stringWriter);
     stringWriter.toString
