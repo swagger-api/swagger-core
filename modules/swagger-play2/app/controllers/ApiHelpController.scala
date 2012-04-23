@@ -18,7 +18,6 @@ import org.codehaus.jackson.map.SerializationConfig
 
 import javax.xml.bind.JAXBContext
 import java.io.StringWriter
-import javax.ws.rs.Path
 
 import scala.reflect.BeanProperty
 import scala.collection.JavaConversions._
@@ -33,11 +32,13 @@ import scala.collection.JavaConversions._
  */
 object ApiHelpController extends SwaggerBaseApiController {
   def getResources() = Action { request =>
+	implicit val requestHeader: RequestHeader = request;
     val resources = if (returnXml(request)) ApiHelpInventory.getRootHelpXml() else ApiHelpInventory.getRootHelpJson()
     returnValue(request, resources)
   }
 
   def getResource(path: String) = Action { request =>
+	implicit val requestHeader: RequestHeader = request;
     val help = if (returnXml(request)) ApiHelpInventory.getPathHelpXml(path) else ApiHelpInventory.getPathHelpJson(path)
     returnValue(request, help)
   }
