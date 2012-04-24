@@ -41,7 +41,6 @@ GET     /resources.json			                controllers.ApiHelpController.getResou
 In your controller for, say your "pet" resource:
 
 ````
-
   @Path("/{id}")
   @ApiOperation(value = "Find pet by ID", notes = "Returns a pet when ID < 10. " +
     "ID > 10 or nonintegers will simulate API error conditions", responseClass = "Pet", httpMethod = "GET")
@@ -57,7 +56,6 @@ In your controller for, say your "pet" resource:
       case _ => JsonResponse(new value.ApiResponse(404, "Pet not found"), 404)
     }
   }
-
 ````
 
 What this does is the following:
@@ -76,12 +74,11 @@ In the routes file, you then wire this api as follows:
 GET     /pet.json				                    controllers.ApiHelpController.getResource(path = "/pet")
 
 GET     /pet.json/:id	                      controllers.PetApiController.getPetById(id)
-
 ````
 
 This will "attach" the /pet.json api to the swagger resource listing, and the method to the `getPetById` method above
 
-#### The `ApiParam` types
+#### The ApiParam annotation
 
 Swagger for play has two types of `ApiParam`s--they are `ApiParam` and `ApiParamImplicit`.  The distinction is that some
 paramaters (variables) are passed to the method implicitly by the framework.  ALL body parameters need to be described
