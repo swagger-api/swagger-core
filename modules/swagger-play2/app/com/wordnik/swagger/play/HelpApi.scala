@@ -7,12 +7,12 @@ import org.slf4j.LoggerFactory
 
 import org.apache.commons.lang.StringUtils
 
-import javax.ws.rs.core.{ UriInfo, HttpHeaders }
 import java.rmi.server.Operation
 
 import scala.collection._
 import mutable._
 import scala.collection.JavaConversions._
+import play.api.mvc.RequestHeader
 
 class HelpApi {
   private val LOGGER = LoggerFactory.getLogger(classOf[HelpApi])
@@ -31,7 +31,7 @@ class HelpApi {
     }
   }
 
-  def filterDocs(doc: Documentation, headers: HttpHeaders, uriInfo: UriInfo, currentApiPath: String, listingPath: String): Documentation = {
+  def filterDocs(doc: Documentation, currentApiPath: String)(implicit requestHeader: RequestHeader): Documentation = {
     //todo: apply auth and filter doc to only those which apply to current request/api-key
     if (apiFilter != null) {
       var apisToRemove = new ListBuffer[DocumentationEndPoint]
@@ -42,11 +42,11 @@ class HelpApi {
             api.getOperations().foreach(apiOperation =>
               apiFilter match {
                 case apiAuthFilter: ApiAuthorizationFilter => {
-                  if (!apiAuthFilter.authorize(api.path, apiOperation.httpMethod, headers, uriInfo))
+                  if (!apiAuthFilter.authorize(api.path))
                     operationsToRemove += apiOperation
                 }
                 case filter: FineGrainedApiAuthorizationFilter => {
-                  if (!filter.authorizeOperation(api.path, apiOperation, headers, uriInfo))
+                  if (!filter.authorizeOperation(api.path, apiOperation))
                     operationsToRemove += apiOperation
                 }
                 case _ =>
