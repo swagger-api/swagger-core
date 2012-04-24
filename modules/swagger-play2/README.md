@@ -70,8 +70,6 @@ What this does is the following:
 
 * Returns error codes 400 and 404, with the messages provided
 
-````
-
 In the routes file, you then wire this api as follows:
 
 ````
