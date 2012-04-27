@@ -40,7 +40,7 @@ You need the following installed and available in your $PATH:
 
 <li>- Scala 2.8.1 (http://www.scala-lang.org).
 
-### To build from source (currently 1.02-SNAPSHOT)
+### To build from source (currently 1.1-SNAPSHOT)
 <pre>
 # first time building locally
 mvn -N
