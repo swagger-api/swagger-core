@@ -13,7 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.wordnik.swagger.core;
+
+package com.wordnik.swagger.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,6 +23,11 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ApiParamsImplicit {
-    ApiParamImplicit[] value();
+public @interface ApiResponse {
+
+    String value() default "ok";  //responseClass
+
+    String occurs() default "1"; //to indicate if return type will contain one or more of the response value
+
+    ApiError[] errors() default @ApiError(code = 404, reason = "No data available");
 }

@@ -22,9 +22,7 @@ import com.wordnik.swagger.core.ApiProperty.*;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlRootElement.*;
 import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.XmlElement.*;
 
 @XmlRootElement(name = "order")
 public class Order {

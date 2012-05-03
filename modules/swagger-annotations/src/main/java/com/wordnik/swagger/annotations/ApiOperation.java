@@ -14,19 +14,20 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.core;
+package com.wordnik.swagger.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ApiProperty {
-    String value() default "";
-    String allowableValues() default "";
-    String access() default "";
+public @interface ApiOperation {
+    String value();
+    String responseClass() default "ok";
+    boolean multiValueResponse() default false; //to indicate if return type will contain one or more of the response value
     String notes() default "";
-    String dataType() default "";
+    String tags() default "";
+    String httpMethod() default "";
 }

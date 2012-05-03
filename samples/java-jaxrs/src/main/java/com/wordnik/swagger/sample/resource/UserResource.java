@@ -16,8 +16,6 @@
 
 package com.wordnik.swagger.sample.resource;
 
-import com.wordnik.swagger.core.*;
-import com.wordnik.swagger.jaxrs.*;
 import com.wordnik.swagger.sample.data.UserData;
 import com.wordnik.swagger.sample.model.User;
 import com.wordnik.swagger.sample.exception.ApiException;
@@ -89,7 +87,7 @@ public class UserResource extends JavaHelp {
 			@ApiError(code = 400, reason = "Invalid username supplied"),
 			@ApiError(code = 404, reason = "User not found") })
 	public Response getUserByName(
-			@ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ", required = true) @PathParam("username") String username) 
+			@ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ", required = true) @PathParam("username") String username)
 		throws ApiException {
 		User user = userData.findUserByName(username);
 		if (null != user) {

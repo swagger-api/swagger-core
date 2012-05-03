@@ -17,7 +17,8 @@
 package com.wordnik.test.swagger.core
 
 import com.wordnik.swagger.core.util._
-import com.wordnik.swagger.core.{ApiProperty, ApiPropertiesReader}
+import com.wordnik.swagger.annotations.ApiProperty
+import com.wordnik.swagger.core.ApiPropertiesReader
 
 import javax.xml.bind._
 import javax.xml.bind.annotation._
@@ -68,7 +69,7 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
     var docObj = ApiPropertiesReader.read(classOf[TestClassWithScalaEnums])
     assert(docObj.getFields.filter(f=>f.name == "label").get(0).getParamType()  === "String")
   }
-  
+
   it should "read different data types properly " in {
     var docObj = ApiPropertiesReader.read(classOf[SampleDataTypes])
     var assertedFields = 0;
@@ -450,8 +451,8 @@ object ScalaEnums extends Enumeration {
 case class ScalaCaseClassWithScalaSupportedType(
                                                  intType: Int,
                                                  longType: Long,
-                                                 stringType: String, 
-                                                 dateType: java.util.Date, 
+                                                 stringType: String,
+                                                 dateType: java.util.Date,
                                                  mapType: Map[String,  Seq[ObjectWithRootElementName]],
                                                  optionType: Option[TestClassWithConstructorProperties],
                                                  seqType: Seq[String],

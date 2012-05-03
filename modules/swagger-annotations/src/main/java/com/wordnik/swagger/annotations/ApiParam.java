@@ -14,16 +14,16 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.core;
+package com.wordnik.swagger.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.METHOD)
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ApiParamImplicit {
+public @interface ApiParam {
     String name() default "";
     String value() default "";
     String defaultValue() default "";
@@ -32,6 +32,5 @@ public @interface ApiParamImplicit {
     String access() default "";
     String internalDescription() default "";
     boolean allowMultiple() default false;
-    String dataType() default "";
-    String paramType() default "";
 }
+
