@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collection;
 
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -171,7 +173,21 @@ class ClassLevelProcessor implements AnnotationProcessor {
                 continue;
             Element element = doc.createElement("param");
             parent.appendChild(element);
-            element.setAttribute("name",p.getSimpleName());
+            // determine name
+            String name;
+            PathParam pp = p.getAnnotation(PathParam.class);
+            QueryParam qp = p.getAnnotation(QueryParam.class);
+            ApiParam ap = p.getAnnotation(ApiParam.class);
+            if (pp != null)
+                name = pp.value();
+            else if (qp!=null)
+                name = qp.value();
+            else if (ap!=null)
+                name = ap.name();
+            else
+                name = p.getSimpleName();
+
+            element.setAttribute("name",name);
             String description = getValue(p, ApiParam.class.getName(), "value");
             setOptionalAttribute(element, "description", description);
             String required = getValue(p, ApiParam.class.getName(), "required");
