@@ -1,0 +1,81 @@
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+  <xsl:template match="/api">
+    <html>
+      <head>
+        <title>Api documentation</title>
+      </head>
+      <body>
+        <xsl:apply-templates/>
+      </body>
+    </html>
+  </xsl:template>
+
+  <xsl:template match="class">
+    <h2>/<xsl:value-of select="@path"/>
+      <xsl:if test="@shortDesc">
+      : <xsl:value-of select="@shortDesc"/>
+      </xsl:if>
+    </h2>
+    Class: <xsl:value-of select="@name"/><br/>
+    <emph><xsl:value-of select="@description"/></emph>
+    <br/>
+    <xsl:if test="method">
+      Methods:<br/>
+      <xsl:apply-templates/>
+    </xsl:if>
+    <p/>
+  </xsl:template>
+
+  <xsl:template match="method">
+    <h3><xsl:value-of select="@method"/><xsl:text xml:space="preserve"> </xsl:text><xsl:value-of select="../@path"/>/<xsl:value-of select="@path"/></h3>
+    <emph><xsl:value-of select="@description"/></emph>
+    <br/>
+    <xsl:choose>
+    <xsl:when test="param">
+    Parameters:
+    <table>
+      <th>
+        <tr><td>Name</td><td>Description</td><td>Required</td><td>Type</td><td>Allowed values</td></tr>
+      </th>
+      <xsl:apply-templates select="param"/>
+    </table>
+    </xsl:when>
+      <xsl:otherwise>
+        This method has no parameters
+      </xsl:otherwise>
+    </xsl:choose>
+    <br/>
+    Return type: <xsl:value-of select="@returnType"/>
+    <p/>
+    <xsl:if test="error">
+      Error codes:<br/>
+      <table>
+        <th>
+          <tr>
+            <td>Code</td><td>Reason</td>
+          </tr>
+        </th>
+        <xsl:apply-templates select="error"/>
+      </table>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="param">
+    <tr>
+      <td><xsl:value-of select="@name"/></td>
+      <td><xsl:value-of select="@description"/></td>
+      <td><xsl:value-of select="@required"/></td>
+      <td><xsl:value-of select="@type"/></td>
+      <td><xsl:value-of select="@allowableValues"/></td>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="error">
+    <tr>
+        <td><xsl:value-of select="@code"/></td>
+        <td><xsl:value-of select="@reason"/></td>
+    </tr>
+  </xsl:template>
+
+</xsl:stylesheet>

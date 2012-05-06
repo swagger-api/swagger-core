@@ -2,3 +2,6 @@ build/
 lib/*.jar
 target
 samples/scala-play2/logs
+*/*.iml
+*.iml
+*.idea
