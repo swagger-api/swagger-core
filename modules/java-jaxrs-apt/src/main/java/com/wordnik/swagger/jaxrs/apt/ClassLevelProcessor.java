@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collection;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.xml.parsers.DocumentBuilder;
@@ -175,19 +176,25 @@ class ClassLevelProcessor implements AnnotationProcessor {
             parent.appendChild(element);
             // determine name
             String name;
+            String paramType="-body-";
             PathParam pp = p.getAnnotation(PathParam.class);
             QueryParam qp = p.getAnnotation(QueryParam.class);
             ApiParam ap = p.getAnnotation(ApiParam.class);
-            if (pp != null)
+            if (pp != null) {
                 name = pp.value();
-            else if (qp!=null)
+                paramType="Path";
+            }
+            else if (qp!=null) {
                 name = qp.value();
+                paramType="Query";
+            }
             else if (ap!=null)
                 name = ap.name();
             else
                 name = p.getSimpleName();
 
             element.setAttribute("name",name);
+            element.setAttribute("paramType",paramType);
             String description = getValue(p, ApiParam.class.getName(), "value");
             setOptionalAttribute(element, "description", description);
             String required = getValue(p, ApiParam.class.getName(), "required");
@@ -197,6 +204,19 @@ class ClassLevelProcessor implements AnnotationProcessor {
             setOptionalAttribute(element,"required",required,"false");
             String allowedValues = getValue(p, ApiParam.class.getName(), "allowableValues");
             setOptionalAttribute(element,"allowableValues",allowedValues,"all");
+
+            String defaultValue;
+            DefaultValue dva = p.getAnnotation(DefaultValue.class);
+            if (dva!=null)
+                defaultValue = dva.value();
+            else if (ap!=null)
+                defaultValue = ap.defaultValue();
+            else
+                defaultValue = "-none-";
+
+            if (defaultValue!=null)
+                element.setAttribute("defaultValue",defaultValue);
+
 
             element.setAttribute("type", t.toString());
         }

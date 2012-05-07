@@ -4,6 +4,12 @@
     <html>
       <head>
         <title>Api documentation</title>
+        <style type="text/css">
+          h2 {background-color:#6464FF   }
+          h3 {background-color:#42EE42   }
+          th {font-weight:bold; font-size:120% }
+          emph {font-style:italic}
+        </style>
       </head>
       <body>
         <xsl:apply-templates/>
@@ -35,9 +41,7 @@
     <xsl:when test="param">
     Parameters:
     <table>
-      <th>
-        <tr><td>Name</td><td>Description</td><td>Required</td><td>Type</td><td>Allowed values</td></tr>
-      </th>
+        <tr><th>Name</th><th>P.Type</th><th>Description</th><th>Required</th><th>Type</th><th>Allowed values</th><th>Default value</th></tr>
       <xsl:apply-templates select="param"/>
     </table>
     </xsl:when>
@@ -51,11 +55,9 @@
     <xsl:if test="error">
       Error codes:<br/>
       <table>
-        <th>
           <tr>
-            <td>Code</td><td>Reason</td>
+            <th>Code</th><th>Reason</th>
           </tr>
-        </th>
         <xsl:apply-templates select="error"/>
       </table>
     </xsl:if>
@@ -64,10 +66,12 @@
   <xsl:template match="param">
     <tr>
       <td><xsl:value-of select="@name"/></td>
+      <td><xsl:value-of select="@paramType"/></td>
       <td><xsl:value-of select="@description"/></td>
       <td><xsl:value-of select="@required"/></td>
       <td><xsl:value-of select="@type"/></td>
       <td><xsl:value-of select="@allowableValues"/></td>
+      <td><xsl:value-of select="@defaultValue"/></td>
     </tr>
   </xsl:template>
 

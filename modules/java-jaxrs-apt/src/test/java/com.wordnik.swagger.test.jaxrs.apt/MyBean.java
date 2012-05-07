@@ -1,5 +1,6 @@
 package com.wordnik.swagger.test.jaxrs.apt;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -27,6 +28,6 @@ public interface MyBean {
     @Path("/two/{pp}")
     @ApiOperation("This is the second method")
     public void methodTwo(
-            @ApiParam(value="The customer id") @PathParam("pp") int pp,
+            @ApiParam(value="The customer id") @PathParam("pp") @DefaultValue("42") int pp,
             @ApiParam(value="Hulla",required = false) @QueryParam("qp") String qp);
 }
