@@ -24,7 +24,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiError {
+    /** Error code to describe */
     int code();
 
+    /** Reason why this error is returned */
     String reason();
 }

@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiOperation {
+    /** Long description of the operation  */
     String value();
     String responseClass() default "ok";
     boolean multiValueResponse() default false; //to indicate if return type will contain one or more of the response value
