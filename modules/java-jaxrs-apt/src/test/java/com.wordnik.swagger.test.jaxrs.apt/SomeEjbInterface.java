@@ -18,7 +18,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
  * Another example of @Api* usage
  * @author Heiko W. Rupp
  */
-@Api(value = "My important business EJB")
+@Api(value = "My important business EJB", basePath = "http://localhost:9999/other_path")
 @Local
 @Produces({"application/json","application/xml","text/html"})
 @Path("/biz-ejb")

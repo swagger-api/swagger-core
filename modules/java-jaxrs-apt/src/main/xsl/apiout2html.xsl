@@ -8,11 +8,13 @@
           h2 {background-color:#6464FF   }
           h3 {background-color:#42EE42   }
           th {font-weight:bold; font-size:120% }
-          emph {font-style:italic}
+          em {font-style:italic; font-size:110%; background-color:LightYellow}
         </style>
       </head>
       <body>
-        <xsl:apply-templates/>
+        <xsl:apply-templates>
+            <xsl:sort select="class/@path"/>
+        </xsl:apply-templates>
       </body>
     </html>
   </xsl:template>
@@ -22,9 +24,12 @@
       <xsl:if test="@shortDesc">
       : <xsl:value-of select="@shortDesc"/>
       </xsl:if>
+      <xsl:if test="@basePath">
+        ( Base: <xsl:value-of select="@basePath"/> )
+      </xsl:if>
     </h2>
     Class: <xsl:value-of select="@name"/><br/>
-    <emph><xsl:value-of select="@description"/></emph>
+    <em><xsl:value-of select="@description"/></em>
     <br/>
     <xsl:if test="method">
       Methods:<br/>
@@ -35,7 +40,7 @@
 
   <xsl:template match="method">
     <h3><xsl:value-of select="@method"/><xsl:text xml:space="preserve"> </xsl:text><xsl:value-of select="../@path"/>/<xsl:value-of select="@path"/></h3>
-    <emph><xsl:value-of select="@description"/></emph>
+    <em><xsl:value-of select="@description"/></em>
     <br/>
     <xsl:choose>
     <xsl:when test="param">

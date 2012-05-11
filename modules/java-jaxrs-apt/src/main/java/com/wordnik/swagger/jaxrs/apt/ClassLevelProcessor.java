@@ -22,6 +22,7 @@ import com.sun.mirror.apt.*;
 import com.sun.mirror.declaration.*;
 import com.sun.mirror.type.AnnotationType;
 import com.sun.mirror.type.TypeMirror;
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiError;
 import com.wordnik.swagger.annotations.ApiErrors;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -124,10 +125,15 @@ class ClassLevelProcessor implements AnnotationProcessor {
             String className = td.toString();
             classElement.setAttribute("name",className);
             classElement.setAttribute("path",basePath);
-            String shortDescription = getValue(td, "com.wordnik.swagger.annotations.Api", "value");
-            setOptionalAttribute(classElement, "shortDesc", shortDescription);
-            String longDescription = getValue(td, "com.wordnik.swagger.annotations.Api", "description");
-            setOptionalAttribute(classElement, "description", longDescription);
+            Api api = td.getAnnotation(Api.class);
+            if (api!=null) {
+                String shortDescription = api.value();
+                setOptionalAttribute(classElement, "shortDesc", shortDescription);
+                String longDescription = api.description();
+                setOptionalAttribute(classElement, "description", longDescription);
+                String basePathAttr = api.basePath();
+                setOptionalAttribute(classElement, "basePath",basePathAttr);
+            }
 
             root.appendChild(classElement);
 
