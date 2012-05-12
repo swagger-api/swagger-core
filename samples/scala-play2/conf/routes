@@ -5,6 +5,12 @@
 # Swagger - Root Resources Listing
 GET     /resources.json			                controllers.ApiHelpController.getResources
 
+# Swagger Utils - Health Resources
+GET     /admin.json/health			        controllers.HealthController.getHealth()
+GET     /admin.xml/health			        controllers.HealthController.getHealth()
+GET     /admin.json/ping			        controllers.HealthController.ping()
+GET     /admin.xml/ping			            controllers.HealthController.ping()
+
 # Pet - Resources
 GET     /pet.json				                    controllers.ApiHelpController.getResource(path = "/pet")
 
