@@ -82,7 +82,6 @@ object ApiHelpInventory {
    * Get detailed API/models for a given resource
    */
   private def getResource(resourceName: String)(implicit requestHeader: RequestHeader) = {
-    println("getting resource " + resourceName)
     getResourceMap.get(resourceName) match {
       case Some(clazz) => {
         val currentApiEndPoint = clazz.getAnnotation(classOf[Api])
@@ -93,7 +92,9 @@ object ApiHelpInventory {
         val docs = new HelpApi(apiFilterClassName).filterDocs(PlayApiReader.read(clazz, apiVersion, swaggerVersion, basePath, currentApiPath), currentApiPath)
         Option(docs)
       }
-      case None => None
+      case None => {
+        None
+      }
     }
   }
 
@@ -131,23 +132,21 @@ object ApiHelpInventory {
   private def getControllerClasses = {
     if (this.controllerClasses.length == 0) {
       val swaggerControllers = current.getTypesAnnotatedWith("controllers", classOf[Api])
-
       if (swaggerControllers.size() > 0) {
         for (clazzName <- swaggerControllers) {
           val clazz = current.classloader.loadClass(clazzName)
           this.controllerClasses += clazz;
           val apiAnnotation = clazz.getAnnotation(classOf[Api])
-          if (apiAnnotation != null && classOf[play.api.mvc.Controller].isAssignableFrom(clazz)) {
+          if (apiAnnotation != null && (classOf[play.api.mvc.Controller].isAssignableFrom(clazz) || classOf[play.mvc.Controller].isAssignableFrom(clazz))) {
             Logger.debug("Found Resource " + apiAnnotation.value + " @ " + clazzName)
             resourceMap += apiAnnotation.value -> clazz
           }
-
+          else {
+            Logger.debug("class " + clazzName + " is not the right type")
+          }
         }
-
       }
-
     }
-
     controllerClasses
   }
 

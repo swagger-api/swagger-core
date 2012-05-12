@@ -99,7 +99,7 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
     val fullMethodName = method.getDeclaringClass.getName + "." + method.getName
     val lookup = PlayApiReader.routesCache.get(fullMethodName)
 
-    Logger debug (lookup.get.path.toString)
+//    Logger debug (lookup.get.path.toString)
 
     val str = lookup match {
       case Some(route) => route.path.parts map { 

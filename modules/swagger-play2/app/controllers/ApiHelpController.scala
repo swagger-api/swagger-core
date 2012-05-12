@@ -32,14 +32,20 @@ import scala.collection.JavaConversions._
  */
 object ApiHelpController extends SwaggerBaseApiController {
   def getResources() = Action { request =>
-	implicit val requestHeader: RequestHeader = request;
-    val resources = if (returnXml(request)) ApiHelpInventory.getRootHelpXml() else ApiHelpInventory.getRootHelpJson()
+    implicit val requestHeader: RequestHeader = request;
+    val resources = returnXml(request) match {
+      case true => ApiHelpInventory.getRootHelpXml()
+      case false => ApiHelpInventory.getRootHelpJson()
+    }
     returnValue(request, resources)
   }
 
   def getResource(path: String) = Action { request =>
-	implicit val requestHeader: RequestHeader = request;
-    val help = if (returnXml(request)) ApiHelpInventory.getPathHelpXml(path) else ApiHelpInventory.getPathHelpJson(path)
+    implicit val requestHeader: RequestHeader = request
+    val help = returnXml(request) match {
+      case true => ApiHelpInventory.getPathHelpXml(path)
+      case false => ApiHelpInventory.getPathHelpJson(path)
+    }
     returnValue(request, help)
   }
 }
@@ -64,7 +70,10 @@ class SwaggerBaseApiController extends Controller {
   }
 
   protected def returnValue(request: Request[_], obj: Any): Result = {
-    val response = if (returnXml(request)) XmlResponse(obj) else JsonResponse(obj)
+    val response = returnXml(request) match {
+      case true => XmlResponse(obj)
+      case false => JsonResponse(obj)
+    }
     response.withHeaders(AccessControlAllowOrigin)
   }
 
@@ -75,10 +84,8 @@ class SwaggerBaseApiController extends Controller {
       } else {
         val mapper = new ObjectMapper()
         val w = new StringWriter()
-
         mapper.getSerializationConfig().disable(SerializationConfig.Feature.AUTO_DETECT_IS_GETTERS)
         mapper.writeValue(w, data)
-
         w.toString()
       }
     }
