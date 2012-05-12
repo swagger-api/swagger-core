@@ -11,11 +11,10 @@ Please follow instructions to build the top-level [swagger-core project](https:/
 
 
 ### To run
-You currently need to build and publish the [swagger-play2](https://github.com/ayush/swagger-play2) module from Ayush Gupta.
-This will be merged into swagger-core shortly.  In the meantime:
+You currently need to build and publish the [swagger-play2](https://github.com/wordnik/swagger-play2) module.
 
 ````
-git clone git@github.com:ayush/swagger-play2.git
+cd modules/swagger-play2
 
 play publish-local
 ````
@@ -30,7 +29,5 @@ The application will listen on port 9000 and respond to `http://localhost:9000/r
 
 ### Limitations
 Note the following limitations (which will go away very, very soon):
-
-<li>- only `/pet` is available</li>
 
 <li>- `api_key` filtering is not implemented</li>
