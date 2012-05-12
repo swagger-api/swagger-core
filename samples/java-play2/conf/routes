@@ -1,0 +1,29 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Swagger - Root Resources Listing
+GET     /resources.json			        controllers.ApiHelpController.getResources
+
+GET     /pet.json				            controllers.ApiHelpController.getResource(path = "/pet")
+GET     /pet.json/:id               controllers.PetApiController.getPet(id)
+POST    /pet.json                   controllers.PetApiController.addPet
+PUT     /pet.json                           controllers.PetApiController.updatePet
+GET     /pet.json/findByStatus              controllers.PetApiController.findPetsByStatus(status)
+GET     /pet.json/findByTags	              controllers.PetApiController.findPetsByTags(tags)
+
+GET     /store.json				                  controllers.ApiHelpController.getResource(path = "/store")
+POST    /store.json/order                   controllers.StoreApiController.placeOrder
+GET     /store.json/order/:orderId	        controllers.StoreApiController.getOrderById(orderId)
+DELETE  /store.json/order/:orderId	        controllers.StoreApiController.deleteOrder(orderId)
+
+GET     /user.json				                  controllers.ApiHelpController.getResource(path = "/user")
+POST    /user.json                          controllers.UserApiController.createUser
+POST    /user.json/createWithArray          controllers.UserApiController.createUsersWithArrayInput
+POST    /user.json/createWithList           controllers.UserApiController.createUsersWithListInput
+PUT     /user.json/:username                controllers.UserApiController.updateUser(username)
+DELETE  /user.json/:username                controllers.UserApiController.deleteUser(username)
+GET     /user.json/login                    controllers.UserApiController.loginUser(username,password)
+GET     /user.json/logout                   controllers.UserApiController.logoutUser
+GET     /user.json/:username                controllers.UserApiController.getUserByName(username)
+
