@@ -32,7 +32,7 @@ object HealthController extends SwaggerBaseApiController {
 
   @Path("/health")  
   @ApiOperation(value = "Returns health report on this JVM",
-    responseClass = "com.wordnik.swagger.discover.Health",
+    responseClass = "com.wordnik.util.perf.Health",
     httpMethod = "GET")
   def getHealth() = Action {  request =>
     try {
