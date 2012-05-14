@@ -126,6 +126,11 @@ object ApiHelpInventory {
     stringWriter.toString
   }
 
+  def clear() {
+	this.controllerClasses.clear
+	this.resourceMap.clear
+  }
+
   /**
    * Get a list of all controller classes in Play
    */

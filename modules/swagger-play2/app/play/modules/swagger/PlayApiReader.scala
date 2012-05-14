@@ -31,7 +31,7 @@ object PlayApiReader {
   import java.io.File
   import play.core.Router.RoutesCompiler.RouteFileParser
   private val endpointsCache = scala.collection.mutable.Map.empty[Class[_], Documentation]
-  lazy val routesCache: Map[String, Route] = populateRoutesCache
+  private var _routesCache: Map[String, Route] = null
   var FORMAT_STRING = ".{format}"
   
   def setFormatString(str: String) = {
@@ -47,6 +47,17 @@ object PlayApiReader {
       case Some(doc) => doc.clone.asInstanceOf[Documentation]
       case _ => null
     }
+  }
+
+  def routesCache = {
+	if(_routesCache == null) _routesCache = populateRoutesCache
+	
+	_routesCache
+  }
+
+  def clear {
+	_routesCache = null
+	endpointsCache.clear
   }
 
   private def populateRoutesCache: Map[String, Route] = {
