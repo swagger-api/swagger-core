@@ -71,9 +71,9 @@ What this does is the following:
 In the routes file, you then wire this api as follows:
 
 ````
-GET     /pet.json				                    controllers.ApiHelpController.getResource(path = "/pet")
+GET     /pet.json            controllers.ApiHelpController.getResource(path = "/pet")
 
-GET     /pet.json/:id	                      controllers.PetApiController.getPetById(id)
+GET     /pet.json/:id        controllers.PetApiController.getPetById(id)
 ````
 
 This will "attach" the /pet.json api to the swagger resource listing, and the method to the `getPetById` method above
