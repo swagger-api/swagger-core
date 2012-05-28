@@ -12,12 +12,15 @@ object ApplicationBuild extends Build {
     "org.codehaus.jackson" % "jackson-xc" % "1.9.5",
     "org.codehaus.jackson" % "jackson-mapper-asl" % "1.9.5",
     "org.codehaus.jackson" % "jackson-core-asl" % "1.9.5",
-    "swagger-play2" %% "swagger-play2" % "1.1-SNAPSHOT")
+    "com.wordnik" %% "swagger-play2" % "1.1-SNAPSHOT")
 
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
-    resolvers += "java-net" at "http://download.java.net/maven/2",
-    resolvers += Resolver.url("local-ivy", new URL("file://" + Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
-    resolvers += Resolver.url("local-ivy-cache", new URL("file://" + Path.userHome.absolutePath + "/.ivy2/cache"))(Resolver.ivyStylePatterns),
-    resolvers += Resolver.url("local-ivy-cache-mvn", new URL("file://" + Path.userHome.absolutePath + "/.ivy2/cache"))(Resolver.mavenStylePatterns),
-    resolvers += "local-maven-repo" at "file://" + Path.userHome.absolutePath + "/.m2/repository/")
+    resolvers := Seq(
+      Resolver.url("swagger-core-github-repo", url("http://wordnik.github.com/repository"))(Resolver.ivyStylePatterns),
+      Resolver.url("swagger-core-github-repo", url("https://github.com/wordnik/swagger-core/tree/master/modules/swagger-play2/repository"))(Resolver.ivyStylePatterns),
+      "local-maven-repo" at "file://" + Path.userHome.absolutePath + "/.m2/repository/",
+      Resolver.url("local-ivy", new URL("file://" + Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
+      Resolver.url("local-ivy-cache", new URL("file://" + Path.userHome.absolutePath + "/.ivy2/cache"))(Resolver.ivyStylePatterns),
+      "java-net" at "http://download.java.net/maven/2",
+      "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"))
 }
