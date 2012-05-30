@@ -302,6 +302,7 @@
     </profile>
   </profiles>
   <modules>
+    <module>modules/swagger-annotations</module>
     <module>modules/swagger-core</module>
     <module>modules/swagger-jaxrs</module>
     <module>modules/swagger-jaxrs-utils</module>

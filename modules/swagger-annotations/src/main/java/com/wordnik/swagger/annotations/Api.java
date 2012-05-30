@@ -14,24 +14,23 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.core;
+package com.wordnik.swagger.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ApiParamImplicit {
-    String name() default "";
-    String value() default "";
-    String defaultValue() default "";
-    String allowableValues() default "";
-    boolean required() default false;
-    String access() default "";
-    String internalDescription() default "";
-    boolean allowMultiple() default false;
-    String dataType() default "";
-    String paramType() default "";
+public @interface Api {
+    /** Short description of the class */
+    String value();
+    String listingPath() default "";
+    String listingClass() default "";
+    /** General description of this class */
+    String description() default "";
+    boolean open() default false;
+    /** The base path that is prepended to all @Path elements. This may be an override for certain scenarios only */
+    String basePath() default "";
 }

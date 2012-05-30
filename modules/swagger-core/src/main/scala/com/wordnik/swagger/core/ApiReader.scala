@@ -16,6 +16,7 @@
 
 package com.wordnik.swagger.core
 
+import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.core.util._
 import com.wordnik.swagger.core.ApiValues._
