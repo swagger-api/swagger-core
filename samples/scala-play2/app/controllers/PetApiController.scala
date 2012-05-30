@@ -24,7 +24,7 @@ object PetApiController extends BaseApiController {
 
   @Path("/{id}")
   @ApiOperation(value = "Find pet by ID", notes = "Returns a pet when ID < 10. " +
-    "ID > 10 or nonintegers will simulate API error conditions", responseClass = "Pet", httpMethod = "GET")
+    "ID > 10 or nonintegers will simulate API error conditions", responseClass = "models.Pet", httpMethod = "GET")
   @ApiParamsImplicit(Array(
     new ApiParamImplicit(name = "id", value = "ID of pet that needs to be fetched", required = true, dataType = "String", paramType = "path",
       allowableValues = "range[0,10]")))
