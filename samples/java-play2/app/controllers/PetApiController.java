@@ -18,7 +18,7 @@ public class PetApiController extends BaseApiController {
 
 	@Path("/{petId}")
 	@ApiOperation(value = "Find pet by ID", notes = "Returns a pet when ID < 10. "
-			+ "ID > 10 or nonintegers will simulate API error conditions", responseClass = "com.wordnik.swagger.sample.model.Pet")
+			+ "ID > 10 or nonintegers will simulate API error conditions", responseClass = "models.Pet")
 	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid ID supplied"),
 			@ApiError(code = 404, reason = "Pet not found") })
 	public static Result getPet(
@@ -58,7 +58,7 @@ public class PetApiController extends BaseApiController {
 
 	@GET
 	@Path("/findByStatus")
-	@ApiOperation(value = "Finds Pets by status", notes = "Multiple status values can be provided with comma seperated strings", responseClass = "com.wordnik.swagger.sample.model.Pet", multiValueResponse = true)
+	@ApiOperation(value = "Finds Pets by status", notes = "Multiple status values can be provided with comma seperated strings", responseClass = "models.Pet", multiValueResponse = true)
 	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid status value") })
 	public static Result findPetsByStatus(
 			@ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available", allowableValues = "available,pending,sold", allowMultiple = true) @QueryParam("status") String status) {
@@ -67,7 +67,7 @@ public class PetApiController extends BaseApiController {
 
 	@GET
 	@Path("/findByTags")
-	@ApiOperation(value = "Finds Pets by tags", notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.", responseClass = "com.wordnik.swagger.sample.model.Pet", multiValueResponse = true)
+	@ApiOperation(value = "Finds Pets by tags", notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.", responseClass = "models.Pet", multiValueResponse = true)
 	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid tag value") })
 	@Deprecated
 	public static Result findPetsByTags(

@@ -88,7 +88,7 @@ public class UserApiController extends BaseApiController {
 	}
 
 	@Path("/{username}")
-	@ApiOperation(value = "Get user by user name", responseClass = "com.wordnik.swagger.sample.model.User")
+	@ApiOperation(value = "Get user by user name", responseClass = "models.User")
 	@ApiErrors({ @ApiError(code = 400, reason = "Invalid username supplied"),
 			@ApiError(code = 404, reason = "User not found") })
 	public static Result getUserByName(
