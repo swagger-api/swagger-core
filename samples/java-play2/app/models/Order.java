@@ -16,15 +16,11 @@
 
 package models;
 
-import com.wordnik.swagger.core.ApiProperty;
-
-import com.wordnik.swagger.core.ApiProperty.*;
+import com.wordnik.swagger.annotations.*;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlRootElement.*;
 import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.XmlElement.*;
 
 @XmlRootElement(name = "order")
 public class Order {

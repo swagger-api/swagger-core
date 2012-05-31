@@ -1,6 +1,7 @@
 package play.modules.swagger
 
 import com.wordnik.swagger.core._
+import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.core.ApiValues._
 import com.wordnik.swagger.core.util.ReflectionUtil
 

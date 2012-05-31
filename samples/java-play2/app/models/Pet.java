@@ -16,13 +16,11 @@
 
 package models;
 
-import com.wordnik.swagger.core.ApiProperty;
-import com.wordnik.swagger.core.ApiProperty.*;
+import com.wordnik.swagger.annotations.*;
 
 import java.util.List;
 import java.util.ArrayList;
 
-import javax.xml.bind.annotation.XmlRootElement.*;
 import javax.xml.bind.annotation.*;
 
 @XmlRootElement(name = "pet")

@@ -2,6 +2,8 @@ package controllers
 
 import models._
 import api._
+import com.wordnik.swagger.core._
+import com.wordnik.swagger.annotations._
 
 import play.api._
 import play.api.mvc._
@@ -10,13 +12,11 @@ import play.data.validation._
 import play.api.data.Forms._
 import play.api.data.format.Formats._
 import play.api.Play.current
+import play.api.data.format.Formats._
 
 import javax.ws.rs._
-
 import java.io.StringWriter
 
-import play.api.data.format.Formats._
-import com.wordnik.swagger.core._
 
 @Api(value = "/store", description = "Operations about store")
 object StoreApiController extends BaseApiController {

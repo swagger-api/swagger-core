@@ -13,14 +13,14 @@ object ApplicationBuild extends Build {
     "org.codehaus.jackson" % "jackson-core-asl" % "1.8.5",
     "org.slf4j" % "slf4j-api" % "1.6.4",
     "com.wordnik" % "swagger-core_2.9.1" % "1.1-SNAPSHOT",
+    "com.wordnik" % "swagger-annotations_2.9.1" % "1.1-SNAPSHOT",
     "javax.ws.rs" % "jsr311-api" % "1.1.1")
 
-  val wnRepo = Some(Resolver.url("wordnik-remote-repos", new URL("https://ci.aws.wordnik.com/artifactory/libs-snapshots"))(Resolver.ivyStylePatterns))
-
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
-    resolvers += "local-maven-repo" at "file://" + Path.userHome.absolutePath + "/.m2/repository/",
-    resolvers += Resolver.url("local-ivy", new URL("file://" + Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
-    resolvers += Resolver.url("local-ivy-cache", new URL("file://" + Path.userHome.absolutePath + "/.ivy2/cache"))(Resolver.ivyStylePatterns),
-    resolvers += Resolver.url("wordnik-remote-repos", new URL("https://ci.aws.wordnik.com/artifactory/libs-snapshots"))(Resolver.ivyStylePatterns),
-    resolvers += "java-net" at "http://download.java.net/maven/2")
+    organization := "com.wordnik",
+    resolvers := Seq(
+      Resolver.url("swagger-core-github-repo", url("http://wordnik.github.com/repository"))(Resolver.ivyStylePatterns),
+      "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
+      "java-net" at "http://download.java.net/maven/2",
+      "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"))
 }

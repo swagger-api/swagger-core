@@ -1,6 +1,7 @@
 package controllers
 
 import com.wordnik.swagger.core._
+import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.core.util.JsonUtil
 
 import org.slf4j.LoggerFactory

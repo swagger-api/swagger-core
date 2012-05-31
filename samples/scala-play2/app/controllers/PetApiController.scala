@@ -17,6 +17,7 @@ import java.io.StringWriter
 
 import play.api.data.format.Formats._
 import com.wordnik.swagger.core._
+import com.wordnik.swagger.annotations._
 
 @Api(value = "/pet", description = "Operations about pets")
 object PetApiController extends BaseApiController {
