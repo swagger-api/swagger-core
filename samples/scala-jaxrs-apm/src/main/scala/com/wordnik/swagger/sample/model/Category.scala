@@ -16,7 +16,7 @@
 
 package com.wordnik.swagger.sample.model
 
-import javax.xml.bind.annotation.{XmlRootElement, XmlElement}
+import javax.xml.bind.annotation._
 
 @XmlRootElement(name = "category")
 class Category() {

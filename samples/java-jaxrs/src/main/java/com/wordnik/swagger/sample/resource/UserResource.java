@@ -16,6 +16,9 @@
 
 package com.wordnik.swagger.sample.resource;
 
+import com.wordnik.swagger.annotations.*;
+import com.wordnik.swagger.jaxrs.*;
+
 import com.wordnik.swagger.sample.data.UserData;
 import com.wordnik.swagger.sample.model.User;
 import com.wordnik.swagger.sample.exception.ApiException;

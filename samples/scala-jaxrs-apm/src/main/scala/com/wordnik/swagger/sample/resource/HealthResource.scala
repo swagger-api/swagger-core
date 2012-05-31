@@ -3,10 +3,8 @@ package com.wordnik.swagger.sample.resource
 import com.wordnik.util.perf._
 import com.wordnik.resource.util._
 
-import com.wordnik.swagger.core.ApiOperation._
-import com.wordnik.swagger.core.ApiError._
 import com.wordnik.swagger.core._
-import com.wordnik.swagger.core.ApiParam._
+import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.jaxrs._
 
 import com.wordnik.swagger.sample.model.User

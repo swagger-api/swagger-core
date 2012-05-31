@@ -16,16 +16,20 @@
 
 package com.wordnik.swagger.jaxrs
 
+import com.wordnik.swagger.core._
+import com.wordnik.swagger.annotations._
+
+import org.codehaus.jackson.JsonGenerationException
+import org.codehaus.jackson.map.JsonMappingException
+
+import com.sun.jersey.api.core.ResourceConfig
+
 import java.io.IOException
 import java.lang.reflect.Constructor
 import javax.servlet.ServletConfig
 import javax.ws.rs.core._
 import javax.ws.rs.core.Response.Status
 import javax.ws.rs._
-import org.codehaus.jackson.JsonGenerationException
-import org.codehaus.jackson.map.JsonMappingException
-import com.sun.jersey.api.core.ResourceConfig
-import com.wordnik.swagger.core._
 
 abstract class JavaHelp {
   @GET def getHelp(@Context servConfig: ServletConfig, @Context resConfig: ResourceConfig, @Context headers: HttpHeaders, @Context uriInfo: UriInfo): Response = {

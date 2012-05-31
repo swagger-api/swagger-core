@@ -16,10 +16,7 @@
 
 package com.wordnik.swagger.sample.resource
 
-import com.wordnik.swagger.core.ApiOperation._
-import com.wordnik.swagger.core.ApiError._
-import com.wordnik.swagger.core._
-import com.wordnik.swagger.core.ApiParam._
+import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.jaxrs._
 
 import com.wordnik.swagger.sample.model.User
@@ -30,7 +27,7 @@ import com.sun.jersey.spi.resource.Singleton
 
 import javax.ws.rs.core.Response
 import javax.ws.rs._
-import util.RestResourceUtil
+import com.wordnik.swagger.core.util.RestResourceUtil
 import scala.collection.JavaConverters._
 
 /**

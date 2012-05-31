@@ -16,10 +16,9 @@
 
 package com.wordnik.swagger.sample.resource
 
-import com.wordnik.swagger.core.ApiOperation._
-import com.wordnik.swagger.core.ApiError._
 import com.wordnik.swagger.core._
-import com.wordnik.swagger.core.ApiParam._
+import com.wordnik.swagger.annotations._
+import com.wordnik.swagger.core.util.RestResourceUtil
 import com.wordnik.swagger.jaxrs._
 import com.wordnik.swagger.sample.model.User
 import com.wordnik.swagger.sample.data.UserData
@@ -29,12 +28,6 @@ import com.sun.jersey.spi.resource.Singleton
 
 import javax.ws.rs.core.Response
 import javax.ws.rs._
-import util.RestResourceUtil
-/**
- * User: ramesh
- * Date: 7/29/11
- * Time: 5:23 PM
- */
 
 trait UserResource extends RestResourceUtil {
   var userData = new UserData

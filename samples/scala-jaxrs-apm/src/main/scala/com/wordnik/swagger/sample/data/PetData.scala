@@ -16,7 +16,7 @@
 
 package com.wordnik.swagger.sample.data
 
-import com.wordnik.swagger.sample.model.{Tag, Category, Pet}
+import com.wordnik.swagger.sample.model._
 
 import java.util.ArrayList
 

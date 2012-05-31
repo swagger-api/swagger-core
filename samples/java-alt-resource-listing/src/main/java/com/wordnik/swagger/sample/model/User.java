@@ -16,8 +16,7 @@
 
 package com.wordnik.swagger.sample.model;
 
-import com.wordnik.swagger.core.ApiProperty;
-import com.wordnik.swagger.core.ApiProperty.*;
+import com.wordnik.swagger.annotations.*;
 
 import javax.xml.bind.annotation.*;
 

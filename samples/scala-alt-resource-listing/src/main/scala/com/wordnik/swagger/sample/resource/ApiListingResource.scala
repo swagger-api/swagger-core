@@ -18,6 +18,7 @@ package com.wordnik.swagger.sample.resource
 
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.jaxrs._
+import com.wordnik.swagger.annotations._
 
 import javax.ws.rs.{Produces, Path}
 

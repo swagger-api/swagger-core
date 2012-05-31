@@ -16,7 +16,7 @@
 
 package com.wordnik.swagger.jaxrs
 
-import com.wordnik.swagger.core.Api
+import com.wordnik.swagger.annotations._
 
 import javax.ws.rs.{Produces, Path}
 

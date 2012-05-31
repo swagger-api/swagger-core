@@ -17,6 +17,7 @@
 package com.wordnik.swagger.jaxrs
 
 import com.wordnik.swagger.core._
+import com.wordnik.swagger.annotations._
 
 import org.slf4j.LoggerFactory
 

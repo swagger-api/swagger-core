@@ -1,13 +1,12 @@
 package com.wordnik.resource.util
 
-import com.wordnik.swagger.core.{ ApiParam, ApiOperation }
+import com.wordnik.swagger.annotations._
 import com.wordnik.util.perf.{ ProfileCounter, Profile }
-
 
 import javax.ws.rs.{ QueryParam, Path, GET }
 import javax.ws.rs.core.Response
 
-import collection.mutable.ListBuffer
+import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConversions._
 
 trait ProfileEndpointTrait {

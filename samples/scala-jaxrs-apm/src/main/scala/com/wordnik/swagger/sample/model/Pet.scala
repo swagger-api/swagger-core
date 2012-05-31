@@ -16,19 +16,13 @@
 
 package com.wordnik.swagger.sample.model
 
-import com.wordnik.swagger.core.ApiProperty
-import com.wordnik.swagger.core.ApiProperty._
+import com.wordnik.swagger.annotations._
 
 import java.util.List
 import java.util.ArrayList
 
-import javax.xml.bind.annotation.XmlRootElement._
-import javax.xml.bind.annotation.{XmlElement, XmlRootElement}
+import javax.xml.bind.annotation._
 
-/**
- * Date: 7/29/11
- * Time: 5:15 PM
- */
 @XmlRootElement(name = "pet")
 class Pet() {
   private var id:Long = 0

@@ -16,10 +16,11 @@
 
 package com.wordnik.swagger.sample.resource;
 
-import javax.ws.rs.*;
+import com.wordnik.swagger.annotations.*;
 
 import com.sun.jersey.spi.resource.Singleton;
-import com.wordnik.swagger.core.Api;
+
+import javax.ws.rs.*;
 
 @Path("/pet")
 @Api(value = "/pet", 

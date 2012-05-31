@@ -15,10 +15,13 @@ package com.wordnik.resource.util
   *  limitations under the License.
   */
 
-import javax.ws.rs.core.Response
+
 import com.wordnik.swagger.core._
-import javax.ws.rs.{Path, GET}
+import com.wordnik.swagger.annotations._
 import com.wordnik.util.perf.HealthSnapshot
+
+import javax.ws.rs.core.Response
+import javax.ws.rs.{Path, GET}
 
 /**
   * @author ayush

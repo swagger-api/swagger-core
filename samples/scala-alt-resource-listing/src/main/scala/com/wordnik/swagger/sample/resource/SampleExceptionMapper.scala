@@ -23,10 +23,6 @@ import javax.ws.rs.ext.{ ExceptionMapper, Provider }
 import javax.ws.rs.core.Response
 import javax.ws.rs.core.Response.Status
 
-/**
- * Date: 8/1/11
- * Time: 3:27 PM
- */
 @Provider
 class SampleExceptionMapper extends ExceptionMapper[ApiException] {
   def toResponse(exception: ApiException): Response = {

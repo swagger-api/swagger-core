@@ -16,8 +16,7 @@
 
 package com.wordnik.swagger.sample.model;
 
-import com.wordnik.swagger.core.ApiProperty;
-import com.wordnik.swagger.core.ApiProperty.*;
+import com.wordnik.swagger.annotations.*;
 
 import java.util.List;
 import java.util.ArrayList;

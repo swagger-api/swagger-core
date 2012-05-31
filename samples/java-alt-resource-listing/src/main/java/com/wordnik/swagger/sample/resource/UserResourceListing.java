@@ -1,11 +1,11 @@
 package com.wordnik.swagger.sample.resource;
 
-import javax.ws.rs.*;
-
+import com.wordnik.swagger.annotations.*;
 import com.wordnik.swagger.jaxrs.JavaHelp;
-import com.wordnik.swagger.core.Api;
 
 import com.sun.jersey.spi.resource.Singleton;
+
+import javax.ws.rs.*;
 
 @Path("/resources/user")
 @Api(value = "/user",

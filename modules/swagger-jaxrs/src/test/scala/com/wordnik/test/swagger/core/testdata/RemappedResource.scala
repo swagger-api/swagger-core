@@ -18,8 +18,7 @@ package com.wordnik.test.swagger.core.testdata
 
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.jaxrs._
-import com.wordnik.swagger.core.ApiParam._
-import com.wordnik.swagger.core.ApiOperation._
+import com.wordnik.swagger.annotations._
 
 import javax.ws.rs._
 import javax.ws.rs.core.Response

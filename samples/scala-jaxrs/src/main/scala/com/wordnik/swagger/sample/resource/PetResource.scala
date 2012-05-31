@@ -16,10 +16,8 @@
 
 package com.wordnik.swagger.sample.resource
 
+import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.core._
-import com.wordnik.swagger.core.ApiError._
-import com.wordnik.swagger.core.ApiParam._
-import com.wordnik.swagger.core.ApiOperation._
 import com.wordnik.swagger.core.util.RestResourceUtil
 import com.wordnik.swagger.jaxrs._
 import com.wordnik.swagger.sample.data.{ PetData }

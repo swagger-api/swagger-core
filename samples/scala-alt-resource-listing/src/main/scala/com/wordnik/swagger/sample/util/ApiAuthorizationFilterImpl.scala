@@ -16,7 +16,7 @@
 
 package com.wordnik.swagger.sample.util
 
-import com.wordnik.swagger.core.Api
+import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.jaxrs.ApiAuthorizationFilter
 
 import org.slf4j.LoggerFactory
