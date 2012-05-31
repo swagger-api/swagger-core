@@ -16,6 +16,7 @@
 
 package com.wordnik.swagger.core
 
+import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.core.util.ReflectionUtil
 import com.wordnik.swagger.core.ApiValues._
 import com.wordnik.swagger.core.util.TypeUtil
@@ -273,7 +274,7 @@ private class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
           docParam.description = readString(apiProperty.value)
           docParam.notes = readString(apiProperty.notes)
           docParam.paramType = readString(apiProperty.dataType)
-          
+
           try {
             docParam.allowableValues = convertToAllowableValues(apiProperty.allowableValues)
           } catch {
