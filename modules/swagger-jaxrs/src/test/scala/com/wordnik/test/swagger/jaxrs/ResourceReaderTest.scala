@@ -52,7 +52,7 @@ class ResourceReaderTest extends FlatSpec with ShouldMatchers {
     assert(doc.swaggerVersion == "2.345")
     assert(doc.basePath == "http://my.host.com/basepath")
     assert(doc.resourcePath == "/sample")
-    assert(doc.getApis.size === 2)
+    assert(doc.getApis.size === 3)
     assert(doc.getModels.size === 2)
     
     // verify the "howdy" model
@@ -73,7 +73,7 @@ class ResourceReaderTest extends FlatSpec with ShouldMatchers {
     assert(doc.swaggerVersion === "2.345")
     assert(doc.basePath === "http://my.host.com/basepath")
     assert(doc.resourcePath === "/sample")
-    assert(doc.getApis.size === 2)
+    assert(doc.getApis.size === 3)
     assert(doc.getModels.size === 2)
 
     val props = doc.getModels().get("Howdy").properties.toMap
@@ -97,5 +97,19 @@ class ResourceReaderTest extends FlatSpec with ShouldMatchers {
     assert(doc.basePath === "http://my.host.com/basepath")
     assert(doc.resourcePath === "/sample")
     assert(doc.getApis === null)
+  }
+
+  it should "Create a collection response for primitive types" in {
+    val loadingClass = classOf[RemappedResourceJSON]
+    val helpApi = new HelpApi
+    val doc = helpApi.filterDocs(JaxrsApiReader.read(loadingClass, "1.123", "2.345", "http://my.host.com/basepath", "/sample"),
+      null,
+      null,
+      null,
+      null)
+    val api = doc.getApis.filter(a => (a.path == "/basic.{format}/getStringList"))(0)
+    val responseclass = api.getOperations().get(0).getResponseClass()
+    assert(responseclass === "List[String]")
+
   }
 }

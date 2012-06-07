@@ -112,7 +112,7 @@ trait ApiSpecParserTrait extends BaseApiParser {
           val annotatedName = ApiPropertiesReader.readName(cls)
           docOperation.responseClass = if (isResponseMultiValue) "List[" + annotatedName + "]" else annotatedName
         } catch {
-          case e: ClassNotFoundException => docOperation.responseClass = apiResponseValue
+          case e: ClassNotFoundException => docOperation.responseClass = if (isResponseMultiValue) "List[" + apiResponseValue + "]" else apiResponseValue
         }
       }
 
