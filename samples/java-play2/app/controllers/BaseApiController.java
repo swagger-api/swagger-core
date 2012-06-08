@@ -19,22 +19,22 @@ import models.*;
 public class BaseApiController extends Controller {
 	static ObjectMapper mapper;
 	static JavaRestResourceUtil ru = new JavaRestResourceUtil();
-	
+
 	static {
 		mapper = new ObjectMapper();
-		mapper.setSerializationConfig(mapper.getSerializationConfig().without(SerializationConfig.Feature.AUTO_DETECT_IS_GETTERS));
+		mapper.setSerializationConfig(mapper.getSerializationConfig().without(
+				SerializationConfig.Feature.AUTO_DETECT_IS_GETTERS));
 	}
-	
+
 	public static Result JsonResponse(Object obj) {
 		return JsonResponse(obj, 200);
 	}
 
 	public static Result JsonResponse(Object obj, int code) {
 		StringWriter w = new StringWriter();
-		try{
-		mapper.writeValue(w, obj);
-		}
-		catch(Exception e){
+		try {
+			mapper.writeValue(w, obj);
+		} catch (Exception e) {
 			// TODO: handle proper return code
 			e.printStackTrace();
 		}
