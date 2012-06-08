@@ -24,10 +24,7 @@ public class PetApiController extends BaseApiController {
 			@ApiError(code = 404, reason = "Pet not found") })
 	public static Result getPet(
 			@ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("petId") String petId) {
-		Pet pet = new Pet();
-		pet.setName("dog");
-		pet.setId(Long.parseLong(petId));
-		return JsonResponse(pet);
+		return JsonResponse(petData.getPetbyId(Long.parseLong(petId)));
 	}
 
 	@POST
