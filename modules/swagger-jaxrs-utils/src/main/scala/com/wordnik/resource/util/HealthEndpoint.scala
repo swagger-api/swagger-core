@@ -17,24 +17,20 @@ package com.wordnik.resource.util
 
 
 import com.wordnik.swagger.core._
+
 import com.wordnik.swagger.annotations._
 import com.wordnik.util.perf.HealthSnapshot
 
 import javax.ws.rs.core.Response
 import javax.ws.rs.{Path, GET}
 
-/**
-  * @author ayush
-  * @since 11/15/11 5:47 PM
-  *
-  */
 trait Monitor {
   private val OK = "ok"
 
   @GET
   @Path("/health")
   @ApiOperation(value = "Returns health report on this JVM",
-    responseClass = "com.wordnik.swagger.discovery.Health")
+    responseClass = "com.wordnik.util.perf.Health")
   def getHealth = Response.ok.entity(HealthSnapshot.get()).build
 
   @GET
@@ -42,6 +38,4 @@ trait Monitor {
   @ApiOperation(value = "Returns ok if all's good",
     responseClass = "String")
   def ping = Response.ok.entity(OK).build
-
-
 }
