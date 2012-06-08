@@ -54,4 +54,21 @@ class BasicResource {
     Response.ok.entity(out).build
   }
 
+  @GET
+  @Path("/getStringList")
+  @ApiOperation(value = "Get object by ID",
+    notes = "No details provided",
+    responseClass = "String",
+    multiValueResponse =  true)
+  @ApiErrors(Array(
+    new ApiError(code = 400, reason = "Invalid ID"),
+    new ApiError(code = 404, reason = "object not found")))
+  def getStringList() = {
+    val out = new java.util.ArrayList[String]()
+    out.add("foo")
+    out.add("bar")
+    Response.ok.entity(out).build
+  }
+
+
 }
