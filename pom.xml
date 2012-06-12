@@ -306,6 +306,7 @@
     <module>modules/swagger-core</module>
     <module>modules/swagger-jaxrs</module>
     <module>modules/swagger-jaxrs-utils</module>
+    <module>modules/java-jaxrs-apt</module>
     <module>samples/java-jaxrs</module>
     <module>samples/java-alt-resource-listing</module>
     <module>samples/scala-jaxrs</module>
