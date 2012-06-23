@@ -69,7 +69,7 @@ Scala-based swagger server with JAX-RS with an alternate resource listing scheme
 [scala-jaxrs-apm](/wordnik/swagger-core/tree/master/samples/scala-jaxrs-apm/README.md) 
 Scala-based swagger server using wordnik-oss utils for Application Performance Monitoring (APM)
 
-To run a sample app:
+To run a sample app after initial compile:
 
 <pre>
 # run scala-jaxrs sample app
