@@ -50,7 +50,7 @@ object PlayApiReader {
     }
   }
 
-  def routesCache = {
+  private def routesCache = {
 	if(_routesCache == null) _routesCache = populateRoutesCache
 	
 	_routesCache
@@ -59,6 +59,23 @@ object PlayApiReader {
   def clear {
 	_routesCache = null
 	endpointsCache.clear
+  }
+
+  def getRoute(className: String, methodName: String) = {
+	// for scala controllers suffix $ to className since its an object
+    val key1 = className + "$." + methodName
+
+    // for java its a regular static class
+    val key2 = className + "." + methodName
+	routesCache.get(key1) match {
+	  case Some(route) => Some(route)
+      case None => {
+		routesCache.get(key2) match {
+		  case Some(route) => Some(route)
+	      case None => None
+		}
+	  }
+	}
   }
 
   private def populateRoutesCache: Map[String, Route] = {
@@ -108,8 +125,7 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
   }
 
   override def getPath(method: Method) = {
-    val fullMethodName = method.getDeclaringClass.getName + "." + method.getName
-    val lookup = PlayApiReader.routesCache.get(fullMethodName)
+    val lookup = PlayApiReader.getRoute(method.getDeclaringClass.getName, method.getName)
 
 //    Logger debug (lookup.get.path.toString)
 
@@ -133,11 +149,10 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
   }
 
   override protected def processOperation(method: Method, o: DocumentationOperation) = {
-    val fullMethodName = method.getDeclaringClass.getCanonicalName + "." + method.getName
-    val lookup = PlayApiReader.routesCache.get(fullMethodName)
+    val lookup = PlayApiReader.getRoute(method.getDeclaringClass.getCanonicalName, method.getName)
     lookup match {
       case Some(route) => o.httpMethod = route.verb.value
-      case None => Logger error "Could not find route " + fullMethodName
+      case None => Logger error "Could not find route " + method.getDeclaringClass.getCanonicalName + "." + method.getName
     }
     o
   }
