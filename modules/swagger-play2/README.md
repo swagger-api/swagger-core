@@ -11,14 +11,15 @@ build it from source, which is done by following these steps:
 ````
 cd modules/swagger-play2
 
-play publish-local
+sbt play
+publish-local
 ````
 
 That will put the swagger-play2 module in your local ivy repository for use in your play2 application.  Now you just need to
 include it in your application like this:
 
 ````
-val appDependencies: Seq[sbt.ModuleID] = Seq("swagger-play2" %% "swagger-play2" % "1.1-SNAPSHOT")
+val appDependencies: Seq[sbt.ModuleID] = Seq("com.wordnik" %% "swagger-play2" % "1.1-SNAPSHOT")
 
 ````
 
