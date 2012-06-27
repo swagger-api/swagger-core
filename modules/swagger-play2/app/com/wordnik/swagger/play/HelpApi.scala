@@ -21,14 +21,7 @@ class HelpApi {
 
   def this(apiFilterClassName: String) = {
     this()
-    if (apiFilterClassName != null) {
-      try {
-        apiFilter = SwaggerContext.loadClass(apiFilterClassName).newInstance.asInstanceOf[AuthorizationFilter]
-      } catch {
-        case e: ClassNotFoundException => LOGGER.error("Unable to resolve apiFilter class " + apiFilterClassName);
-        case e: ClassCastException => LOGGER.error("Unable to cast to apiFilter class " + apiFilterClassName);
-      }
-    }
+    apiFilter = ApiAuthorizationFilterLocator.get(apiFilterClassName)
   }
 
   def filterDocs(doc: Documentation, currentApiPath: String)(implicit requestHeader: RequestHeader): Documentation = {

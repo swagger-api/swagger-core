@@ -24,6 +24,7 @@ import scala.collection.JavaConversions._
  *
  */
 object ApiHelpInventory {
+  Logger.debug("ApiHelpInventory.init")
   // Add the Play classloader to Swagger
   SwaggerContext.registerClassLoader(current.classloader)
 
@@ -49,15 +50,7 @@ object ApiHelpInventory {
    * Get a list of all top level resources
    */
   private def getRootResources(format: String)(implicit requestHeader: RequestHeader) = {
-    var apiFilter: ApiAuthorizationFilter = null
-    if (null != apiFilterClassName) {
-      try {
-        apiFilter = SwaggerContext.loadClass(apiFilterClassName).newInstance.asInstanceOf[ApiAuthorizationFilter]
-      } catch {
-        case e: ClassNotFoundException => Logger.error("Unable to resolve apiFilter class " + apiFilterClassName);
-        case e: ClassCastException => Logger.error("Unable to cast to apiFilter class " + apiFilterClassName);
-      }
-    }
+    var apiFilter: ApiAuthorizationFilter = ApiAuthorizationFilterLocator.get(apiFilterClassName)
 
     val allApiDoc = new Documentation
     for (clazz <- getControllerClasses) {
@@ -130,6 +123,22 @@ object ApiHelpInventory {
   def clear() {
 	this.controllerClasses.clear
 	this.resourceMap.clear
+  }
+
+  def reload() {
+	PlayApiReader.clear
+	ApiAuthorizationFilterLocator.clear
+	
+	clear()
+	this.getRootResources("json")(null)
+	for (resource <- this.getResourceMap.keys) {
+		Logger.debug("loading resource " + resource)
+		getResource(resource)(null) match {
+	      case Some(docs) => Logger.debug("loaded resource " + resource)
+	      case None => Logger.debug("load failed for resource " + resource)
+		}
+	}
+	
   }
 
   /**
