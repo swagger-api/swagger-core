@@ -3,7 +3,7 @@ package com.wordnik.resource.util
 import com.wordnik.swagger.annotations._
 import com.wordnik.util.perf.{ ProfileCounter, Profile }
 
-import javax.ws.rs.{ QueryParam, Path, GET }
+import javax.ws.rs.{ DefaultValue, QueryParam, Path, GET }
 import javax.ws.rs.core.Response
 
 import scala.collection.mutable.ListBuffer
@@ -11,18 +11,18 @@ import scala.collection.JavaConversions._
 
 trait ProfileEndpointTrait {
   @GET
-  @ApiOperation(value = "Gets current profile info", multiValueResponse = true, responseClass = "com.wordnik.util.perf.ProfileCounter")
+  @ApiOperation(value = "Gets current profile data", multiValueResponse = true, responseClass = "com.wordnik.util.perf.ProfileCounter")
   @Path("/profile")
   def getProfile(
     @ApiParam(value = "Filter to sort by")@QueryParam("filter") filter: String,
     @ApiParam(value = "Field to sort by", allowableValues = "name,count,totalDuration,minDuration,avgDuration,maxDuration", defaultValue = "name")@QueryParam("sortBy") sortBy: String = "name",
     @ApiParam(value = "Sort direction", allowableValues = "asc,desc", defaultValue = "asc")@QueryParam("sortOrder") sortOrder: String = "asc",
-    @ApiParam(value = "Resets the profile information", allowableValues = "true,false", defaultValue = "false")@QueryParam("reset") action: String): Response = {
+    @ApiParam(value = "Resets the profile information", allowableValues = "false,true", defaultValue = "false")@DefaultValue("false")@QueryParam("reset") action: String): Response = {
     action match {
-      case "true" => Profile.reset
-      case "" => Profile.reset
+      case s: String if ("true" == s || "" == s) => Profile.reset
       case _ =>
     }
+
     val f = { if (null == filter) None else Some(filter) }
     val data = getProfileCounters(f, Some(sortBy), Some(sortOrder))
     Response.ok.entity(data.toArray).build
