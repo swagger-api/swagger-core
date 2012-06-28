@@ -17,8 +17,12 @@ trait ProfileEndpointTrait {
     @ApiParam(value = "Filter to sort by")@QueryParam("filter") filter: String,
     @ApiParam(value = "Field to sort by", allowableValues = "name,count,totalDuration,minDuration,avgDuration,maxDuration", defaultValue = "name")@QueryParam("sortBy") sortBy: String = "name",
     @ApiParam(value = "Sort direction", allowableValues = "asc,desc", defaultValue = "asc")@QueryParam("sortOrder") sortOrder: String = "asc",
-    @ApiParam(value = "Resets the profile information")@QueryParam("reset") action: String): Response = {
-    if (null != action) Profile.reset
+    @ApiParam(value = "Resets the profile information", allowableValues = "true,false", defaultValue = "false")@QueryParam("reset") action: String): Response = {
+    action match {
+      case "true" => Profile.reset
+      case "" => Profile.reset
+      case _ =>
+    }
     val f = { if (null == filter) None else Some(filter) }
     val data = getProfileCounters(f, Some(sortBy), Some(sortOrder))
     Response.ok.entity(data.toArray).build
