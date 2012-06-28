@@ -21,12 +21,17 @@ class AuthorizationFilter extends ApiAuthorizationFilter {
 
   def authorize(apiPath: String)(implicit requestHeader: RequestHeader): Boolean = {
     Logger.debug("authorizing path " + apiPath)
-    val mName = requestHeader.method.toUpperCase;
-    if (isPathSecure(mName + ":" + apiPath, false)) {
-      if (apiKey == securekeyId) return true
-      else return false
-    }
-    true
+	if(requestHeader != null) {
+	    val mName = requestHeader.method.toUpperCase;
+	    if (isPathSecure(mName + ":" + apiPath, false)) {
+	      if (apiKey == securekeyId) return true
+	      else return false
+	    }
+	    true
+	} else {
+		Logger.debug("no header to authroize path " + apiPath)
+		false
+	}
   }
 
   def authorizeResource(apiPath: String)(implicit requestHeader: RequestHeader): Boolean = {

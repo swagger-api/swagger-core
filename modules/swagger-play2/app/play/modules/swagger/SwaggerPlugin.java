@@ -11,8 +11,7 @@ public class SwaggerPlugin extends Plugin {
     
     public void onStart() {
 		Logger.debug("SwaggerPlugin.onStart");
-		ApiHelpInventory.clear();
-		PlayApiReader.clear();
+		ApiHelpInventory.reload();
 	}
     
     public void onStop() {
