@@ -213,6 +213,7 @@ private class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
     var methodAnnoOutput = processAnnotations(name, methodAnnotations, docParam)
     isTransient = methodAnnoOutput._1
     isXmlElement = methodAnnoOutput._2
+    val isDocumented = methodAnnoOutput._3
 
     try {
       val propertyAnnotations = getDeclaredField(this.hostClass, name).getAnnotations()
@@ -234,7 +235,7 @@ private class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
       isTransient = true;
     }
 
-    if (!(isTransient && !isXmlElement) && docParam.name != null && (isFieldExists|| isGetter)) {
+    if (!(isTransient && !isXmlElement) && docParam.name != null && (isFieldExists|| isGetter || isDocumented)) {
       if (docParam.paramType == null) {
         docParam.paramType = ApiPropertiesReader.getDataType(genericReturnType, returnType)
       }
@@ -262,9 +263,10 @@ private class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
     }
   }
 
-  private def processAnnotations(name:String, annotations: Array[Annotation], docParam:DocumentationParameter):(Boolean, Boolean) = {
+  private def processAnnotations(name:String, annotations: Array[Annotation], docParam:DocumentationParameter):(Boolean, Boolean, Boolean) = {
     var isTransient = false
     var isXmlElement = false
+    var isDocumented = false
     for (ma <- annotations) {
       ma match {
         case xmlTransient: XmlTransient => {
@@ -274,6 +276,7 @@ private class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
           docParam.description = readString(apiProperty.value)
           docParam.notes = readString(apiProperty.notes)
           docParam.paramType = readString(apiProperty.dataType)
+          isDocumented = true
 
           try {
             docParam.allowableValues = convertToAllowableValues(apiProperty.allowableValues)
@@ -305,7 +308,7 @@ private class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
         case _ => Unit
       }
     }
-    (isTransient, isXmlElement)
+    (isTransient, isXmlElement, isDocumented)
   }
 }
 
