@@ -17,6 +17,7 @@ object ApplicationBuild extends Build {
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
     resolvers := Seq(
       Resolver.url("swagger-core-github-repo", url("http://wordnik.github.com/repository"))(Resolver.ivyStylePatterns),
+      "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases",
       "java-net" at "http://download.java.net/maven/2",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"))
 }
