@@ -38,42 +38,42 @@ import scala.annotation.target.field
 class SpecReaderTest extends FlatSpec with ShouldMatchers {
   it should "read a SimplePojo" in {
     var docObj = ApiPropertiesReader.read(classOf[SimplePojo])
-    assert((docObj.getFields.map(f=>f.name).toSet & Set("testInt","testString")).size === 2)
+    assert((docObj.getFields.map(f => f.name).toSet & Set("testInt", "testString")).size === 2)
   }
 
   it should "read a ScalaPojo" in {
     var docObj = ApiPropertiesReader.read(classOf[ScalaPojo])
-    assert((docObj.getFields.map(f=>f.name).toSet & Set("testInt")).size === 1)
+    assert((docObj.getFields.map(f => f.name).toSet & Set("testInt")).size === 1)
   }
 
   it should "read a ScalaCaseClass" in {
     var docObj = ApiPropertiesReader.read(classOf[ScalaCaseClass])
-    assert((docObj.getFields.map(f=>f.name).toSet & Set("testInt")).size === 1)
+    assert((docObj.getFields.map(f => f.name).toSet & Set("testInt")).size === 1)
   }
 
   it should "read a SimplePojo with XMLElement variations" in {
     var docObj = ApiPropertiesReader.read(classOf[SimplePojo2])
-    assert((docObj.getFields.map(f=>f.name).toSet & Set("testInt","testString")).size === 2)
+    assert((docObj.getFields.map(f => f.name).toSet & Set("testInt", "testString")).size === 2)
   }
 
   it should "read collection of collection properties " in {
     var docObj = ApiPropertiesReader.read(classOf[TestCollectionOfCollections])
-    assert(docObj.getFields.filter(f=>f.name == "mapOfMaps").size > 0)
-    assert(docObj.getFields.filter(f=>f.name == "mapOfMaps").get(0).getParamType()  === "Map[string,Map[string,double]]")
-    assert(docObj.getFields.filter(f=>f.name == "listOfLists").get(0).getParamType()  === "List[List[string]]")
-    assert(docObj.getFields.filter(f=>f.name == "listOfMaps").get(0).getParamType()  === "List[Map[string,double]]")
-    assert(docObj.getFields.filter(f=>f.name == "setofLists").get(0).getParamType()  === "Set[List[string]]")
+    assert(docObj.getFields.filter(f => f.name == "mapOfMaps").size > 0)
+    assert(docObj.getFields.filter(f => f.name == "mapOfMaps").get(0).getParamType() === "Map[string,Map[string,double]]")
+    assert(docObj.getFields.filter(f => f.name == "listOfLists").get(0).getParamType() === "List[List[string]]")
+    assert(docObj.getFields.filter(f => f.name == "listOfMaps").get(0).getParamType() === "List[Map[string,double]]")
+    assert(docObj.getFields.filter(f => f.name == "setofLists").get(0).getParamType() === "Set[List[string]]")
   }
 
   it should "read scala enum properties as string" in {
     var docObj = ApiPropertiesReader.read(classOf[TestClassWithScalaEnums])
-    assert(docObj.getFields.filter(f=>f.name == "label").get(0).getParamType()  === "String")
+    assert(docObj.getFields.filter(f => f.name == "label").get(0).getParamType() === "String")
   }
 
   it should "read different data types properly " in {
     var docObj = ApiPropertiesReader.read(classOf[SampleDataTypes])
     var assertedFields = 0;
-    for(field <- docObj.getFields){
+    for (field <- docObj.getFields) {
       field.name match {
         case "sampleByte" => assert(field.paramType === "byte"); assertedFields += 1;
         case "sampleArrayByte" => assert(field.paramType === "Array[byte]"); assertedFields += 1;
@@ -87,10 +87,10 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   it should "read objects and its super class properties" in {
     var docObj = ApiPropertiesReader.read(classOf[ExtendedClass])
     var assertedFields = 0;
-    for(field <- docObj.getFields){
+    for (field <- docObj.getFields) {
       field.name match {
-        case "stringProperty" => assert(field.paramType === "string");assertedFields += 1;
-        case "intProperty" => assert(field.paramType === "int");assertedFields += 1;
+        case "stringProperty" => assert(field.paramType === "string"); assertedFields += 1;
+        case "intProperty" => assert(field.paramType === "int"); assertedFields += 1;
         case "label" => assert(field.paramType === "string"); assertedFields += 1;
         case "transientFieldSerializedGetter" => assert(field.paramType === "string"); assertedFields += 1;
         case _ =>
@@ -103,7 +103,7 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   it should "not create any model properties to default methods like get class " in {
     var docObj = ApiPropertiesReader.read(classOf[ExtendedClass])
     var assertedFields = 0;
-    for(field <- docObj.getFields){
+    for (field <- docObj.getFields) {
       field.name match {
         case "class" => assert(false, "should not have class property in model object");
         case _ =>
@@ -126,14 +126,14 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "read objects inside an array " in {
-    var classes:java.util.List[String] = new java.util.ArrayList[String]()
+    var classes: java.util.List[String] = new java.util.ArrayList[String]()
     classes.add(classOf[TestClassWithArrayOfNonPrimitiveObjects].getName);
     val types = TypeUtil.getReferencedClasses(classes)
     assert(types.size() === 2)
   }
 
   it should "read objects inside a map " in {
-    var classes:java.util.List[String] = new java.util.ArrayList[String]()
+    var classes: java.util.List[String] = new java.util.ArrayList[String]()
     classes.add(classOf[ObjectWithChildObjectsInMap].getName);
     val types = TypeUtil.getReferencedClasses(classes)
     assert(types.size() === 2)
@@ -146,7 +146,7 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "read objects with objects form different element and property names" in {
-    var classes:java.util.List[String] = new java.util.ArrayList[String]()
+    var classes: java.util.List[String] = new java.util.ArrayList[String]()
     classes.add(classOf[ObjectWithDifferentElementAndPropertyName].getName);
     val types = TypeUtil.getReferencedClasses(classes)
     assert(types.size() === 2)
@@ -161,21 +161,27 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
 
   it should "read properties for scala case classes " in {
     var docObj = ApiPropertiesReader.read(classOf[ScalaCaseClassWithScalaSupportedType])
-    docObj.getFields.asScala.foreach(field => println("Field Name is " + field.getName() + " with type " + field.getParamType()))
+    docObj.getFields.asScala.foreach(
+      field => {
+        field.name match {
+          case _ => println("got this for " + field.name + ": " + field.paramType)
+        }
+        println("Field Name is " + field.name + " with type " + field.paramType)
+      })
     expect(11) {
       docObj.getFields.size()
     }
   }
 
   it should "read objects with objects form scala option properties" in {
-    var classes:java.util.List[String] = new java.util.ArrayList[String]()
+    var classes: java.util.List[String] = new java.util.ArrayList[String]()
     classes.add(classOf[ScalaCaseClassWithScalaSupportedType].getName);
     val types = TypeUtil.getReferencedClasses(classes)
     assert(types.size() === 3)
   }
 
   it should "read objects from base class for identifying model classes " in {
-    var classes:java.util.List[String] = new java.util.ArrayList[String]()
+    var classes: java.util.List[String] = new java.util.ArrayList[String]()
     classes.add(classOf[ClassToTestModelClassesFromBaseClass].getName);
     val types = TypeUtil.getReferencedClasses(classes)
     println("types are ::::::::::::::::" + types)
@@ -308,27 +314,30 @@ class SimplePojo2 {
 @XmlRootElement(name = "scalaishPojo")
 @XmlAccessorType(XmlAccessType.NONE)
 class ScalaPojo {
-  @XmlElement(name = "testInt") @BeanProperty
+  @XmlElement(name = "testInt")
+  @BeanProperty
   var testInt = 0
 }
 
 @XmlRootElement(name = "scalaCaseClass")
 @XmlAccessorType(XmlAccessType.NONE)
 case class ScalaCaseClass() {
-  @XmlElement(name = "testInt") @BeanProperty
+  @XmlElement(name = "testInt")
+  @BeanProperty
   var testInt = 0
 
-  @XmlTransient @BeanProperty
+  @XmlTransient
+  @BeanProperty
   var testTransient: List[String] = _
 }
 
-@XmlRootElement(name= "BaseClass")
+@XmlRootElement(name = "BaseClass")
 class BaseClass {
-  @BeanProperty var stringProperty:String = _
-  @BeanProperty var intProperty:Int = _
+  @BeanProperty var stringProperty: String = _
+  @BeanProperty var intProperty: Int = _
 
   @XmlTransient
-  var label:String =_
+  var label: String = _
 
   def setLabel(label: String) =
     this.label = label
@@ -337,13 +346,13 @@ class BaseClass {
   def getLabel() = label
 }
 
-@XmlRootElement(name= "ExtendedClass")
-class ExtendedClass extends BaseClass{
-  @BeanProperty var floatProperty:Float = _
-  @BeanProperty var longProperty:Long = _
+@XmlRootElement(name = "ExtendedClass")
+class ExtendedClass extends BaseClass {
+  @BeanProperty var floatProperty: Float = _
+  @BeanProperty var longProperty: Long = _
 
   @XmlTransient
-  var transientFieldSerializedGetter:String =_
+  var transientFieldSerializedGetter: String = _
 
   def setTransientFieldSerializedGetter(value: String) =
     this.transientFieldSerializedGetter = value
@@ -352,12 +361,12 @@ class ExtendedClass extends BaseClass{
   def getTransientFieldSerializedGetter() = transientFieldSerializedGetter
 }
 
-@XmlRootElement(name= "sampleDataTypes")
+@XmlRootElement(name = "sampleDataTypes")
 class SampleDataTypes {
-  @BeanProperty var sampleByte:Byte = _
-  @BeanProperty var sampleArrayByte:Array[Byte] = _
-  @BeanProperty var sampleArrayString:Array[String] = _
-  @BeanProperty var sampleListString:Array[String] = _
+  @BeanProperty var sampleByte: Byte = _
+  @BeanProperty var sampleArrayByte: Array[Byte] = _
+  @BeanProperty var sampleArrayString: Array[String] = _
+  @BeanProperty var sampleListString: Array[String] = _
 
 }
 
@@ -368,9 +377,8 @@ case class ObjectWithNoneAnnotationAndNoElementAnnotations() {
   var testInt = 0
 
   @BeanProperty
-  var testString:String = _
+  var testString: String = _
 }
-
 
 @XmlAccessorType(XmlAccessType.NONE)
 trait Id {
@@ -387,9 +395,9 @@ class ObjectWithTransientGetterAndXMLElementInTrait extends Id {
 @XmlRootElement(name = "TestCollectionOfCollections")
 @XmlAccessorType(XmlAccessType.NONE)
 class TestCollectionOfCollections {
-  @XmlElement @BeanProperty var mapOfMaps: java.util.HashMap[String, java.util.HashMap[String,  java.lang.Double]] = _
+  @XmlElement @BeanProperty var mapOfMaps: java.util.HashMap[String, java.util.HashMap[String, java.lang.Double]] = _
   @XmlElement @BeanProperty var listOfLists: java.util.List[java.util.List[String]] = _
-  @XmlElement @BeanProperty var listOfMaps: java.util.List[java.util.HashMap[String,  java.lang.Double]] = _
+  @XmlElement @BeanProperty var listOfMaps: java.util.List[java.util.HashMap[String, java.lang.Double]] = _
   @XmlElement @BeanProperty var setofLists: java.util.Set[java.util.List[String]] = _
   //the folowing use case is no currently supported by swagger
   //@XmlElement @BeanProperty var arrayofLists: Array[java.util.List[String]] = _
@@ -397,69 +405,67 @@ class TestCollectionOfCollections {
 
 @XmlRootElement(name = "TestClassWithScalaEnums")
 class TestClassWithScalaEnums {
-  @ApiProperty(dataType="String")
-  @XmlElement @BeanProperty var label: ScalaEnums.Value = _
+  @ApiProperty(dataType = "String") @XmlElement @BeanProperty var label: ScalaEnums.Value = _
 }
 
 @XmlRootElement(name = "TestClassWithJavaEnums")
 class TestClassWithJavaEnums {
 
-  @ApiProperty(dataType="String")
-  @XmlElement(name = "enumType")@BeanProperty var enumType:TestEnum = TestEnum.PUBLIC
-  @XmlElement @BeanProperty var name:String = _
+  @ApiProperty(dataType = "String") @XmlElement(name = "enumType") @BeanProperty var enumType: TestEnum = TestEnum.PUBLIC
+  @XmlElement @BeanProperty var name: String = _
 }
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "TestClassWithArrayOfNonPrimitiveObjects")
 class TestClassWithArrayOfNonPrimitiveObjects {
-  @XmlElement @BeanProperty var arrayWithObjects:Array[BaseClass] = _
+  @XmlElement @BeanProperty var arrayWithObjects: Array[BaseClass] = _
 }
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "TestClassWithConstructorProperties")
-class TestClassWithConstructorProperties(@(XmlElement @field)(name="text") @BeanProperty var text:String) {
+class TestClassWithConstructorProperties(@(XmlElement @field)(name = "text")@BeanProperty var text: String) {
 }
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "ObjectWithDifferentRootElementName")
 class ObjectWithRootElementName {
-  @XmlAttribute(name="label") @BeanProperty var label:String = _
-  @XmlAttribute(name="width") @BeanProperty var width:Int = _
-  @XmlAttribute(name="height") @BeanProperty var height:Int = _
+  @XmlAttribute(name = "label") @BeanProperty var label: String = _
+  @XmlAttribute(name = "width") @BeanProperty var width: Int = _
+  @XmlAttribute(name = "height") @BeanProperty var height: Int = _
 }
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "ObjectWithDifferentElementAndPropertyName")
 class ObjectWithDifferentElementAndPropertyName {
-  @XmlElement(name = "differentElementAndPropertyName") @BeanProperty var sizes:java.util.List[ObjectWithRootElementName] = new java.util.ArrayList[ObjectWithRootElementName]
+  @XmlElement(name = "differentElementAndPropertyName") @BeanProperty var sizes: java.util.List[ObjectWithRootElementName] = new java.util.ArrayList[ObjectWithRootElementName]
 }
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "ObjectWithChildObjectsInMap")
 class ObjectWithChildObjectsInMap {
-  @XmlElement @BeanProperty var objectsInMap:java.util.Map[String, ObjectWithRootElementName] = _
+  @XmlElement @BeanProperty var objectsInMap: java.util.Map[String, ObjectWithRootElementName] = _
 }
 
 object ScalaEnums extends Enumeration {
-    type ScalaEnums = Value
+  type ScalaEnums = Value
 
-    val Abbreviation                  = Value("abbrev")
-    val AdjectivalComplement          = Value("acomp")
-    val AdverbialClauseModifier       = Value("advcl")
+  val Abbreviation = Value("abbrev")
+  val AdjectivalComplement = Value("acomp")
+  val AdverbialClauseModifier = Value("advcl")
 }
 
 case class ScalaCaseClassWithScalaSupportedType(
-                                                 intType: Int,
-                                                 longType: Long,
-                                                 stringType: String,
-                                                 dateType: java.util.Date,
-                                                 mapType: Map[String,  Seq[ObjectWithRootElementName]],
-                                                 optionType: Option[TestClassWithConstructorProperties],
-                                                 seqType: Seq[String],
-                                                 setType: Set[String],
-                                                 seqOfTuples: Seq[(String,  Double)],
-                                                 @(ApiProperty @field)(dataType="String")enumType:ScalaEnums.Value,
-                                                 collectionOfCollections:Map[String,  Seq[ObjectWithRootElementName]]){
+  intType: Int,
+  longType: Long,
+  stringType: String,
+  dateType: java.util.Date,
+  mapType: Map[String, Seq[ObjectWithRootElementName]],
+  optionType: Option[TestClassWithConstructorProperties],
+  seqType: Seq[String],
+  setType: Set[String],
+  seqOfTuples: Seq[(String, Double)],
+  @(ApiProperty @field)(dataType = "String") enumType: ScalaEnums.Value,
+  collectionOfCollections: Map[String, Seq[ObjectWithRootElementName]]) {
 }
 
 class ClassToTestModelClassesFromBaseClass extends ObjectWithChildObjectsInMap {
