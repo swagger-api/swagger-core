@@ -23,6 +23,7 @@ import com.wordnik.swagger.sample.model.Pet;
 import com.wordnik.swagger.sample.exception.NotFoundException;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.*;
 
 public class PetResource extends JavaHelp {
@@ -72,7 +73,8 @@ public class PetResource extends JavaHelp {
 	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid status value") })
 	public Response findPetsByStatus(
 			@ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available", allowableValues = "available,pending,sold", allowMultiple = true) @QueryParam("status") String status) {
-		return Response.ok(petData.findPetByStatus(status)).build();
+		GenericEntity entity = new GenericEntity<java.util.List<Pet>>(petData.findPetByStatus(status)) {};
+		return Response.ok(entity).build();
 	}
 
 	@GET
@@ -82,6 +84,7 @@ public class PetResource extends JavaHelp {
 	@Deprecated
 	public Response findPetsByTags(
 			@ApiParam(value = "Tags to filter by", required = true, allowMultiple = true) @QueryParam("tags") String tags) {
-		return Response.ok(petData.findPetByTags(tags)).build();
+		GenericEntity entity = new GenericEntity<java.util.List<Pet>>(petData.findPetByTags(tags)) {};
+		return Response.ok(entity).build();
 	}
 }

@@ -57,7 +57,7 @@ public class StoreData {
 	}
 
 	public void deleteOrder(long orderId) {
-		for (Order order : orders) {
+		for (Order order : new ArrayList<Order>(orders)) {
 			if (order.getId() == orderId) {
 				orders.remove(order);
 			}
