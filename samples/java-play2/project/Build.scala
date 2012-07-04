@@ -12,7 +12,7 @@ object ApplicationBuild extends Build {
     "org.codehaus.jackson" % "jackson-xc" % "1.9.5",
     "org.codehaus.jackson" % "jackson-mapper-asl" % "1.9.5",
     "org.codehaus.jackson" % "jackson-core-asl" % "1.9.5",
-    "com.wordnik" %% "swagger-play2" % "1.1-SNAPSHOT")
+    "com.wordnik" %% "swagger-play2" % "1.0.2")
 
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
     resolvers := Seq(
