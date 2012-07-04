@@ -86,11 +86,13 @@ object PlayApiReader {
     val parsedRoutes = parser.parse(routesString)
     parsedRoutes match {
       case parser.Success(routes, _) => {
-        routes map { route =>
-          {
+        routes map { rule => rule match {
+	  case route @ Route(_, _, _) =>
             val routeName = route.call.packageName + "." + route.call.controller + "$." + route.call.method
             (routeName, route)
-          }
+	  case x @ _ =>
+	    throw new Exception("Rule type not yet supported: " + x)
+	  }
         } toMap
       }
       case _ => Map[String, Route]()
