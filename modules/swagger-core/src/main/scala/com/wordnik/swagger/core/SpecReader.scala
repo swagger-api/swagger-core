@@ -37,7 +37,7 @@ object ApiPropertiesReader {
   def read(hostClass: Class[_]): DocumentationObject = {
     modelsCache.get(hostClass) match {
       case None => {
-        !hostClass.isEnum match {
+        !hostClass.isEnum && !hostClass.getName.startsWith("java.lang.") match {
           case true => val docObj = new ApiModelParser(hostClass).parse; modelsCache += hostClass -> docObj; docObj
           case _ => null
         }
