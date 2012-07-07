@@ -2,14 +2,14 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.9.1</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.0.1</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
   <artifactId>swagger-jaxrs-utils_2.9.1</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>1.0.1</version>
   <name>swagger-jaxrs-utils</name>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
@@ -49,7 +49,7 @@
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>common-utils_2.9.1</artifactId>
-      <version>1.1.1</version>
+      <version>1.0.1</version>
     </dependency>
     <dependency>
       <groupId>com.sun.jersey</groupId>

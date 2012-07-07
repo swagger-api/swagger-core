@@ -110,7 +110,7 @@ trait UserResource extends RestResourceUtil {
 
   @GET
   @Path("/login")
-  @ApiOperation(value = "Logs user into the system", responseClass = "String")
+  @ApiOperation(value = "Logs user into the system", responseClass = "java.lang.String")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid username and password combination")))
   def loginUser(
