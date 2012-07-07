@@ -9,7 +9,7 @@
   <artifactId>swagger-project_2.9.1</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
-  <version>1.0.1</version>
+  <version>1.1.0-SNAPSHOT</version>
   <url>https://github.com/wordnik/swagger-core</url>
   <scm>
     <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
@@ -302,6 +302,7 @@
     </profile>
   </profiles>
   <modules>
+    <module>modules/swagger-annotations</module>
     <module>modules/swagger-core</module>
     <module>modules/swagger-jaxrs</module>
     <module>modules/swagger-jaxrs-utils</module>
