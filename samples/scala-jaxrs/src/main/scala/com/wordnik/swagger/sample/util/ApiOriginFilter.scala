@@ -27,6 +27,8 @@ class ApiOriginFilter extends javax.servlet.Filter {
   override def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) = {
     val res = response.asInstanceOf[HttpServletResponse]
     res.addHeader("Access-Control-Allow-Origin", "*");
+    res.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT");
+    res.addHeader("Access-Control-Allow-Headers", "api_key, Content-Type");
     chain.doFilter(request, response);
   }
 
