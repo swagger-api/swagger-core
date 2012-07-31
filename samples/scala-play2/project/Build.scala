@@ -5,14 +5,14 @@ import PlayProject._
 object ApplicationBuild extends Build {
 
   val appName = "petstore"
-  val appVersion = "1.0"
+  val appVersion = "1.1-SNAPSHOT"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
-    "org.codehaus.jackson" % "jackson-jaxrs" % "1.9.5",
-    "org.codehaus.jackson" % "jackson-xc" % "1.9.5",
-    "org.codehaus.jackson" % "jackson-mapper-asl" % "1.9.5",
-    "org.codehaus.jackson" % "jackson-core-asl" % "1.9.5",
-    "com.wordnik" %% "swagger-play2-utils" % "1.0.2")
+    "org.codehaus.jackson" % "jackson-jaxrs" % "1.9.7",
+    "org.codehaus.jackson" % "jackson-xc" % "1.9.7",
+    "org.codehaus.jackson" % "jackson-mapper-asl" % "1.9.7",
+    "org.codehaus.jackson" % "jackson-core-asl" % "1.9.7",
+    "com.wordnik" %% "swagger-play2-utils" % "1.0.3-SNAPSHOT")
 
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
     resolvers := Seq(
