@@ -9,7 +9,7 @@
   <groupId>com.wordnik</groupId>
   <artifactId>swagger-jaxrs-utils_2.9.1</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.0</version>
+  <version>${project.parent.version}</version>
   <name>swagger-jaxrs-utils</name>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
