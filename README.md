@@ -7,6 +7,24 @@ framework at http://swagger.wordnik.com.  For more information about Wordnik's A
 visit http://developer.wordnik.com.  
 
 ## Version history
+v1.1.0 Aug-22 2012
+
+<li>- Spec [clarifications](https://github.com/wordnik/swagger-core/wiki/Changelog)
+
+<li>- Updated to Jackson 2.0.x, added sample with [scala case classes](https://github.com/wordnik/swagger-core/tree/master/samples/scala-jaxrs-jackson2)
+
+<li>- Play 2.0.2 supported
+
+<li>- Pluggable model processor, added configurable package introspection
+
+<li>- Feature parity between JAX-RS & Play 2, java, scala
+
+<li>- Made .{format} [configurable](https://github.com/wordnik/swagger-core/tree/master/samples/scala-jaxrs-no-format), see [here](https://github.com/wordnik/swagger-core/blob/master/samples/scala-jaxrs-no-format/src/main/scala/com/wordnik/swagger/sample/Bootstrap.scala#L24)
+
+<li>- Added support for alternate resource listing, examples in [scala](https://github.com/wordnik/swagger-core/tree/master/samples/scala-alt-resource-listing) and [java](https://github.com/wordnik/swagger-core/tree/master/samples/java-alt-resource-listing)
+
+<li>- Moved swagger spec to github [wiki](https://github.com/wordnik/swagger-core/wiki)
+
 
 v1.01 Jan-31 2012
 
