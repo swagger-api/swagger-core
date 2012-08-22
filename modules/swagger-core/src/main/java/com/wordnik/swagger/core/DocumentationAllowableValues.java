@@ -2,12 +2,9 @@ package com.wordnik.swagger.core;
 
 import javax.xml.bind.annotation.*;
 
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.annotate.*;
-import org.codehaus.jackson.map.*;
-import org.codehaus.jackson.map.annotate.*;
+import com.fasterxml.jackson.annotation.*;
 
-import static org.codehaus.jackson.annotate.JsonTypeInfo.*;
+import static com.fasterxml.jackson.annotation.JsonTypeInfo.*;
 
 @JsonTypeInfo(use=Id.NAME, include=As.PROPERTY, property="valueType")
 @JsonSubTypes({

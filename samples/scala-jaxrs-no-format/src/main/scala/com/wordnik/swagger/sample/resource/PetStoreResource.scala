@@ -25,13 +25,11 @@ import com.wordnik.swagger.sample.model.Order
 import com.wordnik.swagger.sample.data.StoreData
 import com.wordnik.swagger.sample.exception.NotFoundException
 
-import com.sun.jersey.spi.resource.Singleton
-
 import javax.ws.rs.core.Response
 import javax.ws.rs._
 
 trait PetStoreResource extends RestResourceUtil {
-  var storeData = new StoreData
+  var StoreData = new StoreData
 
   @GET
   @Path("/order/{orderId}")
@@ -42,7 +40,7 @@ trait PetStoreResource extends RestResourceUtil {
     new ApiError(code = 404, reason = "Order not found")))
   def getOrderById(
       @ApiParam(value="ID of pet that needs to be fetched",required=true)@PathParam("orderId") orderId: String) = {
-      var order = storeData.findOrderById(getLong(0,10000, 0, orderId))
+      var order = StoreData.findOrderById(getLong(0,10000, 0, orderId))
       if (null != order){
         Response.ok.entity(order).build
       }else{
@@ -57,7 +55,7 @@ trait PetStoreResource extends RestResourceUtil {
     new ApiError(code = 400, reason = "Invalid order")))
   def placeOrder(
       @ApiParam(value="order placed for purchasing the pet",required=true)order: Order) = {
-      storeData.placeOrder(order)
+      StoreData.placeOrder(order)
       Response.ok.build
   }
 
@@ -70,20 +68,18 @@ trait PetStoreResource extends RestResourceUtil {
     new ApiError(code = 404, reason = "Order not found")))
   def deleteOrder(
       @ApiParam(value="ID of the order that needs to be deleted",required=true)@PathParam("orderId") orderId: String) = {
-      storeData.deleteOrder(getLong(0, 10000, 0, orderId))
+      StoreData.deleteOrder(getLong(0, 10000, 0, orderId))
       Response.ok.build
   }
 }
 
 @Path("/store")
-@Singleton
 @Api(value="/store" , description = "Operations about store")
 @Produces(Array("application/json"))
 class PetStoreResourceJSON extends Help
   with PetStoreResource
 
 @Path("/store.xml")
-@Singleton
 @Api(value="/store", description = "Operations about store")
 @Produces(Array("application/xml"))
 class PetStoreResourceXML extends Help

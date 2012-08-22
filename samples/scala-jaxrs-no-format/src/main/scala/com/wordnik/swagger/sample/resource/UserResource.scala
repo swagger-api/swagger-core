@@ -23,27 +23,17 @@ import com.wordnik.swagger.sample.model.User
 import com.wordnik.swagger.sample.data.UserData
 import com.wordnik.swagger.sample.exception.NotFoundException
 
-import com.sun.jersey.spi.resource.Singleton
-
 import javax.ws.rs.core.Response
 import javax.ws.rs._
 import com.wordnik.swagger.core.util.RestResourceUtil
 import scala.collection.JavaConverters._
 
-/**
- * User: ramesh
- * Date: 7/29/11
- * Time: 5:23 PM
- */
-
 trait UserResource extends RestResourceUtil {
-  var userData = new UserData
-
   @POST
   @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.")
   def createUser(
     @ApiParam(value = "Created user object", required = true) user: User) = {
-    userData.addUser(user)
+    UserData.addUser(user)
     Response.ok.entity("").build
   }
 
@@ -52,7 +42,7 @@ trait UserResource extends RestResourceUtil {
   @ApiOperation(value = "Creates list of users with given input array")
   def createUsersWithArrayInput(@ApiParam(value = "List of user object", required = true) users: Array[User]): Response = {
     for (user <- users) {
-      userData.addUser(user)
+      UserData.addUser(user)
     }
     Response.ok.entity("").build
   }
@@ -62,7 +52,7 @@ trait UserResource extends RestResourceUtil {
   @ApiOperation(value = "Creates list of users with given list input")
   def createUsersWithListInput(@ApiParam(value = "List of user object", required = true) users: java.util.List[User]): Response = {
     for (user <- users.asScala) {
-      userData.addUser(user)
+      UserData.addUser(user)
     }
     Response.ok.entity("").build
   }
@@ -76,7 +66,7 @@ trait UserResource extends RestResourceUtil {
   def updateUser(
     @ApiParam(value = "name that need to be deleted", required = true)@PathParam("username") username: String,
     @ApiParam(value = "Updated user object", required = true) user: User) = {
-    userData.addUser(user)
+    UserData.addUser(user)
     Response.ok.entity("").build
   }
 
@@ -88,7 +78,7 @@ trait UserResource extends RestResourceUtil {
     new ApiError(code = 404, reason = "User not found")))
   def deleteUser(
     @ApiParam(value = "The name that needs to be deleted", required = true)@PathParam("username") username: String) = {
-    userData.removeUser(username)
+    UserData.removeUser(username)
     Response.ok.entity("").build
   }
 
@@ -100,7 +90,7 @@ trait UserResource extends RestResourceUtil {
     new ApiError(code = 404, reason = "User not found")))
   def getUserByName(
     @ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ", required = true)@PathParam("username") username: String) = {
-    var user = userData.findUserByName(username)
+    var user = UserData.findUserByName(username)
     if (null != user) {
       Response.ok.entity(user).build
     } else {
@@ -110,7 +100,7 @@ trait UserResource extends RestResourceUtil {
 
   @GET
   @Path("/login")
-  @ApiOperation(value = "Logs user into the system", responseClass = "String")
+  @ApiOperation(value = "Logs user into the system", responseClass = "java.lang.String")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid username and password combination")))
   def loginUser(
@@ -128,14 +118,12 @@ trait UserResource extends RestResourceUtil {
 }
 
 @Path("/user")
-@Singleton
 @Api(value="/user", description = "Operations about user")
 @Produces(Array("application/json"))
 class UserResourceJSON extends Help
   with UserResource
 
 @Path("/user.xml")
-@Singleton
 @Api(value="/user", description = "Operations about user")
 @Produces(Array("application/xml"))
 class UserResourceXML extends Help

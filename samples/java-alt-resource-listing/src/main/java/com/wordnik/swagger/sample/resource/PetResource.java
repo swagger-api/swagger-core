@@ -20,29 +20,14 @@ import com.wordnik.swagger.annotations.*;
 import com.wordnik.swagger.sample.data.PetData;
 import com.wordnik.swagger.sample.model.Pet;
 import com.wordnik.swagger.sample.exception.NotFoundException;
+import com.wordnik.swagger.jaxrs.JavaHelp;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
-public class PetResource {
+public class PetResource extends JavaHelp {
 	static PetData petData = new PetData();
 	static JavaRestResourceUtil ru = new JavaRestResourceUtil();
-
-	@GET
-	@ApiOperation(value = "Find pet by ID", notes = "Returns a pet when ID < 10. "
-			+ "ID > 10 or nonintegers will simulate API error conditions", responseClass = "com.wordnik.swagger.sample.model.Pet")
-	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid ID supplied"),
-			@ApiError(code = 404, reason = "Pet not found") })
-	public Response findPet(
-			@ApiParam(value = "ID of pet that needs to be fetched", required = true, allowableValues = "range[0,10]") @QueryParam("petId") String petId)
-			throws NotFoundException {
-		Pet pet = petData.getPetbyId(ru.getLong(0, 100000, 0, petId));
-		if (null != pet) {
-			return Response.ok().entity(pet).build();
-		} else {
-			throw new NotFoundException(404, "Pet not found");
-		}
-	}
 
 	@GET
 	@Path("/{petId}")

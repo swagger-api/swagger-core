@@ -23,7 +23,6 @@ class AllowableValuesSerializationTest extends FlatSpec with ShouldMatchers {
     val operation = new DocumentationOperation("GET",
       "gets an item from a store",
       "returns just one")
-    operation.setResponseTypeInternal("String")
 
     val param = new DocumentationParameter(
       "idRange",

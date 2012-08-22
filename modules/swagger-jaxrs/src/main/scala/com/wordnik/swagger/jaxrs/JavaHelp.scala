@@ -17,52 +17,66 @@
 package com.wordnik.swagger.jaxrs
 
 import com.wordnik.swagger.core._
+import com.wordnik.swagger.core.util.TypeUtil
 import com.wordnik.swagger.annotations._
 
-import org.codehaus.jackson.JsonGenerationException
-import org.codehaus.jackson.map.JsonMappingException
+import org.slf4j.LoggerFactory
 
 import com.sun.jersey.api.core.ResourceConfig
 
-import java.io.IOException
-import java.lang.reflect.Constructor
 import javax.servlet.ServletConfig
-import javax.ws.rs.core._
+
+import javax.ws.rs.{ Path, GET }
+import javax.ws.rs.core.{ UriInfo, HttpHeaders, Context, Response }
 import javax.ws.rs.core.Response.Status
-import javax.ws.rs._
+
+import scala.collection.JavaConversions._
 
 abstract class JavaHelp {
-  @GET def getHelp(@Context servConfig: ServletConfig, @Context resConfig: ResourceConfig, @Context headers: HttpHeaders, @Context uriInfo: UriInfo): Response = {
-    var configReader: ConfigReader = ConfigReaderFactory.getConfigReader(servConfig)
-    var apiVersion: String = configReader.getApiVersion
-    var swaggerVersion: String = configReader.getSwaggerVersion
-    var basePath: String = configReader.getBasePath
-    var apiFilterClassName: String = configReader.getApiFilterClassName
-    var filterOutTopLevelApi: Boolean = true
-    var currentApiEndPoint: Api = this.getClass.getAnnotation(classOf[Api])
+  @GET
+  @ApiOperation(value = "Returns information about API parameters",
+    responseClass = "com.wordnik.swagger.core.Documentation")
+  def getHelp(@Context sc: ServletConfig, @Context rc: ResourceConfig, @Context headers: HttpHeaders, @Context uriInfo: UriInfo): Response = {
+    val reader = ConfigReaderFactory.getConfigReader(sc)
+
+    val apiVersion = reader.getApiVersion()
+    val swaggerVersion = reader.getSwaggerVersion()
+    val basePath = reader.getBasePath()
+    val apiFilterClassName = reader.getApiFilterClassName()
+    reader.getModelPackages.split(",").foreach(p => TypeUtil.addAllowablePackage(p))
+
+    val filterOutTopLevelApi = true
+    val currentApiEndPoint = this.getClass.getAnnotation(classOf[Api])
     if (currentApiEndPoint == null) {
-      return Response.status(Status.NOT_FOUND).build
-    }
-    else {
-      var apiPath: String = null
-      if (filterOutTopLevelApi) {
-        apiPath = currentApiEndPoint.value
+      Response.status(Status.NOT_FOUND).build
+    } else {
+      val apiPath = {
+        if (filterOutTopLevelApi) {
+          currentApiEndPoint.value
+        } else null
       }
-      else apiPath = null
-      var apiListingPath: String = null
-      if (filterOutTopLevelApi) {
-        if (!("" == currentApiEndPoint.listingPath)) apiListingPath = currentApiEndPoint.listingPath
-        else apiListingPath = currentApiEndPoint.value
+      val apiListingPath = {
+        if (filterOutTopLevelApi) {
+          if (!"".equals(currentApiEndPoint.listingPath)) currentApiEndPoint.listingPath
+          else currentApiEndPoint.value
+        } else null
       }
-      else apiListingPath = null
-      var listingClass: Class[_] = this.getClass
-      if (!("" == currentApiEndPoint.listingClass)) {
-        listingClass = SwaggerContext.loadClass(currentApiEndPoint.listingClass)
+      val listingClass: Class[_] = {
+        if (currentApiEndPoint.listingClass != "") {
+          SwaggerContext.loadClass(currentApiEndPoint.listingClass)
+        } else this.getClass
       }
-      var helpApi: HelpApi = new HelpApi(apiFilterClassName)
-      var docs: Documentation = helpApi.filterDocs(JaxrsApiReader.read(listingClass, apiVersion, swaggerVersion, basePath, apiPath), headers, uriInfo, apiListingPath, apiPath)
-      return Response.ok.entity(docs).build
+      val docs = new HelpApi(apiFilterClassName).filterDocs(
+        JaxrsApiReader.read(listingClass, apiVersion, swaggerVersion, basePath, apiPath),
+        headers,
+        uriInfo,
+        apiListingPath,
+        apiPath)
+
+      docs.basePath = basePath
+      docs.apiVersion = apiVersion
+      docs.swaggerVersion = swaggerVersion
+      Response.ok.entity(docs).build
     }
   }
 }
-

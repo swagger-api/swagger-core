@@ -34,7 +34,7 @@ object PlayApiReader {
   private val endpointsCache = scala.collection.mutable.Map.empty[Class[_], Documentation]
   private var _routesCache: Map[String, Route] = null
   var FORMAT_STRING = ".{format}"
-  
+
   def setFormatString(str: String) = {
     if (FORMAT_STRING != str) {
       endpointsCache.clear
@@ -44,21 +44,24 @@ object PlayApiReader {
 
   def read(hostClass: Class[_], apiVersion: String, swaggerVersion: String, basePath: String, apiPath: String): Documentation = {
     endpointsCache.get(hostClass) match {
-      case None => val doc = new PlayApiSpecParser(hostClass, apiVersion, swaggerVersion, basePath, apiPath).parse; endpointsCache += hostClass -> doc.clone.asInstanceOf[Documentation]; doc
+      case None => {
+        val doc = new PlayApiSpecParser(hostClass, apiVersion, swaggerVersion, basePath, apiPath).parse
+        endpointsCache += hostClass -> doc.clone.asInstanceOf[Documentation]
+        doc
+      }
       case Some(doc) => doc.clone.asInstanceOf[Documentation]
       case _ => null
     }
   }
 
   def routesCache = {
-	if(_routesCache == null) _routesCache = populateRoutesCache
-	
-	_routesCache
+    if (_routesCache == null) _routesCache = populateRoutesCache
+    _routesCache
   }
 
   def clear {
-	_routesCache = null
-	endpointsCache.clear
+    _routesCache = null
+    endpointsCache.clear
   }
 
   private def populateRoutesCache: Map[String, Route] = {
@@ -69,13 +72,14 @@ object PlayApiReader {
     val parsedRoutes = parser.parse(routesString)
     parsedRoutes match {
       case parser.Success(routes, _) => {
-        routes map { rule => rule match {
-	  case route @ Route(_, _, _) =>
-            val routeName = route.call.packageName + "." + route.call.controller + "$." + route.call.method
-            (routeName, route)
-	  case x @ _ =>
-	    throw new Exception("Rule type not yet supported: " + x)
-	  }
+        routes map { rule =>
+          rule match {
+            case route @ Route(_, _, _) =>
+              val routeName = route.call.packageName + "." + route.call.controller + "$." + route.call.method
+              (routeName, route)
+            case x @ _ =>
+              throw new Exception("Rule type not yet supported: " + x)
+          }
         } toMap
       }
       case _ => Map[String, Route]()
@@ -97,32 +101,28 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
 
   val documentation = new Documentation
   val apiEndpoint = hostClass.getAnnotation(classOf[Api])
-  
+
   var FORMAT_STRING = ".{format}"
   val LIST_RESOURCES_PATH = "/resources"
 
   def setFormatString(str: String) = {
-    Logger debug("setting format string")
+    Logger debug ("setting format string")
     if (FORMAT_STRING != str) {
-      Logger debug("clearing endpoint cache")
+      Logger debug ("clearing endpoint cache")
       FORMAT_STRING = str
     }
   }
 
   override def getPath(method: Method) = {
-    val fullMethodName = hostClass.getCanonicalName + "." + method.getName
+    val fullMethodName = getFullMethodName(method)
     val lookup = PlayApiReader.routesCache.get(fullMethodName)
-
-//    Logger debug (lookup.get.path.toString)
-
     val str = lookup match {
-      case Some(route) => route.path.parts map { 
-        part => {
+      case Some(route) => route.path.parts map {
+        part =>
           part match {
             case DynamicPart(name, _) => "{" + name + "}"
             case StaticPart(name) => name
           }
-        }
       } mkString
       case None => Logger error "Cannot determine Path. Nothing defined in play routes file for api method " + method.toString; this.resourcePath
     }
@@ -134,8 +134,15 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
     s
   }
 
+  def getFullMethodName(method: Method): String = {
+    hostClass.getCanonicalName.indexOf("$") match {
+      case -1 => hostClass.getCanonicalName + "$." + method.getName
+      case _ => hostClass.getCanonicalName + "." + method.getName
+    }
+  }
+
   override protected def processOperation(method: Method, o: DocumentationOperation) = {
-    val fullMethodName = hostClass.getCanonicalName + "." + method.getName
+    val fullMethodName = getFullMethodName(method)
     val lookup = PlayApiReader.routesCache.get(fullMethodName)
     lookup match {
       case Some(route) => o.httpMethod = route.verb.value

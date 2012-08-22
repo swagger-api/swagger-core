@@ -16,14 +16,13 @@
 
 package com.wordnik.swagger.sample.resource;
 
-import com.wordnik.swagger.jaxrs.*;
 import com.wordnik.swagger.annotations.*;
 import com.wordnik.swagger.sample.data.PetData;
 import com.wordnik.swagger.sample.model.Pet;
 import com.wordnik.swagger.sample.exception.NotFoundException;
+import com.wordnik.swagger.jaxrs.JavaHelp;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.*;
 
 public class PetResource extends JavaHelp {
@@ -36,9 +35,9 @@ public class PetResource extends JavaHelp {
 			+ "ID > 10 or nonintegers will simulate API error conditions", responseClass = "com.wordnik.swagger.sample.model.Pet")
 	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid ID supplied"),
 			@ApiError(code = 404, reason = "Pet not found") })
-	public Response getPetById (
+	public Response getPetById(
 			@ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("petId") String petId)
-	throws NotFoundException {
+			throws NotFoundException {
 		Pet pet = petData.getPetbyId(ru.getLong(0, 100000, 0, petId));
 		if (null != pet) {
 			return Response.ok().entity(pet).build();
@@ -73,8 +72,7 @@ public class PetResource extends JavaHelp {
 	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid status value") })
 	public Response findPetsByStatus(
 			@ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available", allowableValues = "available,pending,sold", allowMultiple = true) @QueryParam("status") String status) {
-		GenericEntity entity = new GenericEntity<java.util.List<Pet>>(petData.findPetByStatus(status)) {};
-		return Response.ok(entity).build();
+		return Response.ok(petData.findPetByStatus(status)).build();
 	}
 
 	@GET
@@ -84,7 +82,6 @@ public class PetResource extends JavaHelp {
 	@Deprecated
 	public Response findPetsByTags(
 			@ApiParam(value = "Tags to filter by", required = true, allowMultiple = true) @QueryParam("tags") String tags) {
-		GenericEntity entity = new GenericEntity<java.util.List<Pet>>(petData.findPetByTags(tags)) {};
-		return Response.ok(entity).build();
+		return Response.ok(petData.findPetByTags(tags)).build();
 	}
 }

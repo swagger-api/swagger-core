@@ -65,7 +65,7 @@ class ResourceListingIT extends FlatSpec with ShouldMatchers {
         "/user.{format}/createWithList")).size == 3)
 
     var param = doc.getApis.filter(api => api.getPath == "/user.{format}/createWithList")(0).getOperations()(0).getParameters()(0)
-    assert(param.getDataType() === "List[user]")
+    assert(param.getDataType() === "List[User]")
 
   }
 

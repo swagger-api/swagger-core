@@ -16,8 +16,6 @@
 
 package com.wordnik.swagger.jaxrs;
 
-import org.codehaus.jackson.map.ObjectMapper;
-
 import com.wordnik.swagger.core.Documentation;
 
 import javax.ws.rs.Produces;
@@ -83,7 +81,6 @@ public class ApiHelpMessageBodyWriter implements MessageBodyWriter<Documentation
     }
 
     private String getStringRepresentation(Documentation documentation) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(documentation);
+        return com.wordnik.swagger.core.util.JsonUtil.getJsonMapper().writeValueAsString(documentation);
     }
 }

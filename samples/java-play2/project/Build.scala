@@ -5,18 +5,16 @@ import PlayProject._
 object ApplicationBuild extends Build {
 
   val appName = "petstore"
-  val appVersion = "1.0"
+  val appVersion = "1.1.0"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
-    "org.codehaus.jackson" % "jackson-jaxrs" % "1.9.5",
-    "org.codehaus.jackson" % "jackson-xc" % "1.9.5",
-    "org.codehaus.jackson" % "jackson-mapper-asl" % "1.9.5",
-    "org.codehaus.jackson" % "jackson-core-asl" % "1.9.5",
-    "com.wordnik" %% "swagger-play2" % "1.0.2")
+    "com.wordnik" %% "swagger-play2" % "1.1.0")
 
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
     resolvers := Seq(
+      "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
       Resolver.url("swagger-core-github-repo", url("http://wordnik.github.com/repository"))(Resolver.ivyStylePatterns),
+      "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
       "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases",
       "java-net" at "http://download.java.net/maven/2",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"))

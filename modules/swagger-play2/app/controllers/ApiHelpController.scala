@@ -13,9 +13,6 @@ import play.api.data.validation.Constraints._
 import play.api.Logger
 import play.modules.swagger.ApiHelpInventory
 
-import org.codehaus.jackson.map.ObjectMapper
-import org.codehaus.jackson.map.SerializationConfig
-
 import javax.xml.bind.JAXBContext
 import java.io.StringWriter
 
@@ -53,7 +50,7 @@ object ApiHelpController extends SwaggerBaseApiController {
 class SwaggerBaseApiController extends Controller {
   protected def jaxbContext(): JAXBContext = JAXBContext.newInstance(classOf[String])
   protected def returnXml(request: Request[_]) = request.path.contains(".xml")
-  protected val ok = "OK"
+  protected val ok = "ok"
   protected val AccessControlAllowOrigin = ("Access-Control-Allow-Origin", "*")
 
   protected def XmlResponse(o: Any) = {
@@ -82,11 +79,8 @@ class SwaggerBaseApiController extends Controller {
       if (data.getClass.equals(classOf[String])) {
         data.asInstanceOf[String]
       } else {
-        val mapper = new ObjectMapper()
-        val w = new StringWriter()
-        mapper.getSerializationConfig().disable(SerializationConfig.Feature.AUTO_DETECT_IS_GETTERS)
-        mapper.writeValue(w, data)
-        w.toString()
+        val mapper = JsonUtil.getJsonMapper
+        mapper.writeValueAsString(data)
       }
     }
     new SimpleResult[String](header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(jsonValue)).as("application/json")

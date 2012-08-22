@@ -48,7 +48,6 @@ class HelpApi {
   }
 
   def filterDocs(doc: Documentation, headers: HttpHeaders, uriInfo: UriInfo, currentApiPath: String, listingPath: String): Documentation = {
-    //todo: apply auth and filter doc to only those which apply to current request/api-key
     if (apiFilter != null) {
       var apisToRemove = new ListBuffer[DocumentationEndPoint]
       if (null != doc.getApis()) {

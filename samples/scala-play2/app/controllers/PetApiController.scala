@@ -66,7 +66,8 @@ object PetApiController extends BaseApiController {
     request.body.asJson match {
       case Some(e) => {
         val pet = BaseApiController.mapper.readValue(e.toString, classOf[Pet]).asInstanceOf[Pet]
-        JsonResponse(pet)
+        petData.addPet(pet)
+        JsonResponse("SUCCESS")
       }
       case None => JsonResponse(new value.ApiResponse(404, "sorry"))
     }

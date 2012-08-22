@@ -22,7 +22,7 @@ import javax.xml.bind.annotation._
 
 import java.lang.Long
 
-@XmlRootElement(name = "user")
+@XmlRootElement(name = "User")
 class User {
   private var id:Long = 0
   private var username:String = _

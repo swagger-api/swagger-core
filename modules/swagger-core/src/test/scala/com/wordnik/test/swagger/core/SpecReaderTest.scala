@@ -20,6 +20,8 @@ import com.wordnik.swagger.core.util._
 import com.wordnik.swagger.annotations.ApiProperty
 import com.wordnik.swagger.core.ApiPropertiesReader
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 import javax.xml.bind._
 import javax.xml.bind.annotation._
 import java.io.{ ByteArrayOutputStream, ByteArrayInputStream }
@@ -161,13 +163,6 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
 
   it should "read properties for scala case classes " in {
     var docObj = ApiPropertiesReader.read(classOf[ScalaCaseClassWithScalaSupportedType])
-    docObj.getFields.asScala.foreach(
-      field => {
-        field.name match {
-          case _ => println("got this for " + field.name + ": " + field.paramType)
-        }
-        println("Field Name is " + field.name + " with type " + field.paramType)
-      })
     expect(11) {
       docObj.getFields.size()
     }
@@ -184,10 +179,8 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
     var classes: java.util.List[String] = new java.util.ArrayList[String]()
     classes.add(classOf[ClassToTestModelClassesFromBaseClass].getName);
     val types = TypeUtil.getReferencedClasses(classes)
-    println("types are ::::::::::::::::" + types)
     assert(types.size() === 2)
   }
-
 }
 
 @RunWith(classOf[JUnitRunner])
@@ -326,6 +319,7 @@ case class ScalaCaseClass() {
   @BeanProperty
   var testInt = 0
 
+  @JsonIgnore
   @XmlTransient
   @BeanProperty
   var testTransient: List[String] = _

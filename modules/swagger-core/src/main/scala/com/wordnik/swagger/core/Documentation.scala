@@ -16,18 +16,16 @@
 
 package com.wordnik.swagger.core
 
-import org.codehaus.jackson._
-import org.codehaus.jackson.annotate._
-import org.codehaus.jackson.map._
-import org.codehaus.jackson.map.annotate._
+import com.fasterxml.jackson.annotation.{JsonProperty, JsonIgnore}
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 
 import java.util.HashMap
+import javax.xml.bind.annotation._
 
 import scala.reflect.BeanProperty
 import scala.collection._
-import mutable.{ ListBuffer }
+import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConversions._
-import javax.xml.bind.annotation._
 
 trait Name {
   private var name: String = _
@@ -178,6 +176,7 @@ class DocumentationOperation(
   def setResponseTypeInternal(s: String) = this.responseTypeInternal = s
 
   @XmlTransient
+  @JsonIgnore
   def getResponseTypeInternal() = this.responseTypeInternal
 
   private var errorResponses = new ListBuffer[DocumentationError]
@@ -247,6 +246,7 @@ class DocumentationParameter(
   def setValueTypeInternal(s: String) = this.valueTypeInternal = s
 
   @XmlTransient
+  @JsonIgnore
   def getValueTypeInternal() = this.valueTypeInternal
 
   override def clone(): Object = {
@@ -372,7 +372,7 @@ class DocumentationObject extends Name {
     val isSet = currentField.paramType.startsWith("Set[");
 
     if (isList || isSet) {
-      currentSchema.setType("array")
+      currentSchema.setType("Array")
       currentSchema.uniqueItems = isSet;
       val arrayElementType = currentField.paramType.substring(currentField.paramType.indexOf("[") + 1, currentField.paramType.indexOf("]"))
       val arrayItem = new DocumentationSchema
@@ -452,7 +452,7 @@ class DocumentationSchema {
   var ref: String = null
 
   @XmlTransient
-  val simpleTypeList: List[String] = List("string", "number", "integer", "boolean", "object", "array", "null", "any")
+  val simpleTypeList: List[String] = List("string", "number", "int", "boolean", "object", "Array", "null", "any")
 
   override def clone: Object = {
     val schema = new DocumentationSchema

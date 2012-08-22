@@ -18,7 +18,7 @@ package com.wordnik.swagger.sample.model
 
 import javax.xml.bind.annotation.{XmlRootElement, XmlElement}
 
-@XmlRootElement(name = "category")
+@XmlRootElement(name = "Category")
 class Category() {
 
   private var id:Long = 0

@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiResponse {
 
-    String value() default "ok";  //responseClass
+    String value() default "void";  //responseClass
 
     String occurs() default "1"; //to indicate if return type will contain one or more of the response value
 

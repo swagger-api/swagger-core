@@ -19,60 +19,30 @@ package models
 import com.wordnik.swagger.annotations._
 
 import java.util.Date
-
 import javax.xml.bind.annotation._
 
-@XmlRootElement(name = "order")
+import scala.reflect.BeanProperty
+
+@XmlRootElement(name = "Order")
 class Order {
-  private var id:Long = 0
-  private var petId:Long = 0
-  private var quantity:Int = 0
-  private var shipDate:Date = null
-  private var status:String = null
+  @XmlElement(name = "id")
+  @BeanProperty
+  var id: Long = 0
 
-  @XmlElement(name="id")
-  def getId():Long = {
-    id
-  }
+  @XmlElement(name = "petId")
+  @BeanProperty
+  var petId: Long = 0
 
-  def setId(id:Long):Unit = {
-    this.id = id
-  }
+  @XmlElement(name = "quantity")
+  @BeanProperty
+  var quantity: Int = 0
 
-  @XmlElement(name="petId")
-  def getPetId():Long = {
-    petId
-  }
+  @XmlElement(name = "shipDate")
+  @BeanProperty
+  var shipDate: Date = null
 
-  def setPetId(petId:Long):Unit = {
-    this.petId = petId
-  }
-
-  @XmlElement(name="quantity")
-  def getQuantity():Int = {
-    quantity
-  }
-
-  def setQuantity(quantity:Int):Unit = {
-    this.quantity = quantity
-  }
-
-  @XmlElement(name="status")
+  @XmlElement(name = "status")
   @ApiProperty(value = "Order Status", allowableValues = "placed,approved,delivered")
-  def getStatus():String = {
-    status
-  }
-
-  def setStatus(status:String):Unit = {
-    this.status = status
-  }
-
-  @XmlElement(name="shipDate")
-  def getShipDate():Date = {
-    shipDate
-  }
-
-  def setShipDate(shipDate:Date):Unit = {
-    this.shipDate = shipDate
-  }
+  @BeanProperty
+  var status: String = null
 }

@@ -22,11 +22,7 @@ import javax.xml.bind.annotation._
 
 import java.lang.Long
 
-/**
- * Date: 7/29/11
- * Time: 5:15 PM
- */
-@XmlRootElement(name = "user")
+@XmlRootElement(name = "User")
 class User {
   private var id:Long = 0
   private var username:String = _

@@ -1,6 +1,6 @@
 package com.wordnik.swagger.core;
 
-import org.codehaus.jackson.map.annotate.*;
+import com.fasterxml.jackson.databind.annotation.*;
 import javax.xml.bind.annotation.*;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)

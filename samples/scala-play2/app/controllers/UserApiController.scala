@@ -71,9 +71,9 @@ object UserApiController extends BaseApiController {
     new ApiError(code = 400, reason = "Invalid username supplied"),
     new ApiError(code = 404, reason = "User not found")))
   @ApiParamsImplicit(Array(
-    new ApiParamImplicit(name = "body", value = "Updated user object", required = true, dataType = "List[User]", paramType = "body")))
-  def updateUser(
-    @ApiParam(value = "name that need to be updated", required = true)@PathParam("username") username: String) = Action { implicit request =>
+    new ApiParamImplicit(name = "username", value = "name that need to be updated", required = true, dataType = "String", paramType = "path"),
+    new ApiParamImplicit(name = "body", value = "Updated user object", required = true, dataType = "User", paramType = "body")))
+  def updateUser(username: String) = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
         val user = BaseApiController.mapper.readValue(e.toString, classOf[User]).asInstanceOf[User]
@@ -90,7 +90,7 @@ object UserApiController extends BaseApiController {
     new ApiError(code = 400, reason = "Invalid username supplied"),
     new ApiError(code = 404, reason = "User not found")))
   def deleteUser(
-    @ApiParam(value = "The name that needs to be deleted", required = true) username: String) = Action { implicit request =>
+    @ApiParam(value = "The name that needs to be deleted", required = true)@PathParam("username") username: String) = Action { implicit request =>
     userData.removeUser(username)
     Ok
   }
@@ -101,7 +101,7 @@ object UserApiController extends BaseApiController {
     new ApiError(code = 400, reason = "Invalid username supplied"),
     new ApiError(code = 404, reason = "User not found")))
   def getUserByName(
-    @ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ", required = true) username: String) = Action { implicit request =>
+    @ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ", required = true)@PathParam("username") username: String) = Action { implicit request =>
     userData.findUserByName(username) match {
       case Some(user) => JsonResponse(user)
       case None => JsonResponse(new value.ApiResponse(400, "Invalid input"))
@@ -113,9 +113,9 @@ object UserApiController extends BaseApiController {
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid username and password combination")))
   def loginUser(
-    @ApiParam(value = "The user name for login", required = true) username: String,
-    @ApiParam(value = "The password for login in clear text", required = true) password: String) = Action { implicit request =>
-    JsonResponse(new value.ApiResponse(200, "logged in user session:" + System.currentTimeMillis()))
+    @ApiParam(value = "The user name for login", required = true)@QueryParam("username") username: String,
+    @ApiParam(value = "The password for login in clear text", required = true)@QueryParam("password") password: String) = Action { implicit request =>
+    JsonResponse("logged in user session:" + System.currentTimeMillis())
   }
 
   @Path("/logout")

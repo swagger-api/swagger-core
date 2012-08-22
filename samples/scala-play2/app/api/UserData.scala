@@ -47,6 +47,7 @@ class UserData {
   }
 
   def addUser(user: User): Unit = {
+    users --= users.filter(u => u.getId == user.getId)
     users += user
   }
 

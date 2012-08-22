@@ -18,7 +18,7 @@ package models;
 
 import javax.xml.bind.annotation.*;
 
-@XmlRootElement(name = "category")
+@XmlRootElement(name = "Category")
 public class Category {
 	private long id;
 	private String name;

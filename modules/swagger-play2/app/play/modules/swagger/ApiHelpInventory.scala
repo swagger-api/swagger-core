@@ -121,24 +121,24 @@ object ApiHelpInventory {
   }
 
   def clear() {
-	this.controllerClasses.clear
-	this.resourceMap.clear
+    this.controllerClasses.clear
+    this.resourceMap.clear
   }
 
   def reload() {
-	PlayApiReader.clear
-	ApiAuthorizationFilterLocator.clear
-	
-	clear()
-	this.getRootResources("json")(null)
-	for (resource <- this.getResourceMap.keys) {
-		Logger.debug("loading resource " + resource)
-		getResource(resource)(null) match {
-	      case Some(docs) => Logger.debug("loaded resource " + resource)
-	      case None => Logger.debug("load failed for resource " + resource)
-		}
-	}
-	
+    PlayApiReader.clear
+    ApiAuthorizationFilterLocator.clear
+
+    clear()
+    this.getRootResources("json")(null)
+    for (resource <- this.getResourceMap.keys) {
+      Logger.debug("loading resource " + resource)
+      getResource(resource)(null) match {
+        case Some(docs) => Logger.debug("loaded resource " + resource)
+        case None => Logger.debug("load failed for resource " + resource)
+      }
+    }
+
   }
 
   /**
@@ -155,8 +155,7 @@ object ApiHelpInventory {
           if (apiAnnotation != null && (classOf[play.api.mvc.Controller].isAssignableFrom(clazz) || classOf[play.mvc.Controller].isAssignableFrom(clazz))) {
             Logger.debug("Found Resource " + apiAnnotation.value + " @ " + clazzName)
             resourceMap += apiAnnotation.value -> clazz
-          }
-          else {
+          } else {
             Logger.debug("class " + clazzName + " is not the right type")
           }
         }

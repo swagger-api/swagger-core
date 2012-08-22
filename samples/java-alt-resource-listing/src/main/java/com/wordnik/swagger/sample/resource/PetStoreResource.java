@@ -20,11 +20,12 @@ import com.wordnik.swagger.annotations.*;
 import com.wordnik.swagger.sample.data.StoreData;
 import com.wordnik.swagger.sample.model.Order;
 import com.wordnik.swagger.sample.exception.NotFoundException;
+import com.wordnik.swagger.jaxrs.JavaHelp;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
-public class PetStoreResource {
+public class PetStoreResource extends JavaHelp {
 	static StoreData storeData = new StoreData();
 	static JavaRestResourceUtil ru = new JavaRestResourceUtil();
 

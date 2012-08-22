@@ -17,5 +17,4 @@ public class SwaggerPlugin extends Plugin {
     public void onStop() {
 		Logger.debug("SwaggerPlugin.onStop");
 	}
-
 }

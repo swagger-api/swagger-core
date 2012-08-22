@@ -33,21 +33,13 @@ import javax.ws.rs._
 import util.RestResourceUtil
 import scala.collection.JavaConverters._
 
-/**
- * User: ramesh
- * Date: 7/29/11
- * Time: 5:23 PM
- */
-
 trait UserResource extends RestResourceUtil {
-  var userData = new UserData
-
   @POST
   @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.")
   def createUser(
     @ApiParam(value = "Created user object", required = true) user: User) = {
     Profile("/user (POST)", {
-      userData.addUser(user)
+      UserData.addUser(user)
       Response.ok.entity("").build
     })
   }
@@ -58,7 +50,7 @@ trait UserResource extends RestResourceUtil {
   def createUsersWithArrayInput(@ApiParam(value = "List of user object", required = true) users: Array[User]): Response = {
     Profile("/user/createWithArray (POST)", {
       for (user <- users) {
-        userData.addUser(user)
+        UserData.addUser(user)
       }
       Response.ok.entity("").build
     })
@@ -70,7 +62,7 @@ trait UserResource extends RestResourceUtil {
   def createUsersWithListInput(@ApiParam(value = "List of user object", required = true) users: java.util.List[User]): Response = {
     Profile("/user/createWithList (POST)", {
       for (user <- users.asScala) {
-        userData.addUser(user)
+        UserData.addUser(user)
       }
       Response.ok.entity("").build
     })
@@ -86,7 +78,7 @@ trait UserResource extends RestResourceUtil {
     @ApiParam(value = "name that need to be deleted", required = true)@PathParam("username") username: String,
     @ApiParam(value = "Updated user object", required = true) user: User) = {
     Profile("/user/* (PUT)", {
-      userData.addUser(user)
+      UserData.addUser(user)
       Response.ok.entity("").build
     })
   }
@@ -100,7 +92,7 @@ trait UserResource extends RestResourceUtil {
   def deleteUser(
     @ApiParam(value = "The name that needs to be deleted", required = true)@PathParam("username") username: String) = {
     Profile("/user/* (DELETE)", {
-      userData.removeUser(username)
+      UserData.removeUser(username)
       Response.ok.entity("").build
     })
   }
@@ -114,7 +106,7 @@ trait UserResource extends RestResourceUtil {
   def getUserByName(
     @ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ", required = true)@PathParam("username") username: String) = {
     Profile("/user/*", {
-      var user = userData.findUserByName(username)
+      var user = UserData.findUserByName(username)
       if (null != user) {
         Response.ok.entity(user).build
       } else {

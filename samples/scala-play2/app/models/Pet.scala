@@ -18,72 +18,35 @@ package models
 
 import com.wordnik.swagger.annotations._
 
-import java.util.List
-import java.util.ArrayList
-
+import java.util.{ List, ArrayList }
 import javax.xml.bind.annotation._
 
-@XmlRootElement(name = "pet")
+import scala.reflect.BeanProperty
+
+@XmlRootElement(name = "Pet")
 class Pet() {
-  private var id:Long = 0
-  private var category:Category = null
-  private var name:String = null
-  private var photoUrls:List[String] = new ArrayList[String]()
-  private var tags:List[Tag] = new ArrayList[Tag]()
-  private var status:String = null
+  @XmlElement(name = "id")
+  @BeanProperty
+  var id: Long = 0
 
-  @XmlElement(name="id")
-  def getId():Long = {
-    id
-  }
+  @XmlElement(name = "category")
+  @BeanProperty
+  var category: Category = null
 
-  def setId(id:Long):Unit = {
-    this.id = id
-  }
-  
-  @XmlElement(name="category")
-  def getCategory():Category = {
-    category
-  }
+  @XmlElement(name = "name")
+  @BeanProperty
+  var name: String = null
 
-  def setCategory(category:Category):Unit = {
-    this.category = category
-  }
+  @XmlElement(name = "photoUrls")
+  @BeanProperty
+  var photoUrls: List[String] = new ArrayList[String]()
 
-  @XmlElement(name="name")
-  def getName():String = {
-    name
-  }
+  @XmlElement(name = "tags")
+  @BeanProperty
+  var tags: List[Tag] = new ArrayList[Tag]()
 
-  def setName(name:String):Unit = {
-    this.name = name
-  }
-
-  @XmlElement(name="photoUrls")
-  def getPhotoUrls():List[String] = {
-    photoUrls
-  }
-
-  def setPhotoUrls(photoUrls:List[String]):Unit = {
-    this.photoUrls = photoUrls
-  }
-
-  @XmlElement(name="tags")
-  def getTags():List[Tag] = {
-    tags
-  }
-
-  def setTags(tags:List[Tag]):Unit = {
-    this.tags = tags
-  }
-
-  @XmlElement(name="status")
+  @XmlElement(name = "status")
   @ApiProperty(value = "pet status in the store", allowableValues = "available,pending,sold")
-  def getStatus():String = {
-    status
-  }
-
-  def setStatus(status:String):Unit = {
-    this.status = status
-  }
+  @BeanProperty
+  var status: String = null
 }

@@ -30,12 +30,11 @@ public class StoreData {
 		orders.add(createOrder(3, 2, 2, new Date(), "placed"));
 		orders.add(createOrder(4, 2, 2, new Date(), "delivered"));
 		orders.add(createOrder(5, 3, 2, new Date(), "placed"));
-        orders.add(createOrder(11, 3, 2, new Date(), "placed"));
-        orders.add(createOrder(12, 3, 2, new Date(), "placed"));
-        orders.add(createOrder(13, 3, 2, new Date(), "placed"));
-        orders.add(createOrder(14, 3, 2, new Date(), "placed"));
-        orders.add(createOrder(15, 3, 2, new Date(), "placed"));
-        
+		orders.add(createOrder(11, 3, 2, new Date(), "placed"));
+		orders.add(createOrder(12, 3, 2, new Date(), "placed"));
+		orders.add(createOrder(13, 3, 2, new Date(), "placed"));
+		orders.add(createOrder(14, 3, 2, new Date(), "placed"));
+		orders.add(createOrder(15, 3, 2, new Date(), "placed"));
 	}
 
 	public Order findOrderById(long orderId) {
@@ -48,18 +47,22 @@ public class StoreData {
 	}
 
 	public void placeOrder(Order order) {
-		for (Order currentOrder : orders) {
-			if (currentOrder.getId() == order.getId()) {
-				orders.remove(order);
+		if (orders.size() > 0) {
+			for (int i = orders.size() - 1; i >= 0; i--) {
+				if (orders.get(i).getId() == order.getId()) {
+					orders.remove(i);
+				}
 			}
 		}
 		orders.add(order);
 	}
 
 	public void deleteOrder(long orderId) {
-		for (Order order : orders) {
-			if (order.getId() == orderId) {
-				orders.remove(order);
+		if (orders.size() > 0) {
+			for (int i = orders.size() - 1; i >= 0; i--) {
+				if (orders.get(i).getId() == orderId) {
+					orders.remove(i);
+				}
 			}
 		}
 	}

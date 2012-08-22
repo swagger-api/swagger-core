@@ -30,8 +30,6 @@ import javax.ws.rs.core.Response
 import javax.ws.rs._
 
 trait PetStoreResource extends RestResourceUtil {
-  var storeData = new StoreData
-
   @GET
   @Path("/order/{orderId}")
   @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5. " +
@@ -41,7 +39,7 @@ trait PetStoreResource extends RestResourceUtil {
     new ApiError(code = 404, reason = "Order not found")))
   def getOrderById(
     @ApiParam(value = "ID of pet that needs to be fetched", required = true)@PathParam("orderId") orderId: String) = {
-    var order = storeData.findOrderById(getLong(0, 10000, 0, orderId))
+    var order = StoreData.findOrderById(getLong(0, 10000, 0, orderId))
     if (null != order) {
       Response.ok.entity(order).build
     } else {
@@ -56,7 +54,7 @@ trait PetStoreResource extends RestResourceUtil {
     new ApiError(code = 400, reason = "Invalid order")))
   def placeOrder(
     @ApiParam(value = "order placed for purchasing the pet", required = true) order: Order) = {
-    storeData.placeOrder(order)
+    StoreData.placeOrder(order)
     Response.ok.entity("").build
   }
 
@@ -69,7 +67,7 @@ trait PetStoreResource extends RestResourceUtil {
     new ApiError(code = 404, reason = "Order not found")))
   def deleteOrder(
     @ApiParam(value = "ID of the order that needs to be deleted", required = true)@PathParam("orderId") orderId: String) = {
-    storeData.deleteOrder(getLong(0, 10000, 0, orderId))
+    StoreData.deleteOrder(getLong(0, 10000, 0, orderId))
     Response.ok.entity("").build
   }
 }
