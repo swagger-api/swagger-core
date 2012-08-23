@@ -22,9 +22,12 @@ sudo apachectl start
 open http://localhost/index.html
 ```
 
-This will start apache on port 80, and open the swagger-ui to view the spec files
+This will start apache on port 80, and open the swagger-ui to view the spec files.
 
 ### Testing the server
 Once started, you can view all apis and even invoke them.  Opening the Chrome Developer Tools and selecting
 the `Network` tab, you will see the API calls going to the http://petstore.swagger.wordnik.com API rather than
 the local apache web server.
+
+### Modifying the spec files
+Now try editing the spec files in the web root--you can immediately reload the browser and see changes.
