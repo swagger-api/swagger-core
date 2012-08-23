@@ -61,6 +61,8 @@ trait ApiListing {
     }
 
     val resources = rc.getRootResourceClasses
+    rc.getRootResourceSingletons.foreach( ref => resources.add(ref.getClass))
+
     val apiListingEndpoint = this.getClass.getAnnotation(classOf[Api])
     val resourceListingType = this.getClass.getAnnotation(classOf[javax.ws.rs.Produces]).value.toSet
 
