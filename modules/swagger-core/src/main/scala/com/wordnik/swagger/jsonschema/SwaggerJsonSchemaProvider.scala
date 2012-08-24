@@ -57,7 +57,7 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
       } else if (hostClass.getName.indexOf(".") < 0) {
         hostClass.getName
       } else {
-        LOGGER.error("Class " + hostClass.getName + " is not annotated with a @XmlRootElement annotation, using " + hostClass.getSimpleName)
+        LOGGER.info("Class " + hostClass.getName + " is not annotated with a @XmlRootElement annotation, using " + hostClass.getSimpleName)
         if (isSimple) hostClass.getSimpleName else hostClass.getName
       }
     }
