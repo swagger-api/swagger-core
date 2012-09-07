@@ -181,6 +181,20 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
     val types = TypeUtil.getReferencedClasses(classes)
     assert(types.size() === 2)
   }
+
+  it should "not read methods from companion object " in {
+    var docObj = ApiPropertiesReader.read(classOf[TestCompanionObject])
+    expect(3) {
+      docObj.getFields.size()
+    }
+  }
+
+  it should "not read reference objects form companion object methods" in {
+    var classes:java.util.List[String] = new java.util.ArrayList[String]()
+    classes.add(classOf[TestCompanionObject].getName);
+    val types = TypeUtil.getReferencedClasses(classes)
+    assert(types.size() === 1)
+  }
 }
 
 @RunWith(classOf[JUnitRunner])
@@ -463,4 +477,16 @@ case class ScalaCaseClassWithScalaSupportedType(
 }
 
 class ClassToTestModelClassesFromBaseClass extends ObjectWithChildObjectsInMap {
+}
+
+case class TestCompanionObject(
+                                @BeanProperty var label:String,
+                                @BeanProperty var width:Int,
+                                @BeanProperty var height:Int) {
+}
+
+object TestCompanionObject {
+ def getDescription():ObjectWithRootElementName = {
+    null
+  }
 }
