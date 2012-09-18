@@ -16,7 +16,7 @@ a dependency and a resolver to your Build.scala like this:
 ```scala
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     /* your other dependencies */
-    "com.wordnik" %% "swagger-play2" % "1.1-SNAPSHOT")
+    "com.wordnik" %% "swagger-play2" % "1.1.1")
 
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
     Resolver.url("swagger-core-github-repo", url("http://wordnik.github.com/repository"))(Resolver.ivyStylePatterns),
@@ -32,8 +32,3 @@ play run
 ````
 
 The application will listen on port 9000 and respond to `http://localhost:9000/resources.json`
-
-### Limitations
-Note the following limitations (which will go away very, very soon):
-
-<li>- `api_key` filtering is not implemented</li>
