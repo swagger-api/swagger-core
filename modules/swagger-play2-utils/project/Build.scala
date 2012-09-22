@@ -8,7 +8,7 @@ object ApplicationBuild extends Build {
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" %% "swagger-play2" % "1.1.0",
+    "com.wordnik" %% "swagger-play2" % "1.1.1",
     "com.wordnik" % "common-utils_2.9.1" % "1.1.1",
     "javax.ws.rs" % "jsr311-api" % "1.1.1")
 
