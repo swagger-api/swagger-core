@@ -67,6 +67,16 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
     assert(docObj.getFields.filter(f => f.name == "setofLists").get(0).getParamType() === "Set[List[string]]")
   }
 
+  it should "read an object with a Scala Map" in {
+    var docObj = ApiPropertiesReader.read(classOf[TestClassWithScalaMapandOptionOfMap])
+    assert(docObj.getFields.filter(_.name == "scalaMap").size > 0)
+  }
+
+  it should "read an object with an Option of Scala Map" in {
+    var docObj = ApiPropertiesReader.read(classOf[TestClassWithScalaMapandOptionOfMap])
+    assert(docObj.getFields.filter(_.name == "scalaMapOption").size > 0)
+  }
+
   it should "read scala enum properties as string" in {
     var docObj = ApiPropertiesReader.read(classOf[TestClassWithScalaEnums])
     assert(docObj.getFields.filter(f => f.name == "label").get(0).getParamType() === "String")
@@ -409,6 +419,13 @@ class TestCollectionOfCollections {
   @XmlElement @BeanProperty var setofLists: java.util.Set[java.util.List[String]] = _
   //the folowing use case is no currently supported by swagger
   //@XmlElement @BeanProperty var arrayofLists: Array[java.util.List[String]] = _
+}
+
+@XmlRootElement(name = "TestClassWithScalaMapandOptionOfMap")
+@XmlAccessorType(XmlAccessType.NONE)
+class TestClassWithScalaMapandOptionOfMap {
+  @XmlElement @BeanProperty var scalaMap: scala.collection.immutable.Map[String, Double] = _
+  @XmlElement @BeanProperty var scalaMapOption: Option[scala.collection.immutable.Map[String, Double]] = _ 
 }
 
 @XmlRootElement(name = "TestClassWithScalaEnums")
