@@ -14,20 +14,19 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.annotations;
+package models
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.xml.bind.annotation.{ XmlRootElement, XmlElement }
 
-@Target({ElementType.METHOD, ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ApiProperty {
-    String value() default "";
-    String allowableValues() default "";
-    String access() default "";
-    String notes() default "";
-    String dataType() default "";
-    boolean required() default false;
+import scala.reflect.BeanProperty
+
+@XmlRootElement(name = "Category")
+class Category() {
+  @XmlElement(name = "id")
+  @BeanProperty
+  var id: Long = 0
+
+  @XmlRootElement(name = "name")
+  @BeanProperty
+  var name: String = _
 }

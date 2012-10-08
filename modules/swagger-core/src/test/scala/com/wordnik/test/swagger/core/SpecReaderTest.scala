@@ -67,6 +67,16 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
     assert(docObj.getFields.filter(f => f.name == "setofLists").get(0).getParamType() === "Set[List[string]]")
   }
 
+  it should "read an object with a Scala Map" in {
+    var docObj = ApiPropertiesReader.read(classOf[TestClassWithScalaMapandOptionOfMap])
+    assert(docObj.getFields.filter(_.name == "scalaMap").size > 0)
+  }
+
+  it should "read an object with an Option of Scala Map" in {
+    var docObj = ApiPropertiesReader.read(classOf[TestClassWithScalaMapandOptionOfMap])
+    assert(docObj.getFields.filter(_.name == "scalaMapOption").size > 0)
+  }
+
   it should "read scala enum properties as string" in {
     var docObj = ApiPropertiesReader.read(classOf[TestClassWithScalaEnums])
     assert(docObj.getFields.filter(f => f.name == "label").get(0).getParamType() === "String")
@@ -180,6 +190,20 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
     classes.add(classOf[ClassToTestModelClassesFromBaseClass].getName);
     val types = TypeUtil.getReferencedClasses(classes)
     assert(types.size() === 2)
+  }
+
+  it should "not read methods from companion object " in {
+    var docObj = ApiPropertiesReader.read(classOf[TestCompanionObject])
+    expect(3) {
+      docObj.getFields.size()
+    }
+  }
+
+  it should "not read reference objects form companion object methods" in {
+    var classes:java.util.List[String] = new java.util.ArrayList[String]()
+    classes.add(classOf[TestCompanionObject].getName);
+    val types = TypeUtil.getReferencedClasses(classes)
+    assert(types.size() === 1)
   }
 }
 
@@ -397,6 +421,13 @@ class TestCollectionOfCollections {
   //@XmlElement @BeanProperty var arrayofLists: Array[java.util.List[String]] = _
 }
 
+@XmlRootElement(name = "TestClassWithScalaMapandOptionOfMap")
+@XmlAccessorType(XmlAccessType.NONE)
+class TestClassWithScalaMapandOptionOfMap {
+  @XmlElement @BeanProperty var scalaMap: scala.collection.immutable.Map[String, Double] = _
+  @XmlElement @BeanProperty var scalaMapOption: Option[scala.collection.immutable.Map[String, Double]] = _ 
+}
+
 @XmlRootElement(name = "TestClassWithScalaEnums")
 class TestClassWithScalaEnums {
   @ApiProperty(dataType = "String") @XmlElement @BeanProperty var label: ScalaEnums.Value = _
@@ -463,4 +494,16 @@ case class ScalaCaseClassWithScalaSupportedType(
 }
 
 class ClassToTestModelClassesFromBaseClass extends ObjectWithChildObjectsInMap {
+}
+
+case class TestCompanionObject(
+                                @BeanProperty var label:String,
+                                @BeanProperty var width:Int,
+                                @BeanProperty var height:Int) {
+}
+
+object TestCompanionObject {
+ def getDescription():ObjectWithRootElementName = {
+    null
+  }
 }

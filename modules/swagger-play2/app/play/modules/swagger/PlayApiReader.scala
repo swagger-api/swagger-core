@@ -33,12 +33,15 @@ object PlayApiReader {
   import play.core.Router.RoutesCompiler.RouteFileParser
   private val endpointsCache = scala.collection.mutable.Map.empty[Class[_], Documentation]
   private var _routesCache: Map[String, Route] = null
-  var FORMAT_STRING = ".{format}"
+  var formatString = current.configuration.getString("swagger.api.format.string") match {
+    case Some(str) => str
+    case _ => ".{format}"
+  }
 
   def setFormatString(str: String) = {
-    if (FORMAT_STRING != str) {
+    if (formatString != str) {
       endpointsCache.clear
-      FORMAT_STRING = str
+      formatString = str
     }
   }
 
@@ -102,14 +105,13 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
   val documentation = new Documentation
   val apiEndpoint = hostClass.getAnnotation(classOf[Api])
 
-  var FORMAT_STRING = ".{format}"
   val LIST_RESOURCES_PATH = "/resources"
 
   def setFormatString(str: String) = {
     Logger debug ("setting format string")
-    if (FORMAT_STRING != str) {
+    if (PlayApiReader.formatString != str) {
       Logger debug ("clearing endpoint cache")
-      FORMAT_STRING = str
+      PlayApiReader.formatString = str
     }
   }
 
@@ -126,9 +128,9 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
       } mkString
       case None => Logger error "Cannot determine Path. Nothing defined in play routes file for api method " + method.toString; this.resourcePath
     }
-    val s = FORMAT_STRING match {
+    val s = PlayApiReader.formatString match {
       case "" => str
-      case e: String => str.replaceAll(".json", FORMAT_STRING).replaceAll(".xml", FORMAT_STRING)
+      case e: String => str.replaceAll(".json", PlayApiReader.formatString).replaceAll(".xml", PlayApiReader.formatString)
     }
     Logger debug (s)
     s

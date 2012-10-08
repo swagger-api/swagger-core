@@ -56,7 +56,7 @@ object ApiHelpInventory {
     for (clazz <- getControllerClasses) {
       val apiAnnotation = clazz.getAnnotation(classOf[Api])
       if (null != apiAnnotation) {
-        val api = new DocumentationEndPoint(apiAnnotation.value + ".{format}", apiAnnotation.description())
+        val api = new DocumentationEndPoint(apiAnnotation.value + PlayApiReader.formatString, apiAnnotation.description())
         if (!isApiAdded(allApiDoc, api)) {
           if (null == apiFilter || apiFilter.authorizeResource(api.path)) {
             allApiDoc.addApi(api)

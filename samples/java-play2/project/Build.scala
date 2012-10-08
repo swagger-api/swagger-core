@@ -8,7 +8,7 @@ object ApplicationBuild extends Build {
   val appVersion = "1.1.0"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
-    "com.wordnik" %% "swagger-play2" % "1.1.0")
+    "com.wordnik" %% "swagger-play2" % "1.1.1")
 
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
     resolvers := Seq(

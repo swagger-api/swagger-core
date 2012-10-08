@@ -2,7 +2,6 @@ package security
 
 import play.modules.swagger.PlayApiReader
 import com.wordnik.swagger.play.ApiAuthorizationFilter
-
 import play.Logger
 import java.io.File
 import java.util.ArrayList
