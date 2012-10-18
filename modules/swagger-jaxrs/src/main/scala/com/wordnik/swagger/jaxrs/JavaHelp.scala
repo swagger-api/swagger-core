@@ -23,8 +23,7 @@ import com.wordnik.swagger.annotations._
 import org.slf4j.LoggerFactory
 
 import com.sun.jersey.api.core.ResourceConfig
-
-import javax.servlet.ServletConfig
+import com.sun.jersey.spi.container.servlet.WebConfig
 
 import javax.ws.rs.{ Path, GET }
 import javax.ws.rs.core.{ UriInfo, HttpHeaders, Context, Response }
@@ -36,8 +35,8 @@ abstract class JavaHelp {
   @GET
   @ApiOperation(value = "Returns information about API parameters",
     responseClass = "com.wordnik.swagger.core.Documentation")
-  def getHelp(@Context sc: ServletConfig, @Context rc: ResourceConfig, @Context headers: HttpHeaders, @Context uriInfo: UriInfo): Response = {
-    val reader = ConfigReaderFactory.getConfigReader(sc)
+  def getHelp(@Context wc: WebConfig, @Context rc: ResourceConfig, @Context headers: HttpHeaders, @Context uriInfo: UriInfo): Response = {
+    val reader = ConfigReaderFactory.getConfigReader(wc)
 
     val apiVersion = reader.getApiVersion()
     val swaggerVersion = reader.getSwaggerVersion()
