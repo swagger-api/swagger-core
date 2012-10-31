@@ -308,7 +308,7 @@
     <module>samples/java-alt-resource-listing</module>
     <module>samples/scala-jaxrs</module>
     <module>samples/scala-alt-resource-listing</module>
-    <module>samples/scala-jaxrs-jackson2</module>
+    <!--module>samples/scala-jaxrs-jackson2</module-->
     <module>samples/scala-jaxrs-apm</module>
   </modules>
   <reporting>

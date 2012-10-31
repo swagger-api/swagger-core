@@ -25,10 +25,6 @@ import com.wordnik.swagger.core.util.JsonUtil;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.fasterxml.jackson.databind.*;
 
-
-
-import com.fasterxml.jackson.module.scala.DefaultScalaModule;
-
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.annotation.*;
