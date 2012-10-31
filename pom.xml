@@ -6,7 +6,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-project_2.9.1</artifactId>
+  <artifactId>swagger-project_2.10.0-RC1</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
   <version>1.1.1-SNAPSHOT</version>
