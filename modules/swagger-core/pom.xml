@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>com.wordnik</groupId>
-    <artifactId>swagger-project_2.9.1</artifactId>
+    <artifactId>swagger-project_2.10.0-RC1</artifactId>
     <version>1.1.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-core_2.9.1</artifactId>
+  <artifactId>swagger-core_2.10.0-RC1</artifactId>
   <packaging>jar</packaging>
   <name>swagger-core</name>
   <version>1.1.1-SNAPSHOT</version>
@@ -33,7 +33,7 @@
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.9.1</artifactId>
+      <artifactId>scalatest_2.10.0-RC1</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -65,7 +65,7 @@
     </dependency>
     <dependency>
       <groupId>com.wordnik</groupId>
-      <artifactId>swagger-annotations_2.9.1</artifactId>
+      <artifactId>swagger-annotations_2.10.0-RC1</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
   </dependencies>
