@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+<!-- =============================================================== -->
+<!-- Wordnik configuration for the Jetty Server                      -->
+<!--                                                                 -->
+<!-- Documentation of this file format can be found at:              -->
+<!-- http://docs.codehaus.org/display/JETTY/jetty.xml                -->
+<!--                                                                 -->
+<!-- =============================================================== -->
+
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+    <!-- =========================================================== -->
+    <!-- JVM Temp dir, stderr and stdout                             -->
+    <!-- =========================================================== -->
+    <Call class="java.lang.System" name="setProperty">
+      <Arg>java.io.tmpdir</Arg>
+      <Arg>/work</Arg>
+    </Call>
+
+	<!-- =========================================================== -->
+    <!-- boolean (append) true or false                              -->
+    <!-- arg int (retain in days)                                    -->
+    <!-- =========================================================== -->
+    <!-- commented out appending stderr output to a log file -->
+    <!--New id="ServerLog" class="java.io.PrintStream">
+      <Arg>
+        <New class="org.mortbay.util.RolloverFileOutputStream">
+          <Arg><SystemProperty name="cs.home" default="."/>/logs/yyyy_mm_dd.stderrout.log</Arg>
+          <Arg type="boolean">false</Arg>
+          <Arg type="int">90</Arg>
+          <Arg><Call class="java.util.TimeZone" name="getTimeZone"><Arg>GMT</Arg></Call></Arg>
+	  <Get id="ServerLogName" name="datedFilename"/>
+	</New>
+      </Arg>
+    </New-->
+
+    <!-- =========================================================== -->
+    <!-- Server Thread Pool                                          -->
+    <!-- =========================================================== -->
+    <Set name="ThreadPool">
+      <New class="org.eclipse.jetty.util.thread.QueuedThreadPool">
+        <Set name="minThreads">10</Set>
+        <Set name="maxThreads">50</Set>
+      </New>
+    </Set>
+
+    <!-- =========================================================== -->
+    <!-- Set connectors                                              -->
+    <!-- =========================================================== -->
+    <!-- One of each type!                                           -->
+    <!-- =========================================================== -->
+
+    <Call name="addConnector">
+      <Arg>
+          <New class="org.eclipse.jetty.server.nio.SelectChannelConnector">
+            <Set name="host"><Property name="jetty.host" /></Set>
+            <Set name="port"><Property name="jetty.port" default="8002"/></Set>
+            <Set name="maxIdleTime">240000</Set>
+            <Set name="Acceptors">2</Set>
+            <Set name="statsOn">false</Set>
+            <Set name="confidentialPort">8443</Set>
+	    <Set name="lowResourcesConnections">5000</Set>
+	    <Set name="lowResourcesMaxIdleTime">5000</Set>
+          </New>
+      </Arg>
+    </Call>
+
+    <!-- =========================================================== -->
+    <!-- Set handler Collection Structure                            --> 
+    <!-- =========================================================== -->
+    <Set name="handler">
+      <New id="Handlers" class="org.eclipse.jetty.server.handler.HandlerCollection">
+        <Set name="handlers">
+         <Array type="org.eclipse.jetty.server.Handler">
+           <Item>
+             <New id="Contexts" class="org.eclipse.jetty.server.handler.ContextHandlerCollection"/>
+           </Item>
+           <Item>
+             <New id="DefaultHandler" class="org.eclipse.jetty.server.handler.DefaultHandler"/>
+           </Item>
+           <Item>
+             <New id="RequestLog" class="org.eclipse.jetty.server.handler.RequestLogHandler"/>
+           </Item>
+         </Array>
+        </Set>
+      </New>
+    </Set>
+    
+    <!-- =========================================================== -->
+    <!-- Configure the context deployer                              -->
+    <!-- =========================================================== -->
+    <Call name="addLifeCycle">
+      <Arg>
+        <New class="org.eclipse.jetty.deploy.WebAppDeployer">
+          <Set name="contexts"><Ref id="Contexts"/></Set>
+	      <Set name="webAppDir"><SystemProperty name="jetty.home" default="."/>/webapps</Set>
+		  <Set name="parentLoaderPriority">false</Set>
+		  <Set name="extract">true</Set>
+		  <Set name="allowDuplicates">false</Set>
+          <Set name="defaultsDescriptor"><SystemProperty name="jetty.home" default="."/>/conf/webdefault.xml</Set>
+        </New>
+      </Arg>
+    </Call>
+
+    <!-- =========================================================== -->
+    <!-- Configure Request Log                                       -->
+    <!-- Request logs  may be configured for the entire server here, -->
+    <!-- or they can be configured for a specific web app in a       -->
+    <!-- contexts configuration (see $(jetty.home)/contexts/test.xml -->
+    <!-- for an example).                                            -->
+    <!-- =========================================================== -->
+    <!-- commented out appending server requests to a log file -->
+    <!--
+    <Ref id="RequestLog">
+      <Set name="requestLog">
+        <New id="RequestLogImpl" class="org.mortbay.jetty.NCSARequestLog">
+          <Set name="filename"><SystemProperty name="cs.home" default="."/>/logs/yyyy_mm_dd.request.log</Set>
+          <Set name="filenameDateFormat">yyyy_MM_dd</Set>
+          <Set name="retainDays">90</Set>
+          <Set name="append">true</Set>
+          <Set name="extended">true</Set>
+          <Set name="logCookies">false</Set>
+          <Set name="LogTimeZone">GMT</Set>
+        </New>
+      </Set>
+    </Ref>
+    -->
+
+    <!-- =========================================================== -->
+    <!-- extra options                                               -->
+    <!-- =========================================================== -->
+    <Set name="stopAtShutdown">true</Set>
+    <Set name="sendServerVersion">false</Set>
+    <Set name="sendDateHeader">true</Set>
+    <Set name="gracefulShutdown">1000</Set>
+</Configure>
