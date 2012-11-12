@@ -36,7 +36,7 @@ public abstract class AbstractTrackingResource<T> extends JavaHelp {
 	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid ID supplied"),
 			@ApiError(code = 404, reason = "Pet not found") })
 	public Response getPetById(
-			T t,
+			@ApiParam(value = "whatever data type", required = true) T t,
 			@ApiParam(value = "ID to be used", required = true) @PathParam("clientId") String clientId)
 			throws NotFoundException {
 		if (null != clientId) {
