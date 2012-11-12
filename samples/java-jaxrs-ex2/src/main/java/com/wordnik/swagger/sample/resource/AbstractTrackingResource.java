@@ -30,12 +30,13 @@ import javax.ws.rs.*;
 @Produces({ MediaType.APPLICATION_JSON })
 @Consumes({ MediaType.APPLICATION_JSON })
 public abstract class AbstractTrackingResource<T> extends JavaHelp {
-@GET
+@POST
 	@Path("/{clientId}")
 	@ApiOperation(value = "Find by ID", notes = "Returns a T", responseClass = "com.wordnik.swagger.sample.model.Pet")
 	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid ID supplied"),
 			@ApiError(code = 404, reason = "Pet not found") })
 	public Response getPetById(
+			T t,
 			@ApiParam(value = "ID to be used", required = true) @PathParam("clientId") String clientId)
 			throws NotFoundException {
 		if (null != clientId) {
