@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory
 
 import com.fasterxml.jackson.databind.node._
 
-import java.lang.reflect.{ Type, Field, Modifier, Method }
+import java.lang.reflect.{ Type, TypeVariable, Field, Modifier, Method, ParameterizedType }
 import java.lang.annotation.Annotation
 import javax.xml.bind.annotation._
 
@@ -88,6 +88,17 @@ object ApiPropertiesReader {
       //we might also have properties that are parametarized by not assignable to java collections. Examples: Scala collections
       ///This step will ignore all those fields.
       if (!genericReturnType.getClass.isAssignableFrom(classOf[ParameterizedTypeImpl])) {
+        JavaHero.doMagic(genericReturnType)
+        println("##### " + genericReturnType)
+        println("##### " + genericReturnType.getClass)
+        println("##### " + genericReturnType.getClass.getGenericSuperclass)
+        println("##### " + genericReturnType.getClass.isInstanceOf[ParameterizedType])
+        
+        /*
+        println("##### " + genericReturnType.getClass.getGenericSuperclass.asInstanceOf[ParameterizedType])
+        val decl = genericReturnType.asInstanceOf[TypeVariable[_]].getGenericDeclaration.asInstanceOf[Type]
+        getGenericTypeParam(genericReturnType, decl)
+        */
         paramType = readName(genericReturnType.asInstanceOf[Class[_]])
       } else {
         //handle scala options
