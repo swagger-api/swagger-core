@@ -69,7 +69,7 @@ trait ApiListing {
     val allApiDoc = new Documentation
     resources.foreach(resource => {
       val wsPath = resource.getAnnotation(classOf[Api])
-      logger.debug("processing resource path " + wsPath)
+      logger.debug("processing resource " + wsPath)
       if (null != wsPath && wsPath.value != JaxrsApiReader.LIST_RESOURCES_PATH) {
         val path = {
           if ("" != wsPath.listingPath) wsPath.listingPath
