@@ -88,7 +88,7 @@ class AlternateApiListingResource {
   }
 
   /**
-   * ignore, will move to base class
+   * ignore, will move to a base class
    **/
   def docForRoute(
   	route: String,
