@@ -50,7 +50,6 @@ trait ProfileEndpointTrait {
         }
       }
       case "totalDuration" => {
-        println("totalDocument")
         sortOrderString.get match {
           case "desc" => sorter sortWith (_._3 > _._3)
           case _ => sorter sortWith (_._3 < _._3)
@@ -76,9 +75,7 @@ trait ProfileEndpointTrait {
       }
       case _ => sorter
     }
-    sorter.foreach(o => {
-      output += o._7
-    })
+    sorter.foreach(o => output += o._7)
     output.toList
   }
 }
