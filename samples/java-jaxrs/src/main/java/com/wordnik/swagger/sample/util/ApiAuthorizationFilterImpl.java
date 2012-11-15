@@ -65,8 +65,7 @@ public class ApiAuthorizationFilterImpl implements ApiAuthorizationFilter {
 		return canAccess;
 	}
 
-	public boolean authorizeResource(String apiPath, HttpHeaders headers,
-			UriInfo uriInfo) {
+	public boolean authorizeResource(String apiPath, HttpHeaders headers, UriInfo uriInfo) {
 		boolean canAccess = true;
 
 		String apiKey = uriInfo.getQueryParameters().getFirst("api_key");
@@ -116,8 +115,8 @@ public class ApiAuthorizationFilterImpl implements ApiAuthorizationFilter {
 		methodSecurityAnotations.put("DELETE:/store.{format}/order/{orderId}", true);
 		methodSecurityAnotations.put("POST:/store.{format}/order", true);
 		methodSecurityAnotations.put("POST:/user", false);
-        methodSecurityAnotations.put("POST:/user.{format}/createWithArray", false);
-        methodSecurityAnotations.put("POST:/user.{format}/createWithList", false);
+    methodSecurityAnotations.put("POST:/user.{format}/createWithArray", false);
+    methodSecurityAnotations.put("POST:/user.{format}/createWithList", false);
 		methodSecurityAnotations.put("PUT:/user.{format}/{username}", true);
 		methodSecurityAnotations.put("DELETE:/user.{format}/{username}", true);
 		methodSecurityAnotations.put("GET:/user.{format}/{username}", false);
