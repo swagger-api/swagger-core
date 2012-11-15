@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script type="text/javascript">
+
+        function createXHR()
+        {
+            var request = false;
+            try
+            {
+                request = new ActiveXObject('Msxml2.XMLHTTP');
+            }
+            catch (err2)
+            {
+                try
+                {
+                    request = new ActiveXObject('Microsoft.XMLHTTP');
+                }
+                catch (err3)
+                {
+                    try
+                    {
+                        request = new XMLHttpRequest();
+                    }
+                    catch (err1)
+                    {
+                        request = false;
+                    }
+                }
+            }
+            return request;
+        }
+
+        function loadJSON(fname)
+        {
+            var xhr = createXHR();
+            xhr.open("GET", fname, true);
+            xhr.onreadystatechange = function()
+            {
+                if (xhr.readyState == 4)
+                {
+                    if (xhr.status != 404)
+                    {
+                        var data = eval("(" + xhr.responseText + ")");
+                        document.getElementById("zone").innerHTML = "<h2>Books:</h2>";
+                        for (i = 0; i < 2; i++)
+                        {
+                            document.getElementById("zone").innerHTML += data.listing.books[i]['@title'] + ', by <i>' + data.listing.books[i].author + "</i><br/>";
+                        }
+                    }
+                    else
+                    {
+                        document.getElementById("zone").innerHTML = fname + " not found";
+                    }
+                }
+            }
+            xhr.send(null);
+        }
+
+
+    </script>
+    <title>Ajax Get JSON Demo</title></head>
+
+
+<body bgcolor="#FFFFFF">
+
+<p><font size="+3">Ajax JSON/JAXB Demo: Mapped format</font></p>
+<hr>
+<FORM name="ajax" method="POST" action="">
+
+    <p>
+        <INPUT type="BUTTON" value=" Click to load the JSON file " ONCLICK="loadJSON('resteasy/library/books/mapped')">
+    </p>
+
+</FORM>
+
+
+<div id="zone"></div>
+
+</body>
+</html>
