@@ -23,7 +23,7 @@ import java.io.StringWriter;
  */
 @Api(value = "/library", 
    description = "the Library api")
-@Path("library")
+@Path("/library.json")
 public class Library
 {
    private HashMap<String, Book> books = new HashMap<String, Book>();
@@ -35,7 +35,7 @@ public class Library
    }
 
    @GET
-   @Path("books/badger")
+   @Path("/books/badger")
    @Produces("application/json")
    @BadgerFish
    @ApiOperation(value = "gets books with Badger", notes = "gets books with @Badgerfish", responseClass = "org.jboss.resteasy.examples.data.BookListing")
@@ -46,7 +46,7 @@ public class Library
    }
 
    @GET
-   @Path("books/mapped")
+   @Path("/books/mapped")
    @Produces("application/json")
    @ApiOperation(value = "gets books with mapped", notes = "gets books with @Mapped", responseClass = "org.jboss.resteasy.examples.data.BookListing")
    @ApiErrors(value = { @ApiError(code = 400, reason = "Not sure"), @ApiError(code = 404, reason = "bad") })
@@ -57,7 +57,7 @@ public class Library
    }
 
    @GET
-   @Path("books/badger.html")
+   @Path("/books/badger.html")
    @Produces("text/html")
    public String getBooksBadgerText() throws Exception
    {
@@ -70,7 +70,7 @@ public class Library
    }
 
    @GET
-   @Path("books/mapped.html")
+   @Path("/books/mapped.html")
    @Produces("text/html")
    public String getBooksMappedText() throws Exception
    {
@@ -82,15 +82,10 @@ public class Library
       return writer.toString();
    }
 
-
-
-
    private BookListing getListing()
    {
       ArrayList<Book> list = new ArrayList<Book>();
       list.addAll(books.values());
       return new BookListing(list);
    }
-
-
 }
