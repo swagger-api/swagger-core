@@ -97,5 +97,19 @@ object PetApiController extends BaseApiController {
     var results = petData.findPetByTags(tags)
     JsonResponse(results)
   }
+
+  @Path("/attachImage")
+  @ApiOperation(value = "Attach an Image File for a pet",
+    notes = "Is not functional, only used to test file upload params",
+    responseClass = "void")
+  @ApiErrors(Array(
+    new ApiError(code = 400, reason = "Invalid file format")))
+  @ApiParamsImplicit(Array(
+    new ApiParamImplicit(value = "Image file to attach", required = true, dataType = "file", paramType = "body"),
+    new ApiParamImplicit(name = "id", value = "ID of pet to which to attach image", required = true, dataType = "String", paramType = "path",
+      allowableValues = "range[0,10]")))
+  def attachImage (id: String) = Action { implicit request =>
+    JsonResponse("SUCCESS")
+  }
 }
 
