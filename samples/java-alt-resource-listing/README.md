@@ -14,11 +14,11 @@ The default ApiListingResource lives in swagger-jaxrs--it is included by adding 
 <pre>
   &lt;init-param&gt;
     &lt;param-name&gt;com.sun.jersey.config.property.packages&lt;/param-name&gt;
-    &lt;param-value&gt;com.wordnik.swagger.sample.resource;com.wordnik.swagger.jaxrs;&lt;/param-value&gt;
+    &lt;param-value&gt;com.wordnik.swagger.sample.resource;com.wordnik.swagger.jaxrs.listing;&lt;/param-value&gt;
   &lt;/init-param&gt;
 </pre>
 
-Note the com.wordnik.swagger.jaxrs contains the default [resource listing](https://github.com/wordnik/swagger-core/blob/master/modules/swagger-jaxrs/src/main/scala/com/wordnik/swagger/jaxrs/ApiListing.scala).
+Note the com.wordnik.swagger.jaxrs.listing contains the default [resource listing](https://github.com/wordnik/swagger-core/blob/master/modules/swagger-jaxrs/src/main/scala/com/wordnik/swagger/jaxrs/listing/ApiListingResource.scala).
 When overriding the default resource listing, simply provide that functionality in a new resource and add it to
 the packages.  For this sample, the new resource listing class is [here](https://github.com/wordnik/swagger-core/blob/master/samples/java-alt-resource-listing/src/main/java/com/wordnik/swagger/sample/resource/ApiListingResource.java).
 One other requirement is setting the JaxrsApiReader format string to an empty string in a [bootstrap servlet](https://github.com/wordnik/swagger-core/blob/master/samples/java-alt-resource-listing/src/main/java/com/wordnik/swagger/sample/Bootstrap.java)
@@ -32,35 +32,7 @@ One other requirement is setting the JaxrsApiReader format string to an empty st
   }
 </pre>
 
-The api resource paths are also modified to live in the /resources/{api} path.  This is done by declaring both a 
-listing path and listing class to two resources:
-
-The actual class implementing the API:
-
-<pre>
-  @Path("/pet")
-  @Api(value = "/pet",
-    description = "Operations about pets",
-    listingPath = "/resources/pet")
-  @Singleton
-  @Produces(Array("application/json", "application/xml"))
-  class PetResourceJSONXML extends PetResource
-</pre>
-
-And the class creating the resource listing:
-
-<pre>
-  @Path("/resources/pet")
-  @Api(value = "/pet",
-    description = "Operations about pets",
-    listingPath = "/resources/pet",
-    listingClass = "com.wordnik.swagger.sample.resource.PetResourceJSONXML")
-  @Singleton
-  @Produces(Array("application/json", "application/xml"))
-  class PetResourceListingJSON extends Help
-</pre>
-
-Note in the above, the "listingClass" points to the implementing class.  It also implements the Help trait.
+The api resource paths are now detected by the framework and live under the `/resources` path (i.e. `/resources/pet`, etc.):
 
 ### To build from source
 Please follow instructions to build the top-level [swagger-core project](https://github.com/wordnik/swagger-core)
