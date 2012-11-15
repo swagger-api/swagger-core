@@ -22,12 +22,11 @@ import com.wordnik.swagger.annotations._
 
 import org.slf4j.LoggerFactory
 
-import com.sun.jersey.api.core.ResourceConfig
-import com.sun.jersey.spi.container.servlet.WebConfig
-
 import javax.ws.rs.{ Path, GET }
 import javax.ws.rs.core.{ UriInfo, HttpHeaders, Context, Response }
 import javax.ws.rs.core.Response.Status
+
+import javax.servlet.ServletConfig
 
 import scala.collection.JavaConversions._
 
@@ -35,14 +34,17 @@ trait Help {
   @GET
   @ApiOperation(value = "Returns information about API parameters",
     responseClass = "com.wordnik.swagger.core.Documentation")
-  def getHelp(@Context wc: WebConfig, @Context rc: ResourceConfig, @Context headers: HttpHeaders, @Context uriInfo: UriInfo): Response = {
-    val reader = ConfigReaderFactory.getConfigReader(wc)
+  def getHelp(
+    @Context sc: ServletConfig, 
+    @Context headers: HttpHeaders, 
+    @Context uriInfo: UriInfo): Response = {
+    val reader = ConfigReaderFactory.getConfigReader(sc)
 
-    val apiVersion = reader.getApiVersion()
-    val swaggerVersion = reader.getSwaggerVersion()
-    val basePath = reader.getBasePath()
-    val apiFilterClassName = reader.getApiFilterClassName()
-    reader.getModelPackages.split(",").foreach(p => TypeUtil.addAllowablePackage(p))
+    val apiVersion = reader.apiVersion
+    val swaggerVersion = reader.swaggerVersion
+    val basePath = reader.basePath
+    val apiFilterClassName = reader.apiFilterClassName
+    reader.modelPackages.split(",").foreach(p => TypeUtil.addAllowablePackage(p))
 
     val filterOutTopLevelApi = true
     val currentApiEndPoint = this.getClass.getAnnotation(classOf[Api])
@@ -81,15 +83,15 @@ trait Help {
 }
 
 object ConfigReaderFactory {
-  def getConfigReader(wc: WebConfig): ConfigReader = {
+  def getConfigReader(sc: ServletConfig): ConfigReader = {
     var configReaderStr = {
-      wc.getInitParameter("swagger.config.reader") match {
+      sc.getInitParameter("swagger.config.reader") match {
         case s: String => s
-        case _ => "com.wordnik.swagger.jaxrs.ConfigReader"
+        case _ => "com.wordnik.swagger.jaxrs.JerseyConfigReader"
       }
     }
-    val constructor = SwaggerContext.loadClass(configReaderStr).getConstructor(classOf[WebConfig])
-    val configReader = constructor.newInstance(wc).asInstanceOf[ConfigReader]
+    val constructor = SwaggerContext.loadClass(configReaderStr).getConstructor(classOf[ServletConfig])
+    val configReader = constructor.newInstance(sc).asInstanceOf[ConfigReader]
     configReader
   }
 }
