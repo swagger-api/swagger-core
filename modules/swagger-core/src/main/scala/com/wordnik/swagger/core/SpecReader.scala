@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory
 
 import com.fasterxml.jackson.databind.node._
 
-import java.lang.reflect.{ Type, Field, Modifier, Method }
+import java.lang.reflect.{ Type, TypeVariable, Field, Modifier, Method, ParameterizedType }
 import java.lang.annotation.Annotation
 import javax.xml.bind.annotation._
 

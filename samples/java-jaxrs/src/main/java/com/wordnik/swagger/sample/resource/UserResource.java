@@ -27,7 +27,7 @@ import com.wordnik.swagger.jaxrs.JavaHelp;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
-public class UserResource extends JavaHelp {
+public class UserResource {
 	static UserData userData = new UserData();
 
 	@POST

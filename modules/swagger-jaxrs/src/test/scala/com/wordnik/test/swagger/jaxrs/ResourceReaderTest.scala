@@ -49,8 +49,6 @@ class ResourceReaderTest extends FlatSpec with ShouldMatchers {
       null,
       null)
       
-    println(com.wordnik.swagger.core.util.JsonUtil.getJsonMapper.writeValueAsString(doc))
-      
     assert(doc.apiVersion == "1.123")
     assert(doc.swaggerVersion == "2.345")
     assert(doc.basePath == "http://my.host.com/basepath")
