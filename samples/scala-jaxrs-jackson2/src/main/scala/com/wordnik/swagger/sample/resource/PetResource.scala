@@ -98,5 +98,4 @@ trait PetResource extends RestResourceUtil {
 @Path("/pet.json")
 @Api(value = "/pet", description = "Operations about pets")
 @Produces(Array("application/json"))
-class PetResourceJSON extends Help
-  with PetResource
+class PetResourceJSON extends PetResource
