@@ -34,17 +34,17 @@ import scala.io._
 @RunWith(classOf[JUnitRunner])
 class ResourceListingIT extends FlatSpec with ShouldMatchers {
   it should "read a resource listing" in {
-    val json = Source.fromURL("http://localhost:8002/api/resources.json").mkString
+    val json = Source.fromURL("http://localhost:8002/api/api-docs.json").mkString
     val doc = JsonUtil.getJsonMapper.readValue(json, classOf[Documentation])
     assert(doc.getApis.size === 3)
     assert((doc.getApis.map(api => api.getPath).toSet &
-      Set("/pet.{format}",
-        "/user.{format}",
-        "/health.{format}")).size == 3)
+      Set("/api-docs.{format}/pet",
+        "/api-docs.{format}/user",
+        "/api-docs.{format}/health")).size == 3)
   }
 
   it should "read the pet api description" in {
-    val json = Source.fromURL("http://localhost:8002/api/health.json").mkString
+    val json = Source.fromURL("http://localhost:8002/api/api-docs.json/health").mkString
     val doc = JsonUtil.getJsonMapper.readValue(json, classOf[Documentation])
     assert(doc.getApis.size === 1)
     assert((doc.getApis.map(api => api.getPath).toSet &
