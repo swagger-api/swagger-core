@@ -85,8 +85,8 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
         <executions>
           <execution>
             <goals>
@@ -161,6 +161,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.0</version>
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
@@ -169,11 +170,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
         <configuration>
           <archive>
             <manifestEntries>
               <mode>development</mode>
-              <url>${pom.url}</url>
+              <url>${project.url}</url>
               <implementation-version>${project.version}</implementation-version>
               <package>com.wordnik</package>
             </manifestEntries>
@@ -196,28 +198,7 @@
         <plugin>
           <groupId>net.alchim31.maven</groupId>
           <artifactId>scala-maven-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>scala-compile-first</id>
-              <phase>process-resources</phase>
-              <goals>
-                <goal>add-source</goal>
-                <goal>compile</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>scala-test-compile</id>
-              <phase>process-test-resources</phase>
-              <goals>
-                <goal>testCompile</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>net.alchim31.maven</groupId>
-          <artifactId>scala-maven-plugin</artifactId>
-          <version>${maven-scala-plugin-version}</version>
+          <version>${scala-maven-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -239,8 +220,8 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.scala-tools</groupId>
-            <artifactId>maven-scala-plugin</artifactId>
+            <groupId>net.alchim31.maven</groupId>
+            <artifactId>scala-maven-plugin</artifactId>
             <executions>
               <execution>
                 <goals>
@@ -317,6 +298,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9</version>
         <configuration>
           <aggregate>true</aggregate>
           <debug>true</debug>
@@ -328,13 +310,14 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
-        <version>2.9.1</version>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>${scala-maven-plugin-version}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.3</version>
         <configuration>
           <aggregate>true</aggregate>
         </configuration>
@@ -342,6 +325,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.6</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -385,12 +369,6 @@
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
         <version>${commons-lang-version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.scala-lang</groupId>
-        <artifactId>scala-library</artifactId>
-        <version>${scala-version}</version>
         <scope>compile</scope>
       </dependency>
       <dependency>
@@ -473,6 +451,6 @@
     <scala-test-version>1.8</scala-test-version>
     <jetty-version>7.6.0.v20120127</jetty-version>
     <servlet-api-version>2.5</servlet-api-version>
-    <maven-scala-plugin-version>3.1.0</maven-scala-plugin-version>
+    <scala-maven-plugin-version>3.1.0</scala-maven-plugin-version>
   </properties>
 </project>
