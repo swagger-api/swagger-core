@@ -37,7 +37,7 @@ import scala.collection.JavaConversions._
 import collection.mutable.ListBuffer
 
 object JaxrsApiReader {
-  var endpointCacheEnabled = false
+  var endpointCacheEnabled = true
   private val LOGGER = LoggerFactory.getLogger(JaxrsApiReader.getClass)
 
   var FORMAT_STRING = ".{format}"

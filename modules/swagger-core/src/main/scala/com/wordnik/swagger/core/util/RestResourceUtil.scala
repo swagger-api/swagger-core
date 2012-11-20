@@ -24,7 +24,7 @@ trait RestResourceUtil {
     var output: Int = defaultValue;
     try output = inputString.toInt
     catch {
-      case _ => output = defaultValue
+      case _: Throwable => output = defaultValue
     }
 
     if (output < minVal) output = minVal
@@ -37,7 +37,7 @@ trait RestResourceUtil {
     var output: Long = defaultValue;
     try output = inputString.toLong
     catch {
-      case _ => output = defaultValue
+      case _: Throwable => output = defaultValue
     }
 
     if (output < minVal) output = minVal
@@ -50,7 +50,7 @@ trait RestResourceUtil {
     var output: Double = defaultValue;
     try output = inputString.toDouble
     catch {
-      case _ => output = defaultValue
+      case _: Throwable => output = defaultValue
     }
 
     if (output < minVal) output = minVal
@@ -70,7 +70,7 @@ trait RestResourceUtil {
     else {
       try output = booleanString.toBoolean
       catch {
-        case _ => output = defaultValue
+        case _: Throwable => output = defaultValue
       }
     }
     output
@@ -78,8 +78,8 @@ trait RestResourceUtil {
   
   def getDate(defaultValue:Date, dateString:String):Date = {
     try new SimpleDateFormat("yyyy-MM-dd").parse(dateString)
-    catch{
-      case _ => defaultValue
+    catch {
+      case _: Throwable => defaultValue
     }
   }
 }

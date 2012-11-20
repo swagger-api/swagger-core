@@ -4,14 +4,14 @@ import PlayProject._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2"
-  val appVersion = "1.1.1"
+  val appVersion = "1.2.0-SNAPSHOT"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     "com.fasterxml.jackson.module" % "jackson-module-scala" % "2.0.0",
     "com.fasterxml.jackson.core" % "jackson-annotations" % "2.0.0",
     "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" % "swagger-core_2.9.1" % "1.1.1-SNAPSHOT",
-    "com.wordnik" % "swagger-annotations_2.9.1" % "1.1.0",
+    "com.wordnik" % "swagger-core_2.9.1" % "1.2.0-SNAPSHOT",
+    "com.wordnik" % "swagger-annotations_2.9.1" % "1.2.0-SNAPSHOT",
     "javax.ws.rs" % "jsr311-api" % "1.1.1")
 
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(

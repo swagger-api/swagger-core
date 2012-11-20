@@ -145,18 +145,22 @@ object ApiHelpInventory {
    * Get a list of all controller classes in Play
    */
   private def getControllerClasses = {
-    if (this.controllerClasses.length == 0) {
-      val swaggerControllers = current.getTypesAnnotatedWith("controllers", classOf[Api])
-      if (swaggerControllers.size() > 0) {
-        for (clazzName <- swaggerControllers) {
-          val clazz = current.classloader.loadClass(clazzName)
-          this.controllerClasses += clazz;
-          val apiAnnotation = clazz.getAnnotation(classOf[Api])
-          if (apiAnnotation != null && (classOf[play.api.mvc.Controller].isAssignableFrom(clazz) || classOf[play.mvc.Controller].isAssignableFrom(clazz))) {
-            Logger.debug("Found Resource " + apiAnnotation.value + " @ " + clazzName)
-            resourceMap += apiAnnotation.value -> clazz
-          } else {
-            Logger.debug("class " + clazzName + " is not the right type")
+    if (this.controllerClasses.isEmpty) {
+      current.getTypesAnnotatedWith("controllers", classOf[Api]).size match {
+        case i:Int if (i > 0) => {
+          swaggerControllers.foreach(className => {
+            val cls = current.classLoader.loadClass(className)
+          })
+          for (clazzName <- swaggerControllers) {
+            val clazz = current.classloader.loadClass(clazzName)
+            this.controllerClasses += clazz;
+            val apiAnnotation = clazz.getAnnotation(classOf[Api])
+            if (apiAnnotation != null && (classOf[play.api.mvc.Controller].isAssignableFrom(clazz) || classOf[play.mvc.Controller].isAssignableFrom(clazz))) {
+              Logger.debug("Found Resource " + apiAnnotation.value + " @ " + clazzName)
+              resourceMap += apiAnnotation.value -> clazz
+            } else {
+              Logger.debug("class " + clazzName + " is not the right type")
+            }
           }
         }
       }
