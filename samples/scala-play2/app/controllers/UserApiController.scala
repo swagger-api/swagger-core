@@ -17,7 +17,7 @@ import play.api.data.format.Formats._
 import javax.ws.rs._
 import java.io.StringWriter
 
-@Api(value = "/user", description = "Operations about user")
+@Api(value = "/user.json", listingPath = "/api-docs.{format}/user", description = "Operations about user")
 object UserApiController extends BaseApiController {
   var userData = new UserData
 
