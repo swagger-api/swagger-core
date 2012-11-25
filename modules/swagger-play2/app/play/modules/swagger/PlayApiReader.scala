@@ -128,6 +128,7 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
       } mkString
       case None => Logger error "Cannot determine Path. Nothing defined in play routes file for api method " + method.toString; this.resourcePath
     }
+    val foo = str
     val s = PlayApiReader.formatString match {
       case "" => str
       case e: String => str.replaceAll(".json", PlayApiReader.formatString).replaceAll(".xml", PlayApiReader.formatString)
