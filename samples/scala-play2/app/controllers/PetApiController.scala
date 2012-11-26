@@ -19,7 +19,7 @@ import play.api.data.format.Formats._
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.annotations._
 
-@Api(value = "/pet.json", listingPath = "/api-docs.{format}/pet", description = "Operations about pets")
+@Api(value = "/pet", listingPath = "/api-docs.{format}/pet", description = "Operations about pets")
 object PetApiController extends BaseApiController {
   var petData = new PetData
 

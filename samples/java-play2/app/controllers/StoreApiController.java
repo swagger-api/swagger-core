@@ -16,7 +16,7 @@ import play.mvc.*;
 
 import views.html.*;
 
-@Api(value = "/store.json", listingPath = "/api-docs.json/store", description = "Operations about store")
+@Api(value = "/store", listingPath = "/api-docs.json/store", description = "Operations about store")
 public class StoreApiController extends BaseApiController {
 	static StoreData storeData = new StoreData();
 

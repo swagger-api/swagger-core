@@ -17,7 +17,7 @@ import java.util.List;
 
 import views.html.*;
 
-@Api(value = "/user.json", listingPath = "/api-docs.{format}/user", description = "Operations about user")
+@Api(value = "/user", listingPath = "/api-docs.{format}/user", description = "Operations about user")
 public class UserApiController extends BaseApiController {
 	static UserData userData = new UserData();
 

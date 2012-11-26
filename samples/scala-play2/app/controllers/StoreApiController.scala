@@ -18,7 +18,7 @@ import javax.ws.rs._
 import java.io.StringWriter
 import scala.collection.JavaConverters._
 
-@Api(value = "/store.json", listingPath = "/api-docs.json/store", description = "Operations about store")
+@Api(value = "/store", listingPath = "/api-docs.json/store", description = "Operations about store")
 object StoreApiController extends BaseApiController {
   var storeData = new StoreData
 
