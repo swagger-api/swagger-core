@@ -10,6 +10,12 @@ visit http://developer.wordnik.com.
 The [github wiki](https://github.com/wordnik/swagger-core/wiki) contains documentation, samples, etc.  Start there
 
 ## Version history
+v1.2.0 Nov-27 2012
+
+<li>- Updated listing path to /api-docs.json
+
+<li>- Moved swagger-play2 and swagger-play2-utils to maven central
+
 v1.1.0 Aug-22 2012
 
 <li>- Spec [clarifications](https://github.com/wordnik/swagger-core/wiki/Changelog)
