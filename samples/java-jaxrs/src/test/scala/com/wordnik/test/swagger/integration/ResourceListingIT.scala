@@ -40,7 +40,7 @@ class ResourceListingIT extends FlatSpec with ShouldMatchers {
   }
 
   it should "read the resource listing in XML" in {
-    val xmlString = Source.fromURL("http://localhost:8002/api/resources.xml").mkString
+    val xmlString = Source.fromURL("http://localhost:8002/api/api-docs.xml").mkString
     val xml = scala.xml.XML.loadString(xmlString)
     assert(((xml \ "apis").map(api => (api \ "path").text).toSet & Set("/api-docs.{format}/pet", "/api-docs.{format}/user")).size == 2)
   }
