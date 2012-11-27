@@ -1,0 +1,19 @@
+{
+  "apiVersion":"0.2",
+  "swaggerVersion":"1.1",
+  "basePath":"http://localhost",
+  "apis":[
+    {
+      "path":"/api-docs/store",
+      "description":"Operations about store"
+    },
+    {
+      "path":"/api-docs/pet",
+      "description":"Operations about pets"
+    },
+    {
+      "path":"/api-docs/user",
+      "description":"Operations about user"
+    }
+  ]
+}
