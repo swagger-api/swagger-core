@@ -1,39 +1,63 @@
 package security
 
-import play.modules.swagger.PlayApiReader
 import com.wordnik.swagger.play.ApiAuthorizationFilter
-
 import play.Logger
 import java.io.File
 import java.util.ArrayList
 import java.net.URLDecoder
 
-import play.api.mvc.RequestHeader
+import play.api.mvc.RequestHeader 
 
 import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConversions._
 
 class AuthorizationFilter extends ApiAuthorizationFilter {
+  val methodSecurityAnotations = Map(
+    "/user.{format}" -> false,
+    "/pet.{format}" -> false,
+    "/store.{format}" -> true)
 
-  var isFilterInitialized: Boolean = false
-  var methodSecurityAnotations: Map[String, Boolean] = Map[String, Boolean]()
-  var classSecurityAnotations: Map[String, Boolean] = Map[String, Boolean]()
+  val classSecurityAnotations = Map(
+    "GET:/pet.{format}/{petId}" -> false,
+    "POST:/pet.{format}" -> true,
+    "PUT:/pet.{format}" -> true,
+    "GET:/pet.{format}/findByStatus" -> false,
+    "GET:/pet.{format}/findByTags" -> false,
+
+
+    "GET:/store.{format}/order/{orderId}" -> true,
+    "DELETE:/store.{format}/order/{orderId}" -> true,
+    "POST:/store.{format}/order" -> true,
+
+    "POST:/user.{format}" -> false,
+    "POST:/user.{format}/createWithArray" -> false,
+    "POST:/user.{format}/createWithList" -> false,
+    "PUT:/user.{format}/{username}" -> true,
+    "DELETE:/user.{format}/{username}" -> true,
+    "GET:/user.{format}/{username}" -> false,
+    "GET:/user.{format}/login" -> false,
+    "GET:/user.{format}/logout" -> false)
+
   var securekeyId = "special-key"
   var unsecurekeyId = "default-key"
 
   def authorize(apiPath: String)(implicit requestHeader: RequestHeader): Boolean = {
     Logger.debug("authorizing path " + apiPath)
-    if (requestHeader != null) {
-      val mName = requestHeader.method.toUpperCase;
-      if (isPathSecure(mName + ":" + apiPath, false)) {
-        if (apiKey == securekeyId) return true
-        else return false
-      }
-      true
-    } else {
-      Logger.debug("no header to authroize path " + apiPath)
-      false
-    }
+  	val isAuthorized = if(requestHeader != null) {
+	    if (isPathSecure(requestHeader.method.toUpperCase + ":" + apiPath, false)) {
+	      if (apiKey == securekeyId) 
+          return true
+	      else 
+          return false
+	    }
+	    else 
+        true
+  	} else {
+  		Logger.debug("no header to authroize path " + apiPath)
+  		false
+  	}
+
+    isAuthorized
   }
 
   def authorizeResource(apiPath: String)(implicit requestHeader: RequestHeader): Boolean = {
@@ -46,52 +70,18 @@ class AuthorizationFilter extends ApiAuthorizationFilter {
   }
 
   private def apiKey()(implicit requestHeader: RequestHeader): String = {
-    if (requestHeader != null) {
-      requestHeader.queryString.get("api_key") match {
-        case Some(keySeq) => keySeq.head
-        case None => null
-      }
-    } else null
+    if(requestHeader == null) null
+  	else requestHeader.queryString.get("api_key") match {
+  		case Some(keySeq) => keySeq.head
+  		case None => null
+  	}
   }
 
   private def isPathSecure(apiPath: String, isResource: Boolean): Boolean = {
-    Logger.debug("checking security on path " + apiPath)
-    if (!isFilterInitialized.booleanValue()) initialize()
-    if (isResource.booleanValue()) {
-      if (classSecurityAnotations.contains(apiPath)) {
-        classSecurityAnotations.get(apiPath).get
-      } else false
-    } else {
-      if (methodSecurityAnotations.contains(apiPath)) {
-        methodSecurityAnotations.get(apiPath).get
-      } else false
+    Logger.debug("checking security on path " + apiPath + ", " + isResource)
+    isResource match {
+      case true => methodSecurityAnotations.getOrElse(apiPath, false)
+      case false => classSecurityAnotations.getOrElse(apiPath, false)
     }
   }
-
-  private def initialize() = {
-    //initialize classes (no .format here)
-    classSecurityAnotations += "/user" -> false
-    classSecurityAnotations += "/pet" -> false
-    classSecurityAnotations += "/store" -> true
-
-    //initialize method security
-    methodSecurityAnotations += "GET:/pet" + PlayApiReader.formatString + "/{petId}" -> false
-    methodSecurityAnotations += "POST:/pet" + PlayApiReader.formatString + "" -> true
-    methodSecurityAnotations += "PUT:/pet" + PlayApiReader.formatString + "" -> true
-    methodSecurityAnotations += "GET:/pet" + PlayApiReader.formatString + "/findByStatus" -> false
-    methodSecurityAnotations += "GET:/pet" + PlayApiReader.formatString + "/findByTags" -> false
-    methodSecurityAnotations += "GET:/store" + PlayApiReader.formatString + "/order/{orderId}" -> true
-    methodSecurityAnotations += "DELETE:/store" + PlayApiReader.formatString + "/order/{orderId}" -> true
-    methodSecurityAnotations += "POST:/store" + PlayApiReader.formatString + "/order" -> true
-    methodSecurityAnotations += "POST:/user" + PlayApiReader.formatString + "" -> false
-    methodSecurityAnotations += "POST:/user" + PlayApiReader.formatString + "/createWithArray" -> false
-    methodSecurityAnotations += "POST:/user" + PlayApiReader.formatString + "/createWithList" -> false
-
-    methodSecurityAnotations += "PUT:/user" + PlayApiReader.formatString + "/{username}" -> true
-    methodSecurityAnotations += "DELETE:/user" + PlayApiReader.formatString + "/{username}" -> true
-    methodSecurityAnotations += "GET:/user" + PlayApiReader.formatString + "/{username}" -> false
-    methodSecurityAnotations += "GET:/user" + PlayApiReader.formatString + "/login" -> false
-    methodSecurityAnotations += "GET:/user" + PlayApiReader.formatString + "/logout" -> false
-  }
-
 }

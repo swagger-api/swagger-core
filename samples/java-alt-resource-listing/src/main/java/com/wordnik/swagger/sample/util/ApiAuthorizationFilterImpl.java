@@ -107,21 +107,21 @@ public class ApiAuthorizationFilterImpl implements ApiAuthorizationFilter {
 		classSecurityAnotations.put("/store", true);
 
 		// initialize method security
-		methodSecurityAnotations.put("GET:/pet.{format}/{petId}", false);
-		methodSecurityAnotations.put("POST:/pet.{format}", true);
-		methodSecurityAnotations.put("PUT:/pet.{format}", true);
-		methodSecurityAnotations.put("GET:/pet.{format}/findByStatus", false);
-		methodSecurityAnotations.put("GET:/pet.{format}/findByTags", false);
-		methodSecurityAnotations.put("GET:/store.{format}/order/{orderId}", true);
-		methodSecurityAnotations.put("DELETE:/store.{format}/order/{orderId}", true);
-		methodSecurityAnotations.put("POST:/store.{format}/order", true);
+		methodSecurityAnotations.put("GET:/pet/{petId}", false);
+		methodSecurityAnotations.put("POST:/pet", true);
+		methodSecurityAnotations.put("PUT:/pet", true);
+		methodSecurityAnotations.put("GET:/pet/findByStatus", false);
+		methodSecurityAnotations.put("GET:/pet/findByTags", false);
+		methodSecurityAnotations.put("GET:/store/order/{orderId}", true);
+		methodSecurityAnotations.put("DELETE:/store/order/{orderId}", true);
+		methodSecurityAnotations.put("POST:/store/order", true);
 		methodSecurityAnotations.put("POST:/user", false);
-        methodSecurityAnotations.put("POST:/user.{format}/createWithArray", false);
-        methodSecurityAnotations.put("POST:/user.{format}/createWithList", false);
-		methodSecurityAnotations.put("PUT:/user.{format}/{username}", true);
-		methodSecurityAnotations.put("DELETE:/user.{format}/{username}", true);
-		methodSecurityAnotations.put("GET:/user.{format}/{username}", false);
-		methodSecurityAnotations.put("GET:/user.{format}/login", false);
-		methodSecurityAnotations.put("GET:/user.{format}/logout", false);
+        methodSecurityAnotations.put("POST:/user/createWithArray", false);
+        methodSecurityAnotations.put("POST:/user/createWithList", false);
+		methodSecurityAnotations.put("PUT:/user/{username}", true);
+		methodSecurityAnotations.put("DELETE:/user/{username}", true);
+		methodSecurityAnotations.put("GET:/user/{username}", false);
+		methodSecurityAnotations.put("GET:/user/login", false);
+		methodSecurityAnotations.put("GET:/user/logout", false);
 	}
 }

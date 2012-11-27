@@ -18,14 +18,9 @@ package com.wordnik.swagger.sample.resource;
 
 import com.wordnik.swagger.annotations.*;
 
-import com.sun.jersey.spi.resource.Singleton;
-
 import javax.ws.rs.*;
 
 @Path("/user")
-@Singleton
-@Api(value="/user",
-	description = "Operations about user",
-	listingPath="/resources/user")
-@Produces({"application/json"})
+@Api(value="/user", description = "Operations about user")
+@Produces({"application/json", "application/xml"})
 public class UserResourceJSONXML extends UserResource {}

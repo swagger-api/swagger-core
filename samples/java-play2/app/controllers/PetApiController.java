@@ -15,7 +15,7 @@ import play.mvc.*;
 
 import views.html.*;
 
-@Api(value = "/pet", description = "Operations about pets")
+@Api(value = "/pet", listingPath = "/api-docs.{format}/pet", description = "Operations about pets")
 public class PetApiController extends BaseApiController {
 	static PetData petData = new PetData();
 

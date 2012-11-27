@@ -18,14 +18,9 @@ package com.wordnik.swagger.sample.resource;
 
 import com.wordnik.swagger.annotations.*;
 
-import com.sun.jersey.spi.resource.Singleton;
-
 import javax.ws.rs.*;
 
 @Path("/pet")
-@Api(value = "/pet", 
-	description = "Operations about pets",
-	listingPath="/resources/pet")
-@Singleton
+@Api(value = "/pet", description = "Operations about pets")
 @Produces({"application/json", "application/xml"})
 public class PetResourceJSONXML extends PetResource {}

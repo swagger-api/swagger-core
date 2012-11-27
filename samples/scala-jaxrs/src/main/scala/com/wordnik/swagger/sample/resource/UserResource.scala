@@ -123,12 +123,10 @@ trait UserResource extends RestResourceUtil {
 @Singleton
 @Api(value = "/user", description = "Operations about user")
 @Produces(Array("application/json"))
-class UserResourceJSON extends Help
-  with UserResource
+class UserResourceJSON extends UserResource
 
 @Path("/user.xml")
 @Singleton
 @Api(value = "/user", description = "Operations about user")
 @Produces(Array("application/xml"))
-class UserResourceXML extends Help
-  with UserResource
+class UserResourceXML extends UserResource

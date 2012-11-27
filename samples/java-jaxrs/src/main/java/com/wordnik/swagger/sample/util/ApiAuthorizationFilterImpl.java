@@ -65,8 +65,7 @@ public class ApiAuthorizationFilterImpl implements ApiAuthorizationFilter {
 		return canAccess;
 	}
 
-	public boolean authorizeResource(String apiPath, HttpHeaders headers,
-			UriInfo uriInfo) {
+	public boolean authorizeResource(String apiPath, HttpHeaders headers, UriInfo uriInfo) {
 		boolean canAccess = true;
 
 		String apiKey = uriInfo.getQueryParameters().getFirst("api_key");

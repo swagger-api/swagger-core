@@ -6,7 +6,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-project_2.10.0-RC1</artifactId>
+  <artifactId>swagger-project_2.10.0-RC2</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
   <version>1.2.0-SNAPSHOT</version>
@@ -340,7 +340,7 @@
     <dependencies>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>swagger-jaxrs_2.10.0-RC1</artifactId>
+        <artifactId>swagger-jaxrs_2.10.0-RC2</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -379,7 +379,7 @@
       </dependency>
       <dependency>
         <groupId>org.scalatest</groupId>
-        <artifactId>scalatest_2.10.0-RC1</artifactId>
+        <artifactId>scalatest_2.10.0-RC2</artifactId>
         <version>${scala-test-version}</version>
         <scope>test</scope>
       </dependency>
@@ -391,7 +391,7 @@
       </dependency>
       <dependency>
         <groupId>com.wordnik</groupId>
-        <artifactId>swagger-core_2.10.0-RC1</artifactId>
+        <artifactId>swagger-core_2.10.0-RC2</artifactId>
         <version>${project.version}</version>
         <scope>compile</scope>
         <exclusions>
@@ -442,7 +442,7 @@
     <swagger-core-version>1.0.1</swagger-core-version>
     <felix-version>2.3.4</felix-version>
     <servlet-api-version>2.5</servlet-api-version>
-    <scala-version>2.10.0-RC1</scala-version>
+    <scala-version>2.10.0-RC2</scala-version>
     <jersey-version>1.13</jersey-version>
     <jackson-version>2.0.4</jackson-version>
     <junit-version>4.8.1</junit-version>

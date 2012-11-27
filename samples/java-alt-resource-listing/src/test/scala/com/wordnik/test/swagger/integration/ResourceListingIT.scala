@@ -50,11 +50,10 @@ class ResourceListingIT extends FlatSpec with ShouldMatchers {
   it should "read the pet api description in JSON" in {
     val json = Client.create(new DefaultClientConfig()).resource("http://localhost:8002/api/resources/pet").accept("application/json").get(classOf[String])
     val doc = JsonUtil.getJsonMapper.readValue(json, classOf[Documentation])
-    assert(doc.getApis.size === 4)
+    assert(doc.getApis.size === 3)
     assert((doc.getApis.map(api => api.getPath).toSet &
-      Set("/pet",
-        "/pet/{petId}",
+      Set("/pet/{petId}",
         "/pet/findByStatus",
-        "/pet/findByTags")).size == 4)
+        "/pet/findByTags")).size == 3)
   }
 }

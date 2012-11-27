@@ -16,8 +16,9 @@ import play.api.data.format.Formats._
 
 import javax.ws.rs._
 import java.io.StringWriter
+import scala.collection.JavaConverters._
 
-@Api(value = "/store", description = "Operations about store")
+@Api(value = "/store", listingPath = "/api-docs.json/store", description = "Operations about store")
 object StoreApiController extends BaseApiController {
   var storeData = new StoreData
 
@@ -33,6 +34,15 @@ object StoreApiController extends BaseApiController {
       case Some(order) => JsonResponse(order)
       case _ => JsonResponse(new value.ApiResponse(404, "Order not found"), 404)
     }
+  }
+
+  @Path("/orders")
+  @ApiOperation(value = "Gets orders in the system", responseClass = "models.Order", httpMethod = "GET", multiValueResponse = true)
+  @ApiErrors(Array(
+    new ApiError(code = 404, reason = "No Orders found")))
+  def getOrders(@ApiParamImplicit(value = "Get all orders or only those which are complete", dataType = "Boolean", required = true)@QueryParam("isComplete") isComplete: Boolean) = Action { implicit request =>
+    val orders: java.util.List[Order] = storeData.orders.toList.asJava
+    JsonResponse(orders)
   }
 
   @Path("/order")

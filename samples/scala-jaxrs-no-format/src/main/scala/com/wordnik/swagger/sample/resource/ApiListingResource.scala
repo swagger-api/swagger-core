@@ -16,18 +16,12 @@
 
 package com.wordnik.swagger.sample.resource
 
-import com.wordnik.swagger.core._
-import com.wordnik.swagger.jaxrs._
-import com.wordnik.swagger.annotations._
+import com.wordnik.swagger.annotations.Api
+import com.wordnik.swagger.jaxrs.listing.ApiListing
 
 import javax.ws.rs.{Produces, Path}
 
-@Path("/resources")
-@Api("/resources")
+@Path("/api-docs")
+@Api("/api-docs")
 @Produces(Array("application/json"))
-class ApiListingResourceJson extends ApiListing
-
-@Path("/resources.xml")
-@Api("/resources")
-@Produces(Array("application/xml"))
-class ApiListingResourceXml extends ApiListing
+class ApiListingResourceJSON extends ApiListing

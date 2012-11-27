@@ -22,10 +22,11 @@ import com.wordnik.swagger.jaxrs._
 import com.wordnik.swagger.sample.model.User
 import com.wordnik.swagger.sample.data.UserData
 import com.wordnik.swagger.sample.exception.NotFoundException
+import com.wordnik.swagger.core.util.RestResourceUtil
 
 import javax.ws.rs.core.Response
 import javax.ws.rs._
-import com.wordnik.swagger.core.util.RestResourceUtil
+
 import scala.collection.JavaConverters._
 
 trait UserResource extends RestResourceUtil {
@@ -120,11 +121,9 @@ trait UserResource extends RestResourceUtil {
 @Path("/user")
 @Api(value="/user", description = "Operations about user")
 @Produces(Array("application/json"))
-class UserResourceJSON extends Help
-  with UserResource
+class UserResourceJSON extends UserResource
 
 @Path("/user.xml")
 @Api(value="/user", description = "Operations about user")
 @Produces(Array("application/xml"))
-class UserResourceXML extends Help
-  with UserResource
+class UserResourceXML extends UserResource

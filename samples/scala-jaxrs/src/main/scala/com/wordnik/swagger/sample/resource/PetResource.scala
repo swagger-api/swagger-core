@@ -26,7 +26,6 @@ import com.wordnik.swagger.sample.exception.NotFoundException
 
 import javax.ws.rs.core.Response
 import javax.ws.rs._
-import java.lang.Exception
 
 trait PetResource extends RestResourceUtil {
   @GET

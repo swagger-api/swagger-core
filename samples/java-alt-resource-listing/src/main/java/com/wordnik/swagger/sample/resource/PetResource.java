@@ -25,7 +25,7 @@ import com.wordnik.swagger.jaxrs.JavaHelp;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
-public class PetResource extends JavaHelp {
+public class PetResource {
 	static PetData petData = new PetData();
 	static JavaRestResourceUtil ru = new JavaRestResourceUtil();
 

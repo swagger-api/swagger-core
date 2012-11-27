@@ -94,22 +94,22 @@ class ApiAuthorizationFilterImpl extends ApiAuthorizationFilter {
     classSecurityAnotations += "/store" -> true
 
     //initialize method security
-    methodSecurityAnotations += "GET:/pet.{format}/{petId}" -> false
-    methodSecurityAnotations += "POST:/pet.{format}" -> true
-    methodSecurityAnotations += "PUT:/pet.{format}" -> true
-    methodSecurityAnotations += "GET:/pet.{format}/findByStatus" -> false
-    methodSecurityAnotations += "GET:/pet.{format}/findByTags" -> false
-    methodSecurityAnotations += "GET:/store.{format}/order/{orderId}" -> true
-    methodSecurityAnotations += "DELETE:/store.{format}/order/{orderId}" -> true
-    methodSecurityAnotations += "POST:/store.{format}/order" -> true
-    methodSecurityAnotations += "POST:/user.{format}" -> false
-    methodSecurityAnotations += "POST:/user.{format}/createWithArray" -> false
-    methodSecurityAnotations += "POST:/user.{format}/createWithList" -> false
+    methodSecurityAnotations += "GET:/pet/{petId}" -> false
+    methodSecurityAnotations += "POST:/pet" -> true
+    methodSecurityAnotations += "PUT:/pet" -> true
+    methodSecurityAnotations += "GET:/pet/findByStatus" -> false
+    methodSecurityAnotations += "GET:/pet/findByTags" -> false
+    methodSecurityAnotations += "GET:/store/order/{orderId}" -> true
+    methodSecurityAnotations += "DELETE:/store/order/{orderId}" -> true
+    methodSecurityAnotations += "POST:/store/order" -> true
+    methodSecurityAnotations += "POST:/user" -> false
+    methodSecurityAnotations += "POST:/user/createWithArray" -> false
+    methodSecurityAnotations += "POST:/user/createWithList" -> false
 
-    methodSecurityAnotations += "PUT:/user.{format}/{username}" -> true
-    methodSecurityAnotations += "DELETE:/user.{format}/{username}" -> true
-    methodSecurityAnotations += "GET:/user.{format}/{username}" -> false
-    methodSecurityAnotations += "GET:/user.{format}/login" -> false
-    methodSecurityAnotations += "GET:/user.{format}/logout" -> false
+    methodSecurityAnotations += "PUT:/user/{username}" -> true
+    methodSecurityAnotations += "DELETE:/user/{username}" -> true
+    methodSecurityAnotations += "GET:/user/{username}" -> false
+    methodSecurityAnotations += "GET:/user/login" -> false
+    methodSecurityAnotations += "GET:/user/logout" -> false
   }
 }

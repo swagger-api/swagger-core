@@ -56,9 +56,15 @@ object ApiHelpInventory {
     for (clazz <- getControllerClasses) {
       val apiAnnotation = clazz.getAnnotation(classOf[Api])
       if (null != apiAnnotation) {
-        val api = new DocumentationEndPoint(apiAnnotation.value + PlayApiReader.formatString, apiAnnotation.description())
+        val listingPath = {
+          if(apiAnnotation.listingPath != "") apiAnnotation.listingPath
+          else apiAnnotation.value
+        }.replaceAll("\\.json", PlayApiReader.formatString).replaceAll("\\.xml", PlayApiReader.formatString)
+        val realPath = apiAnnotation.value.replaceAll("\\.json", PlayApiReader.formatString).replaceAll("\\.xml", PlayApiReader.formatString)
+
+        val api = new DocumentationEndPoint(listingPath, apiAnnotation.description())
         if (!isApiAdded(allApiDoc, api)) {
-          if (null == apiFilter || apiFilter.authorizeResource(api.path)) {
+          if (null == apiFilter || apiFilter.authorizeResource(realPath)) {
             allApiDoc.addApi(api)
           }
         }
@@ -76,14 +82,25 @@ object ApiHelpInventory {
    * Get detailed API/models for a given resource
    */
   private def getResource(resourceName: String)(implicit requestHeader: RequestHeader) = {
-    getResourceMap.get(resourceName) match {
-      case Some(clazz) => {
-        val currentApiEndPoint = clazz.getAnnotation(classOf[Api])
-        val currentApiPath = if (currentApiEndPoint != null && filterOutTopLevelApi) currentApiEndPoint.value else null
+    val qualifiedResourceName = PlayApiReader.formatString match {
+      case e: String if(e != "") => {
+        resourceName.replaceAll("\\.json", PlayApiReader.formatString).replaceAll("\\.xml", PlayApiReader.formatString)
+      }
+      case _ => resourceName
+    }
+    getResourceMap.get(qualifiedResourceName) match {
+      case Some(cls) => {
+        val apiAnnotation = cls.getAnnotation(classOf[Api])
 
-        Logger.debug("Loading resource " + resourceName + " from " + clazz + " @ " + currentApiPath)
+        val listingPath = {
+          if(apiAnnotation.listingPath != "") apiAnnotation.listingPath
+          else apiAnnotation.value
+        }.replaceAll("\\.json", PlayApiReader.formatString).replaceAll("\\.xml", PlayApiReader.formatString)
+        val realPath = apiAnnotation.value.replaceAll("\\.json", PlayApiReader.formatString).replaceAll("\\.xml", PlayApiReader.formatString)
 
-        val docs = new HelpApi(apiFilterClassName).filterDocs(PlayApiReader.read(clazz, apiVersion, swaggerVersion, basePath, currentApiPath), currentApiPath)
+        Logger.debug("Loading resource " + qualifiedResourceName + " from " + cls + " @ " + realPath + ", " + basePath)
+        val api = PlayApiReader.read(cls, apiVersion, swaggerVersion, basePath, realPath)
+        val docs = new HelpApi(apiFilterClassName).filterDocs(api, realPath)
         Option(docs)
       }
       case None => {
@@ -120,12 +137,12 @@ object ApiHelpInventory {
     stringWriter.toString
   }
 
-  def clear() {
+  def clear() = {
     this.controllerClasses.clear
     this.resourceMap.clear
   }
 
-  def reload() {
+  def reload() = {
     PlayApiReader.clear
     ApiAuthorizationFilterLocator.clear
 
@@ -145,20 +162,28 @@ object ApiHelpInventory {
    * Get a list of all controller classes in Play
    */
   private def getControllerClasses = {
-    if (this.controllerClasses.length == 0) {
+    if (this.controllerClasses.isEmpty) {
       val swaggerControllers = current.getTypesAnnotatedWith("controllers", classOf[Api])
-      if (swaggerControllers.size() > 0) {
-        for (clazzName <- swaggerControllers) {
-          val clazz = current.classloader.loadClass(clazzName)
-          this.controllerClasses += clazz;
-          val apiAnnotation = clazz.getAnnotation(classOf[Api])
-          if (apiAnnotation != null && (classOf[play.api.mvc.Controller].isAssignableFrom(clazz) || classOf[play.mvc.Controller].isAssignableFrom(clazz))) {
-            Logger.debug("Found Resource " + apiAnnotation.value + " @ " + clazzName)
-            resourceMap += apiAnnotation.value -> clazz
-          } else {
-            Logger.debug("class " + clazzName + " is not the right type")
-          }
+      swaggerControllers.size match {
+        case i:Int if (i > 0) => {
+          swaggerControllers.foreach(className => current.classloader.loadClass(className))
+          swaggerControllers.foreach(clazzName => {
+            val cls = current.classloader.loadClass(clazzName)
+            this.controllerClasses += cls;
+            val apiAnnotation = cls.getAnnotation(classOf[Api])
+            if (apiAnnotation != null && (classOf[play.api.mvc.Controller].isAssignableFrom(cls) || classOf[play.mvc.Controller].isAssignableFrom(cls))) {
+              Logger.debug("Found Resource " + apiAnnotation.value + " @ " + clazzName)
+              val path = {
+                if(apiAnnotation.listingPath != "") apiAnnotation.listingPath
+                else apiAnnotation.value
+              }.replaceAll("\\.json", PlayApiReader.formatString).replaceAll("\\.xml", PlayApiReader.formatString)
+              resourceMap += path -> cls
+            } else {
+              Logger.debug("class " + clazzName + " is not the right type")
+            }
+          })
         }
+        case _ =>
       }
     }
     controllerClasses
@@ -166,11 +191,10 @@ object ApiHelpInventory {
 
   private def getResourceMap = {
     // check if resources and controller info has already been loaded
-    if (controllerClasses.length == 0) {
-      this.getControllerClasses;
-    }
+    if (controllerClasses.length == 0)
+      this.getControllerClasses
 
-    this.resourceMap;
+    this.resourceMap
   }
 
   private def isApiAdded(allApiDoc: Documentation, endpoint: DocumentationEndPoint): Boolean = {
