@@ -61,7 +61,7 @@ class AuthorizationFilter extends ApiAuthorizationFilter {
   }
 
   def authorizeResource(apiPath: String)(implicit requestHeader: RequestHeader): Boolean = {
-    Logger.debug("authorizing resource " + apiPath)
+    Logger.error("authorizing resource " + apiPath)
     if (isPathSecure(apiPath, true)) {
       if (apiKey == securekeyId) return true
       else return false
