@@ -1145,9 +1145,9 @@ body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operatio
     display: block;
     margin: 0 0 0 0;
     padding: 0;
-    background-color: #faebf2;
+    background-color: #FCE9E3;
     border: 1px solid black;
-    border-color: #f0cecb;
+    border-color: #F5D5C3;
 }
 
 body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.heading h3 {
@@ -1168,7 +1168,7 @@ body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operatio
 
 body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.heading h3 span.http_method a {
     text-transform: uppercase;
-    background-color: #993300;
+    background-color: #D38042;
     text-decoration: none;
     color: white;
     display: inline-block;
@@ -1228,12 +1228,12 @@ body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operatio
 
 body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.heading ul.options li {
     border-right-color: #f0cecb;
-    color: #993300;
+    color: #D38042;
     font-size: 0.9em;
 }
 
 body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.heading ul.options li a {
-    color: #993300;
+    color: #D38042;
     text-decoration: none;
 }
 
@@ -1263,7 +1263,7 @@ body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operatio
 }
 
 body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.content h4 {
-    color: #993300;
+    color: #D38042;
     font-size: 1.1em;
     margin: 0;
     padding: 15px 0 5px 0px;
@@ -1271,7 +1271,7 @@ body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operatio
 
 body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.content form input[type='text'].error {
     outline: 2px solid black;
-    outline-color: #cc0000;
+    outline-color: #F5D5C3;
 }
 
 body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.content div.sandbox_header {
@@ -1509,9 +1509,82 @@ body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operatio
     font-size: 1em;
     line-height: 1.5em;
 }
-.model-signature span {
+.model-signature .description span {
     font-size: 0.9em;
     line-height: 1.5em;
 }
-.model-signature span:nth-child(odd)    { color:#333; }
-.model-signature span:nth-child(even)    { color:#C5862B; }
+.model-signature .description span:nth-child(odd)    { color:#333; }
+.model-signature .description span:nth-child(even)    { color:#C5862B; }
+.model-signature .signature-nav a {
+    text-decoration: none;
+    color: #AAA;
+}
+
+.model-signature pre {
+    font-size: .85em;
+    line-height: 1.2em;
+    overflow: auto;
+    max-height: 200px;
+    cursor: pointer;
+}
+
+.model-signature pre:hover {
+    background-color: #ffffdd;
+}
+
+.model-signature .snippet small {
+    font-size: 0.75em;
+}
+
+.model-signature .signature-container {
+    clear: both;
+}
+
+.model-signature .signature-nav a:hover {
+    text-decoration: underline;
+    color: black;
+}
+
+.model-signature .signature-nav .selected {
+    color: black;
+    text-decoration: none;
+}
+
+.model-signature ul.signature-nav {
+    float: none;
+    clear: both;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    display: block;
+    clear: none;
+    float: right;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.model-signature ul.signature-nav li {
+    float: left;
+    clear: none;
+    margin: 0;
+    padding: 2px 10px;
+    border-right: 1px solid #dddddd;
+}
+
+.model-signature ul.signature-nav li:last-child {
+    padding-right: 0;
+    border-right: none;
+}
+
+pre code {
+  background: none;
+}
+
+.content > .content-type > div > label {
+  clear: both;
+  display: block;
+  color: #0F6AB4;
+  font-size: 1.1em;
+  margin: 0;
+  padding: 15px 0 5px 0px;
+}

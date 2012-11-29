@@ -10,11 +10,12 @@ object ApplicationBuild extends Build {
     "com.fasterxml.jackson.module" % "jackson-module-scala" % "2.0.0",
     "com.fasterxml.jackson.core" % "jackson-annotations" % "2.0.0",
     "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" %% "swagger-core" % "1.2.0",
-    "com.wordnik" %% "swagger-annotations" % "1.2.0",
+    "play" % "routes-compiler_2.9.2" % "2.1-RC1",
+    "com.wordnik" % "swagger-core_2.10.0-RC2" % "1.2.0",
+    "com.wordnik" % "swagger-annotations_2.10.0-RC2" % "1.2.0",
     "javax.ws.rs" % "jsr311-api" % "1.1.1")
 
-  val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
+  val main = PlayProject(appName, appVersion, appDependencies).settings(
     publishTo <<= version { (v: String) =>
       val nexus = "https://oss.sonatype.org/"
       if (v.trim.endsWith("SNAPSHOT"))

@@ -53,6 +53,9 @@
       this.progress('fetching resource list: ' + this.discoveryUrl);
       return jQuery.getJSON(this.discoveryUrl, function(response) {
         var res, resource, _i, _j, _len, _len1, _ref, _ref1;
+        if (response.apiVersion != null) {
+          _this.apiVersion = response.apiVersion;
+        }
         if ((response.basePath != null) && jQuery.trim(response.basePath).length > 0) {
           _this.basePath = response.basePath;
           if (_this.basePath.match(/^HTTP/i) == null) {
@@ -252,7 +255,7 @@
         _results = [];
         for (_i = 0, _len = ops.length; _i < _len; _i++) {
           o = ops[_i];
-          op = new SwaggerOperation(o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, o.errorResponses, this);
+          op = new SwaggerOperation(o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, o.errorResponses, this, o.supportedContentTypes);
           this.operations[op.nickname] = op;
           _results.push(this.operationsArray.push(op));
         }
@@ -334,6 +337,17 @@
       return returnVal;
     };
 
+    SwaggerModel.prototype.createJSONSample = function(modelToIgnore) {
+      var prop, result, _i, _len, _ref;
+      result = {};
+      _ref = this.properties;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        prop = _ref[_i];
+        result[prop.name] = prop.getSampleValue(modelToIgnore);
+      }
+      return result;
+    };
+
     return SwaggerModel;
 
   })();
@@ -363,6 +377,24 @@
       }
     }
 
+    SwaggerModelProperty.prototype.getSampleValue = function(modelToIgnore) {
+      var result;
+      if ((this.refModel != null) && (!(this.refModel === modelToIgnore))) {
+        result = this.refModel.createJSONSample(this.refModel);
+      } else {
+        if (this.isArray) {
+          result = this.refDataType;
+        } else {
+          result = this.dataType;
+        }
+      }
+      if (this.isArray) {
+        return [result];
+      } else {
+        return result;
+      }
+    };
+
     SwaggerModelProperty.prototype.toString = function() {
       var str;
       str = this.name + ': ' + this.dataTypeWithRef;
@@ -381,7 +413,7 @@
 
   SwaggerOperation = (function() {
 
-    function SwaggerOperation(nickname, path, httpMethod, parameters, summary, notes, responseClass, errorResponses, resource) {
+    function SwaggerOperation(nickname, path, httpMethod, parameters, summary, notes, responseClass, errorResponses, resource, supportedContentTypes) {
       var parameter, v, _i, _j, _len, _len1, _ref, _ref1, _ref2,
         _this = this;
       this.nickname = nickname;
@@ -393,6 +425,7 @@
       this.responseClass = responseClass;
       this.errorResponses = errorResponses;
       this.resource = resource;
+      this.supportedContentTypes = supportedContentTypes;
       this["do"] = __bind(this["do"], this);
 
       if (this.nickname == null) {
@@ -413,6 +446,7 @@
       }
       if (this.responseClass != null) {
         this.responseClassSignature = this.getSignature(this.responseClass, this.resource.models);
+        this.responseSampleJSON = this.getSampleJSON(this.responseClass, this.resource.models);
       }
       this.errorResponses = this.errorResponses || [];
       _ref1 = this.parameters;
@@ -424,6 +458,7 @@
           parameter.allowableValues.values = this.resource.api.booleanValues;
         }
         parameter.signature = this.getSignature(parameter.dataType, this.resource.models);
+        parameter.sampleJSON = this.getSampleJSON(parameter.dataType, this.resource.models);
         if (parameter.allowableValues != null) {
           if (parameter.allowableValues.valueType === "RANGE") {
             parameter.isRange = true;
@@ -478,6 +513,17 @@
       }
     };
 
+    SwaggerOperation.prototype.getSampleJSON = function(dataType, models) {
+      var isPrimitive, listType, val;
+      listType = this.isListType(dataType);
+      isPrimitive = ((listType != null) && models[listType]) || (models[dataType] != null) ? false : true;
+      val = isPrimitive ? void 0 : (listType != null ? models[listType].createJSONSample() : models[dataType].createJSONSample());
+      if (val) {
+        val = listType ? [val] : val;
+        return JSON.stringify(val, null, 2);
+      }
+    };
+
     SwaggerOperation.prototype["do"] = function(args, callback, error) {
       var body, headers;
       if (args == null) {
@@ -518,7 +564,7 @@
     };
 
     SwaggerOperation.prototype.urlify = function(args, includeApiKey) {
-      var param, queryParams, url, _i, _len, _ref;
+      var param, queryParams, reg, url, _i, _len, _ref;
       if (includeApiKey == null) {
         includeApiKey = true;
       }
@@ -528,7 +574,8 @@
         param = _ref[_i];
         if (param.paramType === 'path') {
           if (args[param.name]) {
-            url = url.replace("{" + param.name + "}", encodeURIComponent(args[param.name]));
+            reg = new RegExp('\{' + param.name + '[^\}]*\}', 'gi');
+            url = url.replace(reg, encodeURIComponent(args[param.name]));
             delete args[param.name];
           } else {
             throw "" + param.name + " is a required path param.";
