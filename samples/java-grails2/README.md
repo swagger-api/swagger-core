@@ -1,8 +1,3 @@
-README.md
-
-grails install-plugin jaxrs
-
-
 # Swagger Sample App
 
 ## Overview
