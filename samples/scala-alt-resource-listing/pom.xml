@@ -95,5 +95,9 @@
       <artifactId>scalatest_2.9.1</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
   </dependencies>
 </project>
