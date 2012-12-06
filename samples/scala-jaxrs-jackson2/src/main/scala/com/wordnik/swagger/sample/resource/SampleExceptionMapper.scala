@@ -43,8 +43,6 @@ class ApplicationExceptionMapper extends ExceptionMapper[ApiException] {
 class SampleExceptionMapper extends ExceptionMapper[Exception] {
   def toResponse(exception: Exception): Response = {
     exception match {
-      case e: com.sun.jersey.api.NotFoundException =>
-        Response.status(Status.NOT_FOUND).entity(new ApiResponse(ApiResponse.ERROR, e.getMessage())).build
       case e: javax.ws.rs.WebApplicationException =>
         Response.status(e.getResponse.getStatus).entity(new ApiResponse(e.getResponse.getStatus, e.getMessage())).build
       case e: com.fasterxml.jackson.core.JsonParseException =>
