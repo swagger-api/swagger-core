@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.10.0-RC5</artifactId>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.2.0</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-sample-java-alt-resource-listing_2.10.0-RC5</artifactId>
   <packaging>war</packaging>
   <name>swagger-sample-java-alt-resource-listing</name>
-  <version>1.2.1-SNAPSHOT</version>
+  <version>1.2.0</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>
