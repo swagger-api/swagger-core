@@ -29,7 +29,6 @@ import javax.ws.rs.core.Response
 import javax.ws.rs._
 
 trait PetStoreResource extends RestResourceUtil {
-
   @GET
   @Path("/order/{orderId}")
   @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5. " +
@@ -75,9 +74,11 @@ trait PetStoreResource extends RestResourceUtil {
 @Path("/store")
 @Api(value="/store" , description = "Operations about store")
 @Produces(Array("application/json"))
-class PetStoreResourceJSON extends PetStoreResource
+class PetStoreResourceJSON extends Help
+  with PetStoreResource
 
 @Path("/store.xml")
 @Api(value="/store", description = "Operations about store")
 @Produces(Array("application/xml"))
-class PetStoreResourceXML extends PetStoreResource
+class PetStoreResourceXML extends Help
+  with PetStoreResource
