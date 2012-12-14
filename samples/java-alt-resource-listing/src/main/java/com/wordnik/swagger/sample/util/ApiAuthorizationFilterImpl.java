@@ -116,8 +116,8 @@ public class ApiAuthorizationFilterImpl implements ApiAuthorizationFilter {
 		methodSecurityAnotations.put("DELETE:/store/order/{orderId}", true);
 		methodSecurityAnotations.put("POST:/store/order", true);
 		methodSecurityAnotations.put("POST:/user", false);
-    methodSecurityAnotations.put("POST:/user/createWithArray", false);
-    methodSecurityAnotations.put("POST:/user/createWithList", false);
+        methodSecurityAnotations.put("POST:/user/createWithArray", false);
+        methodSecurityAnotations.put("POST:/user/createWithList", false);
 		methodSecurityAnotations.put("PUT:/user/{username}", true);
 		methodSecurityAnotations.put("DELETE:/user/{username}", true);
 		methodSecurityAnotations.put("GET:/user/{username}", false);
