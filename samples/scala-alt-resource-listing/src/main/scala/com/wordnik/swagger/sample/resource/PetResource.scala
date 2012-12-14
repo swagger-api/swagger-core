@@ -24,8 +24,6 @@ import com.wordnik.swagger.sample.data.{ PetData }
 import com.wordnik.swagger.sample.model.{ Pet }
 import com.wordnik.swagger.sample.exception.NotFoundException
 
-import com.sun.jersey.spi.resource.Singleton
-
 import javax.ws.rs._
 import javax.ws.rs.core.Response
 
@@ -120,7 +118,6 @@ trait PetResource extends RestResourceUtil {
   description = "Operations about pets",
   listingPath = "/resources/pet",
   listingClass = "com.wordnik.swagger.sample.resource.PetResourceJSONXML")
-@Singleton
 @Produces(Array("application/json", "application/xml"))
 class PetResourceListingJSON extends Help
 
@@ -128,6 +125,5 @@ class PetResourceListingJSON extends Help
 @Api(value = "/pet",
   description = "Operations about pets",
   listingPath = "/resources/pet")
-@Singleton
 @Produces(Array("application/json", "application/xml"))
 class PetResourceJSONXML extends PetResource

@@ -28,12 +28,7 @@ import javax.ws.rs.core.Response.Status;
 @Provider
 public class SampleExceptionMapper implements ExceptionMapper<Exception> {
 	public Response toResponse(Exception exception) {
-		if (exception instanceof com.sun.jersey.api.NotFoundException) {
-			return Response
-					.status(Status.NOT_FOUND)
-					.entity(new ApiResponse(ApiResponse.ERROR, exception
-							.getMessage())).build();
-		} else if (exception instanceof javax.ws.rs.WebApplicationException) {
+		if (exception instanceof javax.ws.rs.WebApplicationException) {
 			javax.ws.rs.WebApplicationException e = (javax.ws.rs.WebApplicationException) exception;
 			return Response
 					.status(e.getResponse().getStatus())

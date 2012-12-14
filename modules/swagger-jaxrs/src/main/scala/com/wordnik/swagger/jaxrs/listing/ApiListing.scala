@@ -4,9 +4,6 @@ import com.wordnik.swagger.core.{ Documentation, DocumentationEndPoint }
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.jaxrs._
 
-import com.sun.jersey.api.core.ResourceConfig
-import com.sun.jersey.spi.container.servlet.WebConfig
-
 import java.lang.annotation.Annotation
 
 import javax.ws.rs.core.{ UriInfo, HttpHeaders, Context, Response, MediaType, Application }
