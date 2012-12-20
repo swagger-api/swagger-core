@@ -11,18 +11,13 @@ Please follow instructions to build the top-level [swagger-core project](https:/
 
 
 ### To run
-The swagger-play2 module lives in a github repository, currently not in maven central.  You'll have to add
-a dependency and a resolver to your Build.scala like this:
+The swagger-play2 module lives in maven central:
 
 ```scala
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     /* your other dependencies */
-    "com.wordnik" %% "swagger-play2" % "1.1.1")
-
-  val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
-    Resolver.url("swagger-core-github-repo", url("http://wordnik.github.com/repository"))(Resolver.ivyStylePatterns),
-    /* your other resolvers */
-    )
+    "com.wordnik" %% "swagger-play2" % "1.2.0"
+  )
 }
 ```
 
