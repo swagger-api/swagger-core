@@ -87,7 +87,7 @@ class ApiListing {
    * individual api listing
    **/
   @GET
-  @Path("/{route}")
+  @Path("/{route: .+}")
   def apiListing(
     @PathParam("route") route: String,
     @Context app: Application,
