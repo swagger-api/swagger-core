@@ -441,7 +441,7 @@
   <properties>
     <felix-version>2.3.4</felix-version>
     <servlet-api-version>2.5</servlet-api-version>
-    <scala-version>2.10.0-RC5</scala-version>
+    <scala-version>2.10.0</scala-version>
     <jersey-version>1.13</jersey-version>
     <jackson-version>2.0.4</jackson-version>
     <junit-version>4.8.1</junit-version>
