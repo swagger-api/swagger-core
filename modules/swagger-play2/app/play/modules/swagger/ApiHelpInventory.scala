@@ -163,7 +163,20 @@ object ApiHelpInventory {
    */
   private def getControllerClasses = {
     if (this.controllerClasses.isEmpty) {
-      val swaggerControllers = current.getTypesAnnotatedWith("controllers", classOf[Api])
+      // get from application routes
+      val controllers = current.routes match {
+        case Some(r) => {
+          for(doc <- r.documentation) yield {
+            val m1 = doc._3.lastIndexOf("(") match {
+              case i:Int if (i > 0) => doc._3.substring(0, i)
+              case _ => doc._3
+            }
+            Some(m1.substring(0, m1.lastIndexOf(".")))
+          }
+        }
+        case None => Seq(None)
+      }
+      val swaggerControllers = controllers.flatten.toList
       swaggerControllers.size match {
         case i:Int if (i > 0) => {
           swaggerControllers.foreach(className => current.classloader.loadClass(className))
@@ -171,7 +184,7 @@ object ApiHelpInventory {
             val cls = current.classloader.loadClass(clazzName)
             this.controllerClasses += cls;
             val apiAnnotation = cls.getAnnotation(classOf[Api])
-            if (apiAnnotation != null && (classOf[play.api.mvc.Controller].isAssignableFrom(cls) || classOf[play.mvc.Controller].isAssignableFrom(cls))) {
+            if (apiAnnotation != null) {
               Logger.debug("Found Resource " + apiAnnotation.value + " @ " + clazzName)
               val path = {
                 if(apiAnnotation.listingPath != "") apiAnnotation.listingPath
@@ -193,7 +206,6 @@ object ApiHelpInventory {
     // check if resources and controller info has already been loaded
     if (controllerClasses.length == 0)
       this.getControllerClasses
-
     this.resourceMap
   }
 

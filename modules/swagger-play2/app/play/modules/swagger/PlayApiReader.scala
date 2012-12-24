@@ -13,9 +13,10 @@ import java.lang.reflect.{ Type, Field, Modifier, Method }
 
 import play.api.Play.current
 import play.api.Logger
-import play.core.Router.RoutesCompiler.Route
-import play.core.Router.DynamicPart
-import play.core.Router.StaticPart
+import play.router.RoutesCompiler
+
+import play.router.DynamicPart
+import play.router.StaticPart
 
 import scala.collection.JavaConversions._
 import scala.io.Source
@@ -30,7 +31,8 @@ import scala.io.Source
 object PlayApiReader {
   import scalax.file.Path
   import java.io.File
-  import play.core.Router.RoutesCompiler.RouteFileParser
+  import play.router.RoutesCompiler._
+  import play.router.RoutesCompiler.RouteFileParser
   private val endpointsCache = scala.collection.mutable.Map.empty[Class[_], Documentation]
   private var _routesCache: Map[String, Route] = null
   var formatString = current.configuration.getString("swagger.api.format.string") match {
@@ -71,13 +73,22 @@ object PlayApiReader {
     val classLoader = this.getClass.getClassLoader
     val routesStream = classLoader.getResourceAsStream("routes")
     val routesString = Source.fromInputStream(routesStream).getLines().mkString("\n")
-    val parser = new RouteFileParser
-    val parsedRoutes = parser.parse(routesString)
+    val parsedRoutes = current.routes match {
+      case Some(r) => {
+        r.documentation.foreach(doc => {
+          Tuple3(doc._1, doc._2, doc._3)
+        })
+      }
+      case None => println("no routes")
+    }
+
+    // TODO: need to enable this for security support
+    /*
     parsedRoutes match {
       case parser.Success(routes, _) => {
         routes map { rule =>
           rule match {
-            case route @ Route(_, _, _) =>
+            case route @ Route(_, _, _, _) =>
               val routeName = route.call.packageName + "." + route.call.controller + "$." + route.call.method
               (routeName, route)
             case x @ _ =>
@@ -87,6 +98,8 @@ object PlayApiReader {
       }
       case _ => Map[String, Route]()
     }
+    */
+    Map[String, Route]()
   }
 }
 
@@ -115,6 +128,9 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
     }
   }
 
+  /**
+   * Get the path for a given method
+   */
   override def getPath(method: Method) = {
     val fullMethodName = getFullMethodName(method)
     val lookup = PlayApiReader.routesCache.get(fullMethodName)
@@ -128,6 +144,7 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
       } mkString
       case None => Logger error "Cannot determine Path. Nothing defined in play routes file for api method " + method.toString; this.resourcePath
     }
+    val foo = str
     val s = PlayApiReader.formatString match {
       case "" => str
       case e: String => str.replaceAll(".json", PlayApiReader.formatString).replaceAll(".xml", PlayApiReader.formatString)
