@@ -59,5 +59,6 @@ object ApplicationBuild extends Build {
       "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
       "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases",
       "java-net" at "http://download.java.net/maven/2",
+      "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"))
 }
