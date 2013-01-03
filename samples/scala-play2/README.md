@@ -13,15 +13,10 @@ Please follow instructions to build the top-level [swagger-core project](https:/
 The swagger-play2 module lives in maven central:
 
 ```scala
-  val appDependencies: Seq[sbt.ModuleID] = Seq(
-    /* your other dependencies */
-    "com.wordnik" %% "swagger-play2" % "1.2.0")
-
-  val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
-    "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases",
-    /* your other resolvers */
-    )
-}
+val appDependencies: Seq[sbt.ModuleID] = Seq(
+  /* your other dependencies */
+  "com.wordnik" %% "swagger-play2" % "1.2.0"
+)
 ```
 
 then you can build the sample app:
