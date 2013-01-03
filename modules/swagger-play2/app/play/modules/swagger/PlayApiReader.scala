@@ -1,9 +1,27 @@
+/**
+ *  Copyright 2012 Wordnik, Inc.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package play.modules.swagger
 
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.core.ApiValues._
 import com.wordnik.swagger.core.util.ReflectionUtil
+
+import play.router.SwaggerRoutesCompiler.Route
 
 import javax.ws.rs._
 import javax.ws.rs.core.Context
@@ -13,7 +31,6 @@ import java.lang.reflect.{ Type, Field, Modifier, Method }
 
 import play.api.Play.current
 import play.api.Logger
-import play.router.RoutesCompiler
 
 import play.router.DynamicPart
 import play.router.StaticPart
@@ -21,18 +38,11 @@ import play.router.StaticPart
 import scala.collection.JavaConversions._
 import scala.io.Source
 
-/**
- * Caches and retrieves API information for a given Swagger compatible class
- *
- * @author ayush
- * @since 10/9/11 7:13 PM
- *
- */
 object PlayApiReader {
   import scalax.file.Path
   import java.io.File
-  import play.router.RoutesCompiler._
-  import play.router.RoutesCompiler.RouteFileParser
+  import play.core.Router._
+
   private val endpointsCache = scala.collection.mutable.Map.empty[Class[_], Documentation]
   private var _routesCache: Map[String, Route] = null
   var formatString = current.configuration.getString("swagger.api.format.string") match {
@@ -69,24 +79,24 @@ object PlayApiReader {
     endpointsCache.clear
   }
 
+  /*
+  def pathFromRoute(pathString: String, method: String) = {
+    pathString.split()
+  }*/
+
   private def populateRoutesCache: Map[String, Route] = {
     val classLoader = this.getClass.getClassLoader
     val routesStream = classLoader.getResourceAsStream("routes")
     val routesString = Source.fromInputStream(routesStream).getLines().mkString("\n")
-    val parsedRoutes = current.routes match {
-      case Some(r) => {
-        r.documentation.foreach(doc => {
-          Tuple3(doc._1, doc._2, doc._3)
-        })
-      }
-      case None => println("no routes")
-    }
 
-    // TODO: need to enable this for security support
-    /*
-    parsedRoutes match {
-      case parser.Success(routes, _) => {
-        routes map { rule =>
+    import play.router.SwaggerRoutesCompiler._
+
+    val p = new RouteFileParser()
+    val parsedRoutes = p.parse(routesString)
+
+    parsedRoutes.successful match {
+      case true => {
+        parsedRoutes.get.map{rule => {
           rule match {
             case route @ Route(_, _, _, _) =>
               val routeName = route.call.packageName + "." + route.call.controller + "$." + route.call.method
@@ -94,12 +104,10 @@ object PlayApiReader {
             case x @ _ =>
               throw new Exception("Rule type not yet supported: " + x)
           }
-        } toMap
+        }}.toMap
       }
       case _ => Map[String, Route]()
     }
-    */
-    Map[String, Route]()
   }
 }
 
@@ -134,7 +142,8 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
   override def getPath(method: Method) = {
     val fullMethodName = getFullMethodName(method)
     val lookup = PlayApiReader.routesCache.get(fullMethodName)
-    val str = lookup match {
+
+    val str = "/" + (lookup match {
       case Some(route) => route.path.parts map {
         part =>
           part match {
@@ -143,8 +152,8 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
           }
       } mkString
       case None => Logger error "Cannot determine Path. Nothing defined in play routes file for api method " + method.toString; this.resourcePath
-    }
-    val foo = str
+    })
+
     val s = PlayApiReader.formatString match {
       case "" => str
       case e: String => str.replaceAll(".json", PlayApiReader.formatString).replaceAll(".xml", PlayApiReader.formatString)
