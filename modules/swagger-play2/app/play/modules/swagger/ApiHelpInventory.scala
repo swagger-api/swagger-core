@@ -186,7 +186,7 @@ object ApiHelpInventory {
               case i:Int if (i > 0) => doc._3.substring(0, i)
               case _ => doc._3
             }
-            Some(m1.substring(0, m1.lastIndexOf(".")))
+            Some(m1.substring(0, m1.lastIndexOf(".")).replace("@", ""))
           }
         }
         case None => Seq(None)
