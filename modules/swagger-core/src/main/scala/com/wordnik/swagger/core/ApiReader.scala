@@ -84,6 +84,7 @@ trait ApiSpecParserTrait extends BaseApiParser {
     docParam.paramAccess = readString(apiParam.access)
   }
 
+  private val ListRegex: scala.util.matching.Regex = """List\[(.*?)\]""".r
   def parseMethod(method: Method): Any = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
     val apiErrors = method.getAnnotation(classOf[ApiErrors])
@@ -103,8 +104,10 @@ trait ApiSpecParserTrait extends BaseApiParser {
         docOperation.notes = readString(apiOperation.notes)
         docOperation.setTags(toObjectList(apiOperation.tags))
         docOperation.nickname = method.getName
-        val apiResponseValue = readString(apiOperation.responseClass)
-        val isResponseMultiValue = apiOperation.multiValueResponse
+        val (apiResponseValue: String, isResponseMultiValue: Boolean) = ((responseClass: String, isMulti: Boolean) => responseClass match {
+          case ListRegex(respClass) => (respClass, true)
+          case _ => (responseClass, isMulti)
+        })(readString(apiOperation.responseClass), apiOperation.multiValueResponse)
 
         docOperation.setResponseTypeInternal(apiResponseValue)
         try {
