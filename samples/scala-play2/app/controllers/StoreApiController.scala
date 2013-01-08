@@ -37,7 +37,7 @@ object StoreApiController extends BaseApiController {
   }
 
   @Path("/orders")
-  @ApiOperation(value = "Gets orders in the system", responseClass = "models.Order", httpMethod = "GET", multiValueResponse = true)
+  @ApiOperation(value = "Gets orders in the system", responseClass = "List[models.Order]", httpMethod = "GET")
   @ApiErrors(Array(
     new ApiError(code = 404, reason = "No Orders found")))
   def getOrders(@ApiParamImplicit(value = "Get all orders or only those which are complete", dataType = "Boolean", required = true)@QueryParam("isComplete") isComplete: Boolean) = Action { implicit request =>

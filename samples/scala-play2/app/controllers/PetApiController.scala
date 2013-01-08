@@ -75,7 +75,7 @@ object PetApiController extends BaseApiController {
 
   @ApiOperation(value = "Finds Pets by status",
     notes = "Multiple status values can be provided with comma seperated strings",
-    responseClass = "models.Pet", multiValueResponse = true)
+    responseClass = "List[models.Pet]")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid status value")))
   def findPetsByStatus(
@@ -88,7 +88,7 @@ object PetApiController extends BaseApiController {
   @Path("/findByTags")
   @ApiOperation(value = "Finds Pets by tags",
     notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
-    responseClass = "models.Pet", multiValueResponse = true)
+    responseClass = "List[models.Pet]")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid tag value")))
   def findPetsByTags(
