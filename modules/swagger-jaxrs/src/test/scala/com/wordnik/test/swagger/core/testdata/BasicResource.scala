@@ -58,8 +58,7 @@ class BasicResource {
   @Path("/getStringList")
   @ApiOperation(value = "Get object by ID",
     notes = "No details provided",
-    responseClass = "String",
-    multiValueResponse =  true)
+    responseClass = "List[String]")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid ID"),
     new ApiError(code = 404, reason = "object not found")))

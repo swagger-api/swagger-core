@@ -24,8 +24,6 @@ import com.wordnik.swagger.sample.data.{ PetData }
 import com.wordnik.swagger.sample.model.{ Pet }
 import com.wordnik.swagger.sample.exception.NotFoundException
 
-import com.sun.jersey.spi.resource.Singleton
-
 import javax.ws.rs._
 import javax.ws.rs.core.Response
 
@@ -89,7 +87,7 @@ trait PetResource extends RestResourceUtil {
   @Path("/findByStatus")
   @ApiOperation(value = "Finds Pets by status",
     notes = "Multiple status values can be provided with comma seperated strings",
-    responseClass = "com.wordnik.swagger.sample.model.Pet", multiValueResponse = true)
+    responseClass = "List[com.wordnik.swagger.sample.model.Pet]")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid status value")))
   def findPetsByStatus(
@@ -103,7 +101,7 @@ trait PetResource extends RestResourceUtil {
   @Path("/findByTags")
   @ApiOperation(value = "Finds Pets by tags",
     notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
-    responseClass = "com.wordnik.swagger.sample.model.Pet", multiValueResponse = true)
+    responseClass = "List[com.wordnik.swagger.sample.model.Pet]")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid tag value")))
   @Deprecated
@@ -120,7 +118,6 @@ trait PetResource extends RestResourceUtil {
   description = "Operations about pets",
   listingPath = "/resources/pet",
   listingClass = "com.wordnik.swagger.sample.resource.PetResourceJSONXML")
-@Singleton
 @Produces(Array("application/json", "application/xml"))
 class PetResourceListingJSON extends Help
 
@@ -128,6 +125,5 @@ class PetResourceListingJSON extends Help
 @Api(value = "/pet",
   description = "Operations about pets",
   listingPath = "/resources/pet")
-@Singleton
 @Produces(Array("application/json", "application/xml"))
 class PetResourceJSONXML extends PetResource
