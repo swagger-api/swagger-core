@@ -71,9 +71,9 @@
             <plugin>
                 <groupId>org.apache.openejb.maven</groupId>
                 <artifactId>tomee-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1</version>
                 <configuration>
-                    <tomeeVersion>1.5.0</tomeeVersion>
+                    <tomeeVersion>1.5.1</tomeeVersion>
                     <tomeeClassifier>plus</tomeeClassifier>
                     <contextPath>/swagger-java-jaxrs-tomee-sample-app</contextPath>
                     <removeDefaultWebapps>true</removeDefaultWebapps>
