@@ -21,8 +21,6 @@ import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.core.ApiValues._
 import com.wordnik.swagger.core.util.ReflectionUtil
 
-import play.router.SwaggerRoutesCompiler.Route
-
 import javax.ws.rs._
 import javax.ws.rs.core.Context
 import java.lang.annotation.Annotation
@@ -32,11 +30,10 @@ import java.lang.reflect.{ Type, Field, Modifier, Method }
 import play.api.Play.current
 import play.api.Logger
 
-import play.router.DynamicPart
-import play.router.StaticPart
-
 import scala.collection.JavaConversions._
 import scala.io.Source
+
+case class RouteEntry(httpMethod: String, path: String)
 
 object PlayApiReader {
   import scalax.file.Path
@@ -44,7 +41,7 @@ object PlayApiReader {
   import play.core.Router._
 
   private val endpointsCache = scala.collection.mutable.Map.empty[Class[_], Documentation]
-  private var _routesCache: Map[String, Route] = null
+  private var _routesCache: Map[String, RouteEntry] = Map.empty
   var formatString = current.configuration.getString("swagger.api.format.string") match {
     case Some(str) => str
     case _ => ".{format}"
@@ -79,35 +76,27 @@ object PlayApiReader {
     endpointsCache.clear
   }
 
-  /*
-  def pathFromRoute(pathString: String, method: String) = {
-    pathString.split()
-  }*/
-
-  private def populateRoutesCache: Map[String, Route] = {
+  private def populateRoutesCache: Map[String, RouteEntry] = {
     val classLoader = this.getClass.getClassLoader
     val routesStream = classLoader.getResourceAsStream("routes")
     val routesString = Source.fromInputStream(routesStream).getLines().mkString("\n")
 
-    import play.router.SwaggerRoutesCompiler._
+    val r = play.api.Play.current.routes.get.documentation
 
-    val p = new RouteFileParser()
-    val parsedRoutes = p.parse(routesString)
-
-    parsedRoutes.successful match {
-      case true => {
-        parsedRoutes.get.map{rule => {
-          rule match {
-            case route @ Route(_, _, _, _) =>
-              val routeName = route.call.packageName + "." + route.call.controller + "$." + route.call.method
-              (routeName, route)
-            case x @ _ =>
-              throw new Exception("Rule type not yet supported: " + x)
-          }
-        }}.toMap
+    (for(route <- r) yield {
+      val httpMethod = route._1
+      val path = route._2.replaceAll("\\<.*\\>","}").replaceAll("\\$","{")
+      val routeName = {
+        // extract the args in parens
+        val fullMethod = route._3 match {
+          case x if(x.indexOf("(") > 0) => x.substring(0, x.indexOf("("))
+          case _ => route._3
+        }
+        val idx = fullMethod.lastIndexOf(".")
+        fullMethod.substring(0, idx) + "$." + fullMethod.substring(idx+1)
       }
-      case _ => Map[String, Route]()
-    }
+      (routeName, RouteEntry(httpMethod, path))
+    }).toMap
   }
 }
 
@@ -143,16 +132,17 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
     val fullMethodName = getFullMethodName(method)
     val lookup = PlayApiReader.routesCache.get(fullMethodName)
 
-    val str = "/" + (lookup match {
-      case Some(route) => route.path.parts map {
-        part =>
-          part match {
-            case DynamicPart(name, _) => "{" + name + "}"
-            case StaticPart(name) => name
-          }
-      } mkString
-      case None => Logger error "Cannot determine Path. Nothing defined in play routes file for api method " + method.toString; this.resourcePath
-    })
+    val cache = PlayApiReader.routesCache
+
+    val str = {
+      cache.contains(fullMethodName) match {
+        case true => cache(fullMethodName).path
+        case false => {
+          Logger error "Cannot determine Path. Nothing defined in play routes file for api method " + method.toString
+          this.resourcePath
+        }
+      }
+    }
 
     val s = PlayApiReader.formatString match {
       case "" => str
@@ -173,7 +163,7 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
     val fullMethodName = getFullMethodName(method)
     val lookup = PlayApiReader.routesCache.get(fullMethodName)
     lookup match {
-      case Some(route) => o.httpMethod = route.verb.value
+      case Some(route) => o.httpMethod = route.httpMethod
       case None => Logger error "Could not find route " + fullMethodName
     }
     o
