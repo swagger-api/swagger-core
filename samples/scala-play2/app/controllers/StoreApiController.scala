@@ -14,7 +14,7 @@ import play.api.data.format.Formats._
 import play.api.Play.current
 import play.api.data.format.Formats._
 
-import javax.ws.rs._
+import javax.ws.rs.{QueryParam, PathParam}
 import java.io.StringWriter
 import scala.collection.JavaConverters._
 
@@ -22,7 +22,6 @@ import scala.collection.JavaConverters._
 object StoreApiController extends BaseApiController {
   var storeData = new StoreData
 
-  @Path("/order/{orderId}")
   @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5. " +
     "Anything above 5 or nonintegers will generate API errors", responseClass = "models.Order", httpMethod = "GET")
   @ApiErrors(Array(
@@ -36,8 +35,7 @@ object StoreApiController extends BaseApiController {
     }
   }
 
-  @Path("/orders")
-  @ApiOperation(value = "Gets orders in the system", responseClass = "List[models.Order]", httpMethod = "GET")
+  @ApiOperation(value = "Gets orders in the system", responseClass = "models.Order", httpMethod = "GET", multiValueResponse = true)
   @ApiErrors(Array(
     new ApiError(code = 404, reason = "No Orders found")))
   def getOrders(@ApiParamImplicit(value = "Get all orders or only those which are complete", dataType = "Boolean", required = true)@QueryParam("isComplete") isComplete: Boolean) = Action { implicit request =>
@@ -45,7 +43,6 @@ object StoreApiController extends BaseApiController {
     JsonResponse(orders)
   }
 
-  @Path("/order")
   @ApiOperation(value = "Place an order for a pet", responseClass = "void", httpMethod = "POST")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid order")))
@@ -62,7 +59,6 @@ object StoreApiController extends BaseApiController {
     }
   }
 
-  @Path("/order/{orderId}")
   @ApiOperation(value = "Delete purchase order by ID", notes = "For valid response try integer IDs with value < 1000. " +
     "Anything above 1000 or nonintegers will generate API errors", httpMethod = "DELETE")
   @ApiErrors(Array(
