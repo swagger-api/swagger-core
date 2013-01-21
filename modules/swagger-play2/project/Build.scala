@@ -1,6 +1,6 @@
 import sbt._
 import Keys._
-import PlayProject._
+import play.Project._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2"
@@ -14,7 +14,7 @@ object ApplicationBuild extends Build {
     "com.wordnik" % "swagger-annotations_2.10.0" % "1.2.0",
     "javax.ws.rs" % "jsr311-api" % "1.1.1")
 
-  val main = PlayProject(appName, appVersion, appDependencies).settings(
+  val main = play.Project(appName, appVersion, appDependencies).settings(
     publishTo <<= version { (v: String) =>
       val nexus = "https://oss.sonatype.org/"
       if (v.trim.endsWith("SNAPSHOT"))
