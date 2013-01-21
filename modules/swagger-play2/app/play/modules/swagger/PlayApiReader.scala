@@ -35,6 +35,12 @@ import scala.io.Source
 
 case class RouteEntry(httpMethod: String, path: String)
 
+object SwaggerUtils {
+  def convertPathString(str: String) = {
+    str.replaceAll("""<\[[\^/\d-\w]*\]\+>""", "}").replaceAll("\\$","{")
+  }
+}
+
 object PlayApiReader {
   import scalax.file.Path
   import java.io.File
@@ -80,12 +86,11 @@ object PlayApiReader {
     val classLoader = this.getClass.getClassLoader
     val routesStream = classLoader.getResourceAsStream("routes")
     val routesString = Source.fromInputStream(routesStream).getLines().mkString("\n")
-
     val r = play.api.Play.current.routes.get.documentation
 
     (for(route <- r) yield {
       val httpMethod = route._1
-      val path = route._2.replaceAll("\\<.*\\>","}").replaceAll("\\$","{")
+      val path = SwaggerUtils.convertPathString(route._2)
       val routeName = {
         // extract the args in parens
         val fullMethod = route._3 match {
@@ -95,6 +100,7 @@ object PlayApiReader {
         val idx = fullMethod.lastIndexOf(".")
         fullMethod.substring(0, idx) + "$." + fullMethod.substring(idx+1)
       }
+      println("converted route " + route._2 + " to " + path)
       (routeName, RouteEntry(httpMethod, path))
     }).toMap
   }
