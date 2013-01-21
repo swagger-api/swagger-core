@@ -97,8 +97,7 @@ object PlayApiReader {
           case x if(x.indexOf("(") > 0) => x.substring(0, x.indexOf("("))
           case _ => route._3
         }
-        val idx = fullMethod.lastIndexOf(".")
-        fullMethod.substring(0, idx) + "$." + fullMethod.substring(idx+1)
+        fullMethod.replace("@", "")
       }
       println("converted route " + route._2 + " to " + path)
       (routeName, RouteEntry(httpMethod, path))
@@ -159,10 +158,7 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
   }
 
   def getFullMethodName(method: Method): String = {
-    hostClass.getCanonicalName.indexOf("$") match {
-      case -1 => hostClass.getCanonicalName + "$." + method.getName
-      case _ => hostClass.getCanonicalName + "." + method.getName
-    }
+    hostClass.getCanonicalName + "." + method.getName
   }
 
   override protected def processOperation(method: Method, o: DocumentationOperation) = {
