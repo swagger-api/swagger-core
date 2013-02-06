@@ -8,13 +8,12 @@ import com.wordnik.swagger.annotations._
 import play.api._
 import play.api.mvc._
 import play.api.data._
-import play.data.validation._
 import play.api.data.Forms._
 import play.api.data.format.Formats._
 import play.api.Play.current
 import play.api.data.format.Formats._
 
-import javax.ws.rs._
+import javax.ws.rs.{PathParam, QueryParam}
 import java.io.StringWriter
 
 @Api(value = "/user", listingPath = "/api-docs.{format}/user", description = "Operations about user")
@@ -35,7 +34,6 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @Path("/createWithArray")
   @ApiOperation(value = "Creates list of users with given input array", responseClass = "void")
   @ApiParamsImplicit(Array(
     new ApiParamImplicit(name = "body", value = "List of user object", required = true, dataType = "Array[User]", paramType = "body")))
@@ -50,7 +48,6 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @Path("/createWithList")
   @ApiOperation(value = "Creates list of users with given list input", responseClass = "void")
   @ApiParamsImplicit(Array(
     new ApiParamImplicit(name = "body", value = "List of user object", required = true, dataType = "List[User]", paramType = "body")))
@@ -65,7 +62,6 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @Path("/{username}")
   @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid username supplied"),
@@ -84,7 +80,6 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @Path("/{username}")
   @ApiOperation(value = "Delete user", notes = "This can only be done by the logged in user.")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid username supplied"),
@@ -95,7 +90,6 @@ object UserApiController extends BaseApiController {
     Ok
   }
 
-  @Path("/{username}")
   @ApiOperation(value = "Get user by user name", responseClass = "models.User")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid username supplied"),
@@ -108,7 +102,6 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @Path("/login")
   @ApiOperation(value = "Logs user into the system", responseClass = "String")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid username and password combination")))
@@ -118,7 +111,6 @@ object UserApiController extends BaseApiController {
     JsonResponse("logged in user session:" + System.currentTimeMillis())
   }
 
-  @Path("/logout")
   @ApiOperation(value = "Logs out current logged in user session")
   def logoutUser() = Action { implicit request =>
     Ok

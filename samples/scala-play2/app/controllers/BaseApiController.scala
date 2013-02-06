@@ -1,15 +1,10 @@
 package controllers
 
-import play.api._
-import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
-import play.api.data.format.Formats._
-import play.api.Play.current
-
 import value._
 import api._
 import com.wordnik.swagger.core.util.{ JsonUtil, RestResourceUtil }
+
+import play.api.mvc._
 
 import java.io.StringWriter
 

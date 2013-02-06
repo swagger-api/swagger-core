@@ -6,12 +6,11 @@ import api._
 import play.api._
 import play.api.mvc._
 import play.api.data._
-import play.data.validation._
 import play.api.data.Forms._
 import play.api.data.format.Formats._
 import play.api.Play.current
 
-import javax.ws.rs.{ Path, QueryParam }
+import javax.ws.rs.{ QueryParam }
 
 import java.io.StringWriter
 
@@ -23,7 +22,6 @@ import com.wordnik.swagger.annotations._
 object PetApiController extends BaseApiController {
   var petData = new PetData
 
-  @Path("/{id}")
   @ApiOperation(value = "Find pet by ID", notes = "Returns a pet when ID < 10. " +
     "ID > 10 or nonintegers will simulate API error conditions", responseClass = "models.Pet", httpMethod = "GET")
   @ApiParamsImplicit(Array(
@@ -75,7 +73,7 @@ object PetApiController extends BaseApiController {
 
   @ApiOperation(value = "Finds Pets by status",
     notes = "Multiple status values can be provided with comma seperated strings",
-    responseClass = "List[models.Pet]")
+    responseClass = "models.Pet", multiValueResponse = true)
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid status value")))
   def findPetsByStatus(
@@ -85,10 +83,9 @@ object PetApiController extends BaseApiController {
     JsonResponse(results)
   }
 
-  @Path("/findByTags")
   @ApiOperation(value = "Finds Pets by tags",
     notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
-    responseClass = "List[models.Pet]")
+    responseClass = "models.Pet", multiValueResponse = true)
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid tag value")))
   def findPetsByTags(
@@ -98,7 +95,6 @@ object PetApiController extends BaseApiController {
     JsonResponse(results)
   }
 
-  @Path("/attachImage")
   @ApiOperation(value = "Attach an Image File for a pet",
     notes = "Is not functional, only used to test file upload params",
     responseClass = "void")
