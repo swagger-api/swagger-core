@@ -3,7 +3,6 @@
 ## Build & Run ##
 
 ```sh
-$ cd Petstore
 $ ./sbt
 > container:start
 > browse
