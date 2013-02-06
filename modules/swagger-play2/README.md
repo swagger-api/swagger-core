@@ -10,11 +10,11 @@ This is a module to support the play2 framework from [playframework](http://www.
 Usage
 -----
 
-You can depend on pre-build libraries in maven central by adding the following dependency:
+You can depend on pre-built libraries in maven central by adding the following dependency:
 
 ```
 val appDependencies: Seq[sbt.ModuleID] = Seq(
-  "com.wordnik" %% "swagger-play2-utils" % "1.2.1-SNAPSHOT"
+  "com.wordnik" %% "swagger-play2" % "1.2.1-SNAPSHOT"
 )
 ```
 
@@ -27,22 +27,6 @@ play
 publish-local
 ```
 
-That will put the swagger-play2 module in your local ivy repository for use in your play2 application.  Now you just need to
-include it in your application like this:
-
-```
-val appDependencies: Seq[sbt.ModuleID] = Seq("com.wordnik" %% "swagger-play2" % "1.2.1-SNAPSHOT")
-
-```
-
-You can then add swagger support to your app.  Of course, you can also pull the artifact from maven central:
-
-```
-  val appDependencies: Seq[sbt.ModuleID] = Seq(
-    "com.wordnik" %% "swagger-play2-utils" % "1.2.1-SNAPSHOT")
-
-```
-
 ### Adding Swagger to your Play2 app
 
 There are just a couple steps to integrate your Play2 app with swagger.
@@ -51,7 +35,7 @@ There are just a couple steps to integrate your Play2 app with swagger.
 
 ```
 
-GET     /api-docs.json                      controllers.ApiHelpController.getResources
+GET     /api-docs.json        controllers.ApiHelpController.getResources
 
 ``` 
 
@@ -63,16 +47,12 @@ In your controller for, say your "pet" resource:
 @Api(value = "/pet", listingPath = "/api-docs.{format}/pet", description = "Operations about pets")
 object PetApiController extends Controller {
 
-  @Path("/{id}")
-  @ApiOperation(value = "Find pet by ID", notes = "Returns a pet when ID < 10. " +
-    "ID > 10 or nonintegers will simulate API error conditions", responseClass = "Pet", httpMethod = "GET")
-  @ApiParamsImplicit(Array(
-    new ApiParamImplicit(name = "id", value = "ID of pet that needs to be fetched", required = true, dataType = "String", paramType = "path",
-      allowableValues = "range[0,10]")))
+  @ApiOperation(value = "Find pet by ID", notes = "Returns a pet", responseClass = "Pet", httpMethod = "GET")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid ID supplied"),
     new ApiError(code = 404, reason = "Pet not found")))
-  def getPetById(id: String) = Action { implicit request =>
+  def getPetById(
+    @ApiParam(value = "ID of the pet to fetch")@PathParam("id") id: String) = Action { implicit request =>
     petData.getPetbyId(getLong(0, 100000, 0, id)) match {
       case Some(pet) => JsonResponse(pet)
       case _ => JsonResponse(new value.ApiResponse(404, "Pet not found"), 404)
@@ -87,11 +67,11 @@ What this does is the following:
 
 * Tells swagger that the methods in this controller should be described under the `/api-docs.json/pet` path
 
-* Tells swagger that this API listens to `/{id}`
+* The Routes file tells swagger that this API listens to `/{id}`
 
 * Describes the operation as a `GET` with the documentation `Find pet by Id` with more detailed notes `Returns a pet ....`
 
-* Takes the "implicit" param `id`, which is a datatype `String` and a `path` param, and `allowableValues` as a number between 0 and 10
+* Takes the param `id`, which is a datatype `string` and a `path` param
 
 * Returns error codes 400 and 404, with the messages provided
 
