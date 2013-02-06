@@ -10,7 +10,7 @@ import play.api.data.Forms._
 import play.api.data.format.Formats._
 import play.api.Play.current
 
-import javax.ws.rs.{ QueryParam }
+import javax.ws.rs.{ QueryParam, PathParam }
 
 import java.io.StringWriter
 
@@ -22,15 +22,12 @@ import com.wordnik.swagger.annotations._
 object PetApiController extends BaseApiController {
   var petData = new PetData
 
-  @ApiOperation(value = "Find pet by ID", notes = "Returns a pet when ID < 10. " +
-    "ID > 10 or nonintegers will simulate API error conditions", responseClass = "models.Pet", httpMethod = "GET")
-  @ApiParamsImplicit(Array(
-    new ApiParamImplicit(name = "id", value = "ID of pet that needs to be fetched", required = true, dataType = "String", paramType = "path",
-      allowableValues = "range[0,10]")))
+  @ApiOperation(value = "Find pet by ID", notes = "Returns a pet", responseClass = "Pet", httpMethod = "GET")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid ID supplied"),
     new ApiError(code = 404, reason = "Pet not found")))
-  def getPetById(id: String) = Action { implicit request =>
+  def getPetById(
+    @ApiParam(value = "ID of the pet to fetch")@PathParam("id") id: String) = Action { implicit request =>
     petData.getPetbyId(getLong(0, 100000, 0, id)) match {
       case Some(pet) => JsonResponse(pet)
       case _ => JsonResponse(new value.ApiResponse(404, "Pet not found"), 404)
