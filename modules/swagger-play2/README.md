@@ -1,12 +1,24 @@
 # Swagger Play2 Module
 
 ## Overview
-This is a module to support the play2 framework from [playframework](http://www.playframework.org).  It is written in scala but can be
-used with either java or scala-based play2 applications.
+This is a module to support the play2 framework from [playframework](http://www.playframework.org).  It is written in scala but can be used with either java or scala-based play2 applications.
+
+## Version History
+
+* Version 1.2.1 and greater support scala 2.10 and play 2.1.  If you need to use scala 2.9.x and play 2.0, please use 1.2.0.
  
-### To build from source
-The play2 module is currently not available in a maven repo or the playframework modules.  To use it, you'll have to
-build it from source, which is done by following these steps:
+Usage
+-----
+
+You can depend on pre-build libraries in maven central by adding the following dependency:
+
+```
+val appDependencies: Seq[sbt.ModuleID] = Seq(
+  "com.wordnik" %% "swagger-play2-utils" % "1.2.1-SNAPSHOT"
+)
+```
+
+Or you can build from source.
 
 ```
 cd modules/swagger-play2
@@ -19,7 +31,7 @@ That will put the swagger-play2 module in your local ivy repository for use in y
 include it in your application like this:
 
 ```
-val appDependencies: Seq[sbt.ModuleID] = Seq("com.wordnik" %% "swagger-play2" % "1.2.0")
+val appDependencies: Seq[sbt.ModuleID] = Seq("com.wordnik" %% "swagger-play2" % "1.2.1-SNAPSHOT")
 
 ```
 
@@ -27,7 +39,7 @@ You can then add swagger support to your app.  Of course, you can also pull the 
 
 ```
   val appDependencies: Seq[sbt.ModuleID] = Seq(
-    "com.wordnik" %% "swagger-play2-utils" % "1.2.0")
+    "com.wordnik" %% "swagger-play2-utils" % "1.2.1-SNAPSHOT")
 
 ```
 
