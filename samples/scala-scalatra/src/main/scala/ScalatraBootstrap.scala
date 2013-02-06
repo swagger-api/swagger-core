@@ -7,7 +7,10 @@ class ScalatraBootstrap extends LifeCycle {
 
   override def init(context: ServletContext) {
     try {
-    	context.mount(new ResourcesApp, "/api-docs/*")
+    	/* attach the resource listing */
+    	context.mount(new ResourceListing, "/api-docs/*")
+
+    	/* attach the pet api */
       context.mount(new PetstoreApi, "/pet/*")
     } catch {
       case t: Exception => println(t)

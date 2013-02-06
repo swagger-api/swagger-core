@@ -4,13 +4,13 @@ import com.wordnik.swagger.sample.data._
 import com.wordnik.swagger.sample.model._
 
 import org.scalatra._
-import scalate.ScalateSupport
+import org.scalatra.scalate.ScalateSupport
 import org.scalatra.swagger._
+import org.scalatra.json.{ JValueResult, JacksonJsonSupport }
 
 import org.json4s._
 import org.json4s.JsonDSL._
 
-import org.scalatra.json.{ JValueResult, JacksonJsonSupport }
 
 case class SomethingNeat(message: String)
 
@@ -20,8 +20,10 @@ class PetstoreApi(implicit val swagger: Swagger) extends ScalatraServlet
   with JacksonJsonSupport {
 
   protected implicit val jsonFormats: Formats = DefaultFormats
+  /* set the name of this api as "pet" in the Resource Listing */
   override protected val applicationName: Option[String] = Some("pet")
 
+  /* description for the resource listing */
   protected val applicationDescription: String = "Pet API"
 
   before() {
