@@ -1,3 +1,19 @@
+/**
+ *  Copyright 2012 Wordnik, Inc.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.wordnik.swagger.play
 
 import com.wordnik.swagger.core._
@@ -25,17 +41,19 @@ class HelpApi {
   }
 
   def filterDocs(doc: Documentation, currentApiPath: String)(implicit requestHeader: RequestHeader): Documentation = {
-    //todo: apply auth and filter doc to only those which apply to current request/api-key
     if (apiFilter != null) {
       var apisToRemove = new ListBuffer[DocumentationEndPoint]
       if (null != doc.getApis()) {
         doc.getApis().foreach(api => {
           if (api.getOperations() != null) {
             var operationsToRemove = new ListBuffer[DocumentationOperation]
-            api.getOperations().foreach(apiOperation =>
-              apiFilter match {
+            api.getOperations().foreach(apiOperation => {
+              if(apiOperation.httpMethod == null) {
+                operationsToRemove += apiOperation
+              }
+              else apiFilter match {
                 case apiAuthFilter: ApiAuthorizationFilter => {
-                  if (!apiAuthFilter.authorize(api.path))
+                  if (!apiAuthFilter.authorize(api.path, apiOperation.httpMethod))
                     operationsToRemove += apiOperation
                 }
                 case filter: FineGrainedApiAuthorizationFilter => {
@@ -43,7 +61,8 @@ class HelpApi {
                     operationsToRemove += apiOperation
                 }
                 case _ =>
-              })
+              }
+            })
             operationsToRemove.foreach(operation => api.removeOperation(operation))
             if (null == api.getOperations() || api.getOperations().size() == 0)
               apisToRemove += api

@@ -1,3 +1,19 @@
+/**
+ *  Copyright 2012 Wordnik, Inc.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package play.modules.swagger
 
 import com.wordnik.swagger.core._
@@ -13,26 +29,25 @@ import java.lang.reflect.{ Type, Field, Modifier, Method }
 
 import play.api.Play.current
 import play.api.Logger
-import play.core.Router.RoutesCompiler.Route
-import play.core.Router.DynamicPart
-import play.core.Router.StaticPart
 
 import scala.collection.JavaConversions._
 import scala.io.Source
 
-/**
- * Caches and retrieves API information for a given Swagger compatible class
- *
- * @author ayush
- * @since 10/9/11 7:13 PM
- *
- */
+case class RouteEntry(httpMethod: String, path: String)
+
+object SwaggerUtils {
+  def convertPathString(str: String) = {
+    str.replaceAll("""<\[[\^/\d-\w]*\]\+>""", "}").replaceAll("\\$","{")
+  }
+}
+
 object PlayApiReader {
   import scalax.file.Path
   import java.io.File
-  import play.core.Router.RoutesCompiler.RouteFileParser
+  import play.core.Router._
+
   private val endpointsCache = scala.collection.mutable.Map.empty[Class[_], Documentation]
-  private var _routesCache: Map[String, Route] = null
+  private var _routesCache: Map[String, RouteEntry] = Map.empty
   var formatString = current.configuration.getString("swagger.api.format.string") match {
     case Some(str) => str
     case _ => ".{format}"
@@ -67,26 +82,26 @@ object PlayApiReader {
     endpointsCache.clear
   }
 
-  private def populateRoutesCache: Map[String, Route] = {
+  private def populateRoutesCache: Map[String, RouteEntry] = {
     val classLoader = this.getClass.getClassLoader
     val routesStream = classLoader.getResourceAsStream("routes")
     val routesString = Source.fromInputStream(routesStream).getLines().mkString("\n")
-    val parser = new RouteFileParser
-    val parsedRoutes = parser.parse(routesString)
-    parsedRoutes match {
-      case parser.Success(routes, _) => {
-        routes map { rule =>
-          rule match {
-            case route @ Route(_, _, _) =>
-              val routeName = route.call.packageName + "." + route.call.controller + "$." + route.call.method
-              (routeName, route)
-            case x @ _ =>
-              throw new Exception("Rule type not yet supported: " + x)
-          }
-        } toMap
+    val r = play.api.Play.current.routes.get.documentation
+
+    (for(route <- r) yield {
+      val httpMethod = route._1
+      val path = SwaggerUtils.convertPathString(route._2)
+      val routeName = {
+        // extract the args in parens
+        val fullMethod = route._3 match {
+          case x if(x.indexOf("(") > 0) => x.substring(0, x.indexOf("("))
+          case _ => route._3
+        }
+        val idx = fullMethod.lastIndexOf(".")
+        fullMethod.substring(0, idx) + "$." + fullMethod.substring(idx+1)
       }
-      case _ => Map[String, Route]()
-    }
+      (routeName, RouteEntry(httpMethod, path))
+    }).toMap
   }
 }
 
@@ -115,19 +130,25 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
     }
   }
 
+  /**
+   * Get the path for a given method
+   */
   override def getPath(method: Method) = {
     val fullMethodName = getFullMethodName(method)
     val lookup = PlayApiReader.routesCache.get(fullMethodName)
-    val str = lookup match {
-      case Some(route) => route.path.parts map {
-        part =>
-          part match {
-            case DynamicPart(name, _) => "{" + name + "}"
-            case StaticPart(name) => name
-          }
-      } mkString
-      case None => Logger error "Cannot determine Path. Nothing defined in play routes file for api method " + method.toString; this.resourcePath
+
+    val cache = PlayApiReader.routesCache
+
+    val str = {
+      cache.contains(fullMethodName) match {
+        case true => cache(fullMethodName).path
+        case false => {
+          Logger error "Cannot determine Path. Nothing defined in play routes file for api method " + method.toString
+          this.resourcePath
+        }
+      }
     }
+
     val s = PlayApiReader.formatString match {
       case "" => str
       case e: String => str.replaceAll(".json", PlayApiReader.formatString).replaceAll(".xml", PlayApiReader.formatString)
@@ -147,7 +168,7 @@ private class PlayApiSpecParser(_hostClass: Class[_], _apiVersion: String, _swag
     val fullMethodName = getFullMethodName(method)
     val lookup = PlayApiReader.routesCache.get(fullMethodName)
     lookup match {
-      case Some(route) => o.httpMethod = route.verb.value
+      case Some(route) => o.httpMethod = route.httpMethod
       case None => Logger error "Could not find route " + fullMethodName
     }
     o
