@@ -27,7 +27,6 @@ class IntegrationSpec extends Specification {
     	running(TestServer(3333)) {
       	val json = Source.fromURL("http://localhost:3333/api-docs.json").mkString
       	val doc = mapper.readValue(json, classOf[Documentation])
-
 		    doc.getApis.size must_==(4)
 		    (doc.getApis.asScala.map(_.getPath).toSet &
 		      Set(
@@ -43,13 +42,57 @@ class IntegrationSpec extends Specification {
     	running(TestServer(3333)) {
       	val json = Source.fromURL("http://localhost:3333/api-docs.json/pet").mkString
       	val doc = mapper.readValue(json, classOf[Documentation])
-
-		    (doc.getApis.asScala.map(_.getPath).toSet &
+		    (doc.getModels.asScala.keys.toSet &
 		      Set(
-		      	"/pet.{format}/findByTags",
-		        "/pet.{format}/findByStatus",
-		        "/pet.{format}/{id}")
+		      	"Category",
+		        "Tag",
+		        "Pet")
 		      ).size must_==(3)
+      }
+    }
+
+    "contain models without api key" in {
+      running(TestServer(3333)) {
+      val json = Source.fromURL("http://localhost:3333/api-docs.json/pet").mkString
+        val doc = mapper.readValue(json, classOf[Documentation])
+        (doc.getApis.asScala.map(_.getPath).toSet &
+          Set(
+            "/pet.{format}/findByTags",
+            "/pet.{format}/findByStatus",
+            "/pet.{format}/{id}")
+          ).size must_==(3)
+      }
+    }
+
+    "no apis from store resource without valid api key" in {
+      running(TestServer(3333)) {
+        val json = Source.fromURL("http://localhost:3333/api-docs.json/store").mkString
+        val doc = mapper.readValue(json, classOf[Documentation])
+        Option(doc.getApis) must_==(None)
+      }
+    }
+    
+    "no models from store resource without valid api key" in {
+      running(TestServer(3333)) {
+        val json = Source.fromURL("http://localhost:3333/api-docs.json/store").mkString
+        val doc = mapper.readValue(json, classOf[Documentation])
+        Option(doc.getModels) must_==(None)
+      }
+    }
+
+    "contain apis from store resource valid api key" in {
+      running(TestServer(3333)) {
+        val json = Source.fromURL("http://localhost:3333/api-docs.json/store?api_key=special-key").mkString
+        val doc = mapper.readValue(json, classOf[Documentation])
+        doc.getApis.asScala.map(_.getPath).size must_==(2)
+      }
+    }
+
+    "contain correct models from store resource valid api key" in {
+      running(TestServer(3333)) {
+        val json = Source.fromURL("http://localhost:3333/api-docs.json/store?api_key=special-key").mkString
+        val doc = mapper.readValue(json, classOf[Documentation])
+        doc.getModels.asScala.keys.toSet.size must_==(1)
       }
     }
 
