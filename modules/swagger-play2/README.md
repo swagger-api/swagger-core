@@ -43,7 +43,7 @@ GET     /api-docs.json        controllers.ApiHelpController.getResources
 
 In your controller for, say your "pet" resource:
 
-```
+```scala
 @Api(value = "/pet", listingPath = "/api-docs.{format}/pet", description = "Operations about pets")
 object PetApiController extends Controller {
 
