@@ -16,12 +16,11 @@
 
 package com.wordnik.swagger.jaxrs
 
-import javax.servlet.ServletConfig
-
+import com.sun.jersey.spi.container.servlet.WebConfig
 import com.wordnik.swagger.core._
 import scala.collection.JavaConverters._
 
-class JerseyConfigReader(val sc: ServletConfig) extends ConfigReader {
+class JerseyConfigReader(val wc: WebConfig) extends ConfigReader {
 
   def basePath(): String = findInitParam("swagger.api.basepath")
 
@@ -44,10 +43,10 @@ class JerseyConfigReader(val sc: ServletConfig) extends ConfigReader {
    * Look for an initParameter in either the ServletConfig or the ServletContext
    */
   private def findInitParam(key: String): String = {
-    val scOpt = Option.apply(sc)
-    scOpt.map { sc => 
-      Option.apply(sc.getInitParameter(key))
-        .getOrElse(sc.getServletContext.getInitParameter(key))
+    val scOpt = Option.apply(wc)
+    scOpt.map { wc =>
+      Option.apply(wc.getInitParameter(key))
+        .getOrElse(wc.getServletContext.getInitParameter(key))
     } orNull
   }
 

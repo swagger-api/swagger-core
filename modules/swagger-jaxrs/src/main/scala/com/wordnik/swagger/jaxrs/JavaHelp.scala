@@ -16,6 +16,7 @@
 
 package com.wordnik.swagger.jaxrs
 
+import com.sun.jersey.spi.container.servlet.WebConfig
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.core.util.TypeUtil
 import com.wordnik.swagger.annotations._
@@ -26,8 +27,6 @@ import javax.ws.rs.{ Path, GET }
 import javax.ws.rs.core.{ UriInfo, HttpHeaders, Context, Response }
 import javax.ws.rs.core.Response.Status
 
-import javax.servlet.ServletConfig
-
 import scala.collection.JavaConversions._
 
 abstract class JavaHelp {
@@ -35,10 +34,10 @@ abstract class JavaHelp {
   @ApiOperation(value = "Returns information about API parameters",
     responseClass = "com.wordnik.swagger.core.Documentation")
   def getHelp(
-    @Context sc: ServletConfig,
-    @Context headers: HttpHeaders, 
+    @Context wc: WebConfig,
+    @Context headers: HttpHeaders,
     @Context uriInfo: UriInfo): Response = {
-    val reader = ConfigReaderFactory.getConfigReader(sc)
+    val reader = ConfigReaderFactory.getConfigReader(wc)
     val apiVersion = reader.apiVersion()
     val swaggerVersion = reader.swaggerVersion()
     val basePath = reader.basePath()
