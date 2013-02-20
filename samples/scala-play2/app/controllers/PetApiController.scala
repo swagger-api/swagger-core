@@ -22,6 +22,8 @@ import com.wordnik.swagger.annotations._
 object PetApiController extends BaseApiController {
   var petData = new PetData
 
+  def getOptions(path: String) = Action { implicit request => JsonResponse(new value.ApiResponse(200, "Ok")) }
+
   @ApiOperation(value = "Find pet by ID", notes = "Returns a pet", responseClass = "Pet", httpMethod = "GET")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid ID supplied"),
