@@ -27,9 +27,11 @@ import java.lang.annotation.Target;
 public @interface ApiProperty {
 	/** Provide a human readable synopsis of this property */
     String value() default "";
+	
 	/**
 	 * If the values that can be set are restricted, they can be set here. In the form of a comma separated list
-	 * <code>1-registered,2-active,3-closed</code>.
+	 * <code>registered, active, closed</code>.
+	 * 
 	 * @return the allowable values
 	 */
     String allowableValues() default "";
