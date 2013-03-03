@@ -42,7 +42,10 @@ public @interface ApiProperty {
 	/**
 	 * The dataType. See the documentation for the supported datatypes. If the data type is a custom object, set
 	 * it's name, or nothing. In case of an enum use 'string' and allowableValues for the enum constants.
-	 * /**
+     */
+    String dataType() default "";
+
+	/**
 	 * Whether or not the property is required, defaults to false.
 	 * 
 	 * @return true if required, false otherwise
