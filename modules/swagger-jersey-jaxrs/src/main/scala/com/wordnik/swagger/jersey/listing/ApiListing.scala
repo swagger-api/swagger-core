@@ -1,17 +1,16 @@
 package com.wordnik.swagger.jersey.listing
 
+import com.sun.jersey.spi.container.servlet.WebConfig;
 import com.wordnik.swagger.core.{ Documentation, DocumentationEndPoint }
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.jersey._
-import com.wordnik.swagger.jaxrs.{ConfigReaderFactory, HelpApi}
+import com.wordnik.swagger.jaxrs.HelpApi
 
 import java.lang.annotation.Annotation
 
 import javax.ws.rs.core.{ UriInfo, HttpHeaders, Context, Response, MediaType, Application }
 import javax.ws.rs.core.Response._
 import javax.ws.rs._
-
-import javax.servlet.ServletConfig
 
 import scala.collection.mutable.HashMap
 import scala.collection.JavaConverters._
@@ -21,7 +20,7 @@ object ApiListingResource {
 
   def routes(
     app: Application,
-    sc: ServletConfig,
+    wc: WebConfig,
     headers: HttpHeaders,
     uriInfo: UriInfo
   ) = {
@@ -39,7 +38,7 @@ object ApiListingResource {
               }
               cache += path -> resource
             }
-            case _ => 
+            case _ =>
           }
         })
         _cache = Some(cache.toMap)
@@ -53,21 +52,21 @@ class ApiListing {
   @GET
   def resourceListing(
     @Context app: Application,
-    @Context sc: ServletConfig,
+    @Context wc: WebConfig,
     @Context headers: HttpHeaders,
     @Context uriInfo: UriInfo
   ): Response = {
     val listingRoot = this.getClass.getAnnotation(classOf[Api]).value
 
-    val reader = ConfigReaderFactory.getConfigReader(sc)
+    val reader = ConfigReaderFactory.getConfigReader(wc)
     val apiFilterClassName = reader.apiFilterClassName()
     val apiVersion = reader.apiVersion()
     val swaggerVersion = reader.swaggerVersion()
     val basePath = reader.basePath()
-    val routes = ApiListingResource.routes(app, sc, headers, uriInfo)
+    val routes = ApiListingResource.routes(app, wc, headers, uriInfo)
 
     val apis = (for(route <- routes.map(m => m._1)) yield {
-      docForRoute(route, app, sc, headers, uriInfo) match {
+      docForRoute(route, app, wc, headers, uriInfo) match {
         case Some(doc) if(doc.getApis !=null && doc.getApis.size > 0) => {
           Some(new DocumentationEndPoint(listingRoot + JerseyApiReader.FORMAT_STRING + doc.resourcePath, ""))
         }
@@ -92,11 +91,11 @@ class ApiListing {
   def apiListing(
     @PathParam("route") route: String,
     @Context app: Application,
-    @Context sc: ServletConfig,
+    @Context wc: WebConfig,
     @Context headers: HttpHeaders,
     @Context uriInfo: UriInfo
   ): Response = {
-    docForRoute(route, app, sc, headers, uriInfo) match {
+    docForRoute(route, app, wc, headers, uriInfo) match {
       case Some(doc) => Response.ok.entity(doc).build
       case None => Response.status(Status.NOT_FOUND).build
     }
@@ -105,16 +104,16 @@ class ApiListing {
   def docForRoute(
     route: String,
     app: Application,
-    sc: ServletConfig,
+    wc: WebConfig,
     headers: HttpHeaders,
     uriInfo: UriInfo
   ): Option[Documentation] = {
-    val reader = ConfigReaderFactory.getConfigReader(sc)
+    val reader = ConfigReaderFactory.getConfigReader(wc)
     val apiFilterClassName = reader.apiFilterClassName()
     val apiVersion = reader.apiVersion()
     val swaggerVersion = reader.swaggerVersion()
     val basePath = reader.basePath()
-    val routes = ApiListingResource.routes(app, sc, headers, uriInfo)
+    val routes = ApiListingResource.routes(app, wc, headers, uriInfo)
 
     routes.contains(route) match {
       case true => {
