@@ -203,6 +203,9 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
           docParam.description = readString(apiProperty.value)
           docParam.notes = readString(apiProperty.notes)
           docParam.paramType = readString(apiProperty.dataType)
+          if (apiProperty.required()) {
+            docParam.required = true
+          }
           isDocumented = true
 
           try {
