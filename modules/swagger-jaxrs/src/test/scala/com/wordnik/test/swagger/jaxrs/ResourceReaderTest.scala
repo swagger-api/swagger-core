@@ -36,7 +36,8 @@ class ResourceReaderTest extends FlatSpec with ShouldMatchers {
     var docObj = ApiPropertiesReader.read(classOf[SampleOutput])
     assert(docObj != null)
     assert((docObj.getFields.map(f => f.name).toSet & Set("theName", "theValue")).size === 2)
-    assert(docObj.getFields.filter(f => f.name == "id")(0).required == true)
+    assert(docObj.getFields.filter(f => f.name == "id")(0).required === true)
+    assert(docObj.getFields.filter(f => f.name == "theName")(0).required === false)
   }
 
   behavior of "ApiReader"

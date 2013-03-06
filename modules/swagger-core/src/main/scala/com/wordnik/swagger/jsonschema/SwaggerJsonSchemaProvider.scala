@@ -203,6 +203,8 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
           docParam.description = readString(apiProperty.value)
           docParam.notes = readString(apiProperty.notes)
           docParam.paramType = readString(apiProperty.dataType)
+          if(apiProperty.required) docParam.required = apiProperty.required
+
           isDocumented = true
 
           try {
@@ -215,7 +217,7 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
         case xmlAttribute: XmlAttribute => {
           docParam.name = readString(xmlAttribute.name, docParam.name, "##default")
           docParam.name = readString(name, docParam.name)
-          docParam.required = xmlAttribute.required
+          if(docParam.required) docParam.required = xmlAttribute.required
           isXmlElement = true
         }
         case xmlElement: XmlElement => {
