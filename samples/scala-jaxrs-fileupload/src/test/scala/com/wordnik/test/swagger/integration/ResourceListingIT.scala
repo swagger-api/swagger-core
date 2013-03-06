@@ -43,11 +43,12 @@ class ResourceListingIT extends FlatSpec with ShouldMatchers {
   it should "read the pet api description" in {
     val json = Source.fromURL("http://localhost:8002/api/api-docs.json/pet").mkString
     val doc = JsonUtil.getJsonMapper.readValue(json, classOf[Documentation])
-    assert(doc.getApis.size === 3)
+    assert(doc.getApis.size === 4)
     assert((doc.getApis.map(api => api.getPath).toSet &
       Set("/pet.{format}/{petId}",
         "/pet.{format}/findByStatus",
-        "/pet.{format}/findByTags")).size == 3)
+        "/pet.{format}/uploadImage",
+        "/pet.{format}/findByTags")).size == 4)
   }
 
   it should "read the user api with array and list data types as post data" in {
