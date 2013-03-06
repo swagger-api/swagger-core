@@ -25,8 +25,8 @@ import javax.ws.rs.core.Response.Status
 
 @Provider
 class ApplicationExceptionMapper extends ExceptionMapper[ApiException] {
-  def toResponse(exception: ApiException): Response = {
-    exception match {
+  def toResponse(ex: ApiException): Response = {
+    ex match {
       case e: NotFoundException =>
         Response.status(Status.NOT_FOUND).entity(new ApiResponse(ApiResponse.ERROR, e.getMessage())).build
       case e: BadRequestException =>
@@ -41,8 +41,8 @@ class ApplicationExceptionMapper extends ExceptionMapper[ApiException] {
 
 @Provider
 class SampleExceptionMapper extends ExceptionMapper[Exception] {
-  def toResponse(exception: Exception): Response = {
-    exception match {
+  def toResponse(ex: Exception): Response = {
+    ex match {
       case e: javax.ws.rs.WebApplicationException =>
         Response.status(e.getResponse.getStatus).entity(new ApiResponse(e.getResponse.getStatus, e.getMessage())).build
       case e: com.fasterxml.jackson.core.JsonParseException =>
