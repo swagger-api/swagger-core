@@ -20,7 +20,7 @@ import com.wordnik.swagger.core.util._
 import com.wordnik.swagger.annotations.ApiProperty
 import com.wordnik.swagger.core.ApiPropertiesReader
 
-import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 
 import javax.xml.bind._
 import javax.xml.bind.annotation._
@@ -109,7 +109,6 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
       }
     }
     assert(assertedFields === 4)
-
   }
 
   it should "not create any model properties to default methods like get class " in {
@@ -129,7 +128,6 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
 
     docObj = ApiPropertiesReader.read(classOf[ScalaCaseClass])
     assert(docObj.getFields.size() === 1)
-
   }
 
   it should "read properties if attribute is defined as transient in the main class and xml element in the base class " in {
@@ -204,6 +202,16 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
     classes.add(classOf[TestCompanionObject].getName);
     val types = TypeUtil.getReferencedClasses(classes)
     assert(types.size() === 1)
+  }
+
+  it should "honor JsonProperty annotations" in {
+    var docObj = ApiPropertiesReader.read(classOf[ObjectWithJsonProperties])
+    assert((docObj.getFields.map(f => f.name).toSet & Set("theId")).size === 1)
+  }
+
+  it should "honor JsonIgnore annotation which will make a field invisible to swagger json parsing" in {
+    var docObj = ApiPropertiesReader.read(classOf[ObjectWithJsonIgnore])
+    Option(docObj.getFields) should be (None)
   }
 }
 
@@ -469,6 +477,17 @@ class ObjectWithDifferentElementAndPropertyName {
 @XmlRootElement(name = "ObjectWithChildObjectsInMap")
 class ObjectWithChildObjectsInMap {
   @XmlElement @BeanProperty var objectsInMap: java.util.Map[String, ObjectWithRootElementName] = _
+}
+
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement(name = "ObjectWithJsonProperties")
+class ObjectWithJsonProperties {
+  @JsonProperty(value="theId") @BeanProperty var thisIsTheIdField: String = _
+}
+
+@XmlAccessorType(XmlAccessType.NONE)
+class ObjectWithJsonIgnore {
+  @JsonIgnore @BeanProperty var pleaseIgnoreThis: String = _
 }
 
 object ScalaEnums extends Enumeration {

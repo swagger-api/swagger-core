@@ -51,8 +51,6 @@ class DocumentationSerializationTest extends FlatSpec with ShouldMatchers {
     
     val baos = new ByteArrayOutputStream
     m.marshal(doc, baos)
-    
-    println(baos.toString)
   }
   
   def getDoc = {
