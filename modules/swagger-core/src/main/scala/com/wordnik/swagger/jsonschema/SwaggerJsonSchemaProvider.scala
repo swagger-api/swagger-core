@@ -19,7 +19,8 @@ import scala.collection.JavaConversions._
 
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
 
-import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
+import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty, JsonAutoDetect}
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility
 
 import scala.collection.JavaConverters._
 
@@ -33,6 +34,13 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
   private val documentationObject = new DocumentationObject
   private val LOGGER = LoggerFactory.getLogger(classOf[ApiModelParser])
   var hasAccessorNoneAnnotation = false;
+
+  // Defaults should be Visibility.ALWAYS to match Jackson, but for the sake of compatibility,
+  // (code previously only looked at public fields and methods), using PUBLIC_ONLY
+  var jsonAutoDetectField = Visibility.PUBLIC_ONLY;
+  var jsonAutoDetectGetter = Visibility.PUBLIC_ONLY;
+  var jsonAutoDetectIsGetter = Visibility.PUBLIC_ONLY;
+  var jsonAutoDetectSetter = Visibility.PUBLIC_ONLY;
   documentationObject.setName(readName(hostClass))
 
   private val xmlElementTypeMethod = classOf[XmlElement].getDeclaredMethod("type")
@@ -44,6 +52,14 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
 
     val accessorNone = hostClass.getAnnotation(classOf[XmlAccessorType]).asInstanceOf[XmlAccessorType]
     if (null != accessorNone && (accessorNone.value() == XmlAccessType.NONE)) hasAccessorNoneAnnotation = true;
+
+    val jsonAutoDetectAnnotation = hostClass.getAnnotation(classOf[JsonAutoDetect])
+    if (jsonAutoDetectAnnotation != null) {
+      jsonAutoDetectField = jsonAutoDetectAnnotation.fieldVisibility()
+      jsonAutoDetectGetter = jsonAutoDetectAnnotation.getterVisibility()
+      jsonAutoDetectIsGetter = jsonAutoDetectAnnotation.isGetterVisibility()
+      jsonAutoDetectSetter = jsonAutoDetectAnnotation.setterVisibility()
+    }
 
     val name = {
       if (xmlEnum != null && xmlEnum.value() != null) {
@@ -77,12 +93,19 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
   def parseRecursive(hostClass: Class[_]): Unit = {
     if (null != hostClass) {
       for (method <- hostClass.getDeclaredMethods) {
-        if (Modifier.isPublic(method.getModifiers()) && !Modifier.isStatic(method.getModifiers()))
-          parseMethod(method)
+        if (!Modifier.isStatic(method.getModifiers())) {
+          val name = method.getName()
+          if ((name.startsWith("get") && jsonAutoDetectGetter.isVisible(method)) ||
+              (name.startsWith("is") && jsonAutoDetectIsGetter.isVisible(method)) ||
+              (name.startsWith("set") && jsonAutoDetectSetter.isVisible(method)) ||
+              (!name.startsWith("get") && !name.startsWith("is") && !name.startsWith("set"))) {
+            parseMethod(method)
+          }
+        }
       }
 
       for (field <- hostClass.getDeclaredFields) {
-        if (Modifier.isPublic(field.getModifiers()) && !Modifier.isStatic(field.getModifiers()))
+        if (!Modifier.isStatic(field.getModifiers()) && jsonAutoDetectField.isVisible(field))
           parseField(field)
       }
       parseRecursive(hostClass.getSuperclass)
@@ -239,7 +262,7 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
           docParam.name = readString(jsonProperty.value, docParam.name)
           isJsonProperty = true
         }
-        case _ => 
+        case _ =>
       }
     }
     (isTransient, isXmlElement, isDocumented, isJsonProperty)
