@@ -11,26 +11,25 @@ get a tech support call.  You've been warned.
 
 The default ApiListingResource lives in swagger-jaxrs--it is included by adding the following to the web.xml:
 
-<pre>
-  &lt;init-param&gt;
-    &lt;param-name&gt;com.sun.jersey.config.property.packages&lt;/param-name&gt;
-    &lt;param-value&gt;com.wordnik.swagger.sample.resource;com.wordnik.swagger.jaxrs.listing;&lt;/param-value&gt;
-  &lt;/init-param&gt;
-</pre>
+```xml
+<init-param>
+  <param-name>com.sun.jersey.config.property.packages</param-name>
+  <param-value>com.wordnik.swagger.sample.resource;com.wordnik.swagger.jaxrs.listing;</param-value>
+</init-param>
+```
 
 Note the com.wordnik.swagger.jaxrs.listing contains the default [resource listing](https://github.com/wordnik/swagger-core/blob/master/modules/swagger-jaxrs/src/main/scala/com/wordnik/swagger/jaxrs/listing/ApiListingResource.scala).
 When overriding the default resource listing, simply provide that functionality in a new resource and add it to
 the packages.  For this sample, the new resource listing class is [here](https://github.com/wordnik/swagger-core/blob/master/samples/java-alt-resource-listing/src/main/java/com/wordnik/swagger/sample/resource/ApiListingResource.java).
 One other requirement is setting the JaxrsApiReader format string to an empty string in a [bootstrap servlet](https://github.com/wordnik/swagger-core/blob/master/samples/java-alt-resource-listing/src/main/java/com/wordnik/swagger/sample/Bootstrap.java)
 
-
-<pre>
-  public class Bootstrap extends HttpServlet {
-    static {
-	    JaxrsApiReader.setFormatString("");
-    }
+```java
+public class Bootstrap extends HttpServlet {
+  static {
+    JaxrsApiReader.setFormatString("");
   }
-</pre>
+}
+```
 
 The api resource paths are now detected by the framework and live under the `/resources` path (i.e. `/resources/pet`, etc.):
 
@@ -39,9 +38,10 @@ Please follow instructions to build the top-level [swagger-core project](https:/
 
 ### To run (with Maven)
 To run the server, run this task:
-<pre>
-  mvn package -Dlog4j.configuration=file:./conf/log4j.properties jetty:run
-</pre>
+
+```
+mvn package -Dlog4j.configuration=file:./conf/log4j.properties jetty:run
+```
 
 This will start Jetty embedded on port 8002 and apply the logging configuration from conf/log4j.properties
 
@@ -53,7 +53,7 @@ This tells you that the server is up and ready to demonstrate Swagger.
 There is an HTML5-based API tool available in a separate project.  This lets you inspect the API using an 
 intuitive UI.  You can pull this code from here:  https://github.com/wordnik/swagger-ui
 
-You can then open the src/main/html/index.html file in any HTML5-enabled browser.  Open opening, enter the
+You can then open the dist/index.html file in any HTML5-enabled browser.  Open opening, enter the
 URL of your server in the top-centered input box (default is http://localhost:8002/api).  Click the "Explore" 
 button and you should see the resources available on the server.
 

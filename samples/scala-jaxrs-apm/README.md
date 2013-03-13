@@ -56,7 +56,7 @@ This tells you that the server is up and ready to demonstrate Swagger.
 There is an HTML5-based API tool available in a separate project.  This lets you inspect the API using an 
 intuitive UI.  You can pull this code from here:  https://github.com/wordnik/swagger-ui
 
-You can then open the src/main/html/index.html file in any HTML5-enabled browser.  Open opening, enter the
+You can then open the dist/index.html file in any HTML5-enabled browser.  Open opening, enter the
 URL of your server in the top-centered input box (default is http://localhost:8002/api/api-docs.json).  Click the "Explore" 
 button and you should see the resources available on the server.
 

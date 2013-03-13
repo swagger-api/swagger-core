@@ -35,28 +35,27 @@ listing path and listing class to two resources:
 
 The actual class implementing the API:
 
-<pre>
-  @Path("/pet")
-  @Api(value = "/pet",
-    description = "Operations about pets",
-    listingPath = "/resources/pet")
-  @Singleton
-  @Produces(Array("application/json", "application/xml"))
-  class PetResourceJSONXML extends PetResource
-</pre>
+```scala
+@Path("/pet")
+@Api(value = "/pet",
+  description = "Operations about pets",
+  listingPath = "/resources/pet")
+@Singleton
+@Produces(Array("application/json", "application/xml"))
+class PetResourceJSONXML extends PetResource
+```
 
 And the class creating the resource listing:
 
-<pre>
-  @Path("/resources/pet")
-  @Api(value = "/pet",
-    description = "Operations about pets",
-    listingPath = "/resources/pet",
-    listingClass = "com.wordnik.swagger.sample.resource.PetResourceJSONXML")
-  @Singleton
-  @Produces(Array("application/json", "application/xml"))
-  class PetResourceListingJSON extends Help
-</pre>
+```scala
+@Path("/resources/pet")
+@Api(value = "/pet",
+  description = "Operations about pets",
+  listingPath = "/resources/pet",
+  listingClass = "com.wordnik.swagger.sample.resource.PetResourceJSONXML")
+@Produces(Array("application/json", "application/xml"))
+class PetResourceListingJSON
+```
 
 Note in the above, the "listingClass" points to the implementing class.  It also implements the Help trait.
 
@@ -65,9 +64,9 @@ Please follow instructions to build the top-level [swagger-core project](https:/
 
 ### To run (with Maven)
 To run the server, run this task:
-<pre>
-  mvn package -Dlog4j.configuration=file:./conf/log4j.properties jetty:run
-</pre>
+```
+mvn package -Dlog4j.configuration=file:./conf/log4j.properties jetty:run
+```
 
 This will start Jetty embedded on port 8002 and apply the logging configuration from conf/log4j.properties
 
@@ -79,7 +78,7 @@ This tells you that the server is up and ready to demonstrate Swagger.
 There is an HTML5-based API tool available in a separate project.  This lets you inspect the API using an 
 intuitive UI.  You can pull this code from here:  https://github.com/wordnik/swagger-ui
 
-You can then open the src/main/html/index.html file in any HTML5-enabled browser.  Open opening, enter the
+You can then open the dist/index.html file in any HTML5-enabled browser.  Open opening, enter the
 URL of your server in the top-centered input box (default is http://localhost:8002/api).  Click the "Explore" 
 button and you should see the resources available on the server.
 
