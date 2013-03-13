@@ -72,6 +72,9 @@
             <goals>
               <goal>stop</goal>
             </goals>
+            <configuration>
+              <scanIntervalSeconds>0</scanIntervalSeconds>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -79,12 +82,13 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>com.wordnik</groupId>
-      <artifactId>swagger-jaxrs_2.9.1</artifactId>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.wordnik</groupId>
-      <artifactId>swagger-core_2.9.1</artifactId>
+      <artifactId>swagger-jaxrs_2.9.1</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -93,11 +97,6 @@
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_2.9.1</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
