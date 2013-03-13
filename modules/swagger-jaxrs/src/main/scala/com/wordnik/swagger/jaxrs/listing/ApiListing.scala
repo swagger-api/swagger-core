@@ -12,11 +12,11 @@ import javax.ws.rs._
 
 import javax.servlet.ServletConfig
 
-import scala.collection.mutable.HashMap
+import scala.collection.mutable.LinkedHashMap
 import scala.collection.JavaConverters._
 
 object ApiListingResource {
-  var _cache: Option[Map[String, Class[_]]] = None
+  var _cache: Option[LinkedHashMap[String, Class[_]]] = None
 
   def routes(
     app: Application,
@@ -28,7 +28,7 @@ object ApiListingResource {
       case Some(cache) => cache
       case None => {
         val resources = app.getClasses().asScala ++ app.getSingletons().asScala.map(ref => ref.getClass)
-        val cache = new HashMap[String, Class[_]]
+        val cache = new LinkedHashMap[String, Class[_]]
         resources.foreach(resource => {
           resource.getAnnotation(classOf[Api]) match {
             case ep: Annotation => {
@@ -41,7 +41,7 @@ object ApiListingResource {
             case _ => 
           }
         })
-        _cache = Some(cache.toMap)
+        _cache = Some(cache)
         cache
       }
     }
@@ -57,7 +57,6 @@ class ApiListing {
     @Context uriInfo: UriInfo
   ): Response = {
     val listingRoot = this.getClass.getAnnotation(classOf[Api]).value
-
     val reader = ConfigReaderFactory.getConfigReader(sc)
     val apiFilterClassName = reader.apiFilterClassName()
     val apiVersion = reader.apiVersion()

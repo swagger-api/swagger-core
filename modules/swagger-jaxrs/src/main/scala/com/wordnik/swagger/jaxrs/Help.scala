@@ -30,6 +30,7 @@ import javax.servlet.ServletConfig
 
 import scala.collection.JavaConversions._
 
+@deprecated
 trait Help {
   @GET
   @ApiOperation(value = "Returns information about API parameters",
