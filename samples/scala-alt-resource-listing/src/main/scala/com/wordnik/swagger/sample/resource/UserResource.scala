@@ -94,14 +94,6 @@ trait UserResource extends RestResourceUtil {
   def logoutUser() = Response.ok.entity("goodbye").build
 }
 
-@Path("/resources/user")
-@Api(value = "/user",
-  description = "Operations about users",
-  listingPath = "/resources/user",
-  listingClass = "com.wordnik.swagger.sample.resource.UserResourceJSONXML")
-@Produces(Array("application/json", "application/xml"))
-class UserResourceListingJSON extends Help
-
 @Path("/user")
 @Api(value = "/user",
   description = "Operations about users",

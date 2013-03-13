@@ -70,14 +70,6 @@ trait PetStoreResource extends RestResourceUtil {
   }
 }
 
-@Path("/resources/store")
-@Api(value = "/store",
-  description = "Operations about store",
-  listingPath = "/resources/store",
-  listingClass = "com.wordnik.swagger.sample.resource.PetStoreResourceJSONXML")
-@Produces(Array("application/json", "application/xml"))
-class PetStoreResourceListing extends Help
-
 @Path("/store")
 @Api(value = "/store",
   description = "Operations about store",
