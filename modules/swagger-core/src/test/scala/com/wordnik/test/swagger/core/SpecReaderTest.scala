@@ -38,6 +38,11 @@ import scala.annotation.target.field
 
 @RunWith(classOf[JUnitRunner])
 class SpecReaderTest extends FlatSpec with ShouldMatchers {
+  it should "read a generic" in {
+    var docObj = ApiPropertiesReader.read(classOf[GenericObject[String]])
+    assert((docObj.getFields.map{_.name}.toSet & Set("theValue")).size === 1)
+  }
+
   it should "read a SimplePojo" in {
     var docObj = ApiPropertiesReader.read(classOf[SimplePojo])
     assert((docObj.getFields.map(f => f.name).toSet & Set("testInt", "testString")).size === 2)
@@ -525,4 +530,8 @@ object TestCompanionObject {
  def getDescription():ObjectWithRootElementName = {
     null
   }
+}
+
+class GenericObject[T] {
+  @BeanProperty var theValue: T = _
 }

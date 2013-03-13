@@ -32,7 +32,7 @@ import javax.xml.bind.annotation._
 import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConversions._
 
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
+import sun.reflect.generics.reflectiveObjects.{ ParameterizedTypeImpl, TypeVariableImpl }
 
 import scala.collection.JavaConverters._
 
@@ -87,7 +87,10 @@ object ApiPropertiesReader {
     } else {
       //we might also have properties that are parametarized by not assignable to java collections. Examples: Scala collections
       ///This step will ignore all those fields.
-      if (!genericReturnType.getClass.isAssignableFrom(classOf[ParameterizedTypeImpl])) {
+      if (genericReturnType.getClass.isAssignableFrom(classOf[TypeVariableImpl[_]])) {
+        paramType = genericReturnType.asInstanceOf[TypeVariableImpl[_]].getName
+      }
+      else if (!genericReturnType.getClass.isAssignableFrom(classOf[ParameterizedTypeImpl])) {
         paramType = readName(genericReturnType.asInstanceOf[Class[_]])
       } else {
         //handle scala options
