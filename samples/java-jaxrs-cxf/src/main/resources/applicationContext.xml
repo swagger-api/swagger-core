@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+
+	<context:component-scan base-package="com.wordnik.swagger.sample" />
+
+	<!-- JSON mapper -->
+	<bean id="jsonProvider" class="com.wordnik.swagger.sample.util.JacksonJsonProvider" />
+
+	<!-- Exception mapper -->
+	<bean id="exceptionMapper" class="com.wordnik.swagger.sample.resource.SampleExceptionMapper" />
+
+	<!-- Application resources -->
+	<bean id="userResourceJSON" class="com.wordnik.swagger.sample.resource.UserResourceJSON" />
+  <bean id="petResourceJSON" class="com.wordnik.swagger.sample.resource.PetResourceJSON" />
+  <bean id="petStoreResourceJSON" class="com.wordnik.swagger.sample.resource.PetStoreResourceJSON" />
+
+	<bean id="userResourceXML" class="com.wordnik.swagger.sample.resource.UserResourceXML" />
+  <bean id="petResourceXML" class="com.wordnik.swagger.sample.resource.PetResourceXML" />
+  <bean id="petStoreResourceXML" class="com.wordnik.swagger.sample.resource.PetStoreResourceXML" />
+
+	<!-- Swagger API listing resource -->
+	<bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON" />
+	<bean id="swaggerResourceXML" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceXML" />
+
+	<cxf:bus>
+		<cxf:features>
+			<cxf:logging />
+		</cxf:features>
+	</cxf:bus>
+
+	<bean id="basicApplication" class="com.wordnik.swagger.sample.util.BasicApplication">
+		<property name="resourcePackage" value="com.wordnik.swagger.sample.resource" />
+	</bean>
+
+	<bean class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean" init-method="create">
+		<property name="address" value="/" />
+		<property name="serviceBeans">
+			<list>
+				<ref bean="userResourceJSON" />
+        <ref bean="petResourceJSON" />
+        <ref bean="petStoreResourceJSON" />
+
+				<ref bean="userResourceXML" />
+        <ref bean="petResourceXML" />
+        <ref bean="petStoreResourceXML" />
+
+				<ref bean="swaggerResourceJSON" />
+				<ref bean="swaggerResourceXML" />
+			</list>
+		</property>
+		<property name="providers">
+			<list>
+				<ref bean="jsonProvider" />
+				<ref bean="exceptionMapper" />
+			</list>
+		</property>
+		<property name="application" ref="basicApplication" />
+	</bean>
+</beans>

@@ -1,0 +1,15 @@
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger#%method:%line - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="org.springframework" level="ERROR" />
+  <logger name="org.springframework.web" level="ERROR" />
+  <logger name="org.apache.cxf" level="ERROR" />
+
+  <root level="ERROR">
+    <appender-ref ref="STDOUT" />
+  </root>
+</configuration>
