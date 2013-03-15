@@ -10,8 +10,6 @@ import javax.ws.rs.core.{ UriInfo, HttpHeaders, Context, Response, MediaType, Ap
 import javax.ws.rs.core.Response._
 import javax.ws.rs._
 
-import javax.servlet.ServletConfig
-
 import scala.collection.mutable.LinkedHashMap
 import scala.collection.JavaConverters._
 
@@ -20,7 +18,6 @@ object ApiListingResource {
 
   def routes(
     app: Application,
-    sc: ServletConfig,
     headers: HttpHeaders,
     uriInfo: UriInfo
   ) = {
@@ -49,23 +46,26 @@ object ApiListingResource {
 }
 
 class ApiListing {
+
   @GET
   def resourceListing(
     @Context app: Application,
-    @Context sc: ServletConfig,
     @Context headers: HttpHeaders,
     @Context uriInfo: UriInfo
   ): Response = {
     val listingRoot = this.getClass.getAnnotation(classOf[Api]).value
-    val reader = ConfigReaderFactory.getConfigReader(sc)
+    val reader = ConfigReaderFactory.getConfigReader()
     val apiFilterClassName = reader.apiFilterClassName()
     val apiVersion = reader.apiVersion()
     val swaggerVersion = reader.swaggerVersion()
-    val basePath = reader.basePath()
-    val routes = ApiListingResource.routes(app, sc, headers, uriInfo)
+    val basePath = reader.basePath() match {
+        case s: String => s
+        case _ => uriInfo.getBaseUri().toString()
+    }
+    val routes = ApiListingResource.routes(app, headers, uriInfo)
 
     val apis = (for(route <- routes.map(m => m._1)) yield {
-      docForRoute(route, app, sc, headers, uriInfo) match {
+      docForRoute(route, app, headers, uriInfo) match {
         case Some(doc) if(doc.getApis !=null && doc.getApis.size > 0) => {
           Some(new DocumentationEndPoint(listingRoot + JaxrsApiReader.FORMAT_STRING + doc.resourcePath, ""))
         }
@@ -90,11 +90,10 @@ class ApiListing {
   def apiListing(
     @PathParam("route") route: String,
     @Context app: Application,
-    @Context sc: ServletConfig,
     @Context headers: HttpHeaders,
     @Context uriInfo: UriInfo
   ): Response = {
-    docForRoute(route, app, sc, headers, uriInfo) match {
+    docForRoute(route, app, headers, uriInfo) match {
       case Some(doc) => Response.ok.entity(doc).build
       case None => Response.status(Status.NOT_FOUND).build
     }
@@ -103,16 +102,18 @@ class ApiListing {
   def docForRoute(
     route: String,
     app: Application,
-    sc: ServletConfig,
     headers: HttpHeaders,
     uriInfo: UriInfo
   ): Option[Documentation] = {
-    val reader = ConfigReaderFactory.getConfigReader(sc)
+    val reader = ConfigReaderFactory.getConfigReader()
     val apiFilterClassName = reader.apiFilterClassName()
     val apiVersion = reader.apiVersion()
     val swaggerVersion = reader.swaggerVersion()
-    val basePath = reader.basePath()
-    val routes = ApiListingResource.routes(app, sc, headers, uriInfo)
+    val basePath = reader.basePath() match {
+        case s: String => s
+        case _ => uriInfo.getBaseUri().toString()
+    }
+    val routes = ApiListingResource.routes(app, headers, uriInfo)
 
     routes.contains(route) match {
       case true => {

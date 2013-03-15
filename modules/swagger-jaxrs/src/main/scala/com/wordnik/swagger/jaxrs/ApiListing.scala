@@ -22,8 +22,6 @@ import com.wordnik.swagger.annotations._
 
 import org.slf4j.LoggerFactory
 
-import javax.servlet.ServletConfig
-
 import javax.ws.rs.{ Path, GET }
 import javax.ws.rs.core.{ UriInfo, HttpHeaders, Context, Response, Application }
 
@@ -37,12 +35,11 @@ trait ApiListing {
   @ApiOperation(value = "Returns list of all available api endpoints",
     responseClass = "List[DocumentationEndPoint]")
   def getAllApis(
-    @Context sc: ServletConfig,
     @Context app: Application,
     @Context headers: HttpHeaders,
     @Context uriInfo: UriInfo): Response = {
 
-    val reader = ConfigReaderFactory.getConfigReader(sc)
+    val reader = ConfigReaderFactory.getConfigReader()
     val apiVersion = reader.apiVersion()
     val swaggerVersion = reader.swaggerVersion()
     val basePath = reader.basePath()
