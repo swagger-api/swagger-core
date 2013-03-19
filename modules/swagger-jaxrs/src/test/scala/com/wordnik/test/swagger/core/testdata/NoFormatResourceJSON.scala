@@ -38,4 +38,4 @@ class NoFormatResourceJSON extends BasicResource
     listingPath="/resources/basic",
     listingClass="com.wordnik.test.swagger.core.testdata.NoFormatResourceJSON")
 @Produces(Array("application/json"))
-class NoFormatResourceListingJSON extends Help
+class NoFormatResourceListingJSON
