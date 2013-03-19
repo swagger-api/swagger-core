@@ -104,18 +104,26 @@ trait ApiSpecParserTrait extends BaseApiParser {
         docOperation.notes = readString(apiOperation.notes)
         docOperation.setTags(toObjectList(apiOperation.tags))
         docOperation.nickname = method.getName
-        val (apiResponseValue: String, isResponseMultiValue: Boolean) = ((responseClass: String, isMulti: Boolean) => responseClass match {
-          case ListRegex(respClass) => (respClass, true)
-          case _ => (responseClass, isMulti)
-        })(readString(apiOperation.responseClass), apiOperation.multiValueResponse)
+        val (apiResponseValue: String, isResponseMultiValue: Boolean) = 
+          ((responseClass: String, isMulti: Boolean) => responseClass match {
+            case ListRegex(respClass) => (respClass, true)
+            case _ => (responseClass, isMulti)
+          }
+        )(readString(apiOperation.responseClass), apiOperation.multiValueResponse)
+
+        LOGGER.debug("apiOperation apiResponseValue: " + apiResponseValue)
 
         docOperation.setResponseTypeInternal(apiResponseValue)
         try {
           val cls = SwaggerContext.loadClass(apiResponseValue)
+          LOGGER.debug("loaded class " + cls)
           val annotatedName = ApiPropertiesReader.readName(cls)
           docOperation.responseClass = if (isResponseMultiValue) "List[" + annotatedName + "]" else annotatedName
         } catch {
-          case e: ClassNotFoundException => docOperation.responseClass = if (isResponseMultiValue) "List[" + apiResponseValue + "]" else apiResponseValue
+          case e: ClassNotFoundException => docOperation.responseClass = {
+            e.printStackTrace
+            if (isResponseMultiValue) "List[" + apiResponseValue + "]" else apiResponseValue
+          }
         }
       }
 
@@ -181,7 +189,7 @@ trait ApiSpecParserTrait extends BaseApiParser {
             docParam.setValueTypeInternal(ApiPropertiesReader.getGenericTypeParam(genericParamTypes(counter), paramTypeClass))
           }
         } catch {
-          case e: Exception => LOGGER.error("Unable to determine datatype for param " + counter + " in method " + method, e)
+          case e: Exception => LOGGER.debug("Unable to determine datatype for param " + counter + " in method " + method, e)
         }
 
         ignoreParam = processParamAnnotations(docParam, paramAnnotations, method)

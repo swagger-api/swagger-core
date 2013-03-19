@@ -16,6 +16,8 @@
 
 package com.wordnik.test.swagger.core
 
+import com.wordnik.swagger.core.{ DocumentationObject, DocumentationParameter }
+
 import com.wordnik.swagger.core.util._
 import com.wordnik.swagger.annotations.ApiProperty
 import com.wordnik.swagger.core.ApiPropertiesReader
@@ -39,32 +41,57 @@ import scala.annotation.target.field
 @RunWith(classOf[JUnitRunner])
 class SpecReaderTest extends FlatSpec with ShouldMatchers {
   it should "read a generic" in {
-    var docObj = ApiPropertiesReader.read(classOf[GenericObject[String]])
+    val docObj = ApiPropertiesReader.read(classOf[GenericObject[String]])
     assert((docObj.getFields.map{_.name}.toSet & Set("theValue")).size === 1)
   }
 
+  it should "manually define a model serialization" in {
+    val m = new DocumentationObject
+    m.setName("Manual")
+
+    val field = new DocumentationParameter(
+      "fieldA",
+      "The field of Manual",
+      "Notes",
+      "Manual",
+      null,
+      null,
+      false,
+      false)
+    m.addField(field)
+    ApiPropertiesReader.add(classOf[ManualMappedObject], m)
+    val docObj = ApiPropertiesReader.read(classOf[ManualMappedObject])
+    docObj.getFields.map{_.name}.toSet.contains("fieldA") should be (true)
+  }
+
+  it should "skip excluded field types" in {
+    ApiPropertiesReader.excludedFieldTypes += "DateTime"
+    val docObj = ApiPropertiesReader.read(classOf[ModelWithNonSerializableFields])
+    docObj.getFields.map{_.name}.toSet.contains("dt") should be (false)
+  }
+
   it should "read a SimplePojo" in {
-    var docObj = ApiPropertiesReader.read(classOf[SimplePojo])
+    val docObj = ApiPropertiesReader.read(classOf[SimplePojo])
     assert((docObj.getFields.map(f => f.name).toSet & Set("testInt", "testString")).size === 2)
   }
 
   it should "read a ScalaPojo" in {
-    var docObj = ApiPropertiesReader.read(classOf[ScalaPojo])
+    val docObj = ApiPropertiesReader.read(classOf[ScalaPojo])
     assert((docObj.getFields.map(f => f.name).toSet & Set("testInt")).size === 1)
   }
 
   it should "read a ScalaCaseClass" in {
-    var docObj = ApiPropertiesReader.read(classOf[ScalaCaseClass])
+    val docObj = ApiPropertiesReader.read(classOf[ScalaCaseClass])
     assert((docObj.getFields.map(f => f.name).toSet & Set("testInt")).size === 1)
   }
 
   it should "read a SimplePojo with XMLElement variations" in {
-    var docObj = ApiPropertiesReader.read(classOf[SimplePojo2])
+    val docObj = ApiPropertiesReader.read(classOf[SimplePojo2])
     assert((docObj.getFields.map(f => f.name).toSet & Set("testInt", "testString")).size === 2)
   }
 
   it should "read collection of collection properties " in {
-    var docObj = ApiPropertiesReader.read(classOf[TestCollectionOfCollections])
+    val docObj = ApiPropertiesReader.read(classOf[TestCollectionOfCollections])
     assert(docObj.getFields.filter(f => f.name == "mapOfMaps").size > 0)
     assert(docObj.getFields.filter(f => f.name == "mapOfMaps").get(0).getParamType() === "Map[string,Map[string,double]]")
     assert(docObj.getFields.filter(f => f.name == "listOfLists").get(0).getParamType() === "List[List[string]]")
@@ -73,22 +100,22 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "read an object with a Scala Map" in {
-    var docObj = ApiPropertiesReader.read(classOf[TestClassWithScalaMapandOptionOfMap])
+    val docObj = ApiPropertiesReader.read(classOf[TestClassWithScalaMapandOptionOfMap])
     assert(docObj.getFields.filter(_.name == "scalaMap").size > 0)
   }
 
   it should "read an object with an Option of Scala Map" in {
-    var docObj = ApiPropertiesReader.read(classOf[TestClassWithScalaMapandOptionOfMap])
+    val docObj = ApiPropertiesReader.read(classOf[TestClassWithScalaMapandOptionOfMap])
     assert(docObj.getFields.filter(_.name == "scalaMapOption").size > 0)
   }
 
   it should "read scala enum properties as string" in {
-    var docObj = ApiPropertiesReader.read(classOf[TestClassWithScalaEnums])
+    val docObj = ApiPropertiesReader.read(classOf[TestClassWithScalaEnums])
     assert(docObj.getFields.filter(f => f.name == "label").get(0).getParamType() === "String")
   }
 
   it should "read different data types properly " in {
-    var docObj = ApiPropertiesReader.read(classOf[SampleDataTypes])
+    val docObj = ApiPropertiesReader.read(classOf[SampleDataTypes])
     var assertedFields = 0;
     for (field <- docObj.getFields) {
       field.name match {
@@ -102,7 +129,7 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "read objects and its super class properties" in {
-    var docObj = ApiPropertiesReader.read(classOf[ExtendedClass])
+    val docObj = ApiPropertiesReader.read(classOf[ExtendedClass])
     var assertedFields = 0;
     for (field <- docObj.getFields) {
       field.name match {
@@ -117,7 +144,7 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "not create any model properties to default methods like get class " in {
-    var docObj = ApiPropertiesReader.read(classOf[ExtendedClass])
+    val docObj = ApiPropertiesReader.read(classOf[ExtendedClass])
     var assertedFields = 0;
     for (field <- docObj.getFields) {
       field.name match {
@@ -128,15 +155,15 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "only read properties with XMLElement annotation if model object has XmlAccessType type NONE annotation " in {
-    var docObj = ApiPropertiesReader.read(classOf[ObjectWithNoneAnnotationAndNoElementAnnotations])
+    val docObj = ApiPropertiesReader.read(classOf[ObjectWithNoneAnnotationAndNoElementAnnotations])
     assert(null == docObj.getFields)
 
-    docObj = ApiPropertiesReader.read(classOf[ScalaCaseClass])
-    assert(docObj.getFields.size() === 1)
+    val docObj2 = ApiPropertiesReader.read(classOf[ScalaCaseClass])
+    assert(docObj2.getFields.size() === 1)
   }
 
   it should "read properties if attribute is defined as transient in the main class and xml element in the base class " in {
-    var docObj = ApiPropertiesReader.read(classOf[ObjectWithTransientGetterAndXMLElementInTrait])
+    val docObj = ApiPropertiesReader.read(classOf[ObjectWithTransientGetterAndXMLElementInTrait])
     assert(docObj.getFields.size() === 1)
   }
 
@@ -155,7 +182,7 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "read properties from constructor args" in {
-    var docObj = ApiPropertiesReader.read(classOf[TestClassWithConstructorProperties])
+    val docObj = ApiPropertiesReader.read(classOf[TestClassWithConstructorProperties])
     assert(null != docObj.getFields, "should add fields from constructor")
     assert(docObj.getFields.size() === 1)
   }
@@ -168,14 +195,14 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "read properties with XML attribute annotations" in {
-    var docObj = ApiPropertiesReader.read(classOf[ObjectWithRootElementName])
+    val docObj = ApiPropertiesReader.read(classOf[ObjectWithRootElementName])
     expect(3) {
       docObj.getFields.size()
     }
   }
 
   it should "read properties for scala case classes " in {
-    var docObj = ApiPropertiesReader.read(classOf[ScalaCaseClassWithScalaSupportedType])
+    val docObj = ApiPropertiesReader.read(classOf[ScalaCaseClassWithScalaSupportedType])
     expect(11) {
       docObj.getFields.size()
     }
@@ -196,7 +223,7 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "not read methods from companion object " in {
-    var docObj = ApiPropertiesReader.read(classOf[TestCompanionObject])
+    val docObj = ApiPropertiesReader.read(classOf[TestCompanionObject])
     expect(3) {
       docObj.getFields.size()
     }
@@ -210,12 +237,12 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "honor JsonProperty annotations" in {
-    var docObj = ApiPropertiesReader.read(classOf[ObjectWithJsonProperties])
+    val docObj = ApiPropertiesReader.read(classOf[ObjectWithJsonProperties])
     assert((docObj.getFields.map(f => f.name).toSet & Set("theId")).size === 1)
   }
 
   it should "honor JsonIgnore annotation which will make a field invisible to swagger json parsing" in {
-    var docObj = ApiPropertiesReader.read(classOf[ObjectWithJsonIgnore])
+    val docObj = ApiPropertiesReader.read(classOf[ObjectWithJsonIgnore])
     Option(docObj.getFields) should be (None)
   }
 }
@@ -281,7 +308,7 @@ class JaxbSerializationTest extends FlatSpec with ShouldMatchers {
     e.setTransientFieldSerializedGetter("Field1")
     e.setLabel("Field2")
     e.setStringProperty("Field3")
-    m.marshal(e, System.out)
+    m.marshal(e, new ByteArrayOutputStream)
   }
 
   it should "serialize a TestObjectForNoneAnnotation with no xml element annotations" in {
@@ -289,7 +316,7 @@ class JaxbSerializationTest extends FlatSpec with ShouldMatchers {
     var m = ctx.createMarshaller()
     val e = new ObjectWithNoneAnnotationAndNoElementAnnotations
     e.setTestString("test String")
-    m.marshal(e, System.out)
+    m.marshal(e, new ByteArrayOutputStream)
   }
 }
 
@@ -521,15 +548,24 @@ class ClassToTestModelClassesFromBaseClass extends ObjectWithChildObjectsInMap {
 }
 
 case class TestCompanionObject(
-                                @BeanProperty var label:String,
-                                @BeanProperty var width:Int,
-                                @BeanProperty var height:Int) {
+  @BeanProperty var label:String,
+  @BeanProperty var width:Int,
+  @BeanProperty var height:Int) {
 }
 
 object TestCompanionObject {
  def getDescription():ObjectWithRootElementName = {
     null
   }
+}
+
+class ManualMappedObject {
+  @BeanProperty var nada: String = _
+}
+
+class ModelWithNonSerializableFields {
+  @BeanProperty var dt: org.joda.time.DateTime = _
+  @BeanProperty var name: String = _
 }
 
 class GenericObject[T] {

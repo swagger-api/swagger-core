@@ -14,13 +14,10 @@ import java.lang.reflect.{ Type, Field, Modifier, Method }
 import java.lang.annotation.Annotation
 import javax.xml.bind.annotation._
 
-import scala.collection.mutable.ListBuffer
-import scala.collection.JavaConversions._
-
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
-
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 
+import scala.collection.mutable.ListBuffer
+import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 
 class SwaggerJsonSchemaProvider extends JsonSchemaProvider {
@@ -153,8 +150,10 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
       if (docParam.paramType == null) {
         docParam.paramType = ApiPropertiesReader.getDataType(genericReturnType, returnType)
       }
-      if (!"void".equals(docParam.paramType) && null != docParam.paramType && !processedFields.contains(docParam.getName()))
-        documentationObject.addField(docParam)
+      if (!"void".equals(docParam.paramType) && null != docParam.paramType && !processedFields.contains(docParam.getName())) {
+        if(!ApiPropertiesReader.excludedFieldTypes.contains(docParam.paramType))
+          documentationObject.addField(docParam)
+      }
       processedFields.add(docParam.getName())
       validateParam(docParam)
     }
