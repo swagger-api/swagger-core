@@ -41,6 +41,14 @@ object ApiPropertiesReader {
 
   private val modelsCache = scala.collection.mutable.Map.empty[Class[_], DocumentationObject]
 
+  def add(hostClass: Class[_], model: DocumentationObject) = {
+    modelsCache += hostClass -> model
+  }
+
+  def clear = modelsCache.clear
+
+  val excludedFieldTypes = scala.collection.mutable.Set.empty[String]
+
   def read(hostClass: Class[_]): DocumentationObject = {
     modelsCache.get(hostClass) match {
       case None => {
@@ -85,15 +93,15 @@ object ApiPropertiesReader {
       var arrayClass = returnType.asInstanceOf[Class[_]].getComponentType
       paramType = "Array[" + arrayClass.getSimpleName + "]"
     } else {
-      //we might also have properties that are parametarized by not assignable to java collections. Examples: Scala collections
-      ///This step will ignore all those fields.
       if (genericReturnType.getClass.isAssignableFrom(classOf[TypeVariableImpl[_]])) {
+        // returns the parameter type, i.e. GenericObject[T] => T
         paramType = genericReturnType.asInstanceOf[TypeVariableImpl[_]].getName
       }
       else if (!genericReturnType.getClass.isAssignableFrom(classOf[ParameterizedTypeImpl])) {
         paramType = readName(genericReturnType.asInstanceOf[Class[_]])
       } else {
-        //handle scala options
+        //  we might also have properties that are parametarized by not assignable to java collections. Examples: Scala collections
+        //  This step will ignore all those fields.
         val parameterizedType: java.lang.reflect.ParameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
         if (parameterizedType.getRawType == classOf[Option[_]]) {
           val valueType = parameterizedType.getActualTypeArguments.head
