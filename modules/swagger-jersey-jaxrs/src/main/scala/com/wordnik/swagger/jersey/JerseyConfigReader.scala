@@ -18,15 +18,13 @@ package com.wordnik.swagger.jaxrs
 
 import com.sun.jersey.spi.container.servlet.WebConfig;
 import com.wordnik.swagger.core._
+
 import scala.collection.JavaConverters._
 
 class JerseyConfigReader(val wc: WebConfig) extends ConfigReader {
-
   def basePath(): String = findInitParam("swagger.api.basepath")
 
-  def swaggerVersion(): String = {
-    SwaggerSpec.version
-  }
+  def swaggerVersion(): String = SwaggerSpec.version
 
   def apiVersion(): String = findInitParam("api.version")
 
@@ -43,11 +41,8 @@ class JerseyConfigReader(val wc: WebConfig) extends ConfigReader {
    * Look for an initParameter in either the WebConfig or the ServletContext
    */
   private def findInitParam(key: String): String = {
-    val wcOpt = Option.apply(wc)
-    wcOpt.map { sc => 
-      Option.apply(wc.getInitParameter(key))
-        .getOrElse(wc.getServletContext.getInitParameter(key))
+    Option(wc).map { sc => 
+      Option(wc.getInitParameter(key)).getOrElse(wc.getServletContext.getInitParameter(key))
     } orNull
   }
-
 }
