@@ -121,7 +121,6 @@ trait ApiSpecParserTrait extends BaseApiParser {
           docOperation.responseClass = if (isResponseMultiValue) "List[" + annotatedName + "]" else annotatedName
         } catch {
           case e: ClassNotFoundException => docOperation.responseClass = {
-            e.printStackTrace
             if (isResponseMultiValue) "List[" + apiResponseValue + "]" else apiResponseValue
           }
         }
