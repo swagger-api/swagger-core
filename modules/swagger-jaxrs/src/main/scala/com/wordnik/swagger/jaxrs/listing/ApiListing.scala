@@ -47,12 +47,16 @@ object ApiListingResource {
 
 class ApiListing {
 
+  def getApp():Application = {
+    null
+  }
+
   @GET
   def resourceListing(
-    @Context app: Application,
     @Context headers: HttpHeaders,
     @Context uriInfo: UriInfo
   ): Response = {
+    var app: Application = getApp()
     val listingRoot = this.getClass.getAnnotation(classOf[Api]).value
     val reader = ConfigReaderFactory.getConfigReader()
     val apiFilterClassName = reader.apiFilterClassName()
@@ -89,11 +93,10 @@ class ApiListing {
   @Path("/{route: .+}")
   def apiListing(
     @PathParam("route") route: String,
-    @Context app: Application,
     @Context headers: HttpHeaders,
     @Context uriInfo: UriInfo
   ): Response = {
-    docForRoute(route, app, headers, uriInfo) match {
+    docForRoute(route, getApp(), headers, uriInfo) match {
       case Some(doc) => Response.ok.entity(doc).build
       case None => Response.status(Status.NOT_FOUND).build
     }
