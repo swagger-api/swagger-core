@@ -457,4 +457,15 @@
     <servlet-api-version>2.5</servlet-api-version>
     <scala-maven-plugin-version>3.1.0</scala-maven-plugin-version>
   </properties>
+
+    <distributionManagement>
+    <repository>
+      <id>releases</id>
+      <url>http://54.248.218.62:8081/nexus/content/repositories/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>tp_snapshots</id>
+      <url>http://54.248.218.62:8081/nexus/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>
