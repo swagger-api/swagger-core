@@ -26,8 +26,6 @@ import javax.ws.rs.{ Path, GET }
 import javax.ws.rs.core.{ UriInfo, HttpHeaders, Context, Response }
 import javax.ws.rs.core.Response.Status
 
-import javax.servlet.ServletConfig
-
 import scala.collection.JavaConversions._
 
 @deprecated
@@ -36,10 +34,9 @@ trait Help {
   @ApiOperation(value = "Returns information about API parameters",
     responseClass = "com.wordnik.swagger.core.Documentation")
   def getHelp(
-    @Context sc: ServletConfig, 
     @Context headers: HttpHeaders, 
     @Context uriInfo: UriInfo): Response = {
-    val reader = ConfigReaderFactory.getConfigReader(sc)
+    val reader = ConfigReaderFactory.getConfigReader()
 
     val apiVersion = reader.apiVersion
     val swaggerVersion = reader.swaggerVersion
@@ -84,15 +81,10 @@ trait Help {
 }
 
 object ConfigReaderFactory {
-  def getConfigReader(sc: ServletConfig): ConfigReader = {
-    var configReaderStr = {
-      sc.getInitParameter("swagger.config.reader") match {
-        case s: String => s
-        case _ => "com.wordnik.swagger.jaxrs.JerseyConfigReader"
-      }
-    }
-    val constructor = SwaggerContext.loadClass(configReaderStr).getConstructor(classOf[ServletConfig])
-    val configReader = constructor.newInstance(sc).asInstanceOf[ConfigReader]
+  def getConfigReader(): ConfigReader = {
+    var configReaderStr = "com.wordnik.swagger.jaxrs.FileConfigReader";
+    val constructor = SwaggerContext.loadClass(configReaderStr).getConstructor()
+    val configReader = constructor.newInstance().asInstanceOf[ConfigReader]
     configReader
   }
 }
