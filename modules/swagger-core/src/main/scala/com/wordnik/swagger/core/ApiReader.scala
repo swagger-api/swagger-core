@@ -115,10 +115,19 @@ trait ApiSpecParserTrait extends BaseApiParser {
 
         docOperation.setResponseTypeInternal(apiResponseValue)
         try {
-          val cls = SwaggerContext.loadClass(apiResponseValue)
-          LOGGER.debug("loaded class " + cls)
-          val annotatedName = ApiPropertiesReader.readName(cls)
-          docOperation.responseClass = if (isResponseMultiValue) "List[" + annotatedName + "]" else annotatedName
+          val name = {
+            if (ApiPropertiesReader.manualModelMapping.contains(apiResponseValue)) {
+              ApiPropertiesReader.manualModelMapping(apiResponseValue)._1
+            }
+            else {
+              val cls = SwaggerContext.loadClass(apiResponseValue)
+              LOGGER.debug("loaded class " + cls)
+              ApiPropertiesReader.readName(cls)
+            }
+          }
+          docOperation.responseClass = {
+            if (isResponseMultiValue) "List[" + name + "]" else name
+          }
         } catch {
           case e: ClassNotFoundException => docOperation.responseClass = {
             if (isResponseMultiValue) "List[" + apiResponseValue + "]" else apiResponseValue
@@ -183,7 +192,13 @@ trait ApiSpecParserTrait extends BaseApiParser {
         try {
           val paramTypeClass = paramTypes(counter)
           val paramTypeName = ApiPropertiesReader.getDataType(genericParamTypes(counter), paramTypeClass);
-          docParam.dataType = paramTypeName
+          docParam.dataType = {
+            if (ApiPropertiesReader.manualModelMapping.contains(paramTypeName)) {
+              ApiPropertiesReader.manualModelMapping(paramTypeName)._1
+            }
+            else
+              paramTypeName
+          }
           if (!paramTypeClass.isPrimitive && !paramTypeClass.getName().contains("java.lang")) {
             docParam.setValueTypeInternal(ApiPropertiesReader.getGenericTypeParam(genericParamTypes(counter), paramTypeClass))
           }
