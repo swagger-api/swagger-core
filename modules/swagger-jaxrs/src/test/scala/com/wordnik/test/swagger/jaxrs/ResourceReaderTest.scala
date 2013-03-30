@@ -33,7 +33,7 @@ import scala.reflect.BeanProperty
 @RunWith(classOf[JUnitRunner])
 class ResourceReaderTest extends FlatSpec with ShouldMatchers {
   "ApiPropertiesReader" should "read a SimplePojo" in {
-    var docObj = ApiPropertiesReader.read(classOf[SampleOutput])
+    var docObj = ApiPropertiesReader.read(classOf[SampleOutput].getName)
     assert(docObj != null)
     assert((docObj.getFields.map(f => f.name).toSet & Set("theName", "theValue")).size === 2)
     assert(docObj.getFields.filter(f => f.name == "id")(0).required === true)
@@ -63,7 +63,6 @@ class ResourceReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "read a resource class from a listing path" in {
-    // simulate loading from the listing class
     val loadingClass = classOf[RemappedResourceJSON]
     val helpApi = new HelpApi
     val doc = helpApi.filterDocs(JaxrsApiReader.read(loadingClass, "1.123", "2.345", "http://my.host.com/basepath", "/sample"),
@@ -86,7 +85,6 @@ class ResourceReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "NOT read a resource class from a listing path" in {
-    // simulate loading from the listing class
     val loadingClass = classOf[RemappedResourceListingJSON]
     val helpApi = new HelpApi
     val doc = helpApi.filterDocs(JaxrsApiReader.read(loadingClass, "1.123", "2.345", "http://my.host.com/basepath", "/sample"),
@@ -112,5 +110,82 @@ class ResourceReaderTest extends FlatSpec with ShouldMatchers {
     val api = doc.getApis.filter(a => (a.path == "/basic.{format}/getStringList"))(0)
     val responseclass = api.getOperations().get(0).getResponseClass()
     assert(responseclass === "List[String]")
+  }
+
+  it should "Handle generics" in {
+    // the path object 
+    val pathObject = new DocumentationObject()
+    pathObject.setName("Path_Object")
+
+    pathObject.addField(new DocumentationParameter(
+      "fieldA",
+      "The field of Path_Object",
+      "Notes",
+      "Code_Username",
+      null,
+      null,
+      false,
+      false))
+
+    // add the path mapping
+    ApiPropertiesReader.add("com.wordnik.test.swagger.core.testdata.PathParamObject<com.wordnik.test.swagger.core.testdata.StringValue>",
+      "Path_Object", pathObject)
+
+    val postObject = new DocumentationObject()
+    postObject.setName("Post_Object")
+
+    postObject.addField(new DocumentationParameter(
+      "fieldB",
+      "The field of Post_Object",
+      "Notes",
+      "Code_Username",
+      null,
+      null,
+      false,
+      false))
+
+    // add the post mapping
+    ApiPropertiesReader.add("com.wordnik.test.swagger.core.testdata.PostParamObject<com.wordnik.test.swagger.core.testdata.IntValue>",
+      "Post_Object", postObject)
+
+    val returnObject = new DocumentationObject()
+    returnObject.setName("Return_Object")
+
+    returnObject.addField(new DocumentationParameter(
+      "fieldB",
+      "The field of Return_Object",
+      "Notes",
+      "Code_Username",
+      null,
+      null,
+      false,
+      false))
+
+    // add the post mapping
+    ApiPropertiesReader.add("com.wordnik.test.swagger.core.testdata.ReturnObject<com.wordnik.test.swagger.core.testdata.DoubleValue>",
+      "Return_Object", returnObject)
+
+    val loadingClass = classOf[ResourceWithGenericsJSON]
+    val helpApi = new HelpApi
+    val doc = helpApi.filterDocs(JaxrsApiReader.read(loadingClass, "1.123", "2.345", "http://my.host.com/basepath", "/sample"),
+      null,
+      null,
+      null,
+      null)
+
+    ((for(api <- doc.getApis) yield api.path).toSet
+       &
+     Set(
+       "/generics.{format}/genericReturnType",
+       "/generics.{format}/{id}",
+       "/generics.{format}")).size should be (3)
+
+    ((for(model <- doc.getModels) yield model._1).toSet
+      &
+    Set(
+      "Path_Object",
+      "Post_Object",
+      "Return_Object"
+    )).size should be (3)
   }
 }

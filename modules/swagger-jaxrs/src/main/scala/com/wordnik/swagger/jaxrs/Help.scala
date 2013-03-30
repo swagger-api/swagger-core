@@ -30,7 +30,7 @@ import javax.servlet.ServletConfig
 
 import scala.collection.JavaConversions._
 
-@deprecated
+@deprecated("Use com.wordnik.swagger.jaxrs.listing.ApiListing", "1.2.1")
 trait Help {
   @GET
   @ApiOperation(value = "Returns information about API parameters",

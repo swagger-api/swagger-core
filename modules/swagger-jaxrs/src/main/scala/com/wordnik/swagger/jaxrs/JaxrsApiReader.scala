@@ -37,7 +37,7 @@ import scala.collection.JavaConversions._
 import collection.mutable.ListBuffer
 
 object JaxrsApiReader {
-  var endpointCacheEnabled = true
+  var endpointCacheEnabled = false
   private val LOGGER = LoggerFactory.getLogger(JaxrsApiReader.getClass)
 
   var FORMAT_STRING = ".{format}"
@@ -57,16 +57,12 @@ object JaxrsApiReader {
   def read(hostClass: Class[_], apiVersion: String, swaggerVersion: String, basePath: String, apiPath: String): Documentation = {
     LOGGER.debug("reading path " + apiPath)
 
-    endpointsCache.get(hostClass) match {
-      case None => {
-        val doc = new JaxrsApiSpecParser(hostClass, apiVersion, swaggerVersion, basePath, apiPath).parse
-        if(endpointCacheEnabled)
-          endpointsCache += hostClass -> doc.clone.asInstanceOf[Documentation]
-        doc
-      }
-      case doc: Option[Documentation] => doc.get.clone.asInstanceOf[Documentation]
-      case _ => null
-    }
+    endpointsCache.getOrElse(hostClass, {
+      val doc = new JaxrsApiSpecParser(hostClass, apiVersion, swaggerVersion, basePath, apiPath).parse
+      if(endpointCacheEnabled)
+        endpointsCache += hostClass -> doc
+      doc
+    }).clone.asInstanceOf[Documentation]
   }
 }
 
