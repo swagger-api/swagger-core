@@ -61,16 +61,12 @@ object JerseyApiReader {
   def read(hostClass: Class[_], apiVersion: String, swaggerVersion: String, basePath: String, apiPath: String): Documentation = {
     LOGGER.debug("reading path " + apiPath)
 
-    endpointsCache.get(hostClass) match {
-      case None => {
-        val doc = new JerseyApiSpecParser(hostClass, apiVersion, swaggerVersion, basePath, apiPath).parse
-        if(endpointCacheEnabled)
-          endpointsCache += hostClass -> doc.clone.asInstanceOf[Documentation]
-        doc
-      }
-      case doc: Option[Documentation] => doc.get.clone.asInstanceOf[Documentation]
-      case _ => null
-    }
+    endpointsCache.getOrElse(hostClass, {
+      val doc = new JerseyApiSpecParser(hostClass, apiVersion, swaggerVersion, basePath, apiPath).parse
+      if(endpointCacheEnabled)
+        endpointsCache += hostClass -> doc
+      doc
+    }).clone.asInstanceOf[Documentation]
   }
 }
 

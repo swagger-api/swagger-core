@@ -30,7 +30,7 @@ import javax.ws.rs.core.Response.Status
 
 import scala.collection.JavaConversions._
 
-@deprecated
+@deprecated("Use com.wordnik.swagger.jersey.listing.ApiListing", "1.2.1")
 trait Help {
   @GET
   @ApiOperation(value = "Returns information about API parameters",
