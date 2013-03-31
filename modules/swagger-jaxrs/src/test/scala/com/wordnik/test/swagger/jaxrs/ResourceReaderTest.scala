@@ -33,7 +33,7 @@ import scala.reflect.BeanProperty
 @RunWith(classOf[JUnitRunner])
 class ResourceReaderTest extends FlatSpec with ShouldMatchers {
   "ApiPropertiesReader" should "read a SimplePojo" in {
-    var docObj = ApiPropertiesReader.read(classOf[SampleOutput])
+    var docObj = ApiPropertiesReader.read(classOf[SampleOutput].getName)
     assert(docObj != null)
     assert((docObj.getFields.map(f => f.name).toSet & Set("theName", "theValue")).size === 2)
     assert(docObj.getFields.filter(f => f.name == "id")(0).required === true)
