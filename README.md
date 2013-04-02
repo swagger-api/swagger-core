@@ -68,7 +68,7 @@ You need the following installed and available in your $PATH:
 
 <li>- Scala 2.9.1-1 [available here](http://www.scala-lang.org).  Note that 2.9.1 has a defect which causes problems with Jax-RS
 
-### To build from source (currently 1.1.1-SNAPSHOT)
+### To build from source (currently 1.2.2-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
