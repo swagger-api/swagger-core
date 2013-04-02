@@ -65,6 +65,29 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
     docObj.getFields.map{_.name}.toSet.contains("fieldA") should be (true)
   }
 
+  it should "manually define a model serialization from json" in {
+    val jsonString = """
+{
+  "name": "Manual",
+  "fields": [
+    {
+      "name": "fieldA",
+      "description": "The field of Manual",
+      "notes": "Notes",
+      "paramType": "Manual",
+      "required": false,
+      "allowMultiple": false
+    }
+  ]
+}
+"""
+    val m = JsonUtil.getJsonMapper.readValue(jsonString, classOf[DocumentationObject])
+    val className = classOf[ManualMappedObject].getName
+    ApiPropertiesReader.add(className, "MyManualMappedObject", m)
+    val docObj = ApiPropertiesReader.read(className)
+    docObj.getFields.map{_.name}.toSet.contains("fieldA") should be (true)
+  }
+
   it should "skip excluded field types" in {
     ApiPropertiesReader.excludedFieldTypes += "DateTime"
     val docObj = ApiPropertiesReader.read(classOf[ModelWithNonSerializableFields].getName)
