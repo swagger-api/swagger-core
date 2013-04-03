@@ -85,7 +85,10 @@ class JaxrsApiSpecParser(val _hostClass: Class[_], _apiVersion: String, _swagger
     var ignoreParam = false
     for (pa <- paramAnnotations) {
       pa match {
-        case apiParam: ApiParam => parseApiParam(docParam, apiParam, method)
+        case apiParam: ApiParam => {
+          ignoreParam = apiParam.ignore()
+          parseApiParam(docParam, apiParam, method)
+        }
         case wsParam: QueryParam => {
           docParam.name = readString(wsParam.value, docParam.name)
           docParam.paramType = readString(TYPE_QUERY, docParam.paramType)

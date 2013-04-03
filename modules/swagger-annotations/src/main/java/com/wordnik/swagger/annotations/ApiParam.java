@@ -24,6 +24,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiParam {
+    /** Ignores parameter in documentation. */
+    boolean ignore() default false;
+
     /** Name of the parameter */
     String name() default "";
 
