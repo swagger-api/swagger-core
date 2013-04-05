@@ -116,6 +116,7 @@ class JerseyApiSpecParser(val _hostClass: Class[_], _apiVersion: String, _swagge
         case param: FormDataParam => {
           docParam.dataType match {
             case "InputStream" => {
+              docParam.name = readString(param.value, docParam.name)
               docParam.paramType = "body"
               docParam.dataType = "file"              
             }
