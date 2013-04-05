@@ -124,7 +124,6 @@ class JerseyApiSpecParser(val _hostClass: Class[_], _apiVersion: String, _swagge
             case _ => {
               docParam.name = readString(param.value, docParam.name)
               docParam.paramType = readString(TYPE_FORM, docParam.paramType)
-              println("found " + docParam.name + ", " + docParam.paramType + " from " + param.value)
             }
           }
         }
