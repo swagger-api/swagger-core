@@ -74,11 +74,9 @@ trait PetStoreResource extends RestResourceUtil {
 @Path("/store.json")
 @Api(value="/store" , description = "Operations about store")
 @Produces(Array("application/json"))
-class PetStoreResourceJSON extends Help
-  with PetStoreResource
+class PetStoreResourceJSON extends PetStoreResource
 
 @Path("/store.xml")
 @Api(value="/store", description = "Operations about store")
 @Produces(Array("application/xml"))
-class PetStoreResourceXML extends Help
-  with PetStoreResource
+class PetStoreResourceXML extends PetStoreResource

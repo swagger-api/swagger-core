@@ -56,11 +56,13 @@ trait PetResource extends RestResourceUtil {
   @Consumes(Array(MediaType.MULTIPART_FORM_DATA))
   @ApiOperation(value = "uploads an image")
   def uploadFile(
+    @ApiParam(value = "Additional data to pass to server") @FormDataParam("additionalMetadata") testString: String,
     @ApiParam(value = "file to upload") @FormDataParam("file") inputStream: InputStream,
     @ApiParam(value = "file detail") @FormDataParam("file") fileDetail: FormDataContentDisposition) = {
+    println("testString: " + testString)
     val uploadedFileLocation = "./" + fileDetail.getFileName
     IOUtils.copy(inputStream, new FileOutputStream(uploadedFileLocation))
-    val msg = "File uploaded to " + uploadedFileLocation + ", " + (new java.io.File(uploadedFileLocation)).length + " bytes"
+    val msg = "additionalMetadata: " + testString + "\nFile uploaded to " + uploadedFileLocation + ", " + (new java.io.File(uploadedFileLocation)).length + " bytes"
     val output = new com.wordnik.swagger.sample.model.ApiResponse(200, msg)
     Response.status(200).entity(output).build()
   }

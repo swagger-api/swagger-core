@@ -51,6 +51,30 @@ class ResourceListingIT extends FlatSpec with ShouldMatchers {
         "/pet.{format}/findByTags")).size == 4)
   }
 
+  it should "have form params" in {
+    val json = Source.fromURL("http://localhost:8002/api/api-docs.json/pet").mkString
+    val doc = JsonUtil.getJsonMapper.readValue(json, classOf[Documentation])
+    assert(doc.getApis.size === 4)
+    val ep = doc.getApis.filter(m => m.getPath == "/pet.{format}/uploadImage").head
+    ep.getOperations.size should be (1)
+
+    println(JsonUtil.getJsonMapper.writeValueAsString(ep))
+
+    val op = ep.getOperations.head
+
+    op.httpMethod should be ("POST")
+    op.getParameters.size should be (2)
+
+    val metadata = op.getParameters.filter(m => m.name == "additionalMetadata").head
+    metadata.dataType should be ("string")
+    metadata.paramType should be ("form")
+
+    val fileUpload = op.getParameters.filter(m => m.name == "file").head
+    fileUpload.dataType should be ("file")
+    fileUpload.paramType should be ("body")
+
+  }
+
   it should "read the user api with array and list data types as post data" in {
     val json = Source.fromURL("http://localhost:8002/api/api-docs.json/user").mkString
     val doc = JsonUtil.getJsonMapper.readValue(json, classOf[Documentation])
