@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.9.1</artifactId>
-    <version>1.2.2-SNAPSHOT</version>
+    <version>1.2.2</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-sample-scala-alt-resource-listing_2.9.1</artifactId>
   <packaging>war</packaging>
   <name>swagger-sample-scala-alt-resource-listing</name>
-  <version>1.2.2-SNAPSHOT</version>
+  <version>1.2.2</version>
   <build>
     <plugins>
       <plugin>
