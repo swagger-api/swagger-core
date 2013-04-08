@@ -304,6 +304,7 @@
     <module>samples/scala-alt-resource-listing</module>
     <module>samples/scala-jaxrs-jackson2</module>
     <module>samples/scala-jaxrs-no-format</module>
+    <module>samples/scala-jaxrs-fileupload</module>
     <module>samples/scala-jaxrs-apm</module>
   </modules>
   <reporting>
