@@ -120,5 +120,4 @@ trait UserResource extends RestResourceUtil {
 @Path("/user.json")
 @Api(value = "/user", description = "Operations about user")
 @Produces(Array("application/json"))
-class UserResourceJSON extends Help
-  with UserResource
+class UserResourceJSON extends UserResource

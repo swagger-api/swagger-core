@@ -23,8 +23,6 @@ import com.wordnik.swagger.sample.model.User
 import com.wordnik.swagger.sample.data.UserData
 import com.wordnik.swagger.sample.exception.NotFoundException
 
-import com.sun.jersey.spi.resource.Singleton
-
 import javax.ws.rs.core.Response
 import javax.ws.rs._
 import com.wordnik.swagger.core.util.RestResourceUtil
@@ -120,13 +118,11 @@ trait UserResource extends RestResourceUtil {
 }
 
 @Path("/user.json")
-@Singleton
 @Api(value = "/user", description = "Operations about user")
 @Produces(Array("application/json"))
 class UserResourceJSON extends UserResource
 
 @Path("/user.xml")
-@Singleton
 @Api(value = "/user", description = "Operations about user")
 @Produces(Array("application/xml"))
 class UserResourceXML extends UserResource

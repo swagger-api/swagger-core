@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.10.0</artifactId>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.2.2-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-sample-java-alt-resource-listing_2.10.0</artifactId>
   <packaging>war</packaging>
   <name>swagger-sample-java-alt-resource-listing</name>
-  <version>1.2.1-SNAPSHOT</version>
+  <version>1.2.2-SNAPSHOT</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>
@@ -79,12 +79,13 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>com.wordnik</groupId>
-      <artifactId>swagger-jaxrs_2.10.0</artifactId>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.wordnik</groupId>
-      <artifactId>swagger-core_2.10.0</artifactId>
+      <artifactId>swagger-jaxrs_2.10.0</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -96,8 +97,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-client</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

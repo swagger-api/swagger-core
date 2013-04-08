@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.10.0</artifactId>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.2.2-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-scala-apm-sample-app_2.10.0</artifactId>
   <packaging>war</packaging>
   <name>swagger-scala-sample-apm-app</name>
-  <version>1.2.1-SNAPSHOT</version>
+  <version>1.2.2-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
@@ -36,7 +36,6 @@
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty-version}</version>
         <configuration>
           <webAppConfig>
             <contextPath>/api</contextPath>
@@ -99,6 +98,15 @@
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_2.10.0</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-client</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

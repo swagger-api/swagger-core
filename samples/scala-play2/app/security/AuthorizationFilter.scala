@@ -24,6 +24,7 @@ class AuthorizationFilter extends ApiAuthorizationFilter {
     "GET:/pet.{format}/findByStatus" -> false,
     "GET:/pet.{format}/findByTags" -> false,
 
+    "GET:/store.{format}/order" -> true,
     "GET:/store.{format}/order/{orderId}" -> true,
     "DELETE:/store.{format}/order/{orderId}" -> true,
     "POST:/store.{format}/order" -> true,

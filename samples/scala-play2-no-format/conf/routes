@@ -3,18 +3,18 @@
 # ~~~~
 
 # Swagger - Root Resources Listing
-GET     /resources                      controllers.ApiHelpController.getResources
+GET     /api-docs                       controllers.ApiHelpController.getResources
 
 # Swagger Utils - Health Resources
-GET     /admin                          controllers.ApiHelpController.getResource(path = "/admin")
-GET     /admin.xml                           controllers.ApiHelpController.getResource(path = "/admin")
+GET     /admin                          controllers.ApiHelpController.getResource(path = "/api-docs/admin")
+GET     /admin.xml                      controllers.ApiHelpController.getResource(path = "/api-docs/admin")
 GET     /admin/health                   controllers.HealthController.getHealth()
-GET     /admin.xml/health                    controllers.HealthController.getHealth()
+GET     /admin.xml/health               controllers.HealthController.getHealth()
 GET     /admin/ping                     controllers.HealthController.ping()
-GET     /admin.xml/ping                      controllers.HealthController.ping()
+GET     /admin.xml/ping                 controllers.HealthController.ping()
 
 # Pet - Resources
-GET     /pet                            controllers.ApiHelpController.getResource(path = "/pet")
+GET     /api-docs/pet                   controllers.ApiHelpController.getResource(path = "/api-docs/pet")
 
 POST    /pet                            controllers.PetApiController.addPet
 PUT     /pet                            controllers.PetApiController.updatePet
@@ -22,12 +22,12 @@ GET     /pet/findByStatus               controllers.PetApiController.findPetsByS
 GET     /pet/findByTags                 controllers.PetApiController.findPetsByTags(tags)
 GET     /pet/:id                        controllers.PetApiController.getPetById(id)
 
-GET     /store                          controllers.ApiHelpController.getResource(path = "/store")
+GET     /api-docs/store                 controllers.ApiHelpController.getResource(path = "/api-docs/store")
 POST    /store/order                    controllers.StoreApiController.placeOrder
 DELETE  /store/order/:orderId           controllers.StoreApiController.deleteOrder(orderId)
 GET     /store/order/:orderId           controllers.StoreApiController.getOrderById(orderId)
 
-GET     /user                           controllers.ApiHelpController.getResource(path = "/user")
+GET     /api-docs/user                  controllers.ApiHelpController.getResource(path = "/api-docs/user")
 POST    /user                           controllers.UserApiController.createUser
 POST    /user/createWithArray           controllers.UserApiController.createUsersWithArrayInput
 POST    /user/createWithList            controllers.UserApiController.createUsersWithListInput

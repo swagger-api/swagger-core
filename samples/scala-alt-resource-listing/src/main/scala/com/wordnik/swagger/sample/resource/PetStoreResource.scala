@@ -24,8 +24,6 @@ import com.wordnik.swagger.sample.model.Order
 import com.wordnik.swagger.sample.data.StoreData
 import com.wordnik.swagger.sample.exception.NotFoundException
 
-import com.sun.jersey.spi.resource.Singleton
-
 import javax.ws.rs.core.Response
 import javax.ws.rs._
 
@@ -72,17 +70,7 @@ trait PetStoreResource extends RestResourceUtil {
   }
 }
 
-@Path("/resources/store")
-@Api(value = "/store",
-  description = "Operations about store",
-  listingPath = "/resources/store",
-  listingClass = "com.wordnik.swagger.sample.resource.PetStoreResourceJSONXML")
-@Singleton
-@Produces(Array("application/json", "application/xml"))
-class PetStoreResourceListing extends Help
-
 @Path("/store")
-@Singleton
 @Api(value = "/store",
   description = "Operations about store",
   listingPath = "/resources/store")

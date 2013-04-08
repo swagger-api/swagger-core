@@ -96,10 +96,10 @@ trait PetResource extends RestResourceUtil {
 
 @Path("/pet.json")
 @Api(value = "/pet", description = "Operations about pets")
-@Produces(Array("application/json"))
+@Produces(Array("application/json;charset=utf8"))
 class PetResourceJSON extends PetResource
 
 @Path("/pet.xml")
 @Api(value = "/pet", description = "Operations about pets")
-@Produces(Array("application/xml"))
+@Produces(Array("application/xml;charset=utf8"))
 class PetResourceXML extends PetResource

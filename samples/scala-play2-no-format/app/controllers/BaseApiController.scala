@@ -1,15 +1,10 @@
 package controllers
 
-import play.api._
-import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
-import play.api.data.format.Formats._
-import play.api.Play.current
-
 import value._
 import api._
 import com.wordnik.swagger.core.util.{ JsonUtil, RestResourceUtil }
+
+import play.api.mvc._
 
 import java.io.StringWriter
 
@@ -26,7 +21,10 @@ class BaseApiController extends Controller with RestResourceUtil {
 
     val jsonValue: String = w.toString()
     new SimpleResult[String](header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(jsonValue)).as("application/json")
-      .withHeaders(("Access-Control-Allow-Origin", "*"))
+      .withHeaders(
+        ("Access-Control-Allow-Origin", "*"),
+        ("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT"),
+        ("Access-Control-Allow-Headers", "Content-Type, api_key, Authorization"))
   }
 
   protected def JsonResponse(data: Object, code: Int) = {
@@ -36,6 +34,9 @@ class BaseApiController extends Controller with RestResourceUtil {
 
     val jsonValue: String = w.toString()
     new SimpleResult[String](header = ResponseHeader(code), body = play.api.libs.iteratee.Enumerator(jsonValue)).as("application/json")
-      .withHeaders(("Access-Control-Allow-Origin", "*"))
+      .withHeaders(
+        ("Access-Control-Allow-Origin", "*"),
+        ("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT"),
+        ("Access-Control-Allow-Headers", "Content-Type, api_key, Authorization"))
   }
 }

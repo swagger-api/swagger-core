@@ -8,7 +8,6 @@ import com.wordnik.swagger.annotations._
 import play.api._
 import play.api.mvc._
 import play.api.data._
-import play.data.validation._
 import play.api.data.Forms._
 import play.api.data.format.Formats._
 import play.api.Play.current

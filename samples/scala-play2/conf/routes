@@ -5,6 +5,10 @@
 # Swagger - Root Resources Listing
 GET     /api-docs.json               controllers.ApiHelpController.getResources
 
+# OPTIONS to support hosting UI off domain
+
+OPTIONS /*wholepath            			 controllers.PetApiController.getOptions(wholepath)
+
 GET     /api-docs.json/admin         controllers.ApiHelpController.getResource(path = "/api-docs.json/admin")
 GET     /admin.json/health           controllers.HealthController.getHealth
 GET     /admin.json/ping             controllers.HealthController.ping
