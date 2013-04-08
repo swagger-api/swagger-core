@@ -9,7 +9,7 @@
   <artifactId>swagger-project_2.10.0</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
-  <version>1.2.1-SNAPSHOT</version>
+  <version>1.2.2-SNAPSHOT</version>
   <url>https://github.com/wordnik/swagger-core</url>
   <scm>
     <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
@@ -208,6 +208,18 @@
             <goals>sign</goals>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.mortbay.jetty</groupId>
+		  <artifactId>jetty-maven-plugin</artifactId>
+		  <version>${jetty-version}</version>
+		  <dependencies>
+		    <dependency>
+		      <groupId>com.sun.jersey</groupId>
+		      <artifactId>jersey-servlet</artifactId>
+		      <version>${jersey-version}</version>
+		    </dependency>
+		  </dependencies>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -284,12 +296,18 @@
     <module>modules/swagger-annotations</module>
     <module>modules/swagger-core</module>
     <module>modules/swagger-jaxrs</module>
+    <module>modules/swagger-jersey-jaxrs</module>
     <module>modules/swagger-jaxrs-utils</module>
     <module>samples/java-jaxrs</module>
     <module>samples/java-alt-resource-listing</module>
+    <module>samples/java-jaxrs-cxf</module>
+    <module>samples/java-dropwizard</module>
+    <module>samples/java-resteasy</module>
     <module>samples/scala-jaxrs</module>
     <module>samples/scala-alt-resource-listing</module>
     <!--module>samples/scala-jaxrs-jackson2</module-->
+    <module>samples/scala-jaxrs-no-format</module>
+    <module>samples/scala-jaxrs-fileupload</module>
     <module>samples/scala-jaxrs-apm</module>
   </modules>
   <reporting>
@@ -405,36 +423,17 @@
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
         <version>${servlet-api-version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.sun.jersey</groupId>
-        <artifactId>jersey-json</artifactId>
-        <version>${jersey-version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.sun.jersey</groupId>
-        <artifactId>jersey-client</artifactId>
-        <version>${jersey-version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.sun.jersey</groupId>
-        <artifactId>jersey-core</artifactId>
-        <version>${jersey-version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.sun.jersey</groupId>
-        <artifactId>jersey-server</artifactId>
-        <version>${jersey-version}</version>
-        <scope>compile</scope>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
         <version>${slf4j-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.jersey</groupId>
+        <artifactId>jersey-client</artifactId>
+        <version>${jersey-version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
