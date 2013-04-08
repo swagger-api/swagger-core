@@ -448,7 +448,7 @@ class DocumentationSchema {
 
   @JsonProperty(value = "$ref")
   @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
-  @XmlElement(name = "$ref")
+  @XmlElement(name = "ref")
   var ref: String = null
 
   @XmlTransient

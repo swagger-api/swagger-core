@@ -14,11 +14,10 @@ import java.lang.reflect.{ Type, Field, Modifier, Method }
 import java.lang.annotation.Annotation
 import javax.xml.bind.annotation._
 
+import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
+
 import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConversions._
-
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
-
 import scala.collection.JavaConverters._
 
 class SwaggerJsonSchemaProvider extends JsonSchemaProvider {
@@ -65,14 +64,14 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
   }
 
   def parse(): DocumentationObject = {
-    parseRecurrsive(hostClass);
+    parseRecursive(hostClass)
     documentationObject
   }
 
   /**
    * Parse methods from the class and all of its parent classes
    */
-  def parseRecurrsive(hostClass: Class[_]): Unit = {
+  def parseRecursive(hostClass: Class[_]): Unit = {
     if (null != hostClass) {
       for (method <- hostClass.getDeclaredMethods) {
         if (Modifier.isPublic(method.getModifiers()) && !Modifier.isStatic(method.getModifiers()))
@@ -83,7 +82,7 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
         if (Modifier.isPublic(field.getModifiers()) && !Modifier.isStatic(field.getModifiers()))
           parseField(field)
       }
-      parseRecurrsive(hostClass.getSuperclass)
+      parseRecursive(hostClass.getSuperclass)
     }
   }
 
@@ -114,11 +113,12 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
     val (name, isGetter) = extractGetterProperty(methodFieldName)
 
     val docParam = new DocumentationParameter
-    docParam.required = false;
+    docParam.required = false
 
-    var isTransient = false;
-    var isXmlElement = false;
-    var isFieldExists = false;
+    var isTransient = false
+    var isXmlElement = false
+    var isFieldExists = false
+    var isJsonProperty = false
 
     var methodAnnoOutput = processAnnotations(name, methodAnnotations, docParam)
     isTransient = methodAnnoOutput._1
@@ -128,29 +128,32 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
     try {
       val propertyAnnotations = getDeclaredField(this.hostClass, name).getAnnotations()
       var propAnnoOutput = processAnnotations(name, propertyAnnotations, docParam)
-      isFieldExists = true;
-      if (!isXmlElement) { isXmlElement = propAnnoOutput._2 }
-      if (!isTransient) { isTransient = propAnnoOutput._1 }
+      isFieldExists = true
+      if (!isXmlElement) isXmlElement = propAnnoOutput._2
+      if (!isTransient) isTransient = propAnnoOutput._1
+      isJsonProperty = propAnnoOutput._4
     } catch {
       //this means there is no field declared to look for field level annotations.
       case e: java.lang.NoSuchFieldException => isTransient = false
     }
 
     if (docParam.name == null && name != null)
-      docParam.name = name;
+      docParam.name = name
 
     //if class has accessor none annotation, the method/field should have explicit xml element annotations, if not
     // consider it as transient
     if (!isXmlElement && hasAccessorNoneAnnotation) {
-      isTransient = true;
+      isTransient = true
     }
 
-    if (!(isTransient && !isXmlElement) && docParam.name != null && (isFieldExists || isGetter || isDocumented)) {
+    if (!(isTransient && !isXmlElement && !isJsonProperty) && docParam.name != null && (isFieldExists || isGetter || isDocumented)) {
       if (docParam.paramType == null) {
         docParam.paramType = ApiPropertiesReader.getDataType(genericReturnType, returnType)
       }
-      if (!"void".equals(docParam.paramType) && null != docParam.paramType && !processedFields.contains(docParam.getName()))
-        documentationObject.addField(docParam)
+      if (!"void".equals(docParam.paramType) && null != docParam.paramType && !processedFields.contains(docParam.getName())) {
+        if(!ApiPropertiesReader.excludedFieldTypes.contains(docParam.paramType))
+          documentationObject.addField(docParam)
+      }
       processedFields.add(docParam.getName())
       validateParam(docParam)
     }
@@ -190,21 +193,21 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
     }
   }
 
-  private def processAnnotations(name: String, annotations: Array[Annotation], docParam: DocumentationParameter): (Boolean, Boolean, Boolean) = {
+  private def processAnnotations(name: String, annotations: Array[Annotation], docParam: DocumentationParameter): (Boolean, Boolean, Boolean, Boolean) = {
     var isTransient = false
     var isXmlElement = false
     var isDocumented = false
+    var isJsonProperty = false
     for (ma <- annotations) {
       ma match {
-        case xmlTransient: XmlTransient => {
-          isTransient = true
-        }
+        case xmlTransient: XmlTransient => isTransient = true
         case apiProperty: ApiProperty => {
           docParam.description = readString(apiProperty.value)
           docParam.notes = readString(apiProperty.notes)
           docParam.paramType = readString(apiProperty.dataType)
-          isDocumented = true
+          if(apiProperty.required) docParam.required = apiProperty.required
 
+          isDocumented = true
           try {
             docParam.allowableValues = convertToAllowableValues(apiProperty.allowableValues)
           } catch {
@@ -215,7 +218,7 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
         case xmlAttribute: XmlAttribute => {
           docParam.name = readString(xmlAttribute.name, docParam.name, "##default")
           docParam.name = readString(name, docParam.name)
-          docParam.required = xmlAttribute.required
+          if(docParam.required) docParam.required = xmlAttribute.required
           isXmlElement = true
         }
         case xmlElement: XmlElement => {
@@ -229,13 +232,16 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
           isXmlElement = true
           // docParam.paramType = readString(if (typeValue != null) typeValue.getName else null, docParam.paramType)
         }
-        case xmlElementWrapper: XmlElementWrapper => {
-          docParam.wrapperName = readString(xmlElementWrapper.name, docParam.wrapperName, "##default")
+        case xmlElementWrapper: XmlElementWrapper => docParam.wrapperName = readString(xmlElementWrapper.name, docParam.wrapperName, "##default")
+        case jsonIgnore: JsonIgnore => isTransient = true
+        case jsonProperty: JsonProperty => {
+          docParam.name = readString(jsonProperty.value, docParam.name)
+          isJsonProperty = true
         }
-        case _ => Unit
+        case _ => 
       }
     }
-    (isTransient, isXmlElement, isDocumented)
+    (isTransient, isXmlElement, isDocumented, isJsonProperty)
   }
 }
 

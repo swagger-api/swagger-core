@@ -90,18 +90,18 @@ trait ApiListing {
         val hasCompatibleMediaType = {
           // check accept type first
           val resourceMediaType = {
-            if (headers.getRequestHeaders().contains("Content-type")) {
+            val lowerHeaders = headers.getRequestHeaders.asScala.map(f => (f._1.toLowerCase, f._2)).toMap
+
+            if (lowerHeaders.contains("content-type")) {
               logger.debug("using content-type headers")
-              val objs = new scala.collection.mutable.ListBuffer[String]
-              headers.getRequestHeaders()("Content-type").foreach(h =>
-                h.split(",").foreach(str => objs += str.trim))
-              objs.toSet
-            } else if (headers.getRequestHeaders().contains("Accept")) {
+              (for(h <- lowerHeaders("content-type")) yield {
+                h.split(";")(0)
+              }).toSet
+            } else if (lowerHeaders.contains("accept")) {
               logger.debug("using accept headers")
-              val objs = new scala.collection.mutable.ListBuffer[String]
-              headers.getRequestHeaders()("Accept").foreach(h =>
-                h.split(",").foreach(str => objs += str.trim))
-              objs.toSet
+              (for(h <- lowerHeaders("accept")) yield {
+                h.split(";")(0)
+              }).toSet
             } else {
               logger.debug("using produces annotations")
               resource.getAnnotation(classOf[javax.ws.rs.Produces]).value.toSet

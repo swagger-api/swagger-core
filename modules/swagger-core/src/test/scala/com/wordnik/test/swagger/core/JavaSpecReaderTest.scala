@@ -26,7 +26,7 @@ class JavaSpecReaderTest extends FlatSpec with ShouldMatchers {
     var docs = new java.util.ArrayList[DocumentationObject]()
     types.asScala.foreach(t => {
       val c = SwaggerContext.loadClass(t)
-      val doc = ApiPropertiesReader.read(c)
+      val doc = ApiPropertiesReader.read(c.getName())
       if(null != doc){
        docs.add(doc)
       }

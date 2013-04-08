@@ -98,9 +98,8 @@ object PlayApiReader {
           case _ => route._3
         }
         val idx = fullMethod.lastIndexOf(".")
-        fullMethod.substring(0, idx) + "$." + fullMethod.substring(idx+1)
+        (fullMethod.substring(0, idx) + "$." + fullMethod.substring(idx+1)).replace("@", "")
       }
-      println("converted route " + route._2 + " to " + path)
       (routeName, RouteEntry(httpMethod, path))
     }).toMap
   }

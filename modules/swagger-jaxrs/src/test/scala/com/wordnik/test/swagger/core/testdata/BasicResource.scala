@@ -68,6 +68,4 @@ class BasicResource {
     out.add("bar")
     Response.ok.entity(out).build
   }
-
-
 }

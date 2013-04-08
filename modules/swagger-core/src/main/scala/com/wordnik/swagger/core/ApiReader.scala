@@ -104,18 +104,34 @@ trait ApiSpecParserTrait extends BaseApiParser {
         docOperation.notes = readString(apiOperation.notes)
         docOperation.setTags(toObjectList(apiOperation.tags))
         docOperation.nickname = method.getName
-        val (apiResponseValue: String, isResponseMultiValue: Boolean) = ((responseClass: String, isMulti: Boolean) => responseClass match {
-          case ListRegex(respClass) => (respClass, true)
-          case _ => (responseClass, isMulti)
-        })(readString(apiOperation.responseClass), apiOperation.multiValueResponse)
+        val (apiResponseValue: String, isResponseMultiValue: Boolean) = 
+          ((responseClass: String, isMulti: Boolean) => responseClass match {
+            case ListRegex(respClass) => (respClass, true)
+            case _ => (responseClass, isMulti)
+          }
+        )(readString(apiOperation.responseClass), apiOperation.multiValueResponse)
+
+        LOGGER.debug("apiOperation apiResponseValue: " + apiResponseValue)
 
         docOperation.setResponseTypeInternal(apiResponseValue)
         try {
-          val cls = SwaggerContext.loadClass(apiResponseValue)
-          val annotatedName = ApiPropertiesReader.readName(cls)
-          docOperation.responseClass = if (isResponseMultiValue) "List[" + annotatedName + "]" else annotatedName
+          val name = {
+            if (ApiPropertiesReader.manualModelMapping.contains(apiResponseValue)) {
+              ApiPropertiesReader.manualModelMapping(apiResponseValue)._1
+            }
+            else {
+              val cls = SwaggerContext.loadClass(apiResponseValue)
+              LOGGER.debug("loaded class " + cls)
+              ApiPropertiesReader.readName(cls)
+            }
+          }
+          docOperation.responseClass = {
+            if (isResponseMultiValue) "List[" + name + "]" else name
+          }
         } catch {
-          case e: ClassNotFoundException => docOperation.responseClass = if (isResponseMultiValue) "List[" + apiResponseValue + "]" else apiResponseValue
+          case e: ClassNotFoundException => docOperation.responseClass = {
+            if (isResponseMultiValue) "List[" + apiResponseValue + "]" else apiResponseValue
+          }
         }
       }
 
@@ -176,12 +192,18 @@ trait ApiSpecParserTrait extends BaseApiParser {
         try {
           val paramTypeClass = paramTypes(counter)
           val paramTypeName = ApiPropertiesReader.getDataType(genericParamTypes(counter), paramTypeClass);
-          docParam.dataType = paramTypeName
+          docParam.dataType = {
+            if (ApiPropertiesReader.manualModelMapping.contains(paramTypeName)) {
+              ApiPropertiesReader.manualModelMapping(paramTypeName)._1
+            }
+            else
+              paramTypeName
+          }
           if (!paramTypeClass.isPrimitive && !paramTypeClass.getName().contains("java.lang")) {
             docParam.setValueTypeInternal(ApiPropertiesReader.getGenericTypeParam(genericParamTypes(counter), paramTypeClass))
           }
         } catch {
-          case e: Exception => LOGGER.error("Unable to determine datatype for param " + counter + " in method " + method, e)
+          case e: Exception => LOGGER.debug("Unable to determine datatype for param " + counter + " in method " + method, e)
         }
 
         ignoreParam = processParamAnnotations(docParam, paramAnnotations, method)

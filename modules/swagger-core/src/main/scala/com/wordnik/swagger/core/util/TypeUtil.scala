@@ -204,7 +204,7 @@ object TypeUtil {
     }
   }
 
-  val packagesToSkip = Set("scala", "java", "int", "double", "float", "long", "String", "boolean", "void", "[Ljava")
+  val packagesToSkip = Set("scala", "java", "int", "long", "String", "boolean", "void", "[Ljava")
 
   def isPackageAllowed(str: String): Boolean = {
     var isOk = false

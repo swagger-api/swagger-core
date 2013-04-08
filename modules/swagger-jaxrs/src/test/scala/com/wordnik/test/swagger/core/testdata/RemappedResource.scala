@@ -38,4 +38,4 @@ class RemappedResourceJSON extends BasicResource
     listingPath="/resources.json/basic",
     listingClass="com.wordnik.test.swagger.core.testdata.RemappedResourceJSON")
 @Produces(Array("application/json"))
-class RemappedResourceListingJSON extends Help
+class RemappedResourceListingJSON
