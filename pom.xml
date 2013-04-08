@@ -300,7 +300,7 @@
     <module>modules/swagger-jaxrs-utils</module>
     <module>samples/java-jaxrs</module>
     <module>samples/java-alt-resource-listing</module>
-    <module>samples/java-jaxrs-cxf</module>
+    <!--module>samples/java-jaxrs-cxf</module-->
     <!--module>samples/java-dropwizard</module-->
     <!--module>samples/java-resteasy</module-->
     <module>samples/scala-jaxrs</module>
