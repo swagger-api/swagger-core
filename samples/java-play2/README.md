@@ -9,14 +9,13 @@ server at http://petstore.swagger.wordnik.com/api/api-docs.json
 ### To build from source
 Please follow instructions to build the top-level [swagger-core project](https://github.com/wordnik/swagger-core)
 
-
 ### To run
 The swagger-play2 module lives in maven central:
 
 ```scala
 val appDependencies: Seq[sbt.ModuleID] = Seq(
   /* your other dependencies */
-  "com.wordnik" %% "swagger-play2" % "1.2.0"
+  "com.wordnik" %% "swagger-play2" % "1.2.2"
 )
 ```
 
@@ -26,9 +25,4 @@ then you can run the sample app:
 play run
 ````
 
-The application will listen on port 9000 and respond to `http://localhost:9000/resources.json`
-
-### Limitations
-Note the following limitations (which will go away very, very soon):
-
-<li>- `api_key` filtering is not implemented</li>
+The application will listen on port 9000 and respond to `http://localhost:9000/api-docs.json`

@@ -11,6 +11,9 @@ framework at http://swagger.wordnik.com.  For more information about Wordnik's A
 visit http://developer.wordnik.com.
 
 ## Version history
+
+v1.2.2 Apr-8 2013
+
 v1.2.0 Nov-27 2012
 
 <li>- Updated listing path to /api-docs.json

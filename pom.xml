@@ -300,6 +300,9 @@
     <module>modules/swagger-jaxrs-utils</module>
     <module>samples/java-jaxrs</module>
     <module>samples/java-alt-resource-listing</module>
+    <module>samples/java-jaxrs-cxf</module>
+    <module>samples/java-dropwizard</module>
+    <module>samples/java-resteasy</module>
     <module>samples/scala-jaxrs</module>
     <module>samples/scala-alt-resource-listing</module>
     <module>samples/scala-jaxrs-jackson2</module>
@@ -434,14 +437,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>scala-tools.org</id>
-      <name>Scala-Tools Maven2 Repository</name>
-      <url>http://scala-tools.org/repo-releases</url>
-    </pluginRepository>
-  </pluginRepositories>
-  <repositories />
   <properties>
     <swagger-core-version>1.0.1</swagger-core-version>
     <felix-version>2.3.4</felix-version>
