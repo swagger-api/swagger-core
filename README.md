@@ -1,5 +1,7 @@
 # Swagger Core library
 
+[![Build Status](https://travis-ci.org/wordnik/swagger-core.png)](https://travis-ci.org/wordnik/swagger-core)
+
 ## [See the Wiki!](https://github.com/wordnik/swagger-core/wiki)
 The [github wiki](https://github.com/wordnik/swagger-core/wiki) contains documentation, samples, etc.  Start there
 
