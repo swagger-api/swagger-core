@@ -1,0 +1,5 @@
+# generated on 4/8/2013
+language: java
+
+jdk:
+  - oraclejdk6
