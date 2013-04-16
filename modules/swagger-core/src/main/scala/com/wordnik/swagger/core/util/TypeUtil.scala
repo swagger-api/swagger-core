@@ -118,6 +118,19 @@ object TypeUtil {
       val listType: Class[_] = classType.asInstanceOf[Class[_]]
       if (isPackageAllowed(listType.getName)) list.add(listType.getName)
     }
+    else {
+      classType match {
+        case e: ParameterizedTypeImpl => {
+          if(e.getActualTypeArguments().size > 0){
+           for(t <- e.getActualTypeArguments) {            
+             val nm = t.asInstanceOf[Class[_]].getName()
+             if(isPackageAllowed(nm)) list.add(nm)
+           }
+          }
+        }
+        case _ =>
+      }
+    }
   }
 
   /**
