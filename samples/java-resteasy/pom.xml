@@ -1,20 +1,76 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.9.1</artifactId>
     <version>1.2.3-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
-
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
   <artifactId>swagger-java-resteasy-sample_2.9.1</artifactId>
   <packaging>war</packaging>
   <name>swagger-java-resteasy</name>
   <version>1.2.3-SNAPSHOT</version>
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1.1</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.6</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty-version}</version>
+        <configuration>
+          <webAppSourceDirectory>target/${project.artifactId}-${project.version}</webAppSourceDirectory>
+          <webDefaultXml>${project.basedir}/conf/jetty/webdefault.xml</webDefaultXml>
+          <stopPort>8079</stopPort>
+          <stopKey>stopit</stopKey>
+          <connectors>
+            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+              <port>8002</port>
+              <maxIdleTime>60000</maxIdleTime>
+              <confidentialPort>8443</confidentialPort>
+            </connector>
+          </connectors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>start-jetty</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <scanIntervalSeconds>0</scanIntervalSeconds>
+              <daemon>true</daemon>
+            </configuration>
+          </execution>
+          <execution>
+            <id>stop-jetty</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
     <dependency>
@@ -44,7 +100,7 @@
     <dependency>
       <groupId>org.codehaus.jettison</groupId>
       <artifactId>jettison</artifactId>
-      <version>${jettison.version}</version>
+      <version>${jettison-version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
@@ -76,72 +132,8 @@
       <artifactId>servlet-api</artifactId>
     </dependency>
   </dependencies>
-
-  <build>
-    <finalName>jaxb-json</finalName>
-    <plugins>
-      <plugin>
-      <groupId>org.scala-tools</groupId>
-      <artifactId>maven-scala-plugin</artifactId>
-      <executions>
-        <execution>
-        <id>scala-compile-first</id>
-        <phase>process-resources</phase>
-        <goals>
-          <goal>add-source</goal>
-          <goal>compile</goal>
-        </goals>
-        </execution>
-        <execution>
-        <id>scala-test-compile</id>
-        <phase>process-test-resources</phase>
-        <goals>
-          <goal>testCompile</goal>
-        </goals>
-        </execution>
-      </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.15</version>
-        <configuration>
-          <!-- By default the artifactId is taken, override it with something simple -->
-          <contextPath>/</contextPath>
-          <scanIntervalSeconds>2</scanIntervalSeconds>
-          <connectors>
-            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-              <port>9095</port>
-              <maxIdleTime>60000</maxIdleTime>
-            </connector>
-          </connectors>
-          <systemProperties>
-            <systemProperty>
-              <name>log4j.configuration</name>
-              <value>file:./log4j.properties</value>
-            </systemProperty>
-          </systemProperties>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   <properties>
-    <jettison.version>1.3.3</jettison.version>
+    <jettison-version>1.3.3</jettison-version>
   </properties>
 </project>
 
