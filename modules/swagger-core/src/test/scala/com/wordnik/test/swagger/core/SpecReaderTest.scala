@@ -192,9 +192,9 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "read objects inside an array " in {
-    var classes: java.util.List[String] = new java.util.ArrayList[String]()
-    classes.add(classOf[TestClassWithArrayOfNonPrimitiveObjects].getName);
+    val classes = List(classOf[TestClassWithArrayOfNonPrimitiveObjects].getName)
     val types = TypeUtil.getReferencedClasses(classes)
+
     assert(types.size() === 2)
   }
 
