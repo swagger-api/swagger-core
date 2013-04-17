@@ -34,7 +34,6 @@ class TypeUtilTest extends FlatSpec with ShouldMatchers {
 			"com.wordnik.test.swagger.core.Furniture", 
 			"com.wordnik.test.swagger.core.Window") & refs
 		).size should be (3)
-		println(refs)
 	}
 }
 
