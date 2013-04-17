@@ -17,12 +17,15 @@
 package com.wordnik.swagger.core.util
 
 import com.wordnik.swagger.core.SwaggerContext
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.lang.reflect._
+
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
 
-import scala.collection.mutable.HashSet
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+import scala.collection.JavaConverters._
+import scala.collection.mutable.{ ListBuffer, HashSet }
 
 object TypeUtil {
   private final val LOGGER: Logger = LoggerFactory.getLogger(TypeUtil.getClass().getName())
@@ -54,29 +57,23 @@ object TypeUtil {
     else false
   }
 
-  /**
-   * @return true if the passed type represents a paramterized array
-   */
-  def isParameterizedArray(genericType: Type): Boolean = {
-    genericType.getClass.isArray
-  }
+  def isParameterizedArray(genericType: Type): Boolean = genericType.getClass.isArray
 
   def isParameterizedScalaOption(genericType: Type): Boolean = {
     var isOption = false
-    val isTypeParameterized: Boolean = classOf[ParameterizedType].isAssignableFrom(genericType.getClass)
-    if (isTypeParameterized) {
-      val parameterizedType: ParameterizedType = genericType.asInstanceOf[ParameterizedType]
-      isOption = (parameterizedType.getRawType == classOf[Option[_]])
+    if(classOf[ParameterizedType].isAssignableFrom(genericType.getClass)) {
+      val tp = genericType.asInstanceOf[ParameterizedType].getRawType
+      (tp == classOf[Option[_]])
     }
-    isOption
+    else false
   }
 
-  private def getWordnikParameterTypes(genericType: Type): java.util.List[String] = {
-    val list = new java.util.ArrayList[String]
+  def getParameterTypes(genericType: Type): List[String] = {
+    val lb = new ListBuffer[String]
     if (isParameterizedList(genericType) || isParameterizedSet(genericType)) {
       val parameterizedType: ParameterizedType = genericType.asInstanceOf[ParameterizedType]
       for (_listType <- parameterizedType.getActualTypeArguments) {
-        checkAndAddConcreteObjectType(_listType, list)
+        checkAndAddConcreteObjectType(_listType, lb)
       }
     } else if (isParameterizedMap(genericType)) {
       val parameterizedType: ParameterizedType = genericType.asInstanceOf[ParameterizedType]
@@ -84,35 +81,35 @@ object TypeUtil {
       val keyType = typeArgs(0)
       val valueType = typeArgs(1)
       if (keyType.isInstanceOf[Class[_]]) {
-        checkAndAddConcreteObjectType(keyType, list)
+        checkAndAddConcreteObjectType(keyType, lb)
       }
       if (valueType.isInstanceOf[Class[_]]) {
-        checkAndAddConcreteObjectType(valueType, list)
+        checkAndAddConcreteObjectType(valueType, lb)
       }
-      list.addAll(getWordnikParameterTypes(keyType))
-      list.addAll(getWordnikParameterTypes(valueType))
+      lb ++= getParameterTypes(keyType)
+      lb ++= getParameterTypes(valueType)
     } else if (isParameterizedScalaOption(genericType)) {
       val parameterizedType: ParameterizedType = genericType.asInstanceOf[ParameterizedType]
       for (optionType <- parameterizedType.getActualTypeArguments) {
-        checkAndAddConcreteObjectType(optionType, list)
+        checkAndAddConcreteObjectType(optionType, lb)
       }
     }
-    list
+    lb.toList
   }
 
-  private def checkAndAddConcreteObjectType(classType: Type, list: java.util.List[String]) {
+  private def checkAndAddConcreteObjectType(classType: Type, lb: ListBuffer[String]) {
     if (classType.getClass.isAssignableFrom(classOf[Class[_]])) {
       val listType: Class[_] = classType.asInstanceOf[Class[_]]
-      if (isPackageAllowed(listType.getName)) list.add(listType.getName)
+      if (isPackageAllowed(listType.getName)) 
+        lb += listType.getName
     }
     else {
       classType match {
         case e: ParameterizedTypeImpl => {
-          if(e.getActualTypeArguments().size > 0){
-           for(t <- e.getActualTypeArguments) {            
-             val nm = t.asInstanceOf[Class[_]].getName()
-             if(isPackageAllowed(nm)) list.add(nm)
-           }
+          for(t <- e.getActualTypeArguments) {            
+            val nm = t.asInstanceOf[Class[_]].getName()
+            if(isPackageAllowed(nm)) 
+              lb += nm
           }
         }
         case _ =>
@@ -123,9 +120,8 @@ object TypeUtil {
   /**
    * Get all classes references by a given list of classes. This includes types of method params and fields
    */
-  def getReferencedClasses(classNameList: java.util.List[String]): java.util.Collection[String] = {
+  def getReferencedClasses(classNameList: List[String]): java.util.Collection[String] = {
     val referencedClasses = new java.util.HashSet[String]
-    import scala.collection.JavaConversions._
     for (className <- classNameList) {
       referencedClasses.addAll(getReferencedClasses(className))
     }
@@ -165,7 +161,7 @@ object TypeUtil {
               if (isPackageAllowed(fieldClass)) {
                 referencedClasses.add(fieldClass)
               } else {
-                referencedClasses.addAll(getWordnikParameterTypes(fieldGenericType))
+                referencedClasses.addAll(getParameterTypes(fieldGenericType).asJava)
               }
             }
           }
@@ -185,7 +181,7 @@ object TypeUtil {
               if (isPackageAllowed(methodReturnClass)) {
                 referencedClasses.add(methodReturnClass)
               } else {
-                referencedClasses.addAll(getWordnikParameterTypes(methodGenericType))
+                referencedClasses.addAll(getParameterTypes(methodGenericType).asJava)
               }
             }
           }

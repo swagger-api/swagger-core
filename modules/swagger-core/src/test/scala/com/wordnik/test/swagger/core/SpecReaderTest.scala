@@ -199,8 +199,7 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "read objects inside a map " in {
-    var classes: java.util.List[String] = new java.util.ArrayList[String]()
-    classes.add(classOf[ObjectWithChildObjectsInMap].getName);
+    val classes = List(classOf[ObjectWithChildObjectsInMap].getName)
     val types = TypeUtil.getReferencedClasses(classes)
     assert(types.size() === 2)
   }
@@ -212,8 +211,7 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "read objects with objects form different element and property names" in {
-    var classes: java.util.List[String] = new java.util.ArrayList[String]()
-    classes.add(classOf[ObjectWithDifferentElementAndPropertyName].getName);
+    val classes = List(classOf[ObjectWithDifferentElementAndPropertyName].getName)
     val types = TypeUtil.getReferencedClasses(classes)
     assert(types.size() === 2)
   }
@@ -233,15 +231,13 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "read objects with objects form scala option properties" in {
-    var classes: java.util.List[String] = new java.util.ArrayList[String]()
-    classes.add(classOf[ScalaCaseClassWithScalaSupportedType].getName);
+    val classes = List(classOf[ScalaCaseClassWithScalaSupportedType].getName)
     val types = TypeUtil.getReferencedClasses(classes)
     assert(types.size() === 3)
   }
 
   it should "read objects from base class for identifying model classes " in {
-    var classes: java.util.List[String] = new java.util.ArrayList[String]()
-    classes.add(classOf[ClassToTestModelClassesFromBaseClass].getName);
+    val classes = List(classOf[ClassToTestModelClassesFromBaseClass].getName);
     val types = TypeUtil.getReferencedClasses(classes)
     assert(types.size() === 2)
   }
@@ -254,8 +250,7 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "not read reference objects form companion object methods" in {
-    var classes:java.util.List[String] = new java.util.ArrayList[String]()
-    classes.add(classOf[TestCompanionObject].getName);
+    val classes = List(classOf[TestCompanionObject].getName)
     val types = TypeUtil.getReferencedClasses(classes)
     assert(types.size() === 1)
   }
