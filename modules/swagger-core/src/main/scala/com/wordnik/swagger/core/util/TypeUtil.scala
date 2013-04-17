@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -107,9 +107,11 @@ object TypeUtil {
       classType match {
         case e: ParameterizedTypeImpl => {
           for(t <- e.getActualTypeArguments) {            
-            val nm = t.asInstanceOf[Class[_]].getName()
-            if(isPackageAllowed(nm)) 
-              lb += nm
+            if(t.isInstanceOf[Class[_]]){
+              val nm = t.asInstanceOf[Class[_]].getName()
+              if(isPackageAllowed(nm)) 
+                lb += nm
+            }
           }
         }
         case _ =>
