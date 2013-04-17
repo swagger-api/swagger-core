@@ -32,15 +32,15 @@ import scala.reflect.BeanProperty
 class TypeUtilTest extends FlatSpec with ShouldMatchers {
   it should "extract required classes" in {
     val refs = TypeUtil.getReferencedClasses("com.wordnik.test.swagger.core.House").asScala.toSet
-    (Set(
-      "com.wordnik.test.swagger.core.House",
-      "com.wordnik.test.swagger.core.Window",
-      "com.wordnik.test.swagger.core.Furniture") & refs
-    ).size should be (3)
 
     ApiPropertiesReader.excludedFieldTypes ++= Seq("Formats", "JsonLike", "Json4S")
+
     val docObj = ApiPropertiesReader.read("com.wordnik.test.swagger.core.House")
-    println(JsonUtil.getJsonMapper.writeValueAsString(docObj))
+    (Set(
+      "com.wordnik.test.swagger.core.House", 
+      "com.wordnik.test.swagger.core.Furniture", 
+      "com.wordnik.test.swagger.core.Window") & refs
+    ).size should be (3)
   }
 }
 
@@ -51,6 +51,7 @@ import org.json4s.jackson.Serialization.write
 
 case class Window(description: String)
 case class Furniture(description: String)
+<<<<<<< HEAD
 case class House(name: String,
   windows: Option[Seq[Window]],
   furniture: Option[Seq[Furniture]]) extends Json4SModule
@@ -86,3 +87,8 @@ trait JsonModule {
  
   def Json : JsonBackend
 }
+=======
+case class House(
+  windows: Option[Seq[Window]] = None,
+  furniture: Option[Seq[Furniture]] = None)
+>>>>>>> a944a9063cdcba9821a4d3c54324c86aab5a56c2
