@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,79 +17,63 @@
 package com.wordnik.swagger.core.util
 
 import com.wordnik.swagger.core.SwaggerContext
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.lang.reflect._
+
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
 
-import scala.collection.mutable.HashSet
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+import scala.collection.JavaConverters._
+import scala.collection.mutable.{ ListBuffer, HashSet }
 
 object TypeUtil {
-  /**
-   * @return true if the passed type represents a paramterized list
-   */
-  def isParameterizedList(genericType: Type): Boolean = {
-    var isList: Boolean = false
-    val isTypeParameterized: Boolean = classOf[ParameterizedType].isAssignableFrom(genericType.getClass)
-    if (isTypeParameterized) {
-      val parameterizedType: ParameterizedType = genericType.asInstanceOf[ParameterizedType]
-      isList = (parameterizedType.getRawType == classOf[java.util.List[_]]) || (parameterizedType.getRawType == classOf[scala.List[_]]) ||
-        (parameterizedType.getRawType == classOf[Seq[_]])
+  private final val LOGGER: Logger = LoggerFactory.getLogger(TypeUtil.getClass().getName())
+  private final val REFERENCED_CLASSES_CACHE: java.util.Map[String, java.util.Set[String]] = new java.util.HashMap[String, java.util.Set[String]]
+
+  val allowablePackages = new HashSet[String]
+
+  def isParameterizedList(gt: Type): Boolean = {
+    if (classOf[ParameterizedType].isAssignableFrom(gt.getClass)) {
+      val tp = gt.asInstanceOf[ParameterizedType].getRawType
+      (tp == classOf[java.util.List[_]] || tp == classOf[scala.List[_]] || tp == classOf[Seq[_]])
     }
-    return isList && isTypeParameterized
+    else false
   }
 
-  /**
-   * @return true if the passed type represents a paramterized set
-   */
   def isParameterizedSet(genericType: Type): Boolean = {
-    var isSet: Boolean = false
-    val isTypeParameterized: Boolean = classOf[ParameterizedType].isAssignableFrom(genericType.getClass)
-    if (isTypeParameterized) {
-      val parameterizedType: ParameterizedType = genericType.asInstanceOf[ParameterizedType]
-      isSet = (parameterizedType.getRawType == classOf[java.util.Set[_]]) || (parameterizedType.getRawType == classOf[Set[_]])
+    if(classOf[ParameterizedType].isAssignableFrom(genericType.getClass)) {
+      val tp = genericType.asInstanceOf[ParameterizedType].getRawType
+      (tp == classOf[java.util.Set[_]] || tp == classOf[Set[_]])
     }
-    return isSet && isTypeParameterized
+    else false
   }
 
-  /**
-   * @return true if the passed type represents a paramterized map
-   */
   def isParameterizedMap(genericType: Type): Boolean = {
-    var isMap: Boolean = false
-    val isTypeParameterized: Boolean = classOf[ParameterizedType].isAssignableFrom(genericType.getClass)
-    if (isTypeParameterized) {
-      val parameterizedType: ParameterizedType = genericType.asInstanceOf[ParameterizedType]
-      isMap = (parameterizedType.getRawType == classOf[java.util.Map[_, _]]) || (parameterizedType.getRawType == classOf[Map[_, _]])
-      if (!isMap) isMap = (parameterizedType.getRawType == classOf[java.util.HashMap[_, _]]);
+    if(classOf[ParameterizedType].isAssignableFrom(genericType.getClass)) {
+      val tp = genericType.asInstanceOf[ParameterizedType].getRawType
+      (tp == classOf[java.util.Map[_, _]] || tp == classOf[java.util.HashMap[_, _]] || tp == classOf[Map[_,_]])
     }
-    return isMap && isTypeParameterized
+    else false
   }
 
-  /**
-   * @return true if the passed type represents a paramterized array
-   */
-  def isParameterizedArray(genericType: Type): Boolean = {
-    var isArray: Boolean = genericType.getClass.isArray
-    return isArray
-  }
+  def isParameterizedArray(genericType: Type): Boolean = genericType.getClass.isArray
 
   def isParameterizedScalaOption(genericType: Type): Boolean = {
     var isOption = false
-    val isTypeParameterized: Boolean = classOf[ParameterizedType].isAssignableFrom(genericType.getClass)
-    if (isTypeParameterized) {
-      val parameterizedType: ParameterizedType = genericType.asInstanceOf[ParameterizedType]
-      isOption = (parameterizedType.getRawType == classOf[Option[_]])
+    if(classOf[ParameterizedType].isAssignableFrom(genericType.getClass)) {
+      val tp = genericType.asInstanceOf[ParameterizedType].getRawType
+      (tp == classOf[Option[_]])
     }
-    return isOption
+    else false
   }
 
-  private def getWordnikParameterTypes(genericType: Type): java.util.List[String] = {
-    var list: java.util.List[String] = new java.util.ArrayList[String]
+  def getParameterTypes(genericType: Type): List[String] = {
+    val lb = new ListBuffer[String]
     if (isParameterizedList(genericType) || isParameterizedSet(genericType)) {
       val parameterizedType: ParameterizedType = genericType.asInstanceOf[ParameterizedType]
       for (_listType <- parameterizedType.getActualTypeArguments) {
-        checkAndAddConcreteObjectType(_listType, list)
+        checkAndAddConcreteObjectType(_listType, lb)
       }
     } else if (isParameterizedMap(genericType)) {
       val parameterizedType: ParameterizedType = genericType.asInstanceOf[ParameterizedType]
@@ -97,35 +81,37 @@ object TypeUtil {
       val keyType = typeArgs(0)
       val valueType = typeArgs(1)
       if (keyType.isInstanceOf[Class[_]]) {
-        checkAndAddConcreteObjectType(keyType, list)
+        checkAndAddConcreteObjectType(keyType, lb)
       }
       if (valueType.isInstanceOf[Class[_]]) {
-        checkAndAddConcreteObjectType(valueType, list)
+        checkAndAddConcreteObjectType(valueType, lb)
       }
-      list.addAll(getWordnikParameterTypes(keyType))
-      list.addAll(getWordnikParameterTypes(valueType))
+      lb ++= getParameterTypes(keyType)
+      lb ++= getParameterTypes(valueType)
     } else if (isParameterizedScalaOption(genericType)) {
       val parameterizedType: ParameterizedType = genericType.asInstanceOf[ParameterizedType]
       for (optionType <- parameterizedType.getActualTypeArguments) {
-        checkAndAddConcreteObjectType(optionType, list)
+        checkAndAddConcreteObjectType(optionType, lb)
       }
     }
-    return list
+    lb.toList
   }
 
-  private def checkAndAddConcreteObjectType(classType: Type, list: java.util.List[String]) {
+  private def checkAndAddConcreteObjectType(classType: Type, lb: ListBuffer[String]) {
     if (classType.getClass.isAssignableFrom(classOf[Class[_]])) {
       val listType: Class[_] = classType.asInstanceOf[Class[_]]
-      if (isPackageAllowed(listType.getName)) list.add(listType.getName)
+      if (isPackageAllowed(listType.getName)) 
+        lb += listType.getName
     }
     else {
       classType match {
         case e: ParameterizedTypeImpl => {
-          if(e.getActualTypeArguments().size > 0){
-           for(t <- e.getActualTypeArguments) {            
-             val nm = t.asInstanceOf[Class[_]].getName()
-             if(isPackageAllowed(nm)) list.add(nm)
-           }
+          for(t <- e.getActualTypeArguments) {            
+            if(t.isInstanceOf[Class[_]]){
+              val nm = t.asInstanceOf[Class[_]].getName()
+              if(isPackageAllowed(nm)) 
+                lb += nm
+            }
           }
         }
         case _ =>
@@ -136,9 +122,8 @@ object TypeUtil {
   /**
    * Get all classes references by a given list of classes. This includes types of method params and fields
    */
-  def getReferencedClasses(classNameList: java.util.List[String]): java.util.Collection[String] = {
-    val referencedClasses: java.util.Set[String] = new java.util.HashSet[String]
-    import scala.collection.JavaConversions._
+  def getReferencedClasses(classNameList: List[String]): java.util.Collection[String] = {
+    val referencedClasses = new java.util.HashSet[String]
     for (className <- classNameList) {
       referencedClasses.addAll(getReferencedClasses(className))
     }
@@ -178,7 +163,7 @@ object TypeUtil {
               if (isPackageAllowed(fieldClass)) {
                 referencedClasses.add(fieldClass)
               } else {
-                referencedClasses.addAll(getWordnikParameterTypes(fieldGenericType))
+                referencedClasses.addAll(getParameterTypes(fieldGenericType).asJava)
               }
             }
           }
@@ -198,7 +183,7 @@ object TypeUtil {
               if (isPackageAllowed(methodReturnClass)) {
                 referencedClasses.add(methodReturnClass)
               } else {
-                referencedClasses.addAll(getWordnikParameterTypes(methodGenericType))
+                referencedClasses.addAll(getParameterTypes(methodGenericType).asJava)
               }
             }
           }
@@ -234,15 +219,6 @@ object TypeUtil {
     isOk
   }
 
-  def addAllowablePackage(p: String) = {
-    p match {
-      case s: String if (s.length() > 0) => allowablePackages += p
-      case _ =>
-    }
-  }
+  def addAllowablePackage(p: String) = Option(p).map(allowablePackages += p)
 
-  val allowablePackages = new HashSet[String]
-
-  private final val LOGGER: Logger = LoggerFactory.getLogger(TypeUtil.getClass().getName())
-  private final val REFERENCED_CLASSES_CACHE: java.util.Map[String, java.util.Set[String]] = new java.util.HashMap[String, java.util.Set[String]]
 }
