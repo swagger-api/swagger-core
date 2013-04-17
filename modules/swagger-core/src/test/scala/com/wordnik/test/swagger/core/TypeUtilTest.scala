@@ -27,18 +27,18 @@ import org.scalatest.matchers.ShouldMatchers
 
 @RunWith(classOf[JUnitRunner])
 class TypeUtilTest extends FlatSpec with ShouldMatchers {
-	it should "extract required classes" in {
-		val refs = TypeUtil.getReferencedClasses("com.wordnik.test.swagger.core.House").asScala.toSet
-		(Set(
-			"com.wordnik.test.swagger.core.House", 
-			"com.wordnik.test.swagger.core.Furniture", 
-			"com.wordnik.test.swagger.core.Window") & refs
-		).size should be (3)
-	}
+  it should "extract required classes" in {
+    val refs = TypeUtil.getReferencedClasses("com.wordnik.test.swagger.core.House").asScala.toSet
+    (Set(
+      "com.wordnik.test.swagger.core.House", 
+      "com.wordnik.test.swagger.core.Furniture", 
+      "com.wordnik.test.swagger.core.Window") & refs
+    ).size should be (3)
+  }
 }
 
 case class Window(description: String)
 case class Furniture(description: String)
 case class House(
-	windows: Option[Seq[Window]] = None,
+  windows: Option[Seq[Window]] = None,
   furniture: Option[Seq[Furniture]] = None)
