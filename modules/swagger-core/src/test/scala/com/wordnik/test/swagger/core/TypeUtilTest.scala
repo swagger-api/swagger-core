@@ -51,7 +51,6 @@ import org.json4s.jackson.Serialization.write
 
 case class Window(description: String)
 case class Furniture(description: String)
-<<<<<<< HEAD
 case class House(name: String,
   windows: Option[Seq[Window]],
   furniture: Option[Seq[Furniture]]) extends Json4SModule
@@ -87,8 +86,3 @@ trait JsonModule {
  
   def Json : JsonBackend
 }
-=======
-case class House(
-  windows: Option[Seq[Window]] = None,
-  furniture: Option[Seq[Furniture]] = None)
->>>>>>> a944a9063cdcba9821a4d3c54324c86aab5a56c2
