@@ -17,7 +17,9 @@
 package com.wordnik.test.swagger.integration
 
 import com.wordnik.swagger.core._
-import com.wordnik.swagger.core.util.JsonUtil
+import com.wordnik.swagger.core.util._
+
+import com.wordnik.swagger.sample.model._
 
 import org.junit.runner.RunWith
 
@@ -61,5 +63,14 @@ class ResourceListingIT extends FlatSpec with ShouldMatchers {
 
     var param = doc.getApis.filter(api => api.getPath == "/user.{format}/createWithList")(0).getOperations()(0).getParameters()(0)
     assert(param.getDataType() === "List[User]")
+  }
+
+  it should "fetch a pet" in {
+    val json = Source.fromURL("http://localhost:8002/api/pet.json/1").mkString
+    val pet = ScalaJsonUtil.getJsonMapper.readValue(json, classOf[Pet])
+    
+    pet.id should be (1)
+    pet.name should be ("Cat 1")
+    pet.category should be (Category(2, "Cats"))
   }
 }
