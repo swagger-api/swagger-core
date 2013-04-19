@@ -50,15 +50,15 @@ class TypeUtilTest extends FlatSpec with ShouldMatchers {
 
     val fieldNames = (
       for(field <- docObj.getFields.asScala) yield field.name
-    ).toList
+    ).toSet
 
-    fieldNames should be (List("name", "windows", "furniture", "occupantCount"))
+    fieldNames should be (Set("name", "windows", "furniture", "occupantCount"))
 
     val fieldTypes = (
       for(field <- docObj.getFields.asScala) yield field.paramType
-    ).toList
+    ).toSet
 
-    fieldTypes should be (List("string", "List[Window]", "List[Furniture]", "int"))
+    fieldTypes should be (Set("string", "List[Window]", "List[Furniture]", "int"))
   }
 }
 
@@ -99,3 +99,4 @@ trait JsonModule {
   }
   def Json : JsonBackend
 }
+
