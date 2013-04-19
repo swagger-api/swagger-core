@@ -225,9 +225,13 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
 
   it should "read properties for scala case classes " in {
     val docObj = ApiPropertiesReader.read(classOf[ScalaCaseClassWithScalaSupportedType].getName)
-    expect(11) {
-      docObj.getFields.size()
-    }
+    docObj.getFields.size should be (11)
+    val fieldNames = (
+      for(field <- docObj.getFields) yield field.name
+    ).toList
+
+    fieldNames should be (List("intType", "longType", "stringType", "dateType",
+      "mapType", "optionType", "seqType", "setType", "seqOfTuples", "enumType", "collectionOfCollections"))
   }
 
   it should "read objects with objects form scala option properties" in {
