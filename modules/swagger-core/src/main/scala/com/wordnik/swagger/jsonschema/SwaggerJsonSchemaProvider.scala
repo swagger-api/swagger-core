@@ -200,34 +200,34 @@ class ApiModelParser(val hostClass: Class[_]) extends BaseApiParser {
     var isJsonProperty = false
     for (ma <- annotations) {
       ma match {
-        case xmlTransient: XmlTransient => isTransient = true
-        case apiProperty: ApiProperty => {
-          docParam.description = readString(apiProperty.value)
-          docParam.notes = readString(apiProperty.notes)
-          docParam.paramType = readString(apiProperty.dataType)
-          if(apiProperty.required) docParam.required = apiProperty.required
+        case p: XmlTransient => isTransient = true
+        case p: ApiProperty => {
+          docParam.description = readString(p.value)
+          docParam.notes = readString(p.notes)
+          docParam.paramType = readString(p.dataType)
+          if(p.required) docParam.required = p.required
 
           isDocumented = true
           try {
-            docParam.allowableValues = convertToAllowableValues(apiProperty.allowableValues)
+            docParam.allowableValues = convertToAllowableValues(p.allowableValues)
           } catch {
             case e: RuntimeException => LOGGER.error("Allowable values annotation is wrong in for parameter " + docParam.name); e.printStackTrace();
           }
-          docParam.paramAccess = readString(apiProperty.access)
+          docParam.paramAccess = readString(p.access)
         }
-        case xmlAttribute: XmlAttribute => {
-          docParam.name = readString(xmlAttribute.name, docParam.name, "##default")
+        case p: XmlAttribute => {
+          docParam.name = readString(p.name, docParam.name, "##default")
           docParam.name = readString(name, docParam.name)
-          if(docParam.required) docParam.required = xmlAttribute.required
+          if(docParam.required) docParam.required = p.required
           isXmlElement = true
         }
-        case xmlElement: XmlElement => {
-          docParam.name = readString(xmlElement.name, docParam.name, "##default")
+        case p: XmlElement => {
+          docParam.name = readString(p.name, docParam.name, "##default")
           docParam.name = readString(name, docParam.name)
-          docParam.defaultValue = readString(xmlElement.defaultValue, docParam.defaultValue, "\u0000")
+          docParam.defaultValue = readString(p.defaultValue, docParam.defaultValue, "\u0000")
 
-          docParam.required = xmlElement.required
-          val typeValueObj = xmlElementTypeMethod.invoke(xmlElement)
+          docParam.required = p.required
+          val typeValueObj = xmlElementTypeMethod.invoke(p)
           val typeValue = if (typeValueObj == null) null else typeValueObj.asInstanceOf[Class[_]]
           isXmlElement = true
           // docParam.paramType = readString(if (typeValue != null) typeValue.getName else null, docParam.paramType)
