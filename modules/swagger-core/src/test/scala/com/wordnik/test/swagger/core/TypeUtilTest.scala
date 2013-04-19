@@ -48,7 +48,6 @@ class TypeUtilTest extends FlatSpec with ShouldMatchers {
 
     val docObj = ApiPropertiesReader.read("com.wordnik.test.swagger.core.House")
 
-    println(JsonUtil.getJsonMapper.writeValueAsString(docObj))
     val fieldNames = (
       for(field <- docObj.getFields.asScala) yield field.name
     ).toList
@@ -62,6 +61,7 @@ class TypeUtilTest extends FlatSpec with ShouldMatchers {
     fieldTypes should be (List("string", "List[Window]", "List[Furniture]", "int"))
   }
 }
+
 
 import org.json4s._
 import jackson.{Serialization, JsonMethods}

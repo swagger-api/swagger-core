@@ -228,9 +228,9 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
     docObj.getFields.size should be (11)
     val fieldNames = (
       for(field <- docObj.getFields) yield field.name
-    ).toList
+    ).toSet
 
-    fieldNames should be (List("intType", "longType", "stringType", "dateType",
+    fieldNames should be (Set("intType", "longType", "stringType", "dateType",
       "mapType", "optionType", "seqType", "setType", "seqOfTuples", "enumType", "collectionOfCollections"))
   }
 
