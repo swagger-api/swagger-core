@@ -40,7 +40,7 @@ import scala.collection.JavaConversions._
  *
  */
 object ApiHelpInventory {
-  Logger.debug("ApiHelpInventory.init")
+  Logger("swagger").debug("ApiHelpInventory.init")
   // Add the Play classloader to Swagger
   SwaggerContext.registerClassLoader(current.classloader)
 
@@ -114,7 +114,7 @@ object ApiHelpInventory {
         }.replaceAll("\\.json", PlayApiReader.formatString).replaceAll("\\.xml", PlayApiReader.formatString)
         val realPath = apiAnnotation.value.replaceAll("\\.json", PlayApiReader.formatString).replaceAll("\\.xml", PlayApiReader.formatString)
 
-        Logger.debug("Loading resource " + qualifiedResourceName + " from " + cls + " @ " + realPath + ", " + basePath)
+        Logger("swagger").debug("Loading resource " + qualifiedResourceName + " from " + cls + " @ " + realPath + ", " + basePath)
         val api = PlayApiReader.read(cls, apiVersion, swaggerVersion, basePath, realPath)
         val docs = new HelpApi(apiFilterClassName).filterDocs(api, realPath)
         Option(docs)
@@ -165,10 +165,10 @@ object ApiHelpInventory {
     clear()
     this.getRootResources("json")(null)
     for (resource <- this.getResourceMap.keys) {
-      Logger.debug("loading resource " + resource)
+      Logger("swagger").debug("loading resource " + resource)
       getResource(resource)(null) match {
-        case Some(docs) => Logger.debug("loaded resource " + resource)
-        case None => Logger.debug("load failed for resource " + resource)
+        case Some(docs) => Logger("swagger").debug("loaded resource " + resource)
+        case None => Logger("swagger").debug("load failed for resource " + resource)
       }
     }
   }
@@ -200,14 +200,14 @@ object ApiHelpInventory {
             this.controllerClasses += cls;
             val apiAnnotation = cls.getAnnotation(classOf[Api])
             if (apiAnnotation != null) {
-              Logger.debug("Found Resource " + apiAnnotation.value + " @ " + clazzName)
+              Logger("swagger").debug("Found Resource " + apiAnnotation.value + " @ " + clazzName)
               val path = {
                 if(apiAnnotation.listingPath != "") apiAnnotation.listingPath
                 else apiAnnotation.value
               }.replaceAll("\\.json", PlayApiReader.formatString).replaceAll("\\.xml", PlayApiReader.formatString)
               resourceMap += path -> cls
             } else {
-              Logger.debug("class " + clazzName + " is not the right type")
+              Logger("swagger").debug("class " + clazzName + " is not the right type")
             }
           })
         }

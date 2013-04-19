@@ -88,7 +88,7 @@ object ApiHelpController extends SwaggerBaseApiController {
       case Some(help) => returnValue(request, help)
       case None => {
         val msg = new ErrorResponse(500, "api listing for path " + path + " not found")
-        Logger.error(msg.message)
+        Logger("swagger").error(msg.message)
         returnXml(request) match {
           case true => {
             new SimpleResult[String](header = ResponseHeader(500), body = play.api.libs.iteratee.Enumerator(toXmlString(msg))).as("application/xml")
