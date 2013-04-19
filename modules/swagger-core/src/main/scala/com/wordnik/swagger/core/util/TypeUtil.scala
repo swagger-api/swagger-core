@@ -106,7 +106,7 @@ object TypeUtil {
     else {
       classType match {
         case e: ParameterizedTypeImpl => {
-          for(t <- e.getActualTypeArguments) {            
+          for(t <- e.getActualTypeArguments) {
             if(t.isInstanceOf[Class[_]]){
               val nm = t.asInstanceOf[Class[_]].getName()
               if(isPackageAllowed(nm)) 
@@ -127,7 +127,7 @@ object TypeUtil {
     for (className <- classNameList) {
       referencedClasses.addAll(getReferencedClasses(className))
     }
-    return referencedClasses
+    referencedClasses
   }
 
   /**
@@ -136,7 +136,7 @@ object TypeUtil {
   def getReferencedClasses(className: String): java.util.Collection[String] = {
     if (REFERENCED_CLASSES_CACHE.containsKey(className)) return REFERENCED_CLASSES_CACHE.get(className)
     else {
-      val referencedClasses: java.util.Set[String] = new java.util.HashSet[String]
+      val referencedClasses = new java.util.HashSet[String]
       if (className.indexOf(".") > 0) {
         referencedClasses.add(className)
         var clazz: Class[_] = null
@@ -150,7 +150,7 @@ object TypeUtil {
         if (clazz != null) {
           for (field <- clazz.getFields) {
             if (Modifier.isPublic(field.getModifiers) && !Modifier.isStatic(field.getModifiers)) {
-              var fieldClass: String = field.getType.getName
+              var fieldClass = field.getType.getName
               var fieldGenericType = field.getGenericType
               field.getType.isArray match {
                 case true => {

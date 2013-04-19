@@ -20,9 +20,9 @@ class JavaSpecReaderTest extends FlatSpec with ShouldMatchers {
   behavior of "Java Spec reader"
 
   it should "not create swagger doc model for java ENUM classes " in {
-    var classes:java.util.List[String] = new java.util.ArrayList[String]()
-    classes.add(classOf[TestClassWithJavaEnums].getName);
+    val classes = List(classOf[TestClassWithJavaEnums].getName)
     val types = TypeUtil.getReferencedClasses(classes)
+
     var docs = new java.util.ArrayList[DocumentationObject]()
     types.asScala.foreach(t => {
       val c = SwaggerContext.loadClass(t)

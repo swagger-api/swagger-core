@@ -16,6 +16,7 @@
 
 package com.wordnik.test.swagger.core
 
+import com.wordnik.swagger.annotations.ApiProperty
 import com.wordnik.swagger.core.util._
 import com.wordnik.swagger.core.ApiPropertiesReader
 
@@ -27,33 +28,52 @@ import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 
 import scala.reflect.BeanProperty
+import scala.annotation.target.field
 
 @RunWith(classOf[JUnitRunner])
 class TypeUtilTest extends FlatSpec with ShouldMatchers {
   it should "extract required classes" in {
     val refs = TypeUtil.getReferencedClasses("com.wordnik.test.swagger.core.House").asScala.toSet
-    (Set(
-      "com.wordnik.test.swagger.core.House",
-      "com.wordnik.test.swagger.core.Window",
-      "com.wordnik.test.swagger.core.Furniture") & refs
-    ).size should be (3)
 
     ApiPropertiesReader.excludedFieldTypes ++= Seq("Formats", "JsonLike", "Json4S")
+    (Set(
+      "com.wordnik.test.swagger.core.House", 
+      "com.wordnik.test.swagger.core.Furniture", 
+      "com.wordnik.test.swagger.core.Window") & refs
+    ).size should be (3)
+  }
+
+  it should "read the correct fields" in {
+    ApiPropertiesReader.excludedFieldTypes ++= Seq("Formats", "JsonLike", "Json4S")
+
     val docObj = ApiPropertiesReader.read("com.wordnik.test.swagger.core.House")
-    println(JsonUtil.getJsonMapper.writeValueAsString(docObj))
+
+    val fieldNames = (
+      for(field <- docObj.getFields.asScala) yield field.name
+    ).toList
+
+    fieldNames should be (List("name", "windows", "furniture", "occupantCount"))
+
+    val fieldTypes = (
+      for(field <- docObj.getFields.asScala) yield field.paramType
+    ).toList
+
+    fieldTypes should be (List("string", "List[Window]", "List[Furniture]", "int"))
   }
 }
+
 
 import org.json4s._
 import jackson.{Serialization, JsonMethods}
 import org.json4s.jackson.Serialization.write
- 
 
 case class Window(description: String)
 case class Furniture(description: String)
 case class House(name: String,
   windows: Option[Seq[Window]],
-  furniture: Option[Seq[Furniture]]) extends Json4SModule
+  furniture: Option[Seq[Furniture]],
+  @(ApiProperty @field)(notes="number of occupants", dataType="int", required=false) occupantCount: Option[Int] = None
+) extends Json4SModule
  
 trait Json4SModule extends JsonModule {
   type JsonBackend = Json4S
@@ -62,27 +82,20 @@ trait Json4SModule extends JsonModule {
  
   class Json4S extends JsonLike {
     this: JsonBackend =>
- 
     def generate[A <: AnyRef : Manifest](obj: A): String = write[A](obj)
- 
     def parse[A](input: String)(implicit m : Manifest[A]): A = JsonMethods.parse(input).extract[A]
- 
     def toMap(input: String): Map[String, Any] = JsonMethods.parse(input).asInstanceOf[JObject].values
   }
   override val Json = new Json4S
 }
  
 trait JsonModule {
- 
   type JsonBackend <: JsonLike
  
   trait JsonLike {
     this: JsonBackend =>
- 
     def generate[A <: AnyRef : Manifest](obj: A): String
- 
     def parse[A](input: String)(implicit m: Manifest[A]): A
   }
- 
   def Json : JsonBackend
 }
