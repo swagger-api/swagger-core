@@ -90,8 +90,8 @@ class HelpApi {
             LOGGER.error("Skipping model " + t + ". Did not find any public fields or bean-properties in this model. If its a scala class its fields might not have @BeanProperty annotation added to its fields.")
         }
       } catch {
-        case e: ClassNotFoundException => LOGGER.error("Unable to resolve class " + t);
-        case e: Exception => LOGGER.error("Unable to load model documentation for " + t, e)
+        case e: ClassNotFoundException => LOGGER.warn("Unable to resolve class " + t);
+        case e: Exception => LOGGER.warn("Unable to load model documentation for " + t, e)
       }
     })
   }

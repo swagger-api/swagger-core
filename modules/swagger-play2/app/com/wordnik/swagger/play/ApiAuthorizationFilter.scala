@@ -39,8 +39,8 @@ object ApiAuthorizationFilterLocator {
       try {
         apiFilter = SwaggerContext.loadClass(apiFilterClassName).newInstance.asInstanceOf[ApiAuthorizationFilter]
       } catch {
-        case e: ClassNotFoundException => Logger.error("Unable to resolve apiFilter class " + apiFilterClassName);
-        case e: ClassCastException => Logger.error("Unable to cast to apiFilter class " + apiFilterClassName);
+        case e: ClassNotFoundException => Logger("swagger").error("Unable to resolve apiFilter class " + apiFilterClassName);
+        case e: ClassCastException => Logger("swagger").error("Unable to cast to apiFilter class " + apiFilterClassName);
       }
       apiFilterLoadAttempted = true
     }  
