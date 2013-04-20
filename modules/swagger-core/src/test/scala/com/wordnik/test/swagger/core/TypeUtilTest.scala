@@ -33,7 +33,7 @@ import scala.annotation.target.field
 @RunWith(classOf[JUnitRunner])
 class TypeUtilTest extends FlatSpec with ShouldMatchers {
   it should "extract required classes" in {
-    val refs = TypeUtil.getReferencedClasses("com.wordnik.test.swagger.core.House").asScala.toSet
+    val refs = TypeUtil.getReferencedClasses("com.wordnik.test.swagger.core.House")
 
     ApiPropertiesReader.excludedFieldTypes ++= Seq("Formats", "JsonLike", "Json4S")
     (Set(

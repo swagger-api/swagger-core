@@ -17,6 +17,7 @@
 package com.wordnik.swagger.core.util
 
 import com.wordnik.swagger.core.SwaggerContext
+
 import java.lang.reflect._
 
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
@@ -70,38 +71,38 @@ object TypeUtil {
 
   def getParameterTypes(genericType: Type): List[String] = {
     val lb = new ListBuffer[String]
-    if (isParameterizedList(genericType) || isParameterizedSet(genericType)) {
-      val parameterizedType: ParameterizedType = genericType.asInstanceOf[ParameterizedType]
-      for (_listType <- parameterizedType.getActualTypeArguments) {
-        checkAndAddConcreteObjectType(_listType, lb)
-      }
-    } else if (isParameterizedMap(genericType)) {
-      val parameterizedType: ParameterizedType = genericType.asInstanceOf[ParameterizedType]
-      val typeArgs = parameterizedType.getActualTypeArguments
-      val keyType = typeArgs(0)
-      val valueType = typeArgs(1)
-      if (keyType.isInstanceOf[Class[_]]) {
-        checkAndAddConcreteObjectType(keyType, lb)
-      }
-      if (valueType.isInstanceOf[Class[_]]) {
-        checkAndAddConcreteObjectType(valueType, lb)
-      }
-      lb ++= getParameterTypes(keyType)
-      lb ++= getParameterTypes(valueType)
-    } else if (isParameterizedScalaOption(genericType)) {
-      val parameterizedType: ParameterizedType = genericType.asInstanceOf[ParameterizedType]
-      for (optionType <- parameterizedType.getActualTypeArguments) {
-        checkAndAddConcreteObjectType(optionType, lb)
+    if(genericType.isInstanceOf[ParameterizedType]) {
+      val parameterizedType = genericType.asInstanceOf[ParameterizedType]
+      if (isParameterizedList(genericType) || isParameterizedSet(genericType)) {
+        for (listType <- parameterizedType.getActualTypeArguments)
+          lb ++= extractConcreteObjectTypes(listType)
+      } else if (isParameterizedMap(genericType)) {
+        val typeArgs = parameterizedType.getActualTypeArguments
+        val keyType = typeArgs(0)
+        val valueType = typeArgs(1)
+        if (keyType.isInstanceOf[Class[_]])
+          lb ++= extractConcreteObjectTypes(keyType)
+        if (valueType.isInstanceOf[Class[_]])
+          lb ++= extractConcreteObjectTypes(valueType)
+        lb ++= getParameterTypes(keyType)
+        lb ++= getParameterTypes(valueType)
+      } else if (isParameterizedScalaOption(genericType)) {
+        for (optionType <- parameterizedType.getActualTypeArguments) {
+          lb ++= extractConcreteObjectTypes(optionType)
+        }
       }
     }
     lb.toList
   }
 
-  private def checkAndAddConcreteObjectType(classType: Type, lb: ListBuffer[String]) {
+  private def extractConcreteObjectTypes(classType: Type): List[String] = {
+    val output = new ListBuffer[String]
+
     if (classType.getClass.isAssignableFrom(classOf[Class[_]])) {
       val listType: Class[_] = classType.asInstanceOf[Class[_]]
-      if (isPackageAllowed(listType.getName)) 
-        lb += listType.getName
+      if (isPackageAllowed(listType.getName)) {
+        output += listType.getName
+      }
     }
     else {
       classType match {
@@ -110,115 +111,94 @@ object TypeUtil {
             if(t.isInstanceOf[Class[_]]){
               val nm = t.asInstanceOf[Class[_]].getName()
               if(isPackageAllowed(nm)) 
-                lb += nm
+                output += nm
             }
           }
         }
         case _ =>
       }
     }
+    output.toList
   }
 
-  /**
-   * Get all classes references by a given list of classes. This includes types of method params and fields
-   */
-  def getReferencedClasses(classNameList: List[String]): java.util.Collection[String] = {
-    val referencedClasses = new java.util.HashSet[String]
-    for (className <- classNameList) {
-      referencedClasses.addAll(getReferencedClasses(className))
-    }
-    referencedClasses
+  def getReferencedClasses(list: List[String]): Set[String] = {
+    (for(name <- list) 
+      yield getReferencedClasses(name)
+    ).flatMap(x => x).toSet
   }
 
-  /**
-   * Get all classes references by a given class. This includes types of method params and fields
-   */
-  def getReferencedClasses(className: String): java.util.Collection[String] = {
-    if (REFERENCED_CLASSES_CACHE.containsKey(className)) return REFERENCED_CLASSES_CACHE.get(className)
-    else {
-      val referencedClasses = new java.util.HashSet[String]
-      if (className.indexOf(".") > 0) {
-        referencedClasses.add(className)
-        var clazz: Class[_] = null
-        try {
-          clazz = SwaggerContext.loadClass(className)
-        } catch {
-          case e: Exception => {
-            LOGGER.error("Unable to load class " + className)
+  def getReferencedClasses(className: String): Set[String] = {
+    REFERENCED_CLASSES_CACHE.asScala.getOrElseUpdate(className, {
+      if(className.indexOf(".") > 0) {
+        (Set(className) ++ {
+          try {
+            val cls = SwaggerContext.loadClass(className)
+            referencesInFields(cls) ++ referencesInMethods(cls)
+          } catch {
+            case e: Exception => LOGGER.error("Unable to load class " + className)
+            Set[String]().empty
           }
-        }
-        if (clazz != null) {
-          for (field <- clazz.getFields) {
-            if (Modifier.isPublic(field.getModifiers) && !Modifier.isStatic(field.getModifiers)) {
-              var fieldClass = field.getType.getName
-              var fieldGenericType = field.getGenericType
-              field.getType.isArray match {
-                case true => {
-                  if (!field.getType.getClass.isAssignableFrom(classOf[ParameterizedTypeImpl])) {
-                    fieldClass = field.getType.asInstanceOf[Class[_]].getComponentType.getName
-                  }
-                }
-                case _ =>
-              }
-              if (isPackageAllowed(fieldClass)) {
-                referencedClasses.add(fieldClass)
-              } else {
-                referencedClasses.addAll(getParameterTypes(fieldGenericType).asJava)
-              }
-            }
-          }
-          for (method <- clazz.getMethods) {
-            if (Modifier.isPublic(method.getModifiers) && !Modifier.isStatic(method.getModifiers)) {
-              var methodReturnClass: String = method.getReturnType.getName
-              var methodGenericType = method.getGenericReturnType
+        }).asJava
+      }
+      else Set[String]().empty.asJava
+    }).asScala.toSet
+  }
 
-              method.getReturnType.isArray match {
-                case true => {
-                  if (!method.getReturnType.getClass.isAssignableFrom(classOf[ParameterizedTypeImpl])) {
-                    methodReturnClass = method.getReturnType.asInstanceOf[Class[_]].getComponentType.getName
-                  }
-                }
-                case _ =>
-              }
-              if (isPackageAllowed(methodReturnClass)) {
-                referencedClasses.add(methodReturnClass)
-              } else {
-                referencedClasses.addAll(getParameterTypes(methodGenericType).asJava)
-              }
-            }
+  def referencesInFields(cls: Class[_]): Set[String] = {
+    (for (field <- cls.getFields) yield {
+      println("looking at field " + field)
+      if (Modifier.isPublic(field.getModifiers) && !Modifier.isStatic(field.getModifiers)) {
+        val fieldClass = {
+          if(field.getType.isArray) {
+            if (!field.getType.getClass.isAssignableFrom(classOf[ParameterizedTypeImpl]))
+              field.getType.asInstanceOf[Class[_]].getComponentType.getName
+            else field.getType.getName
           }
+          else field.getType.getName
+        }
+        if (isPackageAllowed(fieldClass)) Set(fieldClass)
+        else {
+          getParameterTypes(field.getGenericType).toSet
         }
       }
-      REFERENCED_CLASSES_CACHE.put(className, referencedClasses)
-      val additionalClasses: java.util.Set[String] = new java.util.HashSet[String]
-      import scala.collection.JavaConversions._
-      for (referencedClass <- referencedClasses) {
-        if (!REFERENCED_CLASSES_CACHE.containsKey(referencedClass)) {
-          additionalClasses.addAll(getReferencedClasses(referencedClass))
+      else Set[String]().empty
+    }).flatten.toSet
+  }
+
+  def referencesInMethods(cls: Class[_]): Set[String] = {
+    (for (method <- cls.getMethods) yield {
+      if (Modifier.isPublic(method.getModifiers) && !Modifier.isStatic(method.getModifiers)) {
+        val methodReturnClass: String = {
+          if(method.getReturnType.isArray) {
+            if (!method.getReturnType.getClass.isAssignableFrom(classOf[ParameterizedTypeImpl]))
+              method.getReturnType.asInstanceOf[Class[_]].getComponentType.getName
+            else method.getReturnType.getName
+          }
+          else method.getReturnType.getName
         }
+        if (isPackageAllowed(methodReturnClass)) Set(methodReturnClass)
+        else getParameterTypes(method.getGenericReturnType)
       }
-      referencedClasses.addAll(additionalClasses)
-      return referencedClasses
-    }
+      else Set[String]().empty
+    }).flatten.toSet
   }
 
   val packagesToSkip = Set("scala", "byte", "char", "java", "int", "long", "String", "boolean", "void", "[Ljava")
 
   def isPackageAllowed(str: String): Boolean = {
-    var isOk = false
-    allowablePackages.size match {
-      case 0 => {
-        isOk = true
-        packagesToSkip.foreach(a => if (str.startsWith(a)) isOk = false)
-      }
-      case _ => {
-        isOk = false
-        allowablePackages.foreach(a => if (str.startsWith(a)) isOk = true)
-      }
+    if(allowablePackages.size > 0) {
+      (for(name <- allowablePackages) yield {
+        if(str.startsWith(name)) Some(true)
+        else None
+      }).flatten.size > 0
     }
-    isOk
+    else {
+      (for(name <- packagesToSkip) yield {
+        if(str.startsWith(name)) Some(true)
+        else None
+      }).flatten.size == 0
+    }
   }
 
   def addAllowablePackage(p: String) = Option(p).map(allowablePackages += p)
-
 }
