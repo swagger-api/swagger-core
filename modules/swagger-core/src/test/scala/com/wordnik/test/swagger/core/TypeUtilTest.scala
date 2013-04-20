@@ -99,4 +99,3 @@ trait JsonModule {
   }
   def Json : JsonBackend
 }
-

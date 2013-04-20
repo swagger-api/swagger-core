@@ -47,8 +47,8 @@
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-scala</artifactId>
-      <version>2.0.0</version>
+      <artifactId>jackson-module-scala_2.9.1</artifactId>
+      <version>${jackson-scala-version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -68,6 +68,7 @@
       <artifactId>swagger-annotations_2.9.1</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
+
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
@@ -80,21 +81,17 @@
       <version>1.2</version>
       <scope>test</scope>
     </dependency>
-
-
-<dependency>
-  <groupId>org.json4s</groupId>
-  <artifactId>json4s-ext_2.9.1-1</artifactId>
-  <version>3.1.0</version>
-  <scope>test</scope>
-</dependency>
-
-<dependency>
-  <groupId>org.json4s</groupId>
-  <artifactId>json4s-jackson_2.9.1-1</artifactId>
-  <version>3.1.0</version>
-  <scope>test</scope>
-</dependency>
-
+    <dependency>
+      <groupId>org.json4s</groupId>
+      <artifactId>json4s-ext_2.9.1-1</artifactId>
+      <version>3.1.0</version>
+      <scope>test</scope>
+    </dependency>    
+    <dependency>
+      <groupId>org.json4s</groupId>
+      <artifactId>json4s-jackson_2.9.1-1</artifactId>
+      <version>3.1.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
