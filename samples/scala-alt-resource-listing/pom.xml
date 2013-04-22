@@ -71,9 +71,6 @@
             <goals>
               <goal>stop</goal>
             </goals>
-            <configuration>
-              <scanIntervalSeconds>0</scanIntervalSeconds>
-            </configuration>
           </execution>
         </executions>
       </plugin>
