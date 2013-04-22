@@ -130,10 +130,7 @@ object TypeUtil {
   def getReferencedClasses(className: String): Set[String] = {
     val regex = """[\w]*\[(.*?)\]""".r
     val cls = className match {
-      case regex(inner) => {
-        println(className + " => " + inner)
-        inner
-      }
+      case regex(inner) => inner
       case _ => className
     }
     REFERENCED_CLASSES_CACHE.asScala.getOrElseUpdate(cls, {
@@ -154,7 +151,6 @@ object TypeUtil {
 
   def referencesInFields(cls: Class[_]): Set[String] = {
     (for (field <- cls.getFields) yield {
-      println("looking at field " + field)
       if (Modifier.isPublic(field.getModifiers) && !Modifier.isStatic(field.getModifiers)) {
         val fieldClass = {
           if(field.getType.isArray) {
