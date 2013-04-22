@@ -40,20 +40,16 @@ trait UserResource extends RestResourceUtil {
   @POST
   @Path("/createWithArray")
   @ApiOperation(value = "Creates list of users with given input array")
-  def createUsersWithArrayInput(@ApiParam(value = "List of user object", required = true) users: Array[User]): Response = {
-    for (user <- users) {
-      UserData.addUser(user)
-    }
+  def createUsersWithArrayInput(@ApiParam(value = "List of user object", required = true) users: List[User]): Response = {
+    users.foreach(user => UserData.addUser(user))
     Response.ok.entity("").build
   }
 
   @POST
   @Path("/createWithList")
   @ApiOperation(value = "Creates list of users with given list input")
-  def createUsersWithListInput(@ApiParam(value = "List of user object", required = true) users: java.util.List[User]): Response = {
-    for (user <- users.asScala) {
-      UserData.addUser(user)
-    }
+  def createUsersWithListInput(@ApiParam(value = "List of user object", required = true) users: List[User]): Response = {
+    users.foreach(user => UserData.addUser(user))
     Response.ok.entity("").build
   }
 
