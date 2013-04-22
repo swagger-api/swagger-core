@@ -128,14 +128,19 @@ object TypeUtil {
   }
 
   def getReferencedClasses(className: String): Set[String] = {
-    REFERENCED_CLASSES_CACHE.asScala.getOrElseUpdate(className, {
-      if(className.indexOf(".") > 0) {
-        (Set(className) ++ {
+    val regex = """[\w]*\[(.*?)\]""".r
+    val cls = className match {
+      case regex(inner) => inner
+      case _ => className
+    }
+    REFERENCED_CLASSES_CACHE.asScala.getOrElseUpdate(cls, {
+      if(cls.indexOf(".") > 0) {
+        (Set(cls) ++ {
           try {
-            val cls = SwaggerContext.loadClass(className)
-            referencesInFields(cls) ++ referencesInMethods(cls)
+            val loadedClass = SwaggerContext.loadClass(cls)
+            referencesInFields(loadedClass) ++ referencesInMethods(loadedClass)
           } catch {
-            case e: Exception => LOGGER.error("Unable to load class " + className)
+            case e: Exception => LOGGER.error("Unable to load class " + cls)
             Set[String]().empty
           }
         }).asJava
@@ -146,7 +151,6 @@ object TypeUtil {
 
   def referencesInFields(cls: Class[_]): Set[String] = {
     (for (field <- cls.getFields) yield {
-      println("looking at field " + field)
       if (Modifier.isPublic(field.getModifiers) && !Modifier.isStatic(field.getModifiers)) {
         val fieldClass = {
           if(field.getType.isArray) {
