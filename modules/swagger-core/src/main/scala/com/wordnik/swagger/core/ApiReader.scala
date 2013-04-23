@@ -89,8 +89,15 @@ trait ApiSpecParserTrait extends BaseApiParser {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
     val apiErrors = method.getAnnotation(classOf[ApiErrors])
     val isDeprecated = method.getAnnotation(classOf[Deprecated])
+    val apiResource = method.getAnnotation(classOf[ApiResource])
 
     LOGGER.debug("parsing method " + method.getName)
+    if (apiResource != null){
+      Class.forName(apiResource.resourceClass()).getMethods().foreach( subresource => {
+        parseMethod(subresource)
+      })
+    }
+
     if (apiOperation != null && method.getName != "getHelp") {
       // Read the Operation
       val docOperation = new DocumentationOperation

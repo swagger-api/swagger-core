@@ -9,7 +9,7 @@
   <artifactId>swagger-project_2.9.1</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
-  <version>1.2.3-SNAPSHOT</version>
+  <version>1.2.3-CH-SNAPSHOT</version>
   <url>https://github.com/wordnik/swagger-core</url>
   <scm>
     <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
@@ -298,7 +298,7 @@
     <module>modules/swagger-jaxrs</module>
     <module>modules/swagger-jersey-jaxrs</module>
     <module>modules/swagger-jaxrs-utils</module>
-    <module>samples/java-jaxrs</module>
+    <!--<module>samples/java-jaxrs</module>
     <module>samples/java-alt-resource-listing</module>
     <module>samples/java-dropwizard</module>
     <module>samples/scala-jaxrs</module>
@@ -308,7 +308,7 @@
     <module>samples/scala-jaxrs-fileupload</module>
     <module>samples/scala-jaxrs-apm</module>
     <module>samples/java-resteasy</module>
-    <module>samples/java-jaxrs-cxf</module>
+    <module>samples/java-jaxrs-cxf</module>-->
   </modules>
   <reporting>
     <outputDirectory>target/site</outputDirectory>
