@@ -10,7 +10,7 @@
   <artifactId>swagger-core_2.9.1</artifactId>
   <packaging>jar</packaging>
   <name>swagger-core</name>
-  <version>1.2.3-SNAPSHOT</version>
+  <version>1.2.3-CH-SNAPSHOT</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <defaultGoal>install</defaultGoal>
