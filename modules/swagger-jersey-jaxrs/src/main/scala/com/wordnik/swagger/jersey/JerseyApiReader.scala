@@ -141,7 +141,8 @@ class JerseyApiSpecParser(val _hostClass: Class[_], _apiVersion: String, _swagge
 
   override def getPath(method: Method): String = {
     val wsPath = method.getAnnotation(classOf[javax.ws.rs.Path])
-    val path = apiEndpoint.value + JerseyApiReader.FORMAT_STRING + (if (wsPath == null) "" else wsPath.value)
+    val wsSubresourcePath = method.getDeclaringClass().getAnnotation(classOf[ApiSubResourcePath])
+    val path = apiEndpoint.value + JerseyApiReader.FORMAT_STRING + (if (wsSubresourcePath ==null) "" else wsSubresourcePath.value) + (if (wsPath == null) "" else wsPath.value)
     path
   }
 
