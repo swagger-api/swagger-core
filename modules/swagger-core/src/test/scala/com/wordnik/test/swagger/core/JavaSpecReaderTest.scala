@@ -8,12 +8,6 @@ import scala.collection.JavaConverters._
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
 
-/**
- * User: ramesh
- * Date: 3/23/12
- * Time: 8:36 AM
- */
-
 @RunWith(classOf[JUnitRunner])
 class JavaSpecReaderTest extends FlatSpec with ShouldMatchers {
 
