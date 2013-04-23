@@ -14,10 +14,11 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.jaxrs
+package com.wordnik.swagger.jersey
 
 import com.sun.jersey.spi.container.servlet.WebConfig;
 import com.wordnik.swagger.core._
+import com.wordnik.swagger.jaxrs.ConfigReader
 
 import scala.collection.JavaConverters._
 

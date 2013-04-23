@@ -94,7 +94,7 @@ object ApiPropertiesReader {
       val keyName: String = getDataType(keyType, keyType)
       val valueName: String = getDataType(valueType, valueType)
       "Map[" + keyName + "," + valueName + "]"
-    } else if (!returnType.getClass.isAssignableFrom(classOf[ParameterizedTypeImpl]) && returnType.asInstanceOf[Class[_]].isArray) {
+    } else if (!returnType.getClass.isAssignableFrom(classOf[ParameterizedTypeImpl]) && returnType.isInstanceOf[Class[_]] && returnType.asInstanceOf[Class[_]].isArray) {
       var arrayClass = returnType.asInstanceOf[Class[_]].getComponentType
       "Array[" + arrayClass.getSimpleName + "]"
     } else {
