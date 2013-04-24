@@ -62,7 +62,7 @@ class ApiListing {
     val apiFilterClassName = reader.apiFilterClassName()
     val apiVersion = reader.apiVersion()
     val swaggerVersion = reader.swaggerVersion()
-    val basePath = reader.basePath()
+    val basePath = uriInfo.getBaseUri().toString()
     val routes = ApiListingResource.routes(app, wc, headers, uriInfo)
 
     val apis = (for(route <- routes.map(m => m._1)) yield {
@@ -112,7 +112,7 @@ class ApiListing {
     val apiFilterClassName = reader.apiFilterClassName()
     val apiVersion = reader.apiVersion()
     val swaggerVersion = reader.swaggerVersion()
-    val basePath = reader.basePath()
+    val basePath = uriInfo.getBaseUri().toString()
     val routes = ApiListingResource.routes(app, wc, headers, uriInfo)
 
     routes.contains(route) match {
