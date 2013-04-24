@@ -88,7 +88,7 @@ object ConfigReaderFactory {
     var configReaderStr = {
       wc.getInitParameter("swagger.config.reader") match {
         case s: String => s
-        case _ => "com.wordnik.swagger.jaxrs.JerseyConfigReader"
+        case _ => "com.wordnik.swagger.jersey.JerseyConfigReader"
       }
     }
     val constructor = SwaggerContext.loadClass(configReaderStr).getConstructor(classOf[WebConfig])
