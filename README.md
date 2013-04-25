@@ -14,7 +14,7 @@ visit http://developer.wordnik.com.
 
 ## Version history
 
-v1.2.3 Apr-24 2013
+### v1.2.3 Apr-24 2013
 
 <li>- Updated to Jackson 2.1.4
 
@@ -22,15 +22,15 @@ v1.2.3 Apr-24 2013
 
 <li>- Add manual model definitions
 
-v1.2.2 Apr-8 2013
+### v1.2.2 Apr-8 2013
 
-v1.2.0 Nov-27 2012
+### v1.2.0 Nov-27 2012
 
 <li>- Updated listing path to /api-docs.json
 
 <li>- Moved swagger-play2 and swagger-play2-utils to maven central
 
-v1.1.0 Aug-22 2012
+### v1.1.0 Aug-22 2012
 
 <li>- Spec [clarifications](https://github.com/wordnik/swagger-core/wiki/Changelog)
 
@@ -49,7 +49,7 @@ v1.1.0 Aug-22 2012
 <li>- Moved swagger spec to github [wiki](https://github.com/wordnik/swagger-core/wiki)
 
 
-v1.01 Jan-31 2012
+### v1.01 Jan-31 2012
 
 <li>- Transitioned build to Maven</li>
 
@@ -65,7 +65,7 @@ v1.01 Jan-31 2012
 
 <li>- Added test and integration test through default maven integration-test lifecycle</li>
 
-v1.0 Aug-10 2011
+### v1.0 Aug-10 2011
 
 <li>- Initial release of swagger</li>
 
