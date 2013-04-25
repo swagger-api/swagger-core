@@ -14,6 +14,14 @@ visit http://developer.wordnik.com.
 
 ## Version history
 
+v1.2.3 Apr-24 2013
+
+<li>- Updated to Jackson 2.1.4
+
+<li>- Fix for generics as input/output values
+
+<li>- Add manual model definitions
+
 v1.2.2 Apr-8 2013
 
 v1.2.0 Nov-27 2012
