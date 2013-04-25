@@ -81,7 +81,7 @@ You need the following installed and available in your $PATH:
 
 <li>- Scala 2.9.1-1 [available here](http://www.scala-lang.org).  Note that 2.9.1 has a defect which causes problems with Jax-RS
 
-### To build from source (currently 1.2.2-SNAPSHOT)
+### To build from source (currently 1.2.4-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
@@ -97,10 +97,6 @@ This will build the modules and sample apps.
 Of course if you don't want to build locally you can grab artifacts from maven central:
 
 `http://repo1.maven.org/maven2/com/wordnik/`
-
-And Play2 modules are in our github repo:
-
-`http://wordnik.github.com/repository/com.wordnik`
 
 ## Sample Apps
 There are a number of sample apps in the `samples` folder:
