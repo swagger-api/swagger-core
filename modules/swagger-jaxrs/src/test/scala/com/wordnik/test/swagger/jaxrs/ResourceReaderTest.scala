@@ -188,4 +188,25 @@ class ResourceReaderTest extends FlatSpec with ShouldMatchers {
       "Return_Object"
     )).size should be (3)
   }
+
+  it should "support deep model hierarchy" in {
+    val loadingClass = classOf[ResourceWithDeepObjectJSON]
+    val helpApi = new HelpApi
+    val doc = helpApi.filterDocs(JaxrsApiReader.read(loadingClass, "1.123", "2.345", "http://my.host.com/basepath", "/sample"),
+      null,
+      null,
+      null,
+      null)
+
+    println(JsonUtil.getJsonMapper.writeValueAsString(doc.getModels))
+
+/*    ((for(model <- doc.getModels) yield model._1).toSet
+      &
+    Set(
+      "Path_Object",
+      "Post_Object",
+      "Return_Object"
+    )).size should be (3)
+*/
+  }
 }
