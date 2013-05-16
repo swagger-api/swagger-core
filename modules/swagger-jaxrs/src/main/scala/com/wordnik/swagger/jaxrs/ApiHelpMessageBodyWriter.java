@@ -37,7 +37,7 @@ public class ApiHelpMessageBodyWriter implements MessageBodyWriter<Documentation
     public long getSize(Documentation arg0, Class<?> arg1, Type arg2, Annotation[] arg3,
                         MediaType arg4) {
         try {
-            return getStringRepresentation(arg0).getBytes().length;
+            return getStringRepresentation(arg0).length();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,7 +71,7 @@ public class ApiHelpMessageBodyWriter implements MessageBodyWriter<Documentation
                         MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream)
             throws IOException, WebApplicationException {
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(entityStream));
-        bw.write(getStringRepresentation(documentation).getBytes());
+        bw.write(getStringRepresentation(documentation));
         bw.flush();
     }
 
