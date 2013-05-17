@@ -16,7 +16,7 @@ a dependency and a resolver to your Build.scala like this:
 ```scala
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     /* your other dependencies */
-    "com.wordnik" %% "swagger-play2" % "1.1.1")
+    "com.wordnik" %% "swagger-play2" % "1.2.4")
 
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
     Resolver.url("swagger-core-github-repo", url("http://wordnik.github.com/repository"))(Resolver.ivyStylePatterns),
