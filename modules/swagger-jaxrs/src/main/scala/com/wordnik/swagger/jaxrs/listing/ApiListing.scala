@@ -58,7 +58,6 @@ class ApiListing {
   ): Response = {
     val listingRoot = this.getClass.getAnnotation(classOf[Api]).value
     val reader = ConfigReaderFactory.getConfigReader(sc)
-    val apiFilterClassName = reader.apiFilterClassName()
     val apiVersion = reader.apiVersion()
     val swaggerVersion = reader.swaggerVersion()
     val basePath = reader.basePath()
