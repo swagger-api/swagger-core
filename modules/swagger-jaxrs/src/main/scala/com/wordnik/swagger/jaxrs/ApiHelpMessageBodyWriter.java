@@ -70,9 +70,8 @@ public class ApiHelpMessageBodyWriter implements MessageBodyWriter<Documentation
     public void writeTo(Documentation documentation, Class<?> type, Type genericType, Annotation[] annotations,
                         MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream)
             throws IOException, WebApplicationException {
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(entityStream));
-        bw.write(getStringRepresentation(documentation).getBytes());
-        bw.flush();
+        entityStream.write(getStringRepresentation(documentation).getBytes());
+        entityStream.flush();
     }
 
     public boolean isWriteable(Class<?> arg0, Type arg1, Annotation[] arg2,
