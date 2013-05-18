@@ -16,6 +16,8 @@
 
 package com.wordnik.swagger.core
 
+import com.wordnik.swagger.core.util.JsonUtil
+
 import com.fasterxml.jackson.annotation.{JsonProperty, JsonIgnore}
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 
