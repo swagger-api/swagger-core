@@ -94,6 +94,16 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
     docObj.getFields.map{_.name}.toSet.contains("dt") should be (false)
   }
 
+  it should "skip read XMLElement required flag from scala object" in {
+    val docObj = ApiPropertiesReader.read(classOf[SimplePojo].getName)
+    docObj.getFields.asScala(0).required should be (true)
+  }
+
+  it should "skip read XMLElement required flag from java object" in {
+    val docObj = ApiPropertiesReader.read(classOf[JavaPojo].getName)
+    docObj.getFields.asScala(0).required should be (true)
+  }
+
   it should "read a SimplePojo" in {
     val docObj = ApiPropertiesReader.read(classOf[SimplePojo].getName)
     assert((docObj.getFields.map(f => f.name).toSet & Set("testInt", "testString")).size === 2)
@@ -372,7 +382,7 @@ class SimplePojo {
   private var te: Int = 1
   private var testString: String = _
 
-  @XmlElement(name = "testInt")
+  @XmlElement(name = "testInt", required=true)
   def getTestInt: Int = te
   def setTestInt(te: Int) = { this.te = te }
 
@@ -384,11 +394,11 @@ class SimplePojo {
 @XmlRootElement(name = "simplePojo2")
 @XmlAccessorType(XmlAccessType.NONE)
 class SimplePojo2 {
-  @XmlElement(name = "testInt")
-  var te: Int = 1
+  @JsonProperty("testInt")
+  @BeanProperty var te: Int = 1
 
-  @XmlElement(name = "testString")
-  var ts: String = _
+  @JsonProperty("testString")
+  @BeanProperty var ts: String = _
 }
 
 @XmlRootElement(name = "scalaishPojo")
