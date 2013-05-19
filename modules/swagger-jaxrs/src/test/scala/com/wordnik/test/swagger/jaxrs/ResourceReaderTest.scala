@@ -198,15 +198,13 @@ class ResourceReaderTest extends FlatSpec with ShouldMatchers {
       null,
       null)
 
-    println(JsonUtil.getJsonMapper.writeValueAsString(doc.getModels))
 
-/*    ((for(model <- doc.getModels) yield model._1).toSet
+    ((for(model <- doc.getModels) yield model._1).toSet
       &
     Set(
       "Path_Object",
       "Post_Object",
       "Return_Object"
     )).size should be (3)
-*/
   }
 }

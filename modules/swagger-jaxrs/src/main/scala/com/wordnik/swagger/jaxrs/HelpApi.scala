@@ -17,7 +17,7 @@
 package com.wordnik.swagger.jaxrs
 
 import com.wordnik.swagger.core._
-import com.wordnik.swagger.core.util.TypeUtil
+import com.wordnik.swagger.core.util.{JsonUtil, TypeUtil}
 
 import org.slf4j.LoggerFactory
 
@@ -74,13 +74,15 @@ class HelpApi {
         apisToRemove.foreach(api => doc.removeApi(api))
       }
     }
-    loadModel(doc)
+    loadModels(doc)
     doc
   }
 
-  private def loadModel(d: Documentation) = {
+  private def loadModels(d: Documentation) = {
     val directTypes = getExpectedTypes(d)
-    val types = TypeUtil.getReferencedClasses(directTypes)
+    val refs: HashSet[String] = new HashSet[String] ++ ApiPropertiesReader.manualModelMapping.keys
+    val types = TypeUtil.getReferencedClasses(directTypes, refs)
+
     types.foreach(t => {
       try {
         val n = ApiPropertiesReader.read(t)
@@ -98,17 +100,22 @@ class HelpApi {
     })
   }
 
+  /** 
+   *  returns models for the supplied documentation object
+   **/
   private def getExpectedTypes(d: Documentation): List[String] = {
     val l = new HashSet[String]
     if (d.getApis() != null) {
       d.getApis().foreach(n => { // endpoints
         n.getOperations().foreach(o => { //	operations
           //return types
-          if (StringUtils.isNotBlank(o.getResponseTypeInternal())) l += o.getResponseTypeInternal().replaceAll("\\[\\]", "")
+          if (StringUtils.isNotBlank(o.getResponseTypeInternal())) 
+            l += o.getResponseTypeInternal().replaceAll("\\[\\]", "")
           //operation parameters -- for a POST we might have complex types
           if (o.getParameters() != null) {
             o.getParameters.foreach(r => {
-              if (StringUtils.isNotBlank(r.getValueTypeInternal())) l += r.getValueTypeInternal().replaceAll("\\[\\]", "")
+              if (StringUtils.isNotBlank(r.getValueTypeInternal())) 
+                l += r.getValueTypeInternal().replaceAll("\\[\\]", "")
             })
           }
         })
