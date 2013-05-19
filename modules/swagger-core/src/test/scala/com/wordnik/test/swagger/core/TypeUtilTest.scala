@@ -32,8 +32,18 @@ import scala.annotation.target.field
 
 @RunWith(classOf[JUnitRunner])
 class TypeUtilTest extends FlatSpec with ShouldMatchers {
+  it should "find properties" in {
+    val set = new scala.collection.mutable.HashSet[String]
+    val refs = TypeUtil.updateReferencedClasses("com.wordnik.test.swagger.core.JavaLevelOne", set).toSet
+    (Set(
+      "com.wordnik.test.swagger.core.JavaLevelOne",
+      "com.wordnik.test.swagger.core.JavaLevelTwo",
+      "com.wordnik.test.swagger.core.JavaLevelThree") & refs
+    ).size should be (3)
+  }
+
   it should "extract required classes" in {
-    val refs = TypeUtil.getReferencedClasses("com.wordnik.test.swagger.core.House").toSet
+    val refs = TypeUtil.getReferencedClasses("com.wordnik.test.swagger.core.House", new scala.collection.mutable.HashSet[String]).toSet
 
     ApiPropertiesReader.excludedFieldTypes ++= Seq("Formats", "JsonLike", "Json4S")
     (Set(
@@ -52,7 +62,10 @@ class TypeUtilTest extends FlatSpec with ShouldMatchers {
       for(field <- docObj.getFields.asScala) yield field.name
     ).toSet
 
-    fieldNames should be (Set("name", "windows", "furniture", "occupantCount"))
+    fieldNames should be (Set("name", 
+      "windows", 
+      "furniture", 
+      "occupantCount"))
 
     val fieldTypes = (
       for(field <- docObj.getFields.asScala) yield field.paramType

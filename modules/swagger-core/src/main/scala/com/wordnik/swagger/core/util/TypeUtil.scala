@@ -121,32 +121,39 @@ object TypeUtil {
     output.toList
   }
 
-  def getReferencedClasses(list: List[String]): Set[String] = {
+  def getReferencedClasses(list: List[String], refs: HashSet[String] = new HashSet[String]): Set[String] = {
     (for(name <- list) 
-      yield getReferencedClasses(name)
+      yield getReferencedClasses(name, refs)
     ).flatMap(x => x).toSet
   }
 
-  def getReferencedClasses(className: String): Set[String] = {
+  def getReferencedClasses(className: String, refs: HashSet[String]): Set[String] = {
     val regex = """[\w]*\[(.*?)\]""".r
     val cls = className match {
       case regex(inner) => inner
       case _ => className
     }
     REFERENCED_CLASSES_CACHE.asScala.getOrElseUpdate(cls, {
-      if(cls.indexOf(".") > 0) {
-        (Set(cls) ++ {
-          try {
-            val loadedClass = SwaggerContext.loadClass(cls)
-            referencesInFields(loadedClass) ++ referencesInMethods(loadedClass)
-          } catch {
-            case e: Exception => LOGGER.error("Unable to load class " + cls)
-            Set[String]().empty
-          }
-        }).asJava
-      }
-      else Set[String]().empty.asJava
+      (updateReferencedClasses(cls, refs)).asJava
     }).asScala.toSet
+  }
+
+  /** 
+    * recursive function to add class references from fields, etc.
+   **/ 
+  def updateReferencedClasses(cls: String, refs: HashSet[String]): Set[String] = {
+    try {
+      val loadedClass = SwaggerContext.loadClass(cls)
+      refs += cls
+      val refsToExpand = (referencesInFields(loadedClass) ++ referencesInMethods(loadedClass)) -- refs.toSet
+      refsToExpand.foreach(ref => {
+        updateReferencedClasses(ref, refs)
+        refs += ref
+      })
+    } catch {
+      case e: Exception => LOGGER.error("Unable to load class " + cls)
+    }    
+    refs.toSet
   }
 
   def referencesInFields(cls: Class[_]): Set[String] = {
