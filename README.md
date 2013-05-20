@@ -101,17 +101,17 @@ Of course if you don't want to build locally you can grab artifacts from maven c
 ## Sample Apps
 There are a number of sample apps in the `samples` folder:
 
-[java-jaxrs](/wordnik/swagger-core/tree/master/samples/java-jaxrs/README.md) Java-based swagger server with JAX-RS
+[java-jaxrs](https://github.com/wordnik/swagger-core/tree/master/samples/java-jaxrs/README.md) Java-based swagger server with JAX-RS
 
-[scala-jaxrs](/wordnik/swagger-core/tree/master/samples/scala-jaxrs/README.md) Scala-based swagger server with JAX-RS
+[scala-jaxrs](https://github.com/wordnik/swagger-core/tree/master/samples/scala-jaxrs/README.md) Scala-based swagger server with JAX-RS
 
-[java-alt-resource-listing](/wordnik/swagger-core/tree/master/samples/java-alt-resource-listing/README.md) 
+[java-alt-resource-listing](https://github.com/wordnik/swagger-core/tree/master/samples/java-alt-resource-listing/README.md) 
 Scala-based swagger server with JAX-RS with an alternate resource listing scheme
 
-[scala-alt-resource-listing](/wordnik/swagger-core/tree/master/samples/scala-alt-resource-listing/README.md) 
+[scala-alt-resource-listing](https://github.com/wordnik/swagger-core/tree/master/samples/scala-alt-resource-listing/README.md) 
 Scala-based swagger server with JAX-RS with an alternate resource listing scheme
 
-[scala-jaxrs-apm](/wordnik/swagger-core/tree/master/samples/scala-jaxrs-apm/README.md) 
+[scala-jaxrs-apm](https://github.com/wordnik/swagger-core/tree/master/samples/scala-jaxrs-apm/README.md) 
 Scala-based swagger server using wordnik-oss utils for Application Performance Monitoring (APM)
 
 To run a sample app after initial compile:
