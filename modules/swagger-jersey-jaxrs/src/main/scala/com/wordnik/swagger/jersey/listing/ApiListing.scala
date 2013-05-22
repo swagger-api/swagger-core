@@ -29,21 +29,39 @@ object ApiListingResource {
       case None => {
         val resources = app.getClasses().asScala ++ app.getSingletons().asScala.map(ref => ref.getClass)
         val cache = new HashMap[String, Class[_]]
+
         resources.foreach(resource => {
-          resource.getAnnotation(classOf[Api]) match {
-            case ep: Annotation => {
-              val path = ep.value.startsWith("/") match {
-                case true => ep.value.substring(1)
-                case false => ep.value
-              }
-              cache += path -> resource
-            }
-            case _ =>
-          }
+          processClass(resource, cache);
         })
+
+
         _cache = Some(cache.toMap)
         cache
       }
+    }
+  }
+
+  def processClass(resource: Class[_], cache: HashMap[String, Class[_]]){
+
+    resource.getAnnotation(classOf[Api]) match {
+      case ep: Annotation => {
+        val path = ep.value.startsWith("/") match {
+          case true => ep.value.substring(1)
+          case false => ep.value
+        }
+        cache += path -> resource
+      }
+
+      resource.getDeclaredMethods().foreach(operation => {
+        if(operation.getAnnotation(classOf[ApiResource]) != null){
+          operation.getAnnotation(classOf[ApiResource]) match{
+            case subres: Annotation =>{
+              processClass(Class.forName(subres.resourceClass), cache)
+            }
+          }
+        }
+      })
+      case _ =>
     }
   }
 }
@@ -139,4 +157,6 @@ class ApiListing {
       case _ => None
     }
   }
+
+
 }
