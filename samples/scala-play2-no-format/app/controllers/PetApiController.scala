@@ -40,7 +40,7 @@ object PetApiController extends BaseApiController {
 
   @ApiOperation(value = "Add a new Pet", responseClass = "void")
   @ApiErrors(Array(
-    new ApiError(code = 405, reason = "Invalid input")))
+    new ApiError(code = 400, reason = "Invalid input")))
   @ApiParamsImplicit(Array(
     new ApiParamImplicit(value = "Pet object that needs to be added to the store", required = true, dataType = "Pet", paramType = "body")))
   def addPet() = Action { implicit request =>
@@ -50,7 +50,7 @@ object PetApiController extends BaseApiController {
         petData.addPet(pet)
         Ok
       }
-      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"))
+      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"), 400)
     }
   }
 
@@ -68,7 +68,7 @@ object PetApiController extends BaseApiController {
         petData.addPet(pet)
         JsonResponse("SUCCESS")
       }
-      case None => JsonResponse(new value.ApiResponse(404, "sorry"))
+      case None => JsonResponse(new value.ApiResponse(404, "sorry"), 404)
     }
   }
 
