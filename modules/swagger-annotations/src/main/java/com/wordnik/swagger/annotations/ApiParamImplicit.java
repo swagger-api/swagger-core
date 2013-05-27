@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,14 +24,14 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiParamImplicit {
-    String name() default "";
-    String value() default "";
-    String defaultValue() default "";
-    String allowableValues() default "";
-    boolean required() default false;
-    String access() default "";
-    String internalDescription() default "";
-    boolean allowMultiple() default false;
-    String dataType() default "";
-    String paramType() default "";
+  String name() default "";
+  String value() default "";
+  String defaultValue() default "";
+  String allowableValues() default "";
+  boolean required() default false;
+  String access() default "";
+  String internalDescription() default "";
+  boolean allowMultiple() default false;
+  String dataType() default "";
+  String paramType() default "";
 }

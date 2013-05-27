@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,10 +24,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiResponse {
+  String value() default "void";  //responseClass
 
-    String value() default "void";  //responseClass
+  String occurs() default "1"; //to indicate if return type will contain one or more of the response value
 
-    String occurs() default "1"; //to indicate if return type will contain one or more of the response value
-
-    ApiError[] errors() default @ApiError(code = 404, reason = "No data available");
+  ApiError[] errors() default @ApiError(code = 404, reason = "No data available");
 }

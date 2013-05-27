@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,9 +24,12 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiError {
-    /** Error code to describe */
-    int code();
+  /** Error code to describe */
+  int code();
 
-    /** Reason why this error is returned */
-    String reason();
+  /** Reason why this error is returned */
+  String reason();
+
+  /** Optional response class to include in the error */
+  Class<?> response() default Void.class;
 }

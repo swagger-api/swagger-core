@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,30 +25,32 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiProperty {
-	/** Provide a human readable synopsis of this property */
-    String value() default "";
+  /** Provide a human readable synopsis of this property */
+  String value() default "";
 
-	/**
-	 * If the values that can be set are restricted, they can be set here. In the form of a comma separated list
-	 * <code>registered, active, closed</code>.
-	 *
-	 * @return the allowable values
-	 */
-    String allowableValues() default "";
-    String access() default "";
-	/** Provide any extra information */
-    String notes() default "";
+  /**
+   * If the values that can be set are restricted, they can be set here. In the form of a comma separated list
+   * <code>registered, active, closed</code>.
+   *
+   * @return the allowable values
+   */
+  String allowableValues() default "";
+  String access() default "";
+  /** Provide any extra information */
+  String notes() default "";
 
-	/**
-	 * The dataType. See the documentation for the supported datatypes. If the data type is a custom object, set
-	 * it's name, or nothing. In case of an enum use 'string' and allowableValues for the enum constants.
-     */
-    String dataType() default "";
+  /**
+   * The dataType. See the documentation for the supported datatypes. If the data type is a custom object, set
+   * it's name, or nothing. In case of an enum use 'string' and allowableValues for the enum constants.
+   */
+  String dataType() default "";
 
-	/**
-	 * Whether or not the property is required, defaults to false.
-	 * 
-	 * @return true if required, false otherwise
-	 */
-	boolean required() default false;
+  /**
+   * Whether or not the property is required, defaults to false.
+   * 
+   * @return true if required, false otherwise
+   */
+  boolean required() default false;
+
+  int position() default 0;
 }

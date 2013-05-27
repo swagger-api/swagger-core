@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,11 +24,14 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiOperation {
-    /** Long description of the operation  */
-    String value();
-    String responseClass() default "void";
-    boolean multiValueResponse() default false; //to indicate if return type will contain one or more of the response value
-    String notes() default "";
-    String tags() default "";
-    String httpMethod() default "";
+  /** Long description of the operation  */
+  String value();
+  Class<?> response() default Void.class;
+  String responseContainer() default "";
+  boolean multiValueResponse() default false; //to indicate if return type will contain one or more of the response value
+  String notes() default "";
+  String tags() default "";
+  String httpMethod() default "";
+  /** allow explicit ordering of operations */
+  int position() default 0;
 }

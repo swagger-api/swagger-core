@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,20 +24,19 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiParam {
-    /** Name of the parameter */
-    String name() default "";
+  /** Name of the parameter */
+  String name() default "";
 
-    /** Description of the parameter */
-    String value() default "";
+  /** Description of the parameter */
+  String value() default "";
 
-    /** Default value  - if e.g. no JAX-RS @DefaultValue is given */
-    String defaultValue() default "";
+  /** Default value  - if e.g. no JAX-RS @DefaultValue is given */
+  String defaultValue() default "";
 
-    /** Description of values this endpoint accepts */
-    String allowableValues() default "";
-    boolean required() default false;
-    String access() default "";
-    String internalDescription() default "";
-    boolean allowMultiple() default false;
+  /** Description of values this endpoint accepts */
+  String allowableValues() default "";
+  boolean required() default false;
+  String access() default "";
+  String internalDescription() default "";
+  boolean allowMultiple() default false;
 }
-
