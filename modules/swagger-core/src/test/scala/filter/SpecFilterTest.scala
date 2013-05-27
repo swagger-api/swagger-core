@@ -16,16 +16,16 @@ import org.scalatest.matchers.ShouldMatchers
 
 @RunWith(classOf[JUnitRunner])
 class SpecFilterTest extends FlatSpec with ShouldMatchers {
-	implicit val formats = SwaggerSerializers.formats
+  implicit val formats = SwaggerSerializers.formats
 
-	behavior of "SpecFilter"
+  behavior of "SpecFilter"
 
-	it should "filter an api spec and return all models" in {
-		val spec = TestSpecs.getSimple
+  it should "filter an api spec and return all models" in {
+    val spec = TestSpecs.getSimple
     val p = new SpecFilter().filter(spec, new SimpleFilter )
     p.apis.size should be (4)
     (p.models.get.keys.toSet & Set("Pet", "Category", "Tag")).size should be (3)
-	}
+  }
 
   it should "filter away all non-get operations" in {
     val spec = TestSpecs.getSimple
@@ -84,10 +84,10 @@ class SecretParamFilter extends SwaggerSpecFilter {
 }
 
 object TestSpecs {
-	implicit val formats = SwaggerSerializers.formats
+  implicit val formats = SwaggerSerializers.formats
 
-	def getSimple = {
-		val str = 
+  def getSimple = {
+    val str = 
 """
 {
   "apiVersion": "1.0",
@@ -318,7 +318,7 @@ object TestSpecs {
   }
 }
 """
-		val json = parse(str)
-		json.extract[ApiListing]
-	}
+    val json = parse(str)
+    json.extract[ApiListing]
+  }
 }

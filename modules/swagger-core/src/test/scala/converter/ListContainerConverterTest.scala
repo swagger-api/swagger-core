@@ -12,12 +12,12 @@ import org.scalatest.matchers.ShouldMatchers
 @RunWith(classOf[JUnitRunner])
 class ListContainerConverterTest extends FlatSpec with ShouldMatchers {
   it should "read a case class with List" in {
-  	val model = ModelConverters.read(classOf[CaseClassWithList])
-		model.get.properties.map{_._1}.toSet should equal (Set("id", "kidsAges"))
-	}
+    val model = ModelConverters.read(classOf[CaseClassWithList])
+    model.get.properties.map{_._1}.toSet should equal (Set("id", "kidsAges"))
+  }
 }
 
 case class CaseClassWithList(
-	id: Long,
-	kidsAges: List[java.lang.Integer]
+  id: Long,
+  kidsAges: List[java.lang.Integer]
 )

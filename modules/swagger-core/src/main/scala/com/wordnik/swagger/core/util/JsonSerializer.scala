@@ -24,7 +24,7 @@ import org.json4s.jackson.JsonMethods._
 import org.json4s.jackson.Serialization.{read, write}
 
 object JsonSerializer {
-	implicit val formats = SwaggerSerializers.formats
+  implicit val formats = SwaggerSerializers.formats
 
-	def asJson(w: AnyRef): String = write(w)
+  def asJson(w: AnyRef): String = write(w)
 }

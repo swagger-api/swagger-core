@@ -9,27 +9,27 @@ class SwaggerSchemaConverter
   extends ModelConverter 
   with BaseConverter {
 
-	def read(cls: Class[_]): Option[Model] = {
+  def read(cls: Class[_]): Option[Model] = {
     Option(cls).flatMap({
       cls => {
-				implicit val properties = new LinkedHashMap[String, ModelProperty]()
-      	new ModelPropertyParser(cls).parse
+        implicit val properties = new LinkedHashMap[String, ModelProperty]()
+        new ModelPropertyParser(cls).parse
 
-      	val p = (for((key, value) <- properties) 
-      		yield (value.position, key, value)
-      	).toList
+        val p = (for((key, value) <- properties) 
+          yield (value.position, key, value)
+        ).toList
 
-      	val sortedProperties = new LinkedHashMap[String, ModelProperty]()
-      	p.sortWith(_._1 < _._1).foreach(e => sortedProperties += e._2 -> e._3)
+        val sortedProperties = new LinkedHashMap[String, ModelProperty]()
+        p.sortWith(_._1 < _._1).foreach(e => sortedProperties += e._2 -> e._3)
 
-  	  	Some(Model(
-	    		toName(cls),
-	    		toName(cls),
+        Some(Model(
+          toName(cls),
+          toName(cls),
           cls.getName,
-	    		sortedProperties,
-	    		toDescriptionOpt(cls)
-	  		))
-			}
-		})
-	}
+          sortedProperties,
+          toDescriptionOpt(cls)
+        ))
+      }
+    })
+  }
 }

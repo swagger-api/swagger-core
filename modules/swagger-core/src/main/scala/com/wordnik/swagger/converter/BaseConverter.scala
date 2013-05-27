@@ -18,12 +18,12 @@ trait BaseConverter {
   }
 
   def toName(cls: Class[_]): String = {
-  	import javax.xml.bind.annotation._
+    import javax.xml.bind.annotation._
 
     val xmlRootElement = cls.getAnnotation(classOf[XmlRootElement])
     val xmlEnum = cls.getAnnotation(classOf[XmlEnum])
 
-	  if (xmlEnum != null && xmlEnum.value != null)
+    if (xmlEnum != null && xmlEnum.value != null)
       toName(xmlEnum.value())
     else if (xmlRootElement != null) {
       if ("##default".equals(xmlRootElement.name())) {

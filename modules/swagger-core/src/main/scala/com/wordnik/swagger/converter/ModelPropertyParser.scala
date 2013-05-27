@@ -20,12 +20,12 @@ import scala.collection.mutable.{ LinkedHashMap, ListBuffer, HashSet, HashMap }
 class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[String, ModelProperty]) {
   private val LOGGER = LoggerFactory.getLogger(classOf[ModelPropertyParser])
 
-	val processedFields = new ListBuffer[String]
-	val excludedFieldTypes = new HashSet[String]
+  val processedFields = new ListBuffer[String]
+  val excludedFieldTypes = new HashSet[String]
   final val positiveInfinity = "Infinity"
   final val negativeInfinity = "-Infinity"
 
-	def parse = Option(cls).map(parseRecursive(_))
+  def parse = Option(cls).map(parseRecursive(_))
 
   def parseRecursive(hostClass: Class[_]): Unit = {
     for (method <- hostClass.getDeclaredMethods) {
@@ -37,7 +37,7 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
         parseField(field)
     }
     Option(hostClass.getSuperclass).map(parseRecursive(_))
-	}
+  }
 
   def parseField(field: Field) = {
     parsePropertyAnnotations(field.getName, field.getAnnotations, field.getGenericType, field.getType)
@@ -139,13 +139,13 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
             }
           }
           val param = ModelProperty(
-					  validateDatatype(simpleName),
+            validateDatatype(simpleName),
             paramType,
             position,
-					  required,
-					  description,
-					  allowableValues.getOrElse(AnyAllowableValues),
-					  items)
+            required,
+            description,
+            allowableValues.getOrElse(AnyAllowableValues),
+            items)
           properties += name -> param
         }
       }
@@ -163,7 +163,7 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
     !SwaggerSpec.baseTypes.contains(typeName.toLowerCase)
   }
 
-	def processAnnotations(name: String, annotations: Array[Annotation]): HashMap[String, Any] = {
+  def processAnnotations(name: String, annotations: Array[Annotation]): HashMap[String, Any] = {
     var isTransient = false
     var isXmlElement = false
     var isDocumented = false
@@ -209,7 +209,7 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
           val xmlElementTypeMethod = classOf[XmlElement].getDeclaredMethod("type")
           val typeValueObj = xmlElementTypeMethod.invoke(e)
           val typeValue = {
-          	if (typeValueObj == null) null
+            if (typeValueObj == null) null
             else typeValueObj.asInstanceOf[Class[_]]
           }
           isXmlElement = true
@@ -248,7 +248,7 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
     else s.trim
   }
 
-	def getDeclaredField(inputClass: Class[_], fieldName: String): Field = {
+  def getDeclaredField(inputClass: Class[_], fieldName: String): Field = {
     try {
       inputClass.getDeclaredField(fieldName)
     } catch {

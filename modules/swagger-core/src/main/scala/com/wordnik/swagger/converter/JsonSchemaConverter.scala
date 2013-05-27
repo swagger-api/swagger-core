@@ -17,45 +17,45 @@ import scala.collection.mutable.{ ListBuffer, LinkedHashMap }
 class JsonSchemaConverter 
   extends ModelConverter 
   with BaseConverter {
-	def read(cls: Class[_]): Option[Model] = {
+  def read(cls: Class[_]): Option[Model] = {
     Option(cls).flatMap({
       cls => {
-      	val o = new ObjectMapper
-      	val visitor = new SchemaFactoryWrapper
-      	o.registerModule(new DefaultScalaModule)
-      	o.acceptJsonFormatVisitor(o.constructType(cls), visitor)
-      	visitor.finalSchema match {
+        val o = new ObjectMapper
+        val visitor = new SchemaFactoryWrapper
+        o.registerModule(new DefaultScalaModule)
+        o.acceptJsonFormatVisitor(o.constructType(cls), visitor)
+        visitor.finalSchema match {
           case schema: ObjectSchema => {
-          	val properties = new LinkedHashMap[String, ModelProperty]
-          	for((name, prop) <- schema.getProperties.asScala) {
-          		properties += name -> ModelProperty(
-  	      			prop.getType.name,
+            val properties = new LinkedHashMap[String, ModelProperty]
+            for((name, prop) <- schema.getProperties.asScala) {
+              properties += name -> ModelProperty(
+                prop.getType.name,
                 prop.getType.name, // this should be the fully-qualified name
                 0,
-  	      			Option(prop.getRequired).map(_.toString.toBoolean).orElse(Some(false)).get,
-  	      			Some(""),
-  	      			AnyAllowableValues,
-  	      			None
-        			)
-          	}
-          	Some(
-          		Model(
-    	      		toName(cls),
-    	      		toName(cls),
+                Option(prop.getRequired).map(_.toString.toBoolean).orElse(Some(false)).get,
+                Some(""),
+                AnyAllowableValues,
+                None
+              )
+            }
+            Some(
+              Model(
+                toName(cls),
+                toName(cls),
                 cls.getName,
-    	      		properties,
-    	      		Option(schema.getDescription)
-          		)
-          	)
+                properties,
+                Option(schema.getDescription)
+              )
+            )
           }
           case e: JsonSchema => {
             println("unexpected type " + e)
             None
           }
-  			}
+        }
       }
-		})
-	}
+    })
+  }
 
   def readAll(cls: Class[_]): List[Model] = List()
 }

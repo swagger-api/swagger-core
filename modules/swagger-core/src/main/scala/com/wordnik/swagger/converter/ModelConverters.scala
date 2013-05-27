@@ -10,7 +10,7 @@ object ModelConverters {
 
   val converters = new ListBuffer[ModelConverter]() ++ List(
     new JodaDateTimeConverter,
-  	new SwaggerSchemaConverter
+    new SwaggerSchemaConverter
   )
 
   def addConverter(c: ModelConverter, first: Boolean = false) = {
@@ -22,8 +22,8 @@ object ModelConverters {
     else converters += c
   }
 
-  def read(cls: Class[_]): Option[Model] = {  	
-  	var model: Option[Model] = None
+  def read(cls: Class[_]): Option[Model] = {    
+    var model: Option[Model] = None
     val itr = converters.iterator
     while(model == None && itr.hasNext) {
       model = itr.next.read(cls)

@@ -17,7 +17,7 @@ import scala.reflect.BeanProperty
 @RunWith(classOf[JUnitRunner])
 class ModelPropertyTest extends FlatSpec with ShouldMatchers {
   it should "extract properties" in {
-  	val models = ModelConverters.readAll(classOf[Family])
+    val models = ModelConverters.readAll(classOf[Family])
 
     models.size should be (3)
     val person = models.filter(m => m.name == "Person").head
@@ -37,14 +37,14 @@ class ModelPropertyTest extends FlatSpec with ShouldMatchers {
 case class Family (membersSince: Date, members: List[Person])
 
 case class Person (
-	firstname: String, 
-	lastname: String, 
-	middlename: Option[String], 
-	age: Int, 
-	birthday: Date,
-	employer: List[Employer],
-	awards: List[String])
+  firstname: String, 
+  lastname: String, 
+  middlename: Option[String], 
+  age: Int, 
+  birthday: Date,
+  employer: List[Employer],
+  awards: List[String])
 
 case class Employer (
-	name: String,
-	size: Int)
+  name: String,
+  size: Int)

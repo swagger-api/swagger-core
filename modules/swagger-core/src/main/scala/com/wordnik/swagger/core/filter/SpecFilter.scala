@@ -39,8 +39,8 @@ class SpecFilter {
         else None
       }).flatten.toList
       filteredOps.size match {
-      	case 0 => None
-      	case _ => Some(api.copy(operations = filteredOps))
+        case 0 => None
+        case _ => Some(api.copy(operations = filteredOps))
       }
     }).flatten.toList
     val filteredModels = filterModels(listing.models, filteredApis)
@@ -51,10 +51,10 @@ class SpecFilter {
     val modelNames = requiredModels(allModels, apis)
     val existingModels = allModels.getOrElse(Map[String, Model]())
     val output = (for(model <- modelNames) yield {
-	  	if(existingModels.contains(model))
-	  		Some(model, existingModels(model))
-	  	else None
-	  }).flatten.toMap
+      if(existingModels.contains(model))
+        Some(model, existingModels(model))
+      else None
+    }).flatten.toMap
     if(output.size > 0) Some(output)
     else None
   }
@@ -70,33 +70,33 @@ class SpecFilter {
       }
     })
     val topLevelModels = (for(model <- modelNames) yield {
-    	model match {
-    		case ComplexTypeMatcher(basePart) => {
+      model match {
+        case ComplexTypeMatcher(basePart) => {
           if(basePart.indexOf(",") > 0) // it's a map, use the value only
             basePart.split(",")(1)
           else basePart
-    		}
-    		case _ => model
-    	}
+        }
+        case _ => model
+      }
     }).toList
     val properties = requiredProperties(topLevelModels, allModels.getOrElse(Map()), new HashSet[String]())
     topLevelModels ++ properties
   }
 
   def requiredProperties(models: List[String], allModels: Map[String, Model], inspectedTypes: HashSet[String]): List[String] = {
-  	(for(modelname <- models) yield {
-  		val modelnames = new HashSet[String]()
-  		if(allModels.contains(modelname) && !inspectedTypes.contains(modelname)) {
-  			val model = allModels(modelname)
-  			inspectedTypes += modelname
-  			model.properties.map(m => {
-  				m._2.items match {
-  					case Some(item) => modelnames += item.ref.getOrElse(item.`type`)
-  					case None => modelnames += m._2.`type`
-  				}
-  			})
-  		}
-  		modelnames.toList
-  	}).flatten.toList
+    (for(modelname <- models) yield {
+      val modelnames = new HashSet[String]()
+      if(allModels.contains(modelname) && !inspectedTypes.contains(modelname)) {
+        val model = allModels(modelname)
+        inspectedTypes += modelname
+        model.properties.map(m => {
+          m._2.items match {
+            case Some(item) => modelnames += item.ref.getOrElse(item.`type`)
+            case None => modelnames += m._2.`type`
+          }
+        })
+      }
+      modelnames.toList
+    }).flatten.toList
   }
 }
