@@ -29,10 +29,35 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable.{ ListBuffer, HashSet }
 
 object TypeUtil {
-  private final val LOGGER: Logger = LoggerFactory.getLogger(TypeUtil.getClass().getName())
-  private final val REFERENCED_CLASSES_CACHE: java.util.Map[String, java.util.Set[String]] = new java.util.HashMap[String, java.util.Set[String]]
+  private final val logger: Logger = LoggerFactory.getLogger(TypeUtil.getClass().getName())
+  private final val classCache: java.util.Map[String, java.util.Set[String]] = new java.util.HashMap[String, java.util.Set[String]]
 
   val allowablePackages = new HashSet[String]
+
+  /**
+   * Finds the name of all classes referenced in the classnameList which are not
+   * in the supplied set of refs
+   **/
+  def getReferencedClasses(classnameList: List[String], refs: HashSet[String] = new HashSet[String]): Set[String] = {
+    (for(classname <- classnameList) 
+      yield getReferencedClasses(classname, refs)
+    ).flatMap(x => x).toSet
+  }
+
+  /**
+   * Finds the name of all classes referenced in the classname which are not
+   * in the supplied set of refs
+   **/
+  def getReferencedClasses(classname: String, refs: HashSet[String]): Set[String] = {
+    val regex = """[\w]*\[(.*?)\]""".r
+    val cls = classname match {
+      case regex(inner) => inner
+      case _ => classname
+    }
+    classCache.asScala.getOrElseUpdate(cls, {
+      (updateReferencedClasses(cls, refs)).asJava
+    }).asScala.toSet
+  }
 
   def isParameterizedList(gt: Type): Boolean = {
     if (classOf[ParameterizedType].isAssignableFrom(gt.getClass)) {
@@ -69,7 +94,7 @@ object TypeUtil {
     else false
   }
 
-  def getParameterTypes(genericType: Type): List[String] = {
+  private def getParameterTypes(genericType: Type): List[String] = {
     val lb = new ListBuffer[String]
     if(genericType.isInstanceOf[ParameterizedType]) {
       val parameterizedType = genericType.asInstanceOf[ParameterizedType]
@@ -121,27 +146,10 @@ object TypeUtil {
     output.toList
   }
 
-  def getReferencedClasses(list: List[String], refs: HashSet[String] = new HashSet[String]): Set[String] = {
-    (for(name <- list) 
-      yield getReferencedClasses(name, refs)
-    ).flatMap(x => x).toSet
-  }
-
-  def getReferencedClasses(className: String, refs: HashSet[String]): Set[String] = {
-    val regex = """[\w]*\[(.*?)\]""".r
-    val cls = className match {
-      case regex(inner) => inner
-      case _ => className
-    }
-    REFERENCED_CLASSES_CACHE.asScala.getOrElseUpdate(cls, {
-      (updateReferencedClasses(cls, refs)).asJava
-    }).asScala.toSet
-  }
-
   /** 
     * recursive function to add class references from fields, etc.
    **/ 
-  def updateReferencedClasses(cls: String, refs: HashSet[String]): Set[String] = {
+  private def updateReferencedClasses(cls: String, refs: HashSet[String]): Set[String] = {
     try {
       val loadedClass = SwaggerContext.loadClass(cls)
       refs += cls
@@ -151,12 +159,12 @@ object TypeUtil {
         refs += ref
       })
     } catch {
-      case e: Exception => LOGGER.error("Unable to load class " + cls)
+      case e: Exception => logger.error("Unable to load class " + cls)
     }    
     refs.toSet
   }
 
-  def referencesInFields(cls: Class[_]): Set[String] = {
+  private def referencesInFields(cls: Class[_]): Set[String] = {
     (for (field <- cls.getFields) yield {
       if (Modifier.isPublic(field.getModifiers) && !Modifier.isStatic(field.getModifiers)) {
         val fieldClass = {
@@ -176,7 +184,7 @@ object TypeUtil {
     }).flatten.toSet
   }
 
-  def referencesInMethods(cls: Class[_]): Set[String] = {
+  private def referencesInMethods(cls: Class[_]): Set[String] = {
     (for (method <- cls.getMethods) yield {
       if (Modifier.isPublic(method.getModifiers) && !Modifier.isStatic(method.getModifiers)) {
         val methodReturnClass: String = {
@@ -196,7 +204,7 @@ object TypeUtil {
 
   val packagesToSkip = Set("scala", "byte", "char", "java", "int", "long", "String", "boolean", "void", "[Ljava")
 
-  def isPackageAllowed(str: String): Boolean = {
+  private def isPackageAllowed(str: String): Boolean = {
     if(allowablePackages.size > 0) {
       (for(name <- allowablePackages) yield {
         if(str.startsWith(name)) Some(true)
