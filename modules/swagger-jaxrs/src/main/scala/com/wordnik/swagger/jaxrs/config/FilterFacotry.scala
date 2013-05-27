@@ -4,7 +4,7 @@ import com.wordnik.swagger.core.filter._
 import com.wordnik.swagger.model._
 
 object FilterFactory {
-	var filter: SwaggerSpecFilter = new DefaultSpecFilter
+  var filter: SwaggerSpecFilter = new DefaultSpecFilter
 }
 
 class DefaultSpecFilter extends SwaggerSpecFilter {

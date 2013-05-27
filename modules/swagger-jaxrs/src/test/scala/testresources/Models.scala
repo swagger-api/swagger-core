@@ -25,26 +25,26 @@ class Sample {
 
 @ApiModel(description = "error response model")
 class NotFoundModel {
-	var message: String = _
-	var code: Int = 0
+  var message: String = _
+  var code: Int = 0
 }
 
 @ApiModel(description = "invalid input model")
 case class InvalidInputModel (
-	@ApiProperty("the message")message: String,
-	@ApiProperty("input error code") code: Int
+  @ApiProperty("the message")message: String,
+  @ApiProperty("input error code") code: Int
 )
 
 case class Family (membersSince: Date, members: List[Person])
 
 case class Person (
-	firstname: String, 
-	lastname: String, 
-	middlename: Option[String], 
-	age: Int, 
-	birthday: Date,
-	employer: Employer)
+  firstname: String, 
+  lastname: String, 
+  middlename: Option[String], 
+  age: Int, 
+  birthday: Date,
+  employer: Employer)
 
 case class Employer (
-	name: String,
-	size: Int)
+  name: String,
+  size: Int)

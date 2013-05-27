@@ -8,11 +8,11 @@ import javax.servlet.ServletConfig
 import javax.servlet.http.HttpServlet
 
 class DefaultJaxrsConfig extends HttpServlet {
-	override def init(servletConfig: ServletConfig) = {
-		super.init(servletConfig)
+  override def init(servletConfig: ServletConfig) = {
+    super.init(servletConfig)
 
-		implicit val config = servletConfig
-		ConfigFactory.config = new WebXMLReader()
-		ScannerFactory.scanner = Some(new DefaultJaxrsScanner())
-	}
+    implicit val config = servletConfig
+    ConfigFactory.config = new WebXMLReader()
+    ScannerFactory.scanner = Some(new DefaultJaxrsScanner())
+  }
 }

@@ -15,8 +15,8 @@ import org.scalatest.matchers.ShouldMatchers
 @RunWith(classOf[JUnitRunner])
 class BasicResourceTest extends FlatSpec with ShouldMatchers {
   it should "read an api and extract an error model" in {
-  	val config = new SwaggerConfig()
-  	val apiResource = JaxrsApiReader.read("/api-docs", classOf[BasicResource], config).getOrElse(fail("should not be None"))
+    val config = new SwaggerConfig()
+    val apiResource = JaxrsApiReader.read("/api-docs", classOf[BasicResource], config).getOrElse(fail("should not be None"))
 
     apiResource.apis.size should be (1)
     val api = apiResource.apis.head
@@ -59,8 +59,8 @@ class BasicResourceTest extends FlatSpec with ShouldMatchers {
 @RunWith(classOf[JUnitRunner])
 class ContainerResourceTest extends FlatSpec with ShouldMatchers {
   it should "read an api" in {
-  	val config = new SwaggerConfig()
-  	val apiResource = JaxrsApiReader.read("/api-docs", classOf[ContainerResource], config).getOrElse(fail("should not be None"))
+    val config = new SwaggerConfig()
+    val apiResource = JaxrsApiReader.read("/api-docs", classOf[ContainerResource], config).getOrElse(fail("should not be None"))
     apiResource.apis.size should be (1)
     val api = apiResource.apis.head
     api.path should be ("/container/{id}")
