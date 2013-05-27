@@ -23,12 +23,12 @@
       <param-name>swagger.security.filter</param-name>
       <param-value>com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl</param-value>
     </init-param>
-	 <load-on-startup>1</load-on-startup>
+   <load-on-startup>1</load-on-startup>
   </servlet>
 
   <servlet-mapping>
-  	<servlet-name>jersey</servlet-name>
-  	<url-pattern>/*</url-pattern>
+    <servlet-name>jersey</servlet-name>
+    <url-pattern>/*</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -49,7 +49,7 @@
     <filter-class>com.wordnik.swagger.sample.util.ApiOriginFilter</filter-class>
   </filter>
   <filter-mapping>
-  		<filter-name>ApiOriginFilter</filter-name>
-  		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+      <filter-name>ApiOriginFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+  </filter-mapping>
 </web-app>

@@ -63,7 +63,7 @@ trait RestResourceUtil {
     var output: Boolean = defaultValue
     if (booleanString == null) output = defaultValue
 
-    //	treat "", "YES" as "true"
+    //  treat "", "YES" as "true"
     if ("".equals(booleanString)) output = true
     else if ("YES".equalsIgnoreCase(booleanString)) output = true
     else if ("NO".equalsIgnoreCase(booleanString)) output = false

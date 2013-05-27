@@ -155,8 +155,8 @@
   </servlet> 
 
   <servlet-mapping>
-  	<servlet-name>default</servlet-name>
-  	<url-pattern>/</url-pattern>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/</url-pattern>
   </servlet-mapping>
   
   
