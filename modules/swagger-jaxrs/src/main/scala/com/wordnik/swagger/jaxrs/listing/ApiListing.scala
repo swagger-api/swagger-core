@@ -10,7 +10,7 @@ import com.wordnik.swagger.jaxrs.config._
 
 import java.lang.annotation.Annotation
 
-import javax.ws.rs.core.{ UriInfo, HttpHeaders, Context, Response, MediaType, Application }
+import javax.ws.rs.core.{ UriInfo, HttpHeaders, Context, Response, MediaType, Application, MultivaluedMap }
 import javax.ws.rs.core.Response._
 import javax.ws.rs._
 import javax.ws.rs.ext.Provider
@@ -50,7 +50,7 @@ class ApiListing {
     val f = new SpecFilter
     val listings = ApiListingCache.listing(docRoot, app, sc).map(specs => {
       (for(spec <- specs.values) 
-        yield f.filter(spec, FilterFactory.filter)
+        yield f.filter(spec, FilterFactory.filter, paramsToMap(uriInfo.getQueryParameters), cookiesToMap(headers), headersToMap(headers))
       ).filter(m => m.apis.size > 0)
     })
     val references = (for(listing <- listings.get) yield {
@@ -86,12 +86,26 @@ class ApiListing {
     })
     val listings = ApiListingCache.listing(docRoot, app, sc).map(specs => {
       (for(spec <- specs.values) yield 
-        f.filter(spec, FilterFactory.filter)
+        f.filter(spec, FilterFactory.filter, paramsToMap(uriInfo.getQueryParameters), cookiesToMap(headers), headersToMap(headers))
       ).filter(m => m.resourcePath == pathPart)
     }).toList
     listings.size match {
       case 1 => Response.ok(JsonSerializer.asJson(listings.head)).build
       case _ => Response.status(404).build
     }
+  }
+
+  def paramsToMap(params: MultivaluedMap[String, String]): Map[String, List[String]] = {
+    (for((key, list) <- params.asScala) yield (key, list.asScala.toList)).toMap
+  }
+
+  def cookiesToMap(headers: HttpHeaders): Map[String, String] = {
+    Option(headers).map(h => {
+      (for((name, cookie) <- h.getCookies.asScala) yield (name, cookie.getValue)).toMap
+    }).getOrElse(Map())
+  }
+
+  def headersToMap(headers: HttpHeaders): Map[String, List[String]] = {
+    (for((key, values) <- headers.getRequestHeaders.asScala) yield (key, values.asScala.toList)).toMap
   }
 }
