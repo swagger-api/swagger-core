@@ -9,7 +9,7 @@
     <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
     <init-param>
       <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>com.wordnik.swagger.sample.resource;com.wordnik.swagger.sample.resource.util;com.wordnik.swagger.jaxrs.listing</param-value>
+      <param-value>com.wordnik.swagger.sample.resource;com.wordnik.swagger.jaxrs.listing</param-value>
     </init-param>
     <init-param>
       <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
@@ -19,13 +19,8 @@
       <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
       <param-value>true</param-value>
     </init-param>
-    <init-param>
-      <param-name>swagger.security.filter</param-name>
-      <param-value>com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl</param-value>
-    </init-param>
    <load-on-startup>1</load-on-startup>
   </servlet>
-
   <servlet-mapping>
     <servlet-name>jersey</servlet-name>
     <url-pattern>/*</url-pattern>
@@ -41,6 +36,10 @@
     <init-param>
       <param-name>swagger.api.basepath</param-name>
       <param-value>http://localhost:8002/api</param-value>
+    </init-param>
+    <init-param>
+      <param-name>swagger.filter</param-name>
+      <param-value>com.wordnik.swagger.sample.util.SecurityFilter</param-value>
     </init-param>
     <load-on-startup>2</load-on-startup>
   </servlet>
