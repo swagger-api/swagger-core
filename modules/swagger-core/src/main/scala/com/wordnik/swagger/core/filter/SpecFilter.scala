@@ -19,19 +19,26 @@ package com.wordnik.swagger.core.filter
 import com.wordnik.swagger.model._
 
 import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
+import scala.collection.JavaConverters._
 
 trait SwaggerSpecFilter {
-  def isOperationAllowed(operation: Operation, api: ApiDescription, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]): Boolean
-  def isParamAllowed(parameter: Parameter, operation: Operation, api: ApiDescription, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]): Boolean
+  def isOperationAllowed(operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean
+  def isParamAllowed(parameter: Parameter, operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean
 }
 
 class SpecFilter {
+  val ComplexTypeMatcher = ".*\\[([a-zA-Z]*)\\].*".r
+
   def filter(listing: ApiListing, filter: SwaggerSpecFilter, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]) = {
+    // these are required for java compatibility of the filter interface
+    val javaParams = makeJava(params)
+    val javaCookies = cookies.asJava
+    val javaHeaders = makeJava(headers)
     val filteredApis = (for(api <- listing.apis) yield {
       val filteredOps = (for(op <- api.operations) yield {
-        if(filter.isOperationAllowed(op, api, params, cookies, headers)) {
+        if(filter.isOperationAllowed(op, api, javaParams, javaCookies, javaHeaders)) {
           val filteredParams = (for(param <- op.parameters) yield {
-            if(filter.isParamAllowed(param, op, api, params, cookies, headers)) Some(param)
+            if(filter.isParamAllowed(param, op, api, javaParams, javaCookies, javaHeaders)) Some(param)
             else None
           }).flatten.toList
           Some(op.copy(parameters = filteredParams))
@@ -47,6 +54,8 @@ class SpecFilter {
     listing.copy(apis = filteredApis, models = filteredModels)
   }
 
+  def makeJava(map: Map[String, List[String]]) = (for((key, values) <- map) yield (key, values.asJava)).toMap.asJava
+
   def filterModels(allModels: Option[Map[String, Model]], apis: List[ApiDescription]) = {
     val modelNames = requiredModels(allModels, apis)
     val existingModels = allModels.getOrElse(Map[String, Model]())
@@ -58,8 +67,6 @@ class SpecFilter {
     if(output.size > 0) Some(output)
     else None
   }
-
-  val ComplexTypeMatcher = ".*\\[([a-zA-Z]*)\\].*".r
 
   def requiredModels(allModels: Option[Map[String, Model]], apis: List[ApiDescription]): List[String] = {
     val modelNames = new ListBuffer[String]
