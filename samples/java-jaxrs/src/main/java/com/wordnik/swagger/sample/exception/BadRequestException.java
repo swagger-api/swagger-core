@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package com.wordnik.swagger.sample.exception;
 
 public class BadRequestException extends ApiException{
-	private int code;
-	public BadRequestException (int code, String msg) {
-		super(code, msg);
-		this.code = code;
-	}
+  private int code;
+  public BadRequestException (int code, String msg) {
+    super(code, msg);
+    this.code = code;
+  }
 }

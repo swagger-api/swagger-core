@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.wordnik.swagger.annotations.*;
 
 import javax.ws.rs.*;
 
-@Path("/user.json")
+@Path("/user")
 @Api(value="/user", description = "Operations about user")
-@Produces({"application/json"})
+@Produces({"application/json", "application/xml"})
 public class UserResourceJSON extends UserResource {}
