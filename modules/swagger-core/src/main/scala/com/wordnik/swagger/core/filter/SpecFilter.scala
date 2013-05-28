@@ -21,17 +21,17 @@ import com.wordnik.swagger.model._
 import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
 
 trait SwaggerSpecFilter {
-  def isAllowed(operation: Operation): Boolean
-  def isAllowed(parameter: Parameter, operation: Operation): Boolean
+  def isOperationAllowed(operation: Operation, api: ApiDescription, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]): Boolean
+  def isParamAllowed(parameter: Parameter, operation: Operation, api: ApiDescription, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]): Boolean
 }
 
 class SpecFilter {
-  def filter(listing: ApiListing, filter: SwaggerSpecFilter) = {
+  def filter(listing: ApiListing, filter: SwaggerSpecFilter, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]) = {
     val filteredApis = (for(api <- listing.apis) yield {
       val filteredOps = (for(op <- api.operations) yield {
-        if(filter.isAllowed(op)) {
+        if(filter.isOperationAllowed(op, api, params, cookies, headers)) {
           val filteredParams = (for(param <- op.parameters) yield {
-            if(filter.isAllowed(param, op)) Some(param)
+            if(filter.isParamAllowed(param, op, api, params, cookies, headers)) Some(param)
             else None
           }).flatten.toList
           Some(op.copy(parameters = filteredParams))

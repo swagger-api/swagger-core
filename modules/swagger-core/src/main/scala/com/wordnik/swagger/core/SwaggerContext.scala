@@ -14,20 +14,18 @@ object SwaggerContext {
   def registerClassLoader(cl: ClassLoader) = this.classLoaders += cl
 
   def loadClass(name: String) = {
-    var clazz: Class[_] = null
-
-    for (classLoader <- classLoaders.reverse) {
-      if (clazz == null) {
-        try {
-          clazz = Class.forName(name, true, classLoader)
-        } catch {
-          case e: ClassNotFoundException => LOGGER.debug("Class not found in classLoader " + classLoader)
+    var cls: Class[_] = null
+    val itr = classLoaders.reverse.iterator
+    while (cls == null && itr.hasNext) {
+      try {
+        cls = Class.forName(name.trim, true, itr.next)
+      } catch {
+        case e: ClassNotFoundException => {
+          LOGGER.debug("Class %s not found in classLoader".format(name))
+          throw new ClassNotFoundException("class " + name + " not found")
         }
       }
     }
-
-    if (clazz == null)
-      throw new ClassNotFoundException("class " + name + " not found")
-    clazz
+    cls
   }
 }

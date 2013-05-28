@@ -22,28 +22,28 @@ class SpecFilterTest extends FlatSpec with ShouldMatchers {
 
   it should "filter an api spec and return all models" in {
     val spec = TestSpecs.getSimple
-    val p = new SpecFilter().filter(spec, new SimpleFilter )
+    val p = new SpecFilter().filter(spec, new SimpleFilter, Map(), Map(), Map())
     p.apis.size should be (4)
     (p.models.get.keys.toSet & Set("Pet", "Category", "Tag")).size should be (3)
   }
 
   it should "filter away all non-get operations" in {
     val spec = TestSpecs.getSimple
-    val p = new SpecFilter().filter(spec, new GetOnlyFilter )
+    val p = new SpecFilter().filter(spec, new GetOnlyFilter, Map(), Map(), Map())
     p.apis.size should be (3)
     (p.models.get.keys.toSet & Set("Pet", "Category", "Tag")).size should be (3)
   }
 
   it should "filter away everything" in {
     val spec = TestSpecs.getSimple
-    val p = new SpecFilter().filter(spec, new EatEverythingFilter )
+    val p = new SpecFilter().filter(spec, new EatEverythingFilter, Map(), Map(), Map())
     p.apis.size should be (0)
     p.models should be (None)
   }
 
   it should "filter away secret params" in {
     val spec = TestSpecs.getSimple
-    val p = new SpecFilter().filter(spec, new SecretParamFilter )
+    val p = new SpecFilter().filter(spec, new SecretParamFilter, Map(), Map(), Map())
 
     p.apis.foreach(api => {
       if(api.path == "/pet.{format}") {
@@ -58,26 +58,26 @@ class SpecFilterTest extends FlatSpec with ShouldMatchers {
 }
 
 class SimpleFilter extends SwaggerSpecFilter {
-  override def isAllowed(operation: Operation): Boolean = true
-  override def isAllowed(parameter: Parameter, operation: Operation): Boolean = true
+  override def isOperationAllowed(operation: Operation, api: ApiDescription, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]): Boolean = true
+  override def isParamAllowed(parameter: Parameter, operation: Operation, api: ApiDescription, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]): Boolean = true
 }
 
 class GetOnlyFilter extends SwaggerSpecFilter {
-  override def isAllowed(operation: Operation): Boolean = {
+  override def isOperationAllowed(operation: Operation, api: ApiDescription, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]): Boolean = {
     if(operation.httpMethod != "GET") false
     else true
   }
-  override def isAllowed(parameter: Parameter, operation: Operation): Boolean = true
+  override def isParamAllowed(parameter: Parameter, operation: Operation, api: ApiDescription, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]): Boolean = true
 }
 
 class EatEverythingFilter extends SwaggerSpecFilter {
-  override def isAllowed(operation: Operation): Boolean = false
-  override def isAllowed(parameter: Parameter, operation: Operation): Boolean = true
+  override def isOperationAllowed(operation: Operation, api: ApiDescription, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]): Boolean = false
+  override def isParamAllowed(parameter: Parameter, operation: Operation, api: ApiDescription, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]): Boolean = true
 }
 
 class SecretParamFilter extends SwaggerSpecFilter {
-  override def isAllowed(operation: Operation): Boolean = true
-  override def isAllowed(parameter: Parameter, operation: Operation): Boolean = {
+  override def isOperationAllowed(operation: Operation, api: ApiDescription, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]): Boolean = true
+  override def isParamAllowed(parameter: Parameter, operation: Operation, api: ApiDescription, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]): Boolean = {
     if(parameter.paramAccess == Some("secret")) false
     else true
   }
