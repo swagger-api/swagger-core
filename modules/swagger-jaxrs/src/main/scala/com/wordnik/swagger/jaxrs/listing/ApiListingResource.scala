@@ -9,10 +9,3 @@ import javax.ws.rs._
 @Api("/api-docs")
 // @Produces(Array("application/json"))
 class ApiListingResourceJSON extends ApiListing
-
-/*
-@Path("/api-docs.xml")
-@Api("/api-docs")
-@Produces(Array("application/xml"))
-class ApiListingResourceXML extends ApiListing
-*/

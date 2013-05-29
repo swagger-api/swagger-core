@@ -17,7 +17,8 @@ class BasicResource {
   @Path("/{id}")
   @ApiOperation(value = "Get object by ID",
     notes = "No details provided",
-    response = classOf[Sample])
+    response = classOf[Sample],
+    position = 0)
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid ID", response = classOf[NotFoundModel]),
     new ApiError(code = 404, reason = "object not found")))
@@ -32,7 +33,8 @@ class BasicResource {
   @PUT
   @Path("/{id}")
   @ApiOperation(value = "Update by ID",
-    notes = "No details provided")
+    notes = "No details provided",
+    position = 1)
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid ID"),
     new ApiError(code = 404, reason = "object not found")))

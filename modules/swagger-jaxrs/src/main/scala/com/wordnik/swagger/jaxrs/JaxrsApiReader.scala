@@ -69,6 +69,17 @@ object JaxrsApiReader {
               param.dataType = ModelConverters.toName(paramType)
               processParamAnnotations(param, annotations, method)
             }
+            else if(paramTypes.size > 0) {
+              //  it's a body param w/o annotations, which means POST.  Only take the first one!
+              val p = paramTypes.head
+
+              val param = new MutableParameter
+              param.dataType = ModelConverters.toName(p)
+              param.name = TYPE_BODY
+              param.paramType = TYPE_BODY
+
+              Some(param.asParameter)
+            }
             else None
           }).flatten.toList
 
@@ -269,14 +280,20 @@ object JaxrsApiReader {
         case _ =>
       }
     }
-    if(!shouldIgnore) Some(mutable.asParameter)
+    if(!shouldIgnore) {
+      if(mutable.paramType == null) {
+        mutable.paramType = TYPE_BODY
+        mutable.name = TYPE_BODY
+      }
+      Some(mutable.asParameter)
+    }
     else None
   }
 
   def parseApiParamAnnotation(param: MutableParameter, annotation: ApiParam, method: Method) {
     param.name = readString(annotation.name, param.name)
-    param.description = readString(annotation.value)
-    param.defaultValue = readString(annotation.defaultValue)
+    param.description = Option(readString(annotation.value))
+    param.defaultValue = Option(readString(annotation.defaultValue))
 
     try {
       param.allowableValues = toAllowableValues(annotation.allowableValues)
@@ -361,8 +378,8 @@ object JaxrsApiReader {
 
 class MutableParameter(param: Parameter) {
   var name: String = _
-  var description: String = _
-  var defaultValue: String = _
+  var description: Option[String] = None
+  var defaultValue: Option[String] = None
   var required: Boolean = _
   var allowMultiple: Boolean = false
   var dataType: String = _

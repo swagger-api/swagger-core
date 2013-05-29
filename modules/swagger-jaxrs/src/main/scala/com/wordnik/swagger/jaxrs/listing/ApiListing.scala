@@ -88,7 +88,8 @@ class ApiListing {
       (for(spec <- specs.values) yield 
         f.filter(spec, FilterFactory.filter, paramsToMap(uriInfo.getQueryParameters), cookiesToMap(headers), headersToMap(headers))
       ).filter(m => m.resourcePath == pathPart)
-    }).toList
+    }).flatten.toList
+
     listings.size match {
       case 1 => Response.ok(JsonSerializer.asJson(listings.head)).build
       case _ => Response.status(404).build
