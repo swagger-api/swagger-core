@@ -63,7 +63,7 @@ class ApiListing {
       config.basePath,
       references
     )
-    Response.ok(JsonSerializer.asJson(resourceListing)).build
+    Response.ok(resourceListing).build
   }
 
   /**
@@ -91,7 +91,7 @@ class ApiListing {
     }).flatten.toList
 
     listings.size match {
-      case 1 => Response.ok(JsonSerializer.asJson(listings.head)).build
+      case 1 => Response.ok(listings.head).build
       case _ => Response.status(404).build
     }
   }
