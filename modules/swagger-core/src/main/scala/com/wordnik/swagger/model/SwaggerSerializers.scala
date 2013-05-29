@@ -223,16 +223,13 @@ object SwaggerSerializers {
           !!(json, OPERATION_PARAM, "reason", "missing parameter name", WARNING)
           ""
         }),
-        (json \ "description").extractOrElse({
-          !!(json, OPERATION_PARAM, "description", "missing recommended field", WARNING)
-          ""
-        }),
+        (json \ "description").extractOpt[String],
         (json \ "defaultValue") match {
-          case e:JInt => e.num.toString
-          case e:JBool => e.value.toString
-          case e:JString => e.s
-          case e:JDouble => e.num.toString
-          case _ => ""
+          case e:JInt => Some(e.num.toString)
+          case e:JBool => Some(e.value.toString)
+          case e:JString => Some(e.s)
+          case e:JDouble => Some(e.num.toString)
+          case _ => None
         },
         (json \ "required") match {
           case e:JString => e.s.toBoolean
@@ -363,8 +360,7 @@ object SwaggerSerializers {
           case _ => None
         }
       }) ~
-      ("$ref" -> x.ref) ~
-      ("qualifiedType" -> x.qualifiedType)
+      ("$ref" -> x.ref)
     }
   ))
 

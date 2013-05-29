@@ -179,8 +179,8 @@ class ApiDescriptionSerializersTest extends FlatSpec with ShouldMatchers {
 
           op.parameters.foreach(m => {
             m.name should be ("id")
-            m.description should be ("the id")
-            m.defaultValue should be ("-1")
+            m.description should be (Some("the id"))
+            m.defaultValue should be (Some("-1"))
             m.required should be (false)
             m.allowMultiple should be (true)
             m.dataType should be ("string")
@@ -203,7 +203,7 @@ class ApiDescriptionSerializersTest extends FlatSpec with ShouldMatchers {
         "string",
         "getMeSomeStrings",
         0,
-        List(Parameter("id", "the id", "-1", false, true, "string", AllowableListValues(List("a","b","c")), "query"))
+        List(Parameter("id", Some("the id"), Some("-1"), false, true, "string", AllowableListValues(List("a","b","c")), "query"))
       ))
     )
     write(l) should be ("""{"path":"/foo/bar","description":"the description","operations":[{"httpMethod":"get","summary":"the summary","notes":"the notes","responseClass":"string","nickname":"getMeSomeStrings","parameters":[{"name":"id","description":"the id","defaultValue":"-1","required":false,"allowMultiple":true,"dataType":"string","allowableValues":{"valueType":"LIST","values":["a","b","c"]},"paramType":"query"}]}]}""")
@@ -251,8 +251,8 @@ class OperationSerializersTest extends FlatSpec with ShouldMatchers {
 
         op.parameters.foreach(m => {
           m.name should be ("id")
-          m.description should be ("the id")
-          m.defaultValue should be ("-1")
+          m.description should be (Some("the id"))
+          m.defaultValue should be (Some("-1"))
           m.required should be (false)
           m.allowMultiple should be (true)
           m.dataType should be ("string")
@@ -271,7 +271,7 @@ class OperationSerializersTest extends FlatSpec with ShouldMatchers {
       "string",
       "getMeSomeStrings",
       0,
-      List(Parameter("id", "the id", "-1", false, true, "string", AllowableListValues(List("a","b","c")), "query"))
+      List(Parameter("id", Some("the id"), Some("-1"), false, true, "string", AllowableListValues(List("a","b","c")), "query"))
     )
     write(op) should be ("""{"httpMethod":"get","summary":"the summary","notes":"the notes","responseClass":"string","nickname":"getMeSomeStrings","parameters":[{"name":"id","description":"the id","defaultValue":"-1","required":false,"allowMultiple":true,"dataType":"string","allowableValues":{"valueType":"LIST","values":["a","b","c"]},"paramType":"query"}]}""")
   }
@@ -354,8 +354,8 @@ class ParameterSerializersTest extends FlatSpec with ShouldMatchers {
     json.extract[Parameter] match {
       case p: Parameter => {
         p.name should be ("includeDuplicates")
-        p.description should be ("Show duplicate examples from different sources")
-        p.defaultValue should be ("false")
+        p.description should be (Some("Show duplicate examples from different sources"))
+        p.defaultValue should be (Some("false"))
         p.required should be (false)
         p.allowMultiple should be (false)
         p.dataType should be ("string")
@@ -381,8 +381,8 @@ class ParameterSerializersTest extends FlatSpec with ShouldMatchers {
     json.extract[Parameter] match {
       case p: Parameter => {
         p.name should be ("name")
-        p.description should be ("description")
-        p.defaultValue should be ("tony")
+        p.description should be (Some("description"))
+        p.defaultValue should be (Some("tony"))
         p.required should be (false)
         p.allowMultiple should be (true)
         p.dataType should be ("string")
@@ -393,7 +393,7 @@ class ParameterSerializersTest extends FlatSpec with ShouldMatchers {
   }
 
   it should "serialize a parameter" in {
-    val l = Parameter("name", "description", "tony", false, true, "string", AnyAllowableValues, "query", Some("internal"))
+    val l = Parameter("name", Some("description"), Some("tony"), false, true, "string", AnyAllowableValues, "query", Some("internal"))
     write(l) should be ("""{"name":"name","description":"description","defaultValue":"tony","required":false,"allowMultiple":true,"dataType":"string","paramType":"query","paramAccess":"internal"}""")
   }
 }

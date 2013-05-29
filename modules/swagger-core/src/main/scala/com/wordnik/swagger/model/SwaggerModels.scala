@@ -79,8 +79,8 @@ case class Operation (
 
 case class Parameter (
   name: String,
-  description: String,
-  defaultValue: String,
+  description: Option[String],
+  defaultValue: Option[String],
   required: Boolean,
   allowMultiple: Boolean,
   dataType: String,
