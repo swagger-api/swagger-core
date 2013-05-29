@@ -46,7 +46,7 @@ class ResourceListingIT extends FlatSpec with ShouldMatchers {
     assert(((xml \ "apis").map(api => (api \ "path").text).toSet & Set("/api-docs/pet", "/api-docs/user")).size == 2)
   }
 
-  it should "read the pet api description" in {
+  ignore should "read the pet api description" in {
     val json = Source.fromURL("http://localhost:8002/api/api-docs/pet").mkString
     println(json)
     val doc = ScalaJsonUtil.mapper.readValue(json, classOf[ApiListing])
@@ -57,7 +57,7 @@ class ResourceListingIT extends FlatSpec with ShouldMatchers {
         "/pet/findByTags")).size == 3)
   }
 
-  it should "read the user api with array and list data types as post data" in {
+  ignore should "read the user api with array and list data types as post data" in {
     val json = Source.fromURL("http://localhost:8002/api/api-docs/user").mkString
     val doc = ScalaJsonUtil.mapper.readValue(json, classOf[ApiListing])
     assert(doc.apis.size === 6)
@@ -68,7 +68,6 @@ class ResourceListingIT extends FlatSpec with ShouldMatchers {
 
     var param = doc.apis.filter(api => api.path == "/user/createWithList")(0).operations(0).parameters(0)
     assert(param.dataType === "List[User]")
-
   }
 
   ignore should "read the pet api description in XML" in {
