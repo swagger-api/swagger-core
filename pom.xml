@@ -311,8 +311,8 @@
     <module>samples/scala-jaxrs-no-format</module>
     <module>samples/scala-jaxrs-fileupload</module>
     <module>samples/scala-jaxrs-apm</module>
-    <module>samples/java-resteasy</module>
-    <module>samples/java-jaxrs-cxf</module-->
+    <module>samples/java-resteasy</module>-->
+    <module>samples/java-jaxrs-cxf</module>
   </modules>
   <reporting>
     <outputDirectory>target/site</outputDirectory>

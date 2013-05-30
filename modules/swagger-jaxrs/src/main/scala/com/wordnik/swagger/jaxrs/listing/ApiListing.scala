@@ -57,7 +57,7 @@ class ApiListing {
         yield f.filter(spec, FilterFactory.filter, paramsToMap(uriInfo.getQueryParameters), cookiesToMap(headers), headersToMap(headers))
       ).filter(m => m.apis.size > 0)
     })
-    val references = (for(listing <- listings.get) yield {
+    val references = (for(listing <- listings.getOrElse(List())) yield {
       ApiListingReference(listing.resourcePath, listing.description)
     }).toList
 

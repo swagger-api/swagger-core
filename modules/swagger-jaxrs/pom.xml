@@ -63,5 +63,10 @@
       <version>1.1.1</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.9.8</version>
+    </dependency>
   </dependencies>
 </project>

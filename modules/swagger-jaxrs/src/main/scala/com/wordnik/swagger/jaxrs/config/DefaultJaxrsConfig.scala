@@ -1,6 +1,6 @@
 package com.wordnik.swagger.jaxrs.config
 
-import com.wordnik.swagger.jaxrs.DefaultJaxrsApiReader
+import com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader
 import com.wordnik.swagger.config.ConfigFactory
 import com.wordnik.swagger.reader._
 

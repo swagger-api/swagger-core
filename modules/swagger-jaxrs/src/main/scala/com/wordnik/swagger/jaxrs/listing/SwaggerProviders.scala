@@ -14,7 +14,7 @@ import java.io._
 
 @Produces(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
 @Provider
-class ApiListingProvider extends MessageBodyWriter[com.wordnik.swagger.model.ApiListing] {
+class ApiDeclarationProvider extends MessageBodyWriter[com.wordnik.swagger.model.ApiListing] {
   override def isWriteable(`type`: Class[_], genericType: Type, annotations: Array[Annotation], mediaType: MediaType): Boolean = {
     classOf[com.wordnik.swagger.model.ApiListing].isAssignableFrom(`type`)
   }

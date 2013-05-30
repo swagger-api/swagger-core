@@ -1,6 +1,6 @@
 import testresources._
 
-import com.wordnik.swagger.jaxrs._
+import com.wordnik.swagger.jaxrs.reader._
 import com.wordnik.swagger.core.util._
 import com.wordnik.swagger.model._
 import com.wordnik.swagger.config._
