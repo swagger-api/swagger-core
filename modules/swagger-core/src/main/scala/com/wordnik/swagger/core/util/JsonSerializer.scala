@@ -23,8 +23,19 @@ import org.json4s.JsonDSL._
 import org.json4s.jackson.JsonMethods._
 import org.json4s.jackson.Serialization.{read, write}
 
+import Xml._
+import scala.xml.{Group, Text}
+
 object JsonSerializer {
   implicit val formats = SwaggerSerializers.formats
+  val printer = new scala.xml.PrettyPrinter(100,2)
 
-  def asJson(w: AnyRef): String = write(w)
+  def asJson(w: AnyRef): String = {
+  	write(w)
+  }
+
+  def asXml(w: AnyRef): String = {
+  	val xml = parse(write(w))
+  	toXml(xml).toString
+  }
 }

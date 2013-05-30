@@ -1,5 +1,6 @@
 package com.wordnik.swagger.config
 
+import com.wordnik.swagger.reader.ClassReader
 import com.wordnik.swagger.core.SwaggerSpec
 
 object ConfigFactory {
