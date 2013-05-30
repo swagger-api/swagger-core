@@ -19,11 +19,11 @@ package com.wordnik.swagger.sample.resource
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.annotations._
 
-import com.wordnik.swagger.core.util.RestResourceUtil
 import com.wordnik.swagger.jaxrs._
 import com.wordnik.swagger.sample.model.Order
 import com.wordnik.swagger.sample.data.StoreData
 import com.wordnik.swagger.sample.exception.NotFoundException
+import com.wordnik.swagger.sample.util.RestResourceUtil
 
 import javax.ws.rs.core.Response
 import javax.ws.rs._
@@ -31,8 +31,9 @@ import javax.ws.rs._
 trait PetStoreResource extends RestResourceUtil {
   @GET
   @Path("/order/{orderId}")
-  @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5. " +
-    "Anything above 5 or nonintegers will generate API errors", responseClass = "com.wordnik.swagger.sample.model.Order")
+  @ApiOperation(value = "Find purchase order by ID",
+    notes = "For valid response try integer IDs with value <= 5. Anything above 5 or nonintegers will generate API errors", 
+    response = classOf[Order])
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid ID supplied"),
     new ApiError(code = 404, reason = "Order not found")))
@@ -48,7 +49,7 @@ trait PetStoreResource extends RestResourceUtil {
 
   @POST
   @Path("/order")
-  @ApiOperation(value = "Place an order for a pet", responseClass = "void")
+  @ApiOperation(value = "Place an order for a pet")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid order")))
   def placeOrder(
@@ -59,8 +60,8 @@ trait PetStoreResource extends RestResourceUtil {
 
   @DELETE
   @Path("/order/{orderId}")
-  @ApiOperation(value = "Delete purchase order by ID", notes = "For valid response try integer IDs with value < 1000. " +
-    "Anything above 1000 or nonintegers will generate API errors")
+  @ApiOperation(value = "Delete purchase order by ID",
+    notes = "For valid response try integer IDs with value < 1000.  Anything above 1000 or nonintegers will generate API errors")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid ID supplied"),
     new ApiError(code = 404, reason = "Order not found")))
@@ -71,12 +72,7 @@ trait PetStoreResource extends RestResourceUtil {
   }
 }
 
-@Path("/store.json")
+@Path("/store")
 @Api(value="/store" , description = "Operations about store")
 @Produces(Array("application/json"))
 class PetStoreResourceJSON extends PetStoreResource
-
-@Path("/store.xml")
-@Api(value="/store", description = "Operations about store")
-@Produces(Array("application/xml"))
-class PetStoreResourceXML extends PetStoreResource

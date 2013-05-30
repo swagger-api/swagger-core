@@ -18,8 +18,8 @@ package com.wordnik.swagger.sample.resource
 
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.core._
-import com.wordnik.swagger.core.util.RestResourceUtil
 import com.wordnik.swagger.jaxrs._
+import com.wordnik.swagger.sample.util.RestResourceUtil
 import com.wordnik.swagger.sample.data.{ PetData }
 import com.wordnik.swagger.sample.model.{ Pet }
 import com.wordnik.swagger.sample.exception.NotFoundException
@@ -39,7 +39,9 @@ import javax.ws.rs._
 trait PetResource extends RestResourceUtil {
   @GET
   @Path("/{petId}")
-  @ApiOperation(value = "Find pet by ID", notes = "Returns a pet based on ID", responseClass = "com.wordnik.swagger.sample.model.Pet")
+  @ApiOperation(value = "Find pet by ID", 
+    notes = "Returns a pet based on ID", 
+    response = classOf[Pet])
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid ID supplied"),
     new ApiError(code = 404, reason = "Pet not found")))
@@ -93,7 +95,8 @@ trait PetResource extends RestResourceUtil {
   @Path("/findByStatus")
   @ApiOperation(value = "Finds Pets by status",
     notes = "Multiple status values can be provided with comma seperated strings",
-    responseClass = "com.wordnik.swagger.sample.model.Pet", multiValueResponse = true)
+    response = classOf[Pet],
+    responseContainer = "List")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid status value")))
   def findPetsByStatus(
@@ -107,7 +110,8 @@ trait PetResource extends RestResourceUtil {
   @Path("/findByTags")
   @ApiOperation(value = "Finds Pets by tags",
     notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
-    responseClass = "com.wordnik.swagger.sample.model.Pet", multiValueResponse = true)
+    response = classOf[Pet],
+    responseContainer = "List")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid tag value")))
   @Deprecated
@@ -119,12 +123,8 @@ trait PetResource extends RestResourceUtil {
   }
 }
 
-@Path("/pet.json")
+@Path("/pet")
 @Api(value = "/pet", description = "Operations about pets")
 @Produces(Array("application/json"))
 class PetResourceJSON extends PetResource
 
-@Path("/pet.xml")
-@Api(value = "/pet", description = "Operations about pets")
-@Produces(Array("application/xml"))
-class PetResourceXML extends PetResource

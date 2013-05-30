@@ -22,10 +22,11 @@ import com.wordnik.swagger.jaxrs._
 import com.wordnik.swagger.sample.model.User
 import com.wordnik.swagger.sample.data.UserData
 import com.wordnik.swagger.sample.exception.NotFoundException
+import com.wordnik.swagger.sample.util.RestResourceUtil
 
 import javax.ws.rs.core.Response
 import javax.ws.rs._
-import com.wordnik.swagger.core.util.RestResourceUtil
+
 import scala.collection.JavaConverters._
 
 trait UserResource extends RestResourceUtil {
@@ -84,7 +85,7 @@ trait UserResource extends RestResourceUtil {
 
   @GET
   @Path("/{username}")
-  @ApiOperation(value = "Get user by user name", responseClass = "com.wordnik.swagger.sample.model.User")
+  @ApiOperation(value = "Get user by user name", response = classOf[User])
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid username supplied"),
     new ApiError(code = 404, reason = "User not found")))
@@ -100,7 +101,7 @@ trait UserResource extends RestResourceUtil {
 
   @GET
   @Path("/login")
-  @ApiOperation(value = "Logs user into the system", responseClass = "java.lang.String")
+  @ApiOperation(value = "Logs user into the system", response = classOf[String])
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid username and password combination")))
   def loginUser(
@@ -117,12 +118,7 @@ trait UserResource extends RestResourceUtil {
   }
 }
 
-@Path("/user.json")
+@Path("/user")
 @Api(value = "/user", description = "Operations about user")
 @Produces(Array("application/json"))
 class UserResourceJSON extends UserResource
-
-@Path("/user.xml")
-@Api(value = "/user", description = "Operations about user")
-@Produces(Array("application/xml"))
-class UserResourceXML extends UserResource
