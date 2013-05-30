@@ -1,6 +1,7 @@
 package com.wordnik.swagger.jaxrs.listing
 
 import com.wordnik.swagger.config._
+import com.wordnik.swagger.reader._
 import com.wordnik.swagger.core.util._
 import com.wordnik.swagger.model._
 import com.wordnik.swagger.core.filter._
@@ -23,16 +24,19 @@ import scala.collection.JavaConverters._
 
 object ApiListingCache {
   var _cache: Option[Map[String, com.wordnik.swagger.model.ApiListing]] = None
+
   def listing(docRoot: String, app: Application, sc: ServletConfig): Option[Map[String, com.wordnik.swagger.model.ApiListing]] = {
     _cache.orElse{
-      ScannerFactory.scanner.map(scanner => {
-        val classes = scanner match {
-          case scanner: JaxrsScanner => scanner.asInstanceOf[JaxrsScanner].classesFromContext(app, sc)
-          case _ => List()
-        }
-        val listings = (for(cls <- classes) yield JaxrsApiReader.read(docRoot, cls, ConfigFactory.config)).flatten.toList
-        _cache = Some((listings.map(m => (m.resourcePath, m))).toMap)
-      })
+      ClassReaders.reader.map{reader => 
+        ScannerFactory.scanner.map(scanner => {
+          val classes = scanner match {
+            case scanner: JaxrsScanner => scanner.asInstanceOf[JaxrsScanner].classesFromContext(app, sc)
+            case _ => List()
+          }
+          val listings = (for(cls <- classes) yield reader.read(docRoot, cls, ConfigFactory.config)).flatten.toList
+          _cache = Some((listings.map(m => (m.resourcePath, m))).toMap)
+        })
+      }
       _cache
     }
   }

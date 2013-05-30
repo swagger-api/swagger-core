@@ -1,8 +1,8 @@
 package com.wordnik.swagger.jaxrs.config
 
+import com.wordnik.swagger.jaxrs.DefaultJaxrsApiReader
 import com.wordnik.swagger.config.ConfigFactory
-
-import javax.ws.rs.core.{ Context, Application }
+import com.wordnik.swagger.reader._
 
 import javax.servlet.ServletConfig
 import javax.servlet.http.HttpServlet
@@ -14,5 +14,6 @@ class DefaultJaxrsConfig extends HttpServlet {
     implicit val config = servletConfig
     ConfigFactory.config = new WebXMLReader()
     ScannerFactory.scanner = Some(new DefaultJaxrsScanner())
+    ClassReaders.reader = Some(new DefaultJaxrsApiReader)
   }
 }
