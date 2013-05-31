@@ -28,6 +28,76 @@ trait JaxrsApiReader extends ClassReader {
   // decorates a Parameter based on annotations, returns None if param should be ignored
   def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation], method: Method): Option[Parameter]
 
+  def parseOperation(method: Method, apiOperation: ApiOperation, errorResponses: List[ErrorResponse], isDeprecated: String) = {
+    val api = method.getAnnotation(classOf[Api])
+    val responseClass = apiOperation.responseContainer match {
+      case "" => apiOperation.response.getName
+      case e: String => "%s[%s]".format(e, apiOperation.response.getName)
+    }
+
+    val paramAnnotations = method.getParameterAnnotations
+    val paramTypes = method.getParameterTypes
+    val genericParamTypes = method.getGenericParameterTypes
+
+    val params = (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
+      if(annotations.length > 0) {
+        val param = new MutableParameter
+        param.dataType = ModelConverters.toName(paramType)
+        processParamAnnotations(param, annotations, method)
+      }
+      else if(paramTypes.size > 0) {
+        //  it's a body param w/o annotations, which means POST.  Only take the first one!
+        val p = paramTypes.head
+
+        val param = new MutableParameter
+        param.dataType = ModelConverters.toName(p)
+        param.name = TYPE_BODY
+        param.paramType = TYPE_BODY
+
+        Some(param.asParameter)
+      }
+      else None
+    }).flatten.toList
+
+    Operation(
+      parseHttpMethod(method, apiOperation),
+      apiOperation.value,
+      apiOperation.notes,
+      responseClass,
+      method.getName,
+      apiOperation.position,
+      params,
+      errorResponses,
+      Option(isDeprecated))
+  }
+
+  def readMethod(method: Method) = {
+    val apiOperation = method.getAnnotation(classOf[ApiOperation])
+    val errorAnnotations = method.getAnnotation(classOf[ApiErrors])
+
+    val errorResponses = {
+      if(errorAnnotations == null) List()
+      else (for(error <- errorAnnotations.value) yield {
+        val errorResponse = {
+          if(error.response != classOf[Void])
+            Some(error.response.getName)
+          else None
+        }
+        ErrorResponse(error.code, error.reason, errorResponse)}
+      ).toList
+    }
+    val isDeprecated = Option(method.getAnnotation(classOf[Deprecated])).map(m => "true").getOrElse(null)
+
+    parseOperation(method, apiOperation, errorResponses, isDeprecated)
+  }
+
+  def appendOperation(endpoint: String, path: String, op: Operation, operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]]) = {
+    operations.filter(op => op._1 == endpoint) match {
+      case e: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]] if(e.size > 0) => e.head._3 += op
+      case _ => operations += Tuple3(endpoint, path, new ListBuffer[Operation]() ++= List(op))
+    }
+  }
+
   def read(docRoot: String, cls: Class[_], config: SwaggerConfig): Option[ApiListing] = {
     val api = cls.getAnnotation(classOf[Api])
     if(api != null) {
@@ -38,75 +108,36 @@ trait JaxrsApiReader extends ClassReader {
       }
 
       for(method <- cls.getMethods) {
-        val apiOperation = method.getAnnotation(classOf[ApiOperation])
-        val errorAnnotations = method.getAnnotation(classOf[ApiErrors])
-        val opPath = method.getAnnotation(classOf[Path]) match {
+        val returnType = method.getReturnType
+        val path = method.getAnnotation(classOf[Path]) match {
           case e: Path => e.value()
           case _ => ""
         }
-        val errorResponses = {
-          if(errorAnnotations == null) List()
-          else (for(error <- errorAnnotations.value) yield {
-            val errorResponse = {
-              if(error.response != classOf[Void])
-                Some(error.response.getName)
-              else None
+        Option(returnType.getAnnotation(classOf[Api])) match {
+          case Some(e) => {
+            // the return class has Api annotations, and should be parsed
+            for(submethod <- returnType.getMethods) {
+              if(submethod.getAnnotation(classOf[ApiOperation]) != null) {
+                val op = readMethod(submethod)
+                val endpoint = api.value + pathFromMethod(method)
+                val subpath = submethod.getAnnotation(classOf[Path]) match {
+                  case e: Path => e.value()
+                  case _ => ""
+                }
+                println("adding subpath " + endpoint + " to " + path + subpath)
+                appendOperation(endpoint, path + subpath, op, operations)
+              }
             }
-            ErrorResponse(error.code, error.reason, errorResponse)}
-          ).toList
-        }
-        val isDeprecated = Option(method.getAnnotation(classOf[Deprecated])).map(m => "true").getOrElse(null)
-
-        if(apiOperation != null) {
-          val responseClass = apiOperation.responseContainer match {
-            case "" => apiOperation.response.getName
-            case e: String => "%s[%s]".format(e, apiOperation.response.getName)
           }
-
-          val paramAnnotations = method.getParameterAnnotations
-          val paramTypes = method.getParameterTypes
-          val genericParamTypes = method.getGenericParameterTypes
-
-          val params = (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
-            if(annotations.length > 0) {
-              val param = new MutableParameter
-              param.dataType = ModelConverters.toName(paramType)
-              processParamAnnotations(param, annotations, method)
-            }
-            else if(paramTypes.size > 0) {
-              //  it's a body param w/o annotations, which means POST.  Only take the first one!
-              val p = paramTypes.head
-
-              val param = new MutableParameter
-              param.dataType = ModelConverters.toName(p)
-              param.name = TYPE_BODY
-              param.paramType = TYPE_BODY
-
-              Some(param.asParameter)
-            }
-            else None
-          }).flatten.toList
-
-          val endpoint = api.value + pathFromMethod(method)
-
-          val op = Operation(
-            parseHttpMethod(method, apiOperation),
-            apiOperation.value,
-            apiOperation.notes,
-            responseClass,
-            method.getName,
-            apiOperation.position,
-            params,
-            errorResponses,
-            Option(isDeprecated))
-
-          val ops = operations.filter(op => op._1 == endpoint) match {
-            case e: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]] if(e.size > 0) =>
-              e.head._3 += op
-            case _ => operations += Tuple3(endpoint, opPath, new ListBuffer[Operation]() ++= List(op))
+          case _ => {
+            if(method.getAnnotation(classOf[ApiOperation]) != null) {
+              val op = readMethod(method)
+              val endpoint = api.value + pathFromMethod(method)
+              appendOperation(endpoint, path, op, operations)
+            }            
           }
-          Some(ops) 
         }
+
         // TODO: parse implicit param annotations
       }
       val apis = (for ((endpoint, resourcePath, operationList) <- operations) yield {
