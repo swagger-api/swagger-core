@@ -35,8 +35,7 @@ object JsonSerializer {
   }
 
   def asXml(w: AnyRef): String = {
-  	val xml = parse(write(w))
-  	toXml(xml).toString
+  	toXml(parse(write(w))).toString
   }
 
   def asApiListing(json: String): ApiListing = {

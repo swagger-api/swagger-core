@@ -50,6 +50,8 @@ object SwaggerSerializers {
           !!(json, RESOURCE, "resourcePath", "missing recommended field", WARNING)
           ""
         }),
+        (json \ "produces").extractOrElse(List()),
+        (json \ "consumes").extractOrElse(List()),
         (json \ "apis").extract[List[ApiDescription]],
         (json \ "models").extractOpt[Map[String, Model]]
       )
@@ -59,6 +61,18 @@ object SwaggerSerializers {
       ("apiVersion" -> x.apiVersion) ~
       ("swaggerVersion" -> x.swaggerVersion) ~
       ("basePath" -> x.basePath) ~
+      ("produces" -> {
+        x.produces match {
+          case e: List[String] if(e.size > 0) => Extraction.decompose(e)
+          case _ => JNothing
+        }
+      }) ~
+      ("consumes" -> {
+        x.consumes match {
+          case e: List[String] if(e.size > 0) => Extraction.decompose(e)
+          case _ => JNothing
+        }
+      }) ~
       ("apis" -> {
         x.apis match {
           case e: List[ApiDescription] if (e.size > 0) => Extraction.decompose(e)
@@ -192,6 +206,8 @@ object SwaggerSerializers {
           ""
         }),
         (json \ "position").extractOrElse(0),
+        (json \ "produces").extractOrElse(List()),
+        (json \ "consumes").extractOrElse(List()),
         (json \ "parameters").extract[List[Parameter]],
         (json \ "errorResponses").extract[List[ErrorResponse]],
         (json \ "deprecated").extractOpt[String]
@@ -204,6 +220,18 @@ object SwaggerSerializers {
       ("notes" -> x.notes) ~
       ("responseClass" -> x.responseClass) ~
       ("nickname" -> x.nickname) ~
+      ("produces" -> {
+        x.produces match {
+          case e: List[String] if(e.size > 0) => Extraction.decompose(e)
+          case _ => JNothing
+        }
+      }) ~
+      ("consumes" -> {
+        x.consumes match {
+          case e: List[String] if(e.size > 0) => Extraction.decompose(e)
+          case _ => JNothing
+        }
+      }) ~
       ("parameters" -> Extraction.decompose(x.parameters)) ~
       ("errorResponses" -> {
         x.errorResponses match {
