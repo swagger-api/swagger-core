@@ -33,4 +33,5 @@ public @interface Api {
     boolean open() default false;
     /** The base path that is prepended to all @Path elements. This may be an override for certain scenarios only */
     String basePath() default "";
+    int position() default 0;
 }
