@@ -38,6 +38,14 @@ trait JaxrsApiReader extends ClassReader {
     val paramAnnotations = method.getParameterAnnotations
     val paramTypes = method.getParameterTypes
     val genericParamTypes = method.getGenericParameterTypes
+    val produces = apiOperation.produces match {
+      case e: String if(e != "") => e.split(",").map(_.trim).toList
+      case _ => List()
+    }
+    val consumes = apiOperation.consumes match {
+      case e: String if(e != "") => e.split(",").map(_.trim).toList
+      case _ => List()
+    }
 
     val params = (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
       if(annotations.length > 0) {
@@ -66,6 +74,8 @@ trait JaxrsApiReader extends ClassReader {
       responseClass,
       method.getName,
       apiOperation.position,
+      produces,
+      consumes,
       params,
       errorResponses,
       Option(isDeprecated))
