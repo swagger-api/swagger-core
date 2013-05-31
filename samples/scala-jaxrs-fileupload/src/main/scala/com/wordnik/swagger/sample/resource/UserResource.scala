@@ -29,7 +29,11 @@ import javax.ws.rs._
 
 import scala.collection.JavaConverters._
 
-trait UserResource extends RestResourceUtil {
+
+@Path("/user")
+@Api(value = "/user", description = "Operations about user")
+@Produces(Array("application/json"))
+class UserResource extends RestResourceUtil {
   @POST
   @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.")
   def createUser(
@@ -117,8 +121,3 @@ trait UserResource extends RestResourceUtil {
     Response.ok.entity("").build
   }
 }
-
-@Path("/user")
-@Api(value = "/user", description = "Operations about user")
-@Produces(Array("application/json"))
-class UserResourceJSON extends UserResource

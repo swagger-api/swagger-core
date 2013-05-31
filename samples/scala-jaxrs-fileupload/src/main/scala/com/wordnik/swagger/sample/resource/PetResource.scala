@@ -36,7 +36,35 @@ import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.core.{ MediaType, Context, Response }
 import javax.ws.rs._
 
-trait PetResource extends RestResourceUtil {
+
+@Path("/pet")
+@Api(value = "/pet", description = "Operations about pets")
+@Produces(Array("application/json"))
+class PetResource extends RestResourceUtil {
+
+  @POST
+  @Path("/formData")
+  @Consumes(Array(MediaType.MULTIPART_FORM_DATA))
+  @ApiOperation(value = "uploads a form data", consumes = "x-www-form-urlencoded", produces = "application/json")
+  def postFormData(
+    @ApiParam(value = "user name") @FormDataParam("username") name: String,
+    @ApiParam(value = "user age") @FormDataParam("age") age: String) = {
+
+    val output = "thanks " + name + ", you're " + age + " years old"
+    Response.status(200).entity(new com.wordnik.swagger.sample.model.ApiResponse(200, output)).build()
+  }
+
+  // to keep swagger-ui happy, and support both html form and ajax FormData POST methods, we create
+  // another method which accepts application/x-www-form-urlencoded params, and calls the /formData
+  // method, which accepts multipart/form-data content.  Note that @ApiOperation is not in this method
+  // or it'd show as a duplicate in swagger-ui
+  @POST
+  @Path("/formData")
+  @Consumes(Array(MediaType.APPLICATION_FORM_URLENCODED))
+  def formData2(
+    @FormParam("username") name: String,
+    @FormParam("age") age: String) = formData(name, age)
+
   @GET
   @Path("/{petId}")
   @ApiOperation(value = "Find pet by ID", 
@@ -122,9 +150,4 @@ trait PetResource extends RestResourceUtil {
     Response.ok(results).build
   }
 }
-
-@Path("/pet")
-@Api(value = "/pet", description = "Operations about pets")
-@Produces(Array("application/json"))
-class PetResourceJSON extends PetResource
 
