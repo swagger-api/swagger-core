@@ -433,6 +433,7 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
         <version>${slf4j-version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>com.sun.jersey</groupId>
@@ -450,11 +451,11 @@
     <jackson-scala-version>2.1.5</jackson-scala-version>
 
     <junit-version>4.8.1</junit-version>
-    <maven-plugin.version>1.0.0</maven-plugin.version>
+    <maven-plugin-version>1.0.0</maven-plugin-version>
     <commons-lang-version>2.4</commons-lang-version>
     <slf4j-version>1.6.3</slf4j-version>
     <scala-test-version>1.6.1</scala-test-version>
-    <jetty-version>7.6.0.v20120127</jetty-version>
+    <jetty-version>8.1.11.v20130520</jetty-version>
     <servlet-api-version>2.5</servlet-api-version>
     <scala-maven-plugin-version>3.1.0</scala-maven-plugin-version>
   </properties>
