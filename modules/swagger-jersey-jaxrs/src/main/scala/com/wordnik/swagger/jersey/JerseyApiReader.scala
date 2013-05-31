@@ -90,6 +90,7 @@ class JerseyApiSpecParser(val _hostClass: Class[_], _apiVersion: String, _swagge
     for (pa <- paramAnnotations) {
       pa match {
         case param: ApiParam => {
+          ignoreParam = param.ignore()
           parseApiParam(docParam, param, method)
         }
         case param: QueryParam => {
