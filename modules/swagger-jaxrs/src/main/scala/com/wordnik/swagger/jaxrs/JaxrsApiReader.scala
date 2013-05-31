@@ -124,7 +124,6 @@ trait JaxrsApiReader extends ClassReader {
                   case e: Path => e.value()
                   case _ => ""
                 }
-                println("adding subpath " + endpoint + " to " + path + subpath)
                 appendOperation(endpoint, path + subpath, op, operations)
               }
             }
