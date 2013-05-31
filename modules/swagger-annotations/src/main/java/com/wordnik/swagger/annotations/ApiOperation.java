@@ -34,4 +34,6 @@ public @interface ApiOperation {
   String httpMethod() default "";
   /** allow explicit ordering of operations */
   int position() default 0;
+  String produces() default "";
+  String consumes() default "";
 }
