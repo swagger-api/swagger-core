@@ -27,7 +27,10 @@ import com.wordnik.swagger.sample.exception.NotFoundException
 import javax.ws.rs.core.Response
 import javax.ws.rs._
 
-trait PetResource extends RestResourceUtil {
+@Path("/pet")
+@Api(value = "/pet", description = "Operations about pets")
+@Produces(Array("application/json;charset=utf8"))
+class PetResource extends RestResourceUtil {
   @GET
   @Path("/{petId}")
   @ApiOperation(value = "Find pet by ID", 
@@ -97,13 +100,3 @@ trait PetResource extends RestResourceUtil {
     Response.ok(results).build
   }
 }
-
-@Path("/pet.json")
-@Api(value = "/pet", description = "Operations about pets")
-@Produces(Array("application/json;charset=utf8"))
-class PetResourceJSON extends PetResource
-
-@Path("/pet.xml")
-@Api(value = "/pet", description = "Operations about pets")
-@Produces(Array("application/xml;charset=utf8"))
-class PetResourceXML extends PetResource

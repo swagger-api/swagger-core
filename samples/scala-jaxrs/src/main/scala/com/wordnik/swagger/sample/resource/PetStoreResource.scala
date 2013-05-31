@@ -28,7 +28,11 @@ import com.wordnik.swagger.sample.util.RestResourceUtil
 import javax.ws.rs.core.Response
 import javax.ws.rs._
 
-trait PetStoreResource extends RestResourceUtil {
+
+@Path("/store")
+@Api(value="/store" , description = "Operations about store")
+@Produces(Array("application/json"))
+class PetStoreResource extends RestResourceUtil {
   @GET
   @Path("/order/{orderId}")
   @ApiOperation(value = "Find purchase order by ID",
@@ -71,8 +75,3 @@ trait PetStoreResource extends RestResourceUtil {
       Response.ok.build
   }
 }
-
-@Path("/store")
-@Api(value="/store" , description = "Operations about store")
-@Produces(Array("application/json"))
-class PetStoreResourceJSON extends PetStoreResource
