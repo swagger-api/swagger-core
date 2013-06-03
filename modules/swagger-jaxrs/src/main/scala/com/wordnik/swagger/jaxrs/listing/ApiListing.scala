@@ -27,19 +27,15 @@ object ApiListingResource {
     _cache match {
       case Some(cache) => cache
       case None => {
-        val resources = app.getClasses().asScala ++ app.getSingletons().asScala.map(ref => ref.getClass)
+        val resources = app.getClasses().asScala ++ app.getSingletons().asScala.map(ref => AnnotationResolver.getClassWithAnnotation(ref.getClass, classOf[Api])).filter(_ != null)
         val cache = new LinkedHashMap[String, Class[_]]
         resources.foreach(resource => {
-          resource.getAnnotation(classOf[Api]) match {
-            case ep: Annotation => {
-              val path = ep.value.startsWith("/") match {
-                case true => ep.value.substring(1)
-                case false => ep.value
-              }
-              cache += path -> resource
-            }
-            case _ => 
+          val api = resource.getAnnotation(classOf[Api])
+          val path = api.value.startsWith("/") match {
+            case true => api.value.substring(1)
+            case false => api.value
           }
+          cache += path -> resource
         })
         _cache = Some(cache)
         cache
