@@ -5,12 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class SwaggerSampleConfiguration extends Configuration {
-    @NotEmpty
-    @JsonProperty
-    private String defaultName = "swagger-sample";
+  @NotEmpty
+  @JsonProperty
+  private String defaultName = "swagger-sample";
 
+  static {
+  	System.out.println("configure it");
+  }
 
-    public String getDefaultName() {
-        return defaultName;
-    }
+  public String getDefaultName() {
+    return defaultName;
+  }
 }

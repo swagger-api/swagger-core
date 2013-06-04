@@ -20,19 +20,23 @@ import com.wordnik.swagger.annotations.*;
 import com.wordnik.swagger.sample.data.PetData;
 import com.wordnik.swagger.sample.model.Pet;
 import com.wordnik.swagger.sample.exception.NotFoundException;
-import com.wordnik.swagger.jaxrs.JavaHelp;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
+@Path("/pet")
+@Api(value = "/pet", description = "Operations about pets")
+@Produces({"application/json"})
 public class PetResource {
 	static PetData petData = new PetData();
 	static JavaRestResourceUtil ru = new JavaRestResourceUtil();
 
 	@GET
 	@Path("/{petId}")
-	@ApiOperation(value = "Find pet by ID", notes = "Returns a pet when ID < 10. "
-			+ "ID > 10 or nonintegers will simulate API error conditions", responseClass = "com.wordnik.swagger.sample.model.Pet")
+	@ApiOperation(
+		value = "Find pet by ID", 
+		notes = "Returns a pet when ID < 10. ID > 10 or nonintegers will simulate API error conditions", 
+		response = Pet.class)
 	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid ID supplied"),
 			@ApiError(code = 404, reason = "Pet not found") })
 	public Response getPetById(
@@ -68,7 +72,11 @@ public class PetResource {
 
 	@GET
 	@Path("/findByStatus")
-	@ApiOperation(value = "Finds Pets by status", notes = "Multiple status values can be provided with comma seperated strings", responseClass = "com.wordnik.swagger.sample.model.Pet", multiValueResponse = true)
+	@ApiOperation(
+		value = "Finds Pets by status", 
+		notes = "Multiple status values can be provided with comma seperated strings", 
+		response = Pet.class,
+		responseContainer = "List")
 	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid status value") })
 	public Response findPetsByStatus(
 			@ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available", allowableValues = "available,pending,sold", allowMultiple = true) @QueryParam("status") String status) {
@@ -77,7 +85,11 @@ public class PetResource {
 
 	@GET
 	@Path("/findByTags")
-	@ApiOperation(value = "Finds Pets by tags", notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.", responseClass = "com.wordnik.swagger.sample.model.Pet", multiValueResponse = true)
+	@ApiOperation(
+		value = "Finds Pets by tags", 
+		notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.", 
+		response = Pet.class, 
+		responseContainer = "List")
 	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid tag value") })
 	@Deprecated
 	public Response findPetsByTags(
