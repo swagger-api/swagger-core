@@ -46,7 +46,14 @@ trait JaxrsApiReader extends ClassReader {
       case e: String if(e != "") => e.split(",").map(_.trim).toList
       case _ => List()
     }
-
+    val protocols = apiOperation.protocols match {
+      case e: String if(e != "") => e.split(",").map(_.trim).toList
+      case _ => List()
+    }
+    val authorizations = apiOperation.authorizations match {
+      case e: String if(e != "") => e.split(",").map(_.trim).toList
+      case _ => List()
+    }
     val params = (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
       if(annotations.length > 0) {
         val param = new MutableParameter
@@ -76,6 +83,8 @@ trait JaxrsApiReader extends ClassReader {
       apiOperation.position,
       produces,
       consumes,
+      protocols,
+      authorizations,
       params,
       errorResponses,
       Option(isDeprecated))
