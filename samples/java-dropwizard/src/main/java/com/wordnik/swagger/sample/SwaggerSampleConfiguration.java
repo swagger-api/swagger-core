@@ -9,10 +9,6 @@ public class SwaggerSampleConfiguration extends Configuration {
   @JsonProperty
   private String defaultName = "swagger-sample";
 
-  static {
-  	System.out.println("configure it");
-  }
-
   public String getDefaultName() {
     return defaultName;
   }
