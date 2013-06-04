@@ -24,14 +24,22 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Api {
-    /** Short description of the class */
-    String value();
-    String listingPath() default "";
-    String listingClass() default "";
-    /** General description of this class */
-    String description() default "";
-    boolean open() default false;
-    /** The base path that is prepended to all @Path elements. This may be an override for certain scenarios only */
-    String basePath() default "";
-    int position() default 0;
+  /** Short description of the class */
+  String value();
+  String listingPath() default "";
+  String listingClass() default "";
+
+  /** General description of this class */
+  String description() default "";
+
+  boolean open() default false;
+
+  /** The base path that is prepended to all @Path elements. This may be an override for certain scenarios only */
+  String basePath() default "";
+  
+  int position() default 0;
+  String produces() default "";
+  String consumes() default "";
+  String protocols() default "";
+  String authorizations() default "";
 }

@@ -36,4 +36,6 @@ public @interface ApiOperation {
   int position() default 0;
   String produces() default "";
   String consumes() default "";
+  String protocols() default "";
+  String authorizations() default "";
 }
