@@ -59,6 +59,8 @@ case class ApiListing (
   resourcePath: String,
   produces: List[String] = List.empty,
   consumes: List[String] = List.empty,
+  protocols: List[String] = List.empty,
+  authorizations: List[String] = List.empty,
   apis: List[ApiDescription] = List(),
   models: Option[Map[String, Model]] = None,
   description: Option[String] = None)
@@ -77,6 +79,8 @@ case class Operation (
   position: Int,
   produces: List[String] = List.empty,
   consumes: List[String] = List.empty,
+  protocols: List[String] = List.empty,
+  authorizations: List[String] = List.empty,
   parameters: List[Parameter] = List.empty,
   errorResponses: List[ErrorResponse] = List.empty,
   `deprecated`: Option[String] = None)

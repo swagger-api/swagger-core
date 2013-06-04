@@ -9,4 +9,6 @@ trait ClassReader {
 
 object ClassReaders {
 	var reader: Option[ClassReader] = None
+
+	def setReader(reader: ClassReader) = ClassReaders.reader = Option(reader)
 }

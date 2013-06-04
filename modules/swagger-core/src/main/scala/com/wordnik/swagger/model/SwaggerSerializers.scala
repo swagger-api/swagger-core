@@ -52,6 +52,8 @@ object SwaggerSerializers {
         }),
         (json \ "produces").extractOrElse(List()),
         (json \ "consumes").extractOrElse(List()),
+        (json \ "protocols").extractOrElse(List()),
+        (json \ "authorizations").extractOrElse(List()),
         (json \ "apis").extract[List[ApiDescription]],
         (json \ "models").extractOpt[Map[String, Model]]
       )
@@ -69,6 +71,18 @@ object SwaggerSerializers {
       }) ~
       ("consumes" -> {
         x.consumes match {
+          case e: List[String] if(e.size > 0) => Extraction.decompose(e)
+          case _ => JNothing
+        }
+      }) ~
+      ("protocols" -> {
+        x.protocols match {
+          case e: List[String] if(e.size > 0) => Extraction.decompose(e)
+          case _ => JNothing
+        }
+      }) ~
+      ("authorizations" -> {
+        x.authorizations match {
           case e: List[String] if(e.size > 0) => Extraction.decompose(e)
           case _ => JNothing
         }
@@ -208,6 +222,8 @@ object SwaggerSerializers {
         (json \ "position").extractOrElse(0),
         (json \ "produces").extractOrElse(List()),
         (json \ "consumes").extractOrElse(List()),
+        (json \ "protocols").extractOrElse(List()),
+        (json \ "authorizations").extractOrElse(List()),
         (json \ "parameters").extract[List[Parameter]],
         (json \ "errorResponses").extract[List[ErrorResponse]],
         (json \ "deprecated").extractOpt[String]
@@ -228,6 +244,18 @@ object SwaggerSerializers {
       }) ~
       ("consumes" -> {
         x.consumes match {
+          case e: List[String] if(e.size > 0) => Extraction.decompose(e)
+          case _ => JNothing
+        }
+      }) ~
+      ("protocols" -> {
+        x.protocols match {
+          case e: List[String] if(e.size > 0) => Extraction.decompose(e)
+          case _ => JNothing
+        }
+      }) ~
+      ("authorizations" -> {
+        x.authorizations match {
           case e: List[String] if(e.size > 0) => Extraction.decompose(e)
           case _ => JNothing
         }
