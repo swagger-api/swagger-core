@@ -30,7 +30,7 @@ object UserApiController extends BaseApiController {
         userData.addUser(user)
         JsonResponse(user)
       }
-      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"))
+      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"), 400)
     }
   }
 
@@ -45,7 +45,7 @@ object UserApiController extends BaseApiController {
         users.foreach(user => userData.addUser(user))
         JsonResponse(users)
       }
-      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"))
+      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"), 400)
     }
   }
 
@@ -60,7 +60,7 @@ object UserApiController extends BaseApiController {
         users.foreach(user => userData.addUser(user))
         JsonResponse(users)
       }
-      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"))
+      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"), 400)
     }
   }
 
@@ -79,7 +79,7 @@ object UserApiController extends BaseApiController {
         userData.addUser(user)
         JsonResponse(user)
       }
-      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"))
+      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"), 400)
     }
   }
 
@@ -103,7 +103,7 @@ object UserApiController extends BaseApiController {
     @ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ", required = true)@PathParam("username") username: String) = Action { implicit request =>
     userData.findUserByName(username) match {
       case Some(user) => JsonResponse(user)
-      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"))
+      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"), 400)
     }
   }
 
