@@ -47,7 +47,7 @@ object StoreApiController extends BaseApiController {
         storeData.placeOrder(order)
         JsonResponse(order)
       }
-      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"))
+      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"), 400)
     }
   }
 
