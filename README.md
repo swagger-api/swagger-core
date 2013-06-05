@@ -14,6 +14,13 @@ visit http://developer.wordnik.com.
 
 ## Version history
 
+### v1.2.4 Jun-5 2013
+<li>- Fixed `@Api` paths with slashes
+
+<li>- Added support for model detection with deep recursion (#176)
+
+<li>- i18n support (#190)
+
 ### v1.2.3 Apr-24 2013
 
 <li>- Updated to Jackson 2.1.4
@@ -81,7 +88,7 @@ You need the following installed and available in your $PATH:
 
 <li>- Scala 2.9.1-1 [available here](http://www.scala-lang.org).  Note that 2.9.1 has a defect which causes problems with Jax-RS
 
-### To build from source (currently 1.2.4-SNAPSHOT)
+### To build from source (currently 1.2.4)
 ```
 # first time building locally
 mvn -N
