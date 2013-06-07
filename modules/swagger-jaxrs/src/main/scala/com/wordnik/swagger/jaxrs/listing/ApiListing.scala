@@ -10,6 +10,7 @@ import com.wordnik.swagger.jaxrs._
 import com.wordnik.swagger.jaxrs.config._
 
 import java.lang.annotation.Annotation
+import java.lang.reflect.Method
 
 import javax.ws.rs.core.{ UriInfo, HttpHeaders, Context, Response, MediaType, Application, MultivaluedMap }
 import javax.ws.rs.core.Response._
@@ -21,6 +22,7 @@ import javax.servlet.ServletConfig
 import scala.collection.mutable.LinkedHashMap
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ListBuffer
 
 object ApiListingCache {
   var _cache: Option[Map[String, com.wordnik.swagger.model.ApiListing]] = None
@@ -33,7 +35,10 @@ object ApiListingCache {
             case scanner: JaxrsScanner => scanner.asInstanceOf[JaxrsScanner].classesFromContext(app, sc)
             case _ => List()
           }
-          val listings = (for(cls <- classes) yield reader.read(docRoot, cls, ConfigFactory.config)).flatten.toList
+          // For each top level resource, parse it and look for swagger annotations.
+          val listings = (for(cls <- classes) yield reader.read(docRoot, "", cls, ConfigFactory.config,
+            new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]](),
+            new ListBuffer[Method]())).flatten.toList
           _cache = Some((listings.map(m => (m.resourcePath, m))).toMap)
         })
       }
