@@ -59,7 +59,7 @@ trait ApiSpecParserTrait extends BaseApiParser {
 
   def parse(): Documentation = {
     if (apiEndpoint != null)
-      hostClass.getMethods.foreach(method => parseMethod(method))
+      hostClass.getMethods.foreach(method => parseMethod(documentation, method))
     documentation.apiVersion = apiVersion
     documentation.swaggerVersion = swaggerVersion
     documentation.basePath = basePath
@@ -84,8 +84,31 @@ trait ApiSpecParserTrait extends BaseApiParser {
     docParam.paramAccess = readString(apiParam.access)
   }
 
+  // foo.bar.X<foo.Y,bar.Z> will add X,Y,Z to modules and return "X","Y,Z"
+  // foo.bar.X<foo.Y> will add X,Y to document's modules and return "X","Y"
+  private def handleGenerics(apiResponseValue: String) : (String, String) = {
+    val idx1 = apiResponseValue.indexOf('<')
+    val idx2 = apiResponseValue.indexOf('>')
+    val baseClass = apiResponseValue.substring(0, idx1)
+    val name = addClassToModels(documentation, baseClass)
+
+    val genericClasses = apiResponseValue.substring(idx1 + 1, idx2)
+    var genericName = new String
+    if (genericClasses.contains(",")) {
+
+      for (gc <- genericClasses.split(',')) {
+        genericName += addClassToModels(documentation, gc) + ","
+      }
+      //remove last ','
+      genericName = genericName.substring(0, genericName.length - 1)
+    } else {
+      genericName = addClassToModels(documentation, genericClasses)
+    }
+    (name, genericName)
+  }
+
   private val ListRegex: scala.util.matching.Regex = """List\[(.*?)\]""".r
-  def parseMethod(method: Method): Any = {
+  def parseMethod(documentation: Documentation, method: Method): Any = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
     val apiErrors = method.getAnnotation(classOf[ApiErrors])
     val isDeprecated = method.getAnnotation(classOf[Deprecated])
@@ -113,24 +136,32 @@ trait ApiSpecParserTrait extends BaseApiParser {
 
         LOGGER.debug("apiOperation apiResponseValue: " + apiResponseValue)
 
-        docOperation.setResponseTypeInternal(apiResponseValue)
-        try {
-          val name = {
-            if (ApiPropertiesReader.manualModelMapping.contains(apiResponseValue)) {
-              ApiPropertiesReader.manualModelMapping(apiResponseValue)._1
-            }
-            else {
-              val cls = SwaggerContext.loadClass(apiResponseValue)
-              LOGGER.debug("loaded class " + cls)
-              ApiPropertiesReader.readName(cls)
-            }
-          }
+        val p = """^([a-zA-Z_][a-zA-Z0-9_]*)(\.[a-zA-Z0-9_]+)*(<([a-zA-Z_][a-zA-Z0-9_]*)(\.[a-zA-Z0-9_]+)*(,([a-zA-Z_][a-zA-Z0-9_]*)(\.[a-zA-Z0-9_]+)*)*>)+$"""
+        if (apiResponseValue.matches(p)) {
+          val className = handleGenerics(apiResponseValue)
           docOperation.responseClass = {
-            if (isResponseMultiValue) "List[" + name + "]" else name
+            if (isResponseMultiValue) "List[" + className._1 + "<" + className._2 + ">]" else className._1 + "<" + className._2 +">"
           }
-        } catch {
-          case e: ClassNotFoundException => docOperation.responseClass = {
-            if (isResponseMultiValue) "List[" + apiResponseValue + "]" else apiResponseValue
+        } else {
+          docOperation.setResponseTypeInternal(apiResponseValue)
+          try {
+            val name = {
+              if (ApiPropertiesReader.manualModelMapping.contains(apiResponseValue)) {
+                ApiPropertiesReader.manualModelMapping(apiResponseValue)._1
+              }
+              else {
+                val cls = SwaggerContext.loadClass(apiResponseValue)
+                LOGGER.debug("loaded class " + cls)
+                ApiPropertiesReader.readName(cls)
+              }
+             }
+            docOperation.responseClass = {
+              if (isResponseMultiValue) "List[" + name + "]" else name
+            }
+          } catch {
+            case e: ClassNotFoundException => docOperation.responseClass = {
+              if (isResponseMultiValue) "List[" + apiResponseValue + "]" else apiResponseValue
+            }
           }
         }
       }
@@ -236,6 +267,23 @@ trait ApiSpecParserTrait extends BaseApiParser {
         }
       }
     } else LOGGER.debug("skipping method " + method.getName)
+  }
+
+  private def addClassToModels(d: Documentation, t: String) : String = {
+    try {
+      val n = ApiPropertiesReader.read(t)
+      if (null != n && null != n.getFields && n.getFields.length > 0) {
+        d.addModel(n.getName, n.toDocumentationSchema())
+      } else {
+        if (null == n) LOGGER.error("Skipping model " + t + ". Could not load the model.")
+        else if (null == n.getFields || n.getFields.length == 0)
+          LOGGER.error("Skipping model " + t + ". Did not find any public fields or bean-properties in this model. If its a scala class its fields might not have @BeanProperty annotation added to its fields.")
+      }
+      n.getName
+    } catch {
+      case e: ClassNotFoundException => LOGGER.error("Unable to resolve class " + t); t
+      case e: Exception => LOGGER.error("Unable to load model documentation for " + t, e); t
+    }
   }
 
   protected def processOperation(method: Method, o: DocumentationOperation) = o

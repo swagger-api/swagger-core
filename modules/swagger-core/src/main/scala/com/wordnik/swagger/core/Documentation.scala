@@ -462,8 +462,12 @@ class DocumentationSchema {
     schema.required = required
     schema.name = name
     schema.id = id
+    if (properties == null) {
     schema.properties = new java.util.HashMap[String, DocumentationSchema]
-    // todo: clone
+    } else {
+      schema.properties = properties;
+    }
+
     schema.allowableValues = allowableValues
     schema.description = description
     schema.notes = notes
