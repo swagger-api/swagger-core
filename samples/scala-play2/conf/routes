@@ -9,9 +9,9 @@ GET     /api-docs.json               controllers.ApiHelpController.getResources
 
 OPTIONS /*wholepath            			 controllers.PetApiController.getOptions(wholepath)
 
-GET     /api-docs.json/admin         controllers.ApiHelpController.getResource(path = "/api-docs.json/admin")
-GET     /admin.json/health           controllers.HealthController.getHealth
-GET     /admin.json/ping             controllers.HealthController.ping
+#GET     /api-docs.json/admin         controllers.ApiHelpController.getResource(path = "/api-docs.json/admin")
+#GET     /admin.json/health           controllers.HealthController.getHealth
+#GET     /admin.json/ping             controllers.HealthController.ping
 
 GET     /api-docs.json/pet           controllers.ApiHelpController.getResource(path = "/api-docs.json/pet")
 POST    /pet.json                    controllers.PetApiController.addPet
