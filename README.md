@@ -21,6 +21,8 @@ visit http://developer.wordnik.com.
 
 <li>- i18n support (#190)
 
+<li>- Master is now `stable`
+
 ### v1.2.3 Apr-24 2013
 
 <li>- Updated to Jackson 2.1.4
