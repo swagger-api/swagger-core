@@ -48,4 +48,26 @@ The [Resource Listing](https://github.com/wordnik/swagger-core/wiki/Resource-Lis
 </servlet-mapping>
 ```
 
-Each [Api Declaration](https://github.com/wordnik/swagger-core/wiki/API-Declaration) has a `resourcePath` extracted from the `@Api` path, so the path `/sample/users` will use the `resourcePath` of `/sample`.
+Each [Api Declaration](https://github.com/wordnik/swagger-core/wiki/API-Declaration) has a `resourcePath` extracted from the `@Api` path, so the path `/sample/users` will use the `resourcePath` of `/sample`.  Multiple operations under the same resource path will be merged together, so you can have a servlet with `@Api(value = "/sample/users")` and another with `@Api(value = "/sample/houses")`.  This will produce an Api Declaration like such:
+
+```json
+{
+  "apiVersion": "1.0.0",
+  "swaggerVersion": "1.2",
+  "basePath": "http://localhost:8002",
+  "resourcePath": "/sample",
+  "apis": [
+    {
+      "path": "/sample/users",
+      "description": "more about users",
+      "operations": [
+      ...
+    }, 
+    {
+      "path": "/sample/houses",
+      "description": "more about houses",
+      "operations": [
+      ...
+    }
+    ...
+```
