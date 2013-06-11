@@ -45,7 +45,9 @@ class PetResource extends RestResourceUtil {
   @POST
   @Path("/formData")
   @Consumes(Array(MediaType.MULTIPART_FORM_DATA))
-  @ApiOperation(value = "uploads a form data", consumes = "x-www-form-urlencoded", produces = "application/json")
+  @ApiOperation(value = "uploads a form data", 
+    consumes = "x-www-form-urlencoded", 
+    produces = "application/json")
   def postFormData(
     @ApiParam(value = "user name") @FormDataParam("username") name: String,
     @ApiParam(value = "user age") @FormDataParam("age") age: String) = {
