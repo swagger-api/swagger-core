@@ -83,6 +83,7 @@ class ServletReader extends ClassReader {
             case "" => opa.response.getName
             case e: String => "%s[%s]".format(e, opa.response.getName)
           }
+          println(responseClass)
           val errorAnnotations = method.getAnnotation(classOf[ApiErrors])
           val errorResponses = {
             if(errorAnnotations == null) List()
@@ -114,13 +115,12 @@ class ServletReader extends ClassReader {
       }
 
       if(operations.size > 0) {
-        val descriptions = List(
+        val apis = List(
           ApiDescription(
             "/" + fullPath,
             Some("description"),
             operations.toList))
-
-        val models = modelsFromApis(descriptions)
+        val models = ModelUtil.modelsFromApis(apis)
         Some(
           ApiListing (
             config.apiVersion,
@@ -131,53 +131,12 @@ class ServletReader extends ClassReader {
             List(), // consumes
             List(), // protocols
             List(), // authorizations
-            descriptions,
+            ModelUtil.stripPackages(apis),
             models)
         )
       }
       else None
     }
     else None
-  }
-
-  def modelsFromApis(apis: List[ApiDescription]): Option[Map[String, Model]] = {
-    val modelnames = new HashSet[String]()
-    for(api <- apis; op <- api.operations) {
-      modelnames ++= op.errorResponses.map{_.responseModel}.flatten.toSet
-      modelnames += op.responseClass
-      op.parameters.foreach(param => modelnames += param.dataType)
-    }
-    val models = (for(name <- modelnames) yield modelAndDependencies(name)).flatten.toMap
-    if(models.size > 0) Some(models)
-    else None
-  }
-
-  def modelAndDependencies(name: String): Map[String, Model] = {
-    val typeRef = name match {
-      case ComplexTypeMatcher(containerType, basePart) => {
-        if(basePart.indexOf(",") > 0) // handle maps, i.e. List[String,String]
-          basePart.split("\\,").last.trim
-        else basePart
-      }
-      case _ => name
-    }
-    if(shoudIncludeModel(typeRef)) {
-      try{
-        val cls = SwaggerContext.loadClass(typeRef)
-        (for(model <- ModelConverters.readAll(cls)) yield (model.name, model)).toMap
-      }
-      catch {
-        case e: ClassNotFoundException => Map()
-      }
-    }
-    else Map()
-  }
-
-  def shoudIncludeModel(modelname: String) = {
-    if(SwaggerSpec.baseTypes.contains(modelname.toLowerCase))
-      false
-    else if(modelname.startsWith("java.lang"))
-      false
-    else true
   }
 }

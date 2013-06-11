@@ -17,7 +17,9 @@ object ApiListingCache extends ReaderUtil {
             case _ => List()
           }
           val listings = (for(cls <- classes) yield reader.read(docRoot, cls, ConfigFactory.config)).flatten
+          // println("listings: " + listings)
           val mergedListings = groupByResourcePath(listings)
+          println("merged listings: " + mergedListings.map(m => (m.resourcePath, m)).toMap)
           cache = Some(mergedListings.map(m => (m.resourcePath, m)).toMap)
         })
       }

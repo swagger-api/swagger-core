@@ -23,8 +23,6 @@ import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
 trait JaxrsApiReader extends ClassReader {
   private val LOGGER = LoggerFactory.getLogger(classOf[JaxrsApiReader])
 
-  val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-]*)\\].*".r
-
   // decorates a Parameter based on annotations, returns None if param should be ignored
   def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation], method: Method): Option[Parameter]
 
@@ -168,128 +166,18 @@ trait JaxrsApiReader extends ClassReader {
           orderedOperations.toList)
       }).toList
 
-      val models = modelsFromApis(apis)
+      val models = ModelUtil.modelsFromApis(apis)
       Some(ApiListing (
         apiVersion = config.apiVersion,
         swaggerVersion = config.swaggerVersion,
         basePath = config.basePath,
         resourcePath = (docRoot + api.value),
-        apis = stripPackages(apis),
+        apis = ModelUtil.stripPackages(apis),
         models = models,
         description = description)
       )
     }
     else None
-  }
-
-  def stripPackages(apis: List[ApiDescription]): List[ApiDescription] = {
-    (for(api <- apis) yield {
-      val operations = (for(op <- api.operations) yield {
-        val parameters = (for(param <- op.parameters) yield {
-          param.copy(dataType = cleanDataType(param.dataType))
-        }).toList
-        val errors = (for(error <- op.errorResponses) yield {
-          if(error.responseModel != None) {
-            error.copy(responseModel = Some(cleanDataType(error.responseModel.get)))
-          }
-          else error
-        }).toList
-        op.copy(
-          responseClass = cleanDataType(op.responseClass),
-          parameters = parameters,
-          errorResponses = errors)
-      }).toList
-      api.copy(operations = operations)
-    }).toList
-  }
-
-  def cleanDataType(dataType: String) = {
-    val out = if(dataType.startsWith("java.lang")) {
-      val trimmed = dataType.substring("java.lang".length + 1)
-      if(SwaggerSpec.baseTypes.contains(trimmed.toLowerCase))
-        trimmed.toLowerCase
-      else
-        trimmed
-    }
-    else {
-      modelFromString(dataType) match {
-        case Some(e) => e._1
-        case None => dataType
-      }
-    }
-    // put back in container
-    dataType match {
-      case e: String if(e.toLowerCase.startsWith("list")) => "List[%s]".format(out)
-      case e: String if(e.toLowerCase.startsWith("set")) => "Set[%s]".format(out)
-      case e: String if(e.toLowerCase.startsWith("array")) => "Array[%s]".format(out)
-      case e: String if(e.toLowerCase.startsWith("map")) => "Map[string,%s]".format(out)
-      case _ => out
-    }
-  }
-
-  def modelsFromApis(apis: List[ApiDescription]): Option[Map[String, Model]] = {
-    val modelnames = new HashSet[String]()
-    for(api <- apis; op <- api.operations) {
-      modelnames ++= op.errorResponses.map{_.responseModel}.flatten.toSet
-      modelnames += op.responseClass
-      op.parameters.foreach(param => modelnames += param.dataType)
-    }
-    val models = (for(name <- modelnames) yield modelAndDependencies(name)).flatten.toMap
-    if(models.size > 0) Some(models)
-    else None
-  }
-
-  def modelAndDependencies(name: String): Map[String, Model] = {
-    val typeRef = name match {
-      case ComplexTypeMatcher(containerType, basePart) => {
-        if(basePart.indexOf(",") > 0) // handle maps, i.e. List[String,String]
-          basePart.split("\\,").last.trim
-        else basePart
-      }
-      case _ => name
-    }
-    if(shoudIncludeModel(typeRef)) {
-      try{
-        val cls = SwaggerContext.loadClass(typeRef)
-        (for(model <- ModelConverters.readAll(cls)) yield (model.name, model)).toMap
-      }
-      catch {
-        case e: ClassNotFoundException => Map()
-      }
-    }
-    else Map()
-  }
-
-  def modelFromString(name: String): Option[Tuple2[String, Model]] = {
-    val typeRef = name match {
-      case ComplexTypeMatcher(containerType, basePart) => {
-        if(basePart.indexOf(",") > 0) // handle maps, i.e. List[String,String]
-          basePart.split("\\,").last.trim
-        else basePart
-      }
-      case _ => name
-    }
-    if(shoudIncludeModel(typeRef)) {
-      try{
-        val cls = SwaggerContext.loadClass(typeRef)
-        ModelConverters.read(cls) match {
-          case Some(model) => Some((cls.getSimpleName, model))
-          case None => None
-        }
-      }
-      catch {
-        case e: ClassNotFoundException => None
-      }
-    }
-    else None
-  }
-
-  def shoudIncludeModel(modelname: String) = {
-    if(SwaggerSpec.baseTypes.contains(modelname.toLowerCase))
-      false
-    else if(modelname.startsWith("java.lang"))
-      false
-    else true
   }
 
   def pathFromMethod(method: Method): String = {
