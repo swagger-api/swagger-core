@@ -63,6 +63,7 @@ object SwaggerSerializers {
       ("apiVersion" -> x.apiVersion) ~
       ("swaggerVersion" -> x.swaggerVersion) ~
       ("basePath" -> x.basePath) ~
+      ("resourcePath" -> x.resourcePath) ~
       ("produces" -> {
         x.produces match {
           case e: List[String] if(e.size > 0) => Extraction.decompose(e)
