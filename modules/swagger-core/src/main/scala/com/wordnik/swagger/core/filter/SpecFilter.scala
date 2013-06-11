@@ -74,6 +74,7 @@ class SpecFilter {
       for(op <- api.operations) {
         modelNames += op.responseClass
         op.parameters.foreach(modelNames += _.dataType)
+        op.errorResponses.foreach(_.responseModel.map{modelNames += _})
       }
     })
     val topLevelModels = (for(model <- modelNames) yield {

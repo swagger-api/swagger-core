@@ -83,7 +83,6 @@ class ServletReader extends ClassReader {
             case "" => opa.response.getName
             case e: String => "%s[%s]".format(e, opa.response.getName)
           }
-          println(responseClass)
           val errorAnnotations = method.getAnnotation(classOf[ApiErrors])
           val errorResponses = {
             if(errorAnnotations == null) List()

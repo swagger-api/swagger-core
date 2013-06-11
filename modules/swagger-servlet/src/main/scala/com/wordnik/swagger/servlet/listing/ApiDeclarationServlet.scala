@@ -56,12 +56,7 @@ class ApiDeclarationServlet extends HttpServlet {
     val pathPart = docRoot
     val listings = ApiListingCache.listing(docRoot).map(specs => {
       (for(spec <- specs.values) yield {
-println("\n\npre-filtered: " + spec)
-
-        val o = f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
-println("\n\npost-filtered: " + o)
-
-        o
+        f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
       }).filter(m => m.resourcePath == pathPart)
     }).flatten.toList
     listings.size match {
