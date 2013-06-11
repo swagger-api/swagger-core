@@ -1,8 +1,11 @@
 package com.wordnik.swagger.jaxrs.config
 
+import com.wordnik.swagger.config.Scanner
+
 import javax.servlet.ServletConfig
 
 import javax.ws.rs.core.Application
+
 import scala.collection.JavaConverters._
 
 trait JaxrsScanner extends Scanner {

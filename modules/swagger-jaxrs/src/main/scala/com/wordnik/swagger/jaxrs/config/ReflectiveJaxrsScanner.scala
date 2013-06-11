@@ -1,5 +1,6 @@
 package com.wordnik.swagger.jaxrs.config
 
+import com.wordnik.swagger.config.{ Scanner, ScannerFactory}
 import com.wordnik.swagger.jaxrs._
 import com.wordnik.swagger.annotations.Api
 import com.wordnik.swagger.reader._

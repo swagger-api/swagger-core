@@ -1,7 +1,8 @@
 package com.wordnik.swagger.jaxrs.config
 
+
+import com.wordnik.swagger.config.{ ConfigFactory, ScannerFactory }
 import com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader
-import com.wordnik.swagger.config.ConfigFactory
 import com.wordnik.swagger.reader._
 
 import javax.servlet.ServletConfig

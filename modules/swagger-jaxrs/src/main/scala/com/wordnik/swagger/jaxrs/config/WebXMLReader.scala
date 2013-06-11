@@ -1,8 +1,7 @@
 package com.wordnik.swagger.jaxrs.config
 
-
 import com.wordnik.swagger.core.{ SwaggerSpec, SwaggerContext }
-import com.wordnik.swagger.config.SwaggerConfig
+import com.wordnik.swagger.config.{ SwaggerConfig, FilterFactory }
 import com.wordnik.swagger.core.filter.SwaggerSpecFilter
 
 import org.slf4j.LoggerFactory
