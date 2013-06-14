@@ -3,7 +3,7 @@ package com.wordnik.swagger.converter
 import com.wordnik.swagger.model._
 import com.wordnik.swagger.core.SwaggerSpec
 import com.wordnik.swagger.core.util.TypeUtil
-import com.wordnik.swagger.annotations.ApiProperty
+import com.wordnik.swagger.annotations.ApiModelProperty
 
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
 
@@ -184,7 +184,7 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
     for (ma <- annotations) {
       ma match {
         case e: XmlTransient => isTransient = true
-        case e: ApiProperty => {
+        case e: ApiModelProperty => {
           description = readString(e.value)
           notes = readString(e.notes)
           paramType = readString(e.dataType)

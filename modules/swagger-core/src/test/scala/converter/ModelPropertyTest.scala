@@ -3,7 +3,7 @@ package converter
 import com.wordnik.swagger.converter._
 
 import com.wordnik.swagger.core.util._
-import com.wordnik.swagger.annotations.ApiProperty
+import com.wordnik.swagger.annotations.ApiModelProperty
 
 import java.util.Date
 

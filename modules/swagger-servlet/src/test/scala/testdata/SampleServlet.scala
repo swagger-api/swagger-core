@@ -18,8 +18,8 @@ class SampleServlet extends HttpServlet {
     httpMethod = "GET",
     response = classOf[Dog])
   @ApiResponses(Array(new ApiResponse(code = 405, message = "Invalid input")))
-  @ApiParamsImplicit(Array(
-    new ApiParamImplicit(
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(
       name = "pet",
       defaultValue = "fuzzy",
       value = "Pet object that needs to be added to the store",

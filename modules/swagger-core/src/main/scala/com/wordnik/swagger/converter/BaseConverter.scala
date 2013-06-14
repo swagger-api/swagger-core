@@ -1,14 +1,14 @@
 package com.wordnik.swagger.converter
 
 import com.wordnik.swagger.core.SwaggerSpec
-import com.wordnik.swagger.annotations.ApiClass
+import com.wordnik.swagger.annotations.ApiModel
 
 trait BaseConverter {
   def toDescriptionOpt(cls: Class[_]): Option[String] = {
     var description: Option[String] = None
     for(anno <- cls.getAnnotations) {
       anno match {
-        case e: ApiClass => {
+        case e: ApiModel => {
           if(e.description != null) description = Some(e.description)
         }
         case _ =>        

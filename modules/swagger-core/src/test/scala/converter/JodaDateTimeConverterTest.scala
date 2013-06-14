@@ -40,5 +40,5 @@ class JodaDateTimeConverterTest extends FlatSpec with ShouldMatchers {
 
 
 case class ModelWithJodaDateTime (
-  @(ApiProperty @field)(value = "name of the model", position = 2) name: String,
-  @(ApiProperty @field)(value = "creation timestamp", required = true, position = 1) createdAt: DateTime)
+  @(ApiModelProperty @field)(value = "name of the model", position = 2) name: String,
+  @(ApiModelProperty @field)(value = "creation timestamp", required = true, position = 1) createdAt: DateTime)

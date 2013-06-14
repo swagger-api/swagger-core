@@ -3,7 +3,7 @@ package converter
 import com.wordnik.swagger.converter._
 
 import com.wordnik.swagger.core.util._
-import com.wordnik.swagger.annotations.ApiProperty
+import com.wordnik.swagger.annotations.ApiModelProperty
 
 import java.util.Date
 
@@ -52,9 +52,9 @@ class SimplePojo {
 }
 
 class SimplePojoWithOrderPreserved {
-  @ApiProperty(position=0) var id: Long = 0
-  @ApiProperty(position=1) var name: String = _
-  @ApiProperty(position=2) var date: Date = _
+  @ApiModelProperty(position=0) var id: Long = 0
+  @ApiModelProperty(position=1) var name: String = _
+  @ApiModelProperty(position=2) var date: Date = _
 }
 
 class SimplePojoWithBeanAnnotations {

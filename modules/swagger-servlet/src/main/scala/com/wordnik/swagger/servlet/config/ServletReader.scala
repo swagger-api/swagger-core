@@ -45,7 +45,7 @@ class ServletReader extends ClassReader {
         if(method.getAnnotation(classOf[ApiOperation]) != null) {
           // process only @ApiImplicitParams
           val parameters = {
-            val paramListAnnotation = method.getAnnotation(classOf[ApiParamsImplicit])
+            val paramListAnnotation = method.getAnnotation(classOf[ApiImplicitParams])
             if(paramListAnnotation != null) {
               (for(param <- paramListAnnotation.value) yield {
                 Parameter(
