@@ -24,18 +24,19 @@ import com.wordnik.swagger.sample.data.{ PetData }
 import com.wordnik.swagger.sample.model.{ Pet }
 import com.wordnik.swagger.sample.exception.NotFoundException
 
-import javax.ws.rs.core.Response
+import javax.ws.rs.core.{ Response, MediaType }
 import javax.ws.rs._
 
 @Path("/pet")
 @Api(value = "/pet", description = "Operations about pets")
-@Produces(Array("application/json;charset=utf8"))
+@Produces(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
 class PetResource extends RestResourceUtil {
   @GET
   @Path("/{petId}")
   @ApiOperation(value = "Find pet by ID", 
     notes = "Returns a pet based on ID", 
-    response = classOf[Pet])
+    response = classOf[Pet],
+    produces = "application/json,application/xml")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid ID supplied"),
     new ApiError(code = 404, reason = "Pet not found")))
@@ -74,14 +75,15 @@ class PetResource extends RestResourceUtil {
   @ApiOperation(value = "Finds Pets by status",
     notes = "Multiple status values can be provided with comma seperated strings",
     response = classOf[Pet],
-    responseContainer = "List")
+    responseContainer = "List",
+    produces = "application/json,application/xml")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid status value")))
   def findPetsByStatus(
     @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available",
       allowableValues = "available,pending,sold", allowMultiple = true)@QueryParam("status") status: String) = {
     var results = PetData.findPetByStatus(status)
-    Response.ok(results).build
+    Response.ok(results.toArray(new Array[Pet](0))).build
   }
 
   @GET
@@ -89,7 +91,8 @@ class PetResource extends RestResourceUtil {
   @ApiOperation(value = "Finds Pets by tags",
     notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
     response = classOf[Pet],
-    responseContainer = "List")
+    responseContainer = "List",
+    produces = "application/json,application/xml")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid tag value")))
   @Deprecated
@@ -97,6 +100,6 @@ class PetResource extends RestResourceUtil {
     @ApiParam(value = "Tags to filter by", required = true,
       allowMultiple = true)@QueryParam("tags") tags: String) = {
     var results = PetData.findPetByTags(tags)
-    Response.ok(results).build
+    Response.ok(results.toArray(new Array[Pet](0))).build
   }
 }

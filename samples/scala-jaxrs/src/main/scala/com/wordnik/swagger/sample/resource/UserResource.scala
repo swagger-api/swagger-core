@@ -24,17 +24,19 @@ import com.wordnik.swagger.sample.data.UserData
 import com.wordnik.swagger.sample.exception.NotFoundException
 import com.wordnik.swagger.sample.util.RestResourceUtil
 
-import javax.ws.rs.core.Response
+import javax.ws.rs.core.{ Response, MediaType }
 import javax.ws.rs._
 
 import scala.collection.JavaConverters._
 
 @Path("/user")
 @Api(value = "/user", description = "Operations about user")
-@Produces(Array("application/json"))
+@Produces(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
 class UserResource extends RestResourceUtil {
   @POST
-  @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.")
+  @ApiOperation(
+    value = "Create user", 
+    notes = "This can only be done by the logged in user.")
   def createUser(
     @ApiParam(value = "Created user object", required = true) user: User) = {
     UserData.addUser(user)
@@ -88,7 +90,10 @@ class UserResource extends RestResourceUtil {
 
   @GET
   @Path("/{username}")
-  @ApiOperation(value = "Get user by user name", response = classOf[User])
+  @ApiOperation(
+    value = "Get user by user name", 
+    response = classOf[User],
+    produces = "application/json,application/xml")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid username supplied"),
     new ApiError(code = 404, reason = "User not found")))
@@ -104,7 +109,9 @@ class UserResource extends RestResourceUtil {
 
   @GET
   @Path("/login")
-  @ApiOperation(value = "Logs user into the system", response = classOf[String])
+  @ApiOperation(value = "Logs user into the system", 
+    response = classOf[String],
+    produces = "text/plain")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid username and password combination")))
   def loginUser(
@@ -115,7 +122,8 @@ class UserResource extends RestResourceUtil {
 
   @GET
   @Path("/logout")
-  @ApiOperation(value = "Logs out current logged in user session")
+  @ApiOperation(value = "Logs out current logged in user session",
+    produces = "text/plain")
   def logoutUser() = {
     Response.ok.entity("").build
   }

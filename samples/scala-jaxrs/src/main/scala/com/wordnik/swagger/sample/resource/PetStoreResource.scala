@@ -25,19 +25,20 @@ import com.wordnik.swagger.sample.data.StoreData
 import com.wordnik.swagger.sample.exception.NotFoundException
 import com.wordnik.swagger.sample.util.RestResourceUtil
 
-import javax.ws.rs.core.Response
+import javax.ws.rs.core.{ Response, MediaType }
 import javax.ws.rs._
 
 
 @Path("/store")
 @Api(value="/store" , description = "Operations about store")
-@Produces(Array("application/json"))
+@Produces(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
 class PetStoreResource extends RestResourceUtil {
   @GET
   @Path("/order/{orderId}")
   @ApiOperation(value = "Find purchase order by ID",
     notes = "For valid response try integer IDs with value <= 5. Anything above 5 or nonintegers will generate API errors", 
-    response = classOf[Order])
+    response = classOf[Order],
+    produces = "application/json,application/xml")
   @ApiErrors(Array(
     new ApiError(code = 400, reason = "Invalid ID supplied"),
     new ApiError(code = 404, reason = "Order not found")))
