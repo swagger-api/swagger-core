@@ -37,7 +37,7 @@ object StoreApiController extends BaseApiController {
   @ApiOperation(value = "Gets orders in the system", responseClass = "models.Order", httpMethod = "GET", multiValueResponse = true)
   @ApiResponses(Array(
     new ApiResponse(code = 404, message = "No Orders found")))
-  def getOrders(@ApiParamImplicit(value = "Get all orders or only those which are complete", dataType = "Boolean", required = true)@QueryParam("isComplete") isComplete: Boolean) = Action { implicit request =>
+  def getOrders(@ApiImplicitParam(value = "Get all orders or only those which are complete", dataType = "Boolean", required = true)@QueryParam("isComplete") isComplete: Boolean) = Action { implicit request =>
     val orders: java.util.List[Order] = storeData.orders.toList.asJava
     JsonResponse(orders)
   }
@@ -45,8 +45,8 @@ object StoreApiController extends BaseApiController {
   @ApiOperation(value = "Place an order for a pet", responseClass = "void", httpMethod = "POST")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid order")))
-  @ApiParamsImplicit(Array(
-    new ApiParamImplicit(name = "body", value = "order placed for purchasing the pet", required = true, dataType = "Order", paramType = "body")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "body", value = "order placed for purchasing the pet", required = true, dataType = "Order", paramType = "body")))
   def placeOrder = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {

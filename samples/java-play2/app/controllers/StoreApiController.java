@@ -38,7 +38,7 @@ public class StoreApiController extends BaseApiController {
 	@Path("/order")
 	@ApiOperation(value = "Place an order for a pet", responseClass = "void", httpMethod = "POST")
 	@ApiResponses(@ApiResponse(code = 400, message = "Invalid order"))
-	@ApiParamsImplicit(@ApiParamImplicit(name = "body", value = "order placed for purchasing the pet", required = true, dataType = "Order", paramType = "body"))
+	@ApiImplicitParams(@ApiImplicitParam(name = "body", value = "order placed for purchasing the pet", required = true, dataType = "Order", paramType = "body"))
 	public static Result placeOrder() {
 		Object o = request().body().asJson();
 		try {

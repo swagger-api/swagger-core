@@ -39,8 +39,8 @@ object PetApiController extends BaseApiController {
   @ApiOperation(value = "Add a new Pet", responseClass = "void")
   @ApiResponses(Array(
     new ApiResponse(code = 405, message = "Invalid input")))
-  @ApiParamsImplicit(Array(
-    new ApiParamImplicit(value = "Pet object that needs to be added to the store", required = true, dataType = "Pet", paramType = "body")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(value = "Pet object that needs to be added to the store", required = true, dataType = "Pet", paramType = "body")))
   def addPet() = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
@@ -57,8 +57,8 @@ object PetApiController extends BaseApiController {
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
     new ApiResponse(code = 404, message = "Pet not found"),
     new ApiResponse(code = 405, message = "Validation exception")))
-  @ApiParamsImplicit(Array(
-    new ApiParamImplicit(value = "Pet object that needs to be updated in the store", required = true, dataType = "Pet", paramType = "body")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(value = "Pet object that needs to be updated in the store", required = true, dataType = "Pet", paramType = "body")))
   def updatePet() = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
@@ -99,9 +99,9 @@ object PetApiController extends BaseApiController {
     responseClass = "void")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid file format")))
-  @ApiParamsImplicit(Array(
-    new ApiParamImplicit(value = "Image file to attach", required = true, dataType = "file", paramType = "body"),
-    new ApiParamImplicit(name = "id", value = "ID of pet to which to attach image", required = true, dataType = "String", paramType = "path",
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(value = "Image file to attach", required = true, dataType = "file", paramType = "body"),
+    new ApiImplicitParam(name = "id", value = "ID of pet to which to attach image", required = true, dataType = "String", paramType = "path",
       allowableValues = "range[0,10]")))
   def attachImage (id: String) = Action { implicit request =>
     JsonResponse("SUCCESS")

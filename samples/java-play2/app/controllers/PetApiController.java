@@ -33,7 +33,7 @@ public class PetApiController extends BaseApiController {
 	@POST
 	@ApiOperation(value = "Add a new pet to the store")
 	@ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input") })
-	@ApiParamsImplicit({ @ApiParamImplicit(value = "Pet object that needs to be added to the store", required = true, dataType = "Pet", paramType = "body") })
+	@ApiImplicitParams({ @ApiImplicitParam(value = "Pet object that needs to be added to the store", required = true, dataType = "Pet", paramType = "body") })
 	public static Result addPet() {
 		Object o = request().body().asJson();
 		try {
@@ -50,7 +50,7 @@ public class PetApiController extends BaseApiController {
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
 			@ApiResponse(code = 404, message = "Pet not found"),
 			@ApiResponse(code = 405, message = "Validation exception") })
-	@ApiParamsImplicit({ @ApiParamImplicit(value = "Pet object that needs to be updated in the store", required = true, dataType = "Pet", paramType = "body") })
+	@ApiImplicitParams({ @ApiImplicitParam(value = "Pet object that needs to be updated in the store", required = true, dataType = "Pet", paramType = "body") })
 	public static Result updatePet() {
 		Object o = request().body().asJson();
 		try {

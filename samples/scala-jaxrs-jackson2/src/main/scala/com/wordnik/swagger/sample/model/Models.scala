@@ -26,7 +26,7 @@ case class Pet(
   name: String,
   photoUrls: List[String],
   tags: List[Tag] = List[Tag](),
-  @ApiProperty(value = "pet status in the store", allowableValues = "available,pending,sold") status: String)
+  @ApiModelProperty(value = "pet status in the store", allowableValues = "available,pending,sold") status: String)
 
 case class Tag(
   id: Long,
@@ -40,14 +40,14 @@ case class User(
   email: String,
   password: String,
   phone: String,
-  @ApiProperty(value = "User Status", allowableValues = "1-registered,2-active,3-closed") userStatus: Int)
+  @ApiModelProperty(value = "User Status", allowableValues = "1-registered,2-active,3-closed") userStatus: Int)
 
 case class Order(
   id: Long,
   petId: Long,
   quantity: Int,
   shipDate: Date,
-  @ApiProperty(value = "Order Status", allowableValues = "placed, approved, delivered") status: String)
+  @ApiModelProperty(value = "Order Status", allowableValues = "placed, approved, delivered") status: String)
 
 case class Category(
   id: Long, 

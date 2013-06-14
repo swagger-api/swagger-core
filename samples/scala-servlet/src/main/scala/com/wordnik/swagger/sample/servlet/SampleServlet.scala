@@ -18,12 +18,12 @@ class SampleServlet extends HttpServlet {
   @throws(classOf[ServletException])
   @ApiOperation(httpMethod = "GET", value = "Resource to get a user", response = classOf[SampleData])
   @ApiResponses(Array(new ApiResponse(code = 400, message = "Invalid input", response = classOf[ApiResponse])))
-  @ApiParamsImplicit(Array(
-    new ApiParamImplicit(name = "name", value = "User's name", required = true, dataType = "string", paramType = "query"),
-    new ApiParamImplicit(name = "email", value = "User's email", required = true, dataType = "string", paramType = "query"),
-    new ApiParamImplicit(name = "id", value = "User ID", required = true, dataType = "long", paramType = "query"),
-    new ApiParamImplicit(name = "age", value = "User ID", required = true, dataType = "long", paramType = "query"),
-    new ApiParamImplicit(name = "dateOfBirth", value = "User's date of birth, in dd-MM-yyyy format", required = true, dataType = "Date", paramType = "query")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "name", value = "User's name", required = true, dataType = "string", paramType = "query"),
+    new ApiImplicitParam(name = "email", value = "User's email", required = true, dataType = "string", paramType = "query"),
+    new ApiImplicitParam(name = "id", value = "User ID", required = true, dataType = "long", paramType = "query"),
+    new ApiImplicitParam(name = "age", value = "User ID", required = true, dataType = "long", paramType = "query"),
+    new ApiImplicitParam(name = "dateOfBirth", value = "User's date of birth, in dd-MM-yyyy format", required = true, dataType = "Date", paramType = "query")))
   override protected def doGet(request: HttpServletRequest, response: HttpServletResponse) = {
     response.setContentType("application/json")
     try {

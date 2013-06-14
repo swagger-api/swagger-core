@@ -42,7 +42,7 @@ class Order {
   var shipDate: Date = null
 
   @XmlElement(name = "status")
-  @ApiProperty(value = "Order Status", allowableValues = "placed,approved,delivered")
+  @ApiModelProperty(value = "Order Status", allowableValues = "placed,approved,delivered")
   @BeanProperty
   var status: String = null
 }
