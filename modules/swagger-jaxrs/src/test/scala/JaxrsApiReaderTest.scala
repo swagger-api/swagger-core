@@ -21,9 +21,7 @@ class BasicResourceTest extends FlatSpec with ShouldMatchers {
   it should "read an api and extract an error model" in {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()
-    val apiResource = reader.read("/api-docs", "", classOf[BasicResource], config,
-      new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]](),
-      new ListBuffer[Method]()).getOrElse(fail("should not be None"))
+    val apiResource = reader.read("/api-docs", classOf[BasicResource], config).getOrElse(fail("should not be None"))
 
     apiResource.apis.size should be (1)
     val api = apiResource.apis.head
@@ -68,9 +66,7 @@ class ContainerResourceTest extends FlatSpec with ShouldMatchers {
   it should "read an api" in {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()
-    val apiResource = reader.read("/api-docs", "", classOf[ContainerResource], config,
-      new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]](),
-      new ListBuffer[Method]()).getOrElse(fail("should not be None"))
+    val apiResource = reader.read("/api-docs", classOf[ContainerResource], config).getOrElse(fail("should not be None"))
     apiResource.apis.size should be (1)
     val api = apiResource.apis.head
     api.path should be ("/container/{id}")
@@ -107,9 +103,7 @@ class ModelExtractionTest extends FlatSpec with ShouldMatchers {
   it should "get the right models" in {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()
-    val apiResource = reader.read("/api-docs", "", classOf[NestedModelResource], config,
-      new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]](),
-      new ListBuffer[Method]()).getOrElse(fail("should not be None"))
+    val apiResource = reader.read("/api-docs", classOf[NestedModelResource], config).getOrElse(fail("should not be None"))
 
     val models = apiResource.models.getOrElse(fail("no models found"))
 

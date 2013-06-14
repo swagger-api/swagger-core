@@ -36,9 +36,7 @@ object ApiListingCache {
             case _ => List()
           }
           // For each top level resource, parse it and look for swagger annotations.
-          val listings = (for(cls <- classes) yield reader.read(docRoot, "", cls, ConfigFactory.config,
-            new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]](),
-            new ListBuffer[Method]())).flatten.toList
+          val listings = (for(cls <- classes) yield reader.read(docRoot, cls, ConfigFactory.config)).flatten.toList
           _cache = Some((listings.map(m => (m.resourcePath, m))).toMap)
         })
       }

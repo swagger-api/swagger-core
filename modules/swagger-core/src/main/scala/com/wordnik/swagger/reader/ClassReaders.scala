@@ -8,9 +8,7 @@ import java.lang.reflect.Method
 import scala.collection.mutable.ListBuffer
 
 trait ClassReader {
-  def read(docRoot: String, parentPath: String, cls: Class[_], config: SwaggerConfig,
-           operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]],
-           parentMethods: ListBuffer[Method]): Option[ApiListing]
+  def read(docRoot: String, cls: Class[_], config: SwaggerConfig): Option[ApiListing]
 }
 
 object ClassReaders {
