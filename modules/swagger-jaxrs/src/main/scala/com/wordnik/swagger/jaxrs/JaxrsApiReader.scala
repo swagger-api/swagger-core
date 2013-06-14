@@ -26,16 +26,28 @@ trait JaxrsApiReader extends ClassReader {
   // decorates a Parameter based on annotations, returns None if param should be ignored
   def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation], method: Method): Option[Parameter]
 
-  def parseOperation(method: Method, apiOperation: ApiOperation, errorResponses: List[ErrorResponse], isDeprecated: String) = {
+  def parseOperation(method: Method, apiOperation: ApiOperation, errorResponses: List[ErrorResponse],
+                     isDeprecated: String, parentMethods: ListBuffer[Method]) = {
     val api = method.getAnnotation(classOf[Api])
     val responseClass = apiOperation.responseContainer match {
       case "" => apiOperation.response.getName
       case e: String => "%s[%s]".format(e, apiOperation.response.getName)
     }
 
-    val paramAnnotations = method.getParameterAnnotations
-    val paramTypes = method.getParameterTypes
-    val genericParamTypes = method.getGenericParameterTypes
+    var paramAnnotations: Array[Array[java.lang.annotation.Annotation]] = null
+    var paramTypes: Array[java.lang.Class[_]] = null
+    var genericParamTypes: Array[java.lang.reflect.Type] = null
+
+    if (parentMethods.isEmpty) {
+      paramAnnotations = method.getParameterAnnotations
+      paramTypes = method.getParameterTypes
+      genericParamTypes = method.getGenericParameterTypes
+    } else {
+      paramAnnotations = parentMethods.map(pm => pm.getParameterAnnotations).reduceRight(_ ++ _) ++ method.getParameterAnnotations
+      paramTypes = parentMethods.map(pm => pm.getParameterTypes).reduceRight(_ ++ _) ++ method.getParameterTypes
+      genericParamTypes = parentMethods.map(pm => pm.getGenericParameterTypes).reduceRight(_ ++ _) ++ method.getGenericParameterTypes
+    }
+
     val produces = apiOperation.produces match {
       case e: String if(e != "") => e.split(",").map(_.trim).toList
       case _ => List()
@@ -88,7 +100,7 @@ trait JaxrsApiReader extends ClassReader {
       Option(isDeprecated))
   }
 
-  def readMethod(method: Method) = {
+  def readMethod(method: Method, parentMethods: ListBuffer[Method]) = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
     val errorAnnotations = method.getAnnotation(classOf[ApiErrors])
 
@@ -105,7 +117,7 @@ trait JaxrsApiReader extends ClassReader {
     }
     val isDeprecated = Option(method.getAnnotation(classOf[Deprecated])).map(m => "true").getOrElse(null)
 
-    parseOperation(method, apiOperation, errorResponses, isDeprecated)
+    parseOperation(method, apiOperation, errorResponses, isDeprecated, parentMethods)
   }
 
   def appendOperation(endpoint: String, path: String, op: Operation, operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]]) = {
@@ -115,10 +127,11 @@ trait JaxrsApiReader extends ClassReader {
     }
   }
 
-  def read(docRoot: String, cls: Class[_], config: SwaggerConfig): Option[ApiListing] = {
+  def read(docRoot: String, parentPath: String, cls: Class[_], config: SwaggerConfig,
+           operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]],
+           parentMethods: ListBuffer[Method]): Option[ApiListing] = {
     val api = cls.getAnnotation(classOf[Api])
     if(api != null) {
-      val operations = new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]]()
       val description = api.description match {
         case e: String if(e != "") => Some(e)
         case _ => None
@@ -130,27 +143,18 @@ trait JaxrsApiReader extends ClassReader {
           case e: Path => e.value()
           case _ => ""
         }
+        val endpoint = parentPath + api.value + pathFromMethod(method)
         Option(returnType.getAnnotation(classOf[Api])) match {
           case Some(e) => {
-            // the return class has Api annotations, and should be parsed
-            for(submethod <- returnType.getMethods) {
-              if(submethod.getAnnotation(classOf[ApiOperation]) != null) {
-                val op = readMethod(submethod)
-                val endpoint = api.value + pathFromMethod(method)
-                val subpath = submethod.getAnnotation(classOf[Path]) match {
-                  case e: Path => e.value()
-                  case _ => ""
-                }
-                appendOperation(endpoint, path + subpath, op, operations)
-              }
-            }
+            val root = docRoot + api.value + pathFromMethod(method)
+            parentMethods += method
+            read(root, endpoint, returnType, config, operations, parentMethods)
           }
           case _ => {
             if(method.getAnnotation(classOf[ApiOperation]) != null) {
-              val op = readMethod(method)
-              val endpoint = api.value + pathFromMethod(method)
+              val op = readMethod(method, parentMethods)
               appendOperation(endpoint, path, op, operations)
-            }            
+            }
           }
         }
 
@@ -258,7 +262,7 @@ trait JaxrsApiReader extends ClassReader {
   }
 
   def parseHttpMethod(method: Method, op: ApiOperation): String = {
-    if (op.httpMethod() != null && op.httpMethod().trim().length() > 0) 
+    if (op.httpMethod() != null && op.httpMethod().trim().length() > 0)
       op.httpMethod().trim
     else {
       if(method.getAnnotation(classOf[GET]) != null) "GET"
@@ -299,13 +303,13 @@ class MutableParameter(param: Parameter) {
   def this() = this(null)
 
   def asParameter() = {
-    Parameter(name, 
-      description, 
-      defaultValue, 
-      required, 
-      allowMultiple, 
-      dataType, 
-      allowableValues, 
+    Parameter(name,
+      description,
+      defaultValue,
+      required,
+      allowMultiple,
+      dataType,
+      allowableValues,
       paramType,
       paramAccess)
   }
