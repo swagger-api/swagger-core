@@ -22,13 +22,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /** 
- * An ApiProperty desecribes a property inside a model class.  The annotations can
+ * An ApiModelProperty desecribes a property inside a model class.  The annotations can
  * apply to a method, a property, etc., depending on how the model scanner is configured and
  * used.
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ApiProperty {
+public @interface ApiModelProperty {
   /** Provide a human readable synopsis of this property */
   String value() default "";
 

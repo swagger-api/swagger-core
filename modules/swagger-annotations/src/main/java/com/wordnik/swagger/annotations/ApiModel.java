@@ -28,13 +28,13 @@ import java.lang.annotation.Target;
  * no direct way to see what fields <code>FooBean</code> would have. This
  * annotation is meant to give a description of <code>FooBean</code> and
  * then have the fields of it be annotated with
- * <code>@ApiProperty</code>.
+ * <code>@ApiModelProperty</code>.
  *
  * @author Heiko W. Rupp
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ApiClass {
+public @interface ApiModel {
   /** Provide a synopsis of this class */
   String value() default "";
   /** Provide a longer description of the class */

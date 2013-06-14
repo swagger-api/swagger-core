@@ -23,12 +23,12 @@ import java.lang.annotation.Target;
 
 /**
  * Represents a single parameter in an Api Operation.  A parameter is an input
- * to the operation.  The difference with the ApiParamImplicit is that they are
+ * to the operation.  The difference with the ApiImplicitParam is that they are
  * not bound to a variable, and allow for more manually-defined descriptions.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ApiParamImplicit {
+public @interface ApiImplicitParam {
   /** Name of the parameter */
   String name() default "";
 

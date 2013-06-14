@@ -27,7 +27,6 @@ import java.lang.annotation.Target;
  * be included in the Resource Listing: https://github.com/wordnik/swagger-core/wiki/Resource-Listing
  * for details
  */
-
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Api {

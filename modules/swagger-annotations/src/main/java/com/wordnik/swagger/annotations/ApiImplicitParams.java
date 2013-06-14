@@ -21,8 +21,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * A simple array wrapper to contain multiple ApiImplicitParam objects
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ApiParamsImplicit {
-  ApiParamImplicit[] value();
+public @interface ApiImplicitParams {
+  ApiImplicitParam[] value();
 }
