@@ -38,8 +38,10 @@ public class Library
    @Path("/books/badger")
    @Produces("application/json")
    @BadgerFish
-   @ApiOperation(value = "gets books with Badger", notes = "gets books with @Badgerfish", responseClass = "org.jboss.resteasy.examples.data.BookListing")
-   @ApiErrors(value = { @ApiError(code = 400, reason = "Not sure"), @ApiError(code = 404, reason = "bad") })
+   @ApiOperation(value = "gets books with Badger", 
+      notes = "gets books with @Badgerfish", 
+      response = BookListing.class)
+   @ApiResponses(value = { @ApiResponse(code = 400, message = "Not sure"), @ApiResponse(code = 404, message = "bad") })
    public BookListing getBooksBadger()
    {
       return getListing();
@@ -48,8 +50,10 @@ public class Library
    @GET
    @Path("/books/mapped")
    @Produces("application/json")
-   @ApiOperation(value = "gets books with mapped", notes = "gets books with @Mapped", responseClass = "org.jboss.resteasy.examples.data.BookListing")
-   @ApiErrors(value = { @ApiError(code = 400, reason = "Not sure"), @ApiError(code = 404, reason = "bad") })
+   @ApiOperation(value = "gets books with mapped", 
+      notes = "gets books with @Mapped", 
+      response = BookListing.class)
+   @ApiResponses(value = { @ApiResponse(code = 400, message = "Not sure"), @ApiResponse(code = 404, message = "bad") })
    //@Mapped // mapped is the default format
    public BookListing getBooksMapped()
    {

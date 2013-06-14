@@ -21,17 +21,42 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Represents a single parameter in an Api Operation.  A parameter is an input
+ * to the operation.  The difference with the ApiParamImplicit is that they are
+ * not bound to a variable, and allow for more manually-defined descriptions.
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiParamImplicit {
+  /** Name of the parameter */
   String name() default "";
+
+  /** Description of the parameter */
   String value() default "";
+
+  /** Default value  - if e.g. no JAX-RS @DefaultValue is given */
   String defaultValue() default "";
+
+  /** Description of values this endpoint accepts */
   String allowableValues() default "";
+
+  /** specifies if the parameter is required or not */
   boolean required() default false;
+
+  /** 
+   * specify an optional access value for filtering in a Filter 
+   * implementation.  This
+   * allows you to hide certain parameters if a user doesn't have access to them
+   */
   String access() default "";
-  String internalDescription() default "";
+
+  /** specifies whether or not the parameter can have multiple values provided */
   boolean allowMultiple() default false;
+
+  /** manually set the dataType */
   String dataType() default "";
+
+  /** manually set the param type, i.e. query, path, etc. */
   String paramType() default "";
 }

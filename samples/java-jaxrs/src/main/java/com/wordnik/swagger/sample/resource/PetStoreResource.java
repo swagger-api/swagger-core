@@ -33,8 +33,8 @@ public class PetStoreResource {
   @ApiOperation(value = "Find purchase order by ID",
     notes = "For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions",
     response = Order.class)
-  @ApiErrors(value = { @ApiError(code = 400, reason = "Invalid ID supplied"),
-      @ApiError(code = 404, reason = "Order not found") })
+  @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
+      @ApiResponse(code = 404, message = "Order not found") })
   public Response getOrderById(
       @ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("orderId") String orderId)
       throws NotFoundException {
@@ -50,7 +50,7 @@ public class PetStoreResource {
   @Path("/order")
   @ApiOperation(value = "Place an order for a pet",
     response = Order.class)
-  @ApiErrors({ @ApiError(code = 400, reason = "Invalid Order") })
+  @ApiResponses({ @ApiResponse(code = 400, message = "Invalid Order") })
   public Response placeOrder(
       @ApiParam(value = "order placed for purchasing the pet", required = true) Order order) {
     storeData.placeOrder(order);
@@ -61,8 +61,8 @@ public class PetStoreResource {
   @Path("/order/{orderId}")
   @ApiOperation(value = "Delete purchase order by ID",
     notes = "For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors")
-  @ApiErrors(value = { @ApiError(code = 400, reason = "Invalid ID supplied"),
-      @ApiError(code = 404, reason = "Order not found") })
+  @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
+      @ApiResponse(code = 404, message = "Order not found") })
   public Response deleteOrder(
       @ApiParam(value = "ID of the order that needs to be deleted", allowableValues = "range[1,infinity]", required = true) @PathParam("orderId") String orderId) {
     storeData.deleteOrder(ru.getLong(0, 10000, 0, orderId));

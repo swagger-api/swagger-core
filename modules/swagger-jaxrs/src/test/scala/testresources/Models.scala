@@ -12,7 +12,7 @@ import javax.xml.bind.annotation._
 import scala.reflect.BeanProperty
 
 @XmlRootElement (name="Howdy")
-@ApiModel(description = "a sample model")
+@ApiClass(description = "a sample model")
 @XmlAccessorType(XmlAccessType.NONE)
 class Sample {
   @XmlElement(name="id", required=true)
@@ -23,13 +23,13 @@ class Sample {
   @XmlElement(name="theValue") @BeanProperty var value: String = _
 }
 
-@ApiModel(description = "error response model")
+@ApiClass(description = "error response model")
 class NotFoundModel {
   var message: String = _
   var code: Int = 0
 }
 
-@ApiModel(description = "invalid input model")
+@ApiClass(description = "invalid input model")
 case class InvalidInputModel (
   @ApiProperty("the message")message: String,
   @ApiProperty("input error code") code: Int

@@ -17,7 +17,7 @@ class SampleServlet extends HttpServlet {
     notes = "this adds pets nicely",
     httpMethod = "GET",
     response = classOf[Dog])
-  @ApiErrors(Array(new ApiError(code = 405, reason = "Invalid input")))
+  @ApiResponses(Array(new ApiResponse(code = 405, message = "Invalid input")))
   @ApiParamsImplicit(Array(
     new ApiParamImplicit(
       name = "pet",

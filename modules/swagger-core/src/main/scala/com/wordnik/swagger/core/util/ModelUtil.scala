@@ -31,16 +31,16 @@ object ModelUtil {
         val parameters = (for(param <- op.parameters) yield {
           param.copy(dataType = cleanDataType(param.dataType))
         }).toList
-        val errors = (for(error <- op.errorResponses) yield {
-          if(error.responseModel != None) {
-            error.copy(responseModel = Some(cleanDataType(error.responseModel.get)))
+        val messages = (for(message <- op.responseMessages) yield {
+          if(message.responseModel != None) {
+            message.copy(responseModel = Some(cleanDataType(message.responseModel.get)))
           }
-          else error
+          else message
         }).toList
         op.copy(
           responseClass = cleanDataType(op.responseClass),
           parameters = parameters,
-          errorResponses = errors)
+          responseMessages = messages)
       }).toList
       api.copy(operations = operations)
     }).toList
@@ -73,7 +73,7 @@ object ModelUtil {
   def modelsFromApis(apis: List[ApiDescription]): Option[Map[String, Model]] = {
     val modelnames = new HashSet[String]()
     for(api <- apis; op <- api.operations) {
-      modelnames ++= op.errorResponses.map{_.responseModel}.flatten.toSet
+      modelnames ++= op.responseMessages.map{_.responseModel}.flatten.toSet
       modelnames += op.responseClass
       op.parameters.foreach(param => modelnames += param.dataType)
     }

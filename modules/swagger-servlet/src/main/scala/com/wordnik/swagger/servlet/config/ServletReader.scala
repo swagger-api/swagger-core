@@ -83,16 +83,16 @@ class ServletReader extends ClassReader {
             case "" => opa.response.getName
             case e: String => "%s[%s]".format(e, opa.response.getName)
           }
-          val errorAnnotations = method.getAnnotation(classOf[ApiErrors])
-          val errorResponses = {
-            if(errorAnnotations == null) List()
-            else (for(error <- errorAnnotations.value) yield {
-              val errorResponse = {
-                if(error.response != classOf[Void])
-                  Some(error.response.getName)
+          val responseAnnotations = method.getAnnotation(classOf[ApiResponses])
+          val apiResponses = {
+            if(responseAnnotations == null) List()
+            else (for(response <- responseAnnotations.value) yield {
+              val apiResponse = {
+                if(response.response != classOf[Void])
+                  Some(response.response.getName)
                 else None
               }
-              ErrorResponse(error.code, error.reason, errorResponse)}
+              ResponseMessage(response.code, response.message, apiResponse)}
             ).toList
           }
 
@@ -108,7 +108,7 @@ class ServletReader extends ClassReader {
             protocols, // protocols
             authorizations, // authorizations
             parameters, // params
-            errorResponses, // errors
+            apiResponses, // errors
             None)
         }
       }

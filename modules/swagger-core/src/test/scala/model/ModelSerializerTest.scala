@@ -286,52 +286,52 @@ class OperationSerializersTest extends FlatSpec with ShouldMatchers {
 }
 
 @RunWith(classOf[JUnitRunner])
-class ErrorResponseSerializersTest extends FlatSpec with ShouldMatchers {
+class ResponseMessageTest extends FlatSpec with ShouldMatchers {
   implicit val formats = SwaggerSerializers.formats
 
-  it should "deserialize an ErrorResponse" in {
+  it should "deserialize an ResponseMessage" in {
     val jsonString = """
     {
       "code":101,
-      "reason":"the reason"
+      "message":"the message"
     }
     """
     val json = parse(jsonString)
-    json.extract[ErrorResponse] match {
-      case p: ErrorResponse => {
+    json.extract[ResponseMessage] match {
+      case p: ResponseMessage => {
         p.code should be (101)
-        p.reason should be ("the reason")
+        p.message should be ("the message")
         p.responseModel should be (None)
       }
-      case _ => fail("wrong type returned, should be ErrorResponse")
+      case _ => fail("wrong type returned, should be ResponseMessage")
     }
   }
 
   it should "serialize an operation" in {
-    val l = ErrorResponse(101, "the reason")
-    write(l) should be ("""{"code":101,"reason":"the reason"}""")
+    val l = ResponseMessage(101, "the message")
+    write(l) should be ("""{"code":101,"message":"the message"}""")
   }
 
   it should "deserialize an error with response model" in {
     val jsonString = """
     {
       "code":101,
-      "reason":"the reason",
+      "message":"the message",
       "responseModel":"FancyModel"
     }
     """
     val json = parse(jsonString)
-    json.extract[ErrorResponse] match {
-      case p: ErrorResponse => {
+    json.extract[ResponseMessage] match {
+      case p: ResponseMessage => {
         p.responseModel should be (Some("FancyModel"))
       }
-      case _ => fail("wrong type returned, should be ErrorResponse")
+      case _ => fail("wrong type returned, should be ResponseMessage")
     }
   }
 
   it should "serialize an operation with response model" in {
-    val l = ErrorResponse(101, "the reason", Some("VeryFancyModel"))
-    write(l) should be ("""{"code":101,"reason":"the reason","responseModel":"VeryFancyModel"}""")
+    val l = ResponseMessage(101, "the message", Some("VeryFancyModel"))
+    write(l) should be ("""{"code":101,"message":"the message","responseModel":"VeryFancyModel"}""")
   }
 }
 

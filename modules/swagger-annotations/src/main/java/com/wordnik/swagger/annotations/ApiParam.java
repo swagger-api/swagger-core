@@ -21,6 +21,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Represents a single parameter in an Api Operation.  A parameter is an input
+ * to the operation
+ */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiParam {
@@ -35,8 +39,17 @@ public @interface ApiParam {
 
   /** Description of values this endpoint accepts */
   String allowableValues() default "";
+
+  /** specifies if the parameter is required or not */
   boolean required() default false;
+
+  /** 
+   * specify an optional access value for filtering in a Filter 
+   * implementation.  This
+   * allows you to hide certain parameters if a user doesn't have access to them
+   */
   String access() default "";
-  String internalDescription() default "";
+
+  /** specifies whether or not the parameter can have multiple values provided */
   boolean allowMultiple() default false;
 }

@@ -17,7 +17,7 @@ object SwaggerSerializers {
     new AllowableValuesSerializer + 
     new ParameterSerializer +
     new OperationSerializer +
-    new ErrorResponseSerializer +
+    new ResponseMessageSerializer +
     new ApiDescriptionSerializer +
     new ApiListingReferenceSerializer +
     new ResourceListingSerializer +
@@ -179,25 +179,25 @@ object SwaggerSerializers {
     }
   ))
 
-  class ErrorResponseSerializer extends CustomSerializer[ErrorResponse](formats => ({
+  class ResponseMessageSerializer extends CustomSerializer[ResponseMessage](formats => ({
     case json =>
       implicit val fmts: Formats = formats
-      ErrorResponse(
+      ResponseMessage(
         (json \ "code").extractOrElse({
           !!(json, ERROR, "code", "missing required field", ERROR)
           0
         }),
-        (json \ "reason").extractOrElse({
+        (json \ "message").extractOrElse({
           !!(json, ERROR, "reason", "missing required field", ERROR)
           ""
         }),
         (json \ "responseModel").extractOpt[String]
       )
     }, {
-      case x: ErrorResponse =>
+      case x: ResponseMessage =>
       implicit val fmts = formats
       ("code" -> x.code) ~
-      ("reason" -> x.reason) ~
+      ("message" -> x.message) ~
       ("responseModel" -> x.responseModel)
     }
   ))
@@ -226,7 +226,7 @@ object SwaggerSerializers {
         (json \ "protocols").extractOrElse(List()),
         (json \ "authorizations").extractOrElse(List()),
         (json \ "parameters").extract[List[Parameter]],
-        (json \ "errorResponses").extract[List[ErrorResponse]],
+        (json \ "responseMessages").extract[List[ResponseMessage]],
         (json \ "deprecated").extractOpt[String]
       )
     }, {
@@ -262,9 +262,9 @@ object SwaggerSerializers {
         }
       }) ~
       ("parameters" -> Extraction.decompose(x.parameters)) ~
-      ("errorResponses" -> {
-        x.errorResponses match {
-          case e: List[ErrorResponse] if(e.size > 0) => Extraction.decompose(e)
+      ("responseMessages" -> {
+        x.responseMessages match {
+          case e: List[ResponseMessage] if(e.size > 0) => Extraction.decompose(e)
           case _ => JNothing
         }
       }) ~

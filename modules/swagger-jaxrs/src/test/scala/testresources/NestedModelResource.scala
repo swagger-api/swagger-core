@@ -18,9 +18,9 @@ class NestedModelResource {
   @ApiOperation(value = "Gets a family by id",
     notes = "No details provided",
     response = classOf[Family])
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid ID", response = classOf[NotFoundModel]),
-    new ApiError(code = 404, reason = "object not found")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid ID", response = classOf[NotFoundModel]),
+    new ApiResponse(code = 404, message = "object not found")))
   def getFamilyById(
     @ApiParam(value = "sample param data", required = true, allowableValues = "range[0,100]")@QueryParam("id") id: String) = {
     Response.ok.build

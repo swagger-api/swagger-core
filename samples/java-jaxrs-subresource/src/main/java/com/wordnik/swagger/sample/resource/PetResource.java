@@ -36,8 +36,8 @@ public class PetResource {
   @ApiOperation(value = "Find pet by ID", 
     notes = "Returns a pet when ID < 10.  ID > 10 or nonintegers will simulate API error conditions", 
     response = Pet.class)
-  @ApiErrors(value = { @ApiError(code = 400, reason = "Invalid ID supplied"),
-      @ApiError(code = 404, reason = "Pet not found") })
+  @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
+      @ApiResponse(code = 404, message = "Pet not found") })
   public Response getPetById(
       @ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("petId") String petId)
       throws NotFoundException {
@@ -54,8 +54,8 @@ public class PetResource {
   @ApiOperation(
     value = "Gets the owner of a pet", 
     response = OwnerResource.class)
-  @ApiErrors(value = { @ApiError(code = 400, reason = "Invalid ID supplied"),
-      @ApiError(code = 404, reason = "Pet not found") })
+  @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
+      @ApiResponse(code = 404, message = "Pet not found") })
   public OwnerResource getOwners(@PathParam("petId") String petId) {
     return new OwnerResource(petId);
   }

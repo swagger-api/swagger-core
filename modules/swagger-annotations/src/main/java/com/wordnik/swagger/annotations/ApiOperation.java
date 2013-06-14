@@ -21,21 +21,47 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Describes an operation or typically a HTTP method against a specific path.  Operations
+ * with equivalent paths are grouped in an array in the Api Declaration.  See
+ * https://github.com/wordnik/swagger-core/wiki/API-Declaration
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiOperation {
-  /** Long description of the operation  */
+  /** Brief description of the operation  */
   String value();
-  Class<?> response() default Void.class;
-  String responseContainer() default "";
-  boolean multiValueResponse() default false; //to indicate if return type will contain one or more of the response value
+
+  /** long description of the operation */
   String notes() default "";
+
+  /** default response class from the operation */
+  Class<?> response() default Void.class;
+
+  /** if the response class is within a container, specify it here */
+  String responseContainer() default "";
+
+  /** currently not implemented in readers, reserved for future use */
   String tags() default "";
+
+  /** the HTTP method, i.e GET, PUT, POST, DELETE, PATCH, OPTIONS */
   String httpMethod() default "";
-  /** allow explicit ordering of operations */
+
+  /** allow explicit ordering of operations inside the Api Declaration */
   int position() default 0;
+
+  /** the nickname for the operation, to override what is detected by the annotation scanner */
+  String nickname() default "";
+  
+  /** content type produced by this Api */
   String produces() default "";
+
+  /** media type consumed by this Api */
   String consumes() default "";
+
+  /** protocols that this Api requires (i.e. https) */
   String protocols() default "";
+
+  /** authorizations required by this Api */
   String authorizations() default "";
 }

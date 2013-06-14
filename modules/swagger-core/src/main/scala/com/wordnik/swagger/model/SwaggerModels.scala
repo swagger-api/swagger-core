@@ -82,7 +82,7 @@ case class Operation (
   protocols: List[String] = List.empty,
   authorizations: List[String] = List.empty,
   parameters: List[Parameter] = List.empty,
-  errorResponses: List[ErrorResponse] = List.empty,
+  responseMessages: List[ResponseMessage] = List.empty,
   `deprecated`: Option[String] = None)
 
 case class Parameter (
@@ -96,7 +96,7 @@ case class Parameter (
   paramType: String,
   paramAccess: Option[String] = None)
 
-case class ErrorResponse (
+case class ResponseMessage (
   code: Int,
-  reason: String,
+  message: String,
   responseModel: Option[String] = None)

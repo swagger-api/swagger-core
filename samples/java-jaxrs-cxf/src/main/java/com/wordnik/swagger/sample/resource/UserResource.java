@@ -65,9 +65,9 @@ public class UserResource {
   @Path("/{username}")
   @ApiOperation(value = "Updated user", 
     notes = "This can only be done by the logged in user.")
-  @ApiErrors(value = {
-      @ApiError(code = 400, reason = "Invalid user supplied"),
-      @ApiError(code = 404, reason = "User not found") })
+  @ApiResponses(value = {
+      @ApiResponse(code = 400, message = "Invalid user supplied"),
+      @ApiResponse(code = 404, message = "User not found") })
   public Response updateUser(
       @ApiParam(value = "name that need to be deleted", required = true) @PathParam("username") String username,
       @ApiParam(value = "Updated user object", required = true) User user) {
@@ -79,9 +79,9 @@ public class UserResource {
   @Path("/{username}")
   @ApiOperation(value = "Delete user", 
     notes = "This can only be done by the logged in user.")
-  @ApiErrors(value = {
-      @ApiError(code = 400, reason = "Invalid username supplied"),
-      @ApiError(code = 404, reason = "User not found") })
+  @ApiResponses(value = {
+      @ApiResponse(code = 400, message = "Invalid username supplied"),
+      @ApiResponse(code = 404, message = "User not found") })
   public Response deleteUser(
       @ApiParam(value = "The name that needs to be deleted", required = true) @PathParam("username") String username) {
     userData.removeUser(username);
@@ -92,9 +92,9 @@ public class UserResource {
   @Path("/{username}")
   @ApiOperation(value = "Get user by user name", 
     response = User.class)
-  @ApiErrors(value = {
-      @ApiError(code = 400, reason = "Invalid username supplied"),
-      @ApiError(code = 404, reason = "User not found") })
+  @ApiResponses(value = {
+      @ApiResponse(code = 400, message = "Invalid username supplied"),
+      @ApiResponse(code = 404, message = "User not found") })
   public Response getUserByName(
       @ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ", required = true) @PathParam("username") String username)
     throws ApiException {
@@ -110,7 +110,7 @@ public class UserResource {
   @Path("/login")
   @ApiOperation(value = "Logs user into the system", 
     response = String.class)
-  @ApiErrors(value = { @ApiError(code = 400, reason = "Invalid username/password supplied") })
+  @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid username/password supplied") })
   public Response loginUser(
       @ApiParam(value = "The user name for login", required = true) @QueryParam("username") String username,
       @ApiParam(value = "The password for login in clear text", required = true) @QueryParam("password") String password) {

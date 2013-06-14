@@ -39,4 +39,6 @@ public @interface ApiClass {
   String value() default "";
   /** Provide a longer description of the class */
   String description() default "";
+  /** Provide a superclass for the model to allow describing inheritence */
+  Class<?> parent() default Void.class;
 }

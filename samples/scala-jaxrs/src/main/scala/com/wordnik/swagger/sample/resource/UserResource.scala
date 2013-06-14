@@ -66,9 +66,9 @@ class UserResource extends RestResourceUtil {
   @PUT
   @Path("/{username}")
   @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid username supplied"),
-    new ApiError(code = 404, reason = "User not found")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid username supplied"),
+    new ApiResponse(code = 404, message = "User not found")))
   def updateUser(
     @ApiParam(value = "name that need to be deleted", required = true)@PathParam("username") username: String,
     @ApiParam(value = "Updated user object", required = true) user: User) = {
@@ -79,9 +79,9 @@ class UserResource extends RestResourceUtil {
   @DELETE
   @Path("/{username}")
   @ApiOperation(value = "Delete user", notes = "This can only be done by the logged in user.")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid username supplied"),
-    new ApiError(code = 404, reason = "User not found")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid username supplied"),
+    new ApiResponse(code = 404, message = "User not found")))
   def deleteUser(
     @ApiParam(value = "The name that needs to be deleted", required = true)@PathParam("username") username: String) = {
     UserData.removeUser(username)
@@ -94,9 +94,9 @@ class UserResource extends RestResourceUtil {
     value = "Get user by user name", 
     response = classOf[User],
     produces = "application/json,application/xml")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid username supplied"),
-    new ApiError(code = 404, reason = "User not found")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid username supplied"),
+    new ApiResponse(code = 404, message = "User not found")))
   def getUserByName(
     @ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ", required = true)@PathParam("username") username: String) = {
     var user = UserData.findUserByName(username)
@@ -112,8 +112,8 @@ class UserResource extends RestResourceUtil {
   @ApiOperation(value = "Logs user into the system", 
     response = classOf[String],
     produces = "text/plain")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid username and password combination")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid username and password combination")))
   def loginUser(
     @ApiParam(value = "The user name for login", required = true)@QueryParam("username") username: String,
     @ApiParam(value = "The password for login in clear text", required = true)@QueryParam("password") password: String) = {

@@ -26,7 +26,7 @@ trait JaxrsApiReader extends ClassReader {
   // decorates a Parameter based on annotations, returns None if param should be ignored
   def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation], method: Method): Option[Parameter]
 
-  def parseOperation(method: Method, apiOperation: ApiOperation, errorResponses: List[ErrorResponse],
+  def parseOperation(method: Method, apiOperation: ApiOperation, apiResponses: List[ResponseMessage],
                      isDeprecated: String, parentMethods: ListBuffer[Method]) = {
     val api = method.getAnnotation(classOf[Api])
     val responseClass = apiOperation.responseContainer match {
@@ -96,28 +96,28 @@ trait JaxrsApiReader extends ClassReader {
       protocols,
       authorizations,
       params,
-      errorResponses,
+      apiResponses,
       Option(isDeprecated))
   }
 
   def readMethod(method: Method, parentMethods: ListBuffer[Method]) = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
-    val errorAnnotations = method.getAnnotation(classOf[ApiErrors])
+    val responseAnnotation = method.getAnnotation(classOf[ApiResponses])
 
-    val errorResponses = {
-      if(errorAnnotations == null) List()
-      else (for(error <- errorAnnotations.value) yield {
-        val errorResponse = {
-          if(error.response != classOf[Void])
-            Some(error.response.getName)
+    val apiResponses = {
+      if(responseAnnotation == null) List()
+      else (for(response <- responseAnnotation.value) yield {
+        val apiResponseClass = {
+          if(response.response != classOf[Void])
+            Some(response.response.getName)
           else None
         }
-        ErrorResponse(error.code, error.reason, errorResponse)}
+        ResponseMessage(response.code, response.message, apiResponseClass)}
       ).toList
     }
     val isDeprecated = Option(method.getAnnotation(classOf[Deprecated])).map(m => "true").getOrElse(null)
 
-    parseOperation(method, apiOperation, errorResponses, isDeprecated, parentMethods)
+    parseOperation(method, apiOperation, apiResponses, isDeprecated, parentMethods)
   }
 
   def appendOperation(endpoint: String, path: String, op: Operation, operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]]) = {

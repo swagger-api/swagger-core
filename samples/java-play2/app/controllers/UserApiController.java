@@ -78,8 +78,8 @@ public class UserApiController extends BaseApiController {
 	@GET
 	@Path("/{username}")
 	@ApiOperation(value = "Fetch a user", notes = "This can only be done by the logged in user.")
-	@ApiErrors({ @ApiError(code = 400, reason = "Invalid username supplied"),
-			@ApiError(code = 404, reason = "User not found") })
+	@ApiResponses({ @ApiResponse(code = 400, message = "Invalid username supplied"),
+			@ApiResponse(code = 404, message = "User not found") })
 	@ApiParamsImplicit({
 			@ApiParamImplicit(name = "username", value = "name that need to be updated", required = true, dataType = "String", paramType = "path"),
 			@ApiParamImplicit(name = "body", value = "Updated user object", required = true, dataType = "User", paramType = "body") })
@@ -99,8 +99,8 @@ public class UserApiController extends BaseApiController {
 	@DELETE
 	@Path("/{username}")
 	@ApiOperation(value = "Delete user", notes = "This can only be done by the logged in user.")
-	@ApiErrors({ @ApiError(code = 400, reason = "Invalid username supplied"),
-			@ApiError(code = 404, reason = "User not found") })
+	@ApiResponses({ @ApiResponse(code = 400, message = "Invalid username supplied"),
+			@ApiResponse(code = 404, message = "User not found") })
 	public static Result deleteUser(
 			@ApiParam(value = "The name that needs to be deleted", required = true) String username) {
 		userData.removeUser(username);
@@ -110,8 +110,8 @@ public class UserApiController extends BaseApiController {
 	@GET
 	@Path("/{username}")
 	@ApiOperation(value = "Get user by user name", responseClass = "models.User")
-	@ApiErrors({ @ApiError(code = 400, reason = "Invalid username supplied"),
-			@ApiError(code = 404, reason = "User not found") })
+	@ApiResponses({ @ApiResponse(code = 400, message = "Invalid username supplied"),
+			@ApiResponse(code = 404, message = "User not found") })
 	public static Result getUserByName(
 			@ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ", required = true) @PathParam("username") String username) {
 		User user = userData.findUserByName(username);
@@ -124,7 +124,7 @@ public class UserApiController extends BaseApiController {
 	@GET
 	@Path("/login")
 	@ApiOperation(value = "Logs user into the system", responseClass = "String")
-	@ApiErrors(@ApiError(code = 400, reason = "Invalid username and password combination"))
+	@ApiResponses(@ApiResponse(code = 400, message = "Invalid username and password combination"))
 	public static Result loginUser(
 			@ApiParam(value = "The user name for login", required = true) @QueryParam("username") String username,
 			@ApiParam(value = "The password for login in clear text", required = true) @QueryParam("password") String password) {

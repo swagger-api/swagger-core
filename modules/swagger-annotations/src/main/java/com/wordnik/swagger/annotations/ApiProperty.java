@@ -21,7 +21,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/** ApiProperty can be put on a Method to allow swagger to understand the json fields datatype and more. */
+/** 
+ * An ApiProperty desecribes a property inside a model class.  The annotations can
+ * apply to a method, a property, etc., depending on how the model scanner is configured and
+ * used.
+ */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiProperty {
@@ -35,8 +39,15 @@ public @interface ApiProperty {
    * @return the allowable values
    */
   String allowableValues() default "";
+
+  /** 
+   * specify an optional access value for filtering in a Filter 
+   * implementation.  This
+   * allows you to hide certain parameters if a user doesn't have access to them
+   */
   String access() default "";
-  /** Provide any extra information */
+
+  /** long description of the property */
   String notes() default "";
 
   /**
@@ -52,5 +63,9 @@ public @interface ApiProperty {
    */
   boolean required() default false;
 
+  /**
+   * allows explicitly ordering the property in the model.  Since reflection has no guarantee on
+   * ordering, you should specify property order to keep models consistent across different VM implementations and versions.
+   */
   int position() default 0;
 }

@@ -17,7 +17,7 @@ class SampleServlet extends HttpServlet {
   @throws(classOf[IOException])
   @throws(classOf[ServletException])
   @ApiOperation(httpMethod = "GET", value = "Resource to get a user", response = classOf[SampleData])
-  @ApiErrors(Array(new ApiError(code = 400, reason = "Invalid input", response = classOf[ApiResponse])))
+  @ApiResponses(Array(new ApiResponse(code = 400, message = "Invalid input", response = classOf[ApiResponse])))
   @ApiParamsImplicit(Array(
     new ApiParamImplicit(name = "name", value = "User's name", required = true, dataType = "string", paramType = "query"),
     new ApiParamImplicit(name = "email", value = "User's email", required = true, dataType = "string", paramType = "query"),
