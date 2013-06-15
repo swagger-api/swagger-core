@@ -36,7 +36,8 @@ class PetResource extends RestResourceUtil {
   @ApiOperation(value = "Find pet by ID", 
     notes = "Returns a pet based on ID", 
     response = classOf[Pet],
-    produces = "application/json,application/xml")
+    produces = "application/json,application/xml",
+    authorizations = "oauth2")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
     new ApiResponse(code = 404, message = "Pet not found")))
