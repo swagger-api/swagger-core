@@ -24,7 +24,7 @@ case class OAuth(
   grantTypes: List[GrantType]) extends AuthorizationType {
   override def `type` = "oauth2"
 }
-case class ApiKey(keyname: String) extends AuthorizationType {
+case class ApiKey(keyname: String, passAs: String = "header") extends AuthorizationType {
   override def `type` = "apiKey"
 }
 

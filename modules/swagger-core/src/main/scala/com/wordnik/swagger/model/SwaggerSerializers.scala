@@ -453,7 +453,8 @@ object SwaggerSerializers {
           }).toMap
         })
       case x: ApiKey => 
-        ("type" -> x.`type`)
+        ("type" -> x.`type`) ~
+        ("passAs" -> x.passAs)
     }
   ))
 
