@@ -25,15 +25,9 @@ case class ResourceListing(
   apis: List[ApiListingReference] = List(),
   authorizations: List[AuthorizationType] = List())
 
-trait AuthorizationType {
-  def `type`: String
-}
-case class OAuth(authorizationUrl: String, tokenEndpoint: String, scopes: List[String], grantTypes: List[String]) extends AuthorizationType {
-  override def `type` = "oauth2"
-}
-case class ApiKey(keyname: String) extends AuthorizationType {
-  override def `type` = "apiKey"
-}
+case class LoginEndpoint(url: String)
+case class TokenRequestEndpoint(url: String, clientIdName: String, clientSecretName: String)
+case class TokenEndpoint(url: String, tokenName: String)
 
 case class ApiListingReference(path:String, description: Option[String])
 

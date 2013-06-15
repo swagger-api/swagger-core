@@ -434,9 +434,7 @@ object SwaggerSerializers {
       implicit val fmts: Formats = formats
       json \ "type" match {
         case JString(x) if x.equalsIgnoreCase("oauth2") => {
-          OAuth((json \ "authorizationUrl").extract[String], 
-            (json \ "tokenEndpoint").extract[String], 
-            (json \ "scopes").extractOrElse(List()), 
+          OAuth((json \ "scopes").extractOrElse(List()), 
             (json \ "grantTypes").extractOrElse(List()))
         }
         case JString(x) if x.equalsIgnoreCase("apiKey") => {
@@ -448,10 +446,12 @@ object SwaggerSerializers {
       case x: OAuth => 
         implicit val fmts = formats
         ("type" -> x.`type`) ~ 
-        ("authorizationUrl" -> x.authorizationUrl) ~ 
-        ("tokenEndpoint" -> x.tokenEndpoint) ~ 
         ("scopes" -> Extraction.decompose(x.scopes)) ~
-        ("grantTypes" -> Extraction.decompose(x.grantTypes))
+        ("grantTypes" -> {
+          (for(t <- x.grantTypes) yield {
+            (t.`type`, Extraction.decompose(t))
+          }).toMap
+        })
       case x: ApiKey => 
         ("type" -> x.`type`)
     }
