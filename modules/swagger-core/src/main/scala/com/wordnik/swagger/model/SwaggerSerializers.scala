@@ -21,7 +21,8 @@ object SwaggerSerializers {
     new ApiDescriptionSerializer +
     new ApiListingReferenceSerializer +
     new ResourceListingSerializer +
-    new ApiListingSerializer
+    new ApiListingSerializer +
+    new AuthorizationTypeSeralizer
 
   val validationMessages = ListBuffer.empty[ValidationMessage]
 
@@ -119,7 +120,8 @@ object SwaggerSerializers {
           !!(json, RESOURCE_LISTING, "basePath", "missing required field", ERROR)
           ""
         }),
-        (json \ "apis").extract[List[ApiListingReference]]
+        (json \ "apis").extract[List[ApiListingReference]],
+        (json \ "authorizations").extract[List[AuthorizationType]]
       )
     }, {
       case x: ResourceListing =>
@@ -130,6 +132,12 @@ object SwaggerSerializers {
       ("apis" -> {
         x.apis match {
           case e: List[ApiListingReference] if (e.size > 0) => Extraction.decompose(e)
+          case _ => JNothing
+        }
+      }) ~
+      ("authorizations" -> {
+        x.authorizations match {
+          case e: List[AuthorizationType] if (e.size > 0) => Extraction.decompose((for(at <- e) yield (at.`type`, at)).toMap)
           case _ => JNothing
         }
       })
@@ -418,6 +426,34 @@ object SwaggerSerializers {
         }
       }) ~
       ("$ref" -> x.ref)
+    }
+  ))
+
+  class AuthorizationTypeSeralizer extends CustomSerializer[AuthorizationType](formats => ({
+    case json =>
+      implicit val fmts: Formats = formats
+      json \ "type" match {
+        case JString(x) if x.equalsIgnoreCase("oauth2") => {
+          OAuth((json \ "authorizationUrl").extract[String], 
+            (json \ "tokenEndpoint").extract[String], 
+            (json \ "scopes").extractOrElse(List()), 
+            (json \ "grantTypes").extractOrElse(List()))
+        }
+        case JString(x) if x.equalsIgnoreCase("apiKey") => {
+          ApiKey((json \ "keyname").extract[String])
+        }
+        case _ => null // todo: NOOOOOO!!!!
+      }
+    }, {
+      case x: OAuth => 
+        implicit val fmts = formats
+        ("type" -> x.`type`) ~ 
+        ("authorizationUrl" -> x.authorizationUrl) ~ 
+        ("tokenEndpoint" -> x.tokenEndpoint) ~ 
+        ("scopes" -> Extraction.decompose(x.scopes)) ~
+        ("grantTypes" -> Extraction.decompose(x.grantTypes))
+      case x: ApiKey => 
+        ("type" -> x.`type`)
     }
   ))
 

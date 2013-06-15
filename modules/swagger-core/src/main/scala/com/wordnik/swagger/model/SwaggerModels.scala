@@ -22,7 +22,18 @@ case class ResourceListing(
   apiVersion: String, 
   swaggerVersion: String, 
   basePath: String,
-  apis: List[ApiListingReference] = List())
+  apis: List[ApiListingReference] = List(),
+  authorizations: List[AuthorizationType] = List())
+
+trait AuthorizationType {
+  def `type`: String
+}
+case class OAuth(authorizationUrl: String, tokenEndpoint: String, scopes: List[String], grantTypes: List[String]) extends AuthorizationType {
+  override def `type` = "oauth2"
+}
+case class ApiKey(keyname: String) extends AuthorizationType {
+  override def `type` = "apiKey"
+}
 
 case class ApiListingReference(path:String, description: Option[String])
 
