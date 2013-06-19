@@ -29,9 +29,13 @@ trait JaxrsApiReader extends ClassReader {
   def parseOperation(method: Method, apiOperation: ApiOperation, apiResponses: List[ResponseMessage],
                      isDeprecated: String, parentMethods: ListBuffer[Method]) = {
     val api = method.getAnnotation(classOf[Api])
-    val responseClass = apiOperation.responseContainer match {
-      case "" => apiOperation.response.getName
-      case e: String => "%s[%s]".format(e, apiOperation.response.getName)
+    val responseClass = {
+      val baseName = apiOperation.response.getName
+      val output = apiOperation.responseContainer match {
+        case "" => baseName
+        case e: String => "%s[%s]".format(e, baseName)
+      }
+      output
     }
 
     var paramAnnotations: Array[Array[java.lang.annotation.Annotation]] = null
@@ -67,7 +71,8 @@ trait JaxrsApiReader extends ClassReader {
     val params = (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
       if(annotations.length > 0) {
         val param = new MutableParameter
-        param.dataType = ModelConverters.toName(paramType)
+        LOGGER.debug("looking up dataType for " + paramType)
+        param.dataType = paramType.getName //ModelConverters.toName(paramType)
         processParamAnnotations(param, annotations, method)
       }
       else if(paramTypes.size > 0) {
@@ -75,7 +80,7 @@ trait JaxrsApiReader extends ClassReader {
         val p = paramTypes.head
 
         val param = new MutableParameter
-        param.dataType = ModelConverters.toName(p)
+        param.dataType = p.getName //ModelConverters.toName(p)
         param.name = TYPE_BODY
         param.paramType = TYPE_BODY
 
