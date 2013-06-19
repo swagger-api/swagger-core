@@ -276,6 +276,7 @@ trait JaxrsApiReader extends ClassReader {
     else {
       if(method.getAnnotation(classOf[GET]) != null) "GET"
       else if(method.getAnnotation(classOf[DELETE]) != null) "DELETE"
+      else if(method.getAnnotation(classOf[PATCH]) != null) "PATCH"
       else if(method.getAnnotation(classOf[POST]) != null) "POST"
       else if(method.getAnnotation(classOf[PUT]) != null) "PUT"
       else if(method.getAnnotation(classOf[HEAD]) != null) "HEAD"
