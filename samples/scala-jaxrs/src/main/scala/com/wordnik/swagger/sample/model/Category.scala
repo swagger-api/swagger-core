@@ -31,4 +31,13 @@ class Category() {
   def getName():String = name
   def setName(name:String):Unit = this.name = name
 
+  override def toString() = {
+    val sb = new StringBuilder
+    sb.append("Category(")
+      .append("id=").append(id).append(", ")
+      .append("name=").append(name)
+      .append(")")
+
+    sb.toString
+  }
 }

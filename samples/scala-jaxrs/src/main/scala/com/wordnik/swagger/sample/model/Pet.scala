@@ -34,4 +34,17 @@ class Pet() {
   @XmlElement(name = "tags") @BeanProperty var tags: List[Tag] = new ArrayList[Tag]()
   @XmlElement(name = "status")
   @ApiModelProperty(value = "pet status in the store", allowableValues = "available,pending,sold") @BeanProperty var status: String = null
+
+  override def toString() = {
+    val sb = new StringBuilder
+    sb.append("Pet(")
+      .append("category=").append(category).append(", ")
+      .append("name=").append(name).append(", ")
+      .append("photoUrls=").append(photoUrls).append(", ")
+      .append("tags=").append(tags).append(", ")
+      .append("status=").append(status)
+      .append(")")
+
+    sb.toString
+  }
 }

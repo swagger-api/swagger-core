@@ -14,30 +14,20 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.model
+package com.wordnik.swagger.sample.resource
 
-import javax.xml.bind.annotation._
+import javax.ws.rs.core.{ Response, MediaType }
+import javax.ws.rs._
 
-@XmlRootElement(name = "Tag")
-class Tag {
-  private var id:Long = 0
-  private var name:String = _
+import java.net.URI
 
-  @XmlElement(name="id")
-  def getId():Long = id
-  def setId(id:Long):Unit = this.id = id
-
-  @XmlRootElement(name = "name")
-  def getName():String = name
-  def setName(name:String):Unit = this.name = name
-
-  override def toString() = {
-    val sb = new StringBuilder
-    sb.append("Tag(")
-      .append("id=").append(id).append(", ")
-      .append("name=").append(name)
-      .append(")")
-
-    sb.toString
+@Path("/pet.redirect")
+@Produces(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
+class PetRedirectResource {
+  @GET
+  @Path("/{petId}")
+  def getPetById(
+    @PathParam("petId") petId: String) = {
+    Response.temporaryRedirect(new URI("/pet/" + petId)).build
   }
 }

@@ -29,7 +29,7 @@ import javax.ws.rs._
 
 @Path("/pet")
 @Api(value = "/pet", description = "Operations about pets")
-@Produces(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
+@Produces(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN, MediaType.TEXT_HTML))
 class PetResource extends RestResourceUtil {
   @GET
   @Path("/{petId}")
@@ -48,6 +48,17 @@ class PetResource extends RestResourceUtil {
       case _ => throw new NotFoundException(404, "Pet not found")
     }
   }
+/*
+  @DELETE
+  @Path("/{petId}")
+  @ApiOperation(value = "Deletes a pet")
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid pet value")))
+  def deletePet(
+    @ApiParam(value = "Pet id to delete", required = true)@PathParam("petId") petId: String) = {
+    PetData.deletePet(petId.toLong)
+    Response.ok.build
+  }
 
   @POST
   @ApiOperation(value = "Add a new pet to the store")
@@ -56,7 +67,7 @@ class PetResource extends RestResourceUtil {
   def addPet(
     @ApiParam(value = "Pet object that needs to be added to the store", required = true) pet: Pet) = {
     PetData.addPet(pet)
-    Response.ok.entity("SUCCESS").build
+    Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build
   }
 
   @PUT
@@ -103,4 +114,5 @@ class PetResource extends RestResourceUtil {
     var results = PetData.findPetByTags(tags)
     Response.ok(results.toArray(new Array[Pet](0))).build
   }
+*/
 }

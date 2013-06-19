@@ -8,9 +8,15 @@ import javax.servlet.http.HttpServlet
 
 class SecurityFilter extends SwaggerSpecFilter {
   def isOperationAllowed(operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean = {
-    val isAuthorized = checkKey(params, headers)
-    if((operation.httpMethod != "GET" && !isAuthorized) || api.path.indexOf("/store") != -1) false
-    else true
+/*    checkKey(params, headers) match {
+      case true => true
+      case false => {
+        if(operation.httpMethod == "GET" && api.path.indexOf("/store") == -1) true
+        else false
+      }
+    }
+*/
+    true
   }
 
   def isParamAllowed(parameter: Parameter, operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean = {
