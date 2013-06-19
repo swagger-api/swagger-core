@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.9.1</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-java-resteasy-sample_2.9.1</artifactId>
   <packaging>war</packaging>
   <name>swagger-java-resteasy</name>
-  <version>1.2.4</version>
+  <version>1.2.5</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>
@@ -124,7 +124,7 @@
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-jaxrs_2.9.1</artifactId>
-      <version>1.2.4</version>
+      <version>1.2.5</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
