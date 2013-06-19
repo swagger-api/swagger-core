@@ -28,6 +28,7 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
   def parse = Option(cls).map(parseRecursive(_))
 
   def parseRecursive(hostClass: Class[_]): Unit = {
+    LOGGER.debug("processing class " + hostClass)
     for (method <- hostClass.getDeclaredMethods) {
       if (Modifier.isPublic(method.getModifiers()) && !Modifier.isStatic(method.getModifiers()))
         parseMethod(method)
@@ -40,11 +41,13 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
   }
 
   def parseField(field: Field) = {
+    LOGGER.debug("processing field " + field)
     parsePropertyAnnotations(field.getName, field.getAnnotations, field.getGenericType, field.getType)
   }
 
   def parseMethod(method: Method) = {
     if (method.getParameterTypes == null || method.getParameterTypes.length == 0) {
+      LOGGER.debug("processing method " + method)
       parsePropertyAnnotations(method.getName, method.getAnnotations, method.getGenericReturnType, method.getReturnType)
     }
   }
@@ -69,7 +72,6 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
     var isGetter = e._2
 
     var isFieldExists = false
-    // var 
     var isJsonProperty = false
     var hasAccessorNoneAnnotation = false
     var methodAnnoOutput = processAnnotations(name, methodAnnotations)
@@ -146,8 +148,15 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
             description,
             allowableValues.getOrElse(AnyAllowableValues),
             items)
+          LOGGER.debug("added param for field " + name)
           properties += name -> param
         }
+        else {
+          LOGGER.debug("field " + paramType + " is has been explicitly excluded")
+        }
+      }
+      else {
+        LOGGER.debug("skipping " + name)
       }
       processedFields += name
     }

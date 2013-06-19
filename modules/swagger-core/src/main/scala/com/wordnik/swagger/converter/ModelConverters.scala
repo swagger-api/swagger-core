@@ -3,9 +3,12 @@ package com.wordnik.swagger.converter
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.model._
 
+import org.slf4j.LoggerFactory
+
 import scala.collection.mutable.{ ListBuffer, LinkedHashMap, HashSet, HashMap }
 
 object ModelConverters {
+  private val LOGGER = LoggerFactory.getLogger(ModelConverters.getClass)
   val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-]*)\\].*".r
 
   val converters = new ListBuffer[ModelConverter]() ++ List(
@@ -22,7 +25,7 @@ object ModelConverters {
     else converters += c
   }
 
-  def read(cls: Class[_]): Option[Model] = {    
+  def read(cls: Class[_]): Option[Model] = {
     var model: Option[Model] = None
     val itr = converters.iterator
     while(model == None && itr.hasNext) {
