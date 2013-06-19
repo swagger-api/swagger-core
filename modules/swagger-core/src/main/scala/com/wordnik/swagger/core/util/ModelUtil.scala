@@ -20,9 +20,12 @@ import com.wordnik.swagger.model._
 import com.wordnik.swagger.converter.ModelConverters
 import com.wordnik.swagger.core.{ SwaggerContext, SwaggerSpec }
 
+import org.slf4j.LoggerFactory
+
 import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
 
 object ModelUtil {
+  private val LOGGER = LoggerFactory.getLogger(ModelUtil.getClass)
   val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-]*)\\].*".r
 
   def stripPackages(apis: List[ApiDescription]): List[ApiDescription] = {
@@ -116,7 +119,7 @@ object ModelUtil {
       try{
         val cls = SwaggerContext.loadClass(typeRef)
         ModelConverters.read(cls) match {
-          case Some(model) => Some((cls.getSimpleName, model))
+          case Some(model) => Some((toName(cls), model))
           case None => None
         }
       }
@@ -127,6 +130,30 @@ object ModelUtil {
     else None
   }
 
+  def toName(cls: Class[_]): String = {
+    import javax.xml.bind.annotation._
+
+    val xmlRootElement = cls.getAnnotation(classOf[XmlRootElement])
+    val xmlEnum = cls.getAnnotation(classOf[XmlEnum])
+
+    if (xmlEnum != null && xmlEnum.value != null)
+      toName(xmlEnum.value())
+    else if (xmlRootElement != null) {
+      if ("##default".equals(xmlRootElement.name())) {
+        cls.getSimpleName 
+      } else {
+        xmlRootElement.name() 
+      }
+    } else if (cls.getName.startsWith("java.lang.")) {
+      val name = cls.getName.substring("java.lang.".length)
+      val lc = name.toLowerCase
+      if(SwaggerSpec.baseTypes.contains(lc)) lc
+      else name
+    }
+    else if (cls.getName.indexOf(".") < 0) cls.getName
+    else cls.getSimpleName 
+  }
+
   def shoudIncludeModel(modelname: String) = {
     if(SwaggerSpec.baseTypes.contains(modelname.toLowerCase))
       false
@@ -134,5 +161,4 @@ object ModelUtil {
       false
     else true
   }
-
 }

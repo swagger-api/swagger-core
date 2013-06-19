@@ -18,6 +18,8 @@ package com.wordnik.swagger.core.filter
 
 import com.wordnik.swagger.model._
 
+import org.slf4j.LoggerFactory
+
 import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
 import scala.collection.JavaConverters._
 
@@ -28,6 +30,7 @@ trait SwaggerSpecFilter {
 
 class SpecFilter {
   val ComplexTypeMatcher = ".*\\[([a-zA-Z]*)\\].*".r
+  private val LOGGER = LoggerFactory.getLogger(classOf[SpecFilter])
 
   def filter(listing: ApiListing, filter: SwaggerSpecFilter, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]) = {
     // these are required for java compatibility of the filter interface
@@ -58,7 +61,10 @@ class SpecFilter {
 
   def filterModels(allModels: Option[Map[String, Model]], apis: List[ApiDescription]) = {
     val modelNames = requiredModels(allModels, apis)
+    LOGGER.debug("required model names: " + modelNames)
     val existingModels = allModels.getOrElse(Map[String, Model]())
+
+    LOGGER.debug("existing models: " + existingModels)
     val output = (for(model <- modelNames) yield {
       if(existingModels.contains(model))
         Some(model, existingModels(model))

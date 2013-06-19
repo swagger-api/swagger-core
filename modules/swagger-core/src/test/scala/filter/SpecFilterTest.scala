@@ -318,7 +318,6 @@ object TestSpecs {
   }
 }
 """
-    val json = parse(str)
-    json.extract[ApiListing]
+    parse(str).extract[ApiListing]
   }
 }
