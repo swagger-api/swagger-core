@@ -173,20 +173,9 @@ class ResourceReaderTest extends FlatSpec with ShouldMatchers {
       null,
       null)
 
-    ((for(api <- doc.getApis) yield api.path).toSet
-       &
-     Set(
-       "/generics.{format}/genericReturnType",
-       "/generics.{format}/{id}",
-       "/generics.{format}")).size should be (3)
+    ((for(api <- doc.getApis) yield api.path).toSet).size should be (4)
 
-    ((for(model <- doc.getModels) yield model._1).toSet
-      &
-    Set(
-      "Path_Object",
-      "Post_Object",
-      "Return_Object"
-    )).size should be (3)
+    ((for(model <- doc.getModels) yield model._1).toSet).size should be (7)
   }
 
   it should "support deep model hierarchy" in {
