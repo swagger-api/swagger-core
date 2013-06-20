@@ -46,6 +46,10 @@ class ReturnObject[T] {
   var theReturnObjectName: String = _
 }
 
+class ReturnObject2[T1,T2] {
+  var theReturnObjectName: String = _
+}
+
 @Path("/generics.json")
 @Api(value = "/generics", description = "generics resource")
 @Produces(Array("application/json"))
@@ -96,6 +100,20 @@ class ResourceWithGenerics {
   def getStringList() = {
     val out = new ReturnObject[DoubleValue]
     out.theReturnObjectName = "the return object"
+    Response.ok.entity(out).build
+  }
+
+  @GET
+  @Path("/genericReturnType2")
+  @ApiOperation(value = "Get object2 by ID",
+    notes = "No details provided",
+    responseClass = "com.wordnik.test.swagger.core.testdata.ReturnObject2<com.wordnik.test.swagger.core.testdata.DoubleValue,com.wordnik.test.swagger.core.testdata.IntValue>")
+  @ApiErrors(Array(
+    new ApiError(code = 400, reason = "Invalid ID"),
+    new ApiError(code = 404, reason = "object not found")))
+  def getStringList2() = {
+    val out = new ReturnObject2[DoubleValue, IntValue]
+    out.theReturnObjectName = "the return object 2"
     Response.ok.entity(out).build
   }
 }

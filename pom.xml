@@ -9,7 +9,7 @@
   <artifactId>swagger-project_2.10.0</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
-  <version>1.2.4</version>
+  <version>1.2.5</version>
   <url>https://github.com/wordnik/swagger-core</url>
   <scm>
     <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
@@ -429,6 +429,7 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
         <version>${slf4j-version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>com.sun.jersey</groupId>
