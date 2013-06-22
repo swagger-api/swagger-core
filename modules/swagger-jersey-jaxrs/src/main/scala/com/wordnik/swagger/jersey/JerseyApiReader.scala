@@ -43,7 +43,7 @@ class JerseyApiReader extends JaxrsApiReader {
     var shouldIgnore = false
     for (pa <- paramAnnotations) {
       pa match {
-        case e: ApiParam => parseApiParamAnnotation(mutable, e, method)
+        case e: ApiParam => parseApiParamAnnotation(mutable, e)
         case e: QueryParam => {
           mutable.name = readString(e.value, mutable.name)
           mutable.paramType = readString(TYPE_QUERY, mutable.paramType)
