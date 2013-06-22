@@ -108,7 +108,6 @@ trait JaxrsApiReader extends ClassReader {
   def readMethod(method: Method, parentMethods: ListBuffer[Method]) = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
     val responseAnnotation = method.getAnnotation(classOf[ApiResponses])
-
     val apiResponses = {
       if(responseAnnotation == null) List()
       else (for(response <- responseAnnotation.value) yield {
@@ -140,7 +139,27 @@ trait JaxrsApiReader extends ClassReader {
            operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]],
            parentMethods: ListBuffer[Method]): Option[ApiListing] = {
     val api = cls.getAnnotation(classOf[Api])
+
+    // must have @Api annotation to process!
     if(api != null) {
+      val consumes = Option(api.consumes) match {
+        case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+        case _ => cls.getAnnotation(classOf[Consumes]) match {
+          case e: Consumes => e.value.toList
+          case _ => List()
+        }
+      }
+      val produces = Option(api.produces) match {
+        case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+        case _ => cls.getAnnotation(classOf[Produces]) match {
+          case e: Produces => e.value.toList
+          case _ => List()
+        }
+      }
+      val protocols = Option(api.protocols) match {
+        case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+        case _ => List()
+      }
       val description = api.description match {
         case e: String if(e != "") => Some(e)
         case _ => None
@@ -187,7 +206,10 @@ trait JaxrsApiReader extends ClassReader {
         resourcePath = (docRoot + api.value),
         apis = ModelUtil.stripPackages(apis),
         models = models,
-        description = description)
+        description = description,
+        produces = produces,
+        consumes = consumes,
+        protocols = protocols)
       )
     }
     else None
