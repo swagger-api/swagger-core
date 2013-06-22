@@ -39,7 +39,7 @@ import com.sun.jersey.multipart.FormDataParam
 class JerseyApiReader extends JaxrsApiReader {
   private val LOGGER = LoggerFactory.getLogger(classOf[JerseyApiReader])
 
-  def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation], method: Method): Option[Parameter] = {
+  def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation]): Option[Parameter] = {
     var shouldIgnore = false
     for (pa <- paramAnnotations) {
       pa match {

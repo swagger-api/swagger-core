@@ -24,7 +24,7 @@ trait JaxrsApiReader extends ClassReader {
   private val LOGGER = LoggerFactory.getLogger(classOf[JaxrsApiReader])
 
   // decorates a Parameter based on annotations, returns None if param should be ignored
-  def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation]/*, method: Method*/): Option[Parameter]
+  def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation]): Option[Parameter]
 
   def parseOperation(method: Method, 
       apiOperation: ApiOperation, 
@@ -78,7 +78,7 @@ trait JaxrsApiReader extends ClassReader {
         val param = new MutableParameter
         LOGGER.debug("looking up dataType for " + paramType)
         param.dataType = paramType.getName
-        processParamAnnotations(param, annotations/*, method*/)
+        processParamAnnotations(param, annotations)
       }
       else if(paramTypes.size > 0) {
         //  it's a body param w/o annotations, which means POST.  Only take the first one!
@@ -180,7 +180,7 @@ trait JaxrsApiReader extends ClassReader {
             case _ =>
           }
           val annotations = field.getAnnotations
-          processParamAnnotations(param, annotations/*, method*/)
+          processParamAnnotations(param, annotations)
         }
       ).flatten.toList
 
@@ -240,7 +240,7 @@ trait JaxrsApiReader extends ClassReader {
     else path.value
   }
 
-  def parseApiParamAnnotation(param: MutableParameter, annotation: ApiParam/*, method: Method*/) {
+  def parseApiParamAnnotation(param: MutableParameter, annotation: ApiParam) {
     param.name = readString(annotation.name, param.name)
     param.description = Option(readString(annotation.value))
     param.defaultValue = Option(readString(annotation.defaultValue))
