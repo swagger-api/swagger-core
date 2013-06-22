@@ -1,0 +1,52 @@
+html {
+  font-family: Arial,sans-serif;
+}
+
+button {
+  background-image: linear-gradient(rgb(204, 208, 214), rgb(173, 178, 187));
+  border-radius: 5px;
+  border-bottom-style: none;
+  border-left-style: none;
+  border-right-style: none;
+  border-top-style: none;
+  box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 0px 0px;
+  box-sizing: border-box;
+  font-family: HelveticaNeue, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  height: 31px;
+  margin-bottom: 0px;
+  margin-left: 3px;
+  margin-right: 3px;
+  margin-top: 0px;
+  text-align: center;
+  width: 168px;
+}
+
+button.blue {
+  background-image: linear-gradient(rgb(125, 197, 238), rgb(0, 140, 221) 85%, rgb(48, 162, 228));
+}
+
+.oauth-authorize-login {
+  button
+}
+.secondary_form {
+  visibility: hidden;
+  float: left;
+}
+
+.initial_form {
+  float: left;
+}
+
+.secondary_form input {
+  padding: 7px 8px 8px 8px;
+}
+
+.email_form {
+  top: 19px;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 40px;
+  display: block;
+}
