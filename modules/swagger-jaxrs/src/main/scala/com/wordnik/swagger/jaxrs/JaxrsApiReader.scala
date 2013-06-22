@@ -24,10 +24,15 @@ trait JaxrsApiReader extends ClassReader {
   private val LOGGER = LoggerFactory.getLogger(classOf[JaxrsApiReader])
 
   // decorates a Parameter based on annotations, returns None if param should be ignored
-  def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation], method: Method): Option[Parameter]
+  def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation]/*, method: Method*/): Option[Parameter]
 
-  def parseOperation(method: Method, apiOperation: ApiOperation, apiResponses: List[ResponseMessage],
-                     isDeprecated: String, parentMethods: ListBuffer[Method]) = {
+  def parseOperation(method: Method, 
+      apiOperation: ApiOperation, 
+      apiResponses: List[ResponseMessage],
+      isDeprecated: String,
+      parentParams: List[Parameter],
+      parentMethods: ListBuffer[Method]
+  ) = {
     val api = method.getAnnotation(classOf[Api])
     val responseClass = {
       val baseName = apiOperation.response.getName
@@ -68,12 +73,12 @@ trait JaxrsApiReader extends ClassReader {
       case e: String if(e != "") => e.split(",").map(_.trim).toList
       case _ => List()
     }
-    val params = (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
+    val params = parentParams ++ (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
       if(annotations.length > 0) {
         val param = new MutableParameter
         LOGGER.debug("looking up dataType for " + paramType)
-        param.dataType = paramType.getName //ModelConverters.toName(paramType)
-        processParamAnnotations(param, annotations, method)
+        param.dataType = paramType.getName
+        processParamAnnotations(param, annotations/*, method*/)
       }
       else if(paramTypes.size > 0) {
         //  it's a body param w/o annotations, which means POST.  Only take the first one!
@@ -88,7 +93,6 @@ trait JaxrsApiReader extends ClassReader {
       }
       else None
     }).flatten.toList
-
     Operation(
       parseHttpMethod(method, apiOperation),
       apiOperation.value,
@@ -105,7 +109,7 @@ trait JaxrsApiReader extends ClassReader {
       Option(isDeprecated))
   }
 
-  def readMethod(method: Method, parentMethods: ListBuffer[Method]) = {
+  def readMethod(method: Method, parentParams: List[Parameter], parentMethods: ListBuffer[Method]) = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
     val responseAnnotation = method.getAnnotation(classOf[ApiResponses])
     val apiResponses = {
@@ -121,7 +125,7 @@ trait JaxrsApiReader extends ClassReader {
     }
     val isDeprecated = Option(method.getAnnotation(classOf[Deprecated])).map(m => "true").getOrElse(null)
 
-    parseOperation(method, apiOperation, apiResponses, isDeprecated, parentMethods)
+    parseOperation(method, apiOperation, apiResponses, isDeprecated, parentParams, parentMethods)
   }
 
   def appendOperation(endpoint: String, path: String, op: Operation, operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]]) = {
@@ -135,9 +139,11 @@ trait JaxrsApiReader extends ClassReader {
     readRecursive(docRoot, "", cls, config, new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]], new ListBuffer[Method])
   }
 
-  def readRecursive(docRoot: String, parentPath: String, cls: Class[_], config: SwaggerConfig,
-           operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]],
-           parentMethods: ListBuffer[Method]): Option[ApiListing] = {
+  def readRecursive(docRoot: String, 
+    parentPath: String, cls: Class[_], 
+    config: SwaggerConfig,
+    operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]],
+    parentMethods: ListBuffer[Method]): Option[ApiListing] = {
     val api = cls.getAnnotation(classOf[Api])
 
     // must have @Api annotation to process!
@@ -164,6 +170,19 @@ trait JaxrsApiReader extends ClassReader {
         case e: String if(e != "") => Some(e)
         case _ => None
       }
+      // look for method-level annotated properties
+      val parentParams: List[Parameter] = (for(field <- cls.getDeclaredFields) 
+        yield {
+          val param = new MutableParameter
+          param.dataType = field.getType.getName
+          Option (field.getAnnotation(classOf[ApiParam])) match {
+            case Some(annotation) => toAllowableValues(annotation.allowableValues)
+            case _ =>
+          }
+          val annotations = field.getAnnotations
+          processParamAnnotations(param, annotations/*, method*/)
+        }
+      ).flatten.toList
 
       for(method <- cls.getMethods) {
         val returnType = method.getReturnType
@@ -180,7 +199,7 @@ trait JaxrsApiReader extends ClassReader {
           }
           case _ => {
             if(method.getAnnotation(classOf[ApiOperation]) != null) {
-              val op = readMethod(method, parentMethods)
+              val op = readMethod(method, parentParams, parentMethods)
               appendOperation(endpoint, path, op, operations)
             }
           }
@@ -221,7 +240,7 @@ trait JaxrsApiReader extends ClassReader {
     else path.value
   }
 
-  def parseApiParamAnnotation(param: MutableParameter, annotation: ApiParam, method: Method) {
+  def parseApiParamAnnotation(param: MutableParameter, annotation: ApiParam/*, method: Method*/) {
     param.name = readString(annotation.name, param.name)
     param.description = Option(readString(annotation.value))
     param.defaultValue = Option(readString(annotation.defaultValue))
@@ -230,8 +249,7 @@ trait JaxrsApiReader extends ClassReader {
       param.allowableValues = toAllowableValues(annotation.allowableValues)
     } catch {
       case e: Exception =>
-        LOGGER.error("Allowable values annotation problem in method  " + method +
-          "for parameter " + param.name)
+        LOGGER.error("Allowable values annotation problem in method for parameter " + param.name)
     }
     param.required = annotation.required
     param.allowMultiple = annotation.allowMultiple

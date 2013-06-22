@@ -13,11 +13,11 @@ import javax.ws.rs.core.Context
 
 class DefaultJaxrsApiReader extends JaxrsApiReader {
   // decorates a Parameter based on annotations, returns None if param should be ignored
-  def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation], method: Method): Option[Parameter] = {
+  def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation]/*, method: Method*/): Option[Parameter] = {
     var shouldIgnore = false
     for (pa <- paramAnnotations) {
       pa match {
-        case e: ApiParam => parseApiParamAnnotation(mutable, e, method)
+        case e: ApiParam => parseApiParamAnnotation(mutable, e/*, method*/)
         case e: QueryParam => {
           mutable.name = readString(e.value, mutable.name)
           mutable.paramType = readString(TYPE_QUERY, mutable.paramType)
