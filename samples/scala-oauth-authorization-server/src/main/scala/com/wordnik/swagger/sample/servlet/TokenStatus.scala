@@ -17,10 +17,7 @@ class TokenStatus extends HttpServlet {
   @ApiOperation(httpMethod = "GET", value = "returns an api status message", response = classOf[ApiResponseMessage])
   @ApiResponses(Array(new ApiResponse(code = 400, message = "Invalid input")))
   @ApiImplicitParams(Array(
-    new ApiImplicitParam(name = "grant_type", value = "Grant type requested", allowableValues = "authorization_code,implicit", defaultValue = "authorization_code", required = false, dataType = "string", paramType = "form"),
-    new ApiImplicitParam(name = "client_id", value = "Client identifier", required = true, dataType = "string", paramType = "form"),
-    new ApiImplicitParam(name = "client_secret", value = "Client secret token", required = true, dataType = "string", paramType = "form"),
-    new ApiImplicitParam(name = "auth_code", value = "Authorization code provided by server", required = true, dataType = "string", paramType = "form")))
+    new ApiImplicitParam(name = "access_token", value = "token to verify", paramType = "query")))
   override protected def doGet(request: HttpServletRequest, response: HttpServletResponse) = {
     try {
     val accessCode = request.getCookies().filter(_.getName == "access_token") match {

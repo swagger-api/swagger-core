@@ -1,17 +1,20 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Sample oAuth Client</title>
-<script src='lib/jquery-1.8.0.min.js' type='text/javascript'></script>
-<script src='lib/jquery-cookie.js' type='text/javascript'></script>
-<script src='lib/purl.js' type='text/javascript'></script>
-<script src='lib/developer.js' type='text/javascript'></script>
+  <script src='lib/jquery-1.8.0.min.js' type='text/javascript'></script>
+  <script src='lib/purl.js' type='text/javascript'></script>
+  <script type='text/javascript'>
+    $(document).ready(function() {
+      var token = $.url().param('access_token');
+      if(token) {
+        alert("your token is " + token);
+      }
+      else {
+        alert("sorry, no token for you!");
+      }
+    });
+  </script>
+</head>
 <body>
-  <div class="header">
-    <div class="container"></div>
-  </div>
-  <div class="content"></div>
-  <div class="footer"></div>
+
 </body>
-</html>

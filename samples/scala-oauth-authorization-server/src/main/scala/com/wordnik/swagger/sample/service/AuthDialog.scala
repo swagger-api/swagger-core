@@ -69,7 +69,7 @@ trait AuthDialog {
             <span>Cancel and go back</span>
           </button>
           <button type="button" name="allow" class="button medium blue">
-            <span>Login with Reverb</span>
+            <span>Login</span>
           </button>
         </div>
         <div class="secondary_form" >

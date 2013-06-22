@@ -20,6 +20,12 @@ mvn package -Dlog4j.configuration=file:./conf/log4j.properties jetty:run
 
 This will start Jetty embedded on port 8002 and apply the logging configuration from conf/log4j.properties
 
+You can see the implicit flow by entering a url like this in a browser:
+
+http://localhost:8002/oauth/dialog?redirect_uri=http://localhost:8002/index.html&client_id=someclientid&scope=email
+
+Which will call index.html with an access_token, which can be used to make service calls.
+
 ### Extending this sample
 While a full support for oAuth 2.0 will become first-class in the [Swagger](http://swagger.wordnik.com) project, you can use
 this project as a guideline to start your own.
