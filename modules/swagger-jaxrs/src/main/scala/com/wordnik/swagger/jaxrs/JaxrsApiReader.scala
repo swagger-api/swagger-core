@@ -57,20 +57,26 @@ trait JaxrsApiReader extends ClassReader {
       genericParamTypes = parentMethods.map(pm => pm.getGenericParameterTypes).reduceRight(_ ++ _) ++ method.getGenericParameterTypes
     }
 
-    val produces = apiOperation.produces match {
-      case e: String if(e != "") => e.split(",").map(_.trim).toList
+    val produces = Option(apiOperation.produces) match {
+      case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+      case _ => method.getAnnotation(classOf[Produces]) match {
+        case e: Produces => e.value.toList
+        case _ => List()
+      }
+    }
+    val consumes = Option(apiOperation.consumes) match {
+      case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+      case _ => method.getAnnotation(classOf[Consumes]) match {
+        case e: Consumes => e.value.toList
+        case _ => List()
+      }
+    }
+    val protocols = Option(apiOperation.protocols) match {
+      case Some(e) if(e != "") => e.split(",").map(_.trim).toList
       case _ => List()
     }
-    val consumes = apiOperation.consumes match {
-      case e: String if(e != "") => e.split(",").map(_.trim).toList
-      case _ => List()
-    }
-    val protocols = apiOperation.protocols match {
-      case e: String if(e != "") => e.split(",").map(_.trim).toList
-      case _ => List()
-    }
-    val authorizations = apiOperation.authorizations match {
-      case e: String if(e != "") => e.split(",").map(_.trim).toList
+    val authorizations = Option(apiOperation.authorizations) match {
+      case Some(e) if(e != "") => e.split(",").map(_.trim).toList
       case _ => List()
     }
     val params = parentParams ++ (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
@@ -85,7 +91,7 @@ trait JaxrsApiReader extends ClassReader {
         val p = paramTypes.head
 
         val param = new MutableParameter
-        param.dataType = p.getName //ModelConverters.toName(p)
+        param.dataType = p.getName
         param.name = TYPE_BODY
         param.paramType = TYPE_BODY
 
@@ -93,6 +99,7 @@ trait JaxrsApiReader extends ClassReader {
       }
       else None
     }).flatten.toList
+
     Operation(
       parseHttpMethod(method, apiOperation),
       apiOperation.value,

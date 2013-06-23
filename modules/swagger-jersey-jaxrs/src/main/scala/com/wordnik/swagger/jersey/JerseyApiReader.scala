@@ -71,13 +71,13 @@ class JerseyApiReader extends JaxrsApiReader {
         }
         case e: FormDataParam => {
           mutable.dataType match {
-            case "InputStream" => {
+            case "java.io.InputStream" => {
               mutable.name = readString(e.value, mutable.name)
               mutable.paramType = "body"
               mutable.dataType = "File"
             }
             case "file" => 
-            case "FormDataContentDisposition" => shouldIgnore = true
+            case "com.sun.jersey.core.header.FormDataContentDisposition" => shouldIgnore = true
             case _ => {
               mutable.name = readString(e.value, mutable.name)
               mutable.paramType = readString(TYPE_FORM, mutable.paramType)
