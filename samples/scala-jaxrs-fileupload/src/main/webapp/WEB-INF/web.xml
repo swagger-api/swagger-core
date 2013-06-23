@@ -19,6 +19,10 @@
       <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
       <param-value>true</param-value>
     </init-param>
+    <init-param> 
+      <param-name>com.sun.jersey.config.feature.DisableWADL</param-name> 
+      <param-value>true</param-value> 
+    </init-param> 
    <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -47,4 +51,9 @@
     <filter-name>ApiOriginFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+  <servlet>
+    <servlet-name>Bootstrap</servlet-name>
+    <servlet-class>com.wordnik.swagger.sample.Bootstrap</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
 </web-app>

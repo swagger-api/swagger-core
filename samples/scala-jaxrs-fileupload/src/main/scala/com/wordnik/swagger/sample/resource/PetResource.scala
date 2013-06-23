@@ -19,10 +19,10 @@ package com.wordnik.swagger.sample.resource
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.jaxrs._
-import com.wordnik.swagger.sample.util.RestResourceUtil
 import com.wordnik.swagger.sample.data.{ PetData }
 import com.wordnik.swagger.sample.model.{ Pet }
 import com.wordnik.swagger.sample.exception.NotFoundException
+import com.wordnik.swagger.sample.util.RestResourceUtil
 
 import com.sun.jersey.core.header.FormDataContentDisposition
 import com.sun.jersey.multipart.FormDataParam
@@ -36,42 +36,13 @@ import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.core.{ MediaType, Context, Response }
 import javax.ws.rs._
 
-
 @Path("/pet")
 @Api(value = "/pet", description = "Operations about pets")
-@Produces(Array("application/json"))
+@Produces(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN, MediaType.TEXT_HTML))
 class PetResource extends RestResourceUtil {
-
-  @POST
-  @Path("/formData")
-  @Consumes(Array(MediaType.MULTIPART_FORM_DATA))
-  @ApiOperation(value = "uploads a form data", 
-    consumes = "x-www-form-urlencoded", 
-    produces = "application/json")
-  def postFormData(
-    @ApiParam(value = "user name") @FormDataParam("username") name: String,
-    @ApiParam(value = "user age") @FormDataParam("age") age: String) = {
-
-    val output = "thanks " + name + ", you're " + age + " years old"
-    Response.status(200).entity(new com.wordnik.swagger.sample.model.ApiResponse(200, output)).build()
-  }
-
-  // to keep swagger-ui happy, and support both html form and ajax FormData POST methods, we create
-  // another method which accepts application/x-www-form-urlencoded params, and calls the /formData
-  // method, which accepts multipart/form-data content.  Note that @ApiOperation is not in this method
-  // or it'd show as a duplicate in swagger-ui
-  @POST
-  @Path("/formData")
-  @Consumes(Array(MediaType.APPLICATION_FORM_URLENCODED))
-  def formData2(
-    @FormParam("username") name: String,
-    @FormParam("age") age: String) = formData(name, age)
-
   @GET
   @Path("/{petId}")
-  @ApiOperation(value = "Find pet by ID", 
-    notes = "Returns a pet based on ID", 
-    response = classOf[Pet])
+  @ApiOperation(value = "Find pet by ID", notes = "Returns a pet based on ID", response = classOf[Pet])
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
     new ApiResponse(code = 404, message = "Pet not found")))
@@ -99,6 +70,17 @@ class PetResource extends RestResourceUtil {
     Response.status(200).entity(output).build()
   }
 
+  @DELETE
+  @Path("/{petId}")
+  @ApiOperation(value = "Deletes a pet")
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid pet value")))
+  def deletePet(
+    @ApiParam(value = "Pet id to delete", required = true)@PathParam("petId") petId: String) = {
+    PetData.deletePet(petId.toLong)
+    Response.ok.build
+  }
+
   @POST
   @ApiOperation(value = "Add a new pet to the store")
   @ApiResponses(Array(
@@ -106,7 +88,7 @@ class PetResource extends RestResourceUtil {
   def addPet(
     @ApiParam(value = "Pet object that needs to be added to the store", required = true) pet: Pet) = {
     PetData.addPet(pet)
-    Response.ok.entity("SUCCESS").build
+    Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build
   }
 
   @PUT
@@ -118,15 +100,14 @@ class PetResource extends RestResourceUtil {
   def updatePet(
     @ApiParam(value = "Pet object that needs to be updated in the store", required = true) pet: Pet) = {
     PetData.addPet(pet)
-    Response.ok.entity("SUCCESS").build
+    Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build
   }
 
   @GET
   @Path("/findByStatus")
   @ApiOperation(value = "Finds Pets by status",
     notes = "Multiple status values can be provided with comma seperated strings",
-    response = classOf[Pet],
-    responseContainer = "List")
+    response = classOf[Pet], responseContainer = "List")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid status value")))
   def findPetsByStatus(
@@ -140,8 +121,7 @@ class PetResource extends RestResourceUtil {
   @Path("/findByTags")
   @ApiOperation(value = "Finds Pets by tags",
     notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
-    response = classOf[Pet],
-    responseContainer = "List")
+    response = classOf[Pet], responseContainer = "List")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid tag value")))
   @Deprecated
@@ -151,5 +131,41 @@ class PetResource extends RestResourceUtil {
     var results = PetData.findPetByTags(tags)
     Response.ok(results).build
   }
-}
 
+  @PATCH
+  @Path("/{petId}")
+  @ApiOperation(value = "partial updates to a pet",
+    response = classOf[Pet],
+    responseContainer = "List",
+    produces = "application/json,application/xml")
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid tag value")))
+  def partialUpdate(
+    @ApiParam(value = "ID of pet that needs to be fetched", required = true)@PathParam("petId") petId: String,
+    @ApiParam(value = "Pet object that needs to be added to the store", required = true) pet: Pet) = {
+    PetData.getPetbyId(getLong(0, 100000, 0, petId)) match {
+      case existing: Pet => {
+        existing.merge(pet)
+        Response.status(204).build
+      }
+      case _ => throw new NotFoundException(404, "Pet not found")
+    }
+  }
+
+  @POST
+  @Path("/{petId}")
+  @Consumes(Array(MediaType.APPLICATION_FORM_URLENCODED))
+  @ApiOperation(value = "Updates a pet in the store with form data",
+    consumes = MediaType.APPLICATION_FORM_URLENCODED)
+  @ApiResponses(Array(
+    new ApiResponse(code = 405, message = "Invalid input")))
+  def updatePetWithForm (
+   @ApiParam(value = "ID of pet that needs to be updated", required = true)@PathParam("petId") petId: String,
+   @ApiParam(value = "Updated name of the pet", required = false)@FormParam("name") name: String,
+   @ApiParam(value = "Updated status of the pet", required = false)@FormParam("status") status: String
+   ) = {
+    println((name, status))
+   // PetData.addPet(pet)
+    Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build
+  }
+}
