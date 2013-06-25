@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  * Represents a single parameter in an Api Operation.  A parameter is an input
  * to the operation
  */
-@Target(ElementType.PARAMETER)
+@Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiParam {
   /** Name of the parameter */
