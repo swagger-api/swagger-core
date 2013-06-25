@@ -53,3 +53,40 @@ class PathParamTargetTest extends FlatSpec with ShouldMatchers {
     detailId.dataType should be ("string")
   }
 }
+
+@RunWith(classOf[JUnitRunner])
+class JavaPathParamTargetTest extends FlatSpec with ShouldMatchers {
+  it should "honor a path param target at the class level" in {
+    val reader = new DefaultJaxrsApiReader
+    val config = new SwaggerConfig()
+    val apiResource = reader.read("/api-docs", classOf[JavaPathParamTargetResource], config).getOrElse(fail("should not be None"))
+
+    val apis = apiResource.apis
+
+    apis.size should be (2)
+    val rootOps = apis.filter(_.path == "/javaPathParamTest/{id}").head.operations
+    rootOps.size should be (1)
+    val op = rootOps.head
+    op.parameters.size should be (2)
+
+    val id = op.parameters(0)
+    id.name should be ("id")
+    id.allowableValues should be (AllowableRangeValues("0.0", "10.0"))
+    id.dataType should be ("string")
+
+    val qpt = op.parameters(1)
+    qpt.name should be ("qp")
+    qpt.allowableValues should be (AllowableListValues(List("a", "b", "c")))
+    qpt.dataType should be ("string")
+
+    // verify the 2nd api
+    val detailsOps = apis.filter(_.path == "/javaPathParamTest/{id}/details").head.operations
+    val detailOp = detailsOps.head
+    detailOp.parameters.size should be (1)
+
+    val detailId = detailOp.parameters(0)
+    detailId.name should be ("id")
+    detailId.allowableValues should be (AllowableRangeValues("0.0", "10.0"))
+    detailId.dataType should be ("string")
+  }
+}
