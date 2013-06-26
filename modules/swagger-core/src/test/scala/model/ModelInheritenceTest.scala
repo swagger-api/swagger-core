@@ -89,27 +89,29 @@ class ModelInheritenceTest extends FlatSpec with ShouldMatchers {
 
 @RunWith(classOf[JUnitRunner])
 class ModelInhertenceUtilTest extends FlatSpec with ShouldMatchers {
-  implicit val formats = SwaggerSerializers.formats
+  it should "parse a derived model" in {
+    implicit val formats = SwaggerSerializers.formats
 
-  val json = """{"id":"CatModel","name":"CatModel","qualifiedType":"com.super.CatModel","properties":{"name":{"type":"string","required":false},"id":{"type":"long","required":false}},"description":"A cat model","extends":"model.AnimalBaseModel"}"""
-  val model = parse(json).extract[Model]
+    val json = """{"id":"CatModel","name":"CatModel","qualifiedType":"com.super.CatModel","properties":{"name":{"type":"string","required":false},"id":{"type":"long","required":false}},"description":"A cat model","extends":"model.AnimalBaseModel"}"""
+    val model = parse(json).extract[Model]
 
-  val models = ModelInheritenceUtil.expand(Map(model.name -> model))
-  models.size should be (2)
-  val cat = models("CatModel")
-  cat.baseModel should be(Some("AnimalBaseModel"))
-  cat.properties.size should be (1)
-  cat.modelType should be (None)
+    val models = ModelInheritenceUtil.expand(Map(model.name -> model))
+    models.size should be (2)
+    val cat = models("CatModel")
+    cat.baseModel should be(Some("AnimalBaseModel"))
+    cat.properties.size should be (1)
+    cat.modelType should be (None)
 
-  val name = cat.properties.head._2
-  name.`type` should be ("string")
+    val name = cat.properties.head._2
+    name.`type` should be ("string")
 
-  val base = models("AnimalBaseModel")
-  base.modelType should be (Some("DISCRIMINATOR"))
-  base.properties.size should be (1)
+    val base = models("AnimalBaseModel")
+    base.modelType should be (Some("DISCRIMINATOR"))
+    base.properties.size should be (1)
 
-  val id = base.properties.head._2
-  id.`type` should be ("long")
+    val id = base.properties.head._2
+    id.`type` should be ("long")
+  }
 }
 
 case class AnimalBaseModel (id: Long)
