@@ -21,7 +21,6 @@ import scala.collection.mutable.LinkedHashMap
 case class ResourceListing(
   apiVersion: String, 
   swaggerVersion: String, 
-  basePath: String,
   apis: List[ApiListingReference] = List(),
   authorizations: List[AuthorizationType] = List())
 

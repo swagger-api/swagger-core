@@ -9,5 +9,5 @@ class SwaggerConfig(
   var apiPath: String,
   var authorizations: List[AuthorizationType] = List()) {
 
-  def this() = this(null, null, null, null)
+  def this() = this(null, null, null, null, null)
 }

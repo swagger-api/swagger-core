@@ -116,10 +116,6 @@ object SwaggerSerializers {
           !!(json, RESOURCE_LISTING, "swaggerVersion", "missing required field", ERROR)
           ""
         }),
-        (json \ "basePath").extractOrElse({
-          !!(json, RESOURCE_LISTING, "basePath", "missing required field", ERROR)
-          ""
-        }),
         (json \ "apis").extract[List[ApiListingReference]],
         (json \ "authorizations").extract[List[AuthorizationType]]
       )
@@ -128,7 +124,6 @@ object SwaggerSerializers {
       implicit val fmts = formats
       ("apiVersion" -> x.apiVersion) ~
       ("swaggerVersion" -> x.swaggerVersion) ~
-      ("basePath" -> x.basePath) ~
       ("apis" -> {
         x.apis match {
           case e: List[ApiListingReference] if (e.size > 0) => Extraction.decompose(e)
