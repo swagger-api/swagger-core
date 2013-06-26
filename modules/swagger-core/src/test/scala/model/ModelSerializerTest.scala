@@ -31,7 +31,6 @@ class ResourceListingSerializersTest extends FlatSpec with ShouldMatchers {
       case p: ResourceListing => {
         p.apiVersion should be ("1.2.3")
         p.swaggerVersion should be ("1.1")
-        p.basePath should be ("http://foo/bar")
         p.apis.size should be (0)
       }
       case _ => fail("wrong type returned, should be ResourceListing")
@@ -65,7 +64,6 @@ class ResourceListingSerializersTest extends FlatSpec with ShouldMatchers {
       case p: ResourceListing => {
         p.apiVersion should be ("1.2.3")
         p.swaggerVersion should be ("1.1")
-        p.basePath should be ("http://foo/bar")
         p.apis.size should be (2)
       }
       case _ => fail("wrong type returned, should be ResourceListing")

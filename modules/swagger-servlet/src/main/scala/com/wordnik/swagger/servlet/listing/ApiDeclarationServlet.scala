@@ -40,7 +40,6 @@ class ApiDeclarationServlet extends HttpServlet {
     val config = ConfigFactory.config
     val resourceListing = ResourceListing(config.apiVersion,
       config.swaggerVersion,
-      config.basePath,
       references
     )
     response.getOutputStream.write(JsonSerializer.asJson(resourceListing).getBytes("utf-8"))
