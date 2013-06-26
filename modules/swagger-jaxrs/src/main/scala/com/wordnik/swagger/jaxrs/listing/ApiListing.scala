@@ -67,7 +67,6 @@ class ApiListing {
     val config = ConfigFactory.config
     val resourceListing = ResourceListing(config.apiVersion,
       config.swaggerVersion,
-      config.basePath,
       references,
       config.authorizations
     )

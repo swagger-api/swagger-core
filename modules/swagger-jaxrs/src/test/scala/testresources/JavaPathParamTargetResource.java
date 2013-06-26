@@ -19,15 +19,15 @@ public class JavaPathParamTargetResource {
   @Path("/{id}")
   @ApiOperation(value = "Get object by ID",
     notes = "No details provided",
-    response = Sample.class,
+    response = JavaSample.class,
     position = 0)
   @ApiResponses({
-    @ApiResponse(code = 400, message = "Invalid ID", response = NotFoundModel.class),
+    @ApiResponse(code = 400, message = "Invalid ID"),
     @ApiResponse(code = 404, message = "object not found")}
   )
   public Response getTest(
     @ApiParam(value = "a query param", required = true, allowableValues = "a,b,c")@QueryParam("qp") String classParam) {
-    Sample out = new Sample();
+    JavaSample out = new JavaSample();
     out.setName("foo");
     out.setValue("bar");
     return Response.ok().entity(out).build();
@@ -37,14 +37,14 @@ public class JavaPathParamTargetResource {
   @Path("/{id}/details")
   @ApiOperation(value = "Get details by ID",
     notes = "No details provided",
-    response = Sample.class,
+    response = JavaSample.class,
     position = 0)
   @ApiResponses({
-    @ApiResponse(code = 400, message = "Invalid ID", response = NotFoundModel.class),
+    @ApiResponse(code = 400, message = "Invalid ID"),
     @ApiResponse(code = 404, message = "object not found")}
   )
   public Response getDetails() {
-    Sample out = new Sample();
+    JavaSample out = new JavaSample();
     out.setName("foo");
     out.setValue("bar");
     return Response.ok().entity(out).build();
