@@ -17,6 +17,7 @@
 package com.wordnik.swagger.core.filter
 
 import com.wordnik.swagger.model._
+import com.wordnik.swagger.converter.ModelInheritenceUtil
 
 import org.slf4j.LoggerFactory
 
@@ -70,7 +71,8 @@ class SpecFilter {
         Some(model, existingModels(model))
       else None
     }).flatten.toMap
-    if(output.size > 0) Some(output)
+    val filtered = ModelInheritenceUtil.expand(output)
+    if(output.size > 0) Some(filtered)
     else None
   }
 

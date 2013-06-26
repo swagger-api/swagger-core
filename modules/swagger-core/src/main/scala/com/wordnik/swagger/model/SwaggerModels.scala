@@ -40,7 +40,9 @@ case class Model(
   name: String,
   qualifiedType: String,
   properties: LinkedHashMap[String, ModelProperty],
-  description: Option[String] = None)
+  description: Option[String] = None,
+  baseModel: Option[String] = None,
+  modelType: Option[String] = None)
 
 case class ModelProperty(
   `type`: String,

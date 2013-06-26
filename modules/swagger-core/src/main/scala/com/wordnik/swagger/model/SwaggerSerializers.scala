@@ -350,7 +350,9 @@ object SwaggerSerializers {
         (json \ "name").extractOrElse((json \ "id").extract[String]),
         (json \ "qualifiedType").extractOrElse(""),
         output,
-        (json \ "description").extractOpt[String]
+        (json \ "description").extractOpt[String],
+        (json \ "extends").extractOpt[String],
+        (json \ "type").extractOpt[String]
       )
     }, {
     case x: Model =>
@@ -362,7 +364,10 @@ object SwaggerSerializers {
           case e: LinkedHashMap[String, ModelProperty] => Extraction.decompose(e.toMap)
           case _ => JNothing
         }
-      })
+      }) ~
+      ("description" -> x.description) ~
+      ("extends" -> x.baseModel) ~
+      ("type" -> x.modelType)
     }
   ))
 

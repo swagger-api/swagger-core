@@ -25,9 +25,9 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
 
 object ApiListingCache {
-  var _cache: Option[Map[String, com.wordnik.swagger.model.ApiListing]] = None
+  var _cache: Option[Map[String, ApiListing]] = None
 
-  def listing(docRoot: String, app: Application, sc: ServletConfig): Option[Map[String, com.wordnik.swagger.model.ApiListing]] = {
+  def listing(docRoot: String, app: Application, sc: ServletConfig): Option[Map[String, ApiListing]] = {
     _cache.orElse{
       ClassReaders.reader.map{reader => 
         ScannerFactory.scanner.map(scanner => {
@@ -45,9 +45,9 @@ object ApiListingCache {
   }
 }
 
-class ApiListing {
+class ApiListingResource {
   @GET
-  def resourceListing(
+  def resourceListing (
     @Context app: Application,
     @Context sc: ServletConfig,
     @Context headers: HttpHeaders,
@@ -78,7 +78,7 @@ class ApiListing {
    **/
   @GET
   @Path("/{route: .+}")
-  def apiListing(
+  def apiDeclaration (
     @PathParam("route") route: String,
     @Context app: Application,
     @Context sc: ServletConfig,

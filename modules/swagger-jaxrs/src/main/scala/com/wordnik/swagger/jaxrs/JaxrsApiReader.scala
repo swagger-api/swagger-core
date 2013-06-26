@@ -1,7 +1,6 @@
 package com.wordnik.swagger.jaxrs
 
 import com.wordnik.swagger.annotations._
-import com.wordnik.swagger.converter.ModelConverters
 import com.wordnik.swagger.config._
 import com.wordnik.swagger.reader.ClassReader
 import com.wordnik.swagger.core._
