@@ -25,10 +25,11 @@ class SwaggerSchemaConverter
         p.sortWith(_._1 < _._1).foreach(e => sortedProperties += e._2 -> e._3)
 
         val baseModel = Option(cls.getAnnotation(classOf[ApiModel])) match {
-          case Some(e) => {
-            if(e.parent != null) Some(e.parent.getName)
-            else None
-          }
+          case Some(e) => Option(e.parent.getName)
+          case _ => None
+        }
+        val discriminator = Option(cls.getAnnotation(classOf[ApiModel])) match {
+          case Some(e) => Option(e.discriminator)
           case _ => None
         }
 
@@ -38,7 +39,8 @@ class SwaggerSchemaConverter
           cls.getName,
           sortedProperties,
           toDescriptionOpt(cls),
-          baseModel
+          baseModel,
+          discriminator
         ))
       }
     })

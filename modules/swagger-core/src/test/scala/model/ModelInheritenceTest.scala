@@ -1,6 +1,7 @@
 package model
 
 import com.wordnik.swagger.model._
+import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.converter.ModelInheritenceUtil
 
 import org.json4s._
@@ -79,11 +80,11 @@ class ModelInheritenceTest extends FlatSpec with ShouldMatchers {
       name = "AnimalBaseModel",
       qualifiedType = "com.super.BaseModel",
       description = Some("A cat model"),
-      modelType = Some("DISCRIMINATOR"),
+      discriminator = Some("type"),
       properties = properties
     )
 
-    write(model) should be ("""{"id":"AnimalBaseModel","name":"AnimalBaseModel","properties":{"id":{"type":"long","required":false}},"description":"A cat model","type":"DISCRIMINATOR"}""")
+    write(model) should be ("""{"id":"AnimalBaseModel","name":"AnimalBaseModel","properties":{"id":{"type":"long","required":false}},"description":"A cat model","discriminator":"type"}""")
   }
 }
 
@@ -100,18 +101,21 @@ class ModelInhertenceUtilTest extends FlatSpec with ShouldMatchers {
     val cat = models("CatModel")
     cat.baseModel should be(Some("AnimalBaseModel"))
     cat.properties.size should be (1)
-    cat.modelType should be (None)
+    cat.discriminator should be (None)
 
     val name = cat.properties.head._2
     name.`type` should be ("string")
 
     val base = models("AnimalBaseModel")
-    base.modelType should be (Some("DISCRIMINATOR"))
-    base.properties.size should be (1)
+    base.discriminator should be (Some("type"))
+    base.properties.size should be (2)
 
     val id = base.properties.head._2
     id.`type` should be ("long")
   }
 }
 
-case class AnimalBaseModel (id: Long)
+@ApiModel(value = "the animal base model", discriminator = "type")
+case class AnimalBaseModel (
+  @ApiModelProperty(value = "id", position = 1)id: Long, 
+  @ApiModelProperty(value = "type", position = 2)`type`: String)

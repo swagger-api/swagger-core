@@ -31,9 +31,9 @@ object ModelInheritenceUtil {
             for(model <- ModelConverters.readAll(cls))
               if(typeRef == model.qualifiedType) { // if baseModel == model loaded
                 LOGGER.debug("added baseModel " + typeRef)
-                baseModels += model.name -> model.copy(modelType = Some("DISCRIMINATOR"))
+                baseModels += model.name -> model
               }
-              else {  // if model is a dependency of the baseModle
+              else {  // if model is a dependency of the baseModel
                 LOGGER.debug("added dependentModel " + name)
                 dependentModels += model.name -> model
               }

@@ -42,7 +42,7 @@ case class Model(
   properties: LinkedHashMap[String, ModelProperty],
   description: Option[String] = None,
   baseModel: Option[String] = None,
-  modelType: Option[String] = None)
+  discriminator: Option[String] = None)
 
 case class ModelProperty(
   `type`: String,

@@ -352,7 +352,7 @@ object SwaggerSerializers {
         output,
         (json \ "description").extractOpt[String],
         (json \ "extends").extractOpt[String],
-        (json \ "type").extractOpt[String]
+        (json \ "discriminator").extractOpt[String]
       )
     }, {
     case x: Model =>
@@ -367,7 +367,7 @@ object SwaggerSerializers {
       }) ~
       ("description" -> x.description) ~
       ("extends" -> x.baseModel) ~
-      ("type" -> x.modelType)
+      ("discriminator" -> x.discriminator)
     }
   ))
 
