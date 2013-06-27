@@ -41,4 +41,6 @@ public @interface ApiModel {
   String description() default "";
   /** Provide a superclass for the model to allow describing inheritence */
   Class<?> parent() default Void.class;
+  /** for models with a base class, a discriminator can be provided for polymorphic use cases */
+  String discriminator() default "";
 }
