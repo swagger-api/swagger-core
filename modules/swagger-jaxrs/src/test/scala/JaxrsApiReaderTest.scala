@@ -139,3 +139,18 @@ class ModelExtractionTest extends FlatSpec with ShouldMatchers {
     filtered.models.get.size should be (2)
   }
 }
+
+@RunWith(classOf[JUnitRunner])
+class ListModelExtractionTest extends FlatSpec with ShouldMatchers {
+  it should "get the right models" in {
+    val reader = new DefaultJaxrsApiReader
+    val config = new SwaggerConfig()
+    val apiResource = reader.read("/api-docs", classOf[NestedModelResource2], config).getOrElse(fail("should not be None"))
+
+    val models = apiResource.models.getOrElse(fail("no models found"))
+
+    // models.size should be (2)
+    println(JsonSerializer.asJson(models))
+    (models.keys.toSet & Set("Window", "Handle")).size should be (2)
+  }
+}
