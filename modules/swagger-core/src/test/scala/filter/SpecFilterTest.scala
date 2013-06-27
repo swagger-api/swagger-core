@@ -60,7 +60,6 @@ class SpecFilterTest extends FlatSpec with ShouldMatchers {
   it should "return models in List properties" in {
     val spec = TestSpecs.getReturnTypeWithList
     val p = new SpecFilter().filter(spec, new SimpleFilter, Map(), Map(), Map())
-    println(JsonSerializer.asJson(p.models.get))
     p.apis.size should be (1)
     p.models.get.size should be (2)
   }
