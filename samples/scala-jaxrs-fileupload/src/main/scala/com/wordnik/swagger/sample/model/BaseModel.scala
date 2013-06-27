@@ -2,7 +2,6 @@ package com.wordnik.swagger.sample.model
 
 import javax.xml.bind.annotation.{XmlRootElement, XmlElement}
 
-
 abstract class BaseModel() {
   private var id:Long = 0
 

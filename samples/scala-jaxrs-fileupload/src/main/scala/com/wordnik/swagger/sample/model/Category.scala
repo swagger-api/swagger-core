@@ -21,7 +21,7 @@ import com.wordnik.swagger.annotations.ApiModel
 import javax.xml.bind.annotation.{XmlRootElement, XmlElement}
 
 @ApiModel(value="The Category Model", parent=classOf[BaseModel])
-// @XmlRootElement(name = "Category")
+@XmlRootElement(name = "Category")
 class Category() extends BaseModel {
   private var name:String = _
 
@@ -33,5 +33,4 @@ class Category() extends BaseModel {
   def setName(name:String):Unit = {
     this.name = name
   }
-
 }
