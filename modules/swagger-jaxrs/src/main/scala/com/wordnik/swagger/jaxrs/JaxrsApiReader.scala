@@ -81,8 +81,16 @@ trait JaxrsApiReader extends ClassReader {
     val params = parentParams ++ (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
       if(annotations.length > 0) {
         val param = new MutableParameter
-        LOGGER.debug("looking up dataType for " + paramType)
-        param.dataType = paramType.getName
+        param.dataType = {
+          paramType.getName match {
+            case "[I" => "Array[int]"
+            case "[Z" => "Array[boolean]"
+            case "[D" => "Array[double]"
+            case "[F" => "Array[float]"
+            case "[J" => "Array[long]"
+            case _ => paramType.getName
+          }
+        }
         processParamAnnotations(param, annotations)
       }
       else if(paramTypes.size > 0) {

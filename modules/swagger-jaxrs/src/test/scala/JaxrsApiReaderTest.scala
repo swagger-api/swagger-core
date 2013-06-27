@@ -68,6 +68,7 @@ class ContainerResourceTest extends FlatSpec with ShouldMatchers {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()
     val apiResource = reader.read("/api-docs", classOf[ContainerResource], config).getOrElse(fail("should not be None"))
+
     apiResource.apis.size should be (1)
     val api = apiResource.apis.head
     api.path should be ("/container/{id}")
@@ -149,8 +150,7 @@ class ListModelExtractionTest extends FlatSpec with ShouldMatchers {
 
     val models = apiResource.models.getOrElse(fail("no models found"))
 
-    // models.size should be (2)
-    println(JsonSerializer.asJson(models))
+    models.size should be (2)
     (models.keys.toSet & Set("Window", "Handle")).size should be (2)
   }
 }
