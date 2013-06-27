@@ -116,14 +116,16 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
 
     if (!(isTransient && !isXmlElement && !isJsonProperty) && name != null && (isFieldExists || isGetter || isDocumented)) {
       var paramType = getDataType(genericReturnType, returnType, false)
+      LOGGER.debug("inspecting " + paramType)
       var simpleName = getDataType(genericReturnType, returnType, true)
 
       if (!"void".equals(paramType) && null != paramType && !processedFields.contains(name)) {
         if(!excludedFieldTypes.contains(paramType)) {
           val items = {
-            val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-]*)\\].*".r
+            val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9]*)\\].*".r
             paramType match {
               case ComplexTypeMatcher(containerType, basePart) => {
+                LOGGER.debug("containerType: " + containerType + ", basePart: " + basePart + ", simpleName: " + simpleName)
                 paramType = containerType
                 val ComplexTypeMatcher(t, simpleTypeRef) = simpleName
                 val typeRef = {
