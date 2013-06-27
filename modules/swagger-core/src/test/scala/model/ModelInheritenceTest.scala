@@ -1,5 +1,6 @@
 package model
 
+import com.wordnik.swagger.core.util._
 import com.wordnik.swagger.model._
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.converter.ModelInheritenceUtil
@@ -13,6 +14,8 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
+
+import scala.annotation.target.field
 
 import scala.collection.mutable.LinkedHashMap
 
@@ -117,5 +120,5 @@ class ModelInhertenceUtilTest extends FlatSpec with ShouldMatchers {
 
 @ApiModel(value = "the animal base model", discriminator = "type")
 case class AnimalBaseModel (
-  @ApiModelProperty(value = "id", position = 1)id: Long, 
-  @ApiModelProperty(value = "type", position = 2)`type`: String)
+  @(ApiModelProperty @field)(value = "id", position = 1)id: Long, 
+  @(ApiModelProperty @field)(value = "type", position = 2)`type`: String)
