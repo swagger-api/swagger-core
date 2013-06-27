@@ -64,13 +64,16 @@ object ModelUtil {
       }
     }
     // put back in container
-    dataType match {
-      case e: String if(e.toLowerCase.startsWith("list") && e.indexOf("[") == -1) => "List[%s]".format(out)
-      case e: String if(e.toLowerCase.startsWith("set") && e.indexOf("[") == -1) => "Set[%s]".format(out)
-      case e: String if(e.toLowerCase.startsWith("array") && e.indexOf("[") == -1) => "Array[%s]".format(out)
-      case e: String if(e.toLowerCase.startsWith("map") && e.indexOf("[") == -1) => "Map[string,%s]".format(out)
-      case _ => out
+    if(out != dataType) {
+      dataType match {
+        case e: String if(e.toLowerCase.startsWith("list")) => "List[%s]".format(out)
+        case e: String if(e.toLowerCase.startsWith("set")) => "Set[%s]".format(out)
+        case e: String if(e.toLowerCase.startsWith("array")) => "Array[%s]".format(out)
+        case e: String if(e.toLowerCase.startsWith("map")) => "Map[string,%s]".format(out)
+        case _ => out
+      }
     }
+    else out
   }
 
   def modelsFromApis(apis: List[ApiDescription]): Option[Map[String, Model]] = {
