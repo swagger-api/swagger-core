@@ -38,7 +38,7 @@
     </init-param>
     <init-param>
       <param-name>swagger.api.basepath</param-name>
-      <param-value>http://localhost:9095/resteasy</param-value>
+      <param-value>http://localhost:8002/resteasy</param-value>
     </init-param>
     <init-param>
       <param-name>swagger.security.filter</param-name>
