@@ -35,7 +35,7 @@ class ApiDeclarationServlet extends HttpServlet {
       ).filter(m => m.apis.size > 0)
     })
     val references = (for(listing <- listings.getOrElse(List())) yield {
-      ApiListingReference(request.getServletPath + listing.resourcePath, listing.description)
+      ApiListingReference(listing.resourcePath, listing.description)
     }).toList
     val config = ConfigFactory.config
     val resourceListing = ResourceListing(config.apiVersion,
