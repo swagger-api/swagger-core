@@ -1,7 +1,7 @@
 package com.wordnik.swagger.sample.servlet
 
 import com.wordnik.swagger.annotations._
-import com.wordnik.swagger.sample.model.{ ApiResponse, SampleData }
+import com.wordnik.swagger.sample.model.SampleData
 
 import com.wordnik.swagger.core.util.JsonSerializer
 
@@ -16,7 +16,7 @@ class SampleServlet extends HttpServlet {
   val dateFormat = new SimpleDateFormat("dd-MM-yyyy")
   @throws(classOf[IOException])
   @throws(classOf[ServletException])
-  @ApiOperation(httpMethod = "GET", value = "Resource to get a user", response = classOf[SampleData])
+  @ApiOperation(httpMethod = "GET", value = "Resource to get a user", response = classOf[SampleData], nickname="getUser")
   @ApiResponses(Array(new ApiResponse(code = 400, message = "Invalid input", response = classOf[ApiResponse])))
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "name", value = "User's name", required = true, dataType = "string", paramType = "query"),
@@ -35,7 +35,7 @@ class SampleServlet extends HttpServlet {
       response.getOutputStream.write(JsonSerializer.asJson(SampleData(id, name, email, age, dateOfBirth)).getBytes("utf-8"))
     }
     catch {
-      case e: Exception => response.getOutputStream.write(JsonSerializer.asJson(ApiResponse(400, e.getMessage)).getBytes("utf-8"))
+      case e: Exception => response.getOutputStream.write(JsonSerializer.asJson(com.wordnik.swagger.sample.model.ApiResponse(400, e.getMessage)).getBytes("utf-8"))
     }
   }
 }
