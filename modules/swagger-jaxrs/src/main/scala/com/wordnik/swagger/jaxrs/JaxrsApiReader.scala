@@ -213,14 +213,20 @@ trait JaxrsApiReader extends ClassReader {
       // look for method-level annotated properties
       val parentParams: List[Parameter] = (for(field <- cls.getDeclaredFields) 
         yield {
-          val param = new MutableParameter
-          param.dataType = field.getType.getName
-          Option (field.getAnnotation(classOf[ApiParam])) match {
-            case Some(annotation) => toAllowableValues(annotation.allowableValues)
-            case _ =>
+          // only process fields with @ApiParam, @QueryParam, @HeaderParam, @PathParam
+          if(field.getAnnotation(classOf[QueryParam]) != null || field.getAnnotation(classOf[HeaderParam]) != null ||
+            field.getAnnotation(classOf[HeaderParam]) != null || field.getAnnotation(classOf[PathParam]) != null ||
+            field.getAnnotation(classOf[ApiParam]) != null) { 
+            val param = new MutableParameter
+            param.dataType = field.getType.getName
+            Option (field.getAnnotation(classOf[ApiParam])) match {
+              case Some(annotation) => toAllowableValues(annotation.allowableValues)
+              case _ =>
+            }
+            val annotations = field.getAnnotations
+            processParamAnnotations(param, annotations)
           }
-          val annotations = field.getAnnotations
-          processParamAnnotations(param, annotations)
+          else None
         }
       ).flatten.toList
 

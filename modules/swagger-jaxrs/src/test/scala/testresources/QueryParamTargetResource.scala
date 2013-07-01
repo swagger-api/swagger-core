@@ -17,6 +17,8 @@ class QueryParamTargetResource {
   @ApiParam(value = "a class-level param", required = true, allowableValues = "a,b,c")
   @QueryParam("theParam") var classParam: String = _
 
+  private val hiddenField = 1
+
   @GET
   @Path("/{id}")
   @ApiOperation(value = "Get object by ID",
