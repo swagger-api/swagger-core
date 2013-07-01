@@ -77,7 +77,7 @@ case class ApiDescription (
   operations: List[Operation] = List())
 
 case class Operation (
-  httpMethod: String,
+  method: String,
   summary: String,
   notes: String,
   responseClass: String,

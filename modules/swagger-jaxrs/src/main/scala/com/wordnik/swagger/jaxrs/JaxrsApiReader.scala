@@ -21,9 +21,44 @@ import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
 
 trait JaxrsApiReader extends ClassReader {
   private val LOGGER = LoggerFactory.getLogger(classOf[JaxrsApiReader])
+  val GenericTypeMapper = "([a-zA-Z\\.]*)<([a-zA-Z0-9\\.\\,\\s]*)>".r
 
   // decorates a Parameter based on annotations, returns None if param should be ignored
   def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation]): Option[Parameter]
+
+  def processDataType(paramType: Class[_], genericParamType: Type) = {
+    paramType.getName match {
+      case "[I" => "Array[int]"
+      case "[Z" => "Array[boolean]"
+      case "[D" => "Array[double]"
+      case "[F" => "Array[float]"
+      case "[J" => "Array[long]"
+      case _ => {
+        genericParamType.toString match {
+          case GenericTypeMapper(container, base) => {
+            val qt = SwaggerTypes(base.split("\\.").last) match {
+              case "object" => base
+              case e: String => e
+            }
+            val b = ModelUtil.modelFromString(qt) match {
+              case Some(e) => e._2.qualifiedType
+              case None => qt
+            }
+            "%s[%s]".format(normalizeContainer(container), b)
+          }
+          case _ => paramType.getName
+        }
+      }
+    }
+  }
+
+  def normalizeContainer(str: String) = {
+    if(str.indexOf(".List") >= 0) "List"
+    else {
+      println("UNKNOWN TYPE: " + str)
+      "UNKNOWN"
+    }
+  }
 
   def parseOperation(method: Method, 
       apiOperation: ApiOperation, 
@@ -81,16 +116,7 @@ trait JaxrsApiReader extends ClassReader {
     val params = parentParams ++ (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
       if(annotations.length > 0) {
         val param = new MutableParameter
-        param.dataType = {
-          paramType.getName match {
-            case "[I" => "Array[int]"
-            case "[Z" => "Array[boolean]"
-            case "[D" => "Array[double]"
-            case "[F" => "Array[float]"
-            case "[J" => "Array[long]"
-            case _ => paramType.getName
-          }
-        }
+        param.dataType = processDataType(paramType, genericParamType)
         processParamAnnotations(param, annotations)
       }
       else if(paramTypes.size > 0) {
@@ -236,7 +262,7 @@ trait JaxrsApiReader extends ClassReader {
         apiVersion = config.apiVersion,
         swaggerVersion = config.swaggerVersion,
         basePath = config.basePath,
-        resourcePath = (docRoot + api.value),
+        resourcePath = (api.value),
         apis = ModelUtil.stripPackages(apis),
         models = models,
         description = description,

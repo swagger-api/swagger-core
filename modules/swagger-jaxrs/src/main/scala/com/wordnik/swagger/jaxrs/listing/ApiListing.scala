@@ -42,6 +42,7 @@ object ApiListingCache {
       }
       _cache
     }
+    _cache
   }
 }
 
@@ -87,7 +88,7 @@ class ApiListingResource {
   ): Response = {
     val docRoot = this.getClass.getAnnotation(classOf[Path]).value
     val f = new SpecFilter
-    val pathPart = docRoot + (route match {
+    val pathPart = (route match {
       case e: String if(!e.startsWith("/")) => "/" + e
       case e: String => e
     })

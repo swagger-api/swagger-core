@@ -137,7 +137,7 @@ class ApiDescriptionSerializersTest extends FlatSpec with ShouldMatchers {
       "description":"the description",
       "operations":[
         {
-          "httpMethod":"GET",
+          "method":"GET",
           "summary":"the summary",
           "notes":"the notes",
           "responseClass":"string",
@@ -168,7 +168,7 @@ class ApiDescriptionSerializersTest extends FlatSpec with ShouldMatchers {
         p.description should be (Some("the description"))
         p.operations.size should be (1)
         p.operations.foreach(op => {
-          op.httpMethod should be ("GET")
+          op.method should be ("GET")
           op.summary should be ("the summary")
           op.notes should be ("the notes")
           op.responseClass should be ("string")
@@ -208,7 +208,7 @@ class ApiDescriptionSerializersTest extends FlatSpec with ShouldMatchers {
         List(Parameter("id", Some("the id"), Some("-1"), false, true, "string", AllowableListValues(List("a","b","c")), "query"))
       ))
     )
-    write(l) should be ("""{"path":"/foo/bar","description":"the description","operations":[{"httpMethod":"get","summary":"the summary","notes":"the notes","responseClass":"string","nickname":"getMeSomeStrings","produces":["application/json","application/xml"],"consumes":["application/json"],"protocols":["http"],"parameters":[{"name":"id","description":"the id","defaultValue":"-1","required":false,"allowMultiple":true,"dataType":"string","allowableValues":{"valueType":"LIST","values":["a","b","c"]},"paramType":"query"}]}]}""")
+    write(l) should be ("""{"path":"/foo/bar","description":"the description","operations":[{"method":"get","summary":"the summary","notes":"the notes","responseClass":"string","nickname":"getMeSomeStrings","produces":["application/json","application/xml"],"consumes":["application/json"],"protocols":["http"],"parameters":[{"name":"id","description":"the id","defaultValue":"-1","required":false,"allowMultiple":true,"dataType":"string","allowableValues":{"valueType":"LIST","values":["a","b","c"]},"paramType":"query"}]}]}""")
   }
 }
 
@@ -219,7 +219,7 @@ class OperationSerializersTest extends FlatSpec with ShouldMatchers {
   it should "deserialize an Operation" in {
     val jsonString = """
     {
-      "httpMethod":"GET",
+      "method":"GET",
       "summary":"the summary",
       "notes":"the notes",
       "responseClass":"string",
@@ -244,7 +244,7 @@ class OperationSerializersTest extends FlatSpec with ShouldMatchers {
     val json = parse(jsonString)
     json.extract[Operation] match {
       case op: Operation => {
-        op.httpMethod should be ("GET")
+        op.method should be ("GET")
         op.summary should be ("the summary")
         op.notes should be ("the notes")
         op.responseClass should be ("string")
@@ -279,7 +279,7 @@ class OperationSerializersTest extends FlatSpec with ShouldMatchers {
       List(),
       List(Parameter("id", Some("the id"), Some("-1"), false, true, "string", AllowableListValues(List("a","b","c")), "query"))
     )
-    write(op) should be ("""{"httpMethod":"get","summary":"the summary","notes":"the notes","responseClass":"string","nickname":"getMeSomeStrings","produces":["application/json","application/xml"],"consumes":["application/json"],"protocols":["http"],"parameters":[{"name":"id","description":"the id","defaultValue":"-1","required":false,"allowMultiple":true,"dataType":"string","allowableValues":{"valueType":"LIST","values":["a","b","c"]},"paramType":"query"}]}""")
+    write(op) should be ("""{"method":"get","summary":"the summary","notes":"the notes","responseClass":"string","nickname":"getMeSomeStrings","produces":["application/json","application/xml"],"consumes":["application/json"],"protocols":["http"],"parameters":[{"name":"id","description":"the id","defaultValue":"-1","required":false,"allowMultiple":true,"dataType":"string","allowableValues":{"valueType":"LIST","values":["a","b","c"]},"paramType":"query"}]}""")
   }
 }
 

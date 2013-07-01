@@ -48,7 +48,7 @@ class PetResource extends RestResourceUtil {
       case _ => throw new NotFoundException(404, "Pet not found")
     }
   }
-/*
+
   @DELETE
   @Path("/{petId}")
   @ApiOperation(value = "Deletes a pet")
@@ -114,5 +114,4 @@ class PetResource extends RestResourceUtil {
     var results = PetData.findPetByTags(tags)
     Response.ok(results.toArray(new Array[Pet](0))).build
   }
-*/
 }

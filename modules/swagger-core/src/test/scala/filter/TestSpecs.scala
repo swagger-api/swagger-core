@@ -25,7 +25,7 @@ object TestSpecs {
       "description": "Operations about pets",
       "operations": [
         {
-          "httpMethod": "POST",
+          "method": "POST",
           "summary": "Add a new pet to the store",
           "responseClass": "void",
           "nickname": "addPet",
@@ -47,7 +47,7 @@ object TestSpecs {
           ]
         },
         {
-          "httpMethod": "PUT",
+          "method": "PUT",
           "summary": "Update an existing pet",
           "responseClass": "void",
           "nickname": "updatePet",
@@ -82,7 +82,7 @@ object TestSpecs {
       "description": "Operations about pets",
       "operations": [
         {
-          "httpMethod": "GET",
+          "method": "GET",
           "summary": "Find pet by ID",
           "notes": "Returns a pet based on ID",
           "responseClass": "Pet",
@@ -115,7 +115,7 @@ object TestSpecs {
       "description": "Operations about pets",
       "operations": [
         {
-          "httpMethod": "GET",
+          "method": "GET",
           "summary": "Finds Pets by status",
           "notes": "Multiple status values can be provided with comma seperated strings",
           "responseClass": "List[Pet]",
@@ -153,7 +153,7 @@ object TestSpecs {
       "description": "Operations about pets",
       "operations": [
         {
-          "httpMethod": "GET",
+          "method": "GET",
           "summary": "Finds Pets by tags",
           "notes": "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
           "deprecated": true,
@@ -260,7 +260,7 @@ object TestSpecs {
       "description": "Operations about house parts",
       "operations": [
         {
-          "httpMethod": "GET",
+          "method": "GET",
           "summary": "gets a window",
           "responseClass": "Window",
           "nickname": "getWindow",

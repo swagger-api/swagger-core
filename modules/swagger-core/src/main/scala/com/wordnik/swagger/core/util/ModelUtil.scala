@@ -50,30 +50,33 @@ object ModelUtil {
   }
 
   def cleanDataType(dataType: String) = {
-    val out = if(dataType.startsWith("java.lang")) {
-      val trimmed = dataType.substring("java.lang".length + 1)
+    val typeInfo = dataType match {
+      case ComplexTypeMatcher(container, inner) => {
+        val p = if(inner.indexOf(",") > 0)
+          inner.split("\\,").last.trim
+        else inner
+        (Some(container), p)
+      }
+      case _ => (None, dataType)
+    }
+    val baseType = if(typeInfo._2.startsWith("java.lang")) {
+      val trimmed = typeInfo._2.substring("java.lang".length + 1)
       if(SwaggerSpec.baseTypes.contains(trimmed.toLowerCase))
         trimmed.toLowerCase
       else
         trimmed
     }
     else {
-      modelFromString(dataType) match {
+      modelFromString(typeInfo._2) match {
         case Some(e) => e._1
-        case None => dataType
+        case None => typeInfo._2
       }
     }
     // put back in container
-    if(out != dataType) {
-      dataType match {
-        case e: String if(e.toLowerCase.startsWith("list")) => "List[%s]".format(out)
-        case e: String if(e.toLowerCase.startsWith("set")) => "Set[%s]".format(out)
-        case e: String if(e.toLowerCase.startsWith("array")) => "Array[%s]".format(out)
-        case e: String if(e.toLowerCase.startsWith("map")) => "Map[string,%s]".format(out)
-        case _ => out
-      }
+    typeInfo._1 match {
+      case Some(e) => "%s[%s]".format(e, baseType)
+      case None => baseType
     }
-    else out
   }
 
   def modelsFromApis(apis: List[ApiDescription]): Option[Map[String, Model]] = {

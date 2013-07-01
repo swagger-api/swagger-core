@@ -209,8 +209,8 @@ object SwaggerSerializers {
     case json =>
       implicit val fmts: Formats = formats
       Operation(
-        (json \ "httpMethod").extractOrElse({
-          !!(json, OPERATION, "httpMethod", "missing required field", ERROR)
+        (json \ "method").extractOrElse({
+          !!(json, OPERATION, "method", "missing required field", ERROR)
           ""
         }),
         (json \ "summary").extract[String],
@@ -235,7 +235,7 @@ object SwaggerSerializers {
     }, {
       case x: Operation =>
       implicit val fmts = formats
-      ("httpMethod" -> x.httpMethod) ~
+      ("method" -> x.method) ~
       ("summary" -> x.summary) ~
       ("notes" -> x.notes) ~
       ("responseClass" -> x.responseClass) ~

@@ -25,6 +25,9 @@ import com.wordnik.swagger.sample.exception.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
+@Path("/user")
+@Api(value="/user", description = "Operations about user")
+@Produces({"application/json", "application/xml"})
 public class UserResource {
   static UserData userData = new UserData();
 

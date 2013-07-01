@@ -26,6 +26,7 @@ import javax.ws.rs.core.Response.Status
 @Provider
 class ApplicationExceptionMapper extends ExceptionMapper[ApiException] {
   def toResponse(exception: ApiException): Response = {
+    exception.printStackTrace
     exception match {
       case e: NotFoundException =>
         Response.status(Status.NOT_FOUND).entity(new ApiResponse(ApiResponse.ERROR, e.getMessage())).build
@@ -42,6 +43,7 @@ class ApplicationExceptionMapper extends ExceptionMapper[ApiException] {
 @Provider
 class SampleExceptionMapper extends ExceptionMapper[Exception] {
   def toResponse(exception: Exception): Response = {
+    exception.printStackTrace
     exception match {
       case e: javax.ws.rs.WebApplicationException =>
         Response.status(e.getResponse.getStatus).entity(new ApiResponse(e.getResponse.getStatus, e.getMessage())).build

@@ -16,7 +16,7 @@
   </context-param>
   <context-param>
     <param-name>resteasy.resources</param-name>
-    <param-value>com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON,com.wordnik.swagger.jaxrs.listing.ApiListingResourceXML</param-value>
+    <param-value>com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON</param-value>
   </context-param>
   <context-param>
     <param-name>resteasy.providers</param-name>

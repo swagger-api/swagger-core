@@ -49,7 +49,7 @@ class SpecFilterTest extends FlatSpec with ShouldMatchers {
     p.apis.foreach(api => {
       if(api.path == "/pet.{format}") {
         api.operations.foreach(op => {
-          if(op.httpMethod == "POST") {
+          if(op.method == "POST") {
             op.parameters.size should be (0)
           }
         })
@@ -72,7 +72,7 @@ class SimpleFilter extends SwaggerSpecFilter {
 
 class GetOnlyFilter extends SwaggerSpecFilter {
   override def isOperationAllowed(operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean = {
-    if(operation.httpMethod != "GET") false
+    if(operation.method != "GET") false
     else true
   }
   override def isParamAllowed(parameter: Parameter, operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean = true

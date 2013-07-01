@@ -16,21 +16,28 @@
 
 package com.wordnik.swagger.sample.model
 
-import com.wordnik.swagger.annotations.ApiModel
-
 import javax.xml.bind.annotation.{XmlRootElement, XmlElement}
 
-@ApiModel(value="The Category Model", parent=classOf[BaseModel])
 @XmlRootElement(name = "Category")
-class Category() extends BaseModel {
+class Category() {
+  private var id:Long = 0
   private var name:String = _
 
-  @XmlRootElement(name = "name")
-  def getName():String = {
-    name
-  }
+  @XmlElement(name="id")
+  def getId():Long = id
+  def setId(id:Long):Unit = this.id = id
 
-  def setName(name:String):Unit = {
-    this.name = name
+  @XmlRootElement(name = "name")
+  def getName():String = name
+  def setName(name:String):Unit = this.name = name
+
+  override def toString() = {
+    val sb = new StringBuilder
+    sb.append("Category(")
+      .append("id=").append(id).append(", ")
+      .append("name=").append(name)
+      .append(")")
+
+    sb.toString
   }
 }
