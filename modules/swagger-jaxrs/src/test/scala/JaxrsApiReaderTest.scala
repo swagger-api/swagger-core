@@ -32,7 +32,7 @@ class BasicResourceTest extends FlatSpec with ShouldMatchers {
     ops.size should be (2)
 
     val getOp = ops.head
-    getOp.httpMethod should be ("GET")
+    getOp.method should be ("GET")
     getOp.parameters.size should be (1)
     val param = getOp.parameters.head
     param.name should be ("id")
@@ -75,14 +75,14 @@ class ContainerResourceTest extends FlatSpec with ShouldMatchers {
     api.operations.size should be (2)
 
     val postOp = api.operations.head
-    postOp.httpMethod should be ("POST")
+    postOp.method should be ("POST")
     postOp.responseClass should be ("void")
     postOp.nickname should be ("addTest")
     postOp.parameters.size should be (2)
 
     val getOp = api.operations.last
 
-    getOp.httpMethod should be ("GET")
+    getOp.method should be ("GET")
     getOp.responseClass should be ("List[Howdy]")
     getOp.nickname should be ("getTest")
     getOp.parameters.size should be (1)

@@ -60,7 +60,6 @@ class JavaPathParamTargetTest extends FlatSpec with ShouldMatchers {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()
     val apiResource = reader.read("/api-docs", classOf[JavaPathParamTargetResource], config).getOrElse(fail("should not be None"))
-
     val apis = apiResource.apis
 
     apis.size should be (2)

@@ -1,4 +1,4 @@
-package testresources;
+package testmodels;
 
 import java.util.ArrayList;
 

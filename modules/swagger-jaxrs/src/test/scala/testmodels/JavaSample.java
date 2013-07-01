@@ -1,4 +1,4 @@
-package testresources;
+package testmodels;
 
 import com.wordnik.swagger.annotations.*;
 

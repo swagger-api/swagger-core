@@ -1,5 +1,6 @@
 package testresources;
 
+import testmodels.*;
 import com.wordnik.swagger.core.*;
 import com.wordnik.swagger.annotations.*;
 

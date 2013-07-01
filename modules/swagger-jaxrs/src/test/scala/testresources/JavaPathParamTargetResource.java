@@ -1,5 +1,6 @@
 package testresources;
 
+import testmodels.*;
 import com.wordnik.swagger.core.*;
 import com.wordnik.swagger.annotations.*;
 
@@ -10,7 +11,7 @@ import javax.xml.bind.annotation.*;
 
 @Path("/javaPathParamTest")
 @Api(value = "/javaPathParamTest")
-public class JavaPathParamTargetResource {
+public class JavaPathParamTargetResource extends JavaParentTargetResource {
   @ApiParam(value = "sample param data", required = true, allowableValues = "range[0,10]")
   @PathParam("id") 
   String id;
