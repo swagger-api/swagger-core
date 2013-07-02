@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.*;
 @XmlRootElement(name = "Category")
 public class Category {
   private long id;
-  private String name;
+  private CategoryName name;
 
   @XmlElement(name = "id")
   public long getId() {
@@ -33,11 +33,11 @@ public class Category {
   }
 
   @XmlElement(name = "name")
-  public String getName() {
+  public CategoryName getName() {
     return name;
   }
 
-  public void setName(String name) {
+  public void setName(CategoryName name) {
     this.name = name;
   }
 }
