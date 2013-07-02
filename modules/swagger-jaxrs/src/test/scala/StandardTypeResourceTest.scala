@@ -23,10 +23,9 @@ class StandardTypeResourceTest extends FlatSpec with ShouldMatchers {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()
     val apiResource = reader.read("/api-docs", classOf[ResourceWithStandardTypes], config).getOrElse(fail("should not be None"))
-println(JsonSerializer.asJson(apiResource))
     apiResource.apis.size should be (3)
-    val api1 = apiResource.apis.filter(_.path == "/standard/{id}/strings").head
 
+    val api1 = apiResource.apis.filter(_.path == "/standard/{id}/strings").head
     val ops = api1.operations
     ops.size should be (1)
 
