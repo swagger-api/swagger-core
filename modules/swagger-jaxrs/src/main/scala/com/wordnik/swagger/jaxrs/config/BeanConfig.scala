@@ -18,8 +18,8 @@ import javax.ws.rs.core.Application
 import scala.collection.JavaConverters._
 
 class BeanConfig extends JaxrsScanner {
-	private val LOGGER = LoggerFactory.getLogger(classOf[BeanConfig])
-	private var resourcePackage: String = _
+  private val LOGGER = LoggerFactory.getLogger(classOf[BeanConfig])
+  private var resourcePackage: String = _
 
   ConfigFactory.config = new SwaggerConfig
   ClassReaders.reader = Some(new DefaultJaxrsApiReader)
@@ -27,12 +27,12 @@ class BeanConfig extends JaxrsScanner {
   def getResourcePackage():String = this.resourcePackage
 
   def setResourcePackage(resourcePackage: String) = {
-  	this.resourcePackage = resourcePackage
+    this.resourcePackage = resourcePackage
     ScannerFactory.scanner = Some(this)
   }
 
   def classesFromContext(app: Application, sc: ServletConfig) : List[Class[_]] = {
-  	val config = new ConfigurationBuilder().setUrls(ClasspathHelper.forPackage(resourcePackage)).setScanners(
+    val config = new ConfigurationBuilder().setUrls(ClasspathHelper.forPackage(resourcePackage)).setScanners(
       new TypeAnnotationsScanner(), new SubTypesScanner())
     new Reflections(config).getTypesAnnotatedWith(classOf[Api]).asScala.toList
   }
@@ -48,8 +48,8 @@ class BeanConfig extends JaxrsScanner {
   }
 
   def getApiReader(): String = ClassReaders.reader match {
-  	case Some(cls) => cls.getClass.getName
-  	case _ => ""
+    case Some(cls) => cls.getClass.getName
+    case _ => ""
   }
 
   def setVersion(apiVersion: String) = ConfigFactory.config.apiVersion = apiVersion
