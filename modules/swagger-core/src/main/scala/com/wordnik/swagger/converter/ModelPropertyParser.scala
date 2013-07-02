@@ -42,13 +42,15 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
 
   def parseField(field: Field) = {
     LOGGER.debug("processing field " + field)
-    parsePropertyAnnotations(field.getName, field.getAnnotations, field.getGenericType, field.getType)
+    val returnClass = field.getDeclaringClass
+    parsePropertyAnnotations(returnClass, field.getName, field.getAnnotations, field.getGenericType, field.getType)
   }
 
   def parseMethod(method: Method) = {
     if (method.getParameterTypes == null || method.getParameterTypes.length == 0) {
       LOGGER.debug("processing method " + method)
-      parsePropertyAnnotations(method.getName, method.getAnnotations, method.getGenericReturnType, method.getReturnType)
+      val returnClass = method.getReturnType
+      parsePropertyAnnotations(returnClass, method.getName, method.getAnnotations, method.getGenericReturnType, method.getReturnType)
     }
   }
 
@@ -66,31 +68,37 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
     }
   }
 
-  def parsePropertyAnnotations(methodFieldName: String, methodAnnotations: Array[Annotation], genericReturnType: Type, returnType: Type): Any = {
-    val e = extractGetterProperty(methodFieldName)
+  def parsePropertyAnnotations(returnClass: Class[_], propertyName: String, propertyAnnotations: Array[Annotation], genericReturnType: Type, returnType: Type): Any = {
+
+    val e = extractGetterProperty(propertyName)
     var name = e._1
     var isGetter = e._2
 
     var isFieldExists = false
     var isJsonProperty = false
     var hasAccessorNoneAnnotation = false
-    var methodAnnoOutput = processAnnotations(name, methodAnnotations)
-    var required = methodAnnoOutput("required").asInstanceOf[Boolean]
-    var position = methodAnnoOutput("position").asInstanceOf[Int]
+    var processedAnnotations = processAnnotations(name, propertyAnnotations)
+    var required = processedAnnotations("required").asInstanceOf[Boolean]
+    var position = processedAnnotations("position").asInstanceOf[Int]
 
     var description = {
-      if(methodAnnoOutput.contains("description") && methodAnnoOutput("description") != null)
-        Some(methodAnnoOutput("description").asInstanceOf[String])
+      if(processedAnnotations.contains("description") && processedAnnotations("description") != null)
+        Some(processedAnnotations("description").asInstanceOf[String])
       else None
     }
-    var isTransient = methodAnnoOutput("isTransient").asInstanceOf[Boolean]
-    var isXmlElement = methodAnnoOutput("isXmlElement").asInstanceOf[Boolean]
-    val isDocumented = methodAnnoOutput("isDocumented").asInstanceOf[Boolean]
-    var allowableValues = methodAnnoOutput("allowableValues").asInstanceOf[Option[AllowableValues]]
+    var isTransient = processedAnnotations("isTransient").asInstanceOf[Boolean]
+    var isXmlElement = processedAnnotations("isXmlElement").asInstanceOf[Boolean]
+    val isDocumented = processedAnnotations("isDocumented").asInstanceOf[Boolean]
+    var allowableValues = {
+      if(returnClass.isEnum) 
+        Some(AllowableListValues((for(v <- returnClass.getEnumConstants) yield v.toString).toList))
+      else
+        processedAnnotations("allowableValues").asInstanceOf[Option[AllowableValues]]
+    }
 
     try {
-      val propertyAnnotations = getDeclaredField(this.cls, name).getAnnotations()
-      var propAnnoOutput = processAnnotations(name, propertyAnnotations)
+      val fieldAnnotations = getDeclaredField(this.cls, name).getAnnotations()
+      var propAnnoOutput = processAnnotations(name, fieldAnnotations)
       var propPosition = propAnnoOutput("position").asInstanceOf[Int]
 
       if(allowableValues == None) 
@@ -110,9 +118,8 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
 
     //if class has accessor none annotation, the method/field should have explicit xml element annotations, if not
     // consider it as transient
-    if (!isXmlElement && hasAccessorNoneAnnotation) {
+    if (!isXmlElement && hasAccessorNoneAnnotation)
       isTransient = true
-    }
 
     if (!(isTransient && !isXmlElement && !isJsonProperty) && name != null && (isFieldExists || isGetter || isDocumented)) {
       var paramType = getDataType(genericReturnType, returnType, false)
