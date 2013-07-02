@@ -25,11 +25,7 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
   final val positiveInfinity = "Infinity"
   final val negativeInfinity = "-Infinity"
 
-  def parse = {
-    Option(cls).map(parseRecursive(_))
-
-LOGGER.debug("processed fields: " + processedFields + ", " + properties.keys)
-  }
+  def parse = Option(cls).map(parseRecursive(_))
 
   def parseRecursive(hostClass: Class[_]): Unit = {
     LOGGER.debug("processing class " + hostClass)
