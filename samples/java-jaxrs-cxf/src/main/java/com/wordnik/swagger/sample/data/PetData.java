@@ -134,10 +134,12 @@ public class PetData {
     return pet;
   }
 
-  static Category createCategory(long id, String name) {
+static Category createCategory(long id, String name) {
     Category category = new Category();
     category.setId(id);
-    category.setName(name);
+  CategoryName categoryName = new CategoryName();
+	categoryName.setName(name);
+    category.setName(categoryName);
     return category;
   }
 }

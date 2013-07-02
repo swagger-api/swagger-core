@@ -18,26 +18,17 @@ package com.wordnik.swagger.sample.model;
 
 import javax.xml.bind.annotation.*;
 
-@XmlRootElement(name = "Category")
-public class Category {
-  private long id;
-  private CategoryName name;
+@XmlRootElement(name = "CategoryName")
+public class CategoryName {
+  private String name;
 
-  @XmlElement(name = "id")
-  public long getId() {
-    return id;
-  }
-
-  public void setId(long id) {
-    this.id = id;
-  }
-
+ 
   @XmlElement(name = "name")
-  public CategoryName getName() {
+  public String getName() {
     return name;
   }
 
-  public void setName(CategoryName name) {
+  public void setName(String name) {
     this.name = name;
   }
 }
