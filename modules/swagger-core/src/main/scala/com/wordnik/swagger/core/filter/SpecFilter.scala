@@ -112,7 +112,12 @@ class SpecFilter {
           }
         })
       }
-      modelnames.toList
+      val unresolved = ((modelnames.toSet -- inspectedTypes).toSet & allModels.keys.toSet).toSet
+      (
+        if(unresolved.size > 0)
+          requiredProperties(unresolved.toList, allModels, inspectedTypes)
+        else List()
+      ) ++ modelnames.toList
     }).flatten.toList
   }
 }
