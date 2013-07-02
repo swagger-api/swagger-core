@@ -300,24 +300,20 @@
     <module>modules/swagger-jersey-jaxrs</module>
     <module>modules/swagger-servlet</module>
 
-    <module>samples/java-jaxrs</module>
-    <module>samples/scala-jaxrs</module>
     <module>samples/java-resteasy</module>
-    <module>samples/scala-servlet</module>
-
-    <!--module>modules/swagger-jaxrs</module>
-    <module>modules/swagger-jersey-jaxrs</module>
-    <module>modules/swagger-jaxrs-utils</module>
-    <module>samples/java-alt-resource-listing</module>
+    <module>samples/java-jaxrs</module>
     <module>samples/java-dropwizard</module>
     <module>samples/scala-jaxrs</module>
-    <module>samples/scala-alt-resource-listing</module>
-    <module>samples/scala-jaxrs-jackson2</module>
-    <module>samples/scala-jaxrs-no-format</module>
+    <module>samples/scala-servlet</module>
+    <module>samples/java-jaxrs-subresource</module>
     <module>samples/scala-jaxrs-fileupload</module>
+    <module>samples/java-jaxrs-cxf</module>
+
+<!--
+    <module>modules/swagger-jaxrs-utils</module>
     <module>samples/scala-jaxrs-apm</module>
 -->
-    <module>samples/java-jaxrs-cxf</module>
+
   </modules>
   <reporting>
     <outputDirectory>target/site</outputDirectory>
