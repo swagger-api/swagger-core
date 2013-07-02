@@ -27,8 +27,8 @@ class NestedModelResourceTest extends FlatSpec with ShouldMatchers {
     apiResource.apis.size should be (1)
 
     val models = apiResource.models.get
-    models.size should be (3)
-    (models.keys.toSet & Set("Wheel", "Car", "User")).size should be (3)
+    models.size should be (4)
+    (models.keys.toSet & Set("Wheel", "Car", "User", "LugNut")).size should be (4)
   }
 
   it should "maintain models after filter" in {
@@ -39,6 +39,8 @@ class NestedModelResourceTest extends FlatSpec with ShouldMatchers {
     val filtered = new SpecFilter().filter(apiResource, FilterFactory.filter, Map(), Map(), Map())
 
     val models = filtered.models.get
-    (models.keys.toSet & Set("Wheel", "Car", "User")).size should be (3)
+    (models.keys.toSet & Set("Wheel", "Car", "User", "LugNut")).size should be (4)
+    val wheel = models("Wheel")
+    // wheel.properties.size should be (4)
   }
 }
