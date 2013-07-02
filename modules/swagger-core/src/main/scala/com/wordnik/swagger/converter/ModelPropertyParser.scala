@@ -25,7 +25,11 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
   final val positiveInfinity = "Infinity"
   final val negativeInfinity = "-Infinity"
 
-  def parse = Option(cls).map(parseRecursive(_))
+  def parse = {
+    Option(cls).map(parseRecursive(_))
+
+LOGGER.debug("processed fields: " + processedFields + ", " + properties.keys)
+  }
 
   def parseRecursive(hostClass: Class[_]): Unit = {
     LOGGER.debug("processing class " + hostClass)
@@ -337,7 +341,7 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
       "Map[" + keyName + "," + valueName + "]"
     } else if (!returnType.getClass.isAssignableFrom(classOf[ParameterizedTypeImpl]) && returnType.isInstanceOf[Class[_]] && returnType.asInstanceOf[Class[_]].isArray) {
       var arrayClass = returnType.asInstanceOf[Class[_]].getComponentType
-      "Array[" + arrayClass.getName + "]"
+      "Array[" + readName(arrayClass, isSimple) + "]"
     } else {
       if (genericReturnType.getClass.isAssignableFrom(classOf[TypeVariableImpl[_]])) {
         genericReturnType.asInstanceOf[TypeVariableImpl[_]].getName

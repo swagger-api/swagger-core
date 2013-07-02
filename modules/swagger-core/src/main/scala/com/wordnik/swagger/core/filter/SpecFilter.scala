@@ -62,10 +62,7 @@ class SpecFilter {
 
   def filterModels(allModels: Option[Map[String, Model]], apis: List[ApiDescription]) = {
     val modelNames = requiredModels(allModels, apis)
-    LOGGER.debug("required model names: " + modelNames)
     val existingModels = allModels.getOrElse(Map[String, Model]())
-
-    LOGGER.debug("existing models: " + existingModels)
     val output = (for(model <- modelNames) yield {
       if(existingModels.contains(model))
         Some(model, existingModels(model))
