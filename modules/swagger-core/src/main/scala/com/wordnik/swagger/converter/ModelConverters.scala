@@ -67,6 +67,7 @@ object ModelConverters {
           try{
             checkedNames += typeRef
             val cls = SwaggerContext.loadClass(typeRef)
+            LOGGER.debug("reading class " + cls)
             ModelConverters.read(cls) match {
               case Some(model) => {
                 output += typeRef -> model

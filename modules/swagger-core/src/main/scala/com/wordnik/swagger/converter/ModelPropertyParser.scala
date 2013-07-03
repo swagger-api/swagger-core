@@ -28,16 +28,21 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
   def parse = Option(cls).map(parseRecursive(_))
 
   def parseRecursive(hostClass: Class[_]): Unit = {
-    LOGGER.debug("processing class " + hostClass)
-    for (method <- hostClass.getDeclaredMethods) {
-      if (Modifier.isPublic(method.getModifiers()) && !Modifier.isStatic(method.getModifiers()))
-        parseMethod(method)
+    if(!hostClass.isEnum) {
+      LOGGER.debug("processing class " + hostClass)
+      for (method <- hostClass.getDeclaredMethods) {
+        if (Modifier.isPublic(method.getModifiers()) && !Modifier.isStatic(method.getModifiers()))
+          parseMethod(method)
+      }
+      for (field <- hostClass.getDeclaredFields) {
+        if (Modifier.isPublic(field.getModifiers()) && !Modifier.isStatic(field.getModifiers()))
+          parseField(field)
+      }
+      Option(hostClass.getSuperclass).map(parseRecursive(_))
     }
-    for (field <- hostClass.getDeclaredFields) {
-      if (Modifier.isPublic(field.getModifiers()) && !Modifier.isStatic(field.getModifiers()))
-        parseField(field)
+    else {
+      LOGGER.debug("Not processing enum class " + hostClass)
     }
-    Option(hostClass.getSuperclass).map(parseRecursive(_))
   }
 
   def parseField(field: Field) = {
@@ -69,7 +74,6 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
   }
 
   def parsePropertyAnnotations(returnClass: Class[_], propertyName: String, propertyAnnotations: Array[Annotation], genericReturnType: Type, returnType: Type): Any = {
-
     val e = extractGetterProperty(propertyName)
     var name = e._1
     var isGetter = e._2
@@ -157,7 +161,7 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
             description,
             allowableValues.getOrElse(AnyAllowableValues),
             items)
-          LOGGER.debug("added param for field " + name)
+          LOGGER.debug("added param type " + paramType + " for field " + name)
           properties += name -> param
         }
         else {

@@ -33,15 +33,18 @@ class SwaggerSchemaConverter
           case _ => None
         }
 
-        Some(Model(
-          toName(cls),
-          toName(cls),
-          cls.getName,
-          sortedProperties,
-          toDescriptionOpt(cls),
-          baseModel,
-          discriminator
-        ))
+        sortedProperties.size match {
+          case 0 => None
+          case _ => Some(Model(
+            toName(cls),
+            toName(cls),
+            cls.getName,
+            sortedProperties,
+            toDescriptionOpt(cls),
+            baseModel,
+            discriminator
+          ))
+        }
       }
     })
   }

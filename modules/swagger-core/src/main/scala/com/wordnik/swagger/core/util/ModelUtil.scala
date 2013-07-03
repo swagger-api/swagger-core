@@ -124,10 +124,13 @@ object ModelUtil {
     if(shoudIncludeModel(typeRef)) {
       try{
         val cls = SwaggerContext.loadClass(typeRef)
-        ModelConverters.read(cls) match {
-          case Some(model) => Some((toName(cls), model))
-          case None => None
+        if (!cls.isEnum) {
+          ModelConverters.read(cls) match {
+            case Some(model) => Some((toName(cls), model))
+            case None => None
+          }
         }
+        else None
       }
       catch {
         case e: ClassNotFoundException => None
