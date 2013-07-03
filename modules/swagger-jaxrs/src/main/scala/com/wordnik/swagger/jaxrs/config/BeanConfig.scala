@@ -1,7 +1,7 @@
 package com.wordnik.swagger.jaxrs.config
 
 import com.wordnik.swagger.annotations.Api
-import com.wordnik.swagger.core.SwaggerContext
+import com.wordnik.swagger.core.{ SwaggerContext, SwaggerSpec }
 import com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader
 import com.wordnik.swagger.config._
 import com.wordnik.swagger.reader._
