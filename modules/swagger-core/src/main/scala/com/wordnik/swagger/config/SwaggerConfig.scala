@@ -1,5 +1,7 @@
 package com.wordnik.swagger.config
 
+import com.wordnik.swagger.core.SwaggerSpec
+
 import com.wordnik.swagger.model.AuthorizationType
 
 class SwaggerConfig(
@@ -9,5 +11,5 @@ class SwaggerConfig(
   var apiPath: String,
   var authorizations: List[AuthorizationType] = List()) {
 
-  def this() = this(null, null, null, null, null)
+  def this() = this(null, SwaggerSpec.version, null, null, null)
 }
