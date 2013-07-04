@@ -34,19 +34,24 @@ trait JaxrsApiReader extends ClassReader {
       case "[F" => "Array[float]"
       case "[J" => "Array[long]"
       case _ => {
-        genericParamType.toString match {
-          case GenericTypeMapper(container, base) => {
-            val qt = SwaggerTypes(base.split("\\.").last) match {
-              case "object" => base
-              case e: String => e
+        if(paramType.isArray) {
+          "Array[%s]".format(paramType.getComponentType.getName)
+        }
+        else {
+          genericParamType.toString match {
+            case GenericTypeMapper(container, base) => {
+              val qt = SwaggerTypes(base.split("\\.").last) match {
+                case "object" => base
+                case e: String => e
+              }
+              val b = ModelUtil.modelFromString(qt) match {
+                case Some(e) => e._2.qualifiedType
+                case None => qt
+              }
+              "%s[%s]".format(normalizeContainer(container), b)
             }
-            val b = ModelUtil.modelFromString(qt) match {
-              case Some(e) => e._2.qualifiedType
-              case None => qt
-            }
-            "%s[%s]".format(normalizeContainer(container), b)
+            case _ => paramType.getName
           }
-          case _ => paramType.getName
         }
       }
     }
