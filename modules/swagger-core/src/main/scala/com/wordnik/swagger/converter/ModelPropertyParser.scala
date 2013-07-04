@@ -1,7 +1,7 @@
 package com.wordnik.swagger.converter
 
 import com.wordnik.swagger.model._
-import com.wordnik.swagger.core.SwaggerSpec
+import com.wordnik.swagger.core.{ SwaggerSpec, SwaggerTypes }
 import com.wordnik.swagger.core.util.TypeUtil
 import com.wordnik.swagger.annotations.ApiModelProperty
 
@@ -175,10 +175,11 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
     }
   }
 
-  def validateDatatype(datatype: String): String = {
-    if(SwaggerSpec.baseTypes.contains(datatype.toLowerCase))
-      datatype.toLowerCase
-    else datatype
+  def validateDatatype(dataType: String): String = {
+    SwaggerTypes(dataType) match {
+      case "object" => dataType
+      case e: String => e
+    }
   }
 
   def isComplex(typeName: String): Boolean = {
