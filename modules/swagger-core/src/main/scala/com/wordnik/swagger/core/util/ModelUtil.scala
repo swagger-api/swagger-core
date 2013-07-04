@@ -18,7 +18,7 @@ package com.wordnik.swagger.core.util
 
 import com.wordnik.swagger.model._
 import com.wordnik.swagger.converter.ModelConverters
-import com.wordnik.swagger.core.{ SwaggerContext, SwaggerSpec }
+import com.wordnik.swagger.core.{ SwaggerContext, SwaggerSpec, SwaggerTypes }
 
 import org.slf4j.LoggerFactory
 
@@ -72,10 +72,14 @@ object ModelUtil {
         case None => typeInfo._2
       }
     }
+    val normalized = SwaggerTypes(baseType) match {
+      case "object" => baseType
+      case e: String => e
+    }
     // put back in container
     typeInfo._1 match {
-      case Some(e) => "%s[%s]".format(e, baseType)
-      case None => baseType
+      case Some(e) => "%s[%s]".format(e, normalized)
+      case None => normalized
     }
   }
 
@@ -84,7 +88,10 @@ object ModelUtil {
     for(api <- apis; op <- api.operations) {
       modelnames ++= op.responseMessages.map{_.responseModel}.flatten.toSet
       modelnames += op.responseClass
-      op.parameters.foreach(param => modelnames += param.dataType)
+      op.parameters.foreach(param => {
+        LOGGER.debug("adding dependent model " + param.dataType)
+        modelnames += param.dataType
+      })
     }
     val models = (for(name <- modelnames) yield modelAndDependencies(name)).flatten.toMap
     if(models.size > 0) Some(models)
@@ -94,6 +101,7 @@ object ModelUtil {
   def modelAndDependencies(name: String): Map[String, Model] = {
     val typeRef = name match {
       case ComplexTypeMatcher(containerType, basePart) => {
+        LOGGER.debug("loading " + basePart + ", " + containerType)
         if(basePart.indexOf(",") > 0) // handle maps, i.e. List[String,String]
           basePart.split("\\,").last.trim
         else basePart
