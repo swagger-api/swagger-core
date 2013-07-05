@@ -17,6 +17,7 @@
 package play.modules.swagger
 
 import com.wordnik.swagger.core._
+import com.wordnik.swagger.annotations._
 
 import scala.collection.JavaConversions._
 import org.slf4j.LoggerFactory

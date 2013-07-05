@@ -85,7 +85,7 @@ class HelpApi {
     types.foreach(t => {
       try {
         val c = SwaggerContext.loadClass(t)
-        val n = ApiPropertiesReader.read(c)
+        val n = ApiPropertiesReader.read(c.getName)
         if (null != n && null != n.getFields && n.getFields.length > 0) {
           d.addModel(n.getName, n.toDocumentationSchema())
         } else {

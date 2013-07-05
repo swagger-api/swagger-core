@@ -21,6 +21,7 @@ import play.{Play, Logger}
 
 import collection.mutable.ListBuffer
 import com.wordnik.swagger.core._
+import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.play._
 
 import javax.xml.bind.JAXBContext
