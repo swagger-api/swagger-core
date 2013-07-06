@@ -14,6 +14,29 @@ visit http://developer.wordnik.com.
 
 ## Version history
 
+### v1.3.0-RC1 Jul-2 2013
+
+Source lives in the [1.3-RC1 branch!](https://github.com/wordnik/swagger-core/tree/1.3-RC1)
+
+<li>- Release candidate for swagger-spec 1.2
+
+<li>- Pluggable readers for scanning classes, model introspection, config reading
+
+<li>- Simplified overriding of model introspection
+
+<li>- Support for consumes, produces, protocols, authentications
+
+<li>- oAuth support in spec
+
+<li>- Support for raw servlet integration
+
+<li>- Resource, operation, model property ordering
+
+<li>- Polymorphic model support
+
+### v1.2.5 Jun-19 2013
+<li>- Fixes for generic objects
+
 ### v1.2.4 Jun-5 2013
 <li>- Fixed `@Api` paths with slashes
 
