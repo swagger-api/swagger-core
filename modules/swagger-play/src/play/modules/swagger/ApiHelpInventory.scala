@@ -16,7 +16,7 @@
 
 package play.modules.swagger
 
-import org.codehaus.jackson.map.ObjectMapper
+import com.fasterxml.jackson.databind._
 import play.{Play, Logger}
 
 import collection.mutable.ListBuffer
