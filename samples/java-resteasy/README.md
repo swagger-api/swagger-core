@@ -10,10 +10,10 @@ To run the server, run this task:
 mvn package -Dlog4j.configuration=file:./log4j.properties jetty:run
 </pre>
 
-This will start Jetty embedded on port 8080 and apply the logging configuration from ./log4j.properties
+This will start Jetty embedded on port 8002 and apply the logging configuration from ./log4j.properties
 
 ### Testing the server
-Once started, you can navigate to http://localhost:9095/resteasy/api-docs.json to view the Swagger Resource Listing.
+Once started, you can navigate to http://localhost:8002/resteasy/api-docs.json to view the Swagger Resource Listing.
 This tells you that the server is up and ready to demonstrate Swagger.
 
 ### Using the UI

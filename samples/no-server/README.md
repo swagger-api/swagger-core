@@ -12,17 +12,13 @@ in the UI is not possible.  All users will see the same APIs.
 ### To build from source
 There's nothing to build--all files are here.
 
-### To run with apache
-Simply copy these files to your apache root, or configure the DocumentRoot to be in this location.  If you are 
-running Mac OSX 10.8, you can simply copy the files to the default webroot and start the built-in apache server:
+### To run with maven
 
 ```
-sudo cp -r src/main/html/* /Library/WebServer/Documents
-sudo apachectl start
-open http://localhost/index.html
+mvn jetty:urn
 ```
 
-This will start apache on port 80, and open the swagger-ui to view the spec files.
+This will start jetty on port 8000, and open the swagger-ui to view the spec files.
 
 ### Testing the server
 Once started, you can view all apis and even invoke them.  Opening the Chrome Developer Tools and selecting
