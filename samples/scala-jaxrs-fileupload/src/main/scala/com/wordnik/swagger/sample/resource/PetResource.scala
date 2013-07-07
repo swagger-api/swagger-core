@@ -82,12 +82,14 @@ class PetResource extends RestResourceUtil {
   }
 
   @POST
+  @Consumes(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
   @ApiOperation(value = "Add a new pet to the store")
   @ApiResponses(Array(
     new ApiResponse(code = 405, message = "Invalid input")))
   def addPet(
     @ApiParam(value = "Pet object that needs to be added to the store", required = true) pet: Pet) = {
     PetData.addPet(pet)
+    println("added pet " + pet)
     Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build
   }
 
@@ -113,8 +115,13 @@ class PetResource extends RestResourceUtil {
   def findPetsByStatus(
     @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available",
       allowableValues = "available,pending,sold", allowMultiple = true)@QueryParam("status") status: String) = {
-    var results = PetData.findPetByStatus(status)
-    Response.ok(results).build
+    if(status == null) {
+      Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(400, "invalid status supplied")).build
+    }
+    else {
+      var results = PetData.findPetByStatus(status)
+      Response.ok(results).build
+    }
   }
 
   @GET
@@ -137,6 +144,7 @@ class PetResource extends RestResourceUtil {
   @ApiOperation(value = "partial updates to a pet",
     response = classOf[Pet],
     responseContainer = "List",
+    consumes = "application/json,application/xml",
     produces = "application/json,application/xml")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid tag value")))
@@ -146,7 +154,7 @@ class PetResource extends RestResourceUtil {
     PetData.getPetbyId(getLong(0, 100000, 0, petId)) match {
       case existing: Pet => {
         existing.merge(pet)
-        Response.status(204).build
+        Response.ok.entity(PetData.getPetbyId(getLong(0, 100000, 0, petId))).build
       }
       case _ => throw new NotFoundException(404, "Pet not found")
     }

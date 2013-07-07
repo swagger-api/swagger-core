@@ -46,6 +46,7 @@ class Pet() {
   override def toString() = {
     val sb = new StringBuilder
     sb.append("Pet(")
+      .append("id=").append(id).append(", ")
       .append("category=").append(category).append(", ")
       .append("name=").append(name).append(", ")
       .append("photoUrls=").append(photoUrls).append(", ")
