@@ -348,7 +348,12 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
         genericReturnType.asInstanceOf[TypeVariableImpl[_]].getName
       }
       else if (!genericReturnType.getClass.isAssignableFrom(classOf[ParameterizedTypeImpl])) {
-        readName(genericReturnType.asInstanceOf[Class[_]], isSimple)
+        if(genericReturnType.isInstanceOf[Class[_]])
+          readName(genericReturnType.asInstanceOf[Class[_]], isSimple)
+        else{
+          LOGGER.debug("can't get type info for " + genericReturnType.toString)
+          genericReturnType.toString
+        }
       } else {
         val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
         if (parameterizedType.getRawType == classOf[Option[_]]) {
