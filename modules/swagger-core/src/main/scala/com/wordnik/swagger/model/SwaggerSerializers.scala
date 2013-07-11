@@ -21,6 +21,7 @@ object SwaggerSerializers {
     new ApiDescriptionSerializer +
     new ApiListingReferenceSerializer +
     new ResourceListingSerializer +
+    new ApiInfoSerializer +
     new ApiListingSerializer +
     new AuthorizationTypeSeralizer
 
@@ -117,7 +118,8 @@ object SwaggerSerializers {
           ""
         }),
         (json \ "apis").extract[List[ApiListingReference]],
-        (json \ "authorizations").extract[List[AuthorizationType]]
+        (json \ "authorizations").extract[List[AuthorizationType]],
+        (json \ "info").extractOpt[ApiInfo]
       )
     }, {
       case x: ResourceListing =>
@@ -133,6 +135,12 @@ object SwaggerSerializers {
       ("authorizations" -> {
         x.authorizations match {
           case e: List[AuthorizationType] if (e.size > 0) => Extraction.decompose((for(at <- e) yield (at.`type`, at)).toMap)
+          case _ => JNothing
+        }
+      }) ~
+      ("info" -> {
+        x.info match {
+          case Some(e) => Extraction.decompose(e)
           case _ => JNothing
         }
       })
@@ -177,6 +185,59 @@ object SwaggerSerializers {
         x.operations match {
           case e:List[Operation] if(e.size > 0) => Extraction.decompose(e)
           case _ => JNothing
+        }
+      })
+    }
+  ))
+
+  class ApiInfoSerializer extends CustomSerializer[ApiInfo](formats => ({
+    case json =>
+      implicit val fmts: Formats = formats
+      ApiInfo(
+        (json \ "title").extract[String],
+        (json \ "description").extract[String],
+        (json \ "termsOfServiceUrl").extract[String],
+        (json \ "contact").extract[String],
+        (json \ "license").extract[String],
+        (json \ "licenseUrl").extract[String]
+      )
+    }, {
+      case x: ApiInfo =>
+      implicit val fmts = formats
+      ("title" -> {
+        x.title match {
+          case e: String => Some(e)
+          case _ => None
+        }
+      }) ~
+      ("description" -> {
+        x.description match {
+          case e: String => Some(e)
+          case _ => None
+        }
+      }) ~
+      ("termsOfServiceUrl" -> {
+        x.termsOfServiceUrl match {
+          case e: String => Some(e)
+          case _ => None
+        }
+      }) ~
+      ("contact" -> {
+        x.contact match {
+          case e: String => Some(e)
+          case _ => None
+        }
+      }) ~
+      ("license" -> {
+        x.license match {
+          case e: String => Some(e)
+          case _ => None
+        }
+      }) ~
+      ("licenseUrl" -> {
+        x.licenseUrl match {
+          case e: String => Some(e)
+          case _ => None
         }
       })
     }

@@ -22,7 +22,16 @@ case class ResourceListing(
   apiVersion: String, 
   swaggerVersion: String, 
   apis: List[ApiListingReference] = List(),
-  authorizations: List[AuthorizationType] = List())
+  authorizations: List[AuthorizationType] = List(),
+  info: Option[ApiInfo] = None)
+
+case class ApiInfo(
+  title: String,
+  description: String, 
+  termsOfServiceUrl: String, 
+  contact: String, 
+  license: String, 
+  licenseUrl: String)
 
 case class LoginEndpoint(url: String)
 case class TokenRequestEndpoint(url: String, clientIdName: String, clientSecretName: String)
