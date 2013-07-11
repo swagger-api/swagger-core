@@ -25,4 +25,15 @@ class Bootstrap extends HttpServlet {
   ))
   val apikey = ApiKey("api_key")
   ConfigFactory.config.authorizations = List(oauth, apikey)
+
+  val info = ApiInfo(
+    title = "Swagger Sample App",
+    description = """This is a sample server Petstore server.  You can find out more about Swagger 
+    at <a href="http://swagger.wordnik.com">http://swagger.wordnik.com</a> or on irc.freenode.net, #swagger.""", 
+    termsOfServiceUrl = "http://helloreverb.com/terms/",
+    contact = "apiteam@wordnik.com", 
+    license = "Apache 2.0", 
+    licenseUrl = "http://www.apache.org/licenses/LICENSE-2.0.html")
+
+  ConfigFactory.config.info = Some(info)
 }
