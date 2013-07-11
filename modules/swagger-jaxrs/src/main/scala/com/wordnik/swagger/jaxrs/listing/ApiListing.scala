@@ -69,7 +69,8 @@ class ApiListingResource {
     val resourceListing = ResourceListing(config.apiVersion,
       config.swaggerVersion,
       references,
-      config.authorizations
+      config.authorizations,
+      config.info
     )
     Response.ok(resourceListing).build
   }
