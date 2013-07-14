@@ -7,17 +7,14 @@ import com.wordnik.swagger.core._
 import com.wordnik.swagger.core.util._
 import com.wordnik.swagger.core.ApiValues._
 import com.wordnik.swagger.model._
-
 import org.slf4j.LoggerFactory
-
 import java.lang.reflect.{ Method, Type }
 import java.lang.annotation.Annotation
-
 import javax.ws.rs._
 import javax.ws.rs.core.Context
-
 import scala.collection.JavaConverters._
 import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
+import java.lang.reflect.Field
 
 trait JaxrsApiReader extends ClassReader {
   private val LOGGER = LoggerFactory.getLogger(classOf[JaxrsApiReader])
@@ -216,7 +213,7 @@ trait JaxrsApiReader extends ClassReader {
         case _ => None
       }
       // look for method-level annotated properties
-      val parentParams: List[Parameter] = (for(field <- cls.getDeclaredFields) 
+      val parentParams: List[Parameter] = (for(field <- getAllFields(cls)) 
         yield {
           // only process fields with @ApiParam, @QueryParam, @HeaderParam, @PathParam
           if(field.getAnnotation(classOf[QueryParam]) != null || field.getAnnotation(classOf[HeaderParam]) != null ||
@@ -285,6 +282,14 @@ trait JaxrsApiReader extends ClassReader {
     else None
   }
 
+  def getAllFields(cls: Class[_]): List[Field] = {
+    var fields = cls.getDeclaredFields().toList;                 
+    if (cls.getSuperclass() != null) {
+        fields = getAllFields(cls.getSuperclass()) ++ fields;
+    }   
+    return fields;
+  }
+  
   def pathFromMethod(method: Method): String = {
     val path = method.getAnnotation(classOf[javax.ws.rs.Path])
     if(path == null) ""
