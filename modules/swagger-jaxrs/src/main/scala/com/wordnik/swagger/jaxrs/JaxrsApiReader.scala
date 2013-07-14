@@ -7,14 +7,17 @@ import com.wordnik.swagger.core._
 import com.wordnik.swagger.core.util._
 import com.wordnik.swagger.core.ApiValues._
 import com.wordnik.swagger.model._
+
 import org.slf4j.LoggerFactory
-import java.lang.reflect.{ Method, Type }
+
+import java.lang.reflect.{ Method, Type, Field }
 import java.lang.annotation.Annotation
+
 import javax.ws.rs._
 import javax.ws.rs.core.Context
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
-import java.lang.reflect.Field
 
 trait JaxrsApiReader extends ClassReader {
   private val LOGGER = LoggerFactory.getLogger(classOf[JaxrsApiReader])
