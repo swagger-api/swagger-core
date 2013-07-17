@@ -9,6 +9,8 @@ import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.jaxrs._
 import com.wordnik.swagger.jaxrs.config._
 
+import org.slf4j.LoggerFactory
+
 import java.lang.annotation.Annotation
 import java.lang.reflect.Method
 
@@ -25,28 +27,44 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
 
 object ApiListingCache {
+  private val LOGGER = LoggerFactory.getLogger(ApiListingCache.getClass)
+
   var _cache: Option[Map[String, ApiListing]] = None
 
   def listing(docRoot: String, app: Application, sc: ServletConfig): Option[Map[String, ApiListing]] = {
     _cache.orElse{
+      LOGGER.debug("loading cache")
       ClassReaders.reader.map{reader => 
         ScannerFactory.scanner.map(scanner => {
           val classes = scanner match {
-            case scanner: JaxrsScanner => scanner.asInstanceOf[JaxrsScanner].classesFromContext(app, sc)
+            case scanner: JaxrsScanner => scanner.asInstanceOf[JaxrsScanner].classesFromContext(app, null)
             case _ => List()
           }
           // For each top level resource, parse it and look for swagger annotations.
           val listings = (for(cls <- classes) yield reader.read(docRoot, cls, ConfigFactory.config)).flatten.toList
-          _cache = Some((listings.map(m => (m.resourcePath, m))).toMap)
+          _cache = Some((listings.map(m => {
+            // always start with "/"
+            val resourcePath = m.resourcePath.startsWith ("/") match {
+              case true => m.resourcePath
+              case false => "/" + m.resourcePath
+            }
+            (resourcePath, m)
+          })).toMap)
         })
       }
       _cache
     }
+    if(_cache != None)
+      LOGGER.debug("cache has " + _cache.get.keys + " keys")
+    else
+      LOGGER.debug("cache is empty")
     _cache
   }
 }
 
 class ApiListingResource {
+  private val LOGGER = LoggerFactory.getLogger(classOf[ApiListingResource])
+
   @GET
   def resourceListing (
     @Context app: Application,
@@ -87,6 +105,7 @@ class ApiListingResource {
     @Context headers: HttpHeaders,
     @Context uriInfo: UriInfo
   ): Response = {
+    LOGGER.debug("requested apiDeclaration for " + route)
     val docRoot = this.getClass.getAnnotation(classOf[Path]).value
     val f = new SpecFilter
     val pathPart = (route match {
@@ -94,9 +113,16 @@ class ApiListingResource {
       case e: String => e
     })
     val listings = ApiListingCache.listing(docRoot, app, sc).map(specs => {
-      (for(spec <- specs.values) yield 
+      (for(spec <- specs.values) yield {
+        LOGGER.debug("inspecting path " + spec.resourcePath)
         f.filter(spec, FilterFactory.filter, paramsToMap(uriInfo.getQueryParameters), cookiesToMap(headers), headersToMap(headers))
-      ).filter(m => m.resourcePath == pathPart)
+      }).filter(m => {
+        val resourcePath = m.resourcePath match {
+          case e: String if(e.startsWith("/")) => e
+          case e: String => "/" + e
+        }
+        resourcePath == pathPart
+      })
     }).flatten.toList
 
     listings.size match {

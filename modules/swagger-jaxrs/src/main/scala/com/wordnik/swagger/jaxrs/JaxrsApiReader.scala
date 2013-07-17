@@ -263,17 +263,16 @@ trait JaxrsApiReader extends ClassReader {
         operationList.sortWith(_.position < _.position).foreach(e => orderedOperations += e)
 
         ApiDescription(
-          endpoint,
+          addLeadingSlash(endpoint),
           None,
           orderedOperations.toList)
       }).toList
-
       val models = ModelUtil.modelsFromApis(apis)
       Some(ApiListing (
         apiVersion = config.apiVersion,
         swaggerVersion = config.swaggerVersion,
         basePath = config.basePath,
-        resourcePath = (api.value),
+        resourcePath = addLeadingSlash(api.value),
         apis = ModelUtil.stripPackages(apis),
         models = models,
         description = description,
@@ -373,6 +372,13 @@ trait JaxrsApiReader extends ClassReader {
       else if(method.getAnnotation(classOf[HEAD]) != null) "HEAD"
       else if(method.getAnnotation(classOf[OPTIONS]) != null) "OPTIONS"
       else null
+    }
+  }
+
+  def addLeadingSlash(e: String): String = {
+    e.startsWith("/") match {
+      case true => e
+      case false => "/" + e
     }
   }
 }
