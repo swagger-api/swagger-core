@@ -25,7 +25,7 @@ object SwaggerContext {
         }
       }
     }
-    if(cls == null)
+    if (cls == null)
       throw new ClassNotFoundException("class " + name + " not found")
     cls
   }
