@@ -46,6 +46,10 @@ object ApiListingResource {
       }
     }
   }
+  
+  def invalidateCache() = {
+    _cache = None
+  }
 }
 
 class ApiListing {
@@ -138,5 +142,9 @@ class ApiListing {
       }
       case _ => None
     }
+  }
+  
+  def invalidateCache() = {
+    ApiListingResource.invalidateCache()
   }
 }
