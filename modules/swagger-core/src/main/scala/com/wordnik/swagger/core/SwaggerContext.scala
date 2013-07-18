@@ -22,10 +22,11 @@ object SwaggerContext {
       } catch {
         case e: ClassNotFoundException => {
           LOGGER.debug("Class %s not found in classLoader".format(name))
-          throw new ClassNotFoundException("class " + name + " not found")
         }
       }
     }
+    if (cls == null)
+      throw new ClassNotFoundException("class " + name + " not found")
     cls
   }
 }
