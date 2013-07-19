@@ -66,14 +66,18 @@ class JavaPathParamTargetTest extends FlatSpec with ShouldMatchers {
     val rootOps = apis.filter(_.path == "/javaPathParamTest/{id}").head.operations
     rootOps.size should be (1)
     val op = rootOps.head
-    op.parameters.size should be (2)
+    op.parameters.size should be (3)
 
-    val id = op.parameters(0)
+    val name = op.parameters(0)
+    name.name should be ("name")    
+    name.dataType should be ("string")
+    
+    val id = op.parameters(1)
     id.name should be ("id")
     id.allowableValues should be (AllowableRangeValues("0.0", "10.0"))
     id.dataType should be ("string")
 
-    val qpt = op.parameters(1)
+    val qpt = op.parameters(2)
     qpt.name should be ("qp")
     qpt.allowableValues should be (AllowableListValues(List("a", "b", "c")))
     qpt.dataType should be ("string")
@@ -82,14 +86,18 @@ class JavaPathParamTargetTest extends FlatSpec with ShouldMatchers {
     val detailsOps = apis.filter(_.path == "/javaPathParamTest/{id}/details").head.operations
     val detailOp = detailsOps.head
 
-    detailOp.parameters.size should be (2)
+    detailOp.parameters.size should be (3)
 
-    val detailId = detailOp.parameters(0)
+    val detailName = op.parameters(0)
+    detailName.name should be ("name")    
+    detailName.dataType should be ("string")
+    
+    val detailId = detailOp.parameters(1)
     detailId.name should be ("id")
     detailId.allowableValues should be (AllowableRangeValues("0.0", "10.0"))
     detailId.dataType should be ("string")
 
-    val bodyParam = detailOp.parameters(1)
+    val bodyParam = detailOp.parameters(2)
     bodyParam.name should be ("body")
     bodyParam.allowableValues should be (AllowableListValues(List("1","2","3")))
 
