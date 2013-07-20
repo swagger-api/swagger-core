@@ -2,7 +2,7 @@ package com.wordnik.swagger.jaxrs
 
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.config._
-import com.wordnik.swagger.reader.ClassReader
+import com.wordnik.swagger.reader.{ ClassReader, ClassReaderUtils }
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.core.util._
 import com.wordnik.swagger.core.ApiValues._
@@ -19,7 +19,7 @@ import javax.ws.rs.core.Context
 import scala.collection.JavaConverters._
 import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
 
-trait JaxrsApiReader extends ClassReader {
+trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
   private val LOGGER = LoggerFactory.getLogger(classOf[JaxrsApiReader])
   val GenericTypeMapper = "([a-zA-Z\\.]*)<([a-zA-Z0-9\\.\\,\\s]*)>".r
 
@@ -65,12 +65,13 @@ trait JaxrsApiReader extends ClassReader {
     }
   }
 
-  def parseOperation(method: Method, 
-      apiOperation: ApiOperation, 
-      apiResponses: List[ResponseMessage],
-      isDeprecated: String,
-      parentParams: List[Parameter],
-      parentMethods: ListBuffer[Method]
+  def parseOperation(
+    method: Method, 
+    apiOperation: ApiOperation, 
+    apiResponses: List[ResponseMessage],
+    isDeprecated: String,
+    parentParams: List[Parameter],
+    parentMethods: ListBuffer[Method]
   ) = {
     val api = method.getAnnotation(classOf[Api])
     val responseClass = {
@@ -138,6 +139,31 @@ trait JaxrsApiReader extends ClassReader {
       else None
     }).flatten.toList
 
+    val implicitParams = {
+      val returnType = method.getReturnType
+      println("checking for implicits")
+      Option(method.getAnnotation(classOf[ApiImplicitParams])) match {
+        case Some(e) => {
+          println("found some implicits")
+          (for(param <- e.value) yield {
+            println("processing " + param)
+            val allowableValues = toAllowableValues(param.allowableValues)
+            Parameter(
+              param.name,
+              None,
+              Option(param.defaultValue).filter(_.trim.nonEmpty),
+              param.required,
+              param.allowMultiple,
+              param.dataType,
+              allowableValues,
+              param.paramType,
+              Option(param.access).filter(_.trim.nonEmpty))
+          }).toList
+        }
+        case _ => List()
+      }
+    }
+
     Operation(
       parseHttpMethod(method, apiOperation),
       apiOperation.value,
@@ -149,7 +175,7 @@ trait JaxrsApiReader extends ClassReader {
       consumes,
       protocols,
       authorizations,
-      params,
+      params ++ implicitParams,
       apiResponses,
       Option(isDeprecated))
   }
@@ -184,7 +210,8 @@ trait JaxrsApiReader extends ClassReader {
     readRecursive(docRoot, "", cls, config, new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]], new ListBuffer[Method])
   }
 
-  def readRecursive(docRoot: String, 
+  def readRecursive(
+    docRoot: String, 
     parentPath: String, cls: Class[_], 
     config: SwaggerConfig,
     operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]],
@@ -255,8 +282,6 @@ trait JaxrsApiReader extends ClassReader {
             }
           }
         }
-
-        // TODO: parse implicit param annotations
       }
       val apis = (for ((endpoint, resourcePath, operationList) <- operations) yield {
         val orderedOperations = new ListBuffer[Operation]
@@ -312,52 +337,6 @@ trait JaxrsApiReader extends ClassReader {
     param.required = annotation.required
     param.allowMultiple = annotation.allowMultiple
     param.paramAccess = Option(readString(annotation.access))
-  }
-
-  def toAllowableValues(csvString: String, paramType: String = null): AllowableValues = {
-    if (csvString.toLowerCase.startsWith("range[")) {
-      val ranges = csvString.substring(6, csvString.length() - 1).split(",")
-      return buildAllowableRangeValues(ranges, csvString)
-    } else if (csvString.toLowerCase.startsWith("rangeexclusive[")) {
-      val ranges = csvString.substring(15, csvString.length() - 1).split(",")
-      return buildAllowableRangeValues(ranges, csvString)
-    } else {
-      if (csvString == null || csvString.length == 0) {
-        null
-      } else {
-        val params = csvString.split(",").toList
-        paramType match {
-          case null => new AllowableListValues(params)
-          case "string" => new AllowableListValues(params)
-        }
-      }
-    }
-  }
-
-  val POSITIVE_INFINITY_STRING = "Infinity"
-  val NEGATIVE_INFINITY_STRING = "-Infinity"
-
-  def buildAllowableRangeValues(ranges: Array[String], inputStr: String): AllowableRangeValues = {
-    var min: java.lang.Float = 0
-    var max: java.lang.Float = 0
-    if (ranges.size < 2) {
-      throw new RuntimeException("Allowable values format " + inputStr + "is incorrect")
-    }
-    if (ranges(0).equalsIgnoreCase(POSITIVE_INFINITY_STRING)) {
-      min = Float.PositiveInfinity
-    } else if (ranges(0).equalsIgnoreCase(NEGATIVE_INFINITY_STRING)) {
-      min = Float.NegativeInfinity
-    } else {
-      min = ranges(0).toFloat
-    }
-    if (ranges(1).equalsIgnoreCase(POSITIVE_INFINITY_STRING)) {
-      max = Float.PositiveInfinity
-    } else if (ranges(1).equalsIgnoreCase(NEGATIVE_INFINITY_STRING)) {
-      max = Float.NegativeInfinity
-    } else {
-      max = ranges(1).toFloat
-    }
-    AllowableRangeValues(min.toString, max.toString)
   }
 
   def readString(value: String, defaultValue: String = null, ignoreValue: String = null): String = {

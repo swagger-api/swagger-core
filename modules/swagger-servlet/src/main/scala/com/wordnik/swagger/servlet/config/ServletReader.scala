@@ -3,7 +3,7 @@ package com.wordnik.swagger.servlet.config
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.converter.ModelConverters
 import com.wordnik.swagger.config._
-import com.wordnik.swagger.reader.ClassReader
+import com.wordnik.swagger.reader.{ ClassReader, ClassReaderUtils }
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.core.util._
 import com.wordnik.swagger.core.ApiValues._
@@ -20,7 +20,7 @@ import javax.ws.rs.core.Context
 import scala.collection.JavaConverters._
 import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
 
-class ServletReader extends ClassReader {
+class ServletReader extends ClassReader with ClassReaderUtils {
   private val LOGGER = LoggerFactory.getLogger(classOf[ServletReader])
   val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-]*)\\].*".r
 
@@ -48,6 +48,7 @@ class ServletReader extends ClassReader {
             val paramListAnnotation = method.getAnnotation(classOf[ApiImplicitParams])
             if(paramListAnnotation != null) {
               (for(param <- paramListAnnotation.value) yield {
+                val allowableValues = toAllowableValues(param.allowableValues)
                 Parameter(
                   param.name,
                   None,
@@ -55,7 +56,7 @@ class ServletReader extends ClassReader {
                   param.required,
                   param.allowMultiple,
                   param.dataType,
-                  AnyAllowableValues,
+                  allowableValues,
                   param.paramType,
                   Option(param.access).filter(_.trim.nonEmpty))
               }).toList
