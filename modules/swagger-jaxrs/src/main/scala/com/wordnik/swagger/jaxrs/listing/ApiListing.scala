@@ -60,6 +60,10 @@ object ApiListingCache {
       LOGGER.debug("cache is empty")
     _cache
   }
+
+  def invalidateCache() = {
+    _cache = None
+  }
 }
 
 class ApiListingResource {
@@ -129,6 +133,10 @@ class ApiListingResource {
       case 1 => Response.ok(listings.head).build
       case _ => Response.status(404).build
     }
+  }
+
+  def invalidateCache() = {
+    ApiListingCache.invalidateCache()
   }
 
   def paramsToMap(params: MultivaluedMap[String, String]): Map[String, List[String]] = {
