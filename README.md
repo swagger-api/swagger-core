@@ -22,9 +22,18 @@ visit http://developer.wordnik.com.
 
 ## Version history
 
-### v1.3.0-RC1 Jul-2 2013
+Swagger-core v1.3.0 is in Release candidate status!  If you can't wait for the release and want to get
+going on the latest, you can read about the [spec transition](https://github.com/wordnik/swagger-core/wiki/1.2-transition).  Migration
+guides for the supported server integrations are being worked on now.
 
-Source lives in the [1.3-RC1 branch!](https://github.com/wordnik/swagger-core/tree/1.3-RC1)
+### v1.3.0-RC2 Jul-11 2013
+
+Source lives in the [1.3-RC2 branch!](https://github.com/wordnik/swagger-core/tree/1.3-RC2)
+
+<li>- Added apiInfo so top-level API information can be annotated in both swagger-ui and elsewhere
+
+
+### v1.3.0-RC1 Jul-2 2013
 
 <li>- Release candidate for swagger-spec 1.2
 
