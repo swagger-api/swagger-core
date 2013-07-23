@@ -303,7 +303,8 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
         description = description,
         produces = produces,
         consumes = consumes,
-        protocols = protocols)
+        protocols = protocols,
+        position = api.position)
       )
     }
     else None
