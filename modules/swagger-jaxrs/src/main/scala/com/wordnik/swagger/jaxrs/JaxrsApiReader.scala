@@ -150,7 +150,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
             val allowableValues = toAllowableValues(param.allowableValues)
             Parameter(
               param.name,
-              None,
+              Option(readString(param.value)),
               Option(param.defaultValue).filter(_.trim.nonEmpty),
               param.required,
               param.allowMultiple,
