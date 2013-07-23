@@ -1,5 +1,3 @@
-mvn clean package tomcat6:run
-
 # Swagger CXF Sample App
 
 ## Overview
