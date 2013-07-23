@@ -79,7 +79,7 @@ class ApiListingResource {
   ): Response = {
     val docRoot = this.getClass.getAnnotation(classOf[Path]).value
     val f = new SpecFilter
-    val listings = ApiListingCache.listing(docRoot, app, sc).map(specs => {
+    val listings = ApiListingCache.listing(docRoot, app, wc).map(specs => {
       (for(spec <- specs.values) 
         yield f.filter(spec, FilterFactory.filter, paramsToMap(uriInfo.getQueryParameters), cookiesToMap(headers), headersToMap(headers))
       ).filter(m => m.apis.size > 0)
