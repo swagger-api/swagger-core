@@ -154,3 +154,13 @@ class ListModelExtractionTest extends FlatSpec with ShouldMatchers {
     (models.keys.toSet & Set("Window", "Handle")).size should be (2)
   }
 }
+
+@RunWith(classOf[JUnitRunner])
+class ApiListingOrderTest extends FlatSpec with ShouldMatchers {
+  it should "get Apis in the right order" in {
+    val reader = new DefaultJaxrsApiReader
+    val config = new SwaggerConfig()
+    val apiResource = reader.read("/api-docs", classOf[ResourceWithPosition], config).getOrElse(fail("should not be None"))
+    apiResource.position should be (1)
+  }
+}
