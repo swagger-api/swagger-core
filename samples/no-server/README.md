@@ -15,7 +15,7 @@ There's nothing to build--all files are here.
 ### To run with maven
 
 ```
-mvn jetty:urn
+mvn jetty:run
 ```
 
 This will start jetty on port 8000, and open the swagger-ui to view the spec files.
