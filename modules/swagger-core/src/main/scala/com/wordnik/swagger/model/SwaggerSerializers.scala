@@ -7,9 +7,133 @@ import org.json4s.jackson.Serialization.{read, write}
 
 import scala.collection.mutable.{ListBuffer, LinkedHashMap}
 
-object SwaggerSerializers {
+object SwaggerJsonSchemaSerializers extends Serializers {
   import ValidationMessage._
 
+  implicit val formats = DefaultFormats + 
+    new JsonSchemaModelSerializer + 
+    new JsonSchemaModelPropertySerializer +
+    new JsonSchemaModelRefSerializer + 
+    new AllowableValuesSerializer + 
+    new ParameterSerializer +
+    new OperationSerializer +
+    new ResponseMessageSerializer +
+    new ApiDescriptionSerializer +
+    new ApiListingReferenceSerializer +
+    new ResourceListingSerializer +
+    new ApiInfoSerializer +
+    new ApiListingSerializer +
+    new AuthorizationTypeSeralizer
+
+  class JsonSchemaModelSerializer extends CustomSerializer[Model](formats => ({
+    case json =>
+      implicit val fmts: Formats = formats
+      val output = new LinkedHashMap[String, ModelProperty]
+      val properties = (json \ "properties") match {
+        case JObject(entries) => {
+          entries.map({
+            case (key, value) => output += key -> value.extract[ModelProperty]
+          })
+        }
+        case _ =>
+      }
+
+      Model(
+        (json \ "id").extractOrElse({
+          !!(json, MODEL, "id", "missing required field", ERROR)
+          ""
+        }),
+        (json \ "name").extractOrElse((json \ "id").extract[String]),
+        (json \ "qualifiedType").extractOrElse(""),
+        output,
+        (json \ "description").extractOpt[String],
+        (json \ "extends").extractOpt[String],
+        (json \ "discriminator").extractOpt[String]
+      )
+    }, {
+    case x: Model =>
+      implicit val fmts = formats
+      val required: List[String] = (for((name, prop) <- x.properties) yield {
+        if(prop.required) Some(name)
+        else None
+      }).flatten.toList
+      ("id" -> x.id) ~
+      ("properties" -> {
+        x.properties match {
+          case e: LinkedHashMap[String, ModelProperty] => Extraction.decompose(e.toMap)
+          case _ => JNothing
+        }
+      }) ~
+      ("description" -> x.description) ~
+      ("extends" -> x.baseModel) ~
+      ("discriminator" -> x.discriminator) ~  
+      ("required" -> (required.size match {
+        case 0 => JNothing
+        case _ => Extraction.decompose(required)
+      }))
+    }
+  ))
+
+  class JsonSchemaModelPropertySerializer extends CustomSerializer[ModelProperty] (formats => ({
+    case json =>
+      implicit val fmts: Formats = formats
+      ModelProperty(
+        `type` = (json \ "type").extractOrElse(""),
+        qualifiedType = (json \ "type").extractOrElse(""),
+        position = (json \ "position").extractOrElse(0),
+        (json \ "required") match {
+          case e:JString => e.s.toBoolean
+          case e:JBool => e.value
+          case _ => false
+        },
+        description = (json \ "description").extractOpt[String],
+        allowableValues = (json \ "allowableValues").extract[AllowableValues],
+        items = {
+          (json \ "items").extractOpt[ModelRef] match {
+            case Some(e: ModelRef) if(e.`type` != null || e.ref != None) => Some(e)
+            case _ => None
+          }
+        }
+      )
+    }, {
+    case x: ModelProperty =>
+      implicit val fmts = formats
+      val output = ("type" -> x.`type`) ~
+      ("description" -> x.description) ~
+      ("items" -> Extraction.decompose(x.items))
+
+      x.allowableValues match {
+        case AllowableListValues(values, "LIST") => 
+          output ~ ("enum" -> Extraction.decompose(values))
+        case AllowableRangeValues(min, max)  => 
+          output ~ ("minimum" -> min) ~ ("maximum" -> max)
+        case _ => output
+      }
+    }
+  ))
+
+  class JsonSchemaModelRefSerializer extends CustomSerializer[ModelRef](formats => ({
+    case json =>
+      implicit val fmts: Formats = formats
+      ModelRef(
+        (json \ "type").extractOrElse(null: String),
+        (json \ "$ref").extractOpt[String]
+      )
+    }, {
+      case x: ModelRef =>
+      implicit val fmts = formats
+      ("type" -> {
+        x.`type` match {
+          case e:String => Some(e)
+          case _ => None
+        }
+      }) ~
+      ("$ref" -> x.ref)
+    }
+  ))
+}
+
+object SwaggerSerializers extends Serializers {
   implicit val formats = DefaultFormats + 
     new ModelSerializer + 
     new ModelPropertySerializer +
@@ -24,7 +148,10 @@ object SwaggerSerializers {
     new ApiInfoSerializer +
     new ApiListingSerializer +
     new AuthorizationTypeSeralizer
+}
 
+trait Serializers {
+  import ValidationMessage._
   val validationMessages = ListBuffer.empty[ValidationMessage]
 
   def !!(element: AnyRef, elementType: String, elementId: String, message: String, level: String = ERROR) {
