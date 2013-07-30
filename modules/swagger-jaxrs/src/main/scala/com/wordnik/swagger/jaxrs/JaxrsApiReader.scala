@@ -141,12 +141,11 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
 
     val implicitParams = {
       val returnType = method.getReturnType
-      println("checking for implicits")
+      LOGGER.debug("checking for implicits")
       Option(method.getAnnotation(classOf[ApiImplicitParams])) match {
         case Some(e) => {
-          println("found some implicits")
           (for(param <- e.value) yield {
-            println("processing " + param)
+            LOGGER.debug("processing " + param)
             val allowableValues = toAllowableValues(param.allowableValues)
             Parameter(
               param.name,
