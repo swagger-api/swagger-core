@@ -1,5 +1,6 @@
 package com.wordnik.swagger.sample.service
 
+import com.wordnik.swagger.auth.service.TokenScope
 import com.wordnik.swagger.sample.model._
 
 object UserService {

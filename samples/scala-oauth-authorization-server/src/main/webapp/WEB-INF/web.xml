@@ -41,17 +41,13 @@
       <param-name>swagger.api.basepath</param-name>
       <param-value>http://localhost:8002/api</param-value>
     </init-param>
-    <init-param>
-      <param-name>swagger.filter</param-name>
-      <param-value>com.wordnik.swagger.sample.util.SecurityFilter</param-value>
-    </init-param>
     <load-on-startup>2</load-on-startup>
   </servlet>
 
   <!-- login dialog -->
   <servlet>
     <servlet-name>LoginDialogServlet</servlet-name>
-    <servlet-class>com.wordnik.swagger.sample.servlet.LoginDialogServlet</servlet-class>
+    <servlet-class>com.wordnik.swagger.auth.servlet.LoginDialogServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>LoginDialogServlet</servlet-name>
@@ -61,7 +57,7 @@
   <!-- login post consumer -->
   <servlet>
     <servlet-name>LoginServlet</servlet-name>
-    <servlet-class>com.wordnik.swagger.sample.servlet.LoginServlet</servlet-class>
+    <servlet-class>com.wordnik.swagger.auth.servlet.LoginServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>LoginServlet</servlet-name>
@@ -71,7 +67,7 @@
   <!-- request token -->
   <servlet>
     <servlet-name>TokenRequestServlet</servlet-name>
-    <servlet-class>com.wordnik.swagger.sample.servlet.TokenRequestServlet</servlet-class>
+    <servlet-class>com.wordnik.swagger.auth.servlet.TokenRequestServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>TokenRequestServlet</servlet-name>
@@ -81,7 +77,7 @@
   <!-- token authorization servlet -->
   <servlet>
     <servlet-name>TokenServlet</servlet-name>
-    <servlet-class>com.wordnik.swagger.sample.servlet.TokenServlet</servlet-class>
+    <servlet-class>com.wordnik.swagger.auth.servlet.TokenServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>TokenServlet</servlet-name>
@@ -91,41 +87,19 @@
   <!-- token status servlet -->
   <servlet>
     <servlet-name>TokenStatus</servlet-name>
-    <servlet-class>com.wordnik.swagger.sample.servlet.TokenStatus</servlet-class>
+    <servlet-class>com.wordnik.swagger.auth.servlet.TokenStatus</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>TokenStatus</servlet-name>
     <url-pattern>/oauth/tokenStatus</url-pattern>
   </servlet-mapping>
 
-  <!-- swagger servlet reader -->
+  <!-- bootstrap servlet -->
   <servlet>
-    <servlet-name>DefaultServletReaderConfig</servlet-name>
-    <servlet-class>com.wordnik.swagger.servlet.config.DefaultServletReaderConfig</servlet-class>
+    <servlet-name>Bootstrap</servlet-name>
+    <servlet-class>com.wordnik.swagger.oauth.Bootstrap</servlet-class>
     <load-on-startup>2</load-on-startup>
-    <init-param>
-      <param-name>swagger.resource.package</param-name>
-      <param-value>com.wordnik.swagger.sample.servlet</param-value>
-    </init-param>
-    <init-param>
-      <param-name>swagger.api.basepath</param-name>
-      <param-value>http://localhost:8002</param-value>
-    </init-param>
-    <init-param>
-      <param-name>api.version</param-name>
-      <param-value>1.0.0</param-value>
-    </init-param>
   </servlet>
-
-  <!-- swagger api declaration -->
-  <servlet>
-    <servlet-name>ApiDeclarationServlet</servlet-name>
-    <servlet-class>com.wordnik.swagger.servlet.listing.ApiDeclarationServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ApiDeclarationServlet</servlet-name>
-    <url-pattern>/api-docs/*</url-pattern>
-  </servlet-mapping>
 
   <filter>
     <filter-name>ApiOriginFilter</filter-name>

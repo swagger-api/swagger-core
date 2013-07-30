@@ -1,7 +1,9 @@
 package com.wordnik.swagger.sample.resource
 
 
-import com.wordnik.swagger.sample.service._
+import com.wordnik.swagger.auth.service._
+
+import com.wordnik.swagger.sample.service.UserService
 import com.wordnik.swagger.sample.model._
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.core._

@@ -77,10 +77,15 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
-    </dependency>
+    </dependency><!-- 
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-servlet_2.9.1</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency> -->
+    <dependency>
+      <groupId>com.wordnik</groupId>
+      <artifactId>swagger-jaxrs_2.9.1</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
