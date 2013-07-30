@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.9.1</artifactId>
-    <version>1.3.0-RC2</version>
+    <version>1.3.0-RC3</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-scala-servlet_2.9.1</artifactId>
   <packaging>war</packaging>
   <name>swagger-scala-servlet-server</name>
-  <version>1.3.0-RC2</version>
+  <version>1.3.0-RC3</version>
   <build>
     <plugins>
       <plugin>
