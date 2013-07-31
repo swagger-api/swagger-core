@@ -27,9 +27,9 @@ import scala.reflect.BeanProperty
 @XmlRootElement(name = "Pet")
 @XmlAccessorType(XmlAccessType.NONE)
 class Pet() {
-  @XmlElement(name = "id") @BeanProperty var id: Long = 0
+  @XmlElement(name = "id", required = true) @BeanProperty var id: Long = 0
   @XmlElement(name = "category") @BeanProperty var category: Category = null
-  @XmlElement(name = "name") @BeanProperty var name: String = null
+  @XmlElement(name = "name", required = true) @BeanProperty var name: String = null
   @XmlElement(name = "photoUrls") @BeanProperty var photoUrls: List[String] = new ArrayList[String]()
   @XmlElement(name = "tags") @BeanProperty var tags: List[Tag] = new ArrayList[Tag]()
   @XmlElement(name = "status")
