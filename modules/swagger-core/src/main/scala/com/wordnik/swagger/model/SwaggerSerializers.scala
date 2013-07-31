@@ -1,5 +1,7 @@
 package com.wordnik.swagger.model
 
+import com.wordnik.swagger.core.SwaggerSpec
+
 import org.json4s._
 import org.json4s.JsonDSL._
 import org.json4s.jackson.JsonMethods._
@@ -7,7 +9,8 @@ import org.json4s.jackson.Serialization.{read, write}
 
 import scala.collection.mutable.{ListBuffer, LinkedHashMap}
 
-object SwaggerJsonSchemaSerializers extends Serializers {
+// object SwaggerJsonSchemaSerializers extends Serializers {
+object SwaggerSerializers extends Serializers {
   import ValidationMessage._
 
   implicit val formats = DefaultFormats + 
@@ -74,12 +77,79 @@ object SwaggerJsonSchemaSerializers extends Serializers {
     }
   ))
 
+  def toJsonSchemaType(prop: ModelProperty) = {
+    // see if primitive
+    if(SwaggerSpec.baseTypes.contains(prop.`type`)) {
+      prop.`type` match {
+        case "int"       => ("type" -> "integer") ~ ("format" -> "int32")
+        case "long"      => ("type" -> "integer") ~ ("format" -> "int64")
+        case "float"     => ("type" -> "number")  ~ ("format" -> "float")
+        case "double"    => ("type" -> "number")  ~ ("format" -> "double")
+        case "string"    => ("type" -> "string")  ~ ("format" -> JNothing)
+        case "byte"      => ("type" -> "string")  ~ ("format" -> "byte")
+        case "boolean"   => ("type" -> "boolean") ~ ("format" -> JNothing)
+        case "date"      => ("type" -> "string")  ~ ("format" -> "date")
+        case "date-time" => ("type" -> "string")  ~ ("format" -> "date-time")
+        case _           => ("type" -> None)      ~ ("format" -> JNothing)
+      }
+    }
+    else if (SwaggerSpec.containerTypes.contains(prop.`type`)) {
+      prop.`type` match {
+        case "List"      => ("type" -> "array")   ~ ("format" -> JNothing)
+        case "Array"     => ("type" -> "array")   ~ ("format" -> JNothing)
+        case "Set"       => ("type" -> "array")   ~ ("uniqueItems" -> true)
+      }
+    }
+    else ("$ref" -> prop.`type`)                  ~ ("format" -> JNothing)
+  }
+
+  def fromJsonSchemaType(typeInfo: Tuple2[String, String]): String = {
+    typeInfo match {
+      case ("integer", "int32") => "int"
+      case ("integer", "int64") => "long"
+      case ("number", "float") => "float"
+      case ("number", "double") => "double"
+      case ("string", "byte") => "byte"
+      case ("boolean", _) => "boolean"
+      case ("string", "date") => "date"
+      case ("string", "date-time") => "date-time"
+      case ("string", _) => "string"
+      case _ => typeInfo._1
+    }
+  }
+
   class JsonSchemaModelPropertySerializer extends CustomSerializer[ModelProperty] (formats => ({
     case json =>
       implicit val fmts: Formats = formats
+      val jType = (json \ "type") match {
+        case e: JString => e.s
+        case _ => ""
+      }
+      val jFormat = (json \ "format") match {
+        case e: JString => e.s
+        case _ => ""
+      }
+      val `type` = fromJsonSchemaType((jType, jFormat))
+      val output = new ListBuffer[String]
+      (json \ "enum") match {
+        case JArray(entries) => entries.map {
+          case e: JInt => output += e.num.toString
+          case e: JBool => output += e.value.toString
+          case e: JString => output += e.s
+          case e: JDouble => output += e.num.toString
+          case _ =>
+        }
+        case _ =>
+      }
+
+      val allowableValues = {
+        if (output.size > 0) AllowableListValues(output.toList)
+        else (json \ "allowableValues").extract[AllowableValues]
+      }
+
       ModelProperty(
-        `type` = (json \ "type").extractOrElse(""),
-        qualifiedType = (json \ "type").extractOrElse(""),
+        `type` = `type`,
+        qualifiedType = `type`,
         position = (json \ "position").extractOrElse(0),
         (json \ "required") match {
           case e:JString => e.s.toBoolean
@@ -87,7 +157,7 @@ object SwaggerJsonSchemaSerializers extends Serializers {
           case _ => false
         },
         description = (json \ "description").extractOpt[String],
-        allowableValues = (json \ "allowableValues").extract[AllowableValues],
+        allowableValues = allowableValues,
         items = {
           (json \ "items").extractOpt[ModelRef] match {
             case Some(e: ModelRef) if(e.`type` != null || e.ref != None) => Some(e)
@@ -98,7 +168,8 @@ object SwaggerJsonSchemaSerializers extends Serializers {
     }, {
     case x: ModelProperty =>
       implicit val fmts = formats
-      val output = ("type" -> x.`type`) ~
+      val foo = toJsonSchemaType(x)
+      val output = toJsonSchemaType(x) ~
       ("description" -> x.description) ~
       ("items" -> Extraction.decompose(x.items))
 
@@ -133,7 +204,8 @@ object SwaggerJsonSchemaSerializers extends Serializers {
   ))
 }
 
-object SwaggerSerializers extends Serializers {
+object SwaggerJsonSchemaSerializers extends Serializers {
+// object SwaggerSerializers extends Serializers {
   implicit val formats = DefaultFormats + 
     new ModelSerializer + 
     new ModelPropertySerializer +
@@ -473,15 +545,15 @@ trait Serializers {
         }),
         (json \ "description").extractOpt[String],
         (json \ "defaultValue") match {
-          case e:JInt => Some(e.num.toString)
-          case e:JBool => Some(e.value.toString)
-          case e:JString => Some(e.s)
-          case e:JDouble => Some(e.num.toString)
+          case e: JInt => Some(e.num.toString)
+          case e: JBool => Some(e.value.toString)
+          case e: JString => Some(e.s)
+          case e: JDouble => Some(e.num.toString)
           case _ => None
         },
         (json \ "required") match {
-          case e:JString => e.s.toBoolean
-          case e:JBool => e.value
+          case e: JString => e.s.toBoolean
+          case e: JBool => e.value
           case _ => false
         },
         (json \ "allowMultiple").extractOrElse(false),
@@ -654,10 +726,10 @@ trait Serializers {
           val output = new ListBuffer[String]
           val properties = (json \ "values") match {
             case JArray(entries) => entries.map {
-              case e:JInt => output += e.num.toString
-              case e:JBool => output += e.value.toString
-              case e:JString => output += e.s
-              case e:JDouble => output += e.num.toString
+              case e: JInt => output += e.num.toString
+              case e: JBool => output += e.value.toString
+              case e: JString => output += e.s
+              case e: JDouble => output += e.num.toString
               case _ =>
             }
             case _ =>
