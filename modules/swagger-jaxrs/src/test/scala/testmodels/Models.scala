@@ -23,7 +23,7 @@ class Sample {
   @XmlElement(name="theValue") @BeanProperty var value: String = _
 }
 
-@ApiModel(description = "error response model")
+@ApiModel(value = "error response model")
 class NotFoundModel {
   var message: String = _
   var code: Int = 0
