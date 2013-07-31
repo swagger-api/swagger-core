@@ -60,20 +60,30 @@ object SwaggerSerializers extends Serializers {
         if(prop.required) Some(name)
         else None
       }).flatten.toList
-      ("id" -> x.id) ~
+      ("id" -> x.id) ~  
+      ("description" -> x.description) ~
+      ("required" -> (required.size match {
+        case 0 => JNothing
+        case _ => Extraction.decompose(required)
+      })) ~
+      ("extends" -> {
+        x.baseModel match {
+          case Some(e) if(e != "void") => Extraction.decompose(e)
+          case _ =>JNothing
+        }
+      }) ~
+      ("discriminator" -> {
+        x.discriminator match {
+          case Some(e) if (e.trim != "" && e.trim != "void") => Extraction.decompose(e)
+          case _ => JNothing
+        }
+      }) ~
       ("properties" -> {
         x.properties match {
           case e: LinkedHashMap[String, ModelProperty] => Extraction.decompose(e.toMap)
           case _ => JNothing
         }
-      }) ~
-      ("description" -> x.description) ~
-      ("extends" -> x.baseModel) ~
-      ("discriminator" -> x.discriminator) ~  
-      ("required" -> (required.size match {
-        case 0 => JNothing
-        case _ => Extraction.decompose(required)
-      }))
+      })
     }
   ))
 
@@ -626,8 +636,18 @@ trait Serializers {
         }
       }) ~
       ("description" -> x.description) ~
-      ("extends" -> x.baseModel) ~
-      ("discriminator" -> x.discriminator)
+      ("extends" -> {
+        x.baseModel match {
+          case Some(e) if(e != "void") => Extraction.decompose(e)
+          case _ => JNothing
+        }
+      }) ~
+      ("discriminator" -> {
+        x.discriminator match {
+          case Some(e) if (e.trim != "" && e.trim != "void") => Extraction.decompose(e)
+          case _ => JNothing
+        }
+      })
     }
   ))
 

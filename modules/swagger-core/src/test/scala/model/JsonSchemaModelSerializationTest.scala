@@ -88,7 +88,7 @@ class JsonSchemaModelSerializationTest extends FlatSpec with ShouldMatchers {
 
   it should "serialize a model" in {
     val ref = Model("Foo", "Bar", "com.fun.Bar", (LinkedHashMap("s" -> ModelProperty("string", "java.lang.string", 0, true, Some("a string")))))
-    write(ref) should be ("""{"id":"Foo","properties":{"s":{"type":"string","description":"a string"}},"required":["s"]}""")
+    write(ref) should be ("""{"id":"Foo","required":["s"],"properties":{"s":{"type":"string","description":"a string"}}}""")
   }
 }
 

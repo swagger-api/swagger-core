@@ -5,16 +5,16 @@ import com.wordnik.swagger.annotations.ApiModel
 
 trait BaseConverter {
   def toDescriptionOpt(cls: Class[_]): Option[String] = {
-    var description: Option[String] = None
+    var value: Option[String] = None
     for(anno <- cls.getAnnotations) {
       anno match {
         case e: ApiModel => {
-          if(e.description != null) description = Some(e.description)
+          if(e.value != null) value = Some(e.value)
         }
         case _ =>        
       }
     }
-    description
+    value
   }
 
   def toName(cls: Class[_]): String = {

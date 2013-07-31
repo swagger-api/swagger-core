@@ -44,7 +44,7 @@ class ModelInheritenceTest extends FlatSpec with ShouldMatchers {
       properties = properties
     )
 
-    write(model) should be ("""{"id":"CatModel","properties":{"name":{"type":"string"},"id":{"type":"integer","format":"int64"}},"description":"A cat model","extends":"AnimalBaseModel"}""")
+    write(model) should be ("""{"id":"CatModel","description":"A cat model","extends":"AnimalBaseModel","properties":{"name":{"type":"string"},"id":{"type":"integer","format":"int64"}}}""")
   }
 
   it should "deserialize a model with a super class" in {
@@ -87,7 +87,7 @@ class ModelInheritenceTest extends FlatSpec with ShouldMatchers {
       properties = properties
     )
 
-    write(model) should be ("""{"id":"AnimalBaseModel","properties":{"id":{"type":"integer","format":"int64"}},"description":"A cat model","discriminator":"type"}""")
+    write(model) should be ("""{"id":"AnimalBaseModel","description":"A cat model","discriminator":"type","properties":{"id":{"type":"integer","format":"int64"}}}""")
   }
 }
 
