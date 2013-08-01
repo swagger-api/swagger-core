@@ -20,11 +20,13 @@ import com.wordnik.swagger.annotations.*;
 import com.wordnik.swagger.sample.data.StoreData;
 import com.wordnik.swagger.sample.model.Order;
 import com.wordnik.swagger.sample.exception.NotFoundException;
-import com.wordnik.swagger.jaxrs.JavaHelp;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
+@Path("/store")
+@Api(value="/store" , description = "Operations about store")
+@Produces({"application/json"})
 public class PetStoreResource {
 	static StoreData storeData = new StoreData();
 	static JavaRestResourceUtil ru = new JavaRestResourceUtil();
@@ -32,7 +34,7 @@ public class PetStoreResource {
 	@GET
 	@Path("/order/{orderId}")
 	@ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5 or > 10. "
-			+ "Other values will generated exceptions", responseClass = "com.wordnik.swagger.sample.model.Order")
+			+ "Other values will generated exceptions", response = Order.class)
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
 			@ApiResponse(code = 404, message = "Order not found") })
 	public Response getOrderById(
@@ -48,7 +50,7 @@ public class PetStoreResource {
 
 	@POST
 	@Path("/order")
-	@ApiOperation(value = "Place an order for a pet", responseClass = "com.wordnik.swagger.sample.model.Order")
+	@ApiOperation(value = "Place an order for a pet", response = Order.class)
 	@ApiResponses({ @ApiResponse(code = 400, message = "Invalid Order") })
 	public Response placeOrder(
 			@ApiParam(value = "order placed for purchasing the pet", required = true) Order order) {

@@ -21,12 +21,14 @@ import com.wordnik.swagger.sample.data.UserData;
 import com.wordnik.swagger.sample.model.User;
 import com.wordnik.swagger.sample.exception.ApiException;
 import com.wordnik.swagger.sample.exception.NotFoundException;
-import com.wordnik.swagger.jaxrs.JavaHelp;
 
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
+@Path("/user")
+@Api(value="/user", description = "Operations about user")
+@Produces({"application/json"})
 public class UserResource {
 	static UserData userData = new UserData();
 
@@ -38,25 +40,25 @@ public class UserResource {
 		return Response.ok().entity("").build();
 	}
 
-    @POST
-    @Path("/createWithArray")
-    @ApiOperation(value = "Creates list of users with given input array")
-    public Response createUsersWithArrayInput(@ApiParam(value = "List of user object", required = true) User[] users) {
-        for (User user : users) {
-            userData.addUser(user);
-        }
-        return Response.ok().entity("").build();
-    }
+  @POST
+  @Path("/createWithArray")
+  @ApiOperation(value = "Creates list of users with given input array")
+  public Response createUsersWithArrayInput(@ApiParam(value = "List of user object", required = true) User[] users) {
+      for (User user : users) {
+          userData.addUser(user);
+      }
+      return Response.ok().entity("").build();
+  }
 
-    @POST
-    @Path("/createWithList")
-    @ApiOperation(value = "Creates list of users with given input array")
-    public Response createUsersWithListInput(@ApiParam(value = "List of user object", required = true) java.util.List<User> users) {
-        for (User user : users) {
-            userData.addUser(user);
-        }
-        return Response.ok().entity("").build();
-    }
+  @POST
+  @Path("/createWithList")
+  @ApiOperation(value = "Creates list of users with given input array")
+  public Response createUsersWithListInput(@ApiParam(value = "List of user object", required = true) java.util.List<User> users) {
+      for (User user : users) {
+          userData.addUser(user);
+      }
+      return Response.ok().entity("").build();
+  }
 
 	@PUT
 	@Path("/{username}")
@@ -85,7 +87,7 @@ public class UserResource {
 
 	@GET
 	@Path("/{username}")
-	@ApiOperation(value = "Get user by user name", responseClass = "com.wordnik.swagger.sample.model.User")
+	@ApiOperation(value = "Get user by user name", response = User.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 400, message = "Invalid username supplied"),
 			@ApiResponse(code = 404, message = "User not found") })
@@ -102,7 +104,7 @@ public class UserResource {
 
 	@GET
 	@Path("/login")
-	@ApiOperation(value = "Logs user into the system", responseClass = "string")
+	@ApiOperation(value = "Logs user into the system", response = String.class)
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid username/password supplied") })
 	public Response loginUser(
 			@ApiParam(value = "The user name for login", required = true) @QueryParam("username") String username,
