@@ -48,6 +48,7 @@ object ApiListingCache {
               case true => m.resourcePath
               case false => "/" + m.resourcePath
             }
+            LOGGER.debug("adding resource path " + resourcePath)
             (resourcePath, m)
           })).toMap)
         })
@@ -112,10 +113,8 @@ class ApiListingResource {
     LOGGER.debug("requested apiDeclaration for " + route)
     val docRoot = this.getClass.getAnnotation(classOf[Path]).value
     val f = new SpecFilter
-    val pathPart = (route match {
-      case e: String if(!e.startsWith("/")) => "/" + e
-      case e: String => e
-    })
+    val pathPart = cleanRoute(route)
+    LOGGER.debug("requested route " + pathPart)
     val listings = ApiListingCache.listing(docRoot, app, sc).map(specs => {
       (for(spec <- specs.values) yield {
         LOGGER.debug("inspecting path " + spec.resourcePath)
@@ -133,6 +132,16 @@ class ApiListingResource {
       case 1 => Response.ok(listings.head).build
       case _ => Response.status(404).build
     }
+  }
+
+  // ensure leading slash, remove trailing
+  def cleanRoute(route: String) = {
+    val cleanStart = {
+      if(route.startsWith("/")) route
+      else "/" + route
+    }
+    if(cleanStart.endsWith("/")) cleanStart.substring(0, cleanStart.length - 1)
+    else cleanStart
   }
 
   def invalidateCache() = {
