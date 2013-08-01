@@ -240,6 +240,9 @@ class SpecReaderTest extends FlatSpec with ShouldMatchers {
       for(field <- docObj.getFields) yield field.name
     ).toSet
 
+    val field = docObj.getFields.asScala.filter(_.name == "enumType").head
+    field.required should be (true)
+
     fieldNames should be (Set("intType", "longType", "stringType", "dateType",
       "mapType", "optionType", "seqType", "setType", "seqOfTuples", "enumType", "collectionOfCollections"))
   }
@@ -573,7 +576,7 @@ case class ScalaCaseClassWithScalaSupportedType(
   seqType: Seq[String],
   setType: Set[String],
   seqOfTuples: Seq[(String, Double)],
-  @(ApiProperty @field)(dataType = "String") enumType: ScalaEnums.Value,
+  @(ApiProperty @field)(dataType = "String", required=true) enumType: ScalaEnums.Value,
   collectionOfCollections: Map[String, Seq[ObjectWithRootElementName]]) {
 }
 
