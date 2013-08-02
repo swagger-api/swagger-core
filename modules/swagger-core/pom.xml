@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.9.1</artifactId>
-    <version>1.2.5</version>
+    <version>1.3.0-RC2</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-core_2.9.1</artifactId>
   <packaging>jar</packaging>
   <name>swagger-core</name>
-  <version>1.2.5</version>
+  <version>1.3.0-RC2</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <defaultGoal>install</defaultGoal>
@@ -42,7 +42,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-  	  <groupId>org.slf4j</groupId>
+      <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
@@ -58,6 +58,12 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-jsonSchema</artifactId>
+      <version>2.1.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>com.fasterxml.jackson.jaxrs</groupId>
       <artifactId>jackson-jaxrs-json-provider</artifactId>
       <version>2.0.0</version>
@@ -68,7 +74,24 @@
       <artifactId>swagger-annotations_2.9.1</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.json4s</groupId>
+      <artifactId>json4s-ext_2.9.1-1</artifactId>
+      <version>3.2.4</version>
+      <scope>compile</scope>
+    </dependency> 
+    <dependency>
+      <groupId>org.json4s</groupId>
+      <artifactId>json4s-native_2.9.1-1</artifactId>
+      <version>3.2.4</version>
+      <scope>compile</scope>
+    </dependency>    
+    <dependency>
+      <groupId>org.json4s</groupId>
+      <artifactId>json4s-jackson_2.9.1-1</artifactId>
+      <version>3.2.4</version>
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
@@ -82,16 +105,16 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.json4s</groupId>
-      <artifactId>json4s-ext_2.9.1-1</artifactId>
-      <version>3.1.0</version>
-      <scope>test</scope>
-    </dependency>    
+     <groupId>ch.qos.logback</groupId>
+     <artifactId>logback-classic</artifactId>
+     <version>${logback-version}</version>
+     <scope>provided</scope>
+    </dependency>
     <dependency>
-      <groupId>org.json4s</groupId>
-      <artifactId>json4s-jackson_2.9.1-1</artifactId>
-      <version>3.1.0</version>
-      <scope>test</scope>
+     <groupId>ch.qos.logback</groupId>
+     <artifactId>logback-core</artifactId>
+     <version>${logback-version}</version>
+     <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>

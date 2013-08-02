@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,21 +24,21 @@ import javax.xml.bind.annotation.*;
 
 @XmlRootElement(name = "Order")
 public class Order {
-	private long id;
-	private long petId;
-	private int quantity;
-	private Date shipDate;
-	private String status;
+  private long id;
+  private long petId;
+  private int quantity;
+  private Date shipDate;
+  private String status;
     private boolean complete;
 
-	@XmlElement(name = "id")
-	public long getId() {
-		return id;
-	}
+  @XmlElement(name = "id")
+  public long getId() {
+    return id;
+  }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+  public void setId(long id) {
+    this.id = id;
+  }
 
     public boolean isComplete() {
         return complete;
@@ -49,40 +49,40 @@ public class Order {
     }
 
 
-	@XmlElement(name = "petId")
-	public long getPetId() {
-		return petId;
-	}
+  @XmlElement(name = "petId")
+  public long getPetId() {
+    return petId;
+  }
 
-	public void setPetId(long petId) {
-		this.petId = petId;
-	}
+  public void setPetId(long petId) {
+    this.petId = petId;
+  }
 
-	@XmlElement(name = "quantity")
-	public int getQuantity() {
-		return quantity;
-	}
+  @XmlElement(name = "quantity")
+  public int getQuantity() {
+    return quantity;
+  }
 
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
+  public void setQuantity(int quantity) {
+    this.quantity = quantity;
+  }
 
-	@XmlElement(name = "status")
-	@ApiProperty(value = "Order Status", allowableValues = "placed, approved, delivered")
-	public String getStatus() {
-		return status;
-	}
+  @XmlElement(name = "status")
+  @ApiModelProperty(value = "Order Status", allowableValues = "placed, approved, delivered")
+  public String getStatus() {
+    return status;
+  }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-	@XmlElement(name = "shipDate")
-	public Date getShipDate() {
-		return shipDate;
-	}
+  @XmlElement(name = "shipDate")
+  public Date getShipDate() {
+    return shipDate;
+  }
 
-	public void setShipDate(Date shipDate) {
-		this.shipDate = shipDate;
-	}
+  public void setShipDate(Date shipDate) {
+    this.shipDate = shipDate;
+  }
 }

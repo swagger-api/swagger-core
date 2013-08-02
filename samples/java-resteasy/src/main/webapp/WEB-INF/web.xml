@@ -16,11 +16,13 @@
   </context-param>
   <context-param>
     <param-name>resteasy.resources</param-name>
-    <param-value>com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON,com.wordnik.swagger.jaxrs.listing.ApiListingResourceXML</param-value>
+    <param-value>com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON</param-value>
   </context-param>
+
+  <!-- note! You must add the swagger providers below to correctly handle writing json for the swagger json -->
   <context-param>
     <param-name>resteasy.providers</param-name>
-    <param-value>org.jboss.resteasy.examples.util.JacksonJsonProvider</param-value>
+    <param-value>org.jboss.resteasy.examples.util.JacksonJsonProvider,com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider,com.wordnik.swagger.jaxrs.listing.ResourceListingProvider</param-value>
   </context-param>
   <listener>
     <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
@@ -28,22 +30,23 @@
   <servlet>
     <servlet-name>Resteasy</servlet-name>
     <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>DefaultJaxrsConfig</servlet-name>
+    <servlet-class>com.wordnik.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
     <init-param>
       <param-name>api.version</param-name>
-      <param-value>0.1</param-value>
-    </init-param>
-    <init-param>
-      <param-name>swagger.version</param-name>
-      <param-value>1.1</param-value>
+      <param-value>1.0.0</param-value>
     </init-param>
     <init-param>
       <param-name>swagger.api.basepath</param-name>
       <param-value>http://localhost:8002/resteasy</param-value>
     </init-param>
     <init-param>
-      <param-name>swagger.security.filter</param-name>
+      <param-name>swagger.filter</param-name>
       <param-value>com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl</param-value>
     </init-param>
+    <load-on-startup>2</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>Resteasy</servlet-name>

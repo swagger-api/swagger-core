@@ -36,9 +36,9 @@ trait PetResource extends RestResourceUtil {
   @Path("/{petId}")
   @ApiOperation(value = "Find pet by ID", notes = "Returns a pet when ID < 10. " +
     "ID > 10 or nonintegers will simulate API error conditions", responseClass = "com.wordnik.swagger.sample.model.Pet")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid ID supplied"),
-    new ApiError(code = 404, reason = "Pet not found")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid ID supplied"),
+    new ApiResponse(code = 404, message = "Pet not found")))
   def getPetById(
     @ApiParam(value = "ID of pet that needs to be fetched", required = true, allowableValues = "range[0,10]")@PathParam("petId") petId: String) = {
     Profile("/pet/*", {
@@ -53,8 +53,8 @@ trait PetResource extends RestResourceUtil {
 
   @POST
   @ApiOperation(value = "Add a new pet to the store")
-  @ApiErrors(Array(
-    new ApiError(code = 405, reason = "Invalid input")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 405, message = "Invalid input")))
   def addPet(
     @ApiParam(value = "Pet object that needs to be added to the store", required = true) pet: Pet) = {
     Profile("/pet (POST)", {
@@ -65,10 +65,10 @@ trait PetResource extends RestResourceUtil {
 
   @PUT
   @ApiOperation(value = "Update an existing pet")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid ID supplied"),
-    new ApiError(code = 404, reason = "Pet not found"),
-    new ApiError(code = 405, reason = "Validation exception")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid ID supplied"),
+    new ApiResponse(code = 404, message = "Pet not found"),
+    new ApiResponse(code = 405, message = "Validation exception")))
   def updatePet(
     @ApiParam(value = "Pet object that needs to be added to the store", required = true) pet: Pet) = {
     Profile("/pet (PUT)", {
@@ -82,8 +82,8 @@ trait PetResource extends RestResourceUtil {
   @ApiOperation(value = "Finds Pets by status",
     notes = "Multiple status values can be provided with comma seperated strings",
     responseClass = "List[com.wordnik.swagger.sample.model.Pet]")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid status value")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid status value")))
   def findPetsByStatus(
     @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available",
       allowableValues = "available,pending,sold", allowMultiple = true)@QueryParam("status") status: String) = {
@@ -98,8 +98,8 @@ trait PetResource extends RestResourceUtil {
   @ApiOperation(value = "Finds Pets by tags",
     notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
     responseClass = "List[com.wordnik.swagger.sample.model.Pet]")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid tag value")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid tag value")))
   @Deprecated
   def findPetsByTags(
     @ApiParam(value = "Tags to filter by", required = true,

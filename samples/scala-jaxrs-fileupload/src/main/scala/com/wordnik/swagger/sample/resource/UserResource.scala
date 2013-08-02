@@ -22,13 +22,18 @@ import com.wordnik.swagger.jaxrs._
 import com.wordnik.swagger.sample.model.User
 import com.wordnik.swagger.sample.data.UserData
 import com.wordnik.swagger.sample.exception.NotFoundException
+import com.wordnik.swagger.sample.util.RestResourceUtil
 
 import javax.ws.rs.core.Response
 import javax.ws.rs._
-import com.wordnik.swagger.core.util.RestResourceUtil
+
 import scala.collection.JavaConverters._
 
-trait UserResource extends RestResourceUtil {
+
+@Path("/user")
+@Api(value = "/user", description = "Operations about user")
+@Produces(Array("application/json"))
+class UserResource extends RestResourceUtil {
   @POST
   @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.")
   def createUser(
@@ -60,9 +65,9 @@ trait UserResource extends RestResourceUtil {
   @PUT
   @Path("/{username}")
   @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid username supplied"),
-    new ApiError(code = 404, reason = "User not found")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid username supplied"),
+    new ApiResponse(code = 404, message = "User not found")))
   def updateUser(
     @ApiParam(value = "name that need to be deleted", required = true)@PathParam("username") username: String,
     @ApiParam(value = "Updated user object", required = true) user: User) = {
@@ -73,9 +78,9 @@ trait UserResource extends RestResourceUtil {
   @DELETE
   @Path("/{username}")
   @ApiOperation(value = "Delete user", notes = "This can only be done by the logged in user.")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid username supplied"),
-    new ApiError(code = 404, reason = "User not found")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid username supplied"),
+    new ApiResponse(code = 404, message = "User not found")))
   def deleteUser(
     @ApiParam(value = "The name that needs to be deleted", required = true)@PathParam("username") username: String) = {
     UserData.removeUser(username)
@@ -84,10 +89,10 @@ trait UserResource extends RestResourceUtil {
 
   @GET
   @Path("/{username}")
-  @ApiOperation(value = "Get user by user name", responseClass = "com.wordnik.swagger.sample.model.User")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid username supplied"),
-    new ApiError(code = 404, reason = "User not found")))
+  @ApiOperation(value = "Get user by user name", response = classOf[User])
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid username supplied"),
+    new ApiResponse(code = 404, message = "User not found")))
   def getUserByName(
     @ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ", required = true)@PathParam("username") username: String) = {
     var user = UserData.findUserByName(username)
@@ -100,9 +105,9 @@ trait UserResource extends RestResourceUtil {
 
   @GET
   @Path("/login")
-  @ApiOperation(value = "Logs user into the system", responseClass = "java.lang.String")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid username and password combination")))
+  @ApiOperation(value = "Logs user into the system", response = classOf[String])
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid username and password combination")))
   def loginUser(
     @ApiParam(value = "The user name for login", required = true)@QueryParam("username") username: String,
     @ApiParam(value = "The password for login in clear text", required = true)@QueryParam("password") password: String) = {
@@ -116,13 +121,3 @@ trait UserResource extends RestResourceUtil {
     Response.ok.entity("").build
   }
 }
-
-@Path("/user.json")
-@Api(value = "/user", description = "Operations about user")
-@Produces(Array("application/json"))
-class UserResourceJSON extends UserResource
-
-@Path("/user.xml")
-@Api(value = "/user", description = "Operations about user")
-@Produces(Array("application/xml"))
-class UserResourceXML extends UserResource

@@ -23,9 +23,9 @@ object StoreApiController extends BaseApiController {
   @Path("/order/{orderId}")
   @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5. " +
     "Anything above 5 or nonintegers will generate API errors", responseClass = "models.Order", httpMethod = "GET")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid ID supplied"),
-    new ApiError(code = 404, reason = "Order not found")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid ID supplied"),
+    new ApiResponse(code = 404, message = "Order not found")))
   def getOrderById(
     @ApiParam(value = "ID of pet that needs to be fetched", required = true)@PathParam("orderId") orderId: String) = Action { implicit request =>
     storeData.findOrderById(getLong(0, 10000, 0, orderId)) match {
@@ -36,10 +36,10 @@ object StoreApiController extends BaseApiController {
 
   @Path("/order")
   @ApiOperation(value = "Place an order for a pet", responseClass = "void", httpMethod = "POST")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid order")))
-  @ApiParamsImplicit(Array(
-    new ApiParamImplicit(name = "body", value = "order placed for purchasing the pet", required = true, dataType = "Order", paramType = "body")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid order")))
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "body", value = "order placed for purchasing the pet", required = true, dataType = "Order", paramType = "body")))
   def placeOrder = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
@@ -54,9 +54,9 @@ object StoreApiController extends BaseApiController {
   @Path("/order/{orderId}")
   @ApiOperation(value = "Delete purchase order by ID", notes = "For valid response try integer IDs with value < 1000. " +
     "Anything above 1000 or nonintegers will generate API errors", httpMethod = "DELETE")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid ID supplied"),
-    new ApiError(code = 404, reason = "Order not found")))
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid ID supplied"),
+    new ApiResponse(code = 404, message = "Order not found")))
   def deleteOrder(
     @ApiParam(value = "ID of the order that needs to be deleted", required = true)@PathParam("orderId") orderId: String) = Action {
     implicit request =>

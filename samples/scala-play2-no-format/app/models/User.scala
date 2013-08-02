@@ -53,7 +53,7 @@ class User {
   var phone: String = _
 
   @XmlElement(name = "userStatus")
-  @ApiProperty(value = "User Status", allowableValues = "1-registered,2-active,3-closed")
+  @ApiModelProperty(value = "User Status", allowableValues = "1-registered,2-active,3-closed")
   @BeanProperty
   var userStatus: Int = _
 }

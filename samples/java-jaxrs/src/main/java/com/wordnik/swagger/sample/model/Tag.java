@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,24 +20,24 @@ import javax.xml.bind.annotation.*;
 
 @XmlRootElement(name = "Tag")
 public class Tag {
-	private long id;
-	private String name;
+  private long id;
+  private String name;
 
-	@XmlElement(name = "id")
-	public long getId() {
-		return id;
-	}
+  @XmlElement(name = "id")
+  public long getId() {
+    return id;
+  }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+  public void setId(long id) {
+    this.id = id;
+  }
 
-	@XmlElement(name = "name")
-	public String getName() {
-		return name;
-	}
+  @XmlElement(name = "name")
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 }
