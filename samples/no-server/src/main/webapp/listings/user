@@ -1,252 +1,268 @@
 {
-  "apiVersion":"0.2",
-  "swaggerVersion":"1.1",
-  "basePath":"http://petstore.swagger.wordnik.com/api",
-  "resourcePath":"/user",
-  "apis":[
+  "apiVersion": null,
+  "swaggerVersion": "1.2",
+  "basePath": "http://hello.com",
+  "resourcePath": "/user",
+  "produces": [
+    "application/json",
+    "application/xml"
+  ],
+  "apis": [
     {
-      "path":"/user.{format}/createWithArray",
-      "description":"Operations about user",
-      "operations":[
+      "path": "/user",
+      "operations": [
         {
-          "httpMethod":"POST",
-          "summary":"Creates list of users with given input array",
-          "responseClass":"void",
-          "nickname":"createUsersWithArrayInput",
-          "parameters":[
+          "method": "POST",
+          "summary": "Create user",
+          "notes": "This can only be done by the logged in user.",
+          "responseClass": "void",
+          "nickname": "createUser",
+          "parameters": [
             {
-              "description":"List of user object",
-              "paramType":"body",
-              "required":true,
-              "allowMultiple":false,
-              "dataType":"Array[User]"
+              "name": "body",
+              "description": "Created user object",
+              "required": true,
+              "allowMultiple": false,
+              "dataType": "User",
+              "paramType": "body"
             }
           ]
         }
       ]
     },
     {
-      "path":"/user.{format}",
-      "description":"Operations about user",
-      "operations":[
+      "path": "/user/createWithArray",
+      "operations": [
         {
-          "httpMethod":"POST",
-          "summary":"Create user",
-          "notes":"This can only be done by the logged in user.",
-          "responseClass":"void",
-          "nickname":"createUser",
-          "parameters":[
+          "method": "POST",
+          "summary": "Creates list of users with given input array",
+          "notes": "",
+          "responseClass": "void",
+          "nickname": "createUsersWithArrayInput",
+          "parameters": [
             {
-              "description":"Created user object",
-              "paramType":"body",
-              "required":true,
-              "allowMultiple":false,
-              "dataType":"User"
+              "name": "body",
+              "description": "List of user object",
+              "required": true,
+              "allowMultiple": false,
+              "dataType": "Array[User]",
+              "paramType": "body"
             }
           ]
         }
       ]
     },
     {
-      "path":"/user.{format}/createWithList",
-      "description":"Operations about user",
-      "operations":[
+      "path": "/user/createWithList",
+      "operations": [
         {
-          "httpMethod":"POST",
-          "summary":"Creates list of users with given list input",
-          "responseClass":"void",
-          "nickname":"createUsersWithListInput",
-          "parameters":[
+          "method": "POST",
+          "summary": "Creates list of users with given list input",
+          "notes": "",
+          "responseClass": "void",
+          "nickname": "createUsersWithListInput",
+          "parameters": [
             {
-              "description":"List of user object",
-              "paramType":"body",
-              "required":true,
-              "allowMultiple":false,
-              "dataType":"List[User]"
+              "name": "body",
+              "description": "List of user object",
+              "required": true,
+              "allowMultiple": false,
+              "dataType": "List[User]",
+              "paramType": "body"
             }
           ]
         }
       ]
     },
     {
-      "path":"/user.{format}/{username}",
-      "description":"Operations about user",
-      "operations":[
+      "path": "/user/{username}",
+      "operations": [
         {
-          "httpMethod":"PUT",
-          "summary":"Updated user",
-          "notes":"This can only be done by the logged in user.",
-          "responseClass":"void",
-          "nickname":"updateUser",
-          "parameters":[
+          "method": "PUT",
+          "summary": "Updated user",
+          "notes": "This can only be done by the logged in user.",
+          "responseClass": "void",
+          "nickname": "updateUser",
+          "parameters": [
             {
-              "name":"username",
-              "description":"name that need to be deleted",
-              "paramType":"path",
-              "required":true,
-              "allowMultiple":false,
-              "dataType":"string"
+              "name": "username",
+              "description": "name that need to be deleted",
+              "required": true,
+              "allowMultiple": false,
+              "dataType": "string",
+              "paramType": "path"
             },
             {
-              "description":"Updated user object",
-              "paramType":"body",
-              "required":true,
-              "allowMultiple":false,
-              "dataType":"User"
+              "name": "body",
+              "description": "Updated user object",
+              "required": true,
+              "allowMultiple": false,
+              "dataType": "User",
+              "paramType": "body"
             }
           ],
-          "errorResponses":[
+          "responseMessages": [
             {
-              "code":400,
-              "reason":"Invalid username supplied"
+              "code": 400,
+              "message": "Invalid username supplied"
             },
             {
-              "code":404,
-              "reason":"User not found"
+              "code": 404,
+              "message": "User not found"
             }
           ]
         },
         {
-          "httpMethod":"DELETE",
-          "summary":"Delete user",
-          "notes":"This can only be done by the logged in user.",
-          "responseClass":"void",
-          "nickname":"deleteUser",
-          "parameters":[
+          "method": "DELETE",
+          "summary": "Delete user",
+          "notes": "This can only be done by the logged in user.",
+          "responseClass": "void",
+          "nickname": "deleteUser",
+          "parameters": [
             {
-              "name":"username",
-              "description":"The name that needs to be deleted",
-              "paramType":"path",
-              "required":true,
-              "allowMultiple":false,
-              "dataType":"string"
+              "name": "username",
+              "description": "The name that needs to be deleted",
+              "required": true,
+              "allowMultiple": false,
+              "dataType": "string",
+              "paramType": "path"
             }
           ],
-          "errorResponses":[
+          "responseMessages": [
             {
-              "code":400,
-              "reason":"Invalid username supplied"
+              "code": 400,
+              "message": "Invalid username supplied"
             },
             {
-              "code":404,
-              "reason":"User not found"
+              "code": 404,
+              "message": "User not found"
             }
           ]
         },
         {
-          "httpMethod":"GET",
-          "summary":"Get user by user name",
-          "responseClass":"User",
-          "nickname":"getUserByName",
-          "parameters":[
+          "method": "GET",
+          "summary": "Get user by user name",
+          "notes": "",
+          "responseClass": "User",
+          "nickname": "getUserByName",
+          "produces": [
+            "application/json",
+            "application/xml"
+          ],
+          "parameters": [
             {
-              "name":"username",
-              "description":"The name that needs to be fetched. Use user1 for testing.",
-              "paramType":"path",
-              "required":true,
-              "allowMultiple":false,
-              "dataType":"string"
+              "name": "username",
+              "description": "The name that needs to be fetched. Use user1 for testing.",
+              "required": true,
+              "allowMultiple": false,
+              "dataType": "string",
+              "paramType": "path"
             }
           ],
-          "errorResponses":[
+          "responseMessages": [
             {
-              "code":400,
-              "reason":"Invalid username supplied"
+              "code": 400,
+              "message": "Invalid username supplied"
             },
             {
-              "code":404,
-              "reason":"User not found"
+              "code": 404,
+              "message": "User not found"
             }
           ]
         }
       ]
     },
     {
-      "path":"/user.{format}/login",
-      "description":"Operations about user",
-      "operations":[
+      "path": "/user/login",
+      "operations": [
         {
-          "httpMethod":"GET",
-          "summary":"Logs user into the system",
-          "responseClass":"string",
-          "nickname":"loginUser",
-          "parameters":[
+          "method": "GET",
+          "summary": "Logs user into the system",
+          "notes": "",
+          "responseClass": "string",
+          "nickname": "loginUser",
+          "produces": [
+            "text/plain"
+          ],
+          "parameters": [
             {
-              "name":"username",
-              "description":"The user name for login",
-              "paramType":"query",
-              "required":true,
-              "allowMultiple":false,
-              "dataType":"string"
+              "name": "username",
+              "description": "The user name for login",
+              "required": true,
+              "allowMultiple": false,
+              "dataType": "string",
+              "paramType": "query"
             },
             {
-              "name":"password",
-              "description":"The password for login in clear text",
-              "paramType":"query",
-              "required":true,
-              "allowMultiple":false,
-              "dataType":"string"
+              "name": "password",
+              "description": "The password for login in clear text",
+              "required": true,
+              "allowMultiple": false,
+              "dataType": "string",
+              "paramType": "query"
             }
           ],
-          "errorResponses":[
+          "responseMessages": [
             {
-              "code":400,
-              "reason":"Invalid username and password combination"
+              "code": 400,
+              "message": "Invalid username and password combination"
             }
           ]
         }
       ]
     },
     {
-      "path":"/user.{format}/logout",
-      "description":"Operations about user",
-      "operations":[
+      "path": "/user/logout",
+      "operations": [
         {
-          "httpMethod":"GET",
-          "summary":"Logs out current logged in user session",
-          "responseClass":"void",
-          "nickname":"logoutUser"
+          "method": "GET",
+          "summary": "Logs out current logged in user session",
+          "notes": "",
+          "responseClass": "void",
+          "nickname": "logoutUser",
+          "produces": [
+            "text/plain"
+          ],
+          "parameters": []
         }
       ]
     }
   ],
-  "models":{
-    "User":{
-      "id":"User",
-      "properties":{
-        "id":{
-          "type":"Long"
+  "models": {
+    "User": {
+      "id": "User",
+      "properties": {
+        "email": {
+          "type": "string"
         },
-        "lastName":{
-          "type":"string"
+        "username": {
+          "type": "string"
         },
-        "phone":{
-          "type":"string"
+        "userStatus": {
+          "type": "integer",
+          "format": "int32",
+          "description": "User Status",
+          "enum": [
+            "1-registered",
+            "2-active",
+            "3-closed"
+          ]
         },
-        "username":{
-          "type":"string"
+        "lastName": {
+          "type": "string"
         },
-        "email":{
-          "type":"string"
+        "firstName": {
+          "type": "string"
         },
-        "userStatus":{
-          "allowableValues":{
-            "valueType":"LIST",
-            "values":[
-              "1-registered",
-              "2-active",
-              "3-closed"
-            ],
-            "valueType":"LIST"
-          },
-          "description":"User Status",
-          "type":"int"
+        "id": {
+          "type": "integer",
+          "format": "int64"
         },
-        "firstName":{
-          "type":"string"
+        "phone": {
+          "type": "string"
         },
-        "password":{
-          "type":"string"
+        "password": {
+          "type": "string"
         }
       }
     }
