@@ -49,7 +49,7 @@ class GenericModelConverterTest extends FlatSpec with ShouldMatchers {
   "name": "NumericModel",
   "properties": {
     "value": {
-      "type": "int",
+      "type": "integer",
       "required": false
     }
   }
@@ -64,7 +64,7 @@ class GenericModelConverterTest extends FlatSpec with ShouldMatchers {
     model.qualifiedType should be ("model.NumericModel")
 
     val value = model.properties("value")
-    value.`type` should be ("int")
+    value.`type` should be ("integer")
     value.required should be (false)  
   }
 }

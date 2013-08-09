@@ -36,7 +36,7 @@ class JsonSchemaModelSerializationTest extends FlatSpec with ShouldMatchers {
           "description":"name"
         },
         "tags": {
-          "type":"Array",
+          "type":"array",
           "items": {
             "type":"string"
           }
@@ -72,7 +72,7 @@ class JsonSchemaModelSerializationTest extends FlatSpec with ShouldMatchers {
 
         model.properties("tags") match {
           case e: ModelProperty => {
-            e.`type` should be ("Array")
+            e.`type` should be ("array")
             e.required should be (false)
             e.items match {
               case Some(items) => items.`type` should be ("string")
@@ -129,10 +129,7 @@ class JsonSchemaModelPropertySerializationTest extends FlatSpec with ShouldMatch
       "type":"string",
       "required":false,
       "description":"nice",
-      "allowableValues": {
-        "valueType":"LIST",
-        "values":["1","2","3"]
-      },
+      "enum": ["1","2","3"],
       "items":{
         "type":"Foo",
         "$ref":"Bar"

@@ -34,9 +34,9 @@ object SwaggerSerializers extends Serializers {
       val output = new LinkedHashMap[String, ModelProperty]
       val properties = (json \ "properties") match {
         case JObject(entries) => {
-          entries.map({
-            case (key, value) => output += key -> value.extract[ModelProperty]
-          })
+          for((key, value) <- entries) {
+            output += key -> value.extract[ModelProperty]
+          }
         }
         case _ =>
       }
@@ -80,8 +80,10 @@ object SwaggerSerializers extends Serializers {
       }) ~
       ("properties" -> {
         x.properties match {
-          case e: LinkedHashMap[String, ModelProperty] => Extraction.decompose(e.toMap)
-          case _ => JNothing
+          case e: LinkedHashMap[String, ModelProperty] => {
+            (for((key, value) <- e) yield (key -> Extraction.decompose(value))).toList
+          }
+          case _ => List.empty
         }
       })
     }
@@ -96,6 +98,7 @@ object SwaggerSerializers extends Serializers {
       case "string"    => (name -> "string")  ~ ("format" -> JNothing)
       case "byte"      => (name -> "string")  ~ ("format" -> "byte")
       case "boolean"   => (name -> "boolean") ~ ("format" -> JNothing)
+      case "Date"      => (name -> "string")  ~ ("format" -> "date-time")
       case "date"      => (name -> "string")  ~ ("format" -> "date")
       case "date-time" => (name -> "string")  ~ ("format" -> "date-time")
       case _           => (name -> None)      ~ ("format" -> JNothing)
