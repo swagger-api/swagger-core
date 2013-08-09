@@ -282,10 +282,18 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
           }
         }
       }
-      val apis = (for ((endpoint, resourcePath, operationList) <- operations) yield {
+      // sort them by min position in the operations
+      val s = (for(op <- operations) yield {
+        (op, op._3.map(_.position).toList.min)
+      }).sortWith(_._2 < _._2).toList
+      val orderedOperations = new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]]
+      s.foreach(op => {
+        val ops = op._1._3.sortWith(_.position < _.position)
+        orderedOperations += Tuple3(op._1._1, op._1._2, ops)
+      })
+      val apis = (for ((endpoint, resourcePath, operationList) <- orderedOperations) yield {
         val orderedOperations = new ListBuffer[Operation]
         operationList.sortWith(_.position < _.position).foreach(e => orderedOperations += e)
-
         ApiDescription(
           addLeadingSlash(endpoint),
           None,

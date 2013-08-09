@@ -27,6 +27,11 @@ class PathParamTargetTest extends FlatSpec with ShouldMatchers {
     val apis = apiResource.apis
 
     apis.size should be (2)
+
+    // verify the order
+    apis(0).path should be ("/pathParamTest/{id}/details")
+    apis(1).path should be ("/pathParamTest/{id}")
+
     val rootOps = apis.filter(_.path == "/pathParamTest/{id}").head.operations
     rootOps.size should be (1)
     val op = rootOps.head

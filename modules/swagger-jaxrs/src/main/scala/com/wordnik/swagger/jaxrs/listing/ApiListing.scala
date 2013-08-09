@@ -126,10 +126,10 @@ class ApiListingResource {
         }
         resourcePath == pathPart
       })
-    }).flatten.toList
+    }).toList.flatten
 
     listings.size match {
-      case 1 => Response.ok(listings.head).build
+      case 1 => Response.ok(listings(0)).build
       case _ => Response.status(404).build
     }
   }

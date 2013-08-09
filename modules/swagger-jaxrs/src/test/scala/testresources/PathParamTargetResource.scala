@@ -22,7 +22,7 @@ class PathParamTargetResource {
   @ApiOperation(value = "Get object by ID",
     notes = "No details provided",
     response = classOf[Sample],
-    position = 0)
+    position = 2)
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID", response = classOf[NotFoundModel]),
     new ApiResponse(code = 404, message = "object not found")))
@@ -39,7 +39,7 @@ class PathParamTargetResource {
   @ApiOperation(value = "Get details by ID",
     notes = "No details provided",
     response = classOf[Sample],
-    position = 0)
+    position = 1)
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID", response = classOf[NotFoundModel]),
     new ApiResponse(code = 404, message = "object not found")))
