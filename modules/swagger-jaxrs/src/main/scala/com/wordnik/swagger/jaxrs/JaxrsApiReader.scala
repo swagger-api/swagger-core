@@ -59,6 +59,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
 
   def normalizeContainer(str: String) = {
     if(str.indexOf(".List") >= 0) "List"
+    else if(str.indexOf(".Set") >= 0) "Set"
     else {
       println("UNKNOWN TYPE: " + str)
       "UNKNOWN"

@@ -89,7 +89,7 @@ object SwaggerSerializers extends Serializers {
     }
   ))
 
-  def toJsonSchema(name: String, `type`: String) = {
+  def toJsonSchema(name: String, `type`: String): JObject = {
     `type` match {
       case "int"       => (name -> "integer") ~ ("format" -> "int32")
       case "long"      => (name -> "integer") ~ ("format" -> "int64")
@@ -101,8 +101,33 @@ object SwaggerSerializers extends Serializers {
       case "Date"      => (name -> "string")  ~ ("format" -> "date-time")
       case "date"      => (name -> "string")  ~ ("format" -> "date")
       case "date-time" => (name -> "string")  ~ ("format" -> "date-time")
-      case _           => (name -> None)      ~ ("format" -> JNothing)
+      case _           => {
+        val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-]*)\\].*".r
+        `type` match {
+          case ComplexTypeMatcher(container, value) => 
+            toJsonSchemaContainer(container) ~ {
+              ("items" -> {if(isSimpleType(value))
+                  toJsonSchema("items", value)
+                else
+                  toJsonSchema("$ref", value)})
+            }
+          case _ => (name -> `type`)    ~ ("format" -> JNothing)
+        }
+      }
     }
+  }
+
+  def toJsonSchemaContainer(name: String): JObject = {
+    name match {
+      case "List"      => ("type" -> "array")   ~ ("format" -> JNothing)
+      case "Array"     => ("type" -> "array")   ~ ("format" -> JNothing)
+      case "Set"       => ("type" -> "array")   ~ ("uniqueItems" -> true)
+      case _           => ("type" -> JNothing)
+    }
+  }
+
+  def isSimpleType(name: String) = {
+    Set("int", "long", "float", "double", "string", "byte", "boolean", "Date", "date", "date-time", "array").contains(name)
   }
 
   def toJsonSchemaType(prop: ModelProperty) = {
@@ -262,7 +287,7 @@ object SwaggerSerializers extends Serializers {
       ("defaultValue" -> x.defaultValue) ~
       ("required" -> x.required) ~
       ("allowMultiple" -> x.allowMultiple) ~
-      toJsonSchema("dataType", x.dataType) ~
+      toJsonSchema("type", x.dataType) ~
       ("paramType" -> x.paramType) ~
       ("paramAccess" -> x.paramAccess)
 
