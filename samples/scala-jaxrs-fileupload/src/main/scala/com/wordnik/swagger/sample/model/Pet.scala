@@ -27,6 +27,7 @@ import scala.reflect.BeanProperty
 @XmlRootElement(name = "Pet")
 @XmlAccessorType(XmlAccessType.NONE)
 class Pet() {
+  @ApiModelProperty(value="foo", allowableValues="range[0,100]")
   @XmlElement(name = "id", required = true) @BeanProperty var id: Long = 0
   @XmlElement(name = "category") @BeanProperty var category: Category = null
   @XmlElement(name = "name", required = true) @BeanProperty var name: String = null

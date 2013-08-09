@@ -47,8 +47,8 @@ class PetResource extends RestResourceUtil {
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
     new ApiResponse(code = 404, message = "Pet not found")))
   def getPetById(
-    @ApiParam(value = "ID of pet that needs to be fetched", required = true)@PathParam("petId") petId: String) = {
-    PetData.getPetbyId(getLong(0, 100000, 0, petId)) match {
+    @ApiParam(value = "ID of pet that needs to be fetched", required = true, allowableValues = "range[1, 100000]")@PathParam("petId") petId: Long) = {
+    PetData.getPetbyId(petId) match {
       case pet: Pet => Response.ok.entity(pet).build
       case _ => throw new NotFoundException(404, "Pet not found")
     }

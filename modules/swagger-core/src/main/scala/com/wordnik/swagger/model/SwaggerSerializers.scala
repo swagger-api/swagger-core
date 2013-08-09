@@ -18,7 +18,7 @@ object SwaggerSerializers extends Serializers {
     new JsonSchemaModelPropertySerializer +
     new JsonSchemaModelRefSerializer + 
     new AllowableValuesSerializer + 
-    new ParameterSerializer +
+    new JsonSchemaParameterSerializer +
     new OperationSerializer +
     new ResponseMessageSerializer +
     new ApiDescriptionSerializer +
@@ -87,21 +87,25 @@ object SwaggerSerializers extends Serializers {
     }
   ))
 
+  def toJsonSchema(name: String, `type`: String) = {
+    `type` match {
+      case "int"       => (name -> "integer") ~ ("format" -> "int32")
+      case "long"      => (name -> "integer") ~ ("format" -> "int64")
+      case "float"     => (name -> "number")  ~ ("format" -> "float")
+      case "double"    => (name -> "number")  ~ ("format" -> "double")
+      case "string"    => (name -> "string")  ~ ("format" -> JNothing)
+      case "byte"      => (name -> "string")  ~ ("format" -> "byte")
+      case "boolean"   => (name -> "boolean") ~ ("format" -> JNothing)
+      case "date"      => (name -> "string")  ~ ("format" -> "date")
+      case "date-time" => (name -> "string")  ~ ("format" -> "date-time")
+      case _           => (name -> None)      ~ ("format" -> JNothing)
+    }
+  }
+
   def toJsonSchemaType(prop: ModelProperty) = {
     // see if primitive
     if(SwaggerSpec.baseTypes.contains(prop.`type`)) {
-      prop.`type` match {
-        case "int"       => ("type" -> "integer") ~ ("format" -> "int32")
-        case "long"      => ("type" -> "integer") ~ ("format" -> "int64")
-        case "float"     => ("type" -> "number")  ~ ("format" -> "float")
-        case "double"    => ("type" -> "number")  ~ ("format" -> "double")
-        case "string"    => ("type" -> "string")  ~ ("format" -> JNothing)
-        case "byte"      => ("type" -> "string")  ~ ("format" -> "byte")
-        case "boolean"   => ("type" -> "boolean") ~ ("format" -> JNothing)
-        case "date"      => ("type" -> "string")  ~ ("format" -> "date")
-        case "date-time" => ("type" -> "string")  ~ ("format" -> "date-time")
-        case _           => ("type" -> None)      ~ ("format" -> JNothing)
-      }
+      toJsonSchema("type", prop.`type`)
     }
     else if (SwaggerSpec.containerTypes.contains(prop.`type`)) {
       prop.`type` match {
@@ -178,8 +182,8 @@ object SwaggerSerializers extends Serializers {
     }, {
     case x: ModelProperty =>
       implicit val fmts = formats
-      val foo = toJsonSchemaType(x)
-      val output = toJsonSchemaType(x) ~
+
+      val output = toJsonSchemaType(x) ~      
       ("description" -> x.description) ~
       ("items" -> Extraction.decompose(x.items))
 
@@ -210,6 +214,62 @@ object SwaggerSerializers extends Serializers {
         }
       }) ~
       ("$ref" -> x.ref)
+    }
+  ))
+
+  class JsonSchemaParameterSerializer extends CustomSerializer[Parameter](formats => ({
+    case json =>
+      implicit val fmts: Formats = formats
+      Parameter(
+        (json \ "name").extractOrElse({
+          !!(json, OPERATION_PARAM, "reason", "missing parameter name", WARNING)
+          ""
+        }),
+        (json \ "description").extractOpt[String],
+        (json \ "defaultValue") match {
+          case e: JInt => Some(e.num.toString)
+          case e: JBool => Some(e.value.toString)
+          case e: JString => Some(e.s)
+          case e: JDouble => Some(e.num.toString)
+          case _ => None
+        },
+        (json \ "required") match {
+          case e: JString => e.s.toBoolean
+          case e: JBool => e.value
+          case _ => false
+        },
+        (json \ "allowMultiple").extractOrElse(false),
+        (json \ "dataType").extractOrElse({
+          !!(json, OPERATION_PARAM, "dataType", "missing required field", ERROR)
+          ""
+        }),
+        (json \ "allowableValues").extract[AllowableValues],
+        (json \ "paramType").extractOrElse({
+          !!(json, OPERATION_PARAM, "paramType", "missing required field", ERROR)
+          ""
+        }),
+        (json \ "paramAccess").extractOpt[String]
+      )
+    }, {
+      case x: Parameter =>
+      implicit val fmts = formats
+
+      val output = ("name" -> x.name) ~
+      ("description" -> x.description) ~
+      ("defaultValue" -> x.defaultValue) ~
+      ("required" -> x.required) ~
+      ("allowMultiple" -> x.allowMultiple) ~
+      toJsonSchema("dataType", x.dataType) ~
+      ("paramType" -> x.paramType) ~
+      ("paramAccess" -> x.paramAccess)
+
+      x.allowableValues match {
+        case AllowableListValues(values, "LIST") => 
+          output ~ ("enum" -> Extraction.decompose(values))
+        case AllowableRangeValues(min, max)  => 
+          output ~ ("minimum" -> min) ~ ("maximum" -> max)
+        case _ => output
+      }
     }
   ))
 }
@@ -581,12 +641,13 @@ trait Serializers {
     }, {
       case x: Parameter =>
       implicit val fmts = formats
+
       ("name" -> x.name) ~
       ("description" -> x.description) ~
       ("defaultValue" -> x.defaultValue) ~
       ("required" -> x.required) ~
       ("allowMultiple" -> x.allowMultiple) ~
-      ("dataType" -> x.dataType) ~
+      ("dataType", x.dataType) ~
       ("allowableValues" -> {
         x.allowableValues match {
           case AnyAllowableValues => JNothing // don't serialize when not a concrete type
