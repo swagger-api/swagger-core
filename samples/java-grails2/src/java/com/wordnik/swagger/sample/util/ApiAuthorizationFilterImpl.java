@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 
 package com.wordnik.swagger.sample.util;
 
-import com.wordnik.swagger.jaxrs.*;
+import com.wordnik.swagger.model.*;
+import com.wordnik.swagger.core.filter.SwaggerSpecFilter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
 import java.util.Map;
-import java.util.HashMap;
+import java.util.List;
 
-import javax.ws.rs.core.*;
-
+import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServlet;
 /**
  * 
  * The rules are maintained in simple map with key as path and a boolean value
@@ -41,86 +41,41 @@ import javax.ws.rs.core.*;
  * 
  */
 
-public class ApiAuthorizationFilterImpl implements ApiAuthorizationFilter {
-	static Logger logger = LoggerFactory.getLogger(ApiAuthorizationFilterImpl.class);
+public class ApiAuthorizationFilterImpl implements SwaggerSpecFilter {
+  static Logger logger = LoggerFactory.getLogger(ApiAuthorizationFilterImpl.class);
 
-	boolean isFilterInitialized = false;
-	Map<String, Boolean> methodSecurityAnotations = new HashMap<String, Boolean>();
-	Map<String, Boolean> classSecurityAnotations = new HashMap<String, Boolean>();
-	String securekeyId = "special-key";
-	String unsecurekeyId = "default-key";
+  public boolean isOperationAllowed(Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    boolean isAuthorized = checkKey(params, headers);
+    if(isAuthorized) {
+      return true;
+    }
+    else {
+      if(operation.method() != "GET" || api.path().indexOf("/store") != -1) {
+        return false;
+      }
+      else return true;
+    }
+  }
 
-	public boolean authorize(String apiPath, String method,
-			HttpHeaders headers, UriInfo uriInfo) {
-		boolean canAccess = true;
-		String apiKey = uriInfo.getQueryParameters().getFirst("api_key");
-		String mName = method.toUpperCase();
-		if (isPathSecure(mName + ":" + apiPath, false)) {
-			if (securekeyId.equals(apiKey)) {
-				canAccess = true;
-			} else {
-				canAccess = false;
-			}
-		}
-		return canAccess;
-	}
+  public boolean isParamAllowed(Parameter parameter, Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    boolean isAuthorized = checkKey(params, headers);
+    if((parameter.paramAccess().isDefined() && parameter.paramAccess().get().equals("internal")) && !isAuthorized) 
+      return false;
+    else 
+      return true;
+  }
 
-	public boolean authorizeResource(String apiPath, HttpHeaders headers, UriInfo uriInfo) {
-		boolean canAccess = true;
-
-		String apiKey = uriInfo.getQueryParameters().getFirst("api_key");
-		if (isPathSecure(apiPath, true)) {
-			if (securekeyId.equals(apiKey)) {
-				canAccess = true;
-			} else {
-				canAccess = false;
-			}
-		} else {
-			canAccess = true;
-		}
-		return canAccess;
-	}
-
-	private boolean isPathSecure(String apiPath, boolean isResource) {
-		if (!isFilterInitialized)
-			initialize();
-		if (isResource) {
-			if (classSecurityAnotations.keySet().contains(apiPath)) {
-				return classSecurityAnotations.get(apiPath);
-			} else {
-				return false;
-			}
-		} else {
-			if (methodSecurityAnotations.keySet().contains(apiPath)) {
-				return methodSecurityAnotations.get(apiPath);
-			} else {
-				return false;
-			}
-		}
-	}
-
-	private void initialize() {
-	    //initialize classes (no .format here)
-		classSecurityAnotations.put("/user", false);
-		classSecurityAnotations.put("/pet", false);
-		classSecurityAnotations.put("/store", true);
-
-		// initialize method security
-		methodSecurityAnotations.put("GET:/pet.{format}/{petId}", false);
-		methodSecurityAnotations.put("POST:/pet.{format}", true);
-		methodSecurityAnotations.put("PUT:/pet.{format}", true);
-		methodSecurityAnotations.put("GET:/pet.{format}/findByStatus", false);
-		methodSecurityAnotations.put("GET:/pet.{format}/findByTags", false);
-		methodSecurityAnotations.put("GET:/store.{format}/order/{orderId}", true);
-		methodSecurityAnotations.put("DELETE:/store.{format}/order/{orderId}", true);
-		methodSecurityAnotations.put("POST:/store.{format}/order", true);
-		methodSecurityAnotations.put("POST:/user", false);
-        methodSecurityAnotations.put("POST:/user.{format}/createWithArray", false);
-        methodSecurityAnotations.put("POST:/user.{format}/createWithList", false);
-		methodSecurityAnotations.put("PUT:/user.{format}/{username}", true);
-		methodSecurityAnotations.put("DELETE:/user.{format}/{username}", true);
-		methodSecurityAnotations.put("GET:/user.{format}/{username}", false);
-		methodSecurityAnotations.put("GET:/user.{format}/login", false);
-		methodSecurityAnotations.put("GET:/user.{format}/logout", false);
-	}
+  public boolean checkKey(Map<String, List<String>> params, Map<String, List<String>> headers) {
+    String keyValue = null;
+    if(params.containsKey("api_key"))
+      keyValue = params.get("api_key").get(0);
+    else {
+      if(headers.containsKey("api_key"))
+        keyValue = headers.get("api_key").get(0);
+    }
+    if("special-key".equals(keyValue))
+      return true;
+    else
+      return false;
+  }
 }

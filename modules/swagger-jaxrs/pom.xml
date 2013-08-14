@@ -2,21 +2,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>com.wordnik</groupId>
-    <artifactId>swagger-project_2.9.1</artifactId>
-    <version>1.2.5</version>
+    <artifactId>swagger-project_2.10</artifactId>
+    <version>1.3.0-RC3</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-jaxrs_2.9.1</artifactId>
+  <artifactId>swagger-jaxrs_2.10</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.5</version>
+  <version>1.3.0-RC3</version>
   <name>swagger-jaxrs</name>
   <build>
     <defaultGoal>install</defaultGoal>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
+        <excludes>
+          <exclude>logback.xml</exclude>
+        </excludes>
       </resource>
     </resources>
     <testResources>
@@ -28,7 +31,7 @@
   <dependencies>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.9.1</artifactId>
+      <artifactId>scalatest_2.10</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -43,13 +46,7 @@
     </dependency>
     <dependency>
       <groupId>com.wordnik</groupId>
-      <artifactId>swagger-core_2.9.1</artifactId>
-      <version>${project.parent.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.wordnik</groupId>
-      <artifactId>swagger-annotations_2.9.1</artifactId>
+      <artifactId>swagger-core_2.10</artifactId>
       <version>${project.parent.version}</version>
       <scope>compile</scope>
     </dependency>
@@ -64,28 +61,21 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-servlet</artifactId>
-      <version>${jersey-version}</version>
-      <scope>compile</scope>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.9.8</version>
     </dependency>
     <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-client</artifactId>
-      <version>${jersey-version}</version>
-      <scope>compile</scope>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback-version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-core</artifactId>
-      <version>${jersey-version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-server</artifactId>
-      <version>${jersey-version}</version>
-      <scope>compile</scope>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>${logback-version}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>

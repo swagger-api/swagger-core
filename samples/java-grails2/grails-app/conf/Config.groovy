@@ -1,8 +1,7 @@
 org.grails.jaxrs.url.mappings = ['/api']
 org.grails.jaxrs.provider.init.parameters = [
-  'com.sun.jersey.config.property.packages': 'com.wordnik.swagger.sample',
-  'swagger.api.basepath':'http://localhost:8080/java-grails2/api',
-  'api.version':"1.0"]
+  'com.sun.jersey.config.property.packages': 
+    'com.wordnik.swagger.sample.resource']
 // locations to search for config files that get merged into the main config;
 // config files can be ConfigSlurper scripts, Java properties files, or classes
 // in the classpath in ConfigSlurper format
@@ -78,9 +77,10 @@ environments {
 log4j = {
     // Example of changing the log pattern for the default console appender:
     //
-    //appenders {
-    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-    //}
+    appenders {
+        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+    }
+    debug  'com.wordnik.swagger'
 
     error  'org.codehaus.groovy',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP

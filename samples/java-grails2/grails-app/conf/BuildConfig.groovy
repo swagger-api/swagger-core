@@ -37,7 +37,7 @@ grails.project.dependency.resolution = {
     }
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
-        compile 'com.wordnik:swagger-jaxrs_2.9.1:1.2.0'
+        compile 'com.wordnik:swagger-jaxrs_2.9.1:1.3.0-RC3'
         compile 'com.fasterxml.jackson.core:jackson-core:2.1.0'
         compile 'com.fasterxml.jackson.core:jackson-databind:2.1.0'
     }
@@ -46,6 +46,7 @@ grails.project.dependency.resolution = {
         runtime ":hibernate:$grailsVersion"
         runtime ":jquery:1.8.0"
         runtime ":resources:1.1.6"
+        compile ':jaxrs:0.8'
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"

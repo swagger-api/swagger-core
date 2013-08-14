@@ -20,11 +20,13 @@ import com.wordnik.swagger.annotations.*;
 import com.wordnik.swagger.sample.data.PetData;
 import com.wordnik.swagger.sample.model.Pet;
 import com.wordnik.swagger.sample.exception.NotFoundException;
-import com.wordnik.swagger.jaxrs.JavaHelp;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
+@Path("/pet")
+@Api(value = "/pet", description = "Operations about pets")
+@Produces({"application/json"})
 public class PetResource {
 	static PetData petData = new PetData();
 	static JavaRestResourceUtil ru = new JavaRestResourceUtil();
@@ -32,9 +34,9 @@ public class PetResource {
 	@GET
 	@Path("/{petId}")
 	@ApiOperation(value = "Find pet by ID", notes = "Returns a pet when ID < 10. "
-			+ "ID > 10 or nonintegers will simulate API error conditions", responseClass = "com.wordnik.swagger.sample.model.Pet")
-	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid ID supplied"),
-			@ApiError(code = 404, reason = "Pet not found") })
+			+ "ID > 10 or nonintegers will simulate API error conditions", response = Pet.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
+			@ApiResponse(code = 404, message = "Pet not found") })
 	public Response getPetById(
 			@ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("petId") String petId)
 			throws NotFoundException {
@@ -48,7 +50,7 @@ public class PetResource {
 
 	@POST
 	@ApiOperation(value = "Add a new pet to the store")
-	@ApiErrors(value = { @ApiError(code = 405, reason = "Invalid input") })
+	@ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input") })
 	public Response addPet(
 			@ApiParam(value = "Pet object that needs to be added to the store", required = true) Pet pet) {
 		petData.addPet(pet);
@@ -57,9 +59,9 @@ public class PetResource {
 
 	@PUT
 	@ApiOperation(value = "Update an existing pet")
-	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid ID supplied"),
-			@ApiError(code = 404, reason = "Pet not found"),
-			@ApiError(code = 405, reason = "Validation exception") })
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
+			@ApiResponse(code = 404, message = "Pet not found"),
+			@ApiResponse(code = 405, message = "Validation exception") })
 	public Response updatePet(
 			@ApiParam(value = "Pet object that needs to be added to the store", required = true) Pet pet) {
 		petData.addPet(pet);
@@ -68,8 +70,8 @@ public class PetResource {
 
 	@GET
 	@Path("/findByStatus")
-	@ApiOperation(value = "Finds Pets by status", notes = "Multiple status values can be provided with comma seperated strings", responseClass = "com.wordnik.swagger.sample.model.Pet", multiValueResponse = true)
-	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid status value") })
+	@ApiOperation(value = "Finds Pets by status", notes = "Multiple status values can be provided with comma seperated strings", response = Pet.class, responseContainer = "List")
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid status value") })
 	public Response findPetsByStatus(
 			@ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available", allowableValues = "available,pending,sold", allowMultiple = true) @QueryParam("status") String status) {
 		return Response.ok(petData.findPetByStatus(status)).build();
@@ -77,8 +79,8 @@ public class PetResource {
 
 	@GET
 	@Path("/findByTags")
-	@ApiOperation(value = "Finds Pets by tags", notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.", responseClass = "com.wordnik.swagger.sample.model.Pet", multiValueResponse = true)
-	@ApiErrors(value = { @ApiError(code = 400, reason = "Invalid tag value") })
+	@ApiOperation(value = "Finds Pets by tags", notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.", response = Pet.class, responseContainer = "List")
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid tag value") })
 	@Deprecated
 	public Response findPetsByTags(
 			@ApiParam(value = "Tags to filter by", required = true, allowMultiple = true) @QueryParam("tags") String tags) {

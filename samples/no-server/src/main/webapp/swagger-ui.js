@@ -191,9 +191,9 @@ templates['content_type'] = template(function (Handlebars,depth0,helpers,partial
 function program1(depth0,data) {
   
   var buffer = "", stack1, stack2;
-  buffer += "\n<label for=\"contentType\"></label>\n<select name=\"contentType\">\n	";
-  foundHelper = helpers.supportedContentTypes;
-  stack1 = foundHelper || depth0.supportedContentTypes;
+  buffer += "\n  ";
+  foundHelper = helpers.produces;
+  stack1 = foundHelper || depth0.produces;
   stack2 = helpers.each;
   tmp1 = self.program(2, program2, data);
   tmp1.hash = {};
@@ -201,7 +201,7 @@ function program1(depth0,data) {
   tmp1.inverse = self.noop;
   stack1 = stack2.call(depth0, stack1, tmp1);
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</select>\n";
+  buffer += "\n";
   return buffer;}
 function program2(depth0,data) {
   
@@ -219,16 +219,22 @@ function program2(depth0,data) {
   buffer += "</option>\n	";
   return buffer;}
 
-  foundHelper = helpers.supportedContentTypes;
-  stack1 = foundHelper || depth0.supportedContentTypes;
+function program4(depth0,data) {
+  
+  
+  return "\n  <option value=\"application/json\">application/json</option>\n";}
+
+  buffer += "<label for=\"contentType\"></label>\n<select name=\"contentType\">\n";
+  foundHelper = helpers.produces;
+  stack1 = foundHelper || depth0.produces;
   stack2 = helpers['if'];
   tmp1 = self.program(1, program1, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
-  tmp1.inverse = self.noop;
+  tmp1.inverse = self.program(4, program4, data);
   stack1 = stack2.call(depth0, stack1, tmp1);
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n";
+  buffer += "\n</select>\n";
   return buffer;});
 })();
 
@@ -240,6 +246,99 @@ templates['main'] = template(function (Handlebars,depth0,helpers,partials,data) 
 
 function program1(depth0,data) {
   
+  var buffer = "", stack1, stack2;
+  buffer += "\n    <div class=\"info_title\">";
+  foundHelper = helpers.info;
+  stack1 = foundHelper || depth0.info;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.title);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "info.title", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</div>\n    <div class=\"info_description\">";
+  foundHelper = helpers.info;
+  stack1 = foundHelper || depth0.info;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.description);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "info.description", { hash: {} }); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</div>\n    ";
+  foundHelper = helpers.info;
+  stack1 = foundHelper || depth0.info;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.termsOfServiceUrl);
+  stack2 = helpers['if'];
+  tmp1 = self.program(2, program2, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    ";
+  foundHelper = helpers.info;
+  stack1 = foundHelper || depth0.info;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.contact);
+  stack2 = helpers['if'];
+  tmp1 = self.program(4, program4, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    ";
+  foundHelper = helpers.info;
+  stack1 = foundHelper || depth0.info;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.license);
+  stack2 = helpers['if'];
+  tmp1 = self.program(6, program6, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  ";
+  return buffer;}
+function program2(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "<div class=\"info_tos\"><a href=\"";
+  foundHelper = helpers.info;
+  stack1 = foundHelper || depth0.info;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.termsOfServiceUrl);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "info.termsOfServiceUrl", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">Terms of service</a></div>";
+  return buffer;}
+
+function program4(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "<div class='info_contact'><a href=\"mailto:";
+  foundHelper = helpers.info;
+  stack1 = foundHelper || depth0.info;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.contact);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "info.contact", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">Contact the developer</a></div>";
+  return buffer;}
+
+function program6(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "<div class='info_license'><a href='";
+  foundHelper = helpers.info;
+  stack1 = foundHelper || depth0.info;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.licenseUrl);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "info.licenseUrl", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "'>";
+  foundHelper = helpers.info;
+  stack1 = foundHelper || depth0.info;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.license);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "info.license", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</a></div>";
+  return buffer;}
+
+function program8(depth0,data) {
+  
   var buffer = "", stack1;
   buffer += "\n        , <span style=\"font-variant: small-caps\">api version</span>: ";
   foundHelper = helpers.apiVersion;
@@ -249,7 +348,17 @@ function program1(depth0,data) {
   buffer += escapeExpression(stack1) + "\n        ";
   return buffer;}
 
-  buffer += "\n<div class='container' id='resources_container'>\n    <ul id='resources'>\n    </ul>\n\n    <div class=\"footer\">\n        <br>\n        <br>\n        <h4 style=\"color: #999\">[ <span style=\"font-variant: small-caps\">base url</span>: ";
+  buffer += "<div class='info' id='api_info'>\n  ";
+  foundHelper = helpers.info;
+  stack1 = foundHelper || depth0.info;
+  stack2 = helpers['if'];
+  tmp1 = self.program(1, program1, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>\n<div class='container' id='resources_container'>\n    <ul id='resources'>\n    </ul>\n\n    <div class=\"footer\">\n        <br>\n        <br>\n        <h4 style=\"color: #999\">[ <span style=\"font-variant: small-caps\">base url</span>: ";
   foundHelper = helpers.basePath;
   stack1 = foundHelper || depth0.basePath;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -258,7 +367,7 @@ function program1(depth0,data) {
   foundHelper = helpers.apiVersion;
   stack1 = foundHelper || depth0.apiVersion;
   stack2 = helpers['if'];
-  tmp1 = self.program(1, program1, data);
+  tmp1 = self.program(8, program8, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -288,56 +397,34 @@ function program1(depth0,data) {
 
 function program3(depth0,data) {
   
-  var buffer = "", stack1, stack2;
-  buffer += "\n                    <h4>Response Class</h4>\n                    ";
-  foundHelper = helpers.responseClassSignature;
-  stack1 = foundHelper || depth0.responseClassSignature;
-  stack2 = helpers['if'];
-  tmp1 = self.program(4, program4, data);
-  tmp1.hash = {};
-  tmp1.fn = tmp1;
-  tmp1.inverse = self.program(6, program6, data);
-  stack1 = stack2.call(depth0, stack1, tmp1);
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                ";
-  return buffer;}
-function program4(depth0,data) {
   
-  
-  return "\n                        <p><span class=\"model-signature\"></span></p>\n                    ";}
+  return "\n                  <h4>Response Class</h4>\n                  <p><span class=\"model-signature\" /></p>\n                  <br/>\n                  <div class=\"response-content-type\" />\n                ";}
 
-function program6(depth0,data) {
+function program5(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\n                        <p>";
-  foundHelper = helpers.responseClass;
-  stack1 = foundHelper || depth0.responseClass;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "responseClass", { hash: {} }); }
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "</p>\n                    ";
-  return buffer;}
+  
+  return "\n                  <h4>Parameters</h4>\n                  <table class='fullwidth'>\n                    <thead>\n                      <tr>\n                        <th style=\"width: 100px; max-width: 100px\">Parameter</th>\n                        <th style=\"width: 310px; max-width: 310px\">Value</th>\n                        <th style=\"width: 200px; max-width: 200px\">Description</th>\n                        <th style=\"width: 100px; max-width: 100px\">Parameter Type</th>\n                        <th style=\"width: 220px; max-width: 230px\">Data Type</th>\n                      </tr>\n                    </thead>\n                  <tbody class=\"operation-params\">\n\n                    </tbody>\n                    </table>\n                    ";}
 
-function program8(depth0,data) {
+function program7(depth0,data) {
   
   
-  return "\n                    <div style='margin:0;padding:0;display:inline'></div>\n                    <h4>Status Codes</h4>\n                    <table class='fullwidth'>\n                        <thead>\n                        <tr>\n                            <th>HTTP Status Code</th>\n                            <th>Reason</th>\n                        </tr>\n                        </thead>\n                        <tbody class=\"operation-status\">\n                        \n                        </tbody>\n                    </table>\n                    ";}
+  return "\n                    <div style='margin:0;padding:0;display:inline'></div>\n                    <h4>Error Status Codes</h4>\n                    <table class='fullwidth'>\n                        <thead>\n                        <tr>\n                            <th>HTTP Status Code</th>\n                            <th>Reason</th>\n                        </tr>\n                        </thead>\n                        <tbody class=\"operation-status\">\n                        \n                        </tbody>\n                    </table>\n                    ";}
 
-function program10(depth0,data) {
+function program9(depth0,data) {
   
   
   return "\n                    ";}
 
-function program12(depth0,data) {
+function program11(depth0,data) {
   
   
   return "\n                    <div class='sandbox_header'>\n                        <input class='submit' name='commit' type='button' value='Try it out!' />\n                        <a href='#' class='response_hider' style='display:none'>Hide Response</a>\n                        <img alt='Throbber' class='response_throbber' src='images/throbber.gif' style='display:none' />\n                    </div>\n                    ";}
 
   buffer += "\n    <ul class='operations' >\n      <li class='";
-  foundHelper = helpers.httpMethod;
-  stack1 = foundHelper || depth0.httpMethod;
+  foundHelper = helpers.method;
+  stack1 = foundHelper || depth0.method;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "httpMethod", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "method", { hash: {} }); }
   buffer += escapeExpression(stack1) + " operation' id='";
   foundHelper = helpers.resourceName;
   stack1 = foundHelper || depth0.resourceName;
@@ -349,10 +436,10 @@ function program12(depth0,data) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "nickname", { hash: {} }); }
   buffer += escapeExpression(stack1) + "_";
-  foundHelper = helpers.httpMethod;
-  stack1 = foundHelper || depth0.httpMethod;
+  foundHelper = helpers.method;
+  stack1 = foundHelper || depth0.method;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "httpMethod", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "method", { hash: {} }); }
   buffer += escapeExpression(stack1) + "_";
   foundHelper = helpers.number;
   stack1 = foundHelper || depth0.number;
@@ -369,20 +456,20 @@ function program12(depth0,data) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "nickname", { hash: {} }); }
   buffer += escapeExpression(stack1) + "_";
-  foundHelper = helpers.httpMethod;
-  stack1 = foundHelper || depth0.httpMethod;
+  foundHelper = helpers.method;
+  stack1 = foundHelper || depth0.method;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "httpMethod", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "method", { hash: {} }); }
   buffer += escapeExpression(stack1) + "_";
   foundHelper = helpers.number;
   stack1 = foundHelper || depth0.number;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "number", { hash: {} }); }
   buffer += escapeExpression(stack1) + "' class=\"toggleOperation\">";
-  foundHelper = helpers.httpMethod;
-  stack1 = foundHelper || depth0.httpMethod;
+  foundHelper = helpers.method;
+  stack1 = foundHelper || depth0.method;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "httpMethod", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "method", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</a>\n                  </span>\n                  <span class='path'>\n                    <a href='#!/";
   foundHelper = helpers.resourceName;
   stack1 = foundHelper || depth0.resourceName;
@@ -394,10 +481,10 @@ function program12(depth0,data) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "nickname", { hash: {} }); }
   buffer += escapeExpression(stack1) + "_";
-  foundHelper = helpers.httpMethod;
-  stack1 = foundHelper || depth0.httpMethod;
+  foundHelper = helpers.method;
+  stack1 = foundHelper || depth0.method;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "httpMethod", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "method", { hash: {} }); }
   buffer += escapeExpression(stack1) + "_";
   foundHelper = helpers.number;
   stack1 = foundHelper || depth0.number;
@@ -419,10 +506,10 @@ function program12(depth0,data) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "nickname", { hash: {} }); }
   buffer += escapeExpression(stack1) + "_";
-  foundHelper = helpers.httpMethod;
-  stack1 = foundHelper || depth0.httpMethod;
+  foundHelper = helpers.method;
+  stack1 = foundHelper || depth0.method;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "httpMethod", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "method", { hash: {} }); }
   buffer += escapeExpression(stack1) + "_";
   foundHelper = helpers.number;
   stack1 = foundHelper || depth0.number;
@@ -445,10 +532,10 @@ function program12(depth0,data) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "nickname", { hash: {} }); }
   buffer += escapeExpression(stack1) + "_";
-  foundHelper = helpers.httpMethod;
-  stack1 = foundHelper || depth0.httpMethod;
+  foundHelper = helpers.method;
+  stack1 = foundHelper || depth0.method;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "httpMethod", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "method", { hash: {} }); }
   buffer += escapeExpression(stack1) + "_";
   foundHelper = helpers.number;
   stack1 = foundHelper || depth0.number;
@@ -474,11 +561,21 @@ function program12(depth0,data) {
   tmp1.inverse = self.noop;
   stack1 = stack2.call(depth0, stack1, tmp1);
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                <form accept-charset='UTF-8' class='sandbox'>\n                    <div style='margin:0;padding:0;display:inline'></div>\n                    <h4>Parameters</h4>\n                    <table class='fullwidth'>\n                        <thead>\n                        <tr>\n                            <th style=\"width: 100px; max-width: 100px\" >Parameter</th>\n                            <th style=\"width: 310px; max-width: 310px\">Value</th>\n                            <th style=\"width: 200px; max-width: 200px\">Description</th>\n                            <th style=\"width: 320px; max-width: 330px\">Data Type</th>\n                        </tr>\n                        </thead>\n                        <tbody class=\"operation-params\">\n\n                        </tbody>\n                    </table>\n                    ";
+  buffer += "\n                <form accept-charset='UTF-8' class='sandbox'>\n                  <div style='margin:0;padding:0;display:inline'></div>\n                  ";
+  foundHelper = helpers.parameters;
+  stack1 = foundHelper || depth0.parameters;
+  stack2 = helpers['if'];
+  tmp1 = self.program(5, program5, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                    ";
   foundHelper = helpers.errorResponses;
   stack1 = foundHelper || depth0.errorResponses;
   stack2 = helpers['if'];
-  tmp1 = self.program(8, program8, data);
+  tmp1 = self.program(7, program7, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -488,13 +585,13 @@ function program12(depth0,data) {
   foundHelper = helpers.isReadOnly;
   stack1 = foundHelper || depth0.isReadOnly;
   stack2 = helpers['if'];
-  tmp1 = self.program(10, program10, data);
+  tmp1 = self.program(9, program9, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
-  tmp1.inverse = self.program(12, program12, data);
+  tmp1.inverse = self.program(11, program11, data);
   stack1 = stack2.call(depth0, stack1, tmp1);
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                </form>\n                <div class='response' style='display:none'>\n                    <h4>Request URL</h4>\n                    <div class='block request_url'></div>\n                    <h4>Response Body</h4>\n                    <div class='block response_body'></div>\n                    <h4>Response Code</h4>\n                    <div class='block response_code'></div>\n                    <h4>Response Headers</h4>\n                    <div class='block response_headers'></div>\n                </div>\n            </div>\n        </li>\n    </ul>";
+  buffer += "\n                </form>\n                <div class='response' style='display:none'>\n                    <h4>Request URL</h4>\n                    <div class='block request_url'></div>\n                    <h4>Response Body</h4>\n                    <div class='block response_body'></div>\n                    <h4>Response Code</h4>\n                    <div class='block response_code'></div>\n                    <h4>Response Headers</h4>\n                    <div class='block response_headers'></div>\n                </div>\n            </div>\n        </li>\n    </ul>\n";
   return buffer;});
 })();
 
@@ -527,7 +624,7 @@ function program2(depth0,data) {
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "'/>\n		";
+  buffer += escapeExpression(stack1) + "'/>\n			<div class=\"parameter-content-type\" />\n		";
   return buffer;}
 
 function program4(depth0,data) {
@@ -569,7 +666,7 @@ function program7(depth0,data) {
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "'></textarea>\n				<br />\n				<div class=\"content-type\" />\n			";
+  buffer += escapeExpression(stack1) + "'></textarea>\n				<br />\n				<div class=\"parameter-content-type\" />\n			";
   return buffer;}
 
 function program9(depth0,data) {
@@ -590,7 +687,7 @@ function program9(depth0,data) {
 function program10(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n			<input minlength='0' name='";
+  buffer += "\n			<input class='parameter' minlength='0' name='";
   foundHelper = helpers.name;
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -606,7 +703,7 @@ function program10(depth0,data) {
 function program12(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n			<input minlength='0' name='";
+  buffer += "\n			<input class='parameter' minlength='0' name='";
   foundHelper = helpers.name;
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -635,7 +732,13 @@ function program12(depth0,data) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "description", { hash: {} }); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "</td>\n<td>\n	<span class=\"model-signature\"></span>\n</td>\n\n";
+  buffer += "</td>\n<td>";
+  foundHelper = helpers.paramType;
+  stack1 = foundHelper || depth0.paramType;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "paramType", { hash: {} }); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</td>\n<td>\n	<span class=\"model-signature\"></span>\n</td>\n";
   return buffer;});
 })();
 
@@ -727,7 +830,7 @@ function program11(depth0,data) {
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</td>\n<td>\n    <select name='";
+  buffer += escapeExpression(stack1) + "</td>\n<td>\n    <select class='parameter' name='";
   foundHelper = helpers.name;
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -759,6 +862,12 @@ function program11(depth0,data) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "description", { hash: {} }); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</td>\n<td>";
+  foundHelper = helpers.paramType;
+  stack1 = foundHelper || depth0.paramType;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "paramType", { hash: {} }); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "</td>\n<td><span class=\"model-signature\"></span></td>\n";
   return buffer;});
 })();
@@ -787,14 +896,34 @@ function program1(depth0,data) {
 
 function program3(depth0,data) {
   
-  var buffer = "", stack1;
+  var buffer = "", stack1, stack2;
   buffer += "\n        ";
+  foundHelper = helpers.defaultValue;
+  stack1 = foundHelper || depth0.defaultValue;
+  stack2 = helpers['if'];
+  tmp1 = self.program(4, program4, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.program(6, program6, data);
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    ";
+  return buffer;}
+function program4(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n            ";
   foundHelper = helpers.defaultValue;
   stack1 = foundHelper || depth0.defaultValue;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "defaultValue", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\n    ";
+  buffer += escapeExpression(stack1) + "\n        ";
   return buffer;}
+
+function program6(depth0,data) {
+  
+  
+  return "\n            (empty)\n        ";}
 
   buffer += "<td class='code'>";
   foundHelper = helpers.name;
@@ -816,6 +945,12 @@ function program3(depth0,data) {
   stack1 = foundHelper || depth0.description;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "description", { hash: {} }); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</td>\n<td>";
+  foundHelper = helpers.paramType;
+  stack1 = foundHelper || depth0.paramType;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "paramType", { hash: {} }); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "</td>\n<td><span class=\"model-signature\"></span></td>\n";
   return buffer;});
@@ -845,14 +980,34 @@ function program1(depth0,data) {
 
 function program3(depth0,data) {
   
-  var buffer = "", stack1;
+  var buffer = "", stack1, stack2;
   buffer += "\n        ";
+  foundHelper = helpers.defaultValue;
+  stack1 = foundHelper || depth0.defaultValue;
+  stack2 = helpers['if'];
+  tmp1 = self.program(4, program4, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.program(6, program6, data);
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    ";
+  return buffer;}
+function program4(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n            ";
   foundHelper = helpers.defaultValue;
   stack1 = foundHelper || depth0.defaultValue;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "defaultValue", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\n    ";
+  buffer += escapeExpression(stack1) + "\n        ";
   return buffer;}
+
+function program6(depth0,data) {
+  
+  
+  return "\n            (empty)\n        ";}
 
   buffer += "<td class='code required'>";
   foundHelper = helpers.name;
@@ -874,6 +1029,12 @@ function program3(depth0,data) {
   stack1 = foundHelper || depth0.description;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "description", { hash: {} }); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</td>\n<td>";
+  foundHelper = helpers.paramType;
+  stack1 = foundHelper || depth0.paramType;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "paramType", { hash: {} }); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "</td>\n<td><span class=\"model-signature\"></span></td>\n";
   return buffer;});
@@ -950,7 +1111,7 @@ function program7(depth0,data) {
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "'></textarea>\n				<br />\n				<div class=\"content-type\" />\n			";
+  buffer += escapeExpression(stack1) + "'></textarea>\n				<br />\n				<div class=\"parameter-content-type\" />\n			";
   return buffer;}
 
 function program9(depth0,data) {
@@ -971,7 +1132,7 @@ function program9(depth0,data) {
 function program10(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n			<input class='required' type='file' name='";
+  buffer += "\n			<input class='parameter' class='required' type='file' name='";
   foundHelper = helpers.name;
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -997,7 +1158,7 @@ function program12(depth0,data) {
 function program13(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n				<input class='required' minlength='1' name='";
+  buffer += "\n				<input class='parameter required' minlength='1' name='";
   foundHelper = helpers.name;
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1013,7 +1174,7 @@ function program13(depth0,data) {
 function program15(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n				<input class='required' minlength='1' name='";
+  buffer += "\n				<input class='parameter required' minlength='1' name='";
   foundHelper = helpers.name;
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1042,7 +1203,69 @@ function program15(depth0,data) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "description", { hash: {} }); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "</strong>\n</td>\n<td><span class=\"model-signature\"></span></td>\n";
+  buffer += "</strong>\n</td>\n<td>";
+  foundHelper = helpers.paramType;
+  stack1 = foundHelper || depth0.paramType;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "paramType", { hash: {} }); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</td>\n<td><span class=\"model-signature\"></span></td>\n";
+  return buffer;});
+})();
+
+(function() {
+  var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
+templates['parameter_content_type'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers;
+  var buffer = "", stack1, stack2, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n  ";
+  foundHelper = helpers.consumes;
+  stack1 = foundHelper || depth0.consumes;
+  stack2 = helpers.each;
+  tmp1 = self.program(2, program2, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n";
+  return buffer;}
+function program2(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n  <option value=\"";
+  stack1 = depth0;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "this", { hash: {} }); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\">";
+  stack1 = depth0;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "this", { hash: {} }); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</option>\n  ";
+  return buffer;}
+
+function program4(depth0,data) {
+  
+  
+  return "\n  <option value=\"application/json\">application/json</option>\n";}
+
+  buffer += "<label for=\"parameterContentType\"></label>\n<select name=\"parameterContentType\">\n";
+  foundHelper = helpers.consumes;
+  stack1 = foundHelper || depth0.consumes;
+  stack2 = helpers['if'];
+  tmp1 = self.program(1, program1, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.program(4, program4, data);
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</select>\n";
   return buffer;});
 })();
 
@@ -1053,7 +1276,7 @@ templates['resource'] = template(function (Handlebars,depth0,helpers,partials,da
   var buffer = "", stack1, foundHelper, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression;
 
 
-  buffer += "<div class='heading'>\n    <h2>\n        <a href='#!/";
+  buffer += "<div class='heading'>\n  <h2>\n    <a href='#!/";
   foundHelper = helpers.name;
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1063,12 +1286,12 @@ templates['resource'] = template(function (Handlebars,depth0,helpers,partials,da
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "');\">/";
+  buffer += escapeExpression(stack1) + "');\">";
   foundHelper = helpers.name;
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</a>\n    </h2>\n    <ul class='options'>\n        <li>\n            <a href='#!/";
+  buffer += escapeExpression(stack1) + "</a>\n  </h2>\n  <ul class='options'>\n    <li>\n      <a href='#!/";
   foundHelper = helpers.name;
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1078,32 +1301,88 @@ templates['resource'] = template(function (Handlebars,depth0,helpers,partials,da
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "'\n               onclick=\"Docs.toggleEndpointListForResource('";
+  buffer += escapeExpression(stack1) + "'\n         onclick=\"Docs.toggleEndpointListForResource('";
   foundHelper = helpers.name;
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "');\">Show/Hide</a>\n        </li>\n        <li>\n            <a href='#' onclick=\"Docs.collapseOperationsForResource('";
+  buffer += escapeExpression(stack1) + "');\">Show/Hide</a>\n    </li>\n    <li>\n      <a href='#' onclick=\"Docs.collapseOperationsForResource('";
   foundHelper = helpers.name;
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "'); return false;\">\n                List Operations\n            </a>\n        </li>\n        <li>\n            <a href='#' onclick=\"Docs.expandOperationsForResource('";
+  buffer += escapeExpression(stack1) + "'); return false;\">\n        List Operations\n      </a>\n    </li>\n    <li>\n      <a href='#' onclick=\"Docs.expandOperationsForResource('";
   foundHelper = helpers.name;
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "'); return false;\">\n                Expand Operations\n            </a>\n        </li>\n        <li>\n            <a href='";
+  buffer += escapeExpression(stack1) + "'); return false;\">\n        Expand Operations\n      </a>\n    </li>\n    <li>\n      <a href='";
   foundHelper = helpers.url;
   stack1 = foundHelper || depth0.url;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "url", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "'>Raw</a>\n        </li>\n    </ul>\n</div>\n<ul class='endpoints' id='";
+  buffer += escapeExpression(stack1) + "'>Raw</a>\n    </li>\n  </ul>\n</div>\n<ul class='endpoints' id='";
   foundHelper = helpers.name;
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
   buffer += escapeExpression(stack1) + "_endpoint_list' style='display:none'>\n\n</ul>\n";
+  return buffer;});
+})();
+
+(function() {
+  var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
+templates['response_content_type'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers;
+  var buffer = "", stack1, stack2, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n  ";
+  foundHelper = helpers.produces;
+  stack1 = foundHelper || depth0.produces;
+  stack2 = helpers.each;
+  tmp1 = self.program(2, program2, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n";
+  return buffer;}
+function program2(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n  <option value=\"";
+  stack1 = depth0;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "this", { hash: {} }); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\">";
+  stack1 = depth0;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "this", { hash: {} }); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</option>\n  ";
+  return buffer;}
+
+function program4(depth0,data) {
+  
+  
+  return "\n  <option value=\"application/json\">application/json</option>\n";}
+
+  buffer += "<label for=\"responseContentType\"></label>\n<select name=\"responseContentType\">\n";
+  foundHelper = helpers.produces;
+  stack1 = foundHelper || depth0.produces;
+  stack2 = helpers['if'];
+  tmp1 = self.program(1, program1, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.program(4, program4, data);
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</select>\n";
   return buffer;});
 })();
 
@@ -1153,9 +1432,9 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
 
 
 
-// Generated by CoffeeScript 1.3.3
+// Generated by CoffeeScript 1.4.0
 (function() {
-  var ContentTypeView, HeaderView, MainView, OperationView, ParameterView, ResourceView, SignatureView, StatusCodeView, SwaggerUi,
+  var ContentTypeView, HeaderView, MainView, OperationView, ParameterContentTypeView, ParameterView, ResourceView, ResponseContentTypeView, SignatureView, StatusCodeView, SwaggerUi,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -1208,18 +1487,24 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
     };
 
     SwaggerUi.prototype.updateSwaggerUi = function(data) {
-      this.options.discoveryUrl = data.discoveryUrl;
-      this.options.apiKey = data.apiKey;
+      this.options.url = data.url;
       return this.load();
     };
 
     SwaggerUi.prototype.load = function() {
-      var _ref;
+      var url, _ref;
       if ((_ref = this.mainView) != null) {
         _ref.clear();
       }
-      this.headerView.update(this.options.discoveryUrl, this.options.apiKey);
-      return this.api = new SwaggerApi(this.options);
+      url = this.options.url;
+      if (url.indexOf("http") !== 0) {
+        url = this.buildUrl(window.location.href.toString(), url);
+      }
+      this.options.url = url;
+      this.headerView.update(url);
+      this.api = new SwaggerApi(this.options);
+      this.api.build();
+      return this.api;
     };
 
     SwaggerUi.prototype.render = function() {
@@ -1243,6 +1528,18 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
       return setTimeout(function() {
         return Docs.shebang();
       }, 400);
+    };
+
+    SwaggerUi.prototype.buildUrl = function(base, url) {
+      var parts;
+      console.log("base is " + base);
+      parts = base.split("/");
+      base = parts[0] + "//" + parts[2];
+      if (url.indexOf("/") === 0) {
+        return base + url;
+      } else {
+        return base + "/" + url;
+      }
     };
 
     SwaggerUi.prototype.showMessage = function(data) {
@@ -1294,15 +1591,13 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
 
     HeaderView.prototype.showPetStore = function(e) {
       return this.trigger('update-swagger-ui', {
-        discoveryUrl: "http://petstore.swagger.wordnik.com/api/api-docs.json",
-        apiKey: "special-key"
+        url: "http://petstore.swagger.wordnik.com/api/api-docs.json"
       });
     };
 
     HeaderView.prototype.showWordnikDev = function(e) {
       return this.trigger('update-swagger-ui', {
-        discoveryUrl: "http://api.wordnik.com/v4/resources.json",
-        apiKey: ""
+        url: "http://api.wordnik.com/v4/resources.json"
       });
     };
 
@@ -1317,7 +1612,7 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
         e.preventDefault();
       }
       return this.trigger('update-swagger-ui', {
-        discoveryUrl: $('#input_baseUrl').val(),
+        url: $('#input_baseUrl').val(),
         apiKey: $('#input_apiKey').val()
       });
     };
@@ -1327,11 +1622,9 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
         trigger = false;
       }
       $('#input_baseUrl').val(url);
-      $('#input_apiKey').val(apiKey);
       if (trigger) {
         return this.trigger('update-swagger-ui', {
-          discoveryUrl: url,
-          apiKey: apiKey
+          url: url
         });
       }
     };
@@ -1353,7 +1646,7 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
     MainView.prototype.render = function() {
       var resource, _i, _len, _ref;
       $(this.el).html(Handlebars.templates.main(this.model));
-      _ref = this.model.resourcesArray;
+      _ref = this.model.apisArray;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         resource = _ref[_i];
         this.addResource(resource);
@@ -1436,8 +1729,8 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
     OperationView.prototype.initialize = function() {};
 
     OperationView.prototype.render = function() {
-      var contentTypeModel, contentTypeView, isMethodSubmissionSupported, param, responseSignatureView, signatureModel, statusCode, _i, _j, _len, _len1, _ref, _ref1;
-      isMethodSubmissionSupported = jQuery.inArray(this.model.httpMethod, this.model.supportedSubmitMethods()) >= 0;
+      var contentTypeModel, isMethodSubmissionSupported, param, responseContentTypeView, responseSignatureView, signatureModel, statusCode, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+      isMethodSubmissionSupported = true;
       if (!isMethodSubmissionSupported) {
         this.model.isReadOnly = true;
       }
@@ -1457,28 +1750,40 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
         $('.model-signature', $(this.el)).html(this.model.responseClass);
       }
       contentTypeModel = {
-        isParam: false,
-        supportedContentTypes: this.model.supportedContentTypes
+        isParam: false
       };
-      contentTypeView = new ContentTypeView({
-        model: contentTypeModel
-      });
-      $('.content-type', $(this.el)).append(contentTypeView.render().el);
+      contentTypeModel.consumes = this.model.consumes;
+      contentTypeModel.produces = this.model.produces;
       _ref = this.model.parameters;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         param = _ref[_i];
-        this.addParameter(param);
+        if (param.dataType.toLowerCase() === 'file') {
+          if (!contentTypeModel.consumes) {
+            console.log("set content type ");
+            contentTypeModel.consumes = 'multipart/form-data';
+          }
+        }
       }
-      _ref1 = this.model.errorResponses;
+      responseContentTypeView = new ResponseContentTypeView({
+        model: contentTypeModel
+      });
+      $('.response-content-type', $(this.el)).append(responseContentTypeView.render().el);
+      _ref1 = this.model.parameters;
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        statusCode = _ref1[_j];
+        param = _ref1[_j];
+        this.addParameter(param, contentTypeModel.consumes);
+      }
+      _ref2 = this.model.responseMessages;
+      for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+        statusCode = _ref2[_k];
         this.addStatusCode(statusCode);
       }
       return this;
     };
 
-    OperationView.prototype.addParameter = function(param) {
+    OperationView.prototype.addParameter = function(param, consumes) {
       var paramView;
+      param.consumes = consumes;
       paramView = new ParameterView({
         model: param,
         tagName: 'tr',
@@ -1497,8 +1802,7 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
     };
 
     OperationView.prototype.submitOperation = function(e) {
-      var bodyParam, error_free, form, headerParams, invocationUrl, isFileUpload, map, o, obj, param, paramContentTypeField, responseContentTypeField, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2,
-        _this = this;
+      var error_free, form, map, o, opts, _i, _len, _ref;
       if (e != null) {
         e.preventDefault();
       }
@@ -1519,79 +1823,24 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
       });
       if (error_free) {
         map = {};
-        _ref = form.serializeArray();
+        opts = {
+          parent: this
+        };
+        _ref = form.find("input");
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           o = _ref[_i];
           if ((o.value != null) && jQuery.trim(o.value).length > 0) {
-            map[o.name] = o.value;
+            map[o.name] = encodeURI(o.value);
           }
         }
-        isFileUpload = $('input[type~="file"]').size !== 0;
-        if (isFileUpload) {
-          bodyParam = new FormData();
-          _ref1 = this.model.parameters;
-          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-            param = _ref1[_j];
-            if (param.paramType === 'body') {
-              bodyParam.append(param.name, map[param.name]);
-            }
-          }
-          $.each($('input[type~="file"]'), function(i, el) {
-            return bodyParam.append($(el).attr('name'), el.files[0]);
-          });
-          console.log(bodyParam);
-        } else {
-
-        }
-        bodyParam = null;
-        _ref2 = this.model.parameters;
-        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-          param = _ref2[_k];
-          if (param.paramType === 'body') {
-            bodyParam = map[param.name];
-          }
-        }
-        log("bodyParam = " + bodyParam);
-        headerParams = null;
-        invocationUrl = this.model.supportHeaderParams() ? (headerParams = this.model.getHeaderParams(map), this.model.urlify(map, false)) : this.model.urlify(map, true);
-        log('submitting ' + invocationUrl);
-        $(".request_url", $(this.el)).html("<pre>" + invocationUrl + "</pre>");
-        $(".response_throbber", $(this.el)).show();
-        obj = {
-          type: this.model.httpMethod,
-          url: invocationUrl,
-          headers: headerParams,
-          data: bodyParam,
-          dataType: 'json',
-          processData: false,
-          error: function(xhr, textStatus, error) {
-            return _this.showErrorStatus(xhr, textStatus, error);
-          },
-          success: function(data) {
-            return _this.showResponse(data);
-          },
-          complete: function(data) {
-            return _this.showCompleteStatus(data);
-          }
-        };
-        if (obj.type.toLowerCase() === "post" || obj.type.toLowerCase() === "put" || obj.type.toLowerCase() === "patch") {
-          obj.contentType = "application/json";
-        }
-        if (isFileUpload) {
-          obj.contentType = false;
-        }
-        paramContentTypeField = $("td select[name=contentType]", $(this.el)).val();
-        if (paramContentTypeField) {
-          obj.contentType = paramContentTypeField;
-        }
-        responseContentTypeField = $('.content > .content-type > div > select[name=contentType]', $(this.el)).val();
-        if (responseContentTypeField) {
-          obj.headers = obj.headers != null ? obj.headers : {};
-          obj.headers.accept = responseContentTypeField;
-        }
-        jQuery.ajax(obj);
-        return false;
+        opts.responseContentType = $("div select[name=responseContentType]", $(this.el)).val();
+        opts.requestContentType = $("div select[name=parameterContentType]", $(this.el)).val();
+        return this.model["do"](map, opts, this.showCompleteStatus, this.showErrorStatus, this);
       }
+    };
+
+    OperationView.prototype.success = function(response, parent) {
+      return parent.showCompleteStatus(response);
     };
 
     OperationView.prototype.hideResponse = function(e) {
@@ -1608,12 +1857,12 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
       return $(".response_body", $(this.el)).html(escape(prettyJson));
     };
 
-    OperationView.prototype.showErrorStatus = function(data) {
-      return this.showStatus(data);
+    OperationView.prototype.showErrorStatus = function(data, parent) {
+      return parent.showStatus(data);
     };
 
-    OperationView.prototype.showCompleteStatus = function(data) {
-      return this.showStatus(data);
+    OperationView.prototype.showCompleteStatus = function(data, parent) {
+      return parent.showStatus(data);
     };
 
     OperationView.prototype.formatXml = function(xml) {
@@ -1690,18 +1939,31 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
     };
 
     OperationView.prototype.showStatus = function(data) {
-      var code, pre, response_body;
-      try {
-        code = $('<code />').text(JSON.stringify(JSON.parse(data.responseText), null, 2));
+      var code, content, contentType, headers, pre, response_body;
+      content = data.content.data;
+      headers = data.getHeaders();
+      contentType = headers["Content-Type"];
+      if (content === void 0) {
+        code = $('<code />').text("no content");
         pre = $('<pre class="json" />').append(code);
-      } catch (error) {
-        code = $('<code />').text(this.formatXml(data.responseText));
+      } else if (contentType.indexOf("application/json") === 0) {
+        code = $('<code />').text(JSON.stringify(JSON.parse(content), null, 2));
+        pre = $('<pre class="json" />').append(code);
+      } else if (contentType.indexOf("application/xml") === 0) {
+        code = $('<code />').text(this.formatXml(content));
         pre = $('<pre class="xml" />').append(code);
+      } else if (contentType.indexOf("text/html") === 0) {
+        code = $('<code />').html(content);
+        pre = $('<pre class="xml" />').append(code);
+      } else {
+        code = $('<code />').text(content);
+        pre = $('<pre class="json" />').append(code);
       }
       response_body = pre;
+      $(".request_url").html("<pre>" + data.request.url + "</pre>");
       $(".response_code", $(this.el)).html("<pre>" + data.status + "</pre>");
       $(".response_body", $(this.el)).html(response_body);
-      $(".response_headers", $(this.el)).html("<pre>" + data.getAllResponseHeaders() + "</pre>");
+      $(".response_headers", $(this.el)).html("<pre>" + JSON.stringify(data.getHeaders()) + "</pre>");
       $(".response", $(this.el)).slideDown();
       $(".response_hider", $(this.el)).show();
       $(".response_throbber", $(this.el)).hide();
@@ -1710,7 +1972,7 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
 
     OperationView.prototype.toggleOperationContent = function() {
       var elem;
-      elem = $('#' + this.model.resourceName + "_" + this.model.nickname + "_" + this.model.httpMethod + "_" + this.model.number + "_content");
+      elem = $('#' + Docs.escapeResourceName(this.model.resourceName) + "_" + this.model.nickname + "_" + this.model.method + "_" + this.model.number + "_content");
       if (elem.is(':visible')) {
         return Docs.collapseOperation(elem);
       } else {
@@ -1758,11 +2020,11 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
     ParameterView.prototype.initialize = function() {};
 
     ParameterView.prototype.render = function() {
-      var contentTypeModel, contentTypeView, signatureModel, signatureView, template;
+      var contentTypeModel, isParam, parameterContentTypeView, responseContentTypeView, signatureModel, signatureView, template;
       if (this.model.paramType === 'body') {
         this.model.isBody = true;
       }
-      if (this.model.dataType === 'file') {
+      if (this.model.dataType.toLowerCase() === 'file') {
         this.model.isFile = true;
       }
       template = this.template();
@@ -1781,14 +2043,25 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
       } else {
         $('.model-signature', $(this.el)).html(this.model.signature);
       }
+      isParam = false;
+      if (this.model.isBody) {
+        isParam = true;
+      }
       contentTypeModel = {
-        isParam: true,
-        supportedContentTypes: this.model.supportedContentTypes
+        isParam: isParam
       };
-      contentTypeView = new ContentTypeView({
-        model: contentTypeModel
-      });
-      $('.content-type', $(this.el)).append(contentTypeView.render().el);
+      contentTypeModel.consumes = this.model.consumes;
+      if (isParam) {
+        parameterContentTypeView = new ParameterContentTypeView({
+          model: contentTypeModel
+        });
+        $('.parameter-content-type', $(this.el)).append(parameterContentTypeView.render().el);
+      } else {
+        responseContentTypeView = new ResponseContentTypeView({
+          model: contentTypeModel
+        });
+        $('.response-content-type', $(this.el)).append(responseContentTypeView.render().el);
+      }
       return this;
     };
 
@@ -1899,12 +2172,7 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
       var template;
       template = this.template();
       $(this.el).html(template(this.model));
-      this.isParam = this.model.isParam;
-      if (this.isParam) {
-        $('label[for=contentType]', $(this.el)).text('Parameter content type:');
-      } else {
-        $('label[for=contentType]', $(this.el)).text('Response Content Type');
-      }
+      $('label[for=contentType]', $(this.el)).text('Response Content Type');
       return this;
     };
 
@@ -1913,6 +2181,58 @@ templates['status_code'] = template(function (Handlebars,depth0,helpers,partials
     };
 
     return ContentTypeView;
+
+  })(Backbone.View);
+
+  ResponseContentTypeView = (function(_super) {
+
+    __extends(ResponseContentTypeView, _super);
+
+    function ResponseContentTypeView() {
+      return ResponseContentTypeView.__super__.constructor.apply(this, arguments);
+    }
+
+    ResponseContentTypeView.prototype.initialize = function() {};
+
+    ResponseContentTypeView.prototype.render = function() {
+      var template;
+      template = this.template();
+      $(this.el).html(template(this.model));
+      $('label[for=responseContentType]', $(this.el)).text('Response Content Type');
+      return this;
+    };
+
+    ResponseContentTypeView.prototype.template = function() {
+      return Handlebars.templates.response_content_type;
+    };
+
+    return ResponseContentTypeView;
+
+  })(Backbone.View);
+
+  ParameterContentTypeView = (function(_super) {
+
+    __extends(ParameterContentTypeView, _super);
+
+    function ParameterContentTypeView() {
+      return ParameterContentTypeView.__super__.constructor.apply(this, arguments);
+    }
+
+    ParameterContentTypeView.prototype.initialize = function() {};
+
+    ParameterContentTypeView.prototype.render = function() {
+      var template;
+      template = this.template();
+      $(this.el).html(template(this.model));
+      $('label[for=parameterContentType]', $(this.el)).text('Parameter content type:');
+      return this;
+    };
+
+    ParameterContentTypeView.prototype.template = function() {
+      return Handlebars.templates.parameter_content_type;
+    };
+
+    return ParameterContentTypeView;
 
   })(Backbone.View);
 

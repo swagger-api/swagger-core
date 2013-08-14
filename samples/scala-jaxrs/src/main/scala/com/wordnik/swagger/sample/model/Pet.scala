@@ -26,12 +26,26 @@ import scala.reflect.BeanProperty
 
 @XmlRootElement(name = "Pet")
 @XmlAccessorType(XmlAccessType.NONE)
+@ApiModel(value = "A pet is a person's best friend", description = "This is where a longer description would live")
 class Pet() {
-  @XmlElement(name = "id") @BeanProperty var id: Long = 0
+  @XmlElement(name = "id", required = true) @BeanProperty var id: Long = 0
   @XmlElement(name = "category") @BeanProperty var category: Category = null
-  @XmlElement(name = "name") @BeanProperty var name: String = null
+  @XmlElement(name = "name", required = true) @BeanProperty var name: String = null
   @XmlElement(name = "photoUrls") @BeanProperty var photoUrls: List[String] = new ArrayList[String]()
   @XmlElement(name = "tags") @BeanProperty var tags: List[Tag] = new ArrayList[Tag]()
   @XmlElement(name = "status")
-  @ApiProperty(value = "pet status in the store", allowableValues = "available,pending,sold") @BeanProperty var status: String = null
+  @ApiModelProperty(value = "pet status in the store", allowableValues = "available,pending,sold") @BeanProperty var status: String = null
+
+  override def toString() = {
+    val sb = new StringBuilder
+    sb.append("Pet(")
+      .append("category=").append(category).append(", ")
+      .append("name=").append(name).append(", ")
+      .append("photoUrls=").append(photoUrls).append(", ")
+      .append("tags=").append(tags).append(", ")
+      .append("status=").append(status)
+      .append(")")
+
+    sb.toString
+  }
 }

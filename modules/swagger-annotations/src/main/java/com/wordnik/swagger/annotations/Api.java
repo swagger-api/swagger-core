@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,16 +21,36 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
+/**
+ * describes a top-level api.  Classes with @Api annotations will
+ * be included in the Resource Listing: https://github.com/wordnik/swagger-core/wiki/Resource-Listing
+ * for details
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Api {
-    /** Short description of the class */
-    String value();
-    String listingPath() default "";
-    String listingClass() default "";
-    /** General description of this class */
-    String description() default "";
-    boolean open() default false;
-    /** The base path that is prepended to all @Path elements. This may be an override for certain scenarios only */
-    String basePath() default "";
+  /** Short description of the Api */
+  String value();
+
+  /** General description of this class */
+  String description() default "";
+
+  /** The base path that is prepended to all @Path elements. This may be an override for certain scenarios only */
+  String basePath() default "";
+  
+  /** optional explicit ordering of this Api in the Resource Listing */  
+  int position() default 0;
+
+  /** content type produced by this Api */
+  String produces() default "";
+
+  /** media type consumed by this Api */
+  String consumes() default "";
+
+  /** protocols that this Api requires (i.e. https) */
+  String protocols() default "";
+
+  /** authorizations required by this Api */
+  String authorizations() default "";
 }

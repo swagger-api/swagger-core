@@ -4,13 +4,9 @@ import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.jersey._
 
 import javax.ws.rs._
+import javax.ws.rs.core.MediaType
 
-@Path("/api-docs.json")
+@Path("/api-docs")
 @Api("/api-docs")
-@Produces(Array("application/json"))
-class ApiListingResourceJSON extends ApiListing
-
-@Path("/api-docs.xml")
-@Api("/api-docs")
-@Produces(Array("application/xml"))
-class ApiListingResourceXML extends ApiListing
+@Produces(Array(MediaType.APPLICATION_JSON))
+class ApiListingResourceJSON extends ApiListingResource
