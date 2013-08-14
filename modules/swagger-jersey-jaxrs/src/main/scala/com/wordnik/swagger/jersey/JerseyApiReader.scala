@@ -84,6 +84,9 @@ class JerseyApiReader extends JaxrsApiReader {
             }
           }
         }
+        case e: DefaultValue => {
+          mutable.defaultValue = Option(readString(e.value))
+        }
         case e: Context => shouldIgnore = true
         case _ =>
       }

@@ -24,7 +24,7 @@ class BasicResource {
     new ApiResponse(code = 400, message = "Invalid ID", response = classOf[NotFoundModel]),
     new ApiResponse(code = 404, message = "object not found")))
   def getTest(
-    @ApiParam(value = "sample param data", required = true, allowableValues = "range[0,10]")@QueryParam("id") id: String) = {
+    @ApiParam(value = "sample param data", required = true, allowableValues = "range[0,10]")@DefaultValue("1") @QueryParam("id") id: String) = {
     val out = new Sample
     out.name = "foo"
     out.value = "bar"

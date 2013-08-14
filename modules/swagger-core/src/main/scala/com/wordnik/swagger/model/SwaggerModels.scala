@@ -51,7 +51,8 @@ case class Model(
   properties: LinkedHashMap[String, ModelProperty],
   description: Option[String] = None,
   baseModel: Option[String] = None,
-  discriminator: Option[String] = None)
+  discriminator: Option[String] = None,
+  subTypes: List[String] = List.empty)
 
 case class ModelProperty(
   `type`: String,

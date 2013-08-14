@@ -43,6 +43,9 @@ class DefaultJaxrsApiReader extends JaxrsApiReader {
           mutable.name = readString(e.value, mutable.name)
           mutable.paramType = readString(TYPE_COOKIE, mutable.paramType)
         }
+        case e: DefaultValue => {
+          mutable.defaultValue = Option(readString(e.value))
+        }
         case e: Context => shouldIgnore = true
         case _ =>
       }

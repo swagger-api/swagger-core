@@ -1,11 +1,11 @@
 package com.wordnik.swagger.sample;
 
 import com.wordnik.swagger.sample.resource.*;
+
+import com.wordnik.swagger.jaxrs.config.*;
 import com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON;
 import com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider;
 import com.wordnik.swagger.jaxrs.listing.ResourceListingProvider;
-
-import com.wordnik.swagger.jaxrs.config.*;
 import com.wordnik.swagger.config.*;
 import com.wordnik.swagger.reader.*;
 import com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader;
@@ -29,9 +29,13 @@ public class SwaggerSampleService extends Service<SwaggerSampleConfiguration> {
     environment.addResource(new ApiListingResourceJSON());
     environment.addResource(new PetResource());
 
-    environment.addProvider(new ApiDeclarationProvider());
     environment.addProvider(new ResourceListingProvider());
+    environment.addProvider(new ApiDeclarationProvider());
     ScannerFactory.setScanner(new DefaultJaxrsScanner());
     ClassReaders.setReader(new DefaultJaxrsApiReader());
+
+    SwaggerConfig config = ConfigFactory.config();
+    config.setApiVersion("1.0.1");
+    config.setBasePath("http://localhost:8000");
   }
 }

@@ -43,4 +43,5 @@ public @interface ApiModel {
   Class<?> parent() default Void.class;
   /** for models with a base class, a discriminator can be provided for polymorphic use cases */
   String discriminator() default "";
+  Class<?>[] subTypes() default {};
 }

@@ -292,6 +292,53 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <!-- The auth module, which is not complete -->
+      <id>auth</id>
+      <activation>
+        <property>
+          <name>env</name>
+          <value>auth</value>
+        </property>
+      </activation>
+      <modules>
+        <module>samples/scala-oauth-authorization-server</module>
+      </modules>
+    </profile>
+    <profile>
+      <!-- Samples -->
+      <id>samples</id>
+      <activation>
+        <property>
+          <name>env</name>
+          <value>samples</value>
+        </property>
+      </activation>
+      <modules>
+        <module>samples/java-resteasy</module>
+        <module>samples/java-jaxrs</module>
+        <module>samples/java-dropwizard</module>
+        <module>samples/scala-jaxrs</module>
+        <module>samples/scala-servlet</module>
+        <module>samples/java-jaxrs-subresource</module>
+        <module>samples/scala-jaxrs-fileupload</module>
+        <module>samples/java-jaxrs-cxf</module>
+      </modules>
+    </profile>
+    <profile>
+      <!-- These modules need a little love -->
+      <id>disabled</id>
+      <activation>
+        <property>
+          <name>env</name>
+          <value>disabled</value>
+        </property>
+      </activation>
+      <modules>
+        <module>modules/swagger-jaxrs-utils</module>
+        <module>samples/scala-jaxrs-apm</module>
+      </modules>
+    </profile>
   </profiles>
   <modules>
     <module>modules/swagger-annotations</module>
@@ -299,22 +346,6 @@
     <module>modules/swagger-jaxrs</module>
     <module>modules/swagger-jersey-jaxrs</module>
     <module>modules/swagger-servlet</module>
-
-    <module>samples/java-resteasy</module>
-    <module>samples/java-jaxrs</module>
-    <module>samples/java-dropwizard</module>
-    <module>samples/scala-jaxrs</module>
-    <module>samples/scala-servlet</module>
-    <!--module>samples/scala-oauth-authorization-server</module-->
-    <module>samples/java-jaxrs-subresource</module>
-    <module>samples/scala-jaxrs-fileupload</module>
-    <module>samples/java-jaxrs-cxf</module>
-
-<!--
-    <module>modules/swagger-jaxrs-utils</module>
-    <module>samples/scala-jaxrs-apm</module>
--->
-
   </modules>
   <reporting>
     <outputDirectory>target/site</outputDirectory>

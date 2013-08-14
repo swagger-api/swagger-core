@@ -17,6 +17,8 @@
 package com.wordnik.swagger.core.filter
 
 import com.wordnik.swagger.model._
+import com.wordnik.swagger.core.SwaggerContext
+import com.wordnik.swagger.converter.ModelConverters
 import com.wordnik.swagger.converter.ModelInheritenceUtil
 
 import org.slf4j.LoggerFactory
@@ -48,7 +50,7 @@ class SpecFilter {
           Some(op.copy(parameters = filteredParams))
         }
         else None
-      }).flatten.toList
+      }).flatten.toList.sortWith(_.position < _.position)
       filteredOps.size match {
         case 0 => None
         case _ => Some(api.copy(operations = filteredOps))
@@ -63,11 +65,13 @@ class SpecFilter {
   def filterModels(allModels: Option[Map[String, Model]], apis: List[ApiDescription]) = {
     val modelNames = requiredModels(allModels, apis)
     val existingModels = allModels.getOrElse(Map[String, Model]())
+    LOGGER.debug("existingModels: " + modelNames)
     val output = (for(model <- modelNames) yield {
       if(existingModels.contains(model))
         Some(model, existingModels(model))
       else None
     }).flatten.toMap
+
     val filtered = ModelInheritenceUtil.expand(output)
     if(output.size > 0) Some(filtered)
     else None
@@ -82,6 +86,7 @@ class SpecFilter {
         op.responseMessages.foreach(_.responseModel.map{modelNames += _})
       }
     })
+    LOGGER.debug("requiredModels: " + modelNames)
     val topLevelModels = (for(model <- modelNames) yield {
       model match {
         case ComplexTypeMatcher(basePart) => {
@@ -92,8 +97,22 @@ class SpecFilter {
         case _ => model
       }
     }).toList
+    val subTypes = (for(model <- topLevelModels) yield {
+      allModels match {
+        case Some(models) if(models.contains(model)) => {
+          val m = models(model)
+          (for(subType <- m.subTypes) yield {
+            val cls = SwaggerContext.loadClass(subType)
+            for(model <- ModelConverters.readAll(cls)) yield {
+              model.name
+            }
+          }).flatten.toList
+        }
+        case _ => List()
+      }
+    }).flatten.toList
     val properties = requiredProperties(topLevelModels, allModels.getOrElse(Map()), new HashSet[String]())
-    topLevelModels ++ properties
+    topLevelModels ++ subTypes ++ properties
   }
 
   def requiredProperties(models: List[String], allModels: Map[String, Model], inspectedTypes: HashSet[String]): List[String] = {

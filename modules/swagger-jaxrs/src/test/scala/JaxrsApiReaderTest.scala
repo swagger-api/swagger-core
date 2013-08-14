@@ -38,6 +38,7 @@ class BasicResourceTest extends FlatSpec with ShouldMatchers {
     param.name should be ("id")
     param.dataType should be ("string")
     param.required should be (true)
+    param.defaultValue should be (Some("1"))
 
     apiResource.models should not be (None)
     apiResource.models.get.size should be (2)

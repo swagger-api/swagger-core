@@ -25,6 +25,5 @@ class ModelPropertyParserTest extends FlatSpec with ShouldMatchers {
     implicit val properties = new scala.collection.mutable.LinkedHashMap[String, ModelProperty]
     val parser = new ModelPropertyParser(cls)
     parser.parse
-    println(properties)
   }
 }

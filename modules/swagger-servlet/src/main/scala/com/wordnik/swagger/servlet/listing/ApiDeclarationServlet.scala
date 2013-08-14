@@ -57,7 +57,7 @@ class ApiDeclarationServlet extends HttpServlet {
       (for(spec <- specs.values) yield {
         f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
       }).filter(m => m.resourcePath == pathPart)
-    }).flatten.toList
+    }).toList
     listings.size match {
       case 1 => response.getOutputStream.write(JsonSerializer.asJson(listings.head).getBytes("utf-8"))
       case _ => response.setStatus(404)

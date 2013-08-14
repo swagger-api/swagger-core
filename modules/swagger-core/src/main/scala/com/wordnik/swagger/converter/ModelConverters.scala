@@ -38,6 +38,23 @@ object ModelConverters {
     val output = new HashMap[String, Model]
     var model = read(cls)
     val propertyNames = new HashSet[String]
+
+    // add subTypes
+    model.map(_.subTypes.map(typeRef => {
+      try{
+        LOGGER.debug("loading subtype " + typeRef)
+        val cls = SwaggerContext.loadClass(typeRef)
+        read(cls) match {
+          case Some(model) => output += cls.getName -> model
+          case _ =>
+        }
+      }
+      catch {
+        case e: Exception => LOGGER.error("can't load class " + typeRef)
+      }
+    }))
+
+    // add properties
     model.map(m => {
       output += cls.getName -> m
       val checkedNames = new HashSet[String]
