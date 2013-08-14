@@ -5,14 +5,6 @@
 ## [See the Wiki!](https://github.com/wordnik/swagger-core/wiki)
 The [github wiki](https://github.com/wordnik/swagger-core/wiki) contains documentation, samples, etc.  Start there
 
-## Where to get help!
-Search the [swagger google groups](https://groups.google.com/forum/#!forum/swagger-swaggersocket) for previously 
-asked questions.  Join #swagger on irc.freenode.net to talk to interesting human beings.  And if you find a bug,
-file it in github:
-
-* [Swagger core + server itegrations](https://github.com/wordnik/swagger-core/issues) issues
-* [Swagger UI](https://github.com/wordnik/swagger-ui/issues)
-* [Swagger codegen](https://github.com/wordnik/swagger-codegen/issues)
 
 ## Overview
 This is a project to build the swagger-core library, which is required for the Wordnik 
@@ -21,47 +13,6 @@ framework at http://swagger.wordnik.com.  For more information about Wordnik's A
 visit http://developer.wordnik.com.
 
 ## Version history
-
-Swagger-core v1.3.0 is in Release candidate status!  If you can't wait for the release and want to get
-going on the latest, you can read about the [spec transition](https://github.com/wordnik/swagger-core/wiki/1.2-transition).  Migration
-guides for the supported server integrations are being worked on now.
-
-### v1.3.0-RC2 Jul-11 2013
-
-Source lives in the [1.3-RC2 branch!](https://github.com/wordnik/swagger-core/tree/1.3-RC2)
-
-<li>- Added apiInfo so top-level API information can be annotated in both swagger-ui and elsewhere
-
-
-### v1.3.0-RC1 Jul-2 2013
-
-<li>- Release candidate for swagger-spec 1.2
-
-<li>- Pluggable readers for scanning classes, model introspection, config reading
-
-<li>- Simplified overriding of model introspection
-
-<li>- Support for consumes, produces, protocols, authentications
-
-<li>- oAuth support in spec
-
-<li>- Support for raw servlet integration
-
-<li>- Resource, operation, model property ordering
-
-<li>- Polymorphic model support
-
-### v1.2.5 Jun-19 2013
-<li>- Fixes for generic objects
-
-### v1.2.4 Jun-5 2013
-<li>- Fixed `@Api` paths with slashes
-
-<li>- Added support for model detection with deep recursion (#176)
-
-<li>- i18n support (#190)
-
-<li>- Master is now `stable`
 
 ### v1.2.3 Apr-24 2013
 
@@ -130,7 +81,7 @@ You need the following installed and available in your $PATH:
 
 <li>- Scala 2.9.1-1 [available here](http://www.scala-lang.org).  Note that 2.9.1 has a defect which causes problems with Jax-RS
 
-### To build from source (currently 1.2.4)
+### To build from source (currently 1.2.4-SNAPSHOT)
 ```
 # first time building locally
 mvn -N

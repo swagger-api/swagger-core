@@ -6,10 +6,10 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-project_2.9.1</artifactId>
+  <artifactId>swagger-project_2.10</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
-  <version>1.2.5</version>
+  <version>1.3.0-RC3</version>
   <url>https://github.com/wordnik/swagger-core</url>
   <scm>
     <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
@@ -211,15 +211,15 @@
         </plugin>
         <plugin>
           <groupId>org.mortbay.jetty</groupId>
-		  <artifactId>jetty-maven-plugin</artifactId>
-		  <version>${jetty-version}</version>
-		  <dependencies>
-		    <dependency>
-		      <groupId>com.sun.jersey</groupId>
-		      <artifactId>jersey-servlet</artifactId>
-		      <version>${jersey-version}</version>
-		    </dependency>
-		  </dependencies>
+    		  <artifactId>jetty-maven-plugin</artifactId>
+    		  <version>${jetty-version}</version>
+    		  <dependencies>
+    		    <dependency>
+    		      <groupId>com.sun.jersey</groupId>
+    		      <artifactId>jersey-servlet</artifactId>
+    		      <version>${jersey-version}</version>
+    		    </dependency>
+    		  </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -292,24 +292,60 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <!-- The auth module, which is not complete -->
+      <id>auth</id>
+      <activation>
+        <property>
+          <name>env</name>
+          <value>auth</value>
+        </property>
+      </activation>
+      <modules>
+        <module>samples/scala-oauth-authorization-server</module>
+      </modules>
+    </profile>
+    <profile>
+      <!-- Samples -->
+      <id>samples</id>
+      <activation>
+        <property>
+          <name>env</name>
+          <value>samples</value>
+        </property>
+      </activation>
+      <modules>
+        <module>samples/java-resteasy</module>
+        <module>samples/java-jaxrs</module>
+        <module>samples/java-dropwizard</module>
+        <module>samples/scala-jaxrs</module>
+        <module>samples/scala-servlet</module>
+        <module>samples/java-jaxrs-subresource</module>
+        <module>samples/scala-jaxrs-fileupload</module>
+        <module>samples/java-jaxrs-cxf</module>
+      </modules>
+    </profile>
+    <profile>
+      <!-- These modules need a little love -->
+      <id>disabled</id>
+      <activation>
+        <property>
+          <name>env</name>
+          <value>disabled</value>
+        </property>
+      </activation>
+      <modules>
+        <module>modules/swagger-jaxrs-utils</module>
+        <module>samples/scala-jaxrs-apm</module>
+      </modules>
+    </profile>
   </profiles>
   <modules>
     <module>modules/swagger-annotations</module>
     <module>modules/swagger-core</module>
     <module>modules/swagger-jaxrs</module>
     <module>modules/swagger-jersey-jaxrs</module>
-    <module>modules/swagger-jaxrs-utils</module>
-    <module>samples/java-jaxrs</module>
-    <module>samples/java-alt-resource-listing</module>
-    <module>samples/java-dropwizard</module>
-    <module>samples/scala-jaxrs</module>
-    <module>samples/scala-alt-resource-listing</module>
-    <module>samples/scala-jaxrs-jackson2</module>
-    <module>samples/scala-jaxrs-no-format</module>
-    <module>samples/scala-jaxrs-fileupload</module>
-    <module>samples/scala-jaxrs-apm</module>
-    <module>samples/java-resteasy</module>
-    <module>samples/java-jaxrs-cxf</module>
+    <module>modules/swagger-servlet</module>
   </modules>
   <reporting>
     <outputDirectory>target/site</outputDirectory>
@@ -359,7 +395,7 @@
     <dependencies>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>swagger-jaxrs_2.9.1</artifactId>
+        <artifactId>swagger-jaxrs_2.10</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -398,7 +434,7 @@
       </dependency>
       <dependency>
         <groupId>org.scalatest</groupId>
-        <artifactId>scalatest_2.9.1</artifactId>
+        <artifactId>scalatest_2.10</artifactId>
         <version>${scala-test-version}</version>
         <scope>test</scope>
       </dependency>
@@ -410,7 +446,7 @@
       </dependency>
       <dependency>
         <groupId>com.wordnik</groupId>
-        <artifactId>swagger-core_2.9.1</artifactId>
+        <artifactId>swagger-core_2.10</artifactId>
         <version>${project.version}</version>
         <scope>compile</scope>
         <exclusions>
@@ -440,19 +476,20 @@
     </dependencies>
   </dependencyManagement>
   <properties>
-    <swagger-core-version>1.0.1</swagger-core-version>
+    <scala-version>2.10.0</scala-version>
     <felix-version>2.3.4</felix-version>
     <servlet-api-version>2.5</servlet-api-version>
-    <scala-version>2.9.1-1</scala-version>
     <jersey-version>1.13</jersey-version>
-    <jackson-version>2.1.4</jackson-version>
-    <jackson-scala-version>2.1.3</jackson-scala-version>
+    <jackson-version>2.1.5</jackson-version>
+    <jackson-scala-version>2.1.5</jackson-scala-version>
+    <logback-version>1.0.1</logback-version>
+
     <junit-version>4.8.1</junit-version>
-    <maven-plugin.version>1.0.0</maven-plugin.version>
+    <maven-plugin-version>1.0.0</maven-plugin-version>
     <commons-lang-version>2.4</commons-lang-version>
     <slf4j-version>1.6.3</slf4j-version>
-    <scala-test-version>1.6.1</scala-test-version>
-    <jetty-version>7.6.0.v20120127</jetty-version>
+    <scala-test-version>1.9</scala-test-version>
+    <jetty-version>8.1.11.v20130520</jetty-version>
     <servlet-api-version>2.5</servlet-api-version>
     <scala-maven-plugin-version>3.1.0</scala-maven-plugin-version>
   </properties>
