@@ -9,7 +9,7 @@
     <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
     <init-param>
       <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>com.wordnik.swagger.sample.resource;com.wordnik.swagger.jersey.listing</param-value>
+      <param-value>com.wordnik.swagger.sample.resource;com.wordnik.swagger.jaxrs.listing</param-value>
     </init-param>
     <init-param>
       <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
@@ -31,8 +31,8 @@
   </servlet-mapping>
 
   <servlet>
-    <servlet-name>JerseyJaxrsConfig</servlet-name>
-    <servlet-class>com.wordnik.swagger.jersey.config.JerseyJaxrsConfig</servlet-class>
+    <servlet-name>DefaultJaxrsConfig</servlet-name>
+    <servlet-class>com.wordnik.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
     <init-param>
       <param-name>api.version</param-name>
       <param-value>1.0.0</param-value>
@@ -41,6 +41,10 @@
       <param-name>swagger.api.basepath</param-name>
       <param-value>http://localhost:8002/api</param-value>
     </init-param>
+    <init-param>
+      <param-name>swagger.filter</param-name>
+      <param-value>com.wordnik.swagger.sample.util.SecurityFilter</param-value>
+    </init-param>
     <load-on-startup>2</load-on-startup>
   </servlet>
   <filter>
@@ -48,8 +52,8 @@
     <filter-class>com.wordnik.swagger.sample.util.ApiOriginFilter</filter-class>
   </filter>
   <filter-mapping>
-    <filter-name>ApiOriginFilter</filter-name>
-    <url-pattern>/*</url-pattern>
+      <filter-name>ApiOriginFilter</filter-name>
+      <url-pattern>/*</url-pattern>
   </filter-mapping>
   <servlet>
     <servlet-name>Bootstrap</servlet-name>
