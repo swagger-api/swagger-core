@@ -14,6 +14,9 @@ file it in github:
 * [Swagger UI](https://github.com/wordnik/swagger-ui/issues)
 * [Swagger codegen](https://github.com/wordnik/swagger-codegen/issues)
 
+## Get started with Swagger!
+See the guide on [getting started with swagger](https://github.com/wordnik/swagger-core/wiki/Adding-Swagger-to-your-API) to get started with adding swagger to your API.
+
 ## Overview
 This is a project to build the swagger-core library, which is required for the Wordnik 
 implementation of the Swagger spec.  You can find out more about both the spec and the
