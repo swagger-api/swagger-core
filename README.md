@@ -26,7 +26,7 @@ visit http://developer.wordnik.com.
 
 
 ### Change History
-If you're interested in the change history of swagger and the swagger-core framework, see [here](Changelog).
+If you're interested in the change history of swagger and the swagger-core framework, see [here](https://github.com/wordnik/swagger-core/wiki/Changelog).
 
 
 ### Prerequisites
