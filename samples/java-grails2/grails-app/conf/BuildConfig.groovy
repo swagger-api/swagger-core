@@ -13,6 +13,7 @@ grails.project.dependency.resolution = {
     inherits("global") {
         // specify dependency exclusions here; for example, uncomment this to disable ehcache:
         // excludes 'ehcache'
+        excludes 'grails-plugin-log4j'        
     }
     log "error" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     checksums true // Whether to verify checksums on resolve
@@ -37,9 +38,11 @@ grails.project.dependency.resolution = {
     }
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
-        compile 'com.wordnik:swagger-jaxrs_2.9.1:1.3.0-RC3'
+        compile 'com.wordnik:swagger-jaxrs_2.10:1.3.0'
         compile 'com.fasterxml.jackson.core:jackson-core:2.1.0'
         compile 'com.fasterxml.jackson.core:jackson-databind:2.1.0'
+        compile 'ch.qos.logback:logback-classic:1.0.6'
+        runtime 'ch.qos.logback:logback-classic:1.0.6'
     }
 
     plugins {
