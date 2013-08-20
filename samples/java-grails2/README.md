@@ -5,7 +5,6 @@ This is a grails project to build a stand-alone server which implements the Swag
 
 ### Running the app
 You do not need to install Grails separately to run this project.  
-    
 
 To start simply run:
 
@@ -18,6 +17,4 @@ This will download required framework files and dependencies and start the app o
 ```
 http://localhost:8080/java-grails2/index.html
 ```
-
-Once you start the server, you may see some errors on the console, but they don't appear to affect the operation of swagger.  
 
