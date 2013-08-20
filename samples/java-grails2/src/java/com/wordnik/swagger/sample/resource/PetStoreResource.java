@@ -24,7 +24,7 @@ import com.wordnik.swagger.sample.exception.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
-@Path("/store")
+@Path("/api/store")
 @Api(value="/store" , description = "Operations about store")
 @Produces({"application/json"})
 public class PetStoreResource {
