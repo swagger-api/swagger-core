@@ -9,7 +9,7 @@
     <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
     <init-param>
       <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>com.wordnik.swagger.sample.resource;com.wordnik.swagger.jaxrs.listing</param-value>
+      <param-value>com.wordnik.swagger.sample.resource;com.wordnik.swagger.jersey.listing</param-value>
     </init-param>
     <init-param>
       <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
