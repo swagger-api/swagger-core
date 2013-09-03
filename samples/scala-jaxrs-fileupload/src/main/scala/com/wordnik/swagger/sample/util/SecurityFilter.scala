@@ -6,6 +6,8 @@ import com.wordnik.swagger.core.filter.SwaggerSpecFilter
 import javax.servlet.ServletConfig
 import javax.servlet.http.HttpServlet
 
+import scala.collection.JavaConverters._
+
 class SecurityFilter extends SwaggerSpecFilter {
   def isOperationAllowed(operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean = {
     checkKey(params, headers) match {
@@ -27,10 +29,9 @@ class SecurityFilter extends SwaggerSpecFilter {
     val apiKey = params.containsKey("api_key") match {
       case true => Some(params.get("api_key").get(0))
       case _ => {
-        headers.containsKey("api_key") match {
-          case true => Some(headers.get("api_key").get(0))
-          case _ => None
-        }
+        val h = headers.asScala.filter(_._1.toLowerCase == "api_key")
+        if(h.size > 0) Some(h.head._2.get(0))
+        else None
       }
     }
 
