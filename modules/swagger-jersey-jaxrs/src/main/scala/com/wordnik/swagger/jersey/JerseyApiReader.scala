@@ -35,6 +35,7 @@ import java.lang.annotation.Annotation
 
 import com.sun.jersey.core.header.FormDataContentDisposition
 import com.sun.jersey.multipart.FormDataParam
+import com.sun.jersey.api.core.InjectParam
 
 class JerseyApiReader extends JaxrsApiReader {
   private val LOGGER = LoggerFactory.getLogger(classOf[JerseyApiReader])
@@ -87,6 +88,7 @@ class JerseyApiReader extends JaxrsApiReader {
         case e: DefaultValue => {
           mutable.defaultValue = Option(readString(e.value))
         }
+        case e: InjectParam => shouldIgnore = true
         case e: Context => shouldIgnore = true
         case _ =>
       }
