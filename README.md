@@ -10,7 +10,7 @@ Search the [swagger google groups](https://groups.google.com/forum/#!forum/swagg
 asked questions.  Join #swagger on irc.freenode.net to talk to interesting human beings.  And if you find a bug,
 file it in github:
 
-* [Swagger core + server itegrations](https://github.com/wordnik/swagger-core/issues) issues
+* [Swagger core + server integrations](https://github.com/wordnik/swagger-core/issues) issues
 * [Swagger UI](https://github.com/wordnik/swagger-ui/issues)
 * [Swagger codegen](https://github.com/wordnik/swagger-codegen/issues)
 
