@@ -368,7 +368,6 @@ object SwaggerSerializers extends Serializers {
       ("description" -> x.description) ~
       ("defaultValue" -> x.defaultValue) ~
       ("required" -> x.required) ~
-      ("allowMultiple" -> x.allowMultiple) ~
       toJsonSchema("type", x.dataType) ~
       ("paramType" -> x.paramType) ~
       ("paramAccess" -> x.paramAccess)
@@ -889,9 +888,12 @@ trait Serializers {
             (json \ "grantTypes").extractOrElse(List()))
         }
         case JString(x) if x.equalsIgnoreCase("apiKey") => {
-          ApiKey((json \ "keyname").extract[String])
+          ApiKey((json \ "keyname").extract[String], (json \ "passAs").extractOrElse("header"))
         }
-        case _ => null // todo: NOOOOOO!!!!
+        case JString(x) if x.equalsIgnoreCase("basicAuth") => {
+          BasicAuth()
+        }
+        case _ => null
       }
     }, {
       case x: OAuth => 
@@ -904,8 +906,11 @@ trait Serializers {
           }).toMap
         })
       case x: ApiKey => 
-        ("type" -> x.`type`) ~
+        ("type" -> "apiKey") ~
+        ("keyName" -> x.keyname) ~
         ("passAs" -> x.passAs)
+      case x: BasicAuth =>
+        ("type" -> "basicAuth")
     }
   ))
 
