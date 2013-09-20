@@ -9,7 +9,7 @@
   <artifactId>swagger-project_2.10</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
-  <version>1.3.0</version>
+  <version>1.3.1-SNAPSHOT</version>
   <url>https://github.com/wordnik/swagger-core</url>
   <scm>
     <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
@@ -480,6 +480,7 @@
     <felix-version>2.3.4</felix-version>
     <servlet-api-version>2.5</servlet-api-version>
     <jersey-version>1.13</jersey-version>
+    <jersey2-version>2.1</jersey2-version>
     <jackson-version>2.1.5</jackson-version>
     <jackson-scala-version>2.1.5</jackson-scala-version>
     <logback-version>1.0.1</logback-version>
