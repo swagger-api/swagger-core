@@ -3,8 +3,8 @@ import Keys._
 import play.Project._
 
 object ApplicationBuild extends Build {
-  val appName = "swagger-play2.2"
-  val appVersion = "1.2.5"
+  val appName = "swagger-play2"
+  val appVersion = "1.2.5-2"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.1.3",
