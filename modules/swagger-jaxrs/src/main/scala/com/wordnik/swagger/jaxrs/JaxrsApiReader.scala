@@ -274,6 +274,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
             val root = docRoot + api.value + pathFromMethod(method)
             parentMethods += method
             readRecursive(root, endpoint, returnType, config, operations, parentMethods)
+            parentMethods -= method
           }
           case _ => {
             if(method.getAnnotation(classOf[ApiOperation]) != null) {
