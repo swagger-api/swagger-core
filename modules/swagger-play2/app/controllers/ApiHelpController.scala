@@ -111,6 +111,9 @@ class SwaggerBaseApiController extends Controller {
 
   protected def returnXml(request: Request[_]) = request.path.contains(".xml")
 
+  //protected val ok = "ok"
+  protected val AccessControlAllowOrigin = ("Access-Control-Allow-Origin", "*")
+
   /**
    * Get a list of all top level resources
    */
@@ -189,10 +192,11 @@ class SwaggerBaseApiController extends Controller {
   }
 
   protected def returnValue(request: Request[_], obj: Any): Result = {
-    returnXml(request) match {
+    val response = returnXml(request) match {
       case true => XmlResponse(obj)
       case false => JsonResponse(obj)
     }
+    response.withHeaders(AccessControlAllowOrigin)
   }
 
   def toJsonString(data: Any): String = {
