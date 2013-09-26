@@ -27,6 +27,9 @@ case class OAuth(
 case class ApiKey(keyname: String, passAs: String = "header") extends AuthorizationType {
   override def `type` = "apiKey"
 }
+case class BasicAuth() extends AuthorizationType {
+  override def `type` = "basicAuth"
+}
 
 trait GrantType {
   def `type`: String
