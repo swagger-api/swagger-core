@@ -2,22 +2,23 @@ package play.modules.swagger
 
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.config._
-import com.wordnik.swagger.reader.{ClassReader, ClassReaderUtils}
 import com.wordnik.swagger.core.util._
-
-import java.lang.reflect.Method
-
-import scala.collection.mutable.ListBuffer
-import play.api.{Configuration, Logger}
-
+import com.wordnik.swagger.jaxrs.{MutableParameter, JaxrsApiReader}
 import com.wordnik.swagger.model.Parameter
 import com.wordnik.swagger.model.ApiDescription
-import scala.Some
 import com.wordnik.swagger.model.Operation
 import com.wordnik.swagger.model.ResponseMessage
+import com.wordnik.swagger.core.ApiValues._
 import com.wordnik.swagger.model.ApiListing
+
+import play.api.{Configuration, Logger}
 import play.core.Router.Routes
 
+import java.lang.annotation.Annotation
+import java.lang.reflect.Method
+
+import javax.ws.rs.core.Context
+import javax.ws.rs._
 
 case class RouteEntry(httpMethod: String, path: String)
 
@@ -27,55 +28,74 @@ object SwaggerUtils {
   }
 }
 
-class PlayApiReader(routes: Option[Routes], config: Configuration) extends ClassReader with ClassReaderUtils {
+class PlayApiReader(val routes: Option[Routes], val config: Configuration) extends JaxrsApiReader {
 
   private var _routesCache: Map[String, RouteEntry] = null
 
+  /* ** Not sure if this will be needed? **
   private val formatString = config.getString("swagger.api.format.string") match {
     case Some(str) => str
     case _ => ".{format}"
   }
+  */
 
-  def read(docRoot: String, cls: Class[_], config: SwaggerConfig): Option[ApiListing] = {
+  override def read(docRoot: String, cls: Class[_], config: SwaggerConfig): Option[ApiListing] = {
     Logger("swagger").debug("ControllerReader: read(docRoot = %s, cls = %s, config = %s)".format(docRoot, cls.getName, config.toString))
     val api = cls.getAnnotation(classOf[Api])
-    Logger("swagger").debug("annotation: Api: %s,".format(api.toString))
+    // must have @Api annotation to process!
     if (api != null) {
-
+      Logger("swagger").debug("annotation: Api: %s,".format(api.toString))
       val resourcePath = api.value
 
-      val description = api.description match {
-        case str: String => Some(str)
-        case _ => None
+      val consumes = Option(api.consumes) match {
+        case Some(e) if e != "" => e.split(",").map(_.trim).toList
+        case _ => cls.getAnnotation(classOf[Consumes]) match {
+          case e: Consumes => e.value.toList
+          case _ => List()
+        }
       }
 
+      // assume json as default
+      val produces = Option(api.produces) match {
+        case Some(e) if e != "" => e.split(",").map(_.trim).toList
+        case _ => cls.getAnnotation(classOf[Produces]) match {
+          case e: Produces => e.value.toList
+          case _ => List("application/json")
+        }
+      }
+
+      val protocols = Option(api.protocols) match {
+        case Some(e) if e != "" => e.split(",").map(_.trim).toList
+        case _ => List()
+      }
+
+      val description = api.description match {
+        case e: String if e != "" => Some(e)
+        case _ => None
+      }
       // define a Map to hold Operations keyed by resourcepath
       var operationsMap: Map[String, List[Operation]] = Map.empty
-
       for (method <- cls.getMethods) {
         // only process methods with @ApiOperation annotations
         if (method.getAnnotation(classOf[ApiOperation]) != null) {
           Logger("swagger").debug("ApiOperation: found on method: %s".format(method.getName))
-
           val operation = readMethod(method).get
-
-
           val fullOperationResourcePath = getPath(cls, method)
-          // got to remove any path element specified in basepath
 
-          val basepathUrl = new java.net.URL(config.getBasePath)
-          val basepath = basepathUrl.getPath
-
-
-          val resourcePath = fullOperationResourcePath.stripPrefix(basepath)
-          Logger("swagger").debug("method: %s, fullOperationResourcePath: %s, basepath: %s, resourcePath: %s".format(method.getName, fullOperationResourcePath, basepath, resourcePath))
-
-          // store operations in our Map keyed by resourcepath
-          val opsList: List[Operation] = operationsMap.getOrElse(resourcePath, List.empty[Operation])
-          val newOpsList = opsList.+:(operation)
-          operationsMap = operationsMap - resourcePath
-          operationsMap = operationsMap + (resourcePath -> newOpsList)
-
+          fullOperationResourcePath match {
+            case Some(path) => {
+              // got to remove any path element specified in basepath
+              val basepathUrl = new java.net.URL(config.getBasePath)
+              val basepath = basepathUrl.getPath
+              val resourcePath = path.stripPrefix(basepath)
+              Logger("swagger").debug("method: %s, fullOperationResourcePath: %s, basepath: %s, resourcePath: %s".format(method.getName, path, basepath, resourcePath))
+              // store operations in our Map keyed by resourcepath
+              operationsMap = appendOperation(resourcePath, operation, operationsMap)
+            }
+            case _ => {
+              Logger("swagger").debug("Method: %s has no web route defined".format(method.getName))
+            }
+          }
         }
       }
 
@@ -91,19 +111,192 @@ class PlayApiReader(routes: Option[Routes], config: Configuration) extends Class
           config.apiVersion,
           config.getSwaggerVersion(),
           config.basePath,
-          resourcePath, //resourcePath,
-          List("application/json"), // produces
-          List(), // consumes
-          List(), // protocols
+          resourcePath,
+          produces,
+          consumes,
+          protocols,
           List(), // authorizations
           ModelUtil.stripPackages(apiDescriptions), //  List[com.wordnik.swagger.model.ApiDescription]
-          models, // models
+          models,
           description
           // position
         )
       )
     }
+    else {
+      Logger("swagger").debug("No Api annotation found for class %s".format(cls.getName))
+      None
+    }
+  }
+
+
+  def readMethod(method: Method): Option[Operation] = {
+    val apiOperation = method.getAnnotation(classOf[ApiOperation])
+
+    if (method.getAnnotation(classOf[ApiOperation]) != null) {
+      Logger("swagger").debug("annotation: ApiOperation: %s,".format(apiOperation.toString))
+
+      val produces = apiOperation.produces match {
+        case e: String if e.trim != "" => e.split(",").map(_.trim).toList
+        case _ => List()
+      }
+
+      val consumes = apiOperation.consumes match {
+        case e: String if e.trim != "" => e.split(",").map(_.trim).toList
+        case _ => List()
+      }
+      val protocols = apiOperation.protocols match {
+        case e: String if e.trim != "" => e.split(",").map(_.trim).toList
+        case _ => List()
+      }
+      val authorizations = apiOperation.authorizations match {
+        case e: String if e.trim != "" => e.split(",").map(_.trim).toList
+        case _ => List()
+      }
+      val responseClass = apiOperation.responseContainer match {
+        case "" => apiOperation.response.getName
+        case e: String => "%s[%s]".format(e, apiOperation.response.getName)
+      }
+
+      val responseAnnotations = method.getAnnotation(classOf[ApiResponses])
+
+      val apiResponses = processResponsesAnnotation(responseAnnotations)
+
+      val isDeprecated = Option(method.getAnnotation(classOf[Deprecated])).map(m => "true").getOrElse(null)
+
+      val implicitParams = processImplicitParams(method)
+
+      val params = processParams(method)
+
+      Some(Operation(
+        apiOperation.httpMethod,
+        apiOperation.value,
+        apiOperation.notes,
+        responseClass,
+        apiOperation.nickname,
+        apiOperation.position,
+        produces,
+        consumes,
+        protocols,
+        authorizations,
+        params ++ implicitParams,
+        apiResponses,
+        Option(isDeprecated)))
+    } else {
+      None
+    }
+  }
+
+  def processImplicitParams(method: Method) = {
+    Logger("swagger").debug("checking for ApiImplicitParams")
+    Option(method.getAnnotation(classOf[ApiImplicitParams])) match {
+      case Some(e) => {
+        (for (param <- e.value) yield {
+          Logger("swagger").debug("processing " + param)
+          val allowableValues = toAllowableValues(param.allowableValues)
+          Parameter(
+            param.name,
+            Option(readString(param.value)),
+            Option(param.defaultValue).filter(_.trim.nonEmpty),
+            param.required,
+            param.allowMultiple,
+            param.dataType,
+            allowableValues,
+            param.paramType,
+            Option(param.access).filter(_.trim.nonEmpty))
+        }).toList
+      }
+      case _ => List()
+    }
+  }
+
+  def processParams(method: Method): List[Parameter] = {
+    Logger("swagger").debug("checking for ApiParams")
+    val paramAnnotations = method.getParameterAnnotations
+    val paramTypes = method.getParameterTypes
+    val genericParamTypes: Array[java.lang.reflect.Type] = method.getGenericParameterTypes
+
+    val params = (for ((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
+      if (annotations.length > 0) {
+        val param = new MutableParameter
+        param.dataType = processDataType(paramType, genericParamType)
+        processParamAnnotations(param, annotations)
+      }
+      else None
+    }).flatten.toList
+
+    params
+  }
+
+  def processResponsesAnnotation(responseAnnotations: ApiResponses) = {
+    if (responseAnnotations == null) List()
+    else (for (response <- responseAnnotations.value) yield {
+      val apiResponse = {
+        if (response.response != classOf[Void])
+          Some(response.response.getName)
+        else None
+      }
+      ResponseMessage(response.code, response.message, apiResponse)
+    }
+      ).toList
+  }
+
+  def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation]): Option[Parameter] = {
+    var shouldIgnore = false
+    for (pa <- paramAnnotations) {
+      pa match {
+        case e: ApiParam => parseApiParamAnnotation(mutable, e)
+        case e: QueryParam => {
+          mutable.name = readString(e.value, mutable.name)
+          mutable.paramType = readString(TYPE_QUERY, mutable.paramType)
+        }
+        case e: PathParam => {
+          mutable.name = readString(e.value, mutable.name)
+          mutable.required = true
+          mutable.paramType = readString(TYPE_PATH, mutable.paramType)
+        }
+        case e: MatrixParam => {
+          mutable.name = readString(e.value, mutable.name)
+          mutable.paramType = readString(TYPE_MATRIX, mutable.paramType)
+        }
+        case e: HeaderParam => {
+          mutable.name = readString(e.value, mutable.name)
+          mutable.paramType = readString(TYPE_HEADER, mutable.paramType)
+        }
+        case e: FormParam => {
+          mutable.name = readString(e.value, mutable.name)
+          mutable.paramType = readString(TYPE_FORM, mutable.paramType)
+        }
+        case e: CookieParam => {
+          mutable.name = readString(e.value, mutable.name)
+          mutable.paramType = readString(TYPE_COOKIE, mutable.paramType)
+        }
+        case e: DefaultValue => {
+          mutable.defaultValue = Option(readString(e.value))
+        }
+        case e: Context => shouldIgnore = true
+        case _ =>
+      }
+    }
+    if (!shouldIgnore) {
+      if (mutable.paramType == null) {
+        mutable.paramType = TYPE_BODY
+        mutable.name = TYPE_BODY
+      }
+      Some(mutable.asParameter)
+    }
     else None
+  }
+
+  def appendOperation(resourcePath: String, operation: Operation, operationsMap: Map[String, List[Operation]]): Map[String, List[Operation]] = {
+    operationsMap.get(resourcePath) match {
+      case Some(e) => {
+        operationsMap - resourcePath + (resourcePath -> e.+:(operation))
+      }
+      case None => {
+        operationsMap + (resourcePath -> List(operation))
+      }
+    }
   }
 
   def routesCache = {
@@ -111,109 +304,22 @@ class PlayApiReader(routes: Option[Routes], config: Configuration) extends Class
     _routesCache
   }
 
-  def readMethod(method: Method): Option[Operation] = {
-    Logger("swagger").debug("ApiOperation: found on method: %s".format(method.getName))
-
-    if (method.getAnnotation(classOf[ApiOperation]) != null) {
-
-      // process only @ApiImplicitParams
-      val parameters = {
-        val paramListAnnotation = method.getAnnotation(classOf[ApiImplicitParams])
-        if (paramListAnnotation != null) {
-          (for (param <- paramListAnnotation.value) yield {
-            val allowableValues = toAllowableValues(param.allowableValues)
-            Parameter(
-              param.name,
-              None,
-              Option(param.defaultValue).filter(_.trim.nonEmpty),
-              param.required,
-              param.allowMultiple,
-              param.dataType,
-              allowableValues,
-              param.paramType,
-              Option(param.access).filter(_.trim.nonEmpty))
-          }).toList
-        }
-        else List()
-      }
-      val opa = method.getAnnotation(classOf[ApiOperation])
-      Logger("swagger").debug("annotation: ApiOperation: %s,".format(opa.toString))
-      val produces = opa.produces match {
-        case e: String if (e != "") => e.split(",").map(_.trim).toList
-        case _ => List()
-      }
-      val consumes = opa.consumes match {
-        case e: String if (e != "") => e.split(",").map(_.trim).toList
-        case _ => List()
-      }
-      val protocols = opa.protocols match {
-        case e: String if (e != "") => e.split(",").map(_.trim).toList
-        case _ => List()
-      }
-      val authorizations = opa.authorizations match {
-        case e: String if (e != "") => e.split(",").map(_.trim).toList
-        case _ => List()
-      }
-      val responseClass = opa.responseContainer match {
-        case "" => opa.response.getName
-        case e: String => "%s[%s]".format(e, opa.response.getName)
-      }
-      val responseAnnotations = method.getAnnotation(classOf[ApiResponses])
-      val apiResponses = {
-        if (responseAnnotations == null) List()
-        else (for (response <- responseAnnotations.value) yield {
-          val apiResponse = {
-            if (response.response != classOf[Void])
-              Some(response.response.getName)
-            else None
-          }
-          ResponseMessage(response.code, response.message, apiResponse)
-        }
-          ).toList
-      }
-
-      Some(Operation(
-        opa.httpMethod,
-        opa.value,
-        opa.notes,
-        responseClass,
-        opa.nickname,
-        opa.position,
-        produces,
-        consumes,
-        protocols,
-        authorizations,
-        parameters,
-        apiResponses,
-        None))
-    } else {
-      None
-    }
-  }
-
   /**
    * Get the path for a given method
    */
-  def getPath(clazz: Class[_], method: Method) = {
+  def getPath(clazz: Class[_], method: Method): Option[String] = {
     val fullMethodName = getFullMethodName(clazz, method)
-    val str = {
-      routesCache.contains(fullMethodName) match {
-        case true => routesCache(fullMethodName).path
-        case false => {
-          Logger error "Cannot determine Path. Nothing defined in play routes file for api method " + method.toString
-          //this.resourcePath
-          // todo work out what to do here
-          "xxxxxxxx"
-        }
+    routesCache.contains(fullMethodName) match {
+      case true => {
+        val path = routesCache(fullMethodName).path
+        Logger("swagger").debug("PlayApiReader.getPath: str = %s,".format(path))
+        Some(path)
+      }
+      case fale => {
+        Logger warn "Cannot determine Path. Nothing defined in play routes file for api method " + method.toString
+        None
       }
     }
-
-    val s = formatString match {
-      case "" => str
-      case e: String => str.replaceAll(".json", formatString).replaceAll(".xml", formatString)
-    }
-    Logger("swagger").debug("PlayApiReader.getPath: str = %s,".format(s))
-    s
   }
 
   def getFullMethodName(clazz: Class[_], method: Method): String = {
@@ -224,9 +330,7 @@ class PlayApiReader(routes: Option[Routes], config: Configuration) extends Class
   }
 
   private def populateRoutesCache: Map[String, RouteEntry] = {
-
-    val r = play.api.Play.current.routes.get.documentation
-
+    val r = routes.get.documentation
     (for (route <- r) yield {
       val httpMethod = route._1
       val path = SwaggerUtils.convertPathString(route._2)
@@ -244,4 +348,21 @@ class PlayApiReader(routes: Option[Routes], config: Configuration) extends Class
     }).toMap
   }
 
+  /**
+   * Do not be tempted to use this.... this is here to cover the method in the superclass.
+   * @param method
+   * @param parentParams
+   * @param parentMethods
+   * @return
+   * @deprecated - do not be tempted to use this.... this is here to cover the method in the superclass.
+   */
+  @Deprecated
+  override def readMethod(method : java.lang.reflect.Method, parentParams : scala.List[com.wordnik.swagger.model.Parameter], parentMethods : scala.collection.mutable.ListBuffer[java.lang.reflect.Method]) : com.wordnik.swagger.model.Operation = {
+   // don't use this - it is specific to Jax-RS models.
+    throw new RuntimeException("method not in use..")
+   null
+  }
+
+
 }
+

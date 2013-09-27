@@ -16,7 +16,6 @@
 
 package controllers
 
-
 import play.api.mvc._
 import play.api.Logger
 import play.modules.swagger.ApiListingCache
@@ -111,7 +110,6 @@ class SwaggerBaseApiController extends Controller {
 
   protected def returnXml(request: Request[_]) = request.path.contains(".xml")
 
-  //protected val ok = "ok"
   protected val AccessControlAllowOrigin = ("Access-Control-Allow-Origin", "*")
 
   /**
@@ -175,7 +173,6 @@ class SwaggerBaseApiController extends Controller {
     }
   }
 
-
   def toXmlString(data: Any): String = {
     if (data.getClass.equals(classOf[String])) {
       data.asInstanceOf[String]
@@ -200,7 +197,6 @@ class SwaggerBaseApiController extends Controller {
   }
 
   def toJsonString(data: Any): String = {
-    Logger("swagger").warn("toJsonString: %s".format(data))
     if (data.getClass.equals(classOf[String])) {
       data.asInstanceOf[String]
     } else {

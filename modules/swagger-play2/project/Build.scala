@@ -14,6 +14,7 @@ object ApplicationBuild extends Build {
     "org.slf4j" % "slf4j-api" % "1.6.4",
     "com.wordnik" % "swagger-core_2.10" % "1.3.0",
     "com.wordnik" % "swagger-annotations_2.10" % "1.3.0",
+    "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.0",
     "javax.ws.rs" % "jsr311-api" % "1.1.1",
     "org.mockito" % "mockito-all" % "1.9.0" % "test" withSources() withJavadoc())
 

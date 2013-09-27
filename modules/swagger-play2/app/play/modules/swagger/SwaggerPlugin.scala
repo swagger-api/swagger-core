@@ -36,6 +36,16 @@ class SwaggerPlugin(application: Application) extends Plugin {
       case Some(value) => value
     }
 
+    //ensure basepath is a valid URL, else throw an exception
+    try {
+      val basepathUrl = new java.net.URL(basePath)
+      Logger("swagger").info("Basepath configured as: %s".format(basePath))
+    } catch {
+      case ex: Exception =>
+        Logger("swagger").error("Misconfiguration - basepath not a valid URL: %s. Swagger plugin abandoning initialisation".format(basePath))
+        throw ex
+    }
+
     ConfigFactory.setConfig(new SwaggerConfig(apiVersion, SwaggerSpec.version, basePath, ""))
     SwaggerContext.registerClassLoader(current.classloader)
     ScannerFactory.setScanner(new PlayApiScanner(current.routes))
