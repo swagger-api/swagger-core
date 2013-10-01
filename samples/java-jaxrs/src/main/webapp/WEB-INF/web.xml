@@ -51,6 +51,11 @@
     <filter-name>ApiOriginFilter</filter-name>
     <filter-class>com.wordnik.swagger.sample.util.ApiOriginFilter</filter-class>
   </filter>
+  <servlet>
+    <servlet-name>Bootstrap</servlet-name>
+    <servlet-class>com.wordnik.swagger.sample.Bootstrap</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
   <filter-mapping>
     <filter-name>ApiOriginFilter</filter-name>
     <url-pattern>/*</url-pattern>
