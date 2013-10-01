@@ -26,7 +26,7 @@ import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
 
 object ModelUtil {
   private val LOGGER = LoggerFactory.getLogger(ModelUtil.getClass)
-  val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-]*)\\].*".r
+  val ComplexTypeMatcher = "([\\w]*)\\[([\\w\\.\\-]*)\\].*".r
 
   def stripPackages(apis: List[ApiDescription]): List[ApiDescription] = {
     (for(api <- apis) yield {
