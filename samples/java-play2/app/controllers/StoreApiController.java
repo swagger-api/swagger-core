@@ -23,8 +23,8 @@ public class StoreApiController extends BaseApiController {
 	@Path("/order/{orderId}")
 	@ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5. "
 			+ "Anything above 5 or nonintegers will generate API errors", responseClass = "models.Order", httpMethod = "GET")
-	@ApiResponses({ @ApiResponse(code = 400, message = "Invalid ID supplied"),
-			@ApiResponse(code = 404, message = "Order not found") })
+	@ApiErrors({ @ApiError(code = 400, reason = "Invalid ID supplied"),
+			@ApiError(code = 404, reason = "Order not found") })
 	public static Result getOrderById(
 			@ApiParam(value = "ID of order to fetch", required = true) @PathParam("orderId") String orderId) {
 		Order order = storeData.findOrderById(ru.getLong(0, 10000, 0, orderId));
@@ -37,8 +37,8 @@ public class StoreApiController extends BaseApiController {
 
 	@Path("/order")
 	@ApiOperation(value = "Place an order for a pet", responseClass = "void", httpMethod = "POST")
-	@ApiResponses(@ApiResponse(code = 400, message = "Invalid order"))
-	@ApiImplicitParams(@ApiImplicitParam(name = "body", value = "order placed for purchasing the pet", required = true, dataType = "Order", paramType = "body"))
+	@ApiErrors(@ApiError(code = 400, reason = "Invalid order"))
+	@ApiParamsImplicit(@ApiParamImplicit(name = "body", value = "order placed for purchasing the pet", required = true, dataType = "Order", paramType = "body"))
 	public static Result placeOrder() {
 		Object o = request().body().asJson();
 		try {
@@ -53,8 +53,8 @@ public class StoreApiController extends BaseApiController {
 	@Path("/order/{orderId}")
 	@ApiOperation(value = "Delete purchase order by ID", notes = "For valid response try integer IDs with value < 1000. "
 			+ "Anything above 1000 or nonintegers will generate API errors", responseClass = "void", httpMethod = "DELETE")
-	@ApiResponses({ @ApiResponse(code = 400, message = "Invalid ID supplied"),
-			@ApiResponse(code = 404, message = "Order not found") })
+	@ApiErrors({ @ApiError(code = 400, reason = "Invalid ID supplied"),
+			@ApiError(code = 404, reason = "Order not found") })
 	public static Result deleteOrder(
 			@ApiParam(value = "ID of the order that needs to be deleted", required = true) @PathParam("orderId") String orderId) {
 		storeData.deleteOrder(ru.getLong(0, 10000, 0, orderId));
