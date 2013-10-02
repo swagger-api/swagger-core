@@ -24,7 +24,7 @@ object PetApiController extends BaseApiController {
 
   def getOptions(path: String) = Action { implicit request => JsonResponse(new value.ApiResponse(200, "Ok")) }
 
-  @ApiOperation(value = "Find pet by ID", notes = "Returns a pet", responseClass = "Pet", httpMethod = "GET")
+  @ApiOperation(value = "Find pet by ID", notes = "Returns a pet", responseClass = "models.Pet", httpMethod = "GET")
   @ApiResponses(Array(
     new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid ID supplied"))),
     new ApiResponse(errors = Array(new ApiError(code = 404, reason = "Pet not found")))))
