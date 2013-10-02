@@ -1,6 +1,6 @@
 package controllers
 
-import models._
+import models.User
 import api._
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.annotations._
@@ -21,8 +21,8 @@ object UserApiController extends BaseApiController {
   var userData = new UserData
 
   @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.")
-  @ApiImplicitParams(Array(
-    new ApiImplicitParam(name = "body", value = "Created user object", required = true, dataType = "User", paramType = "body")))
+  @ApiParamsImplicit(Array(
+    new ApiParamImplicit(name = "body", value = "Created user object", required = true, dataType = "User", paramType = "body")))
   def createUser = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
@@ -35,8 +35,8 @@ object UserApiController extends BaseApiController {
   }
 
   @ApiOperation(value = "Creates list of users with given input array", responseClass = "void")
-  @ApiImplicitParams(Array(
-    new ApiImplicitParam(name = "body", value = "List of user object", required = true, dataType = "Array[User]", paramType = "body")))
+  @ApiParamsImplicit(Array(
+    new ApiParamImplicit(name = "body", value = "List of user object", required = true, dataType = "Array[User]", paramType = "body")))
   def createUsersWithArrayInput = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
@@ -49,8 +49,8 @@ object UserApiController extends BaseApiController {
   }
 
   @ApiOperation(value = "Creates list of users with given list input", responseClass = "void")
-  @ApiImplicitParams(Array(
-    new ApiImplicitParam(name = "body", value = "List of user object", required = true, dataType = "List[User]", paramType = "body")))
+  @ApiParamsImplicit(Array(
+    new ApiParamImplicit(name = "body", value = "List of user object", required = true, dataType = "List[User]", paramType = "body")))
   def createUsersWithListInput = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
@@ -64,11 +64,11 @@ object UserApiController extends BaseApiController {
 
   @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.")
   @ApiResponses(Array(
-    new ApiResponse(code = 400, message = "Invalid username supplied"),
-    new ApiResponse(code = 404, message = "User not found")))
-  @ApiImplicitParams(Array(
-    new ApiImplicitParam(name = "username", value = "name that need to be updated", required = true, dataType = "String", paramType = "path"),
-    new ApiImplicitParam(name = "body", value = "Updated user object", required = true, dataType = "User", paramType = "body")))
+    new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid username supplied"))),
+    new ApiResponse(errors = Array(new ApiError(code = 404, reason = "User not found")))))
+  @ApiParamsImplicit(Array(
+    new ApiParamImplicit (name = "username", value = "name that need to be updated", required = true, dataType = "String", paramType = "path"),
+    new ApiParamImplicit(name = "body", value = "Updated user object", required = true, dataType = "User", paramType = "body")))
   def updateUser(username: String) = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
@@ -82,8 +82,8 @@ object UserApiController extends BaseApiController {
 
   @ApiOperation(value = "Delete user", notes = "This can only be done by the logged in user.")
   @ApiResponses(Array(
-    new ApiResponse(code = 400, message = "Invalid username supplied"),
-    new ApiResponse(code = 404, message = "User not found")))
+    new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid username supplied"))),
+    new ApiResponse(errors = Array(new ApiError(code = 404, reason = "User not found")))))
   def deleteUser(
     @ApiParam(value = "The name that needs to be deleted", required = true)@PathParam("username") username: String) = Action { implicit request =>
     userData.removeUser(username)
@@ -92,8 +92,8 @@ object UserApiController extends BaseApiController {
 
   @ApiOperation(value = "Get user by user name", responseClass = "models.User")
   @ApiResponses(Array(
-    new ApiResponse(code = 400, message = "Invalid username supplied"),
-    new ApiResponse(code = 404, message = "User not found")))
+    new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid username supplied"))),
+    new ApiResponse(errors = Array(new ApiError(code = 404, reason = "User not found")))))
   def getUserByName(
     @ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ", required = true)@PathParam("username") username: String) = Action { implicit request =>
     userData.findUserByName(username) match {
@@ -104,7 +104,7 @@ object UserApiController extends BaseApiController {
 
   @ApiOperation(value = "Logs user into the system", responseClass = "String")
   @ApiResponses(Array(
-    new ApiResponse(code = 400, message = "Invalid username and password combination")))
+    new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid username and password combination")))))
   def loginUser(
     @ApiParam(value = "The user name for login", required = true)@QueryParam("username") username: String,
     @ApiParam(value = "The password for login in clear text", required = true)@QueryParam("password") password: String) = Action { implicit request =>
