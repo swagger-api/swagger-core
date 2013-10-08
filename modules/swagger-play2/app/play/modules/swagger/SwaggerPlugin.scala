@@ -19,8 +19,9 @@ package play.modules.swagger
 import com.wordnik.swagger.core.{SwaggerSpec, SwaggerContext}
 import play.api.{Logger, Application, Plugin}
 import play.api.Play._
-import com.wordnik.swagger.config.{SwaggerConfig, ConfigFactory, ScannerFactory}
+import com.wordnik.swagger.config.{FilterFactory, SwaggerConfig, ConfigFactory, ScannerFactory}
 import com.wordnik.swagger.reader.ClassReaders
+import com.wordnik.swagger.core.filter.SwaggerSpecFilter
 
 class SwaggerPlugin(application: Application) extends Plugin {
 
@@ -31,25 +32,41 @@ class SwaggerPlugin(application: Application) extends Plugin {
       case None => "beta"
       case Some(value) => value
     }
+
     val basePath = current.configuration.getString("swagger.api.basepath") match {
-      case None => "http://localhost"
-      case Some(value) => value
+      case Some(e) if (e != "") => {
+        //ensure basepath is a valid URL, else throw an exception
+        try {
+          val basepathUrl = new java.net.URL(e)
+          Logger("swagger").info("Basepath configured as: %s".format(e))
+          e
+        } catch {
+          case ex: Exception =>
+            Logger("swagger").error("Misconfiguration - basepath not a valid URL: %s. Swagger plugin abandoning initialisation".format(e))
+            throw ex
+        }
+      }
+      case _ => "http://localhost"
     }
 
-    //ensure basepath is a valid URL, else throw an exception
-    try {
-      val basepathUrl = new java.net.URL(basePath)
-      Logger("swagger").info("Basepath configured as: %s".format(basePath))
-    } catch {
-      case ex: Exception =>
-        Logger("swagger").error("Misconfiguration - basepath not a valid URL: %s. Swagger plugin abandoning initialisation".format(basePath))
-        throw ex
-    }
-
-    ConfigFactory.setConfig(new SwaggerConfig(apiVersion, SwaggerSpec.version, basePath, ""))
     SwaggerContext.registerClassLoader(current.classloader)
+    ConfigFactory.setConfig(new SwaggerConfig(apiVersion, SwaggerSpec.version, basePath, ""))
     ScannerFactory.setScanner(new PlayApiScanner(current.routes))
     ClassReaders.reader = Some(new PlayApiReader(current.routes, current.configuration))
+
+    current.configuration.getString("swagger.filter") match {
+      case Some(e) if (e != "") => {
+        try {
+          FilterFactory.filter = SwaggerContext.loadClass(e).newInstance.asInstanceOf[SwaggerSpecFilter]
+          Logger("swagger").info("Setting swagger.filter to %s".format(e))
+        }
+        catch {
+          case ex: Exception => Logger("swagger").error("Failed to load filter " + e, ex)
+        }
+      }
+      case _ =>
+    }
+
     val docRoot = ""
     ApiListingCache.listing(docRoot)
 

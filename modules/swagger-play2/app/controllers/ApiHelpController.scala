@@ -116,12 +116,11 @@ class SwaggerBaseApiController extends Controller {
    * Get a list of all top level resources
    */
   protected def getResourceListing(implicit requestHeader: RequestHeader) = {
-    // var apiFilter: ApiAuthorizationFilter = ApiAuthorizationFilterLocator.get(apiFilterClassName)
     Logger("swagger").debug("ApiHelpInventory.getRootResources")
     val docRoot = ""
-    val queryParams = Map[String, List[String]]()
-    val cookies = Map[String, String]()
-    val headers = Map[String, List[String]]()
+    val queryParams = requestHeader.queryString.map {case (key, value) => (key -> value.toList)}
+    val cookies = requestHeader.cookies.map {cookie => (cookie.name -> cookie.value)}.toMap
+    val headers = requestHeader.headers.toMap.map {case (key, value) => (key -> value.toList)}
 
     val f = new SpecFilter
     val listings = ApiListingCache.listing(docRoot).map(specs => {
@@ -150,16 +149,10 @@ class SwaggerBaseApiController extends Controller {
     Logger("swagger").debug("ApiHelpInventory.getResource(%s)".format(resourceName))
     val docRoot = ""
     val f = new SpecFilter
-    val queryParams = Map[String, List[String]]()
-    val cookies = Map[String, String]()
-    val headers = Map[String, List[String]]()
+    val queryParams = requestHeader.queryString.map {case (key, value) => (key -> value.toList)}
+    val cookies = requestHeader.cookies.map {cookie => (cookie.name -> cookie.value)}.toMap
+    val headers = requestHeader.headers.toMap.map {case (key, value) => (key -> value.toList)}
     val pathPart = resourceName
-
-    val cache = ApiListingCache.listing(docRoot)
-    cache.get.foreach {
-      case (key: String, value: ApiListing) =>
-        Logger("swagger").debug("Listing: %s, %s".format(key, value.toString))
-    }
 
     val listings: List[ApiListing] = ApiListingCache.listing(docRoot).map(specs => {
       (for (spec <- specs.values) yield {
