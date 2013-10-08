@@ -1,9 +1,10 @@
 package controllers
 
-import models._
+import models.User
 import api._
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.annotations._
+import com.wordnik.swagger.core.util.ScalaJsonUtil
 
 import play.api._
 import play.api.mvc._
@@ -16,17 +17,17 @@ import play.api.data.format.Formats._
 import javax.ws.rs.{PathParam, QueryParam}
 import java.io.StringWriter
 
-@Api(value = "/user", listingPath = "/api-docs.{format}/user", description = "Operations about user")
+@Api(value = "/user", description = "Operations about user")
 object UserApiController extends BaseApiController {
   var userData = new UserData
 
-  @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.")
+  @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.", httpMethod = "POST"  )
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "body", value = "Created user object", required = true, dataType = "User", paramType = "body")))
   def createUser = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
-        val user = BaseApiController.mapper.readValue(e.toString, classOf[User]).asInstanceOf[User]
+        val user = ScalaJsonUtil.mapper.readValue(e.toString, classOf[User]).asInstanceOf[User]
         userData.addUser(user)
         JsonResponse(user)
       }
@@ -34,13 +35,13 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Creates list of users with given input array", responseClass = "void")
+  @ApiOperation(value = "Creates list of users with given input array", response = classOf[Void], httpMethod = "POST")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "body", value = "List of user object", required = true, dataType = "Array[User]", paramType = "body")))
   def createUsersWithArrayInput = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
-        val users = BaseApiController.mapper.readValue(e.toString, classOf[Array[User]]).asInstanceOf[Array[User]]
+        val users = ScalaJsonUtil.mapper.readValue(e.toString, classOf[Array[User]]).asInstanceOf[Array[User]]
         users.foreach(user => userData.addUser(user))
         JsonResponse(users)
       }
@@ -48,13 +49,13 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Creates list of users with given list input", responseClass = "void")
+  @ApiOperation(value = "Creates list of users with given list input", response = classOf[Void], httpMethod = "POST")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "body", value = "List of user object", required = true, dataType = "List[User]", paramType = "body")))
   def createUsersWithListInput = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
-        val users = BaseApiController.mapper.readValue(e.toString, classOf[Array[User]]).asInstanceOf[Array[User]]
+        val users = ScalaJsonUtil.mapper.readValue(e.toString, classOf[Array[User]]).asInstanceOf[Array[User]]
         users.foreach(user => userData.addUser(user))
         JsonResponse(users)
       }
@@ -62,17 +63,17 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.")
+  @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.", httpMethod = "PUT")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid username supplied"),
     new ApiResponse(code = 404, message = "User not found")))
   @ApiImplicitParams(Array(
-    new ApiImplicitParam(name = "username", value = "name that need to be updated", required = true, dataType = "String", paramType = "path"),
+    new ApiImplicitParam (name = "username", value = "name that need to be updated", required = true, dataType = "String", paramType = "path"),
     new ApiImplicitParam(name = "body", value = "Updated user object", required = true, dataType = "User", paramType = "body")))
   def updateUser(username: String) = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
-        val user = BaseApiController.mapper.readValue(e.toString, classOf[User]).asInstanceOf[User]
+        val user = ScalaJsonUtil.mapper.readValue(e.toString, classOf[User]).asInstanceOf[User]
         userData.addUser(user)
         JsonResponse(user)
       }
@@ -80,7 +81,7 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Delete user", notes = "This can only be done by the logged in user.")
+  @ApiOperation(value = "Delete user", notes = "This can only be done by the logged in user.", httpMethod = "DELETE")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid username supplied"),
     new ApiResponse(code = 404, message = "User not found")))
@@ -90,7 +91,7 @@ object UserApiController extends BaseApiController {
     Ok
   }
 
-  @ApiOperation(value = "Get user by user name", responseClass = "models.User")
+  @ApiOperation(value = "Get user by user name", response = classOf[models.User], httpMethod = "GET")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid username supplied"),
     new ApiResponse(code = 404, message = "User not found")))
@@ -102,7 +103,7 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Logs user into the system", responseClass = "String")
+  @ApiOperation(value = "Logs user into the system", response = classOf[String], httpMethod = "GET")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid username and password combination")))
   def loginUser(
@@ -111,7 +112,7 @@ object UserApiController extends BaseApiController {
     JsonResponse("logged in user session:" + System.currentTimeMillis())
   }
 
-  @ApiOperation(value = "Logs out current logged in user session")
+  @ApiOperation(value = "Logs out current logged in user session", httpMethod = "GET")
   def logoutUser() = Action { implicit request =>
     Ok
   }
