@@ -7,6 +7,9 @@ import com.wordnik.swagger.config.FilterFactory;
 
 import javax.servlet.http.HttpServlet;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class Bootstrap extends HttpServlet {
   static {
     // do any additional initialization here, such as set your base path programmatically as such:
@@ -26,6 +29,20 @@ public class Bootstrap extends HttpServlet {
       "http://www.apache.org/licenses/LICENSE-2.0.html" /* license URL */
     );
 
+    List<String> scopes = new ArrayList<String>();
+    scopes.add("PUBLIC");
+
+    List<GrantType> grantTypes = new ArrayList<GrantType>();
+
+    ImplicitGrant implicitGrant = new ImplicitGrant(
+      new LoginEndpoint("http://localhost:8002/oauth/dialog"), 
+      "access_code");
+
+    grantTypes.add(implicitGrant);
+
+    AuthorizationType oauth = new OAuthBuilder().scopes(scopes).grantTypes(grantTypes).build();
+
+    ConfigFactory.config().addAuthorization(oauth);
     ConfigFactory.config().setApiInfo(info);
   }
 }
