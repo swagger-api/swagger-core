@@ -18,4 +18,8 @@ class SwaggerConfig(
   def setApiInfo(apiInfo: ApiInfo) = {
     this.info = Option(apiInfo)
   }
+
+  def addAuthorization(auth: AuthorizationType) = {
+    authorizations = authorizations ++ List(auth)
+  }
 }
