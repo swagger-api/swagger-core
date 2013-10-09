@@ -46,7 +46,7 @@ class Pet() {
   var tags: List[Tag] = new ArrayList[Tag]()
 
   @XmlElement(name = "status")
-  @ApiModelProperty(value = "pet status in the store", allowableValues = "available,pending,sold")
+  @ApiProperty(value = "pet status in the store", allowableValues = "available,pending,sold")
   @BeanProperty
   var status: String = null
 }

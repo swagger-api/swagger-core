@@ -1,16 +1,22 @@
 import sbt._
 import Keys._
-import PlayProject._
+import play.Project._
 
 object ApplicationBuild extends Build {
 
   val appName = "petstore"
-  val appVersion = "1.2.2"
+  val appVersion = "1.2.6-SNAPSHOT"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
-    "com.wordnik" %% "swagger-play2" % "1.2.2")
+<<<<<<< HEAD
+    "com.wordnik" %% "swagger-play2-utils" % "1.2.6-SNAPSHOT"
+=======
+    "com.wordnik" %% "swagger-play2" % "1.3-SNAPSHOT",
+    "com.wordnik" %% "swagger-play2-utils" % "1.3-SNAPSHOT"
+>>>>>>> 2abdda71405c19c69c23807ffe562e945d310299
+  )
 
-  val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
+  val main = play.Project(appName, appVersion, appDependencies).settings(
     resolvers := Seq(
       "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
       "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
