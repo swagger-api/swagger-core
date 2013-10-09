@@ -95,7 +95,11 @@ public class User {
 	}
 
 	@XmlElement(name = "userStatus")
+<<<<<<< HEAD
     @ApiProperty(value = "User Status", allowableValues = "1-registered,2-active,3-closed")
+=======
+    @ApiModelProperty(value = "User Status", allowableValues = "1-registered,2-active,3-closed")
+>>>>>>> 2abdda71405c19c69c23807ffe562e945d310299
 	public int getUserStatus() {
 		return userStatus;
 	}

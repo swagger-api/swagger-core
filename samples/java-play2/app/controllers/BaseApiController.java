@@ -16,7 +16,7 @@ import models.*;
 public class BaseApiController extends Controller {
 	static JavaRestResourceUtil ru = new JavaRestResourceUtil();
 
-	protected static ObjectMapper mapper = JsonUtil.getJsonMapper();
+	protected static ObjectMapper mapper = JsonUtil.mapper();
 	
 	public static Result JsonResponse(Object obj) {
 		return JsonResponse(obj, 200);

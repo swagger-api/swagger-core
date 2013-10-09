@@ -10,21 +10,26 @@ import play.api.data.Forms._
 import play.api.data.format.Formats._
 import play.api.Play.current
 
+
 import javax.ws.rs.{ QueryParam, PathParam }
 
 import java.io.StringWriter
 
-import play.api.data.format.Formats._
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.annotations._
+import com.wordnik.swagger.core.util.ScalaJsonUtil
 
-@Api(value = "/pet", listingPath = "/api-docs.{format}/pet", description = "Operations about pets")
+@Api(value = "/pet", description = "Operations about pets")
 object PetApiController extends BaseApiController {
   var petData = new PetData
 
   def getOptions(path: String) = Action { implicit request => JsonResponse(new value.ApiResponse(200, "Ok")) }
 
+<<<<<<< HEAD
   @ApiOperation(value = "Find pet by ID", notes = "Returns a pet", responseClass = "models.Pet", httpMethod = "GET")
+=======
+  @ApiOperation(value = "Find pet by ID", notes = "Returns a pet", response = classOf[models.Pet], httpMethod = "GET")
+>>>>>>> 2abdda71405c19c69c23807ffe562e945d310299
   @ApiResponses(Array(
     new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid ID supplied"))),
     new ApiResponse(errors = Array(new ApiError(code = 404, reason = "Pet not found")))))
@@ -36,7 +41,7 @@ object PetApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Add a new Pet", responseClass = "void")
+  @ApiOperation(value = "Add a new Pet", response = classOf[Void], httpMethod = "POST")
   @ApiResponses(Array(
     new ApiResponse(errors = Array(new ApiError(code = 405, reason = "Invalid input")))))
   @ApiParamsImplicit(Array(
@@ -44,7 +49,7 @@ object PetApiController extends BaseApiController {
   def addPet() = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
-        val pet = BaseApiController.mapper.readValue(e.toString, classOf[Pet]).asInstanceOf[Pet]
+        val pet = ScalaJsonUtil.mapper.readValue(e.toString, classOf[Pet]).asInstanceOf[Pet]
         petData.addPet(pet)
         Ok
       }
@@ -52,7 +57,7 @@ object PetApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Update an existing Pet", responseClass = "void")
+  @ApiOperation(value = "Update an existing Pet", response = classOf[Void], httpMethod = "PUT")
   @ApiResponses(Array(
     new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid ID supplied"))),
     new ApiResponse(errors = Array(new ApiError(code = 404, reason = "Pet not found"))),
@@ -62,7 +67,7 @@ object PetApiController extends BaseApiController {
   def updatePet() = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
-        val pet = BaseApiController.mapper.readValue(e.toString, classOf[Pet]).asInstanceOf[Pet]
+        val pet = ScalaJsonUtil.mapper.readValue(e.toString, classOf[Pet]).asInstanceOf[Pet]
         petData.addPet(pet)
         JsonResponse("SUCCESS")
       }
@@ -72,7 +77,7 @@ object PetApiController extends BaseApiController {
 
   @ApiOperation(value = "Finds Pets by status",
     notes = "Multiple status values can be provided with comma seperated strings",
-    responseClass = "models.Pet", multiValueResponse = true)
+    response = classOf[models.Pet], responseContainer = "List", httpMethod = "GET")
   @ApiResponses(Array(
     new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid status value")))))
   def findPetsByStatus(
@@ -84,7 +89,7 @@ object PetApiController extends BaseApiController {
 
   @ApiOperation(value = "Finds Pets by tags",
     notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
-    responseClass = "models.Pet", multiValueResponse = true)
+    response = classOf[models.Pet], responseContainer = "List", httpMethod = "GET")
   @ApiResponses(Array(
     new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid tag value")))))
   def findPetsByTags(
@@ -96,7 +101,7 @@ object PetApiController extends BaseApiController {
 
   @ApiOperation(value = "Attach an Image File for a pet",
     notes = "Is not functional, only used to test file upload params",
-    responseClass = "void")
+    response = classOf[Void], httpMethod = "GET")
   @ApiResponses(Array(
     new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid file format")))))
   @ApiParamsImplicit(Array(

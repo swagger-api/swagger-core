@@ -80,7 +80,11 @@ public class Pet {
 	}
 
 	@XmlElement(name = "status")
+<<<<<<< HEAD
     @ApiProperty(value = "pet status in the store", allowableValues = "available,pending,sold")
+=======
+    @ApiModelProperty(value = "pet status in the store", allowableValues = "available,pending,sold")
+>>>>>>> 2abdda71405c19c69c23807ffe562e945d310299
     public String getStatus() {
 		return status;
 	}
