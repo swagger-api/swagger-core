@@ -26,7 +26,9 @@ import scala.collection.mutable.LinkedHashMap
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
 
-object ApiListingCache {
+import com.wordnik.swagger.core.util.ReaderUtil
+
+object ApiListingCache extends ReaderUtil {
   private val LOGGER = LoggerFactory.getLogger(ApiListingCache.getClass)
 
   var _cache: Option[Map[String, ApiListing]] = None
@@ -42,7 +44,8 @@ object ApiListingCache {
           }
           // For each top level resource, parse it and look for swagger annotations.
           val listings = (for(cls <- classes) yield reader.read(docRoot, cls, ConfigFactory.config)).flatten.toList
-          _cache = Some((listings.map(m => {
+          val mergedListings = groupByResourcePath(listings)
+          _cache = Some((mergedListings.map(m => {
             // always start with "/"
             val resourcePath = m.resourcePath.startsWith ("/") match {
               case true => m.resourcePath
