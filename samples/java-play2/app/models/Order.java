@@ -68,11 +68,7 @@ public class Order {
 	}
 
 	@XmlElement(name = "status")
-<<<<<<< HEAD
-    @ApiProperty(value = "Order Status", allowableValues = "placed,approved,delivered")
-=======
-    @ApiModelProperty(value = "Order Status", allowableValues = "placed,approved,delivered")
->>>>>>> 2abdda71405c19c69c23807ffe562e945d310299
+  @ApiModelProperty(value = "Order Status", allowableValues = "placed,approved,delivered")
 	public String getStatus() {
 		return status;
 	}
