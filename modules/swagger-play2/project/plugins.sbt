@@ -9,9 +9,6 @@ resolvers ++= Seq(
     Resolver.url("Play", url("http://download.playframework.org/ivy-releases/"))(Resolver.ivyStylePatterns)
 )
 
-<<<<<<< HEAD
 resolvers += "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/"
 
-=======
->>>>>>> 2abdda71405c19c69c23807ffe562e945d310299
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.2.0")
