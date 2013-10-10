@@ -21,15 +21,9 @@ import java.io.StringWriter
 object UserApiController extends BaseApiController {
   var userData = new UserData
 
-<<<<<<< HEAD
-  @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.")
-  @ApiParamsImplicit(Array(
-    new ApiParamImplicit(name = "body", value = "Created user object", required = true, dataType = "User", paramType = "body")))
-=======
   @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.", httpMethod = "POST"  )
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "body", value = "Created user object", required = true, dataType = "User", paramType = "body")))
->>>>>>> 2abdda71405c19c69c23807ffe562e945d310299
   def createUser = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
@@ -41,15 +35,9 @@ object UserApiController extends BaseApiController {
     }
   }
 
-<<<<<<< HEAD
-  @ApiOperation(value = "Creates list of users with given input array", responseClass = "void")
-  @ApiParamsImplicit(Array(
-    new ApiParamImplicit(name = "body", value = "List of user object", required = true, dataType = "Array[User]", paramType = "body")))
-=======
   @ApiOperation(value = "Creates list of users with given input array", response = classOf[Void], httpMethod = "POST")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "body", value = "List of user object", required = true, dataType = "Array[User]", paramType = "body")))
->>>>>>> 2abdda71405c19c69c23807ffe562e945d310299
   def createUsersWithArrayInput = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
@@ -61,15 +49,9 @@ object UserApiController extends BaseApiController {
     }
   }
 
-<<<<<<< HEAD
-  @ApiOperation(value = "Creates list of users with given list input", responseClass = "void")
-  @ApiParamsImplicit(Array(
-    new ApiParamImplicit(name = "body", value = "List of user object", required = true, dataType = "List[User]", paramType = "body")))
-=======
   @ApiOperation(value = "Creates list of users with given list input", response = classOf[Void], httpMethod = "POST")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "body", value = "List of user object", required = true, dataType = "List[User]", paramType = "body")))
->>>>>>> 2abdda71405c19c69c23807ffe562e945d310299
   def createUsersWithListInput = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
@@ -83,19 +65,11 @@ object UserApiController extends BaseApiController {
 
   @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.", httpMethod = "PUT")
   @ApiResponses(Array(
-<<<<<<< HEAD
-    new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid username supplied"))),
-    new ApiResponse(errors = Array(new ApiError(code = 404, reason = "User not found")))))
-  @ApiParamsImplicit(Array(
-    new ApiParamImplicit (name = "username", value = "name that need to be updated", required = true, dataType = "String", paramType = "path"),
-    new ApiParamImplicit(name = "body", value = "Updated user object", required = true, dataType = "User", paramType = "body")))
-=======
     new ApiResponse(code = 400, message = "Invalid username supplied"),
     new ApiResponse(code = 404, message = "User not found")))
   @ApiImplicitParams(Array(
     new ApiImplicitParam (name = "username", value = "name that need to be updated", required = true, dataType = "String", paramType = "path"),
     new ApiImplicitParam(name = "body", value = "Updated user object", required = true, dataType = "User", paramType = "body")))
->>>>>>> 2abdda71405c19c69c23807ffe562e945d310299
   def updateUser(username: String) = Action { implicit request =>
     request.body.asJson match {
       case Some(e) => {
@@ -109,8 +83,8 @@ object UserApiController extends BaseApiController {
 
   @ApiOperation(value = "Delete user", notes = "This can only be done by the logged in user.", httpMethod = "DELETE")
   @ApiResponses(Array(
-    new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid username supplied"))),
-    new ApiResponse(errors = Array(new ApiError(code = 404, reason = "User not found")))))
+    new ApiResponse(code = 400, message = "Invalid username supplied"),
+    new ApiResponse(code = 404, message = "User not found")))
   def deleteUser(
     @ApiParam(value = "The name that needs to be deleted", required = true)@PathParam("username") username: String) = Action { implicit request =>
     userData.removeUser(username)
@@ -119,8 +93,8 @@ object UserApiController extends BaseApiController {
 
   @ApiOperation(value = "Get user by user name", response = classOf[models.User], httpMethod = "GET")
   @ApiResponses(Array(
-    new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid username supplied"))),
-    new ApiResponse(errors = Array(new ApiError(code = 404, reason = "User not found")))))
+    new ApiResponse(code = 400, message = "Invalid username supplied"),
+    new ApiResponse(code = 404, message = "User not found")))
   def getUserByName(
     @ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ", required = true)@PathParam("username") username: String) = Action { implicit request =>
     userData.findUserByName(username) match {
@@ -131,7 +105,7 @@ object UserApiController extends BaseApiController {
 
   @ApiOperation(value = "Logs user into the system", response = classOf[String], httpMethod = "GET")
   @ApiResponses(Array(
-    new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid username and password combination")))))
+    new ApiResponse(code = 400, message = "Invalid username and password combination")))
   def loginUser(
     @ApiParam(value = "The user name for login", required = true)@QueryParam("username") username: String,
     @ApiParam(value = "The password for login in clear text", required = true)@QueryParam("password") password: String) = Action { implicit request =>
