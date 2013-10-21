@@ -28,16 +28,9 @@ object SwaggerUtils {
   }
 }
 
-class PlayApiReader(val routes: Option[Routes], val config: Configuration) extends JaxrsApiReader {
+class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
 
   private var _routesCache: Map[String, RouteEntry] = null
-
-  /* ** Not sure if this will be needed? **
-  private val formatString = config.getString("swagger.api.format.string") match {
-    case Some(str) => str
-    case _ => ".{format}"
-  }
-  */
 
   override def read(docRoot: String, cls: Class[_], config: SwaggerConfig): Option[ApiListing] = {
     Logger("swagger").debug("ControllerReader: read(docRoot = %s, cls = %s, config = %s)".format(docRoot, cls.getName, config.toString))
