@@ -97,25 +97,12 @@ class SpecFilter {
         case _ => model
       }
     }).toList
-    val subTypes = (for(model <- topLevelModels) yield {
-      allModels match {
-        case Some(models) if(models.contains(model)) => {
-          val m = models(model)
-          (for(subType <- m.subTypes) yield {
-            val cls = SwaggerContext.loadClass(subType)
-            for(model <- ModelConverters.readAll(cls)) yield {
-              model.name
-            }
-          }).flatten.toList
-        }
-        case _ => List()
-      }
-    }).flatten.toList
-    val properties = requiredProperties(topLevelModels, allModels.getOrElse(Map()), new HashSet[String]())
-    topLevelModels ++ subTypes ++ properties
+
+    val deps = requiredDependencies(topLevelModels, allModels.getOrElse(Map()), new HashSet[String]())
+    topLevelModels ++ deps
   }
 
-  def requiredProperties(models: List[String], allModels: Map[String, Model], inspectedTypes: HashSet[String]): List[String] = {
+  def requiredDependencies(models: List[String], allModels: Map[String, Model], inspectedTypes: HashSet[String]): List[String] = {
     (for(modelname <- models) yield {
       val modelnames = new HashSet[String]()
       if(allModels.contains(modelname) && !inspectedTypes.contains(modelname)) {
@@ -127,11 +114,18 @@ class SpecFilter {
             case None => modelnames += m._2.`type`
           }
         })
+        for(subType <- model.subTypes) {
+          val cls = SwaggerContext.loadClass(subType)
+          val subModel = ModelConverters.read(cls)
+          if(subModel.isDefined && allModels.contains(subModel.get.name)) {
+            modelnames += subModel.get.name
+          }
+        }
       }
       val unresolved = ((modelnames.toSet -- inspectedTypes).toSet & allModels.keys.toSet).toSet
       (
         if(unresolved.size > 0)
-          requiredProperties(unresolved.toList, allModels, inspectedTypes)
+          requiredDependencies(unresolved.toList, allModels, inspectedTypes)
         else List()
       ) ++ modelnames.toList
     }).flatten.toList

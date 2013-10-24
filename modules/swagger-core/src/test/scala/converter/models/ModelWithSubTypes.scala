@@ -18,3 +18,6 @@ case class WildAnimal (
   @(ApiModelProperty @field)(value = "name of animal", position = 1) name: String,
   @(ApiModelProperty @field)(value = "location found in", position = 2) foundInLocation: String,
   @(ApiModelProperty @field)(value = "date added", position = 3) date: java.util.Date)
+
+case class Cage (
+  @(ApiModelProperty @field)(value = "caged animal", position = 1) name: Animal)

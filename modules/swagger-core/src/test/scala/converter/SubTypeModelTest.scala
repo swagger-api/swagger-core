@@ -54,4 +54,81 @@ class SubTypeModelTest extends FlatSpec with ShouldMatchers {
 }
     */
   }
+
+  it should "read a model that has a field with subTypes" in {
+    val models = ModelConverters.readAll(classOf[Cage])
+    models.size should be (4)
+    println(write(models))
+    write(models) should be ("""[{"id":"Cage","properties":{"name":{"$ref":"Animal","description":"caged animal"}}},{"id":"Animal","description":"a model with subtypes","discriminator":"name","properties":{"name":{"type":"string","description":"name of animal"},"date":{"type":"string","format":"date-time","description":"date added"}},"subTypes":["DomesticAnimal","WildAnimal"]},{"id":"DomesticAnimal","properties":{"name":{"type":"string","description":"name of animal"},"safeForChildren":{"type":"boolean","description":"animals are safe for children"},"date":{"type":"string","format":"date-time","description":"date added"}}},{"id":"WildAnimal","properties":{"name":{"type":"string","description":"name of animal"},"foundInLocation":{"type":"string","description":"location found in"},"date":{"type":"string","format":"date-time","description":"date added"}}}]""")
+
+    /*
+  [
+    {
+      "id": "Cage",
+      "properties": {
+        "name": {
+          "$ref": "Animal",
+          "description": "caged animal"
+        }
+      }
+    },
+    {
+      "id": "Animal",
+      "description": "a model with subtypes",
+      "discriminator": "name",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "name of animal"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "date added"
+        }
+      },
+      "subTypes": [
+        "DomesticAnimal",
+        "WildAnimal"
+      ]
+    },
+    {
+      "id": "DomesticAnimal",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "name of animal"
+        },
+        "safeForChildren": {
+          "type": "boolean",
+          "description": "animals are safe for children"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "date added"
+        }
+      }
+    },
+    {
+      "id": "WildAnimal",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "name of animal"
+        },
+        "foundInLocation": {
+          "type": "string",
+          "description": "location found in"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "date added"
+        }
+      }
+    }
+  ]
+    */
+  }
 }
