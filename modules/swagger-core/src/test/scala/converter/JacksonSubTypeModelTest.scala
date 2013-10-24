@@ -31,11 +31,12 @@ class JacksonSubTypeModelTest extends FlatSpec with ShouldMatchers {
     val model = ModelConverters.read(classOf[JAnimal]).getOrElse(fail("no model found"))
     model.subTypes.size should be (2)
 
-    write(model) should be ("""{"id":"JAnimal","discriminator":"type","properties":{"type":{"type":"string","description":"type of animal"},"date":{"type":"string","format":"date-time","description":"Date added to the zoo"}},"subTypes":["JWildAnimal","JDomesticAnimal"]}""")
+    write(model) should be ("""{"id":"JAnimal","description":"Animal desc","discriminator":"type","properties":{"type":{"type":"string","description":"type of animal"},"date":{"type":"string","format":"date-time","description":"Date added to the zoo"}},"subTypes":["JWildAnimal","JDomesticAnimal"]}""")
 
 /*
 {
   "id": "JAnimal",
+  "description":"Animal desc",
   "discriminator": "type",
   "properties": {
     "type": {

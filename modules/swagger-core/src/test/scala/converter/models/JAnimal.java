@@ -1,15 +1,17 @@
 package converter.models;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
-
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 @JsonTypeInfo( use=JsonTypeInfo.Id.NAME, include=JsonTypeInfo.As.PROPERTY, property="type" )
-@JsonSubTypes( { @Type( value = JWildAnimal.class, name = "wild" ), 
+@JsonSubTypes( { @Type( value = JWildAnimal.class, name = "wild" ),
                              @Type( value = JDomesticAnimal.class, name = "domestic" ) } )
+@ApiModel("Animal desc")
 public class JAnimal {
   private String type;
   private Date date;
