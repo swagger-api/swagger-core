@@ -22,7 +22,7 @@ class ModelPropertyTest extends FlatSpec with ShouldMatchers {
   it should "extract properties" in {
     val models = ModelConverters.readAll(classOf[Family])
 
-    models.size should be (3)
+    models.size should be (4)
     val person = models.filter(m => m.name == "Person").head
     val employer = person.properties("employer")
 
@@ -34,6 +34,11 @@ class ModelPropertyTest extends FlatSpec with ShouldMatchers {
     awards.`type` should be ("List")
     val awardItems = awards.items.getOrElse(fail("no items found"))
     awardItems.`type` should be ("string")
+
+    val phonebook = person.properties("phonebook")
+    phonebook.`type` should be ("Map[string,Contact]")
+    val contactModel = models.filter(m => m.name == "Contact").head
+    contactModel.name should be ("Contact")
   }
 
   it should "extract a primitive array" in {
@@ -58,14 +63,20 @@ class ModelPropertyTest extends FlatSpec with ShouldMatchers {
 case class Family (membersSince: Date, members: List[Person])
 
 case class Person (
-  firstname: String, 
-  lastname: String, 
-  middlename: Option[String], 
-  age: Int, 
+  firstname: String,
+  lastname: String,
+  middlename: Option[String],
+  age: Int,
   birthday: Date,
   employer: List[Employer],
-  awards: List[String])
+  awards: List[String],
+  phonebook: Map[String,Contact])
 
 case class Employer (
   name: String,
   size: Int)
+
+case class Contact (
+    name: String,
+    phonenumber: String,
+    email: String)

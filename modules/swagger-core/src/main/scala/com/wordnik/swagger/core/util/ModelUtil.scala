@@ -26,7 +26,7 @@ import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
 
 object ModelUtil {
   private val LOGGER = LoggerFactory.getLogger(ModelUtil.getClass)
-  val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-]*)\\].*".r
+  val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-,]*)\\].*".r
 
   def stripPackages(apis: List[ApiDescription]): List[ApiDescription] = {
     (for(api <- apis) yield {
@@ -157,9 +157,9 @@ object ModelUtil {
       toName(xmlEnum.value())
     else if (xmlRootElement != null) {
       if ("##default".equals(xmlRootElement.name())) {
-        cls.getSimpleName 
+        cls.getSimpleName
       } else {
-        xmlRootElement.name() 
+        xmlRootElement.name()
       }
     } else if (cls.getName.startsWith("java.lang.")) {
       val name = cls.getName.substring("java.lang.".length)
@@ -168,7 +168,7 @@ object ModelUtil {
       else name
     }
     else if (cls.getName.indexOf(".") < 0) cls.getName
-    else cls.getSimpleName 
+    else cls.getSimpleName
   }
 
   def shoudIncludeModel(modelname: String) = {

@@ -9,7 +9,7 @@ import scala.collection.mutable.{ ListBuffer, LinkedHashMap, HashSet, HashMap }
 
 object ModelConverters {
   private val LOGGER = LoggerFactory.getLogger(ModelConverters.getClass)
-  val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-]*)\\].*".r
+  val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-,]*)\\].*".r
 
   val converters = new ListBuffer[ModelConverter]() ++ List(
     new JodaDateTimeConverter,
@@ -57,7 +57,11 @@ object ModelConverters {
           case None => property.qualifiedType
         }
         val name = propertyName match {
-          case ComplexTypeMatcher(containerType, basePart) => basePart
+          case ComplexTypeMatcher(containerType, basePart) => {
+            if(basePart.indexOf(",") > 0) // handle maps, i.e. Map[String,String]
+              basePart.split("\\,").last.trim
+            else basePart
+          }
           case e: String => e
         }
         propertyNames += name

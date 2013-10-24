@@ -32,7 +32,7 @@ trait SwaggerSpecFilter {
 }
 
 class SpecFilter {
-  val ComplexTypeMatcher = ".*\\[([a-zA-Z]*)\\].*".r
+  val ComplexTypeMatcher = ".*\\[([a-zA-Z,]*)\\].*".r
   private val LOGGER = LoggerFactory.getLogger(classOf[SpecFilter])
 
   def filter(listing: ApiListing, filter: SwaggerSpecFilter, params: Map[String, List[String]], cookies: Map[String, String], headers: Map[String, List[String]]) = {
@@ -109,9 +109,17 @@ class SpecFilter {
         val model = allModels(modelname)
         inspectedTypes += modelname
         model.properties.map(m => {
-          m._2.items match {
-            case Some(item) => modelnames += item.ref.getOrElse(item.`type`)
-            case None => modelnames += m._2.`type`
+          val propType = m._2.items match {
+            case Some(item) => item.ref.getOrElse(item.`type`)
+            case None => m._2.`type`
+          }
+          propType match {
+            case ComplexTypeMatcher(basePart) => {
+              if(basePart.indexOf(",") > 0) // it's a map, use the value only
+                modelnames += basePart.split(",")(1)
+              else modelnames += basePart
+            }
+            case _ => modelnames += propType
           }
         })
         for(subType <- model.subTypes) {
