@@ -1,3 +1,5 @@
+
+
 import play.modules.swagger._
 
 import org.specs2.mutable._
@@ -17,7 +19,8 @@ class PlayApiScannerSpec extends Specification with Mockito {
   val routesDocumentation: Seq[(String, String, String)] = Seq(
     ("GET", "/api/dog", "test.testdata.DogController.list"),
     ("PUT", "/api/dog", "test.testdata.DogController.add"),
-    ("GET", "/api/cat", "test.testdata.CatController.list"),
+    ("GET", "/api/cat", "@test.testdata.CatController.list"),
+    ("GET", "/api/cat", "@test.testdata.CatController.add"),
     ("GET", "/api/fly", "test.testdata.FlyController.list")
   )
   mockRoutes.documentation returns routesDocumentation

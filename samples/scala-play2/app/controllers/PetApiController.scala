@@ -3,38 +3,34 @@ package controllers
 import models.Pet
 import api._
 
-import play.api._
 import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
-import play.api.data.format.Formats._
-import play.api.Play.current
 
 
-import javax.ws.rs.{ QueryParam, PathParam }
+import javax.ws.rs.{QueryParam, PathParam}
 
-import java.io.StringWriter
 
-import com.wordnik.swagger.core._
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.core.util.ScalaJsonUtil
 
 @Api(value = "/pet", description = "Operations about pets")
-object PetApiController extends BaseApiController {
+class PetApiController extends BaseApiController {
   var petData = new PetData
 
-  def getOptions(path: String) = Action { implicit request => JsonResponse(new value.ApiResponse(200, "Ok")) }
+  def getOptions(path: String) = Action {
+    implicit request => JsonResponse(new value.ApiResponse(200, "Ok"))
+  }
 
   @ApiOperation(value = "Find pet by ID", notes = "Returns a pet", response = classOf[models.Pet], httpMethod = "GET")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
     new ApiResponse(code = 404, message = "Pet not found")))
   def getPetById(
-    @ApiParam(value = "ID of the pet to fetch")@PathParam("id") id: String) = Action { implicit request =>
-    petData.getPetbyId(getLong(0, 100000, 0, id)) match {
-      case Some(pet) => JsonResponse(pet)
-      case _ => JsonResponse(new value.ApiResponse(404, "Pet not found"), 404)
-    }
+                  @ApiParam(value = "ID of the pet to fetch") @PathParam("id") id: String) = Action {
+    implicit request =>
+      petData.getPetbyId(getLong(0, 100000, 0, id)) match {
+        case Some(pet) => JsonResponse(pet)
+        case _ => JsonResponse(new value.ApiResponse(404, "Pet not found"), 404)
+      }
   }
 
   @ApiOperation(value = "Add a new Pet", response = classOf[Void], httpMethod = "POST")
@@ -42,15 +38,16 @@ object PetApiController extends BaseApiController {
     new ApiResponse(code = 405, message = "Invalid input")))
   @ApiImplicitParams(Array(
     new ApiImplicitParam(value = "Pet object that needs to be added to the store", required = true, dataType = "Pet", paramType = "body")))
-  def addPet() = Action { implicit request =>
-    request.body.asJson match {
-      case Some(e) => {
-        val pet = ScalaJsonUtil.mapper.readValue(e.toString, classOf[Pet]).asInstanceOf[Pet]
-        petData.addPet(pet)
-        Ok
+  def addPet() = Action {
+    implicit request =>
+      request.body.asJson match {
+        case Some(e) => {
+          val pet = ScalaJsonUtil.mapper.readValue(e.toString, classOf[Pet]).asInstanceOf[Pet]
+          petData.addPet(pet)
+          Ok
+        }
+        case None => JsonResponse(new value.ApiResponse(400, "Invalid input"))
       }
-      case None => JsonResponse(new value.ApiResponse(400, "Invalid input"))
-    }
   }
 
   @ApiOperation(value = "Update an existing Pet", response = classOf[Void], httpMethod = "PUT")
@@ -60,15 +57,16 @@ object PetApiController extends BaseApiController {
     new ApiResponse(code = 405, message = "Validation exception")))
   @ApiImplicitParams(Array(
     new ApiImplicitParam(value = "Pet object that needs to be updated in the store", required = true, dataType = "Pet", paramType = "body")))
-  def updatePet() = Action { implicit request =>
-    request.body.asJson match {
-      case Some(e) => {
-        val pet = ScalaJsonUtil.mapper.readValue(e.toString, classOf[Pet]).asInstanceOf[Pet]
-        petData.addPet(pet)
-        JsonResponse("SUCCESS")
+  def updatePet() = Action {
+    implicit request =>
+      request.body.asJson match {
+        case Some(e) => {
+          val pet = ScalaJsonUtil.mapper.readValue(e.toString, classOf[Pet]).asInstanceOf[Pet]
+          petData.addPet(pet)
+          JsonResponse("SUCCESS")
+        }
+        case None => JsonResponse(new value.ApiResponse(404, "sorry"))
       }
-      case None => JsonResponse(new value.ApiResponse(404, "sorry"))
-    }
   }
 
   @ApiOperation(value = "Finds Pets by status",
@@ -77,10 +75,11 @@ object PetApiController extends BaseApiController {
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid status value")))
   def findPetsByStatus(
-    @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available",
-      allowableValues = "available,pending,sold", allowMultiple = true)@QueryParam("status") status: String) = Action { implicit request =>
-    var results = petData.findPetByStatus(status)
-    JsonResponse(results)
+                        @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available",
+                          allowableValues = "available,pending,sold", allowMultiple = true) @QueryParam("status") status: String) = Action {
+    implicit request =>
+      var results = petData.findPetByStatus(status)
+      JsonResponse(results)
   }
 
   @ApiOperation(value = "Finds Pets by tags",
@@ -89,10 +88,11 @@ object PetApiController extends BaseApiController {
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid tag value")))
   def findPetsByTags(
-    @ApiParam(value = "Tags to filter by", required = true,
-      allowMultiple = true)@QueryParam("tags") tags: String) = Action { implicit request =>
-    var results = petData.findPetByTags(tags)
-    JsonResponse(results)
+                      @ApiParam(value = "Tags to filter by", required = true,
+                        allowMultiple = true) @QueryParam("tags") tags: String) = Action {
+    implicit request =>
+      var results = petData.findPetByTags(tags)
+      JsonResponse(results)
   }
 
   @ApiOperation(value = "Attach an Image File for a pet",
@@ -104,8 +104,11 @@ object PetApiController extends BaseApiController {
     new ApiImplicitParam(value = "Image file to attach", required = true, dataType = "file", paramType = "body"),
     new ApiImplicitParam(name = "id", value = "ID of pet to which to attach image", required = true, dataType = "String", paramType = "path",
       allowableValues = "range[0,10]")))
-  def attachImage (id: String) = Action { implicit request =>
-    JsonResponse("SUCCESS")
+  def attachImage(id: String) = Action {
+    implicit request =>
+      JsonResponse("SUCCESS")
   }
 }
+
+object PetApiController {}
 

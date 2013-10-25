@@ -15,15 +15,11 @@ The swagger-play2 module lives in maven central:
 ```scala
 val appDependencies: Seq[sbt.ModuleID] = Seq(
   /* your other dependencies */
-<<<<<<< HEAD
-  "com.wordnik" %% "swagger-play2" % "1.2.6-SNAPSHOT"
-=======
-  "com.wordnik" %% "swagger-play2" % "1.3.0-SNAPSHOT"
->>>>>>> 2abdda71405c19c69c23807ffe562e945d310299
+  "com.wordnik" %% "swagger-play2" % "1.3-SNAPSHOT"
 )
 ```
 
-then you can run the sample app:
+You can run the sample app as such:
 
 ````
 play run
