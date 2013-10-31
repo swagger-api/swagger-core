@@ -3,29 +3,29 @@
 # ~~~~
 
 # Swagger - Root Resources Listing
-GET     /api-docs.json               controllers.ApiHelpController.getResources
+GET     /api-docs               controllers.ApiHelpController.getResources
 
 # OPTIONS to support hosting UI off domain
 
 # OPTIONS /*wholepath            	     controllers.PetApiController.getOptions(wholepath)
 
-GET     /api-docs.json/admin         controllers.ApiHelpController.getResource(path = "/api-docs.json/admin")
+GET     /api-docs/admin         controllers.ApiHelpController.getResource(path = "/api-docs/admin")
 GET     /admin.json/health           controllers.HealthController.getHealth
 GET     /admin.json/ping             controllers.HealthController.ping
 
-GET     /api-docs.json/pet           controllers.ApiHelpController.getResource(path = "/api-docs.json/pet")
+GET     /api-docs/pet           controllers.ApiHelpController.getResource(path = "/api-docs/pet")
 POST    /pet.json                    controllers.PetApiController.addPet
 PUT     /pet.json                    controllers.PetApiController.updatePet
 GET     /pet.json/findByStatus       controllers.PetApiController.findPetsByStatus(status)
 GET     /pet.json/findByTags         controllers.PetApiController.findPetsByTags(tags)
 GET     /pet.json/:id                controllers.PetApiController.getPetById(id)
 
-GET     /api-docs.json/store         controllers.ApiHelpController.getResource(path = "/api-docs.json/store")
+GET     /api-docs/store         controllers.ApiHelpController.getResource(path = "/api-docs/store")
 POST    /store.json/order            controllers.StoreApiController.placeOrder
 GET     /store.json/order/:orderId   controllers.StoreApiController.getOrderById(orderId)
 DELETE  /store.json/order/:orderId   controllers.StoreApiController.deleteOrder(orderId)
 
-GET     /api-docs.json/user          controllers.ApiHelpController.getResource(path = "/api-docs.json/user")
+GET     /api-docs/user          controllers.ApiHelpController.getResource(path = "/api-docs/user")
 POST    /user.json                   controllers.UserApiController.createUser
 POST    /user.json/createWithArray   controllers.UserApiController.createUsersWithArrayInput
 POST    /user.json/createWithList    controllers.UserApiController.createUsersWithListInput
