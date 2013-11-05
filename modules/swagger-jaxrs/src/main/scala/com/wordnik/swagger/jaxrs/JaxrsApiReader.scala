@@ -120,25 +120,25 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
       case Some(e) if(e != "") => e.split(",").map(_.trim).toList
       case _ => List()
     }
-    val params = parentParams ++ (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
-      if(annotations.length > 0) {
-        val param = new MutableParameter
-        param.dataType = processDataType(paramType, genericParamType)
-        processParamAnnotations(param, annotations)
-      }
-      else if(paramTypes.size > 0) {
-        //  it's a body param w/o annotations, which means POST.  Only take the first one!
-        val p = paramTypes.head
 
-        val param = new MutableParameter
-        param.dataType = p.getName
-        param.name = TYPE_BODY
-        param.paramType = TYPE_BODY
-
-        Some(param.asParameter)
+    val (paramsWithAnnotations, paramsWithoutAnnotations) =
+      (paramAnnotations, paramTypes, genericParamTypes).zipped.partition {
+        case (annotations, _, _) => annotations.length > 0
       }
-      else None
-    }).flatten.toList
+
+    val params: List[Parameter] = parentParams ++ ((for((annotations, paramType, genericParamType) <- paramsWithAnnotations) yield {
+      val param = new MutableParameter
+      param.dataType = processDataType(paramType, genericParamType)
+      processParamAnnotations(param, annotations)
+    }) ++ (paramsWithoutAnnotations.headOption map { case (_, paramType, _) =>
+      //  it's a body param w/o annotations, which means POST.  Only take the first one!
+      val param = new MutableParameter
+      param.dataType = paramType.getName
+      param.name = TYPE_BODY
+      param.paramType = TYPE_BODY
+
+      Some(param.asParameter)
+    })).flatten.toList
 
     val implicitParams = {
       val returnType = method.getReturnType
