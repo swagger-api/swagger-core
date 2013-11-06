@@ -16,7 +16,7 @@ object ApplicationBuild extends Build {
     "com.wordnik" % "swagger-annotations_2.10" % "1.3.0",
     "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.0",
     "javax.ws.rs" % "jsr311-api" % "1.1.1",
-    "org.mockito" % "mockito-all" % "1.9.0" % "test" withSources() withJavadoc())
+    "org.mockito" % "mockito-core" % "1.9.5" % "test")
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     publishTo <<= version { (v: String) =>
