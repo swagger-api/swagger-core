@@ -29,7 +29,13 @@ object ModelConverters {
     var model: Option[Model] = None
     val itr = converters.iterator
     while(model == None && itr.hasNext) {
-      model = itr.next.read(cls)
+      itr.next.read(cls) match {
+        case Some(m) => {
+          val filteredProperties = m.properties.filter(prop => ignoredClasses.contains(prop._2.qualifiedType) == false)
+          model = Some(m.copy(properties = filteredProperties))
+        }
+        case _ => model = None
+      }
     }
     model
   }
@@ -56,9 +62,12 @@ object ModelConverters {
 
     // add properties
     model.map(m => {
-      output += cls.getName -> m
+      val filteredProperties = m.properties.filter(prop => ignoredClasses.contains(prop._2.qualifiedType) == false)
+      val filteredModel = m.copy(properties = filteredProperties)
+
+      output += cls.getName -> filteredModel
       val checkedNames = new HashSet[String]
-      addRecursive(m, checkedNames, output)
+      addRecursive(filteredModel, checkedNames, output)
     })
     output.values.toList
   }
@@ -79,7 +88,9 @@ object ModelConverters {
       }
       for(typeRef <- propertyNames) {
         if(ignoredPackages.contains(getPackage(typeRef))) None
-        else if(ignoredClasses.contains(typeRef)) None
+        else if(ignoredClasses.contains(typeRef)) {
+          None
+        }
         else if(!checkedNames.contains(typeRef)) {
           try{
             checkedNames += typeRef
