@@ -45,5 +45,5 @@ class Bar {
 }
 
 class CustomConverter extends SwaggerSchemaConverter {
-  override def ignoredClasses: Set[String] = Set("java.util.Date", "converter.Bar")
+  override def skippedClasses: Set[String] = Set("converter.Bar")
 }
