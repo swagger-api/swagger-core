@@ -24,7 +24,5 @@ class EnumConversionTest extends FlatSpec with ShouldMatchers {
     enumValue.`type` should be ("string")
     enumValue.required should be (false)
     enumValue.allowableValues should be (AllowableListValues(List("PRIVATE", "PUBLIC", "SYSTEM", "INVITE_ONLY")))
-
-    println(JsonSerializer.asJson(model))
   }
 }
