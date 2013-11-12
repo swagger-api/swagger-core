@@ -126,18 +126,16 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
         param.dataType = processDataType(paramType, genericParamType)
         processParamAnnotations(param, annotations)
       }
-      else if(paramTypes.size > 0) {
-        //  it's a body param w/o annotations, which means POST.  Only take the first one!
-        val p = paramTypes.head
-
+      else /* If it doesn't have annotations, it must be a body parameter, and it's safe to assume that there will only
+              ever be one of these in the sequence according to JSR-339 JAX-RS 2.0 section 3.3.2.1. */
+      {
         val param = new MutableParameter
-        param.dataType = p.getName
+        param.dataType = paramType.getName
         param.name = TYPE_BODY
         param.paramType = TYPE_BODY
 
         Some(param.asParameter)
       }
-      else None
     }).flatten.toList
 
     val implicitParams = {
@@ -274,6 +272,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
             val root = docRoot + api.value + pathFromMethod(method)
             parentMethods += method
             readRecursive(root, endpoint, returnType, config, operations, parentMethods)
+            parentMethods -= method
           }
           case _ => {
             if(method.getAnnotation(classOf[ApiOperation]) != null) {
