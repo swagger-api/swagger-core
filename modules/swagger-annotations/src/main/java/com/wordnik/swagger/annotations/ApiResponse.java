@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2013 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,13 +21,23 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
+/**
+ * An ApiResponse represents a type of response from a server.  This can be used to
+ * describe both success codes as well as errors.
+ * If your Api has different response classes, you can describe them here by associating
+ * a response class with a response code.  Note, Swagger does not allow multiple response
+ * types for a single response code.
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiResponse {
+  /** Response code to describe */
+  int code();
 
-    String value() default "void";  //responseClass
+  /** Human-readable message to accompany the response */
+  String message();
 
-    String occurs() default "1"; //to indicate if return type will contain one or more of the response value
-
-    ApiError[] errors() default @ApiError(code = 404, reason = "No data available");
+  /** Optional response class to describe the payload of the message */
+  Class<?> response() default Void.class;
 }

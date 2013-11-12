@@ -1,0 +1,18 @@
+{
+  "apiVersion": "0.2",
+  "swaggerVersion": "1.2",
+  "apis": [
+    {
+      "path": "http://localhost:8000/listings/store",
+      "description": "Operations about store"
+    },
+    {
+      "path": "http://localhost:8000/listings/pet",
+      "description": "Operations about pets"
+    },
+    {
+      "path": "http://localhost:8000/listings/user",
+      "description": "Operations about user"
+    }
+  ]
+}

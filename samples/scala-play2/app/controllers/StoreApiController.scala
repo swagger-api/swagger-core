@@ -1,6 +1,6 @@
 package controllers
 
-import models._
+import models.Order
 import api._
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.annotations._
@@ -23,9 +23,9 @@ object StoreApiController extends BaseApiController {
 
   @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5. " +
     "Anything above 5 or nonintegers will generate API errors", responseClass = "models.Order", httpMethod = "GET")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid ID supplied"),
-    new ApiError(code = 404, reason = "Order not found")))
+  @ApiResponses(Array(
+    new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid ID supplied"))),
+    new ApiResponse(errors = Array(new ApiError(code = 404, reason = "Order not found")))))
   def getOrderById(
     @ApiParam(value = "ID of pet that needs to be fetched", required = true)@PathParam("orderId") orderId: String) = Action { implicit request =>
     storeData.findOrderById(getLong(0, 10000, 0, orderId)) match {
@@ -35,16 +35,16 @@ object StoreApiController extends BaseApiController {
   }
 
   @ApiOperation(value = "Gets orders in the system", responseClass = "models.Order", httpMethod = "GET", multiValueResponse = true)
-  @ApiErrors(Array(
-    new ApiError(code = 404, reason = "No Orders found")))
+  @ApiResponses(Array(
+    new ApiResponse(errors = Array(new ApiError(code = 404, reason = "No Orders found")))))
   def getOrders(@ApiParamImplicit(value = "Get all orders or only those which are complete", dataType = "Boolean", required = true)@QueryParam("isComplete") isComplete: Boolean) = Action { implicit request =>
     val orders: java.util.List[Order] = storeData.orders.toList.asJava
     JsonResponse(orders)
   }
 
   @ApiOperation(value = "Place an order for a pet", responseClass = "void", httpMethod = "POST")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid order")))
+  @ApiResponses(Array(
+    new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid order")))))
   @ApiParamsImplicit(Array(
     new ApiParamImplicit(name = "body", value = "order placed for purchasing the pet", required = true, dataType = "Order", paramType = "body")))
   def placeOrder = Action { implicit request =>
@@ -60,9 +60,9 @@ object StoreApiController extends BaseApiController {
 
   @ApiOperation(value = "Delete purchase order by ID", notes = "For valid response try integer IDs with value < 1000. " +
     "Anything above 1000 or nonintegers will generate API errors", httpMethod = "DELETE")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid ID supplied"),
-    new ApiError(code = 404, reason = "Order not found")))
+  @ApiResponses(Array(
+    new ApiResponse(errors = Array(new ApiError(code = 400, reason = "Invalid ID supplied"))),
+    new ApiResponse(errors = Array(new ApiError(code = 404, reason = "Order not found")))))
   def deleteOrder(
     @ApiParam(value = "ID of the order that needs to be deleted", required = true)@PathParam("orderId") orderId: String) = Action {
     implicit request =>

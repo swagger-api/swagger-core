@@ -1,86 +1,101 @@
 package com.wordnik.swagger.jersey.listing
 
-import com.sun.jersey.spi.container.servlet.WebConfig;
-import com.wordnik.swagger.core.{ Documentation, DocumentationEndPoint }
+import com.wordnik.swagger.config._
+import com.wordnik.swagger.reader._
+import com.wordnik.swagger.core.util._
+import com.wordnik.swagger.model._
+import com.wordnik.swagger.core.filter._
 import com.wordnik.swagger.annotations._
-import com.wordnik.swagger.jersey._
-import com.wordnik.swagger.jaxrs.HelpApi
+import com.wordnik.swagger.jaxrs._
+import com.wordnik.swagger.jaxrs.config._
+
+import org.slf4j.LoggerFactory
 
 import java.lang.annotation.Annotation
+import java.lang.reflect.Method
 
-import javax.ws.rs.core.{ UriInfo, HttpHeaders, Context, Response, MediaType, Application }
+import javax.ws.rs.core.{ UriInfo, HttpHeaders, Context, Response, MediaType, Application, MultivaluedMap }
 import javax.ws.rs.core.Response._
 import javax.ws.rs._
+import javax.ws.rs.ext.Provider
 
-import scala.collection.mutable.HashMap
+import com.sun.jersey.spi.container.servlet.WebConfig
+
+import scala.collection.mutable.LinkedHashMap
+
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ListBuffer
 
-object ApiListingResource {
-  var _cache: Option[Map[String, Class[_]]] = None
+object ApiListingCache {
+  private val LOGGER = LoggerFactory.getLogger(ApiListingCache.getClass)
 
-  def routes(
-    app: Application,
-    wc: WebConfig,
-    headers: HttpHeaders,
-    uriInfo: UriInfo
-  ) = {
-    _cache match {
-      case Some(cache) => cache
-      case None => {
-        val resources = app.getClasses().asScala ++ app.getSingletons().asScala.map(ref => ref.getClass)
-        val cache = new HashMap[String, Class[_]]
-        resources.foreach(resource => {
-          resource.getAnnotation(classOf[Api]) match {
-            case ep: Annotation => {
-              val path = ep.value.startsWith("/") match {
-                case true => ep.value.substring(1)
-                case false => ep.value
-              }
-              cache += path -> resource
-            }
-            case _ =>
+  var _cache: Option[Map[String, ApiListing]] = None
+
+  def listing(docRoot: String, app: Application, wc: WebConfig): Option[Map[String, ApiListing]] = {
+    _cache.orElse{
+      LOGGER.debug("loading cache")
+      ClassReaders.reader.map{reader => 
+        ScannerFactory.scanner.map(scanner => {
+          val classes = scanner match {
+            case scanner: JaxrsScanner => scanner.asInstanceOf[JaxrsScanner].classesFromContext(app, null)
+            case _ => List()
           }
+          // For each top level resource, parse it and look for swagger annotations.
+          val listings = (for(cls <- classes) yield reader.read(docRoot, cls, ConfigFactory.config)).flatten.toList
+          _cache = Some((listings.map(m => {
+            // always start with "/"
+            val resourcePath = m.resourcePath.startsWith ("/") match {
+              case true => m.resourcePath
+              case false => "/" + m.resourcePath
+            }
+            LOGGER.debug("added " + resourcePath + " to cache")
+            (resourcePath, m)
+          })).toMap)
         })
-        _cache = Some(cache.toMap)
-        cache
       }
+      _cache
     }
+    if(_cache != None)
+      LOGGER.debug("cache has " + _cache.get.keys + " keys")
+    else
+      LOGGER.debug("cache is empty")
+    _cache
+  }
+
+  def invalidateCache() = {
+    _cache = None
   }
 }
 
-class ApiListing {
+class ApiListingResource {
+  private val LOGGER = LoggerFactory.getLogger(classOf[ApiListingResource])
+
   @GET
-  def resourceListing(
+  def resourceListing (
     @Context app: Application,
     @Context wc: WebConfig,
     @Context headers: HttpHeaders,
     @Context uriInfo: UriInfo
   ): Response = {
-    val listingRoot = this.getClass.getAnnotation(classOf[Api]).value
+    val docRoot = this.getClass.getAnnotation(classOf[Path]).value
+    val f = new SpecFilter
+    val listings = ApiListingCache.listing(docRoot, app, wc).map(specs => {
+      (for(spec <- specs.values) 
+        yield f.filter(spec, FilterFactory.filter, paramsToMap(uriInfo.getQueryParameters), cookiesToMap(headers), headersToMap(headers))
+      ).filter(m => m.apis.size > 0)
+    })
+    val references = (for(listing <- listings.getOrElse(List())) yield {
+      ApiListingReference(listing.resourcePath, listing.description, listing.position)
+    }).toList.sortWith(_.position < _.position)
 
-    val reader = ConfigReaderFactory.getConfigReader(wc)
-    val apiFilterClassName = reader.apiFilterClassName()
-    val apiVersion = reader.apiVersion()
-    val swaggerVersion = reader.swaggerVersion()
-    val basePath = reader.basePath()
-    val routes = ApiListingResource.routes(app, wc, headers, uriInfo)
-
-    val apis = (for(route <- routes.map(m => m._1)) yield {
-      docForRoute(route, app, wc, headers, uriInfo) match {
-        case Some(doc) if(doc.getApis !=null && doc.getApis.size > 0) => {
-          Some(new DocumentationEndPoint(listingRoot + JerseyApiReader.FORMAT_STRING + doc.resourcePath, ""))
-        }
-        case _ => None
-      }
-    }).flatten.toList
-
-    val doc = new Documentation()
-    doc.apiVersion = apiVersion
-    doc.swaggerVersion = swaggerVersion
-    doc.basePath = basePath
-    doc.setApis(apis.asJava)
-
-    Response.ok.entity(doc).build
+    val config = ConfigFactory.config
+    val resourceListing = ResourceListing(config.apiVersion,
+      config.swaggerVersion,
+      references,
+      config.authorizations,
+      config.info
+    )
+    Response.ok(resourceListing).build
   }
 
   /**
@@ -88,55 +103,62 @@ class ApiListing {
    **/
   @GET
   @Path("/{route: .+}")
-  def apiListing(
+  def apiDeclaration (
     @PathParam("route") route: String,
     @Context app: Application,
     @Context wc: WebConfig,
     @Context headers: HttpHeaders,
     @Context uriInfo: UriInfo
   ): Response = {
-    docForRoute(route, app, wc, headers, uriInfo) match {
-      case Some(doc) => Response.ok.entity(doc).build
-      case None => Response.status(Status.NOT_FOUND).build
+    LOGGER.debug("requested apiDeclaration for " + route)
+    val docRoot = this.getClass.getAnnotation(classOf[Path]).value
+    val f = new SpecFilter
+    val pathPart = cleanRoute(route)
+    LOGGER.debug("requested route " + pathPart)
+    val listings = ApiListingCache.listing(docRoot, app, wc).map(specs => {
+      (for(spec <- specs.values) yield {
+        LOGGER.debug("inspecting path " + spec.resourcePath)
+        f.filter(spec, FilterFactory.filter, paramsToMap(uriInfo.getQueryParameters), cookiesToMap(headers), headersToMap(headers))
+      }).filter(m => {
+        val resourcePath = m.resourcePath match {
+          case e: String if(e.startsWith("/")) => e
+          case e: String => "/" + e
+        }
+        resourcePath == pathPart
+      })
+    }).toList.flatten
+
+    listings.size match {
+      case 1 => Response.ok(listings.head).build
+      case _ => Response.status(404).build
     }
   }
 
-  def docForRoute(
-    route: String,
-    app: Application,
-    wc: WebConfig,
-    headers: HttpHeaders,
-    uriInfo: UriInfo
-  ): Option[Documentation] = {
-    val reader = ConfigReaderFactory.getConfigReader(wc)
-    val apiFilterClassName = reader.apiFilterClassName()
-    val apiVersion = reader.apiVersion()
-    val swaggerVersion = reader.swaggerVersion()
-    val basePath = reader.basePath()
-    val routes = ApiListingResource.routes(app, wc, headers, uriInfo)
-
-    routes.contains(route) match {
-      case true => {
-        val cls = routes(route)
-        cls.getAnnotation(classOf[Api]) match {
-          case currentApiEndPoint: Annotation => {
-            val apiPath = currentApiEndPoint.value
-            val apiListingPath = currentApiEndPoint.value
-            val doc = new HelpApi(apiFilterClassName).filterDocs(
-              JerseyApiReader.read(cls, apiVersion, swaggerVersion, basePath, apiPath),
-              headers,
-              uriInfo,
-              apiListingPath,
-              apiPath)
-            doc.basePath = basePath
-            doc.apiVersion = apiVersion
-            doc.swaggerVersion = swaggerVersion
-            Some(doc)
-          }
-          case _ => None
-        }
-      }
-      case _ => None
+  // ensure leading slash, remove trailing
+  def cleanRoute(route: String) = {
+    val cleanStart = {
+      if(route.startsWith("/")) route
+      else "/" + route
     }
+    if(cleanStart.endsWith("/")) cleanStart.substring(0, cleanStart.length - 1)
+    else cleanStart
+  }
+
+  def invalidateCache() = {
+    ApiListingCache.invalidateCache()
+  }
+
+  def paramsToMap(params: MultivaluedMap[String, String]): Map[String, List[String]] = {
+    (for((key, list) <- params.asScala) yield (key, list.asScala.toList)).toMap
+  }
+
+  def cookiesToMap(headers: HttpHeaders): Map[String, String] = {
+    Option(headers).map(h => {
+      (for((name, cookie) <- h.getCookies.asScala) yield (name, cookie.getValue)).toMap
+    }).getOrElse(Map())
+  }
+
+  def headersToMap(headers: HttpHeaders): Map[String, List[String]] = {
+    (for((key, values) <- headers.getRequestHeaders.asScala) yield (key, values.asScala.toList)).toMap
   }
 }

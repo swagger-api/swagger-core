@@ -1,0 +1,9 @@
+{
+  "apiVersion": "1.0",
+  "apis": [{
+    "description": "",
+    "path": "/resources/samplehub/sample/insert"
+  }],
+  "basePath": "http://localhost:8000",
+  "swaggerVersion": "1.1"
+}

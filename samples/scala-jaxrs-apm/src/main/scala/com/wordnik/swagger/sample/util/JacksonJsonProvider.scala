@@ -18,6 +18,7 @@ package com.wordnik.swagger.sample.resource
 
 import javax.ws.rs.Produces
 
+
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.ext.Provider
 
@@ -25,8 +26,6 @@ import com.wordnik.swagger.core.util.JsonUtil
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider
 import com.fasterxml.jackson.databind._
-
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
 import com.fasterxml.jackson.core.JsonGenerator.Feature
 import com.fasterxml.jackson.databind._
@@ -37,7 +36,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 @Produces(Array(MediaType.APPLICATION_JSON))
 class JacksonJsonProvider extends JacksonJaxbJsonProvider {
   val commonMapper = new ObjectMapper()
-  commonMapper.registerModule(new DefaultScalaModule())
   commonMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
   commonMapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
   commonMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

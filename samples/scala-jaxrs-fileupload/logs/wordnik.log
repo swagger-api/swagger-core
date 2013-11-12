@@ -1,0 +1,154 @@
+DEBUG 2013-05-30 00:58:06.249 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 00:58:06.250 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 00:58:42.842 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 00:58:42.843 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:01:00.121 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:01:00.121 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:01:47.285 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:01:47.285 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:03:07.942 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:03:07.943 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:03:08.906 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:03:08.955 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:03:08.981 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:03:08.994 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:03:08.994 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:03:48.173 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:03:48.173 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:03:49.928 -0700 SwaggerContext - Class FormDataContentDisposition not found in classLoader
+DEBUG 2013-05-30 01:03:49.939 -0700 SwaggerContext - Class InputStream not found in classLoader
+DEBUG 2013-05-30 01:03:49.939 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:03:49.974 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:03:50.000 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:03:50.013 -0700 SwaggerContext - Class InputStream not found in classLoader
+DEBUG 2013-05-30 01:03:50.014 -0700 SwaggerContext - Class FormDataContentDisposition not found in classLoader
+DEBUG 2013-05-30 01:03:50.014 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:03:50.015 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:08:26.800 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:08:26.801 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:08:28.012 -0700 SwaggerContext - Class FormDataContentDisposition not found in classLoader
+DEBUG 2013-05-30 01:08:28.019 -0700 SwaggerContext - Class InputStream not found in classLoader
+DEBUG 2013-05-30 01:08:28.019 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:08:28.055 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:08:28.081 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:08:28.095 -0700 SwaggerContext - Class InputStream not found in classLoader
+DEBUG 2013-05-30 01:08:28.095 -0700 SwaggerContext - Class FormDataContentDisposition not found in classLoader
+DEBUG 2013-05-30 01:08:28.096 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:08:28.097 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:09:29.955 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:09:29.956 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:09:32.396 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:09:32.466 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:09:32.508 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:09:32.516 -0700 SwaggerContext - Class File not found in classLoader
+DEBUG 2013-05-30 01:09:32.527 -0700 SwaggerContext - Class File not found in classLoader
+DEBUG 2013-05-30 01:09:32.528 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:09:32.528 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:11:43.126 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:11:43.127 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:12:00.019 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:12:00.020 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:13:01.666 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:13:01.667 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:13:03.349 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:13:03.389 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:13:03.415 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:13:03.421 -0700 SwaggerContext - Class File not found in classLoader
+DEBUG 2013-05-30 01:13:03.428 -0700 SwaggerContext - Class File not found in classLoader
+DEBUG 2013-05-30 01:13:03.428 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:13:03.429 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:14:04.045 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:14:04.046 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:14:09.317 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:14:09.360 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:14:09.384 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:14:09.390 -0700 SwaggerContext - Class File not found in classLoader
+DEBUG 2013-05-30 01:14:09.397 -0700 SwaggerContext - Class File not found in classLoader
+DEBUG 2013-05-30 01:14:09.398 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:14:09.398 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:15:47.518 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:15:47.518 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:16:19.888 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:16:19.889 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:16:33.273 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:16:33.317 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:16:33.342 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:16:33.348 -0700 SwaggerContext - Class File not found in classLoader
+DEBUG 2013-05-30 01:16:33.355 -0700 SwaggerContext - Class File not found in classLoader
+DEBUG 2013-05-30 01:16:33.356 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:16:33.357 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:16:33.370 -0700 SwaggerContext - Class User not found in classLoader
+DEBUG 2013-05-30 01:16:33.371 -0700 SwaggerContext - Class  not found in classLoader
+DEBUG 2013-05-30 01:16:33.371 -0700 SwaggerContext - Class List not found in classLoader
+DEBUG 2013-05-30 01:16:33.376 -0700 SwaggerContext - Class int not found in classLoader
+DEBUG 2013-05-30 01:16:33.377 -0700 SwaggerContext - Class User not found in classLoader
+DEBUG 2013-05-30 01:16:33.386 -0700 SwaggerContext - Class  not found in classLoader
+DEBUG 2013-05-30 01:16:33.386 -0700 SwaggerContext - Class List not found in classLoader
+DEBUG 2013-05-30 01:16:33.387 -0700 SwaggerContext - Class User not found in classLoader
+DEBUG 2013-05-30 01:16:33.395 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:16:33.396 -0700 SwaggerContext - Class int not found in classLoader
+DEBUG 2013-05-30 01:16:33.397 -0700 SwaggerContext - Class Order not found in classLoader
+DEBUG 2013-05-30 01:16:33.399 -0700 SwaggerContext - Class Order not found in classLoader
+DEBUG 2013-05-30 01:19:27.586 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:19:27.587 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:19:33.406 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:19:33.408 -0700 SwaggerContext - Class int not found in classLoader
+DEBUG 2013-05-30 01:19:33.427 -0700 SwaggerContext - Class Order not found in classLoader
+DEBUG 2013-05-30 01:19:33.432 -0700 SwaggerContext - Class Order not found in classLoader
+DEBUG 2013-05-30 01:19:33.436 -0700 SwaggerContext - Class User not found in classLoader
+DEBUG 2013-05-30 01:19:33.440 -0700 SwaggerContext - Class  not found in classLoader
+DEBUG 2013-05-30 01:19:33.441 -0700 SwaggerContext - Class List not found in classLoader
+DEBUG 2013-05-30 01:19:33.446 -0700 SwaggerContext - Class int not found in classLoader
+DEBUG 2013-05-30 01:19:33.447 -0700 SwaggerContext - Class User not found in classLoader
+DEBUG 2013-05-30 01:19:33.447 -0700 SwaggerContext - Class  not found in classLoader
+DEBUG 2013-05-30 01:19:33.448 -0700 SwaggerContext - Class List not found in classLoader
+DEBUG 2013-05-30 01:19:33.449 -0700 SwaggerContext - Class User not found in classLoader
+DEBUG 2013-05-30 01:19:33.457 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:19:33.457 -0700 SwaggerContext - Class file not found in classLoader
+DEBUG 2013-05-30 01:19:33.465 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:19:33.481 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:19:33.499 -0700 SwaggerContext - Class file not found in classLoader
+DEBUG 2013-05-30 01:19:33.500 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:19:33.501 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:23:31.240 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:23:31.240 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:23:32.454 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:23:32.466 -0700 SwaggerContext - Class file not found in classLoader
+DEBUG 2013-05-30 01:23:32.501 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:23:32.527 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:23:32.540 -0700 SwaggerContext - Class file not found in classLoader
+DEBUG 2013-05-30 01:23:32.541 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:23:32.541 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:23:32.562 -0700 SwaggerContext - Class User not found in classLoader
+DEBUG 2013-05-30 01:23:32.562 -0700 SwaggerContext - Class  not found in classLoader
+DEBUG 2013-05-30 01:23:32.563 -0700 SwaggerContext - Class List not found in classLoader
+DEBUG 2013-05-30 01:23:32.567 -0700 SwaggerContext - Class int not found in classLoader
+DEBUG 2013-05-30 01:23:32.568 -0700 SwaggerContext - Class User not found in classLoader
+DEBUG 2013-05-30 01:23:32.569 -0700 SwaggerContext - Class  not found in classLoader
+DEBUG 2013-05-30 01:23:32.569 -0700 SwaggerContext - Class List not found in classLoader
+DEBUG 2013-05-30 01:23:32.570 -0700 SwaggerContext - Class User not found in classLoader
+DEBUG 2013-05-30 01:23:32.577 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:23:32.578 -0700 SwaggerContext - Class int not found in classLoader
+DEBUG 2013-05-30 01:23:32.579 -0700 SwaggerContext - Class Order not found in classLoader
+DEBUG 2013-05-30 01:23:32.582 -0700 SwaggerContext - Class Order not found in classLoader
+DEBUG 2013-05-30 01:25:52.864 -0700 WebXMLReader - set api.version to 1.0.0
+DEBUG 2013-05-30 01:25:52.865 -0700 WebXMLReader - set swagger.api.basepath to http://localhost:8002/api
+DEBUG 2013-05-30 01:30:22.860 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:30:22.862 -0700 SwaggerContext - Class int not found in classLoader
+DEBUG 2013-05-30 01:30:22.881 -0700 SwaggerContext - Class Order not found in classLoader
+DEBUG 2013-05-30 01:30:22.886 -0700 SwaggerContext - Class Order not found in classLoader
+DEBUG 2013-05-30 01:30:22.890 -0700 SwaggerContext - Class User not found in classLoader
+DEBUG 2013-05-30 01:30:22.894 -0700 SwaggerContext - Class  not found in classLoader
+DEBUG 2013-05-30 01:30:22.895 -0700 SwaggerContext - Class List not found in classLoader
+DEBUG 2013-05-30 01:30:22.899 -0700 SwaggerContext - Class int not found in classLoader
+DEBUG 2013-05-30 01:30:22.900 -0700 SwaggerContext - Class User not found in classLoader
+DEBUG 2013-05-30 01:30:22.900 -0700 SwaggerContext - Class  not found in classLoader
+DEBUG 2013-05-30 01:30:22.901 -0700 SwaggerContext - Class List not found in classLoader
+DEBUG 2013-05-30 01:30:22.902 -0700 SwaggerContext - Class User not found in classLoader
+DEBUG 2013-05-30 01:30:22.909 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:30:22.909 -0700 SwaggerContext - Class file not found in classLoader
+DEBUG 2013-05-30 01:30:22.917 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:30:22.939 -0700 SwaggerContext - Class long not found in classLoader
+DEBUG 2013-05-30 01:30:22.950 -0700 SwaggerContext - Class file not found in classLoader
+DEBUG 2013-05-30 01:30:22.951 -0700 SwaggerContext - Class Pet not found in classLoader
+DEBUG 2013-05-30 01:30:22.951 -0700 SwaggerContext - Class Pet not found in classLoader

@@ -1,18 +1,18 @@
 # Swagger Sample App
 
 ## Overview
-This is a grails project to build a stand-alone server which implements the Swagger spec.  You can find out more about both the spec and the framework at http://swagger.wordnik.com.  For more information about Wordnik's APIs, please visit http://developer.wordnik.com.  There is an online version similar to this server at http://petstore.swagger.wordnik.com/api/api-docs.json
+This is a grails project to build a stand-alone server which implements the Swagger spec.  You can find out more about both the spec and the framework at http://swagger.wordnik.com.  For more information about Wordnik's APIs, please visit http://developer.wordnik.com.  There is an online version similar to this server at http://petstore.swagger.wordnik.com/api/api-docs
 
 ### Running the app
-Downloadn and install [grails 2](http://grails.org/download) and make sure grails is in your $PATH environment variable.
+You do not need to install Grails separately to run this project.  
 
 To start simply run:
 
 ```
-grails run-war
+./grailsw run-app
 ```
 
-This will download dependencies and start the app on port 8080.  You can then navigate to the swagger-ui here:
+This will download required framework files and dependencies and start the app on port 8080.  You can then navigate to the swagger-ui here:
 
 ```
 http://localhost:8080/java-grails2/index.html

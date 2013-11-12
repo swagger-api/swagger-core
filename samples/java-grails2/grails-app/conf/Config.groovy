@@ -1,8 +1,10 @@
-org.grails.jaxrs.url.mappings = ['/api']
+org.grails.jaxrs.url.mappings = ['/api','/api-docs']
 org.grails.jaxrs.provider.init.parameters = [
-  'com.sun.jersey.config.property.packages': 'com.wordnik.swagger.sample',
-  'swagger.api.basepath':'http://localhost:8080/java-grails2/api',
-  'api.version':"1.0"]
+  'com.sun.jersey.config.property.packages': 
+    'com.wordnik.swagger.sample.resource;com.wordnik.swagger.jaxrs.listing']
+
+//org.grails.jaxrs.provider.extra.paths='com.wordnik.swagger.jaxrs.listing'
+
 // locations to search for config files that get merged into the main config;
 // config files can be ConfigSlurper scripts, Java properties files, or classes
 // in the classpath in ConfigSlurper format
@@ -74,13 +76,32 @@ environments {
     }
 }
 
+logback = {
+    debug  'com.wordnik.swagger'
+    error  'org.codehaus.groovy',        // controllers
+           'org.codehaus.groovy.grails.web.pages',          // GSP
+           'org.codehaus.groovy.grails.web.sitemesh',       // layouts
+           'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+           'org.codehaus.groovy.grails.web.mapping',        // URL mapping
+           'org.codehaus.groovy.grails.commons',            // core / classloading
+           'org.codehaus.groovy.grails.plugins',            // plugins
+           'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
+           'org.springframework',
+           'org.hibernate',
+           'net.sf.ehcache.hibernate'
+}
+
 // log4j configuration
 log4j = {
     // Example of changing the log pattern for the default console appender:
     //
-    //appenders {
-    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-    //}
+    appenders {
+        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+    }
+
+    debug  'com.wordnik.swagger'
+
+    debug  'com.jersey'
 
     error  'org.codehaus.groovy',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP

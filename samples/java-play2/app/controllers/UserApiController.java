@@ -81,7 +81,7 @@ public class UserApiController extends BaseApiController {
 	@ApiErrors({ @ApiError(code = 400, reason = "Invalid username supplied"),
 			@ApiError(code = 404, reason = "User not found") })
 	@ApiParamsImplicit({
-			@ApiParamImplicit(name = "username", value = "name that need to be updated", required = true, dataType = "String", paramType = "path"),
+			@ApiParamImplicit(name = "username", value = "name that need to be updated", required = true, dataType = "string", paramType = "path"),
 			@ApiParamImplicit(name = "body", value = "Updated user object", required = true, dataType = "User", paramType = "body") })
 	public static Result updateUser(String username) {
 		Object o = request().body().asJson();
@@ -123,7 +123,7 @@ public class UserApiController extends BaseApiController {
 
 	@GET
 	@Path("/login")
-	@ApiOperation(value = "Logs user into the system", responseClass = "String")
+	@ApiOperation(value = "Logs user into the system", responseClass = "string")
 	@ApiErrors(@ApiError(code = 400, reason = "Invalid username and password combination"))
 	public static Result loginUser(
 			@ApiParam(value = "The user name for login", required = true) @QueryParam("username") String username,

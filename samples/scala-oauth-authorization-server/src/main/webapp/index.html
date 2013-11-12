@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src='lib/jquery-1.8.0.min.js' type='text/javascript'></script>
+  <script src='lib/purl.js' type='text/javascript'></script>
+  <script type='text/javascript'>
+    $(document).ready(function() {
+      var token = $.url().param('access_token');
+      if(token) {
+        alert("your token is " + token);
+      }
+      else {
+        alert("sorry, no token for you!");
+      }
+    });
+  </script>
+</head>
+<body>
+
+</body>

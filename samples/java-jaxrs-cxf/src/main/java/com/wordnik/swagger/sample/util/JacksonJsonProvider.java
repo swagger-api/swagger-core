@@ -29,19 +29,19 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 public class JacksonJsonProvider extends JacksonJaxbJsonProvider {
-	private static ObjectMapper commonMapper = null;
+  private static ObjectMapper commonMapper = null;
 
-	public JacksonJsonProvider() {
-		if(commonMapper == null){
-		    ObjectMapper mapper = new ObjectMapper();
+  public JacksonJsonProvider() {
+    if(commonMapper == null){
+        ObjectMapper mapper = new ObjectMapper();
 
-		    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		    mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
-		    mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-		    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		    
-		    commonMapper = mapper;
-		}
-		super.setMapper(commonMapper);
-	}
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        
+        commonMapper = mapper;
+    }
+    super.setMapper(commonMapper);
+  }
 }

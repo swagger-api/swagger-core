@@ -1,22 +1,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>com.wordnik</groupId>
-    <artifactId>swagger-project_2.9.1</artifactId>
-    <version>1.2.2-SNAPSHOT</version>
+    <artifactId>swagger-project_2.10</artifactId>
+    <version>1.3.0</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-core_2.9.1</artifactId>
+  <artifactId>swagger-core_2.10</artifactId>
   <packaging>jar</packaging>
   <name>swagger-core</name>
-  <version>1.2.2-SNAPSHOT</version>
+  <version>1.3.0</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <defaultGoal>install</defaultGoal>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
+        <excludes>
+          <exclude>logback.xml</exclude>
+        </excludes>
       </resource>
     </resources>
     <testResources>
@@ -33,7 +36,7 @@
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.9.1</artifactId>
+      <artifactId>scalatest_2.10</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -42,19 +45,25 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-  	  <groupId>org.slf4j</groupId>
+      <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-scala</artifactId>
-      <version>2.0.0</version>
+      <artifactId>jackson-module-scala_2.10</artifactId>
+      <version>${jackson-scala-version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
       <version>${jackson-version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-jsonSchema</artifactId>
+      <version>2.1.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -65,8 +74,26 @@
     </dependency>
     <dependency>
       <groupId>com.wordnik</groupId>
-      <artifactId>swagger-annotations_2.9.1</artifactId>
+      <artifactId>swagger-annotations_2.10</artifactId>
       <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.json4s</groupId>
+      <artifactId>json4s-ext_2.10</artifactId>
+      <version>3.2.4</version>
+      <scope>compile</scope>
+    </dependency> 
+    <dependency>
+      <groupId>org.json4s</groupId>
+      <artifactId>json4s-native_2.10</artifactId>
+      <version>3.2.4</version>
+      <scope>compile</scope>
+    </dependency>    
+    <dependency>
+      <groupId>org.json4s</groupId>
+      <artifactId>json4s-jackson_2.10</artifactId>
+      <version>3.2.4</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
@@ -79,6 +106,18 @@
       <artifactId>joda-convert</artifactId>
       <version>1.2</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+     <groupId>ch.qos.logback</groupId>
+     <artifactId>logback-classic</artifactId>
+     <version>${logback-version}</version>
+     <scope>provided</scope>
+    </dependency>
+    <dependency>
+     <groupId>ch.qos.logback</groupId>
+     <artifactId>logback-core</artifactId>
+     <version>${logback-version}</version>
+     <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>
