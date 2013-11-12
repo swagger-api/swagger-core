@@ -344,6 +344,7 @@
     <module>modules/swagger-annotations</module>
     <module>modules/swagger-core</module>
     <module>modules/swagger-jaxrs</module>
+    <module>modules/swagger-jaxrs-utils</module>
     <module>modules/swagger-jersey-jaxrs</module>
     <module>modules/swagger-jersey2-jaxrs</module>
     <module>modules/swagger-servlet</module>
