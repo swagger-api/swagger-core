@@ -36,9 +36,7 @@ You need the following installed and available in your $PATH:
 
 <li>- Apache maven 3.0.3 or greater (http://maven.apache.org/)
 
-<li>- Scala 2.9.1-1 [available here](http://www.scala-lang.org).  Note that 2.9.1 has a defect which causes problems with Jax-RS
-
-### To build from source (currently 1.3.0)
+### To build from source (currently 1.3.1)
 ```
 # first time building locally
 mvn -N
@@ -62,12 +60,6 @@ There are a number of sample apps in the `samples` folder:
 
 [scala-jaxrs](https://github.com/wordnik/swagger-core/tree/master/samples/scala-jaxrs/README.md) Scala-based swagger server with JAX-RS
 
-[java-alt-resource-listing](https://github.com/wordnik/swagger-core/tree/master/samples/java-alt-resource-listing/README.md) 
-Scala-based swagger server with JAX-RS with an alternate resource listing scheme
-
-[scala-alt-resource-listing](https://github.com/wordnik/swagger-core/tree/master/samples/scala-alt-resource-listing/README.md) 
-Scala-based swagger server with JAX-RS with an alternate resource listing scheme
-
 [scala-jaxrs-apm](https://github.com/wordnik/swagger-core/tree/master/samples/scala-jaxrs-apm/README.md) 
 Scala-based swagger server using wordnik-oss utils for Application Performance Monitoring (APM)
 
@@ -85,8 +77,6 @@ And the [Play2](http://playframework.org) samples:
 [java-play2](https://github.com/wordnik/swagger-core/tree/master/samples/java-play2) Java-based Play2 sample app
 
 [scala-play2](https://github.com/wordnik/swagger-core/tree/master/samples/scala-play2) Scala-based Play2 sample app
-
-[scala-play2-no-format](https://github.com/wordnik/swagger-core/tree/master/samples/scala-play2-no-format) Scala-based Play2 sample app without the .{format} in resource listing
 
 To run the Play2 sample apps:
 
