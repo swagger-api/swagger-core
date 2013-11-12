@@ -31,12 +31,14 @@ class SwaggerSchemaConverter
           case _ => None
         }
         val discriminator = {
-          val v = 
-            if(cls.getAnnotation(classOf[ApiModel]) != null)
-              cls.getAnnotation(classOf[ApiModel]).discriminator
+          val v = {
+            val apiAnno = cls.getAnnotation(classOf[ApiModel])
+            if(apiAnno != null && apiAnno.discriminator != null)
+              apiAnno.discriminator
             else if(cls.getAnnotation(classOf[JsonTypeInfo]) != null)
               cls.getAnnotation(classOf[JsonTypeInfo]).property
             else ""
+          }
           if(v != null && v != "") Some(v)
           else None
         }

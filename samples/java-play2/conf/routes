@@ -3,34 +3,30 @@
 # ~~~~
 
 # Swagger - Root Resources Listing
-GET     /api-docs.json               controllers.ApiHelpController.getResources
+GET     /api-docs               controllers.ApiHelpController.getResources
 
 # OPTIONS to support hosting UI off domain
 
-# OPTIONS /*wholepath            	     controllers.PetApiController.getOptions(wholepath)
+# OPTIONS /*wholepath           controllers.PetApiController.getOptions(wholepath)
 
-GET     /api-docs.json/admin         controllers.ApiHelpController.getResource(path = "/api-docs.json/admin")
-GET     /admin.json/health           controllers.HealthController.getHealth
-GET     /admin.json/ping             controllers.HealthController.ping
+GET     /api-docs/pet           controllers.ApiHelpController.getResource(path = "/pet")
+POST    /pet                    controllers.PetApiController.addPet
+PUT     /pet                    controllers.PetApiController.updatePet
+GET     /pet/findByStatus       controllers.PetApiController.findPetsByStatus(status)
+GET     /pet/findByTags         controllers.PetApiController.findPetsByTags(tags)
+GET     /pet/:id                controllers.PetApiController.getPetById(id)
 
-GET     /api-docs.json/pet           controllers.ApiHelpController.getResource(path = "/api-docs.json/pet")
-POST    /pet.json                    controllers.PetApiController.addPet
-PUT     /pet.json                    controllers.PetApiController.updatePet
-GET     /pet.json/findByStatus       controllers.PetApiController.findPetsByStatus(status)
-GET     /pet.json/findByTags         controllers.PetApiController.findPetsByTags(tags)
-GET     /pet.json/:id                controllers.PetApiController.getPetById(id)
+GET     /api-docs/store         controllers.ApiHelpController.getResource(path = "/store")
+POST    /store/order            controllers.StoreApiController.placeOrder
+GET     /store/order/:orderId   controllers.StoreApiController.getOrderById(orderId)
+DELETE  /store/order/:orderId   controllers.StoreApiController.deleteOrder(orderId)
 
-GET     /api-docs.json/store         controllers.ApiHelpController.getResource(path = "/api-docs.json/store")
-POST    /store.json/order            controllers.StoreApiController.placeOrder
-GET     /store.json/order/:orderId   controllers.StoreApiController.getOrderById(orderId)
-DELETE  /store.json/order/:orderId   controllers.StoreApiController.deleteOrder(orderId)
-
-GET     /api-docs.json/user          controllers.ApiHelpController.getResource(path = "/api-docs.json/user")
-POST    /user.json                   controllers.UserApiController.createUser
-POST    /user.json/createWithArray   controllers.UserApiController.createUsersWithArrayInput
-POST    /user.json/createWithList    controllers.UserApiController.createUsersWithListInput
-GET     /user.json/login             controllers.UserApiController.loginUser(username,password)
-GET     /user.json/logout            controllers.UserApiController.logoutUser
-PUT     /user.json/:username         controllers.UserApiController.updateUser(username)
-DELETE  /user.json/:username         controllers.UserApiController.deleteUser(username)
-GET     /user.json/:username         controllers.UserApiController.getUserByName(username)
+GET     /api-docs/user          controllers.ApiHelpController.getResource(path = "/user")
+POST    /user                   controllers.UserApiController.createUser
+POST    /user/createWithArray   controllers.UserApiController.createUsersWithArrayInput
+POST    /user/createWithList    controllers.UserApiController.createUsersWithListInput
+GET     /user/login             controllers.UserApiController.loginUser(username,password)
+GET     /user/logout            controllers.UserApiController.logoutUser
+PUT     /user/:username         controllers.UserApiController.updateUser(username)
+DELETE  /user/:username         controllers.UserApiController.deleteUser(username)
+GET     /user/:username         controllers.UserApiController.getUserByName(username)
