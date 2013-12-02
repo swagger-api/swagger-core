@@ -166,14 +166,25 @@ class PetResource extends RestResourceUtil {
   @ApiOperation(value = "Updates a pet in the store with form data",
     consumes = MediaType.APPLICATION_FORM_URLENCODED)
   @ApiResponses(Array(
-    new ApiResponse(code = 405, message = "Invalid input")))
+    new ApiResponse(code = 404, message = "Pet not found"),
+    new ApiResponse(code = 400, message = "Invalid input")))
   def updatePetWithForm (
    @ApiParam(value = "ID of pet that needs to be updated", required = true)@PathParam("petId") petId: String,
    @ApiParam(value = "Updated name of the pet", required = false)@FormParam("name") name: String,
    @ApiParam(value = "Updated status of the pet", required = false)@FormParam("status") status: String
    ) = {
-    println((name, status))
-   // PetData.addPet(pet)
-    Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build
+    if(Option(petId) == None || (Option(name) == None && Option(status) == None))
+      Response.status(400).build
+    else {
+      PetData.getPetbyId(getLong(0, 100000, 0, petId)) match {
+        case existing: Pet => {
+          if(name != null) existing.name = name
+          if(status != null) existing.status = status
+          Response.ok.entity(PetData.getPetbyId(getLong(0, 100000, 0, petId))).build
+        }
+        case _ => throw new NotFoundException(404, "Pet not found")
+      }
+      Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build
+    }
   }
 }
