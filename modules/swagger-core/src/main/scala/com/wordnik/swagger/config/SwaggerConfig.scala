@@ -12,7 +12,14 @@ class SwaggerConfig(
   @BeanProperty var basePath: String, 
   @BeanProperty var apiPath: String,
   @BeanProperty var authorizations: List[AuthorizationType] = List(),
-  @BeanProperty var info: Option[ApiInfo] = None) {
-
+  var info: Option[ApiInfo] = None) {
   def this() = this(null, SwaggerSpec.version, null, null, List(), None)
+
+  def setApiInfo(apiInfo: ApiInfo) = {
+    this.info = Option(apiInfo)
+  }
+
+  def addAuthorization(auth: AuthorizationType) = {
+    authorizations = authorizations ++ List(auth)
+  }
 }

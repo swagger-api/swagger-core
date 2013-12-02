@@ -29,7 +29,13 @@ object ModelConverters {
     var model: Option[Model] = None
     val itr = converters.iterator
     while(model == None && itr.hasNext) {
-      model = itr.next.read(cls)
+      itr.next.read(cls) match {
+        case Some(m) => {
+          val filteredProperties = m.properties.filter(prop => skippedClasses.contains(prop._2.qualifiedType) == false)
+          model = Some(m.copy(properties = filteredProperties))
+        }
+        case _ => model = None
+      }
     }
     model
   }
@@ -79,7 +85,9 @@ object ModelConverters {
       }
       for(typeRef <- propertyNames) {
         if(ignoredPackages.contains(getPackage(typeRef))) None
-        else if(ignoredClasses.contains(typeRef)) None
+        else if(ignoredClasses.contains(typeRef)) {
+          None
+        }
         else if(!checkedNames.contains(typeRef)) {
           try{
             checkedNames += typeRef
@@ -124,6 +132,10 @@ object ModelConverters {
   def ignoredClasses: Set[String] = {
     (for(converter <- converters) yield converter.ignoredClasses).flatten.toSet
   }
+
+  def skippedClasses: Set[String] = {
+    (for(converter <- converters) yield converter.skippedClasses).flatten.toSet
+  }
 }
 
 trait ModelConverter {
@@ -133,4 +145,5 @@ trait ModelConverter {
 
   def ignoredPackages: Set[String] = Set("java.lang")
   def ignoredClasses: Set[String] = Set("java.util.Date")
+  def skippedClasses: Set[String] = Set()
 }

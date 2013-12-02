@@ -1,7 +1,7 @@
 # Swagger Sample App
 
 ## Overview
-This is a grails project to build a stand-alone server which implements the Swagger spec.  You can find out more about both the spec and the framework at http://swagger.wordnik.com.  For more information about Wordnik's APIs, please visit http://developer.wordnik.com.  There is an online version similar to this server at http://petstore.swagger.wordnik.com/api/api-docs
+This is a grails project to build a stand-alone server which implements the Swagger spec.  You can find out more about both the spec and the framework at http://swagger.wordnik.com.  For more information about Wordnik's APIs, please visit http://developer.wordnik.com.  There is an online version similar to this server at http://petstore.swagger.wordnik.com/api/api-docs.json
 
 ### Running the app
 You do not need to install Grails separately to run this project.  

@@ -4,15 +4,19 @@ import play.Project._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2"
-  val appVersion = "1.2.6-SNAPSHOT"
+  val appVersion = "1.3.1"
+
+  checksums in update := Nil
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.1.3",
     "com.fasterxml.jackson.core" % "jackson-annotations" % "2.1.4",
     "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" % "swagger-core_2.10.0" % "1.2.5",
-    "com.wordnik" % "swagger-annotations_2.10.0" % "1.2.5",
-    "javax.ws.rs" % "jsr311-api" % "1.1.1")
+    "com.wordnik" %% "swagger-core" % "1.3.1",
+    "com.wordnik" % "swagger-annotations" % "1.3.1",
+    "com.wordnik" %% "swagger-jaxrs" % "1.3.1",
+    "javax.ws.rs" % "jsr311-api" % "1.1.1",
+    "org.mockito" % "mockito-core" % "1.9.5" % "test")
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     publishTo <<= version { (v: String) =>

@@ -38,7 +38,7 @@ grails.project.dependency.resolution = {
     }
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
-        compile 'com.wordnik:swagger-jaxrs_2.10:1.3.0'
+        compile 'com.wordnik:swagger-jaxrs_2.10:1.3.1'
         compile 'com.fasterxml.jackson.core:jackson-core:2.1.0'
         compile 'com.fasterxml.jackson.core:jackson-databind:2.1.0'
         compile 'ch.qos.logback:logback-classic:1.0.6'
