@@ -1,5 +1,5 @@
 language: java
 script: mvn verify
 jdk:
-  - oraclejdk6
+  - oraclejdk7
 
