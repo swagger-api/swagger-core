@@ -123,6 +123,8 @@ class SwaggerBaseApiController extends Controller {
     val headers = requestHeader.headers.toMap.map {case (key, value) => (key -> value.toList)}
 
     val f = new SpecFilter
+    val config = ConfigFactory.config
+
     val listings = ApiListingCache.listing(docRoot).map(specs => {
       (for (spec <- specs.values)
       yield f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
@@ -137,8 +139,11 @@ class SwaggerBaseApiController extends Controller {
         Logger("swagger").debug("reference: %s".format(ref.toString))
     }
 
-    ResourceListing(ConfigFactory.config.getApiVersion, ConfigFactory.config.getSwaggerVersion,
-      references
+    ResourceListing(config.getApiVersion,
+      config.getSwaggerVersion,
+      references,
+      config.authorizations,
+      config.info
     )
   }
 
@@ -149,6 +154,8 @@ class SwaggerBaseApiController extends Controller {
     Logger("swagger").debug("ApiHelpInventory.getResource(%s)".format(resourceName))
     val docRoot = ""
     val f = new SpecFilter
+    val config = ConfigFactory.config
+
     val queryParams = requestHeader.queryString.map {case (key, value) => (key -> value.toList)}
     val cookies = requestHeader.cookies.map {cookie => (cookie.name -> cookie.value)}.toMap
     val headers = requestHeader.headers.toMap.map {case (key, value) => (key -> value.toList)}
