@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.10</artifactId>
-    <version>1.3.1-SNAPSHOT</version>
+    <version>1.3.1</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-jersey2-sample-app_2.10</artifactId>
   <packaging>war</packaging>
   <name>swagger-jersey2-jaxrs-app</name>
-  <version>1.3.1-SNAPSHOT</version>
+  <version>1.3.1</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>
@@ -32,24 +32,20 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty-version}</version>
         <configuration>
-          <webAppConfig>
+          <webApp>
             <contextPath>/api</contextPath>
-          </webAppConfig>
+          </webApp>
           <webAppSourceDirectory>target/${project.artifactId}-${project.version}</webAppSourceDirectory>
-          <webDefaultXml>${project.basedir}/conf/jetty/webdefault.xml</webDefaultXml>
           <stopPort>8079</stopPort>
           <stopKey>stopit</stopKey>
-          <connectors>
-            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-              <port>8002</port>
-              <maxIdleTime>60000</maxIdleTime>
-              <confidentialPort>8443</confidentialPort>
-            </connector>
-          </connectors>
+          <httpConnector>
+            <port>8002</port>
+            <idleTimeout>60000</idleTimeout>
+          </httpConnector>
         </configuration>
         <executions>
           <execution>
@@ -79,7 +75,13 @@
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-jersey2-jaxrs_2.10</artifactId>
       <scope>compile</scope>
-      <version>1.3.1-SNAPSHOT</version>
+      <version>1.3.1</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+          </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -119,6 +121,7 @@
     </dependency>
   </dependencies>
   <properties>
-    <jersey2-version>2.4</jersey2-version>
+    <jetty-version>9.0.7.v20131107</jetty-version>
+    <jersey2-version>2.4.1</jersey2-version>
   </properties>
 </project>
