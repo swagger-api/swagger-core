@@ -73,7 +73,8 @@
                         "POST",
                         "DELETE",
                         "OPTIONS",
-                        "PATCH"
+                        "PATCH",
+                        "LINK"
                       ]
                     },
                     "nickname": {
