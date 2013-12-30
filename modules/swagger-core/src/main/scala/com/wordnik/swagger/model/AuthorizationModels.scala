@@ -40,6 +40,16 @@ class OAuthBuilder {
     OAuth(_scopes.toList, _grantTypes.toList)
   }
 }
+case class Authorization(
+  `type`: String,
+  scopes: Array[AuthorizationScope]
+)
+
+case class AuthorizationScope(
+  scope: String,
+  description: String
+)
+
 case class OAuth(
   scopes: List[String], 
   grantTypes: List[GrantType]) extends AuthorizationType {
