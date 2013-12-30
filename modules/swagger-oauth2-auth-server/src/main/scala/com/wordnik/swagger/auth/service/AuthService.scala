@@ -30,7 +30,6 @@ class AuthService extends AuthDialog with TokenCache {
   val validator = ValidatorFactory.validator
 
   def validate[T](authorizationCode: String, f: => T):T = {
-    println("validating code " + authorizationCode)
     tokenCache.contains(authorizationCode) match {
       case true => {
         val token = tokenCache(authorizationCode)
@@ -60,9 +59,6 @@ class AuthService extends AuthDialog with TokenCache {
     val clientId = request.getParameter("client_id")
     val accept = request.getParameter("accept")
 
-    println("using validator " + validator.getClass)
-    println("logging in %s, %s, %s, %s, %s, %s".format(scope, redirectUri, username, "****", clientId, accept))
-
     if(scope == "anonymous") {
       if(validator.isValidRedirectUri(redirectUri)) {
         // it's good to proceed
@@ -71,9 +67,9 @@ class AuthService extends AuthDialog with TokenCache {
         val token = AnonymousTokenResponse(3600, accessToken)
         tokenCache += accessToken -> TokenWrapper(new Date, token)
         val redirectTo = {
-          (redirectUri.indexOf("?") match {
+          (redirectUri.indexOf("#") match {
             case i: Int if(i >= 0) => redirectUri + "&"
-            case i: Int => redirectUri + "?"
+            case i: Int => redirectUri + "#"
           }) + "access_token=" + accessToken
         }
 
@@ -94,9 +90,9 @@ class AuthService extends AuthDialog with TokenCache {
         val token = UserTokenResponse(3600, accessToken, 1)
         tokenCache += accessToken -> TokenWrapper(new Date, token)
         val redirectTo = {
-          (redirectUri.indexOf("?") match {
+          (redirectUri.indexOf("#") match {
             case i: Int if(i >= 0) => redirectUri + "&"
-            case i: Int => redirectUri + "?"
+            case i: Int => redirectUri + "#"
           }) + "access_token=" + accessToken
         }
         val cookie = new Cookie("access_token", token.access_token)
@@ -111,7 +107,6 @@ class AuthService extends AuthDialog with TokenCache {
   }
 
   def tokenStatus(authorizationCode: String) = {
-    println("checking token on " + authorizationCode)
 
     tokenCache.contains(authorizationCode) match {
       case true => {
@@ -127,7 +122,6 @@ class AuthService extends AuthDialog with TokenCache {
 
   def token(request: HttpServletRequest, 
     response: HttpServletResponse): TokenResponse = {
-    println("fetching token")
     try {
       val oauthRequest = new OAuthTokenRequest(request)
       val oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator())
@@ -157,7 +151,6 @@ class AuthService extends AuthDialog with TokenCache {
   }
 
   def authorize(request:HttpServletRequest, response: HttpServletResponse): ApiResponseMessage = {
-    println("authorizing")
     var oauthRequest: OAuthAuthzRequest = null;
     var oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator())
 

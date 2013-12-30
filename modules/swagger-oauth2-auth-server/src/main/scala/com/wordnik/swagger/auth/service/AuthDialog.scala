@@ -28,9 +28,9 @@ trait AuthDialog extends TokenCache {
         val token = AnonymousTokenResponse(3600, accessToken)
         tokenCache += accessToken -> TokenWrapper(new Date, token)
         val redirectTo = {
-          (redirectUri.indexOf("?") match {
+          (redirectUri.indexOf("#") match {
             case i: Int if(i >= 0) => redirectUri + "&"
-            case i: Int => redirectUri + "?"
+            case i: Int => redirectUri + "#"
           }) + "access_token=" + accessToken
         }
         ApiResponseMessage(302, redirectTo)

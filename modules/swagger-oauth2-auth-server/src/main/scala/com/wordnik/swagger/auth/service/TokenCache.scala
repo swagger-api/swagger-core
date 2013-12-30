@@ -4,7 +4,12 @@ import com.wordnik.swagger.auth.model.TokenWrapper
 
 import scala.collection.mutable.{ HashSet, HashMap }
 
-trait TokenCache {
+object TokenCache {
   val codeCache = new HashSet[String]
-  val tokenCache = new HashMap[String, TokenWrapper]
+  val tokenCache = new HashMap[String, TokenWrapper]  
+}
+
+trait TokenCache {
+  def codeCache = TokenCache.codeCache
+  def tokenCache = TokenCache.tokenCache
 }
