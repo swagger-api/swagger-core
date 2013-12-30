@@ -25,20 +25,30 @@ class SampleResource {
   @GET
   @Path("/users/{userId}")
   @ApiOperation(value = "gets the logged-in user",
-    response = classOf[User])
+    response = classOf[User],
+    authorizations = Array(new Authorization(value="oauth2",
+      scopes = Array(
+        new AuthorizationScope(scope = "test:delete", description = "a delete"),
+        new AuthorizationScope(scope = "test:anything", description = "anything")
+      ))))
   @ApiResponses(Array(
     new ApiResponse(code = 404, message = "TODO"))
   )
-  def getUser(
-    @ApiParam(value = "Authorization Code", required = true)@QueryParam("access_token") accessToken: String) = {
-
-    new AuthService().validate(accessToken, {
+  def getUser(@ApiParam(value = "ID of user to fetch", required = true) @PathParam("userId") userId: String,
+    @Context request: HttpServletRequest) = {
+    val token: String = {
+        val h = request.getHeader("Authorization")
+        if(h == null) ""
+        else if(h.trim.toLowerCase.startsWith("bearer")) h.substring("bearer".length).trim
+        else h.trim
+      }
+    new AuthService().validate(token, {
       UserService.getUser().getOrElse(ApiResponseMessage(404, "user not found"))
     })
   }
 
   @GET
-  @Path("/module/users")
+  @Path("/module/user/{userId}")
   @Produces(Array("text/plain"))
   @ApiOperation(value = "gets a user",
     response = classOf[User])
@@ -46,20 +56,17 @@ class SampleResource {
     new ApiResponse(code = 404, message = "TODO"))
   )
   def getUserFragment(
-    @ApiParam(value = "Authorization Code", required = true)@QueryParam("access_token") accessToken: String,
     @ApiParam(value = "ID of user to fetch", required = true) @PathParam("userId") userId: String,
     @Context request: HttpServletRequest) = {
 
     val token: String = {
-      if(accessToken == "" || accessToken == null) {
-          val h = request.getHeader("Authorization")
-          if(h == null) ""
-          else if(h.trim.toLowerCase.startsWith("bearer")) h.substring("bearer".length).trim
-          else h.trim
-        }
-        else accessToken
+        val h = request.getHeader("Authorization")
+        if(h == null) ""
+        else if(h.trim.toLowerCase.startsWith("bearer")) h.substring("bearer".length).trim
+        else h.trim
       }
 
+    println("found token " + token)
     try{
       new AuthService().validate(token, {
         UserService.getUser() match {
