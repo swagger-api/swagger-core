@@ -76,8 +76,11 @@ class ServletReader extends ClassReader with ClassReaderUtils {
             case e: String if(e != "") => e.split(",").map(_.trim).toList
             case _ => List()
           }
-          val authorizations = opa.authorizations match {
-            case e: String if(e != "") => e.split(",").map(_.trim).toList
+          val authorizations:List[com.wordnik.swagger.model.Authorization] = Option(opa.authorizations) match {
+            case Some(e) => (for(a <- e) yield {
+              val scopes = (for(s <- a.scopes) yield com.wordnik.swagger.model.AuthorizationScope(s.scope, s.description)).toArray
+              new com.wordnik.swagger.model.Authorization(a.value, scopes)
+            }).toList
             case _ => List()
           }
           val responseClass = opa.responseContainer match {
