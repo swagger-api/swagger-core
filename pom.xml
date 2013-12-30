@@ -347,6 +347,7 @@
     <module>modules/swagger-jersey-jaxrs</module>
     <module>modules/swagger-jersey2-jaxrs</module>
     <module>modules/swagger-servlet</module>
+    <module>modules/swagger-oauth2-auth-server</module>
   </modules>
   <reporting>
     <outputDirectory>target/site</outputDirectory>

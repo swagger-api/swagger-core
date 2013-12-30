@@ -120,8 +120,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.oltu</groupId>
-      <artifactId>oltu-oauth2-client</artifactId>
+      <groupId>org.apache.oltu.oauth2</groupId>
+      <artifactId>org.apache.oltu.oauth2.client</artifactId>
       <version>${oltu-version}</version>
       <scope>compile</scope>
     </dependency>
@@ -130,13 +130,7 @@
       <artifactId>slf4j-log4j12</artifactId>
     </dependency>
   </dependencies>
-  <repositories>
-    <repository>
-      <id>apache.snapshots</id>
-      <url>http://repository.apache.org/snapshots/</url>
-    </repository>
-  </repositories>
   <properties>
-    <oltu-version>0.31-SNAPSHOT</oltu-version>
+    <oltu-version>0.31</oltu-version>
   </properties>
 </project>
