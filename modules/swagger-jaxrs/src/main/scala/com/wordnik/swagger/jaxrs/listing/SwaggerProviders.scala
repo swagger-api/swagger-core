@@ -28,10 +28,10 @@ class ApiDeclarationProvider extends MessageBodyWriter[com.wordnik.swagger.model
     mediaType: MediaType, 
     headers: MultivaluedMap[String, AnyRef],
     out: OutputStream) = {
-    mediaType match {
-      case MediaType.APPLICATION_JSON_TYPE => out.write(JsonSerializer.asJson(data).getBytes("utf-8"))
-      case MediaType.APPLICATION_XML_TYPE => out.write(JsonSerializer.asXml(data).getBytes("utf-8"))
-    }
+    if(mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE))
+      out.write(JsonSerializer.asJson(data).getBytes("utf-8"))
+    else if (mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE))
+      out.write(JsonSerializer.asXml(data).getBytes("utf-8"))
   }
 }
 
@@ -51,9 +51,9 @@ class ResourceListingProvider extends MessageBodyWriter[ResourceListing] {
     mediaType: MediaType, 
     headers: MultivaluedMap[String, AnyRef],
     out: OutputStream) = {
-    mediaType match {
-      case MediaType.APPLICATION_JSON_TYPE => out.write(JsonSerializer.asJson(data).getBytes())
-      case MediaType.APPLICATION_XML_TYPE => out.write(JsonSerializer.asXml(data).getBytes())
-    }
+    if(mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE))
+      out.write(JsonSerializer.asJson(data).getBytes("utf-8"))
+    else if (mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE))
+      out.write(JsonSerializer.asXml(data).getBytes("utf-8"))
   }
 }
