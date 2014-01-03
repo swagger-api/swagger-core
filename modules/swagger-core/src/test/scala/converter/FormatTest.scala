@@ -1,14 +1,10 @@
 package converter
 
-import com.wordnik.swagger.core.util._
 import com.wordnik.swagger.model._
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.converter._
 
-import org.json4s._
-import org.json4s.JsonDSL._
-import org.json4s.jackson.JsonMethods._
-import org.json4s.jackson.Serialization.{read, write}
+import org.json4s.jackson.Serialization.write
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -18,8 +14,6 @@ import org.scalatest.matchers.ShouldMatchers
 import java.util.Date
 
 import scala.annotation.target.field
-
-import scala.collection.mutable.LinkedHashMap
 
 @RunWith(classOf[JUnitRunner])
 class FormatTest extends FlatSpec with ShouldMatchers {
@@ -31,6 +25,13 @@ class FormatTest extends FlatSpec with ShouldMatchers {
 
     write(model) should be ("""{"id":"DateModel","properties":{"date":{"type":"string","format":"date-time"},"intValue":{"type":"integer","format":"int32"},"longValue":{"type":"integer","format":"int64"},"floatValue":{"type":"number","format":"float"},"doubleValue":{"type":"number","format":"double"}}}""")
   }
+
+  it should "format a set" in {
+    val model = ModelConverters.read(classOf[SetModel]).getOrElse(fail("no model found"))
+    model.properties.size should be (1)
+
+    write(model) should be ("""{"id":"SetModel","properties":{"longs":{"type":"array","uniqueItems":true,"items":{"type":"long"}}}}""")
+  }
 }
 
 case class DateModel(
@@ -39,3 +40,5 @@ case class DateModel(
   @(ApiModelProperty @field)(position=3) longValue: Long,
   @(ApiModelProperty @field)(position=4) floatValue: Float,
   @(ApiModelProperty @field)(position=5) doubleValue: Double)
+
+case class SetModel(longs: Set[java.lang.Long])
