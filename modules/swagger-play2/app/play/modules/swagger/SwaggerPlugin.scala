@@ -50,7 +50,8 @@ class SwaggerPlugin(application: Application) extends Plugin {
     }
 
     SwaggerContext.registerClassLoader(current.classloader)
-    ConfigFactory.setConfig(new SwaggerConfig(apiVersion, SwaggerSpec.version, basePath, ""))
+    ConfigFactory.config.apiVersion = apiVersion
+    ConfigFactory.config.basePath = basePath
     ScannerFactory.setScanner(new PlayApiScanner(current.routes))
     ClassReaders.reader = Some(new PlayApiReader(current.routes))
 
