@@ -18,35 +18,14 @@ package models
 
 import com.wordnik.swagger.annotations._
 
-import java.util.{ List, ArrayList }
-import javax.xml.bind.annotation._
+import scala.annotation.target.field
 
-import scala.reflect.BeanProperty
-
-@XmlRootElement(name = "Pet")
-class Pet() {
-  @XmlElement(name = "id")
-  @BeanProperty
-  var id: Long = 0
-
-  @XmlElement(name = "category")
-  @BeanProperty
-  var category: Category = null
-
-  @XmlElement(name = "name")
-  @BeanProperty
-  var name: String = null
-
-  @XmlElement(name = "photoUrls")
-  @BeanProperty
-  var photoUrls: List[String] = new ArrayList[String]()
-
-  @XmlElement(name = "tags")
-  @BeanProperty
-  var tags: List[Tag] = new ArrayList[Tag]()
-
-  @XmlElement(name = "status")
-  @ApiModelProperty(value = "pet status in the store", allowableValues = "available,pending,sold")
-  @BeanProperty
-  var status: String = null
-}
+@ApiModel("Pet")
+case class Pet(
+  @(ApiModelProperty @field)(position=1, value="id")id: Long,
+  @(ApiModelProperty @field)(position=2)category: Category,
+  @(ApiModelProperty @field)(position=3)name: String,
+  @(ApiModelProperty @field)(position=4)photoUrls: List[String],
+  @(ApiModelProperty @field)(position=5)tags: List[Tag],
+  @(ApiModelProperty @field)(position=6)status: String
+)

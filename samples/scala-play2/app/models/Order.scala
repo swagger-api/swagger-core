@@ -19,30 +19,14 @@ package models
 import com.wordnik.swagger.annotations._
 
 import java.util.Date
-import javax.xml.bind.annotation._
 
-import scala.reflect.BeanProperty
+import scala.annotation.target.field
 
-@XmlRootElement(name = "Order")
-class Order {
-  @XmlElement(name = "id")
-  @BeanProperty
-  var id: Long = 0
-
-  @XmlElement(name = "petId")
-  @BeanProperty
-  var petId: Long = 0
-
-  @XmlElement(name = "quantity")
-  @BeanProperty
-  var quantity: Int = 0
-
-  @XmlElement(name = "shipDate")
-  @BeanProperty
-  var shipDate: Date = null
-
-  @XmlElement(name = "status")
-  @ApiModelProperty(value = "Order Status", allowableValues = "placed,approved,delivered")
-  @BeanProperty
-  var status: String = null
-}
+@ApiModel("Order")
+case class Order (
+  @(ApiModelProperty @field)(position=1)id: Long,
+  @(ApiModelProperty @field)(position=2)petId: Long,
+  @(ApiModelProperty @field)(position=3)quantity: Int,
+  @(ApiModelProperty @field)(position=4)shipDate: Date,
+  @(ApiModelProperty @field)(position=5)status: String
+)

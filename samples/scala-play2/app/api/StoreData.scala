@@ -25,38 +25,24 @@ import java.util.Date
 class StoreData {
   val orders: ListBuffer[Order] = new ListBuffer[Order]()
 
-  {
-    orders += createOrder(1, 1, 2, new Date(), "placed")
-    orders += createOrder(2, 1, 2, new Date(), "delivered")
-    orders += createOrder(3, 2, 2, new Date(), "placed")
-    orders += createOrder(4, 2, 2, new Date(), "delivered")
-    orders += createOrder(5, 3, 2, new Date(), "placed")
-  }
+  orders += Order(1, 1, 2, new Date(), "placed")
+  orders += Order(2, 1, 2, new Date(), "delivered")
+  orders += Order(3, 2, 2, new Date(), "placed")
+  orders += Order(4, 2, 2, new Date(), "delivered")
+  orders += Order(5, 3, 2, new Date(), "placed")
 
   def findOrderById(orderId: Long): Option[Order] = {
-    orders.filter(order => order.getId == orderId) match {
+    orders.filter(order => order.id == orderId) match {
       case orders if (orders.size) > 0 => Some(orders.head)
       case _ => None
     }
   }
 
   def placeOrder(order: Order) = {
-    // remove any pets with same id
-    orders --= orders.filter(o => o.getId == order.getId)
+    // remove any orders with same id
+    orders --= orders.filter(o => o.id == order.id)
     orders += order
   }
 
-  def deleteOrder(orderId: Long): Unit = {
-    orders --= orders.filter(o => o.getId == orderId)
-  }
-
-  private def createOrder(id: Long, petId: Long, quantity: Int, shipDate: Date, status: String): Order = {
-    val order = new Order()
-    order.setId(id)
-    order.setPetId(petId)
-    order.setQuantity(quantity)
-    order.setShipDate(shipDate)
-    order.setStatus(status)
-    order
-  }
+  def deleteOrder(orderId: Long) = orders --= orders.filter(o => o.id == orderId)
 }

@@ -18,42 +18,16 @@ package models
 
 import com.wordnik.swagger.annotations._
 
-import javax.xml.bind.annotation._
+import scala.annotation.target.field
 
-import scala.reflect.BeanProperty
-
-@XmlRootElement(name = "User")
-class User {
-  @XmlElement(name = "id")
-  @BeanProperty
-  var id: Long = 0
-
-  @XmlElement(name = "username")
-  @BeanProperty
-  var username: String = _
-
-  @XmlElement(name = "firstName")
-  @BeanProperty
-  var firstName: String = _
-
-  @XmlElement(name = "lastName")
-  @BeanProperty
-  var lastName: String = _
-
-  @XmlElement(name = "email")
-  @BeanProperty
-  var email: String = _
-
-  @XmlElement(name = "password")
-  @BeanProperty
-  var password: String = _
-
-  @XmlElement(name = "phone")
-  @BeanProperty
-  var phone: String = _
-
-  @XmlElement(name = "userStatus")
-  @ApiModelProperty(value = "User Status", allowableValues = "1-registered,2-active,3-closed")
-  @BeanProperty
-  var userStatus: Int = _
-}
+@ApiModel("User")
+case class User (
+  @(ApiModelProperty @field)(position=1)id: Long,
+  @(ApiModelProperty @field)(position=2)username: String,
+  @(ApiModelProperty @field)(position=3)firstName: String,
+  @(ApiModelProperty @field)(position=4)lastName: String,
+  @(ApiModelProperty @field)(position=5)email: String,
+  @(ApiModelProperty @field)(position=6)password: String,
+  @(ApiModelProperty @field)(position=7)phone: String,
+  @(ApiModelProperty @field)(position=8)userStatus: Int
+)
