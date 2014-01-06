@@ -26,7 +26,7 @@ There is an HTML5-based API tool available in a separate project.  This lets you
 intuitive UI.  You can pull this code from here:  https://github.com/wordnik/swagger-ui
 
 You can then open the dist/index.html file in any HTML5-enabled browser.  Upen opening, enter the
-URL of your server in the top-centered input box (default is http://localhost:8002/api/api-docs.json).  Click the "Explore" 
+URL of your server in the top-centered input box (default is http://localhost:8002/api/api-docs).  Click the "Explore" 
 button and you should see the resources available on the server.
 
 ### Applying an API key
