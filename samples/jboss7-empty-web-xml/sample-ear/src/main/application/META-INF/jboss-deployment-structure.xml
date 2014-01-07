@@ -1,0 +1,11 @@
+<jds:jboss-deployment-structure xmlns:jds="urn:jboss:deployment-structure:1.2">
+   <sub-deployment name="sample-no-webxml-rest.war">
+      <module-alias name="deployment.sample-no-webxml-rest" />
+      <dependencies>
+         <module name="org.jboss.resteasy.resteasy-jaxrs" />
+         <module name="org.jboss.resteasy.resteasy-jackson-provider" />
+         <module name="org.codehaus.jackson.jackson-jaxrs" />
+         <module name="org.codehaus.jackson.jackson-mapper-asl" />
+      </dependencies>
+   </sub-deployment>
+</jds:jboss-deployment-structure>

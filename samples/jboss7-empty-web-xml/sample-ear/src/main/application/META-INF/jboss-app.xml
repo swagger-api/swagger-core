@@ -1,0 +1,4 @@
+<jboss-app xmlns="http://www.jboss.com/xml/ns/javaee"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           version="7.0">
+</jboss-app>
