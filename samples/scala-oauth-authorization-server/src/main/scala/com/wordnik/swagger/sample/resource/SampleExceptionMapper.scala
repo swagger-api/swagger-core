@@ -47,6 +47,8 @@ class SampleExceptionMapper extends ExceptionMapper[Exception] {
         Response.status(e.getResponse.getStatus).entity(ApiResponseMessage(e.getResponse.getStatus, e.getMessage())).build
       case e: com.fasterxml.jackson.core.JsonParseException =>
         Response.status(400).entity(ApiResponseMessage(400, "bad input")).build
+      case e: Exception if(e.getMessage == "unauthorized") =>
+        Response.status(400).entity(ApiResponseMessage(401, "unauthorized")).build
       case _ => {
         exception.printStackTrace
         Response.status(500).entity(ApiResponseMessage(500, "something bad happened")).build

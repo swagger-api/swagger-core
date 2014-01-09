@@ -32,7 +32,8 @@ class SampleResource {
         new AuthorizationScope(scope = "test:anything", description = "anything")
       ))))
   @ApiResponses(Array(
-    new ApiResponse(code = 404, message = "TODO"))
+    new ApiResponse(code = 401, message = "unauthorized"),
+    new ApiResponse(code = 404, message = "user not found"))
   )
   def getUser(@ApiParam(value = "ID of user to fetch", required = true) @PathParam("userId") userId: String,
     @Context request: HttpServletRequest) = {
@@ -51,9 +52,15 @@ class SampleResource {
   @Path("/module/user/{userId}")
   @Produces(Array("text/plain"))
   @ApiOperation(value = "gets a user",
-    response = classOf[User])
+    response = classOf[User],
+    authorizations = Array(new Authorization(value="oauth2",
+      scopes = Array(
+        new AuthorizationScope(scope = "test:delete", description = "a delete"),
+        new AuthorizationScope(scope = "test:anything", description = "anything")
+      ))))
   @ApiResponses(Array(
-    new ApiResponse(code = 404, message = "TODO"))
+    new ApiResponse(code = 401, message = "unauthorized"),
+    new ApiResponse(code = 404, message = "user not found"))
   )
   def getUserFragment(
     @ApiParam(value = "ID of user to fetch", required = true) @PathParam("userId") userId: String,
