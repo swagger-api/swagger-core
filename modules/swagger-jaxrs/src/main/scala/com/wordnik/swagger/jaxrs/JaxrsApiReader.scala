@@ -208,7 +208,14 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
   }
 
   def read(docRoot: String, cls: Class[_], config: SwaggerConfig): Option[ApiListing] = {
-    readRecursive(docRoot, "", cls, config, new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]], new ListBuffer[Method])
+    val parentPath = {
+      Option(cls.getAnnotation(classOf[Path])) match {
+        case Some(e) => e.value()
+        case _ => ""
+      }
+    }
+
+    readRecursive(docRoot, parentPath.replace("//","/"), cls, config, new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]], new ListBuffer[Method])
   }
 
   def readRecursive(
@@ -269,7 +276,8 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
           case e: Path => e.value()
           case _ => ""
         }
-        val endpoint = parentPath + api.value + pathFromMethod(method)
+        val endpoint = (parentPath + /*api.value + */ pathFromMethod(method)).replace("//", "/")
+        println("### endpoint: " + endpoint + ", " + (parentPath, api.value, pathFromMethod(method)))
         Option(returnType.getAnnotation(classOf[Api])) match {
           case Some(e) => {
             val root = docRoot + api.value + pathFromMethod(method)
