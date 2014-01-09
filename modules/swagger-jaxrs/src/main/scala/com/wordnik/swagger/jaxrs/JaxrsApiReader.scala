@@ -277,7 +277,6 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
           case _ => ""
         }
         val endpoint = (parentPath + /*api.value + */ pathFromMethod(method)).replace("//", "/")
-        println("### endpoint: " + endpoint + ", " + (parentPath, api.value, pathFromMethod(method)))
         Option(returnType.getAnnotation(classOf[Api])) match {
           case Some(e) => {
             val root = docRoot + api.value + pathFromMethod(method)
