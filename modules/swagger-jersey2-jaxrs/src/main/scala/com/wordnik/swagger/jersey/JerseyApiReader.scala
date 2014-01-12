@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory
 import javax.ws.rs._
 import core.Context
 
-import java.lang.reflect.{ Type, Field, Modifier, Method }
+import java.lang.reflect.{ ParameterizedType, Type, Field, Modifier, Method }
 import java.lang.annotation.Annotation
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition
@@ -96,6 +96,22 @@ class JerseyApiReader extends JaxrsApiReader {
       Some(mutable.asParameter)
     }
     else None
+  }
+
+  def findSubresourceType(method: Method): Class[_] = {
+    method.getGenericReturnType match {
+      case c: Class[_] => c
+      case pt: ParameterizedType =>
+        val typeArguments = pt.getActualTypeArguments
+        if (pt.getRawType.equals(classOf[Class[_]]) && typeArguments.length == 1)
+          typeArguments(0) match {
+            case c: Class[_] => c
+            case _ => method.getReturnType
+          }
+        else
+          method.getReturnType
+      case _ => method.getReturnType
+    }
   }
 }
 
