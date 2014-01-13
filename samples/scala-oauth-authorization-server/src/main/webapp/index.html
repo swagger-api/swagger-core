@@ -1,20 +1,138 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Swagger UI</title>
+  <link href='//fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'/>
+  <link href='css/highlight.default.css' media='screen' rel='stylesheet' type='text/css'/>
+  <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
+  <script type="text/javascript" src="lib/shred.bundle.js"></script>
   <script src='lib/jquery-1.8.0.min.js' type='text/javascript'></script>
-  <script src='lib/purl.js' type='text/javascript'></script>
-  <script type='text/javascript'>
-    $(document).ready(function() {
-      var token = $.url().param('access_token');
-      if(token) {
-        alert("your token is " + token);
+  <script src='lib/jquery.slideto.min.js' type='text/javascript'></script>
+  <script src='lib/jquery.wiggle.min.js' type='text/javascript'></script>
+  <script src='lib/jquery.ba-bbq.min.js' type='text/javascript'></script>
+  <script src='lib/handlebars-1.0.0.js' type='text/javascript'></script>
+  <script src='lib/underscore-min.js' type='text/javascript'></script>
+  <script src='lib/backbone-min.js' type='text/javascript'></script>
+  <script src='lib/swagger.js' type='text/javascript'></script>
+  <script src='swagger-ui.js' type='text/javascript'></script>
+  <script src='lib/highlight.7.3.pack.js' type='text/javascript'></script>
+  <script type="text/javascript">
+    var clientId = "aaaa";
+    var realm = "foo";
+    var scopes = "scope:fun";
+    var state = "";
+
+    $(function () {
+      window.swaggerUi = new SwaggerUi({
+        url: "http://localhost:8002/api/api-docs",
+        dom_id: "swagger-ui-container",
+        supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
+        onComplete: function(swaggerApi, swaggerUi){
+          $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+          $('.secured').click(function(button) {
+            if(button.target.checked)
+              handleLogin();
+            false;
+          });
+        },
+        onFailure: function(data) {
+          if(console) {
+            console.log("Unable to Load SwaggerUI");
+          }
+        },
+        docExpansion: "none"
+      }
+    );
+
+    $('#input_apiKey').change(function() {
+      var key = $('#input_apiKey')[0].value;
+      console.log("key: " + key);
+      if(key && key.trim() != "") {
+        console.log("added key " + key);
+        window.authorizations.add("key", new ApiKeyAuthorization("api_key", key, "query"));
+      }
+    })
+    window.swaggerUi.load();
+  });
+
+  function handleLogin() {
+    var authSchemes = window.swaggerUi.api.authSchemes;
+    var host = window.location;
+    var redirectUrl = host.protocol + '//' + host.host + "/o2c.html";
+    var url = null;
+
+    var p = window.swaggerUi.api.authSchemes;
+    for (var key in p) {
+      if (p.hasOwnProperty(key)) {
+        var o = p[key].grantTypes;
+        for(var t in o) {
+          if(o.hasOwnProperty(t) && t === 'implicit') {
+            var dets = o[t];
+            url = dets.loginEndpoint.url + "?response_type=token";
+            window.swaggerUi.tokenName = dets.tokenName;
+          }
+        }
+      }
+    }
+    url += '&redirect_uri=' + encodeURIComponent(redirectUrl);
+    url += '&realm=' + encodeURIComponent(realm);
+    url += '&client_id=' + encodeURIComponent(clientId);
+    url += '&state=' + encodeURIComponent(state);
+    url += '&scope=' + encodeURIComponent(scopes);
+
+    window.open(url);
+  }
+
+  function onOAuthComplete(token) {
+    console.log(token);
+    if(token) {
+      if(token.error) {
+        checkbox.each(function(pos){pos.checked = false;});
+        alert(error);
       }
       else {
-        alert("sorry, no token for you!");
+        var b = token[window.swaggerUi.tokenName];
+        if(b){
+          var checkbox = $('input[type=checkbox],.secured')
+          checkbox.each(function(pos){
+            checkbox[pos].checked = true;
+          });
+          window.authorizations.add("key", new ApiKeyAuthorization("Authorization", "Bearer " + b, "header"));
+        }
       }
-    });
+    }
+  }
+
   </script>
 </head>
+
 <body>
+<div id='header'>
+  <div class="swagger-ui-wrap">
+    <a id="logo" href="http://swagger.wordnik.com">swagger</a>
+
+    <form id='api_selector'>
+      <div class='input icon-btn'>
+        <img id="show-pet-store-icon" src="images/pet_store_api.png" title="Show Swagger Petstore Example Apis">
+      </div>
+      <div class='input icon-btn'>
+        <img id="show-wordnik-dev-icon" src="images/wordnik_api.png" title="Show Wordnik Developer Apis">
+      </div>
+      <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text"/></div>
+      <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
+      <div class='input'><a id="explore" href="#">Explore</a></div>
+    </form>
+  </div>
+</div>
+
+<div id="message-bar" class="swagger-ui-wrap">
+  &nbsp;
+</div>
+
+<div id="swagger-ui-container" class="swagger-ui-wrap">
+
+</div>
 
 </body>
+
+</html>

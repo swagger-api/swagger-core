@@ -18,7 +18,7 @@ class Bootstrap extends HttpServlet {
     List(
       ImplicitGrant(
         LoginEndpoint("http://localhost:8002/oauth/dialog"),
-        "access_code"
+        "access_token"
       ),
       AuthorizationCodeGrant(
         TokenRequestEndpoint("http://localhost:8002/oauth/requestToken",
