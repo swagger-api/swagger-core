@@ -11,7 +11,7 @@ import java.util.Date
 import java.net.URLEncoder
 import java.net.URI
 
-trait AuthDialog extends TokenCache {
+class AuthDialog extends TokenCache {
   /**
    * In this sample, the scope 'anonymous' will allow access if the redirectUri
    * is 'localhost' and provide an AnonymousTokenRequest, which is good for 3600

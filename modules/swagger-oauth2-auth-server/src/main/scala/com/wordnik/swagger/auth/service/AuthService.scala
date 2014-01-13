@@ -24,7 +24,7 @@ import java.net.URI
 
 import scala.collection.mutable.HashSet
 
-class AuthService extends AuthDialog with TokenCache {
+class AuthService extends TokenCache {
   private val LOGGER = LoggerFactory.getLogger(classOf[AuthService])
 
   val validator = ValidatorFactory.validator

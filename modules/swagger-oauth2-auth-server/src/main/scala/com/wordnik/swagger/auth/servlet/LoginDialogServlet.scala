@@ -1,7 +1,7 @@
 package com.wordnik.swagger.auth.servlet
 
 import com.wordnik.swagger.annotations._
-import com.wordnik.swagger.auth.service.AuthService
+import com.wordnik.swagger.auth.service.{AuthService, AuthDialog}
 import com.wordnik.swagger.core.util.JsonSerializer
 
 import org.apache.oltu.oauth2.as.issuer.{ MD5Generator, OAuthIssuerImpl }
@@ -26,7 +26,7 @@ class LoginDialogServlet extends HttpServlet {
     val clientId = request.getParameter("client_id")
     val redirectUri = request.getParameter("redirect_uri")
     val scope = request.getParameter("scope")
-    val output = new AuthService().dialog(clientId, redirectUri, scope)
+    val output = new AuthDialog().dialog(clientId, redirectUri, scope)
     if(output.code == 200) {
       response.setContentType("text/html")
       response.setHeader("Pragma", "No-cache");
