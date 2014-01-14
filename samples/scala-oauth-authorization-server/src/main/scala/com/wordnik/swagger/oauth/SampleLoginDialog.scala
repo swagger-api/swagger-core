@@ -56,7 +56,7 @@ class DefaultAuthDialog extends AuthDialog with TokenCache {
         <strong>Hello, <a href="#">Swagger Petstore</a>&nbsp;would like to you log in.</strong>
       </p>
       <p class="oauth_body">        
-        This is a sample OAuth2 server which sends supports the Implicit or Client-side flow.  You can find 
+        This is a sample OAuth2 server which supports the Implicit or Client-side flow.  You can find 
         the source code to the server <a href="https://github.com/wordnik/swagger-core/tree/master/samples/scala-oauth-authorization-server">here</a>.
       </p>
       <p class="oauth_body">        
