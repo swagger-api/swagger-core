@@ -29,9 +29,12 @@
         supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
         onComplete: function(swaggerApi, swaggerUi){
           $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
-          $('.secured').click(function(button) {
-            if(button.target.checked)
+          $('.api-ic').click(function(s) {
+            if($(s.target).hasClass('ic-off'))
               handleLogin();
+            else {
+              handleLogout();
+            }
             false;
           });
         },
@@ -54,6 +57,18 @@
     })
     window.swaggerUi.load();
   });
+
+  function handleLogout() {
+    for(key in window.authorizations.authz){
+      window.authorizations.remove(key)
+    }
+    $('.api-ic.ic-on').addClass('ic-off');
+    $('.api-ic.ic-on').removeClass('ic-on');
+
+    // set the info box
+    $('.api-ic.ic-warning').addClass('ic-error');
+    $('.api-ic.ic-warning').removeClass('ic-warning');
+  }
 
   function handleLogin() {
     var authSchemes = window.swaggerUi.api.authSchemes;
@@ -96,10 +111,13 @@
       else {
         var b = token[window.swaggerUi.tokenName];
         if(b){
-          var checkbox = $('input[type=checkbox],.secured')
-          checkbox.each(function(pos){
-            checkbox[pos].checked = true;
-          });
+          // set the checkbox
+          $('.api-ic.ic-off').addClass('ic-on');
+          $('.api-ic.ic-off').removeClass('ic-off');
+
+          // set the info box
+          $('.api-ic.ic-error').addClass('ic-warning');
+          $('.api-ic.ic-error').removeClass('ic-error');
           window.authorizations.add("key", new ApiKeyAuthorization("Authorization", "Bearer " + b, "header"));
         }
       }

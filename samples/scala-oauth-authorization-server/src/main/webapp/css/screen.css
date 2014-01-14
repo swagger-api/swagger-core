@@ -1009,6 +1009,12 @@ table {
 .swagger-ui-wrap form.form_box p strong {
   color: black;
 }
+.access {
+  float: right;
+}
+.auth {
+  float: right;
+}
 #api_information_panel {
   position: absolute;
   background: #FFF;
@@ -1018,6 +1024,7 @@ table {
   font-size: 13px;
   max-width: 300px;
   line-height: 30px;
+  color: black;
   padding: 5px;
 }
 #api_information_panel p .api-msg-enabled {
@@ -1025,6 +1032,42 @@ table {
 }
 #api_information_panel p .api-msg-disabled {
   color: red;
+}
+.api-ic {
+  height: 18px;
+  vertical-align: middle;
+  display: inline-block;
+  background: url(../images/explorer_icons.png) no-repeat;
+}
+.ic-info {
+  background-position: 0 0;
+  width: 18px;
+  margin-top: -7px;
+  margin-left: 4px;
+}
+.ic-warning {
+  background-position: -60px 0;
+  width: 18px;
+  margin-top: -7px;
+  margin-left: 4px;
+}
+.ic-error {
+  background-position: -30px 0;
+  width: 18px;
+  margin-top: -7px;
+  margin-left: 4px;
+}
+.ic-off {
+  background-position: -90px 0;
+  width: 58px;
+  margin-top: -4px;
+  cursor: pointer;
+}
+.ic-on {
+  background-position: -160px 0;
+  width: 58px;
+  margin-top: -4px;
+  cursor: pointer;
 }
 #header {
   background-color: #89bf04;
