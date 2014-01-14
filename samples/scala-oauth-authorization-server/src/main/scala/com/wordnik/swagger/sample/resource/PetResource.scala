@@ -60,7 +60,8 @@ class PetResource extends RestResourceUtil {
   @ApiOperation(value = "uploads an image",
     authorizations = Array(new Authorization(value="oauth2",
     scopes = Array(
-      new AuthorizationScope(scope = "test:anything", description = "anything")
+      new AuthorizationScope(scope = "test:anything", description = "anything"),
+      new AuthorizationScope(scope = "test:nothing", description = "nothing")
     ))))
   def uploadFile(
     @ApiParam(value = "Additional data to pass to server") @FormDataParam("additionalMetadata") testString: String,

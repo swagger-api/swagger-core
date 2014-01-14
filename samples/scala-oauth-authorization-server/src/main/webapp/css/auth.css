@@ -1,8 +1,22 @@
 .title {
   font-style: bold;
-  font-size: 200%;
 }
 
 .secondary_form {
   display: none;
+}
+
+.main_image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.oauth_body {
+  margin-left: 100px;
+  margin-right: 100px;
+}
+
+.oauth_submit {
+  text-align: center;
 }
