@@ -16,6 +16,8 @@
 
 package com.wordnik.swagger.sample.model
 
+import com.wordnik.swagger.annotations._
+
 import javax.xml.bind.annotation.{XmlRootElement, XmlElement}
 
 @XmlRootElement(name = "Category")
@@ -23,10 +25,12 @@ class Category() {
   private var id:Long = 0
   private var name:String = _
 
+  @ApiModelProperty(position = 1)
   @XmlElement(name="id")
   def getId():Long = id
   def setId(id:Long):Unit = this.id = id
 
+  @ApiModelProperty(position = 2)
   @XmlRootElement(name = "name")
   def getName():String = name
   def setName(name:String):Unit = this.name = name

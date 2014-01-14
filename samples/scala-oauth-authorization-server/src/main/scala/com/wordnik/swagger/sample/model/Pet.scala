@@ -27,14 +27,24 @@ import scala.reflect.BeanProperty
 @XmlRootElement(name = "Pet")
 @XmlAccessorType(XmlAccessType.NONE)
 class Pet() {
-  @ApiModelProperty(value="foo", allowableValues="range[0,100]")
+  @ApiModelProperty(position = 1, value="unique identifier for the pet", allowableValues="range[0,100]")
   @XmlElement(name = "id", required = true) @BeanProperty var id: Long = 0
+  
+  @ApiModelProperty(position = 2)
   @XmlElement(name = "category") @BeanProperty var category: Category = null
+
+  @ApiModelProperty(position = 3)
   @XmlElement(name = "name", required = true) @BeanProperty var name: String = null
+
+  @ApiModelProperty(position = 4)
   @XmlElement(name = "photoUrls") @BeanProperty var photoUrls: List[String] = new ArrayList[String]()
+
+  @ApiModelProperty(position = 5)
   @XmlElement(name = "tags") @BeanProperty var tags: List[Tag] = new ArrayList[Tag]()
+
+  @ApiModelProperty(position = 6, value = "pet status in the store", allowableValues = "available,pending,sold")
   @XmlElement(name = "status")
-  @ApiModelProperty(value = "pet status in the store", allowableValues = "available,pending,sold") @BeanProperty var status: String = null
+  @BeanProperty var status: String = null
 
   def merge(pet: Pet) = {
     if(pet.category != null) this.category = pet.category

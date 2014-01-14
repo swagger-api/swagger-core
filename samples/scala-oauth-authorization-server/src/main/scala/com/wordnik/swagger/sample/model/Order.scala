@@ -32,6 +32,7 @@ class Order {
   private var shipDate:Date = null
   private var status:String = null
 
+  @ApiModelProperty(position = 1)
   @XmlElement(name="id")
   def getId():Long = {
     id
@@ -41,6 +42,7 @@ class Order {
     this.id = id
   }
 
+  @ApiModelProperty(position = 2)
   @XmlElement(name="petId")
   def getPetId():Long = {
     petId
@@ -50,6 +52,7 @@ class Order {
     this.petId = petId
   }
 
+  @ApiModelProperty(position = 3)
   @XmlElement(name="quantity")
   def getQuantity():Int = {
     quantity
@@ -59,8 +62,8 @@ class Order {
     this.quantity = quantity
   }
 
+  @ApiModelProperty(position = 4, value = "Order Status", allowableValues = "placed, approved, delivered")
   @XmlElement(name="status")
-  @ApiModelProperty(value = "Order Status", allowableValues = "placed, approved, delivered")
   def getStatus():String = {
     status
   }
@@ -69,6 +72,7 @@ class Order {
     this.status = status
   }
 
+  @ApiModelProperty(position = 5)
   @XmlElement(name="shipDate")
   def getShipDate():Date = {
     shipDate

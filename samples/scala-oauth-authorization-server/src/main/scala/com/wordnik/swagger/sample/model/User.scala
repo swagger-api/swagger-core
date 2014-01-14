@@ -33,6 +33,7 @@ class User {
   private var phone:String = _
   private var userStatus:Int = _
 
+  @ApiModelProperty(position = 1)
   @XmlElement(name="id")
   def getId():Long = {
     id
@@ -42,7 +43,7 @@ class User {
     this.id = id
   }
 
-
+  @ApiModelProperty(position = 2)
   @XmlElement(name="firstName")
   def getFirstName():String = {
     firstName
@@ -52,6 +53,7 @@ class User {
     this.firstName = firstName
   }
 
+  @ApiModelProperty(position = 3)
   @XmlElement(name="username")
   def getUsername():String = {
     username
@@ -61,7 +63,7 @@ class User {
     this.username = username
   }
 
-
+  @ApiModelProperty(position = 4)
   @XmlElement(name="lastName")
   def getLastName():String = {
     lastName
@@ -71,6 +73,7 @@ class User {
     this.lastName = lastName
   }
 
+  @ApiModelProperty(position = 5)
   @XmlElement(name="email")
   def getEmail():String = {
     email
@@ -80,6 +83,7 @@ class User {
     this.email= email
   }
 
+  @ApiModelProperty(position = 6)
   @XmlElement(name="password")
   def getPassword():String = {
     password
@@ -89,6 +93,7 @@ class User {
     this.password = password
   }
 
+  @ApiModelProperty(position = 7)
   @XmlElement(name="phone")
   def getPhone():String = {
     phone
@@ -98,8 +103,8 @@ class User {
     this.phone = phone
   }
 
+  @ApiModelProperty(position = 8, value = "User Status", allowableValues = "1-registered,2-active,3-closed")
   @XmlElement(name="userStatus")
-  @ApiModelProperty(value = "User Status", allowableValues = "1-registered,2-active,3-closed")
   def getUserStatus():Int = {
     userStatus
   }
