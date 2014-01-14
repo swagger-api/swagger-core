@@ -87,8 +87,11 @@
     console.log(token);
     if(token) {
       if(token.error) {
-        checkbox.each(function(pos){pos.checked = false;});
-        alert(error);
+        var checkbox = $('input[type=checkbox],.secured')
+        checkbox.each(function(pos){
+          checkbox[pos].checked = false;
+        });
+        alert(token.error);
       }
       else {
         var b = token[window.swaggerUi.tokenName];

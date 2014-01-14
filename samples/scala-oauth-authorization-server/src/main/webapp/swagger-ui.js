@@ -323,14 +323,17 @@ function program1(depth0,data) {
 function program3(depth0,data) {
   
   
-  return "<li class='access'>";
+  return "\n          <li>\n          <img class=\"auth_img\" width=\"20px\" height=\"20px\" src=\"/images/oauth.png\">";
   }
 
 function program5(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n            ";
+  buffer += "\n            <div id=\"api_information_panel\" style=\"top: 526px; left: 776px; display: none;\">\n            ";
   stack1 = helpers.each.call(depth0, depth0, {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n            ";
+  stack1 = helpers.each.call(depth0, depth0, {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n          ";
   return buffer;
@@ -338,19 +341,19 @@ function program5(depth0,data) {
 function program6(depth0,data) {
   
   var buffer = "", stack1, stack2;
-  buffer += "\n            <div class='oauth_scope'>\n              <div title='";
+  buffer += "\n              <div title='";
   stack2 = ((stack1 = depth0.description),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "'>"
     + escapeExpression(((stack1 = depth0.scope),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</div>\n            </div>\n            ";
+    + "</div>\n            ";
   return buffer;
   }
 
 function program8(depth0,data) {
   
   
-  return "</li>";
+  return "\n            </div>\n            ";
   }
 
 function program10(depth0,data) {
@@ -498,13 +501,7 @@ function program22(depth0,data) {
   buffer += "\n          ";
   stack1 = helpers.each.call(depth0, depth0.oauth, {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n          ";
-  options = {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data};
-  if (stack1 = helpers.oauth) { stack1 = stack1.call(depth0, options); }
-  else { stack1 = depth0.oauth; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  if (!helpers.oauth) { stack1 = blockHelperMissing.call(depth0, stack1, options); }
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </ul>\n      </div>\n      <div class='content' id='";
+  buffer += "\n          </li>\n        </ul>\n      </div>\n      <div class='content' id='";
   if (stack1 = helpers.resourceName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.resourceName; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
@@ -1548,10 +1545,46 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       'submit .sandbox': 'submitOperation',
       'click .submit': 'submitOperation',
       'click .response_hider': 'hideResponse',
-      'click .toggleOperation': 'toggleOperationContent'
+      'click .toggleOperation': 'toggleOperationContent',
+      'mouseenter .auth_img': 'mouseEnter',
+      'mouseout .auth_img': 'mouseExit'
     };
 
     OperationView.prototype.initialize = function() {};
+
+    OperationView.prototype.mouseEnter = function(e) {
+      var elem, hgh, pos, scMaxX, scMaxY, scX, scY, wd, x, y;
+      elem = $(e.currentTarget.parentNode).find('#api_information_panel');
+      x = event.pageX;
+      y = event.pageY;
+      scX = $(window).scrollLeft();
+      scY = $(window).scrollTop();
+      scMaxX = scX + $(window).width();
+      scMaxY = scY + $(window).height();
+      wd = elem.width();
+      hgh = elem.height();
+      if (x + wd > scMaxX) {
+        x = scMaxX - wd;
+      }
+      if (x < scX) {
+        x = scX;
+      }
+      if (y + hgh > scMaxY) {
+        y = scMaxY - hgh;
+      }
+      if (y < scY) {
+        y = scY;
+      }
+      pos = {};
+      pos.top = y;
+      pos.left = x;
+      elem.css(pos);
+      return $(e.currentTarget.parentNode).find('#api_information_panel').show();
+    };
+
+    OperationView.prototype.mouseExit = function(e) {
+      return $(e.currentTarget.parentNode).find('#api_information_panel').hide();
+    };
 
     OperationView.prototype.render = function() {
       var contentTypeModel, isMethodSubmissionSupported, k, o, param, responseContentTypeView, responseSignatureView, signatureModel, statusCode, type, v, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref5, _ref6, _ref7, _ref8;
@@ -1560,7 +1593,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         this.model.isReadOnly = true;
       }
       this.model.oauth = null;
-      console.log(this.model.authorizations);
       if (this.model.authorizations) {
         _ref5 = this.model.authorizations;
         for (k in _ref5) {
@@ -1575,7 +1607,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             for (_i = 0, _len = v.length; _i < _len; _i++) {
               o = v[_i];
               this.model.oauth.scopes.push(o);
-              console.log(o);
             }
           }
         }

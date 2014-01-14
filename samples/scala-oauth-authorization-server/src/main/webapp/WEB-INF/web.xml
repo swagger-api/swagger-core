@@ -34,6 +34,10 @@
   <servlet>
     <servlet-name>LoginDialogServlet</servlet-name>
     <servlet-class>com.wordnik.swagger.auth.servlet.LoginDialogServlet</servlet-class>
+    <init-param>
+      <param-name>DialogImplementation</param-name>
+      <param-value>com.wordnik.swagger.oauth.SampleLoginDialog</param-value>
+    </init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>LoginDialogServlet</servlet-name>
@@ -90,10 +94,6 @@
     <init-param>
       <param-name>swagger.api.basepath</param-name>
       <param-value>http://localhost:8002/api</param-value>
-    </init-param>
-    <init-param>
-      <param-name>swagger.filter</param-name>
-      <param-value>com.wordnik.swagger.sample.util.SecurityFilter</param-value>
     </init-param>
     <load-on-startup>2</load-on-startup>
   </servlet>
