@@ -59,4 +59,8 @@ class DefaultJaxrsApiReader extends JaxrsApiReader {
     }
     else None
   }
+
+  def findSubresourceType(method: Method): Class[_] = {
+    method.getReturnType
+  }
 }

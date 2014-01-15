@@ -26,6 +26,10 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
   // decorates a Parameter based on annotations, returns None if param should be ignored
   def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation]): Option[Parameter]
 
+  // Finds the type of the subresource this method produces, in case it's a subresource locator
+  // In case it's not a subresource locator the entity type is returned
+  def findSubresourceType(method: Method): Class[_]
+
   def processDataType(paramType: Class[_], genericParamType: Type) = {
     paramType.getName match {
       case "[I" => "Array[int]"
@@ -271,7 +275,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
       ).flatten.toList
 
       for(method <- cls.getMethods) {
-        val returnType = method.getReturnType
+        val returnType = findSubresourceType(method)
         val path = method.getAnnotation(classOf[Path]) match {
           case e: Path => e.value()
           case _ => ""
