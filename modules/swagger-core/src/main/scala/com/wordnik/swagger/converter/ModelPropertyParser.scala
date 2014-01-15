@@ -77,11 +77,13 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
     val e = extractGetterProperty(propertyName)
     var name = e._1
     var isGetter = e._2
+    var initialName = name
 
     var isFieldExists = false
     var isJsonProperty = false
     var hasAccessorNoneAnnotation = false
     var processedAnnotations = processAnnotations(name, propertyAnnotations)
+    name = processedAnnotations("name").asInstanceOf[String]
     var required = processedAnnotations("required").asInstanceOf[Boolean]
     var position = processedAnnotations("position").asInstanceOf[Int]
 
@@ -94,20 +96,20 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
     var isXmlElement = processedAnnotations("isXmlElement").asInstanceOf[Boolean]
     val isDocumented = processedAnnotations("isDocumented").asInstanceOf[Boolean]
     var allowableValues = {
-      if(returnClass.isEnum) 
+      if(returnClass.isEnum)
         Some(AllowableListValues((for(v <- returnClass.getEnumConstants) yield v.toString).toList))
       else
         processedAnnotations("allowableValues").asInstanceOf[Option[AllowableValues]]
     }
 
     try {
-      val fieldAnnotations = getDeclaredField(this.cls, name).getAnnotations()
+      val fieldAnnotations = getDeclaredField(this.cls, initialName).getAnnotations()
       var propAnnoOutput = processAnnotations(name, fieldAnnotations)
       var propPosition = propAnnoOutput("position").asInstanceOf[Int]
 
-      if(allowableValues == None) 
+      if(allowableValues == None)
         allowableValues = propAnnoOutput("allowableValues").asInstanceOf[Option[AllowableValues]]
-      if(description == None && propAnnoOutput.contains("description") && propAnnoOutput("description") != null) 
+      if(description == None && propAnnoOutput.contains("description") && propAnnoOutput("description") != null)
         description = Some(propAnnoOutput("description").asInstanceOf[String])
       if(propPosition != 0) position = propAnnoOutput("position").asInstanceOf[Int]
       if(required == false) required = propAnnoOutput("required").asInstanceOf[Boolean]
@@ -115,9 +117,11 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
       if (!isTransient) isTransient = propAnnoOutput("isTransient").asInstanceOf[Boolean]
       if (!isXmlElement) isXmlElement = propAnnoOutput("isXmlElement").asInstanceOf[Boolean]
       isJsonProperty = propAnnoOutput("isJsonProperty").asInstanceOf[Boolean]
+      var tempName = propAnnoOutput("name").asInstanceOf[String]
+      if(tempName != initialName) name = tempName
     } catch {
       //this means there is no field declared to look for field level annotations.
-      case e: java.lang.NoSuchFieldException => isTransient = false
+      case e: java.lang.NoSuchFieldException => isTransient = false || isTransient
     }
 
     //if class has accessor none annotation, the method/field should have explicit xml element annotations, if not
@@ -243,7 +247,7 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
           updatedName = readString(e.value, name)
           isJsonProperty = true
         }
-        case _ => 
+        case _ =>
       }
     }
     val output = new HashMap[String, Any]
@@ -264,10 +268,12 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
   }
 
   def readString(s: String, existingValue: String = null, ignoreValue: String = null): String = {
-    if (existingValue != null && existingValue.trim.length > 0) existingValue
-    else if (s == null) null
-    else if (s.trim.length == 0) null
-    else if (ignoreValue != null && s.equals(ignoreValue)) null
+    var newExistingVal = existingValue
+    if (existingValue != null && existingValue.trim.length > 0) newExistingVal = existingValue.trim
+
+    if (s == null) newExistingVal
+    else if (s.trim.length == 0) newExistingVal
+    else if (ignoreValue != null && s.equals(ignoreValue)) newExistingVal
     else s.trim
   }
 
@@ -380,7 +386,7 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
         else hostClass.getName
       } else if (xmlRootElement != null) {
         if ("##default".equals(xmlRootElement.name())) {
-          if (isSimple) hostClass.getSimpleName 
+          if (isSimple) hostClass.getSimpleName
           else hostClass.getName
         } else {
           if (isSimple) readString(xmlRootElement.name())
