@@ -100,7 +100,6 @@ object SwaggerSerializers extends Serializers {
   ))
 
   def toJsonSchema(name: String, `type`: String): JObject = {
-    println("to json schema for " + name + ", " + `type`)
     `type` match {
       case "int"       => (name -> "integer") ~ ("format" -> "int32")
       case "long"      => (name -> "integer") ~ ("format" -> "int64")
@@ -300,7 +299,6 @@ object SwaggerSerializers extends Serializers {
     }, {
     case x: ModelProperty =>
       implicit val fmts = formats
-      println("serializing " + x)
       val output = toJsonSchemaType(x) ~      
       ("description" -> x.description) ~
       ("items" -> Extraction.decompose(x.items))
@@ -717,18 +715,13 @@ trait Serializers {
         }
       }) ~
       ("authorizations" -> {
-        println("serializing")
         x.authorizations match {
           case e: List[AuthorizationType] if (e.size > 0) => {
             Extraction.decompose((for(at <- e) yield {
               if(at.`type` != "") {
-                println("at.type: " + at.`type`)
                 Some(at.`type`, at)
               }
-              else {
-                println("no type")
-                None
-              }
+              else None
             }).flatten.toMap)
           }
           case _ => JNothing
