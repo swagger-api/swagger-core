@@ -2,9 +2,12 @@ package com.wordnik.swagger.auth.servlet
 
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.auth.service.{AuthService, AuthDialog}
+import com.wordnik.swagger.core.SwaggerContext
 import com.wordnik.swagger.core.util.JsonSerializer
 
 import org.apache.oltu.oauth2.as.issuer.{ MD5Generator, OAuthIssuerImpl }
+
+import org.slf4j.LoggerFactory
 
 import java.io.IOException
 
@@ -14,6 +17,8 @@ import javax.servlet.http.{ Cookie, HttpServlet, HttpServletRequest, HttpServlet
 
 @Api(value = "/oauth/dialog", description = "requestToken")
 class LoginDialogServlet extends HttpServlet {
+  private val LOGGER = LoggerFactory.getLogger(this.getClass)
+
   @throws(classOf[IOException])
   @throws(classOf[ServletException])
   @ApiOperation(httpMethod = "GET", value = "renders a login dialog", produces = "text/html")
@@ -26,7 +31,14 @@ class LoginDialogServlet extends HttpServlet {
     val clientId = request.getParameter("client_id")
     val redirectUri = request.getParameter("redirect_uri")
     val scope = request.getParameter("scope")
-    val output = new AuthDialog().dialog(clientId, redirectUri, scope)
+    val dialogClass = Option(getServletContext.getInitParameter("DialogImplementation")).getOrElse({
+      LOGGER.warn("using default dialog implementation")
+      "com.wordnik.swagger.auth.service.DefaultAuthDialog"
+    })
+
+    val dialog = SwaggerContext.loadClass(dialogClass).newInstance.asInstanceOf[AuthDialog]
+
+    val output = dialog.show(clientId, redirectUri, scope)
     if(output.code == 200) {
       response.setContentType("text/html")
       response.setHeader("Pragma", "No-cache");

@@ -82,7 +82,16 @@ class AuthService extends TokenCache {
       else response.getOutputStream.write("bad redirect_uri".getBytes("utf-8"))
     }
 
-    if(validator.isValidUser(username, password) && accept.toLowerCase != "deny") {
+    if(accept.toLowerCase == "deny") {
+      val redirectTo = {
+        (redirectUri.indexOf("#") match {
+          case i: Int if(i >= 0) => redirectUri + "&"
+          case i: Int => redirectUri + "#"
+        }) + "error=user_cancelled"
+      }
+      response.sendRedirect(redirectTo)
+    }
+    else if(validator.isValidUser(username, password)) {
       if(validator.isValidRedirectUri(redirectUri)) {
         // it's good to proceed
         val oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator())
@@ -103,11 +112,18 @@ class AuthService extends TokenCache {
       }
       else response.getOutputStream.write("bad redirect_uri".getBytes("utf-8"))
     }
-    else response.getOutputStream.write("invalid credentials".getBytes("utf-8"))
+    else {
+      val redirectTo = {
+        (redirectUri.indexOf("#") match {
+          case i: Int if(i >= 0) => redirectUri + "&"
+          case i: Int => redirectUri + "#"
+        }) + "error=invalid_credentials"
+      }
+      response.sendRedirect(redirectTo)
+    }
   }
 
   def tokenStatus(authorizationCode: String) = {
-
     tokenCache.contains(authorizationCode) match {
       case true => {
         val token = tokenCache(authorizationCode)
