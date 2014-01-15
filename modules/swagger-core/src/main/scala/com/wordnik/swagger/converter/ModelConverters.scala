@@ -16,6 +16,8 @@ object ModelConverters {
     new SwaggerSchemaConverter
   )
 
+  def typeMap = SwaggerTypes.primitives ++ (for(c <- converters) yield c.typeMap).flatten.toMap
+
   def addConverter(c: ModelConverter, first: Boolean = false) = {
     if(first) {
       val reordered = List(c) ++ converters
@@ -25,11 +27,15 @@ object ModelConverters {
     else converters += c
   }
 
-  def read(cls: Class[_]): Option[Model] = {
+  def read(cls: Class[_], t: Map[String, String] = Map.empty): Option[Model] = {
+    val types = {
+      if(t.isEmpty)typeMap
+      else t
+    }
     var model: Option[Model] = None
     val itr = converters.iterator
     while(model == None && itr.hasNext) {
-      itr.next.read(cls) match {
+      itr.next.read(cls, types) match {
         case Some(m) => {
           val filteredProperties = m.properties.filter(prop => skippedClasses.contains(prop._2.qualifiedType) == false)
           model = Some(m.copy(properties = filteredProperties))
@@ -42,7 +48,7 @@ object ModelConverters {
 
   def readAll(cls: Class[_]): List[Model] = {
     val output = new HashMap[String, Model]
-    var model = read(cls)
+    var model = read(cls, typeMap)
     val propertyNames = new HashSet[String]
 
     // add subTypes
@@ -50,7 +56,7 @@ object ModelConverters {
       try{
         LOGGER.debug("loading subtype " + typeRef)
         val cls = SwaggerContext.loadClass(typeRef)
-        read(cls) match {
+        read(cls, typeMap) match {
           case Some(model) => output += cls.getName -> model
           case _ =>
         }
@@ -93,7 +99,7 @@ object ModelConverters {
             checkedNames += typeRef
             val cls = SwaggerContext.loadClass(typeRef)
             LOGGER.debug("reading class " + cls)
-            ModelConverters.read(cls) match {
+            ModelConverters.read(cls, typeMap) match {
               case Some(model) => {
                 output += typeRef -> model
                 addRecursive(model, checkedNames, output)
@@ -139,11 +145,15 @@ object ModelConverters {
 }
 
 trait ModelConverter {
-  def read(cls: Class[_]): Option[Model]
+  def read(cls: Class[_], typeMap: Map[String, String]): Option[Model]
   def toName(cls: Class[_]): String
   def toDescriptionOpt(cls: Class[_]): Option[String]
 
   def ignoredPackages: Set[String] = Set("java.lang")
   def ignoredClasses: Set[String] = Set("java.util.Date")
+
+  def typeMap = Map[String, String]()
+
+  // these classes will be completely ignored
   def skippedClasses: Set[String] = Set()
 }

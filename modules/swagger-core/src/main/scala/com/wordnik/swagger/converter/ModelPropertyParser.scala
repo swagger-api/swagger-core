@@ -17,9 +17,14 @@ import javax.xml.bind.annotation._
 
 import scala.collection.mutable.{ LinkedHashMap, ListBuffer, HashSet, HashMap }
 
-class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[String, ModelProperty]) {
+class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (implicit properties: LinkedHashMap[String, ModelProperty]) {
   private val LOGGER = LoggerFactory.getLogger(classOf[ModelPropertyParser])
 
+  val typeMap = {
+    if(t.isEmpty)
+      SwaggerTypes.primitives
+    else t
+  }
   val processedFields = new ListBuffer[String]
   val excludedFieldTypes = new HashSet[String]
   final val positiveInfinity = "Infinity"
@@ -121,7 +126,9 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
       isJsonProperty = propAnnoOutput("isJsonProperty").asInstanceOf[Boolean]
     } catch {
       //this means there is no field declared to look for field level annotations.
-      case e: java.lang.NoSuchFieldException => isTransient = false
+      case e: java.lang.NoSuchFieldException => {
+        // isTransient = false
+      }
     }
 
     //if class has accessor none annotation, the method/field should have explicit xml element annotations, if not
@@ -180,10 +187,9 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
   }
 
   def validateDatatype(dataType: String): String = {
-    SwaggerTypes(dataType) match {
-      case "object" => dataType
-      case e: String => e
-    }
+    val o = typeMap.getOrElse(dataType.toLowerCase, dataType)
+    LOGGER.debug("validating datatype " + dataType + " against " + typeMap.size + " keys, got " + o)
+    o
   }
 
   def isComplex(typeName: String): Boolean = {
@@ -268,10 +274,18 @@ class ModelPropertyParser(cls: Class[_]) (implicit properties: LinkedHashMap[Str
   }
 
   def readString(s: String, existingValue: String = null, ignoreValue: String = null): String = {
+    /*
     if (s == null && existingValue != null && existingValue.trim.length > 0) existingValue
     else if (s == null) null
     else if (s.trim.length == 0) null
     else if (ignoreValue != null && s.equals(ignoreValue)) null
+    else s.trim
+    */
+    var newExistingVal = existingValue
+    if (existingValue != null && existingValue.trim.length > 0) newExistingVal = existingValue.trim
+    if (s == null) newExistingVal
+    else if (s.trim.length == 0) newExistingVal
+    else if (ignoreValue != null && s.equals(ignoreValue)) newExistingVal
     else s.trim
   }
 
