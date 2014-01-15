@@ -14,7 +14,9 @@ class Bootstrap extends HttpServlet {
   ValidatorFactory.validator = validator
 
   val oauth = OAuth(
-    List("PUBLIC"),
+    List(
+      AuthorizationScope("email", "Access to your email address"),
+      AuthorizationScope("pets", "Access to your pets")),
     List(
       ImplicitGrant(
         LoginEndpoint("http://localhost:8002/oauth/dialog"),

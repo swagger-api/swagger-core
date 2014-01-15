@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServlet
 
 class Bootstrap extends HttpServlet {
   val oauth = OAuth(
-    List("PUBLIC"),
+    List(
+      AuthorizationScope("email", "Access to your email address"),
+      AuthorizationScope("pets", "Access to your pets")),
     List(
       ImplicitGrant(
         LoginEndpoint("http://localhost:8002/oauth/dialog"),
