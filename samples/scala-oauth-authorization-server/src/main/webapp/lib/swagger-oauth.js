@@ -1,7 +1,20 @@
 function handleLogin() {
-  var service = "foo";
+  var scopes = [];
+  var appName = "unknown-app";
   var popupMask = $('#api-common-mask');
   var popupDialog = $('.api-popup-dialog');
+
+  if(window.swaggerUi.api.authSchemes 
+    && window.swaggerUi.api.authSchemes.oauth2
+    && window.swaggerUi.api.authSchemes.oauth2.scopes) {
+    scopes = window.swaggerUi.api.authSchemes.oauth2.scopes;
+  }
+
+  if(window.swaggerUi.api
+    && window.swaggerUi.api.info) {
+    appName = window.swaggerUi.api.info.title;
+  }
+
   if(popupDialog.length > 0) popupDialog = popupDialog.last();
   else {
     popupDialog = $(
@@ -12,7 +25,7 @@ function handleLogin() {
           '<p>Scopes are used to grant an application different levels of access to data on behalf of the end user. Each API may declare one or more scopes.',
             '<a href="#">Learn how to use</a>',
           '</p>',
-          '<p>' + service + ' API declares the following scopes. Select which ones you want to grant to APIs Explorer.</p>',
+          '<p><strong>' + appName + '</strong> API declares the following scopes. Select which ones you want to grant to APIs Explorer.</p>',
           '<ul class="api-popup-scopes">',
           '</ul>',
           '<p class="error-msg"></p>',
@@ -20,13 +33,7 @@ function handleLogin() {
         '</div>',
         '</div>'].join(''));
     $(document.body).append(popupDialog);
-    var scopes = [];
 
-    if(window.swaggerUi.api.authSchemes 
-      && window.swaggerUi.api.authSchemes.oauth2
-      && window.swaggerUi.api.authSchemes.oauth2.scopes) {
-      scopes = window.swaggerUi.api.authSchemes.oauth2.scopes;
-    }
     popup = popupDialog.find('ul.api-popup-scopes').empty();
     for (i = 0; i < scopes.length; i ++) {
       scope = scopes[i];
