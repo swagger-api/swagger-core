@@ -14,7 +14,6 @@ import java.io.IOException
 import javax.servlet.ServletException
 import javax.servlet.http.{ Cookie, HttpServlet, HttpServletRequest, HttpServletResponse }
 
-
 @Api(value = "/oauth/dialog", description = "requestToken")
 class LoginDialogServlet extends HttpServlet {
   private val LOGGER = LoggerFactory.getLogger(this.getClass)
@@ -38,7 +37,7 @@ class LoginDialogServlet extends HttpServlet {
 
     val dialog = SwaggerContext.loadClass(dialogClass).newInstance.asInstanceOf[AuthDialog]
 
-    val output = dialog.show(clientId, redirectUri, scope)
+    val output = dialog.show(clientId, redirectUri, scope, None)
     if(output.code == 200) {
       response.setContentType("text/html")
       response.setHeader("Pragma", "No-cache");

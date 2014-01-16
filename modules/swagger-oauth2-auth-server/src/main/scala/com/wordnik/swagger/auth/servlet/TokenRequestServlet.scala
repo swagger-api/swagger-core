@@ -5,8 +5,6 @@ import com.wordnik.swagger.core.util.JsonSerializer
 import com.wordnik.swagger.auth.model.ApiResponseMessage
 import com.wordnik.swagger.auth.service.AuthService
 
-import org.apache.oltu.oauth2.as.issuer.{ MD5Generator, OAuthIssuerImpl }
-
 import java.io.IOException
 
 import javax.servlet.ServletException
@@ -34,7 +32,10 @@ class TokenRequestServlet extends HttpServlet {
       response.setDateHeader("Expires", 1);
       apiResponse.code match {
         case i: Int if(i < 400 && i >= 300) => response.sendRedirect(apiResponse.message)
-        case _ => response.getOutputStream.write(JsonSerializer.asJson(apiResponse).getBytes("utf-8"))
+        case _ => {
+          response.setContentType("text/html")
+          response.getOutputStream.write(apiResponse.message.getBytes)
+        }
       }
     }
     catch {

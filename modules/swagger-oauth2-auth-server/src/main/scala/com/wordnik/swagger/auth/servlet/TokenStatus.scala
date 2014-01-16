@@ -24,7 +24,7 @@ class TokenStatus extends HttpServlet {
       case e: Array[_] if(e.size > 0) => e.head.getValue
       case _ => request.getParameter("access_token")
     }
-    val apiResponse = new AuthService().tokenStatus(accessCode)
+    val apiResponse = new AuthService().authorizationCodeStatus(accessCode)
     response.setContentType("application/json")
     response.setHeader("Pragma", "No-cache");
     response.setHeader("Cache-Control", "no-cache,no-store,max-age=0");
