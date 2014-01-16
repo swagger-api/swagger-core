@@ -17,7 +17,7 @@ class DefaultAuthDialog extends AuthDialog with TokenCache {
    * is 'localhost' and provide an AnonymousTokenRequest, which is good for 3600
    * seconds
    */
-  def show(clientId: String, redirectUri: String, scope: String) = {
+  def show(clientId: String, redirectUri: String, scope: String, requestId: Option[String]) = {
     if(scope == "anonymous") {
       val url = "/oauth/login"
 
@@ -70,6 +70,7 @@ class DefaultAuthDialog extends AuthDialog with TokenCache {
         <input name="scope" id="scope" type="hidden" value="email"></input>
         <input name="client_id" id="client_id" type="hidden" value="someclientid"></input>
         <input name="accept" id="accept" type="hidden" value="Allow"></input>
+        <input name="request_id" id="request_id" type="hidden" value={{requestId.getOrElse("")}}></input>
 
         <div class="oauth_submit initial_form">
           <button type="button" id="deny" class="button medium grey">

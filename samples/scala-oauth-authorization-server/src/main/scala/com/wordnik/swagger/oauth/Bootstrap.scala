@@ -27,7 +27,7 @@ class Bootstrap extends HttpServlet {
           "client_id",
           "client_secret"),
         TokenEndpoint("http://localhost:8002/oauth/token",
-          "access_code"
+          "auth_code"
         )
     )
   ))
