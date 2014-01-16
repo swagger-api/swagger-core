@@ -24,9 +24,12 @@ class SwaggerSchemaConverter
         val newProperties = mutable.Buffer.empty[(String, ModelProperty)]
         cls.getDeclaredFields.filter(field => Modifier.isPrivate(field.getModifiers)).map(_.getName).flatMap { field =>
           properties.get(field).map { value =>
+            properties -= field
             newProperties += field -> value
           }
         }
+
+        newProperties ++= properties
 
         val p = (for((key, value) <- newProperties.reverse)
           yield (value.position, key, value)
