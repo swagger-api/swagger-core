@@ -29,10 +29,10 @@ import com.sun.jersey.multipart.FormDataParam
 
 import org.apache.commons.io.IOUtils
 
+import org.slf4j.LoggerFactory
+
 import java.io.{File, FileInputStream, InputStream, FileOutputStream}
-
 import javax.servlet.http.HttpServletRequest
-
 import javax.ws.rs.core.{ MediaType, Context, Response }
 import javax.ws.rs._
 
@@ -40,6 +40,8 @@ import javax.ws.rs._
 @Api(value = "/pet", description = "Operations about pets")
 @Produces(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN, MediaType.TEXT_HTML))
 class PetResource extends RestResourceUtil {
+  private val LOGGER = LoggerFactory.getLogger(classOf[PetResource])
+
   @GET
   @Path("/{petId}")
   @ApiOperation(value = "Find pet by ID", notes = "Returns a pet based on ID", response = classOf[Pet])
@@ -62,7 +64,8 @@ class PetResource extends RestResourceUtil {
     @ApiParam(value = "Additional data to pass to server") @FormDataParam("additionalMetadata") testString: String,
     @ApiParam(value = "file to upload") @FormDataParam("file") inputStream: InputStream,
     @ApiParam(value = "file detail") @FormDataParam("file") fileDetail: FormDataContentDisposition) = {
-    println("testString: " + testString)
+    LOGGER.debug("testString: " + testString)
+
     val uploadedFileLocation = "./" + fileDetail.getFileName
     IOUtils.copy(inputStream, new FileOutputStream(uploadedFileLocation))
     val msg = "additionalMetadata: " + testString + "\nFile uploaded to " + uploadedFileLocation + ", " + (new java.io.File(uploadedFileLocation)).length + " bytes"
@@ -89,7 +92,7 @@ class PetResource extends RestResourceUtil {
   def addPet(
     @ApiParam(value = "Pet object that needs to be added to the store", required = true) pet: Pet) = {
     PetData.addPet(pet)
-    println("added pet " + pet)
+    LOGGER.debug("added pet " + pet)
     Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build
   }
 
@@ -166,25 +169,13 @@ class PetResource extends RestResourceUtil {
   @ApiOperation(value = "Updates a pet in the store with form data",
     consumes = MediaType.APPLICATION_FORM_URLENCODED)
   @ApiResponses(Array(
-    new ApiResponse(code = 404, message = "Pet not found"),
-    new ApiResponse(code = 400, message = "Invalid input")))
+    new ApiResponse(code = 405, message = "Invalid input")))
   def updatePetWithForm (
    @ApiParam(value = "ID of pet that needs to be updated", required = true)@PathParam("petId") petId: String,
    @ApiParam(value = "Updated name of the pet", required = false)@FormParam("name") name: String,
    @ApiParam(value = "Updated status of the pet", required = false)@FormParam("status") status: String
    ) = {
-    if(Option(petId) == None || (Option(name) == None && Option(status) == None))
-      Response.status(400).build
-    else {
-      PetData.getPetbyId(getLong(0, 100000, 0, petId)) match {
-        case existing: Pet => {
-          if(name != null) existing.name = name
-          if(status != null) existing.status = status
-          Response.ok.entity(PetData.getPetbyId(getLong(0, 100000, 0, petId))).build
-        }
-        case _ => throw new NotFoundException(404, "Pet not found")
-      }
-      Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build
-    }
+    LOGGER.debug("form values: " + name + ", " + status)
+    Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build
   }
 }
