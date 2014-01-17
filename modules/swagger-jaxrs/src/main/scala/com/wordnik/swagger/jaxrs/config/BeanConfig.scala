@@ -6,6 +6,7 @@ import com.wordnik.swagger.model.ApiInfo
 import com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader
 import com.wordnik.swagger.config._
 import com.wordnik.swagger.reader._
+import com.wordnik.swagger.core.filter._
 
 import org.reflections.Reflections
 import org.reflections.scanners.{ SubTypesScanner, TypeAnnotationsScanner }
@@ -32,10 +33,21 @@ class BeanConfig extends JaxrsScanner {
   @BeanProperty var contact: String = _ 
   @BeanProperty var license: String = _ 
   @BeanProperty var licenseUrl: String = _
+  @BeanProperty var filterClass: String = _
 
   def setScan(shouldScan: Boolean) = {
     if(title != null || description != null || termsOfServiceUrl != null || contact != null || license != null || licenseUrl != null) {
       ConfigFactory.config.info = Some(ApiInfo(title, description, termsOfServiceUrl, contact, license, licenseUrl))
+    }
+    if(filterClass != null) {
+      try {
+        FilterFactory.setFilter(SwaggerContext.loadClass(filterClass).newInstance.asInstanceOf[SwaggerSpecFilter])
+      }
+      catch {
+        case e: Exception => {
+          LOGGER.error("failed to load filter", e)
+        }
+      }
     }
     ScannerFactory.scanner = Some(this)
   }

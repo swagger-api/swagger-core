@@ -26,6 +26,10 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
   // decorates a Parameter based on annotations, returns None if param should be ignored
   def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation]): Option[Parameter]
 
+  // Finds the type of the subresource this method produces, in case it's a subresource locator
+  // In case it's not a subresource locator the entity type is returned
+  def findSubresourceType(method: Method): Class[_]
+
   def processDataType(paramType: Class[_], genericParamType: Type) = {
     paramType.getName match {
       case "[I" => "Array[int]"
@@ -116,8 +120,11 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
       case Some(e) if(e != "") => e.split(",").map(_.trim).toList
       case _ => List()
     }
-    val authorizations = Option(apiOperation.authorizations) match {
-      case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+    val authorizations:List[com.wordnik.swagger.model.Authorization] = Option(apiOperation.authorizations) match {
+      case Some(e) => (for(a <- e) yield {
+        val scopes = (for(s <- a.scopes) yield com.wordnik.swagger.model.AuthorizationScope(s.scope, s.description)).toArray
+        new com.wordnik.swagger.model.Authorization(a.value, scopes)
+      }).toList
       case _ => List()
     }
     val params = parentParams ++ (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
@@ -205,7 +212,14 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
   }
 
   def read(docRoot: String, cls: Class[_], config: SwaggerConfig): Option[ApiListing] = {
-    readRecursive(docRoot, "", cls, config, new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]], new ListBuffer[Method])
+    val parentPath = {
+      Option(cls.getAnnotation(classOf[Path])) match {
+        case Some(e) => e.value()
+        case _ => ""
+      }
+    }
+
+    readRecursive(docRoot, parentPath.replace("//","/"), cls, config, new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]], new ListBuffer[Method])
   }
 
   def readRecursive(
@@ -261,12 +275,12 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
       ).flatten.toList
 
       for(method <- cls.getMethods) {
-        val returnType = method.getReturnType
+        val returnType = findSubresourceType(method)
         val path = method.getAnnotation(classOf[Path]) match {
           case e: Path => e.value()
           case _ => ""
         }
-        val endpoint = parentPath + api.value + pathFromMethod(method)
+        val endpoint = (parentPath + /*api.value + */ pathFromMethod(method)).replace("//", "/")
         Option(returnType.getAnnotation(classOf[Api])) match {
           case Some(e) => {
             val root = docRoot + api.value + pathFromMethod(method)
