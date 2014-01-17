@@ -42,7 +42,7 @@ public class Bootstrap extends HttpServlet {
 
     AuthorizationType oauth = new OAuthBuilder().scopes(scopes).grantTypes(grantTypes).build();
 
-//  ConfigFactory.config().addAuthorization(oauth);
+    ConfigFactory.config().addAuthorization(oauth);
     ConfigFactory.config().setApiInfo(info);
   }
 }

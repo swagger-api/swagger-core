@@ -36,8 +36,8 @@ class ResourceListingIT extends FlatSpec with ShouldMatchers {
     val json = Source.fromURL("http://localhost:8002/api/api-docs").mkString
     val doc = ScalaJsonUtil.mapper.readValue(json, classOf[ResourceListing])
 
-    assert(doc.apis.size === 3)
-    assert((doc.apis.map(api => api.path).toSet & Set("/pet", "/user", "/store")).size == 3)
+    assert(doc.apis.size === 2)
+    assert((doc.apis.map(api => api.path).toSet & Set("/pet", "/user")).size == 2)
   }
 
   ignore should "read the resource listing in XML" in {
