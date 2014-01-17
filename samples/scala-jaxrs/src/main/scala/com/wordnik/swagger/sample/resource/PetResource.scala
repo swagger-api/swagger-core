@@ -37,7 +37,11 @@ class PetResource extends RestResourceUtil {
     notes = "Returns a pet based on ID", 
     response = classOf[Pet],
     produces = "application/json,application/xml",
-    authorizations = "oauth2")
+    authorizations = Array(new Authorization(value="oauth2",
+    scopes = Array(
+      new AuthorizationScope(scope = "test:anything", description = "anything"),
+      new AuthorizationScope(scope = "test:nothing", description = "nothing")
+    ))))
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
     new ApiResponse(code = 404, message = "Pet not found")))

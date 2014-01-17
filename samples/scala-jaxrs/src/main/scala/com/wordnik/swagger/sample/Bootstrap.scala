@@ -8,18 +8,20 @@ import javax.servlet.http.HttpServlet
 
 class Bootstrap extends HttpServlet {
   val oauth = OAuth(
-    List("PUBLIC"),
+    List(
+      AuthorizationScope("email", "Access to your email address"),
+      AuthorizationScope("pets", "Access to your pets")),
     List(
       ImplicitGrant(
         LoginEndpoint("http://localhost:8002/oauth/dialog"),
-        "access_code"
+        "access_token"
       ),
       AuthorizationCodeGrant(
         TokenRequestEndpoint("http://localhost:8002/oauth/requestToken",
           "client_id",
           "client_secret"),
         TokenEndpoint("http://localhost:8002/oauth/token",
-          "access_code"
+          "auth_code"
         )
     )
   ))
