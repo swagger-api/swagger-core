@@ -6,6 +6,17 @@ more about both the spec and the framework at http://swagger.wordnik.com.  For m
 about Wordnik's APIs, please visit http://developer.wordnik.com.  There is an online version of this
 server at http://petstore.swagger.wordnik.com/api/api-docs.json
 
+### Use as example
+This examples shows a fully working petstore app Swagger exposed trough Jersey and configured with Guice.
+The Swagger documentation is exposed by a Jersey2 endpoint so located at `ApiListingResourceJSON`. You have to remember to register
+three classes for scanning in your Jersey application. Do something like:
+```java
+register(ApiListingResourceJSON.class).
+register(JerseyApiDeclarationProvider.class).
+register(JerseyResourceListingProvider.class);
+```
+In the example this is done in `com.wordnik.swagger.sample.Application`
+
 ### To build from source
 Please follow instructions to build the top-level [swagger-core project](https://github.com/wordnik/swagger-core)
 
@@ -40,3 +51,4 @@ based on api-key.  There are two keys defined in the sample app:
 When no key is applied, the "default-key" is applied to all operations.  If the "special-key" is entered, a
 number of other resources are shown in the UI, including sample CRUD operations.  Note this behavior is similar
 to that on http://developer.wordnik.com/docs but the behavior is entirely up to the implementor.
+
