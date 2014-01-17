@@ -46,7 +46,7 @@ public class ApiAuthorizationFilterImpl implements SwaggerSpecFilter {
 
   public boolean isOperationAllowed(Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
     boolean isAuthorized = checkKey(params, headers);
-    if((operation.method() != "GET" && !isAuthorized) || api.path().indexOf("/store") != -1) 
+    if(!"GET".equals(operation.method()) || api.path().indexOf("/store") != -1)
       return false;
     else 
       return true;
