@@ -142,8 +142,11 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         case e: String if e.trim != "" => e.split(",").map(_.trim).toList
         case _ => List()
       }
-      val authorizations = apiOperation.authorizations match {
-        case e: String if e.trim != "" => e.split(",").map(_.trim).toList
+      val authorizations:List[com.wordnik.swagger.model.Authorization] = Option(apiOperation.authorizations) match {
+        case Some(e) => (for(a <- e) yield {
+          val scopes = (for(s <- a.scopes) yield com.wordnik.swagger.model.AuthorizationScope(s.scope, s.description)).toArray
+          new com.wordnik.swagger.model.Authorization(a.value, scopes)
+        }).toList
         case _ => List()
       }
       val responseClass = apiOperation.responseContainer match {
