@@ -174,6 +174,12 @@ object SwaggerSerializers extends Serializers {
   class JsonSchemaOperationSerializer extends CustomSerializer[Operation](formats => ({
     case json =>
       implicit val fmts: Formats = formats
+
+      val authorizations = (json \ "authorizations").extractOpt[Map[String, Authorization]] match {
+        case Some(m) => m.values.toList
+        case _ => List.empty
+      }
+
       Operation(
         (json \ "method").extractOrElse({
           !!(json, OPERATION, "method", "missing required field", ERROR)
@@ -193,7 +199,7 @@ object SwaggerSerializers extends Serializers {
         (json \ "produces").extractOrElse(List()),
         (json \ "consumes").extractOrElse(List()),
         (json \ "protocols").extractOrElse(List()),
-        (json \ "authorizations").extractOrElse(List()),
+        authorizations,
         (json \ "parameters").extract[List[Parameter]],
         (json \ "responseMessages").extract[List[ResponseMessage]],
         (json \ "deprecated").extractOpt[String]
@@ -420,6 +426,12 @@ trait Serializers {
   class ApiListingSerializer extends CustomSerializer[ApiListing](formats => ({
     case json =>
       implicit val fmts: Formats = formats
+
+      val authorizations = (json \ "authorizations").extractOpt[Map[String, Authorization]] match {
+        case Some(m) => m.values.toList
+        case _ => List.empty
+      }
+
       ApiListing(
         (json \ "apiVersion").extractOrElse({
           !!(json, RESOURCE, "apiVersion", "missing required field", ERROR)
@@ -440,7 +452,7 @@ trait Serializers {
         (json \ "produces").extractOrElse(List()),
         (json \ "consumes").extractOrElse(List()),
         (json \ "protocols").extractOrElse(List()),
-        (json \ "authorizations").extractOrElse(List()),
+        authorizations,
         (json \ "apis").extract[List[ApiDescription]],
         (json \ "models").extractOpt[Map[String, Model]]
       )
@@ -498,6 +510,12 @@ trait Serializers {
   class ResourceListingSerializer extends CustomSerializer[ResourceListing](formats => ({
     case json =>
       implicit val fmts: Formats = formats
+
+      val authorizations = (json \ "authorizations").extractOpt[Map[String, AuthorizationType]] match {
+        case Some(m) => m.values.toList
+        case _ => List.empty
+      }
+
       ResourceListing(
         (json \ "apiVersion").extractOrElse({
           !!(json, RESOURCE_LISTING, "apiVersion", "missing required field", ERROR)
@@ -508,7 +526,7 @@ trait Serializers {
           ""
         }),
         (json \ "apis").extract[List[ApiListingReference]],
-        (json \ "authorizations").extract[List[AuthorizationType]],
+        authorizations,
         (json \ "info").extractOpt[ApiInfo]
       )
     }, {

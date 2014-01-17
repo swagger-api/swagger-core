@@ -38,6 +38,10 @@ object JsonSerializer {
   	toXml(parse(write(w))).toString
   }
 
+  def asResourceListing(json: String): ResourceListing = {
+    parse(json).extract[ResourceListing]
+  }
+
   def asApiListing(json: String): ApiListing = {
   	parse(json).extract[ApiListing]
   }

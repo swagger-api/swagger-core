@@ -31,4 +31,11 @@ class SwaggerSerializersTest extends FlatSpec with ShouldMatchers {
   "description" : "the description"
 }""")*/
   }
+
+  it should "deserialize an ApiDeclaration" in {
+    parse(apiDeclaration).extract[ApiListing] should not be (null)
+  }
+
+
+  val apiDeclaration = """{"apiVersion":"1.0.0","swaggerVersion":"1.2","basePath":"http://localhost:9095/resteasy","resourcePath":"/library","apis":[{"path":"/library/books/badger","operations":[{"method":"GET","summary":"gets books with Badger","notes":"gets books with @Badgerfish","type":"listing","nickname":"getBooksBadger","produces":["application/json"],"authorizations":{},"parameters":[],"responseMessages":[{"code":400,"message":"Not sure"},{"code":404,"message":"bad"}]}]},{"path":"/library/books/mapped","operations":[{"method":"GET","summary":"gets books with mapped","notes":"gets books with @Mapped","type":"listing","nickname":"getBooksMapped","produces":["application/json"],"authorizations":{},"parameters":[],"responseMessages":[{"code":400,"message":"Not sure"},{"code":404,"message":"bad"}]}]}],"models":{"book":{"id":"book","properties":{"author":{"type":"string"},"title":{"type":"string"},"iSBN":{"type":"string"}}},"listing":{"id":"listing","properties":{"books":{"type":"array","items":{"$ref":"book"}}}}}}"""
 }
