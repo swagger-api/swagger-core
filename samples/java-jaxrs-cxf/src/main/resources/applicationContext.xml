@@ -47,6 +47,7 @@
     <property name="contact" value="apiteam@wordnik.com"/>
     <property name="license" value="Apache 2.0 License"/>
     <property name="licenseUrl" value="http://www.apache.org/licenses/LICENSE-2.0.html"/>
+    <property name="filterClass" value="com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl"/>
     <property name="scan" value="true"/>
   </bean>
 
