@@ -27,7 +27,8 @@ object SwaggerSerializers extends Serializers {
     new ResourceListingSerializer +
     new ApiInfoSerializer +
     new ApiListingSerializer +
-    new AuthorizationTypeSeralizer
+    new AuthorizationTypeSerializer + 
+    new AuthorizationSerializer
 
   class JsonSchemaModelSerializer extends CustomSerializer[Model](formats => ({
     case json =>
@@ -108,6 +109,7 @@ object SwaggerSerializers extends Serializers {
       case "byte"      => (name -> "string")  ~ ("format" -> "byte")
       case "boolean"   => (name -> "boolean") ~ ("format" -> JNothing)
       case "Date"      => (name -> "string")  ~ ("format" -> "date-time")
+      case "DateTime"  => (name -> "string")  ~ ("format" -> "date-time")
       case "date"      => (name -> "string")  ~ ("format" -> "date")
       case "date-time" => (name -> "string")  ~ ("format" -> "date-time")
       case _           => {
@@ -172,6 +174,12 @@ object SwaggerSerializers extends Serializers {
   class JsonSchemaOperationSerializer extends CustomSerializer[Operation](formats => ({
     case json =>
       implicit val fmts: Formats = formats
+
+      val authorizations = (json \ "authorizations").extractOpt[Map[String, Authorization]] match {
+        case Some(m) => m.values.toList
+        case _ => List.empty
+      }
+
       Operation(
         (json \ "method").extractOrElse({
           !!(json, OPERATION, "method", "missing required field", ERROR)
@@ -191,7 +199,7 @@ object SwaggerSerializers extends Serializers {
         (json \ "produces").extractOrElse(List()),
         (json \ "consumes").extractOrElse(List()),
         (json \ "protocols").extractOrElse(List()),
-        (json \ "authorizations").extractOrElse(List()),
+        authorizations,
         (json \ "parameters").extract[List[Parameter]],
         (json \ "responseMessages").extract[List[ResponseMessage]],
         (json \ "deprecated").extractOpt[String]
@@ -227,7 +235,12 @@ object SwaggerSerializers extends Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[String] if(e.size > 0) => Extraction.decompose(e)
+          case e: List[AuthorizationType] if (e.size > 0) => {
+            Extraction.decompose((for(at <- e) yield {
+              if(at.`type` != "") Some(at.`type`, at)
+              else None
+            }).flatten.toMap)
+          }
           case _ => JNothing
         }
       }) ~
@@ -292,7 +305,6 @@ object SwaggerSerializers extends Serializers {
     }, {
     case x: ModelProperty =>
       implicit val fmts = formats
-
       val output = toJsonSchemaType(x) ~      
       ("description" -> x.description) ~
       ("items" -> Extraction.decompose(x.items))
@@ -398,7 +410,8 @@ object SwaggerJsonSchemaSerializers extends Serializers {
     new ResourceListingSerializer +
     new ApiInfoSerializer +
     new ApiListingSerializer +
-    new AuthorizationTypeSeralizer
+    new AuthorizationTypeSerializer + 
+    new AuthorizationSerializer
 }
 
 trait Serializers {
@@ -413,6 +426,12 @@ trait Serializers {
   class ApiListingSerializer extends CustomSerializer[ApiListing](formats => ({
     case json =>
       implicit val fmts: Formats = formats
+
+      val authorizations = (json \ "authorizations").extractOpt[Map[String, Authorization]] match {
+        case Some(m) => m.values.toList
+        case _ => List.empty
+      }
+
       ApiListing(
         (json \ "apiVersion").extractOrElse({
           !!(json, RESOURCE, "apiVersion", "missing required field", ERROR)
@@ -433,7 +452,7 @@ trait Serializers {
         (json \ "produces").extractOrElse(List()),
         (json \ "consumes").extractOrElse(List()),
         (json \ "protocols").extractOrElse(List()),
-        (json \ "authorizations").extractOrElse(List()),
+        authorizations,
         (json \ "apis").extract[List[ApiDescription]],
         (json \ "models").extractOpt[Map[String, Model]]
       )
@@ -464,7 +483,12 @@ trait Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[String] if(e.size > 0) => Extraction.decompose(e)
+          case e: List[AuthorizationType] if (e.size > 0) => {
+            Extraction.decompose((for(at <- e) yield {
+              if(at.`type` != "") Some(at.`type`, at)
+              else None
+            }).flatten.toMap)
+          }
           case _ => JNothing
         }
       }) ~
@@ -486,6 +510,12 @@ trait Serializers {
   class ResourceListingSerializer extends CustomSerializer[ResourceListing](formats => ({
     case json =>
       implicit val fmts: Formats = formats
+
+      val authorizations = (json \ "authorizations").extractOpt[Map[String, AuthorizationType]] match {
+        case Some(m) => m.values.toList
+        case _ => List.empty
+      }
+
       ResourceListing(
         (json \ "apiVersion").extractOrElse({
           !!(json, RESOURCE_LISTING, "apiVersion", "missing required field", ERROR)
@@ -496,7 +526,7 @@ trait Serializers {
           ""
         }),
         (json \ "apis").extract[List[ApiListingReference]],
-        (json \ "authorizations").extract[List[AuthorizationType]],
+        authorizations,
         (json \ "info").extractOpt[ApiInfo]
       )
     }, {
@@ -512,7 +542,12 @@ trait Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[AuthorizationType] if (e.size > 0) => Extraction.decompose((for(at <- e) yield (at.`type`, at)).toMap)
+          case e: List[AuthorizationType] if (e.size > 0) => {
+            Extraction.decompose((for(at <- e) yield {
+              if(at.`type` != "") Some(at.`type`, at)
+              else None
+            }).flatten.toMap)
+          }
           case _ => JNothing
         }
       }) ~
@@ -699,7 +734,14 @@ trait Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[String] if(e.size > 0) => Extraction.decompose(e)
+          case e: List[AuthorizationType] if (e.size > 0) => {
+            Extraction.decompose((for(at <- e) yield {
+              if(at.`type` != "") {
+                Some(at.`type`, at)
+              }
+              else None
+            }).flatten.toMap)
+          }
           case _ => JNothing
         }
       }) ~
@@ -879,7 +921,7 @@ trait Serializers {
     }
   ))
 
-  class AuthorizationTypeSeralizer extends CustomSerializer[AuthorizationType](formats => ({
+  class AuthorizationTypeSerializer extends CustomSerializer[AuthorizationType](formats => ({
     case json =>
       implicit val fmts: Formats = formats
       json \ "type" match {
@@ -911,6 +953,19 @@ trait Serializers {
         ("passAs" -> x.passAs)
       case x: BasicAuth =>
         ("type" -> "basicAuth")
+    }
+  ))
+
+  class AuthorizationSerializer extends CustomSerializer[Authorization](formats => ({
+    case json =>
+      implicit val fmts: Formats = formats
+      Authorization(
+        (json \ "type").extract[String],
+        (json \ "scopes").extractOrElse(Array[AuthorizationScope]()))
+    }, {
+      case x: Authorization => 
+        implicit val fmts = formats
+        Extraction.decompose(x.scopes)
     }
   ))
 

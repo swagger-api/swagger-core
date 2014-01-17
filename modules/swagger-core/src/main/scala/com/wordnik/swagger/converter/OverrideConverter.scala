@@ -41,7 +41,7 @@ class OverrideConverter
     }
   }
 
-  def read(cls: Class[_]): Option[Model] = {
+  def read(cls: Class[_], typeMap: Map[String, String]): Option[Model] = {
     overrides.getOrElse(cls.getName, None)
   }
 }

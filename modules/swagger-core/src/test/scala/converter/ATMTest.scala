@@ -23,11 +23,7 @@ import javax.xml.bind.annotation._
 @RunWith(classOf[JUnitRunner])
 class ATMTest extends FlatSpec with ShouldMatchers {
   it should "read a model with enums" in {
-    ModelConverters.readAll(classOf[ATM]) match {
-      case a => {
-        println(JsonSerializer.asJson(a))
-      }
-      case _ => fail("didn't read anything")
-    }
+    val a = ModelConverters.readAll(classOf[ATM])
+    JsonSerializer.asJson(a) should be ("""[{"id":"ATM","properties":{"currency":{"$ref":"Currency","enum":["USA","CANADA"]}}}]""")
   }
 }

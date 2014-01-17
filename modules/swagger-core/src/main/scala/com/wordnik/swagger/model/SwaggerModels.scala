@@ -76,7 +76,7 @@ case class ApiListing (
   produces: List[String] = List.empty,
   consumes: List[String] = List.empty,
   protocols: List[String] = List.empty,
-  authorizations: List[String] = List.empty,
+  authorizations: List[Authorization] = List.empty,
   apis: List[ApiDescription] = List(),
   models: Option[Map[String, Model]] = None,
   description: Option[String] = None,
@@ -97,7 +97,7 @@ case class Operation (
   produces: List[String] = List.empty,
   consumes: List[String] = List.empty,
   protocols: List[String] = List.empty,
-  authorizations: List[String] = List.empty,
+  authorizations: List[Authorization] = List.empty,
   parameters: List[Parameter] = List.empty,
   responseMessages: List[ResponseMessage] = List.empty,
   `deprecated`: Option[String] = None)

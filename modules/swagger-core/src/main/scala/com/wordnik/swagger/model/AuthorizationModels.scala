@@ -25,10 +25,10 @@ trait AuthorizationType {
 }
 
 class OAuthBuilder {
-  val _scopes = new ListBuffer[String]
+  val _scopes = new ListBuffer[AuthorizationScope]
   val _grantTypes = new ListBuffer[GrantType]
 
-  def scopes(s: java.util.List[String]) = {
+  def scopes(s: java.util.List[AuthorizationScope]) = {
     _scopes ++= s.asScala.toList
     this
   }
@@ -40,8 +40,18 @@ class OAuthBuilder {
     OAuth(_scopes.toList, _grantTypes.toList)
   }
 }
+case class Authorization(
+  `type`: String,
+  scopes: Array[AuthorizationScope]
+)
+
+case class AuthorizationScope(
+  scope: String,
+  description: String
+)
+
 case class OAuth(
-  scopes: List[String], 
+  scopes: List[AuthorizationScope], 
   grantTypes: List[GrantType]) extends AuthorizationType {
   override def `type` = "oauth2"
 }

@@ -4,7 +4,7 @@ import com.wordnik.swagger.annotations.{ ApiModel, ApiModelProperty }
 
 import scala.annotation.target.field
 
-@ApiModel(value="a model with subtypes", discriminator = "name", subTypes = Array(classOf[DomesticAnimal], classOf[WildAnimal]))
+@ApiModel(value="Animal", description="a model with subtypes", discriminator = "name", subTypes = Array(classOf[DomesticAnimal], classOf[WildAnimal]))
 case class Animal (
   @(ApiModelProperty @field)(value = "name of animal", position = 1) name: String,
   @(ApiModelProperty @field)(value = "date added", position = 2) date: java.util.Date)

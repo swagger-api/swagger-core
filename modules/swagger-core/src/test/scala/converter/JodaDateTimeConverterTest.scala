@@ -31,10 +31,12 @@ class JodaDateTimeConverterTest extends FlatSpec with ShouldMatchers {
     nameProperty.description should be (Some("name of the model"))
 
     val dateTimeProperty = model.properties("createdAt")
-    dateTimeProperty.`type` should be ("DateTime")
+    dateTimeProperty.`type` should be ("Date")
     dateTimeProperty.position should be (1)
     dateTimeProperty.required should be (true)
     dateTimeProperty.description should be (Some("creation timestamp"))
+
+    println(JsonSerializer.asJson(models.head))
   }
 }
 

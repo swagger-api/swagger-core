@@ -133,7 +133,7 @@ object ModelUtil {
       try{
         val cls = SwaggerContext.loadClass(typeRef)
         if (!cls.isEnum) {
-          ModelConverters.read(cls) match {
+          ModelConverters.read(cls, ModelConverters.typeMap) match {
             case Some(model) => Some((toName(cls), model))
             case None => None
           }
