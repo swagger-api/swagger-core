@@ -7,11 +7,11 @@ object ValidatorFactory {
 class NoOpValidator extends Validator {
   def isValidUser(username: String, password: String) = false
   def isValidClient(clientId: String, clientSecret: String) = false
-  def isValidRedirectUri(uri: String): Boolean = false
+  def isValidRedirectUri(clientId: String, uri: String): Boolean = false
 }
 
 trait Validator {
   def isValidUser(username: String, password: String): Boolean
   def isValidClient(clientId: String, clientSecret: String): Boolean
-  def isValidRedirectUri(uri: String): Boolean
+  def isValidRedirectUri(clientId: String, uri: String): Boolean
 }
