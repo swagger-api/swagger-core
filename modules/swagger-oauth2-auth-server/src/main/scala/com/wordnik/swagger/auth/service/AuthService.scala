@@ -34,13 +34,8 @@ class AuthService extends TokenCache {
     Option(tokenCache.getOrElse(authorizationCode, null)) match {
       case Some(token) if(token.getRemaining > 0) => {
         token.tokenResponse match {
-          case e: AnonymousTokenResponse => {
-            TokenScope.unsetUserId()
-          }
-          case e: UserTokenResponse => {
-            // add user id + other scope to the TLV
-            TokenScope.setUserId(e.userId)
-          }
+          case e: AnonymousTokenResponse => TokenScope.unsetUserId()
+          case e: UserTokenResponse => TokenScope.setUserId(e.userId)
           case _ => throw new Exception("unauthorized")
         }
         f
@@ -194,8 +189,6 @@ class AuthService extends TokenCache {
       val builder = OAuthASResponse.authorizationResponse(request, HttpServletResponse.SC_FOUND)
 
       if (responseType.equals(ResponseType.CODE.toString())) {
-        // val showDialog = true
-        // if(showDialog) {
         val requestMap = Map(
           OAuth.OAUTH_STATE -> Option(oauthRequest.getParam(OAuth.OAUTH_STATE)),
           OAuth.OAUTH_REDIRECT_URI -> Option(oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI)),
@@ -214,22 +207,6 @@ class AuthService extends TokenCache {
           request.getRequestURI,
           "scope",
           Option(requestId))
-        /*
-        }
-        else {
-          println(responseType)
-          Option(oauthRequest.getParam(OAuth.OAUTH_STATE)) match {
-            case Some(state) => //builder.setState(state)
-            case _ =>
-          }
-          val code = generateCode
-
-          codeCache.add(code)
-          val redirectURI = oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI)
-          val response = builder.location(redirectURI).buildQueryMessage()
-          val url = new URI(response.getLocationUri())
-          ApiResponseMessage(response.getResponseStatus(), url.toString)
-        }*/
       }
       else if (responseType.equals(ResponseType.TOKEN.toString())) {
         // client ID is required!
