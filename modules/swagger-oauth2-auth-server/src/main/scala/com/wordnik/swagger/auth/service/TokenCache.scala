@@ -17,16 +17,18 @@ trait TokenCache {
   def tokenCache = TokenCache.tokenCache
   def requestCache = TokenCache.requestCache
 
-  def generateRequestId() = {
-    "request-" + System.currentTimeMillis
-  }
+  def generateRequestId(clientId: String) = generateRandomCode("requestId", clientId)
 
-  def generateCode() = {
-    "code-" + System.currentTimeMillis
-  }
+  def generateCode(clientId: String) = generateRandomCode("code", clientId)
 
   def generateAccessToken() = {
     val oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator())
     oauthIssuerImpl.accessToken()
+  }
+
+  def generateRandomCode(scope: String, seed: String) = {
+    val keySource = scope + seed + System.currentTimeMillis.toString + new scala.util.Random(1).nextInt(1000)
+    val md = java.security.MessageDigest.getInstance("SHA-1")
+    new sun.misc.BASE64Encoder().encode(md.digest(keySource.getBytes))
   }
 }

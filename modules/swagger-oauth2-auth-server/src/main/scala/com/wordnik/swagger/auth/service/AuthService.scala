@@ -92,7 +92,7 @@ class AuthService extends TokenCache {
                   case i: Int => redirectUri + "?"
                 })
               }
-              val code = generateCode
+              val code = generateCode(clientId)
               TokenCache.codeCache += code
               LOGGER.debug("redirecting to " + redirectTo + "code=" + code)
               response.sendRedirect(redirectTo + "code=" + code)
@@ -201,7 +201,7 @@ class AuthService extends TokenCache {
           OAuth.OAUTH_REDIRECT_URI -> Option(oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI)),
           OAuth.OAUTH_CLIENT_ID -> Option(oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID)))
 
-        val requestId = generateRequestId
+        val requestId = generateRequestId(oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID))
         TokenCache.requestCache += requestId -> requestMap
 
         val dialogClass = Option(request.getSession.getServletContext.getInitParameter("DialogImplementation")).getOrElse({
