@@ -1,5 +1,5 @@
 /**
- *  Copyright 2013 Wordnik, Inc.
+ *  Copyright 2012 Wordnik, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package com.wordnik.swagger.sample.resource
 
 import com.wordnik.swagger.sample.exception.{ ApiException, BadRequestException, NotFoundException }
-import com.wordnik.swagger.sample.model.ApiResponseMessage
+import com.wordnik.swagger.sample.model.ApiResponse
 
 import javax.ws.rs.ext.{ ExceptionMapper, Provider }
 import javax.ws.rs.core.Response
@@ -26,15 +26,16 @@ import javax.ws.rs.core.Response.Status
 @Provider
 class ApplicationExceptionMapper extends ExceptionMapper[ApiException] {
   def toResponse(exception: ApiException): Response = {
+    exception.printStackTrace
     exception match {
       case e: NotFoundException =>
-        Response.status(Status.NOT_FOUND).entity(ApiResponseMessage(404, e.getMessage())).build
+        Response.status(Status.NOT_FOUND).entity(new ApiResponse(ApiResponse.ERROR, e.getMessage())).build
       case e: BadRequestException =>
-        Response.status(Status.BAD_REQUEST).entity(ApiResponseMessage(400, e.getMessage())).build
+        Response.status(Status.BAD_REQUEST).entity(new ApiResponse(ApiResponse.ERROR, e.getMessage())).build
       case e: ApiException =>
-        Response.status(Status.BAD_REQUEST).entity(ApiResponseMessage(400, e.getMessage())).build
+        Response.status(Status.BAD_REQUEST).entity(new ApiResponse(ApiResponse.ERROR, e.getMessage())).build
       case _ =>
-        Response.status(Status.INTERNAL_SERVER_ERROR).entity(ApiResponseMessage(500, "a system error occured")).build
+        Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ApiResponse(ApiResponse.ERROR, "a system error occured")).build
     }
   }
 }
@@ -42,14 +43,14 @@ class ApplicationExceptionMapper extends ExceptionMapper[ApiException] {
 @Provider
 class SampleExceptionMapper extends ExceptionMapper[Exception] {
   def toResponse(exception: Exception): Response = {
+    exception.printStackTrace
     exception match {
       case e: javax.ws.rs.WebApplicationException =>
-        Response.status(e.getResponse.getStatus).entity(ApiResponseMessage(e.getResponse.getStatus, e.getMessage())).build
+        Response.status(e.getResponse.getStatus).entity(new ApiResponse(e.getResponse.getStatus, e.getMessage())).build
       case e: com.fasterxml.jackson.core.JsonParseException =>
-        Response.status(400).entity(ApiResponseMessage(400, "bad input")).build
+        Response.status(400).entity(new ApiResponse(400, "bad input")).build
       case _ => {
-        exception.printStackTrace
-        Response.status(500).entity(ApiResponseMessage(500, "something bad happened")).build
+        Response.status(500).entity(new ApiResponse(500, "something bad happened")).build
       }
     }
   }
