@@ -4,7 +4,7 @@ import play.Project._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2"
-  val appVersion = "1.3.2-SNAPSHOT"
+  val appVersion = "1.3.3-SNAPSHOT"
 
   checksums in update := Nil
 
@@ -12,9 +12,9 @@ object ApplicationBuild extends Build {
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.1.3",
     "com.fasterxml.jackson.core" % "jackson-annotations" % "2.1.4",
     "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" % "swagger-core_2.10" % "1.3.2-SNAPSHOT",
-    "com.wordnik" % "swagger-annotations" % "1.3.2-SNAPSHOT",
-    "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.2-SNAPSHOT",
+    "com.wordnik" % "swagger-core_2.10" % "1.3.3-SNAPSHOT",
+    "com.wordnik" % "swagger-annotations" % "1.3.3-SNAPSHOT",
+    "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.3-SNAPSHOT",
     "javax.ws.rs" % "jsr311-api" % "1.1.1",
     "org.mockito" % "mockito-core" % "1.9.5" % "test")
 
