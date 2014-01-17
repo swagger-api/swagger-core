@@ -52,5 +52,7 @@ public @interface Api {
   String protocols() default "";
 
   /** authorizations required by this Api */
-  String authorizations() default "";
+  // String authorizations() default "";
+  /** authorizations required by this Api */
+  Authorization[] authorizations() default @Authorization("");
 }
