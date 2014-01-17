@@ -16,17 +16,12 @@
 
 package models
 
-import javax.xml.bind.annotation.{ XmlRootElement, XmlElement }
+import com.wordnik.swagger.annotations._
 
-import scala.reflect.BeanProperty
+import scala.annotation.target.field
 
-@XmlRootElement(name = "Tag")
-class Tag {
-  @XmlElement(name = "id")
-  @BeanProperty
-  var id: Long = 0
 
-  @XmlRootElement(name = "name")
-  @BeanProperty
-  var name: String = _
-}
+@ApiModel("Tag")
+case class Tag (
+  @(ApiModelProperty @field)(position=1)id: Long,
+  @(ApiModelProperty @field)(position=2)name: String)
