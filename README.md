@@ -36,7 +36,7 @@ You need the following installed and available in your $PATH:
 
 <li>- Apache maven 3.0.3 or greater (http://maven.apache.org/)
 
-### To build from source (currently 1.3.1)
+### To build from source (currently 1.3.2)
 ```
 # first time building locally
 mvn -N
