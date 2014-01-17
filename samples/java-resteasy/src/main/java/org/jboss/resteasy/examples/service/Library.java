@@ -21,9 +21,8 @@ import java.io.StringWriter;
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
  * @version $Revision: 1 $
  */
-@Api(value = "/library", 
-   description = "the Library api")
-@Path("/library.json")
+@Api(value = "/library", description = "the Library api")
+@Path("/library")
 public class Library
 {
    private HashMap<String, Book> books = new HashMap<String, Book>();
