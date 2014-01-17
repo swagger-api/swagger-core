@@ -18,7 +18,7 @@ package com.wordnik.test.swagger.integration
 
 import com.wordnik.swagger.model._
 
-import com.wordnik.swagger.core.util.ScalaJsonUtil
+import com.wordnik.swagger.core.util.{ ScalaJsonUtil, JsonSerializer }
 
 import org.junit.runner.RunWith
 
@@ -34,7 +34,7 @@ import scala.io._
 class ResourceListingIT extends FlatSpec with ShouldMatchers {
   it should "read a resource listing" in {
     val json = Source.fromURL("http://localhost:8002/api/api-docs").mkString
-    val doc = ScalaJsonUtil.mapper.readValue(json, classOf[ResourceListing])
+    val doc = JsonSerializer.asResourceListing(json)
 
     assert(doc.apis.size === 2)
     assert((doc.apis.map(api => api.path).toSet & Set("/pet", "/user")).size == 2)
@@ -46,10 +46,9 @@ class ResourceListingIT extends FlatSpec with ShouldMatchers {
     assert(((xml \ "apis").map(api => (api \ "path").text).toSet & Set("/pet", "/user")).size == 2)
   }
 
-  ignore should "read the pet api description" in {
+  it should "read the pet api description" in {
     val json = Source.fromURL("http://localhost:8002/api/api-docs/pet").mkString
-    println(json)
-    val doc = ScalaJsonUtil.mapper.readValue(json, classOf[ApiListing])
+    val doc = JsonSerializer.asApiListing(json)
     assert(doc.apis.size === 3)
     assert((doc.apis.map(api => api.path).toSet &
       Set("/pet/{petId}",
@@ -59,8 +58,8 @@ class ResourceListingIT extends FlatSpec with ShouldMatchers {
 
   ignore should "read the user api with array and list data types as post data" in {
     val json = Source.fromURL("http://localhost:8002/api/api-docs/user").mkString
-    val doc = ScalaJsonUtil.mapper.readValue(json, classOf[ApiListing])
-    assert(doc.apis.size === 6)
+    val doc = JsonSerializer.asApiListing(json)
+    assert(doc.apis.size === 3)
     assert((doc.apis.map(api => api.path).toSet &
       Set("/user",
         "/user/createWithArray",

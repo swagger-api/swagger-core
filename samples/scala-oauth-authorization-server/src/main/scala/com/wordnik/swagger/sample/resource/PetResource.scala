@@ -29,6 +29,8 @@ import com.sun.jersey.multipart.FormDataParam
 
 import org.apache.commons.io.IOUtils
 
+import org.slf4j.LoggerFactory
+
 import java.io.{File, FileInputStream, InputStream, FileOutputStream}
 
 import javax.servlet.http.HttpServletRequest
@@ -40,6 +42,8 @@ import javax.ws.rs._
 @Api(value = "/pet", description = "Operations about pets")
 @Produces(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN, MediaType.TEXT_HTML))
 class PetResource extends RestResourceUtil {
+  private val LOGGER = LoggerFactory.getLogger(classOf[PetResource])
+
   @GET
   @Path("/{petId}")
   @ApiOperation(value = "Find pet by ID", notes = "Returns a pet based on ID", response = classOf[Pet])
@@ -67,7 +71,7 @@ class PetResource extends RestResourceUtil {
     @ApiParam(value = "Additional data to pass to server") @FormDataParam("additionalMetadata") testString: String,
     @ApiParam(value = "file to upload") @FormDataParam("file") inputStream: InputStream,
     @ApiParam(value = "file detail") @FormDataParam("file") fileDetail: FormDataContentDisposition) = {
-    println("testString: " + testString)
+    LOGGER.debug("testString: " + testString)
     val uploadedFileLocation = "./" + fileDetail.getFileName
     IOUtils.copy(inputStream, new FileOutputStream(uploadedFileLocation))
     val msg = "additionalMetadata: " + testString + "\nFile uploaded to " + uploadedFileLocation + ", " + (new java.io.File(uploadedFileLocation)).length + " bytes"
@@ -102,7 +106,7 @@ class PetResource extends RestResourceUtil {
   def addPet(
     @ApiParam(value = "Pet object that needs to be added to the store", required = true) pet: Pet) = {
     PetData.addPet(pet)
-    println("added pet " + pet)
+    LOGGER.debug("added pet " + pet)
     Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build
   }
 
@@ -193,7 +197,7 @@ class PetResource extends RestResourceUtil {
    @ApiParam(value = "Updated name of the pet", required = false)@FormParam("name") name: String,
    @ApiParam(value = "Updated status of the pet", required = false)@FormParam("status") status: String
    ) = {
-    println((name, status))
+    LOGGER.debug((name, status))
    // PetData.addPet(pet)
     Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build
   }

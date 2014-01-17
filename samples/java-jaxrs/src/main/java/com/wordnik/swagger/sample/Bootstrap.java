@@ -15,9 +15,6 @@ public class Bootstrap extends HttpServlet {
     // do any additional initialization here, such as set your base path programmatically as such:
     // ConfigFactory.config().setBasePath("http://www.foo.com/");
 
-    // add a custom filter
-    FilterFactory.setFilter(new CustomFilter());
-
     ApiInfo info = new ApiInfo(
       "Swagger Sample App",                             /* title */
       "This is a sample server Petstore server.  You can find out more about Swagger " + 
@@ -29,8 +26,9 @@ public class Bootstrap extends HttpServlet {
       "http://www.apache.org/licenses/LICENSE-2.0.html" /* license URL */
     );
 
-    List<String> scopes = new ArrayList<String>();
-    scopes.add("PUBLIC");
+    List<AuthorizationScope> scopes = new ArrayList<AuthorizationScope>();
+    scopes.add(new AuthorizationScope("email", "Access to your email address"));
+    scopes.add(new AuthorizationScope("pets", "Access to your pets"));
 
     List<GrantType> grantTypes = new ArrayList<GrantType>();
 

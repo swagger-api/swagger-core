@@ -18,7 +18,7 @@ package com.wordnik.test.swagger.integration
 
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.model._
-import com.wordnik.swagger.core.util.ScalaJsonUtil
+import com.wordnik.swagger.core.util.{ ScalaJsonUtil, JsonSerializer }
 
 import org.junit.runner.RunWith
 
@@ -34,14 +34,14 @@ import scala.io._
 class ResourceListingIT extends FlatSpec with ShouldMatchers {
   it should "read a resource listing" in {
     val json = Source.fromURL("http://localhost:8002/resteasy/api-docs").mkString
-    val doc = ScalaJsonUtil.mapper.readValue(json, classOf[ResourceListing])
+    val doc = JsonSerializer.asResourceListing(json)
     doc.apis.size should be (1)
     (doc.apis.map(api => api.path).toSet & Set("/library")).size should be (1)
   }
 
   it should "read an api declaration" in {
     val json = Source.fromURL("http://localhost:8002/resteasy/api-docs/library").mkString
-    val doc = ScalaJsonUtil.mapper.readValue(json, classOf[ApiListing])
+    val doc = JsonSerializer.asApiListing(json)
     doc.apis.size should be (2)
     (doc.apis.map(api => api.path).toSet & Set("/library/books/badger", "/library/books/mapped")).size should be (2)
     (doc.models.get.map(_._1).toSet & Set("listing", "book")).size should be (2)
