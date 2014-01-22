@@ -33,7 +33,7 @@ class LoginServlet extends HttpServlet {
   @throws(classOf[ServletException])
   override protected def doGet(request: HttpServletRequest, response: HttpServletResponse) = {
     response.setStatus(400)
-    response.setContentType("application/json")
+    response.setContentType("application/json; charset=utf-8")
     response.getOutputStream.write(JsonSerializer.asJson(ApiResponseMessage(400, "get requests are not supported")).getBytes("utf-8"))
   }
 }

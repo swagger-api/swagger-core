@@ -6,16 +6,46 @@ import org.apache.oltu.oauth2.as.issuer.{ MD5Generator, OAuthIssuerImpl }
 
 import scala.collection.mutable.{ HashSet, HashMap }
 
-object TokenCache {
-  val codeCache = new HashSet[String]
-  val tokenCache = new HashMap[String, TokenWrapper]
-  val requestCache = new HashMap[String, Map[String, Option[String]]]
+trait TokenCache {
+  def hasCode(code: String): Boolean
+  def addCode(code: String)
+  def removeCode(code: String)
+
+  def hasAccessCode(accessCode: String): Boolean
+  def getTokenForAccessCode(accessCode: String): TokenWrapper
+  def addAccessCode(accessCode: String, token: TokenWrapper)
+  def removeAccessCode(accessCode: String)
+
+  def hasRequestId(requestId: String): Boolean
+  def getRequestId(requestId: String): Map[String, Option[String]]
+  def addRequestId(requestId: String, requestMap: Map[String, Option[String]])
+  def removeRequestId(requestId: String)
 }
 
-trait TokenCache {
-  def codeCache = TokenCache.codeCache
-  def tokenCache = TokenCache.tokenCache
-  def requestCache = TokenCache.requestCache
+object TokenFactory {
+  var tokenCache: Option[TokenCache] = None
+
+  def apply(): TokenCache = {
+    if(tokenCache == None)
+      tokenCache = Some(new DefaultTokenCache())
+    tokenCache.get
+  }
+}
+
+trait TokenStore {
+  def hasCode(code: String): Boolean = TokenFactory().hasCode(code)
+  def addCode(code: String) = TokenFactory().addCode(code)
+  def removeCode(code: String) = TokenFactory().removeCode(code)
+
+  def hasAccessCode(accessCode: String): Boolean = TokenFactory().hasAccessCode(accessCode)
+  def getTokenForAccessCode(accessCode: String): TokenWrapper = TokenFactory().getTokenForAccessCode(accessCode)
+  def addAccessCode(accessCode: String, token: TokenWrapper) = TokenFactory().addAccessCode(accessCode, token)
+  def removeAccessCode(accessCode: String) = TokenFactory().removeAccessCode(accessCode)
+
+  def hasRequestId(requestId: String): Boolean = TokenFactory().hasRequestId(requestId)
+  def getRequestId(requestId: String): Map[String, Option[String]] = TokenFactory().getRequestId(requestId)
+  def addRequestId(requestId: String, requestMap: Map[String, Option[String]]) = TokenFactory().addRequestId(requestId, requestMap)
+  def removeRequestId(requestId: String) = TokenFactory().removeRequestId(requestId)
 
   def generateRequestId(clientId: String) = generateRandomCode("requestId", clientId)
 
