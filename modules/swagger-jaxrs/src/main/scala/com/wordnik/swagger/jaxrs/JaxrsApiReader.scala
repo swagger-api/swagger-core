@@ -313,6 +313,14 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
           None,
           orderedOperations.toList)
       }).toList
+
+      val authorizations:List[com.wordnik.swagger.model.Authorization] = Option(api.authorizations) match {
+        case Some(e) => (for(a <- e) yield {
+          val scopes = (for(s <- a.scopes) yield com.wordnik.swagger.model.AuthorizationScope(s.scope, s.description)).toArray
+          new com.wordnik.swagger.model.Authorization(a.value, scopes)
+        }).toList
+        case _ => List()
+      }
       val models = ModelUtil.modelsFromApis(apis)
       Some(ApiListing (
         apiVersion = config.apiVersion,
@@ -325,6 +333,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
         produces = produces,
         consumes = consumes,
         protocols = protocols,
+        authorizations = authorizations,
         position = api.position)
       )
     }
