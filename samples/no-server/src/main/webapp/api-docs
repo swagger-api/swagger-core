@@ -1,11 +1,7 @@
 {
-  "apiVersion": "0.2",
+  "apiVersion": "1.0.0",
   "swaggerVersion": "1.2",
   "apis": [
-    {
-      "path": "http://localhost:8000/listings/store",
-      "description": "Operations about store"
-    },
     {
       "path": "http://localhost:8000/listings/pet",
       "description": "Operations about pets"
@@ -13,6 +9,18 @@
     {
       "path": "http://localhost:8000/listings/user",
       "description": "Operations about user"
+    },
+    {
+      "path": "http://localhost:8000/listings/store",
+      "description": "Operations about store"
     }
-  ]
+  ],
+  "info": {
+    "title": "Swagger Sample App",
+    "description": "This is a sample server Petstore server.  You can find out more about Swagger \n    at <a href=\"http://swagger.wordnik.com\">http://swagger.wordnik.com</a> or on irc.freenode.net, #swagger.  For this sample,\n    you can use the api key \"special-key\" to test the authorization filters",
+    "termsOfServiceUrl": "http://helloreverb.com/terms/",
+    "contact": "apiteam@wordnik.com",
+    "license": "Apache 2.0",
+    "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0.html"
+  }
 }
