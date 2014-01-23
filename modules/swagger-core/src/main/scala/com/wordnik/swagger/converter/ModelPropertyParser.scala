@@ -110,8 +110,11 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     }
 
     try {
-      val fieldAnnotations = getDeclaredField(this.cls, name).getAnnotations()
+      val fieldAnnotations = getDeclaredField(this.cls, originalName).getAnnotations()
       var propAnnoOutput = processAnnotations(name, fieldAnnotations)
+      var fieldName = propAnnoOutput("name").asInstanceOf[String] 
+      if (fieldName != null) name =  fieldName 
+    
       var propPosition = propAnnoOutput("position").asInstanceOf[Int]
 
       if(allowableValues == None) 
