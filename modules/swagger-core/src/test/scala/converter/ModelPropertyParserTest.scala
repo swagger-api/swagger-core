@@ -26,4 +26,17 @@ class ModelPropertyParserTest extends FlatSpec with ShouldMatchers {
     val parser = new ModelPropertyParser(cls)
     parser.parse
   }
+
+  it should "mimic Jackson's field->method annotation inheritance" in {
+    val cls = classOf[ModelWithJacksonAnnotatedPrivateField]
+    implicit val properties = new scala.collection.mutable.LinkedHashMap[String, ModelProperty]
+    val parser = new ModelPropertyParser(cls)
+    parser.parse
+
+    properties.keySet.size should be (4)
+    properties.getOrElse("rawFieldProp", null) should not be (null)
+    properties.getOrElse("renamedJacksonProp", null) should not be (null)
+    properties.getOrElse("renamedJacksonMethod", null) should not be (null)
+    properties.getOrElse("fieldLevelJacksonProp", null) should not be (null)
+  }
 }
