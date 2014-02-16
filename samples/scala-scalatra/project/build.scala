@@ -7,7 +7,7 @@ object PetstoreBuild extends Build {
   val Organization = "com.wordnik"
   val Name = "Petstore"
   val Version = "1.0.0"
-  val ScalaVersion = "2.10.0"
+  val ScalaVersion = "2.10.3"
   val ScalatraVersion = "2.2.0"
 
   lazy val project = Project (
