@@ -33,7 +33,14 @@ class PetApiController extends BaseApiController {
       }
   }
 
-  @ApiOperation(value = "Add a new Pet", response = classOf[Void], httpMethod = "POST")
+  @ApiOperation(value = "Add a new Pet",
+    response = classOf[Void],
+    httpMethod = "POST",
+    authorizations = Array(new Authorization(value="oauth2",
+    scopes = Array(
+      new AuthorizationScope(scope = "test:anything", description = "anything"),
+      new AuthorizationScope(scope = "test:nothing", description = "nothing")
+    ))))
   @ApiResponses(Array(
     new ApiResponse(code = 405, message = "Invalid input")))
   @ApiImplicitParams(Array(
