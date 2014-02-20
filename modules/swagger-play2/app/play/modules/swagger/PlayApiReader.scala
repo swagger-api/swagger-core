@@ -359,6 +359,8 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
    null
   }
 
-
+  def findSubresourceType(method: Method): Class[_] = {
+    method.getReturnType
+  }
 }
 
