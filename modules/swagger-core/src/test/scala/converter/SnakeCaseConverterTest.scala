@@ -29,7 +29,8 @@ class SnakeCaseConverterTest extends FlatSpec with ShouldMatchers {
     // make sure the field bar: converter.Bar is not present
     ModelConverters.read(classOf[SnakeCaseModel]) match {
       case Some(model) => {
-        println(JsonSerializer.asJson(model))
+        model.id should be ("SnakeCaseModel")
+        model.name should be ("SnakeCaseModel")
       }
       case _ => fail("didn't read anything")
     }
@@ -52,7 +53,10 @@ class SnakeCaseConverter extends SwaggerSchemaConverter {
         val property = p.copy(`type` = toSnakeCase(p.`type`))
         properties += key -> property
       })
-      model.copy(id = toSnakeCase(model.id), properties = properties)
+      model.copy(
+        id = toSnakeCase(model.id), 
+        name = toSnakeCase(model.name), 
+        properties = properties)
     })
   }
 
