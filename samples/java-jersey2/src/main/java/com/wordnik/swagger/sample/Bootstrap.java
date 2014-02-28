@@ -29,8 +29,9 @@ public class Bootstrap extends HttpServlet {
       "http://www.apache.org/licenses/LICENSE-2.0.html" /* license URL */
     );
 
-    List<String> scopes = new ArrayList<String>();
-    scopes.add("PUBLIC");
+    List<AuthorizationScope> scopes = new ArrayList<AuthorizationScope>();
+    scopes.add(new AuthorizationScope("email", "Access to your email address"));
+    scopes.add(new AuthorizationScope("pets", "Access to your pets"));
 
     List<GrantType> grantTypes = new ArrayList<GrantType>();
 
