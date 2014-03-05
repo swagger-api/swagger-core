@@ -81,16 +81,17 @@ class AuthService extends TokenStore {
           LOGGER.debug("username " + username + " has request id=" + requestId)
           if(hasRequestId(requestId)) {
             LOGGER.debug("token for requestId " + requestId + " found")
-            val token = getRequestId(requestId)
-            val redirectUri = token(OAuth.OAUTH_REDIRECT_URI ).get
+            val requestToken = getRequestId(requestId)
+            val redirectUri = requestToken(OAuth.OAUTH_REDIRECT_URI ).get
             val redirectTo = {
               (redirectUri.indexOf("?") match {
                 case i: Int if(i >= 0) => redirectUri + "&"
                 case i: Int => redirectUri + "?"
               })
             }
-            val code = generateCode(clientId)
-            addCode(code)
+            val code = exchangeRequestIdForCode(clientId)
+            val token = UserTokenResponse(3600, code, 1)
+            addAccessCode(code, TokenWrapper(new Date, token))
             LOGGER.debug("redirecting to " + redirectTo + "code=" + code)
             response.sendRedirect(redirectTo + "code=" + code)
           }
@@ -153,7 +154,7 @@ class AuthService extends TokenStore {
       if(validator.isValidClient(clientId, clientSecret)) {
         if("authorization_code" == grantType) {
           LOGGER.debug("grant type is " + grantType)
-          if(hasCode(code)){
+          if(hasAccessCode(code)){
             throw new Exception("invalid code supplied")
           }
           else {

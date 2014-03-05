@@ -7,11 +7,8 @@ import org.apache.oltu.oauth2.as.issuer.{ MD5Generator, OAuthIssuerImpl }
 import scala.collection.mutable.{ HashSet, HashMap }
 
 trait TokenCache {
-  def hasCode(code: String): Boolean
-  def addCode(code: String)
-  def removeCode(code: String)
-
   def hasAccessCode(accessCode: String): Boolean
+  def exchangeRequestIdForCode(requestId: String): String
   def getTokenForAccessCode(accessCode: String): TokenWrapper
   def addAccessCode(accessCode: String, token: TokenWrapper)
   def removeAccessCode(accessCode: String)
@@ -33,11 +30,8 @@ object TokenFactory {
 }
 
 trait TokenStore {
-  def hasCode(code: String): Boolean = TokenFactory().hasCode(code)
-  def addCode(code: String) = TokenFactory().addCode(code)
-  def removeCode(code: String) = TokenFactory().removeCode(code)
-
   def hasAccessCode(accessCode: String): Boolean = TokenFactory().hasAccessCode(accessCode)
+  def exchangeRequestIdForCode(requestId: String): String = TokenFactory().exchangeRequestIdForCode(requestId)
   def getTokenForAccessCode(accessCode: String): TokenWrapper = TokenFactory().getTokenForAccessCode(accessCode)
   def addAccessCode(accessCode: String, token: TokenWrapper) = TokenFactory().addAccessCode(accessCode, token)
   def removeAccessCode(accessCode: String) = TokenFactory().removeAccessCode(accessCode)
@@ -47,10 +41,14 @@ trait TokenStore {
   def addRequestId(requestId: String, requestMap: Map[String, Option[String]]) = TokenFactory().addRequestId(requestId, requestMap)
   def removeRequestId(requestId: String) = TokenFactory().removeRequestId(requestId)
 
-  def generateRequestId(clientId: String) = generateRandomCode("requestId", clientId)
+  def generateRequestId(clientId: String) = TokenGenerator.generateRandomCode("requestId", clientId)
 
-  def generateCode(clientId: String) = generateRandomCode("code", clientId)
+  def generateCode(clientId: String) = TokenGenerator.generateRandomCode("code", clientId)
 
+  def generateAccessToken() = TokenGenerator.generateAccessToken()
+}
+
+object TokenGenerator {
   def generateAccessToken() = {
     val oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator())
     oauthIssuerImpl.accessToken()

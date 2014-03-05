@@ -5,15 +5,11 @@ import com.wordnik.swagger.auth.model.TokenWrapper
 import scala.collection.mutable.{ HashSet, HashMap }
 
 class DefaultTokenCache extends TokenCache {
-  val codeCache = new HashSet[String]
   val tokenCache = new HashMap[String, TokenWrapper]
   val requestCache = new HashMap[String, Map[String, Option[String]]]
 
-  def hasCode(code: String): Boolean = codeCache.contains(code)
-  def addCode(code: String) = codeCache += code
-  def removeCode(code: String) = codeCache.remove(code)
-
   def hasAccessCode(accessCode: String): Boolean = tokenCache.contains(accessCode)
+  def exchangeRequestIdForCode(requestId: String): String = TokenGenerator.generateAccessToken()
   def getTokenForAccessCode(accessCode: String) = tokenCache(accessCode)
   def addAccessCode(accessCode: String, token: TokenWrapper) = tokenCache += accessCode -> token
   def removeAccessCode(accessCode: String) = tokenCache.remove(accessCode)
