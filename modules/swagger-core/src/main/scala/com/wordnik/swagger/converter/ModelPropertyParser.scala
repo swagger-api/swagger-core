@@ -53,14 +53,14 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
   def parseField(field: Field) = {
     LOGGER.debug("processing field " + field)
     val returnClass = field.getDeclaringClass
-    parsePropertyAnnotations(returnClass, field.getName, field.getAnnotations, field.getGenericType, field.getType)
+    parsePropertyAnnotations(returnClass, field.getName, field.getAnnotations, field.getGenericType, field.getType, true)
   }
 
   def parseMethod(method: Method) = {
     if (method.getParameterTypes == null || method.getParameterTypes.length == 0) {
       LOGGER.debug("processing method " + method)
       val returnClass = method.getReturnType
-      parsePropertyAnnotations(returnClass, method.getName, method.getAnnotations, method.getGenericReturnType, method.getReturnType)
+      parsePropertyAnnotations(returnClass, method.getName, method.getAnnotations, method.getGenericReturnType, method.getReturnType, false)
     }
   }
 
@@ -78,8 +78,11 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     }
   }
 
-  def parsePropertyAnnotations(returnClass: Class[_], propertyName: String, propertyAnnotations: Array[Annotation], genericReturnType: Type, returnType: Type): Any = {
-    val e = extractGetterProperty(propertyName)
+  def parsePropertyAnnotations(returnClass: Class[_], propertyName: String, propertyAnnotations: Array[Annotation], genericReturnType: Type, returnType: Type, isField: Boolean): Any = {
+    val e = isField match {
+      case true => (propertyName, false)
+      case false => extractGetterProperty(propertyName)
+    }
     var originalName = e._1
     var isGetter = e._2
 

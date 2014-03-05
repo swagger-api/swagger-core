@@ -6,7 +6,7 @@
     </layout>
   </appender>
   <logger name="com.wordnik" level="ERROR"/>
-  <root level="debug">
+  <root level="error">
     <appender-ref ref="STDOUT" />
   </root>
 </configuration>

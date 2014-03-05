@@ -51,7 +51,14 @@ class ModelPropertyTest extends FlatSpec with ShouldMatchers {
     intArray.`type` should be ("Array")
     val awardItems = intArray.items.getOrElse(fail("no items found"))
     awardItems.`type` should be ("int")
+  }
 
+  it should "read a model property" in {
+    val models = ModelConverters.readAll(classOf[IsModelTest])
+
+    models.size should be (1)
+    val props = models.filter(m => m.name == "IsModelTest").head
+    println(props)
   }
 }
 
@@ -69,3 +76,7 @@ case class Person (
 case class Employer (
   name: String,
   size: Int)
+
+case class IsModelTest (
+  is_happy: Boolean,
+  name: String)
