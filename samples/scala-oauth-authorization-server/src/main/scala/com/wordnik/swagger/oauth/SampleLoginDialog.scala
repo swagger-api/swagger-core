@@ -11,37 +11,14 @@ import java.util.Date
 import java.net.URLEncoder
 import java.net.URI
 
-class DefaultAuthDialog extends AuthDialog with TokenCache {
+class DefaultAuthDialog extends AuthDialog with TokenStore {
   /**
    * In this sample, the scope 'anonymous' will allow access if the redirectUri
    * is 'localhost' and provide an AnonymousTokenRequest, which is good for 3600
    * seconds
    */
   def show(clientId: String, redirectUri: String, scope: String, requestId: Option[String]) = {
-    if(scope == "anonymous") {
-      val url = "/oauth/login"
-
-      if(redirectUri.startsWith("http://localhost")) {
-        // it's good to proceed
-        val oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator())
-        val accessToken = oauthIssuerImpl.accessToken()
-        val token = AnonymousTokenResponse(3600, accessToken)
-        tokenCache += accessToken -> TokenWrapper(new Date, token)
-        val redirectTo = {
-          (redirectUri.indexOf("#") match {
-            case i: Int if(i >= 0) => redirectUri + "&"
-            case i: Int => redirectUri + "#"
-          }) + "access_token=" + accessToken
-        }
-        ApiResponseMessage(302, redirectTo)
-      }
-      else throw new Exception("bad redirect_uri")
-    }
-    else {
-      /**
-       * render the login dialog
-       */
-      val html = 
+    val html = 
 <html class="js placeholder">
   <head>
     <link rel="stylesheet" href="/css/auth.css"></link>
@@ -93,7 +70,6 @@ class DefaultAuthDialog extends AuthDialog with TokenCache {
     </section>
   </body>
 </html>
-      ApiResponseMessage(200, html.toString)
-    }
+    ApiResponseMessage(200, html.toString)
   }
 }
