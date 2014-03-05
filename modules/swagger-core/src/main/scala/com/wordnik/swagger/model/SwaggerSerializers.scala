@@ -483,7 +483,7 @@ trait Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[Authorization] if (e.size > 0) => {
+          case e: List[AuthorizationType] if (e.size > 0) => {
             Extraction.decompose((for(at <- e) yield {
               if(at.`type` != "") Some(at.`type`, at)
               else None

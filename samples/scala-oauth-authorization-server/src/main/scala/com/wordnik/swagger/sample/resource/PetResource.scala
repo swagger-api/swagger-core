@@ -203,7 +203,8 @@ class PetResource extends RestResourceUtil {
    @ApiParam(value = "Updated name of the pet", required = false)@FormParam("name") name: String,
    @ApiParam(value = "Updated status of the pet", required = false)@FormParam("status") status: String
    ) = {
-    LOGGER.debug(name + ", " + status)
+    LOGGER.debug("pet: " + (name, status))
+   // PetData.addPet(pet)
     Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build
   }
 }

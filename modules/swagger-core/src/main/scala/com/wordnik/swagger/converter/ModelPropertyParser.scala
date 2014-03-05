@@ -229,6 +229,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
           isDocumented = true
           allowableValues = Some(toAllowableValues(e.allowableValues))
           paramAccess = readString(e.access)
+          isTransient = e.hidden
         }
         case e: XmlAttribute => {
           updatedName = readString(e.name, name, "##default")
