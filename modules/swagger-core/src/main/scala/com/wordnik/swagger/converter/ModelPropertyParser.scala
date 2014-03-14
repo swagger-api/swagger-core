@@ -113,9 +113,13 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     }
 
     try {
-      val fieldAnnotations = getDeclaredField(this.cls, name).getAnnotations()
-      var propAnnoOutput = processAnnotations(name, fieldAnnotations)
+      val fieldAnnotations = getDeclaredField(this.cls, originalName).getAnnotations()
+      var propAnnoOutput = processAnnotations(originalName, fieldAnnotations)
       var propPosition = propAnnoOutput("position").asInstanceOf[Int]
+
+      if (name == null || name.equals(originalName)) {
+        name = propAnnoOutput("name").asInstanceOf[String]
+      }
 
       if(allowableValues == None) 
         allowableValues = propAnnoOutput("allowableValues").asInstanceOf[Option[AllowableValues]]
@@ -126,6 +130,8 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       isFieldExists = true
       if (!isTransient) isTransient = propAnnoOutput("isTransient").asInstanceOf[Boolean]
       if (!isXmlElement) isXmlElement = propAnnoOutput("isXmlElement").asInstanceOf[Boolean]
+
+      if (name == null) name = originalName
       isJsonProperty = propAnnoOutput("isJsonProperty").asInstanceOf[Boolean]
     } catch {
       //this means there is no field declared to look for field level annotations.
