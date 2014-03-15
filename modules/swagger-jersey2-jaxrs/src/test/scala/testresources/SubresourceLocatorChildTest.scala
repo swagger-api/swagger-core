@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response
 
 @Api(value = "/child",
   description = "Media Type Test",
-  produces = "application/json; charset=utf8",
+  produces = "application/json; charset=utf-8",
   protocols = "http, https")
 class SubresourceLocatorChildTest {
   @GET
