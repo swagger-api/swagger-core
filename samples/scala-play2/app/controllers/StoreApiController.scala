@@ -23,7 +23,8 @@ object StoreApiController extends BaseApiController {
   var storeData = new StoreData
 
   @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5. " +
-    "Anything above 5 or nonintegers will generate API errors", response = classOf[models.Order], httpMethod = "GET")
+    "Anything above 5 or nonintegers will generate API errors", response = classOf[models.Order],
+    httpMethod = "GET", nickname = "getOrderById")
   @ApiResponses(value = Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
     new ApiResponse(code = 404, message = "Order not found")))
@@ -35,7 +36,7 @@ object StoreApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Gets orders in the system", response = classOf[models.Order], httpMethod = "GET", responseContainer = "List")
+  @ApiOperation(value = "Gets orders in the system", response = classOf[models.Order], httpMethod = "GET", responseContainer = "List", nickname = "getOrders")
   @ApiResponses(Array(
     new ApiResponse(code = 404, message = "No Orders found")))
   def getOrders(@ApiImplicitParam(value = "Get all orders or only those which are complete", dataType = "Boolean", required = true)@QueryParam("isComplete") isComplete: Boolean) = Action { implicit request =>
@@ -43,7 +44,7 @@ object StoreApiController extends BaseApiController {
     JsonResponse(orders)
   }
 
-  @ApiOperation(value = "Place an order for a pet", response = classOf[Void], httpMethod = "POST")
+  @ApiOperation(value = "Place an order for a pet", response = classOf[Void], httpMethod = "POST", nickname = "placeOrder")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid order")))
   @ApiImplicitParams(Array(
@@ -60,7 +61,7 @@ object StoreApiController extends BaseApiController {
   }
 
   @ApiOperation(value = "Delete purchase order by ID", notes = "For valid response try integer IDs with value < 1000. " +
-    "Anything above 1000 or nonintegers will generate API errors", httpMethod = "DELETE")
+    "Anything above 1000 or nonintegers will generate API errors", httpMethod = "DELETE", nickname = "deleteOrder")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
     new ApiResponse(code = 404, message = "Order not found")))
