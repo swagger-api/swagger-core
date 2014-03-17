@@ -32,6 +32,8 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
 
   private var _routesCache: Map[String, RouteEntry] = null
 
+  override def readRecursive(docRoot: String, parentPath: String, cls: Class[_], config: com.wordnik.swagger.config.SwaggerConfig, operations: scala.collection.mutable.ListBuffer[(String, String, scala.collection.mutable.ListBuffer[com.wordnik.swagger.model.Operation])], parentMethods: scala.collection.mutable.ListBuffer[java.lang.reflect.Method]) = ???
+
   override def read(docRoot: String, cls: Class[_], config: SwaggerConfig): Option[ApiListing] = {
     Logger("swagger").debug("ControllerReader: read(docRoot = %s, cls = %s, config = %s)".format(docRoot, cls.getName, config.toString))
     val api = cls.getAnnotation(classOf[Api])
@@ -353,7 +355,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
    * @deprecated - do not be tempted to use this.... this is here to cover the method in the superclass.
    */
   @Deprecated
-  override def readMethod(method : java.lang.reflect.Method, parentParams : scala.List[com.wordnik.swagger.model.Parameter], parentMethods : scala.collection.mutable.ListBuffer[java.lang.reflect.Method]) : com.wordnik.swagger.model.Operation = {
+  override def readMethod(method : java.lang.reflect.Method, parentParams : scala.List[com.wordnik.swagger.model.Parameter], parentMethods : scala.collection.mutable.ListBuffer[java.lang.reflect.Method]) : Option[com.wordnik.swagger.model.Operation] = {
    // don't use this - it is specific to Jax-RS models.
     throw new RuntimeException("method not in use..")
    null

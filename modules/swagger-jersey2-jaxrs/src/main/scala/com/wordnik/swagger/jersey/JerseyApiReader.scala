@@ -43,8 +43,8 @@ class JerseyApiReader extends JaxrsApiReader {
   private val LOGGER = LoggerFactory.getLogger(classOf[JerseyApiReader])
 
   def readRecursive(
-    docRoot: String, 
-    parentPath: String, cls: Class[_], 
+    docRoot: String,
+    parentPath: String, cls: Class[_],
     config: SwaggerConfig,
     operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]],
     parentMethods: ListBuffer[Method]): Option[ApiListing] = {
@@ -75,12 +75,12 @@ class JerseyApiReader extends JaxrsApiReader {
         case _ => None
       }
       // look for method-level annotated properties
-      val parentParams: List[Parameter] = (for(field <- getAllFields(cls)) 
+      val parentParams: List[Parameter] = (for(field <- getAllFields(cls))
         yield {
           // only process fields with @ApiParam, @QueryParam, @HeaderParam, @PathParam
           if(field.getAnnotation(classOf[QueryParam]) != null || field.getAnnotation(classOf[HeaderParam]) != null ||
             field.getAnnotation(classOf[HeaderParam]) != null || field.getAnnotation(classOf[PathParam]) != null ||
-            field.getAnnotation(classOf[ApiParam]) != null) { 
+            field.getAnnotation(classOf[ApiParam]) != null) {
             val param = new MutableParameter
             param.dataType = field.getType.getName
             Option (field.getAnnotation(classOf[ApiParam])) match {
@@ -111,7 +111,7 @@ class JerseyApiReader extends JaxrsApiReader {
           case _ => {
             if(method.getAnnotation(classOf[ApiOperation]) != null) {
               val op = readMethod(method, parentParams, parentMethods)
-              appendOperation(endpoint, path, op, operations)
+              op.map(operation => appendOperation(endpoint, path, operation, operations))
             }
           }
         }
@@ -188,7 +188,7 @@ class JerseyApiReader extends JaxrsApiReader {
               mutable.paramType = "body"
               mutable.dataType = "File"
             }
-            case "file" => 
+            case "file" =>
             case "org.glassfish.jersey.media.multipart.FormDataContentDisposition" => shouldIgnore = true
             case _ => {
               mutable.name = readString(e.value, mutable.name)
