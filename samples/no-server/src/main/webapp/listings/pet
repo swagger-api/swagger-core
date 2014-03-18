@@ -430,6 +430,9 @@
         },
         "name": {
           "type": "string"
+        },
+        "pet": {
+          "$ref": "Pet"
         }
       }
     }

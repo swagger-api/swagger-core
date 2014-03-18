@@ -36,7 +36,7 @@
         <version>${jetty-version}</version>
         <configuration>
           <webAppConfig>
-            <contextPath>/api</contextPath>
+            <contextPath>/</contextPath>
           </webAppConfig>
           <webAppSourceDirectory>target/${project.artifactId}-${project.version}</webAppSourceDirectory>
           <stopPort>8079</stopPort>
@@ -76,7 +76,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>1.3.3</version>
+      <version>1.3.2</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
