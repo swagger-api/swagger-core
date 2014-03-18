@@ -110,8 +110,10 @@ class JerseyApiReader extends JaxrsApiReader {
           }
           case _ => {
             if(method.getAnnotation(classOf[ApiOperation]) != null) {
-              val op = readMethod(method, parentParams, parentMethods)
-              appendOperation(endpoint, path, op, operations)
+              readMethod(method, parentParams, parentMethods) match {
+                case Some(op) => Some(appendOperation(endpoint, path, op, operations))
+                case None => None
+              }
             }
           }
         }
