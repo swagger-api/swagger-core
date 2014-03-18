@@ -35,7 +35,7 @@ class MediaTypeTest extends FlatSpec with ShouldMatchers {
     val apiResource = reader.read("/api-docs", classOf[AnnotationMediaTypeResource], config).getOrElse(fail("should not be None"))
 
     apiResource.consumes.toSet should be (Set("application/json"))
-    apiResource.produces.toSet should be (Set("application/json; charset=utf8"))
+    apiResource.produces.toSet should be (Set("application/json; charset=utf-8"))
     apiResource.protocols.toSet should be (Set("http", "https"))
   }
 }

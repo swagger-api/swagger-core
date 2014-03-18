@@ -53,7 +53,7 @@ class TopLevelMediaTypeResource {
 @Produces(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
 @Api(value = "/mediaTest", 
   description = "Media Type Test",
-  produces = "application/json; charset=utf8",
+  produces = "application/json; charset=utf-8",
   protocols = "http, https")
 class AnnotationMediaTypeResource {
   @GET
