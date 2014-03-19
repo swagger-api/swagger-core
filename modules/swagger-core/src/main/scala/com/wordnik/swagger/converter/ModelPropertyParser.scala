@@ -57,7 +57,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
   }
 
   def parseMethod(method: Method) = {
-    if (method.getParameterTypes == null || method.getParameterTypes.length == 0) {
+    if ((method.getParameterTypes == null || method.getParameterTypes.length == 0) && !method.isBridge) {
       LOGGER.debug("processing method " + method)
       val returnClass = method.getReturnType
       parsePropertyAnnotations(returnClass, method.getName, method.getAnnotations, method.getGenericReturnType, method.getReturnType, false)
@@ -106,7 +106,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     var isXmlElement = processedAnnotations("isXmlElement").asInstanceOf[Boolean]
     val isDocumented = processedAnnotations("isDocumented").asInstanceOf[Boolean]
     var allowableValues = {
-      if(returnClass.isEnum) 
+      if(returnClass.isEnum)
         Some(AllowableListValues((for(v <- returnClass.getEnumConstants) yield v.toString).toList))
       else
         processedAnnotations("allowableValues").asInstanceOf[Option[AllowableValues]]
@@ -121,9 +121,9 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         name = propAnnoOutput("name").asInstanceOf[String]
       }
 
-      if(allowableValues == None) 
+      if(allowableValues == None)
         allowableValues = propAnnoOutput("allowableValues").asInstanceOf[Option[AllowableValues]]
-      if(description == None && propAnnoOutput.contains("description") && propAnnoOutput("description") != null) 
+      if(description == None && propAnnoOutput.contains("description") && propAnnoOutput("description") != null)
         description = Some(propAnnoOutput("description").asInstanceOf[String])
       if(propPosition != 0) position = propAnnoOutput("position").asInstanceOf[Int]
       if(required == false) required = propAnnoOutput("required").asInstanceOf[Boolean]
@@ -262,7 +262,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
           updatedName = readString(e.value, name)
           isJsonProperty = true
         }
-        case _ => 
+        case _ =>
       }
     }
     val output = new HashMap[String, Any]
@@ -407,7 +407,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         else hostClass.getName
       } else if (xmlRootElement != null) {
         if ("##default".equals(xmlRootElement.name())) {
-          if (isSimple) hostClass.getSimpleName 
+          if (isSimple) hostClass.getSimpleName
           else hostClass.getName
         } else {
           if (isSimple) readString(xmlRootElement.name())
