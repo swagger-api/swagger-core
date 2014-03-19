@@ -245,7 +245,6 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         }
         case e: XmlElement => {
           updatedName = readString(e.name, name, "##default")
-          // updatedName = readString(name, name)
           defaultValue = readString(e.defaultValue, defaultValue, "\u0000")
 
           required = e.required
