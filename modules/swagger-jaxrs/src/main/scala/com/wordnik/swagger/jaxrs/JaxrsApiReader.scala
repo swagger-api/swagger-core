@@ -86,16 +86,21 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
     parentMethods: ListBuffer[Method]
   ) = {
     val api = method.getAnnotation(classOf[Api])
-    val responseClass = if(apiOperation != null){
-      val baseName = apiOperation.response.getName
-      val output = apiOperation.responseContainer match {
-        case "" => baseName
-        case e: String => "%s[%s]".format(e, baseName)
+    val responseClass = {
+      if(apiOperation != null){
+        val baseName = apiOperation.response.getName
+        val output = apiOperation.responseContainer match {
+          case "" => baseName
+          case e: String => "%s[%s]".format(e, baseName)
+        }
+        output
       }
-      output
-    }
-    else {
-      "void"
+      else {
+        if(!"javax.ws.rs.core.Response".equals(method.getReturnType.getCanonicalName))
+          method.getReturnType.getName
+        else
+          "void"
+      }
     }
 
     var paramAnnotations: Array[Array[java.lang.annotation.Annotation]] = null
@@ -175,15 +180,15 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
             LOGGER.debug("processing " + param)
             val allowableValues = toAllowableValues(param.allowableValues)
             Parameter(
-              param.name,
-              Option(readString(param.value)),
-              Option(param.defaultValue).filter(_.trim.nonEmpty),
-              param.required,
-              param.allowMultiple,
-              param.dataType,
-              allowableValues,
-              param.paramType,
-              Option(param.access).filter(_.trim.nonEmpty))
+              name = param.name,
+              description = Option(readString(param.value)),
+              defaultValue = Option(param.defaultValue).filter(_.trim.nonEmpty),
+              required = param.required,
+              allowMultiple = param.allowMultiple,
+              dataType = param.dataType,
+              allowableValues = allowableValues,
+              paramType = param.paramType,
+              paramAccess = Option(param.access).filter(_.trim.nonEmpty))
           }).toList
         }
         case _ => List()
@@ -196,19 +201,19 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
     }
 
     Operation(
-      parseHttpMethod(method, apiOperation),
-      summary,
-      notes,
-      responseClass,
-      nickname,
-      position,
-      produces,
-      consumes,
-      protocols,
-      authorizations,
-      params ++ implicitParams,
-      apiResponses,
-      Option(isDeprecated))
+      method = parseHttpMethod(method, apiOperation),
+      summary = summary,
+      notes = notes,
+      responseClass = responseClass,
+      nickname = nickname,
+      position = position,
+      produces = produces,
+      consumes = consumes,
+      protocols = protocols,
+      authorizations = authorizations,
+      parameters = params ++ implicitParams,
+      responseMessages = apiResponses,
+      `deprecated` = Option(isDeprecated))
   }
 
   def readMethod(method: Method, parentParams: List[Parameter], parentMethods: ListBuffer[Method]): Option[Operation] = {

@@ -16,7 +16,18 @@ class NonAnnotatedResource {
   @GET
   @Path("/{id}")
   def getTest(
-    @QueryParam("id") id: String) = {
+    @QueryParam("id") id: String): Sample = {
+    val out = new Sample
+    out.name = "foo"
+    out.value = "bar"
+
+    out
+  }
+
+  @GET
+  @Path("/{id}/r")
+  def getWithResponse(
+    @QueryParam("id") id: String): Response = {
     val out = new Sample
     out.name = "foo"
     out.value = "bar"

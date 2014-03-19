@@ -24,13 +24,23 @@ class NonAnnotatedResourceTest extends FlatSpec with ShouldMatchers {
     val config = new SwaggerConfig()
     val apiResource = reader.read("/api-docs", classOf[NonAnnotatedResource], config).getOrElse(fail("should not be None"))
 
-    apiResource.apis.map(p => println(p.path))
+    val apis = apiResource.apis.map(m => (m.path -> m)).toMap
 
-    apiResource.apis.size should be (2)
-    val api = apiResource.apis.head
-    api.path should be ("/basic/{id}")
+    val api1 = apis("/basic/{id}/r")
+    val ops1 = api1.operations.map(m => (m.method -> m)).toMap
+    val getOp1 = ops1("GET")
+    getOp1.responseClass should be ("void")
 
-    val ops = api.operations
-    ops.size should be (2)
+    val api2 = apis("/basic/{id}")
+    val ops2 = api2.operations.map(m => (m.method -> m)).toMap
+
+    val getOp2 = ops2("GET")
+    getOp2.responseClass should be ("Howdy")
+
+    val putOp2 = ops2("PUT")
+    putOp2.responseClass should be ("void")
+
+    val models = apiResource.models.get
+    val howdy = models("Howdy")    
   }
 }
