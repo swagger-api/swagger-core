@@ -93,6 +93,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
 
     var required = processedAnnotations("required").asInstanceOf[Boolean]
     var position = processedAnnotations("position").asInstanceOf[Int]
+    var renamed = (processedAnnotations("name").asInstanceOf[String] != processedAnnotations("originalName").asInstanceOf[String])
 
     var description = {
       if(processedAnnotations.contains("description") && processedAnnotations("description") != null)
@@ -110,9 +111,12 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     }
 
     try {
-      val fieldAnnotations = getDeclaredField(this.cls, name).getAnnotations()
+      val fieldAnnotations = getDeclaredField(this.cls, originalName).getAnnotations()
       var propAnnoOutput = processAnnotations(name, fieldAnnotations)
       var propPosition = propAnnoOutput("position").asInstanceOf[Int]
+
+      if(!renamed && propAnnoOutput("isJsonProperty").asInstanceOf[Boolean])
+        name = propAnnoOutput("name").asInstanceOf[String]
 
       if(allowableValues == None) 
         allowableValues = propAnnoOutput("allowableValues").asInstanceOf[Option[AllowableValues]]
@@ -261,6 +265,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     output += "isXmlElement" -> isXmlElement
     output += "isDocumented" -> isDocumented
     output += "isJsonProperty" -> isJsonProperty
+    output += "originalName" -> name
     output += "name" -> updatedName
     output += "required" -> required
     output += "defaultValue" -> defaultValue
