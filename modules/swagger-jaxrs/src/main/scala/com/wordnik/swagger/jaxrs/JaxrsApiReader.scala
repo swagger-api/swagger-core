@@ -112,9 +112,15 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
       genericParamTypes = parentMethods.map(pm => pm.getGenericParameterTypes).reduceRight(_ ++ _) ++ method.getGenericParameterTypes
     }
 
-    val (produces, consumes, protocols, authorizations) = {
+    val (nickname, produces, consumes, protocols, authorizations) = {
       if(apiOperation != null) {
-        (Option(apiOperation.produces) match {
+        (
+        (if(apiOperation.nickname != null && apiOperation.nickname != "") 
+          apiOperation.nickname
+        else
+          method.getName
+        ),
+        Option(apiOperation.produces) match {
           case Some(e) if(e != "") => e.split(",").map(_.trim).toList
           case _ => method.getAnnotation(classOf[Produces]) match {
             case e: Produces => e.value.toList
@@ -140,7 +146,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
           case _ => List()
         })
       }
-      else((List(), List(), List(), List()))
+      else(method.getName, List(), List(), List(), List())
     }
     val params = parentParams ++ (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
       if(annotations.length > 0) {
@@ -194,7 +200,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
       summary,
       notes,
       responseClass,
-      method.getName,
+      nickname,
       position,
       produces,
       consumes,
