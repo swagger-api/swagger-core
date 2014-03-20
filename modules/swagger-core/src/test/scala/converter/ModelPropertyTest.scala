@@ -58,11 +58,25 @@ class ModelPropertyTest extends FlatSpec with ShouldMatchers {
 
     models.size should be (1)
     val props = models.filter(m => m.name == "IsModelTest").head
-    println(props)
+  }
+
+  it should "read a scala object" in {
+    val models = ModelConverters.readAll(classOf[Pet])
+
+    models.size should be (1)
+    val props = models.filter(m => m.name == "Pet").head
+
+    println(JsonSerializer.asJson(props))
   }
 }
 
 case class Family (membersSince: Date, members: List[Person])
+
+class Pet {
+  var name: String = _
+  var age: Int = 0
+  var birthday: java.util.Date = _
+}
 
 case class Person (
   firstname: String, 
