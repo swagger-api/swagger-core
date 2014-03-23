@@ -6,7 +6,7 @@ The goal of Swagger is to define a standard, language-agnostic interface to REST
 
 Swagger-core is the Java/Scala implementation of Swagger. It supports *JAX-RS*, *plain Servlets*, and *Play Framework*.
 
-Check out [Swagger-Spec](https://github.com/wordnik/swagger-spec) for additional information about the Swagger project, including additional libraries including support for SpringMVC, other languages and more. 
+Check out [Swagger-Spec](https://github.com/wordnik/swagger-spec) for additional information about the Swagger project, including additional libraries with support for SpringMVC, other languages and more. 
 
 ## See the Wiki!
 The [github wiki](https://github.com/wordnik/swagger-core/wiki) contains documentation, samples, etc.  Start there.
