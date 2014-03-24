@@ -22,13 +22,13 @@ import scala.concurrent.Future
   produces = "application/json, application/xml",
   consumes = "application/json, application/xml",
   protocols = "http, https",
-  authorizations = "vet, owner"
+  authorizations = Array(new Authorization("vet"), new Authorization("owner"))
 )
 object DogController extends Controller {
 
   @ApiOperation(value = "addDog1",
     httpMethod = "PUT",
-    authorizations = "",
+    authorizations = Array(),
     consumes = "",
     protocols = "")
   @ApiImplicitParams(Array(
@@ -41,7 +41,7 @@ object DogController extends Controller {
     notes = "Adds a dogs better",
     httpMethod = "PUT",
     nickname = "addDog2_nickname",
-    authorizations = "vet",
+    authorizations = Array(new Authorization("vet")),
     consumes = " application/json ",
     protocols = "http",
     position = 2)
@@ -55,7 +55,7 @@ object DogController extends Controller {
   @ApiOperation(value = "Add a new Dog",
     notes = "Adds a dogs nicely",
     httpMethod = "PUT",
-    authorizations = "vet, owner",
+    authorizations = Array(new Authorization("vet"), new Authorization("owner")),
     consumes = " application/json, text/yaml ",
     protocols = "http, https"
   )
