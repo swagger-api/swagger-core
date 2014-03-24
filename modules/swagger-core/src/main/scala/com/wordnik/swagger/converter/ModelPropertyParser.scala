@@ -349,6 +349,10 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
       val valueType = parameterizedType.getActualTypeArguments.head
       "Set[" + getDataType(valueType, valueType, isSimple) + "]"
+    } else if (TypeUtil.isParameterizedCollection(genericReturnType)) {
+      val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
+      val valueType = parameterizedType.getActualTypeArguments.head
+      "Array[" + getDataType(valueType, valueType, isSimple) + "]"
     } else if (TypeUtil.isParameterizedMap(genericReturnType)) {
       val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
       val typeArgs = parameterizedType.getActualTypeArguments
