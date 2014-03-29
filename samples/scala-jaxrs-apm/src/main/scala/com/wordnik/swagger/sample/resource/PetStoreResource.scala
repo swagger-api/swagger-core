@@ -16,73 +16,63 @@
 
 package com.wordnik.swagger.sample.resource
 
-import com.wordnik.util.perf._
 import com.wordnik.swagger.core._
 import com.wordnik.swagger.annotations._
-import com.wordnik.swagger.core.util.RestResourceUtil
+
 import com.wordnik.swagger.jaxrs._
 import com.wordnik.swagger.sample.model.Order
 import com.wordnik.swagger.sample.data.StoreData
 import com.wordnik.swagger.sample.exception.NotFoundException
+import com.wordnik.swagger.sample.util.RestResourceUtil
 
-import javax.ws.rs.core.Response
+import javax.ws.rs.core.{ Response, MediaType }
 import javax.ws.rs._
 
-trait PetStoreResource extends RestResourceUtil {
+
+@Path("/store")
+@Api(value="/store" , description = "Operations about store")
+@Produces(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
+class PetStoreResource extends RestResourceUtil {
   @GET
   @Path("/order/{orderId}")
-  @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5. " +
-    "Anything above 5 or nonintegers will generate API errors", responseClass = "com.wordnik.swagger.sample.model.Order")
+  @ApiOperation(value = "Find purchase order by ID",
+    notes = "For valid response try integer IDs with value <= 5. Anything above 5 or nonintegers will generate API errors", 
+    response = classOf[Order],
+    produces = "application/json,application/xml")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
     new ApiResponse(code = 404, message = "Order not found")))
   def getOrderById(
-    @ApiParam(value = "ID of pet that needs to be fetched", required = true)@PathParam("orderId") orderId: String) = {
-    Profile("/store/*", {
-      var order = StoreData.findOrderById(getLong(0, 10000, 0, orderId))
-      if (null != order) {
+      @ApiParam(value="ID of pet that needs to be fetched",required=true)@PathParam("orderId") orderId: String) = {
+      var order = StoreData.findOrderById(getLong(0,10000, 0, orderId))
+      if (null != order){
         Response.ok.entity(order).build
-      } else {
+      }else{
         throw new NotFoundException(404, "Order not found")
       }
-    })
   }
 
   @POST
   @Path("/order")
-  @ApiOperation(value = "Place an order for a pet", responseClass = "com.wordnik.swagger.sample.model.Order")
+  @ApiOperation(value = "Place an order for a pet")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid order")))
   def placeOrder(
-    @ApiParam(value = "order placed for purchasing the pet", required = true) order: Order) = {
-    Profile("/store/order (POST)", {
+      @ApiParam(value="order placed for purchasing the pet",required=true)order: Order) = {
       StoreData.placeOrder(order)
-      Response.ok.entity("").build
-    })
+      Response.ok.build
   }
 
   @DELETE
   @Path("/order/{orderId}")
-  @ApiOperation(value = "Delete purchase order by ID", notes = "For valid response try integer IDs with value < 1000. " +
-    "Anything above 1000 or nonintegers will generate API errors")
+  @ApiOperation(value = "Delete purchase order by ID",
+    notes = "For valid response try integer IDs with value < 1000.  Anything above 1000 or nonintegers will generate API errors")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
     new ApiResponse(code = 404, message = "Order not found")))
   def deleteOrder(
-    @ApiParam(value = "ID of the order that needs to be deleted", required = true)@PathParam("orderId") orderId: String) = {
-    Profile("/store/order/* (DELETE)", {
+      @ApiParam(value="ID of the order that needs to be deleted",required=true)@PathParam("orderId") orderId: String) = {
       StoreData.deleteOrder(getLong(0, 10000, 0, orderId))
-      Response.ok.entity("").build
-    })
+      Response.ok.build
   }
 }
-
-@Path("/store.json")
-@Api(value = "/store", description = "Operations about store")
-@Produces(Array("application/json"))
-class PetStoreResourceJSON extends PetStoreResource
-
-@Path("/store.xml")
-@Api(value = "/store", description = "Operations about store")
-@Produces(Array("application/xml"))
-class PetStoreResourceXML extends PetStoreResource

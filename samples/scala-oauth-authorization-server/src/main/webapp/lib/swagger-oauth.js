@@ -1,8 +1,11 @@
+var appName;
+var popupMask;
+var popupDialog;
+var clientId;
+var realm;
+
 function handleLogin() {
   var scopes = [];
-  var appName = "unknown-app";
-  var popupMask = $('#api-common-mask');
-  var popupDialog = $('.api-popup-dialog');
 
   if(window.swaggerUi.api.authSchemes 
     && window.swaggerUi.api.authSchemes.oauth2
@@ -15,7 +18,8 @@ function handleLogin() {
     appName = window.swaggerUi.api.info.title;
   }
 
-  if(popupDialog.length > 0) popupDialog = popupDialog.last();
+  if(popupDialog.length > 0)
+    popupDialog = popupDialog.last();
   else {
     popupDialog = $(
       [
@@ -25,7 +29,7 @@ function handleLogin() {
           '<p>Scopes are used to grant an application different levels of access to data on behalf of the end user. Each API may declare one or more scopes.',
             '<a href="#">Learn how to use</a>',
           '</p>',
-          '<p><strong>' + appName + '</strong> API declares the following scopes. Select which ones you want to grant to APIs Explorer.</p>',
+          '<p><strong>' + appName + '</strong> API requires the following scopes. Select which ones you want to grant to Swagger UI.</p>',
           '<ul class="api-popup-scopes">',
           '</ul>',
           '<p class="error-msg"></p>',
@@ -93,6 +97,8 @@ function handleLogin() {
       scopes.push($(o[k]).attr("scope"));
     }
 
+    window.enabledScopes=scopes;
+
     url += '&redirect_uri=' + encodeURIComponent(redirectUrl);
     url += '&realm=' + encodeURIComponent(realm);
     url += '&client_id=' + encodeURIComponent(clientId);
@@ -111,6 +117,7 @@ function handleLogout() {
   for(key in window.authorizations.authz){
     window.authorizations.remove(key)
   }
+  window.enabledScopes = null;
   $('.api-ic.ic-on').addClass('ic-off');
   $('.api-ic.ic-on').removeClass('ic-on');
 
@@ -119,7 +126,21 @@ function handleLogout() {
   $('.api-ic.ic-warning').removeClass('ic-warning');
 }
 
-function initOAuth() {
+function initOAuth(opts) {
+  var o = (opts||{});
+  var errors = [];
+
+  appName = (o.appName||errors.push("missing appName"));
+  popupMask = (o.popupMask||$('#api-common-mask'));
+  popupDialog = (o.popupDialog||$('.api-popup-dialog'));
+  clientId = (o.clientId||errors.push("missing client id"));
+  realm = (o.realm||errors.push("missing realm"));
+
+  if(errors.length > 0){
+    log("auth unable initialize oauth: " + errors);
+    return;
+  }
+
   $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
   $('.api-ic').click(function(s) {
     if($(s.target).hasClass('ic-off'))
@@ -143,13 +164,46 @@ function onOAuthComplete(token) {
     else {
       var b = token[window.swaggerUi.tokenName];
       if(b){
-        // set the checkbox
-        $('.api-ic.ic-off').addClass('ic-on');
-        $('.api-ic.ic-off').removeClass('ic-off');
+        // if all roles are satisfied
+        var o = null;
+        $.each($('.auth #api_information_panel'), function(k, v) {
+          var children = v;
+          if(children && children.childNodes) {
+            var requiredScopes = [];
+            $.each((children.childNodes), function (k1, v1){
+              var inner = v1.innerHTML;
+              if(inner)
+                requiredScopes.push(inner);
+            });
+            var diff = [];
+            for(var i=0; i < requiredScopes.length; i++) {
+              var s = requiredScopes[i];
+              if(window.enabledScopes && window.enabledScopes.indexOf(s) == -1) {
+                diff.push(s);
+              }
+            }
+            if(diff.length > 0){
+              o = v.parentNode;
+              $(o.parentNode).find('.api-ic.ic-on').addClass('ic-off');
+              $(o.parentNode).find('.api-ic.ic-on').removeClass('ic-on');
 
-        // set the info box
-        $('.api-ic.ic-error').addClass('ic-warning');
-        $('.api-ic.ic-error').removeClass('ic-error');
+              // sorry, not all scopes are satisfied
+              $(o).find('.api-ic').addClass('ic-warning');
+              $(o).find('.api-ic').removeClass('ic-error');
+            }
+            else {
+              o = v.parentNode;
+              $(o.parentNode).find('.api-ic.ic-off').addClass('ic-on');
+              $(o.parentNode).find('.api-ic.ic-off').removeClass('ic-off');
+
+              // all scopes are satisfied
+              $(o).find('.api-ic').addClass('ic-info');
+              $(o).find('.api-ic').removeClass('ic-warning');
+              $(o).find('.api-ic').removeClass('ic-error');          
+            }
+          }
+        });
+
         window.authorizations.add("key", new ApiKeyAuthorization("Authorization", "Bearer " + b, "header"));
       }
     }

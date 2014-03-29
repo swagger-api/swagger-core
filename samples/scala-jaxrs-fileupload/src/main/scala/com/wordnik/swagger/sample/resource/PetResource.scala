@@ -116,8 +116,11 @@ class PetResource extends RestResourceUtil {
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid status value")))
   def findPetsByStatus(
-    @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available",
-      allowableValues = "available,pending,sold", allowMultiple = true)@QueryParam("status") status: String) = {
+    @ApiParam(value = "Status values that need to be considered for filter", 
+      required = true, 
+      defaultValue = "available",
+      allowableValues = "available,pending,sold",
+      allowMultiple = true)@QueryParam("status") status: String) = {
     if(status == null) {
       Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(400, "invalid status supplied")).build
     }

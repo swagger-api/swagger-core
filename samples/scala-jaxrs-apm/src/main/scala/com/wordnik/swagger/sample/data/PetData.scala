@@ -56,6 +56,13 @@ object PetData {
     null
   }
 
+  def deletePet(petId: Long) = {
+    Option(getPetbyId(petId)) match {
+      case Some(pet) => pets -= pet
+      case _ => // do nothing
+    }
+  }
+
   def findPetByStatus(status: String): java.util.List[Pet] = {
     var statues = status.split(",")
     var result = new java.util.ArrayList[Pet]()

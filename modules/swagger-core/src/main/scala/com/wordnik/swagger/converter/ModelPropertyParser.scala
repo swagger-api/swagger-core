@@ -53,14 +53,14 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
   def parseField(field: Field) = {
     LOGGER.debug("processing field " + field)
     val returnClass = field.getDeclaringClass
-    parsePropertyAnnotations(returnClass, field.getName, field.getAnnotations, field.getGenericType, field.getType)
+    parsePropertyAnnotations(returnClass, field.getName, field.getAnnotations, field.getGenericType, field.getType, true)
   }
 
   def parseMethod(method: Method) = {
-    if (method.getParameterTypes == null || method.getParameterTypes.length == 0) {
+    if ((method.getParameterTypes == null || method.getParameterTypes.length == 0) && !method.isBridge) {
       LOGGER.debug("processing method " + method)
       val returnClass = method.getReturnType
-      parsePropertyAnnotations(returnClass, method.getName, method.getAnnotations, method.getGenericReturnType, method.getReturnType)
+      parsePropertyAnnotations(returnClass, method.getName, method.getAnnotations, method.getGenericReturnType, method.getReturnType, false)
     }
   }
 
@@ -78,8 +78,11 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     }
   }
 
-  def parsePropertyAnnotations(returnClass: Class[_], propertyName: String, propertyAnnotations: Array[Annotation], genericReturnType: Type, returnType: Type): Any = {
-    val e = extractGetterProperty(propertyName)
+  def parsePropertyAnnotations(returnClass: Class[_], propertyName: String, propertyAnnotations: Array[Annotation], genericReturnType: Type, returnType: Type, isField: Boolean): Any = {
+    val e = isField match {
+      case true => (propertyName, false)
+      case false => extractGetterProperty(propertyName)
+    }
     var originalName = e._1
     var isGetter = e._2
 
@@ -103,26 +106,32 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     var isXmlElement = processedAnnotations("isXmlElement").asInstanceOf[Boolean]
     val isDocumented = processedAnnotations("isDocumented").asInstanceOf[Boolean]
     var allowableValues = {
-      if(returnClass.isEnum) 
+      if(returnClass.isEnum)
         Some(AllowableListValues((for(v <- returnClass.getEnumConstants) yield v.toString).toList))
       else
         processedAnnotations("allowableValues").asInstanceOf[Option[AllowableValues]]
     }
 
     try {
-      val fieldAnnotations = getDeclaredField(this.cls, name).getAnnotations()
-      var propAnnoOutput = processAnnotations(name, fieldAnnotations)
+      val fieldAnnotations = getDeclaredField(this.cls, originalName).getAnnotations()
+      var propAnnoOutput = processAnnotations(originalName, fieldAnnotations)
       var propPosition = propAnnoOutput("position").asInstanceOf[Int]
 
-      if(allowableValues == None) 
+      if (name == null || name.equals(originalName)) {
+        name = propAnnoOutput("name").asInstanceOf[String]
+      }
+
+      if(allowableValues == None)
         allowableValues = propAnnoOutput("allowableValues").asInstanceOf[Option[AllowableValues]]
-      if(description == None && propAnnoOutput.contains("description") && propAnnoOutput("description") != null) 
+      if(description == None && propAnnoOutput.contains("description") && propAnnoOutput("description") != null)
         description = Some(propAnnoOutput("description").asInstanceOf[String])
       if(propPosition != 0) position = propAnnoOutput("position").asInstanceOf[Int]
       if(required == false) required = propAnnoOutput("required").asInstanceOf[Boolean]
       isFieldExists = true
       if (!isTransient) isTransient = propAnnoOutput("isTransient").asInstanceOf[Boolean]
       if (!isXmlElement) isXmlElement = propAnnoOutput("isXmlElement").asInstanceOf[Boolean]
+
+      if (name == null) name = originalName
       isJsonProperty = propAnnoOutput("isJsonProperty").asInstanceOf[Boolean]
     } catch {
       //this means there is no field declared to look for field level annotations.
@@ -226,6 +235,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
           isDocumented = true
           allowableValues = Some(toAllowableValues(e.allowableValues))
           paramAccess = readString(e.access)
+          isTransient = e.hidden
         }
         case e: XmlAttribute => {
           updatedName = readString(e.name, name, "##default")
@@ -235,7 +245,6 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         }
         case e: XmlElement => {
           updatedName = readString(e.name, name, "##default")
-          // updatedName = readString(name, name)
           defaultValue = readString(e.defaultValue, defaultValue, "\u0000")
 
           required = e.required
@@ -253,7 +262,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
           updatedName = readString(e.value, name)
           isJsonProperty = true
         }
-        case _ => 
+        case _ =>
       }
     }
     val output = new HashMap[String, Any]
@@ -349,10 +358,6 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
       val valueType = parameterizedType.getActualTypeArguments.head
       "Set[" + getDataType(valueType, valueType, isSimple) + "]"
-    } else if (TypeUtil.isParameterizedCollection(genericReturnType)) {
-      val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
-      val valueType = parameterizedType.getActualTypeArguments.head
-      "Array[" + getDataType(valueType, valueType, isSimple) + "]"
     } else if (TypeUtil.isParameterizedMap(genericReturnType)) {
       val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
       val typeArgs = parameterizedType.getActualTypeArguments
@@ -402,7 +407,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         else hostClass.getName
       } else if (xmlRootElement != null) {
         if ("##default".equals(xmlRootElement.name())) {
-          if (isSimple) hostClass.getSimpleName 
+          if (isSimple) hostClass.getSimpleName
           else hostClass.getName
         } else {
           if (isSimple) readString(xmlRootElement.name())

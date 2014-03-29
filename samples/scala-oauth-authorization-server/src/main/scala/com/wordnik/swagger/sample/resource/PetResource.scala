@@ -39,7 +39,13 @@ import javax.ws.rs.core.{ MediaType, Context, Response }
 import javax.ws.rs._
 
 @Path("/pet")
-@Api(value = "/pet", description = "Operations about pets")
+@Api(value = "/pet", description = "Operations about pets",
+    authorizations = Array(new Authorization(value="oauth2",
+    scopes = Array(
+      new AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
+      new AuthorizationScope(scope = "read:pets", description = "read your pets")
+    )))
+  )
 @Produces(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN, MediaType.TEXT_HTML))
 class PetResource extends RestResourceUtil {
   private val LOGGER = LoggerFactory.getLogger(classOf[PetResource])
@@ -64,8 +70,8 @@ class PetResource extends RestResourceUtil {
   @ApiOperation(value = "uploads an image",
     authorizations = Array(new Authorization(value="oauth2",
     scopes = Array(
-      new AuthorizationScope(scope = "test:anything", description = "anything"),
-      new AuthorizationScope(scope = "test:nothing", description = "nothing")
+      new AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
+      new AuthorizationScope(scope = "read:pets", description = "read your pets")
     ))))
   def uploadFile(
     @ApiParam(value = "Additional data to pass to server") @FormDataParam("additionalMetadata") testString: String,
@@ -84,7 +90,7 @@ class PetResource extends RestResourceUtil {
   @ApiOperation(value = "Deletes a pet",
     authorizations = Array(new Authorization(value="oauth2",
     scopes = Array(
-      new AuthorizationScope(scope = "test:anything", description = "anything")
+      new AuthorizationScope(scope = "write:pets", description = "modify pets in your account")
     ))))
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid pet value")))
@@ -99,7 +105,7 @@ class PetResource extends RestResourceUtil {
   @ApiOperation(value = "Add a new pet to the store",
     authorizations = Array(new Authorization(value="oauth2",
     scopes = Array(
-      new AuthorizationScope(scope = "test:anything", description = "anything")
+      new AuthorizationScope(scope = "write:pets", description = "modify pets in your account")
     ))))
   @ApiResponses(Array(
     new ApiResponse(code = 405, message = "Invalid input")))
@@ -165,7 +171,7 @@ class PetResource extends RestResourceUtil {
     produces = "application/json,application/xml",
     authorizations = Array(new Authorization(value="oauth2",
     scopes = Array(
-      new AuthorizationScope(scope = "test:anything", description = "anything")
+      new AuthorizationScope(scope = "write:pets", description = "modify pets in your account")
     ))))
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid tag value")))
@@ -188,7 +194,7 @@ class PetResource extends RestResourceUtil {
     consumes = MediaType.APPLICATION_FORM_URLENCODED,
     authorizations = Array(new Authorization(value="oauth2",
     scopes = Array(
-      new AuthorizationScope(scope = "test:anything", description = "anything")
+      new AuthorizationScope(scope = "write:pets", description = "modify pets in your account")
     ))))
   @ApiResponses(Array(
     new ApiResponse(code = 405, message = "Invalid input")))
@@ -197,7 +203,7 @@ class PetResource extends RestResourceUtil {
    @ApiParam(value = "Updated name of the pet", required = false)@FormParam("name") name: String,
    @ApiParam(value = "Updated status of the pet", required = false)@FormParam("status") status: String
    ) = {
-    LOGGER.debug((name, status))
+    LOGGER.debug("pet: " + (name, status))
    // PetData.addPet(pet)
     Response.ok.entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build
   }

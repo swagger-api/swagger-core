@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Swagger UI</title>
-  <link href='//fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'/>
+  <link href='https://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'/>
   <link href='css/highlight.default.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
   <script type="text/javascript" src="lib/shred.bundle.js"></script>
@@ -17,35 +17,40 @@
   <script src='swagger-ui.js' type='text/javascript'></script>
   <script src='lib/highlight.7.3.pack.js' type='text/javascript'></script>
 
+  <!-- enabling this will enable oauth2 implicit scope support -->
   <script src='lib/swagger-oauth.js' type='text/javascript'></script>
 
   <script type="text/javascript">
-    var clientId = "your-client-id";
-    var realm = "your-realm";
-
     $(function () {
       window.swaggerUi = new SwaggerUi({
-        url: "http://localhost:8002/api/api-docs",
-        dom_id: "swagger-ui-container",
-        supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
-        onComplete: function(swaggerApi, swaggerUi){
-          if(typeof initOAuth == "function")
-            initOAuth();
-        },
-        onFailure: function(data) {
-          if(console) {
-            console.log("Unable to Load SwaggerUI");
-          }
-        },
-        docExpansion: "none"
-      }
-    );
+      url: "http://localhost:8002/api/api-docs",
+      dom_id: "swagger-ui-container",
+      supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
+      onComplete: function(swaggerApi, swaggerUi){
+        log("Loaded SwaggerUI");
+
+        if(typeof initOAuth == "function") {
+          initOAuth({
+            clientId: "your-client-id",
+            realm: "your-realms",
+            appName: "your-app-name"
+          });
+        }
+        $('pre code').each(function(i, e) {
+          hljs.highlightBlock(e)
+        });
+      },
+      onFailure: function(data) {
+        log("Unable to Load SwaggerUI");
+      },
+      docExpansion: "none"
+    });
 
     $('#input_apiKey').change(function() {
       var key = $('#input_apiKey')[0].value;
-      console.log("key: " + key);
+      log("key: " + key);
       if(key && key.trim() != "") {
-        console.log("added key " + key);
+        log("added key " + key);
         window.authorizations.add("key", new ApiKeyAuthorization("api_key", key, "query"));
       }
     })
@@ -53,6 +58,7 @@
   });
   </script>
 </head>
+
 <body>
 <div id='header'>
   <div class="swagger-ui-wrap">
@@ -70,8 +76,8 @@
     </form>
   </div>
 </div>
+
 <div id="message-bar" class="swagger-ui-wrap">&nbsp;</div>
 <div id="swagger-ui-container" class="swagger-ui-wrap"></div>
 </body>
-
 </html>

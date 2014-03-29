@@ -11,7 +11,9 @@ import scala.collection.JavaConversions._
 
 trait ProfileEndpointTrait {
   @GET
-  @ApiOperation(value = "Gets current profile data", responseClass = "List[com.wordnik.util.perf.ProfileCounter]")
+  @ApiOperation(value = "Gets current profile data",
+    response = classOf[com.wordnik.util.perf.ProfileCounter],
+    responseContainer = "List")
   @Path("/profile")
   def getProfile(
     @ApiParam(value = "Filter to sort by")@QueryParam("filter") filter: String,

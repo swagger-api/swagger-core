@@ -4,7 +4,7 @@ import com.wordnik.util.perf._
 import com.wordnik.resource.util._
 
 import com.wordnik.swagger.core._
-import com.wordnik.swagger.core.util.RestResourceUtil
+import com.wordnik.swagger.sample.util._
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.jaxrs._
 
@@ -17,12 +17,7 @@ import javax.ws.rs._
 
 trait HealthResource extends ProfileEndpointTrait
 
-@Path("/health.json")
+@Path("/health")
 @Api(value="/health" , description = "Health information about the server")
-@Produces(Array("application/json"))
-class HealthResourceJSON extends HealthResource
-
-@Path("/health.xml")
-@Api(value="/health", description = "Health information about the server")
-@Produces(Array("application/xml"))
-class HealthResourceXML extends HealthResource
+@Produces(Array("application/json", "application/xml"))
+class HealthResourceJSONXML extends HealthResource

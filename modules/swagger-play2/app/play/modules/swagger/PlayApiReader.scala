@@ -20,6 +20,8 @@ import java.lang.reflect.Method
 import javax.ws.rs.core.Context
 import javax.ws.rs._
 
+import scala.collection.mutable.ListBuffer
+
 case class RouteEntry(httpMethod: String, path: String)
 
 object SwaggerUtils {
@@ -29,8 +31,119 @@ object SwaggerUtils {
 }
 
 class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
-
   private var _routesCache: Map[String, RouteEntry] = null
+
+  override
+  def readRecursive(
+    docRoot: String, 
+    parentPath: String, cls: Class[_], 
+    config: SwaggerConfig,
+    operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]],
+    parentMethods: ListBuffer[Method]): Option[ApiListing] = {
+    val api = cls.getAnnotation(classOf[Api])
+
+    // must have @Api annotation to process!
+    if(api != null) {
+      val consumes = Option(api.consumes) match {
+        case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+        case _ => cls.getAnnotation(classOf[Consumes]) match {
+          case e: Consumes => e.value.toList
+          case _ => List()
+        }
+      }
+      val produces = Option(api.produces) match {
+        case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+        case _ => cls.getAnnotation(classOf[Produces]) match {
+          case e: Produces => e.value.toList
+          case _ => List()
+        }
+      }
+      val protocols = Option(api.protocols) match {
+        case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+        case _ => List()
+      }
+      val description = api.description match {
+        case e: String if(e != "") => Some(e)
+        case _ => None
+      }
+      // look for method-level annotated properties
+      val parentParams: List[Parameter] = (for(field <- getAllFields(cls)) 
+        yield {
+          // only process fields with @ApiParam, @QueryParam, @HeaderParam, @PathParam
+          if(field.getAnnotation(classOf[QueryParam]) != null || field.getAnnotation(classOf[HeaderParam]) != null ||
+            field.getAnnotation(classOf[HeaderParam]) != null || field.getAnnotation(classOf[PathParam]) != null ||
+            field.getAnnotation(classOf[ApiParam]) != null) { 
+            val param = new MutableParameter
+            param.dataType = field.getType.getName
+            Option (field.getAnnotation(classOf[ApiParam])) match {
+              case Some(annotation) => toAllowableValues(annotation.allowableValues)
+              case _ =>
+            }
+            val annotations = field.getAnnotations
+            processParamAnnotations(param, annotations)
+          }
+          else None
+        }
+      ).flatten.toList
+
+      for(method <- cls.getMethods) {
+        val returnType = findSubresourceType(method)
+        val path = method.getAnnotation(classOf[Path]) match {
+          case e: Path => e.value()
+          case _ => ""
+        }
+        val endpoint = (parentPath + pathFromMethod(method)).replace("//", "/")
+        Option(returnType.getAnnotation(classOf[Api])) match {
+          case Some(e) => {
+            val root = docRoot + api.value + pathFromMethod(method)
+            parentMethods += method
+            readRecursive(root, endpoint, returnType, config, operations, parentMethods)
+            parentMethods -= method
+          }
+          case _ => {
+            if(method.getAnnotation(classOf[ApiOperation]) != null) {
+              readMethod(method, parentParams, parentMethods) match {
+                case Some(op) => appendOperation(endpoint, path, op, operations)
+                case None =>
+              }
+            }
+          }
+        }
+      }
+      // sort them by min position in the operations
+      val s = (for(op <- operations) yield {
+        (op, op._3.map(_.position).toList.min)
+      }).sortWith(_._2 < _._2).toList
+      val orderedOperations = new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]]
+      s.foreach(op => {
+        val ops = op._1._3.sortWith(_.position < _.position)
+        orderedOperations += Tuple3(op._1._1, op._1._2, ops)
+      })
+      val apis = (for ((endpoint, resourcePath, operationList) <- orderedOperations) yield {
+        val orderedOperations = new ListBuffer[Operation]
+        operationList.sortWith(_.position < _.position).foreach(e => orderedOperations += e)
+        ApiDescription(
+          addLeadingSlash(endpoint),
+          None,
+          orderedOperations.toList)
+      }).toList
+      val models = ModelUtil.modelsFromApis(apis)
+      Some(ApiListing (
+        apiVersion = config.apiVersion,
+        swaggerVersion = config.swaggerVersion,
+        basePath = config.basePath,
+        resourcePath = addLeadingSlash(api.value),
+        apis = ModelUtil.stripPackages(apis),
+        models = models,
+        description = description,
+        produces = produces,
+        consumes = consumes,
+        protocols = protocols,
+        position = api.position)
+      )
+    }
+    else None
+  }
 
   override def read(docRoot: String, cls: Class[_], config: SwaggerConfig): Option[ApiListing] = {
     Logger("swagger").debug("ControllerReader: read(docRoot = %s, cls = %s, config = %s)".format(docRoot, cls.getName, config.toString))
@@ -72,12 +185,12 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         // only process methods with @ApiOperation annotations
         if (method.getAnnotation(classOf[ApiOperation]) != null) {
           Logger("swagger").debug("ApiOperation: found on method: %s".format(method.getName))
+          val operation = readMethod(method).get
+          val fullOperationResourcePath = getPath(cls, method)
 
-          val fullMethodName = getFullMethodName(cls, method)
-          routesCache.get(fullMethodName) match {
-            case Some(RouteEntry(httpMethod, path)) => {
+          fullOperationResourcePath match {
+            case Some(path) => {
               // got to remove any path element specified in basepath
-              val operation = readMethod(method, fullMethodName).get
               val basepathUrl = new java.net.URL(config.getBasePath)
               val basepath = basepathUrl.getPath
               val resourcePath = path.stripPrefix(basepath)
@@ -123,19 +236,11 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
   }
 
 
-  def readMethod(method: Method, fullMethodName: String): Option[Operation] = {
+  def readMethod(method: Method): Option[Operation] = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
-    val routeEntry = routesCache.get(fullMethodName)
 
     if (method.getAnnotation(classOf[ApiOperation]) != null) {
       Logger("swagger").debug("annotation: ApiOperation: %s,".format(apiOperation.toString))
-
-      val httpMethod = routeEntry.map(_.httpMethod).getOrElse(apiOperation.httpMethod)
-
-      val nickname = apiOperation.nickname match {
-        case e: String if e.trim != "" => e
-        case _ => genNickname(fullMethodName, routeEntry.map(_.httpMethod))
-      }
 
       val produces = apiOperation.produces match {
         case e: String if e.trim != "" => e.split(",").map(_.trim).toList
@@ -173,11 +278,11 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
       val params = processParams(method)
 
       Some(Operation(
-        httpMethod,
+        apiOperation.httpMethod,
         apiOperation.value,
         apiOperation.notes,
         responseClass,
-        nickname,
+        apiOperation.nickname,
         apiOperation.position,
         produces,
         consumes,
@@ -197,7 +302,6 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
       case Some(e) => {
         (for (param <- e.value) yield {
           Logger("swagger").debug("processing " + param)
-          val dataType = if (param.dataType.isEmpty) "String" else param.dataType
           val allowableValues = toAllowableValues(param.allowableValues)
           Parameter(
             param.name,
@@ -205,7 +309,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
             Option(param.defaultValue).filter(_.trim.nonEmpty),
             param.required,
             param.allowMultiple,
-            dataType,
+            param.dataType,
             allowableValues,
             param.paramType,
             Option(param.access).filter(_.trim.nonEmpty))
@@ -304,7 +408,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
     }
   }
 
-  def routesCache = synchronized {
+  def routesCache = {
     if (_routesCache == null) _routesCache = populateRoutesCache
     _routesCache
   }
@@ -332,10 +436,6 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
       case -1 => clazz.getCanonicalName + "$." + method.getName
       case _ => clazz.getCanonicalName + "." + method.getName
     }
-  }
-
-  def genNickname(fullMethodName: String, httpMethod: Option[String] = None): String = {
-    httpMethod.getOrElse("") + "_" + fullMethodName.replace(".", "_")
   }
 
   private def populateRoutesCache: Map[String, RouteEntry] = {
@@ -366,10 +466,10 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
    * @deprecated - do not be tempted to use this.... this is here to cover the method in the superclass.
    */
   @Deprecated
-  override def readMethod(method : java.lang.reflect.Method, parentParams : scala.List[com.wordnik.swagger.model.Parameter], parentMethods : scala.collection.mutable.ListBuffer[java.lang.reflect.Method]) : com.wordnik.swagger.model.Operation = {
+  override def readMethod(method: Method, parentParams : List[Parameter], parentMethods : ListBuffer[Method]) : Option[Operation] = {
    // don't use this - it is specific to Jax-RS models.
     throw new RuntimeException("method not in use..")
-   null
+    None
   }
 
   def findSubresourceType(method: Method): Class[_] = {

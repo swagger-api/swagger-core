@@ -56,7 +56,7 @@ class PetStoreResource extends RestResourceUtil {
   @ApiOperation(value = "Place an order for a pet",
     authorizations = Array(new Authorization(value="oauth2",
     scopes = Array(
-      new AuthorizationScope(scope = "test:anything", description = "anything")
+      new AuthorizationScope(scope = "write:pets", description = "write to your pets")
     ))))
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid order")))
@@ -72,7 +72,7 @@ class PetStoreResource extends RestResourceUtil {
     notes = "For valid response try integer IDs with value < 1000.  Anything above 1000 or nonintegers will generate API errors",
     authorizations = Array(new Authorization(value="oauth2",
     scopes = Array(
-      new AuthorizationScope(scope = "test:anything", description = "anything")
+      new AuthorizationScope(scope = "write:pets", description = "write to your pets")
     ))))
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),

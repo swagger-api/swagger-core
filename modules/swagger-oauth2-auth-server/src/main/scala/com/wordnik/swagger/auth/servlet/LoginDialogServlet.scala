@@ -37,7 +37,12 @@ class LoginDialogServlet extends HttpServlet {
 
     val dialog = SwaggerContext.loadClass(dialogClass).newInstance.asInstanceOf[AuthDialog]
 
-    val output = dialog.show(clientId, redirectUri, scope, None)
+    val output = dialog.show(clientId,
+      redirectUri,
+      scope,
+      "token",
+      None)
+
     if(output.code == 200) {
       response.setContentType("text/html")
       response.setHeader("Pragma", "No-cache");

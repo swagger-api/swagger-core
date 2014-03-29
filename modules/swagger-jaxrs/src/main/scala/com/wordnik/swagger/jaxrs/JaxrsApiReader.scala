@@ -30,6 +30,13 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
   // In case it's not a subresource locator the entity type is returned
   def findSubresourceType(method: Method): Class[_]
 
+  def readRecursive(
+    docRoot: String, 
+    parentPath: String, cls: Class[_], 
+    config: SwaggerConfig,
+    operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]],
+    parentMethods: ListBuffer[Method]): Option[ApiListing]
+
   def processDataType(paramType: Class[_], genericParamType: Type) = {
     paramType.getName match {
       case "[I" => "Array[int]"
@@ -80,12 +87,20 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
   ) = {
     val api = method.getAnnotation(classOf[Api])
     val responseClass = {
-      val baseName = apiOperation.response.getName
-      val output = apiOperation.responseContainer match {
-        case "" => baseName
-        case e: String => "%s[%s]".format(e, baseName)
+      if(apiOperation != null){
+        val baseName = apiOperation.response.getName
+        val output = apiOperation.responseContainer match {
+          case "" => baseName
+          case e: String => "%s[%s]".format(e, baseName)
+        }
+        output
       }
-      output
+      else {
+        if(!"javax.ws.rs.core.Response".equals(method.getReturnType.getCanonicalName))
+          method.getReturnType.getName
+        else
+          "void"
+      }
     }
 
     var paramAnnotations: Array[Array[java.lang.annotation.Annotation]] = null
@@ -102,30 +117,41 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
       genericParamTypes = parentMethods.map(pm => pm.getGenericParameterTypes).reduceRight(_ ++ _) ++ method.getGenericParameterTypes
     }
 
-    val produces = Option(apiOperation.produces) match {
-      case Some(e) if(e != "") => e.split(",").map(_.trim).toList
-      case _ => method.getAnnotation(classOf[Produces]) match {
-        case e: Produces => e.value.toList
-        case _ => List()
+    val (nickname, produces, consumes, protocols, authorizations) = {
+      if(apiOperation != null) {
+        (
+        (if(apiOperation.nickname != null && apiOperation.nickname != "") 
+          apiOperation.nickname
+        else
+          method.getName
+        ),
+        Option(apiOperation.produces) match {
+          case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+          case _ => method.getAnnotation(classOf[Produces]) match {
+            case e: Produces => e.value.toList
+            case _ => List()
+          }
+        },
+        Option(apiOperation.consumes) match {
+          case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+          case _ => method.getAnnotation(classOf[Consumes]) match {
+            case e: Consumes => e.value.toList
+            case _ => List()
+          }
+        },
+        Option(apiOperation.protocols) match {
+          case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+          case _ => List()
+        },
+        Option(apiOperation.authorizations) match {
+          case Some(e) => (for(a <- e) yield {
+            val scopes = (for(s <- a.scopes) yield com.wordnik.swagger.model.AuthorizationScope(s.scope, s.description)).toArray
+            new com.wordnik.swagger.model.Authorization(a.value, scopes)
+          }).toList
+          case _ => List()
+        })
       }
-    }
-    val consumes = Option(apiOperation.consumes) match {
-      case Some(e) if(e != "") => e.split(",").map(_.trim).toList
-      case _ => method.getAnnotation(classOf[Consumes]) match {
-        case e: Consumes => e.value.toList
-        case _ => List()
-      }
-    }
-    val protocols = Option(apiOperation.protocols) match {
-      case Some(e) if(e != "") => e.split(",").map(_.trim).toList
-      case _ => List()
-    }
-    val authorizations:List[com.wordnik.swagger.model.Authorization] = Option(apiOperation.authorizations) match {
-      case Some(e) => (for(a <- e) yield {
-        val scopes = (for(s <- a.scopes) yield com.wordnik.swagger.model.AuthorizationScope(s.scope, s.description)).toArray
-        new com.wordnik.swagger.model.Authorization(a.value, scopes)
-      }).toList
-      case _ => List()
+      else(method.getName, List(), List(), List(), List())
     }
     val params = parentParams ++ (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
       if(annotations.length > 0) {
@@ -154,38 +180,43 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
             LOGGER.debug("processing " + param)
             val allowableValues = toAllowableValues(param.allowableValues)
             Parameter(
-              param.name,
-              Option(readString(param.value)),
-              Option(param.defaultValue).filter(_.trim.nonEmpty),
-              param.required,
-              param.allowMultiple,
-              param.dataType,
-              allowableValues,
-              param.paramType,
-              Option(param.access).filter(_.trim.nonEmpty))
+              name = param.name,
+              description = Option(readString(param.value)),
+              defaultValue = Option(param.defaultValue).filter(_.trim.nonEmpty),
+              required = param.required,
+              allowMultiple = param.allowMultiple,
+              dataType = param.dataType,
+              allowableValues = allowableValues,
+              paramType = param.paramType,
+              paramAccess = Option(param.access).filter(_.trim.nonEmpty))
           }).toList
         }
         case _ => List()
       }
     }
 
+    val (summary, notes, position) = {
+      if(apiOperation != null) (apiOperation.value, apiOperation.notes, apiOperation.position)
+      else ("","",0)
+    }
+
     Operation(
-      parseHttpMethod(method, apiOperation),
-      apiOperation.value,
-      apiOperation.notes,
-      responseClass,
-      method.getName,
-      apiOperation.position,
-      produces,
-      consumes,
-      protocols,
-      authorizations,
-      params ++ implicitParams,
-      apiResponses,
-      Option(isDeprecated))
+      method = parseHttpMethod(method, apiOperation),
+      summary = summary,
+      notes = notes,
+      responseClass = responseClass,
+      nickname = nickname,
+      position = position,
+      produces = produces,
+      consumes = consumes,
+      protocols = protocols,
+      authorizations = authorizations,
+      parameters = params ++ implicitParams,
+      responseMessages = apiResponses,
+      `deprecated` = Option(isDeprecated))
   }
 
-  def readMethod(method: Method, parentParams: List[Parameter], parentMethods: ListBuffer[Method]) = {
+  def readMethod(method: Method, parentParams: List[Parameter], parentMethods: ListBuffer[Method]): Option[Operation] = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
     val responseAnnotation = method.getAnnotation(classOf[ApiResponses])
     val apiResponses = {
@@ -201,7 +232,12 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
     }
     val isDeprecated = Option(method.getAnnotation(classOf[Deprecated])).map(m => "true").getOrElse(null)
 
-    parseOperation(method, apiOperation, apiResponses, isDeprecated, parentParams, parentMethods)
+    val hidden = if(apiOperation != null)
+      apiOperation.hidden
+    else false
+
+    if(!hidden) Some(parseOperation(method, apiOperation, apiResponses, isDeprecated, parentParams, parentMethods))
+    else None
   }
 
   def appendOperation(endpoint: String, path: String, op: Operation, operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]]) = {
@@ -218,117 +254,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
         case _ => ""
       }
     }
-
     readRecursive(docRoot, parentPath.replace("//","/"), cls, config, new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]], new ListBuffer[Method])
-  }
-
-  def readRecursive(
-    docRoot: String, 
-    parentPath: String, cls: Class[_], 
-    config: SwaggerConfig,
-    operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]],
-    parentMethods: ListBuffer[Method]): Option[ApiListing] = {
-    val api = cls.getAnnotation(classOf[Api])
-
-    // must have @Api annotation to process!
-    if(api != null) {
-      val consumes = Option(api.consumes) match {
-        case Some(e) if(e != "") => e.split(",").map(_.trim).toList
-        case _ => cls.getAnnotation(classOf[Consumes]) match {
-          case e: Consumes => e.value.toList
-          case _ => List()
-        }
-      }
-      val produces = Option(api.produces) match {
-        case Some(e) if(e != "") => e.split(",").map(_.trim).toList
-        case _ => cls.getAnnotation(classOf[Produces]) match {
-          case e: Produces => e.value.toList
-          case _ => List()
-        }
-      }
-      val protocols = Option(api.protocols) match {
-        case Some(e) if(e != "") => e.split(",").map(_.trim).toList
-        case _ => List()
-      }
-      val description = api.description match {
-        case e: String if(e != "") => Some(e)
-        case _ => None
-      }
-      // look for method-level annotated properties
-      val parentParams: List[Parameter] = (for(field <- getAllFields(cls)) 
-        yield {
-          // only process fields with @ApiParam, @QueryParam, @HeaderParam, @PathParam
-          if(field.getAnnotation(classOf[QueryParam]) != null || field.getAnnotation(classOf[HeaderParam]) != null ||
-            field.getAnnotation(classOf[HeaderParam]) != null || field.getAnnotation(classOf[PathParam]) != null ||
-            field.getAnnotation(classOf[ApiParam]) != null) { 
-            val param = new MutableParameter
-            param.dataType = field.getType.getName
-            Option (field.getAnnotation(classOf[ApiParam])) match {
-              case Some(annotation) => toAllowableValues(annotation.allowableValues)
-              case _ =>
-            }
-            val annotations = field.getAnnotations
-            processParamAnnotations(param, annotations)
-          }
-          else None
-        }
-      ).flatten.toList
-
-      for(method <- cls.getMethods) {
-        val returnType = findSubresourceType(method)
-        val path = method.getAnnotation(classOf[Path]) match {
-          case e: Path => e.value()
-          case _ => ""
-        }
-        val endpoint = (parentPath + /*api.value + */ pathFromMethod(method)).replace("//", "/")
-        Option(returnType.getAnnotation(classOf[Api])) match {
-          case Some(e) => {
-            val root = docRoot + api.value + pathFromMethod(method)
-            parentMethods += method
-            readRecursive(root, endpoint, returnType, config, operations, parentMethods)
-            parentMethods -= method
-          }
-          case _ => {
-            if(method.getAnnotation(classOf[ApiOperation]) != null) {
-              val op = readMethod(method, parentParams, parentMethods)
-              appendOperation(endpoint, path, op, operations)
-            }
-          }
-        }
-      }
-      // sort them by min position in the operations
-      val s = (for(op <- operations) yield {
-        (op, op._3.map(_.position).toList.min)
-      }).sortWith(_._2 < _._2).toList
-      val orderedOperations = new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]]
-      s.foreach(op => {
-        val ops = op._1._3.sortWith(_.position < _.position)
-        orderedOperations += Tuple3(op._1._1, op._1._2, ops)
-      })
-      val apis = (for ((endpoint, resourcePath, operationList) <- orderedOperations) yield {
-        val orderedOperations = new ListBuffer[Operation]
-        operationList.sortWith(_.position < _.position).foreach(e => orderedOperations += e)
-        ApiDescription(
-          addLeadingSlash(endpoint),
-          None,
-          orderedOperations.toList)
-      }).toList
-      val models = ModelUtil.modelsFromApis(apis)
-      Some(ApiListing (
-        apiVersion = config.apiVersion,
-        swaggerVersion = config.swaggerVersion,
-        basePath = config.basePath,
-        resourcePath = addLeadingSlash(api.value),
-        apis = ModelUtil.stripPackages(apis),
-        models = models,
-        description = description,
-        produces = produces,
-        consumes = consumes,
-        protocols = protocols,
-        position = api.position)
-      )
-    }
-    else None
   }
 
   def getAllFields(cls: Class[_]): List[Field] = {
@@ -370,7 +296,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
   }
 
   def parseHttpMethod(method: Method, op: ApiOperation): String = {
-    if (op.httpMethod() != null && op.httpMethod().trim().length() > 0)
+    if (op != null && op.httpMethod() != null && op.httpMethod().trim().length() > 0)
       op.httpMethod().trim
     else {
       if(method.getAnnotation(classOf[GET]) != null) "GET"

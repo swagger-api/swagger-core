@@ -71,11 +71,11 @@ class SwaggerPlugin(application: Application) extends Plugin {
     val docRoot = ""
     ApiListingCache.listing(docRoot)
 
-    Logger("swagger").info("Plugin - initialisation done")
+    Logger("swagger").info("Plugin - initialization done")
   }
 
   override def onStop() {
-    // we may need to tidy up resources here
+    ApiListingCache.cache = None
     Logger("swagger").info("Plugin - stopped");
   }
 }

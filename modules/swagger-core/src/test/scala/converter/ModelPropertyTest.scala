@@ -51,11 +51,32 @@ class ModelPropertyTest extends FlatSpec with ShouldMatchers {
     intArray.`type` should be ("Array")
     val awardItems = intArray.items.getOrElse(fail("no items found"))
     awardItems.`type` should be ("int")
+  }
 
+  it should "read a model property" in {
+    val models = ModelConverters.readAll(classOf[IsModelTest])
+
+    models.size should be (1)
+    val props = models.filter(m => m.name == "IsModelTest").head
+  }
+
+  it should "read a scala object" in {
+    val models = ModelConverters.readAll(classOf[Pet])
+
+    models.size should be (1)
+    val props = models.filter(m => m.name == "Pet").head
+
+    println(JsonSerializer.asJson(props))
   }
 }
 
 case class Family (membersSince: Date, members: List[Person])
+
+class Pet {
+  var name: String = _
+  var age: Int = 0
+  var birthday: java.util.Date = _
+}
 
 case class Person (
   firstname: String, 
@@ -69,3 +90,7 @@ case class Person (
 case class Employer (
   name: String,
   size: Int)
+
+case class IsModelTest (
+  is_happy: Boolean,
+  name: String)

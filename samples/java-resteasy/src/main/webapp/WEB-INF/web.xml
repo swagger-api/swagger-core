@@ -22,7 +22,7 @@
   <!-- note! You must add the swagger providers below to correctly handle writing json for the swagger json -->
   <context-param>
     <param-name>resteasy.providers</param-name>
-    <param-value>org.jboss.resteasy.examples.util.JacksonJsonProvider,com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider,com.wordnik.swagger.jaxrs.listing.ResourceListingProvider</param-value>
+    <param-value>com.wordnik.swagger.jaxrs.json.JacksonJsonProvider,com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider,com.wordnik.swagger.jaxrs.listing.ResourceListingProvider</param-value>
   </context-param>
   <listener>
     <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>

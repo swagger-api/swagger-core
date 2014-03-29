@@ -11,13 +11,13 @@ import java.util.Date
 import java.net.URLEncoder
 import java.net.URI
 
-class DefaultAuthDialog extends AuthDialog with TokenCache {
+class DefaultAuthDialog extends AuthDialog with TokenStore {
   /**
    * In this sample, the scope 'anonymous' will allow access if the redirectUri
    * is 'localhost' and provide an AnonymousTokenRequest, which is good for 3600
    * seconds
    */
-  def show(clientId: String, redirectUri: String, scope: String, requestId: Option[String]) = {
+  def show(clientId: String, redirectUri: String, scope: String, responseType: String, requestId: Option[String]) = {
     if(scope == "anonymous") {
       val url = "/oauth/login"
 
@@ -26,7 +26,7 @@ class DefaultAuthDialog extends AuthDialog with TokenCache {
         val oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator())
         val accessToken = oauthIssuerImpl.accessToken()
         val token = AnonymousTokenResponse(3600, accessToken)
-        tokenCache += accessToken -> TokenWrapper(new Date, token)
+        addAccessCode(accessToken, TokenWrapper(new Date, token))
         val redirectTo = {
           (redirectUri.indexOf("#") match {
             case i: Int if(i >= 0) => redirectUri + "&"

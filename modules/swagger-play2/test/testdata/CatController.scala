@@ -17,7 +17,7 @@ class CatController extends Controller {
 
   @ApiOperation(value = "addCat1",
       httpMethod = "PUT",
-      authorizations = Array(),
+      authorizations = "",
       consumes = "",
       protocols = "")
     @ApiImplicitParams(Array(

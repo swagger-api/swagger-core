@@ -15,18 +15,18 @@ class Bootstrap extends HttpServlet {
 
   val oauth = OAuth(
     List(
-      AuthorizationScope("email", "Access to your email address"),
-      AuthorizationScope("pets", "Access to your pets")),
+      AuthorizationScope("write:pets", "Modify pets in your account"),
+      AuthorizationScope("read:pets", "Read your pets")),
     List(
       ImplicitGrant(
-        LoginEndpoint("http://localhost:8002/oauth/dialog"),
+        LoginEndpoint("http://petstore.swagger.wordnik.com/oauth/dialog"),
         "access_token"
       ),
       AuthorizationCodeGrant(
-        TokenRequestEndpoint("http://localhost:8002/oauth/requestToken",
+        TokenRequestEndpoint("http://petstore.swagger.wordnik.com/oauth/requestToken",
           "client_id",
           "client_secret"),
-        TokenEndpoint("http://localhost:8002/oauth/token",
+        TokenEndpoint("http://petstore.swagger.wordnik.com/oauth/token",
           "auth_code"
         )
     )

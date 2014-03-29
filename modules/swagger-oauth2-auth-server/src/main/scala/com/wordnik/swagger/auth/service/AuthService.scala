@@ -24,15 +24,16 @@ import java.net.URI
 
 import scala.collection.mutable.HashSet
 
-class AuthService extends TokenCache {
+class AuthService extends TokenStore {
   private val LOGGER = LoggerFactory.getLogger(classOf[AuthService])
 
   val validator = ValidatorFactory.validator
 
-  def validate[T](authorizationCode: String, f: => T):T = {
-    LOGGER.debug("validating code " + authorizationCode)
-    Option(tokenCache.getOrElse(authorizationCode, null)) match {
-      case Some(token) if(token.getRemaining > 0) => {
+  def validate[T](accessCode: String, f: => T):T = {
+    LOGGER.debug("validating access code " + accessCode)
+    if(hasAccessCode(accessCode)) {
+      val token = getTokenForAccessCode(accessCode)
+      if(token.getRemaining > 0) {
         token.tokenResponse match {
           case e: AnonymousTokenResponse => TokenScope.unsetUserId()
           case e: UserTokenResponse => TokenScope.setUserId(e.userId)
@@ -40,8 +41,9 @@ class AuthService extends TokenCache {
         }
         f
       }
-      case _ => throw new Exception("unauthorized")
+      else throw new Exception("unauthorized")
     }
+    else throw new Exception("unauthorized")
   }
 
   def login(request: HttpServletRequest, response: HttpServletResponse) = {
@@ -52,6 +54,7 @@ class AuthService extends TokenCache {
     val clientId = request.getParameter("client_id")
     val accept = request.getParameter("accept")
     val requestId = request.getParameter("request_id")
+    val responseType = request.getParameter("response_type")
 
     LOGGER.debug("logging in user " + username + ", accept=" + accept)
 
@@ -77,32 +80,37 @@ class AuthService extends TokenCache {
         }
         if(requestId != null && !"".equals(requestId)) {
           LOGGER.debug("username " + username + " has request id=" + requestId)
-          Option(TokenCache.requestCache.getOrElse(requestId, null)) match {
-            case Some(token) => {
-              LOGGER.debug("token for requestId " + requestId + " found")
-              val redirectUri = token(OAuth.OAUTH_REDIRECT_URI ).get
-              val redirectTo = {
-                (redirectUri.indexOf("?") match {
-                  case i: Int if(i >= 0) => redirectUri + "&"
-                  case i: Int => redirectUri + "?"
-                })
-              }
-              val code = generateCode(clientId)
-              TokenCache.codeCache += code
-              LOGGER.debug("redirecting to " + redirectTo + "code=" + code)
-              response.sendRedirect(redirectTo + "code=" + code)
+          if(hasRequestId(requestId)) {
+            LOGGER.debug("token for requestId " + requestId + " found")
+            // now that we have the username, save it in the hash
+            val requestToken = getRequestId(requestId) ++ Map("username" -> Some(username))
+            addRequestId(requestId, requestToken)
+
+            val redirectUri = requestToken(OAuth.OAUTH_REDIRECT_URI ).get
+            val redirectTo = {
+              (redirectUri.indexOf("?") match {
+                case i: Int if(i >= 0) => redirectUri + "&"
+                case i: Int => redirectUri + "?"
+              })
             }
-            case None => {
-              LOGGER.debug("token for requestId " + requestId + " NOT found")
-              response.sendRedirect(redirectTo + "error=invalid_code")
-            }
+            val code = exchangeRequestIdForCode(requestId)
+            val token = UserTokenResponse(3600, code, 0)
+            addAccessCode(code, TokenWrapper(new Date, token))
+            LOGGER.debug("redirecting to " + redirectTo + "code=" + code)
+            response.sendRedirect(redirectTo + "code=" + code)
+          }
+          else {
+            LOGGER.debug("token for requestId " + requestId + " NOT found")
+            response.sendRedirect(redirectTo + "error=invalid_code")
           }
         }
         else {
+          // should this actually exist?
           LOGGER.debug("no request id, generating access token")
           val accessToken = generateAccessToken()
-          val token = UserTokenResponse(3600, accessToken, 1)
-          tokenCache += accessToken -> TokenWrapper(new Date, token)
+          val token = UserTokenResponse(3600, accessToken, 0)
+          addAccessCode(accessToken, TokenWrapper(new Date, token))
+
           val redirectTo = {
             (redirectUri.indexOf("#") match {
               case i: Int if(i >= 0) => redirectUri + "&"
@@ -126,18 +134,17 @@ class AuthService extends TokenCache {
     }
   }
 
-  def authorizationCodeStatus(authorizationCode: String) = {
-    LOGGER.debug("checking code status for " + authorizationCode)
-    tokenCache.contains(authorizationCode) match {
-      case true => {
-        val token = tokenCache(authorizationCode)
-        if(token.getRemaining > 0)
-          ApiResponseMessage(200, "%d seconds remaining".format(token.getRemaining))
-        else
-          ApiResponseMessage(400, "invalid token")
-      }
-      case false => ApiResponseMessage(400, "invalid token")
+  def authorizationCodeStatus(accessCode: String) = {
+    LOGGER.debug("checking code status for " + accessCode)
+    if(hasAccessCode(accessCode)) {
+      val token = getTokenForAccessCode(accessCode)
+      if(token.getRemaining > 0)
+        ApiResponseMessage(200, "%d seconds remaining".format(token.getRemaining))
+      else
+        ApiResponseMessage(400, "invalid token")
     }
+    else 
+      ApiResponseMessage(400, "invalid token")
   }
 
   def token(request: HttpServletRequest, response: HttpServletResponse): TokenResponse = {
@@ -152,15 +159,23 @@ class AuthService extends TokenCache {
       if(validator.isValidClient(clientId, clientSecret)) {
         if("authorization_code" == grantType) {
           LOGGER.debug("grant type is " + grantType)
-          if(!codeCache.contains(code)){
-            throw new Exception("invalid code supplied")
-          }
-          else {
+          val validCode = hasAccessCode(code)
+
+          if(validCode) {
+            removeAccessCode(code)
             val accessToken = generateAccessToken()
-            val token = AnonymousTokenResponse(3600, accessToken)
-            tokenCache += accessToken -> TokenWrapper(new Date, token)
+            val token = UserTokenResponse(3600, accessToken, 0)
+            addAccessCode(accessToken, TokenWrapper(new Date, token))
             token
           }
+          else if(allowAnonymousTokens()) {
+            val accessToken = generateAccessToken()
+            val token = AnonymousTokenResponse(3600, accessToken)
+            addAccessCode(accessToken, TokenWrapper(new Date, token))
+            token
+          }
+          else
+            throw new Exception("invalid code supplied")
         }
         else {
           LOGGER.debug("unsupported grant type " + grantType)
@@ -180,6 +195,8 @@ class AuthService extends TokenCache {
   }
 
   def authorize(request: HttpServletRequest,response: HttpServletResponse): ApiResponseMessage = {
+    import scala.collection.JavaConverters._
+
     var oauthRequest: OAuthAuthzRequest = null;
     try {
       oauthRequest = new OAuthAuthzRequest(request)
@@ -192,11 +209,11 @@ class AuthService extends TokenCache {
         val requestMap = Map(
           OAuth.OAUTH_STATE -> Option(oauthRequest.getParam(OAuth.OAUTH_STATE)),
           OAuth.OAUTH_REDIRECT_URI -> Option(oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI)),
-          OAuth.OAUTH_CLIENT_ID -> Option(oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID)))
+          OAuth.OAUTH_CLIENT_ID -> Option(oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID)),
+          OAuth.OAUTH_SCOPE -> Option(oauthRequest.getParam(OAuth.OAUTH_SCOPE)))
 
         val requestId = generateRequestId(oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID))
-        TokenCache.requestCache += requestId -> requestMap
-
+        addRequestId(requestId, requestMap)
         val dialogClass = Option(request.getSession.getServletContext.getInitParameter("DialogImplementation")).getOrElse({
           LOGGER.warn("using default dialog implementation")
           "com.wordnik.swagger.auth.service.DefaultAuthDialog"
@@ -204,34 +221,10 @@ class AuthService extends TokenCache {
         val dialog = SwaggerContext.loadClass(dialogClass).newInstance.asInstanceOf[AuthDialog]
         // write the dialog UI
         dialog.show(oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID),
-          request.getRequestURI,
-          "scope",
+          oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI),
+          oauthRequest.getParam(OAuth.OAUTH_SCOPE),
+          ResponseType.CODE.toString(),
           Option(requestId))
-      }
-      else if (responseType.equals(ResponseType.TOKEN.toString())) {
-        // client ID is required!
-        if(oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID) == null) {
-          ApiResponseMessage(HttpServletResponse.SC_BAD_REQUEST, "client_id not found")
-        }
-        else {
-          val sb = new StringBuilder()
-          try{
-            sb.append(OAuth.OAUTH_CLIENT_ID).append("=").append(URLEncoder.encode(oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID), "UTF-8")).append("&")
-            if(oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI) != null)
-              sb.append(OAuth.OAUTH_REDIRECT_URI).append("=").append(URLEncoder.encode(oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI), "UTF-8")).append("&")
-            if(oauthRequest.getParam(OAuth.OAUTH_RESPONSE_TYPE) != null)
-              sb.append(OAuth.OAUTH_RESPONSE_TYPE).append("=").append(URLEncoder.encode(oauthRequest.getParam(OAuth.OAUTH_RESPONSE_TYPE), "UTF-8")).append("&")
-            if(oauthRequest.getParam(OAuth.OAUTH_STATE) != null)
-              sb.append(OAuth.OAUTH_STATE).append("=").append(URLEncoder.encode(oauthRequest.getParam(OAuth.OAUTH_STATE), "UTF-8")).append("&")
-            if(oauthRequest.getParam(OAuth.OAUTH_SCOPE) != null)
-              sb.append(OAuth.OAUTH_SCOPE).append("=").append(URLEncoder.encode(oauthRequest.getParam(OAuth.OAUTH_SCOPE), "UTF-8"))
-          }
-          catch {
-            case e: Exception => e.printStackTrace()
-          }
-          val redirectURI = new URI("/foo?" + sb.toString())
-          ApiResponseMessage(307, redirectURI.toString)
-        }
       }
       else {
         val redirectURI = oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI)

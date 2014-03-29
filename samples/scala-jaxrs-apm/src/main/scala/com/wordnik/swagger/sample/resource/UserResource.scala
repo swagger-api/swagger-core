@@ -16,54 +16,51 @@
 
 package com.wordnik.swagger.sample.resource
 
-import com.wordnik.util.perf._
-
-import com.wordnik.swagger.core._
 import com.wordnik.swagger.annotations._
-import com.wordnik.swagger.core.util.RestResourceUtil
+import com.wordnik.swagger.jaxrs._
 
 import com.wordnik.swagger.sample.model.User
 import com.wordnik.swagger.sample.data.UserData
 import com.wordnik.swagger.sample.exception.NotFoundException
+import com.wordnik.swagger.sample.util.RestResourceUtil
 
-import javax.ws.rs.core.Response
+import javax.ws.rs.core.{ Response, MediaType }
 import javax.ws.rs._
 
 import scala.collection.JavaConverters._
 
-trait UserResource extends RestResourceUtil {
+@Path("/user")
+@Api(value = "/user", description = "Operations about user")
+@Produces(Array(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
+class UserResource extends RestResourceUtil {
   @POST
-  @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.")
+  @ApiOperation(
+    value = "Create user", 
+    notes = "This can only be done by the logged in user.")
   def createUser(
     @ApiParam(value = "Created user object", required = true) user: User) = {
-    Profile("/user (POST)", {
-      UserData.addUser(user)
-      Response.ok.entity("").build
-    })
+    UserData.addUser(user)
+    Response.ok.entity("").build
   }
 
   @POST
   @Path("/createWithArray")
   @ApiOperation(value = "Creates list of users with given input array")
   def createUsersWithArrayInput(@ApiParam(value = "List of user object", required = true) users: Array[User]): Response = {
-    Profile("/user/createWithArray (POST)", {
-      for (user <- users) {
-        UserData.addUser(user)
-      }
-      Response.ok.entity("").build
-    })
+    for (user <- users) {
+      UserData.addUser(user)
+    }
+    Response.ok.entity("").build
   }
 
   @POST
   @Path("/createWithList")
   @ApiOperation(value = "Creates list of users with given list input")
   def createUsersWithListInput(@ApiParam(value = "List of user object", required = true) users: java.util.List[User]): Response = {
-    Profile("/user/createWithList (POST)", {
-      for (user <- users.asScala) {
-        UserData.addUser(user)
-      }
-      Response.ok.entity("").build
-    })
+    for (user <- users.asScala) {
+      UserData.addUser(user)
+    }
+    Response.ok.entity("").build
   }
 
   @PUT
@@ -75,10 +72,8 @@ trait UserResource extends RestResourceUtil {
   def updateUser(
     @ApiParam(value = "name that need to be deleted", required = true)@PathParam("username") username: String,
     @ApiParam(value = "Updated user object", required = true) user: User) = {
-    Profile("/user/* (PUT)", {
-      UserData.addUser(user)
-      Response.ok.entity("").build
-    })
+    UserData.addUser(user)
+    Response.ok.entity("").build
   }
 
   @DELETE
@@ -89,59 +84,47 @@ trait UserResource extends RestResourceUtil {
     new ApiResponse(code = 404, message = "User not found")))
   def deleteUser(
     @ApiParam(value = "The name that needs to be deleted", required = true)@PathParam("username") username: String) = {
-    Profile("/user/* (DELETE)", {
-      UserData.removeUser(username)
-      Response.ok.entity("").build
-    })
+    UserData.removeUser(username)
+    Response.ok.entity("").build
   }
 
   @GET
   @Path("/{username}")
-  @ApiOperation(value = "Get user by user name", responseClass = "com.wordnik.swagger.sample.model.User")
+  @ApiOperation(
+    value = "Get user by user name", 
+    response = classOf[User],
+    produces = "application/json,application/xml")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid username supplied"),
     new ApiResponse(code = 404, message = "User not found")))
   def getUserByName(
     @ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ", required = true)@PathParam("username") username: String) = {
-    Profile("/user/*", {
-      var user = UserData.findUserByName(username)
-      if (null != user) {
-        Response.ok.entity(user).build
-      } else {
-        throw new NotFoundException(404, "User not found")
-      }
-    })
+    var user = UserData.findUserByName(username)
+    if (null != user) {
+      Response.ok.entity(user).build
+    } else {
+      throw new NotFoundException(404, "User not found")
+    }
   }
 
   @GET
   @Path("/login")
-  @ApiOperation(value = "Logs user into the system", responseClass = "String")
+  @ApiOperation(value = "Logs user into the system", 
+    response = classOf[String],
+    produces = "text/plain")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid username and password combination")))
   def loginUser(
     @ApiParam(value = "The user name for login", required = true)@QueryParam("username") username: String,
     @ApiParam(value = "The password for login in clear text", required = true)@QueryParam("password") password: String) = {
-    Profile("/user/login", {
-      Response.ok.entity("logged in user session:" + System.currentTimeMillis()).build
-    })
+    Response.ok.entity("logged in user session:" + System.currentTimeMillis()).build
   }
 
   @GET
   @Path("/logout")
-  @ApiOperation(value = "Logs out current logged in user session")
+  @ApiOperation(value = "Logs out current logged in user session",
+    produces = "text/plain")
   def logoutUser() = {
-    Profile("/user/logout", {
-      Response.ok.entity("").build
-    })
+    Response.ok.entity("").build
   }
 }
-
-@Path("/user.json")
-@Api(value = "/user", description = "Operations about user")
-@Produces(Array("application/json"))
-class UserResourceJSON extends UserResource
-
-@Path("/user.xml")
-@Api(value = "/user", description = "Operations about user")
-@Produces(Array("application/xml"))
-class UserResourceXML extends UserResource

@@ -3,14 +3,14 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.10</artifactId>
-    <version>1.3.2</version>
+    <version>1.3.4</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
   <artifactId>swagger-jersey2-jaxrs_2.10</artifactId>
   <packaging>jar</packaging>
-  <version>1.3.2</version>
+  <version>1.3.4</version>
   <name>swagger-jersey2-jaxrs (Jersey 2.x support)</name>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -47,6 +47,12 @@
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-jaxrs_2.10</artifactId>
       <version>${project.parent.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>jsr311-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.glassfish.jersey.containers</groupId>
