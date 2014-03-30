@@ -1,0 +1,16 @@
+{
+  "name": "swagger-utils",
+  "version": "1.0.0",
+  "description": "Converts swagger json to yaml",
+  "author": {
+    "name": "Tony Tam",
+    "email": "fehguy@gmail.com",
+    "url": "http://developer.wordnik.com"
+  },
+  "license": "Apache",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "json2yaml": "~1.0",
+    "js-yaml": "~3.0"
+  }
+}
