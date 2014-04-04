@@ -25,7 +25,7 @@ trait TokenResponse {
   def access_token: String
 }
 case class AnonymousTokenResponse(expires_in: Long, access_token: String) extends TokenResponse
-case class UserTokenResponse(expires_in: Long, access_token: String, userId: Long) extends TokenResponse
+case class UserTokenResponse(expires_in: Long, access_token: String, username: String) extends TokenResponse
 
 case class TokenWrapper(createdAt: Date, tokenResponse: TokenResponse) {
   def getRemaining() = {
