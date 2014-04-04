@@ -14,7 +14,7 @@ import play.core.Router.Routes
 class PlayApiScanner(routes: Option[Routes]) extends Scanner {
 
   def classes(): List[Class[_]] = {
-    Logger("swagger").warn("ControllerScanner - looking for controllers with API annotation")
+    Logger("swagger").info("ControllerScanner - looking for controllers with API annotation")
 
     // get controller names from application routes
     val controllers = (routes match {
