@@ -3,15 +3,15 @@ package com.wordnik.swagger.auth.service;
 public class TokenScope {
   public static final ThreadLocal userThreadLocal = new ThreadLocal();
 
-  public static void setUserId(Long userId) {
-    userThreadLocal.set(userId);
+  public static void setUsername(String username) {
+    userThreadLocal.set(username);
   }
 
-  public static Long getUserId() {
-    return (Long)userThreadLocal.get();
+  public static String getUsername() {
+    return (String)userThreadLocal.get();
   }
 
-  public static void unsetUserId() {
+  public static void unsetUsername() {
     userThreadLocal.remove();
   }
 }

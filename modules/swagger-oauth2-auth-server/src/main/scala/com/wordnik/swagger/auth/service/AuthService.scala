@@ -35,8 +35,8 @@ class AuthService extends TokenStore {
       val token = getTokenForAccessCode(accessCode)
       if(token.getRemaining > 0) {
         token.tokenResponse match {
-          case e: AnonymousTokenResponse => TokenScope.unsetUserId()
-          case e: UserTokenResponse => TokenScope.setUserId(e.userId)
+          case e: AnonymousTokenResponse => TokenScope.unsetUsername()
+          case e: UserTokenResponse => TokenScope.setUsername(e.username)
           case _ => throw new Exception("unauthorized")
         }
         f
@@ -94,7 +94,7 @@ class AuthService extends TokenStore {
               })
             }
             val code = exchangeRequestIdForCode(requestId)
-            val token = UserTokenResponse(3600, code, 0)
+            val token = UserTokenResponse(3600, code, username)
             addAccessCode(code, TokenWrapper(new Date, token))
             LOGGER.debug("redirecting to " + redirectTo + "code=" + code)
             response.sendRedirect(redirectTo + "code=" + code)
@@ -108,7 +108,7 @@ class AuthService extends TokenStore {
           // should this actually exist?
           LOGGER.debug("no request id, generating access token")
           val accessToken = generateAccessToken()
-          val token = UserTokenResponse(3600, accessToken, 0)
+          val token = UserTokenResponse(3600, accessToken, username)
           addAccessCode(accessToken, TokenWrapper(new Date, token))
 
           val redirectTo = {
@@ -162,9 +162,13 @@ class AuthService extends TokenStore {
           val validCode = hasAccessCode(code)
 
           if(validCode) {
+            val username = getTokenForAccessCode(code).tokenResponse match {
+              case e: UserTokenResponse => e.username
+              case _ => null
+            }
             removeAccessCode(code)
             val accessToken = generateAccessToken()
-            val token = UserTokenResponse(3600, accessToken, 0)
+            val token = UserTokenResponse(3600, accessToken, username)
             addAccessCode(accessToken, TokenWrapper(new Date, token))
             token
           }
