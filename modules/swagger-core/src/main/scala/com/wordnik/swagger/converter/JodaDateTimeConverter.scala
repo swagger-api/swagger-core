@@ -17,8 +17,8 @@ class JodaDateTimeConverter extends ModelConverter with BaseConverter {
   // }
   // 
   // (note the keys are lowercase when matching)
-  override def typeMap = Map("datetime" -> "Date", "xmlgregoriancalendar" -> "Date")
+  override def typeMap = Map("datetime" -> "Date", "localdatetime" -> "Date", "xmlgregoriancalendar" -> "Date")
 
   // don't expand DateTime models
-  override def ignoredClasses: Set[String] = Set("org.joda.time.DateTime", "javax.xml.datatype.XMLGregorianCalendar")
+  override def ignoredClasses: Set[String] = Set("org.joda.time.DateTime", "org.joda.time.LocalDateTime", "javax.xml.datatype.XMLGregorianCalendar")
 }
