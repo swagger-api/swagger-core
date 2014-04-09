@@ -2,9 +2,12 @@ package converter.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"ignoredString", "middleName"})
+@JsonIgnoreProperties({"ignoredString", "middleName", "favoriteColor"})
 public class ModelWithIgnorePropertiesAnnotation {
   private String name, ignoredString;
+
+  public String favoriteColor;
+  public String favoriteAnimal;
 
   public String getName() {
     return name;

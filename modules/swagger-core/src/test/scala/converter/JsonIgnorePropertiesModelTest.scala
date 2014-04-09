@@ -16,5 +16,5 @@ import org.scalatest.matchers.ShouldMatchers
 @RunWith(classOf[JUnitRunner])
 class JsonIgnorePropertiesModelTest extends FlatSpec with ShouldMatchers {
   val models = ModelConverters.readAll(classOf[ModelWithIgnorePropertiesAnnotation])
-  JsonSerializer.asJson(models) should be ("""[{"id":"ModelWithIgnorePropertiesAnnotation","properties":{"name":{"type":"string"}}}]""")
+  JsonSerializer.asJson(models) should be ("""[{"id":"ModelWithIgnorePropertiesAnnotation","properties":{"name":{"type":"string"},"favoriteAnimal":{"type":"string"}}}]""")
 }
