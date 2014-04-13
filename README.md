@@ -38,7 +38,7 @@ You need the following installed and available in your $PATH:
 
 <li>- Java 1.6 or greater (http://java.oracle.com)
 
-<li>- Apache maven 3.0.3 or greater (http://maven.apache.org/)
+<li>- Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
 ### To build from source (currently 1.3.4)
 ```
