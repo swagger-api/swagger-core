@@ -7,8 +7,8 @@ public class TokenScope {
     userThreadLocal.set(username);
   }
 
-  public static Long getUsername() {
-    return (Long)userThreadLocal.get();
+  public static String getUsername() {
+    return (String)userThreadLocal.get();
   }
 
   public static void unsetUsername() {
