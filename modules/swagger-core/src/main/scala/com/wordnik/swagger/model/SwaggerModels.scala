@@ -19,18 +19,18 @@ package com.wordnik.swagger.model
 import scala.collection.mutable.LinkedHashMap
 
 case class ResourceListing(
-  apiVersion: String, 
-  swaggerVersion: String, 
+  apiVersion: String,
+  swaggerVersion: String,
   apis: List[ApiListingReference] = List(),
   authorizations: List[AuthorizationType] = List(),
   info: Option[ApiInfo] = None)
 
 case class ApiInfo(
   title: String,
-  description: String, 
-  termsOfServiceUrl: String, 
-  contact: String, 
-  license: String, 
+  description: String,
+  termsOfServiceUrl: String,
+  contact: String,
+  license: String,
   licenseUrl: String)
 
 case class LoginEndpoint(url: String)
@@ -61,7 +61,9 @@ case class ModelProperty(
   required: Boolean = false,
   description: Option[String] = None,
   allowableValues: AllowableValues = AnyAllowableValues,
-  items: Option[ModelRef] = None)
+  items: Option[ModelRef] = None,
+  notes: Option[String] = None,
+  access: Option[String] = None)
 
 case class ModelRef(
   `type`: String,

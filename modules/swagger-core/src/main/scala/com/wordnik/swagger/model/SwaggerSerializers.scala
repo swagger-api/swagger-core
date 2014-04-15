@@ -14,11 +14,11 @@ import scala.collection.mutable.{ListBuffer, LinkedHashMap}
 object SwaggerSerializers extends Serializers {
   import ValidationMessage._
 
-  implicit val formats = DefaultFormats + 
-    new JsonSchemaModelSerializer + 
+  implicit val formats = DefaultFormats +
+    new JsonSchemaModelSerializer +
     new JsonSchemaModelPropertySerializer +
-    new JsonSchemaModelRefSerializer + 
-    new AllowableValuesSerializer + 
+    new JsonSchemaModelRefSerializer +
+    new AllowableValuesSerializer +
     new JsonSchemaParameterSerializer +
     new JsonSchemaOperationSerializer +
     new ResponseMessageSerializer +
@@ -27,7 +27,7 @@ object SwaggerSerializers extends Serializers {
     new ResourceListingSerializer +
     new ApiInfoSerializer +
     new ApiListingSerializer +
-    new AuthorizationTypeSerializer + 
+    new AuthorizationTypeSerializer +
     new AuthorizationSerializer
 
   class JsonSchemaModelSerializer extends CustomSerializer[Model](formats => ({
@@ -62,7 +62,7 @@ object SwaggerSerializers extends Serializers {
         if(prop.required) Some(name)
         else None
       }).flatten.toList
-      ("id" -> x.id) ~  
+      ("id" -> x.id) ~
       ("description" -> x.description) ~
       ("required" -> (required.size match {
         case 0 => JNothing
@@ -115,7 +115,7 @@ object SwaggerSerializers extends Serializers {
       case _           => {
         val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-]*)\\].*".r
         `type` match {
-          case ComplexTypeMatcher(container, value) => 
+          case ComplexTypeMatcher(container, value) =>
             toJsonSchemaContainer(container) ~ {
               ("items" -> {if(isSimpleType(value))
                   toJsonSchema("type", value)
@@ -288,7 +288,7 @@ object SwaggerSerializers extends Serializers {
         `type` = `type`,
         qualifiedType = `type`,
         position = (json \ "position").extractOrElse(0),
-        (json \ "required") match {
+        required = (json \ "required") match {
           case e:JString => e.s.toBoolean
           case e:JBool => e.value
           case _ => false
@@ -300,19 +300,23 @@ object SwaggerSerializers extends Serializers {
             case Some(e: ModelRef) if(e.`type` != null || e.ref != None) => Some(e)
             case _ => None
           }
-        }
+        },
+        notes = (json \ "notes").extractOpt[String],
+        access = (json \ "access").extractOpt[String]
       )
     }, {
     case x: ModelProperty =>
       implicit val fmts = formats
-      val output = toJsonSchemaType(x) ~      
+      val output = toJsonSchemaType(x) ~
       ("description" -> x.description) ~
+      ("notes" -> x.notes) ~
+      ("access" -> x.access) ~
       ("items" -> Extraction.decompose(x.items))
 
       x.allowableValues match {
-        case AllowableListValues(values, "LIST") => 
+        case AllowableListValues(values, "LIST") =>
           output ~ ("enum" -> Extraction.decompose(values))
-        case AllowableRangeValues(min, max)  => 
+        case AllowableRangeValues(min, max)  =>
           output ~ ("minimum" -> min) ~ ("maximum" -> max)
         case _ => output
       }
@@ -386,9 +390,9 @@ object SwaggerSerializers extends Serializers {
       ("paramAccess" -> x.paramAccess)
 
       x.allowableValues match {
-        case AllowableListValues(values, "LIST") => 
+        case AllowableListValues(values, "LIST") =>
           output ~ ("enum" -> Extraction.decompose(values))
-        case AllowableRangeValues(min, max)  => 
+        case AllowableRangeValues(min, max)  =>
           output ~ ("minimum" -> min) ~ ("maximum" -> max)
         case _ => output
       }
@@ -398,11 +402,11 @@ object SwaggerSerializers extends Serializers {
 
 object SwaggerJsonSchemaSerializers extends Serializers {
 // object SwaggerSerializers extends Serializers {
-  implicit val formats = DefaultFormats + 
-    new ModelSerializer + 
+  implicit val formats = DefaultFormats +
+    new ModelSerializer +
     new ModelPropertySerializer +
-    new ModelRefSerializer + 
-    new AllowableValuesSerializer + 
+    new ModelRefSerializer +
+    new AllowableValuesSerializer +
     new ParameterSerializer +
     new OperationSerializer +
     new ResponseMessageSerializer +
@@ -411,7 +415,7 @@ object SwaggerJsonSchemaSerializers extends Serializers {
     new ResourceListingSerializer +
     new ApiInfoSerializer +
     new ApiListingSerializer +
-    new AuthorizationTypeSerializer + 
+    new AuthorizationTypeSerializer +
     new AuthorizationSerializer
 }
 
@@ -871,7 +875,7 @@ trait Serializers {
         `type` = (json \ "type").extractOrElse(""),
         qualifiedType = (json \ "type").extractOrElse(""),
         position = (json \ "position").extractOrElse(0),
-        (json \ "required") match {
+        required = (json \ "required") match {
           case e:JString => e.s.toBoolean
           case e:JBool => e.value
           case _ => false
@@ -883,7 +887,9 @@ trait Serializers {
             case Some(e: ModelRef) if(e.`type` != null || e.ref != None) => Some(e)
             case _ => None
           }
-        }
+        },
+        notes = (json \ "notes").extractOpt[String],
+        access = (json \ "access").extractOpt[String]
       )
     }, {
     case x: ModelProperty =>
@@ -898,7 +904,9 @@ trait Serializers {
           case _ => JNothing
         }
       }) ~
-      ("items" -> Extraction.decompose(x.items))
+      ("items" -> Extraction.decompose(x.items)) ~
+      ("notes" -> x.notes) ~
+      ("access" -> x.access)
     }
   ))
 
@@ -927,7 +935,7 @@ trait Serializers {
       implicit val fmts: Formats = formats
       json \ "type" match {
         case JString(x) if x.equalsIgnoreCase("oauth2") => {
-          OAuth((json \ "scopes").extractOrElse(List()), 
+          OAuth((json \ "scopes").extractOrElse(List()),
             (json \ "grantTypes").extractOrElse(List()))
         }
         case JString(x) if x.equalsIgnoreCase("apiKey") => {
@@ -939,16 +947,16 @@ trait Serializers {
         case _ => null
       }
     }, {
-      case x: OAuth => 
+      case x: OAuth =>
         implicit val fmts = formats
-        ("type" -> x.`type`) ~ 
+        ("type" -> x.`type`) ~
         ("scopes" -> Extraction.decompose(x.scopes)) ~
         ("grantTypes" -> {
           (for(t <- x.grantTypes) yield {
             (t.`type`, Extraction.decompose(t))
           }).toMap
         })
-      case x: ApiKey => 
+      case x: ApiKey =>
         ("type" -> "apiKey") ~
         ("keyName" -> x.keyname) ~
         ("passAs" -> x.passAs)
@@ -964,7 +972,7 @@ trait Serializers {
         (json \ "type").extract[String],
         (json \ "scopes").extractOrElse(Array[AuthorizationScope]()))
     }, {
-      case x: Authorization => 
+      case x: Authorization =>
         implicit val fmts = formats
         Extraction.decompose(x.scopes)
     }
@@ -995,10 +1003,10 @@ trait Serializers {
         }
       }
     }, {
-      case AllowableListValues(values, "LIST") => 
+      case AllowableListValues(values, "LIST") =>
         implicit val fmts = formats
         ("valueType" -> "LIST") ~ ("values" -> Extraction.decompose(values))
-      case AllowableRangeValues(min, max)  => 
+      case AllowableRangeValues(min, max)  =>
         ("valueType" -> "RANGE") ~ ("min" -> min) ~ ("max" -> max)
     }
   ))
