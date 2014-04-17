@@ -21,8 +21,6 @@ class ServletScanner extends Scanner {
   }
 
   def classes(): List[Class[_]] = {
-    val config = new ConfigurationBuilder().setUrls(ClasspathHelper.forPackage(resourcePackage)).setScanners(
-      new TypeAnnotationsScanner(), new SubTypesScanner())
-    new Reflections(config).getTypesAnnotatedWith(classOf[Api]).asScala.toList
+    new Reflections(resourcePackage).getTypesAnnotatedWith(classOf[Api]).asScala.toList
   }
 }
