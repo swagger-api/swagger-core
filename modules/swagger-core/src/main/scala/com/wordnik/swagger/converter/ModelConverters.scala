@@ -27,6 +27,10 @@ object ModelConverters {
     else converters += c
   }
 
+  def removeConverter(c: ModelConverter) = {
+    converters -= c
+  }
+
   def read(cls: Class[_], t: Map[String, String] = Map.empty): Option[Model] = {
     val types = {
       if(t.isEmpty)typeMap

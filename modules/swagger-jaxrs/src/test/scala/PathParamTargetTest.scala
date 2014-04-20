@@ -89,7 +89,7 @@ class JavaPathParamTargetTest extends FlatSpec with ShouldMatchers {
 
     // verify the 2nd api
     val detailsOps = apis.filter(_.path == "/javaPathParamTest/{id}/details").head.operations
-    val detailOp = detailsOps.head
+    val detailOp = detailsOps.filter(_.method == "POST").head
 
     detailOp.parameters.size should be (3)
 

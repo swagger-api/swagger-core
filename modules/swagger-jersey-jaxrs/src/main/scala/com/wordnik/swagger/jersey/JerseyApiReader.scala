@@ -75,24 +75,7 @@ class JerseyApiReader extends JaxrsApiReader {
         case _ => None
       }
       // look for method-level annotated properties
-      val parentParams: List[Parameter] = (for(field <- getAllFields(cls)) 
-        yield {
-          // only process fields with @ApiParam, @QueryParam, @HeaderParam, @PathParam
-          if(field.getAnnotation(classOf[QueryParam]) != null || field.getAnnotation(classOf[HeaderParam]) != null ||
-            field.getAnnotation(classOf[HeaderParam]) != null || field.getAnnotation(classOf[PathParam]) != null ||
-            field.getAnnotation(classOf[ApiParam]) != null) { 
-            val param = new MutableParameter
-            param.dataType = field.getType.getName
-            Option (field.getAnnotation(classOf[ApiParam])) match {
-              case Some(annotation) => toAllowableValues(annotation.allowableValues)
-              case _ =>
-            }
-            val annotations = field.getAnnotations
-            processParamAnnotations(param, annotations)
-          }
-          else None
-        }
-      ).flatten.toList
+      val parentParams: List[Parameter] = getAllParamsFromFields(cls)
 
       for(method <- cls.getMethods) {
         val returnType = findSubresourceType(method)
@@ -153,7 +136,7 @@ class JerseyApiReader extends JaxrsApiReader {
     else None
   }
 
-  def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation]): Option[Parameter] = {
+  def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation]): List[Parameter] = {
     var shouldIgnore = false
     for (pa <- paramAnnotations) {
       pa match {
@@ -211,9 +194,9 @@ class JerseyApiReader extends JaxrsApiReader {
         mutable.paramType = TYPE_BODY
         mutable.name = TYPE_BODY
       }
-      Some(mutable.asParameter)
+      List(mutable.asParameter)
     }
-    else None
+    else List()
   }
 
   def findSubresourceType(method: Method): Class[_] = {

@@ -24,7 +24,8 @@ import javax.xml.bind.annotation._
 class SnakeCaseConverterTest extends FlatSpec with ShouldMatchers {
   it should "ignore properties with type Bar" in {
     // add the custom converter
-    ModelConverters.addConverter(new SnakeCaseConverter, true)
+    val snakeCaseConverter = new SnakeCaseConverter
+    ModelConverters.addConverter(snakeCaseConverter, true)
 
     // make sure the field bar: converter.Bar is not present
     ModelConverters.read(classOf[SnakeCaseModel]) match {
@@ -34,6 +35,9 @@ class SnakeCaseConverterTest extends FlatSpec with ShouldMatchers {
       }
       case _ => fail("didn't read anything")
     }
+    
+    // cleanup to avoid impacting other test cases with Date model members
+    ModelConverters.removeConverter(snakeCaseConverter)
   }
 }
 

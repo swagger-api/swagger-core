@@ -25,13 +25,15 @@ import org.scalatest.matchers.ShouldMatchers
 class CustomConverterTest extends FlatSpec with ShouldMatchers {
   it should "ignore properties with type Bar" in {
     // add the custom converter
-    ModelConverters.addConverter(new CustomConverter, true)
+    val customConverter = new CustomConverter
+    ModelConverters.addConverter(customConverter, true)
 
     // make sure the field bar: converter.Bar is not present
     ModelConverters.read(classOf[Foo]) match {
       case Some(model) => model.properties.get("bar") should be (None)
       case _ => fail("didn't read anything")
     }
+    ModelConverters.removeConverter(customConverter)
   }
 }
 
