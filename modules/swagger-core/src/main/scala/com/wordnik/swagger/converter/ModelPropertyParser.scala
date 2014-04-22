@@ -39,7 +39,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       val ignoredProperties = parseIgnorePropertiesClassAnnotation(hostClass)
 
       for (method <- hostClass.getDeclaredMethods) {
-        if (Modifier.isPublic(method.getModifiers()) && !Modifier.isStatic(method.getModifiers())) {
+        if (Modifier.isPublic(method.getModifiers()) && !Modifier.isStatic(method.getModifiers()) && !method.isSynthetic()) {
           val (fieldName, getter) = extractGetterProperty(method.getName)
 
           LOGGER.debug("field name for method " + method.getName + " is " + fieldName)
@@ -53,7 +53,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       }
 
       for (field <- hostClass.getDeclaredFields) {
-        if (Modifier.isPublic(field.getModifiers()) && !Modifier.isStatic(field.getModifiers()) && !ignoredProperties.contains(field.getName)) {
+        if (Modifier.isPublic(field.getModifiers()) && !Modifier.isStatic(field.getModifiers()) && !ignoredProperties.contains(field.getName) && !field.isSynthetic()) {
           if (ignoredProperties.contains(field.getName)) {
             LOGGER.debug("ignoring property " + field.getName)
           } else {
