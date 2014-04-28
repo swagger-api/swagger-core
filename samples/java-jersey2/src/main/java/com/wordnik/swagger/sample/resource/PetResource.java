@@ -77,7 +77,9 @@ public class PetResource {
     responseContainer = "List")
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid status value") })
   public Response findPetsByStatus(
-      @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available", allowableValues = "available,pending,sold", allowMultiple = true) @QueryParam("status") String status) {
+      @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available", allowableValues = "available,pending,sold", allowMultiple = true) @QueryParam("status") String status,
+      @BeanParam QueryResultBean qr
+){
     return Response.ok(petData.findPetByStatus(status)).build();
   }
 
