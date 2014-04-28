@@ -2,17 +2,22 @@
 
 [![Build Status](https://travis-ci.org/wordnik/swagger-core.png)](https://travis-ci.org/wordnik/swagger-core)
 
-## [See the Wiki!](https://github.com/wordnik/swagger-core/wiki)
-The [github wiki](https://github.com/wordnik/swagger-core/wiki) contains documentation, samples, etc.  Start there
+The goal of Swagger™ is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, Swager removes the guesswork in calling the service.
 
-## Where to get help!
-Search the [swagger google groups](https://groups.google.com/forum/#!forum/swagger-swaggersocket) for previously 
-asked questions.  Join #swagger on irc.freenode.net to talk to interesting human beings.  And if you find a bug,
-file it in github:
+Swagger-core is the Java/Scala implementation of Swagger. It supports *JAX-RS*, *plain Servlets*, and *Play Framework*.
 
-* [Swagger core + server integrations](https://github.com/wordnik/swagger-core/issues) issues
-* [Swagger UI](https://github.com/wordnik/swagger-ui/issues)
-* [Swagger codegen](https://github.com/wordnik/swagger-codegen/issues)
+Check out [Swagger-Spec](https://github.com/wordnik/swagger-spec) for additional information about the Swagger project, including additional libraries with support for SpringMVC, other languages and more. 
+
+## See the Wiki!
+The [github wiki](https://github.com/wordnik/swagger-core/wiki) contains documentation, samples, etc.  Start there.
+
+## Support
+The following methods are available to obtain support for Swagger:
+
+- [The Swagger Google Group](https://groups.google.com/forum/#!forum/swagger-swaggersocket) - This would normally be your first stop to get support for Swagger. Here you can find previously asked question, and ask new ones. When asking a question, please provide as much information as you can regarding the environment you use (development language, library, versions.
+- The [Issues tab](https://github.com/wordnik/swagger-core/issues?state=open) - Please open feature requests and bugs here. If you're not sure you encountered a bug, or if it's a general usage question, please use the Google Group mentioned above.
+- IRC! you can find us on [freenode](irc://irc.freenode.net) in the channel #Swagger. You can talk with us directly there.
+
 
 ## Get started with Swagger!
 See the guide on [getting started with swagger](https://github.com/wordnik/swagger-core/wiki/Adding-Swagger-to-your-API) to get started with adding swagger to your API.
@@ -20,8 +25,7 @@ See the guide on [getting started with swagger](https://github.com/wordnik/swagg
 
 ## Overview
 This is a project to build the swagger-core library, which is required for the Wordnik 
-implementation of the Swagger spec.  You can find out more about both the spec and the
-framework at http://swagger.wordnik.com.  For more information about Wordnik's APIs, please
+implementation of the Swagger spec. For more information about Wordnik's APIs, please
 visit http://developer.wordnik.com.
 
 
@@ -34,11 +38,9 @@ You need the following installed and available in your $PATH:
 
 <li>- Java 1.6 or greater (http://java.oracle.com)
 
-<li>- Apache maven 3.0.3 or greater (http://maven.apache.org/)
+<li>- Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
-<li>- Scala 2.9.1-1 [available here](http://www.scala-lang.org).  Note that 2.9.1 has a defect which causes problems with Jax-RS
-
-### To build from source (currently 1.3.0)
+### To build from source (currently 1.3.4)
 ```
 # first time building locally
 mvn -N
@@ -62,12 +64,6 @@ There are a number of sample apps in the `samples` folder:
 
 [scala-jaxrs](https://github.com/wordnik/swagger-core/tree/master/samples/scala-jaxrs/README.md) Scala-based swagger server with JAX-RS
 
-[java-alt-resource-listing](https://github.com/wordnik/swagger-core/tree/master/samples/java-alt-resource-listing/README.md) 
-Scala-based swagger server with JAX-RS with an alternate resource listing scheme
-
-[scala-alt-resource-listing](https://github.com/wordnik/swagger-core/tree/master/samples/scala-alt-resource-listing/README.md) 
-Scala-based swagger server with JAX-RS with an alternate resource listing scheme
-
 [scala-jaxrs-apm](https://github.com/wordnik/swagger-core/tree/master/samples/scala-jaxrs-apm/README.md) 
 Scala-based swagger server using wordnik-oss utils for Application Performance Monitoring (APM)
 
@@ -86,8 +82,6 @@ And the [Play2](http://playframework.org) samples:
 
 [scala-play2](https://github.com/wordnik/swagger-core/tree/master/samples/scala-play2) Scala-based Play2 sample app
 
-[scala-play2-no-format](https://github.com/wordnik/swagger-core/tree/master/samples/scala-play2-no-format) Scala-based Play2 sample app without the .{format} in resource listing
-
 To run the Play2 sample apps:
 
 ```
@@ -99,7 +93,7 @@ play run
 License
 -------
 
-Copyright 2013 Reverb Technologies, Inc.
+Copyright 2014 Reverb Technologies, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
