@@ -5,7 +5,7 @@ import com.wordnik.swagger.core.{ SwaggerSpec, SwaggerTypes }
 import com.wordnik.swagger.core.util.TypeUtil
 import com.wordnik.swagger.annotations.ApiModelProperty
 
-import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty}
+import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty, JsonIgnoreProperties}
 
 import org.slf4j.LoggerFactory
 
@@ -35,14 +35,33 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
   def parseRecursive(hostClass: Class[_]): Unit = {
     if(!hostClass.isEnum) {
       LOGGER.debug("processing class " + hostClass)
+
+      val ignoredProperties = parseIgnorePropertiesClassAnnotation(hostClass)
+
       for (method <- hostClass.getDeclaredMethods) {
-        if (Modifier.isPublic(method.getModifiers()) && !Modifier.isStatic(method.getModifiers()))
-          parseMethod(method)
+        if (Modifier.isPublic(method.getModifiers()) && !Modifier.isStatic(method.getModifiers()) && !method.isSynthetic()) {
+          val (fieldName, getter) = extractGetterProperty(method.getName)
+
+          LOGGER.debug("field name for method " + method.getName + " is " + fieldName)
+
+          if (ignoredProperties.contains(fieldName)) {
+            LOGGER.debug("ignoring property " + fieldName)
+          } else {
+            parseMethod(method)
+          }
+        }
       }
+
       for (field <- hostClass.getDeclaredFields) {
-        if (Modifier.isPublic(field.getModifiers()) && !Modifier.isStatic(field.getModifiers()))
-          parseField(field)
+        if (Modifier.isPublic(field.getModifiers()) && !Modifier.isStatic(field.getModifiers()) && !ignoredProperties.contains(field.getName) && !field.isSynthetic()) {
+          if (ignoredProperties.contains(field.getName)) {
+            LOGGER.debug("ignoring property " + field.getName)
+          } else {
+            parseField(field)
+          }
+        }
       }
+
       Option(hostClass.getSuperclass).map(parseRecursive(_))
     }
     else {
@@ -76,6 +95,19 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     } else {
       (methodFieldName, false)
     }
+  }
+
+  def parseIgnorePropertiesClassAnnotation(returnClass: Class[_]) : Array[String] = {
+    var ignoredProperties = Array[String]()
+    val ignore = returnClass.getAnnotation(classOf[JsonIgnoreProperties])
+
+    if (ignore != null) {
+      ignoredProperties = ignore.value
+
+      LOGGER.debug("found @JsonIgnoreProperties on " + returnClass + " with value(s) " + ignoredProperties.mkString(","))
+    }
+
+    ignoredProperties
   }
 
   def parsePropertyAnnotations(returnClass: Class[_], propertyName: String, propertyAnnotations: Array[Annotation], genericReturnType: Type, returnType: Type, isField: Boolean): Any = {

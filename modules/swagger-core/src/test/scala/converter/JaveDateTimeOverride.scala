@@ -17,9 +17,12 @@ import scala.reflect.BeanProperty
 
 @RunWith(classOf[JUnitRunner])
 class JaveDateTimeOverride extends FlatSpec with ShouldMatchers {
-  ModelConverters.addConverter(new JavaDateTimeConverter, true)
+  val javaDateTimeConverter = new JavaDateTimeConverter
+  ModelConverters.addConverter(javaDateTimeConverter, true)
   val models = ModelConverters.readAll(classOf[ModelWithDate])
   JsonSerializer.asJson(models) should be ("""[{"id":"ModelWithDate","properties":{"dateValue":{"type":"integer","format":"int64"}}}]""")
+  // cleanup to avoid impacting other test cases with Date model members
+  ModelConverters.removeConverter(javaDateTimeConverter)
 }
 
 class JavaDateTimeConverter extends SwaggerSchemaConverter {

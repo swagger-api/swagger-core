@@ -163,7 +163,7 @@ class AuthService extends TokenStore {
 
           if(validCode) {
             val username = getTokenForAccessCode(code).tokenResponse match {
-              case e: UserTokenResponse => e.username
+              case t: UserTokenResponse => t.username
               case _ => null
             }
             removeAccessCode(code)
