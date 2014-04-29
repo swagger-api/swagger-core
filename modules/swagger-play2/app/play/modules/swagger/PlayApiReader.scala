@@ -67,24 +67,24 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         case _ => None
       }
       // look for method-level annotated properties
-      val parentParams: List[Parameter] = (for(field <- getAllFields(cls)) 
-        yield {
-          // only process fields with @ApiParam, @QueryParam, @HeaderParam, @PathParam
-          if(field.getAnnotation(classOf[QueryParam]) != null || field.getAnnotation(classOf[HeaderParam]) != null ||
-            field.getAnnotation(classOf[HeaderParam]) != null || field.getAnnotation(classOf[PathParam]) != null ||
-            field.getAnnotation(classOf[ApiParam]) != null) { 
-            val param = new MutableParameter
-            param.dataType = field.getType.getName
-            Option (field.getAnnotation(classOf[ApiParam])) match {
-              case Some(annotation) => toAllowableValues(annotation.allowableValues)
-              case _ =>
-            }
-            val annotations = field.getAnnotations
-            processParamAnnotations(param, annotations)
+      val params = new ListBuffer[Parameter]
+      for(field <- getAllFields(cls)) {
+        // only process fields with @ApiParam, @QueryParam, @HeaderParam, @PathParam
+        if(field.getAnnotation(classOf[QueryParam]) != null || field.getAnnotation(classOf[HeaderParam]) != null ||
+          field.getAnnotation(classOf[HeaderParam]) != null || field.getAnnotation(classOf[PathParam]) != null ||
+          field.getAnnotation(classOf[ApiParam]) != null) { 
+          val param = new MutableParameter
+          param.dataType = field.getType.getName
+          Option (field.getAnnotation(classOf[ApiParam])) match {
+            case Some(annotation) => toAllowableValues(annotation.allowableValues)
+            case _ =>
           }
-          else None
+          val annotations = field.getAnnotations
+          params ++= processParamAnnotations(param, annotations)
         }
-      ).flatten.toList
+      }
+
+      val parentParams: List[Parameter] = params.toList
 
       for(method <- cls.getMethods) {
         val returnType = findSubresourceType(method)
@@ -325,16 +325,16 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
     val paramTypes = method.getParameterTypes
     val genericParamTypes: Array[java.lang.reflect.Type] = method.getGenericParameterTypes
 
-    val params = (for ((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
+    val paramList = new ListBuffer[Parameter]
+    for ((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
       if (annotations.length > 0) {
         val param = new MutableParameter
         param.dataType = processDataType(paramType, genericParamType)
-        processParamAnnotations(param, annotations)
+        paramList ++= processParamAnnotations(param, annotations)
       }
-      else None
-    }).flatten.toList
+    }
 
-    params
+    paramList.toList
   }
 
   def processResponsesAnnotation(responseAnnotations: ApiResponses) = {
@@ -346,11 +346,10 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         else None
       }
       ResponseMessage(response.code, response.message, apiResponse)
-    }
-      ).toList
+    }).toList
   }
 
-  def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation]): Option[Parameter] = {
+  def processParamAnnotations(mutable: MutableParameter, paramAnnotations: Array[Annotation]): List[Parameter] = {
     var shouldIgnore = false
     for (pa <- paramAnnotations) {
       pa match {
@@ -392,9 +391,9 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         mutable.paramType = TYPE_BODY
         mutable.name = TYPE_BODY
       }
-      Some(mutable.asParameter)
+      List(mutable.asParameter)
     }
-    else None
+    else List()
   }
 
   def appendOperation(resourcePath: String, operation: Operation, operationsMap: Map[String, List[Operation]]): Map[String, List[Operation]] = {
