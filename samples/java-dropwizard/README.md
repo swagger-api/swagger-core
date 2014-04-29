@@ -3,7 +3,7 @@ To run the sample:
 ```
 mvn package
 
-java -jar target/swagger-java-dropwizard-sample-app_2.10-1.3.3-SNAPSHOT.jar server conf/swagger-sample.yml 
+java -jar target/swagger-java-dropwizard-sample-app_2.10-1.3.6-SNAPSHOT.jar server conf/swagger-sample.yml 
 
 ```
 
