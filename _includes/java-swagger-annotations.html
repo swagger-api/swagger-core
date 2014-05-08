@@ -2,14 +2,14 @@
 
 All of the above was one time setup to activate Swagger into your service. However, it still does not know enough about your APIs. Sure jaxrs annotations on your API resources do give some information. However, we need to a way to tell Swagger the really good stuff about the APIs. 
 
-This is done via Swagger annotations. There is more information available in [Swagger annotations javadoc]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/index.html) but here is a breakdown of the various annotations that you can add to your API code to really Swaggerize it.
+This is done via Swagger annotations. There is more information available in [Swagger annotations javadoc]({{site.baseurl}}/javadocs/swagger-core/1.3.5/annotations/index.html) but here is a breakdown of the various annotations that you can add to your API code to really Swaggerize it.
 
 ### Annotating Resources
 Here are the swagger annotations you can use to mark up your API Resource classes, their methods and parameters:
 
 <br>
 
-**Class** / [@Api]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/Api.html)
+**Class** / [@Api]({{site.baseurl}}/javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/Api.html)
 
 ```java
 @Api(value="/user", description = "Operations about user")
@@ -21,7 +21,7 @@ public class UserResource {
 
 <br>
 
-**Methods** / [@ApiOperation]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiOperation.html) & [@ApiResponse]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiResponse.html)
+**Methods** / [@ApiOperation]({{site.baseurl}}/javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiOperation.html) & [@ApiResponse]({{site.baseurl}}/javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiResponse.html)
 
 ```java
 public class UserResource {
@@ -41,7 +41,7 @@ public class UserResource {
 
 <br>
 
-**Parameters** / [@ApiParam]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiParam.html)
+**Parameters** / [@ApiParam]({{site.baseurl}}/javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiParam.html)
 
 ```java
 public class UserResource {
@@ -111,13 +111,13 @@ public class UserResource {
 ### Annotating Models
 **How does Swagger figure out your API models?**
 
-Your APIs typically accept some input data and respond with some output data. Input data is implicitly expressed as parameters to your resource class methods. In jaxrs Swagger, output data is expressed using [@ApiOperation's response element]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiOperation.html#response). If your API contains multiple output types, you can express that using [@ApiResponse's response element]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiResponse.html#response).
+Your APIs typically accept some input data and respond with some output data. Input data is implicitly expressed as parameters to your resource class methods. In jaxrs Swagger, output data is expressed using [@ApiOperation's response element]({{site.baseurl}}/javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiOperation.html#response). If your API contains multiple output types, you can express that using [@ApiResponse's response element]({{site.baseurl}}/javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiResponse.html#response).
 
 So, by looking at data types of your API resource's method params and by reading @ApiOperation.response + @ApiResponse.response, Swagger creates an inventory of the models that your API works wth. To enable swagger to do more with your models, you can annotate these model classes too.
 
 <br>
 
-**Model class** | [@ApiModel]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiModel.html#response)
+**Model class** | [@ApiModel]({{site.baseurl}}/javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiModel.html#response)
 
 ```java
 @ApiModel(description = "An item which may be available in our grocery store")
@@ -128,7 +128,7 @@ public class GroceryItem {
 
 <br>
 
-**Model property** | [@ApiModelProperty]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiModelProperty.html#response)
+**Model property** | [@ApiModelProperty]({{site.baseurl}}/javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiModelProperty.html#response)
 
 ```java
 @ApiModel(description = "An item which may be available in our grocery store")
