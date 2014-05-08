@@ -1,0 +1,45 @@
+### Optional Swagger configuration
+If you like, you can also give the following information about your API to Swagger:
+
+1. title
+2. description
+3. termsOfServiceUrl
+4. contact
+5. license
+6. licenseUrl
+
+Lets do this in a servlet too:
+
+```java
+import com.wordnik.swagger.config.ConfigFactory;
+import com.wordnik.swagger.model.ApiInfo;
+
+public class Bootstrap extends HttpServlet {
+  static {
+        ApiInfo info = new ApiInfo(
+          "Swagger Sample App",                             /* title */
+          "This is a sample server Petstore server.  You can find out more about Swagger " + 
+          "at <a href=\"http://swagger.wordnik.com\">http://swagger.wordnik.com</a> or on irc.freenode.net, #swagger.  For this sample, " + 
+          "you can use the api key \"special-key\" to test the authorization filters", 
+          "http://helloreverb.com/terms/",                  /* TOS URL */
+          "apiteam@wordnik.com",                            /* Contact */
+          "Apache 2.0",                                     /* license */
+          "http://www.apache.org/licenses/LICENSE-2.0.html" /* license URL */
+        );
+
+        ConfigFactory.config.setApiInfo(info);
+    }
+}
+```
+
+And of course add this servlet to web.xml:
+
+```xml
+    <servlet>
+        <servlet-name>Bootstrap</servlet-name>
+        <servlet-class>com.wordnik.swagger.sample.Bootstrap</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+```
+
+Note that `ConfigFactory.config`, which we're using in our sample Bootstap above, lets you configure [several other properties](https://github.com/wordnik/swagger-core/blob/master/modules/swagger-core/src/main/scala/com/wordnik/swagger/config/SwaggerConfig.scala#L10-L13) programatically.

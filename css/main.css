@@ -1,3 +1,7 @@
-/*.nav-pills li a {
+.nav-pills-small li a {
 	padding: 5px 10px;
-}*/
+}
+
+hr {
+	border-top: 1px solid #eee
+}

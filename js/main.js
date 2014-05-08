@@ -1,7 +1,7 @@
 $( document ).ready(function() {
   $("table").addClass("table table-striped");
   hljs.initHighlightingOnLoad();
-  console.log("foo")
+  $('.toc').toc({ listType: 'ul', showSpeed: 0 })
 });
 
 function setActive(className, selectedItem) {

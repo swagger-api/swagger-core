@@ -1,0 +1,177 @@
+## Annotate your code
+
+All of the above was one time setup to activate Swagger into your service. However, it still does not know enough about your APIs. Sure jaxrs annotations on your API resources do give some information. However, we need to a way to tell Swagger the really good stuff about the APIs. 
+
+This is done via Swagger annotations. There is more information available in [Swagger annotations javadoc]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/index.html) but here is a breakdown of the various annotations that you can add to your API code to really Swaggerize it.
+
+### Annotating Resources
+Here are the swagger annotations you can use to mark up your API Resource classes, their methods and parameters:
+
+<br>
+
+**Class** / [@Api]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/Api.html)
+
+```java
+@Api(value="/user", description = "Operations about user")
+// other jaxrs annotations like @Path and @Produces
+public class UserResource {
+    // your resource code
+}
+```
+
+<br>
+
+**Methods** / [@ApiOperation]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiOperation.html) & [@ApiResponse]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiResponse.html)
+
+```java
+public class UserResource {
+    @ApiOperation(
+        value = "Get user by user name",
+        response = User.class,
+        position = 0)
+    @ApiResponses(value = {
+        @ApiResponse(code = 400, message = "Invalid username supplied"),
+        @ApiResponse(code = 404, message = "User not found") })
+    // other jaxrs annotations like @Path and @GET/@POST/@DELETE
+    public Response getUserByName(...) throws ApiException {
+        // your resource method code
+    }
+}
+```
+
+<br>
+
+**Parameters** / [@ApiParam]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiParam.html)
+
+```java
+public class UserResource {
+    public Response getUserByName(
+        // other jaxrs annotations like @PathParam/@QueryParam
+        @ApiParam(
+            value = "The name that needs to be fetched. Use user1 for testing. ", 
+            required = true)  String username)
+    throws ApiException {
+}
+```
+
+<br>
+
+**A more complete Example** showing both Swagger and jaxrs annotations for all three: Resource class, method and its parameters:
+
+```java
+@Path("/user")
+@Api(value="/user", description = "Operations about user")
+@Produces({"application/json", "application/xml"})
+public class UserResource {
+    @GET
+    @Path("/{username}")
+    @ApiOperation(
+        value = "Get user by user name",
+        response = User.class,
+        position = 0)
+    @ApiResponses(value = {
+        @ApiResponse(code = 400, message = "Invalid username supplied"),
+        @ApiResponse(code = 404, message = "User not found")})
+    public Response getUserByName(
+        @ApiParam(
+            value = "The name that needs to be fetched. Use user1 for testing. ", 
+            required = true)
+        @PathParam("username") String username)
+    throws ApiException {
+        // your method code
+    }
+
+  @GET
+  @Path("/login")
+  @ApiOperation(
+        value = "Logs user into the system",
+        response = String.class,
+        position = 6)
+  @ApiResponses(value = { 
+        @ApiResponse(code = 400, message = "Invalid username/password supplied") })
+  public Response loginUser(
+        @ApiParam(
+            value = "The user name for login", 
+            required = true) 
+        @QueryParam("username") String username,
+
+        @ApiParam(
+            value = "The password for login in clear text", 
+            required = true) 
+        @QueryParam("password") String password) {
+        // your method code
+  }
+
+
+}
+```
+
+<br>
+
+### Annotating Models
+**How does Swagger figure out your API models?**
+
+Your APIs typically accept some input data and respond with some output data. Input data is implicitly expressed as parameters to your resource class methods. In jaxrs Swagger, output data is expressed using [@ApiOperation's response element]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiOperation.html#response). If your API contains multiple output types, you can express that using [@ApiResponse's response element]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiResponse.html#response).
+
+So, by looking at data types of your API resource's method params and by reading @ApiOperation.response + @ApiResponse.response, Swagger creates an inventory of the models that your API works wth. To enable swagger to do more with your models, you can annotate these model classes too.
+
+<br>
+
+**Model class** | [@ApiModel]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiModel.html#response)
+
+```java
+@ApiModel(description = "An item which may be available in our grocery store")
+public class GroceryItem {
+    // your model properties
+}
+```
+
+<br>
+
+**Model property** | [@ApiModelProperty]({{site.baseurl}}javadocs/swagger-core/1.3.5/annotations/com/wordnik/swagger/annotations/ApiModelProperty.html#response)
+
+```java
+@ApiModel(description = "An item which may be available in our grocery store")
+public class GroceryItem {
+    private String id, department;
+
+    @ApiModelProperty(value = "unique identifier", allowableValues = "1,2,3")
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @ApiModelProperty(value = "department this item is found in")
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+}
+```
+
+<br>
+
+Here is a more complete example (in Scala) with subtypes:
+
+```scala
+@ApiModel(value="Animal", description="a model with subtypes", discriminator = "name", subTypes = Array(classOf[DomesticAnimal], classOf[WildAnimal]))
+case class Animal (
+  @(ApiModelProperty @field)(value = "name of animal", position = 1) name: String,
+  @(ApiModelProperty @field)(value = "date added", position = 2) date: java.util.Date)
+
+case class DomesticAnimal (
+  @(ApiModelProperty @field)(value = "name of animal", position = 1) name: String,
+  @(ApiModelProperty @field)(value = "animals are safe for children", position = 2) safeForChildren: Boolean,
+  @(ApiModelProperty @field)(value = "date added", position = 3) date: java.util.Date)
+
+case class WildAnimal (
+  @(ApiModelProperty @field)(value = "name of animal", position = 1) name: String,
+  @(ApiModelProperty @field)(value = "location found in", position = 2) foundInLocation: String,
+  @(ApiModelProperty @field)(value = "date added", position = 3) date: java.util.Date)
+```

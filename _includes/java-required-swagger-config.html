@@ -1,0 +1,22 @@
+### Required Swagger configuration
+
+There are a couple of things you need to configure for your Swagger deployment. This includes:
+
+1. `api.version`: This is the version of your API so you can put what you want here.
+2. `swagger.api.basepath`: The basepath from which swagger resource listing is served.
+
+```xml
+<servlet>
+    <servlet-name>DefaultJaxrsConfig</servlet-name>
+    <servlet-class>com.wordnik.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
+    <init-param>
+        <param-name>api.version</param-name>
+        <param-value>1.0.0</param-value>
+    </init-param>
+    <init-param>
+        <param-name>swagger.api.basepath</param-name>
+        <param-value>http://localhost:9090/api</param-value>
+    </init-param>
+    <load-on-startup>2</load-on-startup>
+</servlet>
+```
