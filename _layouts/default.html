@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{{ page.title }}</title>
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{site.baseurl}}css/bootstrap-simplex.min.css">
+    <link rel="stylesheet" href="{{site.baseurl}}css/main.css">
+    <link rel="stylesheet" href="{{site.baseurl}}css/highlight_js_solarized_dark.css">
+    <link rel="shortcut icon" href="{{site.baseurl}}images/favicon.png" />
+
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="http://yandex.st/highlightjs/8.0/highlight.min.js"></script>
+    <script src="{{site.baseurl}}js/main.js"></script>
+
+    <script type="text/javascript">
+    $( document ).ready(function() {
+      $(".menuitem").removeClass("active");
+      $(".menuitem-{{page.selectedMenu}}").addClass("active");
+    });
+    </script>
+
+    </head>
+
+    <body>
+
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand menuitem menuitem-home" href="{{site.baseurl}}">Swagger</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+              <!-- <li class="menuitem menuitem-service"><a href="{{site.baseurl}}service.html">Swaggerize your service</a></li> -->
+
+              <li class="dropdown menuitem menuitem-service">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Swaggerize your service <b class="caret"></b></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{{site.baseurl}}service/java/tomcat-jersey-1.html">Java</a></li>
+                <li><a href="#">Scala</a></li>
+                <li><a href="#">Node.js</a></li>
+                <li><a href="#">Python</a></li>
+              </ul>
+              </li>
+
+              <li class="menuitem menuitem-ui"><a href="#">Get interactive API documentation</a></li>
+              <li class="menuitem menuitem-lib"><a href="#">Generate client libraries</a></li>
+
+<!--             <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Whats your Container? <b class="caret"></b></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">Mule 3.4.0</a></li>
+                <li><a href="#">Tomcat 7</a></li>
+                <li><a href="#">Jboss</a></li>
+                <li><a href="#">Glassfish</a></li>
+              </ul>
+            </li>
+ -->          
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1>{{ page.title }}</h1>
+          {{ content }}
+        </div>
+      </div>
+    </div>
+
+</body>
+</html>
