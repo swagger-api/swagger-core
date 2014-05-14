@@ -3,11 +3,11 @@ import Keys._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2-utils"
-  val appVersion = "1.4.0-SNAPSHOT"
+  val appVersion = "1.3.6-SNAPSHOT"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" % "swagger-core_2.10" % "1.3.5",
+    "com.wordnik" % "swagger-core_2.10" % "1.3.6-SNAPSHOT",
     "com.wordnik" % "common-utils_2.10.0" % "1.1.5",
     "javax.ws.rs" % "jsr311-api" % "1.1.1")
 
