@@ -266,22 +266,60 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
   }
 
   def getAllParamsFromFields(cls: Class[_]): List[Parameter] = {
-    (for(field <- getAllFields(cls)) yield {
-      // only process fields with @ApiParam, @QueryParam, @HeaderParam, @PathParam
-      if(field.getAnnotation(classOf[QueryParam]) != null || field.getAnnotation(classOf[HeaderParam]) != null ||
-        field.getAnnotation(classOf[HeaderParam]) != null || field.getAnnotation(classOf[PathParam]) != null ||
-        field.getAnnotation(classOf[ApiParam]) != null) {
+    // find getter/setters
+    (cls.getDeclaredMethods map {
+      method =>
+        if (method.getAnnotation(classOf[QueryParam]) != null ||
+          method.getAnnotation(classOf[HeaderParam]) != null ||
+          method.getAnnotation(classOf[PathParam]) != null ||
+          method.getAnnotation(classOf[ApiParam]) != null) {
+          createParameterFromGetterOrSetter(method).toList
+        } else Nil
+    }).flatten.toList ++
+      (for (field <- getAllFields(cls)) yield {
+        // only process fields with @ApiParam, @QueryParam, @HeaderParam, @PathParam
+        if (field.getAnnotation(classOf[QueryParam]) != null ||
+          field.getAnnotation(classOf[HeaderParam]) != null ||
+          field.getAnnotation(classOf[PathParam]) != null ||
+          field.getAnnotation(classOf[ApiParam]) != null) {
+          val param = new MutableParameter
+          param.dataType = processDataType(field.getType, field.getGenericType)
+          Option(field.getAnnotation(classOf[ApiParam])) match {
+            case Some(annotation) => toAllowableValues(annotation.allowableValues)
+            case _ =>
+          }
+          val annotations = field.getAnnotations
+          processParamAnnotations(param, annotations)
+        }
+        else Nil
+      }).flatten.toList
+  }
+  
+  private val getterPattern = """get(.+)""".r
+  private val setterPattern = """set(.+)""".r
+  
+  private def createParameterFromGetterOrSetter(method: Method): List[Parameter] = {
+    (method.getName match {
+      case getterPattern(propertyName) =>
         val param = new MutableParameter
-        param.dataType = processDataType(field.getType, field.getGenericType)
-        Option (field.getAnnotation(classOf[ApiParam])) match {
+        // TODO: not sure this will work
+        param.dataType = processDataType(method.getReturnType, method.getGenericReturnType)
+        Some(param)
+      case setterPattern(propertyName) =>
+        val param = new MutableParameter
+        // TODO: not sure this will work
+        param.dataType = processDataType(method.getParameterTypes()(0), method.getGenericParameterTypes()(0))
+        Some(param)
+      case _ => None
+    }).toList.map {
+      param =>
+        Option(method.getAnnotation(classOf[ApiParam])) match {
           case Some(annotation) => toAllowableValues(annotation.allowableValues)
           case _ =>
         }
-        val annotations = field.getAnnotations
+        val annotations = method.getAnnotations
         processParamAnnotations(param, annotations)
-      }
-      else List.empty
-    }).flatten.toList
+    }.flatten
   }
   
   def pathFromMethod(method: Method): String = {

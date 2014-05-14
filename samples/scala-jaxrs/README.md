@@ -19,7 +19,7 @@ mvn package -Dlog4j.configuration=file:./conf/log4j.properties jetty:run
 This will start Jetty embedded on port 8002 and apply the logging configuration from conf/log4j.properties
 
 ### Testing the server
-Once started, you can navigate to http://localhost:8002/api/resources.json to view the Swagger Resource Listing.
+Once started, you can navigate to http://localhost:8002/api/api-docs to view the Swagger Resource Listing.
 This tells you that the server is up and ready to demonstrate Swagger.
 
 ### Using the UI
