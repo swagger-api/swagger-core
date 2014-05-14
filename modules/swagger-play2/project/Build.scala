@@ -1,10 +1,9 @@
 import sbt._
 import Keys._
-import play.Project._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2"
-  val appVersion = "1.3.6-SNAPSHOT"
+  val appVersion = "1.4.0-SNAPSHOT"
 
   checksums in update := Nil
 
@@ -16,7 +15,9 @@ object ApplicationBuild extends Build {
     "javax.ws.rs" % "jsr311-api" % "1.1.1",
     "org.mockito" % "mockito-core" % "1.9.5" % "test")
 
-  val main = play.Project(appName, appVersion, appDependencies).settings(
+  val main = Project(appName, file(".")).enablePlugins(play.PlayScala).settings(
+    version := appVersion,
+    libraryDependencies ++= appDependencies,
     publishTo <<= version { (v: String) =>
       val nexus = "https://oss.sonatype.org/"
       if (v.trim.endsWith("SNAPSHOT"))
