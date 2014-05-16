@@ -1,10 +1,9 @@
 import sbt._
 import Keys._
-import play.Project._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2"
-  val appVersion = "1.3.5"
+  val appVersion = "1.3.6-SNAPSHOT"
 
   checksums in update := Nil
 
@@ -12,11 +11,13 @@ object ApplicationBuild extends Build {
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.1.3",
     "com.fasterxml.jackson.core" % "jackson-annotations" % "2.1.4",
     "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.5",
+    "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.6-SNAPSHOT",
     "javax.ws.rs" % "jsr311-api" % "1.1.1",
     "org.mockito" % "mockito-core" % "1.9.5" % "test")
 
-  val main = play.Project(appName, appVersion, appDependencies).settings(
+  val main = Project(appName, file(".")).enablePlugins(play.PlayScala).settings(
+    version := appVersion,
+    libraryDependencies ++= appDependencies,
     publishTo <<= version { (v: String) =>
       val nexus = "https://oss.sonatype.org/"
       if (v.trim.endsWith("SNAPSHOT"))

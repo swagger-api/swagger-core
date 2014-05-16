@@ -7,9 +7,9 @@ import com.wordnik.util.perf.{ HealthSnapshot, Health }
 import org.slf4j.LoggerFactory
 
 import play.api.mvc._
+import play.api.libs.iteratee.Enumerator
 
 import javax.ws.rs.Path
-
 
 @Api(value = "/admin", description = "Administrative operations")
 object HealthController extends Controller {
@@ -19,12 +19,12 @@ object HealthController extends Controller {
   @Path("/health")
   @ApiOperation(value = "Returns health report on this JVM",
     response = classOf[com.wordnik.util.perf.Health],
-    httpMethod = "GET")
-  def getHealth() = Action { request =>
+    httpMethod = "GET", nickname = "getHealth")
+  def getHealth = Action { request =>
     try {
       val health: Health = HealthSnapshot.get()
 
-      new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(ScalaJsonUtil.mapper.writeValueAsBytes(health))).as("application/json")
+      Ok.chunked(Enumerator(ScalaJsonUtil.mapper.writeValueAsBytes(health))).as("application/json")
         .withHeaders(AccessControlAllowOrigin)
     } catch {
       case e: Exception => LOGGER.error("Error occurred", e); InternalServerError //Error(e.getMessage)
@@ -33,11 +33,10 @@ object HealthController extends Controller {
 
   @Path("/ping")
   @ApiOperation(value = "Pings service", response = classOf[String],
-    produces = "text/plain", httpMethod = "GET")
+    produces = "text/plain", httpMethod = "GET", nickname = "ping")
   def ping() = Action { request =>
     try {
-      new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator("OK".getBytes)).as("text/plain")
-        .withHeaders(AccessControlAllowOrigin)
+      Ok.chunked(Enumerator("OK".getBytes)).as("text/plain").withHeaders(AccessControlAllowOrigin)
     } catch {
       case e: Exception => LOGGER.error("Error occurred", e); InternalServerError //Error(e.getMessage)
     }
