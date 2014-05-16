@@ -19,8 +19,8 @@ object HealthController extends Controller {
   @Path("/health")
   @ApiOperation(value = "Returns health report on this JVM",
     response = classOf[com.wordnik.util.perf.Health],
-    httpMethod = "GET")
-  def getHealth() = Action { request =>
+    httpMethod = "GET", nickname = "getHealth") 
+  def getHealth = Action { request =>
     try {
       val health: Health = HealthSnapshot.get()
 
@@ -33,7 +33,7 @@ object HealthController extends Controller {
 
   @Path("/ping")
   @ApiOperation(value = "Pings service", response = classOf[String],
-    produces = "text/plain", httpMethod = "GET")
+    produces = "text/plain", httpMethod = "GET", nickname = "ping")
   def ping() = Action { request =>
     try {
       new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator("OK".getBytes)).as("text/plain")
