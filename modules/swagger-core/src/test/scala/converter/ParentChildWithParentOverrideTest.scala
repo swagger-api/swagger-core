@@ -20,10 +20,7 @@ import converter.models.Child
 
 
 @RunWith(classOf[JUnitRunner])
-class ParentChildWithParentOverrideTest extends FlatSpec with ShouldMatchers {
-  val parentClassName = ""
-  
-    
+class ParentChildWithParentOverrideTest extends FlatSpec with ShouldMatchers {    
   it should "Json specified model should have the model of Child" in {
     val converter = new OverrideConverter()
     converter.add(classOf[Parent].getName(), """{"id":"Parent","properties":{"overriddenName":{"type":"string","qualifiedType":"java.lang.String"},"parentName":{"type":"string","qualifiedType":"java.lang.String"},"child":{"type":"Child","qualifiedType":"converter.models.Child"}}}""")
