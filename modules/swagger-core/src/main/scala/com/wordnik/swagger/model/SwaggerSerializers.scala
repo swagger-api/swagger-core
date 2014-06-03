@@ -264,7 +264,7 @@ object SwaggerSerializers extends Serializers {
       }
       val qType = (json \ "qualifiedType") match {
         case e: JString => e.s
-        case _ => ""
+        case _ => jType
       }
       val jFormat = (json \ "format") match {
         case e: JString => e.s
