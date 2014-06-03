@@ -262,6 +262,10 @@ object SwaggerSerializers extends Serializers {
         case e: JString => e.s
         case _ => ""
       }
+      val qType = (json \ "qualifiedType") match {
+        case e: JString => e.s
+        case _ => ""
+      }
       val jFormat = (json \ "format") match {
         case e: JString => e.s
         case _ => ""
@@ -286,7 +290,7 @@ object SwaggerSerializers extends Serializers {
 
       ModelProperty(
         `type` = `type`,
-        qualifiedType = `type`,
+        qualifiedType = qType,
         position = (json \ "position").extractOrElse(0),
         (json \ "required") match {
           case e:JString => e.s.toBoolean
