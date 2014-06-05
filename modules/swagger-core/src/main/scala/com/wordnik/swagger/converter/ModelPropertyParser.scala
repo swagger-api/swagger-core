@@ -117,12 +117,16 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     }
     var originalName = e._1
     var isGetter = e._2
+    var overrideDataType: String = null
 
     var isFieldExists = false
     var isJsonProperty = false
     var hasAccessorNoneAnnotation = false
 
     var processedAnnotations = processAnnotations(originalName, propertyAnnotations)
+    if(processedAnnotations.contains("paramType") && processedAnnotations("paramType") != null)
+      overrideDataType = processedAnnotations("paramType").toString
+
     var name = processedAnnotations("name").asInstanceOf[String]
     if (name == null) name = originalName
 
@@ -153,6 +157,9 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         name = propAnnoOutput("name").asInstanceOf[String]
       }
 
+      if(propAnnoOutput.contains("paramType") && propAnnoOutput("paramType") != null)
+        overrideDataType = propAnnoOutput("paramType").toString
+
       if(allowableValues == None)
         allowableValues = propAnnoOutput("allowableValues").asInstanceOf[Option[AllowableValues]]
       if(description == None && propAnnoOutput.contains("description") && propAnnoOutput("description") != null)
@@ -180,8 +187,10 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     if (!(isTransient && !isXmlElement && !isJsonProperty) && name != null && (isFieldExists || isGetter || isDocumented)) {
       var paramType = getDataType(genericReturnType, returnType, false)
       LOGGER.debug("inspecting " + paramType)
-      var simpleName = getDataType(genericReturnType, returnType, true)
-
+      var simpleName = Option(overrideDataType) match {
+        case Some(e) => e
+        case _ => getDataType(genericReturnType, returnType, true)
+      }
       if (!"void".equals(paramType) && null != paramType && !processedFields.contains(name)) {
         if(!excludedFieldTypes.contains(paramType)) {
           val items = {
@@ -205,6 +214,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
               case _ => None
             }
           }
+
           val param = ModelProperty(
             validateDatatype(simpleName),
             paramType,
