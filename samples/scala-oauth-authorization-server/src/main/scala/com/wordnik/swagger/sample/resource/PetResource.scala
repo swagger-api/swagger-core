@@ -78,11 +78,19 @@ class PetResource extends RestResourceUtil {
     @ApiParam(value = "file to upload") @FormDataParam("file") inputStream: InputStream,
     @ApiParam(value = "file detail") @FormDataParam("file") fileDetail: FormDataContentDisposition) = {
     LOGGER.debug("testString: " + testString)
-    val uploadedFileLocation = "./" + fileDetail.getFileName
-    IOUtils.copy(inputStream, new FileOutputStream(uploadedFileLocation))
-    val msg = "additionalMetadata: " + testString + "\nFile uploaded to " + uploadedFileLocation + ", " + (new java.io.File(uploadedFileLocation)).length + " bytes"
-    val output = new com.wordnik.swagger.sample.model.ApiResponse(200, msg)
-    Response.status(200).entity(output).build()
+    if(fileDetail == null || inputStream == null) {
+      val msg = "additionalMetadata: " + testString + ", but no file supplied!"
+      val output = new com.wordnik.swagger.sample.model.ApiResponse(200, msg)
+      Response.status(200).entity(output).build()
+    }
+    else
+    {
+      val uploadedFileLocation = "./" + fileDetail.getFileName
+      IOUtils.copy(inputStream, new FileOutputStream(uploadedFileLocation))
+      val msg = "additionalMetadata: " + testString + "\nFile uploaded to " + uploadedFileLocation + ", " + (new java.io.File(uploadedFileLocation)).length + " bytes"
+      val output = new com.wordnik.swagger.sample.model.ApiResponse(200, msg)
+      Response.status(200).entity(output).build()
+    }
   }
 
   @DELETE
