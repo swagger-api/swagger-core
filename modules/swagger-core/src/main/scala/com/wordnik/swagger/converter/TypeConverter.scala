@@ -5,8 +5,6 @@ import com.wordnik.swagger.model.Model
 import scala.collection.mutable.HashMap
 
 class TypeConverter extends ModelConverter with BaseConverter {
-  private val LOGGER = LoggerFactory.getLogger(this.getClass)
-
   val m = new HashMap[String, String]
 
   def read(cls: Class[_], typeMap: Map[String, String]): Option[Model] = None
