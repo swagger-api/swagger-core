@@ -27,7 +27,7 @@ class JodaLocalDateConverterTest extends FlatSpec with ShouldMatchers {
     dateTimeProperty.`type` should be("Date")
     dateTimeProperty.position should be(1)
     dateTimeProperty.required should be(true)
-    dateTimeProperty.description should be(Some("reation localDate"))
+    dateTimeProperty.description should be(Some("creation localDate"))
 
     println(JsonSerializer.asJson(models.head))
   }
