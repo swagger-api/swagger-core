@@ -92,11 +92,18 @@ class DefaultJaxrsApiReader extends JaxrsApiReader {
           None,
           orderedOperations.toList)
       }).toList
+
+      val basePath = {
+        if(api.basePath == "")
+          config.basePath
+        else
+          api.basePath
+      }
       val models = ModelUtil.modelsFromApis(apis)
       Some(ApiListing (
         apiVersion = config.apiVersion,
         swaggerVersion = config.swaggerVersion,
-        basePath = config.basePath,
+        basePath = basePath,
         resourcePath = addLeadingSlash(api.value),
         apis = ModelUtil.stripPackages(apis),
         models = models,
