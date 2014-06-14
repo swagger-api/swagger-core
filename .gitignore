@@ -8,3 +8,5 @@ samples/scala-play2/logs
 .project
 .classpath
 .cache
+atlassian-ide-plugin.xml
+*.iml

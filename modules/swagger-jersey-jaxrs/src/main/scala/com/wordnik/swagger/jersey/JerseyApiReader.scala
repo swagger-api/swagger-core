@@ -119,10 +119,16 @@ class JerseyApiReader extends JaxrsApiReader {
           orderedOperations.toList)
       }).toList
       val models = ModelUtil.modelsFromApis(apis)
+      val basePath = {
+        if(api.basePath == "")
+          config.basePath
+        else
+          api.basePath
+      }
       Some(ApiListing (
         apiVersion = config.apiVersion,
         swaggerVersion = config.swaggerVersion,
-        basePath = config.basePath,
+        basePath = basePath,
         resourcePath = addLeadingSlash(api.value),
         apis = ModelUtil.stripPackages(apis),
         models = models,
