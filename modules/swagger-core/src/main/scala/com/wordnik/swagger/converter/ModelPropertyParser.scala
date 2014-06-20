@@ -38,6 +38,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
 
       val ignoredProperties = parseIgnorePropertiesClassAnnotation(hostClass)
 
+      val fieldPublicAccessorMethods = scala.collection.mutable.Set[String]()
       for (method <- hostClass.getDeclaredMethods) {
         if (Modifier.isPublic(method.getModifiers()) && !Modifier.isStatic(method.getModifiers()) && !method.isSynthetic()) {
           val (fieldName, getter) = extractGetterProperty(method.getName)
@@ -47,13 +48,15 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
           if (ignoredProperties.contains(fieldName)) {
             LOGGER.debug("ignoring property " + fieldName)
           } else {
+            fieldPublicAccessorMethods.add(fieldName)
             parseMethod(method)
           }
         }
       }
 
       for (field <- hostClass.getDeclaredFields) {
-        if (Modifier.isPublic(field.getModifiers()) && !Modifier.isStatic(field.getModifiers()) && !ignoredProperties.contains(field.getName) && !field.isSynthetic()) {
+        if ((Modifier.isPublic(field.getModifiers()) || fieldPublicAccessorMethods.contains(field.getName)) &&
+          !Modifier.isStatic(field.getModifiers()) && !ignoredProperties.contains(field.getName) && !field.isSynthetic()) {
           if (ignoredProperties.contains(field.getName)) {
             LOGGER.debug("ignoring property " + field.getName)
           } else {
@@ -289,7 +292,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
           updatedName = readString(e.name, name, "##default")
           defaultValue = readString(e.defaultValue, defaultValue, "\u0000")
 
-          required = e.required
+          if(e.required) required = true
           val xmlElementTypeMethod = classOf[XmlElement].getDeclaredMethod("type")
           val typeValueObj = xmlElementTypeMethod.invoke(e)
           val typeValue = {
