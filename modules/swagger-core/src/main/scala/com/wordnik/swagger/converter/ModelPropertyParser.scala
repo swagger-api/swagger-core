@@ -48,8 +48,8 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
           if (ignoredProperties.contains(fieldName)) {
             LOGGER.debug("ignoring property " + fieldName)
           } else {
-            fieldPublicAccessorMethods.add(fieldName)
             parseMethod(method)
+            if (properties.contains(fieldName)) fieldPublicAccessorMethods.add(fieldName)
           }
         }
       }
