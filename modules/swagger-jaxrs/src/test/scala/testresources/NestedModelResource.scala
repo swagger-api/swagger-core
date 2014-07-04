@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response
 
 import javax.xml.bind.annotation._
 
-import scala.reflect.BeanProperty
+import scala.beans.BeanProperty
 
 @Path("/family")
 @Api(value = "/family", description = "Family Resource")

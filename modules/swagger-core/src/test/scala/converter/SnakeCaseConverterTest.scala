@@ -10,7 +10,7 @@ import com.wordnik.swagger.converter._
 import com.wordnik.swagger.core.util._
 import com.wordnik.swagger.model._
 
-import scala.reflect.BeanProperty
+import scala.beans.BeanProperty
 import scala.collection.mutable.LinkedHashMap
 
 import org.junit.runner.RunWith

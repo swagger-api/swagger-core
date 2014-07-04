@@ -9,7 +9,7 @@ import javax.ws.rs.core.{ Response, MediaType }
 
 import javax.xml.bind.annotation._
 
-import scala.reflect.BeanProperty
+import scala.beans.BeanProperty
 
 @Path("/queryParamTest")
 @Api(value = "/queryParamTest")
