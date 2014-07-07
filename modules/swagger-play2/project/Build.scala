@@ -8,11 +8,11 @@ object ApplicationBuild extends Build {
 
   checksums in update := Nil
 
+  scalaVersion:= "2.11.1"
+
   val appDependencies: Seq[sbt.ModuleID] = Seq(
-    "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.1.3",
-    "com.fasterxml.jackson.core" % "jackson-annotations" % "2.1.4",
     "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.7-SNAPSHOT",
+    "com.wordnik" % "swagger-jaxrs_2.11" % "1.3.7-SNAPSHOT",
     "javax.ws.rs" % "jsr311-api" % "1.1.1",
     "org.mockito" % "mockito-core" % "1.9.5" % "test")
 
