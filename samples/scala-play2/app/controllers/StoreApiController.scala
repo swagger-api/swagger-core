@@ -22,7 +22,8 @@ import scala.collection.JavaConverters._
 object StoreApiController extends BaseApiController {
   var storeData = new StoreData
 
-  @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5. " +
+  @ApiOperation(nickname = "getOrderById",
+    value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5. " +
     "Anything above 5 or nonintegers will generate API errors", response = classOf[models.Order], httpMethod = "GET")
   @ApiResponses(value = Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
@@ -35,7 +36,8 @@ object StoreApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Gets orders in the system", response = classOf[models.Order], httpMethod = "GET", responseContainer = "List")
+  @ApiOperation(nickname = "getOrders",
+    value = "Gets orders in the system", response = classOf[models.Order], httpMethod = "GET", responseContainer = "List")
   @ApiResponses(Array(
     new ApiResponse(code = 404, message = "No Orders found")))
   def getOrders(@ApiImplicitParam(value = "Get all orders or only those which are complete", dataType = "Boolean", required = true)@QueryParam("isComplete") isComplete: Boolean) = Action { implicit request =>
@@ -43,7 +45,8 @@ object StoreApiController extends BaseApiController {
     JsonResponse(orders)
   }
 
-  @ApiOperation(value = "Place an order for a pet", response = classOf[Void], httpMethod = "POST")
+  @ApiOperation(nickname = "placeOrder",
+    value = "Place an order for a pet", response = classOf[Void], httpMethod = "POST")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid order")))
   @ApiImplicitParams(Array(
@@ -59,7 +62,8 @@ object StoreApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Delete purchase order by ID", notes = "For valid response try integer IDs with value < 1000. " +
+  @ApiOperation(nickname = "deleteOrder",
+    value = "Delete purchase order by ID", notes = "For valid response try integer IDs with value < 1000. " +
     "Anything above 1000 or nonintegers will generate API errors", httpMethod = "DELETE")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
