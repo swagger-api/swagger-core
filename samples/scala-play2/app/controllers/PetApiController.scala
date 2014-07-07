@@ -59,7 +59,7 @@ class PetApiController extends BaseApiController {
   }
 
   @ApiOperation(nickname = "updatePet",
-value = "Update an existing Pet", response = classOf[Void], httpMethod = "PUT")
+    value = "Update an existing Pet", response = classOf[Void], httpMethod = "PUT")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
     new ApiResponse(code = 404, message = "Pet not found"),
@@ -79,7 +79,7 @@ value = "Update an existing Pet", response = classOf[Void], httpMethod = "PUT")
   }
 
   @ApiOperation(nickname = "findPetByStatus",
-value = "Finds Pets by status",
+    value = "Finds Pets by status",
     notes = "Multiple status values can be provided with comma seperated strings",
     response = classOf[models.Pet], responseContainer = "List", httpMethod = "GET")
   @ApiResponses(Array(
@@ -93,7 +93,7 @@ value = "Finds Pets by status",
   }
 
   @ApiOperation(nickname = "findPetsByTags",
-value = "Finds Pets by tags",
+    value = "Finds Pets by tags",
     notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
     response = classOf[models.Pet], responseContainer = "List", httpMethod = "GET")
   @ApiResponses(Array(
@@ -109,7 +109,7 @@ value = "Finds Pets by tags",
   @ApiOperation(nickname = "attachImage",
     value = "Attach an Image File for a pet",
     notes = "Is not functional, only used to test file upload params",
-    response = classOf[Void], httpMethod = "GET")
+    response = classOf[Void], httpMethod = "POST")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid file format")))
   @ApiImplicitParams(Array(
