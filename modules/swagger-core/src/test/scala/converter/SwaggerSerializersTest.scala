@@ -12,13 +12,13 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.beans.BeanProperty
 
 
 @RunWith(classOf[JUnitRunner])
-class SwaggerSerializersTest extends FlatSpec with ShouldMatchers {
+class SwaggerSerializersTest extends FlatSpec with Matchers {
   implicit val formats = SwaggerSerializers.formats
 
   it should "serialize an authorization model" in {

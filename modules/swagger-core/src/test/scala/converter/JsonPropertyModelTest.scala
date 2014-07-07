@@ -11,10 +11,10 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
-class JsonPropertyModelTest extends FlatSpec with ShouldMatchers {
+class JsonPropertyModelTest extends FlatSpec with Matchers {
   val models = ModelConverters.readAll(classOf[ModelWithJsonProperty])
   JsonSerializer.asJson(models) should be ("""[{"id":"ModelWithJsonProperty","properties":{"theCount":{"type":"integer","format":"int32"}}}]""")
 }

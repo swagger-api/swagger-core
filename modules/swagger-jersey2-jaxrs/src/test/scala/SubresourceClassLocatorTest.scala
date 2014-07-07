@@ -5,10 +5,10 @@ import com.wordnik.swagger.config._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
-class SubresourceClassLocatorTest extends FlatSpec with ShouldMatchers {
+class SubresourceClassLocatorTest extends FlatSpec with Matchers {
   it should "find a class subresource" in {
     val reader = new JerseyApiReader
     val config = new SwaggerConfig()

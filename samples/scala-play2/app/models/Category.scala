@@ -18,7 +18,7 @@ package models
 
 import com.wordnik.swagger.annotations._
 
-import scala.annotation.target.field
+import scala.annotation.meta.field
 
 @ApiModel(value="Category",description="category of a pet")
 case class Category(

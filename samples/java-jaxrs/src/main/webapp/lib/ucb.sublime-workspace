@@ -595,7 +595,7 @@
 			}
 		},
 		{
-			"contents": "scala -cp swagger-codegen_2.10.0-2.0.13-assembly.jar -DfileMap=src/main/specs/api-docs src/main/scala/.scala http://localhost:8080\nscala -cp swagger-codegen_2.10.0-2.0.13-assembly.jar -DfileMap=src/main/specs/api-docs src/main/scala/ObjcClientCodegen.scala http://localhost:8080\nscala -cp swagger-codegen_2.10.0-2.0.13-assembly.jar -DfileMap=src/main/specs/api-docs src/main/scala/PythonClientCodegen.scala http://localhost:8080\nscala -cp swagger-codegen_2.10.0-2.0.13-assembly.jar -DfileMap=src/main/specs/api-docs src/main/scala/AndroidClientCodegen.scala http://localhost:8080\n",
+			"contents": "scala -cp swagger-codegen_2.11.0-2.0.13-assembly.jar -DfileMap=src/main/specs/api-docs src/main/scala/.scala http://localhost:8080\nscala -cp swagger-codegen_2.11.0-2.0.13-assembly.jar -DfileMap=src/main/specs/api-docs src/main/scala/ObjcClientCodegen.scala http://localhost:8080\nscala -cp swagger-codegen_2.11.0-2.0.13-assembly.jar -DfileMap=src/main/specs/api-docs src/main/scala/PythonClientCodegen.scala http://localhost:8080\nscala -cp swagger-codegen_2.11.0-2.0.13-assembly.jar -DfileMap=src/main/specs/api-docs src/main/scala/AndroidClientCodegen.scala http://localhost:8080\n",
 			"file": "/Users/tony/dev/projects/fehguy/ucb/bin/clients.sh",
 			"file_size": 597,
 			"file_write_time": 1393982270000000,
@@ -1146,9 +1146,9 @@
 			"1.2.0-SNAPSHOT",
 			"2.10.0-RC3",
 			"  ",
-			"_2.10.0-RC1",
-			"wordnik-oss-project_2.10.0-RC1",
-			"scalatest_2.10.0-RC1",
+			"_2.11.0-RC1",
+			"wordnik-oss-project_2.11.0-RC1",
+			"scalatest_2.11.0-RC1",
 			"webapp"
 		],
 		"reverse": false,
@@ -1926,7 +1926,7 @@
 			],
 			[
 				"auth.js",
-				"swagger-core/samples/scala-oauth-authorization-server/target/swagger-oauth-authorization_2.10-1.3.3-SNAPSHOT/js/auth.js"
+				"swagger-core/samples/scala-oauth-authorization-server/target/swagger-oauth-authorization_2.11-1.3.3-SNAPSHOT/js/auth.js"
 			],
 			[
 				"petresou",
