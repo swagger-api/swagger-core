@@ -235,7 +235,7 @@ object SwaggerSerializers extends Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[AuthorizationType] if (e.size > 0) => {
+          case e: List[Authorization] if (e.size > 0) => {
             Extraction.decompose((for(at <- e) yield {
               if(at.`type` != "") Some(at.`type`, at)
               else None
@@ -490,7 +490,7 @@ trait Serializers {
         x.authorizations match {
           case e: List[AuthorizationType] if (e.size > 0) => {
             Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") Some(at.`type`, at)
+              if(at.`type` != "") Some(at.getName, at)
               else None
             }).flatten.toMap)
           }
@@ -549,7 +549,7 @@ trait Serializers {
         x.authorizations match {
           case e: List[AuthorizationType] if (e.size > 0) => {
             Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") Some(at.`type`, at)
+              if(at.`type` != "") Some(at.getName, at)
               else None
             }).flatten.toMap)
           }
@@ -741,8 +741,8 @@ trait Serializers {
         x.authorizations match {
           case e: List[AuthorizationType] if (e.size > 0) => {
             Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") {
-                Some(at.`type`, at)
+              if(at.getName != "") {
+                Some(at.getName, at)
               }
               else None
             }).flatten.toMap)
@@ -970,7 +970,7 @@ trait Serializers {
     }, {
       case x: Authorization => 
         implicit val fmts = formats
-        Extraction.decompose(x.scopes)
+        Extraction.decompose(x.scopes.filter(_.scope != ""))
     }
   ))
 
