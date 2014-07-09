@@ -1,6 +1,8 @@
 import sbt._
 import Keys._
-import play.Project._
+import play.Play
+import play.PlayScala.autoImport._
+import PlayKeys._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2"

@@ -15,6 +15,7 @@ GET     /admin/ping             controllers.HealthController.ping
 
 GET     /api-docs/pet           controllers.ApiHelpController.getResource(path = "/pet")
 POST    /pet                    @controllers.PetApiController.addPet
+POST    /pet/:id                @controllers.PetApiController.attachImage(pet)
 PUT     /pet                    @controllers.PetApiController.updatePet
 GET     /pet/findByStatus       @controllers.PetApiController.findPetsByStatus(status)
 GET     /pet/findByTags         @controllers.PetApiController.findPetsByTags(tags)
