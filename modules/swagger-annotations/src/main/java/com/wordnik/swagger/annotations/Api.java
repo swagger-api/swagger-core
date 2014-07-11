@@ -33,6 +33,9 @@ public @interface Api {
   /** Short description of the Api */
   String value();
 
+  /** Filter the Api listings */
+  String filter() default "";
+
   /** General description of this class */
   String description() default "";
 
