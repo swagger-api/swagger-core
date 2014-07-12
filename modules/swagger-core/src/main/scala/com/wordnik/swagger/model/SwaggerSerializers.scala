@@ -236,10 +236,19 @@ object SwaggerSerializers extends Serializers {
       ("authorizations" -> {
         x.authorizations match {
           case e: List[Authorization] if (e.size > 0) => {
-            Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") Some(at.`type`, at)
-              else None
+            var open = false
+            val o = ((for(at <- e) yield {
+              if(at.`type` == "open") {
+                open = true
+                None
+              }
+              else if(at.`type` != "")
+                Some(at.`type`, at)
+              else
+                None
             }).flatten.toMap)
+            if(o.size > 0 || open) Extraction.decompose(o)
+            else JNothing
           }
           case _ => JNothing
         }
@@ -928,7 +937,7 @@ trait Serializers {
 
   class AuthorizationTypeSerializer extends CustomSerializer[AuthorizationType](formats => ({
     case json =>
-      implicit val fmts: Formats = formats
+      implicit val fmts = formats
       json \ "type" match {
         case JString(x) if x.equalsIgnoreCase("oauth2") => {
           OAuth((json \ "scopes").extractOrElse(List()), 
