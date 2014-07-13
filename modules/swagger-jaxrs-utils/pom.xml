@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>com.wordnik</groupId>
-    <artifactId>swagger-project_2.11</artifactId>
+    <artifactId>swagger-project_2.10</artifactId>
     <version>1.3.8-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-jaxrs-utils_2.11</artifactId>
+  <artifactId>swagger-jaxrs-utils_2.10</artifactId>
   <packaging>jar</packaging>
   <version>1.3.8-SNAPSHOT</version>
   <name>swagger-jaxrs-utils</name>
@@ -28,7 +28,7 @@
   <dependencies>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.11</artifactId>
+      <artifactId>scalatest_2.10</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -43,7 +43,7 @@
     </dependency>
     <dependency>
       <groupId>com.wordnik</groupId>
-      <artifactId>swagger-core_2.11</artifactId>
+      <artifactId>swagger-core_2.10</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
