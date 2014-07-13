@@ -18,7 +18,7 @@ package models
 
 import com.wordnik.swagger.annotations._
 
-import scala.annotation.target.field
+import scala.annotation.meta.field
 
 @ApiModel("User")
 case class User (

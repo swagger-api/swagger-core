@@ -237,7 +237,7 @@ object SwaggerSerializers extends Serializers {
         x.authorizations match {
           case e: List[Authorization] if (e.size > 0) => {
             var open = false
-            val o = ((for(at <- e) yield {
+            val o = ((for(at: Authorization <- e) yield {
               if(at.`type` == "open") {
                 open = true
                 None
@@ -498,8 +498,8 @@ trait Serializers {
       ("authorizations" -> {
         x.authorizations match {
           case e: List[AuthorizationType] if (e.size > 0) => {
-            Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") Some(at.getName, at)
+            Extraction.decompose((for(at: AuthorizationType <- e) yield {
+              if(at.`type` != "") Some(Tuple2(at.getName, at))
               else None
             }).flatten.toMap)
           }
@@ -557,8 +557,8 @@ trait Serializers {
       ("authorizations" -> {
         x.authorizations match {
           case e: List[AuthorizationType] if (e.size > 0) => {
-            Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") Some(at.getName, at)
+            Extraction.decompose((for(at: AuthorizationType <- e) yield {
+              if(at.`type` != "") Some(Tuple2(at.getName, at))
               else None
             }).flatten.toMap)
           }
@@ -749,7 +749,7 @@ trait Serializers {
       ("authorizations" -> {
         x.authorizations match {
           case e: List[AuthorizationType] if (e.size > 0) => {
-            Extraction.decompose((for(at <- e) yield {
+            Extraction.decompose((for(at: AuthorizationType <- e) yield {
               if(at.getName != "") {
                 Some(at.getName, at)
               }

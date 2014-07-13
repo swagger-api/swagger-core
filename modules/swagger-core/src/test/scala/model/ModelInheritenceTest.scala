@@ -13,14 +13,14 @@ import org.json4s.jackson.Serialization.{read, write}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
-import scala.annotation.target.field
+import scala.annotation.meta.field
 
 import scala.collection.mutable.LinkedHashMap
 
 @RunWith(classOf[JUnitRunner])
-class ModelInheritenceTest extends FlatSpec with ShouldMatchers {
+class ModelInheritenceTest extends FlatSpec with Matchers {
   implicit val formats = SwaggerSerializers.formats
 
   it should "serialize a model with a super class" in {
@@ -92,7 +92,7 @@ class ModelInheritenceTest extends FlatSpec with ShouldMatchers {
 }
 
 @RunWith(classOf[JUnitRunner])
-class ModelInhertenceUtilTest extends FlatSpec with ShouldMatchers {
+class ModelInhertenceUtilTest extends FlatSpec with Matchers {
   it should "parse a derived model" in {
     implicit val formats = SwaggerSerializers.formats
 

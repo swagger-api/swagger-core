@@ -10,13 +10,13 @@ import org.json4s.jackson.Serialization.{read, write}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.mutable.LinkedHashMap
 
 
 @RunWith(classOf[JUnitRunner])
-class JsonSchemaModelSerializationTest extends FlatSpec with ShouldMatchers {
+class JsonSchemaModelSerializationTest extends FlatSpec with Matchers {
   implicit val formats = SwaggerSerializers.formats
 
   it should "deserialize a model" in {
@@ -93,7 +93,7 @@ class JsonSchemaModelSerializationTest extends FlatSpec with ShouldMatchers {
 }
 
 @RunWith(classOf[JUnitRunner])
-class JsonSchemaModelRefSerializationTest extends FlatSpec with ShouldMatchers {
+class JsonSchemaModelRefSerializationTest extends FlatSpec with Matchers {
   implicit val formats = SwaggerSerializers.formats
 
   it should "deserialize a model ref" in {
@@ -120,7 +120,7 @@ class JsonSchemaModelRefSerializationTest extends FlatSpec with ShouldMatchers {
 }
 
 @RunWith(classOf[JUnitRunner])
-class JsonSchemaModelPropertySerializationTest extends FlatSpec with ShouldMatchers {
+class JsonSchemaModelPropertySerializationTest extends FlatSpec with Matchers {
   implicit val formats = SwaggerSerializers.formats
 
   it should "deserialize a model property with allowable values and ref" in {
@@ -218,7 +218,7 @@ class JsonSchemaModelPropertySerializationTest extends FlatSpec with ShouldMatch
 }
 
 @RunWith(classOf[JUnitRunner])
-class JsonSchemaAllowableValuesSerializersTest extends FlatSpec with ShouldMatchers {
+class JsonSchemaAllowableValuesSerializersTest extends FlatSpec with Matchers {
   implicit val formats = SwaggerSerializers.formats
 
   it should "deserialize allowable value list" in {

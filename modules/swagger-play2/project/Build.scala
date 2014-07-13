@@ -1,6 +1,8 @@
 import sbt._
 import Keys._
-import play.Project._
+import play.Play
+import play.PlayScala.autoImport._
+import PlayKeys._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2"
@@ -8,9 +10,11 @@ object ApplicationBuild extends Build {
 
   checksums in update := Nil
 
+  scalaVersion:= "2.11.1"
+
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.8-SNAPSHOT",
+    "com.wordnik" % "swagger-jaxrs_2.11" % "1.3.8-SNAPSHOT",
     "javax.ws.rs" % "jsr311-api" % "1.1.1",
     "org.mockito" % "mockito-core" % "1.9.5" % "test")
 

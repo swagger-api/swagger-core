@@ -10,16 +10,16 @@ import com.wordnik.swagger.model._
 import org.joda.time.DateTime
 
 import scala.collection.mutable.LinkedHashMap
-import scala.annotation.target.field
+import scala.annotation.meta.field
 import javax.xml.datatype.XMLGregorianCalendar
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
-class XMLGregorianCalendarTest extends FlatSpec with ShouldMatchers {
+class XMLGregorianCalendarTest extends FlatSpec with Matchers {
   it should "read a model with XMLGregorianCalendar" in {
     val models = ModelConverters.readAll(classOf[ModelWithCalendar])
     models.size should be (1) // don't create a Joda DateTime object

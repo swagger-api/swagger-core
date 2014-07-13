@@ -13,12 +13,12 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.beans.BeanProperty
 
 @RunWith(classOf[JUnitRunner])
-class ModelPropertyTest extends FlatSpec with ShouldMatchers {
+class ModelPropertyTest extends FlatSpec with Matchers {
   it should "extract properties" in {
     val models = ModelConverters.readAll(classOf[Family])
 
