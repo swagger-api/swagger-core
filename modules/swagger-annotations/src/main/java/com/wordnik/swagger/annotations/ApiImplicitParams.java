@@ -22,10 +22,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A simple array wrapper to contain multiple ApiImplicitParam objects
+ * A wrapper to allow a list of multiple {@link com.wordnik.swagger.annotations.ApiImplicitParam} objects.
+ *
+ * @see com.wordnik.swagger.annotations.ApiImplicitParam
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiImplicitParams {
-  ApiImplicitParam[] value();
+    /**
+     * A list of {@link com.wordnik.swagger.annotations.ApiImplicitParam}s available to the API operation.
+     */
+    ApiImplicitParam[] value();
 }

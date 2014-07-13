@@ -22,10 +22,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A simple array wrapper to contain multiple ApiResponse objects
+ * A wrapper to allow a list of multiple {@link com.wordnik.swagger.annotations.ApiResponse} objects.
+ * <p/>
+ * If you need to describe a single {@link com.wordnik.swagger.annotations.ApiResponse}, you still
+ * must use this annotation and wrap the {@code @ApiResponse} in an array.
+ *
+ * @see com.wordnik.swagger.annotations.ApiResponse
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiResponses {
-  ApiResponse[] value();
+    /**
+     * A list of {@link com.wordnik.swagger.annotations.ApiResponse}s provided by the API operation.
+     */
+    ApiResponse[] value();
 }

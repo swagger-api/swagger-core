@@ -22,41 +22,91 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Represents a single parameter in an Api Operation.  A parameter is an input
- * to the operation.  The difference with the ApiImplicitParam is that they are
- * not bound to a variable, and allow for more manually-defined descriptions.
+ * Represents a single parameter in an API Operation.
+ * <p/>
+ * While {@link com.wordnik.swagger.annotations.ApiParam} is bound to a JAX-RS parameter,
+ * method or field, this allows you to manually define a parameter in a fine-tuned manner.
+ * This is the only way to define parameters when using Servlets or other non-JAX-RS
+ * environments.
+ * <p/>
+ * This annotation must be used as a value of {@link com.wordnik.swagger.annotations.ApiImplicitParams}
+ * in order to be parsed.
+ *
+ * @see com.wordnik.swagger.annotations.ApiImplicitParams
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiImplicitParam {
-  /** Name of the parameter */
-  String name() default "";
+    /**
+     * Name of the parameter.
+     * <p/>
+     * For proper Swagger functionality, follow these rules when naming your parameters based on {@link #paramType()}:
+     * <ol>
+     * <li>If {@code paramType} is "path", the name should be the associated section in the path.</li>
+     * <li>If {@code paramType} is "body", the name should be "body".</li>
+     * <li>For all other cases, the name should be the parameter name as your application expects to accept.</li>
+     * </ol>
+     *
+     * @see #paramType()
+     */
+    String name() default "";
 
-  /** Description of the parameter */
-  String value() default "";
+    /**
+     * A brief description of the parameter.
+     */
+    String value() default "";
 
-  /** Default value  - if e.g. no JAX-RS @DefaultValue is given */
-  String defaultValue() default "";
+    /**
+     * Describes the default value for the parameter.
+     */
+    String defaultValue() default "";
 
-  /** Description of values this endpoint accepts */
-  String allowableValues() default "";
+    /**
+     * Limits the acceptable values for this parameter.
+     * <p/>
+     * There are three ways to describe the allowable values:
+     * <ol>
+     * <li>To set a list of values, provide a comma-separated list surrounded by square brackets.
+     * For example: {@code [first, second, third]}.</li>
+     * <li>To set a range of values, start the value with "range", and surrounding by square
+     * brackets include the minimum and maximum values. For example: {@code range[1, 5]}.</li>
+     * <li>To set a minimum/maximum value, use the same format for range but use "infinity"
+     * or "-infinity" as the second value. For example, {@code range[1, infinity]} means the
+     * minimum allowable value of this parameter is 1.</li>
+     * </ol>
+     */
+    String allowableValues() default "";
 
-  /** specifies if the parameter is required or not */
-  boolean required() default false;
+    /**
+     * Specifies if the parameter is required or not.
+     * <p/>
+     * Path parameters should always be set as required.
+     */
+    boolean required() default false;
 
-  /** 
-   * specify an optional access value for filtering in a Filter 
-   * implementation.  This
-   * allows you to hide certain parameters if a user doesn't have access to them
-   */
-  String access() default "";
+    /**
+     * Allows for filtering a parameter from the API documentation.
+     *
+     * @see com.wordnik.swagger.core.filter.SwaggerSpecFilter
+     */
+    String access() default "";
 
-  /** specifies whether or not the parameter can have multiple values provided */
-  boolean allowMultiple() default false;
+    /**
+     * Specifies whether the parameter can accept multiple comma-separated values.
+     */
+    boolean allowMultiple() default false;
 
-  /** manually set the dataType */
-  String dataType() default "";
+    /**
+     * The data type of the parameter.
+     * <p/>
+     * This can be the class name or a primitive.
+     */
+    String dataType() default "";
 
-  /** manually set the param type, i.e. query, path, etc. */
-  String paramType() default "";
+    /**
+     * The parameter type of the parameter.
+     *
+     * Valid values are {@code path}, {@code query}, {@code body}, {@code header} or {@code form}.
+     */
+    String paramType() default "";
 }
