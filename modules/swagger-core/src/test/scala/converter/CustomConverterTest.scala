@@ -14,7 +14,7 @@ import org.joda.time.DateTime
 
 import scala.collection.mutable.LinkedHashMap
 import scala.annotation.target.field
-import scala.reflect.BeanProperty
+import scala.beans.BeanProperty
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

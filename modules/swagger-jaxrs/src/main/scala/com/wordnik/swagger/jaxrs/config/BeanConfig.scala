@@ -18,7 +18,7 @@ import javax.servlet.ServletConfig
 import javax.ws.rs.core.Application
 
 import scala.collection.JavaConverters._
-import scala.reflect.BeanProperty
+import scala.beans.BeanProperty
 
 class BeanConfig extends JaxrsScanner {
   private val LOGGER = LoggerFactory.getLogger(classOf[BeanConfig])

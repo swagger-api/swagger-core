@@ -37,7 +37,7 @@ class PlayApiScanner(routes: Option[Routes]) extends Scanner {
           SwaggerContext.loadClass(className).getAnnotation(classOf[Api]) != null
         } catch {
           case ex: Exception => {
-            Logger("swagger").error("Problem loading class:  %s. %s: %s".format(className, ex.getMessage))
+            Logger("swagger").error("Problem loading class:  %s. %s: %s".format(className, ex.getClass.getName, ex.getMessage))
             false}
         }
       } =>

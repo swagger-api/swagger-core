@@ -235,11 +235,20 @@ object SwaggerSerializers extends Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[AuthorizationType] if (e.size > 0) => {
-            Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") Some(at.`type`, at)
-              else None
+          case e: List[Authorization] if (e.size > 0) => {
+            var open = false
+            val o = ((for(at <- e) yield {
+              if(at.`type` == "open") {
+                open = true
+                None
+              }
+              else if(at.`type` != "")
+                Some(at.`type`, at)
+              else
+                None
             }).flatten.toMap)
+            if(o.size > 0 || open) Extraction.decompose(o)
+            else JNothing
           }
           case _ => JNothing
         }
@@ -261,6 +270,10 @@ object SwaggerSerializers extends Serializers {
       val jType = (json \ "type") match {
         case e: JString => e.s
         case _ => ""
+      }
+      val qType = (json \ "qualifiedType") match {
+        case e: JString => e.s
+        case _ => jType
       }
       val jFormat = (json \ "format") match {
         case e: JString => e.s
@@ -286,7 +299,7 @@ object SwaggerSerializers extends Serializers {
 
       ModelProperty(
         `type` = `type`,
-        qualifiedType = `type`,
+        qualifiedType = qType,
         position = (json \ "position").extractOrElse(0),
         (json \ "required") match {
           case e:JString => e.s.toBoolean
@@ -486,7 +499,7 @@ trait Serializers {
         x.authorizations match {
           case e: List[AuthorizationType] if (e.size > 0) => {
             Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") Some(at.`type`, at)
+              if(at.`type` != "") Some(at.getName, at)
               else None
             }).flatten.toMap)
           }
@@ -545,7 +558,7 @@ trait Serializers {
         x.authorizations match {
           case e: List[AuthorizationType] if (e.size > 0) => {
             Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") Some(at.`type`, at)
+              if(at.`type` != "") Some(at.getName, at)
               else None
             }).flatten.toMap)
           }
@@ -737,8 +750,8 @@ trait Serializers {
         x.authorizations match {
           case e: List[AuthorizationType] if (e.size > 0) => {
             Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") {
-                Some(at.`type`, at)
+              if(at.getName != "") {
+                Some(at.getName, at)
               }
               else None
             }).flatten.toMap)
@@ -924,7 +937,7 @@ trait Serializers {
 
   class AuthorizationTypeSerializer extends CustomSerializer[AuthorizationType](formats => ({
     case json =>
-      implicit val fmts: Formats = formats
+      implicit val fmts = formats
       json \ "type" match {
         case JString(x) if x.equalsIgnoreCase("oauth2") => {
           OAuth((json \ "scopes").extractOrElse(List()), 
@@ -966,7 +979,7 @@ trait Serializers {
     }, {
       case x: Authorization => 
         implicit val fmts = formats
-        Extraction.decompose(x.scopes)
+        Extraction.decompose(x.scopes.filter(_.scope != ""))
     }
   ))
 

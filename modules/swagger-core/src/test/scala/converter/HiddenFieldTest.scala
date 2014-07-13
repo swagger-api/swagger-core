@@ -9,7 +9,7 @@ import com.wordnik.swagger.annotations._
 
 import java.util.Date
 
-import scala.reflect.BeanProperty
+import scala.beans.BeanProperty
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

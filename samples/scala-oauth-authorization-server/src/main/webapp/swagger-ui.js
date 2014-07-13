@@ -1,5 +1,5 @@
 // swagger-ui.js
-// version 2.0.15
+// version 2.0.18
 $(function() {
 
 	// Helper function for vertically aligning DOM elements
@@ -384,7 +384,7 @@ function program14(depth0,data) {
 function program16(depth0,data) {
   
   
-  return "\n          <div style='margin:0;padding:0;display:inline'></div>\n          <h4>Error Status Codes</h4>\n          <table class='fullwidth'>\n            <thead>\n            <tr>\n              <th>HTTP Status Code</th>\n              <th>Reason</th>\n            </tr>\n            </thead>\n            <tbody class=\"operation-status\">\n            \n            </tbody>\n          </table>\n          ";
+  return "\n          <div style='margin:0;padding:0;display:inline'></div>\n          <h4>Response Messages</h4>\n          <table class='fullwidth'>\n            <thead>\n            <tr>\n              <th>HTTP Status Code</th>\n              <th>Reason</th>\n              <th>Response Model</th>\n            </tr>\n            </thead>\n            <tbody class=\"operation-status\">\n            \n            </tbody>\n          </table>\n          ";
   }
 
 function program18(depth0,data) {
@@ -1202,7 +1202,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (stack1 = helpers.message) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.message; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "</td>\n";
+  buffer += "</td>\n<td width='50%'><span class=\"model-signature\" /></td>";
   return buffer;
   });
 })();
@@ -1732,9 +1732,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     };
 
     OperationView.prototype.handleFileUpload = function(map, form) {
-      var bodyParam, el, headerParams, o, obj, param, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref5, _ref6, _ref7, _ref8,
+      var bodyParam, el, headerParams, o, obj, param, params, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref5, _ref6, _ref7, _ref8,
         _this = this;
-      log("it's a file upload");
       _ref5 = form.serializeArray();
       for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
         o = _ref5[_i];
@@ -1743,6 +1742,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       }
       bodyParam = new FormData();
+      params = 0;
       _ref6 = this.model.parameters;
       for (_j = 0, _len1 = _ref6.length; _j < _len1; _j++) {
         param = _ref6[_j];
@@ -1764,7 +1764,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       _ref8 = form.find('input[type~="file"]');
       for (_l = 0, _len3 = _ref8.length; _l < _len3; _l++) {
         el = _ref8[_l];
-        bodyParam.append($(el).attr('name'), el.files[0]);
+        if (typeof el.files[0] !== 'undefined') {
+          bodyParam.append($(el).attr('name'), el.files[0]);
+          params += 1;
+        }
       }
       log(bodyParam);
       this.invocationUrl = this.model.supportHeaderParams() ? (headerParams = this.model.getHeaderParams(map), this.model.urlify(map, false)) : this.model.urlify(map, true);
@@ -1789,6 +1792,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       };
       if (window.authorizations) {
         window.authorizations.apply(obj);
+      }
+      if (params === 0) {
+        obj.data.append("fake", "true");
       }
       jQuery.ajax(obj);
       return false;
@@ -1996,9 +2002,23 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     StatusCodeView.prototype.initialize = function() {};
 
     StatusCodeView.prototype.render = function() {
-      var template;
+      var responseModel, responseModelView, template;
       template = this.template();
       $(this.el).html(template(this.model));
+      if (swaggerUi.api.models.hasOwnProperty(this.model.responseModel)) {
+        responseModel = {
+          sampleJSON: JSON.stringify(swaggerUi.api.models[this.model.responseModel].createJSONSample(), null, 2),
+          isParam: false,
+          signature: swaggerUi.api.models[this.model.responseModel].getMockSignature()
+        };
+        responseModelView = new SignatureView({
+          model: responseModel,
+          tagName: 'div'
+        });
+        $('.model-signature', this.$el).append(responseModelView.render().el);
+      } else {
+        $('.model-signature', this.$el).html('');
+      }
       return this;
     };
 
@@ -2119,7 +2139,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       var template;
       template = this.template();
       $(this.el).html(template(this.model));
-      this.switchToDescription();
+      this.switchToSnippet();
       this.isParam = this.model.isParam;
       if (this.isParam) {
         $('.notice', $(this.el)).text('Click to set as parameter value');

@@ -71,7 +71,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
 
   def parseField(field: Field) = {
     LOGGER.debug("processing field " + field)
-    val returnClass = field.getDeclaringClass
+    val returnClass = field.getType
     parsePropertyAnnotations(returnClass, field.getName, field.getAnnotations, field.getGenericType, field.getType, true)
   }
 
