@@ -4,11 +4,11 @@ import play.Project._
 
 object ApplicationBuild extends Build {
   val appName = "petstore"
-  val appVersion = "1.3.7"
+  val appVersion = "1.3.8-SNAPSHOT"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
-    "com.wordnik" %% "swagger-play2" % "1.3.7",
-    "com.wordnik" %% "swagger-play2-utils" % "1.3.7"
+    "com.wordnik" %% "swagger-play2" % "1.3.8-SNAPSHOT",
+    "com.wordnik" %% "swagger-play2-utils" % "1.3.8-SNAPSHOT"
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
