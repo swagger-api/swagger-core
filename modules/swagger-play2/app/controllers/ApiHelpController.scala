@@ -64,11 +64,11 @@ class ErrorResponse(@XmlElement var code: Int, @XmlElement var message: String) 
 
 object ApiHelpController extends SwaggerBaseApiController {
 
-  def getResources() = Action {
+  def getResources(filter: String = null) = Action {
     request =>
       implicit val requestHeader: RequestHeader = request
 
-      val resourceListing = getResourceListing
+      val resourceListing = getResourceListing(if (filter == null || filter.trim.isEmpty) None else Some(filter))
 
       val responseStr = returnXml(request) match {
         case true => toXmlString(resourceListing)
@@ -115,7 +115,7 @@ class SwaggerBaseApiController extends Controller {
   /**
    * Get a list of all top level resources
    */
-  protected def getResourceListing(implicit requestHeader: RequestHeader) = {
+  protected def getResourceListing(filter: Option[String])(implicit requestHeader: RequestHeader) = {
     Logger("swagger").debug("ApiHelpInventory.getRootResources")
     val docRoot = ""
     val queryParams = requestHeader.queryString.map {case (key, value) => (key -> value.toList)}
@@ -126,7 +126,7 @@ class SwaggerBaseApiController extends Controller {
     val listings = ApiListingCache.listing(docRoot).map(specs => {
       (for (spec <- specs.values)
       yield f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
-        ).filter(m => m.apis.size > 0)
+        ).filter(m => m.apis.size > 0 && m.filter == filter)
     })
     val references = (for (listing <- listings.getOrElse(List())) yield {
       ApiListingReference(listing.resourcePath, listing.description)
