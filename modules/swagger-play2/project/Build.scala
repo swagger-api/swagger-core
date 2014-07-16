@@ -19,6 +19,7 @@ object ApplicationBuild extends Build {
     "org.mockito" % "mockito-core" % "1.9.5" % "test")
 
   val main = Project(appName, file(".")).enablePlugins(PlayScala).settings(
+    scalaVersion := "2.11.1",
     version := appVersion,
     libraryDependencies ++= appDependencies,
     publishTo <<= version { (v: String) =>
