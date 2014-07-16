@@ -2,7 +2,7 @@ package converter.models
 
 import com.wordnik.swagger.annotations.{ ApiModel, ApiModelProperty }
 
-import scala.annotation.target.field
+import scala.annotation.meta.field
 
 @ApiModel(value="Animal", description="a model with subtypes", discriminator = "name", subTypes = Array(classOf[DomesticAnimal], classOf[WildAnimal]))
 case class Animal (

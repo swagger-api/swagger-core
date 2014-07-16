@@ -118,17 +118,29 @@ class SwaggerBaseApiController extends Controller {
   protected def getResourceListing(implicit requestHeader: RequestHeader) = {
     Logger("swagger").debug("ApiHelpInventory.getRootResources")
     val docRoot = ""
-    val queryParams = requestHeader.queryString.map {case (key, value) => (key -> value.toList)}
-    val cookies = requestHeader.cookies.map {cookie => (cookie.name -> cookie.value)}.toMap
-    val headers = requestHeader.headers.toMap.map {case (key, value) => (key -> value.toList)}
+    val queryParams = (for((key, value) <- requestHeader.queryString) yield {
+      (key, value.toList)
+    }).toMap
+    val cookies = (for(cookie <- requestHeader.cookies) yield {
+      (cookie.name, cookie.value)
+    }).toMap
+    val headers = (for((key, value) <- requestHeader.headers.toMap) yield {
+      (key, value.toList)
+    }).toMap
 
     val f = new SpecFilter
-    val listings = ApiListingCache.listing(docRoot).map(specs => {
-      (for (spec <- specs.values)
+    val l: Option[Map[String, com.wordnik.swagger.model.ApiListing]] = ApiListingCache.listing(docRoot)
+
+    val specs: List[com.wordnik.swagger.model.ApiListing] = l match {
+      case Some(m) => m.map(_._2).toList
+      case _ => List()
+    }
+    // val specs = l.getOrElse(Map: Map[String, com.wordnik.swagger.model.ApiListing] ()).map(_._2).toList
+    val listings = (for (spec <- specs)
       yield f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
-        ).filter(m => m.apis.size > 0)
-    })
-    val references = (for (listing <- listings.getOrElse(List())) yield {
+    ).filter(m => m.apis.size > 0)
+
+    val references = (for (listing <- listings) yield {
       ApiListingReference(listing.resourcePath, listing.description)
     }).toList
 

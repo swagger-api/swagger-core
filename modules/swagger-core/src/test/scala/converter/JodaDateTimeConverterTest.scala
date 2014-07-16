@@ -10,16 +10,16 @@ import com.wordnik.swagger.model._
 import org.joda.time.DateTime
 
 import scala.collection.mutable.LinkedHashMap
-import scala.annotation.target.field
+import scala.annotation.meta.field
 
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
-class JodaDateTimeConverterTest extends FlatSpec with ShouldMatchers {
+class JodaDateTimeConverterTest extends FlatSpec with Matchers {
   it should "read a generic model" in {
     val models = ModelConverters.readAll(classOf[ModelWithJodaDateTime])
     models.size should be (1) // don't create a Joda DateTime object

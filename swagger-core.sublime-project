@@ -1,0 +1,38 @@
+{
+	"folders":
+	[
+		{
+			"path": "/Users/tony/dev/projects/wordnik/swagger-core"
+		},
+		{
+			"path": "/Users/tony/dev/projects/reverb/developer"
+		},
+		{
+			"path": "/Users/tony/dev/projects/wordnik/swagger-ui-master"
+		},
+		{
+			"path": "/Users/tony/dev/projects/wordnik/swagger-spec"
+		},
+		{
+			"path": "/Users/tony/dev/projects/wordnik/swagger-editor"
+		},
+		{
+			"path": "/Users/tony/dev/projects/wordnik/swagger-js-normalized"
+		},
+		{
+			"path": "/Users/tony/dev/projects/fehguy/java-codegen"
+		},
+		{
+			"path": "/Users/tony/dev/projects/wordnik/jackson-module-swagger"
+		},
+		{
+			"path": "/Users/tony/dev/projects/fehguy/shred"
+		},
+		{
+			"path": "/Users/tony/dev/projects/wordnik/swagger-codegen"
+		},
+		{
+			"path": "/Users/tony/dev/projects/wordnik/swagger-js"
+		}
+	]
+}

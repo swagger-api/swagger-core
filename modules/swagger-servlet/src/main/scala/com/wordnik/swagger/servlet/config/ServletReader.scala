@@ -14,9 +14,6 @@ import org.slf4j.LoggerFactory
 import java.lang.reflect.{ Method, Type }
 import java.lang.annotation.Annotation
 
-import javax.ws.rs._
-import javax.ws.rs.core.Context
-
 import scala.collection.JavaConverters._
 import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
 
