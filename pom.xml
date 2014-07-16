@@ -221,6 +221,13 @@
     		    </dependency>
     		  </dependencies>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>${felix-version}</version>
+        </plugin>
+
       </plugins>
     </pluginManagement>
   </build>
@@ -495,7 +502,7 @@
   </dependencyManagement>
   <properties>
     <scala-version>2.10.4</scala-version>
-    <felix-version>2.3.4</felix-version>
+    <felix-version>2.3.7</felix-version>
     <servlet-api-version>2.5</servlet-api-version>
     <jersey-version>1.13</jersey-version>
     <jersey2-version>2.1</jersey2-version>
