@@ -33,32 +33,31 @@ object ApplicationBuild extends Build {
     pomIncludeRepository := { x => false },
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     organization := "com.wordnik",
-    pomExtra := (
-  <url>http://swagger.wordnik.com</url>
-  <licenses>
-    <license>
-      <name>Apache License 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  <scm>
-    <url>git@github.com:wordnik/swagger-core.git</url>
-    <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
-  </scm>
-  <developers>
-    <developer>
-      <id>fehguy</id>
-      <name>Tony Tam</name>
-      <email>fehguy@gmail.com</email>
-    </developer>
-    <developer>
-      <id>ayush</id>
-      <name>Ayush Gupta</name>
-      <email>ayush@glugbot.com</email>
-    </developer>
-  </developers>)
-    ,
+    pomExtra :=
+      <url>http://swagger.wordnik.com</url>
+      <licenses>
+        <license>
+          <name>Apache License 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+      <scm>
+        <url>git@github.com:wordnik/swagger-core.git</url>
+        <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
+      </scm>
+      <developers>
+        <developer>
+          <id>fehguy</id>
+          <name>Tony Tam</name>
+          <email>fehguy@gmail.com</email>
+        </developer>
+        <developer>
+          <id>ayush</id>
+          <name>Ayush Gupta</name>
+          <email>ayush@glugbot.com</email>
+        </developer>
+      </developers>,
     resolvers := Seq(
       "maven-central" at "https://repo1.maven.org/maven2",
       "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
