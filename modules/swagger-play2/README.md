@@ -5,7 +5,13 @@ This is a module to support the play2 framework from [playframework](http://www.
 
 ## Version History
 
-* Version 1.2.1 and greater support scala 2.10 and play 2.1.  If you need to use scala 2.9.x and play 2.0, please use 1.2.0.
+* Swagger-Play2 1.3.7 supports play 2.2.  If you need 2.1 support, please use 1.3.5 or earlier
+
+* Swagger-Play2 1.3.6 requires play 2.2.x.
+
+* Swagger-Play2 1.2.1 and greater support scala 2.10 and play 2.0 and 2.1.
+
+* Swagger-Play2 1.2.0 support scala 2.9.x and play 2.0, please use 1.2.0.
  
 Usage
 -----
@@ -14,7 +20,7 @@ You can depend on pre-built libraries in maven central by adding the following d
 
 ```
 val appDependencies: Seq[sbt.ModuleID] = Seq(
-  "com.wordnik" %% "swagger-play2" % "1.2.1-SNAPSHOT"
+  "com.wordnik" %% "swagger-play2" % "1.3.7"
 )
 ```
 
@@ -35,7 +41,7 @@ There are just a couple steps to integrate your Play2 app with swagger.
 
 ```
 
-GET     /api-docs.json        controllers.ApiHelpController.getResources
+GET     /api-docs               controllers.ApiHelpController.getResources
 
 ``` 
 
@@ -44,20 +50,15 @@ GET     /api-docs.json        controllers.ApiHelpController.getResources
 In your controller for, say your "pet" resource:
 
 ```scala
-@Api(value = "/pet", listingPath = "/api-docs.{format}/pet", description = "Operations about pets")
-object PetApiController extends Controller {
+@Api(value = "/pet", description = "Operations about pets")
+class PetApiController extends BaseApiController {
 
-  @ApiOperation(value = "Find pet by ID", notes = "Returns a pet", responseClass = "Pet", httpMethod = "GET")
-  @ApiErrors(Array(
-    new ApiError(code = 400, reason = "Invalid ID supplied"),
-    new ApiError(code = 404, reason = "Pet not found")))
+  @ApiOperation(nickname = "getPetById", value = "Find pet by ID", notes = "Returns a pet", response = classOf[models.Pet], httpMethod = "GET")
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid ID supplied"),
+    new ApiResponse(code = 404, message = "Pet not found")))
   def getPetById(
-    @ApiParam(value = "ID of the pet to fetch")@PathParam("id") id: String) = Action { implicit request =>
-    petData.getPetbyId(getLong(0, 100000, 0, id)) match {
-      case Some(pet) => JsonResponse(pet)
-      case _ => JsonResponse(new value.ApiResponse(404, "Pet not found"), 404)
-    }
-  }
+    @ApiParam(value = "ID of the pet to fetch") @PathParam("id") id: String) = Action {
 
   ...
 
@@ -65,7 +66,7 @@ object PetApiController extends Controller {
 
 What this does is the following:
 
-* Tells swagger that the methods in this controller should be described under the `/api-docs.json/pet` path
+* Tells swagger that the methods in this controller should be described under the `/api-docs/pet` path
 
 * The Routes file tells swagger that this API listens to `/{id}`
 
@@ -78,12 +79,12 @@ What this does is the following:
 In the routes file, you then wire this api as follows:
 
 ```
-GET     /api-docs.json/pet            controllers.ApiHelpController.getResource(path = "/pet")
+GET     /api-docs/pet            controllers.ApiHelpController.getResource(path = "/pet")
 
-GET     /pet.json/:id                 controllers.PetApiController.getPetById(id)
+GET     /pet/:id                 controllers.PetApiController.getPetById(id)
 ```
 
-This will "attach" the /api-docs.json/pet api to the swagger resource listing, and the method to the `getPetById` method above
+This will "attach" the /api-docs/pet api to the swagger resource listing, and the method to the `getPetById` method above
 
 #### The ApiParam annotation
 
@@ -93,4 +94,4 @@ with `ApiParamImplicit` annotations.  If they are `queryParam`s or `pathParam`s,
 
 ### Sample Application
 
-Please take a look [here](https://github.com/wordnik/swagger-core/tree/master/samples/scala-play2) for a full sample application using the Swagger Play2 module. 
+Please take a look [here](https://github.com/wordnik/swagger-core/tree/master/samples/scala-play2) for a full sample application using the Swagger Play2 module with scala, and [here](https://github.com/wordnik/swagger-core/tree/master/samples/java-play2) for a Java example. 
