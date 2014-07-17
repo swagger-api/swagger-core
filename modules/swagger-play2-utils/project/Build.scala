@@ -1,10 +1,9 @@
 import sbt._
 import Keys._
-import play.Project._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2-utils"
-  val appVersion = "1.3.1"
+  val appVersion = "1.4.0"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     "org.slf4j" % "slf4j-api" % "1.6.4",
@@ -12,7 +11,10 @@ object ApplicationBuild extends Build {
     "com.wordnik" % "common-utils_2.10.0" % "1.1.5",
     "javax.ws.rs" % "jsr311-api" % "1.1.1")
 
-  val main = play.Project(appName, appVersion, appDependencies).settings(
+  val main = Project(appName, file(".")).enablePlugins(play.PlayScala).settings(
+    version := appVersion,
+    libraryDependencies ++= appDependencies,
+    scalaVersion := "2.10.4",
     publishTo <<= version { (v: String) =>
       val nexus = "https://oss.sonatype.org/"
       if (v.trim.endsWith("SNAPSHOT"))

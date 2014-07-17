@@ -11,4 +11,4 @@ resolvers ++= Seq(
 
 resolvers += "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/"
 
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.2.0")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.1")
