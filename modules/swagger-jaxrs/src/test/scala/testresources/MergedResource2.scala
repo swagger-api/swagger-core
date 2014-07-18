@@ -11,30 +11,26 @@ import javax.xml.bind.annotation._
 
 import scala.beans.BeanProperty
 
-@Path("/basic")
-@Api(value = "/basic", description = "Basic resource")
-class ImplicitParamResource {
+@Path("/merged")
+@Api(value = "/merged", description = "MergedResource")
+class MergedResource2 {
   @GET
-  @Path("/{id}")
+  @Path("/model2")
   @ApiOperation(value = "Get object by ID",
     notes = "No details provided",
-    response = classOf[Sample],
+    response = classOf[Sample2],
     position = 0)
-  @ApiImplicitParams(Array(
-    new ApiImplicitParam(
-      name = "id",
-      value = "id of pet to add",
-      required = true,
-      dataType = "int",
-      allowableValues = "a,b,c",
-      paramType = "query")))
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID", response = classOf[NotFoundModel]),
     new ApiResponse(code = 404, message = "object not found")))
-  def getTest() = {
-    val out = new Sample
-    out.name = "foo"
-    out.value = "bar"
+  def getTest(
+    @ApiParam(value = "sample param data", required = true, allowableValues = "range[0,10]")@DefaultValue("1") @QueryParam("id") id: String) = {
+    val out = new Sample2
+    out.id = "100"
     Response.ok.entity(out).build
   }
+}
+
+class Sample2 {
+  @BeanProperty var id: String = _
 }

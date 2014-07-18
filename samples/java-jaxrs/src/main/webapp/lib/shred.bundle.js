@@ -376,12 +376,9 @@ Shred.Response = require("./shred/response");
 Shred.prototype = {
   request: function(options) {
     options.logger = this.log;
-    options.logCurl = true;//options.logCurl || this.logCurl;
+    options.logCurl = options.logCurl || this.logCurl;
     options.cookieJar = ( 'cookieJar' in options ) ? options.cookieJar : this._sharedCookieJar; // let them set cookieJar = null
     options.agent = options.agent || this.agent;
-
-    console.log(options.cookieJar);
-
     // fill in default options
     for (var key in this.defaults) {
       if (this.defaults.hasOwnProperty(key) && !options[key]) {

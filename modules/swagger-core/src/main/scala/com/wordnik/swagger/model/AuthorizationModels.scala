@@ -22,6 +22,7 @@ import scala.collection.JavaConverters._
 
 trait AuthorizationType {
   def `type`: String
+  def getName: String
 }
 
 class OAuthBuilder {
@@ -54,12 +55,15 @@ case class OAuth(
   scopes: List[AuthorizationScope], 
   grantTypes: List[GrantType]) extends AuthorizationType {
   override def `type` = "oauth2"
+  override def getName: String = `type`
 }
 case class ApiKey(keyname: String, passAs: String = "header") extends AuthorizationType {
   override def `type` = "apiKey"
+  override def getName: String = keyname
 }
 case class BasicAuth() extends AuthorizationType {
   override def `type` = "basicAuth"
+  override def getName: String = `type`
 }
 
 trait GrantType {

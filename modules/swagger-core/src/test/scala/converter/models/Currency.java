@@ -1,4 +1,4 @@
-package converter.model;
+package converter.models;
 
 public enum Currency
 {
