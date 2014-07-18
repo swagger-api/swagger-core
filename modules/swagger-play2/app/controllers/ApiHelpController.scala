@@ -175,31 +175,7 @@ class SwaggerBaseApiController extends Controller {
     }).get.toList
 
     listings.size match {
-      case 1 => {
-//        listings.head.models.map(m => {
-//          for (
-//            (mk, mv) <- m
-//          ) yield {
-//            if (mv.dynamicProperties.nonEmpty) {
-//              val allProperties = (for (
-//                (k, v) <- mv.properties
-//              ) yield (v.position, ModelPropertyHolder(k, v))).toList :::
-//                (for (
-//                  (k, v) <- mv.dynamicProperties
-//                ) yield (v.position, DynamicModelPropertyHolder(k, v))).toList
-//
-//              val sortedProperties = allProperties.sortWith(_._1 < _._1).map(e => e._2)
-//              val builtProperties = buildProperties(sortedProperties, 1)
-//
-//              mv.properties.clear()
-//              builtProperties.foreach(e => mv.properties += e._1 -> e._2)
-//              mv.dynamicProperties.clear()
-//            }
-//          }
-//        })
-
-        Option(buildUserListing(listings.head))
-      }
+      case 1 => Option(buildUserListing(listings.head))
       case _ => None
     }
   }
