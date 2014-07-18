@@ -249,6 +249,8 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
   }
 
 
+  var ApiModelProperty: List[Parameter] = _
+
   def readMethod(method: Method): Option[Operation] = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
 
@@ -288,7 +290,8 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
 
       val implicitParams = processImplicitParams(method)
 
-      val params = processParams(method)
+      ApiModelProperty = processParams(method)
+      val params = ApiModelProperty
 
       Some(Operation(
         apiOperation.httpMethod,

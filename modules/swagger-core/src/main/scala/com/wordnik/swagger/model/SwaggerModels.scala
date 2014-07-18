@@ -48,20 +48,31 @@ case class Model(
   id: String,
   name: String,
   qualifiedType: String,
-  properties: LinkedHashMap[String, ModelProperty],
+  properties: LinkedHashMap[String, ModelProperty] = LinkedHashMap.empty,
+  dynamicProperties: LinkedHashMap[String, DynamicModelProperty] = LinkedHashMap.empty,
   description: Option[String] = None,
   baseModel: Option[String] = None,
   discriminator: Option[String] = None,
-  subTypes: List[String] = List.empty)
+  subTypes: List[String] = List.empty) {
+}
 
-case class ModelProperty(
+trait BaseModelProperty {
+  def position: Int
+}
+
+case class ModelProperty (
   `type`: String,
   qualifiedType: String,
-  position: Int = 0,
+  override val position: Int = 0,
   required: Boolean = false,
   description: Option[String] = None,
   allowableValues: AllowableValues = AnyAllowableValues,
-  items: Option[ModelRef] = None)
+  items: Option[ModelRef] = None,
+  dynamicName: Option[String] = None) extends BaseModelProperty
+
+case class DynamicModelProperty(
+  override val position: Int = 0,
+  builderInstance: String) extends BaseModelProperty
 
 case class ModelRef(
   `type`: String,
