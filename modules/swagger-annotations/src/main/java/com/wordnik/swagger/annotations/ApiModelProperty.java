@@ -40,8 +40,8 @@ public @interface ApiModelProperty {
    */
   String allowableValues() default "";
 
-  /** 
-   * specify an optional access value for filtering in a Filter 
+  /**
+   * specify an optional access value for filtering in a Filter
    * implementation.  This
    * allows you to hide certain parameters if a user doesn't have access to them
    */
@@ -68,7 +68,7 @@ public @interface ApiModelProperty {
    * ordering, you should specify property order to keep models consistent across different VM implementations and versions.
    */
   int position() default 0;
-  
+
   /**
    * Allows a model property to be marked as hidden in the swagger model definition
    */

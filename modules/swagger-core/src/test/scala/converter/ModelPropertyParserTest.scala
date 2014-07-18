@@ -23,6 +23,7 @@ class ModelPropertyParserTest extends FlatSpec with ShouldMatchers {
   it should "extract a string list" in {
     val cls = classOf[List[String]]
     implicit val properties = new scala.collection.mutable.LinkedHashMap[String, ModelProperty]
+    implicit val dynamicProperties = new scala.collection.mutable.LinkedHashMap[String, DynamicModelProperty]
     val parser = new ModelPropertyParser(cls)
     parser.parse
   }
