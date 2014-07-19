@@ -52,6 +52,9 @@ public @interface Api {
     /** Filter the Api listings */
     String filter() default "";
 
+    /** Use a path alias */
+    String pathAlias() default "";
+
     /**
      * Corresponds to the `description` field of the Resource Listing API operation.
      * <p/>
