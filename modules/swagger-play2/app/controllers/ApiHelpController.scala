@@ -116,8 +116,6 @@ class SwaggerBaseApiController extends Controller {
 
   protected val AccessControlAllowOrigin = ("Access-Control-Allow-Origin", "*")
 
-  //Thread.currentThread().setContextClassLoader(Play.application.classloader)
-  //private val mirror = ru.runtimeMirror(getClass.getClassLoader)
   private val mirror = ru.runtimeMirror(Play.application.classloader)
 
   trait BasePropertyHolder
