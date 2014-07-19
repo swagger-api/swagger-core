@@ -36,7 +36,7 @@ If you're interested in the change history of swagger and the swagger-core frame
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
-<li>- Java 1.6 or greater (http://java.oracle.com)
+<li>- Java 6, 7 (http://java.oracle.com)
 
 <li>- Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
