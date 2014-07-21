@@ -88,7 +88,7 @@ class ApiListingResource {
       ).filter(m => m.apis.size > 0)
     })
     val references = (for(listing <- listings.getOrElse(List())) yield {
-      ApiListingReference(listing.resourcePath, listing.description, listing.position)
+      ApiListingReference(path = listing.resourcePath, description = listing.description, position = listing.position)
     }).toList.sortWith(_.position < _.position)
 
     val config = ConfigFactory.config
