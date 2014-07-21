@@ -585,8 +585,8 @@ trait Serializers {
           !!(json, RESOURCE, "path", "missing required field", ERROR)
           ""
         }),
-        (json \ "pathAlias").extractOpt[String],
-        (json \ "description").extractOpt[String]
+        (json \ "description").extractOpt[String],
+        pathAlias = (json \ "pathAlias").extractOpt[String]
       )
     }, {
       case x: ApiListingReference =>
