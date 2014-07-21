@@ -34,6 +34,7 @@ object SwaggerSerializers extends Serializers {
     case json =>
       implicit val fmts: Formats = formats
       val output = new LinkedHashMap[String, ModelProperty]
+      val dynamicOutput = new LinkedHashMap[String, DynamicModelProperty]
       val properties = (json \ "properties") match {
         case JObject(entries) => {
           for((key, value) <- entries) {
@@ -51,6 +52,7 @@ object SwaggerSerializers extends Serializers {
         (json \ "name").extractOrElse((json \ "id").extract[String]),
         (json \ "qualifiedType").extractOrElse(""),
         output,
+        dynamicOutput,
         (json \ "description").extractOpt[String],
         (json \ "extends").extractOpt[String],
         (json \ "discriminator").extractOpt[String]
@@ -313,7 +315,8 @@ object SwaggerSerializers extends Serializers {
             case Some(e: ModelRef) if(e.`type` != null || e.ref != None) => Some(e)
             case _ => None
           }
-        }
+        },
+        dynamicName = (json \ "dynamicName").extractOpt[String]
       )
     }, {
     case x: ModelProperty =>
@@ -582,12 +585,18 @@ trait Serializers {
           !!(json, RESOURCE, "path", "missing required field", ERROR)
           ""
         }),
+        (json \ "pathAlias").extractOpt[String],
         (json \ "description").extractOpt[String]
       )
     }, {
       case x: ApiListingReference =>
       implicit val fmts = formats
-      ("path" -> x.path) ~
+      ("path" -> {
+        x.pathAlias match {
+          case Some(alias) => alias
+          case _ => x.path
+        }
+      }) ~
       ("description" -> x.description)
     }
   ))
@@ -829,6 +838,7 @@ trait Serializers {
     case json =>
       implicit val fmts: Formats = formats
       val output = new LinkedHashMap[String, ModelProperty]
+      val dynamicOutput = new LinkedHashMap[String, DynamicModelProperty]
       val properties = (json \ "properties") match {
         case JObject(entries) => {
           entries.map({
@@ -846,6 +856,7 @@ trait Serializers {
         (json \ "name").extractOrElse((json \ "id").extract[String]),
         (json \ "qualifiedType").extractOrElse(""),
         output,
+        dynamicOutput,
         (json \ "description").extractOpt[String],
         (json \ "extends").extractOpt[String],
         (json \ "discriminator").extractOpt[String]
@@ -896,7 +907,8 @@ trait Serializers {
             case Some(e: ModelRef) if(e.`type` != null || e.ref != None) => Some(e)
             case _ => None
           }
-        }
+        },
+        dynamicName = (json \ "dynamicName").extractOpt[String]
       )
     }, {
     case x: ModelProperty =>

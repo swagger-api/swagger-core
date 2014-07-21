@@ -37,7 +37,7 @@ case class LoginEndpoint(url: String)
 case class TokenRequestEndpoint(url: String, clientIdName: String, clientSecretName: String)
 case class TokenEndpoint(url: String, tokenName: String)
 
-case class ApiListingReference(path:String, description: Option[String], position: Int = 0)
+case class ApiListingReference(path:String, pathAlias: Option[String], description: Option[String], position: Int = 0)
 
 trait AllowableValues
 case object AnyAllowableValues extends AllowableValues
@@ -48,20 +48,31 @@ case class Model(
   id: String,
   name: String,
   qualifiedType: String,
-  properties: LinkedHashMap[String, ModelProperty],
+  properties: LinkedHashMap[String, ModelProperty] = LinkedHashMap.empty,
+  dynamicProperties: LinkedHashMap[String, DynamicModelProperty] = LinkedHashMap.empty,
   description: Option[String] = None,
   baseModel: Option[String] = None,
   discriminator: Option[String] = None,
-  subTypes: List[String] = List.empty)
+  subTypes: List[String] = List.empty) {
+}
 
-case class ModelProperty(
+trait BaseModelProperty {
+  def position: Int
+}
+
+case class ModelProperty (
   `type`: String,
   qualifiedType: String,
-  position: Int = 0,
+  override val position: Int = 0,
   required: Boolean = false,
   description: Option[String] = None,
   allowableValues: AllowableValues = AnyAllowableValues,
-  items: Option[ModelRef] = None)
+  items: Option[ModelRef] = None,
+  dynamicName: Option[String] = None) extends BaseModelProperty
+
+case class DynamicModelProperty(
+  override val position: Int = 0,
+  builderInstance: String) extends BaseModelProperty
 
 case class ModelRef(
   `type`: String,
@@ -80,6 +91,8 @@ case class ApiListing (
   apis: List[ApiDescription] = List(),
   models: Option[Map[String, Model]] = None,
   description: Option[String] = None,
+  filter: Option[String] = None,
+  pathAlias: Option[String] = None,
   position: Int = 0)
 
 case class ApiDescription (
