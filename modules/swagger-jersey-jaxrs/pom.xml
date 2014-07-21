@@ -3,14 +3,14 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.10</artifactId>
-    <version>1.3.7-Dev</version>
+    <version>1.3.8-CD-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
   <artifactId>swagger-jersey-jaxrs_2.10</artifactId>
   <packaging>jar</packaging>
-  <version>1.3.7-Dev</version>
+  <version>1.3.8-CD-SNAPSHOT</version>
   <name>swagger-jersey-jaxrs</name>
   <build>
     <defaultGoal>install</defaultGoal>
