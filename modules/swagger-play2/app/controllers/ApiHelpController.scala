@@ -139,7 +139,7 @@ class SwaggerBaseApiController extends Controller {
         ).filter(m => m.apis.size > 0 && m.filter == filter)
     })
     val references = (for (listing <- listings.getOrElse(List())) yield {
-      ApiListingReference(listing.resourcePath, listing.pathAlias, listing.description)
+      ApiListingReference(listing.resourcePath, listing.description, pathAlias = listing.pathAlias)
     }).toList
 
     references.foreach {
