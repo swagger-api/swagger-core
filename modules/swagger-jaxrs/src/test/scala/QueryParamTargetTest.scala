@@ -13,12 +13,12 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.mutable.ListBuffer
 
 @RunWith(classOf[JUnitRunner])
-class QueryParamTargetTest extends FlatSpec with ShouldMatchers {
+class QueryParamTargetTest extends FlatSpec with Matchers {
   it should "honor a query param target at the class level" in {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()

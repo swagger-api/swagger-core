@@ -13,12 +13,12 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.beans.BeanProperty
 
 @RunWith(classOf[JUnitRunner])
-class ModelPropertyParserTest extends FlatSpec with ShouldMatchers {
+class ModelPropertyParserTest extends FlatSpec with Matchers {
 
   it should "extract a string list" in {
     val cls = classOf[List[String]]

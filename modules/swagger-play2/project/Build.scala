@@ -1,16 +1,16 @@
 import sbt._
 import Keys._
-import play.Project._
+import play._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2"
-  val appVersion = "1.3.7"
+  val appVersion = "1.3.8-SNAPSHOT"
 
   checksums in update := Nil
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.7",
+    "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.8-SNAPSHOT",
     "javax.ws.rs" % "jsr311-api" % "1.1.1",
     "org.mockito" % "mockito-core" % "1.9.5" % "test")
 
@@ -54,7 +54,6 @@ object ApplicationBuild extends Build {
   </developers>)
     ,
     resolvers := Seq(
-      "maven-central" at "https://repo1.maven.org/maven2",
       "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
       "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
       "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases",

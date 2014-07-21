@@ -9,14 +9,14 @@ import org.json4s.jackson.Serialization.write
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import java.util.Date
 
-import scala.annotation.target.field
+import scala.annotation.meta.field
 
 @RunWith(classOf[JUnitRunner])
-class FormatTest extends FlatSpec with ShouldMatchers {
+class FormatTest extends FlatSpec with Matchers {
   implicit val formats = SwaggerSerializers.formats
 
   it should "format a date" in {

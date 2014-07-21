@@ -11,10 +11,10 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
-class JsonIgnorePropertiesModelTest extends FlatSpec with ShouldMatchers {
+class JsonIgnorePropertiesModelTest extends FlatSpec with Matchers {
   val models = ModelConverters.readAll(classOf[ModelWithIgnorePropertiesAnnotation])
   JsonSerializer.asJson(models) should be ("""[{"id":"ModelWithIgnorePropertiesAnnotation","properties":{"name":{"type":"string"},"favoriteAnimal":{"type":"string"}}}]""")
 }
