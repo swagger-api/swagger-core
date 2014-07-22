@@ -14,11 +14,12 @@ object ApplicationBuild extends Build {
 
   val appDependencies = Seq(
     "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" % "swagger-jaxrs_2.11" % "1.3.8-SNAPSHOT",
+    "com.wordnik" %% "swagger-jaxrs" % "1.3.8-SNAPSHOT",
     "javax.ws.rs" % "jsr311-api" % "1.1.1",
     "org.mockito" % "mockito-core" % "1.9.5" % "test")
 
   val main = Project(appName, file(".")).enablePlugins(PlayScala).settings(
+    crossScalaVersions := Seq("2.10.4", "2.11.1"),
     scalaVersion := "2.11.1",
     version := appVersion,
     libraryDependencies ++= appDependencies,

@@ -65,4 +65,44 @@
       <version>${jersey2-version}</version>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+    <id>scala-2.10</id>
+    <activation>
+      <property>
+        <name>scala-version</name>
+        <value>2.10</value>
+      </property>
+    </activation>
+    <dependencyManagement>
+      <dependencies>
+        <dependency>
+          <groupId>org.scala-lang</groupId>
+          <artifactId>scala-library</artifactId>
+          <version>2.10.4</version>
+          <scope>compile</scope>
+        </dependency>
+      </dependencies>
+    </dependencyManagement>
+  </profile>
+  <profile>
+    <id>scala-2.11</id>
+    <activation>
+      <property>
+        <name>scala-version</name>
+        <value>2.11</value>
+      </property>
+    </activation>
+    <dependencyManagement>
+      <dependencies>
+        <dependency>
+          <groupId>org.scala-lang</groupId>
+          <artifactId>scala-library</artifactId>
+          <version>2.11.1</version>
+          <scope>compile</scope>
+        </dependency>
+      </dependencies>
+    </dependencyManagement>
+  </profile>
+</profiles>
 </project>
