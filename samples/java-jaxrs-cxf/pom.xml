@@ -2,13 +2,13 @@
 
   <parent>
     <groupId>com.wordnik</groupId>
-    <artifactId>swagger-project_2.11</artifactId>
+    <artifactId>swagger-project_2.10</artifactId>
     <version>1.3.8-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-java-cxf-sample_2.11</artifactId>
+  <artifactId>swagger-java-cxf-sample_2.10</artifactId>
   <packaging>war</packaging>
   <name>swagger-java-cxf-sample</name>
   <version>1.3.8-SNAPSHOT</version>
@@ -188,13 +188,13 @@
     <!-- Swagger Stuff -->
     <dependency>
       <groupId>com.wordnik</groupId>
-      <artifactId>swagger-core_2.11</artifactId>
+      <artifactId>swagger-core_2.10</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.wordnik</groupId>
-      <artifactId>swagger-jaxrs_2.11</artifactId>
+      <artifactId>swagger-jaxrs_2.10</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
@@ -230,7 +230,7 @@
 
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.11</artifactId>
+      <artifactId>scalatest_2.10</artifactId>
       <version>${scala-test-version}</version>
       <scope>test</scope>
     </dependency>

@@ -6,7 +6,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-project_2.11</artifactId>
+  <artifactId>swagger-project_2.10</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
   <version>1.3.8-SNAPSHOT</version>
@@ -398,7 +398,7 @@
     <dependencies>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>swagger-jaxrs_2.11</artifactId>
+        <artifactId>swagger-jaxrs_2.10</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -431,7 +431,7 @@
       </dependency>      
       <dependency>
         <groupId>org.scalatest</groupId>
-        <artifactId>scalatest_2.11</artifactId>
+        <artifactId>scalatest_2.10</artifactId>
         <version>${scala-test-version}</version>
         <scope>test</scope>
       </dependency>
@@ -443,7 +443,7 @@
       </dependency>
       <dependency>
         <groupId>com.wordnik</groupId>
-        <artifactId>swagger-core_2.11</artifactId>
+        <artifactId>swagger-core_2.10</artifactId>
         <version>${project.version}</version>
         <scope>compile</scope>
         <exclusions>
@@ -488,7 +488,7 @@
     </dependencies>
   </dependencyManagement>
   <properties>
-    <scala-version>2.10.4</scala-version>
+    <scala-version>2.10.3</scala-version>
     <felix-version>2.3.4</felix-version>
     <servlet-api-version>2.5</servlet-api-version>
     <jersey-version>1.13</jersey-version>
