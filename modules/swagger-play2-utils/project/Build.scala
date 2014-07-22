@@ -8,7 +8,7 @@ object ApplicationBuild extends Build {
   val appName = "swagger-play2-utils"
   val appVersion = "1.3.8-SNAPSHOT"
 
-  scalaVersion := "2.11.1"
+  scalaVersion := "2.10.3"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     "org.slf4j" % "slf4j-api" % "1.6.4",
@@ -18,7 +18,7 @@ object ApplicationBuild extends Build {
 
   val main = Project(appName, file(".")).enablePlugins(PlayScala).settings(
     crossScalaVersions := Seq("2.10.4", "2.11.1"),
-    scalaVersion := "2.11.1",
+    scalaVersion := "2.10.3",
     version := appVersion,
     libraryDependencies ++= appDependencies,
     publishTo <<= version { (v: String) =>
