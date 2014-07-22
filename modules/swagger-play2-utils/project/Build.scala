@@ -11,10 +11,10 @@ object ApplicationBuild extends Build {
   scalaVersion := "2.11.1"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
-    "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" % "swagger-core_2.11" % "1.3.8-SNAPSHOT",
-    "com.wordnik" % "common-utils_2.11.0" % "1.1.5",
-    "javax.ws.rs" % "jsr311-api" % "1.1.1")
+    "org.slf4j"   %  "slf4j-api"    % "1.6.4",
+    "com.wordnik" %% "swagger-core" % "1.3.8-SNAPSHOT",
+    "com.wordnik" %% "common-utils" % "1.3.0-SNAPSHOT",
+    "javax.ws.rs" %  "jsr311-api"   % "1.1.1")
 
   val main = Project(appName, file(".")).enablePlugins(PlayScala).settings(
     crossScalaVersions := Seq("2.10.4", "2.11.1"),
