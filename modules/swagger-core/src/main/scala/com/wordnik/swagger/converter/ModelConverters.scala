@@ -14,6 +14,7 @@ object ModelConverters {
   val converters = new ListBuffer[ModelConverter]() ++ List(
     new JodaDateTimeConverter,
     new JodaLocalDateConverter,
+    new UUIDConverter,
     new SwaggerSchemaConverter
   )
 
