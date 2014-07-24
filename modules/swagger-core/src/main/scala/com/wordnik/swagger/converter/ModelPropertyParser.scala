@@ -3,7 +3,7 @@ package com.wordnik.swagger.converter
 import com.wordnik.swagger.model._
 import com.wordnik.swagger.core.{ SwaggerSpec, SwaggerTypes }
 import com.wordnik.swagger.core.util.TypeUtil
-import com.wordnik.swagger.annotations.ApiModelProperty
+import com.wordnik.swagger.annotations.{ApiDynamicModelProperty, ApiModelProperty}
 
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty, JsonIgnoreProperties}
 
@@ -17,7 +17,7 @@ import javax.xml.bind.annotation._
 
 import scala.collection.mutable.{ LinkedHashMap, ListBuffer, HashSet, HashMap }
 
-class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (implicit properties: LinkedHashMap[String, ModelProperty]) {
+class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (implicit properties: LinkedHashMap[String, ModelProperty], dynamicProperties: LinkedHashMap[String, DynamicModelProperty]) {
   private val LOGGER = LoggerFactory.getLogger(classOf[ModelPropertyParser])
 
   val typeMap = {
@@ -148,6 +148,14 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         processedAnnotations("allowableValues").asInstanceOf[Option[AllowableValues]]
     }
 
+    var isDynamic = processedAnnotations("isDynamic").asInstanceOf[Boolean]
+    var builderInstance = {
+      if(processedAnnotations.contains("builderInstance") && processedAnnotations("builderInstance") != null) {
+        val builderInstanceStr = processedAnnotations("builderInstance").asInstanceOf[String]
+        if (builderInstanceStr.isEmpty) None else Some(builderInstanceStr)
+      } else None
+    }
+
     try {
       val fieldAnnotations = getDeclaredField(this.cls, originalName).getAnnotations()
       var propAnnoOutput = processAnnotations(originalName, fieldAnnotations)
@@ -170,6 +178,13 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       if (!isTransient) isTransient = propAnnoOutput("isTransient").asInstanceOf[Boolean]
       if (!isXmlElement) isXmlElement = propAnnoOutput("isXmlElement").asInstanceOf[Boolean]
 
+      if (!isDynamic) isDynamic = propAnnoOutput("isDynamic").asInstanceOf[Boolean]
+      if(builderInstance == None && propAnnoOutput.contains("builderInstance") && propAnnoOutput("builderInstance") != null)
+        builderInstance = {
+          val builderInstanceStr = propAnnoOutput("builderInstance").asInstanceOf[String]
+          if (builderInstanceStr.isEmpty) None else Some(builderInstanceStr)
+        }
+
       if (name == null) name = originalName
       isJsonProperty = propAnnoOutput("isJsonProperty").asInstanceOf[Boolean]
     } catch {
@@ -185,53 +200,61 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       isTransient = true
 
     if (!(isTransient && !isXmlElement && !isJsonProperty) && name != null && (isFieldExists || isGetter || isDocumented)) {
-      var paramType = getDataType(genericReturnType, returnType, false)
-      LOGGER.debug("inspecting " + paramType)
-      var simpleName = Option(overrideDataType) match {
-        case Some(e) => e
-        case _ => getDataType(genericReturnType, returnType, true)
-      }
-      if (!"void".equals(paramType) && null != paramType && !processedFields.contains(name)) {
-        if(!excludedFieldTypes.contains(paramType)) {
-          val items = {
-            val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9_]*)\\].*".r
-            paramType match {
-              case ComplexTypeMatcher(containerType, basePart) => {
-                LOGGER.debug("containerType: " + containerType + ", basePart: " + basePart + ", simpleName: " + simpleName)
-                paramType = containerType
-                val ComplexTypeMatcher(t, simpleTypeRef) = simpleName
-                val typeRef = {
-                  if(simpleTypeRef.indexOf(",") > 0) // it's a map, use the value only
-                    simpleTypeRef.split(",").last
-                  else simpleTypeRef
+      if(isDynamic) {
+        builderInstance.map(b => {
+          val param = DynamicModelProperty(position, b)
+          LOGGER.debug("added dynamic field " + name)
+          dynamicProperties += name -> param
+        })
+      } else {
+        var paramType = getDataType(genericReturnType, returnType, false)
+        LOGGER.debug("inspecting " + paramType)
+        var simpleName = Option(overrideDataType) match {
+          case Some(e) => e
+          case _ => getDataType(genericReturnType, returnType, true)
+        }
+        if (!"void".equals(paramType) && null != paramType && !processedFields.contains(name)) {
+          if (!excludedFieldTypes.contains(paramType)) {
+            val items = {
+              val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9_]*)\\].*".r
+              paramType match {
+                case ComplexTypeMatcher(containerType, basePart) => {
+                  LOGGER.debug("containerType: " + containerType + ", basePart: " + basePart + ", simpleName: " + simpleName)
+                  paramType = containerType
+                  val ComplexTypeMatcher(t, simpleTypeRef) = simpleName
+                  val typeRef = {
+                    if (simpleTypeRef.indexOf(",") > 0) // it's a map, use the value only
+                      simpleTypeRef.split(",").last
+                    else simpleTypeRef
+                  }
+                  simpleName = containerType
+                  if (isComplex(simpleTypeRef)) {
+                    Some(ModelRef(null, Some(simpleTypeRef), Some(basePart)))
+                  }
+                  else Some(ModelRef(simpleTypeRef, None, Some(basePart)))
                 }
-                simpleName = containerType
-                if(isComplex(simpleTypeRef)) {
-                  Some(ModelRef(null, Some(simpleTypeRef), Some(basePart)))
-                }
-                else Some(ModelRef(simpleTypeRef, None, Some(basePart)))
+                case _ => None
               }
-              case _ => None
             }
-          }
 
-          val param = ModelProperty(
-            validateDatatype(simpleName),
-            paramType,
-            position,
-            required,
-            description,
-            allowableValues.getOrElse(AnyAllowableValues),
-            items)
-          LOGGER.debug("added param type " + paramType + " for field " + name)
-          properties += name -> param
+            val param = ModelProperty(
+              validateDatatype(simpleName),
+              paramType,
+              position,
+              required,
+              description,
+              allowableValues.getOrElse(AnyAllowableValues),
+              items)
+            LOGGER.debug("added param type " + paramType + " for field " + name)
+            properties += name -> param
+          }
+          else {
+            LOGGER.debug("field " + paramType + " is has been explicitly excluded")
+          }
         }
         else {
-          LOGGER.debug("field " + paramType + " is has been explicitly excluded")
+          LOGGER.debug("skipping " + name)
         }
-      }
-      else {
-        LOGGER.debug("skipping " + name)
       }
       processedFields += name
     }
@@ -252,6 +275,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     var isXmlElement = false
     var isDocumented = false
     var isJsonProperty = false
+    var isDynamic = false
 
     var classname = name
     var updatedName = name
@@ -264,6 +288,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     var paramAccess: String = null
     var wrapperName: String = null
     var position = 0
+    var builderInstance: String = null
 
     for (ma <- annotations) {
       ma match {
@@ -278,6 +303,14 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
           allowableValues = Some(toAllowableValues(e.allowableValues))
           paramAccess = readString(e.access)
           isTransient = e.hidden
+        }
+        case e: ApiDynamicModelProperty => {
+          if(e.position != 0) position = e.position
+          isDocumented = true
+          paramAccess = readString(e.access)
+          isTransient = e.hidden
+          builderInstance = readString(e.builderInstance())
+          isDynamic = true
         }
         case e: XmlAttribute => {
           updatedName = readString(e.name, name, "##default")
@@ -312,6 +345,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     output += "isXmlElement" -> isXmlElement
     output += "isDocumented" -> isDocumented
     output += "isJsonProperty" -> isJsonProperty
+    output += "isDynamic" -> isDynamic
     output += "name" -> updatedName
     output += "required" -> required
     output += "defaultValue" -> defaultValue
@@ -321,6 +355,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     output += "allowableValues" -> allowableValues
     output += "paramAccess" -> paramAccess
     output += "position" -> position
+    output += "builderInstance" -> builderInstance
     output
   }
 
