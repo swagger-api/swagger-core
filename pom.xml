@@ -9,7 +9,7 @@
   <artifactId>swagger-project_2.10</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
-  <version>1.3.8-SNAPSHOT</version>
+  <version>2.0.0-SNAPSHOT</version>
   <url>https://github.com/wordnik/swagger-core</url>
   <scm>
     <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
@@ -226,47 +226,6 @@
   </build>
   <profiles>
     <profile>
-      <id>release-profile</id>
-      <properties>
-        <skipTests>true</skipTests>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>net.alchim31.maven</groupId>
-            <artifactId>scala-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>compile</goal>
-                  <goal>testCompile</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration />
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>build-helper-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>add-source</id>
-                <phase>prepare-package</phase>
-                <goals>
-                  <goal>add-source</goal>
-                </goals>
-                <configuration>
-                  <sources>
-                    <source>src/main/scala</source>
-                  </sources>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
       <id>release-sign-artifacts</id>
       <activation>
         <property>
@@ -343,11 +302,11 @@
   <modules>
     <module>modules/swagger-annotations</module>
     <module>modules/swagger-core</module>
-    <module>modules/swagger-jaxrs</module>
+    <!--module>modules/swagger-jaxrs</module>
     <module>modules/swagger-jersey-jaxrs</module>
     <module>modules/swagger-jersey2-jaxrs</module>
     <module>modules/swagger-servlet</module>
-    <module>modules/swagger-utils</module>
+    <module>modules/swagger-utils</module-->
     <!--module>modules/swagger-oauth2-auth-server</module-->
   </modules>
   <reporting>
@@ -366,11 +325,6 @@
           </links>
           <excludePackageNames />
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>net.alchim31.maven</groupId>
-        <artifactId>scala-maven-plugin</artifactId>
-        <version>${scala-maven-plugin-version}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -396,11 +350,6 @@
   </reporting>
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>swagger-jaxrs_2.10</artifactId>
-        <version>${project.version}</version>
-      </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-plugin-tools-api</artifactId>
@@ -442,18 +391,6 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>com.wordnik</groupId>
-        <artifactId>swagger-core_2.10</artifactId>
-        <version>${project.version}</version>
-        <scope>compile</scope>
-        <exclusions>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
         <version>${servlet-api-version}</version>
@@ -488,15 +425,16 @@
     </dependencies>
   </dependencyManagement>
   <properties>
+    <joda-version>1.2</joda-version>
+    <joda-time-version>2.2</joda-time-version>
+
     <scala-version>2.10.3</scala-version>
     <felix-version>2.3.4</felix-version>
     <servlet-api-version>2.5</servlet-api-version>
     <jersey-version>1.13</jersey-version>
     <jersey2-version>2.1</jersey2-version>
     <jackson-version>2.4.1</jackson-version>
-    <jackson-scala-version>2.4.1</jackson-scala-version>
     <logback-version>1.0.1</logback-version>
-    <json4s-version>3.2.10</json4s-version>
 
     <junit-version>4.8.1</junit-version>
     <maven-plugin-version>1.0.0</maven-plugin-version>
