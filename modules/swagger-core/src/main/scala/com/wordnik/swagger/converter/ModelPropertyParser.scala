@@ -138,6 +138,16 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         Some(processedAnnotations("description").asInstanceOf[String])
       else None
     }
+    var notes = {
+      if(processedAnnotations.contains("notes") && processedAnnotations("notes") != null)
+        Some(processedAnnotations("notes").asInstanceOf[String])
+      else None
+    }
+    var access = {
+      if(processedAnnotations.contains("paramAccess") && processedAnnotations("paramAccess") != null)
+        Some(processedAnnotations("paramAccess").asInstanceOf[String])
+      else None
+    }
     var isTransient = processedAnnotations("isTransient").asInstanceOf[Boolean]
     var isXmlElement = processedAnnotations("isXmlElement").asInstanceOf[Boolean]
     val isDocumented = processedAnnotations("isDocumented").asInstanceOf[Boolean]
@@ -164,6 +174,10 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         allowableValues = propAnnoOutput("allowableValues").asInstanceOf[Option[AllowableValues]]
       if(description == None && propAnnoOutput.contains("description") && propAnnoOutput("description") != null)
         description = Some(propAnnoOutput("description").asInstanceOf[String])
+      if(notes == None && propAnnoOutput.contains("notes") && propAnnoOutput("notes") != null)
+        notes = Some(propAnnoOutput("notes").asInstanceOf[String])
+      if(access == None && propAnnoOutput.contains("paramAccess") && propAnnoOutput("paramAccess") != null)
+        access = Some(propAnnoOutput("paramAccess").asInstanceOf[String])
       if(propPosition != 0) position = propAnnoOutput("position").asInstanceOf[Int]
       if(required == false) required = propAnnoOutput("required").asInstanceOf[Boolean]
       isFieldExists = true
@@ -222,7 +236,9 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
             required,
             description,
             allowableValues.getOrElse(AnyAllowableValues),
-            items)
+            items,
+            notes,
+            access)
           LOGGER.debug("added param type " + paramType + " for field " + name)
           properties += name -> param
         }
