@@ -4,11 +4,11 @@ import play.Project._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2-utils"
-  val appVersion = "1.3.7"
+  val appVersion = "1.3.8-CD-SNAPSHOT"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" % "swagger-core_2.10" % "1.3.7",
+    "com.wordnik" % "swagger-core_2.10" % "1.3.8-CD-SNAPSHOT",
     "com.wordnik" % "common-utils_2.10.0" % "1.1.5",
     "javax.ws.rs" % "jsr311-api" % "1.1.1")
 
@@ -52,6 +52,7 @@ object ApplicationBuild extends Build {
   </developers>)
     ,
     resolvers := Seq(
+      "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
       "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
       "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases",
       "java-net" at "http://download.java.net/maven/2",

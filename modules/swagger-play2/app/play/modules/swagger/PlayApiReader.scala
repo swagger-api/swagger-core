@@ -128,6 +128,17 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
           orderedOperations.toList)
       }).toList
       val models = ModelUtil.modelsFromApis(apis)
+
+      val filter = api.filter match {
+        case e: String if e != "" => Some(e)
+        case _ => None
+      }
+
+      val pathAlias = api.pathAlias match {
+        case e: String if e != "" => Some(e)
+        case _ => None
+      }
+
       Some(ApiListing (
         apiVersion = config.apiVersion,
         swaggerVersion = config.swaggerVersion,
@@ -139,6 +150,8 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         produces = produces,
         consumes = consumes,
         protocols = protocols,
+        filter = filter,
+        pathAlias = pathAlias,
         position = api.position)
       )
     }
@@ -212,6 +225,16 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
 
       val models = ModelUtil.modelsFromApis(apiDescriptions)
 
+      val filter = api.filter match {
+        case e: String if e != "" => Some(e)
+        case _ => None
+      }
+
+      val pathAlias = api.pathAlias match {
+        case e: String if e != "" => Some(e)
+        case _ => None
+      }
+
       Some(
         ApiListing(
           config.apiVersion,
@@ -224,7 +247,9 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
           List(), // authorizations
           ModelUtil.stripPackages(apiDescriptions), //  List[com.wordnik.swagger.model.ApiDescription]
           models,
-          description
+          description,
+          filter,
+          pathAlias
           // position
         )
       )
@@ -235,6 +260,8 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
     }
   }
 
+
+  var ApiModelProperty: List[Parameter] = _
 
   def readMethod(method: Method): Option[Operation] = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
@@ -275,7 +302,8 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
 
       val implicitParams = processImplicitParams(method)
 
-      val params = processParams(method)
+      ApiModelProperty = processParams(method)
+      val params = ApiModelProperty
 
       Some(Operation(
         apiOperation.httpMethod,

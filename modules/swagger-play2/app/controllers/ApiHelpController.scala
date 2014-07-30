@@ -17,7 +17,7 @@
 package controllers
 
 import play.api.mvc._
-import play.api.Logger
+import play.api.{Play, Logger}
 import play.modules.swagger.ApiListingCache
 
 import javax.xml.bind.JAXBContext
@@ -26,9 +26,14 @@ import javax.xml.bind.annotation._
 import java.io.StringWriter
 
 import com.wordnik.swagger.core.util.JsonSerializer
-import com.wordnik.swagger.model.{ApiListing, ApiListingReference, ResourceListing}
+import com.wordnik.swagger.model._
 import com.wordnik.swagger.core.filter.SpecFilter
 import com.wordnik.swagger.config.{ConfigFactory, FilterFactory}
+
+import scala.collection.mutable.LinkedHashMap
+import scala.reflect.runtime.{universe => ru}
+import scala.reflect.runtime.universe._
+import play.api.Play.current
 
 object ErrorResponse {
   val ERROR = 1
@@ -63,12 +68,11 @@ class ErrorResponse(@XmlElement var code: Int, @XmlElement var message: String) 
 }
 
 object ApiHelpController extends SwaggerBaseApiController {
-
-  def getResources() = Action {
+  def getResources(filter: String = null) = Action {
     request =>
       implicit val requestHeader: RequestHeader = request
 
-      val resourceListing = getResourceListing
+      val resourceListing = getResourceListing(if (filter == null || filter.trim.isEmpty) None else Some(filter))
 
       val responseStr = returnXml(request) match {
         case true => toXmlString(resourceListing)
@@ -112,10 +116,16 @@ class SwaggerBaseApiController extends Controller {
 
   protected val AccessControlAllowOrigin = ("Access-Control-Allow-Origin", "*")
 
+  private val mirror = ru.runtimeMirror(Play.application.classloader)
+
+  trait BasePropertyHolder
+  case class ModelPropertyHolder(name: String, prop: ModelProperty) extends BasePropertyHolder
+  case class DynamicModelPropertyHolder(name: String, prop: DynamicModelProperty) extends BasePropertyHolder
+
   /**
    * Get a list of all top level resources
    */
-  protected def getResourceListing(implicit requestHeader: RequestHeader) = {
+  protected def getResourceListing(filter: Option[String])(implicit requestHeader: RequestHeader) = {
     Logger("swagger").debug("ApiHelpInventory.getRootResources")
     val docRoot = ""
     val queryParams = requestHeader.queryString.map {case (key, value) => (key -> value.toList)}
@@ -126,10 +136,10 @@ class SwaggerBaseApiController extends Controller {
     val listings = ApiListingCache.listing(docRoot).map(specs => {
       (for (spec <- specs.values)
       yield f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
-        ).filter(m => m.apis.size > 0)
+        ).filter(m => m.apis.size > 0 && m.filter == filter)
     })
     val references = (for (listing <- listings.getOrElse(List())) yield {
-      ApiListingReference(listing.resourcePath, listing.description)
+      ApiListingReference(listing.resourcePath, listing.description, pathAlias = listing.pathAlias)
     }).toList
 
     references.foreach {
@@ -163,8 +173,78 @@ class SwaggerBaseApiController extends Controller {
     }).get.toList
 
     listings.size match {
-      case 1 => Option(listings.head)
+      case 1 => Option(buildUserListing(listings.head))
       case _ => None
+    }
+  }
+
+  def buildUserListing(listing: ApiListing)(implicit requestHeader: RequestHeader) = {
+    listing.copy(models = buildUserModels(listing.models))
+  }
+
+  def buildUserModels(models: Option[Map[String, Model]])(implicit requestHeader: RequestHeader) = {
+    models.map(m => {
+      for (
+        (mk, mv) <- m
+      ) yield {
+        (mk, buildUserModel(mv))
+      }
+    })
+  }
+
+  def buildUserModel(model: Model)(implicit requestHeader: RequestHeader) = {
+    if (model.dynamicProperties.nonEmpty) {
+      val allProperties = (for (
+        (k, v) <- model.properties
+      ) yield (v.position, ModelPropertyHolder(k, v))).toList :::
+        (for (
+          (k, v) <- model.dynamicProperties
+        ) yield (v.position, DynamicModelPropertyHolder(k, v))).toList
+
+      val sortedProperties = allProperties.sortWith(_._1 < _._1).map(e => e._2)
+      val builtProperties = buildProperties(sortedProperties, 1)
+
+      val newProperties = new LinkedHashMap[String, ModelProperty]
+      builtProperties.foreach(e => newProperties += e._1 -> e._2)
+
+      model.copy(properties = newProperties, dynamicProperties = LinkedHashMap.empty)
+    } else model
+  }
+
+  def buildProperties(props: List[BasePropertyHolder], pos: Int)(implicit requestHeader: RequestHeader): List[(String, ModelProperty)] = {
+    props match {
+      case (x: ModelPropertyHolder) :: xs => (x.name, x.prop.copy(position = pos)) :: buildProperties(xs, pos + 1)
+      case (x: DynamicModelPropertyHolder) :: xs => {
+        val properties = buildDynamicProperty(x.prop, pos)
+        properties._1 ::: buildProperties(xs, properties._2 + 1)
+      }
+      case _ => Nil
+    }
+  }
+
+  def buildDynamicProperty(prop: DynamicModelProperty, pos: Int)(implicit requestHeader: RequestHeader): (List[(String, ModelProperty)], Integer) = {
+    val module = mirror.staticModule(prop.builderInstance)
+    val obj = mirror.reflectModule(module)
+    val instance = mirror.reflect(obj.instance)
+    val sig = obj.symbol.typeSignature.member(newTermName("build"))
+    val anyRes = instance.reflectMethod(sig.asMethod)(requestHeader)
+
+    val res = try {
+      anyRes.asInstanceOf[List[ModelProperty]]
+    } catch {
+      case e: ClassCastException => Nil
+    }
+
+    buildDynamicPropertyList(res, pos)
+  }
+
+  def buildDynamicPropertyList(props: List[ModelProperty], pos: Int): (List[(String, ModelProperty)], Integer) = {
+    props match {
+      case x::xs => if (x.dynamicName.isDefined) {
+        val rest = buildDynamicPropertyList(xs, pos + 1)
+        ((x.dynamicName.get, x.copy(position = pos, dynamicName = None)) :: rest._1, rest._2)
+    } else buildDynamicPropertyList(xs, pos)
+      case _ => (Nil, pos)
     }
   }
 
