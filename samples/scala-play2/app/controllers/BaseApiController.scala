@@ -14,7 +14,7 @@ class BaseApiController extends Controller with RestResourceUtil {
   // APIs
   protected def JsonResponse(data: Object) = {
     val jsonValue: String = toJsonString(data)
-    new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(jsonValue.getBytes())).as("application/json")
+    new Result(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(jsonValue.getBytes())).as("application/json")
       .withHeaders(
         ("Access-Control-Allow-Origin", "*"),
         ("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT"),
@@ -23,7 +23,7 @@ class BaseApiController extends Controller with RestResourceUtil {
 
   protected def JsonResponse(data: Object, code: Int) = {
     val jsonValue: String = toJsonString(data)
-    new SimpleResult(header = ResponseHeader(code), body = play.api.libs.iteratee.Enumerator(jsonValue.getBytes())).as("application/json")
+    new Result(header = ResponseHeader(code), body = play.api.libs.iteratee.Enumerator(jsonValue.getBytes())).as("application/json")
       .withHeaders(
         ("Access-Control-Allow-Origin", "*"),
         ("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT"),
