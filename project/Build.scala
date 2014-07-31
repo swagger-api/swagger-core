@@ -39,16 +39,17 @@ object Build extends Build {
        "*"
      )): _*)
     .settings(libraryDependencies ++= Seq(
-	    commonsLang,
-		self4jApi,
 		jacksonModule,
 		jacksonSchema,
 		jacksonJaxrs,
 		json4sExt,
 		json4sNative,
 		json4sJackson,
+        jsr311Api,
 		jodaTime,
 		jodaConvert,
+	    commonsLang,
+		self4jApi,
 		logbackClassis,
 		junit,
 		scalatest

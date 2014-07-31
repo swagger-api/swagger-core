@@ -8,8 +8,8 @@ object Dependencies {
   val json4sNative = "org.json4s" %% "json4s-native" % "3.2.10"
   val json4sJackson = "org.json4s" %% "json4s-jackson" % "3.2.10"
   val jacksonModule = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.4.1"
-  val jacksonSchema = "com.fasterxml.jackson.module" % "jackson-module-jsonSchema" % "2.1.0"
-  val jacksonJaxrs = "com.fasterxml.jackson.jaxrs" % "jackson-jaxrs-json-provider" % "2.0.0"
+  val jacksonSchema = "com.fasterxml.jackson.module" % "jackson-module-jsonSchema" % "2.4.1"
+  val jacksonJaxrs = "com.fasterxml.jackson.jaxrs" % "jackson-jaxrs-json-provider" % "2.4.1"
   val jodaTime = "joda-time" % "joda-time" % "2.3"
   val jodaConvert = "org.joda" % "joda-convert" % "1.2"
   val commonsLang = "commons-lang" % "commons-lang" % "2.4"
@@ -37,6 +37,6 @@ object Dependencies {
   val scalatest = "org.scalatest" %% "scalatest" % "2.2.0"% "test"
   val junit = "junit" % "junit" % "4.8.1" % "test"
 
-  val logbackClassis = "ch.qos.logback" % "logback-classic" % "1.0.1" % "provided"
+  val logbackClassis = "ch.qos.logback" % "logback-classic" % "1.1.2" % "provided"
 }
 
