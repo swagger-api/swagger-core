@@ -17,12 +17,16 @@ import play.mvc.*;
 
 import views.html.*;
 
-@Api(value = "/store", description = "Operations about store")
+@Path("/store")
+@Api(value="/store" , description = "Operations about store")
+@Produces({"application/json"})
 public class StoreApiController extends BaseApiController {
 
     static StoreData storeData = new StoreData();
 
-    @ApiOperation(value = "Find purchase order by ID",
+    @GET
+    @Path("/order/{orderId}")
+    @ApiOperation(nickname = "getOrderById", value = "Find purchase order by ID",
             notes = "For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions",
             response = Order.class, httpMethod = "GET")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"),
@@ -37,7 +41,7 @@ public class StoreApiController extends BaseApiController {
         }
     }
 
-    @ApiOperation(value = "Place an order for a pet",
+    @ApiOperation(nickname = "placeOrder", value = "Place an order for a pet",
             response = Order.class, httpMethod = "POST")
     @ApiResponses({@ApiResponse(code = 400, message = "Invalid Order")})
     public static Result placeOrder() {
@@ -51,7 +55,7 @@ public class StoreApiController extends BaseApiController {
         return JsonResponse("");
     }
 
-    @ApiOperation(value = "Delete purchase order by ID",
+    @ApiOperation(nickname = "deleteOrder",value = "Delete purchase order by ID",
             notes = "For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors",
             httpMethod = "DELETE")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"),

@@ -19,7 +19,7 @@ import views.html.*;
 public class PetApiController extends BaseApiController {
     static PetData petData = new PetData();
 
-    @ApiOperation(value = "Find pet by ID",
+    @ApiOperation(nickname = "getPetById",value = "Find pet by ID",
             notes = "Returns a pet when ID < 10.  ID > 10 or nonintegers will simulate API error conditions",
             response = Pet.class, httpMethod = "GET")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"),
@@ -29,7 +29,7 @@ public class PetApiController extends BaseApiController {
         return JsonResponse(petData.getPetbyId(Long.parseLong(petId)));
     }
 
-    @ApiOperation(value = "Add a new pet to the store", httpMethod = "POST")
+    @ApiOperation(nickname = "addPet",value = "Add a new pet to the store", httpMethod = "POST")
     @ApiResponses(value = {@ApiResponse(code = 405, message = "Invalid input")})
     public static Result addPet() {
         Object o = request().body().asJson();
@@ -42,7 +42,7 @@ public class PetApiController extends BaseApiController {
         return JsonResponse("SUCCESS");
     }
 
-    @ApiOperation(value = "Update an existing pet", httpMethod = "PUT")
+    @ApiOperation(nickname = "updatePet",value = "Update an existing pet", httpMethod = "PUT")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"),
             @ApiResponse(code = 404, message = "Pet not found"),
             @ApiResponse(code = 405, message = "Validation exception")})
@@ -58,7 +58,7 @@ public class PetApiController extends BaseApiController {
         return JsonResponse("SUCCESS");
     }
 
-    @ApiOperation(value = "Finds Pets by status",
+    @ApiOperation(nickname = "findPetByStatus", value = "Finds Pets by status",
             notes = "Multiple status values can be provided with comma seperated strings",
             response = Pet.class,
             responseContainer = "List", httpMethod = "GET")
@@ -69,7 +69,7 @@ public class PetApiController extends BaseApiController {
         return JsonResponse(petData.findPetByStatus(status));
     }
 
-    @ApiOperation(value = "Finds Pets by tags",
+    @ApiOperation(nickname = "findPetsByTags",value = "Finds Pets by tags",
             notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
             response = Pet.class,
             responseContainer = "List", httpMethod = "GET")
