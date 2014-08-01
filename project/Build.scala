@@ -1,7 +1,5 @@
 import sbt._
 import Keys._
-import play.Play.autoImport._
-import PlayKeys._
 
 object Build extends Build {
   import BuildSettings._
@@ -131,6 +129,19 @@ object Build extends Build {
 		scalatest
 	  )
     )
+	
+  import play.Play.autoImport._
+  import PlayKeys._
+  
+  lazy val play2 = Project("swagger-play2", file("modules/swagger-play2"))
+    .enablePlugins(play.PlayScala)
+    .dependsOn(jaxrs)
+    .settings(swaggerModuleSettings: _*)
+	.settings(
+        scalaSource in Compile := baseDirectory.value / "app",
+		libraryDependencies += mockitoCore
+	 )
+	
    lazy val play2Util = Project("swagger-play2-utils", file("modules/swagger-play2-utils"))
     .enablePlugins(play.PlayScala)
     .dependsOn(core)
@@ -140,15 +151,6 @@ object Build extends Build {
 		resolvers += Resolvers.sonatypeNexusSnapshots,
 		libraryDependencies += "com.wordnik" %% "common-utils" % "1.3.0-SNAPSHOT"
     )
-	
-  lazy val play2 = Project("swagger-play2", file("modules/swagger-play2"))
-    .enablePlugins(play.PlayScala)
-    .dependsOn(jaxrs)
-    .settings(swaggerModuleSettings: _*)
-	.settings(
-        scalaSource in Compile := baseDirectory.value / "app",
-		libraryDependencies += mockitoCore
-	 )
 	
    // -------------------------------------------------------------------------------------------------------------------
    // Some Samples
