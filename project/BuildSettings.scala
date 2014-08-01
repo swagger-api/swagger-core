@@ -6,8 +6,8 @@ import sbtassembly.Plugin._
 
 object BuildSettings {
   val appVersion = "1.3.8"
-  val thisScalaVersion = "2.11.2"
-  val scalaVersions4ScrossBuild = Seq("2.11.2", "2.10.4")
+  val thisScalaVersion = "2.11.1"
+  val scalaVersions4ScrossBuild = Seq("2.11.1", "2.10.4")
 
   lazy val basicSettings = seq(
     version               := appVersion,
