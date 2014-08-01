@@ -4,7 +4,7 @@ addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.2")
 
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.11.2")
 
-addSbtPlugin("com.earldouglas" % "xsbt-web-plugin" % "1.0.0-M2")
+addSbtPlugin("com.earldouglas" % "xsbt-web-plugin" % "1.0.0-M3")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-osgi" % "0.7.0")
 

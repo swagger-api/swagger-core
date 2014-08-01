@@ -20,6 +20,7 @@ object Build extends Build {
   lazy val annotations = Project("swagger-annotations", file("modules/swagger-annotations"))
     .settings(swaggerModuleSettings: _*)
     .settings(osgiSettings(exports = Seq("com.wordnik.swagger.annotations")): _*)
+	.settings(exportJars := true)
 	
 	
   lazy val core = Project("swagger-core", file("modules/swagger-core"))
@@ -53,6 +54,7 @@ object Build extends Build {
 		scalatest
 	  )
     )
+	.settings(exportJars := true)
 	
   lazy val jaxrs = Project("swagger-jaxrs", file("modules/swagger-jaxrs"))
     .dependsOn(core)
@@ -177,7 +179,7 @@ object Build extends Build {
    import com.earldouglas.xwp.XwpPlugin._
    
    lazy val scalaServletSample = Project("scala-servlet", file("samples/scala-servlet"))
-    .webappDependsOn(servlet, jaxrs, core, annotations)
+    .dependsOn(jaxrs, servlet)
     .settings(swaggerModuleSettings: _*)
 	.settings(jetty():_*)
     .settings(libraryDependencies ++= Seq(
@@ -190,7 +192,7 @@ object Build extends Build {
     )
 	
    lazy val scalaJaxrsSample = Project("scala-jaxrs", file("samples/scala-jaxrs"))
-    .webappDependsOn(servlet, jaxrs, core, annotations)
+    .dependsOn(jaxrs, servlet)
     .settings(swaggerModuleSettings: _*)
 	.settings(jetty():_*)
     .settings(libraryDependencies ++= Seq(
@@ -206,7 +208,7 @@ object Build extends Build {
     )
 
 	lazy val oauth2ServerSample = Project("scala-oauth-authorization-server", file("samples/scala-oauth-authorization-server"))
-    .webappDependsOn(jersey, jaxrs, oauth2Server, core, annotations)
+    .dependsOn(jersey, oauth2Server, servlet)
     .settings(swaggerModuleSettings: _*)
 	.settings(jetty():_*)
     .settings(libraryDependencies ++= Seq(
@@ -229,7 +231,7 @@ object Build extends Build {
    import AssemblyKeys._
 
    lazy val javaDropwizardSample = Project("java-dropwizard", file("samples/java-dropwizard"))
-    .webappDependsOn(jaxrs)
+    .dependsOn(jaxrs, servlet)
     .settings(swaggerModuleSettings: _*)
 	.settings(assemblySettings :_*)
 	.settings(mainClass in assembly := Some("com.wordnik.swagger.sample.SwaggerSampleService"))
