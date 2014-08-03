@@ -92,7 +92,8 @@
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-annotations</artifactId>
-      <version>${swagger-annotations-version}</version>
+      <version>${project.parent.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
@@ -125,7 +126,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <properties>
-    <swagger-annotations-version>1.3.7</swagger-annotations-version>
-  </properties>
 </project>

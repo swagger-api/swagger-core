@@ -7,7 +7,9 @@ public class Person {
   private String firstName;
   private Address address;
   private Map<String, String> properties;
-
+  private Date birthDate;
+  private Float floatValue;
+  private Double doubleValue;
   public Long getId() {
     return id;
   }
@@ -34,5 +36,26 @@ public class Person {
   }
   public void setProperties(Map<String, String> properties) {
     this.properties = properties;
+  }
+
+  public Date getBirthDate() {
+    return birthDate;
+  }
+  public void setBirthDate(Date birthDate) {
+    this.birthDate = birthDate;
+  }
+
+  public Float getFloat() {
+    return floatValue;
+  }
+  public void setFloat(Float floatValue) {
+    this.floatValue = floatValue;
+  }
+
+  public Double getDouble() {
+    return doubleValue;
+  }
+  public void setDouble(Double doubleValue) {
+    this.doubleValue = doubleValue;
   }
 }

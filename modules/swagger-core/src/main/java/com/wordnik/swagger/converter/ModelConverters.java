@@ -1,6 +1,10 @@
 package com.wordnik.swagger.converter;
 
+import com.wordnik.swagger.models.*;
+import com.wordnik.swagger.models.properties.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
@@ -12,8 +16,13 @@ import java.util.*;
 
 public class ModelConverters {
   static ObjectMapper mapper = new ObjectMapper();
-  public static Map<String, JsonSchema> readAll(Class cls) {
+
+  static {
+    mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+  }
+  public static Map<String, Model> readAll(Class cls) {
     Map<String, JsonSchema> schemas = new HashMap<String, JsonSchema>();
+    Map<String, Model> models = new HashMap<String, Model>();
     SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
     try {
       mapper.acceptJsonFormatVisitor(cls, visitor);
@@ -39,11 +48,15 @@ public class ModelConverters {
       String schemaName = nameFromId(objectSchema.getId());
       objectSchema.setId(null);
       schemas.put(schemaName, objectSchema);
+
+      for(String key: schemas.keySet()) {
+        models.put(key, ModelFactory.convert(schemas.get(key)));
+      }
     }
     catch (Exception e) {
       e.printStackTrace();
     }
-    return schemas;
+    return models;
   }
 
   static String nameFromId(String name) {
