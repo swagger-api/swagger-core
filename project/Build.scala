@@ -20,7 +20,6 @@ object Build extends Build {
   lazy val annotations = Project("swagger-annotations", file("modules/swagger-annotations"))
     .settings(swaggerModuleSettings: _*)
     .settings(osgiSettings(exports = Seq("com.wordnik.swagger.annotations")): _*)
-	.settings(exportJars := true)
 	
 	
   lazy val core = Project("swagger-core", file("modules/swagger-core"))
@@ -54,7 +53,6 @@ object Build extends Build {
 		scalatest
 	  )
     )
-	.settings(exportJars := true)
 	
   lazy val jaxrs = Project("swagger-jaxrs", file("modules/swagger-jaxrs"))
     .dependsOn(core)
