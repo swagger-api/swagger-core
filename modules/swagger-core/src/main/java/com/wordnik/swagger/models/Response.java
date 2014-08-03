@@ -1,4 +1,4 @@
-package com.wordnik.swagger;
+package com.wordnik.swagger.models;
 
 import com.wordnik.swagger.models.Model;
 import com.wordnik.swagger.models.properties.Property;

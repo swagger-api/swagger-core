@@ -1,31 +1,28 @@
-package com.wordnik.swagger.parameters;
+package com.wordnik.swagger.models.parameters;
 
 import com.wordnik.swagger.models.properties.Property;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({ "name", "in", "description", "required", "type", "items", "collectionFormat"})
-public class QueryParameter extends AbstractParameter implements Parameter {;
+public class PathParameter extends AbstractParameter implements Parameter {;
   Property type;
 
-  public QueryParameter() {
-    super.setIn("query");
+  public PathParameter() {
+    super.setIn("path");
+    super.setRequired(true);
   }
 
-  public QueryParameter type(Property type) {
+  public PathParameter type(Property type) {
     this.setType(type);
     return this;
   }
-  public QueryParameter description(String description) {
+  public PathParameter description(String description) {
     this.setDescription(description);
     return this;
   }
-  public QueryParameter name(String name) {
+  public PathParameter name(String name) {
     this.setName(name);
-    return this;
-  }
-  public QueryParameter required(boolean required) {
-    this.setRequired(required);
     return this;
   }
 

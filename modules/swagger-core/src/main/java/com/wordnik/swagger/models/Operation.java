@@ -1,6 +1,6 @@
-package com.wordnik.swagger;
+package com.wordnik.swagger.models;
 
-import com.wordnik.swagger.parameters.*;
+import com.wordnik.swagger.models.parameters.*;
 
 import java.util.List;
 import java.util.ArrayList;

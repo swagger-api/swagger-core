@@ -1,9 +1,9 @@
 import models._
 
-import com.wordnik.swagger._
 import com.wordnik.swagger.models._
 import com.wordnik.swagger.models.properties._
-import com.wordnik.swagger.parameters._
+import com.wordnik.swagger.models.parameters._
+
 import com.wordnik.swagger.converter._
 
 import com.fasterxml.jackson.databind.SerializationFeature

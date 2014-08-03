@@ -1,4 +1,4 @@
-package com.wordnik.swagger;
+package com.wordnik.swagger.models;
 
 public class Path {
   Operation get;
