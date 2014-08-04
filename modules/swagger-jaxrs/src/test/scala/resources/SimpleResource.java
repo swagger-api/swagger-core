@@ -42,7 +42,8 @@ public class SimpleResource {
   public Response updateTest(
     @ApiParam(value = "sample param data", required = true)Sample sample,
     @HeaderParam(value = "Authorization") String authorization,
-    @QueryParam(value = "dateUpdated") java.util.Date dateUpdated) {
+    @QueryParam(value = "dateUpdated") java.util.Date dateUpdated,
+    @CookieParam(value = "X-your-cookie") String cookieId) {
     return Response.ok().build();
   }
 }

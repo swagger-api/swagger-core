@@ -212,15 +212,16 @@ public class Reader {
       }
       else if(annotation instanceof CookieParam) {
         CookieParam param = (CookieParam) annotation;
-        // parameter = new PathParameter()
-        //   .name(param.value());
-        // Property schema = ModelConverters.readAsProperty(cls);
-        // if(schema != null)
-        //   parameter.setType(schema);
+        CookieParameter hp = new CookieParameter()
+          .name(param.value());
+        Property schema = ModelConverters.readAsProperty(cls);
+        if(schema != null)
+          hp.setProperty(schema);
+        parameter = hp;
       }
       else if(annotation instanceof DefaultValue) {
         DefaultValue defaultValueAnnotation = (DefaultValue) annotation;
-        // TODO: not supported
+        // TODO: not supported yet
         defaultValue = defaultValueAnnotation.value();
       }
       else {
