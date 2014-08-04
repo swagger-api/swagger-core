@@ -2,10 +2,7 @@ import com.wordnik.swagger.models._
 import com.wordnik.swagger.models.properties._
 import com.wordnik.swagger.converter._
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.annotation.JsonInclude.Include
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
+import com.wordnik.swagger.util.Json
 
 import scala.collection.mutable.HashMap
 import scala.collection.JavaConverters._
@@ -17,9 +14,7 @@ import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
 class ModelSerializerTest extends FlatSpec with Matchers {
-  val m = new ObjectMapper()
-  m.setSerializationInclusion(Include.NON_NULL)
-  m.enable(SerializationFeature.INDENT_OUTPUT)
+  val m = Json.mapper()
 
   it should "convert a model" in {
     val pet = new Model()
@@ -31,6 +26,5 @@ class ModelSerializerTest extends FlatSpec with Matchers {
     pet.setProperties(props.asJava)
     pet.setEnum(List("id", "name").asJava)
 
-    // println(m.writeValueAsString(pet))
   }
 }

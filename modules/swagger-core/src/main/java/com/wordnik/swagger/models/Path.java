@@ -8,12 +8,44 @@ public class Path {
   Operation patch;
   Operation options;
 
+  public Path set(String method, Operation op) {
+    if("get".equals(method))
+      return get(op);
+    if("put".equals(method))
+      return put(op);
+    if("post".equals(method))
+      return post(op);
+    if("delete".equals(method))
+      return delete(op);
+    if("patch".equals(method))
+      return patch(op);
+    if("options".equals(method))
+      return options(op);
+    return null;
+  }
+
   public Path get(Operation get) {
     this.get = get;
     return this;
   }
+  public Path put(Operation put) {
+    this.put = put;
+    return this;
+  }
   public Path post(Operation post) {
     this.post = post;
+    return this;
+  }
+  public Path delete(Operation delete) {
+    this.delete = delete;
+    return this;
+  }
+  public Path patch(Operation patch) {
+    this.patch = patch;
+    return this;
+  }
+  public Path options(Operation options) {
+    this.options = options;
     return this;
   }
 

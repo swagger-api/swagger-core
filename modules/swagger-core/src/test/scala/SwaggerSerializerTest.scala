@@ -5,11 +5,7 @@ import com.wordnik.swagger.models.properties._
 import com.wordnik.swagger.models.parameters._
 
 import com.wordnik.swagger.converter._
-
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.annotation.JsonInclude.Include
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
+import com.wordnik.swagger.util.Json
 
 import scala.collection.mutable.HashMap
 import scala.collection.JavaConverters._
@@ -21,9 +17,7 @@ import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
 class SwaggerSerializerTest extends FlatSpec with Matchers {
-  val m = new ObjectMapper()
-  m.setSerializationInclusion(Include.NON_NULL)
-  m.enable(SerializationFeature.INDENT_OUTPUT)
+  val m = Json.mapper()
 
   it should "convert a spec" in {
     val personModel = ModelConverters.readAll(classOf[Person]).get("Person")
@@ -57,12 +51,12 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
       .name("tags")
       .description("tags to filter by")
       .required(false)
-      .`type`(new StringProperty())
+      .property(new StringProperty())
     )
     get.parameter(new PathParameter()
       .name("petId")
       .description("pet to fetch")
-      .`type`(new LongProperty())
+      .property(new LongProperty())
     )
 
     val response = new Response()
@@ -88,6 +82,6 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
 
     swagger.path("/pets", new Path().get(get).post(post))
 
-    println(m.writeValueAsString(swagger))
+    println(Json.pretty().writeValueAsString(swagger))
   }
 }

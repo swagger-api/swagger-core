@@ -1,26 +1,24 @@
 package com.wordnik.swagger.models;
 
+import com.wordnik.swagger.util.Json;
 import com.wordnik.swagger.models.properties.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.*;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 public class ModelFactory {
-  static ObjectMapper mapper = new ObjectMapper();
-  static {
-    mapper.setSerializationInclusion(Include.NON_NULL);
-    mapper.enable(SerializationFeature.INDENT_OUTPUT);
-    mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-  }
+  static ObjectMapper mapper = Json.mapper();
+
   public static Model convert(JsonSchema schema) {
     Model model = new Model();
     if(schema.isObjectSchema()) {
       ObjectSchema obj = schema.asObjectSchema();
+      model.setSimple(false);
 
       for(String key: obj.getProperties().keySet()) {
         Property property = convertProperty(obj.getProperties().get(key));
@@ -33,7 +31,7 @@ public class ModelFactory {
   }
 
   public static Property convertProperty(JsonSchema schema) {
-    if(schema.isNumberSchema()) {
+    if(schema.isNumberSchema() && !schema.isIntegerSchema()) {
       String format = null;
       NumberSchema s = schema.asNumberSchema();
       if(s.getFormat() != null) {

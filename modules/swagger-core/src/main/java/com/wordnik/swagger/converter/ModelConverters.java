@@ -1,5 +1,6 @@
 package com.wordnik.swagger.converter;
 
+import com.wordnik.swagger.util.Json;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.properties.*;
 
@@ -15,11 +16,59 @@ import com.fasterxml.jackson.module.jsonSchema.types.*;
 import java.util.*;
 
 public class ModelConverters {
-  static ObjectMapper mapper = new ObjectMapper();
+  static ObjectMapper mapper = Json.mapper();
 
-  static {
-    mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+  public static Property readAsProperty(Class cls) {
+    SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
+    try {
+      mapper.acceptJsonFormatVisitor(cls, visitor);
+      JsonSchema schema = visitor.finalSchema();
+      if(schema.isObjectSchema()) {
+        return null;
+      }
+      return ModelFactory.convertProperty(schema);
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
   }
+
+  public static Map<String, Model> read(Class cls) {
+    Map<String, JsonSchema> schemas = new HashMap<String, JsonSchema>();
+    Map<String, Model> models = new HashMap<String, Model>();
+    SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
+    try {
+      mapper.acceptJsonFormatVisitor(cls, visitor);
+
+      JsonSchema schema = visitor.finalSchema();
+      ObjectSchema objectSchema = schema.asObjectSchema();
+
+      if(objectSchema != null) {
+        Map<String, JsonSchema> properties = new java.util.HashMap<String, JsonSchema>(objectSchema.getProperties());
+        objectSchema.setProperties(properties);
+
+        String schemaName = nameFromId(objectSchema.getId());
+        objectSchema.setId(null);
+        schemas.put(schemaName, objectSchema);
+
+        for(String key: schemas.keySet()) {
+          models.put(key, ModelFactory.convert(schemas.get(key)));
+        }
+      }
+      else {
+        Property property = ModelFactory.convertProperty(schema);
+        Model model = new Model();
+        model.addProperty("default", property);
+        models.put(cls.getName(), model);
+      }
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+    return models;
+  }
+
   public static Map<String, Model> readAll(Class cls) {
     Map<String, JsonSchema> schemas = new HashMap<String, JsonSchema>();
     Map<String, Model> models = new HashMap<String, Model>();

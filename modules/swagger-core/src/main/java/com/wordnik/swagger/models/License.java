@@ -4,6 +4,15 @@ public class License {
   String name;
   String url;
 
+  public License name(String name) {
+    setName(name);
+    return this;
+  }
+  public License url(String url) {
+    setUrl(url);
+    return this;
+  }
+
   public String getName() {
     return name;
   }

@@ -3,7 +3,6 @@ package com.wordnik.swagger.models.parameters;
 import com.wordnik.swagger.models.properties.*;
 
 public abstract class AbstractParameter {
-  Property type;
   String in;
   String name;
   String description;
@@ -35,12 +34,5 @@ public abstract class AbstractParameter {
   }
   public void setRequired(boolean required) {
     this.required = required;
-  }
-
-  public Property getType() {
-    return type;
-  }
-  public void setType(Property type) {
-    this.type = type;
   }
 }

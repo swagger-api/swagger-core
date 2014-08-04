@@ -160,6 +160,11 @@ public class Swagger {
   public void setPaths(Map<String, Path> paths) {
     this.paths = paths;
   }
+  public Path getPath(String path) {
+    if(this.paths == null)
+      return null;
+    return this.paths.get(path);
+  }
 
   public List<Security> getSecurity() {
     return security;

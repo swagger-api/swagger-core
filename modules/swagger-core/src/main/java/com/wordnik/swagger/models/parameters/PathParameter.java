@@ -6,15 +6,16 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({ "name", "in", "description", "required", "type", "items", "collectionFormat"})
 public class PathParameter extends AbstractParameter implements Parameter {;
-  Property type;
+  String type;
+  String format;
 
   public PathParameter() {
     super.setIn("path");
     super.setRequired(true);
   }
 
-  public PathParameter type(Property type) {
-    this.setType(type);
+  public PathParameter property(Property property) {
+    this.setProperty(property);
     return this;
   }
   public PathParameter description(String description) {
@@ -26,10 +27,22 @@ public class PathParameter extends AbstractParameter implements Parameter {;
     return this;
   }
 
-  public void setType(Property type) {
+  public String getType() {
+    return type;
+  }
+  public void setType(String type) {
     this.type = type;
   }
-  public Property getType() {
-    return type;
+
+  public String getFormat() {
+    return format;
+  }
+  public void setFormat(String format) {
+    this.format = format;
+  }
+
+  public void setProperty(Property property) {
+    this.type = property.getType();
+    this.format = property.getFormat();
   }
 }
