@@ -31,17 +31,18 @@ public class SimpleResource {
     return Response.ok().entity(out).build();
   }
 
-//   @PUT
-//   @Path("/{id}")
-//   @ApiOperation(value = "Update by ID",
-//     notes = "No details provided",
-//     position = 1)
-//   @ApiResponses(Array(
-//     new ApiResponse(code = 400, message = "Invalid ID"),
-//     new ApiResponse(code = 404, message = "object not found")))
-//   def updateTest(
-//     @ApiParam(value = "sample param data", required = true)sample: Sample) = {
-//   }
-// }
-
+  @PUT
+  @Path("/{id}")
+  @ApiOperation(value = "Update by ID",
+    notes = "No details provided",
+    position = 1)
+  @ApiResponses({
+    @ApiResponse(code = 400, message = "Invalid ID"),
+    @ApiResponse(code = 404, message = "object not found")})
+  public Response updateTest(
+    @ApiParam(value = "sample param data", required = true)Sample sample,
+    @HeaderParam(value = "Authorization") String authorization,
+    @QueryParam(value = "dateUpdated") java.util.Date dateUpdated) {
+    return Response.ok().build();
+  }
 }

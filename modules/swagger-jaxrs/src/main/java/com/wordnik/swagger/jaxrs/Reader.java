@@ -2,6 +2,7 @@ package com.wordnik.swagger.jaxrs;
 
 import com.wordnik.swagger.converter.ModelConverters;
 
+import com.wordnik.swagger.util.Json;
 import com.wordnik.swagger.annotations.*;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.properties.*;
@@ -27,12 +28,7 @@ import java.util.*;
 
 public class Reader {
   Swagger swagger;
-  static ObjectMapper m;
-  static {
-    m = new ObjectMapper();
-    m.setSerializationInclusion(Include.NON_NULL);
-    m.enable(SerializationFeature.INDENT_OUTPUT);
-  }
+  static ObjectMapper m = Json.mapper();
 
   public Swagger read(Set<Class<?>> classes) {
     for(Class cls: classes) {
@@ -207,11 +203,12 @@ public class Reader {
       }
       else if(annotation instanceof HeaderParam) {
         HeaderParam param = (HeaderParam) annotation;
-        // parameter = new PathParameter()
-        //   .name(param.value());
-        // Property schema = ModelConverters.readAsProperty(cls);
-        // if(schema != null)
-        //   parameter.setType(schema);
+        HeaderParameter hp = new HeaderParameter()
+          .name(param.value());
+        Property schema = ModelConverters.readAsProperty(cls);
+        if(schema != null)
+          hp.setProperty(schema);
+        parameter = hp;
       }
       else if(annotation instanceof CookieParam) {
         CookieParam param = (CookieParam) annotation;
@@ -226,13 +223,16 @@ public class Reader {
         // TODO: not supported
         defaultValue = defaultValueAnnotation.value();
       }
+      else {
+        // System.out.println("unprocessed " + annotation);
+      }
     }
 
     // lastly apply ApiParam
-    if(parameter != null) {
-      for(Annotation annotation: annotations) {
-        if(annotation instanceof ApiParam) {
-          ApiParam param = (ApiParam) annotation;
+    for(Annotation annotation: annotations) {
+      if(annotation instanceof ApiParam) {
+        ApiParam param = (ApiParam) annotation;
+        if(parameter != null) {
           // parameter.required(param.required());
           if(param.name() != null && !"".equals(param.name()))
             parameter.setName(param.name());
@@ -242,6 +242,24 @@ public class Reader {
           allowableValues = param.allowableValues();
           if(!"".equals(param.defaultValue()))
             defaultValue = param.defaultValue();
+        }
+        else {
+          // must be a body param
+          BodyParameter bp = new BodyParameter();
+          if(param.name() != null && !"".equals(param.name()))
+            bp.setName(param.name());
+          else
+            bp.setName("body");
+          bp.setDescription(param.value());
+
+          Map<String, Model> models = ModelConverters.read(cls);
+          if(models.size() > 0) {
+            for(String name: models.keySet()) {
+              bp.setSchema(new RefModel().asDefault(name));
+              swagger.addDefinition(name, models.get(name));
+            }
+          }
+          parameter = bp;
         }
       }
     }
