@@ -1,18 +1,19 @@
 package com.wordnik.swagger.models.parameters;
 
+import com.wordnik.swagger.models.Model;
 import com.wordnik.swagger.models.properties.Property;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({ "name", "in", "description", "required", "type", "items", "collectionFormat"})
 public class BodyParameter extends AbstractParameter implements Parameter {;
-  Property schema;
+  Model schema;
 
   public BodyParameter() {
     super.setIn("body");
   }
 
-  public BodyParameter schema(Property schema) {
+  public BodyParameter schema(Model schema) {
     this.setSchema(schema);
     return this;
   }
@@ -25,10 +26,10 @@ public class BodyParameter extends AbstractParameter implements Parameter {;
     return this;
   }
 
-  public void setSchema(Property schema) {
+  public void setSchema(Model schema) {
     this.schema = schema;
   }
-  public Property getSchema() {
+  public Model getSchema() {
     return schema;
   }
 }

@@ -78,7 +78,7 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
       .defaultResponse(errorResponse)
       .parameter(new BodyParameter()
         .description("the pet to add")
-        .schema(new RefProperty().asDefault("Person")))
+        .schema(new RefModel().asDefault("Person")))
 
     swagger.path("/pets", new Path().get(get).post(post))
 
