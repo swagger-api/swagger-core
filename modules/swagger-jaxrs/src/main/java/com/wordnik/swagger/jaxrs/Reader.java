@@ -45,7 +45,7 @@ public class Reader {
     return this.swagger;
   }
 
-  public void read(Class cls) {
+  public Swagger read(Class cls) {
     if(swagger == null)
       swagger = new Swagger();
     Api api = (Api) cls.getAnnotation(Api.class);
@@ -109,6 +109,7 @@ public class Reader {
         }
       }
     }
+    return swagger;
   }
 
   String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath) {
@@ -233,7 +234,7 @@ public class Reader {
         if(annotation instanceof ApiParam) {
           ApiParam param = (ApiParam) annotation;
           // parameter.required(param.required());
-          if(param.name() != null)
+          if(param.name() != null && !"".equals(param.name()))
             parameter.setName(param.name());
           parameter.setDescription(param.value());
           // parameter.setAccess(param.access());
