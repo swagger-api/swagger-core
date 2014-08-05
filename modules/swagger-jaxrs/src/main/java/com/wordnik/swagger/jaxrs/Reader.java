@@ -253,11 +253,15 @@ public class Reader {
             bp.setName("body");
           bp.setDescription(param.value());
 
-          Map<String, Model> models = ModelConverters.read(cls);
-          if(models.size() > 0) {
-            for(String name: models.keySet()) {
-              bp.setSchema(new RefModel().asDefault(name));
-              swagger.addDefinition(name, models.get(name));
+          if(!cls.isArray()) {
+            Map<String, Model> models = ModelConverters.read(cls);
+            if(models.size() > 0) {
+              for(String name: models.keySet()) {
+                if(name.indexOf("java.util") == -1) {
+                  bp.setSchema(new RefModel().asDefault(name));
+                  swagger.addDefinition(name, models.get(name));
+                }
+              }
             }
           }
           parameter = bp;

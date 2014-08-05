@@ -7,7 +7,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-@Produces({"application/json"})
+@Produces({"application/json", "application/yaml"})
 @Path("/swagger.json")
 public class ApiListingResource {
   @Context
