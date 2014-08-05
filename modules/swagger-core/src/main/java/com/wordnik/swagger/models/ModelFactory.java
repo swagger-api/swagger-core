@@ -31,9 +31,6 @@ public class ModelFactory {
   }
 
   public static Property convertProperty(JsonSchema schema) {
-    System.out.println("converting ");
-    Json.printPretty(schema);
-
     if(schema.isNumberSchema() && !schema.isIntegerSchema()) {
       String format = null;
       NumberSchema s = schema.asNumberSchema();
