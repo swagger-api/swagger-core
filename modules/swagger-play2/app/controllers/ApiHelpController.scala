@@ -184,45 +184,82 @@ class SwaggerBaseApiController extends Controller {
 
   def buildUserModels(models: Option[Map[String, Model]])(implicit requestHeader: RequestHeader) = {
     models.map(m => {
-      for (
-        (mk, mv) <- m
-      ) yield {
-        (mk, buildUserModel(mv))
-      }
+      val modelsList = m.toList
+      val newModels = buildRecursiveModels(modelsList)
+      newModels.toMap
     })
   }
 
-  def buildUserModel(model: Model)(implicit requestHeader: RequestHeader) = {
-    if (model.dynamicProperties.nonEmpty) {
-      val allProperties = (for (
-        (k, v) <- model.properties
-      ) yield (v.position, ModelPropertyHolder(k, v))).toList :::
-        (for (
-          (k, v) <- model.dynamicProperties
-        ) yield (v.position, DynamicModelPropertyHolder(k, v))).toList
-
-      val sortedProperties = allProperties.sortWith(_._1 < _._1).map(e => e._2)
-      val builtProperties = buildProperties(sortedProperties, 1)
-
-      val newProperties = new LinkedHashMap[String, ModelProperty]
-      builtProperties.foreach(e => newProperties += e._1 -> e._2)
-
-      model.copy(properties = newProperties, dynamicProperties = LinkedHashMap.empty)
-    } else model
-  }
-
-  def buildProperties(props: List[BasePropertyHolder], pos: Int)(implicit requestHeader: RequestHeader): List[(String, ModelProperty)] = {
-    props match {
-      case (x: ModelPropertyHolder) :: xs => (x.name, x.prop.copy(position = pos)) :: buildProperties(xs, pos + 1)
-      case (x: DynamicModelPropertyHolder) :: xs => {
-        val properties = buildDynamicProperty(x.prop, pos)
-        properties._1 ::: buildProperties(xs, properties._2 + 1)
+  def buildRecursiveModels(models: List[(String, Model)])(implicit requestHeader: RequestHeader): List[(String, Model)] = {
+    models match {
+      case (k,v)::xs => {
+        if (v.dynamicProperties.nonEmpty) {
+          val dynamicModelProperties = v.dynamicProperties.toList
+          val dynamicModels = buildRecursiveDynamicModels(v, dynamicModelProperties)
+          (k, updateUserModel(v, dynamicModels.toMap)) :: dynamicModels ::: buildRecursiveModels(xs)
+        } else {
+          (k,v) :: buildRecursiveModels(xs)
+        }
       }
       case _ => Nil
     }
   }
 
-  def buildDynamicProperty(prop: DynamicModelProperty, pos: Int)(implicit requestHeader: RequestHeader): (List[(String, ModelProperty)], Integer) = {
+  def buildRecursiveDynamicModels(baseModel: Model, dynamicModels: List[(String, DynamicModelProperty)])(implicit requestHeader: RequestHeader): List[(String, Model)] = {
+    dynamicModels match {
+      case (k,v)::xs => buildDynamicUserModel(baseModel, k, v) :: buildRecursiveDynamicModels(baseModel, xs)
+      case _ => Nil
+    }
+  }
+
+  def buildDynamicUserModel(baseModel: Model, propertyName: String, dynamicProperty: DynamicModelProperty)(implicit requestHeader: RequestHeader): (String, Model) = {
+    val dynamicModelName = baseModel.name + "." + propertyName.capitalize
+    val builtProperties = buildDynamicProperty(dynamicProperty)
+
+    val allProperties = (for (
+      (k, v) <- builtProperties
+    ) yield (v.position, k, v)).toList
+    val sortedProperties = allProperties.sortWith(_._1 < _._1).map(e => (e._2, e._3))
+
+    val newProperties = new LinkedHashMap[String, ModelProperty]
+    sortedProperties.foreach(e => newProperties += e._1 -> e._2)
+
+    (dynamicModelName, new Model(dynamicModelName, dynamicModelName, dynamicModelName, newProperties))
+  }
+
+  def updateUserModel(model: Model, dynamicModels: Map[String, Model])(implicit requestHeader: RequestHeader) = {
+    val allProperties = (for (
+      (k, v) <- model.properties
+    ) yield (v.position, k, v)).toList :::
+      (for (
+        (k, v) <- model.dynamicProperties
+      ) yield (v.position, k, v)).toList
+
+    val sortedProperties = allProperties.sortWith(_._1 < _._1).map(e => (e._2, e._3))
+    val builtProperties = buildProperties(model, sortedProperties, dynamicModels)
+
+    val newProperties = new LinkedHashMap[String, ModelProperty]
+    builtProperties.foreach(e => newProperties += e._1 -> e._2)
+
+    model.copy(properties = newProperties, dynamicProperties = LinkedHashMap.empty)
+  }
+
+  def buildProperties(baseModel: Model, props: List[(String, BaseModelProperty)], dynamicModels: Map[String, Model])(implicit requestHeader: RequestHeader): List[(String, ModelProperty)] = {
+    props match {
+      case (k, v: ModelProperty) :: xs => (k, v) :: buildProperties(baseModel, xs, dynamicModels)
+      case (k, v: DynamicModelProperty) :: xs => {
+        val dynamicModelName = baseModel.name + "." + k.capitalize
+        val required = {
+          hasRequiredProperty(dynamicModels(dynamicModelName).properties.unzip._2.toList)
+        }
+        val property = new ModelProperty(dynamicModelName, dynamicModelName, v.position, required)
+        (k, property) :: buildProperties(baseModel, xs, dynamicModels)
+      }
+      case _ => Nil
+    }
+  }
+
+  def buildDynamicProperty(prop: DynamicModelProperty)(implicit requestHeader: RequestHeader): List[(String, ModelProperty)] = {
     val module = mirror.staticModule(prop.builderInstance)
     val obj = mirror.reflectModule(module)
     val instance = mirror.reflect(obj.instance)
@@ -235,17 +272,23 @@ class SwaggerBaseApiController extends Controller {
       case e: ClassCastException => Nil
     }
 
-    buildDynamicPropertyList(res, pos)
+    buildDynamicPropertyList(res)
   }
 
-  def buildDynamicPropertyList(props: List[ModelProperty], pos: Int): (List[(String, ModelProperty)], Integer) = {
+  def buildDynamicPropertyList(props: List[ModelProperty]): List[(String, ModelProperty)] = {
     props match {
-      case x::xs => if (x.dynamicName.isDefined) {
-        val rest = buildDynamicPropertyList(xs, pos + 1)
-        ((x.dynamicName.get, x.copy(position = pos, dynamicName = None)) :: rest._1, rest._2)
-    } else buildDynamicPropertyList(xs, pos)
-      case _ => (Nil, pos)
+      case x::xs => {
+        if (x.dynamicName.isDefined) {
+          val rest = buildDynamicPropertyList(xs)
+          (x.dynamicName.get, x.copy(dynamicName = None)) :: rest
+        } else buildDynamicPropertyList(xs)
+      }
+      case _ => (Nil)
     }
+  }
+
+  def hasRequiredProperty(props: List[ModelProperty]): Boolean = {
+    props.exists(p => p.required)
   }
 
   def toXmlString(data: Any): String = {
