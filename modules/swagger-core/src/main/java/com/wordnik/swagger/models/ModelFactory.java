@@ -93,7 +93,6 @@ public class ModelFactory {
     }
     try{
       if(schema.isObjectSchema()) {
-        Json.printPretty(schema);
         ObjectSchema o = schema.asObjectSchema();
         ObjectSchema.AdditionalProperties add = o.getAdditionalProperties();
 
@@ -109,7 +108,7 @@ public class ModelFactory {
             com.wordnik.swagger.converter.ModelConverters.nameFromId(schema.getId())
           );
         }
-        System.out.println("it's an object schema");
+        System.out.println("unmatched object");
         Json.printPretty(schema);
         return null;
       }
