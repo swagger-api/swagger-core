@@ -78,9 +78,8 @@ public class ModelFactory {
         }
       }
       else {
-        System.out.println("oops! ");
         Json.printPretty(schema);
-        return a;
+        return null;
       }
     }
     if(schema.get$ref() != null) {

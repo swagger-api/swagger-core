@@ -26,7 +26,8 @@ public class ModelConverters {
       if(schema.isObjectSchema()) {
         return null;
       }
-      return ModelFactory.convertProperty(schema);
+      Property property = ModelFactory.convertProperty(schema);
+      return property;
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -99,7 +100,9 @@ public class ModelConverters {
       schemas.put(schemaName, objectSchema);
 
       for(String key: schemas.keySet()) {
-        models.put(key, ModelFactory.convert(schemas.get(key)));
+        Model model = ModelFactory.convert(schemas.get(key));
+        if(model.getProperties().size() > 0)
+          models.put(key, model);
       }
     }
     catch (Exception e) {
