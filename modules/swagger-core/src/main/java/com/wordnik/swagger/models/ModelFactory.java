@@ -31,6 +31,9 @@ public class ModelFactory {
   }
 
   public static Property convertProperty(JsonSchema schema) {
+    System.out.println("converting ");
+    Json.printPretty(schema);
+
     if(schema.isNumberSchema() && !schema.isIntegerSchema()) {
       String format = null;
       NumberSchema s = schema.asNumberSchema();
@@ -70,14 +73,23 @@ public class ModelFactory {
     if(schema.isArraySchema()) {
       ArraySchema arraySchema = (ArraySchema) schema;
       ArrayProperty a = new ArrayProperty();
-      if(arraySchema.getItems().isSingleItems()) {
-        Property items = convertProperty(arraySchema.getItems().asSingleItems().getSchema());
-        a.setItems(items);
-        return a;        
+      if(arraySchema.getItems() != null) {
+        if(arraySchema.getItems().isSingleItems()) {
+          Property items = convertProperty(arraySchema.getItems().asSingleItems().getSchema());
+          a.setItems(items);
+          return a;        
+        }
+      }
+      else {
+        System.out.println("oops! ");
+        Json.printPretty(schema);
+        return a;
       }
     }
     if(schema.get$ref() != null) {
-      return new RefProperty(schema.get$ref());
+      return new RefProperty().asDefault(
+        com.wordnik.swagger.converter.ModelConverters.nameFromId(schema.get$ref())
+      );
     }
     try{
       if(schema.isObjectSchema()) {
@@ -92,6 +104,13 @@ public class ModelFactory {
             return new MapProperty(p);
           }
         }
+        else if(schema.getId() != null ){
+          return new RefProperty().asDefault(
+            com.wordnik.swagger.converter.ModelConverters.nameFromId(schema.getId())
+          );
+        }
+        System.out.println("it's an object schema");
+        Json.printPretty(schema);
         return null;
       }
 

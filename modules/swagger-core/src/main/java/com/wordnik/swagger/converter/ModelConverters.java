@@ -108,7 +108,7 @@ public class ModelConverters {
     return models;
   }
 
-  static String nameFromId(String name) {
+  public static String nameFromId(String name) {
     if(name == null)
       return "NO_NAME";
     String parts[] = name.split(":");
