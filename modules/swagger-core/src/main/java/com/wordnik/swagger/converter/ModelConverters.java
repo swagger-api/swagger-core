@@ -44,7 +44,7 @@ public class ModelConverters {
       JsonSchema schema = visitor.finalSchema();
       ObjectSchema objectSchema = schema.asObjectSchema();
 
-      if(objectSchema != null) {
+      if(objectSchema != null && objectSchema.getId() != null) {
         Map<String, JsonSchema> properties = new java.util.HashMap<String, JsonSchema>(objectSchema.getProperties());
         objectSchema.setProperties(properties);
 
@@ -109,6 +109,8 @@ public class ModelConverters {
   }
 
   static String nameFromId(String name) {
+    if(name == null)
+      return "NO_NAME";
     String parts[] = name.split(":");
     return parts[parts.length - 1];
   }

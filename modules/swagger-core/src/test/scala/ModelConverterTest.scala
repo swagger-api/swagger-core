@@ -15,6 +15,6 @@ class ModelConverterTest extends FlatSpec with Matchers {
 
   it should "convert a model" in {
     val schemas = ModelConverters.readAll(classOf[Person])
-    println(Json.pretty().writeValueAsString(schemas))
+    // println(Json.pretty().writeValueAsString(schemas))
   }
 }

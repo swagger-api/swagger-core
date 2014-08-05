@@ -82,6 +82,6 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
 
     swagger.path("/pets", new Path().get(get).post(post))
 
-    println(Json.pretty().writeValueAsString(swagger))
+    // println(Json.pretty().writeValueAsString(swagger))
   }
 }

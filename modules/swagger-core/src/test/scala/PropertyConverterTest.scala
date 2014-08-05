@@ -4,6 +4,12 @@ import com.wordnik.swagger.util.Json
 import com.wordnik.swagger.models.properties._
 import com.wordnik.swagger.converter._
 
+// joda
+import org.joda.time.DateTime;
+
+// guava
+import com.google.common.base.Optional;
+
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
@@ -19,7 +25,6 @@ class PropertyConverterTest extends FlatSpec with Matchers {
 
   it should "convert a date" in {
     val out = ModelConverters.readAsProperty(classOf[java.util.Date])
-    println(Json.mapper().writeValueAsString(out))
     out.isInstanceOf[DateTimeProperty] should be (true)
     Json.mapper().writeValueAsString(out) should be ("""{"type":"string","format":"date-time"}""")
   }
@@ -45,8 +50,46 @@ class PropertyConverterTest extends FlatSpec with Matchers {
 
   it should "convert a boolean" in {
     val out = ModelConverters.readAsProperty(classOf[java.lang.Boolean])
-    println(Json.pretty().writeValueAsString(out))
     out.isInstanceOf[BooleanProperty] should be (true)
     Json.mapper().writeValueAsString(out) should be ("""{"type":"boolean"}""")
+  }
+
+  ignore should "convert a joda date time" in {
+    val out = ModelConverters.readAsProperty(classOf[DateTime])
+    println(Json.pretty().writeValueAsString(out))
+    out.isInstanceOf[DateTimeProperty] should be (true)
+    Json.mapper().writeValueAsString(out) should be ("""{"type":"string","format":"date-time"}""")
+  }
+
+  ignore should "convert a Guava optional" in {
+    val out = ModelConverters.readAsProperty(classOf[Optional[Integer]])
+    println(Json.pretty().writeValueAsString(out))
+    out.isInstanceOf[IntegerProperty] should be (true)
+    Json.mapper().writeValueAsString(out) should be ("""{"type":"integer","format":"int32"}""")
+  }
+
+  ignore should "convert a java map" in {
+    val out = ModelConverters.read(classOf[java.util.Map[String, String]])
+    out.isInstanceOf[MapProperty] should be (true)
+    // Json.mapper().writeValueAsString(out) should be ("""{"type":"integer","format":"int32"}""")    
+  }
+
+  it should "convert a java string array" in {
+    val out = ModelConverters.readAsProperty(classOf[Array[String]])
+    out.isInstanceOf[ArrayProperty] should be (true)
+    Json.mapper().writeValueAsString(out) should be ("""{"type":"array","items":{"type":"string"}}""")    
+  }
+
+  it should "convert a java integer array" in {
+    val out = ModelConverters.readAsProperty(classOf[Array[java.lang.Integer]])
+    out.isInstanceOf[ArrayProperty] should be (true)
+    Json.mapper().writeValueAsString(out) should be ("""{"type":"array","items":{"type":"integer","format":"int32"}}""")    
+  }
+
+  ignore should "convert a java double array" in {
+    val out = ModelConverters.readAsProperty(classOf[Array[java.lang.Double]])
+    println(Json.pretty().writeValueAsString(out))
+    out.isInstanceOf[ArrayProperty] should be (true)
+    Json.mapper().writeValueAsString(out) should be ("""{"type":"array","items":{"type":"number","format":"double"}}""")    
   }
 }

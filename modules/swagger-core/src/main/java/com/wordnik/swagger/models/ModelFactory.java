@@ -67,11 +67,21 @@ public class ModelFactory {
       }
       return new StringProperty();
     }
+    if(schema.isArraySchema()) {
+      ArraySchema arraySchema = (ArraySchema) schema;
+      ArrayProperty a = new ArrayProperty();
+      if(arraySchema.getItems().isSingleItems()) {
+        Property items = convertProperty(arraySchema.getItems().asSingleItems().getSchema());
+        a.setItems(items);
+        return a;        
+      }
+    }
     if(schema.get$ref() != null) {
       return new RefProperty(schema.get$ref());
     }
     try{
       if(schema.isObjectSchema()) {
+        Json.printPretty(schema);
         ObjectSchema o = schema.asObjectSchema();
         ObjectSchema.AdditionalProperties add = o.getAdditionalProperties();
 
