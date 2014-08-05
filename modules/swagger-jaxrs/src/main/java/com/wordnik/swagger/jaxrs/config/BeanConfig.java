@@ -117,11 +117,12 @@ public class BeanConfig {
         .url(licenseUrl));
 
     Set<Class<?>> classes = new Reflections(config).getTypesAnnotatedWith(Api.class);
-    reader.read(classes)
-      .title(title)
-      .host(host)
-      .basePath(basePath)
-      .info(info);
+    if(classes != null)
+      reader.read(classes)
+        .title(title)
+        .host(host)
+        .basePath(basePath)
+        .info(info);
   }
 
   public Swagger getSwagger() {
