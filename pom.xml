@@ -97,7 +97,7 @@
           </execution>
         </executions>
         <configuration>
-          <scalaVersion>2.11.2</scalaVersion>
+          <scalaVersion>${scala-version}</scalaVersion>
           <jvmArgs>
             <jvmArg>-Xmx384m</jvmArg>
           </jvmArgs>
