@@ -26,11 +26,11 @@ public class SwaggerSampleService extends Service<SwaggerSampleConfiguration> {
 
   @Override
   public void run(SwaggerSampleConfiguration configuration, Environment environment) {
-    environment.addResource(new ApiListingResourceJSON());
-    environment.addResource(new PetResource());
+    environment.jersey().register(new ApiListingResourceJSON());
+    environment.jersey().register(new PetResource());
 
-    environment.addProvider(new ResourceListingProvider());
-    environment.addProvider(new ApiDeclarationProvider());
+    environment.jersey().register(new ResourceListingProvider());
+    environment.jersey().register(new ApiDeclarationProvider());
     ScannerFactory.setScanner(new DefaultJaxrsScanner());
     ClassReaders.setReader(new DefaultJaxrsApiReader());
 
