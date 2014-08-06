@@ -94,26 +94,17 @@ public class ModelConverters {
             }
           }
           else {
-            System.out.println("not an object");
-            System.out.println(propertySchema);
             if(propertySchema.isArraySchema()) {
-
               ArraySchema arraySchema = (ArraySchema) propertySchema;
-              // ArrayProperty a = new ArrayProperty();
               if(arraySchema.getItems() != null) {
                 if(arraySchema.getItems().isSingleItems()) {
-                  System.out.println("got single item: " + arraySchema.getItems().asSingleItems());
-
                   JsonSchema innerSchema = arraySchema.getItems().asSingleItems().getSchema();
-
                   String name = nameFromId(innerSchema.getId());
                   if(name != null && innerSchema != null)
                     schemas.put(name, innerSchema);
                 }
               }
-
             }
-            Json.printPretty(propertySchema);
           }
         }
         objectSchema.setProperties(properties);
@@ -124,7 +115,7 @@ public class ModelConverters {
 
         for(String key: schemas.keySet()) {
           Model model = ModelFactory.convert(schemas.get(key));
-          if(model != null && model.getProperties().size() > 0)
+          if(model != null && model.getProperties() != null && model.getProperties().size() > 0)
             models.put(key, model);
         }
       }

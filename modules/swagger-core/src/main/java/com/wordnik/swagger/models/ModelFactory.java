@@ -78,7 +78,6 @@ public class ModelFactory {
         }
       }
       else {
-        Json.printPretty(schema);
         return null;
       }
     }
@@ -105,7 +104,7 @@ public class ModelFactory {
           );
         }
         System.out.println("unmatched object");
-        Json.printPretty(schema);
+        // Json.printPretty(schema);
         return null;
       }
 
