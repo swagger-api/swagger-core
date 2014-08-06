@@ -80,29 +80,53 @@ public class ModelConverters {
       JsonSchema schema = visitor.finalSchema();
       ObjectSchema objectSchema = schema.asObjectSchema();
 
-      Map<String, JsonSchema> properties = new java.util.HashMap<String, JsonSchema>(objectSchema.getProperties());
-      for(String key : objectSchema.getProperties().keySet()) {
-        JsonSchema propertySchema = objectSchema.getProperties().get(key);
-        if(propertySchema.isObjectSchema()) {
-          if(propertySchema.getId() != null) {
-            String name = nameFromId(propertySchema.getId());
-            propertySchema.setId(null);
-            schemas.put(name, propertySchema);
-            ReferenceSchema ref = new ReferenceSchema("#/definitions/" + name);
-            properties.put(name, ref);
+      if(objectSchema != null) {
+        Map<String, JsonSchema> properties = new java.util.HashMap<String, JsonSchema>(objectSchema.getProperties());
+        for(String key : objectSchema.getProperties().keySet()) {
+          JsonSchema propertySchema = objectSchema.getProperties().get(key);
+          if(propertySchema.isObjectSchema()) {
+            if(propertySchema.getId() != null) {
+              String name = nameFromId(propertySchema.getId());
+              propertySchema.setId(null);
+              schemas.put(name, propertySchema);
+              ReferenceSchema ref = new ReferenceSchema("#/definitions/" + name);
+              properties.put(name, ref);
+            }
+          }
+          else {
+            System.out.println("not an object");
+            System.out.println(propertySchema);
+            if(propertySchema.isArraySchema()) {
+
+              ArraySchema arraySchema = (ArraySchema) propertySchema;
+              // ArrayProperty a = new ArrayProperty();
+              if(arraySchema.getItems() != null) {
+                if(arraySchema.getItems().isSingleItems()) {
+                  System.out.println("got single item: " + arraySchema.getItems().asSingleItems());
+
+                  JsonSchema innerSchema = arraySchema.getItems().asSingleItems().getSchema();
+
+                  String name = nameFromId(innerSchema.getId());
+                  if(name != null && innerSchema != null)
+                    schemas.put(name, innerSchema);
+                }
+              }
+
+            }
+            Json.printPretty(propertySchema);
           }
         }
-      }
-      objectSchema.setProperties(properties);
+        objectSchema.setProperties(properties);
 
-      String schemaName = nameFromId(objectSchema.getId());
-      objectSchema.setId(null);
-      schemas.put(schemaName, objectSchema);
+        String schemaName = nameFromId(objectSchema.getId());
+        objectSchema.setId(null);
+        schemas.put(schemaName, objectSchema);
 
-      for(String key: schemas.keySet()) {
-        Model model = ModelFactory.convert(schemas.get(key));
-        if(model.getProperties().size() > 0)
-          models.put(key, model);
+        for(String key: schemas.keySet()) {
+          Model model = ModelFactory.convert(schemas.get(key));
+          if(model != null && model.getProperties().size() > 0)
+            models.put(key, model);
+        }
       }
     }
     catch (Exception e) {
