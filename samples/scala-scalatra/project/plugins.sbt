@@ -1,1 +1,0 @@
-addSbtPlugin("org.scalatra.sbt" % "scalatra-sbt" % "0.1.1")
