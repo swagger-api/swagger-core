@@ -63,7 +63,7 @@ public class Reader {
 
     if(api != null) {
       // the value will be used as a tag for 2.0
-      String tag = api.value();
+      String tag = api.value().replace("/", "");
       String description = api.description();
       String basePath = api.basePath();
       int position = api.position();
@@ -95,6 +95,7 @@ public class Reader {
 
           Operation operation = parseMethod(method);
           if(operation != null) {
+            operation.tag(tag);
             Path path = swagger.getPath(operationPath);
             if(path == null) {
               path = new Path();
@@ -266,7 +267,6 @@ public class Reader {
                   }
                 }
               }
-              Json.printPretty(models);
             }
           }
           else {
