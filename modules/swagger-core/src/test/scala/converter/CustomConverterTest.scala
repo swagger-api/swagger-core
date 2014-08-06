@@ -13,7 +13,7 @@ import com.wordnik.swagger.model._
 import org.joda.time.DateTime
 
 import scala.collection.mutable.LinkedHashMap
-import scala.annotation.target.field
+import scala.annotation.meta.field
 import scala.beans.BeanProperty
 
 import org.junit.runner.RunWith

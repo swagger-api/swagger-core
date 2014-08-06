@@ -10,7 +10,7 @@ import com.wordnik.swagger.model._
 import org.joda.time.DateTime
 
 import scala.collection.mutable.LinkedHashMap
-import scala.annotation.target.field
+import scala.annotation.meta.field
 import javax.xml.datatype.XMLGregorianCalendar
 
 import org.junit.runner.RunWith

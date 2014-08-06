@@ -13,7 +13,7 @@ import org.scalatest.matchers.ShouldMatchers
 
 import java.util.Date
 
-import scala.annotation.target.field
+import scala.annotation.meta.field
 
 @RunWith(classOf[JUnitRunner])
 class FormatTest extends FlatSpec with ShouldMatchers {

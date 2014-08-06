@@ -6,7 +6,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-project_2.10</artifactId>
+  <artifactId>swagger-project_2.11</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
   <version>1.3.7</version>
@@ -97,14 +97,11 @@
           </execution>
         </executions>
         <configuration>
-          <configuration>
-            <recompileMode>incremental</recompileMode>
-          </configuration>
+          <scalaVersion>2.11.2</scalaVersion>
           <jvmArgs>
             <jvmArg>-Xmx384m</jvmArg>
           </jvmArgs>
           <args>
-            <arg>-target:jvm-1.6</arg>
             <arg>-deprecation</arg>
           </args>
           <launchers>
@@ -136,36 +133,39 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.7</version>
-        <configuration>
-          <aggregate>true</aggregate>
-          <source>1.6</source>
-          <encoding>UTF-8</encoding>
-          <maxmemory>1g</maxmemory>
-          <links>
-            <link>http://java.sun.com/javase/6/docs/api/</link>
-          </links>
-          <excludePackageNames>${javadoc.package.exclude}</excludePackageNames>
-        </configuration>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+      <!--<plugin>-->
+        <!--<groupId>org.apache.maven.plugins</groupId>-->
+        <!--<artifactId>maven-javadoc-plugin</artifactId>-->
+        <!--<version>2.7</version>-->
+        <!--<configuration>-->
+          <!--<aggregate>true</aggregate>-->
+          <!--<source>1.6</source>-->
+          <!--<encoding>UTF-8</encoding>-->
+          <!--<maxmemory>1g</maxmemory>-->
+          <!--<links>-->
+              <!--&lt;!&ndash;<link>http://docs.oracle.com/javase/6/docs/api/</link>&ndash;&gt;-->
+              <!--&lt;!&ndash;<link>http://docs.oracle.com/javase/7/docs/api/</link>&ndash;&gt;-->
+              <!--&lt;!&ndash;<link>http://java.sun.com/javase/8/docs/api/</link>&ndash;&gt;-->
+              <!--&lt;!&ndash;<link>http://java.sun.com/javase/6/docs/api/</link>&ndash;&gt;-->
+          <!--</links>-->
+          <!--<excludePackageNames>${javadoc.package.exclude}</excludePackageNames>-->
+        <!--</configuration>-->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--<id>attach-javadocs</id>-->
+            <!--<phase>verify</phase>-->
+            <!--<goals>-->
+              <!--<goal>jar</goal>-->
+            <!--</goals>-->
+          <!--</execution>-->
+        <!--</executions>-->
+      <!--</plugin>-->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.0</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <!--<source>1.6</source>-->
+          <!--<target>1.6</target>-->
         </configuration>
       </plugin>
       <plugin>
@@ -398,7 +398,7 @@
     <dependencies>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>swagger-jaxrs_2.10</artifactId>
+        <artifactId>swagger-jaxrs_2.11</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -437,7 +437,7 @@
       </dependency>
       <dependency>
         <groupId>org.scalatest</groupId>
-        <artifactId>scalatest_2.10</artifactId>
+        <artifactId>scalatest_2.11</artifactId>
         <version>${scala-test-version}</version>
         <scope>test</scope>
       </dependency>
@@ -449,7 +449,7 @@
       </dependency>
       <dependency>
         <groupId>com.wordnik</groupId>
-        <artifactId>swagger-core_2.10</artifactId>
+        <artifactId>swagger-core_2.11</artifactId>
         <version>${project.version}</version>
         <scope>compile</scope>
         <exclusions>
@@ -494,7 +494,7 @@
     </dependencies>
   </dependencyManagement>
   <properties>
-    <scala-version>2.10.0</scala-version>
+    <scala-version>2.11.2</scala-version>
     <felix-version>2.3.4</felix-version>
     <servlet-api-version>2.5</servlet-api-version>
     <jersey-version>1.13</jersey-version>
@@ -504,13 +504,13 @@
     <logback-version>1.0.1</logback-version>
     <json4s-version>3.2.9</json4s-version>
 
-    <junit-version>4.8.1</junit-version>
+    <junit-version>4.11</junit-version>
     <maven-plugin-version>1.0.0</maven-plugin-version>
     <commons-lang-version>2.4</commons-lang-version>
     <slf4j-version>1.6.3</slf4j-version>
-    <scala-test-version>1.9</scala-test-version>
+    <scala-test-version>2.2.1</scala-test-version>
     <jetty-version>8.1.11.v20130520</jetty-version>
     <servlet-api-version>2.5</servlet-api-version>
-    <scala-maven-plugin-version>3.1.5</scala-maven-plugin-version>
+    <scala-maven-plugin-version>3.2.0</scala-maven-plugin-version>
   </properties>
 </project>

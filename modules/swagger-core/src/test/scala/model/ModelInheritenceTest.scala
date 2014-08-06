@@ -15,7 +15,7 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
 
-import scala.annotation.target.field
+import scala.annotation.meta.field
 
 import scala.collection.mutable.LinkedHashMap
 
