@@ -10,11 +10,13 @@ object ApplicationBuild extends Build {
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" % "swagger-jaxrs_2.10" % "1.3.8-SNAPSHOT",
+    "com.wordnik" %% "swagger-jaxrs" % "1.3.8-SNAPSHOT",
     "javax.ws.rs" % "jsr311-api" % "1.1.1",
     "org.mockito" % "mockito-core" % "1.9.5" % "test")
 
-  val main = play.Project(appName, appVersion, appDependencies).settings(
+  val main = Project(appName, file(".")).enablePlugins(PlayScala).settings(
+    version := appVersion,
+    libraryDependencies ++= appDependencies,
     publishTo <<= version { (v: String) =>
       val nexus = "https://oss.sonatype.org/"
       if (v.trim.endsWith("SNAPSHOT"))

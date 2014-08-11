@@ -94,10 +94,10 @@ object ApiHelpController extends SwaggerBaseApiController {
           Logger("swagger").error(msg.message)
           returnXml(request) match {
             case true => {
-              new SimpleResult(header = ResponseHeader(500), body = play.api.libs.iteratee.Enumerator(toXmlString(msg).getBytes())).as("application/xml")
+              new Result(header = ResponseHeader(500), body = play.api.libs.iteratee.Enumerator(toXmlString(msg).getBytes())).as("application/xml")
             }
             case false => {
-              new SimpleResult(header = ResponseHeader(500), body = play.api.libs.iteratee.Enumerator(toJsonString(msg).getBytes())).as("application/json")
+              new Result(header = ResponseHeader(500), body = play.api.libs.iteratee.Enumerator(toJsonString(msg).getBytes())).as("application/json")
             }
           }
         }
@@ -192,7 +192,7 @@ class SwaggerBaseApiController extends Controller {
 
   protected def XmlResponse(data: Any) = {
     val xmlValue = toXmlString(data)
-    new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(xmlValue.getBytes())).as("application/xml")
+    new Result(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(xmlValue.getBytes())).as("application/xml")
   }
 
   protected def returnValue(request: Request[_], obj: Any): Result = {
@@ -213,6 +213,6 @@ class SwaggerBaseApiController extends Controller {
 
   protected def JsonResponse(data: Any) = {
     val jsonValue = toJsonString(data)
-    new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(jsonValue.getBytes())).as("application/json")
+    new Result(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(jsonValue.getBytes())).as("application/json")
   }
 }
