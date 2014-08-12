@@ -8,5 +8,5 @@ import javax.ws.rs.core.MediaType
 
 @Path("/api-docs")
 @Api("/api-docs")
-@Produces(Array("application/json; charset=utf-8"))
+@Produces(Array("application/json; charset=utf-8", "application/json"))
 class ApiListingResourceJSON extends ApiListingResource
