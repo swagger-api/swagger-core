@@ -145,8 +145,8 @@ class SwaggerBaseApiController extends Controller {
     // val specs = l.getOrElse(Map: Map[String, com.wordnik.swagger.model.ApiListing] ()).map(_._2).toList
     val listings = (for (spec <- specs)
       yield f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
-        ).filter(m => m.apis.size > 0 && m.filter == filter)
-    })
+    ).filter(m => m.apis.size > 0 && m.filter == filter)
+    
     val references = (for (listing <- listings) yield {
       ApiListingReference(listing.resourcePath, listing.description, pathAlias = listing.pathAlias)
     }).toList
