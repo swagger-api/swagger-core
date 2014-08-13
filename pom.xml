@@ -141,6 +141,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.7</version>
         <configuration>
+          <additionalparam>-Xdoclint:none</additionalparam>
           <aggregate>true</aggregate>
           <source>1.6</source>
           <encoding>UTF-8</encoding>
@@ -358,6 +359,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.9</version>
         <configuration>
+          <additionalparam>-Xdoclint:none</additionalparam>
           <aggregate>true</aggregate>
           <debug>true</debug>
           <links>
