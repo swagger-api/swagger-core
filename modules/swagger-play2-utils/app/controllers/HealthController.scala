@@ -24,7 +24,7 @@ object HealthController extends Controller {
     try {
       val health: Health = HealthSnapshot.get()
 
-      new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(ScalaJsonUtil.mapper.writeValueAsBytes(health))).as("application/json")
+      new Result(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(ScalaJsonUtil.mapper.writeValueAsBytes(health))).as("application/json")
         .withHeaders(AccessControlAllowOrigin)
     } catch {
       case e: Exception => LOGGER.error("Error occurred", e); InternalServerError //Error(e.getMessage)
@@ -36,7 +36,7 @@ object HealthController extends Controller {
     produces = "text/plain", httpMethod = "GET", nickname = "ping")
   def ping() = Action { request =>
     try {
-      new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator("OK".getBytes)).as("text/plain")
+      new Result(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator("OK".getBytes)).as("text/plain")
         .withHeaders(AccessControlAllowOrigin)
     } catch {
       case e: Exception => LOGGER.error("Error occurred", e); InternalServerError //Error(e.getMessage)

@@ -14,10 +14,10 @@ import scala.beans.BeanProperty
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
-class HiddenFieldTest extends FlatSpec with ShouldMatchers {
+class HiddenFieldTest extends FlatSpec with Matchers {
   it should "ignore a hidden field" in {
     val model = ModelConverters.read(classOf[ModelWithHiddenFields]).getOrElse(fail("no model found"))
     model.id should be ("ModelWithHiddenFields")

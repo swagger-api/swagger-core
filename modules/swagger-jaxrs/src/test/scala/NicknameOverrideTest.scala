@@ -13,12 +13,12 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.mutable.ListBuffer
 
 @RunWith(classOf[JUnitRunner])
-class NicknameOverrideTest extends FlatSpec with ShouldMatchers {
+class NicknameOverrideTest extends FlatSpec with Matchers {
   it should "read a nickname override" in {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()

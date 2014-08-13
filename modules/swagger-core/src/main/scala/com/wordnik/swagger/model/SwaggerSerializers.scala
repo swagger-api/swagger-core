@@ -500,9 +500,9 @@ trait Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[AuthorizationType] if (e.size > 0) => {
-            Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") Some(at.getName, at)
+          case e: List[Authorization] if (e.size > 0) => {
+            Extraction.decompose((for(at: Authorization <- e) yield {
+              if(at.`type` != "") Some(at.`type`, at)
               else None
             }).flatten.toMap)
           }
@@ -559,9 +559,9 @@ trait Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[AuthorizationType] if (e.size > 0) => {
-            Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") Some(at.getName, at)
+          case e: List[Authorization] if (e.size > 0) => {
+            Extraction.decompose((for(at: Authorization <- e) yield {
+              if(at.`type` != "") Some(at.`type`, at)
               else None
             }).flatten.toMap)
           }
@@ -757,13 +757,14 @@ trait Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[AuthorizationType] if (e.size > 0) => {
-            Extraction.decompose((for(at <- e) yield {
-              if(at.getName != "") {
-                Some(at.getName, at)
-              }
-              else None
-            }).flatten.toMap)
+          case e: List[Authorization] if (e.size > 0) => {
+            val out = (for(at: Authorization <- e) yield {
+                if(at.`type` != "") {
+                  Some(at.`type`, at)
+                }
+                else None
+              }).flatten.toMap
+            Extraction.decompose(out)
           }
           case _ => JNothing
         }
