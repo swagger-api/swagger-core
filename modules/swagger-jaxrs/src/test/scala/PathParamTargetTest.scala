@@ -13,12 +13,12 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.mutable.ListBuffer
 
 @RunWith(classOf[JUnitRunner])
-class PathParamTargetTest extends FlatSpec with ShouldMatchers {
+class PathParamTargetTest extends FlatSpec with Matchers {
   it should "honor a path param target at the class level" in {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()
@@ -60,7 +60,7 @@ class PathParamTargetTest extends FlatSpec with ShouldMatchers {
 }
 
 @RunWith(classOf[JUnitRunner])
-class JavaPathParamTargetTest extends FlatSpec with ShouldMatchers {
+class JavaPathParamTargetTest extends FlatSpec with Matchers {
   it should "honor a path param target at the class level" in {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()

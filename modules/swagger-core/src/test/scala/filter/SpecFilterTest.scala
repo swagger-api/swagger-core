@@ -13,10 +13,10 @@ import org.json4s.native.Serialization.{read, write}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
-class SpecFilterTest extends FlatSpec with ShouldMatchers {
+class SpecFilterTest extends FlatSpec with Matchers {
   implicit val formats = SwaggerSerializers.formats
 
   behavior of "SpecFilter"

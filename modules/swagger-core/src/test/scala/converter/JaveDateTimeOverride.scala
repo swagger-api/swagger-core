@@ -11,12 +11,12 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.beans.BeanProperty
 
 @RunWith(classOf[JUnitRunner])
-class JaveDateTimeOverride extends FlatSpec with ShouldMatchers {
+class JaveDateTimeOverride extends FlatSpec with Matchers {
   val javaDateTimeConverter = new JavaDateTimeConverter
   ModelConverters.addConverter(javaDateTimeConverter, true)
   val models = ModelConverters.readAll(classOf[ModelWithDate])

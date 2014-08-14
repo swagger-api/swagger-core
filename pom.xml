@@ -6,7 +6,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-project_2.10</artifactId>
+  <artifactId>swagger-project_2.11</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
   <version>1.3.8-CD-SNAPSHOT</version>
@@ -141,6 +141,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.7</version>
         <configuration>
+          <additionalparam>-Xdoclint:none</additionalparam>
           <aggregate>true</aggregate>
           <source>1.6</source>
           <encoding>UTF-8</encoding>
@@ -348,7 +349,7 @@
     <module>modules/swagger-jersey2-jaxrs</module>
     <module>modules/swagger-servlet</module>
     <module>modules/swagger-utils</module>
-    <module>modules/swagger-oauth2-auth-server</module>
+    <!--module>modules/swagger-oauth2-auth-server</module-->
   </modules>
   <reporting>
     <outputDirectory>target/site</outputDirectory>
@@ -358,6 +359,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.9</version>
         <configuration>
+          <additionalparam>-Xdoclint:none</additionalparam>
           <aggregate>true</aggregate>
           <debug>true</debug>
           <links>
@@ -398,7 +400,7 @@
     <dependencies>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>swagger-jaxrs_2.10</artifactId>
+        <artifactId>swagger-jaxrs_2.11</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -428,16 +430,10 @@
         <artifactId>commons-lang</artifactId>
         <version>${commons-lang-version}</version>
         <scope>compile</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.scala-lang</groupId>
-        <artifactId>scala-library</artifactId>
-        <version>${scala-version}</version>
-        <scope>compile</scope>
-      </dependency>
+      </dependency>      
       <dependency>
         <groupId>org.scalatest</groupId>
-        <artifactId>scalatest_2.10</artifactId>
+        <artifactId>scalatest_2.11</artifactId>
         <version>${scala-test-version}</version>
         <scope>test</scope>
       </dependency>
@@ -449,7 +445,7 @@
       </dependency>
       <dependency>
         <groupId>com.wordnik</groupId>
-        <artifactId>swagger-core_2.10</artifactId>
+        <artifactId>swagger-core_2.11</artifactId>
         <version>${project.version}</version>
         <scope>compile</scope>
         <exclusions>
@@ -494,7 +490,7 @@
     </dependencies>
   </dependencyManagement>
   <properties>
-    <scala-version>2.10.0</scala-version>
+    <scala-version>2.11.1</scala-version>
     <felix-version>2.3.4</felix-version>
     <servlet-api-version>2.5</servlet-api-version>
     <jersey-version>1.13</jersey-version>
@@ -502,15 +498,15 @@
     <jackson-version>2.4.1</jackson-version>
     <jackson-scala-version>2.4.1</jackson-scala-version>
     <logback-version>1.0.1</logback-version>
-    <json4s-version>3.2.9</json4s-version>
+    <json4s-version>3.2.10</json4s-version>
 
     <junit-version>4.8.1</junit-version>
     <maven-plugin-version>1.0.0</maven-plugin-version>
     <commons-lang-version>2.4</commons-lang-version>
     <slf4j-version>1.6.3</slf4j-version>
-    <scala-test-version>1.9</scala-test-version>
+    <scala-test-version>2.1.3</scala-test-version>
     <jetty-version>8.1.11.v20130520</jetty-version>
     <servlet-api-version>2.5</servlet-api-version>
     <scala-maven-plugin-version>3.1.5</scala-maven-plugin-version>
-  </properties>
+  </properties>  
 </project>

@@ -20,7 +20,7 @@ import com.wordnik.swagger.annotations._
 
 import java.util.Date
 
-import scala.annotation.target.field
+import scala.annotation.meta.field
 
 @ApiModel("Order")
 case class Order (

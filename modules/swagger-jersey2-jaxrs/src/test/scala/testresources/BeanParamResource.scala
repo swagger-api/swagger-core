@@ -1,8 +1,9 @@
 package testresources
 
-import javax.ws.rs._
-import com.wordnik.swagger.annotations._
 import testmodels._
+import com.wordnik.swagger.annotations._
+
+import javax.ws.rs._
 import javax.ws.rs.core.Response
 
 @Path("/beanParam")

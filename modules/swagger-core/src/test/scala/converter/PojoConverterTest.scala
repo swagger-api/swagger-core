@@ -10,12 +10,12 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.beans.BeanProperty
 
 @RunWith(classOf[JUnitRunner])
-class PojoConverterTest extends FlatSpec with ShouldMatchers {
+class PojoConverterTest extends FlatSpec with Matchers {
   ignore should "ignore public fields without annotations" in {
     val model = ModelConverters.read(classOf[SimplePojo]).getOrElse(fail("no model found"))
     model should not be (None)

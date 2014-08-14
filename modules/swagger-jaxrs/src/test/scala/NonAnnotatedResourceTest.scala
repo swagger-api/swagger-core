@@ -13,12 +13,12 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.mutable.ListBuffer
 
 @RunWith(classOf[JUnitRunner])
-class NonAnnotatedResourceTest extends FlatSpec with ShouldMatchers {
+class NonAnnotatedResourceTest extends FlatSpec with Matchers {
   it should "read a resource without Api annotations" in {
     val reader = new BasicJaxrsReader
     val config = new SwaggerConfig()
