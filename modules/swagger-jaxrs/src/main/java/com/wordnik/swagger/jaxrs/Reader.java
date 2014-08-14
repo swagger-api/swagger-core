@@ -132,6 +132,22 @@ public class Reader {
     ApiOperation apiOperation = (ApiOperation) method.getAnnotation(ApiOperation.class);
     ApiResponses responseAnnotation = method.getAnnotation(ApiResponses.class);
 
+    operation.summary(apiOperation.value())
+      .description(apiOperation.notes());
+
+    if(apiOperation.response() != null && !Void.class.equals(apiOperation.response())) {
+      // Property prop = ModelConverters.readAsProperty(apiOperation.response());
+
+      Class responseClass = apiOperation.response();
+      if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
+        Map<String, Model> models = ModelConverters.read(responseClass);
+        for(String key: models.keySet()) {
+          operation.response(200, new Response()
+            .schema(new RefProperty().asDefault(key)));
+        }
+      }
+    }
+
     List<ApiResponse> apiResponses = new ArrayList<ApiResponse>();
     if(responseAnnotation != null) {
       for(ApiResponse apiResponse: responseAnnotation.value()) {
