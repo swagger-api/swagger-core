@@ -18,7 +18,11 @@ package com.wordnik.swagger.jaxrs.json;
 
 import com.wordnik.swagger.util.Json;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.core.JsonGenerator.Feature;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 import javax.ws.rs.Produces;
@@ -26,11 +30,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-@Produces(MediaType.APPLICATION_JSON)
+@Produces({MediaType.APPLICATION_JSON, "application/xml", "application/yaml"})
 public class JacksonJsonProvider extends JacksonJaxbJsonProvider {
-  private static ObjectMapper commonMapper = Json.mapper();
+  private static ObjectMapper commonMapper;// = Json.mapper();
 
   public JacksonJsonProvider() {
-    super.setMapper(commonMapper);
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    super.setMapper(mapper);
+    commonMapper = mapper;
   }
 }
