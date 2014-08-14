@@ -3,7 +3,9 @@ package com.wordnik.swagger.models.properties;
 public class RefProperty extends AbstractProperty implements Property {
   String ref;
 
-  public RefProperty() {}
+  public RefProperty() {
+    super.type = "ref";
+  }
 
   public RefProperty asDefault(String ref) {
     this.set$ref("#/definitions/" + ref);
