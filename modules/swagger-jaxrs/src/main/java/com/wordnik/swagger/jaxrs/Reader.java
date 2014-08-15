@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-
 import java.lang.reflect.*;
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -144,6 +143,7 @@ public class Reader {
         for(String key: models.keySet()) {
           operation.response(200, new Response()
             .schema(new RefProperty().asDefault(key)));
+          swagger.model(key, models.get(key));
         }
       }
     }
@@ -164,6 +164,7 @@ public class Reader {
           Map<String, Model> models = ModelConverters.read(responseClass);
           for(String key: models.keySet()) {
             response.schema(new RefProperty().asDefault(key));
+            swagger.model(key, models.get(key));
           }
         }
       }
