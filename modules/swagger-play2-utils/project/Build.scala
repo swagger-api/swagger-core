@@ -22,16 +22,16 @@ object ApplicationBuild extends Build {
     version := appVersion,
     libraryDependencies ++= appDependencies,
     publishTo <<= version { (v: String) =>
-      val nexus = "https://oss.sonatype.org/"
+      val nexus = "http://is-macmini1.cdlocal:8081/nexus/content/repositories/"
       if (v.trim.endsWith("SNAPSHOT"))
-        Some("snapshots" at nexus + "content/repositories/snapshots")
+        Some("snapshots" at nexus + "snapshots")
       else
-        Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+        Some("releases"  at nexus + "releases")
     },
     publishArtifact in Test := false,
     publishMavenStyle := true,
     pomIncludeRepository := { x => false },
-    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
+    credentials += Credentials("Sonatype Nexus Repository Manager", "is-macmini1.cdlocal", "admin", "admin123"),
     organization := "com.wordnik",
     pomExtra := (
   <url>http://swagger.wordnik.com</url>

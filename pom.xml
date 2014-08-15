@@ -489,6 +489,18 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+  <distributionManagement>
+    <repository>
+      <id>local-public</id>
+      <name>Releases</name>
+      <url>http://is-macmini1.cdlocal:8081/nexus/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>local-public</id>
+      <name>Snapshot Releases</name>
+      <url>http://is-macmini1.cdlocal:8081/nexus/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
   <properties>
     <scala-version>2.11.1</scala-version>
     <felix-version>2.3.4</felix-version>
