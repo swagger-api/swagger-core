@@ -33,10 +33,19 @@ public class Employee extends AbstractModel
     private Link<Department> dept;
     private Link<Employee> manager;
     private Set<Link<Employee>> subordinates;
+    private EmployeeSalary sal;
 
-    public Employee()
+    @XmlElement
+    @JsonProperty
+    @ApiModelProperty(access = "public", required = true)
+    public EmployeeSalary getSalary()
     {
-        // TODO Auto-generated constructor stub
+        return sal;
+    }
+
+    public void setSalary( EmployeeSalary sal )
+    {
+        this.sal = sal;
     }
 
     @XmlElement
