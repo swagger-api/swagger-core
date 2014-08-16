@@ -106,7 +106,7 @@ public class Employee extends AbstractModel
 
     @JsonProperty("team")
     @XmlElement(name = "team")
-    @ApiModelProperty(dataType = "link", required = true, value = "List of employees that report to this employee.")
+    @ApiModelProperty(required = true, value = "List of employees that report to this employee.")
     public Set<Link<Employee>> getSubordinates()
     {
         return subordinates;
