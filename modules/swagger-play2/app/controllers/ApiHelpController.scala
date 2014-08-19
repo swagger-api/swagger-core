@@ -16,6 +16,8 @@
 
 package controllers
 
+import java.nio.charset.Charset
+
 import play.api.mvc._
 import play.api.Logger
 import play.modules.swagger.ApiListingCache
@@ -94,10 +96,10 @@ object ApiHelpController extends SwaggerBaseApiController {
           Logger("swagger").error(msg.message)
           returnXml(request) match {
             case true => {
-              new SimpleResult(header = ResponseHeader(500), body = play.api.libs.iteratee.Enumerator(toXmlString(msg).getBytes())).as("application/xml")
+              new SimpleResult(header = ResponseHeader(500), body = play.api.libs.iteratee.Enumerator(toXmlString(msg).getBytes(Utf8))).as(s"application/xml; charset=$Utf8")
             }
             case false => {
-              new SimpleResult(header = ResponseHeader(500), body = play.api.libs.iteratee.Enumerator(toJsonString(msg).getBytes())).as("application/json")
+              new SimpleResult(header = ResponseHeader(500), body = play.api.libs.iteratee.Enumerator(toJsonString(msg).getBytes(Utf8))).as(s"application/json; charset=$Utf8")
             }
           }
         }
@@ -106,6 +108,8 @@ object ApiHelpController extends SwaggerBaseApiController {
 }
 
 class SwaggerBaseApiController extends Controller {
+  final val Utf8 = Charset.forName("UTF-8")
+
   protected def jaxbContext(): JAXBContext = JAXBContext.newInstance(classOf[String], classOf[ResourceListing])
 
   protected def returnXml(request: Request[_]) = request.path.contains(".xml")
@@ -192,7 +196,7 @@ class SwaggerBaseApiController extends Controller {
 
   protected def XmlResponse(data: Any) = {
     val xmlValue = toXmlString(data)
-    new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(xmlValue.getBytes())).as("application/xml")
+    new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(xmlValue.getBytes(Utf8))).as(s"application/xml; charset=$Utf8")
   }
 
   protected def returnValue(request: Request[_], obj: Any): Result = {
@@ -213,6 +217,6 @@ class SwaggerBaseApiController extends Controller {
 
   protected def JsonResponse(data: Any) = {
     val jsonValue = toJsonString(data)
-    new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(jsonValue.getBytes())).as("application/json")
+    new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(jsonValue.getBytes(Utf8))).as(s"application/json; charset=$Utf8")
   }
 }
