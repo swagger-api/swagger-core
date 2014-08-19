@@ -16,6 +16,8 @@
 
 package controllers
 
+import java.nio.charset.Charset
+
 import play.api.mvc._
 import play.api.Logger
 import play.modules.swagger.ApiListingCache
@@ -70,10 +72,7 @@ object ApiHelpController extends SwaggerBaseApiController {
 
       val resourceListing = getResourceListing
 
-      val responseStr = returnXml(request) match {
-        case true => toXmlString(resourceListing)
-        case false => toJsonString(resourceListing)
-      }
+      val responseStr = if(returnXml(request)) toXmlString(resourceListing) else toJsonString(resourceListing)
       returnValue(request, responseStr)
   }
 
@@ -82,30 +81,24 @@ object ApiHelpController extends SwaggerBaseApiController {
       implicit val requestHeader: RequestHeader = request
 
       val apiListing = getApiListing(path)
-
-      val responseStr = returnXml(request) match {
-        case true => toXmlString(apiListing)
-        case false => toJsonString(apiListing)
-      }
-      Option(responseStr) match {
-        case Some(help) => returnValue(request, help)
-        case None => {
-          val msg = new ErrorResponse(500, "api listing for path " + path + " not found")
-          Logger("swagger").error(msg.message)
-          returnXml(request) match {
-            case true => {
-              new SimpleResult(header = ResponseHeader(500), body = play.api.libs.iteratee.Enumerator(toXmlString(msg).getBytes())).as("application/xml")
-            }
-            case false => {
-              new SimpleResult(header = ResponseHeader(500), body = play.api.libs.iteratee.Enumerator(toJsonString(msg).getBytes())).as("application/json")
-            }
-          }
+      val responseStr = if (returnXml(request)) toXmlString(apiListing) else toJsonString(apiListing)
+      Option(responseStr).map {
+        help => returnValue(request, help)
+      }.getOrElse {
+        val msg = new ErrorResponse(500, s"api listing for path $path not found")
+        Logger("swagger").error(msg.message)
+        if (returnXml(request)) {
+          new SimpleResult(header = ResponseHeader(500), body = play.api.libs.iteratee.Enumerator(toXmlString(msg).getBytes(Utf8))).as(s"application/xml; charset=$Utf8")
+        } else {
+          new SimpleResult(header = ResponseHeader(500), body = play.api.libs.iteratee.Enumerator(toJsonString(msg).getBytes(Utf8))).as(s"application/json; charset=$Utf8")
         }
       }
   }
 }
 
 class SwaggerBaseApiController extends Controller {
+  final val Utf8 = Charset.forName("UTF-8")
+
   protected def jaxbContext(): JAXBContext = JAXBContext.newInstance(classOf[String], classOf[ResourceListing])
 
   protected def returnXml(request: Request[_]) = request.path.contains(".xml")
@@ -117,7 +110,6 @@ class SwaggerBaseApiController extends Controller {
    */
   protected def getResourceListing(implicit requestHeader: RequestHeader) = {
     Logger("swagger").debug("ApiHelpInventory.getRootResources")
-    val docRoot = ""
     val queryParams = (for((key, value) <- requestHeader.queryString) yield {
       (key, value.toList)
     }).toMap
@@ -129,29 +121,23 @@ class SwaggerBaseApiController extends Controller {
     }).toMap
 
     val f = new SpecFilter
-    val l: Option[Map[String, com.wordnik.swagger.model.ApiListing]] = ApiListingCache.listing(docRoot)
 
-    val specs: List[com.wordnik.swagger.model.ApiListing] = l match {
-      case Some(m) => m.map(_._2).toList
-      case _ => List()
-    }
+    val specs = ApiListingCache.listing(docRoot = "").map(_.values).getOrElse(Nil)
     // val specs = l.getOrElse(Map: Map[String, com.wordnik.swagger.model.ApiListing] ()).map(_._2).toList
-    val listings = (for (spec <- specs)
-      yield f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
-    ).filter(m => m.apis.size > 0)
+    val listings = for (spec <- specs)
+    yield f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
 
-    val references = (for (listing <- listings) yield {
-      ApiListingReference(listing.resourcePath, listing.description)
-    }).toList
 
-    references.foreach {
-      ref =>
-        Logger("swagger").debug("reference: %s".format(ref.toString))
+    val references = for (listing <- listings if listing.apis.nonEmpty) yield {
+      val ref = ApiListingReference(listing.resourcePath, listing.description)
+      Logger("swagger").debug(s"reference: $ref")
+      ref
     }
-    ResourceListing(ConfigFactory.config.getApiVersion, 
+
+    ResourceListing(ConfigFactory.config.getApiVersion,
       ConfigFactory.config.getSwaggerVersion,
-      references,
-      List(),
+      references.toList,
+      Nil,
       ConfigFactory.config.info
     )
   }
@@ -160,59 +146,50 @@ class SwaggerBaseApiController extends Controller {
    * Get detailed API/models for a given resource
    */
   protected def getApiListing(resourceName: String)(implicit requestHeader: RequestHeader) = {
-    Logger("swagger").debug("ApiHelpInventory.getResource(%s)".format(resourceName))
-    val docRoot = ""
+    Logger("swagger").debug(s"ApiHelpInventory.getResource($resourceName)")
     val f = new SpecFilter
-    val queryParams = requestHeader.queryString.map {case (key, value) => (key -> value.toList)}
-    val cookies = requestHeader.cookies.map {cookie => (cookie.name -> cookie.value)}.toMap
-    val headers = requestHeader.headers.toMap.map {case (key, value) => (key -> value.toList)}
-    val pathPart = resourceName
+    val queryParams = requestHeader.queryString.map {case (key, value) => key -> value.toList}
+    val cookies = requestHeader.cookies.map {cookie => cookie.name -> cookie.value}.toMap
+    val headers = requestHeader.headers.toMap.map {case (key, value) => key -> value.toList}
 
-    val listings: List[ApiListing] = ApiListingCache.listing(docRoot).map(specs => {
+    val listings: Iterable[ApiListing] = ApiListingCache.listing(docRoot = "").map(specs =>
       (for (spec <- specs.values) yield {
         f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
-      }).filter(m => m.resourcePath == pathPart)
-    }).get.toList
+      }).filter(_.resourcePath == resourceName)
+    ).getOrElse(Nil)
 
     listings.size match {
-      case 1 => Option(listings.head)
+      case 1 => listings.headOption
       case _ => None
     }
   }
 
-  def toXmlString(data: Any): String = {
-    if (data.getClass.equals(classOf[String])) {
-      data.asInstanceOf[String]
-    } else {
+  def toXmlString(data: AnyRef): String = data match {
+    case s: String => s
+    case _ => {
       val stringWriter = new StringWriter()
-      jaxbContext.createMarshaller().marshal(data, stringWriter)
+      jaxbContext().createMarshaller().marshal(data, stringWriter)
       stringWriter.toString
     }
   }
 
-  protected def XmlResponse(data: Any) = {
+  protected def XmlResponse(data: AnyRef) = {
     val xmlValue = toXmlString(data)
-    new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(xmlValue.getBytes())).as("application/xml")
+    new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(xmlValue.getBytes(Utf8))).as(s"application/xml; charset=$Utf8")
   }
 
-  protected def returnValue(request: Request[_], obj: Any): Result = {
-    val response = returnXml(request) match {
-      case true => XmlResponse(obj)
-      case false => JsonResponse(obj)
-    }
+  protected def returnValue(request: Request[_], obj: AnyRef): Result = {
+    val response = if (returnXml(request)) XmlResponse(obj) else JsonResponse(obj)
     response.withHeaders(AccessControlAllowOrigin)
   }
 
-  def toJsonString(data: Any): String = {
-    if (data.getClass.equals(classOf[String])) {
-      data.asInstanceOf[String]
-    } else {
-      JsonSerializer.asJson(data.asInstanceOf[AnyRef])
-    }
+  def toJsonString(data: AnyRef): String = data match {
+    case s: String => s
+    case d: AnyRef => JsonSerializer.asJson(d)
   }
 
-  protected def JsonResponse(data: Any) = {
+  protected def JsonResponse(data: AnyRef) = {
     val jsonValue = toJsonString(data)
-    new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(jsonValue.getBytes())).as("application/json")
+    new SimpleResult(header = ResponseHeader(200), body = play.api.libs.iteratee.Enumerator(jsonValue.getBytes(Utf8))).as(s"application/json; charset=$Utf8")
   }
 }
