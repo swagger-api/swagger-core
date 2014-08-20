@@ -18,6 +18,7 @@ public class BeanConfig {
 
   String resourcePackage;
   String title;
+  String version;
   String description;
   String termsOfServiceUrl;
   String contact;
@@ -41,6 +42,13 @@ public class BeanConfig {
   }
   public void setTitle(String title) {
     this.title = title;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+  public void setVersion(String version) {
+    this.version = version;
   }
 
   public String getDescription() {
@@ -106,7 +114,9 @@ public class BeanConfig {
 
     this.info = new Info()
       .description(description)
-      .title(title);
+      .title(title)
+      .version(version)
+      .termsOfService(termsOfServiceUrl);
 
     if(contact != null)
       this.info.contact(new Contact()
@@ -119,7 +129,6 @@ public class BeanConfig {
     Set<Class<?>> classes = new Reflections(config).getTypesAnnotatedWith(Api.class);
     if(classes != null)
       reader.read(classes)
-        .title(title)
         .host(host)
         .basePath(basePath)
         .info(info);
