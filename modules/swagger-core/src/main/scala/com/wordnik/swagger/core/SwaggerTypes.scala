@@ -14,7 +14,8 @@ object SwaggerTypes {
     "integer" -> "int",
     "double" -> "double",
     "float" -> "float",
-    "boolean" -> "boolean")
+    "boolean" -> "boolean",
+    "uuid" -> "string")
 
   def apply(str: String) = {
     primitives.getOrElse(str.toLowerCase, "object")
