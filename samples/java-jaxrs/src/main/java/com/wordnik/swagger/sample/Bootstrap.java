@@ -23,6 +23,7 @@ public class Bootstrap extends HttpServlet {
 
     bc.setHost("petstore.swagger.wordnik.com");
     bc.setBasePath("/api");
+    bc.setVersion("1.0.0");
     bc.setTitle("Petstore Sample API");
     bc.setDescription("A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification");
     bc.setTermsOfServiceUrl("http://helloreverb.com/terms/");
