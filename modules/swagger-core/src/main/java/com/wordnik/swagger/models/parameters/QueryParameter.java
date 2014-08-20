@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class QueryParameter extends AbstractParameter implements Parameter {;
   String type;
   String format;
+  String collectionFormat;
 
   public QueryParameter() {
     super.setIn("query");
@@ -29,6 +30,10 @@ public class QueryParameter extends AbstractParameter implements Parameter {;
     this.setRequired(required);
     return this;
   }
+  public QueryParameter collectionFormat(String collectionFormat) {
+    this.setCollectionFormat(collectionFormat);
+    return this;
+  }
 
   public String getType() {
     return type;
@@ -42,6 +47,13 @@ public class QueryParameter extends AbstractParameter implements Parameter {;
   }
   public void setFormat(String format) {
     this.format = format;
+  }
+
+  public String getCollectionFormat() {
+    return collectionFormat;
+  }
+  public void setCollectionFormat(String collectionFormat) {
+    this.collectionFormat = collectionFormat;
   }
 
   public void setProperty(Property property) {
