@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class CookieParameter extends AbstractParameter implements Parameter {;
   String type;
   String format;
+  String collectionFormat;
 
   public CookieParameter() {
     super.setIn("cookie");
@@ -26,6 +27,10 @@ public class CookieParameter extends AbstractParameter implements Parameter {;
     this.setName(name);
     return this;
   }
+  public CookieParameter collectionFormat(String collectionFormat) {
+    this.setCollectionFormat(collectionFormat);
+    return this;
+  }
 
   public String getType() {
     return type;
@@ -39,6 +44,13 @@ public class CookieParameter extends AbstractParameter implements Parameter {;
   }
   public void setFormat(String format) {
     this.format = format;
+  }
+
+  public String getCollectionFormat() {
+    return collectionFormat;
+  }
+  public void setCollectionFormat(String collectionFormat) {
+    this.collectionFormat = collectionFormat;
   }
 
   public void setProperty(Property property) {
