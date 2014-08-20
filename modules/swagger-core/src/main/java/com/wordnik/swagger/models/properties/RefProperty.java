@@ -1,5 +1,7 @@
 package com.wordnik.swagger.models.properties;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class RefProperty extends AbstractProperty implements Property {
   String ref;
 
@@ -14,6 +16,17 @@ public class RefProperty extends AbstractProperty implements Property {
 
   public RefProperty(String ref) {
     this.ref = ref;
+  }
+
+  @Override
+  @JsonIgnore
+  public String getType() {
+    return this.type;
+  }
+  @Override
+  @JsonIgnore
+  public void setType(String type) {
+    this.type = type;
   }
 
   public String get$ref() {
