@@ -46,18 +46,18 @@ public class Reader {
     Api api = (Api) cls.getAnnotation(Api.class);
     
     javax.ws.rs.Path apiPath = (javax.ws.rs.Path) cls.getAnnotation(javax.ws.rs.Path.class);
-    Consumes apiConsumes;
-    Produces apiProduces;
+    String[] apiConsumes = new String[0];
+    String[] apiProduces = new String[0];
 
     Annotation annotation;
     annotation = cls.getAnnotation(Consumes.class);
     if(annotation != null) {
-      apiConsumes = (Consumes)annotation;
+      apiConsumes = ((Consumes)annotation).value();
     }
 
     annotation = cls.getAnnotation(Produces.class);
     if(annotation != null) {
-      apiProduces = (Produces)annotation;
+      apiProduces = ((Produces)annotation).value();
     }
 
     if(api != null) {
@@ -94,6 +94,13 @@ public class Reader {
 
           Operation operation = parseMethod(method);
           if(operation != null) {
+            if(operation.getConsumes() == null)
+              for(String mediaType: apiConsumes)
+                operation.consumes(mediaType);
+            if(operation.getProduces() == null)
+              for(String mediaType: apiProduces)
+                operation.produces(mediaType);
+
             operation.tag(tag);
             Path path = swagger.getPath(operationPath);
             if(path == null) {
@@ -120,6 +127,9 @@ public class Reader {
       if(!methodPath.startsWith("/") && !b.toString().endsWith("/")) {
         b.append("/");
       }
+      if(methodPath.endsWith("/")) {
+        methodPath = methodPath.substring(0, methodPath.length() -1);
+      }
       b.append(methodPath);
     }
     return b.toString();
@@ -131,17 +141,31 @@ public class Reader {
     ApiOperation apiOperation = (ApiOperation) method.getAnnotation(ApiOperation.class);
     ApiResponses responseAnnotation = method.getAnnotation(ApiResponses.class);
 
+    Annotation annotation;
+    annotation = method.getAnnotation(Consumes.class);
+    if(annotation != null) {
+      String[] apiConsumes = ((Consumes)annotation).value();
+      for(String mediaType: apiConsumes)
+        operation.consumes(mediaType);
+    }
+
+    annotation = method.getAnnotation(Produces.class);
+    if(annotation != null) {
+      String[] apiProduces = ((Produces)annotation).value();
+      for(String mediaType: apiProduces)
+        operation.produces(mediaType);
+    }
+
     operation.summary(apiOperation.value())
       .description(apiOperation.notes());
 
     if(apiOperation.response() != null && !Void.class.equals(apiOperation.response())) {
-      // Property prop = ModelConverters.readAsProperty(apiOperation.response());
-
       Class responseClass = apiOperation.response();
       if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
         Map<String, Model> models = ModelConverters.read(responseClass);
         for(String key: models.keySet()) {
           operation.response(200, new Response()
+            .description("successful operation")
             .schema(new RefProperty().asDefault(key)));
           swagger.model(key, models.get(key));
         }
@@ -170,7 +194,7 @@ public class Reader {
       }
     }
     boolean isDeprecated = false;
-    Annotation annotation = method.getAnnotation(Deprecated.class);
+    annotation = method.getAnnotation(Deprecated.class);
     if(annotation != null)
       isDeprecated = true;
 
@@ -189,6 +213,9 @@ public class Reader {
         // add it
         operation.parameter(parameter);
       }
+    }
+    if(operation.getResponses() == null) {
+      operation.defaultResponse(new Response().description("successful operation"));
     }
     return operation;
   }
@@ -258,6 +285,25 @@ public class Reader {
           parameter.setDescription(param.value());
           // parameter.setAccess(param.access());
           allowMultiple = param.allowMultiple();
+          if(allowMultiple == true) {
+            if(parameter instanceof PathParameter) {
+              PathParameter p = (PathParameter) parameter;
+              p.setCollectionFormat("jaxrs");
+            }
+            else if(parameter instanceof QueryParameter) {
+              QueryParameter p = (QueryParameter) parameter;
+              p.setCollectionFormat("jaxrs");
+            }
+            else if(parameter instanceof HeaderParameter) {
+              HeaderParameter p = (HeaderParameter) parameter;
+              p.setCollectionFormat("jaxrs");
+            }
+            else if(parameter instanceof CookieParameter) {
+              CookieParameter p = (CookieParameter) parameter;
+              p.setCollectionFormat("jaxrs");
+            }
+          }
+
           allowableValues = param.allowableValues();
           if(!"".equals(param.defaultValue()))
             defaultValue = param.defaultValue();
