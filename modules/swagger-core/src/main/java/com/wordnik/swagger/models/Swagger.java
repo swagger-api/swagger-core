@@ -8,8 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Swagger {
-  String swagger = "2.0";
-  String title;
+  Float swagger = 2.0f;
   Info info;
   String host;
   String basePath;
@@ -20,10 +19,6 @@ public class Swagger {
   List<Security> security;
   Map<String, Model> definitions;
 
-  public Swagger title(String title) {
-    this.setTitle(title);
-    return this;
-  }
   public Swagger info(Info info) {
     this.setInfo(info);
     return this;
@@ -83,18 +78,11 @@ public class Swagger {
     return this;
   }
 
-  public String getSwagger() {
+  public Float getSwagger() {
     return swagger;
   }
-  public void setSwagger(String swagger) {
+  public void setSwagger(Float swagger) {
     this.swagger = swagger;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-  public void setTitle(String title) {
-    this.title = title;
   }
 
   public Info getInfo() {
