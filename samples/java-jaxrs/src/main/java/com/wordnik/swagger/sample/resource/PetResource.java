@@ -50,6 +50,7 @@ public class PetResource {
   }
 
   @POST
+  @Consumes({"application/json", "application/xml"})
   @ApiOperation(value = "Add a new pet to the store")
   @ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input") })
   public Response addPet(
@@ -59,6 +60,7 @@ public class PetResource {
   }
 
   @PUT
+  @Consumes({"application/json", "application/xml"})
   @ApiOperation(value = "Update an existing pet")
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
       @ApiResponse(code = 404, message = "Pet not found"),
