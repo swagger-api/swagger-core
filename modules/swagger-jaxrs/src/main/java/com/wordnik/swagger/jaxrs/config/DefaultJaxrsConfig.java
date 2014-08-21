@@ -1,7 +1,5 @@
 package com.wordnik.swagger.jaxrs.config;
 
-
-// import com.wordnik.swagger.config.*;
 import javax.ws.rs.core.*;
 
 import javax.servlet.ServletConfig;
@@ -12,31 +10,13 @@ public class DefaultJaxrsConfig extends HttpServlet {
   public void init(ServletConfig servletConfig) throws javax.servlet.ServletException {
     super.init(servletConfig);
 
-    // @Context Application app;
-
-    // System.out.println(app);
-
-/*
-    implicit val config = servletConfig
-    ConfigFactory.config = new WebXMLReader()
-    ScannerFactory.scanner = Some(new DefaultJaxrsScanner())
-    if(servletConfig.getInitParameter("scan.all.resources") != null) {
-      if(app != null)
-        (app.getClasses().asScala ++ app.getSingletons().asScala.map(ref => ref.getClass)).toList
-
-
-
-    } match {
-      case "true" => {
-        val reader = new BasicJaxrsReader
-        Option(servletConfig.getInitParameter("ignore.routes")) match {
-          case Some(e) => reader.ignoredRoutes = e.split(",").toSet
-          case _ =>
-        }
-        ClassReaders.reader = Some(reader)
-      }
-      case _ => ClassReaders.reader = Some(new DefaultJaxrsApiReader)
+    servletConfig.getServletContext().setAttribute("reader", new WebXMLReader(servletConfig));
+    servletConfig.getServletContext().setAttribute("scanner", new DefaultJaxrsScanner());
+    if("true".equals(servletConfig.getInitParameter("scan.all.resources"))) {
+      // scan all resources, not just those annotated
     }
-    */
+    else {
+
+    }
   }
 }

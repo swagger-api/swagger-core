@@ -2,6 +2,7 @@ import com.wordnik.swagger.jaxrs.config._
 
 import resources.SimpleResource
 
+import com.wordnik.swagger.models.Swagger
 import com.wordnik.swagger.jaxrs.Reader
 import com.wordnik.swagger.util.Json
 
@@ -13,7 +14,7 @@ import org.scalatest.Matchers
 @RunWith(classOf[JUnitRunner])
 class SimpleScannerTest extends FlatSpec with Matchers {
   it should "scan a simple resource" in {
-    val swagger = new Reader().read(classOf[SimpleResource])
+    val swagger = new Reader(new Swagger()).read(classOf[SimpleResource])
     swagger.getPaths().size should be (1)
 
     val path = swagger.getPaths().get("/{id}")

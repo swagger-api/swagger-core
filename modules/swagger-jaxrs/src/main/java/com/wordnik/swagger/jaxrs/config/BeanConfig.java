@@ -14,7 +14,7 @@ import org.reflections.util.ConfigurationBuilder;
 import java.util.Set;
 
 public class BeanConfig {
-  Reader reader = new Reader();
+  Reader reader = new Reader(new Swagger());
 
   String resourcePackage;
   String title;

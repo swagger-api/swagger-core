@@ -29,6 +29,10 @@ public class Reader {
   Swagger swagger;
   static ObjectMapper m = Json.mapper();
 
+  public Reader(Swagger swagger) {
+    this.swagger = swagger;
+  }
+
   public Swagger read(Set<Class<?>> classes) {
     for(Class cls: classes) {
       read(cls);
