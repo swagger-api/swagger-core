@@ -39,9 +39,9 @@ public class PetResource {
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
       @ApiResponse(code = 404, message = "Pet not found") })
   public Response getPetById(
-      @ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("petId") String petId)
+      @ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("petId") Long petId)
       throws NotFoundException {
-    Pet pet = petData.getPetbyId(ru.getLong(0, 100000, 0, petId));
+    Pet pet = petData.getPetbyId(petId);
     if (null != pet) {
       return Response.ok().entity(pet).build();
     } else {

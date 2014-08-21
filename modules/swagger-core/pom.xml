@@ -68,6 +68,12 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-swagger</artifactId>
+      <version>${jackson-swagger-version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
       <version>${jackson-version}</version>
@@ -127,4 +133,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <properties>
+    <jackson-swagger-version>0.5.1-SNAPSHOT</jackson-swagger-version>
+  </properties>
 </project>

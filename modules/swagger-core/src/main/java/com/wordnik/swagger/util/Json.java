@@ -24,7 +24,7 @@ public class Json {
     return mapper().writer(new DefaultPrettyPrinter());
   }
 
-  public static void printPretty(Object o) {
+  public static void prettyPrint(Object o) {
     try {
       System.out.println(pretty().writeValueAsString(o));
     }

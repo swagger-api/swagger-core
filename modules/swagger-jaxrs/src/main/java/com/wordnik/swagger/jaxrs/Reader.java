@@ -321,7 +321,7 @@ public class Reader {
             Class innerType = cls.getComponentType();
             Property innerProperty = ModelConverters.readAsProperty(innerType);
             if(innerProperty == null) {
-              Map<String, Model> models = ModelConverters.readAll(innerType);
+              Map<String, Model> models = ModelConverters.read(innerType);
               if(models.size() > 0) {
                 for(String name: models.keySet()) {
                   if(name.indexOf("java.util") == -1) {
@@ -333,7 +333,7 @@ public class Reader {
             }
           }
           else {
-            Map<String, Model> models = ModelConverters.readAll(cls);
+            Map<String, Model> models = ModelConverters.read(cls);
             if(models.size() > 0) {
               for(String name: models.keySet()) {
                 if(name.indexOf("java.util") == -1) {
