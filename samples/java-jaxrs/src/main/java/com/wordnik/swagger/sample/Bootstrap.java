@@ -16,7 +16,9 @@ import java.util.ArrayList;
 
 public class Bootstrap extends HttpServlet {
   static Swagger swagger;
+  static Info info;
   static {
+    /*
     BeanConfig bc = new BeanConfig();
 
     bc.setResourcePackage("com.wordnik.swagger.sample.resource");
@@ -30,9 +32,25 @@ public class Bootstrap extends HttpServlet {
     bc.setContact("Wordnik API Team");
     bc.setLicense("MIT");
     bc.setLicenseUrl("http://github.com/gruntjs/grunt/blob/master/LICENSE-MIT");
-    bc.setScan(true);
+*/
 
-    swagger = bc.getSwagger();
+
+    info = new Info()
+      .title("Swagger Sample App")
+      .description("This is a sample server Petstore server.  You can find out more about Swagger " + 
+        "at <a href=\"http://swagger.wordnik.com\">http://swagger.wordnik.com</a> or on irc.freenode.net, #swagger.  For this sample, " + 
+        "you can use the api key \"special-key\" to test the authorization filters")
+      .termsOfService("http://helloreverb.com/terms/")                  /* TOS URL */
+      .contact(new Contact()
+        .name("Wordnik API Team")
+        .email("apiteam@wordnik.com"))
+      .license(new License()
+        .name("MIT")
+        .url("http://github.com/gruntjs/grunt/blob/master/LICENSE-MIT"));
+
+    // bc.setScan(true);
+
+    // swagger = bc.getSwagger();
 
     // do any additional initialization here, such as set your base path programmatically as such:
     // ConfigFactory.config().setBasePath("http://www.foo.com/");
@@ -70,6 +88,7 @@ public class Bootstrap extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     ServletContext context = config.getServletContext();
+    Swagger swagger = new Swagger().info(info);
     context.setAttribute("swagger", swagger);
   }
 }
