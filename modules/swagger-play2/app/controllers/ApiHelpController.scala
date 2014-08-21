@@ -68,7 +68,7 @@ class ErrorResponse(@XmlElement var code: Int, @XmlElement var message: String) 
   def setMessage(message: String) = this.message = message
 }
 
-object ApiHelpController extends SwaggerBaseApiController {
+trait ApiHelpController extends SwaggerBaseApiController {
   def getResources(filter: String = null) = Action {
     request =>
       implicit val requestHeader: RequestHeader = request
@@ -105,6 +105,8 @@ object ApiHelpController extends SwaggerBaseApiController {
       }
   }
 }
+
+object ApiHelpController extends ApiHelpController
 
 class SwaggerBaseApiController extends Controller {
   protected def jaxbContext = JAXBContext.newInstance(classOf[String], classOf[ResourceListing])
@@ -335,4 +337,5 @@ class SwaggerBaseApiController extends Controller {
     val jsonValue = toJsonString(data)
     Ok.chunked(Enumerator(jsonValue.getBytes)).as("application/json")
   }
+
 }
