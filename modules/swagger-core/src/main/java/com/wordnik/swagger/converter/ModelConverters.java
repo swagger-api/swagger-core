@@ -24,7 +24,14 @@ public class ModelConverters {
 
   public static Map<String, Model> read(Class cls) {
     ModelResolver resolver = new ModelResolver(mapper);
+    Model model = resolver.resolve(cls);
+    Map<String, Model> output = new HashMap<String, Model>();
+    output.put(model.getName(), model);
+    return output;
+  }
 
+  public static Map<String, Model> readAll(Class cls) {
+    ModelResolver resolver = new ModelResolver(mapper);
     resolver.resolve(cls);
     return resolver.getDetectedTypes();
   }

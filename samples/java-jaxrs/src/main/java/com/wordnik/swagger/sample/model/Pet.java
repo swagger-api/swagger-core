@@ -51,6 +51,7 @@ public class Pet {
   }
 
   @XmlElement(name = "name")
+  @ApiModelProperty(example = "doggie")
   public String getName() {
     return name;
   }

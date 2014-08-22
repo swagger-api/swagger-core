@@ -8,7 +8,7 @@ import com.wordnik.swagger.models.Contact;
  * legacy support for swagger 1.2 deployments
  **/
 
-
+@Deprecated
 public class ApiInfo extends Info {
   public ApiInfo() {}
 

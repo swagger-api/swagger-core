@@ -73,4 +73,9 @@ public @interface ApiModelProperty {
    * Allows a model property to be marked as hidden in the swagger model definition
    */
   boolean hidden() default false;
+
+  /**
+   * A sample value for the property
+   **/
+  String example() default "";
 }

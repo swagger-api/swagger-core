@@ -6,9 +6,17 @@ public abstract class AbstractProperty {
   String name;
   String type;
   String format;
+  String example;
   Xml xml;
   boolean required;
   Integer position;
+
+  public String getExample() {
+    return example;
+  }
+  public void setExample(String example) {
+    this.example = example;
+  }
 
   public String getName() {
     return name;

@@ -13,6 +13,9 @@ public interface Property {
   @JsonIgnore
   boolean getRequired();
 
+  String getExample();
+  void setExample(String example);
+
   // @JsonIgnore
   void setPosition(Integer position);
   Integer getPosition();

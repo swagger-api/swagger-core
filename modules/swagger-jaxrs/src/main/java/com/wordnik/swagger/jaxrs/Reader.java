@@ -140,10 +140,14 @@ public class Reader {
   }
 
   protected Operation parseMethod(Method method) {
-    Operation operation = new Operation();
-
     ApiOperation apiOperation = (ApiOperation) method.getAnnotation(ApiOperation.class);
     ApiResponses responseAnnotation = method.getAnnotation(ApiResponses.class);
+
+    String operationId = apiOperation.nickname();
+    if("".equals(operationId))
+      operationId = method.getName();
+
+    Operation operation = new Operation().operationId(operationId);
 
     Annotation annotation;
     annotation = method.getAnnotation(Consumes.class);
