@@ -12,10 +12,16 @@ import javax.xml.bind.annotation.*;
 @XmlType(propOrder = { "enum", "properties"})
 @JsonPropertyOrder({ "enum", "properties"})
 public class Model {
+  private String name;
   private List<String> _enum;
   private Map<String, Property> properties;
   private boolean isSimple = false;
   private String description;
+
+  public Model name(String name) {
+    this.setName(name);
+    return this;
+  }
 
   public Model description(String description) {
     this.setDescription(description);
@@ -24,6 +30,14 @@ public class Model {
   public Model property(String key, Property property) {
     this.addProperty(key, property);
     return this;
+  }
+
+  @JsonIgnore
+  public String getName() {
+    return this.name;
+  }
+  public void setName(String name) {
+    this.name = name;
   }
 
   public String getDescription() {
