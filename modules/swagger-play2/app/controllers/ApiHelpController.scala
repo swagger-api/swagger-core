@@ -68,7 +68,7 @@ class ErrorResponse(@XmlElement var code: Int, @XmlElement var message: String) 
   def setMessage(message: String) = this.message = message
 }
 
-trait ApiHelpController extends SwaggerBaseApiController {
+class ApiHelpController extends SwaggerBaseApiController {
   def getResources(filter: String = null) = Action {
     request =>
       implicit val requestHeader: RequestHeader = request
