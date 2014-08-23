@@ -177,6 +177,10 @@ public class Reader {
             .schema(new RefProperty().asDefault(key)));
           swagger.model(key, models.get(key));
         }
+        models = ModelConverters.readAll(responseClass);
+        for(String key: models.keySet()) {
+          swagger.model(key, models.get(key));
+        }
       }
     }
 
@@ -196,6 +200,10 @@ public class Reader {
           Map<String, Model> models = ModelConverters.read(responseClass);
           for(String key: models.keySet()) {
             response.schema(new RefProperty().asDefault(key));
+            swagger.model(key, models.get(key));
+          }
+          models = ModelConverters.readAll(responseClass);
+          for(String key: models.keySet()) {
             swagger.model(key, models.get(key));
           }
         }

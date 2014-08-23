@@ -56,7 +56,18 @@ public class Model {
   }
 
   public List<String> getEnum() {
-    return _enum;
+    List<String> output = new ArrayList<String>();
+    if(properties != null) {
+      for(String key : properties.keySet()) {
+        Property prop = properties.get(key);
+        if(prop.getRequired())
+          output.add(key);
+      }
+    }
+    if(output.size() > 0)
+      return output;
+    else
+      return null;
   }
   public void setEnum(List<String> _enum) {
     this._enum = _enum;

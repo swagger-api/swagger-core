@@ -51,7 +51,7 @@ public class Pet {
   }
 
   @XmlElement(name = "name")
-  @ApiModelProperty(example = "doggie")
+  @ApiModelProperty(example = "doggie", required = true)
   public String getName() {
     return name;
   }
@@ -61,7 +61,7 @@ public class Pet {
   }
 
   @XmlElementWrapper(name = "photoUrls")
-  @XmlElement(name = "photoUrl")
+  @XmlElement(name = "photoUrl", required = true)
   public List<String> getPhotoUrls() {
     return photoUrls;
   }

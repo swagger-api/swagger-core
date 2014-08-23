@@ -14,7 +14,12 @@ public class ModelConverters {
 
   public static Property readAsProperty(Class cls) {
     try {
-      return new ModelResolver(mapper).resolveProperty(cls);
+      Property property = new ModelResolver(mapper).resolveProperty(cls);
+      System.out.println(property.getName());
+      if(!"string".equals(property.getName()))
+        return property;
+      else
+        return null;
     }
     catch (Exception e) {
       e.printStackTrace();
