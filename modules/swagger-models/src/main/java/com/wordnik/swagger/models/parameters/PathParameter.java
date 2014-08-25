@@ -9,34 +9,47 @@ public class PathParameter extends AbstractParameter implements Parameter {;
   String type;
   String format;
   String collectionFormat;
+  Property items;
 
   public PathParameter() {
     super.setIn("path");
     super.setRequired(true);
   }
 
-  public PathParameter property(Property property) {
-    this.setProperty(property);
-    return this;
-  }
-  public PathParameter description(String description) {
-    this.setDescription(description);
-    return this;
-  }
-  public PathParameter name(String name) {
-    this.setName(name);
+  public PathParameter array(boolean isArray) {
+    this.setArray(isArray);
     return this;
   }
   public PathParameter collectionFormat(String collectionFormat) {
     this.setCollectionFormat(collectionFormat);
     return this;
   }
-
-  public String getType() {
-    return type;
+  public PathParameter description(String description) {
+    this.setDescription(description);
+    return this;
   }
-  public void setType(String type) {
-    this.type = type;
+  public PathParameter items(Property items) {
+    this.setItems(items);
+    return this;
+  }
+  public PathParameter name(String name) {
+    this.setName(name);
+    return this;
+  }
+  public PathParameter property(Property property) {
+    this.setProperty(property);
+    return this;
+  }
+
+  public void setArray(boolean isArray) {
+    this.type = "array";
+  }
+
+  public void setItems(Property items) {
+    this.items = items;
+  }
+  public Property getItems() {
+    return items;
   }
 
   public String getFormat() {
@@ -44,6 +57,13 @@ public class PathParameter extends AbstractParameter implements Parameter {;
   }
   public void setFormat(String format) {
     this.format = format;
+  }
+
+  public String getType() {
+    return type;
+  }
+  public void setType(String type) {
+    this.type = type;
   }
 
   public String getCollectionFormat() {

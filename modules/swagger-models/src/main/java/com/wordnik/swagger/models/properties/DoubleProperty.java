@@ -5,4 +5,10 @@ public class DoubleProperty extends AbstractProperty implements Property {
     super.type = "number";
     super.format = "double";
   }
+
+  public static boolean isType(String type, String format) {
+    if("number".equals(type) && "double".equals(format))
+      return true;
+    else return false;
+  }
 }

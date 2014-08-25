@@ -9,6 +9,7 @@ public class HeaderParameter extends AbstractParameter implements Parameter {;
   String type;
   String format;
   String collectionFormat;
+  Property items;
 
   public HeaderParameter() {
     super.setIn("header");
@@ -31,7 +32,25 @@ public class HeaderParameter extends AbstractParameter implements Parameter {;
     this.setCollectionFormat(collectionFormat);
     return this;
   }
+  public HeaderParameter array(boolean isArray) {
+    this.setArray(isArray);
+    return this;
+  }
+  public HeaderParameter items(Property items) {
+    this.items = items;
+    return this;
+  }
 
+  public void setArray(boolean isArray) {
+    this.type = "array";
+  }
+
+  public void setItems(Property items) {
+    this.items = items;
+  }
+  public Property getItems() {
+    return items;
+  }
   public String getType() {
     return type;
   }

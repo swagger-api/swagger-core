@@ -9,13 +9,14 @@ public class RefProperty extends AbstractProperty implements Property {
     super.type = "ref";
   }
 
+  public RefProperty(String ref) {
+    super.type = "ref";
+    set$ref(ref);
+  }
+
   public RefProperty asDefault(String ref) {
     this.set$ref("#/definitions/" + ref);
     return this;
-  }
-
-  public RefProperty(String ref) {
-    set$ref(ref);
   }
 
   @Override
@@ -34,5 +35,11 @@ public class RefProperty extends AbstractProperty implements Property {
   }
   public void set$ref(String ref) {
     this.ref = ref;
+  }
+
+  public static boolean isType(String type, String format) {
+    if("$ref".equals(type))
+      return true;
+    else return false;
   }
 }

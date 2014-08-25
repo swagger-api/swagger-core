@@ -2,26 +2,29 @@ package com.wordnik.swagger.models.parameters;
 
 import com.wordnik.swagger.models.properties.Property;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 
-@JsonTypeInfo(  
-    use = JsonTypeInfo.Id.NAME,  
-    include = JsonTypeInfo.As.PROPERTY,  
-    property = "in")  
+@JsonTypeInfo(
+  use = JsonTypeInfo.Id.NAME,
+  include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
+  property = "in")
 @JsonSubTypes({  
-    @Type(value = BodyParameter.class, name = "body"),  
-    @Type(value = HeaderParameter.class, name = "header"),  
-    @Type(value = PathParameter.class, name = "path"),  
-    @Type(value = QueryParameter.class, name = "query"),  
-    @Type(value = CookieParameter.class, name = "cookie") }) 
+  @Type(value = BodyParameter.class, name = "body"),
+  @Type(value = HeaderParameter.class, name = "header"),
+  @Type(value = PathParameter.class, name = "path"),
+  @Type(value = QueryParameter.class, name = "query"),
+  @Type(value = CookieParameter.class, name = "cookie")})
 public interface Parameter {
-  void setName(String name);
   String getIn();
+  void setIn(String in);
+
   String getName();
+  void setName(String name);
+
   String getDescription();
-  boolean getRequired();
   void setDescription(String description);
+
+  boolean getRequired();
 }

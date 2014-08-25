@@ -5,4 +5,10 @@ public class DateProperty extends AbstractProperty implements Property {
     super.type = "string";
     super.format = "date";
   }
+
+  public static boolean isType(String type, String format) {
+    if("string".equals(type) && "date".equals(format))
+      return true;
+    else return false;
+  }
 }

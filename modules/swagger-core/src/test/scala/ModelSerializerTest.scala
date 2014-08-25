@@ -17,7 +17,7 @@ class ModelSerializerTest extends FlatSpec with Matchers {
   val m = Json.mapper()
 
   it should "convert a model" in {
-    val pet = new Model()
+    val pet = new ModelImpl()
     val props = new HashMap[String, Property]
     props += "intValue" -> new IntegerProperty
     props += "longValue" -> new LongProperty

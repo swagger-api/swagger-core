@@ -1,7 +1,7 @@
 package com.wordnik.swagger.jaxrs;
 
 import com.wordnik.swagger.converter.ModelConverters;
-
+import com.wordnik.swagger.models.properties.PropertyBuilder;
 import com.wordnik.swagger.util.Json;
 import com.wordnik.swagger.annotations.*;
 import com.wordnik.swagger.models.*;
@@ -139,15 +139,54 @@ public class Reader {
     return b.toString();
   }
 
-  protected Operation parseMethod(Method method) {
+  public Operation parseMethod(Method method) {
+    Operation operation = new Operation();
+
     ApiOperation apiOperation = (ApiOperation) method.getAnnotation(ApiOperation.class);
     ApiResponses responseAnnotation = method.getAnnotation(ApiResponses.class);
 
-    String operationId = apiOperation.nickname();
-    if("".equals(operationId))
-      operationId = method.getName();
+    String operationId = method.getName();
 
-    Operation operation = new Operation().operationId(operationId);
+    Class<?> responseClass = null;
+    if(apiOperation != null) {
+      if(!"".equals(apiOperation.nickname()))
+        operationId = method.getName();
+      operation
+        .summary(apiOperation.value())
+        .description(apiOperation.notes());
+      if(apiOperation.response() != null && !Void.class.equals(apiOperation.response())) {
+        responseClass = apiOperation.response();
+      }
+    }
+    else {
+      // pick out response from method declaration
+      responseClass = method.getReturnType();
+      if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
+        if(isPrimitive(responseClass)) {
+          Property property = ModelConverters.readAsProperty(responseClass);
+          if(property != null) {
+            operation.response(200, new Response()
+              .description("successful operation")
+              .schema(property));
+          }
+        }
+        else {
+          Map<String, Model> models = ModelConverters.read(responseClass);
+          for(String key: models.keySet()) {
+            operation.response(200, new Response()
+              .description("successful operation")
+              .schema(new RefProperty().asDefault(key)));
+            swagger.model(key, models.get(key));
+          }
+          models = ModelConverters.readAll(responseClass);
+          for(String key: models.keySet()) {
+            swagger.model(key, models.get(key));
+          }
+        }
+      }
+    }
+
+    operation.operationId(operationId);
 
     Annotation annotation;
     annotation = method.getAnnotation(Consumes.class);
@@ -164,25 +203,6 @@ public class Reader {
         operation.produces(mediaType);
     }
 
-    operation.summary(apiOperation.value())
-      .description(apiOperation.notes());
-
-    if(apiOperation.response() != null && !Void.class.equals(apiOperation.response())) {
-      Class responseClass = apiOperation.response();
-      if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
-        Map<String, Model> models = ModelConverters.read(responseClass);
-        for(String key: models.keySet()) {
-          operation.response(200, new Response()
-            .description("successful operation")
-            .schema(new RefProperty().asDefault(key)));
-          swagger.model(key, models.get(key));
-        }
-        models = ModelConverters.readAll(responseClass);
-        for(String key: models.keySet()) {
-          swagger.model(key, models.get(key));
-        }
-      }
-    }
 
     List<ApiResponse> apiResponses = new ArrayList<ApiResponse>();
     if(responseAnnotation != null) {
@@ -195,7 +215,7 @@ public class Reader {
         else
           operation.response(apiResponse.code(), response);
 
-        Class responseClass = apiResponse.response();
+        responseClass = apiResponse.response();
         if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
           Map<String, Model> models = ModelConverters.read(responseClass);
           for(String key: models.keySet()) {
@@ -220,11 +240,14 @@ public class Reader {
 
     // process parameters
     Class[] parameterTypes = method.getParameterTypes();
+    Type[] genericParameterTypes = method.getGenericParameterTypes();
     Annotation[][] paramAnnotations = method.getParameterAnnotations();
     // paramTypes = method.getParameterTypes
     // genericParamTypes = method.getGenericParameterTypes
     for(int i = 0; i < parameterTypes.length; i++) {
-      Parameter parameter = getParameter(parameterTypes[i], paramAnnotations[i]);
+    	Class<?> cls = parameterTypes[i];
+    	Type type = genericParameterTypes[i];
+    	Parameter parameter = getParameter(cls, type, paramAnnotations[i]);
       if(parameter != null) {
         // add it
         operation.parameter(parameter);
@@ -236,12 +259,26 @@ public class Reader {
     return operation;
   }
 
-  Parameter getParameter(Class cls, Annotation[] annotations) {
+  Parameter getParameter(Class<?> cls, Type type, Annotation[] annotations) {
     // look for path, query
     Parameter parameter = null;
     String defaultValue;
     boolean allowMultiple;
     String allowableValues;
+    boolean isArray = false;
+    
+    // see if it's a collection type
+    if(type instanceof ParameterizedType){
+        ParameterizedType aType = (ParameterizedType) type;
+        Type[] parameterArgTypes = aType.getActualTypeArguments();
+        for(Type parameterArgType : parameterArgTypes){
+        	if(cls.isAssignableFrom(List.class)){
+        		isArray = true;
+        	}
+            Class<?> parameterArgClass = (Class<?>) parameterArgType;
+            cls = parameterArgClass;
+        }
+    }
 
     for(Annotation annotation : annotations) {
       if(annotation instanceof QueryParam) {
@@ -300,23 +337,35 @@ public class Reader {
             parameter.setName(param.name());
           parameter.setDescription(param.value());
           // parameter.setAccess(param.access());
-          allowMultiple = param.allowMultiple();
+          allowMultiple = param.allowMultiple() || isArray;
           if(allowMultiple == true) {
             if(parameter instanceof PathParameter) {
               PathParameter p = (PathParameter) parameter;
-              p.setCollectionFormat("jaxrs");
+              Property items = PropertyBuilder.build(p.getType(), p.getFormat());
+              p.items(items)
+                .array(true)
+                .collectionFormat("jaxrs");
             }
             else if(parameter instanceof QueryParameter) {
               QueryParameter p = (QueryParameter) parameter;
-              p.setCollectionFormat("jaxrs");
+              Property items = PropertyBuilder.build(p.getType(), p.getFormat());
+              p.items(items)
+                .array(true)
+                .collectionFormat("jaxrs");
             }
             else if(parameter instanceof HeaderParameter) {
               HeaderParameter p = (HeaderParameter) parameter;
-              p.setCollectionFormat("jaxrs");
+              Property items = PropertyBuilder.build(p.getType(), p.getFormat());
+              p.items(items)
+                .array(true)
+                .collectionFormat("jaxrs");
             }
             else if(parameter instanceof CookieParameter) {
               CookieParameter p = (CookieParameter) parameter;
-              p.setCollectionFormat("jaxrs");
+              Property items = PropertyBuilder.build(p.getType(), p.getFormat());
+              p.items(items)
+                .array(true)
+                .collectionFormat("jaxrs");
             }
           }
 
@@ -364,6 +413,25 @@ public class Reader {
       }
     }
     return parameter;
+  }
+
+  boolean isPrimitive(Class<?> cls) {
+    boolean out = false;
+
+    Property property = ModelConverters.readAsProperty(cls);
+    if(property == null)
+      out = false;
+    if("integer".equals(property.getType()))
+      out = true;
+    else if("string".equals(property.getType()))
+      out = true;
+    else if("number".equals(property.getType()))
+      out = true;
+    else if("boolean".equals(property.getType()))
+      out = true;
+    else if("array".equals(property.getType()))
+      out = true;
+    return out;
   }
 
   String getHttpMethod(ApiOperation apiOperation, Method method) {

@@ -2,7 +2,9 @@ package com.wordnik.swagger.models.parameters;
 
 import com.wordnik.swagger.models.properties.*;
 
+import com.fasterxml.jackson.annotation.*;
 public abstract class AbstractParameter {
+  @JsonIgnore
   String in;
   String name;
   String description;

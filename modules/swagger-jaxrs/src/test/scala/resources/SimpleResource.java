@@ -31,6 +31,20 @@ public class SimpleResource {
     return Response.ok().entity(out).build();
   }
 
+  @GET
+  @Path("/{id}/value")
+  @Produces({"text/plain"})
+  @ApiOperation(value = "Get simple string value",
+    notes = "No details provided",
+    response = String.class,
+    position = 0)
+  @ApiResponses({
+    @ApiResponse(code = 400, message = "Invalid ID", response = NotFoundModel.class),
+    @ApiResponse(code = 404, message = "object not found")})
+  public Response getStringValue() throws WebApplicationException {
+    return Response.ok().entity("ok").build();
+  }
+
   @PUT
   @Path("/{id}")
   @ApiOperation(value = "Update by ID",

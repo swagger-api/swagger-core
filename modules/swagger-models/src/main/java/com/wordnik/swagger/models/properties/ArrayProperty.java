@@ -5,6 +5,11 @@ public class ArrayProperty extends AbstractProperty implements Property {
   public ArrayProperty() {
     super.type = "array";
   }
+  public ArrayProperty(Property items) {
+    super.type = "array";
+    setItems(items);
+  }
+
   public ArrayProperty items(Property items) {
     setItems(items);
     return this;

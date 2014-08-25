@@ -15,11 +15,6 @@ public class ModelConverters {
   public static Property readAsProperty(Class cls) {
     try {
       Property property = new ModelResolver(mapper).resolveProperty(cls);
-      System.out.println(property.getName());
-      if(!"string".equals(property.getName()))
-        return property;
-      else
-        return null;
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -27,17 +22,30 @@ public class ModelConverters {
     }
   }
 
-  public static Map<String, Model> read(Class cls) {
-    ModelResolver resolver = new ModelResolver(mapper);
-    Model model = resolver.resolve(cls);
+  public static Map<String, Model> read(Class<?> cls) {
     Map<String, Model> output = new HashMap<String, Model>();
-    output.put(model.getName(), model);
+    if(shouldProcess(cls)) {
+      ModelResolver resolver = new ModelResolver(mapper);
+      Model model = resolver.resolve(cls);
+      if(model instanceof ModelImpl)
+        output.put(((ModelImpl)model).getName(), model);
+    }
     return output;
   }
 
-  public static Map<String, Model> readAll(Class cls) {
-    ModelResolver resolver = new ModelResolver(mapper);
-    resolver.resolve(cls);
-    return resolver.getDetectedTypes();
+  public static Map<String, Model> readAll(Class<?> cls) {
+    Map<String, Model> output = new HashMap<String, Model>();
+    if(shouldProcess(cls)) {
+      ModelResolver resolver = new ModelResolver(mapper);
+      resolver.resolve(cls);
+      return resolver.getDetectedTypes();
+    }
+    else return output;
+  }
+
+  static boolean shouldProcess(Class<?> cls) {
+    if(cls.getName().startsWith("java.lang"))
+      return false;
+    return true;
   }
 }

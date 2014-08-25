@@ -15,7 +15,7 @@ import org.scalatest.Matchers
 class SimpleScannerTest extends FlatSpec with Matchers {
   it should "scan a simple resource" in {
     val swagger = new Reader(new Swagger()).read(classOf[SimpleResource])
-    swagger.getPaths().size should be (1)
+    swagger.getPaths().size should be (2)
 
     val path = swagger.getPaths().get("/{id}")
     val get = path.getGet()

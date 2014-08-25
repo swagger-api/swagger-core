@@ -9,6 +9,7 @@ public class QueryParameter extends AbstractParameter implements Parameter {;
   String type;
   String format;
   String collectionFormat;
+  Property items;
 
   public QueryParameter() {
     super.setIn("query");
@@ -33,6 +34,25 @@ public class QueryParameter extends AbstractParameter implements Parameter {;
   public QueryParameter collectionFormat(String collectionFormat) {
     this.setCollectionFormat(collectionFormat);
     return this;
+  }
+  public QueryParameter array(boolean isArray) {
+    this.setArray(isArray);
+    return this;
+  }
+  public QueryParameter items(Property items) {
+    this.items = items;
+    return this;
+  }
+
+  public void setArray(boolean isArray) {
+    this.type = "array";
+  }
+
+  public void setItems(Property items) {
+    this.items = items;
+  }
+  public Property getItems() {
+    return items;
   }
 
   public String getType() {

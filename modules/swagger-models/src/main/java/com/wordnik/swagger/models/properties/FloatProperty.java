@@ -5,4 +5,10 @@ public class FloatProperty extends AbstractProperty implements Property {
     super.type = "number";
     super.format = "float";
   }
+
+  public static boolean isType(String type, String format) {
+    if("number".equals(type) && "float".equals(format))
+      return true;
+    else return false;
+  }
 }
