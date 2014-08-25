@@ -18,6 +18,7 @@ class SwaggerSchemaConverter
     Option(cls).flatMap({
       cls => {
         implicit val properties = new LinkedHashMap[String, ModelProperty]()
+        implicit val dynamicProperties = new LinkedHashMap[String, DynamicModelProperty]()
         new ModelPropertyParser(cls, typeMap).parse
 
         val newProperties = mutable.Buffer.empty[(String, ModelProperty)]
@@ -34,6 +35,21 @@ class SwaggerSchemaConverter
 
         val sortedProperties = new LinkedHashMap[String, ModelProperty]()
         p.sortWith(_._1 < _._1).foreach(e => sortedProperties += e._2 -> e._3)
+
+        val newDynamicProperties = mutable.Buffer.empty[(String, DynamicModelProperty)]
+        cls.getDeclaredFields.filter(field => Modifier.isPrivate(field.getModifiers)).map(_.getName).flatMap { field =>
+          dynamicProperties.get(field).map { value =>
+            dynamicProperties -= field
+            newDynamicProperties += field -> value
+          }
+        }
+        newDynamicProperties ++= dynamicProperties
+        val dp = (for((key, value) <- newDynamicProperties)
+          yield (value.position, key, value)
+        ).toList
+
+        val sortedDynamicProperties = new LinkedHashMap[String, DynamicModelProperty]()
+        dp.sortWith(_._1 < _._1).foreach(e => sortedDynamicProperties += e._2 -> e._3)
 
         val parent = Option(cls.getAnnotation(classOf[ApiModel])) match {
           case Some(e) => Some(e.parent.getName)
@@ -58,13 +74,14 @@ class SwaggerSchemaConverter
             (for(subType <- cls.getAnnotation(classOf[JsonSubTypes]).value) yield (subType.value.getName)).toList
           else List()
         }
-        sortedProperties.size match {
+        sortedProperties.size + sortedDynamicProperties.size match {
           case 0 => None
           case _ => Some(Model(
             toName(cls),
             toName(cls),
             cls.getName,
             sortedProperties,
+            sortedDynamicProperties,
             toDescriptionOpt(cls),
             parent,
             discriminator,

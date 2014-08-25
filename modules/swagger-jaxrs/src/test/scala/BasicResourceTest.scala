@@ -13,12 +13,12 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.mutable.ListBuffer
 
 @RunWith(classOf[JUnitRunner])
-class BasicResourceTest extends FlatSpec with ShouldMatchers {
+class BasicResourceTest extends FlatSpec with Matchers {
   it should "read an api and extract an error model" in {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()
@@ -64,7 +64,7 @@ class BasicResourceTest extends FlatSpec with ShouldMatchers {
 }
 
 @RunWith(classOf[JUnitRunner])
-class ContainerResourceTest extends FlatSpec with ShouldMatchers {
+class ContainerResourceTest extends FlatSpec with Matchers {
   it should "read an api" in {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()
@@ -102,7 +102,7 @@ class ContainerResourceTest extends FlatSpec with ShouldMatchers {
 }
 
 @RunWith(classOf[JUnitRunner])
-class ModelExtractionTest extends FlatSpec with ShouldMatchers {
+class ModelExtractionTest extends FlatSpec with Matchers {
   it should "get the right models" in {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()
@@ -143,7 +143,7 @@ class ModelExtractionTest extends FlatSpec with ShouldMatchers {
 }
 
 @RunWith(classOf[JUnitRunner])
-class ListModelExtractionTest extends FlatSpec with ShouldMatchers {
+class ListModelExtractionTest extends FlatSpec with Matchers {
   it should "get the right models" in {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()
@@ -157,7 +157,7 @@ class ListModelExtractionTest extends FlatSpec with ShouldMatchers {
 }
 
 @RunWith(classOf[JUnitRunner])
-class ApiListingOrderTest extends FlatSpec with ShouldMatchers {
+class ApiListingOrderTest extends FlatSpec with Matchers {
   it should "get Apis in the right order" in {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()

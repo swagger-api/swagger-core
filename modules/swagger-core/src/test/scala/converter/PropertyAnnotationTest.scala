@@ -16,12 +16,12 @@ import scala.collection.mutable.LinkedHashMap
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import javax.xml.bind.annotation._
 
 @RunWith(classOf[JUnitRunner])
-class PropertyAnnotationTest extends FlatSpec with ShouldMatchers {
+class PropertyAnnotationTest extends FlatSpec with Matchers {
   it should "read annotations on a property" in {
     val a = ModelConverters.readAll(classOf[ModelWithAnnotationOnProperty])
     JsonSerializer.asJson(a) should be ("""[{"id":"ModelWithAnnotationOnProperty","description":"my annotated model","properties":{"count":{"type":"integer","format":"int32","description":"the count of items"}}}]""")

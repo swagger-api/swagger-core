@@ -16,12 +16,12 @@ import scala.collection.mutable.LinkedHashMap
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import javax.xml.bind.annotation._
 
 @RunWith(classOf[JUnitRunner])
-class SnakeCaseConverterTest extends FlatSpec with ShouldMatchers {
+class SnakeCaseConverterTest extends FlatSpec with Matchers {
   it should "ignore properties with type Bar" in {
     // add the custom converter
     val snakeCaseConverter = new SnakeCaseConverter

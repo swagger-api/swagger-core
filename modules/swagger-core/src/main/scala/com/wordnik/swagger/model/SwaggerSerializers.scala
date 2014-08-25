@@ -34,6 +34,7 @@ object SwaggerSerializers extends Serializers {
     case json =>
       implicit val fmts: Formats = formats
       val output = new LinkedHashMap[String, ModelProperty]
+      val dynamicOutput = new LinkedHashMap[String, DynamicModelProperty]
       val properties = (json \ "properties") match {
         case JObject(entries) => {
           for((key, value) <- entries) {
@@ -51,6 +52,7 @@ object SwaggerSerializers extends Serializers {
         (json \ "name").extractOrElse((json \ "id").extract[String]),
         (json \ "qualifiedType").extractOrElse(""),
         output,
+        dynamicOutput,
         (json \ "description").extractOpt[String],
         (json \ "extends").extractOpt[String],
         (json \ "discriminator").extractOpt[String]
@@ -313,7 +315,8 @@ object SwaggerSerializers extends Serializers {
             case Some(e: ModelRef) if(e.`type` != null || e.ref != None) => Some(e)
             case _ => None
           }
-        }
+        },
+        dynamicName = (json \ "dynamicName").extractOpt[String]
       )
     }, {
     case x: ModelProperty =>
@@ -497,9 +500,9 @@ trait Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[AuthorizationType] if (e.size > 0) => {
-            Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") Some(at.getName, at)
+          case e: List[Authorization] if (e.size > 0) => {
+            Extraction.decompose((for(at: Authorization <- e) yield {
+              if(at.`type` != "") Some(at.`type`, at)
               else None
             }).flatten.toMap)
           }
@@ -556,9 +559,9 @@ trait Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[AuthorizationType] if (e.size > 0) => {
-            Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") Some(at.getName, at)
+          case e: List[Authorization] if (e.size > 0) => {
+            Extraction.decompose((for(at: Authorization <- e) yield {
+              if(at.`type` != "") Some(at.`type`, at)
               else None
             }).flatten.toMap)
           }
@@ -582,12 +585,18 @@ trait Serializers {
           !!(json, RESOURCE, "path", "missing required field", ERROR)
           ""
         }),
-        (json \ "description").extractOpt[String]
+        (json \ "description").extractOpt[String],
+        pathAlias = (json \ "pathAlias").extractOpt[String]
       )
     }, {
       case x: ApiListingReference =>
       implicit val fmts = formats
-      ("path" -> x.path) ~
+      ("path" -> {
+        x.pathAlias match {
+          case Some(alias) => alias
+          case _ => x.path
+        }
+      }) ~
       ("description" -> x.description)
     }
   ))
@@ -748,13 +757,14 @@ trait Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[AuthorizationType] if (e.size > 0) => {
-            Extraction.decompose((for(at <- e) yield {
-              if(at.getName != "") {
-                Some(at.getName, at)
-              }
-              else None
-            }).flatten.toMap)
+          case e: List[Authorization] if (e.size > 0) => {
+            val out = (for(at: Authorization <- e) yield {
+                if(at.`type` != "") {
+                  Some(at.`type`, at)
+                }
+                else None
+              }).flatten.toMap
+            Extraction.decompose(out)
           }
           case _ => JNothing
         }
@@ -829,6 +839,7 @@ trait Serializers {
     case json =>
       implicit val fmts: Formats = formats
       val output = new LinkedHashMap[String, ModelProperty]
+      val dynamicOutput = new LinkedHashMap[String, DynamicModelProperty]
       val properties = (json \ "properties") match {
         case JObject(entries) => {
           entries.map({
@@ -846,6 +857,7 @@ trait Serializers {
         (json \ "name").extractOrElse((json \ "id").extract[String]),
         (json \ "qualifiedType").extractOrElse(""),
         output,
+        dynamicOutput,
         (json \ "description").extractOpt[String],
         (json \ "extends").extractOpt[String],
         (json \ "discriminator").extractOpt[String]
@@ -896,7 +908,8 @@ trait Serializers {
             case Some(e: ModelRef) if(e.`type` != null || e.ref != None) => Some(e)
             case _ => None
           }
-        }
+        },
+        dynamicName = (json \ "dynamicName").extractOpt[String]
       )
     }, {
     case x: ModelProperty =>

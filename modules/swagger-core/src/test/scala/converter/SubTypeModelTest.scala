@@ -19,12 +19,12 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.beans.BeanProperty
 
 @RunWith(classOf[JUnitRunner])
-class SubTypeModelTest extends FlatSpec with ShouldMatchers {
+class SubTypeModelTest extends FlatSpec with Matchers {
   implicit val formats = SwaggerSerializers.formats
 
   it should "read a model with subTypes" in {

@@ -38,32 +38,32 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
     docRoot: String, 
     parentPath: String, cls: Class[_], 
     config: SwaggerConfig,
-    operations: ListBuffer[Tuple3[String, String, ListBuffer[Operation]]],
+    operations: ListBuffer[(String, String, ListBuffer[Operation])],
     parentMethods: ListBuffer[Method]): Option[ApiListing] = {
     val api = cls.getAnnotation(classOf[Api])
 
     // must have @Api annotation to process!
     if(api != null) {
       val consumes = Option(api.consumes) match {
-        case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+        case Some(e) if e != "" => e.split(",").map(_.trim).toList
         case _ => cls.getAnnotation(classOf[Consumes]) match {
           case e: Consumes => e.value.toList
           case _ => List()
         }
       }
       val produces = Option(api.produces) match {
-        case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+        case Some(e) if e != "" => e.split(",").map(_.trim).toList
         case _ => cls.getAnnotation(classOf[Produces]) match {
           case e: Produces => e.value.toList
           case _ => List()
         }
       }
       val protocols = Option(api.protocols) match {
-        case Some(e) if(e != "") => e.split(",").map(_.trim).toList
+        case Some(e) if e != "" => e.split(",").map(_.trim).toList
         case _ => List()
       }
       val description = api.description match {
-        case e: String if(e != "") => Some(e)
+        case e: String if e != "" => Some(e)
         case _ => None
       }
       // look for method-level annotated properties
@@ -94,27 +94,26 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         }
         val endpoint = (parentPath + pathFromMethod(method)).replace("//", "/")
         Option(returnType.getAnnotation(classOf[Api])) match {
-          case Some(e) => {
+          case Some(e) =>
             val root = docRoot + api.value + pathFromMethod(method)
             parentMethods += method
             readRecursive(root, endpoint, returnType, config, operations, parentMethods)
             parentMethods -= method
-          }
-          case _ => {
+          case _ =>
             if(method.getAnnotation(classOf[ApiOperation]) != null) {
+              // FIXME: this will always fail!
               readMethod(method, parentParams, parentMethods) match {
                 case Some(op) => appendOperation(endpoint, path, op, operations)
                 case None =>
               }
             }
-          }
         }
       }
       // sort them by min position in the operations
       val s = (for(op <- operations) yield {
         (op, op._3.map(_.position).toList.min)
       }).sortWith(_._2 < _._2).toList
-      val orderedOperations = new ListBuffer[Tuple3[String, String, ListBuffer[Operation]]]
+      val orderedOperations = new ListBuffer[(String, String, ListBuffer[Operation])]
       s.foreach(op => {
         val ops = op._1._3.sortWith(_.position < _.position)
         orderedOperations += Tuple3(op._1._1, op._1._2, ops)
@@ -128,6 +127,17 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
           orderedOperations.toList)
       }).toList
       val models = ModelUtil.modelsFromApis(apis)
+
+      val filter = api.filter match {
+        case e: String if e != "" => Some(e)
+        case _ => None
+      }
+
+      val pathAlias = api.pathAlias match {
+        case e: String if e != "" => Some(e)
+        case _ => None
+      }
+
       Some(ApiListing (
         apiVersion = config.apiVersion,
         swaggerVersion = config.swaggerVersion,
@@ -139,6 +149,8 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         produces = produces,
         consumes = consumes,
         protocols = protocols,
+        filter = filter,
+        pathAlias = pathAlias,
         position = api.position)
       )
     }
@@ -189,7 +201,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
           val fullOperationResourcePath = getPath(cls, method)
 
           fullOperationResourcePath match {
-            case Some(path) => {
+            case Some(path) =>
               // got to remove any path element specified in basepath
               val basepathUrl = new java.net.URL(config.getBasePath)
               val basepath = basepathUrl.getPath
@@ -197,10 +209,8 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
               Logger("swagger").debug("method: %s, fullOperationResourcePath: %s, basepath: %s, resourcePath: %s".format(method.getName, path, basepath, resourcePath))
               // store operations in our Map keyed by resourcepath
               operationsMap = appendOperation(resourcePath, operation, operationsMap)
-            }
-            case _ => {
+            case _ =>
               Logger("swagger").debug("Method: %s has no web route defined".format(method.getName))
-            }
           }
         }
       }
@@ -212,10 +222,20 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
 
       val models = ModelUtil.modelsFromApis(apiDescriptions)
 
+      val filter = api.filter match {
+        case e: String if e != "" => Some(e)
+        case _ => None
+      }
+
+      val pathAlias = api.pathAlias match {
+        case e: String if e != "" => Some(e)
+        case _ => None
+      }
+
       Some(
         ApiListing(
           config.apiVersion,
-          config.getSwaggerVersion(),
+          config.getSwaggerVersion,
           config.basePath,
           resourcePath,
           produces,
@@ -224,7 +244,9 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
           List(), // authorizations
           ModelUtil.stripPackages(apiDescriptions), //  List[com.wordnik.swagger.model.ApiDescription]
           models,
-          description
+          description,
+          filter,
+          pathAlias
           // position
         )
       )
@@ -235,6 +257,8 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
     }
   }
 
+
+  var ApiModelProperty: List[Parameter] = _
 
   def readMethod(method: Method): Option[Operation] = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
@@ -271,11 +295,12 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
 
       val apiResponses = processResponsesAnnotation(responseAnnotations)
 
-      val isDeprecated = Option(method.getAnnotation(classOf[Deprecated])).map(m => "true").getOrElse(null)
+      val isDeprecated = Option(method.getAnnotation(classOf[Deprecated])).map(m => "true").orNull
 
       val implicitParams = processImplicitParams(method)
 
-      val params = processParams(method)
+      ApiModelProperty = processParams(method)
+      val params = ApiModelProperty
 
       Some(Operation(
         apiOperation.httpMethod,
@@ -299,7 +324,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
   def processImplicitParams(method: Method) = {
     Logger("swagger").debug("checking for ApiImplicitParams")
     Option(method.getAnnotation(classOf[ApiImplicitParams])) match {
-      case Some(e) => {
+      case Some(e) =>
         (for (param <- e.value) yield {
           Logger("swagger").debug("processing " + param)
           val allowableValues = toAllowableValues(param.allowableValues)
@@ -314,7 +339,6 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
             param.paramType,
             Option(param.access).filter(_.trim.nonEmpty))
         }).toList
-      }
       case _ => List()
     }
   }
@@ -354,34 +378,27 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
     for (pa <- paramAnnotations) {
       pa match {
         case e: ApiParam => parseApiParamAnnotation(mutable, e)
-        case e: QueryParam => {
+        case e: QueryParam =>
           mutable.name = readString(e.value, mutable.name)
           mutable.paramType = readString(TYPE_QUERY, mutable.paramType)
-        }
-        case e: PathParam => {
+        case e: PathParam =>
           mutable.name = readString(e.value, mutable.name)
           mutable.required = true
           mutable.paramType = readString(TYPE_PATH, mutable.paramType)
-        }
-        case e: MatrixParam => {
+        case e: MatrixParam =>
           mutable.name = readString(e.value, mutable.name)
           mutable.paramType = readString(TYPE_MATRIX, mutable.paramType)
-        }
-        case e: HeaderParam => {
+        case e: HeaderParam =>
           mutable.name = readString(e.value, mutable.name)
           mutable.paramType = readString(TYPE_HEADER, mutable.paramType)
-        }
-        case e: FormParam => {
+        case e: FormParam =>
           mutable.name = readString(e.value, mutable.name)
           mutable.paramType = readString(TYPE_FORM, mutable.paramType)
-        }
-        case e: CookieParam => {
+        case e: CookieParam =>
           mutable.name = readString(e.value, mutable.name)
           mutable.paramType = readString(TYPE_COOKIE, mutable.paramType)
-        }
-        case e: DefaultValue => {
+        case e: DefaultValue =>
           mutable.defaultValue = Option(readString(e.value))
-        }
         case e: Context => shouldIgnore = true
         case _ =>
       }
@@ -391,19 +408,17 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         mutable.paramType = TYPE_BODY
         mutable.name = TYPE_BODY
       }
-      List(mutable.asParameter)
+      List(mutable.asParameter())
     }
     else List()
   }
 
   def appendOperation(resourcePath: String, operation: Operation, operationsMap: Map[String, List[Operation]]): Map[String, List[Operation]] = {
     operationsMap.get(resourcePath) match {
-      case Some(e) => {
+      case Some(e) =>
         operationsMap - resourcePath + (resourcePath -> e.+:(operation))
-      }
-      case None => {
+      case None =>
         operationsMap + (resourcePath -> List(operation))
-      }
     }
   }
 
@@ -417,16 +432,13 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
    */
   def getPath(clazz: Class[_], method: Method): Option[String] = {
     val fullMethodName = getFullMethodName(clazz, method)
-    routesCache.contains(fullMethodName) match {
-      case true => {
-        val path = routesCache(fullMethodName).path
-        Logger("swagger").debug("PlayApiReader.getPath: str = %s,".format(path))
-        Some(path)
-      }
-      case fale => {
-        Logger warn "Cannot determine Path. Nothing defined in play routes file for api method " + method.toString
-        None
-      }
+    if (routesCache.contains(fullMethodName)) {
+      val path = routesCache(fullMethodName).path
+      Logger("swagger").debug("PlayApiReader.getPath: str = %s,".format(path))
+      Some(path)
+    } else {
+      Logger warn "Cannot determine Path. Nothing defined in play routes file for api method " + method.toString
+      None
     }
   }
 
@@ -445,7 +457,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
       val routeName = {
         // extract the args in parens
         val fullMethod = route._3 match {
-          case x if (x.indexOf("(") > 0) => x.substring(0, x.indexOf("("))
+          case x if x.indexOf("(") > 0 => x.substring(0, x.indexOf("("))
           case _ => route._3
         }
         val idx = fullMethod.lastIndexOf(".")

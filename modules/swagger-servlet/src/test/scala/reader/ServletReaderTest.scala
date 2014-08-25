@@ -9,10 +9,10 @@ import com.wordnik.swagger.servlet.config._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
-class ServletReaderTest extends FlatSpec with ShouldMatchers {
+class ServletReaderTest extends FlatSpec with Matchers {
   it should "read a servlet" in {
     val config = new SwaggerConfig
     config.basePath = "http://localhost:8080/api"

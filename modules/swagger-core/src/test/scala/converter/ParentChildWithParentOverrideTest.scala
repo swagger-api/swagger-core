@@ -12,7 +12,7 @@ import scala.collection.mutable.LinkedHashMap
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import javax.xml.bind.annotation._
 import converter.models.Parent
 import converter.models.Child
@@ -20,7 +20,7 @@ import converter.models.Child
 
 
 @RunWith(classOf[JUnitRunner])
-class ParentChildWithParentOverrideTest extends FlatSpec with ShouldMatchers {    
+class ParentChildWithParentOverrideTest extends FlatSpec with Matchers {    
   it should "Json specified model should have the model of Child" in {
     val converter = new OverrideConverter()
     converter.add(classOf[Parent].getName(), """{"id":"Parent","properties":{"overriddenName":{"type":"string","qualifiedType":"java.lang.String"},"parentName":{"type":"string","qualifiedType":"java.lang.String"},"child":{"type":"Child","qualifiedType":"converter.models.Child"}}}""")

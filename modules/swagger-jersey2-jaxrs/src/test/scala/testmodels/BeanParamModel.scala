@@ -1,6 +1,7 @@
 package testmodels
 
 import com.wordnik.swagger.annotations.ApiParam
+
 import javax.ws.rs.QueryParam
 import java.util.Date
 

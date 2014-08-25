@@ -13,16 +13,16 @@ import com.wordnik.swagger.model._
 import org.joda.time.DateTime
 
 import scala.collection.mutable.LinkedHashMap
-import scala.annotation.target.field
+import scala.annotation.meta.field
 import scala.beans.BeanProperty
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
-class CustomConverterTest extends FlatSpec with ShouldMatchers {
+class CustomConverterTest extends FlatSpec with Matchers {
   it should "ignore properties with type Bar" in {
     // add the custom converter
     val customConverter = new CustomConverter

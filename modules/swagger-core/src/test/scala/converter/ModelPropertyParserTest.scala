@@ -13,16 +13,17 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.beans.BeanProperty
 
 @RunWith(classOf[JUnitRunner])
-class ModelPropertyParserTest extends FlatSpec with ShouldMatchers {
+class ModelPropertyParserTest extends FlatSpec with Matchers {
 
   it should "extract a string list" in {
     val cls = classOf[List[String]]
     implicit val properties = new scala.collection.mutable.LinkedHashMap[String, ModelProperty]
+    implicit val dynamicProperties = new scala.collection.mutable.LinkedHashMap[String, DynamicModelProperty]
     val parser = new ModelPropertyParser(cls)
     parser.parse
   }
@@ -30,6 +31,7 @@ class ModelPropertyParserTest extends FlatSpec with ShouldMatchers {
   it should "extract enum values from fields" in {
     val cls = classOf[ModelWithEnumField]
     implicit val properties = new scala.collection.mutable.LinkedHashMap[String, ModelProperty]
+    implicit val dynamicProperties = new scala.collection.mutable.LinkedHashMap[String, DynamicModelProperty]
     val parser = new ModelPropertyParser(cls)
     parser.parse
     val result = properties.get("enumValue").get.allowableValues
@@ -40,6 +42,7 @@ class ModelPropertyParserTest extends FlatSpec with ShouldMatchers {
   it should "extract enum values from method return types" in {
     val cls = classOf[ModelWithEnumProperty]
     implicit val properties = new scala.collection.mutable.LinkedHashMap[String, ModelProperty]
+    implicit val dynamicProperties = new scala.collection.mutable.LinkedHashMap[String, DynamicModelProperty]
     val parser = new ModelPropertyParser(cls)
     parser.parse
     val result = properties.get("enumValue").get.allowableValues

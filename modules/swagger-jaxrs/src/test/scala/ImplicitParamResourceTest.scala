@@ -13,12 +13,12 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.mutable.ListBuffer
 
 @RunWith(classOf[JUnitRunner])
-class ImplicitParamResourceTest extends FlatSpec with ShouldMatchers {
+class ImplicitParamResourceTest extends FlatSpec with Matchers {
   it should "read implicit params" in {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()

@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>com.wordnik</groupId>
-    <artifactId>swagger-project_2.10</artifactId>
-    <version>1.3.7</version>
+    <artifactId>swagger-project_2.11</artifactId>
+    <version>1.3.8-CD-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-core_2.10</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>swagger-core_2.11</artifactId>
+  <packaging>bundle</packaging>
   <name>swagger-core</name>
-  <version>1.3.7</version>
+  <version>1.3.8-CD-SNAPSHOT</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <defaultGoal>install</defaultGoal>
@@ -27,6 +27,31 @@
         <directory>src/test/resources</directory>
       </testResource>
     </testResources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>
+              com.wordnik.swagger.converter,
+              com.wordnik.swagger.core,
+              com.wordnik.swagger.core.util,
+              com.wordnik.swagger.reader,
+              com.wordnik.swagger.config,
+              com.wordnik.swagger.model
+            </Export-Package>
+            <Import-Package>
+              org.json4s.jackson,
+              *
+            </Import-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+
   </build>
   <dependencies>
     <dependency>
@@ -36,7 +61,7 @@
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.10</artifactId>
+      <artifactId>scalatest_2.11</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -50,7 +75,7 @@
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-scala_2.10</artifactId>
+      <artifactId>jackson-module-scala_2.11</artifactId>
       <version>${jackson-scala-version}</version>
       <scope>compile</scope>
     </dependency>
@@ -63,13 +88,13 @@
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
       <artifactId>jackson-module-jsonSchema</artifactId>
-      <version>2.1.0</version>
+      <version>${jackson-version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.jaxrs</groupId>
       <artifactId>jackson-jaxrs-json-provider</artifactId>
-      <version>2.0.0</version>
+      <version>${jackson-version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -79,19 +104,19 @@
     </dependency>
     <dependency>
       <groupId>org.json4s</groupId>
-      <artifactId>json4s-ext_2.10</artifactId>
+      <artifactId>json4s-ext_2.11</artifactId>
       <version>${json4s-version}</version>
       <scope>compile</scope>
     </dependency> 
     <dependency>
       <groupId>org.json4s</groupId>
-      <artifactId>json4s-native_2.10</artifactId>
+      <artifactId>json4s-native_2.11</artifactId>
       <version>${json4s-version}</version>
       <scope>compile</scope>
     </dependency>    
     <dependency>
       <groupId>org.json4s</groupId>
-      <artifactId>json4s-jackson_2.10</artifactId>
+      <artifactId>json4s-jackson_2.11</artifactId>
       <version>${json4s-version}</version>
       <scope>compile</scope>
     </dependency>

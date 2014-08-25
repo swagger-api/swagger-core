@@ -1,29 +1,37 @@
 import sbt._
 import Keys._
-import play.Project._
+import play.Play.autoImport._
+import play.PlayScala
+import PlayKeys._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2-utils"
-  val appVersion = "1.3.7"
+  val appVersion = "1.3.8-CD-SNAPSHOT"
+
+  scalaVersion := "2.11.1"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
-    "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" % "swagger-core_2.10" % "1.3.7",
-    "com.wordnik" % "common-utils_2.10.0" % "1.1.5",
-    "javax.ws.rs" % "jsr311-api" % "1.1.1")
+    "org.slf4j"   %  "slf4j-api"    % "1.6.4",
+    "com.wordnik" %% "swagger-core" % "1.3.8-CD-SNAPSHOT",
+    "com.wordnik" %% "common-utils" % "1.3.0-SNAPSHOT",
+    "javax.ws.rs" %  "jsr311-api"   % "1.1.1")
 
-  val main = play.Project(appName, appVersion, appDependencies).settings(
+  val main = Project(appName, file(".")).enablePlugins(PlayScala).settings(
+    crossScalaVersions := Seq("2.10.4", "2.11.1"),
+    scalaVersion := "2.11.1",
+    version := appVersion,
+    libraryDependencies ++= appDependencies,
     publishTo <<= version { (v: String) =>
-      val nexus = "https://oss.sonatype.org/"
+      val nexus = "http://is-macmini1.cdlocal:8081/nexus/content/repositories/"
       if (v.trim.endsWith("SNAPSHOT"))
-        Some("snapshots" at nexus + "content/repositories/snapshots")
+        Some("snapshots" at nexus + "snapshots")
       else
-        Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+        Some("releases"  at nexus + "releases")
     },
     publishArtifact in Test := false,
     publishMavenStyle := true,
     pomIncludeRepository := { x => false },
-    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
+    credentials += Credentials("Sonatype Nexus Repository Manager", "is-macmini1.cdlocal", "admin", "admin123"),
     organization := "com.wordnik",
     pomExtra := (
   <url>http://swagger.wordnik.com</url>
@@ -52,6 +60,7 @@ object ApplicationBuild extends Build {
   </developers>)
     ,
     resolvers := Seq(
+      "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
       "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
       "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases",
       "java-net" at "http://download.java.net/maven/2",

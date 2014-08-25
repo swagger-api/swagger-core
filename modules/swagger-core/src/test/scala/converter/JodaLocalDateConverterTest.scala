@@ -7,12 +7,12 @@ import org.joda.time.LocalDate
 import org.junit.runner.RunWith
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.annotation.meta.field
 
 @RunWith(classOf[JUnitRunner])
-class JodaLocalDateConverterTest extends FlatSpec with ShouldMatchers {
+class JodaLocalDateConverterTest extends FlatSpec with Matchers {
   it should "read a generic model" in {
     val models = ModelConverters.readAll(classOf[ModelWithJodaLocalDate])
     models.size should be(1)
