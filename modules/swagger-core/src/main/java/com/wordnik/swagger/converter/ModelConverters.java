@@ -15,6 +15,7 @@ public class ModelConverters {
   public static Property readAsProperty(Class cls) {
     try {
       Property property = new ModelResolver(mapper).resolveProperty(cls);
+      return property;
     }
     catch (Exception e) {
       e.printStackTrace();
