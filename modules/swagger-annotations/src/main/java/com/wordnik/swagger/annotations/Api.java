@@ -109,4 +109,9 @@ public @interface Api {
      * @see Authorization
      */
     Authorization[] authorizations() default @Authorization("");
+
+    /**
+     * Hides the api.
+     */
+    boolean hidden() default false;
 }
