@@ -22,34 +22,72 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Represents a single parameter in an Api Operation.  A parameter is an input
- * to the operation
+ * Adds additional meta-data for operation parameters.
+ * <p/>
+ * This annotation can be used only in combination of JAX-RS 1.x/2.x annotations.
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiParam {
-  /** Name of the parameter */
-  String name() default "";
+    /**
+     * The parameter name.
+     * <p/>
+     * The name of the parameter will be derived from the field/method/parameter name,
+     * however you can override it.
+     * <p/>
+     * Body parameters will always be named "body". Path parameters will always be named
+     * as the path section they represent.
+     */
+    String name() default "";
 
-  /** Description of the parameter */
-  String value() default "";
+    /**
+     * A brief description of the parameter.
+     */
+    String value() default "";
 
-  /** Default value  - if e.g. no JAX-RS @DefaultValue is given */
-  String defaultValue() default "";
+    /**
+     * Describes the default value for the parameter.
+     * <p/>
+     * If the parameter is annotated with JAX-RS's {@code @DefaultValue}, that value would
+     * be used, but can be overridden by setting this property.
+     */
+    String defaultValue() default "";
 
-  /** Description of values this endpoint accepts */
-  String allowableValues() default "";
+    /**
+     * Limits the acceptable values for this parameter.
+     * <p/>
+     * If the original parameter type is an enum, the values of the enum would be translated to
+     * the allowableValues. Those can be overridden by setting this property.
+     * <p/>
+     * There are three ways to describe the allowable values:
+     * <ol>
+     * <li>To set a list of values, provide a comma-separated list surrounded by square brackets.
+     * For example: {@code [first, second, third]}.</li>
+     * <li>To set a range of values, start the value with "range", and surrounding by square
+     * brackets include the minimum and maximum values. For example: {@code range[1, 5]}.</li>
+     * <li>To set a minimum/maximum value, use the same format for range but use "infinity"
+     * or "-infinity" as the second value. For example, {@code range[1, infinity]} means the
+     * minimum allowable value of this parameter is 1.</li>
+     * </ol>
+     */
+    String allowableValues() default "";
 
-  /** specifies if the parameter is required or not */
-  boolean required() default false;
+    /**
+     * Specifies if the parameter is required or not.
+     * <p/>
+     * Path parameters will always be set as required, whether you set this property or not.
+     */
+    boolean required() default false;
 
-  /** 
-   * specify an optional access value for filtering in a Filter 
-   * implementation.  This
-   * allows you to hide certain parameters if a user doesn't have access to them
-   */
-  String access() default "";
+    /**
+     * Allows for filtering a parameter from the API documentation.
+     *
+     * @see com.wordnik.swagger.core.filter.SwaggerSpecFilter
+     */
+    String access() default "";
 
-  /** specifies whether or not the parameter can have multiple values provided */
-  boolean allowMultiple() default false;
+    /**
+     * Specifies whether the parameter can accept multiple comma-separated values.
+     */
+    boolean allowMultiple() default false;
 }
