@@ -155,7 +155,7 @@ trait ModelConverter {
   def toDescriptionOpt(cls: Class[_]): Option[String]
 
   def ignoredPackages: Set[String] = Set("java.lang")
-  def ignoredClasses: Set[String] = Set("java.util.Date")
+  def ignoredClasses: Set[String] = Set("java.util.Date", "java.math.BigDecimal")
 
   def typeMap = Map[String, String]()
 
