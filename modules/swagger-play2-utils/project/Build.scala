@@ -6,14 +6,14 @@ import PlayKeys._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2-utils"
-  val appVersion = "1.3.8-SNAPSHOT"
+  val appVersion = "1.3.8"
 
   scalaVersion := "2.11.1"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     "org.slf4j"   %  "slf4j-api"    % "1.6.4",
-    "com.wordnik" %% "swagger-core" % "1.3.8-SNAPSHOT",
-    "com.wordnik" %% "common-utils" % "1.3.0-SNAPSHOT",
+    "com.wordnik" %% "swagger-core" % "1.3.8",
+    "com.wordnik" %% "common-utils" % "1.3.0",
     "javax.ws.rs" %  "jsr311-api"   % "1.1.1")
 
   val main = Project(appName, file(".")).enablePlugins(PlayScala).settings(
