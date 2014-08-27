@@ -9,10 +9,10 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
-class CaseClassConverterTest extends FlatSpec with ShouldMatchers {
+class CaseClassConverterTest extends FlatSpec with Matchers {
   it should "read a simple case class" in {
     val model = ModelConverters.read(classOf[SimpleCaseClass]).getOrElse(fail("no model found"))
     model.qualifiedType should be ("converter.SimpleCaseClass")

@@ -101,18 +101,20 @@ object SwaggerSerializers extends Serializers {
 
   def toJsonSchema(name: String, `type`: String): JObject = {
     `type` match {
-      case "int"       => (name -> "integer") ~ ("format" -> "int32")
-      case "long"      => (name -> "integer") ~ ("format" -> "int64")
-      case "float"     => (name -> "number")  ~ ("format" -> "float")
-      case "double"    => (name -> "number")  ~ ("format" -> "double")
-      case "string"    => (name -> "string")  ~ ("format" -> JNothing)
-      case "byte"      => (name -> "string")  ~ ("format" -> "byte")
-      case "boolean"   => (name -> "boolean") ~ ("format" -> JNothing)
-      case "Date"      => (name -> "string")  ~ ("format" -> "date-time")
-      case "DateTime"  => (name -> "string")  ~ ("format" -> "date-time")
-      case "date"      => (name -> "string")  ~ ("format" -> "date")
-      case "date-time" => (name -> "string")  ~ ("format" -> "date-time")
-      case _           => {
+      case "int"        => (name -> "integer") ~ ("format" -> "int32")
+      case "long"       => (name -> "integer") ~ ("format" -> "int64")
+      case "float"      => (name -> "number")  ~ ("format" -> "float")
+      case "double"     => (name -> "number")  ~ ("format" -> "double")
+      case "string"     => (name -> "string")  ~ ("format" -> JNothing)
+      case "byte"       => (name -> "string")  ~ ("format" -> "byte")
+      case "boolean"    => (name -> "boolean") ~ ("format" -> JNothing)
+      case "Date"       => (name -> "string")  ~ ("format" -> "date-time")
+      case "DateTime"   => (name -> "string")  ~ ("format" -> "date-time")
+      case "BigDecimal" => (name -> "number")
+      case "UUID"       => (name -> "string")  ~ ("format" -> "uuid")
+      case "date"       => (name -> "string")  ~ ("format" -> "date")
+      case "date-time"  => (name -> "string")  ~ ("format" -> "date-time")
+      case _            => {
         val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-]*)\\].*".r
         `type` match {
           case ComplexTypeMatcher(container, value) => 
@@ -162,7 +164,9 @@ object SwaggerSerializers extends Serializers {
       case ("integer", "int64") => "long"
       case ("number", "float") => "float"
       case ("number", "double") => "double"
+      case ("number", _) => "bigDecimal"
       case ("string", "byte") => "byte"
+      case ("string", "uuid") => "uuid"
       case ("boolean", _) => "boolean"
       case ("string", "date") => "date"
       case ("string", "date-time") => "date-time"
@@ -236,19 +240,10 @@ object SwaggerSerializers extends Serializers {
       ("authorizations" -> {
         x.authorizations match {
           case e: List[Authorization] if (e.size > 0) => {
-            var open = false
-            val o = ((for(at <- e) yield {
-              if(at.`type` == "open") {
-                open = true
-                None
-              }
-              else if(at.`type` != "")
-                Some(at.`type`, at)
-              else
-                None
+            Extraction.decompose((for(at: Authorization <- e) yield {
+              if(at.`type` != "") Some(at.`type`, at)
+              else None
             }).flatten.toMap)
-            if(o.size > 0 || open) Extraction.decompose(o)
-            else JNothing
           }
           case _ => JNothing
         }
@@ -497,9 +492,9 @@ trait Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[AuthorizationType] if (e.size > 0) => {
-            Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") Some(at.getName, at)
+          case e: List[Authorization] if (e.size > 0) => {
+            Extraction.decompose((for(at: Authorization <- e) yield {
+              if(at.`type` != "") Some(at.`type`, at)
               else None
             }).flatten.toMap)
           }
@@ -557,8 +552,8 @@ trait Serializers {
       ("authorizations" -> {
         x.authorizations match {
           case e: List[AuthorizationType] if (e.size > 0) => {
-            Extraction.decompose((for(at <- e) yield {
-              if(at.`type` != "") Some(at.getName, at)
+            Extraction.decompose((for(at: AuthorizationType <- e) yield {
+              if(at.`type` != "") Some(at.`type`, at)
               else None
             }).flatten.toMap)
           }
@@ -748,13 +743,14 @@ trait Serializers {
       }) ~
       ("authorizations" -> {
         x.authorizations match {
-          case e: List[AuthorizationType] if (e.size > 0) => {
-            Extraction.decompose((for(at <- e) yield {
-              if(at.getName != "") {
-                Some(at.getName, at)
-              }
-              else None
-            }).flatten.toMap)
+          case e: List[Authorization] if (e.size > 0) => {
+            val out = (for(at: Authorization <- e) yield {
+                if(at.`type` != "") {
+                  Some(at.`type`, at)
+                }
+                else None
+              }).flatten.toMap
+            Extraction.decompose(out)
           }
           case _ => JNothing
         }
@@ -937,7 +933,7 @@ trait Serializers {
 
   class AuthorizationTypeSerializer extends CustomSerializer[AuthorizationType](formats => ({
     case json =>
-      implicit val fmts = formats
+      implicit val fmts: Formats = formats
       json \ "type" match {
         case JString(x) if x.equalsIgnoreCase("oauth2") => {
           OAuth((json \ "scopes").extractOrElse(List()), 
@@ -979,7 +975,7 @@ trait Serializers {
     }, {
       case x: Authorization => 
         implicit val fmts = formats
-        Extraction.decompose(x.scopes.filter(_.scope != ""))
+        Extraction.decompose(x.scopes)
     }
   ))
 

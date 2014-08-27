@@ -8,12 +8,12 @@ import com.wordnik.swagger.model._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.beans.BeanProperty
 
 @RunWith(classOf[JUnitRunner])
-class XmlElementNameTest extends FlatSpec with ShouldMatchers {
+class XmlElementNameTest extends FlatSpec with Matchers {
   it should "honor XML Element Name" in {
     val models = ModelConverters.readAll(classOf[EB])
     models.size should be (1)
