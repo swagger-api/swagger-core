@@ -240,10 +240,21 @@ object SwaggerSerializers extends Serializers {
       ("authorizations" -> {
         x.authorizations match {
           case e: List[Authorization] if (e.size > 0) => {
-            Extraction.decompose((for(at: Authorization <- e) yield {
-              if(at.`type` != "") Some(at.`type`, at)
-              else None
-            }).flatten.toMap)
+            Extraction.decompose({
+              var open = false
+              val o = ((for(at <- e) yield {
+                if(at.`type` == "open") {
+                  open = true
+                  None
+                }
+                else if(at.`type` != ""){
+                  val out: Option[Tuple2[String, Authorization]] = Some(at.`type`, at)
+                  out
+                }
+                else
+                  None
+              }).flatten.toMap)
+            })
           }
           case _ => JNothing
         }
