@@ -116,7 +116,8 @@ class JerseyApiReader extends JaxrsApiReader {
         ApiDescription(
           addLeadingSlash(endpoint),
           None,
-          orderedOperations.toList)
+          orderedOperations.toList,
+          api.hidden)
       }).toList
       val models = ModelUtil.modelsFromApis(apis)
       val basePath = {
