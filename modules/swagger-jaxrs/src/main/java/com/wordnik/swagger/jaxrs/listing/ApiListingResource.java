@@ -1,5 +1,7 @@
 package com.wordnik.swagger.jaxrs.listing;
 
+import com.wordnik.swagger.util.Yaml;
+import com.wordnik.swagger.util.Json;
 import com.wordnik.swagger.models.Swagger;
 import com.wordnik.swagger.jaxrs.config.*;
 import com.wordnik.swagger.jaxrs.Reader;
@@ -59,8 +61,26 @@ public class ApiListingResource {
     @Context HttpHeaders headers,
     @Context UriInfo uriInfo) {
     Swagger swagger = (Swagger) context.getAttribute("swagger");
-    if(swagger != null) {
-      return Response.ok().entity(swagger).build();
+    if(!initialized) 
+      scan(app, sc);
+    try{
+      if(swagger != null) {
+        String yaml = Yaml.mapper().writeValueAsString(swagger);
+        String[] parts = yaml.split("\n");
+        StringBuilder b = new StringBuilder();
+        for(String part : parts) {
+          int pos = part.indexOf("!<");
+          if(pos >= 0)
+            b.append(part.substring(0, pos));
+          else
+            b.append(part);
+          b.append("\n");
+        }
+        return Response.ok().entity(b.toString()).type("text/plain").build();
+      }
+    }
+    catch (Exception e) {
+      e.printStackTrace();
     }
     return Response.status(404).build();
   }

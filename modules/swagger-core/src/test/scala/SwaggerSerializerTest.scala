@@ -82,6 +82,9 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
 
     swagger.path("/pets", new Path().get(get).post(post))
 
-    // println(Json.pretty().writeValueAsString(swagger))
+    val swaggerJson = Json.mapper().writeValueAsString(swagger)
+    Json.prettyPrint(swagger)
+    val rebuilt = Json.mapper().readValue(swaggerJson, classOf[Swagger])
+    Json.prettyPrint(rebuilt)
   }
 }

@@ -161,27 +161,27 @@ public class Reader {
     else {
       // pick out response from method declaration
       responseClass = method.getReturnType();
-      if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
-        if(isPrimitive(responseClass)) {
-          Property property = ModelConverters.readAsProperty(responseClass);
-          if(property != null) {
-            operation.response(200, new Response()
-              .description("successful operation")
-              .schema(property));
-          }
+    }
+    if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
+      if(isPrimitive(responseClass)) {
+        Property property = ModelConverters.readAsProperty(responseClass);
+        if(property != null) {
+          operation.response(200, new Response()
+            .description("successful operation")
+            .schema(property));
         }
-        else {
-          Map<String, Model> models = ModelConverters.read(responseClass);
-          for(String key: models.keySet()) {
-            operation.response(200, new Response()
-              .description("successful operation")
-              .schema(new RefProperty().asDefault(key)));
-            swagger.model(key, models.get(key));
-          }
-          models = ModelConverters.readAll(responseClass);
-          for(String key: models.keySet()) {
-            swagger.model(key, models.get(key));
-          }
+      }
+      else {
+        Map<String, Model> models = ModelConverters.read(responseClass);
+        for(String key: models.keySet()) {
+          operation.response(200, new Response()
+            .description("successful operation")
+            .schema(new RefProperty().asDefault(key)));
+          swagger.model(key, models.get(key));
+        }
+        models = ModelConverters.readAll(responseClass);
+        for(String key: models.keySet()) {
+          swagger.model(key, models.get(key));
         }
       }
     }
