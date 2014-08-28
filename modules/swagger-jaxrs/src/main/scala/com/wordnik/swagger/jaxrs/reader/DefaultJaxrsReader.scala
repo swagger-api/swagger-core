@@ -90,7 +90,8 @@ class DefaultJaxrsApiReader extends JaxrsApiReader {
         ApiDescription(
           addLeadingSlash(endpoint),
           None,
-          orderedOperations.toList)
+          orderedOperations.toList,
+          hidden = api.hidden)
       }).toList
 
       val basePath = {

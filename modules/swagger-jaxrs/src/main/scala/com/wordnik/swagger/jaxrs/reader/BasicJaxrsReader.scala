@@ -27,9 +27,13 @@ class BasicJaxrsReader extends JaxrsApiReader {
     parentMethods: ListBuffer[Method]): Option[ApiListing] = {
     val api = cls.getAnnotation(classOf[Api])
     val pathAnnotation = cls.getAnnotation(classOf[Path])
+    var hidden = false
 
     val r = Option(api) match {
-      case Some(api) => api.value
+      case Some(api) => {
+        hidden = api.hidden
+        api.value
+      }
       case None => Option(pathAnnotation) match {
         case Some(p) => p.value
         case None => null
@@ -108,7 +112,8 @@ class BasicJaxrsReader extends JaxrsApiReader {
         ApiDescription(
           addLeadingSlash(endpoint),
           None,
-          orderedOperations.toList)
+          orderedOperations.toList,
+          hidden)
       }).toList
       val models = ModelUtil.modelsFromApis(apis)
       Some(ApiListing (
