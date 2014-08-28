@@ -32,13 +32,11 @@
         log("Loaded SwaggerUI");
 
         if(typeof initOAuth == "function") {
-          /*
           initOAuth({
             clientId: "your-client-id",
             realm: "your-realms",
             appName: "your-app-name"
           });
-          */
         }
         $('pre code').each(function(i, e) {
           hljs.highlightBlock(e)
@@ -47,7 +45,8 @@
       onFailure: function(data) {
         log("Unable to Load SwaggerUI");
       },
-      docExpansion: "none"
+      docExpansion: "none",
+      sorter : "alpha"
     });
 
     $('#input_apiKey').change(function() {
