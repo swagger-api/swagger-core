@@ -23,7 +23,7 @@ GET     /pet/:id                @controllers.PetApiController.getPetById(id)
 
 GET     /api-docs/store         controllers.ApiHelpController.getResource(path = "/store")
 POST    /store/order            controllers.StoreApiController.placeOrder
-GET     /store/order            controllers.StoreApiController.getOrders(isComplete:Boolean)
+GET     /store/order            controllers.StoreApiController.getOrders(isComplete: Boolean)
 GET     /store/order/:orderId   controllers.StoreApiController.getOrderById(orderId)
 DELETE  /store/order/:orderId   controllers.StoreApiController.deleteOrder(orderId)
 

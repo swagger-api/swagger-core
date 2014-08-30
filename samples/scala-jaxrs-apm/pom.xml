@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.10</artifactId>
-    <version>1.3.8</version>
+    <version>1.3.9-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-scala-apm-sample-app_2.10</artifactId>
   <packaging>war</packaging>
   <name>swagger-scala-sample-apm-app</name>
-  <version>1.3.8</version>
+  <version>1.3.9-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>

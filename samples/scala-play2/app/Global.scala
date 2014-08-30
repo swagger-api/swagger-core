@@ -5,6 +5,26 @@ import com.wordnik.swagger.model._
 
 
 object Global extends GlobalSettings {
+  val oauth = OAuth(
+    List(
+      AuthorizationScope("write:pets", "Modify pets in your account"),
+      AuthorizationScope("read:pets", "Read your pets")),
+    List(
+      ImplicitGrant(
+        LoginEndpoint("http://petstore.swagger.wordnik.com/oauth/dialog"),
+        "access_token"
+      ),
+      AuthorizationCodeGrant(
+        TokenRequestEndpoint("http://petstore.swagger.wordnik.com/oauth/requestToken",
+          "client_id",
+          "client_secret"),
+        TokenEndpoint("http://petstore.swagger.wordnik.com/oauth/token",
+          "auth_code"
+        )
+    )
+  ))
+  ConfigFactory.config.authorizations = List(oauth)
+
   val info = ApiInfo(
     title = "Swagger Sample App",
     description = """This is a sample server Petstore server.  You can find out more about Swagger 

@@ -6,7 +6,7 @@ import PlayKeys._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2"
-  val appVersion = "1.3.8"
+  val appVersion = "1.3.9-SNAPSHOT"
 
   checksums in update := Nil
 
@@ -14,7 +14,7 @@ object ApplicationBuild extends Build {
 
   val appDependencies = Seq(
     "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" %% "swagger-jaxrs" % "1.3.8",
+    "com.wordnik" %% "swagger-jaxrs" % "1.3.9-SNAPSHOT",
     "javax.ws.rs" % "jsr311-api" % "1.1.1",
     "org.mockito" % "mockito-core" % "1.9.5" % "test")
 
