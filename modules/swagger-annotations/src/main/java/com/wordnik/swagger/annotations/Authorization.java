@@ -16,10 +16,7 @@
 
 package com.wordnik.swagger.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Declares an authorization scheme to be used on a resource or an operation.
@@ -35,6 +32,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 public @interface Authorization {
     /**
      * The name of the authorization scheme to be used on this resource/operation.
