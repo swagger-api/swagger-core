@@ -145,10 +145,11 @@ class SwaggerBaseApiController extends Controller {
       ref =>
         Logger("swagger").debug("reference: %s".format(ref.toString))
     }
-    ResourceListing(ConfigFactory.config.getApiVersion, 
+    ResourceListing(
+      ConfigFactory.config.getApiVersion, 
       ConfigFactory.config.getSwaggerVersion,
       references,
-      List(),
+      ConfigFactory.config.authorizations,
       ConfigFactory.config.info
     )
   }
