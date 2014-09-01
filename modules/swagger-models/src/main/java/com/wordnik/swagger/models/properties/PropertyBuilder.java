@@ -4,6 +4,7 @@ import java.util.*;
 
 public class PropertyBuilder {
   public static Property build(String type, String format, Map<String, Object> args) {
+    List<String> _enum = (List<String>) args.get("enum");
     String title = (String)args.get("title");
     String description = (String)args.get("description");
     String _default = (String)args.get("default");
@@ -58,7 +59,8 @@ public class PropertyBuilder {
       property = new StringProperty()
         .minLength(minLength)
         .maxLength(maxLength)
-        .pattern(pattern);
+        .pattern(pattern)
+        ._enum(_enum);
 
     // general properties
     if(property != null) {

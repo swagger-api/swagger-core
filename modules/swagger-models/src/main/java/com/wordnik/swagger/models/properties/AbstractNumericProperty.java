@@ -1,7 +1,7 @@
 package com.wordnik.swagger.models.properties;
 
 
-abstract class AbstractNumericProperty extends AbstractProperty implements Property {
+public abstract class AbstractNumericProperty extends AbstractProperty implements Property {
   protected Double minimum = null, maximum = null, exclusiveMinimum = null, exclusiveMaximum = null;
 
   public AbstractNumericProperty minimum(Double minimum) {

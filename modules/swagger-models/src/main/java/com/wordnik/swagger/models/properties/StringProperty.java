@@ -1,6 +1,9 @@
 package com.wordnik.swagger.models.properties;
 
+import java.util.*;
+
 public class StringProperty extends AbstractProperty implements Property {
+  protected List<String> _enum;
   protected Integer minLength = null, maxLength = null;
   protected String pattern = null;
 
@@ -19,6 +22,24 @@ public class StringProperty extends AbstractProperty implements Property {
   public StringProperty pattern(String pattern) {
     this.setPattern(pattern);
     return this;
+  }
+  public StringProperty _enum(String value) {
+    if(this._enum == null)
+      this._enum = new ArrayList<String>();
+    if(!_enum.contains(value))
+      _enum.add(value);
+    return this;
+  }
+  public StringProperty _enum(List<String> value) {
+    this._enum = value;
+    return this;
+  }
+
+  public List<String> getEnum() {
+    return _enum;
+  }
+  public void setEnum(List<String> _enum) {
+    this._enum = _enum;
   }
 
   public Integer getMinLength() {
