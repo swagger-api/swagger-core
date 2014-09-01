@@ -172,4 +172,17 @@ class PropertySerializationTest extends FlatSpec with Matchers {
     p.getClass should be (classOf[StringProperty])
     m.writeValueAsString(p) should equal (json)
   }
+
+  it should "serialize a string array property" in {
+    val p = new ArrayProperty().items(new StringProperty())
+    m.writeValueAsString(p) should equal ("""{"type":"array","items":{"type":"string"}}""")
+  }
+
+  it should "deserialize a string array property" in {
+    val json = """{"type":"array","items":{"type":"string"}}"""
+    val p = m.readValue(json, classOf[Property])
+    p.getType should be ("array")
+    p.getClass should be (classOf[ArrayProperty])
+    m.writeValueAsString(p) should equal (json)
+  }
 }
