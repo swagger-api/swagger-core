@@ -7,6 +7,8 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import scala.collection.JavaConverters._
+
 @RunWith(classOf[JUnitRunner])
 class PropertySerializationTest extends FlatSpec with Matchers {
   val m = Json.mapper()
@@ -169,6 +171,22 @@ class PropertySerializationTest extends FlatSpec with Matchers {
     val json = """{"type":"string"}"""
     val p = m.readValue(json, classOf[Property])
     p.getType should be ("string")
+    p.getClass should be (classOf[StringProperty])
+    m.writeValueAsString(p) should equal (json)
+  }
+
+  it should "serialize a StringProperty with enums" in {
+    val p = new StringProperty()._enum("a")._enum("b")
+    m.writeValueAsString(p) should be ("""{"type":"string","enum":["a","b"]}""")
+  }
+
+  it should "deserialize a StringProperty with enums" in {
+    val json = """{"type":"string","enum":["a","b"]}"""
+    val p = m.readValue(json, classOf[Property])
+    p.getType should be ("string")
+    val _enum = (p.asInstanceOf[StringProperty]).getEnum
+    _enum should not be (null)
+    _enum.asScala.toSet should equal (Set("a", "b"))
     p.getClass should be (classOf[StringProperty])
     m.writeValueAsString(p) should equal (json)
   }
