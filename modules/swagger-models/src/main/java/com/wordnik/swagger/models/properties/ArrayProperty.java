@@ -10,6 +10,11 @@ public class ArrayProperty extends AbstractProperty implements Property {
     setItems(items);
   }
 
+  public ArrayProperty description(String description) {
+    this.setDescription(description);
+    return this;
+  }
+
   public ArrayProperty items(Property items) {
     setItems(items);
     return this;

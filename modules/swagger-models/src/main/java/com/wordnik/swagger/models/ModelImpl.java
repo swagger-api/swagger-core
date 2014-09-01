@@ -2,7 +2,7 @@ package com.wordnik.swagger.models;
 
 import com.wordnik.swagger.models.properties.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.*;
@@ -70,11 +70,25 @@ public class ModelImpl implements Model {
   }
   public void setEnum(List<String> _enum) {
     this._enum = _enum;
+    for(String s : _enum) {
+      if(properties != null) {
+        Property p = properties.get(s);
+        if(p != null) {
+          p.setRequired(true);
+        }
+      }
+    }
   }
 
   public void addProperty(String key, Property property) {
     if(properties == null)
       properties = new LinkedHashMap<String, Property>();
+    if(_enum != null) {
+      for(String ek : _enum) {
+        if(key.equals(ek))
+          property.setRequired(true);
+      }
+    }
     properties.put(key, property);    
   }
 
@@ -82,6 +96,8 @@ public class ModelImpl implements Model {
     return properties;
   }
   public void setProperties(Map<String, Property> properties) {
-    this.properties = properties;
+    for(String key: properties.keySet()) {
+      this.addProperty(key, properties.get(key));
+    }
   }
 }

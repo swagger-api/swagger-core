@@ -16,6 +16,11 @@ public class MapProperty extends AbstractProperty implements Property {
     return this;
   }
 
+  public MapProperty description(String description) {
+    this.setDescription(description);
+    return this;
+  }
+
   public Property getAdditionalProperties() {
     return property;
   }

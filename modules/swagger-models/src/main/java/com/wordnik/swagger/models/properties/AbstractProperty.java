@@ -1,8 +1,6 @@
 package com.wordnik.swagger.models.properties;
 
-import java.util.Map;
-
-public abstract class AbstractProperty {
+public abstract class AbstractProperty implements Property {
   String name;
   String type;
   String format;
@@ -10,6 +8,17 @@ public abstract class AbstractProperty {
   Xml xml;
   boolean required;
   Integer position;
+  String description;
+  String title;
+
+  public Property title(String title) {
+    this.setTitle(title);
+    return this;
+  }
+  public Property description(String description) {
+    this.setDescription(description);
+    return this;
+  }
 
   public String getExample() {
     return example;
@@ -58,5 +67,19 @@ public abstract class AbstractProperty {
   }
   public void setRequired(boolean required) {
     this.required = required;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+  public void setDescription(String description) {
+    this.description = description;
   }
 }

@@ -1,8 +1,45 @@
 package com.wordnik.swagger.models.properties;
 
 public class StringProperty extends AbstractProperty implements Property {
+  protected Integer minLength = null, maxLength = null;
+  protected String pattern = null;
+
   public StringProperty() {
     super.type = "string";
+  }
+
+  public StringProperty minLength(Integer minLength) {
+    this.setMinLength(minLength);
+    return this;
+  }
+  public StringProperty maxLength(Integer maxLength) {
+    this.setMaxLength(maxLength);
+    return this;
+  }
+  public StringProperty pattern(String pattern) {
+    this.setPattern(pattern);
+    return this;
+  }
+
+  public Integer getMinLength() {
+    return minLength;
+  }
+  public void setMinLength(Integer minLength) {
+    this.minLength = minLength;
+  }
+
+  public Integer getMaxLength() {
+    return maxLength;
+  }
+  public void setMaxLength(Integer maxLength) {
+    this.maxLength = maxLength;
+  }
+
+  public String getPattern() {
+    return pattern;
+  }
+  public void setPattern(String pattern) {
+    this.pattern = pattern;
   }
 
   public static boolean isType(String type, String format) {

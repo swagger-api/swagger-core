@@ -18,6 +18,10 @@ public class RefProperty extends AbstractProperty implements Property {
     this.set$ref("#/definitions/" + ref);
     return this;
   }
+  public RefProperty description(String description) {
+    this.setDescription(description);
+    return this;
+  }
 
   @Override
   @JsonIgnore
