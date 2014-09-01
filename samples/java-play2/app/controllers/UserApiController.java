@@ -22,7 +22,7 @@ public class UserApiController extends BaseApiController {
 
     static UserData userData = new UserData();
 
-    @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.", httpMethod = "POST")
+    @ApiOperation(nickname = "createUser", value = "Create user", notes = "This can only be done by the logged in user.", httpMethod = "POST")
     @ApiImplicitParams(@ApiImplicitParam(name = "body", value = "Created user object", required = true, dataType = "User", paramType = "body"))
     public static Result createUser() {
         Object o = request().body().asJson();
@@ -37,7 +37,7 @@ public class UserApiController extends BaseApiController {
         return JsonResponse(new models.ApiResponse(400, "Invalid input"));
     }
 
-    @ApiOperation(value = "Creates list of users with given input array", httpMethod = "POST")
+    @ApiOperation(nickname = "createUsersWithArrayInput", value = "Creates list of users with given input array", httpMethod = "POST")
     @ApiImplicitParams(@ApiImplicitParam(name = "body", value = "List of user object", required = true, dataType = "Array[User]", paramType = "body"))
     public static Result createUsersWithArrayInput() {
         Object o = request().body().asJson();
@@ -54,7 +54,7 @@ public class UserApiController extends BaseApiController {
         return JsonResponse(new models.ApiResponse(400, "Invalid input"));
     }
 
-    @ApiOperation(value = "Creates list of users with given input array", httpMethod = "POST")
+    @ApiOperation(nickname = "createUsersWithListInput", value = "Creates list of users with given input array", httpMethod = "POST")
     @ApiImplicitParams(@ApiImplicitParam(name = "body", value = "List of user object", required = true, dataType = "List[User]", paramType = "body"))
     public static Result createUsersWithListInput() {
         Object o = request().body().asJson();
@@ -71,7 +71,7 @@ public class UserApiController extends BaseApiController {
         return JsonResponse(new models.ApiResponse(400, "Invalid input"));
     }
 
-    @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.",
+    @ApiOperation(nickname = "updateUser", value = "Updated user", notes = "This can only be done by the logged in user.",
             httpMethod = "PUT")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Invalid user supplied"),
@@ -92,7 +92,7 @@ public class UserApiController extends BaseApiController {
         return JsonResponse(new models.ApiResponse(400, "Invalid input"));
     }
 
-    @ApiOperation(value = "Delete user", notes = "This can only be done by the logged in user.",
+    @ApiOperation(nickname = "deleteUser", value = "Delete user", notes = "This can only be done by the logged in user.",
             httpMethod = "DELETE")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Invalid username supplied"),
@@ -103,7 +103,7 @@ public class UserApiController extends BaseApiController {
         return ok();
     }
 
-    @ApiOperation(value = "Get user by user name", response = User.class, httpMethod = "GET")
+    @ApiOperation(nickname = "getUserByName", value = "Get user by user name", response = User.class, httpMethod = "GET")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Invalid username supplied"),
             @ApiResponse(code = 404, message = "User not found")})
@@ -116,7 +116,7 @@ public class UserApiController extends BaseApiController {
             return JsonResponse(new models.ApiResponse(400, "Invalid input"));
     }
 
-    @ApiOperation(value = "Logs user into the system", response = String.class, httpMethod = "GET")
+    @ApiOperation(nickname = "loginUser", value = "Logs user into the system", response = String.class, httpMethod = "GET")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid username/password supplied")})
 
     public static Result loginUser(
@@ -127,7 +127,7 @@ public class UserApiController extends BaseApiController {
 
     @GET
     @Path("/logout")
-    @ApiOperation(value = "Logs out current logged in user session", httpMethod = "GET")
+    @ApiOperation(nickname = "logoutUser", value = "Logs out current logged in user session", httpMethod = "GET")
     public static Result logoutUser() {
         return ok();
     }
