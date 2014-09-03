@@ -5,7 +5,7 @@ import com.wordnik.swagger.models.properties.Property;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({ "name", "in", "description", "required", "type", "items", "collectionFormat"})
-public class CookieParameter extends AbstractParameter implements Parameter {;
+public class CookieParameter extends AbstractParameter implements SerializableParameter {;
   String type;
   String format;
   String collectionFormat;
