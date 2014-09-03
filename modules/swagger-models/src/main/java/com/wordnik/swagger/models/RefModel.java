@@ -2,6 +2,8 @@ package com.wordnik.swagger.models;
 
 import com.wordnik.swagger.models.properties.Property;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.*;
 
 public class RefModel implements Model {
@@ -31,6 +33,14 @@ public class RefModel implements Model {
   }
   public void setProperties(Map<String, Property> properties) {
     this.properties = properties;
+  }
+
+  @JsonIgnore
+  public String getSimpleRef() {
+    if(ref.indexOf("#/definitions/") == 0)
+      return ref.substring("#/definitions/".length());
+    else
+      return ref;
   }
 
   public String get$ref() {
