@@ -42,6 +42,7 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
       .model("Person", personModel)
 
     val get = new Operation()
+      .produces("application/json")
       .summary("finds pets in the system")
       .description("a longer description")
       .tag("Pet Operations")
@@ -83,8 +84,6 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
     swagger.path("/pets", new Path().get(get).post(post))
 
     val swaggerJson = Json.mapper().writeValueAsString(swagger)
-    Json.prettyPrint(swagger)
     val rebuilt = Json.mapper().readValue(swaggerJson, classOf[Swagger])
-    Json.prettyPrint(rebuilt)
   }
 }

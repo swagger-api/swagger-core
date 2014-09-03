@@ -49,6 +49,16 @@ public class PetResource {
     }
   }
 
+  @DELETE
+  @Path("/{petId}")
+  @ApiOperation(value = "Deletes a pet")
+  @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid pet value")})
+  public Response deletePet(
+    @ApiParam(value = "Pet id to delete", required = true)@PathParam("petId") Long petId) {
+    petData.deletePet(petId);
+    return Response.ok().build();
+  }
+
   @POST
   @Consumes({"application/json", "application/xml"})
   @ApiOperation(value = "Add a new pet to the store")
