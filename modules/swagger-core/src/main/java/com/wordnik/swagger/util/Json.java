@@ -15,16 +15,22 @@ public class Json {
   static ObjectMapper mapper;
   public static ObjectMapper mapper() {
     if(mapper == null) {
-      mapper = new ObjectMapper();
-      // mapper.registerModule(new JodaModule());
-      SimpleModule module = new SimpleModule();
-      module.addDeserializer(Property.class, new PropertyDeserializer());
-      module.addDeserializer(Model.class, new ModelDeserializer());
-      mapper.registerModule(module);
-      mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-      mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-      mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+      mapper = create();
     }
+    return mapper;
+  }
+
+  public static ObjectMapper create() {
+    mapper = new ObjectMapper();
+
+    SimpleModule module = new SimpleModule();
+    module.addDeserializer(Property.class, new PropertyDeserializer());
+    module.addDeserializer(Model.class, new ModelDeserializer());
+    mapper.registerModule(module);
+    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
     return mapper;
   }
 
