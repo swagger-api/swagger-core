@@ -1,8 +1,8 @@
 package com.wordnik.swagger.util;
 
 import com.wordnik.swagger.models.properties.*;
-import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.*; 
 import com.fasterxml.jackson.databind.node.*;
 

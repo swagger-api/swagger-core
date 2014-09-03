@@ -3,8 +3,10 @@ package com.wordnik.swagger.util;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.properties.Property;
 
-import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.deser.*; 
+import com.fasterxml.jackson.databind.node.*;
 
 import java.util.List;
 import java.io.IOException;
@@ -20,22 +22,15 @@ public class ModelDeserializer extends JsonDeserializer<Model> {
       return Json.mapper().convertValue(sub, RefModel.class);
     }
     else {
-      ModelImpl model = Json.mapper().convertValue(node, ModelImpl.class);
-      if(model != null) {
-        List<String> enums = model.getEnum();
-        if(enums != null) {
-          for(String name: enums) {
-            Property p = model.getProperties().get(name);
-            if(p != null) {
-              p.setRequired(true);
-            }
-          }
-        }
+      sub = node.get("type");
+      Model model = null;
+      if(sub != null && "array".equals(((TextNode)sub).textValue())) {
+        model = Json.mapper().convertValue(node, ArrayModel.class);
       }
-
+      else {
+        model = Json.mapper().convertValue(node, ModelImpl.class);
+      }
       return model;
     }
-    // ModelImpl m = new ModelImpl();
-    // return this.deserialize(jp, ctxt, m);
   }
 }
