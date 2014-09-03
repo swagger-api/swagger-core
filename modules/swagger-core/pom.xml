@@ -95,6 +95,13 @@
       <version>${project.parent.version}</version>
       <scope>compile</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-scala_2.10</artifactId>
+      <version>${jackson-version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
@@ -111,6 +118,12 @@
       <groupId>org.joda</groupId>
       <artifactId>joda-convert</artifactId>
       <version>${joda-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-guava</artifactId>
+      <version>${jackson-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
