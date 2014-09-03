@@ -146,6 +146,7 @@ public class Reader {
     ApiResponses responseAnnotation = method.getAnnotation(ApiResponses.class);
 
     String operationId = method.getName();
+    String responseContainer = null;
 
     Class<?> responseClass = null;
     if(apiOperation != null) {
@@ -157,6 +158,8 @@ public class Reader {
       if(apiOperation.response() != null && !Void.class.equals(apiOperation.response())) {
         responseClass = apiOperation.response();
       }
+      if(!"".equals(apiOperation.responseContainer()))
+        responseContainer = apiOperation.responseContainer();
     }
     else {
       // pick out response from method declaration
@@ -174,9 +177,15 @@ public class Reader {
       else {
         Map<String, Model> models = ModelConverters.read(responseClass);
         for(String key: models.keySet()) {
+          Property responseProperty = null;
+
+          if("list".equalsIgnoreCase(responseContainer))
+            responseProperty = new ArrayProperty(new RefProperty().asDefault(key));
+          else
+            responseProperty = new RefProperty().asDefault(key);
           operation.response(200, new Response()
             .description("successful operation")
-            .schema(new RefProperty().asDefault(key)));
+            .schema(responseProperty));
           swagger.model(key, models.get(key));
         }
         models = ModelConverters.readAll(responseClass);
@@ -269,15 +278,15 @@ public class Reader {
     
     // see if it's a collection type
     if(type instanceof ParameterizedType){
-        ParameterizedType aType = (ParameterizedType) type;
-        Type[] parameterArgTypes = aType.getActualTypeArguments();
-        for(Type parameterArgType : parameterArgTypes){
-        	if(cls.isAssignableFrom(List.class)){
-        		isArray = true;
-        	}
-            Class<?> parameterArgClass = (Class<?>) parameterArgType;
-            cls = parameterArgClass;
-        }
+      ParameterizedType aType = (ParameterizedType) type;
+      Type[] parameterArgTypes = aType.getActualTypeArguments();
+      for(Type parameterArgType : parameterArgTypes){
+      	if(cls.isAssignableFrom(List.class)){
+      		isArray = true;
+      	}
+        Class<?> parameterArgClass = (Class<?>) parameterArgType;
+        cls = parameterArgClass;
+      }
     }
 
     for(Annotation annotation : annotations) {
@@ -344,28 +353,28 @@ public class Reader {
               Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
-                .collectionFormat("jaxrs");
+                .collectionFormat("default");
             }
             else if(parameter instanceof QueryParameter) {
               QueryParameter p = (QueryParameter) parameter;
               Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
-                .collectionFormat("jaxrs");
+                .collectionFormat("default");
             }
             else if(parameter instanceof HeaderParameter) {
               HeaderParameter p = (HeaderParameter) parameter;
               Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
-                .collectionFormat("jaxrs");
+                .collectionFormat("default");
             }
             else if(parameter instanceof CookieParameter) {
               CookieParameter p = (CookieParameter) parameter;
               Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
-                .collectionFormat("jaxrs");
+                .collectionFormat("default");
             }
           }
 
@@ -390,11 +399,16 @@ public class Reader {
               if(models.size() > 0) {
                 for(String name: models.keySet()) {
                   if(name.indexOf("java.util") == -1) {
-                    bp.setSchema(new RefModel().asDefault(name));
+                    bp.setSchema(
+                      new ArrayModel().items(new RefProperty().asDefault(name))
+                    );
                     swagger.addDefinition(name, models.get(name));
                   }
                 }
               }
+            }
+            else {
+              bp.setSchema(new ArrayModel().items(innerProperty));
             }
           }
           else {
@@ -402,7 +416,10 @@ public class Reader {
             if(models.size() > 0) {
               for(String name: models.keySet()) {
                 if(name.indexOf("java.util") == -1) {
-                  bp.setSchema(new RefModel().asDefault(name));
+                  if(isArray)
+                    bp.setSchema(new ArrayModel().items(new RefProperty().asDefault(name)));
+                  else
+                    bp.setSchema(new RefModel().asDefault(name));
                   swagger.addDefinition(name, models.get(name));
                 }
               }
