@@ -41,6 +41,14 @@ public class RefProperty extends AbstractProperty implements Property {
     this.ref = ref;
   }
 
+  @JsonIgnore
+  public String getSimpleRef() {
+    if(ref.indexOf("#/definitions/") == 0)
+      return ref.substring("#/definitions/".length());
+    else
+      return ref;
+  }
+
   public static boolean isType(String type, String format) {
     if("$ref".equals(type))
       return true;

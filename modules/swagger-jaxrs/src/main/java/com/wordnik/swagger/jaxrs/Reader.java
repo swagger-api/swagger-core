@@ -341,28 +341,28 @@ public class Reader {
           if(allowMultiple == true) {
             if(parameter instanceof PathParameter) {
               PathParameter p = (PathParameter) parameter;
-              Property items = PropertyBuilder.build(p.getType(), p.getFormat());
+              Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
                 .collectionFormat("jaxrs");
             }
             else if(parameter instanceof QueryParameter) {
               QueryParameter p = (QueryParameter) parameter;
-              Property items = PropertyBuilder.build(p.getType(), p.getFormat());
+              Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
                 .collectionFormat("jaxrs");
             }
             else if(parameter instanceof HeaderParameter) {
               HeaderParameter p = (HeaderParameter) parameter;
-              Property items = PropertyBuilder.build(p.getType(), p.getFormat());
+              Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
                 .collectionFormat("jaxrs");
             }
             else if(parameter instanceof CookieParameter) {
               CookieParameter p = (CookieParameter) parameter;
-              Property items = PropertyBuilder.build(p.getType(), p.getFormat());
+              Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
                 .collectionFormat("jaxrs");
