@@ -2,6 +2,8 @@ package com.wordnik.swagger.models;
 
 import com.wordnik.swagger.models.parameters.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -117,6 +119,7 @@ public class Operation {
     this.operationId = operationId;
   }
 
+  @JsonIgnore
   public List<Scheme> getSchemes() {
     return schemes;
   }

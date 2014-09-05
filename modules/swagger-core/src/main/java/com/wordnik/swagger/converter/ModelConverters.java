@@ -39,13 +39,28 @@ public class ModelConverters {
     if(shouldProcess(cls)) {
       ModelResolver resolver = new ModelResolver(mapper);
       resolver.resolve(cls);
-      return resolver.getDetectedTypes();
+      Map<String, Model> models = resolver.getDetectedTypes();
+      Map<String, Model> o = new HashMap<String, Model>();
+      for(String key : models.keySet()) {
+        Model m = models.get(key);
+        if(m.getProperties() != null) {
+          for(String propertyName : m.getProperties().keySet()) {
+            Property prop = m.getProperties().get(propertyName);
+            if(prop instanceof RefProperty) {
+              RefProperty rp = (RefProperty) prop;
+            }
+          }
+        }
+      }
+      return models;
     }
     else return output;
   }
 
   static boolean shouldProcess(Class<?> cls) {
-    if(cls.getName().startsWith("java.lang"))
+    if(cls.getName().startsWith("java."))
+      return false;
+    if(cls.isEnum())
       return false;
     return true;
   }

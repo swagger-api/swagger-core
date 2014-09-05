@@ -17,7 +17,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
   @Type(value = QueryParameter.class, name = "query"),
   @Type(value = CookieParameter.class, name = "cookie")})
 public interface Parameter {
+  @JsonIgnore
   String getIn();
+  @JsonIgnore
   void setIn(String in);
 
   String getName();

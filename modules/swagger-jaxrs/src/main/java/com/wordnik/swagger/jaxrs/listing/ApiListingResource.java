@@ -70,8 +70,9 @@ public class ApiListingResource {
         StringBuilder b = new StringBuilder();
         for(String part : parts) {
           int pos = part.indexOf("!<");
-          if(pos >= 0)
-            b.append(part.substring(0, pos));
+          int endPos = part.indexOf(">");
+          if(pos >= 0)  // dirty hack for https://github.com/FasterXML/jackson-dataformat-yaml/issues/22
+            b.append(part.replace("!<", "in: ").replace(">", ""));
           else
             b.append(part);
           b.append("\n");

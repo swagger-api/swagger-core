@@ -2,22 +2,24 @@ package com.wordnik.swagger.models;
 
 import com.wordnik.swagger.models.Model;
 
+import com.fasterxml.jackson.annotation.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Swagger {
-  Float swagger = 2.0f;
-  Info info;
-  String host;
-  String basePath;
-  List<Scheme> schemes;
-  List<String> consumes;
-  List<String> produces;
-  Map<String, Path> paths;
-  List<Security> security;
-  Map<String, Model> definitions;
+  protected Float swagger = 2.0f;
+  protected Info info;
+  protected String host;
+  protected String basePath;
+  protected List<Scheme> schemes;
+  protected List<String> consumes;
+  protected List<String> produces;
+  protected Map<String, Path> paths;
+  protected List<Security> security;
+  protected Map<String, Model> definitions;
 
   public Swagger info(Info info) {
     this.setInfo(info);
@@ -106,6 +108,7 @@ public class Swagger {
     this.basePath = basePath;
   }
 
+  @JsonIgnore
   public List<Scheme> getSchemes() {
     return schemes;
   }

@@ -406,6 +406,10 @@ public class Reader {
                   }
                 }
               }
+              models = ModelConverters.readAll(innerType);
+              for(String key : models.keySet()) {
+                swagger.model(key, models.get(key));
+              }
             }
             else {
               bp.setSchema(new ArrayModel().items(innerProperty));
@@ -423,6 +427,10 @@ public class Reader {
                   swagger.addDefinition(name, models.get(name));
                 }
               }
+            }
+            models = ModelConverters.readAll(cls);
+            for(String key : models.keySet()) {
+              swagger.model(key, models.get(key));
             }
           }
           parameter = bp;

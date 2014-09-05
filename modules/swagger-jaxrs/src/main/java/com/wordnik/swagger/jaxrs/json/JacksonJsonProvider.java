@@ -32,14 +32,9 @@ import javax.ws.rs.ext.Provider;
 @Provider
 @Produces({MediaType.APPLICATION_JSON})
 public class JacksonJsonProvider extends JacksonJaxbJsonProvider {
-  private static ObjectMapper commonMapper;// = Json.mapper();
+  private static ObjectMapper commonMapper = Json.create();
 
   public JacksonJsonProvider() {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    super.setMapper(mapper);
-    commonMapper = mapper;
+    super.setMapper(commonMapper);
   }
 }
