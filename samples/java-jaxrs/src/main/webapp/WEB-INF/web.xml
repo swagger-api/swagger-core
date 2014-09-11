@@ -38,6 +38,10 @@
       <param-value>1.0.0</param-value>
     </init-param>
     <init-param>
+      <param-name>swagger.api.title</param-name>
+      <param-value>Swagger Petstore</param-value>
+    </init-param>
+    <init-param>
       <param-name>swagger.api.basepath</param-name>
       <param-value>http://localhost:8002/api</param-value>
     </init-param>
