@@ -17,6 +17,8 @@ public class WebXMLReader /*implements SwaggerConfig*/ {
 
     basePath = servletConfig.getInitParameter("swagger.api.basepath");
     title = servletConfig.getInitParameter("swagger.api.title");
+    if(title == null)
+      title = "";
 
     if(basePath != null) {
       String[] parts = basePath.split("//");

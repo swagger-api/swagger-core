@@ -167,11 +167,18 @@ public class Reader {
     }
     if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
       if(isPrimitive(responseClass)) {
+        Property responseProperty = null;
         Property property = ModelConverters.readAsProperty(responseClass);
         if(property != null) {
+          if("list".equalsIgnoreCase(responseContainer))
+            responseProperty = new ArrayProperty(property);
+          else if("map".equalsIgnoreCase(responseContainer))
+            responseProperty = new MapProperty(property);
+          else
+            responseProperty = property;
           operation.response(200, new Response()
             .description("successful operation")
-            .schema(property));
+            .schema(responseProperty));
         }
       }
       else {
@@ -455,6 +462,8 @@ public class Reader {
     else if("boolean".equals(property.getType()))
       out = true;
     else if("array".equals(property.getType()))
+      out = true;
+    else if("File".equals(property.getType()))
       out = true;
     return out;
   }
