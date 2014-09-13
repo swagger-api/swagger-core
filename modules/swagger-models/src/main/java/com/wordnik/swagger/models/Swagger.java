@@ -4,10 +4,7 @@ import com.wordnik.swagger.models.Model;
 
 import com.fasterxml.jackson.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Swagger {
   protected Float swagger = 2.0f;
@@ -63,7 +60,7 @@ public class Swagger {
   }
   public Swagger path(String key, Path path) {
     if(this.paths == null)
-      this.paths = new HashMap<String, Path>();
+      this.paths = new LinkedHashMap<String, Path>();
     this.paths.put(key, path);
     return this;
   }
@@ -146,7 +143,15 @@ public class Swagger {
   }
 
   public Map<String, Path> getPaths() {
-    return paths;
+    Map<String, Path> sorted = new LinkedHashMap<String, Path>();
+    List<String> keys = new ArrayList<String>();
+    keys.addAll(paths.keySet());
+    Collections.sort(keys);
+
+    for(String key: keys) {
+      sorted.put(key, paths.get(key));
+    }
+    return sorted;
   }
   public void setPaths(Map<String, Path> paths) {
     this.paths = paths;

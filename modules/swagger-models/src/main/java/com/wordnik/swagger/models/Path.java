@@ -1,5 +1,8 @@
 package com.wordnik.swagger.models;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder({ "get", "post", "put", "delete", "options", "patch"})
 public class Path {
   Operation get;
   Operation put;
