@@ -76,18 +76,20 @@ public class Reader {
 
       List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
       for(Authorization auth : authorizations) {
-        SecurityRequirement security = new SecurityRequirement();
-        security.setName(auth.value());
-        AuthorizationScope[] scopes = auth.scopes();
-        for(AuthorizationScope scope : scopes) {
-          if(scope.scope() != null && !"".equals(scope.scope())) {
-            security.addScope(scope.scope());
-            swagger.addSecurityDefinition(auth.value(),
-              new SecurityDefinition(auth.value(), auth.type())
-                .scope(new SecurityScope(scope.scope(), scope.description())));
+        if(auth.value() != null && !"".equals(auth.value())) {
+          SecurityRequirement security = new SecurityRequirement();
+          security.setName(auth.value());
+          AuthorizationScope[] scopes = auth.scopes();
+          for(AuthorizationScope scope : scopes) {
+            if(scope.scope() != null && !"".equals(scope.scope())) {
+              security.addScope(scope.scope());
+              swagger.addSecurityDefinition(auth.value(),
+                new SecurityDefinition(auth.value(), auth.type())
+                  .scope(new SecurityScope(scope.scope(), scope.description())));
+            }
           }
+          securities.add(security);
         }
-        securities.add(security);
       }
 
       // merge consumes, produces
@@ -176,6 +178,29 @@ public class Reader {
       }
       if(!"".equals(apiOperation.responseContainer()))
         responseContainer = apiOperation.responseContainer();
+      if(apiOperation.authorizations()!= null) {
+        List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
+        for(Authorization auth : apiOperation.authorizations()) {
+          if(auth.value() != null && !"".equals(auth.value())) {
+            SecurityRequirement security = new SecurityRequirement();
+            security.setName(auth.value());
+            AuthorizationScope[] scopes = auth.scopes();
+            for(AuthorizationScope scope : scopes) {
+              SecurityDefinition definition = new SecurityDefinition(auth.value(), auth.type());
+              swagger.addSecurityDefinition(auth.value(), definition);
+              if(scope.scope() != null && !"".equals(scope.scope())) {
+                security.addScope(scope.scope());
+                definition.scope(new SecurityScope(scope.scope(), scope.description()));
+              }
+            }
+            securities.add(security);
+          }
+        }
+        if(securities.size() > 0) {
+          for(SecurityRequirement sec : securities)
+            operation.security(sec);
+        }
+      }
     }
     else {
       // pick out response from method declaration
