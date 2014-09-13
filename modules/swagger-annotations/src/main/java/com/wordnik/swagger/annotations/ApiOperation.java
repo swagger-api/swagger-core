@@ -66,7 +66,7 @@ public @interface ApiOperation {
   //String authorizations() default "";
 
   /** authorizations required by this Api */
-  Authorization[] authorizations() default @Authorization("");
+  Authorization[] authorizations() default @Authorization(value = "", type = "");
 
   /**
    * Allows an operation to be marked as hidden

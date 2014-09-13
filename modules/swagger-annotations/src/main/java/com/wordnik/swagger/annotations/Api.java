@@ -54,5 +54,5 @@ public @interface Api {
   /** authorizations required by this Api */
   // String authorizations() default "";
   /** authorizations required by this Api */
-  Authorization[] authorizations() default @Authorization("");
+  Authorization[] authorizations() default @Authorization(value = "", type = "");
 }
