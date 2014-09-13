@@ -25,7 +25,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
 @Path("/pet")
-@Api(value = "/pet", description = "Operations about pets")
+@Api(value = "/pet", description = "Operations about pets", authorizations = {
+  @Authorization(value = "petstore_auth", type = "oauth2",
+  scopes = {
+    @AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
+    @AuthorizationScope(scope = "read:pets", description = "read your pets")
+  })
+})
 @Produces({"application/json", "application/xml"})
 public class PetResource {
   static PetData petData = new PetData();
@@ -35,7 +41,8 @@ public class PetResource {
   @Path("/{petId}")
   @ApiOperation(value = "Find pet by ID", 
     notes = "Returns a pet when ID < 10.  ID > 10 or nonintegers will simulate API error conditions", 
-    response = Pet.class)
+    response = Pet.class
+  )
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
       @ApiResponse(code = 404, message = "Pet not found") })
   public Response getPetById(
