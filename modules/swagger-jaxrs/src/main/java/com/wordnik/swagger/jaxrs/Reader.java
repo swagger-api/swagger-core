@@ -1,13 +1,16 @@
 package com.wordnik.swagger.jaxrs;
 
-import com.wordnik.swagger.converter.ModelConverters;
-import com.wordnik.swagger.models.properties.PropertyBuilder;
-import com.wordnik.swagger.util.Json;
 import com.wordnik.swagger.annotations.*;
-import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.models.properties.*;
-import com.wordnik.swagger.models.parameters.*;
+import com.wordnik.swagger.converter.ModelConverters;
 import com.wordnik.swagger.jaxrs.PATCH;
+import com.wordnik.swagger.models.*;
+import com.wordnik.swagger.models.parameters.*;
+import com.wordnik.swagger.models.properties.*;
+import com.wordnik.swagger.util.Json;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.PathParam;
@@ -16,10 +19,6 @@ import javax.ws.rs.CookieParam;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import java.lang.reflect.*;
 import java.lang.annotation.Annotation;
@@ -34,9 +33,8 @@ public class Reader {
   }
 
   public Swagger read(Set<Class<?>> classes) {
-    for(Class cls: classes) {
+    for(Class cls: classes)
       read(cls);
-    }
     return swagger;
   }
 
@@ -48,6 +46,7 @@ public class Reader {
     if(swagger == null)
       swagger = new Swagger();
     Api api = (Api) cls.getAnnotation(Api.class);
+    Map<String, SecurityScope> globalScopes = new HashMap<String, SecurityScope>();
     
     javax.ws.rs.Path apiPath = (javax.ws.rs.Path) cls.getAnnotation(javax.ws.rs.Path.class);
     String[] apiConsumes = new String[0];
@@ -73,6 +72,23 @@ public class Reader {
       String produces = api.produces();
       String consumes = api.consumes();
       String schems = api.protocols();
+      Authorization[] authorizations = api.authorizations();
+
+      List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
+      for(Authorization auth : authorizations) {
+        SecurityRequirement security = new SecurityRequirement();
+        security.setName(auth.value());
+        AuthorizationScope[] scopes = auth.scopes();
+        for(AuthorizationScope scope : scopes) {
+          if(scope.scope() != null && !"".equals(scope.scope())) {
+            security.addScope(scope.scope());
+            swagger.addSecurityDefinition(auth.value(),
+              new SecurityDefinition(auth.value(), auth.type())
+                .scope(new SecurityScope(scope.scope(), scope.description())));
+          }
+        }
+        securities.add(security);
+      }
 
       // merge consumes, produces
 
@@ -81,8 +97,6 @@ public class Reader {
       // handle subresources by looking at return type
 
       // parse the method
-
-
       Method methods[] = cls.getMethods();
       for(Method method: methods) {
         ApiOperation apiOperation = (ApiOperation) method.getAnnotation(ApiOperation.class);
@@ -106,6 +120,8 @@ public class Reader {
                 operation.produces(mediaType);
 
             operation.tag(tag);
+            if(securities.size() > 0) 
+              operation.security(securities);
             Path path = swagger.getPath(operationPath);
             if(path == null) {
               path = new Path();
