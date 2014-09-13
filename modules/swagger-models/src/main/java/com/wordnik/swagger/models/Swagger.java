@@ -15,7 +15,7 @@ public class Swagger {
   protected List<String> consumes;
   protected List<String> produces;
   protected Map<String, Path> paths;
-  protected List<Security> security;
+  protected Map<String, SecurityDefinition> security;
   protected Map<String, Model> definitions;
 
   public Swagger info(Info info) {
@@ -64,12 +64,8 @@ public class Swagger {
     this.paths.put(key, path);
     return this;
   }
-  public Swagger security(List<Security> security) {
-    this.setSecurity(security);
-    return this;
-  }
-  public Swagger security(Security security) {
-    this.addSecurity(security);
+  public Swagger security(String name, SecurityDefinition security) {
+    this.addSecurityDefinition(name, security);
     return this;
   }
   public Swagger model(String name, Model model) {
@@ -162,16 +158,16 @@ public class Swagger {
     return this.paths.get(path);
   }
 
-  public List<Security> getSecurity() {
+  public Map<String, SecurityDefinition> getSecurity() {
     return security;
   }
-  public void setSecurity(List<Security> security) {
+  public void setSecurityDefinition(Map<String, SecurityDefinition> security) {
     this.security = security;
   }
-  public void addSecurity(Security security) {
+  public void addSecurityDefinition(String name, SecurityDefinition security) {
     if(this.security == null)
-      this.security = new ArrayList<Security>();
-    this.security.add(security);
+      this.security = new HashMap<String, SecurityDefinition>();
+    this.security.put(name, security);
   }
 
   public void setDefinitions(Map<String, Model> definitions) {

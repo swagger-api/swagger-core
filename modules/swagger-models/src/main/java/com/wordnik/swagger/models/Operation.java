@@ -19,7 +19,7 @@ public class Operation {
   List<String> produces;
   List<Parameter> parameters;
   Map<String, Response> responses;
-  List<Security> security;
+  Map<String, SecurityRequirement> security;
 
   public Operation summary(String summary) {
     this.setSummary(summary);
@@ -57,12 +57,13 @@ public class Operation {
     this.addProduces(produces);
     return this;
   }
-  public Operation security(List<Security> security) {
-    this.setSecurity(security);
+  public Operation security(List<SecurityRequirement> security) {
+    for(SecurityRequirement s : security)
+      this.addSecurityRequirement(s);
     return this;
   }
-  public Operation security(Security security) {
-    this.addSecurity(security);
+  public Operation security(SecurityRequirement security) {
+    this.addSecurityRequirement(security);
     return this;
   }
   public Operation parameter(Parameter parameter) {
@@ -182,15 +183,16 @@ public class Operation {
     this.responses.put(key, response);
   }
 
-  public List<Security> getSecurity() {
+  public Map<String, SecurityRequirement> getSecurity() {
     return security;
   }
-  public void setSecurity(List<Security> security) {
+  public void setSecurityRequirement(Map<String, SecurityRequirement> security) {
     this.security = security;
   }
-  public void addSecurity(Security security) {
-    if(this.security == null)
-      this.security = new ArrayList<Security>();
-    this.security.add(security);
+  public void addSecurityRequirement(SecurityRequirement security) {
+    if(this.security == null) {
+      this.security = new HashMap<String, SecurityRequirement>();
+    }
+    this.security.put(security.getName(), security);
   }
 }
