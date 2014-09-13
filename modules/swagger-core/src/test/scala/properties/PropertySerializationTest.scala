@@ -203,4 +203,13 @@ class PropertySerializationTest extends FlatSpec with Matchers {
     p.getClass should be (classOf[ArrayProperty])
     m.writeValueAsString(p) should equal (json)
   }
+/*
+  it should "read a file property" in {
+    val json = """{"type":"File"}"""
+    val p = m.readValue(json, classOf[Property])
+    p.getType should be ("File")
+    p.getClass should be (classOf[FileProperty])
+    m.writeValueAsString(p) should equal (json)    
+  }
+*/
 }

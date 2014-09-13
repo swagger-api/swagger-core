@@ -7,14 +7,24 @@ import com.wordnik.swagger.models.properties.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.swagger.ModelResolver;
 
+import java.io.File;
 import java.util.*;
 
 public class ModelConverters {
   static ObjectMapper mapper = Json.mapper();
+  static List<ModelConverter> converters = new ArrayList<ModelConverter>();
 
-  public static Property readAsProperty(Class cls) {
+  public static Property readAsProperty(Class<?> cls) {
+	  // if(File.class.equals(cls))
+	  //   return new FileProperty();
     try {
-      Property property = new ModelResolver(mapper).resolveProperty(cls);
+      Property property = null;
+      for(ModelConverter c : converters) {
+        property = c.resolveProperty(cls);
+        if(property != null)
+          return property;
+      }
+      property = new ModelResolver(mapper).resolveProperty(cls);
       return property;
     }
     catch (Exception e) {
@@ -58,10 +68,10 @@ public class ModelConverters {
   }
 
   static boolean shouldProcess(Class<?> cls) {
-    if(cls.getName().startsWith("java."))
-      return false;
-    if(cls.isEnum())
-      return false;
+    // if(cls.getName().startsWith("java."))
+    //   return false;
+    // if(cls.isEnum())
+    //   return false;
     return true;
   }
 }

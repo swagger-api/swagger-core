@@ -21,7 +21,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
 
   it should "convert a model" in {
     val schemas = ModelConverters.read(classOf[Person])
-    m.writeValueAsString(schemas) should equal ("""{"Person":{"properties":{"id":{"type":"integer","format":"int64"},"firstName":{"type":"string"},"address":{"$ref":"Address"},"properties":{"$ref":"Map"},"birthDate":{"type":"string","format":"date-time"},"float":{"type":"number","format":"float"},"double":{"type":"number","format":"double"}}}}""")
+    m.writeValueAsString(schemas) should equal ("""{"Person":{"properties":{"id":{"type":"integer","format":"int64"},"firstName":{"type":"string"},"address":{"$ref":"Address"},"properties":{"type":"object","additionalProperties":{"type":"string"}},"birthDate":{"type":"string","format":"date-time"},"float":{"type":"number","format":"float"},"double":{"type":"number","format":"double"}}}}""")
   }
 
   it should "convert a model with Joda DateTime" in {
@@ -72,5 +72,10 @@ class ModelConverterTest extends FlatSpec with Matchers {
     val schemas = ModelConverters.readAll(classOf[NestedModel])
 
     m.writeValueAsString(schemas) should equal ("""{"NestedModel":{"properties":{"complexModel":{"$ref":"ComplexModel"},"localtime":{"type":"string","format":"date-time"}}},"ComplexModel":{"properties":{"name":{"type":"string"},"age":{"type":"integer","format":"int32"}}}}""")
+  }
+
+  it should "convert a map model" in {
+    val schemas = ModelConverters.readAll(classOf[java.util.Map[String, String]])
+    println(m.writeValueAsString(schemas))
   }
 }
