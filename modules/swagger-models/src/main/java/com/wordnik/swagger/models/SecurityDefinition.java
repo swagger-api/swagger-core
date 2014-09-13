@@ -1,5 +1,7 @@
 package com.wordnik.swagger.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.*;
 
 public class SecurityDefinition {
@@ -17,6 +19,7 @@ public class SecurityDefinition {
     return this;
   }
 
+  @JsonIgnore
   public String getName() {
     return name;
   }
