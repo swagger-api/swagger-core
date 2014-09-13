@@ -41,7 +41,8 @@ public class PetResource {
   @Path("/{petId}")
   @ApiOperation(value = "Find pet by ID", 
     notes = "Returns a pet when ID < 10.  ID > 10 or nonintegers will simulate API error conditions", 
-    response = Pet.class
+    response = Pet.class,
+    authorizations = @Authorization(value = "api_key", type = "api_key")
   )
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
       @ApiResponse(code = 404, message = "Pet not found") })
