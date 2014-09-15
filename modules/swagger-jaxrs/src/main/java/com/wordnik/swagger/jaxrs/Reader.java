@@ -144,7 +144,7 @@ public class Reader {
     if(classLevelPath != null) {
       b.append(classLevelPath.value());
     }
-    if(methodLevelPath != null) {
+    if(methodLevelPath != null && !"/".equals(methodLevelPath.value())) {
       String methodPath = methodLevelPath.value();
       if(!methodPath.startsWith("/") && !b.toString().endsWith("/")) {
         b.append("/");
@@ -154,7 +154,11 @@ public class Reader {
       }
       b.append(methodPath);
     }
-    return b.toString();
+    String output = b.toString();
+    if(output.endsWith("/") && output.length() > 1)
+      return output.substring(0, output.length() - 1);
+    else
+      return output;
   }
 
   public Operation parseMethod(Method method) {
