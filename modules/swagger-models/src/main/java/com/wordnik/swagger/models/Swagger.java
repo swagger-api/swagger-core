@@ -158,7 +158,7 @@ public class Swagger {
     return this.paths.get(path);
   }
 
-  public Map<String, SecurityDefinition> getSecurity() {
+  public Map<String, SecurityDefinition> getSecurityDefinition() {
     return securityDefinition;
   }
   public void setSecurityDefinition(Map<String, SecurityDefinition> securityDefinition) {

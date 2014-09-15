@@ -35,7 +35,7 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
     val swagger = new Swagger()
       .info(info)
       .host("petstore.swagger.wordnik.com")
-      .security("api-key", new SecurityDefinition("key", "value"))
+      .securityDefinition("api-key", new SecurityDefinition("key", "value"))
       .scheme(Scheme.HTTP)
       .consumes("application/json")
       .produces("application/json")

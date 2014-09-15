@@ -206,7 +206,7 @@ public class Reader {
         }
       }
     }
-    else {
+    if(responseClass == null) {
       // pick out response from method declaration
       responseClass = method.getReturnType();
     }
