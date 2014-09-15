@@ -43,6 +43,12 @@ public class PropertyBuilder {
         .maximum(maximum)
         .exclusiveMinimum(exclusiveMinimum)
         .exclusiveMaximum(exclusiveMinimum);
+    if(DecimalProperty.isType(type, format))
+      property = new DecimalProperty()
+        .minimum(minimum)
+        .maximum(maximum)
+        .exclusiveMinimum(exclusiveMinimum)
+        .exclusiveMaximum(exclusiveMinimum);
     if(IntegerProperty.isType(type, format))
       property = new IntegerProperty()
         .minimum(minimum)
@@ -63,13 +69,19 @@ public class PropertyBuilder {
         .maxLength(maxLength)
         .pattern(pattern)
         ._enum(_enum);
-
+    if(UUIDProperty.isType(type, format))
+      property = new UUIDProperty()
+        .minLength(minLength)
+        .maxLength(maxLength)
+        .pattern(pattern);
     // general properties
     if(property != null) {
       property
         .title(title)
         .description(description);
     }
+    if(property == null)
+      System.out.println("no property for " + type + ", " + format);
     return property;
   }
 }
