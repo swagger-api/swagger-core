@@ -11,6 +11,11 @@ public class StringProperty extends AbstractProperty implements Property {
     super.type = "string";
   }
 
+  public StringProperty example(String example) {
+    this.setExample(example);
+    return this;
+  }
+
   public StringProperty minLength(Integer minLength) {
     this.setMinLength(minLength);
     return this;

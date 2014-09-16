@@ -20,18 +20,18 @@ public abstract class AbstractProperty implements Property {
     return this;
   }
 
-  public String getExample() {
-    return example;
-  }
-  public void setExample(String example) {
-    this.example = example;
-  }
-
   public String getName() {
     return name;
   }
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getExample() {
+    return example;
+  }
+  public void setExample(String example) {
+    this.example = example;
   }
 
   public void setPosition(Integer position) {

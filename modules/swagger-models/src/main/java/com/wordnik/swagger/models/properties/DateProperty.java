@@ -6,6 +6,11 @@ public class DateProperty extends AbstractProperty implements Property {
     super.format = "date";
   }
 
+  public DateProperty example(String example) {
+    this.setExample(example);
+    return this;
+  }
+
   public static boolean isType(String type, String format) {
     if("string".equals(type) && "date".equals(format))
       return true;

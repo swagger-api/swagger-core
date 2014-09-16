@@ -6,6 +6,11 @@ public class FloatProperty extends AbstractNumericProperty implements Property {
     super.format = "float";
   }
 
+  public FloatProperty example(Float example) {
+    this.setExample(String.valueOf(example));
+    return this;
+  }
+
   public static boolean isType(String type, String format) {
     if("number".equals(type) && "float".equals(format))
       return true;

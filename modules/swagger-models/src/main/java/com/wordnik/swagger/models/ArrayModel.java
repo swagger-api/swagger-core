@@ -9,6 +9,7 @@ public class ArrayModel implements Model {
   private String type;
   private String description;
   private Property items;
+  private String example;
 
   public ArrayModel () {
     this.type = "array";
@@ -49,5 +50,12 @@ public class ArrayModel implements Model {
   }
   public void setProperties(Map<String, Property> properties) {
     this.properties = properties;
+  }
+
+  public String getExample() {
+    return example;
+  }
+  public void setExample(String example) {
+    this.example = example;
   }
 }

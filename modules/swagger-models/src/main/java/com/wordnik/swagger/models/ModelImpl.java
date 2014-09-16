@@ -17,6 +17,7 @@ public class ModelImpl implements Model {
   private Map<String, Property> properties;
   private boolean isSimple = false;
   private String description;
+  private String example;
 
   public ModelImpl name(String name) {
     this.setName(name);
@@ -28,6 +29,10 @@ public class ModelImpl implements Model {
   }
   public ModelImpl property(String key, Property property) {
     this.addProperty(key, property);
+    return this;
+  }
+  public ModelImpl example(String example) {
+    this.setExample(example);
     return this;
   }
 
@@ -99,5 +104,17 @@ public class ModelImpl implements Model {
     for(String key: properties.keySet()) {
       this.addProperty(key, properties.get(key));
     }
+  }
+
+  public String getExample() {
+    if(example == null) {
+
+    }
+
+    return example;
+  }
+
+  public void setExample(String example) {
+    this.example = example;
   }
 }

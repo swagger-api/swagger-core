@@ -10,6 +10,7 @@ public class RefModel implements Model {
   String ref;
   private String description;
   private Map<String, Property> properties;
+  private String example;
 
   public RefModel(){}
   public RefModel(String ref){
@@ -48,5 +49,12 @@ public class RefModel implements Model {
   }
   public void set$ref(String ref) {
     this.ref = ref;
+  }
+
+  public String getExample() {
+    return example;
+  }
+  public void setExample(String example) {
+    this.example = example;
   }
 }

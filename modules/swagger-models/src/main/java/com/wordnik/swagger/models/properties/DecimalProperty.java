@@ -5,6 +5,11 @@ public class DecimalProperty extends AbstractNumericProperty implements Property
     super.type = "number";
   }
 
+  public DecimalProperty example(String example) {
+    this.setExample(example);
+    return this;
+  }
+
   public static boolean isType(String type, String format) {
     if("number".equals(type) && format == null)
       return true;
