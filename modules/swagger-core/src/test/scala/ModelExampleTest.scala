@@ -15,8 +15,6 @@ class ModelExampleTest extends FlatSpec with Matchers {
     val model = new ModelImpl()
       .property("name", new StringProperty().example("Tony"))
       .property("id", new LongProperty().example(123))
-
-    Json.prettyPrint(model)
   }
 
   it should "create a model with example" in {
@@ -26,6 +24,5 @@ class ModelExampleTest extends FlatSpec with Matchers {
       .example("""{"name":"Fred","id":123456"}""")
 
     model.getExample should equal("""{"name":"Fred","id":123456"}""")
-    Json.prettyPrint(model)
   }
 }
