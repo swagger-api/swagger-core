@@ -110,6 +110,8 @@ public @interface Api {
 
     /**
      * Hides the api.
+     *
+     * @since 1.3.8
      */
     boolean hidden() default false;
 }
