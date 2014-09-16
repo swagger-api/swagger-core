@@ -3,9 +3,12 @@ package com.wordnik.swagger.models;
 import com.wordnik.swagger.models.Model;
 import com.wordnik.swagger.models.properties.Property;
 
+import java.util.*;
+
 public class Response {
   String description;
   Property schema;
+  Map<String, String> examples;
 
   public Response schema(Property property) {
     this.setSchema(property);
@@ -13,6 +16,13 @@ public class Response {
   }
   public Response description(String description) {
     this.setDescription(description);
+    return this;
+  }
+  public Response example(String type, String example) {
+    if(examples == null) {
+      examples = new HashMap<String, String>();
+    }
+    examples.put(type, example);
     return this;
   }
 
@@ -28,5 +38,12 @@ public class Response {
   }
   public void setSchema(Property schema) {
     this.schema = schema;
+  }
+
+  public Map<String, String> getExamples() {
+    return this.examples;
+  }
+  public void setExamples(Map<String, String> examples) {
+    this.examples = examples;
   }
 }

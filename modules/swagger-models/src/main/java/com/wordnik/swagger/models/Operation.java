@@ -20,6 +20,7 @@ public class Operation {
   List<Parameter> parameters;
   Map<String, Response> responses;
   Map<String, SecurityRequirement> security;
+  String example;
 
   public Operation summary(String summary) {
     this.setSummary(summary);

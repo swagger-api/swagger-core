@@ -108,7 +108,7 @@ public class ModelImpl implements Model {
 
   public String getExample() {
     if(example == null) {
-
+      // TODO: will add logic to construct examples based on payload here
     }
 
     return example;
