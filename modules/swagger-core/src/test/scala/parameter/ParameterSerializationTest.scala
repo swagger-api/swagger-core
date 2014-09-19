@@ -26,7 +26,7 @@ class ParameterSerializationTest extends FlatSpec with Matchers {
 
   it should "serialize a QueryParameter" in {
     val p = new QueryParameter().property(new StringProperty())
-    println(m.writeValueAsString(p)) //should be ("""{"in":"query","required":false,"type":"string"}""")
+    m.writeValueAsString(p) should be ("""{"in":"query","required":false,"type":"string"}""")
   }
 
   it should "deserialize a QueryParameter" in {

@@ -128,7 +128,6 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
     args.put("exclusiveMaximum", exclusiveMinimum);
     args.put("uniqueItems", uniqueItems);
 
-
     detailNode = node.get("$ref");
     if(detailNode != null) {
       String ref = (String) ((TextNode) detailNode).asText();
