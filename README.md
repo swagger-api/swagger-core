@@ -22,6 +22,15 @@ The following methods are available to obtain support for Swagger:
 ## Get started with Swagger!
 See the guide on [getting started with swagger](https://github.com/wordnik/swagger-core/wiki/Adding-Swagger-to-your-API) to get started with adding swagger to your API.
 
+## Compatability
+The Swagger Specification has undergone 3 revisions since initial creation in 2010.  The swagger-core project has the following compatibilies with the swagger specification:
+
+Swagger core Version      | Release Date | Swagger Spec compatability | Notes
+----------------------- | ------------ | -------------------------- | -----
+1.5.0 (in development)  | n/a          | 2.0           | [branch develop_2.0](https://github.com/wordnik/swagger-core/tree/develop_2.0)
+1.3.9                   | 2014-09-18   | 1.2           | [tag v1.3.9](https://github.com/wordnik/swagger-core/tree/v1.3.9)
+1.2.4                   | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/wordnik/swagger-core/tree/swagger-project_2.10.0-1.2.4)
+1.0.0                   | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/wordnik/swagger-core/tree/v1.0)
 
 ## Overview
 This is a project to build the swagger-core library, which is required for the Wordnik 
