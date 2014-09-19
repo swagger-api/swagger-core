@@ -1,5 +1,5 @@
 // swagger-ui.js
-// version 2.0.18
+// version 2.0.24
 $(function() {
 
 	// Helper function for vertically aligning DOM elements
@@ -68,7 +68,7 @@ log = function(){
   log.history = log.history || [];
   log.history.push(arguments);
   if(this.console){
-    console.log( Array.prototype.slice.call(arguments) );
+    console.log( Array.prototype.slice.call(arguments)[0] );
   }
 };
 
@@ -396,7 +396,7 @@ function program18(depth0,data) {
 function program20(depth0,data) {
   
   
-  return "\n          <div class='sandbox_header'>\n            <input class='submit' name='commit' type='button' value='Try it out!' />\n            <a href='#' class='response_hider' style='display:none'>Hide Response</a>\n            <img alt='Throbber' class='response_throbber' src='images/throbber.gif' style='display:none' />\n          </div>\n          ";
+  return "\n          <div class='sandbox_header'>\n            <input class='submit' name='commit' type='button' value='Try it out!' />\n            <a href='#' class='response_hider' style='display:none'>Hide Response</a>\n            <span class='response_throbber' style='display:none'></span>\n          </div>\n          ";
   }
 
   buffer += "\n  <ul class='operations' >\n    <li class='";
@@ -562,7 +562,7 @@ function program9(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n		";
-  stack1 = helpers['if'].call(depth0, depth0.defaultValue, {hash:{},inverse:self.program(12, program12, data),fn:self.program(10, program10, data),data:data});
+  stack1 = helpers['if'].call(depth0, depth0.isFile, {hash:{},inverse:self.program(10, program10, data),fn:self.program(2, program2, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n	";
   return buffer;
@@ -570,7 +570,16 @@ function program9(depth0,data) {
 function program10(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n			<input class='parameter' minlength='0' name='";
+  buffer += "\n			";
+  stack1 = helpers['if'].call(depth0, depth0.defaultValue, {hash:{},inverse:self.program(13, program13, data),fn:self.program(11, program11, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n		";
+  return buffer;
+  }
+function program11(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n				<input class='parameter' minlength='0' name='";
   if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
@@ -578,18 +587,18 @@ function program10(depth0,data) {
   if (stack1 = helpers.defaultValue) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.defaultValue; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "'/>\n		";
+    + "'/>\n			";
   return buffer;
   }
 
-function program12(depth0,data) {
+function program13(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n			<input class='parameter' minlength='0' name='";
+  buffer += "\n				<input class='parameter' minlength='0' name='";
   if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "' placeholder='' type='text' value=''/>\n		";
+    + "' placeholder='' type='text' value=''/>\n			";
   return buffer;
   }
 
@@ -1072,11 +1081,11 @@ function program1(depth0,data) {
   if (stack1 = helpers.id) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.id; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "' onclick=\"Docs.toggleEndpointListForResource('";
+    + "' class=\"toggleEndpointList\" data-id=\"";
   if (stack1 = helpers.id) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.id; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "');\">";
+    + "\">";
   if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
@@ -1097,19 +1106,19 @@ function program1(depth0,data) {
   if (stack1 = helpers.id) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.id; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "'\n         onclick=\"Docs.toggleEndpointListForResource('";
+    + "' class=\"toggleEndpointList\" data-id=\"";
   if (stack1 = helpers.id) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.id; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "');\">Show/Hide</a>\n    </li>\n    <li>\n      <a href='#' onclick=\"Docs.collapseOperationsForResource('";
+    + "\">Show/Hide</a>\n    </li>\n    <li>\n      <a href='#' class=\"collapseResource\" data-id=\"";
   if (stack1 = helpers.id) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.id; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "'); return false;\">\n        List Operations\n      </a>\n    </li>\n    <li>\n      <a href='#' onclick=\"Docs.expandOperationsForResource('";
+    + "\">\n        List Operations\n      </a>\n    </li>\n    <li>\n      <a href='#' class=\"expandResource\" data-id=";
   if (stack1 = helpers.id) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.id; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "'); return false;\">\n        Expand Operations\n      </a>\n    </li>\n    <li>\n      <a href='";
+    + ">\n        Expand Operations\n      </a>\n    </li>\n    <li>\n      <a href='";
   if (stack1 = helpers.url) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.url; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
@@ -1289,7 +1298,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       this.showMessage('Finished Loading Resource Information. Rendering Swagger UI...');
       this.mainView = new MainView({
         model: this.api,
-        el: $('#' + this.dom_id)
+        el: $('#' + this.dom_id),
+        swaggerOptions: this.options
       }).render();
       this.showMessage();
       switch (this.options.docExpansion) {
@@ -1422,6 +1432,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   })(Backbone.View);
 
   MainView = (function(_super) {
+    var sorters;
+
     __extends(MainView, _super);
 
     function MainView() {
@@ -1429,7 +1441,33 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       return _ref2;
     }
 
-    MainView.prototype.initialize = function() {};
+    sorters = {
+      'alpha': function(a, b) {
+        return a.path.localeCompare(b.path);
+      },
+      'method': function(a, b) {
+        return a.method.localeCompare(b.method);
+      }
+    };
+
+    MainView.prototype.initialize = function(opts) {
+      var route, sorter, sorterName, _i, _len, _ref3;
+      if (opts == null) {
+        opts = {};
+      }
+      if (opts.swaggerOptions.sorter) {
+        sorterName = opts.swaggerOptions.sorter;
+        sorter = sorters[sorterName];
+        _ref3 = this.model.apisArray;
+        for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+          route = _ref3[_i];
+          route.operationsArray.sort(sorter);
+        }
+        if (sorterName === "alpha") {
+          return this.model.apisArray.sort(sorter);
+        }
+      }
+    };
 
     MainView.prototype.render = function() {
       var counter, id, resource, resources, _i, _len, _ref3;
@@ -1457,7 +1495,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         model: resource,
         tagName: 'li',
         id: 'resource_' + resource.id,
-        className: 'resource'
+        className: 'resource',
+        swaggerOptions: this.options.swaggerOptions
       });
       return $('#resources').append(resourceView.render().el);
     };
@@ -1498,6 +1537,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         operation.parentId = this.model.id;
         this.addOperation(operation);
       }
+      $('.toggleEndpointList', this.el).click(this.callDocs.bind(this, 'toggleEndpointListForResource'));
+      $('.collapseResource', this.el).click(this.callDocs.bind(this, 'collapseOperationsForResource'));
+      $('.expandResource', this.el).click(this.callDocs.bind(this, 'expandOperationsForResoruce'));
       return this;
     };
 
@@ -1507,10 +1549,16 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       operationView = new OperationView({
         model: operation,
         tagName: 'li',
-        className: 'endpoint'
+        className: 'endpoint',
+        swaggerOptions: this.options.swaggerOptions
       });
       $('.endpoints', $(this.el)).append(operationView.render().el);
       return this.number++;
+    };
+
+    ResourceView.prototype.callDocs = function(fnName, e) {
+      e.preventDefault();
+      return Docs[fnName](e.currentTarget.getAttribute('data-id'));
     };
 
     return ResourceView;
@@ -1541,8 +1589,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     OperationView.prototype.mouseEnter = function(e) {
       var elem, hgh, pos, scMaxX, scMaxY, scX, scY, wd, x, y;
       elem = $(e.currentTarget.parentNode).find('#api_information_panel');
-      x = event.pageX;
-      y = event.pageY;
+      x = e.pageX;
+      y = e.pageY;
       scX = $(window).scrollLeft();
       scY = $(window).scrollTop();
       scMaxX = scX + $(window).width();
@@ -1747,7 +1795,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       for (_j = 0, _len1 = _ref6.length; _j < _len1; _j++) {
         param = _ref6[_j];
         if (param.paramType === 'form') {
-          if (map[param.name] !== void 0) {
+          if (param.type.toLowerCase() !== 'file' && map[param.name] !== void 0) {
             bodyParam.append(param.name, map[param.name]);
           }
         }
@@ -1769,9 +1817,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           params += 1;
         }
       }
-      log(bodyParam);
       this.invocationUrl = this.model.supportHeaderParams() ? (headerParams = this.model.getHeaderParams(map), this.model.urlify(map, false)) : this.model.urlify(map, true);
-      $(".request_url", $(this.el)).html("<pre>" + this.invocationUrl + "</pre>");
+      $(".request_url", $(this.el)).html("<pre></pre>");
+      $(".request_url pre", $(this.el)).text(this.invocationUrl);
       obj = {
         type: this.model.method,
         url: this.invocationUrl,
@@ -1938,7 +1986,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     };
 
     OperationView.prototype.showStatus = function(response) {
-      var code, content, contentType, headers, pre, response_body, url;
+      var code, content, contentType, headers, opts, pre, response_body, response_body_el, url;
       if (response.content === void 0) {
         content = response.data;
         url = response.url;
@@ -1967,14 +2015,21 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         pre = $('<pre class="json" />').append(code);
       }
       response_body = pre;
-      $(".request_url", $(this.el)).html("<pre>" + url + "</pre>");
+      $(".request_url", $(this.el)).html("<pre></pre>");
+      $(".request_url pre", $(this.el)).text(url);
       $(".response_code", $(this.el)).html("<pre>" + response.status + "</pre>");
       $(".response_body", $(this.el)).html(response_body);
-      $(".response_headers", $(this.el)).html("<pre>" + JSON.stringify(response.headers, null, "  ").replace(/\n/g, "<br>") + "</pre>");
+      $(".response_headers", $(this.el)).html("<pre>" + _.escape(JSON.stringify(response.headers, null, "  ")).replace(/\n/g, "<br>") + "</pre>");
       $(".response", $(this.el)).slideDown();
       $(".response_hider", $(this.el)).show();
       $(".response_throbber", $(this.el)).hide();
-      return hljs.highlightBlock($('.response_body', $(this.el))[0]);
+      response_body_el = $('.response_body', $(this.el))[0];
+      opts = this.options.swaggerOptions;
+      if (opts.highlightSizeThreshold && response.data.length > opts.highlightSizeThreshold) {
+        return response_body_el;
+      } else {
+        return hljs.highlightBlock(response_body_el);
+      }
     };
 
     OperationView.prototype.toggleOperationContent = function() {

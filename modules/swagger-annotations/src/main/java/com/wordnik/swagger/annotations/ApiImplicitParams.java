@@ -16,10 +16,7 @@
 
 package com.wordnik.swagger.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * A wrapper to allow a list of multiple {@link com.wordnik.swagger.annotations.ApiImplicitParam} objects.
@@ -28,6 +25,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 public @interface ApiImplicitParams {
     /**
      * A list of {@link com.wordnik.swagger.annotations.ApiImplicitParam}s available to the API operation.

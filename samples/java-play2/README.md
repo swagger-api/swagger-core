@@ -15,7 +15,7 @@ The swagger-play2 module lives in maven central:
 ```scala
 val appDependencies: Seq[sbt.ModuleID] = Seq(
   /* your other dependencies */
-  "com.wordnik" %% "swagger-play2" % "1.3.8-SNAPSHOT"
+  "com.wordnik" %% "swagger-play2" % "1.3.9-SNAPSHOT"
 )
 ```
 

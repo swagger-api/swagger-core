@@ -20,12 +20,23 @@ class PetApiController extends BaseApiController {
     implicit request => JsonResponse(new value.ApiResponse(200, "Ok"))
   }
 
-  @ApiOperation(nickname = "getPetById", value = "Find pet by ID", notes = "Returns a pet", response = classOf[models.Pet], httpMethod = "GET")
+  @ApiOperation(
+    nickname = "getPetById", 
+    value = "Find pet by ID", 
+    notes = "Returns a pet", 
+    response = classOf[models.Pet], 
+    httpMethod = "GET",
+    authorizations = Array(new Authorization(value="oauth2",
+      scopes = Array(
+        new AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
+        new AuthorizationScope(scope = "read:pets", description = "read your pets")
+      )))
+    )
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
     new ApiResponse(code = 404, message = "Pet not found")))
   def getPetById(
-                  @ApiParam(value = "ID of the pet to fetch") @PathParam("id") id: String) = Action {
+    @ApiParam(value = "ID of the pet to fetch") @PathParam("id") id: String) = Action {
     implicit request =>
       petData.getPetbyId(getLong(0, 100000, 0, id)) match {
         case Some(pet) => JsonResponse(pet)
@@ -85,8 +96,8 @@ class PetApiController extends BaseApiController {
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid status value")))
   def findPetsByStatus(
-                        @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available",
-                          allowableValues = "available,pending,sold", allowMultiple = true) @QueryParam("status") status: String) = Action {
+    @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available",
+      allowableValues = "available,pending,sold", allowMultiple = true) @QueryParam("status") status: String) = Action {
     implicit request =>
       var results = petData.findPetByStatus(status)
       JsonResponse(results)

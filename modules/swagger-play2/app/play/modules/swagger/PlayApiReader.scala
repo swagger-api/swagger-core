@@ -178,6 +178,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         case e: String if e != "" => Some(e)
         case _ => None
       }
+
       // define a Map to hold Operations keyed by resourcepath
       var operationsMap: Map[String, List[Operation]] = Map.empty
       for (method <- cls.getMethods) {
@@ -218,7 +219,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
           produces,
           consumes,
           protocols,
-          List(), // authorizations
+          List(),
           ModelUtil.stripPackages(apiDescriptions), //  List[com.wordnik.swagger.model.ApiDescription]
           models,
           description
@@ -231,7 +232,6 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
       None
     }
   }
-
 
   def readMethod(method: Method): Option[Operation] = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
@@ -259,6 +259,8 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         }).toList
         case _ => List()
       }
+      // Logger("swagger").error("authz: " + authorizations)
+      if(1 == 1) throw new RuntimeException("fun")
       val responseClass = apiOperation.responseContainer match {
         case "" => apiOperation.response.getName
         case e: String => "%s[%s]".format(e, apiOperation.response.getName)

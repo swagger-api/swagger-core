@@ -15,5 +15,24 @@ object Global extends GlobalSettings {
     license = "Apache 2.0", 
     licenseUrl = "http://www.apache.org/licenses/LICENSE-2.0.html")
 
+  val oauth = OAuth(
+    List(
+      AuthorizationScope("write:pets", "Modify pets in your account"),
+      AuthorizationScope("read:pets", "Read your pets")),
+    List(
+      ImplicitGrant(
+        LoginEndpoint("http://petstore.swagger.wordnik.com/oauth/dialog"),
+        "access_token"
+      ),
+      AuthorizationCodeGrant(
+        TokenRequestEndpoint("http://petstore.swagger.wordnik.com/oauth/requestToken",
+          "client_id",
+          "client_secret"),
+        TokenEndpoint("http://petstore.swagger.wordnik.com/oauth/token",
+          "auth_code"
+        )
+    )
+  ))
+  ConfigFactory.config.authorizations = List(oauth)
   ConfigFactory.config.info = Some(info)
 }
