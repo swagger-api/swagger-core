@@ -59,6 +59,8 @@ public @interface Api {
      * <p/>
      * The `basePath` is derived automatically by Swagger. This property allows
      * overriding the default value if needed.
+     *
+     * @since 1.3.7
      */
     String basePath() default "";
 
@@ -110,6 +112,8 @@ public @interface Api {
 
     /**
      * Hides the api.
+     *
+     * @since 1.3.8
      */
     boolean hidden() default false;
 }
