@@ -259,8 +259,6 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         }).toList
         case _ => List()
       }
-      // Logger("swagger").error("authz: " + authorizations)
-      if(1 == 1) throw new RuntimeException("fun")
       val responseClass = apiOperation.responseContainer match {
         case "" => apiOperation.response.getName
         case e: String => "%s[%s]".format(e, apiOperation.response.getName)
