@@ -18,6 +18,7 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= appDependencies,
     resolvers := Seq(
       "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
+      Resolver.url("Local Ivy Repository", url("file://"+Path.userHome.absolutePath+"/.ivy2/local"))(Resolver.ivyStylePatterns),
       "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
       "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases",
       "java-net" at "http://download.java.net/maven/2",

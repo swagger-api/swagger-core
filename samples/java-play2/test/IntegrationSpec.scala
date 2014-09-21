@@ -22,36 +22,36 @@ class IntegrationSpec extends Specification {
   "Application" should {    
     "have the proper resource metadata" in {
       running(TestServer(3333)) {
-      	val json = Source.fromURL("http://localhost:3333/api-docs").mkString
+        val json = Source.fromURL("http://localhost:3333/api-docs").mkString
         val doc = parse(json).extract[ResourceListing]
-      	doc.swaggerVersion must_==("1.2")
+        doc.swaggerVersion must_==("1.2")
       }
     }
 
     "contain all apis defined in the routes without api key" in {
-    	running(TestServer(3333)) {
-      	val json = Source.fromURL("http://localhost:3333/api-docs").mkString
+      running(TestServer(3333)) {
+        val json = Source.fromURL("http://localhost:3333/api-docs").mkString
         val doc = parse(json).extract[ResourceListing]
-		    doc.apis.size must_==(3)
-		    (doc.apis.map(_.path).toSet &
-		      Set(
+        doc.apis.size must_==(3)
+        (doc.apis.map(_.path).toSet &
+          Set(
             "/admin",
             "/pet",
-		        "/user")
-		      ).size must_==(3)
+            "/user")
+          ).size must_==(3)
       }
     }
 
     "contain all operations defined in the pet resource without api key" in {
-    	running(TestServer(3333)) {
-      	val json = Source.fromURL("http://localhost:3333/api-docs/pet").mkString
+      running(TestServer(3333)) {
+        val json = Source.fromURL("http://localhost:3333/api-docs/pet").mkString
         val doc = parse(json).extract[ApiListing]
-		    (doc.models.get.keys.toSet &
-		      Set(
-		      	"Category",
-		        "Tag",
-		        "Pet")
-		      ).size must_==(3)
+        (doc.models.get.keys.toSet &
+          Set(
+            "Category",
+            "Tag",
+            "Pet")
+          ).size must_==(3)
       }
     }
 
@@ -101,15 +101,15 @@ class IntegrationSpec extends Specification {
     }
 
     "contain all operations defined in the pet resource with api key" in {
-    	running(TestServer(3333)) {
-      	val json = Source.fromURL("http://localhost:3333/api-docs/pet?api_key=special-key").mkString
+      running(TestServer(3333)) {
+        val json = Source.fromURL("http://localhost:3333/api-docs/pet?api_key=special-key").mkString
         val doc = parse(json).extract[ApiListing]
-		    (doc.apis.map(_.path).toSet &
-		      Set(
-		      	"/pet/findByTags",
-		        "/pet/findByStatus",
-		        "/pet/{id}")
-		      ).size must_==(3)
+        (doc.apis.map(_.path).toSet &
+          Set(
+            "/pet/findByTags",
+            "/pet/findByStatus",
+            "/pet/{id}")
+          ).size must_==(3)
       }
     }
   }
