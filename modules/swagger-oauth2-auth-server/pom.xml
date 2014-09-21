@@ -3,14 +3,14 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.11</artifactId>
-    <version>1.3.9</version>
+    <version>1.3.10</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
   <artifactId>swagger-oauth2-server_2.11</artifactId>
   <packaging>jar</packaging>
-  <version>1.3.9</version>
+  <version>1.3.10</version>
   <name>swagger-oauth2-server</name>
   <build>
     <defaultGoal>install</defaultGoal>
