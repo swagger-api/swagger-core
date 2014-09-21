@@ -15,7 +15,6 @@ import org.mockito.Mockito._
 
 
 class PlayApiReaderSpec extends Specification with Mockito {
-
   "PlayApiReader.SwaggerUtils" should {
     "convert a simple play route comment" in {
       val path = "/pet.json/$id<[^/]+>/test/$nothing<[^/]+>"
@@ -84,7 +83,6 @@ class PlayApiReaderSpec extends Specification with Mockito {
 
 
   "with Object as Controller" should {
-
     "get full name for method" in {
       reader.getFullMethodName(dogControllerClass, dogMethod("add1").get) must beEqualTo("test.testdata.DogController$.add1")
     }
@@ -119,7 +117,6 @@ class PlayApiReaderSpec extends Specification with Mockito {
     "get request path for a method that has path params" in {
       reader.getPath(catControllerClass, catControllerClass.getMethod("get1", classOf[Long])).getOrElse("") must beEqualTo("/api/cat/:id")
     }
-
   }
 
 
@@ -157,7 +154,6 @@ class PlayApiReaderSpec extends Specification with Mockito {
   }
 
   "readMethod with Object as controller" should {
-
     "create Operation for annotated method" in {
       val maybeOperation: Option[Operation] = reader.readMethod(dogMethod("list").get)
       maybeOperation.nonEmpty must beTrue
@@ -188,20 +184,22 @@ class PlayApiReaderSpec extends Specification with Mockito {
 
     "adds empty 'authorizations' when not defined" in {
       val operation: Operation = reader.readMethod(dogMethod("add1").get).get
+      println(operation.authorizations)
       operation.authorizations must beEqualTo(List.empty)
     }
 
     "adds 'authorizations' when defined" in {
       val operation: Operation = reader.readMethod(dogMethod("add2").get).get
       operation.authorizations.length must beEqualTo(1)
-      operation.authorizations.head must beEqualTo("vet")
+      operation.authorizations.head.`type` must beEqualTo("oauth2")
     }
 
-    "adds mulitple 'authorizations' when defined" in {
+    "adds multiple 'authorizations' when defined" in {
       val operation: Operation = reader.readMethod(dogMethod("add3").get).get
       operation.authorizations.length must beEqualTo(2)
-      operation.authorizations.contains("vet") must beTrue
-      operation.authorizations.contains("owner") must beTrue
+      val authNames = (for(auth <- operation.authorizations) yield auth.`type`).toSet
+      authNames.contains("oauth2") must beTrue
+      authNames.contains("api_key") must beTrue
     }
 
     "adds empty 'produces' when not defined" in {
