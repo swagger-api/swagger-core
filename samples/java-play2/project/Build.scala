@@ -1,9 +1,10 @@
 import sbt._
 import Keys._
-import play.Project._
+import play.Play.autoImport._
+import play.PlayJava
+import PlayKeys._
 
 object ApplicationBuild extends Build {
-
   val appName = "petstore"
   val appVersion = "1.3.10"
 
@@ -12,7 +13,9 @@ object ApplicationBuild extends Build {
     "com.wordnik" %% "swagger-play2-utils" % "1.3.10"
   )
 
-  val main = play.Project(appName, appVersion, appDependencies).settings(
+  val main = Project(appName, file(".")).enablePlugins(play.PlayJava).settings(
+    version := appVersion,
+    libraryDependencies ++= appDependencies,
     resolvers := Seq(
       "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
       Resolver.url("Local Ivy Repository", url("file://"+Path.userHome.absolutePath+"/.ivy2/local"))(Resolver.ivyStylePatterns),
