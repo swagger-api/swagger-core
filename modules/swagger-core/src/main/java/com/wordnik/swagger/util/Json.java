@@ -38,6 +38,15 @@ public class Json {
     return mapper().writer(new DefaultPrettyPrinter());
   }
 
+  public static String pretty(Object o) {
+    try {
+      return pretty().writeValueAsString(o);
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
   public static void prettyPrint(Object o) {
     try {
       System.out.println(pretty().writeValueAsString(o));

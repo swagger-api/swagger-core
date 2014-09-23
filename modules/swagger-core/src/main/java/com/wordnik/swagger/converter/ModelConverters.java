@@ -5,10 +5,12 @@ import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.properties.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.module.swagger.ModelResolver;
 
 import java.io.File;
 import java.util.*;
+import java.lang.reflect.Type;
 
 public class ModelConverters {
   static ObjectMapper mapper = Json.mapper();
@@ -44,15 +46,18 @@ public class ModelConverters {
     return output;
   }
 
-  public static Map<String, Model> readAll(Class<?> cls) {
+
+  public static Map<String, Model> readAll(Type type) {
+    JavaType javaType = mapper.getTypeFactory().constructType(type);
     Map<String, Model> output = new HashMap<String, Model>();
-    if(shouldProcess(cls)) {
+    if(shouldProcess(type)) {
       ModelResolver resolver = new ModelResolver(mapper);
-      resolver.resolve(cls);
+      resolver.resolve(javaType);
       Map<String, Model> models = resolver.getDetectedTypes();
       Map<String, Model> o = new HashMap<String, Model>();
       for(String key : models.keySet()) {
         Model m = models.get(key);
+
         if(m.getProperties() != null) {
           for(String propertyName : m.getProperties().keySet()) {
             Property prop = m.getProperties().get(propertyName);
@@ -65,6 +70,34 @@ public class ModelConverters {
       return models;
     }
     else return output;
+  }
+
+  public static Map<String, Model> readAll(Class<?> cls) {
+    Map<String, Model> output = new HashMap<String, Model>();
+    if(shouldProcess(cls)) {
+      ModelResolver resolver = new ModelResolver(mapper);
+      resolver.resolve(cls);
+      Map<String, Model> models = resolver.getDetectedTypes();
+      Map<String, Model> o = new HashMap<String, Model>();
+      for(String key : models.keySet()) {
+        Model m = models.get(key);
+
+        if(m.getProperties() != null) {
+          for(String propertyName : m.getProperties().keySet()) {
+            Property prop = m.getProperties().get(propertyName);
+            if(prop instanceof RefProperty) {
+              RefProperty rp = (RefProperty) prop;
+            }
+          }
+        }
+      }
+      return models;
+    }
+    else return output;
+  }
+
+  static boolean shouldProcess(Type t) {
+    return true;
   }
 
   static boolean shouldProcess(Class<?> cls) {

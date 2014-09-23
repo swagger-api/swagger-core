@@ -39,12 +39,12 @@ class ParameterSerializationTest extends FlatSpec with Matchers {
     val p = new QueryParameter()
       .array(true)
       .items(new StringProperty())
-      .collectionFormat("jaxrs")
-    m.writeValueAsString(p) should be ("""{"in":"query","required":false,"type":"array","items":{"type":"string"},"collectionFormat":"jaxrs"}""")
+      .collectionFormat("multi")
+    m.writeValueAsString(p) should be ("""{"in":"query","required":false,"type":"array","items":{"type":"string"},"collectionFormat":"multi"}""")
   }
 
   it should "deserialize a array QueryParameter" in {
-    val json = """{"in":"query","required":false,"type":"array","items":{"type":"string"},"collectionFormat":"jaxrs"}"""
+    val json = """{"in":"query","required":false,"type":"array","items":{"type":"string"},"collectionFormat":"multi"}"""
     val p = m.readValue(json, classOf[Parameter])
     m.writeValueAsString(p) should equal (json)
   }
@@ -64,13 +64,20 @@ class ParameterSerializationTest extends FlatSpec with Matchers {
     val p = new PathParameter()
       .array(true)
       .items(new StringProperty())
-      .collectionFormat("jaxrs")
-    m.writeValueAsString(p) should be ("""{"in":"path","required":true,"type":"array","items":{"type":"string"},"collectionFormat":"jaxrs"}""")
-    println(yaml.writeValueAsString(p))
+      .collectionFormat("multi")
+    m.writeValueAsString(p) should be ("""{"in":"path","required":true,"type":"array","items":{"type":"string"},"collectionFormat":"multi"}""")
+    yaml.writeValueAsString(p) should equal (
+"""--- !<path>
+required: true
+type: "array"
+items:
+  type: "string"
+collectionFormat: "multi"
+""")
   }
 
   it should "deserialize a string array PathParameter" in {
-    val json = """{"in":"path","required":true,"type":"array","items":{"type":"string"},"collectionFormat":"jaxrs"}"""
+    val json = """{"in":"path","required":true,"type":"array","items":{"type":"string"},"collectionFormat":"multi"}"""
     val p = m.readValue(json, classOf[Parameter])
     m.writeValueAsString(p) should equal (json)
   }
@@ -79,12 +86,12 @@ class ParameterSerializationTest extends FlatSpec with Matchers {
     val p = new PathParameter()
       .array(true)
       .items(new IntegerProperty())
-      .collectionFormat("jaxrs")
-    m.writeValueAsString(p) should be ("""{"in":"path","required":true,"type":"array","items":{"type":"integer","format":"int32"},"collectionFormat":"jaxrs"}""")
+      .collectionFormat("multi")
+    m.writeValueAsString(p) should be ("""{"in":"path","required":true,"type":"array","items":{"type":"integer","format":"int32"},"collectionFormat":"multi"}""")
   }
 
   it should "deserialize a integer array PathParameter" in {
-    val json = """{"in":"path","required":true,"type":"array","items":{"type":"integer","format":"int32"},"collectionFormat":"jaxrs"}"""
+    val json = """{"in":"path","required":true,"type":"array","items":{"type":"integer","format":"int32"},"collectionFormat":"multi"}"""
     val p = m.readValue(json, classOf[Parameter])
     m.writeValueAsString(p) should equal (json)
   }
@@ -92,7 +99,11 @@ class ParameterSerializationTest extends FlatSpec with Matchers {
   it should "serialize a HeaderParameter" in {
     val p = new HeaderParameter().property(new StringProperty())
     m.writeValueAsString(p) should be ("""{"in":"header","required":true,"type":"string"}""")
-    println(yaml.writeValueAsString(p))
+    yaml.writeValueAsString(p) should equal(
+"""--- !<header>
+required: true
+type: "string"
+""")
   }
 
   it should "deserialize a HeaderParameter" in {
@@ -105,13 +116,12 @@ class ParameterSerializationTest extends FlatSpec with Matchers {
     val p = new HeaderParameter()
       .array(true)
       .property(new StringProperty())
-      .collectionFormat("jaxrs")
-    m.writeValueAsString(p) should be ("""{"in":"header","required":true,"type":"string","collectionFormat":"jaxrs"}""")
-    println(yaml.writeValueAsString(p))
+      .collectionFormat("multi")
+    m.writeValueAsString(p) should be ("""{"in":"header","required":true,"type":"string","collectionFormat":"multi"}""")
   }
 
   it should "deserialize a string array HeaderParameter" in {
-    val json = """{"in":"header","required":true,"type":"string","collectionFormat":"jaxrs"}"""
+    val json = """{"in":"header","required":true,"type":"string","collectionFormat":"multi"}"""
     val p = m.readValue(json, classOf[Parameter])
     m.writeValueAsString(p) should equal (json)
   }
@@ -121,7 +131,6 @@ class ParameterSerializationTest extends FlatSpec with Matchers {
       .name("Cat")
       .property("name", new StringProperty())
     val p = new BodyParameter().schema(model)
-    println(m.writeValueAsString(p))
     m.writeValueAsString(p) should be ("""{"in":"body","required":false,"schema":{"properties":{"name":{"type":"string"}}}}""")
   }
 
@@ -130,7 +139,14 @@ class ParameterSerializationTest extends FlatSpec with Matchers {
       .name("Cat")
       .property("name", new StringProperty())
     val p = new BodyParameter().schema(model)
-    println(yaml.writeValueAsString(p)) //should be ("""{"in":"body","required":false,"schema":{"properties":{"name":{"type":"string"}}}}""")
+    yaml.writeValueAsString(p) should equal(
+"""--- !<body>
+required: false
+schema:
+  properties:
+    name:
+      type: "string"
+""")
   }
 
   it should "deserialize a BodyParameter" in {
