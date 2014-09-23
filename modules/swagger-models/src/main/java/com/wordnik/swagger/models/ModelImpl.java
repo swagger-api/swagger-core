@@ -12,13 +12,20 @@ import javax.xml.bind.annotation.*;
 @XmlType(propOrder = { "enum", "properties"})
 @JsonPropertyOrder({ "enum", "properties"})
 public class ModelImpl implements Model {
+  private String type;
   private String name;
   private List<String> _enum;
   private Map<String, Property> properties;
   private boolean isSimple = false;
   private String description;
   private String example;
+  private Property additionalProperties;
+  private String discriminator;
 
+  public ModelImpl discriminator(String discriminator) {
+    this.setDiscriminator(discriminator);
+    return this;
+  }
   public ModelImpl name(String name) {
     this.setName(name);
     return this;
@@ -34,6 +41,17 @@ public class ModelImpl implements Model {
   public ModelImpl example(String example) {
     this.setExample(example);
     return this;
+  }
+  public ModelImpl additionalProperties(Property additionalProperties) {
+    this.setAdditionalProperties(additionalProperties);
+    return this;
+  }
+
+  public String getDiscriminator() {
+    return this.discriminator;
+  }
+  public void setDiscriminator(String discriminator) {
+    this.discriminator = discriminator;
   }
 
   @JsonIgnore
@@ -57,6 +75,21 @@ public class ModelImpl implements Model {
   }
   public void setSimple(boolean isSimple) {
     this.isSimple = isSimple;
+  }
+
+  public Property getAdditionalProperties() {
+    return additionalProperties;
+  }
+  public void setAdditionalProperties(Property additionalProperties) {
+    this.setType("object");
+    this.additionalProperties = additionalProperties;
+  }
+
+  public String getType() {
+    return type;
+  }
+  public void setType(String type) {
+    this.type = type;
   }
 
   public List<String> getEnum() {
