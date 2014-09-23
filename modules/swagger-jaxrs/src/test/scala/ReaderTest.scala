@@ -24,7 +24,7 @@ class ReaderTest extends FlatSpec with Matchers {
     for(method <- methods) {
       if(isValidRestPath(method)) {
         val operation = reader.parseMethod(method)
-        Json.prettyPrint(operation)
+        operation should not be (null)
       }
     }
   }

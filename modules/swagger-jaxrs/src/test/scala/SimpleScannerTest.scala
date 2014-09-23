@@ -1,6 +1,6 @@
 import com.wordnik.swagger.jaxrs.config._
 
-import resources.SimpleResource
+import resources._
 
 import com.wordnik.swagger.models.Swagger
 import com.wordnik.swagger.jaxrs.Reader
@@ -32,6 +32,16 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     param2.getName() should be ("limit")
     param2.getRequired() should be (false)
     param2.getDescription() should be (null)
-    println(Json.pretty().writeValueAsString(get))
+  }
+
+  it should "scan a resource with void return type" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithVoidReturns])
+    swagger.getDefinitions().size() should be (1)
+    swagger.getDefinitions().get("NotFoundModel") should not be (null)
+  }
+
+  it should "scan a resource with map return type" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithMapReturnValue])
+    Json.prettyPrint(swagger)
   }
 }

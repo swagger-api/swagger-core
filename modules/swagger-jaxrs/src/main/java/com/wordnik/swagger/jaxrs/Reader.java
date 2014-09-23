@@ -208,9 +208,13 @@ public class Reader {
     }
     if(responseClass == null) {
       // pick out response from method declaration
+      Type t = method.getGenericReturnType();
       responseClass = method.getReturnType();
+      Map<String, Model> models = ModelConverters.readAll(t);
     }
-    if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
+    if(responseClass != null 
+      && !responseClass.equals(java.lang.Void.class)
+      && !responseClass.equals(javax.ws.rs.core.Response.class)) {
       if(isPrimitive(responseClass)) {
         Property responseProperty = null;
         Property property = ModelConverters.readAsProperty(responseClass);
@@ -228,11 +232,20 @@ public class Reader {
       }
       else {
         Map<String, Model> models = ModelConverters.read(responseClass);
+        if(models.size() == 0) {
+          System.out.println("responseClass " + responseClass);
+          Property p = ModelConverters.readAsProperty(responseClass);
+          operation.response(200, new Response()
+            .description("successful operation")
+            .schema(p));
+        }
         for(String key: models.keySet()) {
           Property responseProperty = null;
 
           if("list".equalsIgnoreCase(responseContainer))
             responseProperty = new ArrayProperty(new RefProperty().asDefault(key));
+          else if("map".equalsIgnoreCase(responseContainer))
+            responseProperty = new MapProperty(new RefProperty().asDefault(key));
           else
             responseProperty = new RefProperty().asDefault(key);
           operation.response(200, new Response()

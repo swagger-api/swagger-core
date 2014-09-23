@@ -2,10 +2,10 @@ package resources;
 
 import models.*;
 
+import com.wordnik.swagger.annotations.*;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-
-import com.wordnik.swagger.annotations.*;
 
 @Api(value = "/basic", description = "Basic resource")
 @Produces({"application/xml"})

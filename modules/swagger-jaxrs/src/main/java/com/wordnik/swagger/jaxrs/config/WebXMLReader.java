@@ -32,7 +32,7 @@ public class WebXMLReader /*implements SwaggerConfig*/ {
         else {
           scheme = parts[0];
           basePath = null;
-          host = parts[0] + "//" + parts[1];
+          host = parts[1];
         }
       }
     }

@@ -23,6 +23,8 @@ class BeanConfigTest extends FlatSpec with Matchers {
     bc.setLicenseUrl("http://github.com/gruntjs/grunt/blob/master/LICENSE-MIT")
     bc.setScan(true)
 
-    println(Json.pretty().writeValueAsString(bc.getSwagger()))
+    val swagger = bc.getSwagger()
+    swagger should not be (null)
+    // TODO: add checks
   }
 }
