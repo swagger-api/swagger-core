@@ -21,6 +21,8 @@ public class ModelImpl implements Model {
   private String example;
   private Property additionalProperties;
   private String discriminator;
+  /** names of required properties */
+  private List<String> required;
 
   public ModelImpl discriminator(String discriminator) {
     this.setDiscriminator(discriminator);
@@ -137,6 +139,9 @@ public class ModelImpl implements Model {
           property.setRequired(true);
       }
     }
+    if (required != null && required.contains(key)) {
+      property.setRequired(true);
+    }
     properties.put(key, property);    
   }
 
@@ -159,5 +164,21 @@ public class ModelImpl implements Model {
 
   public void setExample(String example) {
     this.example = example;
+  }
+
+  public List<String> getRequired() {
+    return required;
+  }
+
+  public void setRequired(List<String> required) {
+    this.required = required;
+    if (properties != null) {
+      for (String propertyName : required) {
+        Property property = properties.get(propertyName);
+        if (property != null) {
+          property.setRequired(true);
+        }
+      }
+    }
   }
 }
