@@ -29,7 +29,7 @@ class CompositionTest extends FlatSpec with Matchers {
     } ]
   },
   "Human" : {
-    "enum" : [ "name" ],
+    "required" : [ "name" ],
     "properties" : {
       "name" : {
         "type" : "string",
@@ -80,7 +80,7 @@ class CompositionTest extends FlatSpec with Matchers {
     } ]
   },
   "Animal" : {
-    "enum" : [ "name" ],
+    "required" : [ "name" ],
     "properties" : {
       "name" : {
         "type" : "string",

@@ -24,13 +24,13 @@ class ModelSerializerTest extends FlatSpec with Matchers {
     props += "dateValue" -> new DateProperty
     props += "dateTimeValue" -> new DateTimeProperty
     pet.setProperties(props.asJava)
-    pet.setEnum(List("intValue", "name").asJava)
+    pet.setRequired(List("intValue", "name").asJava)
 
-    m.writeValueAsString(pet) should be ("""{"enum":["intValue"],"properties":{"dateValue":{"type":"string","format":"date"},"longValue":{"type":"integer","format":"int64"},"dateTimeValue":{"type":"string","format":"date-time"},"intValue":{"type":"integer","format":"int32"}}}""")
+    m.writeValueAsString(pet) should be ("""{"required":["intValue"],"properties":{"dateValue":{"type":"string","format":"date"},"longValue":{"type":"integer","format":"int64"},"dateTimeValue":{"type":"string","format":"date-time"},"intValue":{"type":"integer","format":"int32"}}}""")
   }
 
   it should "deserialize a model" in {
-    val json = """{"enum":["intValue"],"properties":{"dateValue":{"type":"string","format":"date"},"longValue":{"type":"integer","format":"int64"},"dateTimeValue":{"type":"string","format":"date-time"},"intValue":{"type":"integer","format":"int32"}}}"""
+    val json = """{"required":["intValue"],"properties":{"dateValue":{"type":"string","format":"date"},"longValue":{"type":"integer","format":"int64"},"dateTimeValue":{"type":"string","format":"date-time"},"intValue":{"type":"integer","format":"int32"}}}"""
 
     val p = m.readValue(json, classOf[Model])
     m.writeValueAsString(p) should equal (json)

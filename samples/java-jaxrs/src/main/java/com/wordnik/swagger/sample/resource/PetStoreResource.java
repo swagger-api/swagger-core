@@ -51,13 +51,13 @@ public class PetStoreResource {
 
   @POST
   @Path("/order")
-  @ApiOperation(value = "Place an order for a pet",
-    response = Order.class)
+  @ApiOperation(value = "Place an order for a pet")
   @ApiResponses({ @ApiResponse(code = 400, message = "Invalid Order") })
-  public Response placeOrder(
-      @ApiParam(value = "order placed for purchasing the pet", required = true) Order order) {
+  public Order placeOrder(
+      @ApiParam(value = "order placed for purchasing the pet",
+        required = true) Order order) {
     storeData.placeOrder(order);
-    return Response.ok().entity("").build();
+    return storeData.placeOrder(order);
   }
 
   @DELETE

@@ -9,12 +9,12 @@ import java.util.*;
 
 import javax.xml.bind.annotation.*;
 
-@XmlType(propOrder = { "enum", "properties"})
-@JsonPropertyOrder({ "enum", "properties"})
+@XmlType(propOrder = { "required", "properties"})
+@JsonPropertyOrder({ "required", "properties"})
 public class ModelImpl implements Model {
   private String type;
   private String name;
-  private List<String> _enum;
+  private List<String> required;
   private Map<String, Property> properties;
   private boolean isSimple = false;
   private String description;
@@ -44,6 +44,10 @@ public class ModelImpl implements Model {
   }
   public ModelImpl additionalProperties(Property additionalProperties) {
     this.setAdditionalProperties(additionalProperties);
+    return this;
+  }
+  public ModelImpl required(String name) {
+    this.addRequired(name);
     return this;
   }
 
@@ -92,7 +96,13 @@ public class ModelImpl implements Model {
     this.type = type;
   }
 
-  public List<String> getEnum() {
+  public void addRequired(String name) {
+    Property p = properties.get(name);
+    if(p != null)
+      p.setRequired(true);
+  }
+
+  public List<String> getRequired() {
     List<String> output = new ArrayList<String>();
     if(properties != null) {
       for(String key : properties.keySet()) {
@@ -106,9 +116,9 @@ public class ModelImpl implements Model {
     else
       return null;
   }
-  public void setEnum(List<String> _enum) {
-    this._enum = _enum;
-    for(String s : _enum) {
+  public void setRequired(List<String> required) {
+    this.required = required;
+    for(String s : required) {
       if(properties != null) {
         Property p = properties.get(s);
         if(p != null) {
@@ -121,8 +131,8 @@ public class ModelImpl implements Model {
   public void addProperty(String key, Property property) {
     if(properties == null)
       properties = new LinkedHashMap<String, Property>();
-    if(_enum != null) {
-      for(String ek : _enum) {
+    if(required != null) {
+      for(String ek : required) {
         if(key.equals(ek))
           property.setRequired(true);
       }

@@ -277,7 +277,6 @@ public class Reader {
         operation.produces(mediaType);
     }
 
-
     List<ApiResponse> apiResponses = new ArrayList<ApiResponse>();
     if(responseAnnotation != null) {
       for(ApiResponse apiResponse: responseAnnotation.value()) {
@@ -492,10 +491,18 @@ public class Reader {
                   swagger.addDefinition(name, models.get(name));
                 }
               }
+              models = ModelConverters.readAll(cls);
+              for(String key : models.keySet()) {
+                swagger.model(key, models.get(key));
+              }
             }
-            models = ModelConverters.readAll(cls);
-            for(String key : models.keySet()) {
-              swagger.model(key, models.get(key));
+            else {
+              Property prop = ModelConverters.readAsProperty(cls);
+              if(prop != null) {
+                ModelImpl model = new ModelImpl();
+                model.setType(prop.getType());
+                bp.setSchema(model);
+              }
             }
           }
           parameter = bp;

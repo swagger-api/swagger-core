@@ -101,8 +101,8 @@ public class ModelConverters {
   }
 
   static boolean shouldProcess(Class<?> cls) {
-    // if(cls.getName().startsWith("java."))
-    //   return false;
+    if(cls.getName().startsWith("java.lang"))
+      return false;
     // if(cls.isEnum())
     //   return false;
     return true;
