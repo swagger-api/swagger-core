@@ -34,8 +34,8 @@ class ResourceListingIT extends FlatSpec with Matchers {
     val json = Source.fromURL("http://localhost:8002/api/api-docs").mkString
     val doc = JsonSerializer.asResourceListing(json)
 
-    doc.apis.size should be (2)
-    (doc.apis.map(api => api.path).toSet & Set("/pet", "/user")).size should be (2)
+    doc.apis.size should be (1)
+    (doc.apis.map(api => api.path).toSet & Set("/pet")).size should be (1)
   }
 
   ignore should "read the resource listing in XML" in {
@@ -47,11 +47,10 @@ class ResourceListingIT extends FlatSpec with Matchers {
   it should "read the pet api description" in {
     val json = Source.fromURL("http://localhost:8002/api/api-docs/pet").mkString
     val doc = JsonSerializer.asApiListing(json)
-    doc.apis.size should be (3)
+    doc.apis.size should be (2)
     (doc.apis.map(api => api.path).toSet &
-      Set("/pet/{petId}",
-        "/pet/findByStatus",
-        "/pet/findByTags")).size should be (3)
+      Set("/pet/{petId}/owner",
+        "/pet/{petId}")).size should be (2)
   }
 
   ignore should "read the user api with array and list data types as post data" in {
