@@ -105,7 +105,16 @@ public class PetData {
     return result;
   }
 
-  public void addPet(Pet pet) {
+  public Pet addPet(Pet pet) {
+    if(pet.getId() == 0) {
+      long maxId = 0;
+      for (int i = pets.size() - 1; i >= 0; i--) {
+        if(pets.get(i).getId() > maxId) {
+          maxId = pets.get(i).getId();
+        }
+      }
+      pet.setId(maxId + 1);
+    }
     if (pets.size() > 0) {
       for (int i = pets.size() - 1; i >= 0; i--) {
         if (pets.get(i).getId() == pet.getId()) {
@@ -114,6 +123,7 @@ public class PetData {
       }
     }
     pets.add(pet);
+    return pet;
   }
 
   static Pet createPet(long id, Category cat, String name, String[] urls,

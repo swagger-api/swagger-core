@@ -73,8 +73,8 @@ public class PetResource {
   @ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input") })
   public Response addPet(
       @ApiParam(value = "Pet object that needs to be added to the store", required = true) Pet pet) {
-    petData.addPet(pet);
-    return Response.ok().entity("SUCCESS").build();
+    Pet updatedPet = petData.addPet(pet);
+    return Response.ok().entity(updatedPet).build();
   }
 
   @PUT
@@ -85,8 +85,8 @@ public class PetResource {
       @ApiResponse(code = 405, message = "Validation exception") })
   public Response updatePet(
       @ApiParam(value = "Pet object that needs to be added to the store", required = true) Pet pet) {
-    petData.addPet(pet);
-    return Response.ok().entity("SUCCESS").build();
+    Pet updatedPet = petData.addPet(pet);
+    return Response.ok().entity(updatedPet).build();
   }
 
   @GET
