@@ -80,6 +80,7 @@ case class ApiListing (
   apis: List[ApiDescription] = List(),
   models: Option[Map[String, Model]] = None,
   description: Option[String] = None,
+  filter: Option[String] = None,
   position: Int = 0)
 
 case class ApiDescription (
