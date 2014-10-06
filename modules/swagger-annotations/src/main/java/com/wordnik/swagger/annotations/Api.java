@@ -54,6 +54,13 @@ public @interface Api {
      */
     String filter() default "";
     /**
+     * Use a path alias.
+     * <p/>
+     * This is the path that the API will generate in the URL instead of the path used internally (related to filter).
+     */
+    String pathAlias() default "";
+
+    /**
      * Corresponds to the `description` field of the Resource Listing API operation.
      * <p/>
      * This should be a short description of the resource.

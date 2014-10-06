@@ -133,6 +133,11 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         case _ => None
       }
 
+      val pathAlias = api.pathAlias match {
+        case e: String if e != "" => Some(e)
+        case _ => None
+      }
+
       Some(ApiListing (
         apiVersion = config.apiVersion,
         swaggerVersion = config.swaggerVersion,
@@ -145,6 +150,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         consumes = consumes,
         protocols = protocols,
         filter = filter,
+        pathAlias = pathAlias,
         position = api.position)
       )
     }
@@ -222,6 +228,11 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         case _ => None
       }
 
+      val pathAlias = api.pathAlias match {
+        case e: String if e != "" => Some(e)
+        case _ => None
+      }
+
       Some(
         ApiListing(
           config.apiVersion,
@@ -235,7 +246,8 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
           ModelUtil.stripPackages(apiDescriptions), //  List[com.wordnik.swagger.model.ApiDescription]
           models,
           description,
-          filter
+          filter,
+          pathAlias
           // position
         )
       )
