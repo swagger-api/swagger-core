@@ -126,6 +126,10 @@ class JerseyApiReader extends JaxrsApiReader {
         else
           api.basePath
       }
+      val filter = api.filter match {
+        case e: String if(e != "") => Some(e)
+        case _ => None
+      }
       Some(ApiListing (
         apiVersion = config.apiVersion,
         swaggerVersion = config.swaggerVersion,
@@ -137,7 +141,8 @@ class JerseyApiReader extends JaxrsApiReader {
         produces = produces,
         consumes = consumes,
         protocols = protocols,
-        position = api.position)
+        position = api.position,
+        filter = filter)
       )
     }
     else None
