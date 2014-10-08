@@ -62,14 +62,14 @@ class ScalaModelTest extends FlatSpec with Matchers {
 """{
   "Pet" : {
     "properties" : {
+      "isDomestic" : {
+        "type" : "boolean"
+      },
       "name" : {
         "type" : "string"
       },
       "type" : {
         "type" : "string"
-      },
-      "isDomestic" : {
-        "type" : "boolean"
       }
     }
   }
