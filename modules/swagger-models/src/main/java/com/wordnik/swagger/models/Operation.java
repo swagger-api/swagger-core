@@ -21,6 +21,7 @@ public class Operation {
   Map<String, Response> responses;
   Map<String, SecurityRequirement> security;
   String example;
+  private ExternalDocs externalDocs;
 
   public Operation summary(String summary) {
     this.setSummary(summary);
@@ -195,5 +196,13 @@ public class Operation {
       this.security = new HashMap<String, SecurityRequirement>();
     }
     this.security.put(security.getName(), security);
+  }
+
+  public ExternalDocs getExternalDocs() {
+    return externalDocs;
+  }
+
+  public void setExternalDocs(ExternalDocs value) {
+    externalDocs = value;
   }
 }

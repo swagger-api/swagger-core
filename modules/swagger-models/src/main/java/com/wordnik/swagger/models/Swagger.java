@@ -1,7 +1,5 @@
 package com.wordnik.swagger.models;
 
-import com.wordnik.swagger.models.Model;
-
 import com.fasterxml.jackson.annotation.*;
 
 import java.util.*;
@@ -17,6 +15,7 @@ public class Swagger {
   protected Map<String, Path> paths;
   protected Map<String, SecurityDefinition> securityDefinition;
   protected Map<String, Model> definitions;
+  private ExternalDocs externalDocs;
 
   public Swagger info(Info info) {
     this.setInfo(info);
@@ -180,5 +179,13 @@ public class Swagger {
     if(this.definitions == null)
       this.definitions = new HashMap<String, Model>();
     this.definitions.put(key, model);
+  }
+
+  public ExternalDocs getExternalDocs() {
+    return externalDocs;
+  }
+
+  public void setExternalDocs(ExternalDocs value) {
+    externalDocs = value;
   }
 }

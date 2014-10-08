@@ -4,7 +4,7 @@ import com.wordnik.swagger.models.properties.Property;
 
 import java.util.*;
 
-public class ArrayModel implements Model {
+public class ArrayModel extends AbstractModel {
   private Map<String, Property> properties;
   private String type;
   private String description;

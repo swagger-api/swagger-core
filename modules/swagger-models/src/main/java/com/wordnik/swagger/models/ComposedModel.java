@@ -3,13 +3,10 @@ package com.wordnik.swagger.models;
 import com.wordnik.swagger.models.properties.*;
 
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.*;
 
-import javax.xml.bind.annotation.*;
-
-public class ComposedModel implements Model {
+public class ComposedModel extends AbstractModel {
   private List<Model> allOf = new ArrayList<Model>();
   private Model parent;
   private Model child;
