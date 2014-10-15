@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
   @Type(value = HeaderParameter.class, name = "header"),
   @Type(value = PathParameter.class, name = "path"),
   @Type(value = QueryParameter.class, name = "query"),
+  @Type(value = FormParameter.class, name = "formData"),
   @Type(value = CookieParameter.class, name = "cookie")})
 public interface Parameter {
   @JsonIgnore
