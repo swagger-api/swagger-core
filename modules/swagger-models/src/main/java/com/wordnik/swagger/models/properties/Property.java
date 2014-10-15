@@ -1,5 +1,7 @@
 package com.wordnik.swagger.models.properties;
 
+import com.wordnik.swagger.models.Xml;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public interface Property {
@@ -21,6 +23,7 @@ public interface Property {
 
   @JsonIgnore
   boolean getRequired();
+  void setRequired(boolean required);
 
   String getExample();
   void setExample(String example);
@@ -29,5 +32,6 @@ public interface Property {
   void setPosition(Integer position);
   Integer getPosition();
 
-  void setRequired(boolean required);
+  Xml getXml();
+  void setXml(Xml xml);
 }
