@@ -16,6 +16,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.CookieParam;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -390,6 +391,15 @@ public class Reader {
           hp.setProperty(schema);
         parameter = hp;
       }
+      else if(annotation instanceof FormParam) {
+        FormParam param = (FormParam) annotation;
+        FormParameter fp = new FormParameter()
+          .name(param.value());
+        Property schema = ModelConverters.readAsProperty(cls);
+        if(schema != null)
+          fp.setProperty(schema);
+        parameter = fp;
+      }
       else if(annotation instanceof DefaultValue) {
         DefaultValue defaultValueAnnotation = (DefaultValue) annotation;
         // TODO: not supported yet
@@ -417,28 +427,28 @@ public class Reader {
               Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
-                .collectionFormat("default");
+                .collectionFormat("multi");
             }
             else if(parameter instanceof QueryParameter) {
               QueryParameter p = (QueryParameter) parameter;
               Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
-                .collectionFormat("default");
+                .collectionFormat("multi");
             }
             else if(parameter instanceof HeaderParameter) {
               HeaderParameter p = (HeaderParameter) parameter;
               Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
-                .collectionFormat("default");
+                .collectionFormat("multi");
             }
             else if(parameter instanceof CookieParameter) {
               CookieParameter p = (CookieParameter) parameter;
               Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
-                .collectionFormat("default");
+                .collectionFormat("multi");
             }
           }
 
