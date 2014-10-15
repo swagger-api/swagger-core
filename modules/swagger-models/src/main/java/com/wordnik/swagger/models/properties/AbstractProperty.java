@@ -1,5 +1,7 @@
 package com.wordnik.swagger.models.properties;
 
+import com.wordnik.swagger.models.Xml;
+
 public abstract class AbstractProperty implements Property {
   String name;
   String type;
