@@ -1,5 +1,5 @@
 /**
- *  Copyright 2013 Wordnik, Inc.
+ *  Copyright 2014 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import com.wordnik.swagger.sample.model.Pet;
 import com.wordnik.swagger.sample.exception.NotFoundException;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.*;
 
 @Path("/pet")
@@ -62,6 +63,7 @@ public class PetResource {
   @ApiOperation(value = "Deletes a pet")
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid pet value")})
   public Response deletePet(
+    @ApiParam() @HeaderParam("api_key") String apiKey,
     @ApiParam(value = "Pet id to delete", required = true)@PathParam("petId") Long petId) {
     petData.deletePet(petId);
     return Response.ok().build();
@@ -112,5 +114,21 @@ public class PetResource {
   public Response findPetsByTags(
       @ApiParam(value = "Tags to filter by", required = true, allowMultiple = true) @QueryParam("tags") String tags) {
     return Response.ok(petData.findPetByTags(tags)).build();
+  }
+
+  @POST
+  @Path("/{petId}")
+  @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
+  @ApiOperation(value = "Updates a pet in the store with form data",
+    consumes = MediaType.APPLICATION_FORM_URLENCODED)
+  @ApiResponses(value = {
+    @ApiResponse(code = 405, message = "Invalid input")})
+  public Response  updatePetWithForm (
+   @ApiParam(value = "ID of pet that needs to be updated", required = true)@PathParam("petId") String petId,
+   @ApiParam(value = "Updated name of the pet", required = false)@FormParam("name") String name,
+   @ApiParam(value = "Updated status of the pet", required = false)@FormParam("status") String status) {
+    System.out.println(name);
+    System.out.println(status);
+    return Response.ok().entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build();
   }
 }
