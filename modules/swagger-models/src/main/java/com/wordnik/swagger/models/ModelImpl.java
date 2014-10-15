@@ -21,6 +21,7 @@ public class ModelImpl implements Model {
   private String example;
   private Property additionalProperties;
   private String discriminator;
+  private Xml xml;
 
   public ModelImpl discriminator(String discriminator) {
     this.setDiscriminator(discriminator);
@@ -48,6 +49,10 @@ public class ModelImpl implements Model {
   }
   public ModelImpl required(String name) {
     this.addRequired(name);
+    return this;
+  }
+  public ModelImpl xml(Xml xml) {
+    this.setXml(xml);
     return this;
   }
 
@@ -159,5 +164,12 @@ public class ModelImpl implements Model {
 
   public void setExample(String example) {
     this.example = example;
+  }
+
+  public Xml getXml(){
+    return xml;
+  }
+  public void setXml(Xml xml) {
+    this.xml = xml;
   }
 }
