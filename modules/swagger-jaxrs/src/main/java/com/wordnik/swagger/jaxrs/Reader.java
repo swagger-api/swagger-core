@@ -24,8 +24,10 @@ import javax.ws.rs.Produces;
 import java.lang.reflect.*;
 import java.lang.annotation.Annotation;
 import java.util.*;
+import com.wordnik.swagger.jaxrs.ext.*;
 
 public class Reader {
+  List<SwaggerExtension> EXTENSIONS = SwaggerExtensions.getExtensions();
   Swagger swagger;
   static ObjectMapper m = Json.mapper();
 
@@ -354,59 +356,65 @@ public class Reader {
       }
     }
 
-    for(Annotation annotation : annotations) {
-      if(annotation instanceof QueryParam) {
-        QueryParam param = (QueryParam) annotation;
-        QueryParameter qp = new QueryParameter()
-          .name(param.value());
-        Property schema = ModelConverters.readAsProperty(cls);
-        if(schema != null)
-          qp.setProperty(schema);
-        parameter = qp;
-      }
-      else if(annotation instanceof PathParam) {
-        PathParam param = (PathParam) annotation;
-        PathParameter pp = new PathParameter()
-          .name(param.value());
-        Property schema = ModelConverters.readAsProperty(cls);
-        if(schema != null)
-          pp.setProperty(schema);
-        parameter = pp;
-      }
-      else if(annotation instanceof HeaderParam) {
-        HeaderParam param = (HeaderParam) annotation;
-        HeaderParameter hp = new HeaderParameter()
-          .name(param.value());
-        Property schema = ModelConverters.readAsProperty(cls);
-        if(schema != null)
-          hp.setProperty(schema);
-        parameter = hp;
-      }
-      else if(annotation instanceof CookieParam) {
-        CookieParam param = (CookieParam) annotation;
-        CookieParameter hp = new CookieParameter()
-          .name(param.value());
-        Property schema = ModelConverters.readAsProperty(cls);
-        if(schema != null)
-          hp.setProperty(schema);
-        parameter = hp;
-      }
-      else if(annotation instanceof FormParam) {
-        FormParam param = (FormParam) annotation;
-        FormParameter fp = new FormParameter()
-          .name(param.value());
-        Property schema = ModelConverters.readAsProperty(cls);
-        if(schema != null)
-          fp.setProperty(schema);
-        parameter = fp;
-      }
-      else if(annotation instanceof DefaultValue) {
-        DefaultValue defaultValueAnnotation = (DefaultValue) annotation;
-        // TODO: not supported yet
-        defaultValue = defaultValueAnnotation.value();
-      }
-      else {
-        // System.out.println("unprocessed " + annotation);
+    boolean shouldIgnore = false;
+    for(SwaggerExtension ext : EXTENSIONS) {
+      shouldIgnore = ext.shouldIgnoreClass(cls);
+      if(!shouldIgnore)
+        parameter = ext.processParameter(annotations, cls, isArray);
+    }
+
+    if(parameter == null) {
+      for(Annotation annotation : annotations) {
+        if(annotation instanceof QueryParam) {
+          QueryParam param = (QueryParam) annotation;
+          QueryParameter qp = new QueryParameter()
+            .name(param.value());
+          Property schema = ModelConverters.readAsProperty(cls);
+          if(schema != null)
+            qp.setProperty(schema);
+          parameter = qp;
+        }
+        else if(annotation instanceof PathParam) {
+          PathParam param = (PathParam) annotation;
+          PathParameter pp = new PathParameter()
+            .name(param.value());
+          Property schema = ModelConverters.readAsProperty(cls);
+          if(schema != null)
+            pp.setProperty(schema);
+          parameter = pp;
+        }
+        else if(annotation instanceof HeaderParam) {
+          HeaderParam param = (HeaderParam) annotation;
+          HeaderParameter hp = new HeaderParameter()
+            .name(param.value());
+          Property schema = ModelConverters.readAsProperty(cls);
+          if(schema != null)
+            hp.setProperty(schema);
+          parameter = hp;
+        }
+        else if(annotation instanceof CookieParam) {
+          CookieParam param = (CookieParam) annotation;
+          CookieParameter hp = new CookieParameter()
+            .name(param.value());
+          Property schema = ModelConverters.readAsProperty(cls);
+          if(schema != null)
+            hp.setProperty(schema);
+          parameter = hp;
+        }
+        else if(annotation instanceof FormParam) {
+          FormParam param = (FormParam) annotation;
+          FormParameter fp = new FormParameter()
+            .name(param.value());
+          Property schema = ModelConverters.readAsProperty(cls);
+          if(schema != null)
+            fp.setProperty(schema);
+          parameter = fp;
+        }
+        else if(annotation instanceof DefaultValue) {
+          DefaultValue defaultValueAnnotation = (DefaultValue) annotation;
+          // TODO: not supported yet
+          defaultValue = defaultValueAnnotation.value();
+        }
       }
     }
 
@@ -456,7 +464,7 @@ public class Reader {
           if(!"".equals(param.defaultValue()))
             defaultValue = param.defaultValue();
         }
-        else {
+        else if(shouldIgnore == false) {
           // must be a body param
           BodyParameter bp = new BodyParameter();
           if(param.name() != null && !"".equals(param.name()))
@@ -538,7 +546,7 @@ public class Reader {
       out = true;
     else if("array".equals(property.getType()))
       out = true;
-    else if("File".equals(property.getType()))
+    else if("file".equals(property.getType()))
       out = true;
     return out;
   }
