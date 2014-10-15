@@ -5,7 +5,6 @@ import com.wordnik.swagger.models.properties.Property;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-// @JsonPropertyOrder({ "name", "in", "description", "required", "type", "items", "collectionFormat"})
 public class BodyParameter extends AbstractParameter implements Parameter {;
   Model schema;
 
