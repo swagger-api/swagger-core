@@ -12,8 +12,12 @@ public class FormParameter extends AbstractParameter implements SerializablePara
   Property items;
 
   public FormParameter() {
-    super.setIn("cookie");
+    super.setIn("formData");
     super.setRequired(true);
+  }
+  public FormParameter type(String type) {
+    this.setType(type);
+    return this;
   }
 
   public FormParameter property(Property property) {
