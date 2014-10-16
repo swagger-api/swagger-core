@@ -19,7 +19,7 @@ public class Operation {
   List<String> produces;
   List<Parameter> parameters;
   Map<String, Response> responses;
-  Map<String, SecurityRequirement> security;
+  List<Map<String, List<String>>> security;
   String example;
 
   public Operation summary(String summary) {
@@ -58,13 +58,8 @@ public class Operation {
     this.addProduces(produces);
     return this;
   }
-  public Operation security(List<SecurityRequirement> security) {
-    for(SecurityRequirement s : security)
-      this.addSecurityRequirement(s);
-    return this;
-  }
   public Operation security(SecurityRequirement security) {
-    this.addSecurityRequirement(security);
+    this.addSecurity(security.getName(), security.getScopes());
     return this;
   }
   public Operation parameter(Parameter parameter) {
@@ -184,16 +179,19 @@ public class Operation {
     this.responses.put(key, response);
   }
 
-  public Map<String, SecurityRequirement> getSecurity() {
+  public List<Map<String, List<String>>> getSecurity() {
     return security;
   }
-  public void setSecurityRequirement(Map<String, SecurityRequirement> security) {
+  public void setSecurity(List<Map<String, List<String>>> security) {
     this.security = security;
   }
-  public void addSecurityRequirement(SecurityRequirement security) {
-    if(this.security == null) {
-      this.security = new HashMap<String, SecurityRequirement>();
-    }
-    this.security.put(security.getName(), security);
+  public void addSecurity(String name, List<String> security) {
+    if(this.security == null)
+      this.security = new ArrayList<Map<String, List<String>>>();
+    Map<String, List<String>> req = new HashMap<String, List<String>>();
+    if(security == null)
+      security = new ArrayList<String>();
+    req.put(name, security);
+    this.security.add(req);
   }
 }

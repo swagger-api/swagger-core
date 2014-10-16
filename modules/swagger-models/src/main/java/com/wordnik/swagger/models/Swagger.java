@@ -7,15 +7,16 @@ import com.fasterxml.jackson.annotation.*;
 import java.util.*;
 
 public class Swagger {
-  protected Float swagger = 2.0f;
+  protected String swagger = "2.0";
   protected Info info;
   protected String host;
   protected String basePath;
   protected List<Scheme> schemes;
   protected List<String> consumes;
   protected List<String> produces;
+  protected List<SecurityRequirement> securityRequirement;
   protected Map<String, Path> paths;
-  protected Map<String, SecurityDefinition> securityDefinition;
+  protected Map<String, SecurityDefinition> securityDefinitions;
   protected Map<String, Model> definitions;
 
   public Swagger info(Info info) {
@@ -73,10 +74,10 @@ public class Swagger {
     return this;
   }
 
-  public Float getSwagger() {
+  public String getSwagger() {
     return swagger;
   }
-  public void setSwagger(Float swagger) {
+  public void setSwagger(String swagger) {
     this.swagger = swagger;
   }
 
@@ -139,6 +140,8 @@ public class Swagger {
   }
 
   public Map<String, Path> getPaths() {
+    if(paths == null)
+      return null;
     Map<String, Path> sorted = new LinkedHashMap<String, Path>();
     List<String> keys = new ArrayList<String>();
     keys.addAll(paths.keySet());
@@ -158,16 +161,21 @@ public class Swagger {
     return this.paths.get(path);
   }
 
-  public Map<String, SecurityDefinition> getSecurityDefinition() {
-    return securityDefinition;
+  public Map<String, SecurityDefinition> getSecurityDefinitions() {
+    return securityDefinitions;
   }
-  public void setSecurityDefinition(Map<String, SecurityDefinition> securityDefinition) {
-    this.securityDefinition = securityDefinition;
+  public void setSecurityDefinitions(Map<String, SecurityDefinition> securityDefinitions) {
+    this.securityDefinitions = securityDefinitions;
   }
   public void addSecurityDefinition(String name, SecurityDefinition securityDefinition) {
-    if(this.securityDefinition == null)
-      this.securityDefinition = new HashMap<String, SecurityDefinition>();
-    this.securityDefinition.put(name, securityDefinition);
+    if(this.securityDefinitions == null)
+      this.securityDefinitions = new HashMap<String, SecurityDefinition>();
+    if(this.securityDefinitions.get(name) != null) {
+      SecurityDefinition existing = this.securityDefinitions.get(name);
+      existing.add(securityDefinition);
+    }
+    else
+      this.securityDefinitions.put(name, securityDefinition);
   }
 
   public void setDefinitions(Map<String, Model> definitions) {

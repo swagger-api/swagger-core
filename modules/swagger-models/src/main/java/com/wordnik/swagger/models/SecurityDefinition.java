@@ -5,26 +5,25 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.*;
 
 public class SecurityDefinition {
-  String name;
   String type;
-  List<SecurityScope> scopes;
+  Map<String, String> scopes;
 
   public SecurityDefinition(){}
-  public SecurityDefinition(String name, String type){
-    this.name = name;
+  public SecurityDefinition(String type){
     this.type = type;
   }
-  public SecurityDefinition scope(SecurityScope scope) {
-    this.addScope(scope);
+  public SecurityDefinition scope(String name, String description) {
+    this.addScope(name, description);
     return this;
   }
 
-  @JsonIgnore
-  public String getName() {
-    return name;
-  }
-  public void setName(String name) {
-    this.name = name;
+  public void add(SecurityDefinition def) {
+    if(def.scopes != null) 
+    for(String key: def.scopes.keySet()) {
+      String value = def.scopes.get(key);
+      System.out.println(key + " adding scope " + value);
+      this.addScope(key, value);
+    }
   }
 
   public String getType() {
@@ -34,15 +33,15 @@ public class SecurityDefinition {
     this.type = type;
   }
 
-  public List<SecurityScope> getScopes() {
+  public Map<String, String> getScopes() {
     return scopes;
   }
-  public void setScopes(List<SecurityScope> scopes) {
+  public void setScopes(Map<String, String> scopes) {
     this.scopes = scopes;
   }
-  public void addScope(SecurityScope scope) {
+  public void addScope(String name, String description) {
     if(this.scopes == null)
-      this.scopes = new ArrayList<SecurityScope>();
-    this.scopes.add(scope);
+      this.scopes = new HashMap<String, String>();
+    this.scopes.put(name, description);
   }
 }

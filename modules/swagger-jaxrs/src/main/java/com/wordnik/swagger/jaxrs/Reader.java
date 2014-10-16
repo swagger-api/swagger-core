@@ -87,8 +87,8 @@ public class Reader {
             if(scope.scope() != null && !"".equals(scope.scope())) {
               security.addScope(scope.scope());
               swagger.addSecurityDefinition(auth.value(),
-                new SecurityDefinition(auth.value(), auth.type())
-                  .scope(new SecurityScope(scope.scope(), scope.description())));
+                new SecurityDefinition(auth.type())
+                  .scope(scope.scope(), scope.description()));
             }
           }
           securities.add(security);
@@ -125,8 +125,8 @@ public class Reader {
                 operation.produces(mediaType);
 
             operation.tag(tag);
-            if(securities.size() > 0) 
-              operation.security(securities);
+            for(SecurityRequirement security : securities)
+              operation.security(security);
             Path path = swagger.getPath(operationPath);
             if(path == null) {
               path = new Path();
@@ -193,12 +193,13 @@ public class Reader {
             security.setName(auth.value());
             AuthorizationScope[] scopes = auth.scopes();
             for(AuthorizationScope scope : scopes) {
-              SecurityDefinition definition = new SecurityDefinition(auth.value(), auth.type());
-              swagger.addSecurityDefinition(auth.value(), definition);
+              SecurityDefinition definition = new SecurityDefinition(auth.type());
               if(scope.scope() != null && !"".equals(scope.scope())) {
                 security.addScope(scope.scope());
-                definition.scope(new SecurityScope(scope.scope(), scope.description()));
+                definition.scope(scope.scope(), scope.description());
               }
+              System.out.println("adding security " + auth.value() + ", " + auth.type());
+              swagger.addSecurityDefinition(auth.value(), definition);
             }
             securities.add(security);
           }

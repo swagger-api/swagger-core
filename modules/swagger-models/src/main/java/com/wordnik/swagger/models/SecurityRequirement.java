@@ -6,6 +6,7 @@ import java.util.*;
 
 public class SecurityRequirement {
   String name;
+  String type;
   List<String> scopes;
 
   public SecurityRequirement() {}
