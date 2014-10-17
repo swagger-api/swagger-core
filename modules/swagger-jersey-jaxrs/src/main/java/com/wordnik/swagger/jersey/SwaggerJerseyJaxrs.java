@@ -15,8 +15,13 @@ public class SwaggerJerseyJaxrs implements SwaggerExtension {
         FormDataParam fd = (FormDataParam) annotation;
         if(java.io.InputStream.class.equals(cls))
           return new FormParameter().type("file").name(fd.value());
-        else
-          return new FormParameter().name(fd.value());
+        else {
+          FormParameter fp = new FormParameter().name(fd.value());
+          Property schema = ModelConverters.readAsProperty(cls);
+          if(schema != null)
+            fp.setProperty(schema);
+          return fp;
+        }
       }
     }
     return null;
