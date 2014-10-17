@@ -102,7 +102,6 @@ public class Swagger {
     this.basePath = basePath;
   }
 
-  @JsonIgnore
   public List<Scheme> getSchemes() {
     return schemes;
   }
