@@ -1,7 +1,9 @@
 package com.wordnik.swagger.jersey;
 
+import com.wordnik.swagger.converter.ModelConverters;
 import com.wordnik.swagger.jaxrs.ext.*;
 import com.wordnik.swagger.models.parameters.*;
+import com.wordnik.swagger.models.properties.*;
 
 import com.sun.jersey.multipart.FormDataParam;
 import com.sun.jersey.api.core.InjectParam;
