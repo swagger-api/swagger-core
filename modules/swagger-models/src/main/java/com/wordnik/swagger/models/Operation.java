@@ -21,6 +21,7 @@ public class Operation {
   Map<String, Response> responses;
   List<Map<String, List<String>>> security;
   String example;
+  private ExternalDocs externalDocs;
 
   public Operation summary(String summary) {
     this.setSummary(summary);
@@ -193,5 +194,13 @@ public class Operation {
       security = new ArrayList<String>();
     req.put(name, security);
     this.security.add(req);
+  }
+
+  public ExternalDocs getExternalDocs() {
+    return externalDocs;
+  }
+
+  public void setExternalDocs(ExternalDocs value) {
+    externalDocs = value;
   }
 }

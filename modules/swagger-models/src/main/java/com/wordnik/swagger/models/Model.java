@@ -13,4 +13,6 @@ public interface Model {
 
   String getExample();
   void setExample(String example);
+
+  ExternalDocs getExternalDocs();
 }

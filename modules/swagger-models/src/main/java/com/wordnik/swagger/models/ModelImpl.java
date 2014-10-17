@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.*;
 
 @XmlType(propOrder = { "required", "properties"})
 @JsonPropertyOrder({ "required", "properties"})
-public class ModelImpl implements Model {
+public class ModelImpl extends AbstractModel {
   private String type;
   private String name;
   private List<String> required;
