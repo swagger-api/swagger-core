@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.*;
 
-public class RefModel implements Model {
+public class RefModel extends AbstractModel {
   String ref;
   private String description;
   private Map<String, Property> properties;
