@@ -21,7 +21,8 @@ import java.io.StringWriter
 object UserApiController extends BaseApiController {
   var userData = new UserData
 
-  @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.", httpMethod = "POST"  )
+  @ApiOperation(nickname = "createUser",
+    value = "Create user", notes = "This can only be done by the logged in user.", httpMethod = "POST"  )
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "body", value = "Created user object", required = true, dataType = "User", paramType = "body")))
   def createUser = Action { implicit request =>
@@ -35,7 +36,8 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Creates list of users with given input array", response = classOf[Void], httpMethod = "POST")
+  @ApiOperation(nickname = "createUsersWithArrayInput",
+    value = "Creates list of users with given input array", response = classOf[Void], httpMethod = "POST")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "body", value = "List of user object", required = true, dataType = "Array[User]", paramType = "body")))
   def createUsersWithArrayInput = Action { implicit request =>
@@ -49,7 +51,8 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Creates list of users with given list input", response = classOf[Void], httpMethod = "POST")
+  @ApiOperation(nickname = "createUsersWithListInput",
+    value = "Creates list of users with given list input", response = classOf[Void], httpMethod = "POST")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "body", value = "List of user object", required = true, dataType = "List[User]", paramType = "body")))
   def createUsersWithListInput = Action { implicit request =>
@@ -63,7 +66,8 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.", httpMethod = "PUT")
+  @ApiOperation(nickname = "updateUser",
+    value = "Updated user", notes = "This can only be done by the logged in user.", httpMethod = "PUT")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid username supplied"),
     new ApiResponse(code = 404, message = "User not found")))
@@ -81,7 +85,8 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Delete user", notes = "This can only be done by the logged in user.", httpMethod = "DELETE")
+  @ApiOperation(nickname = "deleteUser",
+    value = "Delete user", notes = "This can only be done by the logged in user.", httpMethod = "DELETE")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid username supplied"),
     new ApiResponse(code = 404, message = "User not found")))
@@ -91,7 +96,8 @@ object UserApiController extends BaseApiController {
     Ok
   }
 
-  @ApiOperation(value = "Get user by user name", response = classOf[models.User], httpMethod = "GET")
+  @ApiOperation(nickname = "getUserByName",
+    value = "Get user by user name", response = classOf[models.User], httpMethod = "GET")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid username supplied"),
     new ApiResponse(code = 404, message = "User not found")))
@@ -103,7 +109,8 @@ object UserApiController extends BaseApiController {
     }
   }
 
-  @ApiOperation(value = "Logs user into the system", response = classOf[String], httpMethod = "GET")
+  @ApiOperation(nickname = "loginUser",
+    value = "Logs user into the system", response = classOf[String], httpMethod = "GET")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid username and password combination")))
   def loginUser(
@@ -112,7 +119,8 @@ object UserApiController extends BaseApiController {
     JsonResponse("logged in user session:" + System.currentTimeMillis())
   }
 
-  @ApiOperation(value = "Logs out current logged in user session", httpMethod = "GET")
+  @ApiOperation(nickname = "logoutUser",
+    value = "Logs out current logged in user session", httpMethod = "GET")
   def logoutUser() = Action { implicit request =>
     Ok
   }

@@ -23,8 +23,9 @@ trait ReaderUtil {
     val tuples = listings.map(m => (m.resourcePath, m))
     val grouped = tuples.groupBy(_._1)
     (for (group <- grouped) yield {
-      val apiDescriptions = (for(g <- group._2; api <- g._2.apis) yield api).toList
-      group._2(0)._2.copy(apis = apiDescriptions)
+      val apiDescriptions = (for(g <- group._2; api <- g._2.apis) yield api).filter(_.hidden == false).toList
+      val models = (for(g <- group._2; models <- g._2.models) yield models).flatten.toMap
+      group._2(0)._2.copy(apis = apiDescriptions, models = Option(models))
     }).toList
   }
 }

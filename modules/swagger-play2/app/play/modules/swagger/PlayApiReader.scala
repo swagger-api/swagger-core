@@ -178,6 +178,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         case e: String if e != "" => Some(e)
         case _ => None
       }
+
       // define a Map to hold Operations keyed by resourcepath
       var operationsMap: Map[String, List[Operation]] = Map.empty
       for (method <- cls.getMethods) {
@@ -218,7 +219,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
           produces,
           consumes,
           protocols,
-          List(), // authorizations
+          List(),
           ModelUtil.stripPackages(apiDescriptions), //  List[com.wordnik.swagger.model.ApiDescription]
           models,
           description
@@ -231,7 +232,6 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
       None
     }
   }
-
 
   def readMethod(method: Method): Option[Operation] = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
@@ -252,11 +252,14 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         case e: String if e.trim != "" => e.split(",").map(_.trim).toList
         case _ => List()
       }
-      val authorizations:List[com.wordnik.swagger.model.Authorization] = Option(apiOperation.authorizations) match {
+      val authorizations: List[com.wordnik.swagger.model.Authorization] = Option(apiOperation.authorizations) match {
         case Some(e) => (for(a <- e) yield {
           val scopes = (for(s <- a.scopes) yield com.wordnik.swagger.model.AuthorizationScope(s.scope, s.description)).toArray
-          new com.wordnik.swagger.model.Authorization(a.value, scopes)
-        }).toList
+          if(a.value != null && !"".equals(a.value))
+            Some(new com.wordnik.swagger.model.Authorization(a.value, scopes))
+          else
+            None
+        }).flatten.toList
         case _ => List()
       }
       val responseClass = apiOperation.responseContainer match {

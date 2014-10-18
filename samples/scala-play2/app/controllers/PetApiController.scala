@@ -20,12 +20,23 @@ class PetApiController extends BaseApiController {
     implicit request => JsonResponse(new value.ApiResponse(200, "Ok"))
   }
 
-  @ApiOperation(value = "Find pet by ID", notes = "Returns a pet", response = classOf[models.Pet], httpMethod = "GET")
+  @ApiOperation(
+    nickname = "getPetById", 
+    value = "Find pet by ID", 
+    notes = "Returns a pet", 
+    response = classOf[models.Pet], 
+    httpMethod = "GET",
+    authorizations = Array(new Authorization(value="oauth2",
+      scopes = Array(
+        new AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
+        new AuthorizationScope(scope = "read:pets", description = "read your pets")
+      )))
+    )
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
     new ApiResponse(code = 404, message = "Pet not found")))
   def getPetById(
-                  @ApiParam(value = "ID of the pet to fetch") @PathParam("id") id: String) = Action {
+    @ApiParam(value = "ID of the pet to fetch") @PathParam("id") id: String) = Action {
     implicit request =>
       petData.getPetbyId(getLong(0, 100000, 0, id)) match {
         case Some(pet) => JsonResponse(pet)
@@ -33,7 +44,8 @@ class PetApiController extends BaseApiController {
       }
   }
 
-  @ApiOperation(value = "Add a new Pet",
+  @ApiOperation(nickname = "addPet",
+    value = "Add a new Pet",
     response = classOf[Void],
     httpMethod = "POST",
     authorizations = Array(new Authorization(value="oauth2",
@@ -57,7 +69,8 @@ class PetApiController extends BaseApiController {
       }
   }
 
-  @ApiOperation(value = "Update an existing Pet", response = classOf[Void], httpMethod = "PUT")
+  @ApiOperation(nickname = "updatePet",
+    value = "Update an existing Pet", response = classOf[Void], httpMethod = "PUT")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid ID supplied"),
     new ApiResponse(code = 404, message = "Pet not found"),
@@ -76,20 +89,22 @@ class PetApiController extends BaseApiController {
       }
   }
 
-  @ApiOperation(value = "Finds Pets by status",
+  @ApiOperation(nickname = "findPetByStatus",
+    value = "Finds Pets by status",
     notes = "Multiple status values can be provided with comma seperated strings",
     response = classOf[models.Pet], responseContainer = "List", httpMethod = "GET")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid status value")))
   def findPetsByStatus(
-                        @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available",
-                          allowableValues = "available,pending,sold", allowMultiple = true) @QueryParam("status") status: String) = Action {
+    @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available",
+      allowableValues = "available,pending,sold", allowMultiple = true) @QueryParam("status") status: String) = Action {
     implicit request =>
       var results = petData.findPetByStatus(status)
       JsonResponse(results)
   }
 
-  @ApiOperation(value = "Finds Pets by tags",
+  @ApiOperation(nickname = "findPetsByTags",
+    value = "Finds Pets by tags",
     notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
     response = classOf[models.Pet], responseContainer = "List", httpMethod = "GET")
   @ApiResponses(Array(
@@ -102,9 +117,10 @@ class PetApiController extends BaseApiController {
       JsonResponse(results)
   }
 
-  @ApiOperation(value = "Attach an Image File for a pet",
+  @ApiOperation(nickname = "attachImage",
+    value = "Attach an Image File for a pet",
     notes = "Is not functional, only used to test file upload params",
-    response = classOf[Void], httpMethod = "GET")
+    response = classOf[Void], httpMethod = "POST")
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid file format")))
   @ApiImplicitParams(Array(

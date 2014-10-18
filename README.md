@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/wordnik/swagger-core.png)](https://travis-ci.org/wordnik/swagger-core)
 
-The goal of Swagger™ is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, Swager removes the guesswork in calling the service.
+The goal of Swagger™ is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, Swagger removes the guesswork in calling the service.
 
 Swagger-core is the Java/Scala implementation of Swagger. It supports *JAX-RS*, *plain Servlets*, and *Play Framework*.
 
@@ -22,6 +22,15 @@ The following methods are available to obtain support for Swagger:
 ## Get started with Swagger!
 See the guide on [getting started with swagger](https://github.com/wordnik/swagger-core/wiki/Adding-Swagger-to-your-API) to get started with adding swagger to your API.
 
+## Compatability
+The Swagger Specification has undergone 3 revisions since initial creation in 2010.  The swagger-core project has the following compatibilies with the swagger specification:
+
+Swagger core Version      | Release Date | Swagger Spec compatability | Notes | Status
+------------------------- | ------------ | -------------------------- | ----- | ----
+1.5.0 (in development)    | n/a          | 2.0           | [branch develop_2.0](https://github.com/wordnik/swagger-core/tree/develop_2.0) | [1.5.0 Milestone](https://github.com/wordnik/swagger-core/milestones/v1.5.0)
+1.3.10                     | 2014-09-18   | 1.2           | [tag v1.3.10](https://github.com/wordnik/swagger-core/tree/v1.3.10)
+1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/wordnik/swagger-core/tree/swagger-project_2.10.0-1.2.4)
+1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/wordnik/swagger-core/tree/v1.0)
 
 ## Overview
 This is a project to build the swagger-core library, which is required for the Wordnik 
@@ -36,11 +45,11 @@ If you're interested in the change history of swagger and the swagger-core frame
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
-<li>- Java 1.6 or greater (http://java.oracle.com)
+<li>- Java 6, 7 (http://java.oracle.com)
 
 <li>- Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
-### To build from source (currently 1.3.5)
+### To build from source (currently 1.3.10)
 ```
 # first time building locally
 mvn -N

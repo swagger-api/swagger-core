@@ -17,7 +17,6 @@ class CatController extends Controller {
 
   @ApiOperation(value = "addCat1",
       httpMethod = "PUT",
-      authorizations = "",
       consumes = "",
       protocols = "")
     @ApiImplicitParams(Array(
@@ -60,13 +59,9 @@ class CatController extends Controller {
       request => Ok("test case")
     }
 
-
     def no_route = Action {
       request => Ok("test case")
     }
-
-
-
 }
 
 case class Cat(id: Long, name: String)
