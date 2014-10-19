@@ -1,3 +1,5 @@
+# Note!  The swagger-core will be moving from the wordnik organization to swagger-api!
+
 # Swagger Core library
 
 [![Build Status](https://travis-ci.org/wordnik/swagger-core.png)](https://travis-ci.org/wordnik/swagger-core)
