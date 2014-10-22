@@ -1,27 +1,32 @@
 # Swagger Sample App
 
 ## Overview
-This is an example of swagger integration with the [RESTEasy](http://www.jboss.org/resteasy) JAX-RS framework from
-[JBoss](http://www.jboss.org/).  It's a simple, modified example from the RESTEasy 2.3.5 release.
+This is a java project to build a stand-alone server which implements the Swagger spec.  You can find out 
+more about both the spec and the framework at http://swagger.wordnik.com.  For more information 
+about Wordnik's APIs, please visit http://developer.wordnik.com.  There is an online version of this
+server at http://petstore.swagger.wordnik.com/api/api-docs
+
+### To build from source
+Please follow instructions to build the top-level [swagger-core project](https://github.com/wordnik/swagger-core)
 
 ### To run (with Maven)
 To run the server, run this task:
 <pre>
-mvn package -Dlog4j.configuration=file:./log4j.properties jetty:run
+mvn package -Dlog4j.configuration=file:./conf/log4j.properties jetty:run
 </pre>
 
-This will start Jetty embedded on port 8080 and apply the logging configuration from ./log4j.properties
+This will start Jetty embedded on port 8002.
 
 ### Testing the server
-Once started, you can navigate to http://localhost:9095/resteasy/api-docs to view the Swagger Resource Listing.
+Once started, you can navigate to http://localhost:8002/api/api-docs to view the Swagger Resource Listing.
 This tells you that the server is up and ready to demonstrate Swagger.
 
 ### Using the UI
 There is an HTML5-based API tool available in a separate project.  This lets you inspect the API using an 
 intuitive UI.  You can pull this code from here:  https://github.com/wordnik/swagger-ui
 
-You can then open the dist/index.html file in any HTML5-enabled browser.  Open opening, enter the
-URL of your server in the top-centered input box (default is http://localhost:8002/api).  Click the "Explore" 
+You can then open the dist/index.html file in any HTML5-enabled browser.  Upen opening, enter the
+URL of your server in the top-centered input box (default is http://localhost:8002/api/api-docs).  Click the "Explore"
 button and you should see the resources available on the server.
 
 ### Applying an API key
