@@ -1,5 +1,9 @@
 package com.wordnik.swagger.models.parameters;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.*;
 
 public abstract class AbstractParameter {
   protected String in;
@@ -7,6 +11,7 @@ public abstract class AbstractParameter {
   protected String description;
   protected boolean required = false;
   protected String access;
+  private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
   public String getIn() {
     return in;
@@ -43,4 +48,15 @@ public abstract class AbstractParameter {
     this.access = access;
   }
 
+  @JsonAnyGetter
+  public Map<String, Object> getVendorExtensions() {
+    return vendorExtensions;
+  }
+
+  @JsonAnySetter
+  public void setVendorExtension(String name, Object value) {
+    if (name.startsWith("x-")) {
+      vendorExtensions.put(name, value);
+    }
+  }
 }
