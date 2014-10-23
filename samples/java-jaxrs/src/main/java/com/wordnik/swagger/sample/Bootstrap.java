@@ -3,6 +3,8 @@ package com.wordnik.swagger.sample;
 import com.wordnik.swagger.model.ApiInfo;
 import com.wordnik.swagger.models.Swagger;
 
+import com.wordnik.swagger.models.auth.*;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletConfig;
@@ -22,9 +24,10 @@ public class Bootstrap extends HttpServlet {
       "http://www.apache.org/licenses/LICENSE-2.0.html" /* license URL */
     );
 
-
     ServletContext context = config.getServletContext();
     Swagger swagger = new Swagger().info(info);
+    swagger.securityDefinition("api_key", new ApiKeyAuth("api_key", In.HEADER));
+    swagger.securityDefinition("petstore_auth", new OAuth2().implicit("http://petstore.swagger.wordnik.com/api/oauth/dialog"));
     context.setAttribute("swagger", swagger);
   }
 }
