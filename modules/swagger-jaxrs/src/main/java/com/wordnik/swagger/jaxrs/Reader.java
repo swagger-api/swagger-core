@@ -86,9 +86,6 @@ public class Reader {
           for(AuthorizationScope scope : scopes) {
             if(scope.scope() != null && !"".equals(scope.scope())) {
               security.addScope(scope.scope());
-              swagger.addSecurityDefinition(auth.value(),
-                new SecurityDefinition(auth.type())
-                  .scope(scope.scope(), scope.description()));
             }
           }
           securities.add(security);
@@ -198,8 +195,6 @@ public class Reader {
                 security.addScope(scope.scope());
                 definition.scope(scope.scope(), scope.description());
               }
-              System.out.println("adding security " + auth.value() + ", " + auth.type());
-              swagger.addSecurityDefinition(auth.value(), definition);
             }
             securities.add(security);
           }
