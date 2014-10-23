@@ -21,7 +21,7 @@ public class WebXMLReader /*implements SwaggerConfig*/ {
       title = "";
 
     if(basePath != null) {
-      String[] parts = basePath.split("//");
+      String[] parts = basePath.split("://");
       if(parts.length > 1) {
         int pos = parts[1].indexOf("/");
         if(pos >= 0) {
