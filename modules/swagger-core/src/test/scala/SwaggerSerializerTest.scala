@@ -1,6 +1,7 @@
 import models._
 
 import com.wordnik.swagger.models._
+import com.wordnik.swagger.models.auth._
 import com.wordnik.swagger.models.properties._
 import com.wordnik.swagger.models.parameters._
 
@@ -35,7 +36,7 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
     val swagger = new Swagger()
       .info(info)
       .host("petstore.swagger.wordnik.com")
-      .securityDefinition("api-key", new SecurityDefinition("key"))
+      .securityDefinition("api-key", new ApiKeyAuth("key", In.HEADER))
       .scheme(Scheme.HTTP)
       .consumes("application/json")
       .produces("application/json")
@@ -63,6 +64,7 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
     val response = new Response()
       .description("pets returned")
       .schema(new RefProperty().asDefault("Person"))
+      .example("application/json", "fun!")
 
     val errorResponse = new Response()
       .description("error response")
@@ -82,8 +84,9 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
         .schema(new RefModel().asDefault("Person")))
 
     swagger.path("/pets", new Path().get(get).post(post))
-
     val swaggerJson = Json.mapper().writeValueAsString(swagger)
     val rebuilt = Json.mapper().readValue(swaggerJson, classOf[Swagger])
+
+    Json.prettyPrint(swagger)
   }
 }

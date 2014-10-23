@@ -3,6 +3,7 @@ import models.composition.Pet;
 
 import com.wordnik.swagger.util.Json
 import com.wordnik.swagger.models._
+import com.wordnik.swagger.models.auth._
 import com.wordnik.swagger.converter._
 import com.wordnik.swagger.models.parameters._
 import com.wordnik.swagger.models.properties._
@@ -40,7 +41,8 @@ class SecurityDefinitionTest extends FlatSpec with Matchers {
 
     swagger
       .securityDefinition("githubAccessCode",
-        new SecurityDefinition("oauth2")
+        new OAuth2()
+          .accessCode("http://foo.com/accessCode", "http://foo.com/tokenUrl")
           .scope("user:email", "Grants read access to a user’s email addresses."))
 
     val get = new Operation()
