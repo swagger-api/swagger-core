@@ -116,7 +116,13 @@ public class Swagger {
   public void addScheme(Scheme scheme) {
     if(this.schemes == null)
       this.schemes = new ArrayList<Scheme>();
-    this.schemes.add(scheme);
+    boolean found = false;
+    for(Scheme existing : this.schemes) {
+      if(existing.equals(scheme))
+        found = true;
+    }
+    if(!found)
+      this.schemes.add(scheme);
   }
 
   public List<String> getConsumes() {
