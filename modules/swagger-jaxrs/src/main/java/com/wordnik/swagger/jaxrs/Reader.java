@@ -5,6 +5,7 @@ import com.wordnik.swagger.converter.ModelConverters;
 import com.wordnik.swagger.jaxrs.PATCH;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.parameters.*;
+import com.wordnik.swagger.models.parameters.Parameter;
 import com.wordnik.swagger.models.properties.*;
 import com.wordnik.swagger.util.Json;
 
@@ -50,7 +51,7 @@ public class Reader {
       swagger = new Swagger();
     Api api = (Api) cls.getAnnotation(Api.class);
     Map<String, SecurityScope> globalScopes = new HashMap<String, SecurityScope>();
-    
+
     javax.ws.rs.Path apiPath = (javax.ws.rs.Path) cls.getAnnotation(javax.ws.rs.Path.class);
     String[] apiConsumes = new String[0];
     String[] apiProduces = new String[0];
@@ -211,7 +212,7 @@ public class Reader {
       responseClass = method.getReturnType();
       Map<String, Model> models = ModelConverters.readAll(t);
     }
-    if(responseClass != null 
+    if(responseClass != null
       && !responseClass.equals(java.lang.Void.class)
       && !responseClass.equals(javax.ws.rs.core.Response.class)) {
       if(isPrimitive(responseClass)) {
@@ -338,7 +339,7 @@ public class Reader {
     boolean allowMultiple;
     String allowableValues;
     boolean isArray = false;
-    
+
     // see if it's a collection type
     if(type instanceof ParameterizedType){
       ParameterizedType aType = (ParameterizedType) type;
