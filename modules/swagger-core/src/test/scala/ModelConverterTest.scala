@@ -16,7 +16,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
 
   it should "convert a model" in {
     val schemas = ModelConverters.read(classOf[Person])
-    m.writeValueAsString(schemas) should equal ("""{"Person":{"properties":{"id":{"type":"integer","format":"int64"},"firstName":{"type":"string"},"address":{"$ref":"Address"},"properties":{"type":"object","additionalProperties":{"type":"string"}},"birthDate":{"type":"string","format":"date-time"},"float":{"type":"number","format":"float"},"double":{"type":"number","format":"double"}}}}""")
+    m.writeValueAsString(schemas) should equal ("""{"Person":{"properties":{"id":{"type":"integer","format":"int64"},"firstName":{"type":"string"},"address":{"$ref":"Address"},"properties":{"type":"object","additionalProperties":{"type":"string"}},"birthDate":{"type":"string","format":"date-time"},"double":{"type":"number","format":"double"},"float":{"type":"number","format":"float"}}}}""")
   }
 
   it should "convert a model with Joda DateTime" in {
@@ -30,14 +30,14 @@ class ModelConverterTest extends FlatSpec with Matchers {
 """{
   "Pet" : {
     "properties" : {
+      "isDomestic" : {
+        "type" : "boolean"
+      },
       "name" : {
         "type" : "string"
       },
       "type" : {
         "type" : "string"
-      },
-      "isDomestic" : {
-        "type" : "boolean"
       }
     }
   }
@@ -54,14 +54,14 @@ class ModelConverterTest extends FlatSpec with Matchers {
         "type" : "integer",
         "format" : "int32"
       },
+      "isDomestic" : {
+        "type" : "boolean"
+      },
       "name" : {
         "type" : "string"
       },
       "type" : {
         "type" : "string"
-      },
-      "isDomestic" : {
-        "type" : "boolean"
       }
     }
   }

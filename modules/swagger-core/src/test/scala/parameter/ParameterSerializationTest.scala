@@ -67,13 +67,8 @@ class ParameterSerializationTest extends FlatSpec with Matchers {
       .collectionFormat("multi")
     m.writeValueAsString(p) should be ("""{"in":"path","required":true,"type":"array","items":{"type":"string"},"collectionFormat":"multi"}""")
     yaml.writeValueAsString(p) should equal (
-"""--- !<path>
-required: true
-type: "array"
-items:
-  type: "string"
-collectionFormat: "multi"
-""")
+"--- !<path>\nrequired: true\ntype: \"array\"\nitems:\n  type: \"string\"\ncollectionFormat: \"multi\"\n"
+    )
   }
 
   it should "deserialize a string array PathParameter" in {
@@ -100,10 +95,8 @@ collectionFormat: "multi"
     val p = new HeaderParameter().property(new StringProperty())
     m.writeValueAsString(p) should be ("""{"in":"header","required":true,"type":"string"}""")
     yaml.writeValueAsString(p) should equal(
-"""--- !<header>
-required: true
-type: "string"
-""")
+"--- !<header>\nrequired: true\ntype: \"string\"\n"
+    )
   }
 
   it should "deserialize a HeaderParameter" in {
@@ -140,13 +133,8 @@ type: "string"
       .property("name", new StringProperty())
     val p = new BodyParameter().schema(model)
     yaml.writeValueAsString(p) should equal(
-"""--- !<body>
-required: false
-schema:
-  properties:
-    name:
-      type: "string"
-""")
+"--- !<body>\nrequired: false\nschema:\n  properties:\n    name:\n      type: \"string\"\n"
+    )
   }
 
   it should "deserialize a BodyParameter" in {
