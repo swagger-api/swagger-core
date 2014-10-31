@@ -52,24 +52,19 @@ public class UserResourceBean implements UserResource {
   }
 
   @Override
-  public Response updateUser(
-          @PathParam("username") String username,
-          User user) {
+  public Response updateUser(String username, User user) {
     userData.addUser(user);
     return Response.ok().entity("").build();
   }
 
   @Override
-  public Response deleteUser(
-          @PathParam("username") String username) {
+  public Response deleteUser(String username) {
     userData.removeUser(username);
     return Response.ok().entity("").build();
   }
 
   @Override
-  public Response getUserByName(
-          @PathParam("username") String username)
-    throws ApiException {
+  public Response getUserByName(String username) throws ApiException {
     User user = userData.findUserByName(username);
     if (null != user) {
       return Response.ok().entity(user).build();
@@ -79,9 +74,7 @@ public class UserResourceBean implements UserResource {
   }
 
   @Override
-  public Response loginUser(
-          @QueryParam("username") String username,
-          @QueryParam("password") String password) {
+  public Response loginUser(String username, String password) {
     return Response.ok()
         .entity("logged in user session:" + System.currentTimeMillis())
         .build();

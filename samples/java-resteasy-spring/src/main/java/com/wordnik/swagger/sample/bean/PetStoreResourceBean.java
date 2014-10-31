@@ -30,9 +30,7 @@ public class PetStoreResourceBean implements PetStoreResource {
   static JavaRestResourceUtil ru = new JavaRestResourceUtil();
 
   @Override
-  public Response getOrderById(
-          @PathParam("orderId") String orderId)
-      throws NotFoundException {
+  public Response getOrderById(String orderId) throws NotFoundException {
     Order order = storeData.findOrderById(ru.getLong(0, 10000, 0, orderId));
     if (null != order) {
       return Response.ok().entity(order).build();
@@ -42,15 +40,13 @@ public class PetStoreResourceBean implements PetStoreResource {
   }
 
   @Override
-  public Response placeOrder(
-          Order order) {
+  public Response placeOrder(Order order) {
     storeData.placeOrder(order);
     return Response.ok().entity("").build();
   }
 
   @Override
-  public Response deleteOrder(
-          @PathParam("orderId") String orderId) {
+  public Response deleteOrder(String orderId) {
     storeData.deleteOrder(ru.getLong(0, 10000, 0, orderId));
     return Response.ok().entity("").build();
   }

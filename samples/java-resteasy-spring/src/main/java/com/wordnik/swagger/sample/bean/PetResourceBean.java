@@ -29,9 +29,7 @@ public class PetResourceBean implements PetResource {
     static JavaRestResourceUtil ru = new JavaRestResourceUtil();
 
     @Override
-    public Pet getPetById(
-            @PathParam("petId") String petId)
-            throws NotFoundException {
+    public Pet getPetById(String petId) throws NotFoundException {
         Pet pet = petData.getPetbyId(ru.getLong(0, 100000, 0, petId));
         if (null != pet) {
             return pet;
@@ -53,15 +51,13 @@ public class PetResourceBean implements PetResource {
     }
 
     @Override
-    public Response findPetsByStatus(
-            @QueryParam("status") String status) {
+    public Response findPetsByStatus(String status) {
         return Response.ok(petData.findPetByStatus(status)).build();
     }
 
     @Override
     @Deprecated
-    public Response findPetsByTags(
-            @QueryParam("tags") String tags) {
+    public Response findPetsByTags(String tags) {
         return Response.ok(petData.findPetByTags(tags)).build();
     }
 }
