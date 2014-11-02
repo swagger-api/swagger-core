@@ -1,5 +1,7 @@
 package resources;
 
+import com.wordnik.swagger.annotations.ApiParam;
+
 import javax.ws.rs.*;
 
 public class SimpleMethods {

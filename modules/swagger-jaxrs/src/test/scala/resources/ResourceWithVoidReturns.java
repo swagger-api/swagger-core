@@ -17,7 +17,7 @@ public class ResourceWithVoidReturns {
     @ApiResponse(code = 400, message = "Invalid ID", response = NotFoundModel.class),
     @ApiResponse(code = 404, message = "object not found")})
   public Response getTest(
-      @ApiParam(value = "sample param data", required = true, allowableValues = "range[0,10]")
+      @ApiParam(value = "sample param data", required = true, allowableValues = "range[0,10]", defaultValue = "2")
       @DefaultValue("1")
       @PathParam("id") String id,
       @QueryParam("limit") Integer limit

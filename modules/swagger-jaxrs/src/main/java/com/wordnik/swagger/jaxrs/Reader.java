@@ -334,7 +334,7 @@ public class Reader {
   Parameter getParameter(Class<?> cls, Type type, Annotation[] annotations) {
     // look for path, query
     Parameter parameter = null;
-    String defaultValue;
+    String defaultValue = null;
     boolean allowMultiple;
     String allowableValues;
     boolean isArray = false;
@@ -365,6 +365,7 @@ public class Reader {
           QueryParam param = (QueryParam) annotation;
           QueryParameter qp = new QueryParameter()
             .name(param.value());
+          qp.setDefaultValue(defaultValue);
           Property schema = ModelConverters.readAsProperty(cls);
           if(schema != null)
             qp.setProperty(schema);
@@ -374,6 +375,7 @@ public class Reader {
           PathParam param = (PathParam) annotation;
           PathParameter pp = new PathParameter()
             .name(param.value());
+          pp.setDefaultValue(defaultValue);
           Property schema = ModelConverters.readAsProperty(cls);
           if(schema != null)
             pp.setProperty(schema);
@@ -383,6 +385,7 @@ public class Reader {
           HeaderParam param = (HeaderParam) annotation;
           HeaderParameter hp = new HeaderParameter()
             .name(param.value());
+          hp.setDefaultValue(defaultValue);
           Property schema = ModelConverters.readAsProperty(cls);
           if(schema != null)
             hp.setProperty(schema);
@@ -390,17 +393,19 @@ public class Reader {
         }
         else if(annotation instanceof CookieParam) {
           CookieParam param = (CookieParam) annotation;
-          CookieParameter hp = new CookieParameter()
+          CookieParameter cp = new CookieParameter()
             .name(param.value());
+          cp.setDefaultValue(defaultValue);
           Property schema = ModelConverters.readAsProperty(cls);
           if(schema != null)
-            hp.setProperty(schema);
-          parameter = hp;
+            cp.setProperty(schema);
+          parameter = cp;
         }
         else if(annotation instanceof FormParam) {
           FormParam param = (FormParam) annotation;
           FormParameter fp = new FormParameter()
             .name(param.value());
+          fp.setDefaultValue(defaultValue);
           Property schema = ModelConverters.readAsProperty(cls);
           if(schema != null)
             fp.setProperty(schema);
@@ -419,6 +424,10 @@ public class Reader {
       if(annotation instanceof ApiParam) {
         ApiParam param = (ApiParam) annotation;
         if(parameter != null) {
+          if(!"".equals(param.defaultValue())){
+            defaultValue = param.defaultValue();
+          }
+
           // parameter.required(param.required());
           if(param.name() != null && !"".equals(param.name()))
             parameter.setName(param.name());
@@ -432,6 +441,7 @@ public class Reader {
               p.items(items)
                 .array(true)
                 .collectionFormat("multi");
+              p.setDefaultValue(defaultValue);
             }
             else if(parameter instanceof QueryParameter) {
               QueryParameter p = (QueryParameter) parameter;
@@ -439,6 +449,7 @@ public class Reader {
               p.items(items)
                 .array(true)
                 .collectionFormat("multi");
+              p.setDefaultValue(defaultValue);
             }
             else if(parameter instanceof HeaderParameter) {
               HeaderParameter p = (HeaderParameter) parameter;
@@ -446,6 +457,7 @@ public class Reader {
               p.items(items)
                 .array(true)
                 .collectionFormat("multi");
+              p.setDefaultValue(defaultValue);
             }
             else if(parameter instanceof CookieParameter) {
               CookieParameter p = (CookieParameter) parameter;
@@ -453,12 +465,11 @@ public class Reader {
               p.items(items)
                 .array(true)
                 .collectionFormat("multi");
+              p.setDefaultValue(defaultValue);
             }
           }
 
           allowableValues = param.allowableValues();
-          if(!"".equals(param.defaultValue()))
-            defaultValue = param.defaultValue();
         }
         else if(shouldIgnore == false) {
           // must be a body param
