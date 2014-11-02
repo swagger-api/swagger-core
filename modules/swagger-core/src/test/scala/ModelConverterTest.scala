@@ -46,8 +46,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
 
   it should "read an inherited interface" in {
     val schemas = ModelConverters.readAll(classOf[Cat])
-    Json.pretty(schemas) should equal (
-"""{
+    val expected: String = """{
   "Cat" : {
     "properties" : {
       "clawCount" : {
@@ -65,7 +64,11 @@ class ModelConverterTest extends FlatSpec with Matchers {
       }
     }
   }
-}""")
+}"""
+    val actual: String = Json.pretty(schemas)
+    println(s"Actual: $actual")
+    println(s"Expected: $expected")
+    actual should equal (expected)
 
   }
 }
