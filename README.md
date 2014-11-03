@@ -22,10 +22,10 @@ The following methods are available to obtain support for Swagger:
 ## Get started with Swagger!
 See the guide on [getting started with swagger](https://github.com/swagger-api/swagger-core/wiki/Adding-Swagger-to-your-API) to get started with adding swagger to your API.
 
-## Compatability
-The Swagger Specification has undergone 3 revisions since initial creation in 2010.  The swagger-core project has the following compatibilies with the swagger specification:
+## Compatibility
+The Swagger Specification has undergone 3 revisions since initial creation in 2010.  The swagger-core project has the following compatibilities with the swagger specification:
 
-Swagger core Version      | Release Date | Swagger Spec compatability | Notes | Status
+Swagger core Version      | Release Date | Swagger Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
 1.5.0 (in development)    | n/a          | 2.0           | [branch develop_2.0](https://github.com/swagger-api/swagger-core/tree/develop_2.0) | [1.5.0 Milestone](https://github.com/swagger-api/swagger-core/milestones/v1.5.0)
 1.3.10                     | 2014-09-18   | 1.2           | [tag v1.3.10](https://github.com/swagger-api/swagger-core/tree/v1.3.10)
