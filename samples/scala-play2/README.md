@@ -30,3 +30,46 @@ play run
 ````
 
 The application will listen on port 9000 and respond to `http://localhost:9000/api-docs`
+
+## Using Swagger UI
+=======
+
+[Swagger UI](SwaggerUiController) dynamically generates beautiful documentation from the JSON returned by `api-docs`.
+
+To see Swagger UI in action, run the application and point your browser at `http://localhost:9000/api`.
+
+Follow the steps below to set up Swagger UI in your own Play2 project.
+
+### Static assets
+
+The `dist` folder of [swagger-ui](https://github.com/swagger-api/swagger-ui) has been copied into `public/swagger-ui`.
+(Make sure to check out the relevant stable tag in the project README instead of using master.)
+
+Then edit `public/swagger-ui/index.html` to specify our `api-docs` resource by default:
+
+```javascript
+    $(function () {
+      window.swaggerUi = new SwaggerUi({
+      url: "http://localhost:9000/api-docs",
+      dom_id: "swagger-ui-container",
+```
+
+### Controller
+
+Use a controller to redirect requests for `/api` to the Swagger UI static assets - in the sample project, look at `SwaggerUiController`:
+
+```scala
+  def api = Action {
+    Redirect("/assets/swagger-ui/index.html")
+  }
+```
+
+### Routes
+
+Add entries for the controller and the static assets to `routes`:
+
+    # Swagger UI
+    GET     /api                    controllers.SwaggerUiController.api
+    GET     /assets/*file           controllers.Assets.at(path="/public", file)
+
+
