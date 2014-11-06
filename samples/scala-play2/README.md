@@ -32,7 +32,6 @@ play run
 The application will listen on port 9000 and respond to `http://localhost:9000/api-docs`
 
 ## Using Swagger UI
-=======
 
 [Swagger UI](SwaggerUiController) dynamically generates beautiful documentation from the JSON returned by `api-docs`.
 
