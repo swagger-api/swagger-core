@@ -80,6 +80,16 @@ public class PropertyBuilder {
         .title(title)
         .description(description);
     }
+    // fallbacks
+    if("integer".equals(type) && format == null) {
+        // fall back to Integer if type is integer and format is missing
+      System.out.println("no format specified for integer type, falling back to int32");
+      property = new IntegerProperty()
+        .minimum(minimum)
+        .maximum(maximum)
+        .exclusiveMinimum(exclusiveMinimum)
+        .exclusiveMaximum(exclusiveMinimum);
+    }
     if(property == null)
       System.out.println("no property for " + type + ", " + format);
     return property;
