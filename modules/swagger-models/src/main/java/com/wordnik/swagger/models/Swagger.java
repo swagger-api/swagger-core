@@ -18,7 +18,7 @@ public class Swagger {
   protected Map<String, Path> paths;
   protected Map<String, SecurityScheme> securityDefinitions;
   protected Map<String, Model> definitions;
-  private ExternalDocs externalDocs;
+  protected ExternalDocs externalDocs;
 
   public Swagger info(Info info) {
     this.setInfo(info);
