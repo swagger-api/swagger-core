@@ -10,18 +10,18 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class Operation {
-  List<String> tags;
-  String summary;
-  String description;
-  String operationId;
-  List<Scheme> schemes;
-  List<String> consumes;
-  List<String> produces;
-  List<Parameter> parameters;
-  Map<String, Response> responses;
-  List<Map<String, List<String>>> security;
-  String example;
-  private ExternalDocs externalDocs;
+  protected List<String> tags;
+  protected String summary;
+  protected String description;
+  protected String operationId;
+  protected List<Scheme> schemes;
+  protected List<String> consumes;
+  protected List<String> produces;
+  protected List<Parameter> parameters;
+  protected Map<String, Response> responses;
+  protected List<Map<String, List<String>>> security;
+  protected String example;
+  protected ExternalDocs externalDocs;
 
   public Operation summary(String summary) {
     this.setSummary(summary);
@@ -81,6 +81,10 @@ public class Operation {
   }
   public Operation tag(String tag) {
     this.addTag(tag);
+    return this;
+  }
+  public Operation externalDocs(ExternalDocs externalDocs) {
+    this.setExternalDocs(externalDocs);
     return this;
   }
 
