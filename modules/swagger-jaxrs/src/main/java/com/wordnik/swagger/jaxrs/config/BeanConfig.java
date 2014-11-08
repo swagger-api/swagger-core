@@ -2,6 +2,7 @@ package com.wordnik.swagger.jaxrs.config;
 
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.jaxrs.Reader;
+import com.wordnik.swagger.config.Scanner;
 
 import com.wordnik.swagger.annotations.Api;
 
@@ -13,7 +14,7 @@ import org.reflections.util.ConfigurationBuilder;
 
 import java.util.Set;
 
-public class BeanConfig {
+public class BeanConfig implements Scanner {
   Reader reader = new Reader(new Swagger());
 
   String resourcePackage;
@@ -108,6 +109,17 @@ public class BeanConfig {
   }
 
   public void setScan(boolean shouldScan) {
+    Set<Class<?>> classes = classes();
+    if(classes != null)
+      reader.read(classes)
+        .host(host)
+        .basePath(basePath)
+        .info(info);
+
+    ScannerFactory.setScanner(this);
+  }
+
+  public Set<Class<?>> classes() {
     ConfigurationBuilder config = new ConfigurationBuilder()
       .setUrls(ClasspathHelper.forPackage(resourcePackage))
       .setScanners(new TypeAnnotationsScanner(), new SubTypesScanner());
@@ -126,12 +138,7 @@ public class BeanConfig {
         .name(license)
         .url(licenseUrl));
 
-    Set<Class<?>> classes = new Reflections(config).getTypesAnnotatedWith(Api.class);
-    if(classes != null)
-      reader.read(classes)
-        .host(host)
-        .basePath(basePath)
-        .info(info);
+    return new Reflections(config).getTypesAnnotatedWith(Api.class);
   }
 
   public Swagger getSwagger() {

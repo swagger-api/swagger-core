@@ -1,16 +1,13 @@
 package com.wordnik.swagger.jaxrs.config;
 
+import com.wordnik.swagger.config.Scanner;
+
 import java.util.*;
 
 import javax.servlet.ServletConfig;
 import javax.ws.rs.core.Application;
 
-// trait JaxrsScanner extends Scanner {
-//   def classes(): List[Class[_]] = List()
-//   def classesFromContext(app: Application, sc: ServletConfig): List[Class[_]]
-// }
-
-public class DefaultJaxrsScanner /*extends JaxrsScanner */{
+public class DefaultJaxrsScanner implements JaxrsScanner {
   public Set<Class<?>> classesFromContext(
     Application app,
     ServletConfig sc) {
@@ -28,5 +25,9 @@ public class DefaultJaxrsScanner /*extends JaxrsScanner */{
       }
     }
     return output;
+  }
+
+  public Set<Class<?>>classes() {
+    return new HashSet<Class<?>>();
   }
 }

@@ -1,6 +1,7 @@
 package com.wordnik.swagger.jaxrs.config;
 
 import com.wordnik.swagger.models.*;
+import com.wordnik.swagger.config.Scanner;
 // import com.wordnik.swagger.config.{ SwaggerConfig, FilterFactory }
 // import com.wordnik.swagger.core.filter.SwaggerSpecFilter
 
