@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+
+  <display-name>Swagger-CXF-Sample</display-name>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:applicationContext.xml</param-value>
+  </context-param>
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+  </listener>
+  <servlet>
+    <display-name>CXF Service Servlet</display-name>
+    <servlet-name>CXFServiceServlet</servlet-name>
+    <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+
+    <!-- set the base path for the swagger application -->
+    <init-param>
+      <param-name>swagger.api.basepath</param-name>
+      <param-value>http://localhost:8002/api</param-value>
+    </init-param>
+
+    <!-- configure a security filter -->
+    <init-param>
+      <param-name>swagger.security.filter</param-name>
+      <param-value>com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <!-- add the origin filter for JQuery CORS support -->
+  <filter>
+    <filter-name>ApiOriginFilter</filter-name>
+    <filter-class>com.wordnik.swagger.sample.util.ApiOriginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>ApiOriginFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!-- mount the CXF servlet on /api -->
+  <servlet-mapping>
+    <servlet-name>CXFServiceServlet</servlet-name>
+    <url-pattern>/api/*</url-pattern>
+  </servlet-mapping>
+</web-app>
