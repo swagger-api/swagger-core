@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5"
+         metadata-complete="true"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+    <display-name>/@grails.project.key@</display-name>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>@grails.project.key@</param-value>
+    </context-param>
+
+    <filter>
+        <filter-name>sitemesh</filter-name>
+        <filter-class>org.codehaus.groovy.grails.web.sitemesh.GrailsPageFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>charEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetBeanName</param-name>
+            <param-value>characterEncodingFilter</param-value>
+        </init-param>
+        <init-param>
+            <param-name>targetFilterLifecycle</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>charEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>sitemesh</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+
+    <listener>
+        <listener-class>org.codehaus.groovy.grails.web.context.GrailsContextLoaderListener</listener-class>
+    </listener>
+    <!-- Grails dispatcher servlet -->
+    <servlet>
+        <servlet-name>grails</servlet-name>
+        <servlet-class>org.codehaus.groovy.grails.web.servlet.GrailsDispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- The Groovy Server Pages servlet -->
+    <servlet>
+        <servlet-name>gsp</servlet-name>
+        <servlet-class>org.codehaus.groovy.grails.web.pages.GroovyPagesServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>gsp</servlet-name>
+        <url-pattern>*.gsp</url-pattern>
+    </servlet-mapping>
+
+    <session-config>
+        <!-- 30 minutes -->
+        <session-timeout>30</session-timeout>
+    </session-config>
+    
+  <!--servlet>
+    <servlet-name>DefaultJaxrsConfig</servlet-name>
+    <servlet-class>com.wordnik.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
+    <init-param>
+      <param-name>api.version</param-name>
+      <param-value>1.0.0</param-value>
+    </init-param>
+    <init-param>
+      <param-name>swagger.api.basepath</param-name>
+      <param-value>http://localhost:8002/api</param-value>
+    </init-param>
+    <load-on-startup>2</load-on-startup>
+  </servlet-->
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+</web-app>
