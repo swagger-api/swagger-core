@@ -21,7 +21,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
     List<String> _enum = null;
     String type = null, format = null, title = null, description = null, _default = null,
       pattern = null, discriminator = null;
-
+    
     Integer minItems = null, maxItems = null, minProperties = null, maxProperties = null, 
       maxLength = null, minLength = null;
 
@@ -30,9 +30,16 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
     Boolean uniqueItems = null;
     // externalDocs
     // example
+    JsonNode detailNode = node.get("example");
+    String example;
+    if(detailNode != null) {
+      example = detailNode.asText();
+    } else {
+      example = null;
+    }
 
     // enum properties
-    JsonNode detailNode = node.get("enum");
+    detailNode = node.get("enum");
     if(detailNode != null) {
       ArrayNode an = (ArrayNode)detailNode;
       List<String> output = new ArrayList<String>();
@@ -108,6 +115,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
       uniqueItems = (Boolean) ((BooleanNode) detailNode).booleanValue();
 
     Map<String, Object> args = new HashMap<String, Object>();
+    args.put("example", example);
     args.put("enum", _enum);
     args.put("type", type);
     args.put("format", format);

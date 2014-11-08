@@ -24,7 +24,7 @@ public class PropertyBuilder {
     Double exclusiveMaximum = (Double)args.get("exclusiveMaximum");
     Boolean uniqueItems = (Boolean)args.get("uniqueItems");
 
-    Property property = null;
+    AbstractProperty property = null;
     if(BooleanProperty.isType(type, format))
       property = new BooleanProperty();
     if(DateProperty.isType(type, format))
@@ -79,6 +79,10 @@ public class PropertyBuilder {
       property
         .title(title)
         .description(description);
+      String example = (String)args.get("example");
+      if (example != null) {
+        property.setExample(example);
+      }
     }
     // fallbacks
     if("integer".equals(type) && format == null) {
