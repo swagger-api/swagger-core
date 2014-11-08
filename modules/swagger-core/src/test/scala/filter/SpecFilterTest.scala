@@ -61,4 +61,16 @@ class SpecFilterTest extends FlatSpec with Matchers {
     else
       fail("paths should not be null")
   }
+
+  it should "filter away internal model properties" in {
+    val swagger = new SwaggerLoader().read("src/test/scala/specFiles/sampleSpec.json")
+    val filter = new InternalModelPropertiesRemoverFilter()
+
+    val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
+    for((key, model) <- filtered.getDefinitions().asScala) {
+      for((propName, prop) <- model.getProperties().asScala) {
+        propName.startsWith("_") should be (false)
+      }
+    }
+  }
 }

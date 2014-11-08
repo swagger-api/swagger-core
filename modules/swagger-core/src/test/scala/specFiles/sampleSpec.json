@@ -36,6 +36,12 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "found it",
+            "schema": {
+              "$ref": "Order"
+            }
+          },
           "404": {
             "description": "Order not found"
           },
@@ -130,6 +136,9 @@
     },
     "Order": {
       "properties": {
+        "_id": {
+          "type": "string"
+        },
         "id": {
           "type": "integer",
           "format": "int32"

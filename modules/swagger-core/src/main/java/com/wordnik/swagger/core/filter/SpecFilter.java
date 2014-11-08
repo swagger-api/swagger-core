@@ -3,7 +3,10 @@ package com.wordnik.swagger.core.filter;
 import com.wordnik.swagger.core.filter.SwaggerSpecFilter;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.parameters.*;
+import com.wordnik.swagger.models.properties.*;
 import com.wordnik.swagger.model.ApiDescription;
+
+import com.wordnik.swagger.util.Json;
 
 import java.util.*;
 
@@ -42,8 +45,33 @@ public class SpecFilter {
         clone.path(resourcePath, clonedPath);
     }
 
+    Map<String, Model> definitions = filterDefinitions(filter, swagger.getDefinitions(), params, cookies, headers);
     clone.setSecurityDefinitions(swagger.getSecurityDefinitions());
+    clone.setDefinitions(definitions);
     return clone;
+  }
+
+  public Map<String, Model> filterDefinitions(SwaggerSpecFilter filter, Map<String, Model> definitions, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    Map<String, Model> clonedDefinitions = new LinkedHashMap<String, Model>();
+
+    for(String key: definitions.keySet()) {
+      Model definition = definitions.get(key);
+      Map<String, Property> clonedProperties = new LinkedHashMap<String, Property>();
+      for(String propName: definition.getProperties().keySet()) {
+        Property property = definition.getProperties().get(propName);
+        if(property != null) {
+          boolean shouldInclude = filter.isPropertyAllowed(definition, property, propName, params, cookies, headers);
+          if(shouldInclude) {
+            clonedProperties.put(propName, property);
+          }
+        }
+      }
+      Model clonedModel = (Model)definition.clone();
+      clonedModel.getProperties().clear();
+      clonedModel.setProperties(clonedProperties);
+      clonedDefinitions.put(key, clonedModel);
+    }
+    return clonedDefinitions;
   }
 
   public Operation filterOperation(SwaggerSpecFilter filter, Operation op, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
