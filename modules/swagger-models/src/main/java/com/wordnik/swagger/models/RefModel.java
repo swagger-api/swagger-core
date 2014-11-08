@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.*;
 
 public class RefModel extends AbstractModel {
-  String ref;
+  private String ref;
   private String description;
   private Map<String, Property> properties;
   private String example;
@@ -56,5 +56,16 @@ public class RefModel extends AbstractModel {
   }
   public void setExample(String example) {
     this.example = example;
+  }
+
+  public Object clone() {
+    RefModel cloned = new RefModel();
+    super.cloneTo(cloned);
+    cloned.ref = this.ref;
+    cloned.description = this.description;
+    cloned.properties = this.properties;
+    cloned.example = this.example;
+
+    return cloned;
   }
 }

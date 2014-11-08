@@ -58,4 +58,17 @@ public class ArrayModel extends AbstractModel {
   public void setExample(String example) {
     this.example = example;
   }
+
+  public Object clone() {
+    ArrayModel cloned = new ArrayModel();
+    super.cloneTo(cloned);
+
+    cloned.properties = this.properties;
+    cloned.type = this.type;
+    cloned.description = this.description;
+    cloned.items = this.items;
+    cloned.example = this.example;
+
+    return cloned;
+  }
 }

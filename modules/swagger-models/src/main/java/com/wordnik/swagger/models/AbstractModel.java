@@ -1,7 +1,6 @@
 package com.wordnik.swagger.models;
 
 public abstract class AbstractModel implements Model {
-
   private ExternalDocs externalDocs;
 
   @Override
@@ -11,5 +10,14 @@ public abstract class AbstractModel implements Model {
 
   public void setExternalDocs(ExternalDocs value) {
     externalDocs = value;
+  }
+
+  public void cloneTo(Object clone) {
+    AbstractModel cloned = (AbstractModel) clone;
+    cloned.externalDocs = this.externalDocs;
+  }
+
+  public Object clone() {
+    return null;
   }
 }

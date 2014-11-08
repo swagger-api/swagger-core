@@ -172,4 +172,21 @@ public class ModelImpl extends AbstractModel {
   public void setXml(Xml xml) {
     this.xml = xml;
   }
+
+  public Object clone() {
+    ModelImpl cloned = new ModelImpl();
+    super.cloneTo(cloned);
+    cloned.type = this.type;
+    cloned.name = this.name;
+    cloned.required = this.required;
+    cloned.properties = this.properties;
+    cloned.isSimple = this.isSimple;
+    cloned.description = this.description;
+    cloned.example = this.example;
+    cloned.additionalProperties = this.additionalProperties;
+    cloned.discriminator = this.discriminator;
+    cloned.xml = this.xml;
+
+    return cloned;
+  }
 }

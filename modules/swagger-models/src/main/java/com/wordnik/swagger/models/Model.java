@@ -15,4 +15,6 @@ public interface Model {
   void setExample(String example);
 
   ExternalDocs getExternalDocs();
+
+  Object clone();
 }
