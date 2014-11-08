@@ -11,7 +11,8 @@ import java.util.*;
 /**
  * Sample filter to avoid all get operations for the resource
  **/
-public class NoGetOperationsFilter implements SwaggerSpecFilter {
+public class NoGetOperationsFilter extends AbstractSpecFilter {
+  @Override
   public boolean isOperationAllowed(
     Operation operation,
     ApiDescription api,
@@ -20,16 +21,6 @@ public class NoGetOperationsFilter implements SwaggerSpecFilter {
     Map<String, List<String>> headers) {
     if("get".equals(api.getMethod()))
       return false;
-    return true;
-  }
-
-  public boolean isParamAllowed(
-    Parameter parameter,
-    Operation operation,
-    ApiDescription api,
-    Map<String, List<String>> params,
-    Map<String, String> cookies,
-    Map<String, List<String>> headers) {
     return true;
   }
 }

@@ -11,7 +11,8 @@ import java.util.*;
 /**
  * Sample filter to avoid all resources for the /user resource
  **/
-public class NoUserOperationsFilter implements SwaggerSpecFilter {
+public class NoUserOperationsFilter extends AbstractSpecFilter {
+  @Override
   public boolean isOperationAllowed(
     Operation operation,
     ApiDescription api,
@@ -20,16 +21,6 @@ public class NoUserOperationsFilter implements SwaggerSpecFilter {
     Map<String, List<String>> headers) {
     if(api.getPath().startsWith("/user"))
       return false;
-    return true;
-  }
-
-  public boolean isParamAllowed(
-    Parameter parameter,
-    Operation operation,
-    ApiDescription api,
-    Map<String, List<String>> params,
-    Map<String, String> cookies,
-    Map<String, List<String>> headers) {
     return true;
   }
 }
