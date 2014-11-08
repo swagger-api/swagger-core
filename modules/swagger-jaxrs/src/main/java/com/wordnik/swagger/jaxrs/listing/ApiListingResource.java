@@ -1,5 +1,6 @@
 package com.wordnik.swagger.jaxrs.listing;
 
+import com.wordnik.swagger.config.Scanner;
 import com.wordnik.swagger.util.Yaml;
 import com.wordnik.swagger.util.Json;
 import com.wordnik.swagger.models.Swagger;
@@ -11,7 +12,7 @@ import javax.servlet.ServletContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
-import java.util.*;
+import java.util.Set;
 
 @Path("/")
 public class ApiListingResource {
@@ -20,16 +21,26 @@ public class ApiListingResource {
   ServletContext context;
 
   protected synchronized void scan (Application app, ServletConfig sc) {
-    DefaultJaxrsScanner scanner = (DefaultJaxrsScanner)context.getAttribute("scanner");
+    Scanner scanner = ScannerFactory.getScanner();
+    System.out.println("got scanner " + scanner);
     if(scanner != null) {
-      Set<Class<?>> classes = scanner.classesFromContext(app, sc);
-      Reader reader = new Reader((Swagger)context.getAttribute("swagger"));
+      Set<Class<?>> classes = null;
+      if (scanner instanceof JaxrsScanner) {
+        JaxrsScanner jaxrsScanner = (JaxrsScanner)scanner;
+        classes = jaxrsScanner.classesFromContext(app, sc);
+      }
+      else {
+        classes = scanner.classes();
+      }
+      if(classes != null) {
+        Reader reader = new Reader((Swagger)context.getAttribute("swagger"));
 
-      Swagger swagger = reader.read(classes);
-      context.setAttribute("swagger", swagger);
-      WebXMLReader xmlReader = (WebXMLReader)context.getAttribute("reader");
-      if(xmlReader != null) {
-        xmlReader.read(swagger);
+        Swagger swagger = reader.read(classes);
+        context.setAttribute("swagger", swagger);
+        WebXMLReader xmlReader = (WebXMLReader)context.getAttribute("reader");
+        if(xmlReader != null) {
+          xmlReader.read(swagger);
+        }
       }
     }
     initialized = true;
@@ -71,7 +82,8 @@ public class ApiListingResource {
         for(String part : parts) {
           int pos = part.indexOf("!<");
           int endPos = part.indexOf(">");
-          if(pos >= 0)  // dirty hack for https://github.com/FasterXML/jackson-dataformat-yaml/issues/22
+          // dirty hack for https://github.com/FasterXML/jackson-dataformat-yaml/issues/22
+          if(pos >= 0)
             b.append(part.replace("!<", "in: ").replace(">", ""));
           else
             b.append(part);
