@@ -23,6 +23,11 @@ public interface Parameter {
   @JsonIgnore
   void setIn(String in);
 
+  @JsonIgnore
+  String getAccess();
+  @JsonIgnore
+  void setAccess(String access);
+
   String getName();
   void setName(String name);
 

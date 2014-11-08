@@ -10,6 +10,7 @@ public abstract class AbstractParameter {
   protected String name;
   protected String description;
   protected boolean required = false;
+  protected String access;
 
   public String getIn() {
     return in;
@@ -38,4 +39,12 @@ public abstract class AbstractParameter {
   public void setRequired(boolean required) {
     this.required = required;
   }
+
+  public String getAccess() {
+    return access;
+  }
+  public void setAccess(String access) {
+    this.access = access;
+  }
+
 }

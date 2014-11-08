@@ -94,4 +94,10 @@ public class Path {
     this.options = options;
   }
 
+  public boolean isEmpty() {
+    if(get == null && put == null && post == null && delete == null && patch == null && options == null)
+      return true;
+    else
+      return false;
+  }
 }
