@@ -30,7 +30,11 @@ class FormatTest extends FlatSpec with Matchers {
     val model = ModelConverters.read(classOf[SetModel]).getOrElse(fail("no model found"))
     model.properties.size should be (1)
 
-    write(model) should be ("""{"id":"SetModel","properties":{"longs":{"type":"array","uniqueItems":true,"items":{"type":"long"}}}}""")
+    // gbolt; 11/9/2014 - Unclear why the type is expected to be "long"?  As far as I understand, long is not one of the
+    // 7 primitive types defined in JSON Schema.  It should be integer with format of int64.
+   // write(model) should be ("""{"id":"SetModel","properties":{"longs":{"type":"array","uniqueItems":true,"items":{"type":"long"}}}}""")
+   write(model) should be ("""{"id":"SetModel","properties":{"longs":{"type":"array","uniqueItems":true,"items":{"type":"integer","format":"int64"}}}}""")
+
   }
 }
 
