@@ -423,7 +423,7 @@ public class Reader {
           if(param.name() != null && !"".equals(param.name()))
             parameter.setName(param.name());
           parameter.setDescription(param.value());
-          // parameter.setAccess(param.access());
+          parameter.setAccess(param.access());
           allowMultiple = param.allowMultiple() || isArray;
           if(allowMultiple == true) {
             if(parameter instanceof PathParameter) {

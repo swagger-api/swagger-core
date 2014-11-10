@@ -13,8 +13,10 @@ public class WebXMLReader /*implements SwaggerConfig*/ {
   String basePath, host, filterClass, apiVersion, title, scheme = "http";
 
   public WebXMLReader(ServletConfig servletConfig) {
+    ScannerFactory.setScanner(new DefaultJaxrsScanner());
     apiVersion = servletConfig.getInitParameter("api.version");
-    if(apiVersion == null) apiVersion = "Swagger Server";
+    if(apiVersion == null)
+      apiVersion = "Swagger Server";
 
     basePath = servletConfig.getInitParameter("swagger.api.basepath");
     title = servletConfig.getInitParameter("swagger.api.title");

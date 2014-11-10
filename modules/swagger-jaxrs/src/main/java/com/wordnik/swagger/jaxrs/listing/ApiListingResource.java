@@ -1,11 +1,11 @@
 package com.wordnik.swagger.jaxrs.listing;
 
-import com.wordnik.swagger.config.Scanner;
-import com.wordnik.swagger.util.Yaml;
-import com.wordnik.swagger.util.Json;
-import com.wordnik.swagger.models.Swagger;
-import com.wordnik.swagger.jaxrs.config.*;
+import com.wordnik.swagger.config.*;
+import com.wordnik.swagger.core.filter.*;
 import com.wordnik.swagger.jaxrs.Reader;
+import com.wordnik.swagger.jaxrs.config.*;
+import com.wordnik.swagger.util.*;
+import com.wordnik.swagger.models.Swagger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -13,6 +13,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
 import java.util.Set;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @Path("/")
 public class ApiListingResource {
@@ -22,7 +25,7 @@ public class ApiListingResource {
 
   protected synchronized void scan (Application app, ServletConfig sc) {
     Scanner scanner = ScannerFactory.getScanner();
-    System.out.println("got scanner " + scanner);
+    System.out.println("using scanner " + scanner);
     if(scanner != null) {
       Set<Class<?>> classes = null;
       if (scanner instanceof JaxrsScanner) {
@@ -34,7 +37,6 @@ public class ApiListingResource {
       }
       if(classes != null) {
         Reader reader = new Reader((Swagger)context.getAttribute("swagger"));
-
         Swagger swagger = reader.read(classes);
         context.setAttribute("swagger", swagger);
         WebXMLReader xmlReader = (WebXMLReader)context.getAttribute("reader");
@@ -57,8 +59,18 @@ public class ApiListingResource {
     Swagger swagger = (Swagger) context.getAttribute("swagger");
     if(!initialized) 
       scan(app, sc);
-    if(swagger != null) 
+    if(swagger != null) {
+      SwaggerSpecFilter filterImpl = FilterFactory.getFilter();
+      if(filterImpl != null) {
+        SpecFilter f = new SpecFilter();
+        swagger = f.filter(swagger,
+          filterImpl,
+          getQueryParams(uriInfo.getQueryParameters()),
+          getCookies(headers),
+          getHeaders(headers));
+      }
       return Response.ok().entity(swagger).build();
+    }
     else
       return Response.status(404).build();
   }
@@ -76,6 +88,17 @@ public class ApiListingResource {
       scan(app, sc);
     try{
       if(swagger != null) {
+        SwaggerSpecFilter filterImpl = FilterFactory.getFilter();
+        System.out.println("using filter " + filterImpl);
+        if(filterImpl != null) {
+          SpecFilter f = new SpecFilter();
+          swagger = f.filter(swagger,
+            filterImpl,
+            getQueryParams(uriInfo.getQueryParameters()),
+            getCookies(headers),
+            getHeaders(headers));
+        }
+
         String yaml = Yaml.mapper().writeValueAsString(swagger);
         String[] parts = yaml.split("\n");
         StringBuilder b = new StringBuilder();
@@ -96,5 +119,39 @@ public class ApiListingResource {
       e.printStackTrace();
     }
     return Response.status(404).build();
+  }
+
+  protected Map<String, List<String>> getQueryParams(MultivaluedMap<String, String> params) {
+    Map<String, List<String>> output = new HashMap<String, List<String>>();
+    if(params != null) {
+      for(String key: params.keySet()) {
+        List<String> values = params.get(key);
+        output.put(key, values);
+      }
+    }
+    return output;
+  }
+
+  protected Map<String, String> getCookies(HttpHeaders headers) {
+    Map<String, String> output = new HashMap<String, String>();
+    if(headers != null) {
+      for(String key: headers.getCookies().keySet()) {
+        Cookie cookie = headers.getCookies().get(key);
+        output.put(key, cookie.getValue());
+      }
+    }
+    return output;
+  }
+
+
+  protected Map<String, List<String>> getHeaders(HttpHeaders headers) {
+    Map<String, List<String>> output = new HashMap<String, List<String>>();
+    if(headers != null) {
+      for(String key: headers.getRequestHeaders().keySet()) {
+        List<String> values = headers.getRequestHeaders().get(key);
+        output.put(key, values);
+      }
+    }
+    return output;
   }
 }
