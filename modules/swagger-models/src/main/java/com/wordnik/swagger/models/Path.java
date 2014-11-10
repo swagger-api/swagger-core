@@ -1,5 +1,6 @@
 package com.wordnik.swagger.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({ "get", "post", "put", "delete", "options", "patch"})
@@ -94,6 +95,7 @@ public class Path {
     this.options = options;
   }
 
+  @JsonIgnore
   public boolean isEmpty() {
     if(get == null && put == null && post == null && delete == null && patch == null && options == null)
       return true;
