@@ -59,7 +59,11 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
                 case Some(e) => e._2.qualifiedType
                 case None => qt
               }
-              "%s[%s]".format(normalizeContainer(container), b)
+              if (container.endsWith(".Optional") || container.equals("scala.Option")) {
+                b
+              } else {
+                "%s[%s]".format(normalizeContainer(container), b)
+              }
             }
             case _ => paramType.getName
           }
