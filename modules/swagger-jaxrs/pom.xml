@@ -123,4 +123,10 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <properties>
+    <!-- TODO increase coverage and remove these overrides-->
+    <coverage.complexity.minimum>0.29</coverage.complexity.minimum>
+    <coverage.line.minimum>0.50</coverage.line.minimum>
+    <coverage.missed.classes>0</coverage.missed.classes>
+  </properties>
 </project>
