@@ -27,8 +27,8 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
   }
   val processedFields = new ListBuffer[String]
   val excludedFieldTypes = new HashSet[String]
-  final val positiveInfinity = "Infinity"
-  final val negativeInfinity = "-Infinity"
+  final val positiveInfinity = "infinity"
+  final val negativeInfinity = "-infinity"
 
   def parse = Option(cls).map(parseRecursive(_))
 
@@ -378,13 +378,13 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     }
     else {
       val min = ranges(0) match {
-        case e: String if(e == positiveInfinity) => Float.PositiveInfinity
-        case e: String if(e == negativeInfinity) => Float.NegativeInfinity
+        case e: String if(e.toLowerCase() == positiveInfinity) => Float.PositiveInfinity
+        case e: String if(e.toLowerCase() == negativeInfinity) => Float.NegativeInfinity
         case e: String => e.toFloat
       }
       val max = ranges(1) match {
-        case e: String if(e == positiveInfinity) => Float.PositiveInfinity
-        case e: String if(e == negativeInfinity) => Float.NegativeInfinity
+        case e: String if(e.toLowerCase() == positiveInfinity) => Float.PositiveInfinity
+        case e: String if(e.toLowerCase() == negativeInfinity) => Float.NegativeInfinity
         case e: String => e.toFloat
       }
       AllowableRangeValues(min.toString, max.toString)
