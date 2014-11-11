@@ -1,15 +1,18 @@
 package com.wordnik.swagger.models.parameters;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wordnik.swagger.models.properties.Property;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "name", "in", "description", "required", "type", "items", "collectionFormat"})
-public class FormParameter extends AbstractParameter implements SerializableParameter {;
+@JsonPropertyOrder({ "name", "in", "description", "required", "type", "items", "collectionFormat", "default"})
+public class FormParameter extends AbstractParameter implements SerializableParameter {
   String type;
   String format;
   String collectionFormat;
   Property items;
+  @JsonProperty("default")
+  String defaultValue;
 
   public FormParameter() {
     super.setIn("formData");
@@ -79,5 +82,13 @@ public class FormParameter extends AbstractParameter implements SerializablePara
   public void setProperty(Property property) {
     this.type = property.getType();
     this.format = property.getFormat();
+  }
+
+  public String getDefaultValue() {
+    return defaultValue;
+  }
+
+  public void setDefaultValue(String defaultValue) {
+    this.defaultValue = defaultValue;
   }
 }
