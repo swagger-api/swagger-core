@@ -1,11 +1,8 @@
 package com.wordnik.swagger.models.parameters;
 
 import com.wordnik.swagger.models.Model;
-import com.wordnik.swagger.models.properties.Property;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-public class BodyParameter extends AbstractParameter implements Parameter {;
+public class BodyParameter extends AbstractParameter implements Parameter {
   Model schema;
 
   public BodyParameter() {

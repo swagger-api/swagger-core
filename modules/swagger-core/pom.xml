@@ -144,6 +144,12 @@
       <version>${scala-version}</version>
       <scope>test</scope>
     </dependency>
+      <dependency>
+          <groupId>com.propensive</groupId>
+          <artifactId>rapture-io</artifactId>
+          <version>0.7.2</version>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
   <properties>
     <jackson-swagger-version>0.5.1-SNAPSHOT</jackson-swagger-version>

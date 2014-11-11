@@ -22,7 +22,7 @@ public class ResourceWithMapReturnValue {
     @ApiResponse(code = 404, message = "object not found")})
   public Map<String, Integer> getTest(
       @ApiParam(value = "sample param data", required = true, allowableValues = "range[0,10]")
-      @DefaultValue("1")
+      @DefaultValue("5")
       @PathParam("id") String id,
       @QueryParam("limit") Integer limit
       ) throws WebApplicationException {

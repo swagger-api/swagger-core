@@ -1,19 +1,12 @@
-import com.wordnik.swagger.jaxrs.config._
-
-import resources.SimpleMethods
-
-import com.wordnik.swagger.models.Swagger
-import com.wordnik.swagger.jaxrs.Reader
-import com.wordnik.swagger.util.Json
-
+import java.lang.reflect.Method
 import javax.ws.rs._
 
-import java.lang.reflect.Method
-
+import com.wordnik.swagger.jaxrs.Reader
+import com.wordnik.swagger.models.Swagger
 import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
+import resources.SimpleMethods
 
 @RunWith(classOf[JUnitRunner])
 class ReaderTest extends FlatSpec with Matchers {
