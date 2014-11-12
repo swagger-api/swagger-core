@@ -15,7 +15,7 @@ import org.scalatest.Matchers
 import scala.beans.BeanProperty
 
 @RunWith(classOf[JUnitRunner])
-class XmlModelTests extends FlatSpec with Matchers {
+class XmlModelTest extends FlatSpec with Matchers {
   it should "process an XML model attribute" in {
     val schemas = ModelConverters.readAll(classOf[Monster])
     val model = schemas.get("Monster")
