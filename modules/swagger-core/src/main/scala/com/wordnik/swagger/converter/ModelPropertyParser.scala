@@ -206,10 +206,10 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
                   else simpleTypeRef
                 }
                 simpleName = containerType
-                if(isComplex(simpleTypeRef)) {
-                  Some(ModelRef(null, Some(simpleTypeRef), Some(basePart)))
+                if(isComplex(typeRef)) {
+                  Some(ModelRef(null, Some(typeRef), Some(basePart)))
                 }
-                else Some(ModelRef(simpleTypeRef, None, Some(basePart)))
+                else Some(ModelRef(typeRef, None, Some(basePart)))
               }
               case _ => None
             }
@@ -392,7 +392,11 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
   }
 
   def getDataType(genericReturnType: Type, returnType: Type, isSimple: Boolean = false): String = {
-    if (TypeUtil.isParameterizedList(genericReturnType)) {
+    if (TypeUtil.isOptionalType(genericReturnType)) {
+      val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
+      val valueType = parameterizedType.getActualTypeArguments.head
+      getDataType(valueType, valueType, isSimple)
+    } else if (TypeUtil.isParameterizedList(genericReturnType)) {
       val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
       val valueType = parameterizedType.getActualTypeArguments.head
       "List[" + getDataType(valueType, valueType, isSimple) + "]"
