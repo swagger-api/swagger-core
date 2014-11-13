@@ -175,6 +175,15 @@ object SwaggerSerializers extends Serializers {
     }
   }
 
+  def toJsonSchemaTypeFromRef(ref: ModelRef): JObject = {
+    // see if primitive
+    if(SwaggerSpec.baseTypes.contains(ref.`type`)) {
+      toJsonSchema("type", ref.`type`)
+    } else {
+      ("type" -> ref.`type`)
+    }
+  }
+
   class JsonSchemaOperationSerializer extends CustomSerializer[Operation](formats => ({
     case json =>
       implicit val fmts: Formats = formats
@@ -337,23 +346,22 @@ object SwaggerSerializers extends Serializers {
   ))
 
   class JsonSchemaModelRefSerializer extends CustomSerializer[ModelRef](formats => ({
-    case json =>
+    case json => {
       implicit val fmts: Formats = formats
       ModelRef(
         (json \ "type").extractOrElse(null: String),
         (json \ "$ref").extractOpt[String]
       )
-    }, {
-      case x: ModelRef =>
+    }}, {
+    case x: ModelRef => {
       implicit val fmts = formats
-      ("type" -> {
-        x.`type` match {
-          case e:String => Some(e)
-          case _ => None
-        }
-      }) ~
-      ("$ref" -> x.ref)
+      val output: JObject = x.`type` match {
+        case e: String => toJsonSchemaTypeFromRef(x)
+        case _ => ("type" -> None)
+      }
+      output ~ ("$ref" -> x.ref)
     }
+  }
   ))
 
   class JsonSchemaParameterSerializer extends CustomSerializer[Parameter](formats => ({

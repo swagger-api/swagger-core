@@ -22,7 +22,7 @@ val appDependencies: Seq[sbt.ModuleID] = Seq(
 You can run the sample app as such:
 
 ````
-play run
+activator run
 ````
 
 The application will listen on port 9000 and respond to `http://localhost:9000/api-docs.json`

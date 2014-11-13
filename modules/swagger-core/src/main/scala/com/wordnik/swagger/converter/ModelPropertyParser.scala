@@ -27,8 +27,8 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
   }
   val processedFields = new ListBuffer[String]
   val excludedFieldTypes = new HashSet[String]
-  final val positiveInfinity = "Infinity"
-  final val negativeInfinity = "-Infinity"
+  final val positiveInfinity = "infinity"
+  final val negativeInfinity = "-infinity"
 
   def parse = Option(cls).map(parseRecursive(_))
 
@@ -206,10 +206,10 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
                   else simpleTypeRef
                 }
                 simpleName = containerType
-                if(isComplex(simpleTypeRef)) {
-                  Some(ModelRef(null, Some(simpleTypeRef), Some(basePart)))
+                if(isComplex(typeRef)) {
+                  Some(ModelRef(null, Some(typeRef), Some(basePart)))
                 }
-                else Some(ModelRef(simpleTypeRef, None, Some(basePart)))
+                else Some(ModelRef(typeRef, None, Some(basePart)))
               }
               case _ => None
             }
@@ -378,13 +378,13 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     }
     else {
       val min = ranges(0) match {
-        case e: String if(e == positiveInfinity) => Float.PositiveInfinity
-        case e: String if(e == negativeInfinity) => Float.NegativeInfinity
+        case e: String if(e.toLowerCase() == positiveInfinity) => Float.PositiveInfinity
+        case e: String if(e.toLowerCase() == negativeInfinity) => Float.NegativeInfinity
         case e: String => e.toFloat
       }
       val max = ranges(1) match {
-        case e: String if(e == positiveInfinity) => Float.PositiveInfinity
-        case e: String if(e == negativeInfinity) => Float.NegativeInfinity
+        case e: String if(e.toLowerCase() == positiveInfinity) => Float.PositiveInfinity
+        case e: String if(e.toLowerCase() == negativeInfinity) => Float.NegativeInfinity
         case e: String => e.toFloat
       }
       AllowableRangeValues(min.toString, max.toString)
@@ -392,7 +392,11 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
   }
 
   def getDataType(genericReturnType: Type, returnType: Type, isSimple: Boolean = false): String = {
-    if (TypeUtil.isParameterizedList(genericReturnType)) {
+    if (TypeUtil.isOptionalType(genericReturnType)) {
+      val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
+      val valueType = parameterizedType.getActualTypeArguments.head
+      getDataType(valueType, valueType, isSimple)
+    } else if (TypeUtil.isParameterizedList(genericReturnType)) {
       val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
       val valueType = parameterizedType.getActualTypeArguments.head
       "List[" + getDataType(valueType, valueType, isSimple) + "]"
