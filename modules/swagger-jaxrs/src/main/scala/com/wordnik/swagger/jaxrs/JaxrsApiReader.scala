@@ -10,7 +10,7 @@ import com.wordnik.swagger.model._
 
 import org.slf4j.LoggerFactory
 
-import java.lang.reflect.{ Method, Type, Field }
+import java.lang.reflect.{ Method, Type, Field, ParameterizedType }
 import java.lang.annotation.Annotation
 
 import javax.ws.rs._
@@ -46,12 +46,21 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
       case "[J" => "Array[long]"
       case _ => {
         if(paramType.isArray) {
-          "Array[%s]".format(paramType.getComponentType.getName)
+          if (paramType.getComponentType.isEnum) {
+            "Array[string]"
+          }
+          else {
+            "Array[%s]".format(paramType.getComponentType.getName)
+          }
+        }
+        else if(paramType.isEnum) {
+          "string"
         }
         else {
           genericParamType.toString match {
             case GenericTypeMapper(container, base) => {
-              val qt = SwaggerTypes(base.split("\\.").last) match {
+              val baseType = genericParamType.asInstanceOf[ParameterizedType].getActualTypeArguments()(0).asInstanceOf[Class[_]]
+              val qt = if (baseType.isEnum) "string" else SwaggerTypes(base.split("\\.").last) match {
                 case "object" => base
                 case e: String => e
               }
@@ -65,6 +74,18 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
           }
         }
       }
+    }
+  }
+
+  def processAllowableValues(paramType: Class[_], genericParamType: Type) = {
+    if(paramType.isEnum) {
+      AllowableListValues(paramType.asInstanceOf[Class[Enum[_]]].getEnumConstants.map(_.name).toList)
+    }
+    else if (paramType.isArray && paramType.getComponentType.isEnum) {
+      AllowableListValues(paramType.getComponentType.asInstanceOf[Class[Enum[_]]].getEnumConstants.map(_.name).toList)
+    }
+    else {
+      AnyAllowableValues
     }
   }
 
@@ -88,7 +109,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
     val api = method.getAnnotation(classOf[Api])
     val responseClass = {
       if(apiOperation != null){
-        val baseName = apiOperation.response.getName
+        val baseName = processDataType(apiOperation.response, apiOperation.response)
         val output = apiOperation.responseContainer match {
           case "" => baseName
           case e: String => "%s[%s]".format(e, baseName)
@@ -97,7 +118,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
       }
       else {
         if(!"javax.ws.rs.core.Response".equals(method.getReturnType.getCanonicalName))
-          method.getReturnType.getName
+          processDataType(method.getReturnType, method.getGenericReturnType)
         else
           "void"
       }
@@ -157,13 +178,15 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
       if(annotations.length > 0) {
         val param = new MutableParameter
         param.dataType = processDataType(paramType, genericParamType)
+        param.allowableValues = processAllowableValues(paramType, genericParamType)
         processParamAnnotations(param, annotations)
       }
       else /* If it doesn't have annotations, it must be a body parameter, and it's safe to assume that there will only
               ever be one of these in the sequence according to JSR-339 JAX-RS 2.0 section 3.3.2.1. */
       {
         val param = new MutableParameter
-        param.dataType = paramType.getName
+        param.dataType = processDataType(paramType, genericParamType)
+        param.allowableValues = processAllowableValues(paramType, genericParamType)
         param.name = TYPE_BODY
         param.paramType = TYPE_BODY
 
@@ -284,6 +307,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
           field.getAnnotation(classOf[ApiParam]) != null) {
           val param = new MutableParameter
           param.dataType = processDataType(field.getType, field.getGenericType)
+          param.allowableValues = processAllowableValues(field.getType, field.getGenericType)
           Option(field.getAnnotation(classOf[ApiParam])) match {
             case Some(annotation) => toAllowableValues(annotation.allowableValues)
             case _ =>
@@ -304,11 +328,13 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
         val param = new MutableParameter
         // TODO: not sure this will work
         param.dataType = processDataType(method.getReturnType, method.getGenericReturnType)
+        param.allowableValues = processAllowableValues(method.getReturnType, method.getGenericReturnType)
         Some(param)
       case setterPattern(propertyName) =>
         val param = new MutableParameter
         // TODO: not sure this will work
         param.dataType = processDataType(method.getParameterTypes()(0), method.getGenericParameterTypes()(0))
+        param.allowableValues = processAllowableValues(method.getParameterTypes()(0), method.getGenericParameterTypes()(0))
         Some(param)
       case _ => None
     }).toList.map {
@@ -334,7 +360,9 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
     param.defaultValue = Option(readString(annotation.defaultValue))
 
     try {
-      param.allowableValues = toAllowableValues(annotation.allowableValues)
+      if (annotation.allowableValues != null && !annotation.allowableValues.isEmpty) {
+        param.allowableValues = toAllowableValues(annotation.allowableValues)
+      }
     } catch {
       case e: Exception =>
         LOGGER.error("Allowable values annotation problem in method for parameter " + param.name)

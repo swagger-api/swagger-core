@@ -329,6 +329,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
       if (annotations.length > 0) {
         val param = new MutableParameter
         param.dataType = processDataType(paramType, genericParamType)
+        param.allowableValues = processAllowableValues(paramType, genericParamType)
         paramList ++= processParamAnnotations(param, annotations)
       }
     }
