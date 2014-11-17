@@ -1,4 +1,4 @@
-package com.intuit.platform.swagger
+package com.wordnik.swagger.mule
 
 import com.wordnik.swagger.core.util.ReaderUtil
 import com.wordnik.swagger.annotations._
