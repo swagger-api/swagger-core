@@ -114,7 +114,8 @@
 
         <dependency>
             <groupId>com.wordnik</groupId>
-            <artifactId>swagger-jaxrs_2.10</artifactId>
+            <artifactId>swagger-mule_2.10</artifactId>
+            <version>1.3.10</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
