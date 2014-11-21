@@ -1,6 +1,6 @@
 package com.wordnik.swagger.models;
 
-import com.wordnik.swagger.models.auth.SecurityScheme;
+import com.wordnik.swagger.models.auth.SecuritySchemeDefinition;
 
 import com.fasterxml.jackson.annotation.*;
 
@@ -16,7 +16,7 @@ public class Swagger {
   protected List<String> produces;
   protected List<SecurityRequirement> securityRequirement;
   protected Map<String, Path> paths;
-  protected Map<String, SecurityScheme> securityDefinitions;
+  protected Map<String, SecuritySchemeDefinition> securityDefinitions;
   protected Map<String, Model> definitions;
   protected ExternalDocs externalDocs;
 
@@ -70,7 +70,7 @@ public class Swagger {
     this.paths.put(key, path);
     return this;
   }
-  public Swagger securityDefinition(String name, SecurityScheme securityDefinition) {
+  public Swagger securityDefinition(String name, SecuritySchemeDefinition securityDefinition) {
     this.addSecurityDefinition(name, securityDefinition);
     return this;
   }
@@ -171,15 +171,15 @@ public class Swagger {
     return this.paths.get(path);
   }
 
-  public Map<String, SecurityScheme> getSecurityDefinitions() {
+  public Map<String, SecuritySchemeDefinition> getSecurityDefinitions() {
     return securityDefinitions;
   }
-  public void setSecurityDefinitions(Map<String, SecurityScheme> securityDefinitions) {
+  public void setSecurityDefinitions(Map<String, SecuritySchemeDefinition> securityDefinitions) {
     this.securityDefinitions = securityDefinitions;
   }
-  public void addSecurityDefinition(String name, SecurityScheme securityDefinition) {
+  public void addSecurityDefinition(String name, SecuritySchemeDefinition securityDefinition) {
     if(this.securityDefinitions == null)
-      this.securityDefinitions = new HashMap<String, SecurityScheme>();
+      this.securityDefinitions = new HashMap<String, SecuritySchemeDefinition>();
     this.securityDefinitions.put(name, securityDefinition);
   }
 

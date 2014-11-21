@@ -41,7 +41,7 @@ class SecurityDefinitionTest extends FlatSpec with Matchers {
 
     swagger
       .securityDefinition("githubAccessCode",
-        new OAuth2()
+        new OAuth2Definition()
           .accessCode("http://foo.com/accessCode", "http://foo.com/tokenUrl")
           .scope("user:email", "Grants read access to a user’s email addresses."))
 
