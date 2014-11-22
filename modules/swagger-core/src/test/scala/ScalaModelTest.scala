@@ -53,7 +53,32 @@ class ScalaModelTest extends FlatSpec with Matchers {
     m.registerModule(DefaultScalaModule)
     val schemas = ModelConverters.readAll(classOf[NestedModel])
 
-    m.writeValueAsString(schemas) should equal ("""{"ComplexModel":{"properties":{"name":{"type":"string"},"age":{"type":"integer","format":"int32"}}},"NestedModel":{"properties":{"complexModel":{"$ref":"ComplexModel"},"localtime":{"type":"string","format":"date-time"}}}}""")
+	Json.pretty(schemas) should equal (
+      """{
+  "ComplexModel" : {
+    "properties" : {
+      "name" : {
+        "type" : "string"
+      },
+      "age" : {
+        "type" : "integer",
+        "format" : "int32"
+      }
+    }
+  },
+  "NestedModel" : {
+    "properties" : {
+      "complexModel" : {
+        "$ref" : "ComplexModel"
+      },
+      "localtime" : {
+        "type" : "string",
+        "format" : "date-time"
+      }
+    }
+  }
+}"""
+    )
   }
 
   it should "read an interface" in {

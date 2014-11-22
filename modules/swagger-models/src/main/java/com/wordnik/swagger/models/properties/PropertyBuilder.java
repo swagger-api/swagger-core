@@ -43,6 +43,9 @@ public class PropertyBuilder {
         .maximum(maximum)
         .exclusiveMinimum(exclusiveMinimum)
         .exclusiveMaximum(exclusiveMinimum);
+    if(FileProperty.isType(type, format)) {
+      property = new FileProperty();
+    }
     if(DecimalProperty.isType(type, format))
       property = new DecimalProperty()
         .minimum(minimum)
@@ -94,8 +97,8 @@ public class PropertyBuilder {
         .exclusiveMinimum(exclusiveMinimum)
         .exclusiveMaximum(exclusiveMinimum);
     }
-    if(property == null)
-      System.out.println("no property for " + type + ", " + format);
+    // if(property == null)
+    //   System.out.println("no property for " + type + ", " + format);
     return property;
   }
 }
