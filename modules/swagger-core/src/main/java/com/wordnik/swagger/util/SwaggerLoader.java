@@ -22,7 +22,7 @@ public class SwaggerLoader {
         mapper.readValue(new File(location), Swagger.class);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      System.out.println(e.getMessage());
       return null;
     }
   }
