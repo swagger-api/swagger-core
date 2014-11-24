@@ -34,4 +34,5 @@ public interface Parameter {
   void setDescription(String description);
 
   boolean getRequired();
+  void setRequired(boolean required);
 }
