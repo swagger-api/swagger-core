@@ -391,8 +391,8 @@ object SwaggerSerializers extends Serializers {
           ""
         }),
         (json \ "allowableValues").extract[AllowableValues],
-        (json \ "type").extractOrElse({
-          !!(json, OPERATION_PARAM, "type", "missing required field", ERROR)
+        (json \ "paramType").extractOrElse({
+          !!(json, OPERATION_PARAM, "paramType", "missing required field", ERROR)
           ""
         }),
         (json \ "paramAccess").extractOpt[String]
