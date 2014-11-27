@@ -349,6 +349,7 @@
     <module>modules/swagger-servlet</module>
     <module>modules/swagger-utils</module>
     <module>modules/swagger-oauth2-auth-server</module>
+    <module>modules/swagger-mule</module>
   </modules>
   <reporting>
     <outputDirectory>target/site</outputDirectory>
