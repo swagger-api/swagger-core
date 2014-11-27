@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.10</artifactId>
-    <version>1.3.11</version>
+    <version>1.3.12-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -11,7 +11,7 @@
   <artifactId>swagger-java-cxf-sample_2.10</artifactId>
   <packaging>war</packaging>
   <name>swagger-java-cxf-sample</name>
-  <version>1.3.11</version>
+  <version>1.3.12-SNAPSHOT</version>
 
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
