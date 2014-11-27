@@ -34,7 +34,7 @@ class DefaultAuthDialog extends AuthDialog with TokenStore {
       </p>
       <p class="oauth_body">        
         This is a sample OAuth2 server which supports the Implicit or Client-side flow.  You can find 
-        the source code to the server <a href="https://github.com/wordnik/swagger-core/tree/master/samples/scala-oauth-authorization-server">here</a>.
+        the source code to the server <a href="https://github.com/swagger-api/swagger-core/tree/master/samples/scala-oauth-authorization-server">here</a>.
       </p>
       <p class="oauth_body">        
         Since we don't really keep track of usernames in this sample server, you can enter any non-blank username
