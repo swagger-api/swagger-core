@@ -71,7 +71,7 @@
   <dependencies>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.10</artifactId>
+      <artifactId>scalatest_2.11</artifactId>
       <scope>test</scope>
       <version>${scala-test-version}</version>
     </dependency>

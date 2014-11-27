@@ -11,7 +11,7 @@ server at http://petstore.swagger.wordnik.com/api/api-docs.json
 This version is compatible with Play 2.3.0 and Swagger 1.3.11
 
 ### To build Swagger from source (optional)
-Please follow instructions to build the top-level [swagger-core project](https://github.com/wordnik/swagger-core)
+Please follow instructions to build the top-level [swagger-core project](https://github.com/swagger-api/swagger-core)
 
 ### To run
 The swagger-play2 module lives in maven central:

@@ -27,7 +27,7 @@ You can then add support to your app.
 
 There are just a single step to integrate this plugin's features app with swagger.
 
-Add the resource listing to your routes file (you can read more about the resource listing [here](https://github.com/wordnik/swagger-core/wiki/Resource-Listing)
+Add the resource listing to your routes file (you can read more about the resource listing [here](https://github.com/swagger-api/swagger-core/wiki/Resource-Listing)
 
 ````
 
@@ -40,4 +40,4 @@ GET     /admin.xml/ping			            controllers.HealthController.ping()
 
 ### Sample Application
 
-Please take a look [here](https://github.com/wordnik/swagger-core/tree/master/samples/scala-play2) for a full sample application using the Swagger Play2 utils module.
+Please take a look [here](https://github.com/swagger-api/swagger-core/tree/master/samples/scala-play2) for a full sample application using the Swagger Play2 utils module.

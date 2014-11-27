@@ -37,7 +37,7 @@ sbt publishLocal
 
 There are just a couple steps to integrate your Play2 app with swagger.
 
-1.  Add the resource listing to your routes file (you can read more about the resource listing [here](https://github.com/wordnik/swagger-core/wiki/Resource-Listing)
+1.  Add the resource listing to your routes file (you can read more about the resource listing [here](https://github.com/swagger-api/swagger-core/wiki/Resource-Listing)
 
 ```
 
@@ -45,7 +45,7 @@ GET     /api-docs               controllers.ApiHelpController.getResources
 
 ``` 
 
-2.  Annotate your REST endpoints with Swagger annotations.  This allows the Swagger framework to create the [api-declaration](https://github.com/wordnik/swagger-core/wiki/API-Declaration) automatically!
+2.  Annotate your REST endpoints with Swagger annotations.  This allows the Swagger framework to create the [api-declaration](https://github.com/swagger-api/swagger-core/wiki/API-Declaration) automatically!
 
 In your controller for, say your "pet" resource:
 
@@ -94,4 +94,4 @@ with `ApiParamImplicit` annotations.  If they are `queryParam`s or `pathParam`s,
 
 ### Sample Application
 
-Please take a look [here](https://github.com/wordnik/swagger-core/tree/master/samples/scala-play2) for a full sample application using the Swagger Play2 module with scala, and [here](https://github.com/wordnik/swagger-core/tree/master/samples/java-play2) for a Java example. 
+Please take a look [here](https://github.com/swagger-api/swagger-core/tree/master/samples/scala-play2) for a full sample application using the Swagger Play2 module with scala, and [here](https://github.com/swagger-api/swagger-core/tree/master/samples/java-play2) for a Java example. 

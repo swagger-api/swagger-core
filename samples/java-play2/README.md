@@ -7,7 +7,7 @@ about Wordnik's APIs, please visit http://developer.wordnik.com.  There is an on
 server at http://petstore.swagger.wordnik.com/api/api-docs.json
 
 ### To build from source
-Please follow instructions to build the top-level [swagger-core project](https://github.com/wordnik/swagger-core)
+Please follow instructions to build the top-level [swagger-core project](https://github.com/swagger-api/swagger-core)
 
 ### To run
 The swagger-play2 module lives in maven central:

@@ -28,12 +28,12 @@ The Swagger Specification has undergone 3 revisions since initial creation in 20
 Swagger core Version      | Release Date | Swagger Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
 1.5.0 (in development)    | n/a          | 2.0           | [branch develop_2.0](https://github.com/swagger-api/swagger-core/tree/develop_2.0) | [1.5.0 Milestone](https://github.com/swagger-api/swagger-core/milestones/v1.5.0)
-1.3.11                     | 2014-11-27   | 1.2           | [tag v1.3.11](https://github.com/swagger-api/swagger-core/tree/v1.3.10)
+1.3.11                     | 2014-11-27   | 1.2           | [tag v1.3.11](https://github.com/swagger-api/swagger-core/tree/v1.3.11)
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4)
 1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0)
 
 ## Overview
-This is a project to build the swagger-core library, which is required for the Wordnik implementation of the Swagger spec. For more information about Wordnik's APIs, please visit http://developer.wordnik.com.
+This is a project to build the swagger-core library, which is required for the Reverb implementation of the Swagger spec. For more information about Wordnik's APIs, please visit http://developer.wordnik.com.
 
 
 ### Change History
@@ -43,11 +43,11 @@ If you're interested in the change history of swagger and the swagger-core frame
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
-<li>- Java 6, 7 (http://java.oracle.com)
+<li>- Java 7 (http://java.oracle.com)
 
 <li>- Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
-### To build from source (currently 1.3.10)
+### To build from source (currently 1.3.11)
 ```
 # first time building locally
 mvn -N
