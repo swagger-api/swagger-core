@@ -206,10 +206,10 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
                   else simpleTypeRef
                 }
                 simpleName = containerType
-                if(isComplex(simpleTypeRef)) {
-                  Some(ModelRef(null, Some(simpleTypeRef), Some(basePart)))
+                if(isComplex(typeRef)) {
+                  Some(ModelRef(null, Some(typeRef), Some(basePart)))
                 }
-                else Some(ModelRef(simpleTypeRef, None, Some(basePart)))
+                else Some(ModelRef(typeRef, None, Some(basePart)))
               }
               case _ => None
             }
