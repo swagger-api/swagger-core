@@ -175,6 +175,15 @@ object SwaggerSerializers extends Serializers {
     }
   }
 
+  def toJsonSchemaTypeFromRef(ref: ModelRef): JObject = {
+    // see if primitive
+    if(SwaggerSpec.baseTypes.contains(ref.`type`)) {
+      toJsonSchema("type", ref.`type`)
+    } else {
+      ("type" -> ref.`type`)
+    }
+  }
+
   class JsonSchemaOperationSerializer extends CustomSerializer[Operation](formats => ({
     case json =>
       implicit val fmts: Formats = formats
@@ -337,23 +346,22 @@ object SwaggerSerializers extends Serializers {
   ))
 
   class JsonSchemaModelRefSerializer extends CustomSerializer[ModelRef](formats => ({
-    case json =>
+    case json => {
       implicit val fmts: Formats = formats
       ModelRef(
         (json \ "type").extractOrElse(null: String),
         (json \ "$ref").extractOpt[String]
       )
-    }, {
-      case x: ModelRef =>
+    }}, {
+    case x: ModelRef => {
       implicit val fmts = formats
-      ("type" -> {
-        x.`type` match {
-          case e:String => Some(e)
-          case _ => None
-        }
-      }) ~
-      ("$ref" -> x.ref)
+      val output: JObject = x.`type` match {
+        case e: String => toJsonSchemaTypeFromRef(x)
+        case _ => ("type" -> None)
+      }
+      output ~ ("$ref" -> x.ref)
     }
+  }
   ))
 
   class JsonSchemaParameterSerializer extends CustomSerializer[Parameter](formats => ({
@@ -383,8 +391,8 @@ object SwaggerSerializers extends Serializers {
           ""
         }),
         (json \ "allowableValues").extract[AllowableValues],
-        (json \ "type").extractOrElse({
-          !!(json, OPERATION_PARAM, "type", "missing required field", ERROR)
+        (json \ "paramType").extractOrElse({
+          !!(json, OPERATION_PARAM, "paramType", "missing required field", ERROR)
           ""
         }),
         (json \ "paramAccess").extractOpt[String]
