@@ -15,14 +15,14 @@ The swagger-play2 module lives in maven central:
 ```scala
 val appDependencies: Seq[sbt.ModuleID] = Seq(
   /* your other dependencies */
-  "com.wordnik" %% "swagger-play2" % "1.3.10-SNAPSHOT"
+  "com.wordnik" %% "swagger-play2" % "1.3.11"
 )
 ```
 
 You can run the sample app as such:
 
 ````
-play run
+activator run
 ````
 
 The application will listen on port 9000 and respond to `http://localhost:9000/api-docs.json`

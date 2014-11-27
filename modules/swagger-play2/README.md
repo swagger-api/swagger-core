@@ -4,7 +4,7 @@
 This is a module to support the play2 framework from [playframework](http://www.playframework.org).  It is written in scala but can be used with either java or scala-based play2 applications.
 
 ## Version History
-* swagger-play2 1.3.10 supports play 2.3.  If you need 2.2 support, use 1.3.7 or earlier.
+* swagger-play2 1.3.11 supports play 2.3.  If you need 2.2 support, use 1.3.7 or earlier.
 
 * swagger-play2 1.3.7 supports play 2.2.  If you need 2.1 support, please use 1.3.5 or earlier
 

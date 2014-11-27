@@ -59,6 +59,14 @@ object TypeUtil {
     }).asScala.toSet
   }
 
+  def isOptionalType(gt: Type): Boolean = {
+    if (classOf[ParameterizedType].isAssignableFrom(gt.getClass)) {
+      val tp = gt.asInstanceOf[ParameterizedType].getRawType
+      (tp == classOf[Option[_]] || tp.asInstanceOf[Class[_]].getSimpleName.equals("Optional"))
+    }
+    else false
+  }
+
   def isParameterizedList(gt: Type): Boolean = {
     if (classOf[ParameterizedType].isAssignableFrom(gt.getClass)) {
       val tp = gt.asInstanceOf[ParameterizedType].getRawType

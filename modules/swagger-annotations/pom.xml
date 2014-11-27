@@ -3,13 +3,13 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project_2.11</artifactId>
-    <version>1.3.11-SNAPSHOT</version>
+    <version>1.3.11</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
   <artifactId>swagger-annotations</artifactId>
-  <version>1.3.11-SNAPSHOT</version>
+  <version>1.3.11</version>
   <packaging>bundle</packaging>
   <name>swagger-annotations</name>
 
