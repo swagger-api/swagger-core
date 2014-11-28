@@ -37,7 +37,7 @@ public class SwaggerExampleGuiceContextListener extends GuiceServletContextListe
                 Map<String, String> props = new HashMap<String, String>();
                 props.put("javax.ws.rs.Application", Application.class.getName());
                 props.put("jersey.config.server.wadl.disableWadl", "true");
-                serve("/*").with(ServletContainer.class, props);
+                serve("/api/*").with(ServletContainer.class, props);
 
                 ReflectiveJaxrsScanner scanner = new ReflectiveJaxrsScanner();
                 scanner.setResourcePackage(getClass().getPackage().getName());
