@@ -19,7 +19,7 @@ class Bootstrap extends HttpServlet {
       AuthorizationScope("read:pets", "Read your pets")),
     List(
       ImplicitGrant(
-        LoginEndpoint("http://petstore.swagger.wordnik.com/oauth/dialog"),
+        LoginEndpoint("http://localhost:8002/oauth/dialog"),
         "access_token"
       ),
       AuthorizationCodeGrant(
