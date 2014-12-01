@@ -12,6 +12,7 @@ public abstract class AbstractProperty implements Property {
   Integer position;
   String description;
   String title;
+  private String defaultValue;
 
   public Property title(String title) {
     this.setTitle(title);
@@ -83,5 +84,13 @@ public abstract class AbstractProperty implements Property {
   }
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public String getDefaultValue() {
+    return defaultValue;
+  }
+
+  public void setDefaultValue(String defaultValue) {
+    this.defaultValue = defaultValue;
   }
 }
