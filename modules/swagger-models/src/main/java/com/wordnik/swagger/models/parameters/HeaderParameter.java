@@ -16,7 +16,6 @@ public class HeaderParameter extends AbstractParameter implements SerializablePa
 
   public HeaderParameter() {
     super.setIn("header");
-    super.setRequired(true);
   }
 
   public HeaderParameter property(Property property) {

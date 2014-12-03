@@ -16,7 +16,6 @@ public class FormParameter extends AbstractParameter implements SerializablePara
 
   public FormParameter() {
     super.setIn("formData");
-    super.setRequired(true);
   }
   public FormParameter type(String type) {
     this.setType(type);
