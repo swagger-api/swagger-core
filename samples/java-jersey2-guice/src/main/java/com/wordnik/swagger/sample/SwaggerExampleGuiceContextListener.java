@@ -58,7 +58,7 @@ public class SwaggerExampleGuiceContextListener extends GuiceServletContextListe
 
                 bootstrap();
 
-                filter("/*", ApiOriginFilter.class.getName());
+                filter("/*").through(ApiOriginFilter.class);
             }
         });
     }
