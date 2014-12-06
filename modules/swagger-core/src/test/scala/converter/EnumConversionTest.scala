@@ -23,6 +23,6 @@ class EnumConversionTest extends FlatSpec with Matchers {
     val enumValue = model.properties("enumValue")
     enumValue.`type` should be ("string")
     enumValue.required should be (false)
-    enumValue.allowableValues should be (AllowableListValues(List("PRIVATE", "PUBLIC", "SYSTEM", "INVITE_ONLY")))
+    enumValue.allowableValues should be (AllowableListValues(List("PRIVATE", "PUBLIC", "SYSTEM", "INVITE-ONLY")))
   }
 }

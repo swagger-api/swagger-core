@@ -10,5 +10,5 @@ public enum TestEnum {
   @XmlEnumValue("PRIVATE")PRIVATE,
   @XmlEnumValue("PUBLIC")PUBLIC,
   @XmlEnumValue("SYSTEM")SYSTEM,
-  @XmlEnumValue("INVITE_ONLY")INVITE_ONLY;
+  @XmlEnumValue("INVITE-ONLY")INVITE_ONLY;
 }
