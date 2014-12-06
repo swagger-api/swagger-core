@@ -6,9 +6,9 @@ import com.wordnik.swagger.models.properties.Property;
 import java.util.*;
 
 public class Response {
-  String description;
-  Property schema;
-  Map<String, String> examples;
+  private String description;
+  private Property schema;
+  private Map<String, String> examples;
 
   public Response schema(Property property) {
     this.setSchema(property);

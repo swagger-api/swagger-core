@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.*;
 
 public class SecurityDefinition {
-  String type;
-  Map<String, String> scopes;
+  private String type;
+  private Map<String, String> scopes;
 
   public SecurityDefinition(){}
   public SecurityDefinition(String type){

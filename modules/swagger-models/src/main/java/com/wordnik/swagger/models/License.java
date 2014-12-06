@@ -1,8 +1,8 @@
 package com.wordnik.swagger.models;
 
 public class License {
-  String name;
-  String url;
+  private String name;
+  private String url;
 
   public License name(String name) {
     setName(name);

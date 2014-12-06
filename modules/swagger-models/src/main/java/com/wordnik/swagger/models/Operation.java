@@ -10,18 +10,18 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class Operation {
-  protected List<String> tags;
-  protected String summary;
-  protected String description;
-  protected String operationId;
-  protected List<Scheme> schemes;
-  protected List<String> consumes;
-  protected List<String> produces;
-  protected List<Parameter> parameters;
-  protected Map<String, Response> responses;
-  protected List<Map<String, List<String>>> security;
-  protected String example;
-  protected ExternalDocs externalDocs;
+  private List<String> tags;
+  private String summary;
+  private String description;
+  private String operationId;
+  private List<Scheme> schemes;
+  private List<String> consumes;
+  private List<String> produces;
+  private List<Parameter> parameters;
+  private Map<String, Response> responses;
+  private List<Map<String, List<String>>> security;
+  private String example;
+  private ExternalDocs externalDocs;
 
   public Operation summary(String summary) {
     this.setSummary(summary);

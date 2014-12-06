@@ -3,8 +3,8 @@ package com.wordnik.swagger.models;
 import java.util.*;
 
 public class SecurityScope {
-  String name;
-  String description;
+  private String name;
+  private String description;
 
   public SecurityScope() {}
   public SecurityScope(String name, String description) {

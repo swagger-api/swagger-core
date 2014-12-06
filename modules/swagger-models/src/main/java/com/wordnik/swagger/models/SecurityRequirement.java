@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.*;
 
 public class SecurityRequirement {
-  String name;
-  String type;
-  List<String> scopes;
+  private String name;
+  private String type;
+  private List<String> scopes;
 
   public SecurityRequirement() {}
   public SecurityRequirement(String name) {

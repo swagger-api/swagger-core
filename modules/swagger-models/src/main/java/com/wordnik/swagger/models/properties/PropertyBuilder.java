@@ -4,8 +4,10 @@ import java.util.*;
 
 public class PropertyBuilder {
   public static Property build(String type, String format, Map<String, Object> args) {
-    if(args == null)
-        args = new HashMap<String, Object>();
+    if(args == null) {
+      args = new HashMap<String, Object>();
+    }
+
     List<String> _enum = (List<String>) args.get("enum");
     String title = (String)args.get("title");
     String description = (String)args.get("description");

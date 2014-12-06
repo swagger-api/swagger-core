@@ -17,9 +17,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
   @Type(value = FormParameter.class, name = "formData"),
   @Type(value = CookieParameter.class, name = "cookie")})
 public interface Parameter {
-  @JsonIgnore
+  // @JsonIgnore
   String getIn();
-  @JsonIgnore
+  // @JsonIgnore
   void setIn(String in);
 
   @JsonIgnore
@@ -34,4 +34,5 @@ public interface Parameter {
   void setDescription(String description);
 
   boolean getRequired();
+  void setRequired(boolean required);
 }

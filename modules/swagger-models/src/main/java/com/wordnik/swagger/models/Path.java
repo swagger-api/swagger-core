@@ -5,12 +5,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({ "get", "post", "put", "delete", "options", "patch"})
 public class Path {
-  Operation get;
-  Operation put;
-  Operation post;
-  Operation delete;
-  Operation patch;
-  Operation options;
+  private Operation get;
+  private Operation put;
+  private Operation post;
+  private Operation delete;
+  private Operation patch;
+  private Operation options;
 
   public Path set(String method, Operation op) {
     if("get".equals(method))

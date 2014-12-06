@@ -1,9 +1,9 @@
 package com.wordnik.swagger.models;
 
 public class Contact {
-  String name;
-  String url;
-  String email;
+  private String name;
+  private String url;
+  private String email;
 
   public Contact name(String name) {
     this.setName(name);

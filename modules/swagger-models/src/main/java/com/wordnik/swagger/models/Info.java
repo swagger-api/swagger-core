@@ -1,12 +1,12 @@
 package com.wordnik.swagger.models;
 
 public class Info {
-  String description;
-  String version;
-  String title;
-  String termsOfService;
-  Contact contact;
-  License license;
+  private String description;
+  private String version;
+  private String title;
+  private String termsOfService;
+  private Contact contact;
+  private License license;
 
   public Info version(String version) {
     this.setVersion(version);
