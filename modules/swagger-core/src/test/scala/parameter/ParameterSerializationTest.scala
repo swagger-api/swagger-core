@@ -98,12 +98,10 @@ collectionFormat: "multi"
 
   it should "serialize a HeaderParameter" in {
     val p = new HeaderParameter().property(new StringProperty())
-    m.writeValueAsString(p) should be ("""{"in":"header","required":true,"type":"string"}""")
+    m.writeValueAsString(p) should be ("""{"in":"header","required":false,"type":"string"}""")
     yaml.writeValueAsString(p) should equal(
-"""--- !<header>
-required: true
-type: "string"
-""")
+"--- !<header>\nrequired: false\ntype: \"string\"\n"
+    )
   }
 
   it should "deserialize a HeaderParameter" in {
@@ -117,7 +115,7 @@ type: "string"
       .array(true)
       .property(new StringProperty())
       .collectionFormat("multi")
-    m.writeValueAsString(p) should be ("""{"in":"header","required":true,"type":"string","collectionFormat":"multi"}""")
+    m.writeValueAsString(p) should be ("""{"in":"header","required":false,"type":"string","collectionFormat":"multi"}""")
   }
 
   it should "deserialize a string array HeaderParameter" in {

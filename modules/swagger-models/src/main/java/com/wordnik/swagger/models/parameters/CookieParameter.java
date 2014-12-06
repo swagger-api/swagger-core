@@ -16,7 +16,6 @@ public class CookieParameter extends AbstractParameter implements SerializablePa
 
   public CookieParameter() {
     super.setIn("cookie");
-    super.setRequired(true);
   }
 
   public CookieParameter property(Property property) {
