@@ -2,13 +2,14 @@ package com.wordnik.swagger.jaxrs;
 
 import com.wordnik.swagger.annotations.*;
 import com.wordnik.swagger.converter.ModelConverters;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
 import com.wordnik.swagger.jaxrs.PATCH;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.parameters.*;
 import com.wordnik.swagger.models.parameters.Parameter;
 import com.wordnik.swagger.models.properties.*;
 import com.wordnik.swagger.util.Json;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -22,10 +23,11 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.lang.reflect.ParameterizedType;
 import java.lang.annotation.Annotation;
 import java.util.*;
-import com.wordnik.swagger.jaxrs.ext.*;
 
 public class Reader {
   List<SwaggerExtension> EXTENSIONS = SwaggerExtensions.getExtensions();

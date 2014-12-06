@@ -53,8 +53,8 @@ class ScalaModelTest extends FlatSpec with Matchers {
     m.registerModule(DefaultScalaModule)
     val schemas = ModelConverters.readAll(classOf[NestedModel])
 
-    Json.pretty(schemas) should equal (
-      """{
+    Json.pretty(schemas) should equal ( 
+"""{
   "ComplexModel" : {
     "properties" : {
       "name" : {
@@ -77,8 +77,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
       }
     }
   }
-}"""
-    )
+}""")
   }
 
   it should "read an interface" in {
