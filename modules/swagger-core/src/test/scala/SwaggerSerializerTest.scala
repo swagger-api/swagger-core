@@ -10,6 +10,7 @@ import com.wordnik.swagger.util.Json
 
 import scala.collection.mutable.HashMap
 import scala.collection.JavaConverters._
+import scala.io.Source
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -86,7 +87,11 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
     swagger.path("/pets", new Path().get(get).post(post))
     val swaggerJson = Json.mapper().writeValueAsString(swagger)
     val rebuilt = Json.mapper().readValue(swaggerJson, classOf[Swagger])
+    Json.pretty(swagger) should equal (Json.pretty(rebuilt))
+  }
 
-    Json.prettyPrint(swagger)
+  it should "read the uber api" in {
+    val jsonString = Source.fromFile("src/test/scala/specFiles/uber.json").mkString.toString
+    val swagger = Json.mapper().readValue(jsonString, classOf[Swagger])
   }
 }

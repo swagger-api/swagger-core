@@ -106,9 +106,9 @@ public class ApiListingResource {
           int pos = part.indexOf("!<");
           int endPos = part.indexOf(">");
           // dirty hack for https://github.com/FasterXML/jackson-dataformat-yaml/issues/22
-          if(pos >= 0)
-            b.append(part.replace("!<", "in: ").replace(">", ""));
-          else
+          // if(pos >= 0)
+          //   b.append(part.replace("!<", "in: ").replace(">", ""));
+          // else
             b.append(part);
           b.append("\n");
         }
