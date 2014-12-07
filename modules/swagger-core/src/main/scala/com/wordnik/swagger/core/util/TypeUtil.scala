@@ -75,6 +75,14 @@ object TypeUtil {
     else false
   }
 
+  def isParameterizedVector(gt: Type): Boolean = {
+    if (classOf[ParameterizedType].isAssignableFrom(gt.getClass)) {
+      val tp = gt.asInstanceOf[ParameterizedType].getRawType
+      tp == classOf[scala.Vector[_]]
+    }
+    else false
+  }
+
   def isParameterizedSet(genericType: Type): Boolean = {
     if(classOf[ParameterizedType].isAssignableFrom(genericType.getClass)) {
       val tp = genericType.asInstanceOf[ParameterizedType].getRawType
