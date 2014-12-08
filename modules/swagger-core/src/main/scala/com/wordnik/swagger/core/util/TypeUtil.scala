@@ -114,7 +114,7 @@ object TypeUtil {
     val lb = new ListBuffer[String]
     if(genericType.isInstanceOf[ParameterizedType]) {
       val parameterizedType = genericType.asInstanceOf[ParameterizedType]
-      if (isParameterizedList(genericType) || isParameterizedSet(genericType)) {
+      if (isParameterizedList(genericType) || isParameterizedSet(genericType) || isParameterizedVector(genericType)) {
         for (listType <- parameterizedType.getActualTypeArguments)
           lb ++= extractConcreteObjectTypes(listType)
       } else if (isParameterizedMap(genericType)) {
