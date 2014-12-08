@@ -9,6 +9,7 @@ public class Response {
   private String description;
   private Property schema;
   private Map<String, String> examples;
+  private Map<String, Property> headers;
 
   public Response schema(Property property) {
     this.setSchema(property);
@@ -45,5 +46,13 @@ public class Response {
   }
   public void setExamples(Map<String, String> examples) {
     this.examples = examples;
+  }
+
+  public Map<String, Property> getHeaders() {
+    return headers;
+  }
+
+  public void setHeaders(Map<String, Property> headers) {
+    this.headers = headers;
   }
 }
