@@ -1,7 +1,10 @@
 package com.wordnik.swagger.jackson;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.wordnik.swagger.models.*;
+import com.wordnik.swagger.models.properties.*;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+import com.wordnik.swagger.util.*;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.Version;
@@ -10,10 +13,9 @@ import com.fasterxml.jackson.databind.introspect.*;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.type.MapType;
-import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.models.properties.*;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.bind.annotation.*;
 
@@ -256,7 +258,7 @@ public class ModelResolver {
           }
 
           props.add(property);
-          model.property(propName, property);
+          // model.property(propName, property);
         }
       }
     }
@@ -294,8 +296,6 @@ public class ModelResolver {
     for (Property prop : props) {
       modelProps.put(prop.getName(), prop);
     }
-
-    model.getProperties().clear();
     model.setProperties(modelProps);
     innerTypes.put(name, model);
     return model;
@@ -417,6 +417,8 @@ public class ModelResolver {
     return new Comparator<Property>() {
       @Override
       public int compare(Property one, Property two) {
+        if (one.getPosition() == null && two.getPosition() == null)
+          return 0;
         if (one.getPosition() == null)
           return -1;
         if (two.getPosition() == null)
