@@ -81,7 +81,5 @@ class SecurityDefinitionTest extends FlatSpec with Matchers {
     swagger.path("/pets", new Path().get(get))
 
     val json = Json.mapper.writeValueAsString(swagger)
-
-    // Json.prettyPrint(swagger)
   }
 }
