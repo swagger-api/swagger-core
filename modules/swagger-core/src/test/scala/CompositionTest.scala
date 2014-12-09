@@ -17,19 +17,6 @@ class CompositionTest extends FlatSpec with Matchers {
     val schemas = ModelConverters.readAll(classOf[Human])
     Json.pretty(schemas) should equal (
 """{
-  "Pet" : {
-    "allOf" : [ {
-      "$ref" : "Human"
-    }, {
-      "required" : [ "isDomestic" ],
-      "properties" : {
-        "isDomestic" : {
-          "type" : "boolean",
-          "position" : 3
-        }
-      }
-    } ]
-  },
   "Human" : {
     "required" : [ "name", "type" ],
     "properties" : {
@@ -51,14 +38,7 @@ class CompositionTest extends FlatSpec with Matchers {
       }
     },
     "discriminator" : "type"
-  }
-}""")
-  }
-
-  it should "read a model with composition" in {
-    val schemas = ModelConverters.readAll(classOf[Animal])
-    Json.pretty(schemas) should equal (
-"""{
+  },
   "Pet" : {
     "allOf" : [ {
       "$ref" : "Human"
@@ -71,21 +51,14 @@ class CompositionTest extends FlatSpec with Matchers {
         }
       }
     } ]
-  },
-  "Human" : {
-    "allOf" : [ {
-      "$ref" : "Animal"
-    }, {
-      "properties" : {
-        "firstName" : {
-          "type" : "string"
-        },
-        "lastName" : {
-          "type" : "string"
-        }
-      }
-    } ]
-  },
+  }
+}""")
+  }
+
+  it should "read a model with composition" in {
+    val schemas = ModelConverters.readAll(classOf[Animal])
+    Json.pretty(schemas) should equal (
+"""{
   "Animal" : {
     "required" : [ "name", "type" ],
     "properties" : {
@@ -101,6 +74,33 @@ class CompositionTest extends FlatSpec with Matchers {
       }
     },
     "discriminator" : "type"
+  },
+  "Human" : {
+    "allOf" : [ {
+      "$ref" : "Animal"
+    }, {
+      "properties" : {
+        "firstName" : {
+          "type" : "string"
+        },
+        "lastName" : {
+          "type" : "string"
+        }
+      }
+    } ]
+  },
+  "Pet" : {
+    "allOf" : [ {
+      "$ref" : "Human"
+    }, {
+      "required" : [ "isDomestic" ],
+      "properties" : {
+        "isDomestic" : {
+          "type" : "boolean",
+          "position" : 3
+        }
+      }
+    } ]
   }
 }""")
   }

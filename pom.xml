@@ -240,7 +240,9 @@
             <exclude>**/com/wordnik/swagger/config/FilterFactory.*</exclude>
             <exclude>**/com/wordnik/swagger/model/ApiInfo.*</exclude>
             <exclude>**/com/wordnik/swagger/util/Yaml.*</exclude>
-
+            <exclude>**/com/wordnik/swagger/jackson/*</exclude>
+            <exclude>**/com/wordnik/swagger/converter/ModelConverters.*</exclude>
+            
             <!-- JAXRS -->
             <exclude>**/com/wordnik/swagger/jaxrs/json/JacksonJsonProvider.*</exclude>
             <exclude>**/com/wordnik/swagger/jaxrs/listing/ApiListingResource.*</exclude>
@@ -529,7 +531,7 @@
     <servlet-api-version>2.5</servlet-api-version>
     <jersey-version>1.13</jersey-version>
     <jersey2-version>2.1</jersey2-version>
-    <jackson-version>2.4.1</jackson-version>
+    <jackson-version>2.4.2</jackson-version>
     <jackson-guava-version>2.4.2</jackson-guava-version>
     <logback-version>1.0.1</logback-version>
 

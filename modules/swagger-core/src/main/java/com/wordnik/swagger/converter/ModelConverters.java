@@ -1,12 +1,12 @@
 package com.wordnik.swagger.converter;
 
-import com.wordnik.swagger.util.Json;
+import com.wordnik.swagger.jackson.ModelResolver;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.properties.*;
+import com.wordnik.swagger.util.Json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.module.swagger.ModelResolver;
 
 import java.io.File;
 import java.util.*;
@@ -49,49 +49,45 @@ public class ModelConverters {
 
   public static Map<String, Model> readAll(Type type) {
     JavaType javaType = mapper.getTypeFactory().constructType(type);
-    Map<String, Model> output = new HashMap<String, Model>();
+    Map<String, Model> output = new LinkedHashMap<String, Model>();
     if(shouldProcess(type)) {
       ModelResolver resolver = new ModelResolver(mapper);
       resolver.resolve(javaType);
       Map<String, Model> models = resolver.getDetectedTypes();
-      Map<String, Model> o = new HashMap<String, Model>();
-      for(String key : models.keySet()) {
-        Model m = models.get(key);
+      List<String> keys = new ArrayList<String>();
+      Iterator<String> iter = models.keySet().iterator();
+      while (iter.hasNext())
+        keys.add(iter.next());
 
-        if(m.getProperties() != null) {
-          for(String propertyName : m.getProperties().keySet()) {
-            Property prop = m.getProperties().get(propertyName);
-            if(prop instanceof RefProperty) {
-              RefProperty rp = (RefProperty) prop;
-            }
-          }
-        }
+      Collections.sort(keys);
+
+      for(String key : keys) {
+        Model m = models.get(key);
+        output.put(key, m);
       }
-      return models;
+      return output;
     }
     else return output;
   }
 
   public static Map<String, Model> readAll(Class<?> cls) {
-    Map<String, Model> output = new HashMap<String, Model>();
+    Map<String, Model> output = new LinkedHashMap<String, Model>();
     if(shouldProcess(cls)) {
       ModelResolver resolver = new ModelResolver(mapper);
       resolver.resolve(cls);
       Map<String, Model> models = resolver.getDetectedTypes();
-      Map<String, Model> o = new HashMap<String, Model>();
-      for(String key : models.keySet()) {
-        Model m = models.get(key);
 
-        if(m.getProperties() != null) {
-          for(String propertyName : m.getProperties().keySet()) {
-            Property prop = m.getProperties().get(propertyName);
-            if(prop instanceof RefProperty) {
-              RefProperty rp = (RefProperty) prop;
-            }
-          }
-        }
+      List<String> keys = new ArrayList<String>();
+      Iterator<String> iter = models.keySet().iterator();
+      while (iter.hasNext())
+        keys.add(iter.next());
+      Collections.sort(keys);
+
+      for(String key : keys) {
+        Model m = models.get(key);
+        output.put(key, m);
       }
-      return models;
+      return output;
     }
     else return output;
   }
