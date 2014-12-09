@@ -291,6 +291,7 @@ public class ModelResolver {
 
     // TODO: not working with the comparator
     Collections.sort(props, getPropertyComparator());
+
     Map<String, Property> modelProps = new LinkedHashMap<String, Property>();
     for (Property prop : props) {
       modelProps.put(prop.getName(), prop);
