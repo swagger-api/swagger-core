@@ -167,7 +167,6 @@ public class ModelResolver {
       .description(_description(beanDesc.getClassInfo()));
 
     // if XmlRootElement annotation, construct an Xml object and attach it to the model
-    
     XmlRootElement rootAnnotation = beanDesc.getClassAnnotations().get(XmlRootElement.class);
     if(rootAnnotation != null && rootAnnotation.name() != null && !"".equals(rootAnnotation.name())) {
       Xml xml = new Xml()
@@ -289,7 +288,6 @@ public class ModelResolver {
       }
     }
 
-    // TODO: not working with the comparator
     Collections.sort(props, getPropertyComparator());
 
     Map<String, Property> modelProps = new LinkedHashMap<String, Property>();
@@ -297,6 +295,7 @@ public class ModelResolver {
       modelProps.put(prop.getName(), prop);
     }
 
+    model.getProperties().clear();
     model.setProperties(modelProps);
     innerTypes.put(name, model);
     return model;
