@@ -20,6 +20,6 @@ class JsonDesrializationTest extends FlatSpec with Matchers {
     val c = m.readValue(new java.io.File("src/test/scala/specFiles/compositionTest.json"), classOf[Swagger])
     c.isInstanceOf[Swagger] should be (true)
     
-    Json.prettyPrint(c)
+    // Json.prettyPrint(c)
   }
 }

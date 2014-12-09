@@ -21,22 +21,27 @@ class CompositionTest extends FlatSpec with Matchers {
     "allOf" : [ {
       "$ref" : "Human"
     }, {
+      "required" : [ "isDomestic" ],
       "properties" : {
         "isDomestic" : {
-          "type" : "boolean"
+          "type" : "boolean",
+          "position" : 3
         }
       }
     } ]
   },
   "Human" : {
-    "required" : [ "name" ],
+    "required" : [ "name", "type" ],
     "properties" : {
       "name" : {
         "type" : "string",
-        "description" : "The name of the human"
+        "position" : 1,
+        "description" : "The name of the animal"
       },
       "type" : {
-        "type" : "string"
+        "type" : "string",
+        "position" : 2,
+        "description" : "The animal type"
       },
       "firstName" : {
         "type" : "string"
@@ -58,9 +63,11 @@ class CompositionTest extends FlatSpec with Matchers {
     "allOf" : [ {
       "$ref" : "Human"
     }, {
+      "required" : [ "isDomestic" ],
       "properties" : {
         "isDomestic" : {
-          "type" : "boolean"
+          "type" : "boolean",
+          "position" : 3
         }
       }
     } ]
@@ -80,14 +87,17 @@ class CompositionTest extends FlatSpec with Matchers {
     } ]
   },
   "Animal" : {
-    "required" : [ "name" ],
+    "required" : [ "name", "type" ],
     "properties" : {
       "name" : {
         "type" : "string",
-        "description" : "The name of the human"
+        "position" : 1,
+        "description" : "The name of the animal"
       },
       "type" : {
-        "type" : "string"
+        "type" : "string",
+        "position" : 2,
+        "description" : "The animal type"
       }
     },
     "discriminator" : "type"

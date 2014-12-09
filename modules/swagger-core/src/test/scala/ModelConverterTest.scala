@@ -29,15 +29,21 @@ class ModelConverterTest extends FlatSpec with Matchers {
     Json.pretty(schemas) should equal (
 """{
   "Pet" : {
+    "required" : [ "name", "type", "isDomestic" ],
     "properties" : {
       "name" : {
-        "type" : "string"
+        "type" : "string",
+        "position" : 2,
+        "description" : "The name of the pet"
       },
       "type" : {
-        "type" : "string"
+        "type" : "string",
+        "position" : 1,
+        "description" : "The pet type"
       },
       "isDomestic" : {
-        "type" : "boolean"
+        "type" : "boolean",
+        "position" : 3
       }
     }
   }
@@ -49,19 +55,25 @@ class ModelConverterTest extends FlatSpec with Matchers {
     Json.pretty(schemas) should equal (
 """{
   "Cat" : {
+    "required" : [ "name", "type", "isDomestic" ],
     "properties" : {
       "clawCount" : {
         "type" : "integer",
         "format" : "int32"
       },
       "name" : {
-        "type" : "string"
+        "type" : "string",
+        "position" : 2,
+        "description" : "The name of the pet"
       },
       "type" : {
-        "type" : "string"
+        "type" : "string",
+        "position" : 1,
+        "description" : "The pet type"
       },
       "isDomestic" : {
-        "type" : "boolean"
+        "type" : "boolean",
+        "position" : 3
       }
     }
   }

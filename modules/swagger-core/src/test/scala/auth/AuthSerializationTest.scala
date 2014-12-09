@@ -21,7 +21,6 @@ class AuthSerializationTest extends FlatSpec with Matchers {
     val auth = new ApiKeyAuthDefinition()
       .name("api-key")
       .in(In.HEADER)
-    Json.prettyPrint(auth)
     Json.mapper.writeValueAsString(auth) should be ("""{"type":"apiKey","name":"api-key","in":"header"}""")
   }
 

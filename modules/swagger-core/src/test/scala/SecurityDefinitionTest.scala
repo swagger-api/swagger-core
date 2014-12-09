@@ -82,6 +82,6 @@ class SecurityDefinitionTest extends FlatSpec with Matchers {
 
     val json = Json.mapper.writeValueAsString(swagger)
 
-    Json.prettyPrint(swagger)
+    // Json.prettyPrint(swagger)
   }
 }
