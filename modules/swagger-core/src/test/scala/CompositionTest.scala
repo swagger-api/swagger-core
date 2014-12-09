@@ -15,20 +15,16 @@ class CompositionTest extends FlatSpec with Matchers {
 
   it should "read a model with required params and description" in {
     val schemas = ModelConverters.readAll(classOf[Human])
+
     Json.pretty(schemas) should equal (
 """{
   "Human" : {
-    "required" : [ "name", "type" ],
     "properties" : {
       "name" : {
-        "type" : "string",
-        "position" : 1,
-        "description" : "The name of the animal"
+        "type" : "string"
       },
       "type" : {
-        "type" : "string",
-        "position" : 2,
-        "description" : "The animal type"
+        "type" : "string"
       },
       "firstName" : {
         "type" : "string"
@@ -43,8 +39,18 @@ class CompositionTest extends FlatSpec with Matchers {
     "allOf" : [ {
       "$ref" : "Human"
     }, {
-      "required" : [ "isDomestic" ],
+      "required" : [ "isDomestic", "name", "type" ],
       "properties" : {
+        "type" : {
+          "type" : "string",
+          "position" : 1,
+          "description" : "The pet type"
+        },
+        "name" : {
+          "type" : "string",
+          "position" : 2,
+          "description" : "The name of the pet"
+        },
         "isDomestic" : {
           "type" : "boolean",
           "position" : 3
@@ -57,20 +63,17 @@ class CompositionTest extends FlatSpec with Matchers {
 
   it should "read a model with composition" in {
     val schemas = ModelConverters.readAll(classOf[Animal])
+    Json.prettyPrint(schemas)
+    println("xxxx")
     Json.pretty(schemas) should equal (
 """{
   "Animal" : {
-    "required" : [ "name", "type" ],
     "properties" : {
       "name" : {
-        "type" : "string",
-        "position" : 1,
-        "description" : "The name of the animal"
+        "type" : "string"
       },
       "type" : {
-        "type" : "string",
-        "position" : 2,
-        "description" : "The animal type"
+        "type" : "string"
       }
     },
     "discriminator" : "type"
@@ -80,6 +83,12 @@ class CompositionTest extends FlatSpec with Matchers {
       "$ref" : "Animal"
     }, {
       "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string"
+        },
         "firstName" : {
           "type" : "string"
         },
@@ -93,8 +102,18 @@ class CompositionTest extends FlatSpec with Matchers {
     "allOf" : [ {
       "$ref" : "Human"
     }, {
-      "required" : [ "isDomestic" ],
+      "required" : [ "isDomestic", "name", "type" ],
       "properties" : {
+        "type" : {
+          "type" : "string",
+          "position" : 1,
+          "description" : "The pet type"
+        },
+        "name" : {
+          "type" : "string",
+          "position" : 2,
+          "description" : "The name of the pet"
+        },
         "isDomestic" : {
           "type" : "boolean",
           "position" : 3

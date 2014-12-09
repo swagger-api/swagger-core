@@ -140,7 +140,6 @@
     </dependency>
   </dependencies>
   <properties>
-    <jackson-swagger-version>0.5.1-SNAPSHOT</jackson-swagger-version>
     <!-- TODO increase coverage -->
     <coverage.complexity.minimum>0.50</coverage.complexity.minimum>
     <coverage.line.minimum>0.45</coverage.line.minimum>
