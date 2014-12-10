@@ -13,7 +13,7 @@ class VectorContainerConverterTest extends FlatSpec with Matchers {
     model.properties.map{_._1}.toSet should equal(Set("id", "kidsAges"))
     val properties = model.properties("kidsAges")
 
-    properties.`type` should equal("Vector")
+    properties.`type` should equal("List")
     properties.items should be(Some(ModelRef("int", None, Some("java.lang.Integer"))))
   }
 }
