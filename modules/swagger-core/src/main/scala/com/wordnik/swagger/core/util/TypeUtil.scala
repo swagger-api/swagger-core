@@ -75,14 +75,6 @@ object TypeUtil {
     else false
   }
 
-  def isParameterizedVector(gt: Type): Boolean = {
-    if (classOf[ParameterizedType].isAssignableFrom(gt.getClass)) {
-      val tp = gt.asInstanceOf[ParameterizedType].getRawType
-      tp == classOf[scala.Vector[_]]
-    }
-    else false
-  }
-
   def isParameterizedSet(genericType: Type): Boolean = {
     if(classOf[ParameterizedType].isAssignableFrom(genericType.getClass)) {
       val tp = genericType.asInstanceOf[ParameterizedType].getRawType
@@ -114,7 +106,7 @@ object TypeUtil {
     val lb = new ListBuffer[String]
     if(genericType.isInstanceOf[ParameterizedType]) {
       val parameterizedType = genericType.asInstanceOf[ParameterizedType]
-      if (isParameterizedList(genericType) || isParameterizedSet(genericType) || isParameterizedVector(genericType)) {
+      if (isParameterizedList(genericType) || isParameterizedSet(genericType)) {
         for (listType <- parameterizedType.getActualTypeArguments)
           lb ++= extractConcreteObjectTypes(listType)
       } else if (isParameterizedMap(genericType)) {

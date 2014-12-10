@@ -400,10 +400,6 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
       val valueType = parameterizedType.getActualTypeArguments.head
       "List[" + getDataType(valueType, valueType, isSimple) + "]"
-    } else if (TypeUtil.isParameterizedVector(genericReturnType)) {
-      val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
-      val valueType = parameterizedType.getActualTypeArguments.head
-      "Vector[" + getDataType(valueType, valueType, isSimple) + "]"
     } else if (TypeUtil.isParameterizedSet(genericReturnType)) {
       val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
       val valueType = parameterizedType.getActualTypeArguments.head
