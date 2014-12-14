@@ -21,6 +21,7 @@ public class ModelImpl extends AbstractModel {
   private String example;
   private Property additionalProperties;
   private String discriminator;
+  private List<String> subTypes;
   private Xml xml;
 
   public ModelImpl discriminator(String discriminator) {
@@ -190,4 +191,13 @@ public class ModelImpl extends AbstractModel {
 
     return cloned;
   }
+public List<String> getSubTypes() {
+	if (this.subTypes==null) {
+		setSubTypes(new ArrayList<String>());
+	}
+	return subTypes;
+}
+public void setSubTypes(List<String> subTypes) {
+	this.subTypes = subTypes;
+}
 }
