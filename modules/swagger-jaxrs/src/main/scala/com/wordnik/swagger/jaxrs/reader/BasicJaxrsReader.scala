@@ -16,6 +16,9 @@ import javax.ws.rs.core.Context
 import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
 
 class BasicJaxrsReader extends JaxrsApiReader {
+  private[this] final val verbsOrApi = Set(classOf[GET], classOf[DELETE], classOf[HEAD], 
+    classOf[OPTIONS], classOf[POST], classOf[PUT], classOf[ApiOperation]) 
+    
   var ignoredRoutes: Set[String] = Set()
 
   def ignoreRoutes = ignoredRoutes
@@ -90,9 +93,11 @@ class BasicJaxrsReader extends JaxrsApiReader {
             parentMethods -= method
           }
           case _ => {
-            readMethod(method, parentParams, parentMethods) match {
-              case Some(op) => appendOperation(endpoint, path, op, operations)
-              case None => None
+            if(verbsOrApi.exists(method.getAnnotation(_) != null)) {
+              readMethod(method, parentParams, parentMethods) match {
+                case Some(op) => appendOperation(endpoint, path, op, operations)
+                case None => None
+              }
             }
           }
         }

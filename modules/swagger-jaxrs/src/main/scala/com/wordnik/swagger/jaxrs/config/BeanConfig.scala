@@ -7,18 +7,15 @@ import com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader
 import com.wordnik.swagger.config._
 import com.wordnik.swagger.reader._
 import com.wordnik.swagger.core.filter._
-
 import org.reflections.Reflections
 import org.reflections.scanners.{ SubTypesScanner, TypeAnnotationsScanner }
 import org.reflections.util.{ ClasspathHelper, ConfigurationBuilder}
-
 import org.slf4j.LoggerFactory
-
 import javax.servlet.ServletConfig
 import javax.ws.rs.core.Application
-
 import scala.collection.JavaConverters._
 import scala.beans.BeanProperty
+import javax.ws.rs.Path
 
 class BeanConfig extends JaxrsScanner {
   private val LOGGER = LoggerFactory.getLogger(classOf[BeanConfig])
@@ -57,7 +54,9 @@ class BeanConfig extends JaxrsScanner {
   def classesFromContext(app: Application, sc: ServletConfig) : List[Class[_]] = {
     val config = new ConfigurationBuilder().setUrls(ClasspathHelper.forPackage(resourcePackage)).setScanners(
       new TypeAnnotationsScanner(), new SubTypesScanner())
-    new Reflections(config).getTypesAnnotatedWith(classOf[Api]).asScala.toList
+    var relections = new Reflections(config)
+    (relections.getTypesAnnotatedWith(classOf[Api]).asScala ++ 
+      relections.getTypesAnnotatedWith(classOf[Path]).asScala ).toList
   }
 
   def setApiReader(reader: String) = {
