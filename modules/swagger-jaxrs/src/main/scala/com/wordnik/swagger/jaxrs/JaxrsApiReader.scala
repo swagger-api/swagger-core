@@ -222,6 +222,8 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
 
   def readMethod(method: Method, parentParams: List[Parameter], parentMethods: ListBuffer[Method]): Option[Operation] = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
+    if (parseHttpMethod(method, apiOperation) == null) return None
+
     val responseAnnotation = method.getAnnotation(classOf[ApiResponses])
     val apiResponses = {
       if(responseAnnotation == null) List()
