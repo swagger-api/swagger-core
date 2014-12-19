@@ -135,6 +135,8 @@ public class ModelImpl extends AbstractModel {
   }
 
   public void addProperty(String key, Property property) {
+    if(property == null)
+      return;
     if(properties == null)
       properties = new LinkedHashMap<String, Property>();
     if(required != null) {
@@ -150,9 +152,10 @@ public class ModelImpl extends AbstractModel {
     return properties;
   }
   public void setProperties(Map<String, Property> properties) {
-    for(String key: properties.keySet()) {
-      this.addProperty(key, properties.get(key));
-    }
+    if(properties != null)
+      for(String key: properties.keySet()) {
+        this.addProperty(key, properties.get(key));
+      }
   }
 
   public String getExample() {

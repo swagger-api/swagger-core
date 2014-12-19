@@ -160,6 +160,10 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
     }
 
     Property output = PropertyBuilder.build(type, format, args);
+    if(output == null) {
+      System.out.println("no property from " + type + ", " + format + ", " + args);
+      return null;
+    }
     output.setDescription(description);
     return output;
   }
