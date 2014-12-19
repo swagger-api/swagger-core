@@ -176,7 +176,17 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
           case _ => List()
         })
       }
-      else(method.getName, List(), List(), List(), List())
+      else(method.getName,
+           method.getAnnotation(classOf[Produces]) match {
+             case e: Produces => e.value.toList
+             case _ => List()
+           },
+           method.getAnnotation(classOf[Consumes]) match {
+             case e: Consumes => e.value.toList
+             case _ => List()
+           },
+           List(),
+           List())
     }
     val params = parentParams ++ (for((annotations, paramType, genericParamType) <- (paramAnnotations, paramTypes, genericParamTypes).zipped.toList) yield {
       if(annotations.length > 0) {
@@ -245,6 +255,8 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
 
   def readMethod(method: Method, parentParams: List[Parameter], parentMethods: ListBuffer[Method]): Option[Operation] = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
+    if (parseHttpMethod(method, apiOperation) == null) return None
+
     val responseAnnotation = method.getAnnotation(classOf[ApiResponses])
     val apiResponses = {
       if(responseAnnotation == null) List()
