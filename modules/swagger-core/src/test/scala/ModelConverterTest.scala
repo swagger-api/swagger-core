@@ -114,4 +114,11 @@ class ModelConverterTest extends FlatSpec with Matchers {
 }""")
 
   }
+
+  it should "honor the ApiModel name" in {
+    val schemas = ModelConverters.readAll(classOf[ModelWithApiModel])
+    schemas.size should be (1)
+    val model = schemas.keySet().iterator().next()
+    model should be ("MyModel")
+  }
 }

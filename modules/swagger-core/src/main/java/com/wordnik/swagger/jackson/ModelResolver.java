@@ -148,7 +148,7 @@ public class ModelResolver {
     final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
     
     // Couple of possibilities for defining
-    final String name = _typeName(type, beanDesc);
+    String name = _typeName(type, beanDesc);
     if("Object".equals(name)) {
 	    return new ModelImpl();
     }
@@ -181,6 +181,10 @@ public class ModelResolver {
     ApiModel apiModel = beanDesc.getClassAnnotations().get(ApiModel.class);
     // TODO
     if (apiModel != null) {
+      if(apiModel.value() != null && !"".equals(apiModel.value())) {
+        name = apiModel.value();
+        model.setName(name);
+      }
       Class<?> parent = apiModel.parent();
       if (parent != Void.class) {
         // model.setBaseModel(_typeName(_mapper.constructType(parent)));
