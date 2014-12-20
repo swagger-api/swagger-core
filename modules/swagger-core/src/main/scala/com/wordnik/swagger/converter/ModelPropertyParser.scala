@@ -322,14 +322,17 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         case e: XmlAttribute => {
           updatedName = readString(e.name, name, "##default")
           updatedName = readString(name, name)
-          if(e.required) required = true
+          if(e.required)
+            required = true
           isXmlElement = true
         }
         case e: XmlElement => {
           updatedName = readString(e.name, name, "##default")
           defaultValue = readString(e.defaultValue, defaultValue, "\u0000")
 
-          required = e.required
+          // per #788 only override the required property if it's true
+          if(e.required)
+            required = e.required
           val xmlElementTypeMethod = classOf[XmlElement].getDeclaredMethod("type")
           val typeValueObj = xmlElementTypeMethod.invoke(e)
           val typeValue = {
