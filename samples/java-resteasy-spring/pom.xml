@@ -7,9 +7,9 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-java-resteasy-sample_2.10</artifactId>
+  <artifactId>swagger-java-sample-app_2.10</artifactId>
   <packaging>war</packaging>
-  <name>swagger-java-resteasy</name>
+  <name>swagger-java-resteasy-spring-app</name>
   <version>1.3.12-SNAPSHOT</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
@@ -38,6 +38,7 @@
         <configuration>
           <webAppConfig>
             <contextPath>/</contextPath>
+            <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
           </webAppConfig>
           <webAppSourceDirectory>target/${project.artifactId}-${project.version}</webAppSourceDirectory>
           <webDefaultXml>${project.basedir}/conf/jetty/webdefault.xml</webDefaultXml>
@@ -73,48 +74,48 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>com.googlecode.maven-download-plugin</groupId>
-        <artifactId>download-maven-plugin</artifactId>
-        <version>1.2.1</version>
-        <executions>
-          <execution>
-            <id>swagger-ui</id>
-            <goals>
-              <goal>wget</goal>
-            </goals>
-            <configuration>
-              <url>https://github.com/swagger-api/swagger-ui/archive/v${swagger-ui-version}.tar.gz</url>
-              <unpack>true</unpack>
-              <outputDirectory>${project.build.directory}</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
-        <executions>
-          <execution>
-            <id>copy-resources</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>target/${project.artifactId}-${project.version}</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.build.directory}/swagger-ui-${swagger-ui-version}/dist</directory>
-                  <filtering>true</filtering>
-                  <excludes>
-                    <exclude>index.html</exclude>
-                  </excludes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+          <groupId>com.googlecode.maven-download-plugin</groupId>
+          <artifactId>download-maven-plugin</artifactId>
+          <version>1.2.1</version>
+          <executions>
+            <execution>
+              <id>swagger-ui</id>
+              <goals>
+                <goal>wget</goal>
+              </goals>
+              <configuration>
+                <url>https://github.com/swagger-api/swagger-ui/archive/v${swagger-ui-version}.tar.gz</url>
+                <unpack>true</unpack>
+                <outputDirectory>${project.build.directory}</outputDirectory>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.6</version>
+          <executions>
+            <execution>
+              <id>copy-resources</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>copy-resources</goal>
+              </goals>
+              <configuration>
+                <outputDirectory>target/${project.artifactId}-${project.version}</outputDirectory>
+                <resources>
+                  <resource>
+                    <directory>${project.build.directory}/swagger-ui-${swagger-ui-version}/dist</directory>
+                    <filtering>true</filtering>
+                    <excludes>
+                      <exclude>index.html</exclude>
+                    </excludes>
+                  </resource>
+                </resources>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>      
     </plugins>
   </build>
   <dependencies>
@@ -196,6 +197,21 @@
                   <artifactId>stax-api</artifactId>
               </exclusion>
           </exclusions>
+      </dependency>
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+          <version>3.2.4.RELEASE</version>
+      </dependency>
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-web</artifactId>
+          <version>3.2.4.RELEASE</version>
+      </dependency>
+      <dependency>
+          <groupId>org.jboss.resteasy</groupId>
+          <artifactId>resteasy-spring</artifactId>
+          <version>2.3.5.Final</version>
       </dependency>
   </dependencies>
 </project>
