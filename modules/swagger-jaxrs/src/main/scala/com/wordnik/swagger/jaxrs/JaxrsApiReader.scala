@@ -17,7 +17,7 @@ import javax.ws.rs._
 import javax.ws.rs.core.Context
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable.{ ListBuffer, HashMap, HashSet }
+import scala.collection.mutable.{ ListBuffer, HashMap, HashSet, LinkedHashMap }
 
 trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
   private val LOGGER = LoggerFactory.getLogger(classOf[JaxrsApiReader])
@@ -237,6 +237,18 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
       else ("","",0)
     }
 
+    // it is possible to have duplicates of param names.  If so, we keep the last one
+    // as it may be an override for a class-level param
+    val paramMap = new LinkedHashMap[String, Parameter]
+    for(param <- (params ++ implicitParams)) {
+      if(paramMap.contains(param.name)) {
+        paramMap.remove(param.name)
+        println("removing duplicate")
+      }
+      paramMap += param.name -> param
+    }
+    val allParams = (for((name, param) <- paramMap) yield param).toList
+
     Operation(
       method = parseHttpMethod(method, apiOperation),
       summary = summary,
@@ -248,7 +260,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
       consumes = consumes,
       protocols = protocols,
       authorizations = authorizations,
-      parameters = params ++ implicitParams,
+      parameters = allParams,
       responseMessages = apiResponses,
       `deprecated` = Option(isDeprecated))
   }
