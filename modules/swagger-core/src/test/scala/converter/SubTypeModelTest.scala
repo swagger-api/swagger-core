@@ -30,28 +30,6 @@ class SubTypeModelTest extends FlatSpec with Matchers {
   it should "read a model with subTypes" in {
     val model = ModelConverters.read(classOf[Animal]).getOrElse(fail("no model found"))
     model.subTypes.size should be (2)
-    println(write(model))
     write(model) should be ("""{"id":"Animal","description":"a model with subtypes","discriminator":"name","properties":{"name":{"type":"string","description":"name of animal"},"date":{"type":"string","format":"date-time","description":"date added"}},"subTypes":["DomesticAnimal","WildAnimal"]}""")
-
-    /*
-{
-  "id": "Animal",
-  "description": "a model with subtypes",
-  "discriminator": "name",
-  "properties": {
-    "date": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "name": {
-      "type": "string"
-    }
-  },
-  "subTypes": [
-    "DomesticAnimal",
-    "WildAnimal"
-  ]
-}
-    */
   }
 }

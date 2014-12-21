@@ -96,7 +96,7 @@ class ModelInhertenceUtilTest extends FlatSpec with Matchers {
   it should "parse a derived model" in {
     implicit val formats = SwaggerSerializers.formats
 
-    val json = """{"id":"CatModel","name":"CatModel","qualifiedType":"com.super.CatModel","properties":{"name":{"type":"string","required":false},"id":{"type":"long","required":false}},"description":"A cat model","extends":"model.AnimalBaseModel"}"""
+    val json = """{"id":"CatModel","name":"CatModel","qualifiedType":"com.super.CatModel","properties":{"name":{"type":"string","required":false},"id":{"type":"long","required":false}},"description":"A cat model","extends":"models.AnimalBaseModel"}"""
     val model = parse(json).extract[Model]
 
     val models = ModelInheritenceUtil.expand(Map(model.name -> model))
