@@ -216,17 +216,22 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
           (for(param <- e.value) yield {
             LOGGER.debug("processing " + param)
             val allowableValues = toAllowableValues(param.allowableValues)
-            Parameter(
-              name = param.name,
-              description = Option(readString(param.value)),
-              defaultValue = Option(param.defaultValue).filter(_.trim.nonEmpty),
-              required = param.required,
-              allowMultiple = param.allowMultiple,
-              dataType = param.dataType,
-              allowableValues = allowableValues,
-              paramType = param.paramType,
-              paramAccess = Option(param.access).filter(_.trim.nonEmpty))
-          }).toList
+
+            if("".equals(param.dataType) || "".equals(param.name) ||
+              "".equals(param.paramType))
+              None
+            else
+              Some(Parameter(
+                name = param.name,
+                description = Option(readString(param.value)),
+                defaultValue = Option(param.defaultValue).filter(_.trim.nonEmpty),
+                required = param.required,
+                allowMultiple = param.allowMultiple,
+                dataType = param.dataType,
+                allowableValues = allowableValues,
+                paramType = param.paramType,
+                paramAccess = Option(param.access).filter(_.trim.nonEmpty)))
+          }).flatten.toList
         }
         case _ => List()
       }
