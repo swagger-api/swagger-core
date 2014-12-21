@@ -34,7 +34,7 @@ object ApplicationBuild extends Build {
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     organization := "com.wordnik",
     pomExtra := (
-  <url>http://swagger.wordnik.com</url>
+  <url>http://swagger.io</url>
   <licenses>
     <license>
       <name>Apache License 2.0</name>
@@ -60,6 +60,7 @@ object ApplicationBuild extends Build {
   </developers>)
     ,
     resolvers := Seq(
+      "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
       "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
       "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases",
       "java-net" at "http://download.java.net/maven/2",
