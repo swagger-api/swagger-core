@@ -17,12 +17,10 @@ class CovariantGetterTest extends FlatSpec with Matchers {
 
   it should "read a getter with covariant return type" in {
     val model = ModelConverters.read(classOf[JCovariantGetter.Sub]).getOrElse(fail("no model found"))
-    val myProperty = model.properties.get("myProperty")
-    myProperty should not be (None)
+    val myProperty = model.properties.getOrElse("myProperty", fail("didn't get myProperty"))
     myProperty.get.qualifiedType should be ("java.lang.Integer")
-    val myOtherProperty = model.properties.get("myOtherProperty")
-    myOtherProperty should not be (None)
+
+    val myOtherProperty = model.properties.getOrElse("myOtherProperty", fail("didn't find myOtherProperty"))
     myOtherProperty.get.qualifiedType should be ("java.lang.Integer")
   }
-
 }

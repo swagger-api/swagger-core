@@ -14,7 +14,7 @@ import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
-class EnumConversionTest extends FlatSpec with Matchers {
+class EnumConversionPropertyTest extends FlatSpec with Matchers {
   it should "read a model with an enum property" in {
     val model = ModelConverters.read(classOf[ModelWithEnumProperty]).getOrElse(fail("no model found"))
     model.id should be ("ModelWithEnumProperty")
@@ -24,5 +24,10 @@ class EnumConversionTest extends FlatSpec with Matchers {
     enumValue.`type` should be ("string")
     enumValue.required should be (false)
     enumValue.allowableValues should be (AllowableListValues(List("PRIVATE", "PUBLIC", "SYSTEM", "INVITE_ONLY")))
+  }
+
+  it should "read a model with enums" in {
+    val a = ModelConverters.readAll(classOf[ATM])
+    JsonSerializer.asJson(a) should be ("""[{"id":"ATM","properties":{"currency":{"$ref":"Currency","enum":["USA","CANADA"]}}}]""")
   }
 }
