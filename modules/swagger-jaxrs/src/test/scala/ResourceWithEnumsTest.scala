@@ -23,7 +23,6 @@ class ResourceWithEnumsTest extends FlatSpec with Matchers {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()
     val apiResource = reader.read("/api-docs", classOf[ResourceWithEnums], config).getOrElse(fail("should not be None"))
-    println(JsonSerializer.asJson(apiResource))
     apiResource.apis.size should be (1)
 
     val api = apiResource.apis.filter(_.path == "/standard/{id}/strings").head

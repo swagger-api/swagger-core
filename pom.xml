@@ -12,8 +12,8 @@
   <version>1.3.12-SNAPSHOT</version>
   <url>https://github.com/swagger-api/swagger-core</url>
   <scm>
-    <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
-    <developerConnection>scm:git:git@github.com:wordnik/swagger-core.git</developerConnection>
+    <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
+    <developerConnection>scm:git:git@github.com:swagger-api/swagger-core.git</developerConnection>
     <url>https://github.com/swagger-api/swagger-core</url>
   </scm>
   <prerequisites>
@@ -316,7 +316,10 @@
       </activation>
       <modules>
         <module>samples/java-resteasy</module>
+        <module>samples/java-resteasy-spring</module>
         <module>samples/java-jaxrs</module>
+        <module>samples/java-jaxrs-wink</module>
+        <module>samples/java-jersey-spring</module>
         <module>samples/java-dropwizard</module>
         <module>samples/scala-jaxrs</module>
         <module>samples/scala-servlet</module>
@@ -348,8 +351,8 @@
     <module>modules/swagger-jersey2-jaxrs</module>
     <module>modules/swagger-servlet</module>
     <module>modules/swagger-utils</module>
+    <module>modules/swagger-oauth2-auth-server</module>
     <module>modules/swagger-mule</module>
-    <!--module>modules/swagger-oauth2-auth-server</module-->
   </modules>
   <reporting>
     <outputDirectory>target/site</outputDirectory>
@@ -416,13 +419,21 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-ext</artifactId>
         <version>${slf4j-version}</version>
-        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>${slf4j-version}</version>
-        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-library</artifactId>
+        <version>${scala-version}</version>
       </dependency>
       <dependency>
         <groupId>org.scalatest</groupId>
@@ -440,7 +451,6 @@
         <groupId>com.wordnik</groupId>
         <artifactId>swagger-core_2.11</artifactId>
         <version>${project.version}</version>
-        <scope>compile</scope>
         <exclusions>
           <exclusion>
             <groupId>org.slf4j</groupId>
@@ -491,7 +501,8 @@
     <jackson-version>2.4.1</jackson-version>
     <jackson-scala-version>2.4.1</jackson-scala-version>
     <logback-version>1.0.1</logback-version>
-    <json4s-version>3.2.10</json4s-version>
+    <json4s-version>3.2.11</json4s-version>
+    <swagger-ui-version>2.0.24</swagger-ui-version>
 
     <junit-version>4.8.1</junit-version>
     <maven-plugin-version>1.0.0</maven-plugin-version>
@@ -501,5 +512,5 @@
     <jetty-version>8.1.11.v20130520</jetty-version>
     <servlet-api-version>2.5</servlet-api-version>
     <scala-maven-plugin-version>3.1.5</scala-maven-plugin-version>
-  </properties>  
+  </properties>
 </project>

@@ -8,6 +8,7 @@ object ApplicationBuild extends Build {
   val appName = "petstore"
   val appVersion = "1.3.12-SNAPSHOT"
 
+
   val appDependencies: Seq[sbt.ModuleID] = Seq(
     "com.wordnik" %% "swagger-play2" % "1.3.12-SNAPSHOT",
     "com.wordnik" %% "swagger-play2-utils" % "1.3.12-SNAPSHOT"
@@ -15,6 +16,7 @@ object ApplicationBuild extends Build {
 
   val main = Project(appName, file(".")).enablePlugins(play.PlayJava).settings(
     version := appVersion,
+    scalaVersion := "2.11.1",
     libraryDependencies ++= appDependencies,
     resolvers := Seq(
       "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",

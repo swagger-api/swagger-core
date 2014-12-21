@@ -23,7 +23,6 @@ class RootResourceTest extends FlatSpec with Matchers {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()
     val apiResource = reader.read("/api-docs", classOf[RootResource], config).getOrElse(fail("should not be None"))
-    println(JsonSerializer.asJson(apiResource))
 
     apiResource.apis.size should be (1)
 

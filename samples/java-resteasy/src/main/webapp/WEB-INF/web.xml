@@ -1,36 +1,28 @@
-<?xml version="1.0"?>
-<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
-<web-app>
-  <display-name>Archetype Created Web Application</display-name>
-  <context-param>
-    <param-name>javax.ws.rs.core.Application</param-name>
-    <param-value>org.jboss.resteasy.examples.service.LibraryApplication</param-value>
-  </context-param>
-  <context-param>
-    <param-name>resteasy.scan</param-name>
-    <param-value>true</param-value>
-  </context-param>
-  <context-param>
-    <param-name>resteasy.servlet.mapping.prefix</param-name>
-    <param-value>/resteasy</param-value>
-  </context-param>
-  <context-param>
-    <param-name>resteasy.resources</param-name>
-    <param-value>com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON</param-value>
-  </context-param>
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:j2ee = "http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee  http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-  <!-- note! You must add the swagger providers below to correctly handle writing json for the swagger json -->
-  <context-param>
-    <param-name>resteasy.providers</param-name>
-    <param-value>com.wordnik.swagger.jaxrs.json.JacksonJsonProvider,com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider,com.wordnik.swagger.jaxrs.listing.ResourceListingProvider</param-value>
-  </context-param>
-  <listener>
-    <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
-  </listener>
+    <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/api</param-value>
+    </context-param>
+
   <servlet>
-    <servlet-name>Resteasy</servlet-name>
+    <servlet-name>resteasy</servlet-name>
     <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+    <init-param>
+      <param-name>javax.ws.rs.Application</param-name>
+      <param-value>com.wordnik.swagger.sample.PetStoreApplication</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
   </servlet>
+  <servlet-mapping>
+    <servlet-name>resteasy</servlet-name>
+    <url-pattern>/api/*</url-pattern>
+  </servlet-mapping>
+
   <servlet>
     <servlet-name>DefaultJaxrsConfig</servlet-name>
     <servlet-class>com.wordnik.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
@@ -40,18 +32,23 @@
     </init-param>
     <init-param>
       <param-name>swagger.api.basepath</param-name>
-      <param-value>http://localhost:9095/resteasy</param-value>
+      <param-value>http://localhost:8002/api</param-value>
+    </init-param>
+    <init-param>
+      <param-name>swagger.filter</param-name>
+      <param-value>com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl</param-value>
     </init-param>
     <load-on-startup>2</load-on-startup>
   </servlet>
-  <servlet-mapping>
-    <servlet-name>Resteasy</servlet-name>
-    <url-pattern>/resteasy/*</url-pattern>
-  </servlet-mapping>
   <filter>
     <filter-name>ApiOriginFilter</filter-name>
-    <filter-class>org.jboss.resteasy.examples.util.ApiOriginFilter</filter-class>
+    <filter-class>com.wordnik.swagger.sample.util.ApiOriginFilter</filter-class>
   </filter>
+  <servlet>
+    <servlet-name>Bootstrap</servlet-name>
+    <servlet-class>com.wordnik.swagger.sample.Bootstrap</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
   <filter-mapping>
     <filter-name>ApiOriginFilter</filter-name>
     <url-pattern>/*</url-pattern>

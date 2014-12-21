@@ -77,7 +77,10 @@ object ModelConverters {
       val checkedNames = new HashSet[String]
       addRecursive(m, checkedNames, output)
     })
-    output.values.toList
+
+    // sort by name
+    val keys = output.keys.toList.sortWith(_ < _)
+    (for(key <- keys) yield output(key)).toList
   }
 
   def addRecursive(model: Model, checkedNames: HashSet[String], output: HashMap[String, Model]): Unit = {

@@ -36,7 +36,7 @@ object ApplicationBuild extends Build {
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     organization := "com.wordnik",
     pomExtra :=
-      <url>http://swagger.wordnik.com</url>
+      <url>http://swagger.io</url>
       <licenses>
         <license>
           <name>Apache License 2.0</name>
@@ -46,7 +46,7 @@ object ApplicationBuild extends Build {
       </licenses>
       <scm>
         <url>git@github.com:wordnik/swagger-core.git</url>
-        <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
+        <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
       </scm>
       <developers>
         <developer>

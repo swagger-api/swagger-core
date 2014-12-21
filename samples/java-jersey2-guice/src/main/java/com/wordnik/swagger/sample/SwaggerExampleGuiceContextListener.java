@@ -37,7 +37,7 @@ public class SwaggerExampleGuiceContextListener extends GuiceServletContextListe
                 Map<String, String> props = new HashMap<String, String>();
                 props.put("javax.ws.rs.Application", Application.class.getName());
                 props.put("jersey.config.server.wadl.disableWadl", "true");
-                serve("/*").with(ServletContainer.class, props);
+                serve("/api/*").with(ServletContainer.class, props);
 
                 ReflectiveJaxrsScanner scanner = new ReflectiveJaxrsScanner();
                 scanner.setResourcePackage(getClass().getPackage().getName());
@@ -58,7 +58,7 @@ public class SwaggerExampleGuiceContextListener extends GuiceServletContextListe
 
                 bootstrap();
 
-                filter("/*", ApiOriginFilter.class.getName());
+                filter("/*").through(ApiOriginFilter.class);
             }
         });
     }
@@ -69,7 +69,7 @@ public class SwaggerExampleGuiceContextListener extends GuiceServletContextListe
         ApiInfo info = new ApiInfo(
                 "Swagger Sample App",                             /* title */
                 "This is a sample server Petstore server.  You can find out more about Swagger " +
-                        "at <a href=\"http://swagger.wordnik.com\">http://swagger.wordnik.com</a> or on irc.freenode.net, #swagger.  For this sample, " +
+                        "at <a href=\"http://swagger.io\">http://swagger.io</a> or on irc.freenode.net, #swagger.  For this sample, " +
                         "you can use the api key \"special-key\" to test the authorization filters",
                 "http://helloreverb.com/terms/",                  /* TOS URL */
                 "apiteam@wordnik.com",                            /* Contact */
