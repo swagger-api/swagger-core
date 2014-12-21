@@ -46,7 +46,7 @@ object ApplicationBuild extends Build {
       </licenses>
       <scm>
         <url>git@github.com:wordnik/swagger-core.git</url>
-        <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
+        <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
       </scm>
       <developers>
         <developer>
