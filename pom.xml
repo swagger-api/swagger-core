@@ -318,6 +318,7 @@
         <module>samples/java-resteasy</module>
         <module>samples/java-resteasy-spring</module>
         <module>samples/java-jaxrs</module>
+        <module>samples/java-jaxrs-wink</module>
         <module>samples/java-jersey-spring</module>
         <module>samples/java-dropwizard</module>
         <module>samples/scala-jaxrs</module>
