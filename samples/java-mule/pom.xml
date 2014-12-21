@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.wordnik</groupId>
         <artifactId>swagger-project_2.10</artifactId>
-        <version>1.3.10</version>
+        <version>1.3.12-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
 
@@ -13,7 +13,7 @@
     <artifactId>swagger-java-sample-app_2.10</artifactId>
     <packaging>mule</packaging>
     <name>swagger-java-mule-app</name>
-    <version>1.3.10</version>
+    <version>1.3.12-SNAPSHOT</version>
 
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
