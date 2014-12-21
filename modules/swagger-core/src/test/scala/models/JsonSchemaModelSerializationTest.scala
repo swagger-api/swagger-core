@@ -1,4 +1,4 @@
-package model
+package models
 
 import com.wordnik.swagger.model._
 

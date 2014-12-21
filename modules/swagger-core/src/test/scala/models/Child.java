@@ -1,4 +1,4 @@
-package converter.models;
+package models;
 
 public class Child {
 	private String childName;
@@ -10,6 +10,4 @@ public class Child {
 	public void setChildName(String childName) {
 		this.childName = childName;
 	}
-	
-	
 }

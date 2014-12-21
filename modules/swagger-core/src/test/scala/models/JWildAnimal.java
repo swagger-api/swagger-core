@@ -1,6 +1,6 @@
-package converter.models;
+package models;
 
-public class JDomesticAnimal {
+public class JWildAnimal {
   private String type;
 
   public String getType() {

@@ -1,4 +1,4 @@
-package converter.models;
+package models;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;

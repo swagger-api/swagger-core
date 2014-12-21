@@ -1,9 +1,7 @@
-package converter.models;
-
+package models;
 
 public class Parent {
-	private String parentName;
-	
+	private String parentName;	
 	private Child child;
 
 	public String getParentName() {

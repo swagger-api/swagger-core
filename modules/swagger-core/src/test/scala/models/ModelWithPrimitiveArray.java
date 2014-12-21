@@ -1,4 +1,4 @@
-package converter.models;
+package models;
 
 public class ModelWithPrimitiveArray {
   public int[] intArray;

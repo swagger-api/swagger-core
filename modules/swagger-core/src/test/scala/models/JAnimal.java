@@ -1,4 +1,4 @@
-package converter.models;
+package models;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 

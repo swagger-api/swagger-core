@@ -1,7 +1,7 @@
-package converter.models
+package models
 
 import com.wordnik.swagger.annotations.{ ApiModel, ApiModelProperty }
-import converter.models.OrderSize.OrderSize
+import models.OrderSize.OrderSize
 
 import scala.annotation.meta.field
 

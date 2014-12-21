@@ -2,7 +2,7 @@ package converter
 
 import com.wordnik.swagger.core.SwaggerSpec
 import com.wordnik.swagger.core.util.ModelUtil
-import converter.models._
+import models._
 import com.wordnik.swagger.model._
 import com.wordnik.swagger.converter._
 import org.json4s._

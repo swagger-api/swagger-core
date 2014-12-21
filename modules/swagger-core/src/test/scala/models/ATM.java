@@ -1,4 +1,4 @@
-package converter.models;
+package models;
 
 import java.util.List;
 

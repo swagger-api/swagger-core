@@ -1,4 +1,4 @@
-package converter.models;
+package models;
 
 import com.fasterxml.jackson.annotation.*;
 public class ModelWithJsonProperty {

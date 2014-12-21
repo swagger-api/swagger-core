@@ -1,4 +1,4 @@
-package converter.models;
+package models;
 
 public abstract class JCovariantGetter {
 

@@ -1,9 +1,13 @@
-package converter.models;
+package models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-public class ModelWithIgnoreAnnotation {
+@JsonIgnoreProperties({"ignoredString", "middleName", "favoriteColor"})
+public class ModelWithIgnorePropertiesAnnotation {
   private String name, ignoredString;
+
+  public String favoriteColor;
+  public String favoriteAnimal;
 
   public String getName() {
     return name;
@@ -13,7 +17,6 @@ public class ModelWithIgnoreAnnotation {
     this.name = name;
   }
 
-  @JsonIgnore
   public String getIgnoredString() {
     return ignoredString;
   }
@@ -22,7 +25,6 @@ public class ModelWithIgnoreAnnotation {
     this.ignoredString = ignoredString;
   }
 
-  @JsonIgnore
   public String getMiddleName() {
     return "ignore middle name";
   }
