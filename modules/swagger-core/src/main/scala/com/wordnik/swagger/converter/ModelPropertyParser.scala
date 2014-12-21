@@ -210,12 +210,15 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
               case ComplexTypeMatcher(containerType, basePart) => {
                 LOGGER.debug("containerType: " + containerType + ", basePart: " + basePart + ", simpleName: " + simpleName)
                 paramType = containerType
-                val ComplexTypeMatcher(t, simpleTypeRef) = simpleName
-                val typeRef = {
-                  if(simpleTypeRef.indexOf(",") > 0) // it's a map, use the value only
-                    simpleTypeRef.split(",").last
-                  else simpleTypeRef
+                val typeRef = simpleName match {
+                  case ComplexTypeMatcher(t, simpleTypeRef) => {
+                    if(simpleTypeRef.indexOf(",") > 0) // it's a map, use the value only
+                      simpleTypeRef.split(",").last
+                    else simpleTypeRef
+                  }
+                  case _ => simpleName
                 }
+
                 simpleName = containerType
                 if(isComplex(typeRef)) {
                   Some(ModelRef(null, Some(typeRef), Some(basePart)))
