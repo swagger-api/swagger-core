@@ -116,7 +116,7 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/src/main/webapp</outputDirectory>
+              <outputDirectory>target/${project.artifactId}-${project.version}</outputDirectory>
               <resources>
                 <resource>
                   <directory>${project.build.directory}/swagger-ui-${swagger-ui-version}/dist</directory>
