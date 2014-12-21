@@ -12,8 +12,8 @@
   <version>1.3.12-SNAPSHOT</version>
   <url>https://github.com/swagger-api/swagger-core</url>
   <scm>
-    <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
-    <developerConnection>scm:git:git@github.com:wordnik/swagger-core.git</developerConnection>
+    <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
+    <developerConnection>scm:git:git@github.com:swagger-api/swagger-core.git</developerConnection>
     <url>https://github.com/swagger-api/swagger-core</url>
   </scm>
   <prerequisites>
@@ -498,7 +498,7 @@
     <jackson-version>2.4.1</jackson-version>
     <jackson-scala-version>2.4.1</jackson-scala-version>
     <logback-version>1.0.1</logback-version>
-    <json4s-version>3.2.10</json4s-version>
+    <json4s-version>3.2.11</json4s-version>
     <swagger-ui-version>2.0.24</swagger-ui-version>
 
     <junit-version>4.8.1</junit-version>
