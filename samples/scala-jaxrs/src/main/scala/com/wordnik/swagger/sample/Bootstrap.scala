@@ -31,7 +31,7 @@ class Bootstrap extends HttpServlet {
   val info = ApiInfo(
     title = "Swagger Sample App",
     description = """This is a sample server Petstore server.  You can find out more about Swagger 
-    at <a href="http://swagger.wordnik.com">http://swagger.wordnik.com</a> or on irc.freenode.net, #swagger.""", 
+    at <a href="http://swagger.io">http://swagger.io</a> or on irc.freenode.net, #swagger.""", 
     termsOfServiceUrl = "http://helloreverb.com/terms/",
     contact = "apiteam@wordnik.com", 
     license = "Apache 2.0", 
