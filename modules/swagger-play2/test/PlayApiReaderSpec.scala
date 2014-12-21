@@ -15,7 +15,6 @@ import org.mockito.Mockito._
 
 
 class PlayApiReaderSpec extends Specification with Mockito {
-
   "PlayApiReader.SwaggerUtils" should {
     "convert a simple play route comment" in {
       val path = "/pet.json/$id<[^/]+>/test/$nothing<[^/]+>"
@@ -87,7 +86,6 @@ class PlayApiReaderSpec extends Specification with Mockito {
     val fullMethodName = reader.getFullMethodName(dogControllerClass, method)
     reader.readMethod(method, fullMethodName)
   }
-
 
   "with Object as Controller" should {
 
