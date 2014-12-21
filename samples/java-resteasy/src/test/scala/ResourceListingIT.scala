@@ -24,23 +24,23 @@ import org.junit.runner.RunWith
 
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.JavaConversions._
 
 import scala.io._
 
 @RunWith(classOf[JUnitRunner])
-class ResourceListingIT extends FlatSpec with ShouldMatchers {
+class ResourceListingIT extends FlatSpec with Matchers {
   it should "read a resource listing" in {
-    val json = Source.fromURL("http://localhost:8002/resteasy/api-docs").mkString
+    val json = Source.fromURL("http://localhost:8002/api/api-docs").mkString
     val doc = JsonSerializer.asResourceListing(json)
     doc.apis.size should be (1)
     (doc.apis.map(api => api.path).toSet & Set("/library")).size should be (1)
   }
 
   it should "read an api declaration" in {
-    val json = Source.fromURL("http://localhost:8002/resteasy/api-docs/library").mkString
+    val json = Source.fromURL("http://localhost:8002/api/api-docs/library").mkString
     val doc = JsonSerializer.asApiListing(json)
     doc.apis.size should be (2)
     (doc.apis.map(api => api.path).toSet & Set("/library/books/badger", "/library/books/mapped")).size should be (2)
