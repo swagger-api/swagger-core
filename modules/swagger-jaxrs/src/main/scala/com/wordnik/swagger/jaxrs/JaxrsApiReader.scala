@@ -112,7 +112,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
   ) = {
     val api = method.getAnnotation(classOf[Api])
     val responseClass = {
-      if(apiOperation != null){
+      if(apiOperation != null && !classOf[Void].equals(apiOperation.response)){
         val baseName = processDataType(apiOperation.response, apiOperation.response)
         val output = apiOperation.responseContainer match {
           case "" => baseName
