@@ -504,6 +504,7 @@
     <jackson-scala-version>2.4.1</jackson-scala-version>
     <logback-version>1.0.1</logback-version>
     <json4s-version>3.2.9</json4s-version>
+    <swagger-ui-version>2.0.24</swagger-ui-version>
 
     <junit-version>4.8.1</junit-version>
     <maven-plugin-version>1.0.0</maven-plugin-version>
