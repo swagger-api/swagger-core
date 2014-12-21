@@ -367,7 +367,7 @@ trait JaxrsApiReader extends ClassReader with ClassReaderUtils {
   def pathFromMethod(method: Method): String = {
     val path = method.getAnnotation(classOf[javax.ws.rs.Path])
     if(path == null) ""
-    else path.value
+    else addLeadingSlash(path.value)
   }
 
   def parseApiParamAnnotation(param: MutableParameter, annotation: ApiParam) {
