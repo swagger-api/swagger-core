@@ -42,6 +42,7 @@
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
+      <version>${scala-version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -63,7 +64,7 @@
     <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
-      <version>0.9.9-RC1</version>
+      <version>0.9.9</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>

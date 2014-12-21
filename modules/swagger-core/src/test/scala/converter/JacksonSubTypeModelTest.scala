@@ -1,6 +1,6 @@
 package converter
 
-import converter.models._
+import models._
 
 import com.wordnik.swagger.model._
 import com.wordnik.swagger.converter._

@@ -8,17 +8,17 @@ object ApplicationBuild extends Build {
   val appName = "swagger-play2-utils"
   val appVersion = "1.3.12-SNAPSHOT"
 
-  scalaVersion := "2.10.3"
+  scalaVersion := "2.10.4"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
-    "org.slf4j" % "slf4j-api" % "1.6.4",
+    "org.slf4j"    % "slf4j-api"    % "1.6.4",
     "com.wordnik" %% "swagger-core" % "1.3.12-SNAPSHOT",
     "com.wordnik" %% "common-utils" % "1.3.0",
-    "javax.ws.rs" % "jsr311-api" % "1.1.1")
+    "javax.ws.rs"  % "jsr311-api"   % "1.1.1")
 
   val main = Project(appName, file(".")).enablePlugins(PlayScala).settings(
     crossScalaVersions := Seq("2.10.4", "2.11.1"),
-    scalaVersion := "2.10.3",
+    scalaVersion := "2.10.4",
     version := appVersion,
     libraryDependencies ++= appDependencies,
     publishTo <<= version { (v: String) =>
@@ -34,7 +34,7 @@ object ApplicationBuild extends Build {
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     organization := "com.wordnik",
     pomExtra := (
-  <url>http://swagger.wordnik.com</url>
+  <url>http://swagger.io</url>
   <licenses>
     <license>
       <name>Apache License 2.0</name>
@@ -60,6 +60,7 @@ object ApplicationBuild extends Build {
   </developers>)
     ,
     resolvers := Seq(
+      "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
       "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
       "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases",
       "java-net" at "http://download.java.net/maven/2",

@@ -128,11 +128,4 @@
      <scope>provided</scope>
     </dependency>
   </dependencies>
-  <properties>
-    <servlet-api-version>2.5</servlet-api-version>
-    <junit-version>4.8.1</junit-version>
-    <scala-test-version>1.9</scala-test-version>
-    <slf4j-version>1.6.3</slf4j-version>
-    <logback-version>1.0.1</logback-version>
-  </properties>
 </project>

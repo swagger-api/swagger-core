@@ -416,25 +416,21 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-ext</artifactId>
         <version>${slf4j-version}</version>
-        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>${slf4j-version}</version>
-        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
         <version>${commons-lang-version}</version>
-        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>org.scala-lang</groupId>
         <artifactId>scala-library</artifactId>
         <version>${scala-version}</version>
-        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>org.scalatest</groupId>
@@ -452,7 +448,6 @@
         <groupId>com.wordnik</groupId>
         <artifactId>swagger-core_2.10</artifactId>
         <version>${project.version}</version>
-        <scope>compile</scope>
         <exclusions>
           <exclusion>
             <groupId>org.slf4j</groupId>
@@ -495,7 +490,7 @@
     </dependencies>
   </dependencyManagement>
   <properties>
-    <scala-version>2.10.0</scala-version>
+    <scala-version>2.10.4</scala-version>
     <felix-version>2.3.4</felix-version>
     <servlet-api-version>2.5</servlet-api-version>
     <jersey-version>1.13</jersey-version>
@@ -503,7 +498,8 @@
     <jackson-version>2.4.1</jackson-version>
     <jackson-scala-version>2.4.1</jackson-scala-version>
     <logback-version>1.0.1</logback-version>
-    <json4s-version>3.2.9</json4s-version>
+    <json4s-version>3.2.10</json4s-version>
+    <swagger-ui-version>2.0.24</swagger-ui-version>
 
     <junit-version>4.8.1</junit-version>
     <maven-plugin-version>1.0.0</maven-plugin-version>

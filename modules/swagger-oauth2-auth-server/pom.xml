@@ -39,13 +39,11 @@
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-core_2.10</artifactId>
       <version>${project.parent.version}</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -60,6 +58,11 @@
       <groupId>org.apache.oltu.oauth2</groupId>
       <artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
       <version>${oltu-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>jsr311-api</artifactId>
+      <version>1.1.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

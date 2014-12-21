@@ -18,7 +18,7 @@ package com.wordnik.swagger.sample.model
 
 import javax.xml.bind.annotation._
 
-import scala.reflect.BeanProperty
+import scala.beans.BeanProperty
 
 object ApiResponse {
   val ERROR = 1

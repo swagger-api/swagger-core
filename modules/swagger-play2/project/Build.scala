@@ -10,7 +10,7 @@ object ApplicationBuild extends Build {
 
   checksums in update := Nil
 
-  scalaVersion:= "2.10.3"
+  scalaVersion:= "2.10.4"
 
   val appDependencies = Seq(
     "org.slf4j" % "slf4j-api" % "1.6.4",
@@ -20,7 +20,7 @@ object ApplicationBuild extends Build {
 
   val main = Project(appName, file(".")).enablePlugins(PlayScala).settings(
     crossScalaVersions := Seq("2.10.4", "2.11.1"),
-    scalaVersion := "2.10.3",
+    scalaVersion := "2.10.4",
     version := appVersion,
     libraryDependencies ++= appDependencies,
     publishTo <<= version { (v: String) =>
@@ -36,7 +36,7 @@ object ApplicationBuild extends Build {
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     organization := "com.wordnik",
     pomExtra :=
-      <url>http://swagger.wordnik.com</url>
+      <url>http://swagger.io</url>
       <licenses>
         <license>
           <name>Apache License 2.0</name>

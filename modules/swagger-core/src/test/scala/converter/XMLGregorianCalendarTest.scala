@@ -1,6 +1,6 @@
 package converter
 
-import model._
+import models._
 
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.converter._
@@ -35,8 +35,6 @@ class XMLGregorianCalendarTest extends FlatSpec with Matchers {
     dateTimeProperty.position should be (1)
     dateTimeProperty.required should be (true)
     dateTimeProperty.description should be (Some("creation timestamp"))
-
-    println(JsonSerializer.asJson(models.head))
   }
 }
 

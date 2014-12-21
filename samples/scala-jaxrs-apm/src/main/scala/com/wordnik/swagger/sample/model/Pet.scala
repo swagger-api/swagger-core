@@ -22,7 +22,7 @@ import java.util.List
 import java.util.ArrayList
 
 import javax.xml.bind.annotation._
-import scala.reflect.BeanProperty
+import scala.beans.BeanProperty
 
 @XmlRootElement(name = "Pet")
 @XmlAccessorType(XmlAccessType.NONE)

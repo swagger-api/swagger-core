@@ -210,12 +210,15 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
               case ComplexTypeMatcher(containerType, basePart) => {
                 LOGGER.debug("containerType: " + containerType + ", basePart: " + basePart + ", simpleName: " + simpleName)
                 paramType = containerType
-                val ComplexTypeMatcher(t, simpleTypeRef) = simpleName
-                val typeRef = {
-                  if(simpleTypeRef.indexOf(",") > 0) // it's a map, use the value only
-                    simpleTypeRef.split(",").last
-                  else simpleTypeRef
+                val typeRef = simpleName match {
+                  case ComplexTypeMatcher(t, simpleTypeRef) => {
+                    if(simpleTypeRef.indexOf(",") > 0) // it's a map, use the value only
+                      simpleTypeRef.split(",").last
+                    else simpleTypeRef
+                  }
+                  case _ => simpleName
                 }
+
                 simpleName = containerType
                 if(isComplex(typeRef)) {
                   Some(ModelRef(null, Some(typeRef), Some(basePart)))
@@ -312,7 +315,8 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
           description = readString(e.value)
           notes = readString(e.notes)
           paramType = readString(e.dataType)
-          if(e.required) required = true
+          if(e.required)
+            required = true
           if(e.position != 0) position = e.position
           isDocumented = true
           allowableValues = Some(toAllowableValues(e.allowableValues))
@@ -321,15 +325,18 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         }
         case e: XmlAttribute => {
           updatedName = readString(e.name, name, "##default")
-          updatedName = readString(name, name)
-          if(e.required) required = true
+          updatedName = readString(e.name, name)
+          if(e.required)
+            required = true
           isXmlElement = true
         }
         case e: XmlElement => {
           updatedName = readString(e.name, name, "##default")
           defaultValue = readString(e.defaultValue, defaultValue, "\u0000")
 
-          required = e.required
+          // per #788 only override the required property if it's true
+          if(e.required)
+            required = e.required
           val xmlElementTypeMethod = classOf[XmlElement].getDeclaredMethod("type")
           val typeValueObj = xmlElementTypeMethod.invoke(e)
           val typeValue = {
