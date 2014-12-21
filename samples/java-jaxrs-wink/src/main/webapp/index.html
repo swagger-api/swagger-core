@@ -28,7 +28,7 @@
       if (url && url.length > 1) {
         url = url[1];
       } else {
-        url = "http://" + window.location.hostname + (window.location.port ? ':'+ window.location.port: '') + "/rest/api-docs/";
+        url = "http://" + window.location.hostname + (window.location.port ? ':'+ window.location.port: '') + "/api/api-docs/";
       }
       window.swaggerUi = new SwaggerUi({
         url: url,
