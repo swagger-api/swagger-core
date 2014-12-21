@@ -36,7 +36,7 @@ object ApplicationBuild extends Build {
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     organization := "com.wordnik",
     pomExtra :=
-      <url>http://swagger.wordnik.com</url>
+      <url>http://swagger.io</url>
       <licenses>
         <license>
           <name>Apache License 2.0</name>
