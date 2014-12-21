@@ -63,28 +63,25 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
 						<component>
 							<spring-object bean="petResource" />
 						</component>
-                        <component>
-                            <spring-object bean="petStoreResource" />
-                        </component>
-                        <component>
-                            <spring-object bean="userResource" />
-                        </component>
-                        <component>
+            <component>
+              <spring-object bean="petStoreResource" />
+            </component>
+            <component>
+              <spring-object bean="userResource" />
+            </component>
+            <component>
 							<spring-object bean="apiListingJSON" />
 						</component>
 					</jersey:resources>
 
 					<logger category="********** mule-swagger-integration response"
 						level="INFO" doc:name="Logger" />
-
 					<flow-ref name="CORSConfiguration" doc:name="Flow Reference" />
-
 				</processor-chain>
 			</otherwise>
 		</choice>
 
 		<catch-exception-strategy doc:name="Catch Exception Strategy">
-
 			<!-- The catch exception strategy sets the HTTP status code of the response
 				to 500 to indicate a server error. Mule sends the new message payload to
 				the caller. -->
@@ -97,7 +94,6 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
            		&quot;returnMessage&quot;:&quot;#[exception.cause.message]&quot;,&quot;systemMessage&quot;:&quot;Internal Error&quot;,&quot;result&quot;:&quot;null&quot;  }"
 				doc:name="Set Error Payload" />
 		</catch-exception-strategy>
-
 	</flow>
 
 	<!-- CORS configuration -->

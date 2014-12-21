@@ -7,9 +7,9 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-java-sample-app_2.10</artifactId>
+  <artifactId>swagger-java-resteasy-spring-sample_2.10</artifactId>
   <packaging>war</packaging>
-  <name>swagger-java-resteasy-spring-app</name>
+  <name>swagger-java-resteasy-spring-sample</name>
   <version>1.3.12-SNAPSHOT</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>

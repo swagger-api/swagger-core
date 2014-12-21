@@ -9,7 +9,7 @@
   <groupId>com.wordnik</groupId>
   <artifactId>swagger-java-resteasy-sample_2.10</artifactId>
   <packaging>war</packaging>
-  <name>swagger-java-resteasy</name>
+  <name>swagger-java-resteasy-sample</name>
   <version>1.3.12-SNAPSHOT</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
