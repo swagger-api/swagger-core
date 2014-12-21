@@ -8,17 +8,17 @@ object ApplicationBuild extends Build {
   val appName = "swagger-play2-utils"
   val appVersion = "1.3.12-SNAPSHOT"
 
-  scalaVersion := "2.10.3"
+  scalaVersion := "2.10.4"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
-    "org.slf4j" % "slf4j-api" % "1.6.4",
+    "org.slf4j"    % "slf4j-api"    % "1.6.4",
     "com.wordnik" %% "swagger-core" % "1.3.12-SNAPSHOT",
     "com.wordnik" %% "common-utils" % "1.3.0",
-    "javax.ws.rs" % "jsr311-api" % "1.1.1")
+    "javax.ws.rs"  % "jsr311-api"   % "1.1.1")
 
   val main = Project(appName, file(".")).enablePlugins(PlayScala).settings(
     crossScalaVersions := Seq("2.10.4", "2.11.1"),
-    scalaVersion := "2.10.3",
+    scalaVersion := "2.10.4",
     version := appVersion,
     libraryDependencies ++= appDependencies,
     publishTo <<= version { (v: String) =>
