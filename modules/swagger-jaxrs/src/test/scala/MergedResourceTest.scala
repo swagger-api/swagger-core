@@ -29,8 +29,7 @@ class MergedResourceTest extends FlatSpec with Matchers {
     val merged = new TestReader().groupByResourcePath(List(r1, r2))
     merged.size should be (1)
     val listing = merged.head
-    println(listing.models.get.keys)
-    // (listing.models.get.keys.toSet & Set("NotFoundModel", "Sample1", "Sample2")).size should be (3)
+    (listing.models.get.keys.toSet & Set("NotFoundModel", "Sample1", "Sample2")).size should be (3)
   }
 }
 
