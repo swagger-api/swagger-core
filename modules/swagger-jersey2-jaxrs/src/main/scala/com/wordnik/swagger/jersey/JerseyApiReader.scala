@@ -192,6 +192,9 @@ class JerseyApiReader extends JaxrsApiReader {
           val cls = SwaggerContext.loadClass(mutable.dataType)
           return getAllParamsFromFields(cls)
         }
+        case e: DefaultValue => {
+          mutable.defaultValue = Option(readString(e.value))
+        }
         case e: Context => shouldIgnore = true
         case _ =>
       }

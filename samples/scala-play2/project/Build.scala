@@ -6,11 +6,11 @@ import PlayKeys._
 
 object ApplicationBuild extends Build {
   val appName = "petstore"
-  val appVersion = "1.3.10"
+  val appVersion = "1.3.12-SNAPSHOT"
 
   val appDependencies: Seq[sbt.ModuleID] = Seq(
-    "com.wordnik" %% "swagger-play2" % "1.3.10",
-    "com.wordnik" %% "swagger-play2-utils" % "1.3.10"
+    "com.wordnik" %% "swagger-play2" % "1.3.12-SNAPSHOT",
+    "com.wordnik" %% "swagger-play2-utils" % "1.3.12-SNAPSHOT"
   )
 
   val main = Project(appName, file(".")).enablePlugins(play.PlayScala).settings(

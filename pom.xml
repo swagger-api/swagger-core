@@ -9,12 +9,12 @@
   <artifactId>swagger-project_2.10</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
-  <version>1.3.10</version>
-  <url>https://github.com/wordnik/swagger-core</url>
+  <version>1.3.12-SNAPSHOT</version>
+  <url>https://github.com/swagger-api/swagger-core</url>
   <scm>
     <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
     <developerConnection>scm:git:git@github.com:wordnik/swagger-core.git</developerConnection>
-    <url>https://github.com/wordnik/swagger-core</url>
+    <url>https://github.com/swagger-api/swagger-core</url>
   </scm>
   <prerequisites>
     <maven>2.2.0</maven>
@@ -28,7 +28,7 @@
   </developers>
   <issueManagement>
     <system>github</system>
-    <url>https://github.com/wordnik/swagger-core/issues</url>
+    <url>https://github.com/swagger-api/swagger-core/issues</url>
   </issueManagement>
   <mailingLists>
     <mailingList>
@@ -349,6 +349,7 @@
     <module>modules/swagger-servlet</module>
     <module>modules/swagger-utils</module>
     <module>modules/swagger-oauth2-auth-server</module>
+    <module>modules/swagger-mule</module>
   </modules>
   <reporting>
     <outputDirectory>target/site</outputDirectory>
