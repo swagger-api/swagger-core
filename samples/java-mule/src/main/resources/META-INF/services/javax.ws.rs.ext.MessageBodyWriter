@@ -1,0 +1,2 @@
+com.wordnik.swagger.jaxrs.listing.ResourceListingProvider
+com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider
