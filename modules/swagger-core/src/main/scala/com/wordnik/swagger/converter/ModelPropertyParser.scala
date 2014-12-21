@@ -312,7 +312,8 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
           description = readString(e.value)
           notes = readString(e.notes)
           paramType = readString(e.dataType)
-          if(e.required) required = true
+          if(e.required)
+            required = true
           if(e.position != 0) position = e.position
           isDocumented = true
           allowableValues = Some(toAllowableValues(e.allowableValues))
@@ -321,7 +322,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         }
         case e: XmlAttribute => {
           updatedName = readString(e.name, name, "##default")
-          updatedName = readString(name, name)
+          updatedName = readString(e.name, name)
           if(e.required)
             required = true
           isXmlElement = true
