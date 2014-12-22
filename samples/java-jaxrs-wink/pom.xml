@@ -7,10 +7,10 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-jaxrs-wink-sample</artifactId>
+  <artifactId>swagger-jaxrs-wink-sample_2.11</artifactId>
   <version>1.3.12-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>swagger-jaxrs-wink-sample</name>
+  <name>swagger-jaxrs-wink-sample_2.11</name>
   <developers>
     <developer>
       <email>zouzias@gmail.com</email>
