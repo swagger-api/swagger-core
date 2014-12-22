@@ -92,7 +92,7 @@
       <artifactId>servlet-api</artifactId>
       <version>${servlet-api-version}</version>
     </dependency>
-    <dependency>
+<!--     <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
       <version>0.9.8</version>
@@ -103,7 +103,7 @@
       <version>0.9.8</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
+ -->    <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
       <version>2.2</version>

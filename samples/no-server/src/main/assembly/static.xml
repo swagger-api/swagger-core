@@ -1,0 +1,19 @@
+<assembly>
+	<!-- <id>static</id> -->
+	<formats>
+		<format>dir</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+		<fileSet>
+			<directory>src/main/webapp</directory>
+			<includes>
+				<include>**/*</include>
+			</includes>
+			<excludes>
+				<exclude>WEB-INF/*</exclude>
+			</excludes>
+			<outputDirectory>/</outputDirectory>
+		</fileSet>
+	</fileSets>
+</assembly>
