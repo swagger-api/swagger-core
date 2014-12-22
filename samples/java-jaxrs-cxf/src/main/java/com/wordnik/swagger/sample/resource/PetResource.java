@@ -19,17 +19,34 @@ package com.wordnik.swagger.sample.resource;
 import com.wordnik.swagger.annotations.*;
 import com.wordnik.swagger.sample.data.PetData;
 import com.wordnik.swagger.sample.model.Pet;
+import com.wordnik.swagger.sample.model.Tag;
 import com.wordnik.swagger.sample.exception.NotFoundException;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
 @Path("/pet")
 @Api(value = "/pet", description = "Operations about pets")
-@Produces({"application/json"})
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class PetResource {
   static PetData petData = new PetData();
   static JavaRestResourceUtil ru = new JavaRestResourceUtil();
+
+
+  @GET
+  @Path("/test")
+  @ApiOperation(value = "Find pet by ID", 
+    notes = "Returns a pet when ID < 10. ID > 10 or nonintegers will simulate API error conditions", 
+    response = Tag.class)
+  @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
+      @ApiResponse(code = 404, message = "Pet not found") })
+  public Response getTagById()
+      throws NotFoundException {
+    Tag t = new Tag();
+
+    return Response.ok().entity(t).build();
+  }
 
   @GET
   @Path("/{petId}")

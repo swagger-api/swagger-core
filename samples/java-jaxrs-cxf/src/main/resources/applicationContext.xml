@@ -18,7 +18,7 @@
   <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" />
 
   <!-- JSON mapper -->
-  <bean id="jsonProvider" class="com.wordnik.swagger.jaxrs.json.JacksonJsonProvider" />
+  <bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
 
   <!-- Exception mapper -->
   <bean id="exceptionMapper" class="com.wordnik.swagger.sample.resource.SampleExceptionMapper" />
