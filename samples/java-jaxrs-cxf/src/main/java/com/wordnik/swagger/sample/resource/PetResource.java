@@ -21,12 +21,13 @@ import com.wordnik.swagger.sample.data.PetData;
 import com.wordnik.swagger.sample.model.Pet;
 import com.wordnik.swagger.sample.exception.NotFoundException;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
 @Path("/pet")
 @Api(value = "/pet", description = "Operations about pets")
-@Produces({"application/json"})
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class PetResource {
   static PetData petData = new PetData();
   static JavaRestResourceUtil ru = new JavaRestResourceUtil();

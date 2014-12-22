@@ -50,7 +50,7 @@ public class PetStoreResource {
 
   @DELETE
   @Path("/order/{orderId}")
-  public Response deleteOrder(String orderId) {
+  public Response deleteOrder(@PathParam("orderId") String orderId) {
     storeData.deleteOrder(ru.getLong(0, 10000, 0, orderId));
     return Response.ok().entity("").build();
   }

@@ -52,13 +52,7 @@
     <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
-      <version>0.9.8</version>
-    </dependency>
-    <dependency>
-      <groupId>org.reflections</groupId>
-      <artifactId>reflections</artifactId>
-      <version>0.9.8</version>
-      <scope>compile</scope>
+      <version>0.9.9</version>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>

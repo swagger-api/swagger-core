@@ -52,7 +52,7 @@
     <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
-      <version>0.9.8</version>
+      <version>0.9.9</version>
     </dependency>
     <dependency>
       <groupId>org.apache.oltu.oauth2</groupId>
