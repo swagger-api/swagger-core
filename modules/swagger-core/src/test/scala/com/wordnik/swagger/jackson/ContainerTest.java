@@ -1,6 +1,7 @@
 package com.wordnik.swagger.jackson;
 
 
+import com.wordnik.swagger.converter.ModelConverterContextImpl;
 import com.wordnik.swagger.jackson.*;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.properties.*;
@@ -21,8 +22,12 @@ public class ContainerTest extends SwaggerTestBase {
   }
 
   public void testArray() throws Exception {
-    Model model = new ModelResolver(mapper())
-      .resolve(ArrayBean.class,new ModelConverterContextMock());
+    ModelResolver modelResolver = new ModelResolver(mapper());
+    
+    ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+	
+	Model model = context
+      .resolve(ArrayBean.class);
 
     Map<String, Property> props = model.getProperties();
     assertEquals(1, props.size());
@@ -38,8 +43,11 @@ public class ContainerTest extends SwaggerTestBase {
   }
 
   public void testMap() throws Exception {
-    Model model = new ModelResolver(mapper())
-       .resolve(MapBean.class,new ModelConverterContextMock());
+	ModelResolver modelResolver = new ModelResolver(mapper());
+	ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+	Model model = context
+       .resolve(MapBean.class);
 
     Map<String, Property> props = model.getProperties();
     assertEquals(1, props.size());
@@ -58,11 +66,11 @@ public class ContainerTest extends SwaggerTestBase {
 //    Map<String, InnerType> test = new HashMap<String, InnerType>();
     ModelResolver resolver = new ModelResolver(mapper());
     
-    ModelConverterContextMock context = new ModelConverterContextMock();
-	resolver.resolve(WrapperType.class,context);
+    ModelConverterContextImpl context = new ModelConverterContextImpl(resolver);
+	context.resolve(WrapperType.class);
     
-    for(String key: context.models.keySet()) {
-      Model model = context.models.get(key);
+    for(String key: context.getDefinedModels().keySet()) {
+      Model model = context.getDefinedModels().get(key);
       assertNotNull(model);
       // !!! TODO: verify
     }

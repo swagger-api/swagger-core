@@ -8,10 +8,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wordnik.swagger.jackson.JacksonModelConverter;
 import com.wordnik.swagger.jackson.ModelResolver;
 import com.wordnik.swagger.models.Model;
 import com.wordnik.swagger.models.properties.Property;
+import com.wordnik.swagger.util.Json;
 
 public class ModelConverters {
 	private static final ModelConverters SINGLETON = new ModelConverters();
@@ -23,7 +23,7 @@ public class ModelConverters {
 	
 	public ModelConverters() {
 		converters = new CopyOnWriteArrayList<ModelConverter>();
-		converters.add(new JacksonModelConverter());
+		converters.add(new ModelResolver(Json.mapper()));
 	}
 	
 	public void addConverter(ModelConverter converter){

@@ -22,6 +22,8 @@ class ScalaModelTest extends FlatSpec with Matchers {
     m.registerModule(DefaultScalaModule)
 
     val schemas = ModelConverters.getInstance().read(classOf[SimpleCaseClass])
+    println(m.writeValueAsString(schemas))
+    println("""{"SimpleCaseClass":{"properties":{"name":{"type":"string"},"count":{"type":"integer","format":"int32"}}}}""")
     m.writeValueAsString(schemas) should equal ("""{"SimpleCaseClass":{"properties":{"name":{"type":"string"},"count":{"type":"integer","format":"int32"}}}}""")
   }
 

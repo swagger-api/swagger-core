@@ -53,8 +53,7 @@ public class ModelResolver implements ModelConverter{
   protected final ObjectMapper _mapper;
   protected final AnnotationIntrospector _intr;
   protected final TypeNameResolver _typeNameResolver = TypeNameResolver.std;
-  protected final Map<String, Model> typesCache = new ConcurrentHashMap<String, Model>();
-  protected final Set<String> processedInnerTypes = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());; 
+  
 
   /**
    * Minor optimization: no need to keep on resolving same types over and over
@@ -102,22 +101,17 @@ public class ModelResolver implements ModelConverter{
       if(keyType != null && valueType != null) {
         MapProperty mapProperty = new MapProperty();
         Property innerType = getPrimitiveProperty(_typeName(valueType));
-        if(innerType == null) { //not a primitive property
+        if(innerType == null) { 
           String propertyTypeName = _typeName(valueType);
-          Model innerModel = typesCache.get(propertyTypeName);
-          if(innerModel == null)
-            innerModel = resolve(valueType,context); //context.resolve(valueType);
+          Model innerModel =context.resolve(valueType); 
           if(innerModel != null) {
-            if(!"Object".equals(propertyTypeName)) {
-              typesCache.put(propertyTypeName, innerModel);
-              context.defineModel(propertyTypeName, innerModel);              
+        	  context.defineModel(propertyTypeName, innerModel);
+            if(!"Object".equals(propertyTypeName)) {              
               innerType = new RefProperty(propertyTypeName);
               mapProperty.additionalProperties(innerType);
               property = mapProperty;
             }
             else {
-              typesCache.put(propertyTypeName, innerModel);
-              context.defineModel(propertyTypeName, innerModel);
               innerType = new StringProperty();
               mapProperty.additionalProperties(innerType);
               property = mapProperty;
@@ -134,11 +128,8 @@ public class ModelResolver implements ModelConverter{
         Property innerType = getPrimitiveProperty(_typeName(valueType));
         if(innerType == null) {
           String propertyTypeName = _typeName(valueType);
-          Model innerModel = typesCache.get(propertyTypeName);
-          if(innerModel == null)
-            innerModel =resolve(valueType,context);//context.resolve(valueType) ;
-          if(innerModel != null) {
-            typesCache.put(propertyTypeName, innerModel);
+          Model innerModel = context.resolve(valueType);
+          if(innerModel != null) {            
             context.defineModel(propertyTypeName, innerModel);
             innerType = new RefProperty(propertyTypeName);
             arrayProperty.setItems(innerType);
@@ -155,12 +146,8 @@ public class ModelResolver implements ModelConverter{
     if(property == null) {
       // complex type
       String propertyTypeName = _typeName(propType);
-      Model innerModel = typesCache.get(propertyTypeName);
-      if(innerModel == null) {
-        innerModel = resolve(propType,context);//context.resolve(propType);
-      }
-      if(innerModel != null) {
-        typesCache.put(propertyTypeName, innerModel);
+      Model innerModel =  context.resolve(propType);      
+      if(innerModel != null) {      
         context.defineModel(propertyTypeName, innerModel);
         property = new RefProperty(propertyTypeName);
       }
@@ -186,17 +173,6 @@ public class ModelResolver implements ModelConverter{
       return null;
     }
 
-    // if processed already, return it or return null
-    if(processedInnerTypes.contains(name)){
-      Model model = typesCache.get(name);
-      if(model!=null){
-    	  context.defineModel(name, model);
-      }
-      return model;
-    }
-
-    // avoid recursion on failures
-    processedInnerTypes.add(name);
 
     ModelImpl model = new ModelImpl()
       .name(name)
@@ -243,7 +219,7 @@ public class ModelResolver implements ModelConverter{
       final AnnotatedMember member = propDef.getPrimaryMember();
       if(member != null) {
         JavaType propType = member.getType(beanDesc.bindingsForBeanType());
-        property =resolveProperty(propType,context);// context.resolveProperty(propType);
+        property =context.resolveProperty(propType);
 
         if(property != null) {
           property.setName(propName);
@@ -302,7 +278,7 @@ public class ModelResolver implements ModelConverter{
     if (nts != null) {
       ArrayList<String> subtypeNames = new ArrayList<String>();
       for (NamedType subtype : nts) {
-        Model subtypeModel = resolve(subtype.getType(),context);
+        Model subtypeModel = context.resolve(subtype.getType());
 
         if(subtypeModel instanceof ModelImpl && subtypeModel != null) {
           ModelImpl impl = (ModelImpl) subtypeModel;
@@ -319,8 +295,7 @@ public class ModelResolver implements ModelConverter{
           impl.setDiscriminator(null);
           ComposedModel child = new ComposedModel()
             .parent(new RefModel(name))
-            .child(impl);
-		typesCache.put(impl.getName(), child);
+            .child(impl);		
           context.defineModel(impl.getName(), child);
         }
       }
@@ -333,7 +308,6 @@ public class ModelResolver implements ModelConverter{
       modelProps.put(prop.getName(), prop);
     }
     model.setProperties(modelProps);
-    typesCache.put(name, model);
     context.defineModel(name, model);
     return model;
   }

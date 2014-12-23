@@ -63,8 +63,6 @@ class CompositionTest extends FlatSpec with Matchers {
 
   it should "read a model with composition" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Animal])
-    Json.prettyPrint(schemas)
-    println("xxxx")
     Json.pretty(schemas) should equal (
 """{
   "Animal" : {
@@ -100,7 +98,7 @@ class CompositionTest extends FlatSpec with Matchers {
   },
   "Pet" : {
     "allOf" : [ {
-      "$ref" : "Human"
+      "$ref" : "Animal"
     }, {
       "required" : [ "isDomestic", "name", "type" ],
       "properties" : {
