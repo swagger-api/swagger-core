@@ -1,6 +1,6 @@
 # Swagger Core library
 
-[![Build Status](https://travis-ci.org/swagger-api/swagger-core.png?branch=master)](https://travis-ci.org/swagger-api/swagger-core)
+[![Build Status](https://travis-ci.org/swagger-api/swagger-core.png)](https://travis-ci.org/swagger-api/swagger-core)
 
 The goal of Swagger™ is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, Swagger removes the guesswork in calling the service.
 
@@ -28,7 +28,7 @@ The Swagger Specification has undergone 3 revisions since initial creation in 20
 Swagger core Version      | Release Date | Swagger Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
 1.5.0 (in development)    | n/a          | 2.0           | [branch develop_2.0](https://github.com/swagger-api/swagger-core/tree/develop_2.0) | [1.5.0 Milestone](https://github.com/swagger-api/swagger-core/milestones/v1.5.0)
-1.3.11                     | 2014-11-27   | 1.2           | [tag v1.3.11](https://github.com/swagger-api/swagger-core/tree/v1.3.11)
+1.3.12                     | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12)
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4)
 1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0)
 
@@ -47,7 +47,7 @@ You need the following installed and available in your $PATH:
 
 <li>- Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
-### To build from source (currently 1.3.11)
+### To build from source (currently 1.3.12)
 ```
 # first time building locally
 mvn -N
