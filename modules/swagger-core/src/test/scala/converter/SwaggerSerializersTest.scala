@@ -25,12 +25,14 @@ class SwaggerSerializersTest extends FlatSpec with Matchers {
   it should "serialize an authorization model" in {
     val auth = new Authorization("oauth2", Array(AuthorizationScope("scope1", "description 1"), 
       AuthorizationScope("scope2", "description 2")))
-    println(pretty(render(parse(write(auth)))))/* should be (
-"""{
-  "type" : "oauth2",
-  "scopes" : [ "scope1", "scope2" ],
-  "description" : "the description"
-}""")*/
+    pretty(render(parse(write(auth)))) should be (
+"""[ {
+  "scope" : "scope1",
+  "description" : "description 1"
+}, {
+  "scope" : "scope2",
+  "description" : "description 2"
+} ]""")
   }
 
   it should "serialize an api listing with authorizations" in {
@@ -50,7 +52,6 @@ class SwaggerSerializersTest extends FlatSpec with Matchers {
       None,
       None,
       1)
-    println(pretty(render(parse(write(apiListing)))))
   }
 
   it should "deserialize an ApiDeclaration" in {

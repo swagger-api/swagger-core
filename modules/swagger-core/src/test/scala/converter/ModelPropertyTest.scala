@@ -1,6 +1,6 @@
 package converter
 
-import converter.models._
+import models._
 
 import com.wordnik.swagger.converter._
 import com.wordnik.swagger.model._
@@ -64,9 +64,8 @@ class ModelPropertyTest extends FlatSpec with Matchers {
     val models = ModelConverters.readAll(classOf[Pet])
 
     models.size should be (1)
-    val props = models.filter(m => m.name == "Pet").head
-
-    println(JsonSerializer.asJson(props))
+    val model = models.filter(m => m.name == "Pet").head
+    model.properties("name") should not be (null)
   }
 }
 
