@@ -11,7 +11,7 @@ public interface ModelConverter {
 	 * 
 	 * @param type
 	 * @param context
-	 * @return Property or null if this ModelConverter cannot convert the given Type
+	 * @return null if this ModelConverter cannot convert the given Type
 	 */
 	public Property resolveProperty(Type type,ModelConverterContext context);
 	
@@ -19,7 +19,7 @@ public interface ModelConverter {
 	 * 
 	 * @param type
 	 * @param context
-	 * @return Model or null if this ModelConverter cannot convert the given Type
+	 * @return null if this ModelConverter cannot convert the given Type
 	 */
 	public Model resolve(Type type,ModelConverterContext context);
 }
