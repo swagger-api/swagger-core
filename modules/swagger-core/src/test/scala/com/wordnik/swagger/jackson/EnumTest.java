@@ -1,5 +1,6 @@
-package com.fasterxml.jackson.module.swagger;
+package com.wordnik.swagger.jackson;
 
+import com.wordnik.swagger.converter.ModelConverter;
 import com.wordnik.swagger.jackson.*;
 import com.wordnik.swagger.models.*;
 
@@ -9,8 +10,12 @@ public class EnumTest extends SwaggerTestBase {
   public enum Currency { USA, CANADA }
 
   public void testEnum() throws Exception {
-    Model model = new ModelResolver(mapper())
-      .resolve(Currency.class);
+    ModelResolver modelResolver = new ModelResolver(mapper());
+	ModelConverterContextMock context = new ModelConverterContextMock();
+	context.delegate = modelResolver;
+	
+	Model model = modelResolver
+      .resolve(Currency.class,context);
     assertNotNull(model);
     
     Set<String> names = model.getProperties().keySet();

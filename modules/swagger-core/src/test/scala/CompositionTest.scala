@@ -14,7 +14,7 @@ class CompositionTest extends FlatSpec with Matchers {
   val m = Json.mapper()
 
   it should "read a model with required params and description" in {
-    val schemas = ModelConverters.readAll(classOf[Human])
+    val schemas = ModelConverters.getInstance().readAll(classOf[Human])
 
     Json.pretty(schemas) should equal (
 """{
@@ -62,7 +62,7 @@ class CompositionTest extends FlatSpec with Matchers {
   }
 
   it should "read a model with composition" in {
-    val schemas = ModelConverters.readAll(classOf[Animal])
+    val schemas = ModelConverters.getInstance().readAll(classOf[Animal])
     Json.prettyPrint(schemas)
     println("xxxx")
     Json.pretty(schemas) should equal (

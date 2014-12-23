@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.module.swagger;
+package com.wordnik.swagger.jackson;
 
 import com.wordnik.swagger.jackson.*;
 import com.wordnik.swagger.models.*;
@@ -20,7 +20,7 @@ public class ATMTest extends SwaggerTestBase {
 
   public void testATMModel() throws Exception {
     Model model = new ModelResolver(mapper())
-       .resolve(ATM.class);
+       .resolve(ATM.class,new ModelConverterContextMock());
     assertNotNull(model);
     /*
     prettyPrint(model);

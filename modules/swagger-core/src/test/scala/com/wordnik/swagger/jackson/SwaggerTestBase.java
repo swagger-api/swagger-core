@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.module.swagger;
+package com.wordnik.swagger.jackson;
 
 import com.wordnik.swagger.jackson.*;
 

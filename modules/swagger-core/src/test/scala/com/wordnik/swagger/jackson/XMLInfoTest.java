@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.module.swagger;
+package com.wordnik.swagger.jackson;
 
 import java.util.*;
 
@@ -6,7 +6,6 @@ import com.wordnik.swagger.jackson.*;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.properties.*;
 import com.wordnik.swagger.annotations.*;
-
 import com.fasterxml.jackson.annotation.*;
 
 import javax.xml.bind.annotation.*;
@@ -28,7 +27,7 @@ public class XMLInfoTest extends SwaggerTestBase {
 
   public void testSimple() throws Exception {
     final ModelResolver mr = modelResolver();
-    Model model = mr.resolve(XmlDecoratedBean.class);
+    Model model = mr.resolve(XmlDecoratedBean.class,new ModelConverterContextMock());
     assertTrue(model instanceof ModelImpl);
 
     ModelImpl impl = (ModelImpl) model;

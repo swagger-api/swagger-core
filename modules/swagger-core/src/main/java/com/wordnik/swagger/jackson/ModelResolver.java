@@ -1,31 +1,60 @@
 package com.wordnik.swagger.jackson;
 
-import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.models.properties.*;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
-import com.wordnik.swagger.util.*;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.introspect.*;
+import com.fasterxml.jackson.databind.AnnotationIntrospector;
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyMetadata;
+import com.fasterxml.jackson.databind.PropertyName;
+import com.fasterxml.jackson.databind.introspect.Annotated;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.type.MapType;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+import com.wordnik.swagger.converter.ModelConverter;
+import com.wordnik.swagger.converter.ModelConverterContext;
+import com.wordnik.swagger.models.ComposedModel;
+import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.ModelImpl;
+import com.wordnik.swagger.models.RefModel;
+import com.wordnik.swagger.models.Xml;
+import com.wordnik.swagger.models.properties.ArrayProperty;
+import com.wordnik.swagger.models.properties.BooleanProperty;
+import com.wordnik.swagger.models.properties.DateTimeProperty;
+import com.wordnik.swagger.models.properties.DoubleProperty;
+import com.wordnik.swagger.models.properties.FloatProperty;
+import com.wordnik.swagger.models.properties.IntegerProperty;
+import com.wordnik.swagger.models.properties.LongProperty;
+import com.wordnik.swagger.models.properties.MapProperty;
+import com.wordnik.swagger.models.properties.Property;
+import com.wordnik.swagger.models.properties.RefProperty;
+import com.wordnik.swagger.models.properties.StringProperty;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.xml.bind.annotation.*;
-
-public class ModelResolver {
+public class ModelResolver implements ModelConverter{
+	
   protected final ObjectMapper _mapper;
   protected final AnnotationIntrospector _intr;
-
-  protected TypeNameResolver _typeNameResolver = TypeNameResolver.std;
-  protected Map<String, Model> innerTypes = new HashMap<String, Model>();
-  protected Set<String> processedInnerTypes = new HashSet<String>();
+  protected final TypeNameResolver _typeNameResolver = TypeNameResolver.std;
+  protected final Map<String, Model> typesCache = new ConcurrentHashMap<String, Model>();
+  protected final Set<String> processedInnerTypes = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());; 
 
   /**
    * Minor optimization: no need to keep on resolving same types over and over
@@ -33,10 +62,6 @@ public class ModelResolver {
    */
   protected Map<JavaType, String> _resolvedTypeNames = new ConcurrentHashMap<JavaType, String>();
   
-  public Map<String, Model> getDetectedTypes() {
-    return innerTypes;
-  }
-
   @SuppressWarnings("serial")
   public ModelResolver(ObjectMapper mapper) {
     mapper.registerModule(
@@ -54,11 +79,11 @@ public class ModelResolver {
     return _mapper;
   }
 
-  public Property resolveProperty(Class<?> cls) {
-    return resolveProperty(_mapper.constructType(cls));
+  public Property resolveProperty(Type type,ModelConverterContext context) {
+    return resolveProperty(_mapper.constructType(type),context);
   }
 
-  public Property resolveProperty(JavaType propType) {
+  public Property resolveProperty(JavaType propType,ModelConverterContext context) {
     Property property = null;
 
     String typeName = _typeName(propType);
@@ -77,20 +102,22 @@ public class ModelResolver {
       if(keyType != null && valueType != null) {
         MapProperty mapProperty = new MapProperty();
         Property innerType = getPrimitiveProperty(_typeName(valueType));
-        if(innerType == null) {
+        if(innerType == null) { //not a primitive property
           String propertyTypeName = _typeName(valueType);
-          Model innerModel = innerTypes.get(propertyTypeName);
+          Model innerModel = typesCache.get(propertyTypeName);
           if(innerModel == null)
-            innerModel = resolve(valueType);
+            innerModel = resolve(valueType,context); //context.resolve(valueType);
           if(innerModel != null) {
             if(!"Object".equals(propertyTypeName)) {
-              innerTypes.put(propertyTypeName, innerModel);
+              typesCache.put(propertyTypeName, innerModel);
+              context.defineModel(propertyTypeName, innerModel);              
               innerType = new RefProperty(propertyTypeName);
               mapProperty.additionalProperties(innerType);
               property = mapProperty;
             }
             else {
-              innerTypes.put(propertyTypeName, innerModel);
+              typesCache.put(propertyTypeName, innerModel);
+              context.defineModel(propertyTypeName, innerModel);
               innerType = new StringProperty();
               mapProperty.additionalProperties(innerType);
               property = mapProperty;
@@ -107,11 +134,12 @@ public class ModelResolver {
         Property innerType = getPrimitiveProperty(_typeName(valueType));
         if(innerType == null) {
           String propertyTypeName = _typeName(valueType);
-          Model innerModel = innerTypes.get(propertyTypeName);
+          Model innerModel = typesCache.get(propertyTypeName);
           if(innerModel == null)
-            innerModel = resolve(valueType);
+            innerModel =resolve(valueType,context);//context.resolve(valueType) ;
           if(innerModel != null) {
-            innerTypes.put(propertyTypeName, innerModel);
+            typesCache.put(propertyTypeName, innerModel);
+            context.defineModel(propertyTypeName, innerModel);
             innerType = new RefProperty(propertyTypeName);
             arrayProperty.setItems(innerType);
             property = arrayProperty;
@@ -127,12 +155,13 @@ public class ModelResolver {
     if(property == null) {
       // complex type
       String propertyTypeName = _typeName(propType);
-      Model innerModel = innerTypes.get(propertyTypeName);
+      Model innerModel = typesCache.get(propertyTypeName);
       if(innerModel == null) {
-        innerModel = resolve(propType);
+        innerModel = resolve(propType,context);//context.resolve(propType);
       }
       if(innerModel != null) {
-        innerTypes.put(propertyTypeName, innerModel);
+        typesCache.put(propertyTypeName, innerModel);
+        context.defineModel(propertyTypeName, innerModel);
         property = new RefProperty(propertyTypeName);
       }
     }
@@ -140,11 +169,11 @@ public class ModelResolver {
     return property;
   }
   
-  public Model resolve(Class<?> cls) {
-    return resolve(_mapper.constructType(cls));
+  public Model resolve(Type type,ModelConverterContext context) {
+    return resolve(_mapper.constructType(type),context);
   }
 
-  public Model resolve(JavaType type) {
+  public Model resolve(JavaType type,ModelConverterContext context) {
     final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
     
     // Couple of possibilities for defining
@@ -158,8 +187,13 @@ public class ModelResolver {
     }
 
     // if processed already, return it or return null
-    if(processedInnerTypes.contains(name))
-      return innerTypes.get(name);
+    if(processedInnerTypes.contains(name)){
+      Model model = typesCache.get(name);
+      if(model!=null){
+    	  context.defineModel(name, model);
+      }
+      return model;
+    }
 
     // avoid recursion on failures
     processedInnerTypes.add(name);
@@ -209,7 +243,7 @@ public class ModelResolver {
       final AnnotatedMember member = propDef.getPrimaryMember();
       if(member != null) {
         JavaType propType = member.getType(beanDesc.bindingsForBeanType());
-        property = resolveProperty(propType);
+        property =resolveProperty(propType,context);// context.resolveProperty(propType);
 
         if(property != null) {
           property.setName(propName);
@@ -268,7 +302,7 @@ public class ModelResolver {
     if (nts != null) {
       ArrayList<String> subtypeNames = new ArrayList<String>();
       for (NamedType subtype : nts) {
-        Model subtypeModel = resolve(subtype.getType());
+        Model subtypeModel = resolve(subtype.getType(),context);
 
         if(subtypeModel instanceof ModelImpl && subtypeModel != null) {
           ModelImpl impl = (ModelImpl) subtypeModel;
@@ -283,9 +317,11 @@ public class ModelResolver {
           }
 
           impl.setDiscriminator(null);
-          innerTypes.put(impl.getName(), new ComposedModel()
+          ComposedModel child = new ComposedModel()
             .parent(new RefModel(name))
-            .child(impl));
+            .child(impl);
+		typesCache.put(impl.getName(), child);
+          context.defineModel(impl.getName(), child);
         }
       }
     }
@@ -297,7 +333,8 @@ public class ModelResolver {
       modelProps.put(prop.getName(), prop);
     }
     model.setProperties(modelProps);
-    innerTypes.put(name, model);
+    typesCache.put(name, model);
+    context.defineModel(name, model);
     return model;
   }
 

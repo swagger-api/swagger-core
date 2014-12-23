@@ -1,10 +1,9 @@
-package com.fasterxml.jackson.module.swagger;
+package com.wordnik.swagger.jackson;
 
 import com.wordnik.swagger.jackson.*;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.properties.*;
 import com.wordnik.swagger.annotations.*;
-
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -78,7 +77,7 @@ public class SimpleGenerationTest extends SwaggerTestBase {
 
   public void testSimple() throws Exception  {
     Model model = modelResolver()
-      .resolve(SimpleBean.class);
+      .resolve(SimpleBean.class,new ModelConverterContextMock());
     assertNotNull(model);
 
     assertEquals("DESC", model.getDescription());
@@ -116,7 +115,7 @@ public class SimpleGenerationTest extends SwaggerTestBase {
   @Ignore
   public void testOrdering() throws Exception {
     Model model = modelResolver()
-      .resolve(JsonOrderBean.class);
+      .resolve(JsonOrderBean.class,new ModelConverterContextMock());
 
     Map<String, Property> props = model.getProperties();
 
@@ -137,7 +136,7 @@ public class SimpleGenerationTest extends SwaggerTestBase {
 
   public void testTheCountBean() throws Exception {
     Model model = modelResolver()
-      .resolve(TheCount.class);
+      .resolve(TheCount.class,new ModelConverterContextMock());
 
     Map<String, Property> props = model.getProperties();
     assertEquals(1, props.size());
@@ -149,7 +148,7 @@ public class SimpleGenerationTest extends SwaggerTestBase {
   public void testStringDateMap() throws Exception {
     final ObjectMapper M = new ObjectMapper();
     Model model = new ModelResolver(M)
-      .resolve(StringDateMapBean.class);
+      .resolve(StringDateMapBean.class,new ModelConverterContextMock());
 
     Map<String, Property> props = model.getProperties();
     assertEquals(1, props.size());
@@ -159,7 +158,7 @@ public class SimpleGenerationTest extends SwaggerTestBase {
 
   public void testIntArray() throws Exception {
       Model model = new ModelResolver(new ObjectMapper())
-        .resolve(IntArrayBean.class);
+        .resolve(IntArrayBean.class,new ModelConverterContextMock());
 
       Map<String, Property> props = model.getProperties();
       assertEquals(1, props.size());

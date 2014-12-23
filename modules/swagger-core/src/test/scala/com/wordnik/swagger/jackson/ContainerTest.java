@@ -1,4 +1,5 @@
-package com.fasterxml.jackson.module.swagger;
+package com.wordnik.swagger.jackson;
+
 
 import com.wordnik.swagger.jackson.*;
 import com.wordnik.swagger.models.*;
@@ -21,7 +22,7 @@ public class ContainerTest extends SwaggerTestBase {
 
   public void testArray() throws Exception {
     Model model = new ModelResolver(mapper())
-      .resolve(ArrayBean.class);
+      .resolve(ArrayBean.class,new ModelConverterContextMock());
 
     Map<String, Property> props = model.getProperties();
     assertEquals(1, props.size());
@@ -38,7 +39,7 @@ public class ContainerTest extends SwaggerTestBase {
 
   public void testMap() throws Exception {
     Model model = new ModelResolver(mapper())
-       .resolve(MapBean.class);
+       .resolve(MapBean.class,new ModelConverterContextMock());
 
     Map<String, Property> props = model.getProperties();
     assertEquals(1, props.size());
@@ -56,10 +57,12 @@ public class ContainerTest extends SwaggerTestBase {
   public void testComplexMap() throws Exception {
 //    Map<String, InnerType> test = new HashMap<String, InnerType>();
     ModelResolver resolver = new ModelResolver(mapper());
-    resolver.resolve(WrapperType.class);
-    Map<String, Model> types = resolver.getDetectedTypes();
-    for(String key: types.keySet()) {
-      Model model = types.get(key);
+    
+    ModelConverterContextMock context = new ModelConverterContextMock();
+	resolver.resolve(WrapperType.class,context);
+    
+    for(String key: context.models.keySet()) {
+      Model model = context.models.get(key);
       assertNotNull(model);
       // !!! TODO: verify
     }

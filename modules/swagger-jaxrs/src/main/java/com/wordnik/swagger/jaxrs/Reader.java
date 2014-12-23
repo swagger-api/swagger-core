@@ -212,14 +212,14 @@ public class Reader {
       // pick out response from method declaration
       Type t = method.getGenericReturnType();
       responseClass = method.getReturnType();
-      Map<String, Model> models = ModelConverters.readAll(t);
+      Map<String, Model> models = ModelConverters.getInstance().readAll(t);
     }
     if(responseClass != null
       && !responseClass.equals(java.lang.Void.class)
       && !responseClass.equals(javax.ws.rs.core.Response.class)) {
       if(isPrimitive(responseClass)) {
         Property responseProperty = null;
-        Property property = ModelConverters.readAsProperty(responseClass);
+        Property property = ModelConverters.getInstance().readAsProperty(responseClass);
         if(property != null) {
           if("list".equalsIgnoreCase(responseContainer))
             responseProperty = new ArrayProperty(property);
@@ -233,10 +233,10 @@ public class Reader {
         }
       }
       else {
-        Map<String, Model> models = ModelConverters.read(responseClass);
+        Map<String, Model> models = ModelConverters.getInstance().read(responseClass);
         if(models.size() == 0) {
           System.out.println("responseClass " + responseClass);
-          Property p = ModelConverters.readAsProperty(responseClass);
+          Property p = ModelConverters.getInstance().readAsProperty(responseClass);
           operation.response(200, new Response()
             .description("successful operation")
             .schema(p));
@@ -255,7 +255,7 @@ public class Reader {
             .schema(responseProperty));
           swagger.model(key, models.get(key));
         }
-        models = ModelConverters.readAll(responseClass);
+        models = ModelConverters.getInstance().readAll(responseClass);
         for(String key: models.keySet()) {
           swagger.model(key, models.get(key));
         }
@@ -292,12 +292,12 @@ public class Reader {
 
         responseClass = apiResponse.response();
         if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
-          Map<String, Model> models = ModelConverters.read(responseClass);
+          Map<String, Model> models = ModelConverters.getInstance().read(responseClass);
           for(String key: models.keySet()) {
             response.schema(new RefProperty().asDefault(key));
             swagger.model(key, models.get(key));
           }
-          models = ModelConverters.readAll(responseClass);
+          models = ModelConverters.getInstance().readAll(responseClass);
           for(String key: models.keySet()) {
             swagger.model(key, models.get(key));
           }
@@ -369,7 +369,7 @@ public class Reader {
           QueryParameter qp = new QueryParameter()
             .name(param.value());
           qp.setDefaultValue(defaultValue);
-          Property schema = ModelConverters.readAsProperty(cls);
+          Property schema = ModelConverters.getInstance().readAsProperty(cls);
           if(schema != null)
             qp.setProperty(schema);
           parameter = qp;
@@ -379,7 +379,7 @@ public class Reader {
           PathParameter pp = new PathParameter()
             .name(param.value());
           pp.setDefaultValue(defaultValue);
-          Property schema = ModelConverters.readAsProperty(cls);
+          Property schema = ModelConverters.getInstance().readAsProperty(cls);
           if(schema != null)
             pp.setProperty(schema);
           parameter = pp;
@@ -389,7 +389,7 @@ public class Reader {
           HeaderParameter hp = new HeaderParameter()
             .name(param.value());
           hp.setDefaultValue(defaultValue);
-          Property schema = ModelConverters.readAsProperty(cls);
+          Property schema = ModelConverters.getInstance().readAsProperty(cls);
           if(schema != null)
             hp.setProperty(schema);
           parameter = hp;
@@ -399,7 +399,7 @@ public class Reader {
           CookieParameter cp = new CookieParameter()
             .name(param.value());
           cp.setDefaultValue(defaultValue);
-          Property schema = ModelConverters.readAsProperty(cls);
+          Property schema = ModelConverters.getInstance().readAsProperty(cls);
           if(schema != null)
             cp.setProperty(schema);
           parameter = cp;
@@ -409,7 +409,7 @@ public class Reader {
           FormParameter fp = new FormParameter()
             .name(param.value());
           fp.setDefaultValue(defaultValue);
-          Property schema = ModelConverters.readAsProperty(cls);
+          Property schema = ModelConverters.getInstance().readAsProperty(cls);
           if(schema != null)
             fp.setProperty(schema);
           parameter = fp;
@@ -485,9 +485,9 @@ public class Reader {
 
           if(cls.isArray()) {
             Class innerType = cls.getComponentType();
-            Property innerProperty = ModelConverters.readAsProperty(innerType);
+            Property innerProperty = ModelConverters.getInstance().readAsProperty(innerType);
             if(innerProperty == null) {
-              Map<String, Model> models = ModelConverters.read(innerType);
+              Map<String, Model> models = ModelConverters.getInstance().read(innerType);
               if(models.size() > 0) {
                 for(String name: models.keySet()) {
                   if(name.indexOf("java.util") == -1) {
@@ -498,7 +498,7 @@ public class Reader {
                   }
                 }
               }
-              models = ModelConverters.readAll(innerType);
+              models = ModelConverters.getInstance().readAll(innerType);
               for(String key : models.keySet()) {
                 swagger.model(key, models.get(key));
               }
@@ -508,7 +508,7 @@ public class Reader {
             }
           }
           else {
-            Map<String, Model> models = ModelConverters.read(cls);
+            Map<String, Model> models = ModelConverters.getInstance().read(cls);
             if(models.size() > 0) {
               for(String name: models.keySet()) {
                 if(name.indexOf("java.util") == -1) {
@@ -519,13 +519,13 @@ public class Reader {
                   swagger.addDefinition(name, models.get(name));
                 }
               }
-              models = ModelConverters.readAll(cls);
+              models = ModelConverters.getInstance().readAll(cls);
               for(String key : models.keySet()) {
                 swagger.model(key, models.get(key));
               }
             }
             else {
-              Property prop = ModelConverters.readAsProperty(cls);
+              Property prop = ModelConverters.getInstance().readAsProperty(cls);
               if(prop != null) {
                 ModelImpl model = new ModelImpl();
                 model.setType(prop.getType());
@@ -543,7 +543,7 @@ public class Reader {
   boolean isPrimitive(Class<?> cls) {
     boolean out = false;
 
-    Property property = ModelConverters.readAsProperty(cls);
+    Property property = ModelConverters.getInstance().readAsProperty(cls);
     if(property == null)
       out = false;
     if("integer".equals(property.getType()))

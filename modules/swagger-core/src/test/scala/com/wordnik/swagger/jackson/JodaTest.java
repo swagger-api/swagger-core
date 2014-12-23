@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.module.swagger;
+package com.wordnik.swagger.jackson;
 
 import com.wordnik.swagger.jackson.*;
 import com.wordnik.swagger.models.*;
@@ -21,7 +21,7 @@ public class JodaTest extends SwaggerTestBase {
 
   public void testSimple() throws Exception {
     final ModelResolver mr = modelResolver();
-    Model model = mr.resolve(ModelWithJodaDateTime.class);
+    Model model = mr.resolve(ModelWithJodaDateTime.class,new ModelConverterContextMock());
     assertNotNull(model);
 
     Map<String,Property> props = model.getProperties();

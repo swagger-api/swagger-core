@@ -19,7 +19,7 @@ public class SwaggerJerseyJaxrs implements SwaggerExtension {
           return new FormParameter().type("file").name(fd.value());
         else {
           FormParameter fp = new FormParameter().name(fd.value());
-          Property schema = ModelConverters.readAsProperty(cls);
+          Property schema = ModelConverters.getInstance().readAsProperty(cls);
           if(schema != null)
             fp.setProperty(schema);
           return fp;
