@@ -8,7 +8,7 @@ server at http://petstore.swagger.wordnik.com/api/api-docs.json
 
 ## Version compatibility
 =======
-This version is compatible with Play 2.3.0 and Swagger 1.3.12-SNAPSHOT
+This version is compatible with Play 2.3.0 and Swagger 1.3.13-SNAPSHOT
 
 ### To build Swagger from source (optional)
 Please follow instructions to build the top-level [swagger-core project](https://github.com/swagger-api/swagger-core)
@@ -19,7 +19,7 @@ The swagger-play2 module lives in maven central:
 ```scala
 val appDependencies: Seq[sbt.ModuleID] = Seq(
   /* your other dependencies */
-  "com.wordnik" %% "swagger-play2" % "1.3.12-SNAPSHOT"
+  "com.wordnik" %% "swagger-play2" % "1.3.13-SNAPSHOT"
 )
 ```
 
