@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2014 Reverb Technologies, Inc.
 
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");

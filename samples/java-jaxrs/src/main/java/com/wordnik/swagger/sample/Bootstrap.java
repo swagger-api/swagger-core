@@ -18,7 +18,7 @@ public class Bootstrap extends HttpServlet {
     ApiInfo info = new ApiInfo(
       "Swagger Sample App",                             /* title */
       "This is a sample server Petstore server.  You can find out more about Swagger " + 
-      "at <a href=\"http://swagger.wordnik.com\">http://swagger.wordnik.com</a> or on irc.freenode.net, #swagger.  For this sample, " + 
+      "at <a href=\"http://swagger.io\">http://swagger.io</a> or on irc.freenode.net, #swagger.  For this sample, " + 
       "you can use the api key \"special-key\" to test the authorization filters", 
       "http://helloreverb.com/terms/",                  /* TOS URL */
       "apiteam@wordnik.com",                            /* Contact */
@@ -33,7 +33,7 @@ public class Bootstrap extends HttpServlet {
     List<GrantType> grantTypes = new ArrayList<GrantType>();
 
     ImplicitGrant implicitGrant = new ImplicitGrant(
-      new LoginEndpoint("http://localhost:8002/oauth/dialog"), 
+      new LoginEndpoint("http://petstore.swagger.wordnik.com/oauth/dialog"), 
       "access_code");
 
     grantTypes.add(implicitGrant);

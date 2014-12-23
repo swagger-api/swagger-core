@@ -1,5 +1,5 @@
 /**
- *  Copyright 2013 Wordnik, Inc.
+ *  Copyright 2014 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public class PetStoreResource {
 
   @DELETE
   @Path("/order/{orderId}")
-  public Response deleteOrder(String orderId) {
+  public Response deleteOrder(@PathParam("orderId") String orderId) {
     storeData.deleteOrder(ru.getLong(0, 10000, 0, orderId));
     return Response.ok().entity("").build();
   }

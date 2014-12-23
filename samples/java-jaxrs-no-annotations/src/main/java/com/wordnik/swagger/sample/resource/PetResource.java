@@ -1,5 +1,5 @@
 /**
- *  Copyright 2013 Wordnik, Inc.
+ *  Copyright 2014 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public class PetResource {
 
   @GET
   @Path("/{petId}")
-  public Response getPetById(String petId)
+  public Response getPetById(@PathParam("petId") String petId)
       throws NotFoundException {
     Pet pet = petData.getPetbyId(ru.getLong(0, 100000, 0, petId));
     if (null != pet) {
@@ -55,7 +55,7 @@ public class PetResource {
 
   @GET
   @Path("/findByStatus")
-  public Response findPetsByStatus(String status) {
+  public Response findPetsByStatus(@QueryParam("status") String status) {
     return Response.ok(petData.findPetByStatus(status)).build();
   }
 

@@ -17,7 +17,7 @@ Simply copy these files to your apache root, or configure the DocumentRoot to be
 running Mac OSX 10.8, you can simply copy the files to the default webroot and start the built-in apache server:
 
 ```
-mvn jetty:run &
+mvn package jetty:run &
 open http://localhost:8000/
 
 ```

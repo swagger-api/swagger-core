@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2014 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.wordnik.swagger.sample.model
 
 import javax.xml.bind.annotation._
 
-import scala.reflect.BeanProperty
+import scala.beans.BeanProperty
 
 object ApiResponse {
   val ERROR = 1

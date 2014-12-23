@@ -27,7 +27,7 @@ http://localhost:8002/oauth/dialog?redirect_uri=http://localhost:8002/index.html
 Which will call index.html with an access_token, which can be used to make service calls.
 
 ### Extending this sample
-While a full support for oAuth 2.0 will become first-class in the [Swagger](http://swagger.wordnik.com) project, you can use
+While a full support for oAuth 2.0 will become first-class in the [Swagger](http://swagger.io) project, you can use
 this project as a guideline to start your own.
 
 #### Where to start

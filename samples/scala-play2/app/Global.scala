@@ -8,7 +8,7 @@ object Global extends GlobalSettings {
   val info = ApiInfo(
     title = "Swagger Sample App",
     description = """This is a sample server Petstore server.  You can find out more about Swagger 
-    at <a href="http://swagger.wordnik.com">http://swagger.wordnik.com</a> or on irc.freenode.net, #swagger.  For this sample,
+    at <a href="http://swagger.io">http://swagger.io</a> or on irc.freenode.net, #swagger.  For this sample,
     you can use the api key "special-key" to test the authorization filters""", 
     termsOfServiceUrl = "http://helloreverb.com/terms/",
     contact = "apiteam@wordnik.com", 
