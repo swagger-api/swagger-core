@@ -1,5 +1,7 @@
-package com.fasterxml.jackson.module.swagger;
+package com.wordnik.swagger.jackson;
 
+
+import com.wordnik.swagger.converter.ModelConverterContextImpl;
 import com.wordnik.swagger.jackson.*;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.properties.*;
@@ -20,7 +22,11 @@ public class ContainerTest extends SwaggerTestBase {
   }
 
   public void testArray() throws Exception {
-    Model model = new ModelResolver(mapper())
+    ModelResolver modelResolver = new ModelResolver(mapper());
+    
+    ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+	
+	Model model = context
       .resolve(ArrayBean.class);
 
     Map<String, Property> props = model.getProperties();
@@ -37,7 +43,10 @@ public class ContainerTest extends SwaggerTestBase {
   }
 
   public void testMap() throws Exception {
-    Model model = new ModelResolver(mapper())
+	ModelResolver modelResolver = new ModelResolver(mapper());
+	ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+	Model model = context
        .resolve(MapBean.class);
 
     Map<String, Property> props = model.getProperties();
@@ -56,10 +65,12 @@ public class ContainerTest extends SwaggerTestBase {
   public void testComplexMap() throws Exception {
 //    Map<String, InnerType> test = new HashMap<String, InnerType>();
     ModelResolver resolver = new ModelResolver(mapper());
-    resolver.resolve(WrapperType.class);
-    Map<String, Model> types = resolver.getDetectedTypes();
-    for(String key: types.keySet()) {
-      Model model = types.get(key);
+    
+    ModelConverterContextImpl context = new ModelConverterContextImpl(resolver);
+	context.resolve(WrapperType.class);
+    
+    for(String key: context.getDefinedModels().keySet()) {
+      Model model = context.getDefinedModels().get(key);
       assertNotNull(model);
       // !!! TODO: verify
     }

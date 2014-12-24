@@ -1,5 +1,6 @@
-package com.fasterxml.jackson.module.swagger;
+package com.wordnik.swagger.jackson;
 
+import com.wordnik.swagger.converter.ModelConverterContextImpl;
 import com.wordnik.swagger.jackson.*;
 import com.wordnik.swagger.models.*;
 
@@ -23,7 +24,10 @@ public class ComplexPropertyTest extends SwaggerTestBase {
    */
 
   public void testOuterBean() throws Exception  {
-    Model model = modelResolver()
+    ModelResolver modelResolver = modelResolver();
+	ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+	;
+	Model model = context
       .resolve(OuterBean.class);
     assertNotNull(model);
   }

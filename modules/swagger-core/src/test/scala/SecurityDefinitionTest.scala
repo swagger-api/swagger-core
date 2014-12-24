@@ -18,8 +18,8 @@ import org.scalatest.Matchers
 @RunWith(classOf[JUnitRunner])
 class SecurityDefinitionTest extends FlatSpec with Matchers {
   it should "create a model with security requirements" in {
-    val personModel = ModelConverters.read(classOf[Person]).get("Person")
-    val errorModel = ModelConverters.read(classOf[Error]).get("Error")
+    val personModel = ModelConverters.getInstance().read(classOf[Person]).get("Person")
+    val errorModel = ModelConverters.getInstance().read(classOf[Error]).get("Error")
 
     val info = new Info()
       .version("1.0.0")

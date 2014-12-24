@@ -15,7 +15,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
   val m = Json.mapper()
 
   it should "convert a model" in {
-    val schemas = ModelConverters.read(classOf[Person])
+    val schemas = ModelConverters.getInstance().read(classOf[Person])
     Json.pretty(schemas) should equal(
 """{
   "Person" : {
@@ -54,12 +54,12 @@ class ModelConverterTest extends FlatSpec with Matchers {
   }
 
   it should "convert a model with Joda DateTime" in {
-    val schemas = ModelConverters.read(classOf[JodaDateTimeModel])
+    val schemas = ModelConverters.getInstance().read(classOf[JodaDateTimeModel])
     m.writeValueAsString(schemas) should equal ("""{"JodaDateTimeModel":{"properties":{"createdAt":{"type":"string","format":"date-time"}}}}""")
   }
 
   it should "read an interface" in {
-    val schemas = ModelConverters.readAll(classOf[Pet])
+    val schemas = ModelConverters.getInstance().readAll(classOf[Pet])
     Json.pretty(schemas) should equal (
 """{
   "Pet" : {
@@ -85,7 +85,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
   }
 
   it should "read an inherited interface" in {
-    val schemas = ModelConverters.readAll(classOf[Cat])
+    val schemas = ModelConverters.getInstance().readAll(classOf[Cat])
     Json.pretty(schemas) should equal (
 """{
   "Cat" : {

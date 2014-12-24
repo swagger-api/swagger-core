@@ -17,7 +17,7 @@ import scala.beans.BeanProperty
 @RunWith(classOf[JUnitRunner])
 class XmlModelTest extends FlatSpec with Matchers {
   it should "process an XML model attribute" in {
-    val schemas = ModelConverters.readAll(classOf[Monster])
+    val schemas = ModelConverters.getInstance().readAll(classOf[Monster])
     val model = schemas.get("Monster")
     model should not be (null)
     model.isInstanceOf[ModelImpl] should be (true)

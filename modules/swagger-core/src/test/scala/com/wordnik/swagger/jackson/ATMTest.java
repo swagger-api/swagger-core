@@ -1,5 +1,6 @@
-package com.fasterxml.jackson.module.swagger;
+package com.wordnik.swagger.jackson;
 
+import com.wordnik.swagger.converter.ModelConverterContextImpl;
 import com.wordnik.swagger.jackson.*;
 import com.wordnik.swagger.models.*;
 
@@ -19,7 +20,11 @@ public class ATMTest extends SwaggerTestBase {
   public enum Currency { USA, CANADA }
 
   public void testATMModel() throws Exception {
-    Model model = new ModelResolver(mapper())
+    
+	ModelResolver modelResolver = new ModelResolver(mapper());
+	   ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+	
+	Model model = context
        .resolve(ATM.class);
     assertNotNull(model);
     /*

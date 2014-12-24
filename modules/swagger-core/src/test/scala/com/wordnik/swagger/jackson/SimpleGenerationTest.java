@@ -1,16 +1,19 @@
-package com.fasterxml.jackson.module.swagger;
+package com.wordnik.swagger.jackson;
 
-import com.wordnik.swagger.jackson.*;
-import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.models.properties.*;
-import com.wordnik.swagger.annotations.*;
-
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.Ignore;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+import com.wordnik.swagger.converter.ModelConverterContextImpl;
+import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.properties.Property;
 
 public class SimpleGenerationTest extends SwaggerTestBase {
 //  ObjectMapper mapper = new ObjectMapper();
@@ -77,7 +80,10 @@ public class SimpleGenerationTest extends SwaggerTestBase {
    */
 
   public void testSimple() throws Exception  {
-    Model model = modelResolver()
+    ModelResolver modelResolver = modelResolver();
+    ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+	
+	Model model = context
       .resolve(SimpleBean.class);
     assertNotNull(model);
 
@@ -115,7 +121,10 @@ public class SimpleGenerationTest extends SwaggerTestBase {
 
   @Ignore
   public void testOrdering() throws Exception {
-    Model model = modelResolver()
+    ModelResolver modelResolver = modelResolver();
+    ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+	Model model = context
       .resolve(JsonOrderBean.class);
 
     Map<String, Property> props = model.getProperties();
@@ -136,7 +145,12 @@ public class SimpleGenerationTest extends SwaggerTestBase {
   }
 
   public void testTheCountBean() throws Exception {
-    Model model = modelResolver()
+	  
+	  ModelResolver modelResolver = modelResolver();
+	  ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+		
+    Model model = context
       .resolve(TheCount.class);
 
     Map<String, Property> props = model.getProperties();
@@ -146,11 +160,14 @@ public class SimpleGenerationTest extends SwaggerTestBase {
     assertEquals("theCount", prop.getName());
   }
 
-  public void testStringDateMap() throws Exception {
+  public void testStringDateMap() throws Exception {	
     final ObjectMapper M = new ObjectMapper();
-    Model model = new ModelResolver(M)
+    ModelResolver modelResolver = new ModelResolver(M);
+    ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+	Model model = context
       .resolve(StringDateMapBean.class);
 
+	
     Map<String, Property> props = model.getProperties();
     assertEquals(1, props.size());
     Property prop = props.values().iterator().next();
@@ -158,7 +175,9 @@ public class SimpleGenerationTest extends SwaggerTestBase {
   }
 
   public void testIntArray() throws Exception {
-      Model model = new ModelResolver(new ObjectMapper())
+      ModelResolver modelResolver = new ModelResolver(new ObjectMapper());
+      ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+	Model model = context
         .resolve(IntArrayBean.class);
 
       Map<String, Property> props = model.getProperties();
