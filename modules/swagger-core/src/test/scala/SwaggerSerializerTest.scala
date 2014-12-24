@@ -22,8 +22,8 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
   val m = Json.mapper()
 
   it should "convert a spec" in {
-    val personModel = ModelConverters.read(classOf[Person]).get("Person")
-    val errorModel = ModelConverters.read(classOf[Error]).get("Error")
+    val personModel = ModelConverters.getInstance().read(classOf[Person]).get("Person")
+    val errorModel = ModelConverters.getInstance().read(classOf[Error]).get("Error")
     val info = new Info()
       .version("1.0.0")
       .title("Swagger Petstore")

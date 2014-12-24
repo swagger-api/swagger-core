@@ -21,21 +21,23 @@ class ScalaModelTest extends FlatSpec with Matchers {
   it should "convert a simple scala case class" in {
     m.registerModule(DefaultScalaModule)
 
-    val schemas = ModelConverters.read(classOf[SimpleCaseClass])
+    val schemas = ModelConverters.getInstance().read(classOf[SimpleCaseClass])
+    println(m.writeValueAsString(schemas))
+    println("""{"SimpleCaseClass":{"properties":{"name":{"type":"string"},"count":{"type":"integer","format":"int32"}}}}""")
     m.writeValueAsString(schemas) should equal ("""{"SimpleCaseClass":{"properties":{"name":{"type":"string"},"count":{"type":"integer","format":"int32"}}}}""")
   }
 
   it should "convert a scala case class with List property" in {
     m.registerModule(DefaultScalaModule)
 
-    val schemas = ModelConverters.read(classOf[CaseClassWithList])
+    val schemas = ModelConverters.getInstance().read(classOf[CaseClassWithList])
     m.writeValueAsString(schemas) should equal ("""{"CaseClassWithList":{"properties":{"name":{"type":"string"},"items":{"type":"array","items":{"type":"string"}}}}}""")
   }
 
   it should "convert a scala case class with optional value" in {
     m.registerModule(DefaultScalaModule)
 
-    val schemas = ModelConverters.read(classOf[CaseClassWithOptionLong])
+    val schemas = ModelConverters.getInstance().read(classOf[CaseClassWithOptionLong])
     val props = (schemas.get("CaseClassWithOptionLong")).asInstanceOf[ModelImpl].getProperties()
     val propertyCount = props.keySet.size
 
@@ -51,7 +53,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
 
   it should "convert a scala case class with nexted models" in {
     m.registerModule(DefaultScalaModule)
-    val schemas = ModelConverters.readAll(classOf[NestedModel])
+    val schemas = ModelConverters.getInstance().readAll(classOf[NestedModel])
 
     Json.pretty(schemas) should equal ( 
 """{
@@ -81,7 +83,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
   }
 
   it should "read an interface" in {
-    val schemas = ModelConverters.readAll(classOf[Pet])
+    val schemas = ModelConverters.getInstance().readAll(classOf[Pet])
     Json.pretty(schemas) should equal (
 """{
   "Pet" : {
