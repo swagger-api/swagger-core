@@ -9,8 +9,6 @@ import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty, JsonIgnorePro
 
 import org.slf4j.LoggerFactory
 
-import sun.reflect.generics.reflectiveObjects.{ ParameterizedTypeImpl, TypeVariableImpl }
-
 import java.lang.reflect.{ Type, TypeVariable, Field, Modifier, Method, ParameterizedType }
 import java.lang.annotation.Annotation
 import javax.xml.bind.annotation._
@@ -460,14 +458,14 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       val keyName: String = getDataType(keyType, keyType, isSimple)
       val valueName: String = getDataType(valueType, valueType, isSimple)
       "Map[" + keyName + "," + valueName + "]"
-    } else if (!returnType.getClass.isAssignableFrom(classOf[ParameterizedTypeImpl]) && returnType.isInstanceOf[Class[_]] && returnType.asInstanceOf[Class[_]].isArray) {
+    } else if (!returnType.getClass.isAssignableFrom(classOf[ParameterizedType]) && returnType.isInstanceOf[Class[_]] && returnType.asInstanceOf[Class[_]].isArray) {
       var arrayClass = returnType.asInstanceOf[Class[_]].getComponentType
       "Array[" + readName(arrayClass, isSimple) + "]"
     } else {
-      if (genericReturnType.getClass.isAssignableFrom(classOf[TypeVariableImpl[_]])) {
-        genericReturnType.asInstanceOf[TypeVariableImpl[_]].getName
+      if (genericReturnType.getClass.isAssignableFrom(classOf[TypeVariable[_]])) {
+        genericReturnType.asInstanceOf[TypeVariable[_]].getName
       }
-      else if (!genericReturnType.getClass.isAssignableFrom(classOf[ParameterizedTypeImpl])) {
+      else if (!genericReturnType.getClass.isAssignableFrom(classOf[ParameterizedType])) {
         if(genericReturnType.isInstanceOf[Class[_]])
           readName(genericReturnType.asInstanceOf[Class[_]], isSimple)
         else{
