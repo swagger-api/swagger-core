@@ -1,6 +1,7 @@
 package com.wordnik.swagger.util;
 
 import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.parameters.Parameter;
 import com.wordnik.swagger.models.properties.Property;
 
 import com.fasterxml.jackson.datatype.joda.JodaModule;
@@ -26,6 +27,7 @@ public class Json {
     SimpleModule module = new SimpleModule();
     module.addDeserializer(Property.class, new PropertyDeserializer());
     module.addDeserializer(Model.class, new ModelDeserializer());
+    module.addDeserializer(Parameter.class, new ParameterDeserializer());
     mapper.registerModule(module);
     mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);

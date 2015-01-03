@@ -5,17 +5,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-@JsonTypeInfo(
-  use = JsonTypeInfo.Id.NAME,
-  include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
-  property = "in")
-@JsonSubTypes({  
-  @Type(value = BodyParameter.class, name = "body"),
-  @Type(value = HeaderParameter.class, name = "header"),
-  @Type(value = PathParameter.class, name = "path"),
-  @Type(value = QueryParameter.class, name = "query"),
-  @Type(value = FormParameter.class, name = "formData"),
-  @Type(value = CookieParameter.class, name = "cookie")})
 public interface Parameter {
   // @JsonIgnore
   String getIn();

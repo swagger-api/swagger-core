@@ -2,6 +2,11 @@ package com.wordnik.swagger.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.wordnik.swagger.models.parameters.Parameter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @JsonPropertyOrder({ "get", "post", "put", "delete", "options", "patch"})
 public class Path {
@@ -11,6 +16,7 @@ public class Path {
   private Operation delete;
   private Operation patch;
   private Operation options;
+  private List<Parameter> parameters;
 
   public Path set(String method, Operation op) {
     if("get".equals(method))
@@ -93,6 +99,19 @@ public class Path {
   }
   public void setOptions(Operation options) {
     this.options = options;
+  }
+
+  public List<Parameter> getParameters() {
+    return parameters;
+  }
+  public void setParameters(List<Parameter> parameters) {
+    this.parameters = parameters;
+  }
+  public void addParameter(Parameter parameter) {
+    if(this.parameters == null) {
+        this.parameters = new ArrayList<Parameter>();
+    }
+    this.parameters.add(parameter);
   }
 
   @JsonIgnore
