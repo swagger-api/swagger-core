@@ -1,8 +1,9 @@
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.wordnik.swagger.models._
 import com.wordnik.swagger.models.properties._
 import com.wordnik.swagger.models.parameters._
 
-import com.wordnik.swagger.util.Json
+import com.wordnik.swagger.util._
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
@@ -18,11 +19,7 @@ import org.scalatest.Matchers
 @RunWith(classOf[JUnitRunner])
 class ParameterSerializationTest extends FlatSpec with Matchers {
   val m = Json.mapper()
-
-  val yaml = new ObjectMapper(new YAMLFactory())
-  yaml.setSerializationInclusion(JsonInclude.Include.NON_NULL)
-  yaml.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-  yaml.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+  val yaml = Yaml.mapper()
 
   it should "serialize a QueryParameter" in {
     val p = new QueryParameter().property(new StringProperty())
@@ -67,7 +64,8 @@ class ParameterSerializationTest extends FlatSpec with Matchers {
       .collectionFormat("multi")
     m.writeValueAsString(p) should be ("""{"in":"path","required":true,"type":"array","items":{"type":"string"},"collectionFormat":"multi"}""")
     yaml.writeValueAsString(p) should equal (
-"""--- !<path>
+"""---
+in: "path"
 required: true
 type: "array"
 items:
@@ -100,8 +98,11 @@ collectionFormat: "multi"
     val p = new HeaderParameter().property(new StringProperty())
     m.writeValueAsString(p) should be ("""{"in":"header","required":false,"type":"string"}""")
     yaml.writeValueAsString(p) should equal(
-"--- !<header>\nrequired: false\ntype: \"string\"\n"
-    )
+"""---
+in: "header"
+required: false
+type: "string"
+""")
   }
 
   it should "deserialize a HeaderParameter" in {
@@ -138,7 +139,8 @@ collectionFormat: "multi"
       .property("name", new StringProperty())
     val p = new BodyParameter().schema(model)
     yaml.writeValueAsString(p) should equal(
-"""--- !<body>
+"""---
+in: "body"
 required: false
 schema:
   properties:

@@ -198,17 +198,7 @@ public class Swagger {
   }
 
   public Map<String, Parameter> getParameters() {
-    if(paths == null)
-      return null;
-    Map<String, Parameter> sorted = new LinkedHashMap<String, Parameter>();
-    List<String> keys = new ArrayList<String>();
-    keys.addAll(paths.keySet());
-    Collections.sort(keys);
-
-    for(String key: keys) {
-      sorted.put(key, parameters.get(key));
-    }
-    return sorted;
+    return parameters;
   }
 
   public void setParameters(Map<String, Parameter> parameters) {
@@ -220,6 +210,11 @@ public class Swagger {
         return null;
     return this.parameters.get(parameter);
   }
+    public void addParameters(String key, Parameter parameter) {
+        if(this.parameters == null)
+            this.parameters = new HashMap<String, Parameter>();
+        this.parameters.put(key, parameter);
+    }
 
   public ExternalDocs getExternalDocs() {
     return externalDocs;
