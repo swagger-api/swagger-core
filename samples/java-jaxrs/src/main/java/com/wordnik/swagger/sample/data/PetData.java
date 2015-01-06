@@ -18,8 +18,7 @@ package com.wordnik.swagger.sample.data;
 
 import com.wordnik.swagger.sample.model.*;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 public class PetData {
   static List<Pet> pets = new ArrayList<Pet>();
@@ -124,6 +123,22 @@ public class PetData {
     }
     pets.add(pet);
     return pet;
+  }
+
+  public Map<String, Integer> getInventoryByStatus() {
+    Map<String, Integer> output = new HashMap<String, Integer>();
+    for(Pet pet : pets) {
+      String status = pet.getStatus();
+      if(status != null && !"".equals(status)) {
+        Integer count = output.get(status);
+        if(count == null)
+          count = new Integer(1);
+        else
+          count = count.intValue() + 1;
+        output.put(status, count);
+      }
+    }
+    return output;
   }
 
   static Pet createPet(long id, Category cat, String name, String[] urls,

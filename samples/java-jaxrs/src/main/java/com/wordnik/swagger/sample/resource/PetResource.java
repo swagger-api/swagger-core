@@ -33,7 +33,7 @@ import javax.ws.rs.*;
     @AuthorizationScope(scope = "read:pets", description = "read your pets")
   })
 })
-@Produces({"application/json", "application/xml"})
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class PetResource {
   static PetData petData = new PetData();
   static JavaRestResourceUtil ru = new JavaRestResourceUtil();
@@ -70,7 +70,7 @@ public class PetResource {
   }
 
   @POST
-  @Consumes({"application/json", "application/xml"})
+  @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
   @ApiOperation(value = "Add a new pet to the store")
   @ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input") })
   public Response addPet(
@@ -80,7 +80,7 @@ public class PetResource {
   }
 
   @PUT
-  @Consumes({"application/json", "application/xml"})
+  @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
   @ApiOperation(value = "Update an existing pet")
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
       @ApiResponse(code = 404, message = "Pet not found"),
@@ -131,4 +131,6 @@ public class PetResource {
     System.out.println(status);
     return Response.ok().entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build();
   }
+
+
 }

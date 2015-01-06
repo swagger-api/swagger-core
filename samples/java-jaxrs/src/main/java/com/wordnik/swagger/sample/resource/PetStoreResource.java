@@ -17,11 +17,12 @@
 package com.wordnik.swagger.sample.resource;
 
 import com.wordnik.swagger.annotations.*;
-import com.wordnik.swagger.sample.data.StoreData;
+import com.wordnik.swagger.sample.data.*;
 import com.wordnik.swagger.sample.model.Order;
 import com.wordnik.swagger.sample.exception.NotFoundException;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.*;
 
 @Path("/store")
@@ -29,7 +30,21 @@ import javax.ws.rs.*;
 @Produces({"application/json", "application/xml"})
 public class PetStoreResource {
   static StoreData storeData = new StoreData();
+  static PetData petData = new PetData();
   static JavaRestResourceUtil ru = new JavaRestResourceUtil();
+
+  @GET
+  @Path("/inventory")
+  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+  @ApiOperation(value = "Returns pet inventories by status", 
+    notes = "Returns a map of status codes to quantities", 
+    response = Integer.class,
+    responseContainer = "map",
+    authorizations = @Authorization(value = "api_key", type = "api_key")
+  )
+  public java.util.Map<String, Integer> getInventory() {
+    return petData.getInventoryByStatus();
+  }
 
   @GET
   @Path("/order/{orderId}")

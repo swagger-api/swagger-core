@@ -26,9 +26,9 @@ public class Bootstrap extends HttpServlet {
 
     ServletContext context = config.getServletContext();
     Swagger swagger = new Swagger().info(info);
-    swagger.securityDefinition("api_key", new ApiKeyAuth("api_key", In.HEADER));
+    swagger.securityDefinition("api_key", new ApiKeyAuthDefinition("api_key", In.HEADER));
     swagger.securityDefinition("petstore_auth", 
-      new OAuth2()
+      new OAuth2Definition()
         .implicit("http://petstore.swagger.wordnik.com/api/oauth/dialog")
         .scope("read:pets", "read your pets")
         .scope("write:pets", "modify pets in your account"));
