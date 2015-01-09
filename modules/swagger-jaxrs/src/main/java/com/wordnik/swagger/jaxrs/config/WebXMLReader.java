@@ -13,11 +13,15 @@ public class WebXMLReader /*implements SwaggerConfig*/ {
   String basePath, host, filterClass, apiVersion, title, scheme = "http";
 
   public WebXMLReader(ServletConfig servletConfig) {
-    ScannerFactory.setScanner(new DefaultJaxrsScanner());
+    Scanner scanner = new DefaultJaxrsScanner();
+    ScannerFactory.setScanner(scanner);
     apiVersion = servletConfig.getInitParameter("api.version");
     if(apiVersion == null)
       apiVersion = "Swagger Server";
 
+    String shouldPrettyPrint = servletConfig.getInitParameter("swagger.pretty.print");
+    if(shouldPrettyPrint != null)
+      scanner.setPrettyPrint(Boolean.parseBoolean(shouldPrettyPrint));
     basePath = servletConfig.getInitParameter("swagger.api.basepath");
     title = servletConfig.getInitParameter("swagger.api.title");
     if(title == null)

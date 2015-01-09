@@ -14,7 +14,7 @@ import org.reflections.util.ConfigurationBuilder;
 
 import java.util.Set;
 
-public class BeanConfig implements Scanner {
+public class BeanConfig extends AbstractScanner implements Scanner {
   Reader reader = new Reader(new Swagger());
 
   String resourcePackage;

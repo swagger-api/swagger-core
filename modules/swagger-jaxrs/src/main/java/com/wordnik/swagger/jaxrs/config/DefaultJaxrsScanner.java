@@ -7,7 +7,9 @@ import java.util.*;
 import javax.servlet.ServletConfig;
 import javax.ws.rs.core.Application;
 
-public class DefaultJaxrsScanner implements JaxrsScanner {
+public class DefaultJaxrsScanner extends AbstractScanner implements JaxrsScanner {
+  private boolean prettyPrint = false;
+
   public Set<Class<?>> classesFromContext(
     Application app,
     ServletConfig sc) {
@@ -29,5 +31,13 @@ public class DefaultJaxrsScanner implements JaxrsScanner {
 
   public Set<Class<?>>classes() {
     return new HashSet<Class<?>>();
+  }
+
+  public boolean prettyPrint() {
+    return prettyPrint;
+  }
+
+  public void setPrettyPrint(boolean shouldPrettyPrint) {
+    this.prettyPrint = shouldPrettyPrint;
   }
 }

@@ -12,6 +12,9 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ws.rs.core.*;
 import javax.ws.rs.ext.*;
 import javax.ws.rs.Produces;
@@ -23,14 +26,20 @@ import java.lang.annotation.Annotation;
 @Provider
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "application/yaml"})
 public class SwaggerSerializers implements MessageBodyWriter <Swagger> {
+  Logger LOGGER = LoggerFactory.getLogger(SwaggerSerializers.class);
+
   static ObjectMapper yaml;
-  static ObjectMapper commonMapper;
+  static boolean prettyPrint = false;
 
   static {
     yaml = new ObjectMapper(new YAMLFactory());
     yaml.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     yaml.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     yaml.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  }
+
+  public static void setPrettyPrint(boolean shouldPrettyPrint) {
+    SwaggerSerializers.prettyPrint = shouldPrettyPrint;
   }
 
   @Override
@@ -52,8 +61,12 @@ public class SwaggerSerializers implements MessageBodyWriter <Swagger> {
     MediaType mediaType,
     MultivaluedMap <String, Object> headers,
     OutputStream out) throws IOException {
-    if(mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE))
-      out.write(Json.mapper().writeValueAsString(data).getBytes("utf-8"));
+    if(mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
+      if(prettyPrint)
+        out.write(Json.pretty().writeValueAsString(data).getBytes("utf-8"));
+      else
+        out.write(Json.mapper().writeValueAsString(data).getBytes("utf-8"));
+    }
     else if (mediaType.toString().startsWith("application/yaml"))
       out.write(yaml.writeValueAsString(data).getBytes("utf-8"));
     else if(mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE)) {

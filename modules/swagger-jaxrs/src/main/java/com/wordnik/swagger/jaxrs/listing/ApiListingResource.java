@@ -7,6 +7,9 @@ import com.wordnik.swagger.jaxrs.config.*;
 import com.wordnik.swagger.util.*;
 import com.wordnik.swagger.models.Swagger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.ws.rs.*;
@@ -19,14 +22,18 @@ import java.util.HashMap;
 
 @Path("/")
 public class ApiListingResource {
+  Logger LOGGER = LoggerFactory.getLogger(ApiListingResource.class);
+
   static boolean initialized = false;
   @Context
   ServletContext context;
 
   protected synchronized void scan (Application app, ServletConfig sc) {
     Scanner scanner = ScannerFactory.getScanner();
-    System.out.println("using scanner " + scanner);
+    LOGGER.debug("using scanner " + scanner);
+
     if(scanner != null) {
+      SwaggerSerializers.setPrettyPrint(scanner.prettyPrint());
       Set<Class<?>> classes = null;
       if (scanner instanceof JaxrsScanner) {
         JaxrsScanner jaxrsScanner = (JaxrsScanner)scanner;
@@ -89,7 +96,7 @@ public class ApiListingResource {
     try{
       if(swagger != null) {
         SwaggerSpecFilter filterImpl = FilterFactory.getFilter();
-        System.out.println("using filter " + filterImpl);
+        LOGGER.debug("using filter " + filterImpl);
         if(filterImpl != null) {
           SpecFilter f = new SpecFilter();
           swagger = f.filter(swagger,

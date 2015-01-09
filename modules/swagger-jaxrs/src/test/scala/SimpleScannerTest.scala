@@ -1,7 +1,8 @@
+import resources._
+
 import com.wordnik.swagger.jaxrs.config._
 import com.wordnik.swagger.models.parameters.PathParameter
-
-import resources._
+import com.wordnik.swagger.models.properties.MapProperty
 
 import com.wordnik.swagger.models.Swagger
 import com.wordnik.swagger.jaxrs.Reader
@@ -47,6 +48,15 @@ class SimpleScannerTest extends FlatSpec with Matchers {
 
   it should "scan a resource with map return type" in {
     val swagger = new Reader(new Swagger()).read(classOf[ResourceWithMapReturnValue])
-    Json.prettyPrint(swagger)
+    val path = swagger.getPaths().get("/{id}")
+    val get = path.getGet()
+    get should not be (null)
+
+    get.getResponses() should not be (null)
+    val response = get.getResponses().get("200")
+    response should not be (null)
+
+    val schema = response.getSchema()
+    schema.getClass should be (classOf[MapProperty])
   }
 }
