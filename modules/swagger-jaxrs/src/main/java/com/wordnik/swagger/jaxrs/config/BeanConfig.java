@@ -108,6 +108,11 @@ public class BeanConfig extends AbstractScanner implements Scanner {
     this.basePath = basePath;
   }
 
+  public void setPrettyPrint(String prettyPrint) {
+    if(prettyPrint != null)
+      this.prettyPrint = Boolean.parseBoolean(prettyPrint);
+  }
+
   public void setScan(boolean shouldScan) {
     Set<Class<?>> classes = classes();
     if(classes != null)

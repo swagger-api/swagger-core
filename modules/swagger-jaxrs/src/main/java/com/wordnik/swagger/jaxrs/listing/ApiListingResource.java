@@ -33,7 +33,8 @@ public class ApiListingResource {
     LOGGER.debug("using scanner " + scanner);
 
     if(scanner != null) {
-      SwaggerSerializers.setPrettyPrint(scanner.prettyPrint());
+      SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
+
       Set<Class<?>> classes = null;
       if (scanner instanceof JaxrsScanner) {
         JaxrsScanner jaxrsScanner = (JaxrsScanner)scanner;

@@ -1,9 +1,9 @@
 package com.wordnik.swagger.jaxrs.config;
 
 public abstract class AbstractScanner {
-  private boolean prettyPrint = false;
+  protected boolean prettyPrint = false;
 
-  public boolean prettyPrint() {
+  public boolean getPrettyPrint() {
     return prettyPrint;
   }
 
