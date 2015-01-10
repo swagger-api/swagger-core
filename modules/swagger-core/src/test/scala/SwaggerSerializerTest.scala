@@ -94,4 +94,48 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
     val jsonString = Source.fromFile("src/test/scala/specFiles/uber.json").mkString.toString
     val swagger = Json.mapper().readValue(jsonString, classOf[Swagger])
   }
+
+  it should "write a spec with parameter references" in {
+    val personModel = ModelConverters.getInstance().read(classOf[Person]).get("Person")
+
+    val info = new Info()
+      .version("1.0.0")
+      .title("Swagger Petstore")
+
+    val contact = new Contact()
+      .name("Wordnik API Team")
+      .email("foo@bar.baz")
+      .url("http://swagger.io")
+    info.setContact(contact)
+
+    val swagger = new Swagger()
+      .info(info)
+      .host("petstore.swagger.wordnik.com")
+      .securityDefinition("api-key", new ApiKeyAuthDefinition("key", In.HEADER))
+      .scheme(Scheme.HTTP)
+      .consumes("application/json")
+      .produces("application/json")
+      .model("Person", personModel)
+
+    val parameter = new QueryParameter()
+      .name("id")
+      .description("a common get parameter")
+      .property(new LongProperty())
+
+    val get = new Operation()
+      .produces("application/json")
+      .summary("finds pets in the system")
+      .description("a longer description")
+      .tag("Pet Operations")
+      .operationId("get pet by id")
+      .parameter(new RefParameter("foo"))
+
+    swagger
+      .parameter("foo", parameter)
+      .path("/pets", new Path().get(get))
+
+    val swaggerJson = Json.mapper().writeValueAsString(swagger)
+    val rebuilt = Json.mapper().readValue(swaggerJson, classOf[Swagger])
+    Json.pretty(swagger) should equal (Json.pretty(rebuilt))
+  }
 }
