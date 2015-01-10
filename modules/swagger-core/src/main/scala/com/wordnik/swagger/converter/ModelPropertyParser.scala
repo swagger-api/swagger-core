@@ -164,9 +164,9 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       if(propPosition != 0) position = propAnnoOutput("position").asInstanceOf[Int]
       if(required == false) required = propAnnoOutput("required").asInstanceOf[Boolean]
       isFieldExists = true
+
       if (!isTransient) isTransient = propAnnoOutput("isTransient").asInstanceOf[Boolean]
       if (!isXmlElement) isXmlElement = propAnnoOutput("isXmlElement").asInstanceOf[Boolean]
-
       if (name == null) name = originalName
       isJsonProperty = propAnnoOutput("isJsonProperty").asInstanceOf[Boolean]
     } catch {
@@ -249,6 +249,9 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       }
       processedFields += name
     }
+    else {
+      processedFields += name
+    }
   }
 
   def validateDatatype(dataType: String): String = {
@@ -307,7 +310,6 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     var paramAccess: String = null
     var wrapperName: String = null
     var position = 0
-
     for (ma <- annotations) {
       ma match {
         case e: XmlTransient => isTransient = true
