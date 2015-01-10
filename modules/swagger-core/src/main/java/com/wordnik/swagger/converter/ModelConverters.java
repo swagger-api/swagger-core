@@ -1,17 +1,16 @@
 package com.wordnik.swagger.converter;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wordnik.swagger.jackson.ModelResolver;
 import com.wordnik.swagger.models.Model;
 import com.wordnik.swagger.models.properties.Property;
 import com.wordnik.swagger.util.Json;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ModelConverters {
 	private static final ModelConverters SINGLETON = new ModelConverters();
