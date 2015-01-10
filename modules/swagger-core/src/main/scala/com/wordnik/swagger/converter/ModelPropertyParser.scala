@@ -87,11 +87,12 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
   def extractGetterProperty(methodFieldName: String): (String, Boolean) = {
     if (methodFieldName != null &&
       (methodFieldName.startsWith("get")) &&
-      methodFieldName.length > 3) {
+      methodFieldName.length > 3 && Character.isUpperCase(methodFieldName.charAt(3))) {
       (methodFieldName.substring(3, 4).toLowerCase() + methodFieldName.substring(4, methodFieldName.length()), true)
     } else if (methodFieldName != null &&
       (methodFieldName.startsWith("is")) &&
-      methodFieldName.length > 2) {
+      methodFieldName.length > 2 &&
+      Character.isUpperCase(methodFieldName.charAt(2))) {
       (methodFieldName.substring(2, 3).toLowerCase() + methodFieldName.substring(3, methodFieldName.length()), true)
     } else {
       (methodFieldName, false)
