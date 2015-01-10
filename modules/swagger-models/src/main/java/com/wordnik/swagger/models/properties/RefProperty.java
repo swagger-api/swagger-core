@@ -35,10 +35,13 @@ public class RefProperty extends AbstractProperty implements Property {
   }
 
   public String get$ref() {
-    return ref;
+    return "#/definitions/" + ref;
   }
   public void set$ref(String ref) {
-    this.ref = ref;
+    if(ref.indexOf("#/definitions/") == 0)
+      this.ref = ref.substring("#/definitions/".length());
+    else
+      this.ref = ref;
   }
 
   @JsonIgnore
