@@ -1,9 +1,7 @@
 package com.wordnik.swagger.models.parameters;
 
-import com.fasterxml.jackson.annotation.*;
 
 public abstract class AbstractParameter {
-  @JsonIgnore
   protected String in;
   protected String name;
   protected String description;

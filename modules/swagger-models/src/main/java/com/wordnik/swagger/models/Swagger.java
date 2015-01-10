@@ -3,6 +3,7 @@ package com.wordnik.swagger.models;
 import com.wordnik.swagger.models.auth.SecuritySchemeDefinition;
 
 import com.fasterxml.jackson.annotation.*;
+import com.wordnik.swagger.models.parameters.Parameter;
 
 import java.util.*;
 
@@ -18,6 +19,7 @@ public class Swagger {
   protected Map<String, Path> paths;
   protected Map<String, SecuritySchemeDefinition> securityDefinitions;
   protected Map<String, Model> definitions;
+  protected Map<String, Parameter> parameters;
   protected ExternalDocs externalDocs;
 
   public Swagger info(Info info) {
@@ -194,6 +196,25 @@ public class Swagger {
       this.definitions = new HashMap<String, Model>();
     this.definitions.put(key, model);
   }
+
+  public Map<String, Parameter> getParameters() {
+    return parameters;
+  }
+
+  public void setParameters(Map<String, Parameter> parameters) {
+    this.parameters = parameters;
+  }
+
+  public Parameter getParameter(String parameter) {
+    if(this.parameters == null)
+        return null;
+    return this.parameters.get(parameter);
+  }
+    public void addParameters(String key, Parameter parameter) {
+        if(this.parameters == null)
+            this.parameters = new HashMap<String, Parameter>();
+        this.parameters.put(key, parameter);
+    }
 
   public ExternalDocs getExternalDocs() {
     return externalDocs;
