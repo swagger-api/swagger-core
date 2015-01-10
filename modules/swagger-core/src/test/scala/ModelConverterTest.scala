@@ -121,26 +121,21 @@ class ModelConverterTest extends FlatSpec with Matchers {
     val model = schemas.keySet().iterator().next()
     model should be ("MyModel")
   }
-}
 
-@RunWith(classOf[JUnitRunner])
-class PropertyNameConversionTest extends FlatSpec with Matchers {
   it should "maintain property names" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[ModelPropertyName])
-    Json.prettyPrint(schemas)
     schemas.size should be (1)
 
     val modelName = schemas.keySet().iterator().next()
     modelName should be ("ModelPropertyName")
 
     val model = schemas.get(modelName)
-    Json.prettyPrint(model)
 
     val itr = model.getProperties().keySet().iterator()
     val prop1Name = itr.next()
     val prop2Name = itr.next()
 
-    println(prop1Name)
-    println(prop2Name)
+    prop1Name should be ("is_persistent")
+    prop2Name should be ("gettersAndHaters")
   }
 }

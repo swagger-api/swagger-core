@@ -173,6 +173,27 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       Property property = null;
       String propName = propDef.getName();
 
+      // hack to avoid clobbering properties with get/is names
+      // it's ugly but gets around https://github.com/swagger-api/swagger-core/issues/415
+      if(propDef.getPrimaryMember() != null) {
+        java.lang.reflect.Member member = propDef.getPrimaryMember().getMember();
+        if(member != null) {
+          String altName = member.getName();
+          if(altName != null) {
+            if(altName.startsWith("get")) {
+              if(!Character.isUpperCase(altName.charAt(3))) {
+                propName = altName;
+              }
+            }
+            else if (altName.startsWith("is")) {
+              if(!Character.isUpperCase(altName.charAt(2))) {
+                propName = altName;
+              }
+            }
+          }
+        }
+      }
+
       PropertyMetadata md = propDef.getMetadata();
 
       final AnnotatedMember member = propDef.getPrimaryMember();
