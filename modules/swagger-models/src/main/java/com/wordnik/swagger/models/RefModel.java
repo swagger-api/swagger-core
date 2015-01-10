@@ -6,10 +6,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.*;
 
-public class RefModel extends AbstractModel {
+public class RefModel implements Model {
   // internally, the ref value is never fully qualified
   private String ref;
   private String description;
+  private ExternalDocs externalDocs;
   private Map<String, Property> properties;
   private String example;
 
@@ -23,6 +24,8 @@ public class RefModel extends AbstractModel {
     return this;
   }
 
+  // not allowed in a $ref
+  @JsonIgnore
   public String getDescription() {
     return description;
   }
@@ -30,6 +33,7 @@ public class RefModel extends AbstractModel {
     this.description = description;
   }
 
+  @JsonIgnore
   public Map<String, Property> getProperties() {
     return properties;
   }
@@ -55,6 +59,7 @@ public class RefModel extends AbstractModel {
       this.ref = ref;
   }
 
+  @JsonIgnore
   public String getExample() {
     return example;
   }
@@ -62,9 +67,17 @@ public class RefModel extends AbstractModel {
     this.example = example;
   }
 
+  @JsonIgnore
+  public ExternalDocs getExternalDocs() {
+    return externalDocs;
+  }
+
+  public void setExternalDocs(ExternalDocs value) {
+    externalDocs = value;
+  }
+
   public Object clone() {
     RefModel cloned = new RefModel();
-    super.cloneTo(cloned);
     cloned.ref = this.ref;
     cloned.description = this.description;
     cloned.properties = this.properties;

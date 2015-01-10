@@ -49,4 +49,12 @@ class ModelSerializerTest extends FlatSpec with Matchers {
     p.isInstanceOf[ArrayModel] should be (true)
     m.writeValueAsString(p) should equal (json)
   }
+
+  it should "not create an xml object for ref" in {
+    val model = new RefModel("Monster")
+    model.setDescription("oops")
+    model.setExternalDocs(new ExternalDocs("external docs", "http://swagger.io"));
+
+    Json.mapper().writeValueAsString(model) should be ("""{"$ref":"#/definitions/Monster"}""")
+  }
 }
