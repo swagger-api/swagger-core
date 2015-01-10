@@ -2,15 +2,14 @@ package com.wordnik.swagger.models.auth;
 
 import java.util.*;
 
-public class OAuth2Definition extends AbstractAuthScheme implements SecuritySchemeDefinition {
+public class OAuth2Definition implements SecuritySchemeDefinition {
+  private String type = "oauth2";
   private String authorizationUrl;
   private String tokenUrl;
   private String flow;
   private Map<String, String> scopes;
 
-  public OAuth2Definition () {
-    super.setType("oauth2");
-  }
+  public OAuth2Definition () { }
 
   public OAuth2Definition implicit(String authorizationUrl) {
     this.setAuthorizationUrl(authorizationUrl);
@@ -69,5 +68,12 @@ public class OAuth2Definition extends AbstractAuthScheme implements SecuritySche
     if(this.scopes == null)
       this.scopes = new HashMap<String, String>();
     this.scopes.put(name, description);
+  }
+
+  public String getType() {
+    return type;
+  }
+  public void setType(String type) {
+    this.type = type;
   }
 }

@@ -1,12 +1,11 @@
 package com.wordnik.swagger.models.auth;
 
-public class ApiKeyAuthDefinition extends AbstractAuthScheme implements SecuritySchemeDefinition {
+public class ApiKeyAuthDefinition implements SecuritySchemeDefinition {
+  private String type = "apiKey";
   private String name;
   private In in;
 
-  public ApiKeyAuthDefinition () {
-    super.setType("apiKey");
-  }
+  public ApiKeyAuthDefinition () { }
 
   public ApiKeyAuthDefinition(String name, In in) {
     super();
@@ -35,5 +34,12 @@ public class ApiKeyAuthDefinition extends AbstractAuthScheme implements Security
   }
   public void setIn(In in) {
     this.in = in;
+  }
+
+  public String getType() {
+    return type;
+  }
+  public void setType(String type) {
+    this.type = type;
   }
 }

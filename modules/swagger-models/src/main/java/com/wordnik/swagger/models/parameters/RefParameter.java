@@ -1,8 +1,9 @@
 package com.wordnik.swagger.models.parameters;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wordnik.swagger.models.properties.AbstractProperty;
 import com.wordnik.swagger.models.properties.Property;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class RefParameter extends AbstractParameter implements Parameter {
   String ref;
