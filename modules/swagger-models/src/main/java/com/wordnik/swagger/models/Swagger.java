@@ -22,6 +22,7 @@ public class Swagger {
   protected Map<String, Parameter> parameters;
   protected ExternalDocs externalDocs;
 
+  // builders
   public Swagger info(Info info) {
     this.setInfo(info);
     return this;
@@ -72,6 +73,10 @@ public class Swagger {
     this.paths.put(key, path);
     return this;
   }
+  public Swagger parameter(String key, Parameter parameter) {
+    this.addParameter(key, parameter);
+    return this;
+  }
   public Swagger securityDefinition(String name, SecuritySchemeDefinition securityDefinition) {
     this.addSecurityDefinition(name, securityDefinition);
     return this;
@@ -81,6 +86,7 @@ public class Swagger {
     return this;
   }
 
+  // getter & setters
   public String getSwagger() {
     return swagger;
   }
@@ -207,14 +213,15 @@ public class Swagger {
 
   public Parameter getParameter(String parameter) {
     if(this.parameters == null)
-        return null;
+      return null;
     return this.parameters.get(parameter);
   }
-    public void addParameters(String key, Parameter parameter) {
-        if(this.parameters == null)
-            this.parameters = new HashMap<String, Parameter>();
-        this.parameters.put(key, parameter);
-    }
+
+  public void addParameter(String key, Parameter parameter) {
+    if(this.parameters == null)
+      this.parameters = new HashMap<String, Parameter>();
+    this.parameters.put(key, parameter);
+  }
 
   public ExternalDocs getExternalDocs() {
     return externalDocs;
