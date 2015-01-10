@@ -28,6 +28,12 @@ public class RefParameter extends AbstractParameter implements Parameter {
     this.ref = ref;
   }
 
+  @Override
+  @JsonIgnore
+  public boolean getRequired() {
+    return required;
+  }
+
   @JsonIgnore
   public String getSimpleRef() {
     if(ref.indexOf("#/definitions/") == 0)
