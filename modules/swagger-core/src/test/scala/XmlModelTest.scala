@@ -20,7 +20,6 @@ class XmlModelTest extends FlatSpec with Matchers {
     val schemas = ModelConverters.getInstance().readAll(classOf[Monster])
     val model = schemas.get("Monster")
 
-    Json.prettyPrint(model)
     model should not be (null)
     model.isInstanceOf[ModelImpl] should be (true)
     var xml = model.asInstanceOf[ModelImpl].getXml()
