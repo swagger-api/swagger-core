@@ -1,6 +1,7 @@
 import models._
 
 import com.wordnik.swagger.util.Json
+import com.wordnik.swagger.util.Yaml
 import com.wordnik.swagger.models.auth._
 
 import scala.collection.JavaConverters._
@@ -22,6 +23,19 @@ class AuthSerializationTest extends FlatSpec with Matchers {
       .name("api-key")
       .in(In.HEADER)
     Json.mapper.writeValueAsString(auth) should be ("""{"type":"apiKey","name":"api-key","in":"header"}""")
+  }
+
+  it should "convert serialize a header key model to yaml" in {
+    val auth = new ApiKeyAuthDefinition()
+      .name("api-key")
+      .in(In.HEADER)
+    Yaml.mapper.writeValueAsString(auth) should be (
+    """---
+type: "apiKey"
+name: "api-key"
+in: "header"
+"""
+    )
   }
 
   it should "convert serialize an oauth2 implicit flow model" in {

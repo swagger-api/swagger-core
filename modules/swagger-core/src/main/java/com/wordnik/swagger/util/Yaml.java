@@ -1,6 +1,7 @@
 package com.wordnik.swagger.util;
 
 import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.auth.SecuritySchemeDefinition;
 import com.wordnik.swagger.models.parameters.Parameter;
 import com.wordnik.swagger.models.properties.Property;
 
@@ -20,9 +21,10 @@ public class Yaml {
       mapper = new ObjectMapper(new YAMLFactory());
       // mapper.registerModule(new JodaModule());
       SimpleModule module = new SimpleModule();
-      module.addDeserializer(Property.class, new PropertyDeserializer());
       module.addDeserializer(Model.class, new ModelDeserializer());
+      module.addDeserializer(Property.class, new PropertyDeserializer());
       module.addDeserializer(Parameter.class, new ParameterDeserializer());
+      module.addDeserializer(SecuritySchemeDefinition.class, new SecurityDefinitionDeserializer());
       mapper.registerModule(module);
       mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
       mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
