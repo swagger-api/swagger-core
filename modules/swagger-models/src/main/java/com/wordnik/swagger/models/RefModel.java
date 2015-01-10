@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.*;
 
 public class RefModel extends AbstractModel {
+  // internally, the ref value is never fully qualified
   private String ref;
   private String description;
   private Map<String, Property> properties;
@@ -45,10 +46,13 @@ public class RefModel extends AbstractModel {
   }
 
   public String get$ref() {
-    return ref;
+    return "#/definitions/" + ref;
   }
   public void set$ref(String ref) {
-    this.ref = ref;
+    if(ref.indexOf("#/definitions/") == 0)
+      this.ref = ref.substring("#/definitions/".length());
+    else
+      this.ref = ref;
   }
 
   public String getExample() {
