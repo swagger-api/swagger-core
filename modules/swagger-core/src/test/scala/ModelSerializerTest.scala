@@ -40,11 +40,11 @@ class ModelSerializerTest extends FlatSpec with Matchers {
     val model = new ArrayModel()
     model.setItems(new RefProperty("Pet"))
 
-    m.writeValueAsString(model) should be ("""{"type":"array","items":{"$ref":"Pet"}}""")
+    m.writeValueAsString(model) should be ("""{"type":"array","items":{"$ref":"#/definitions/Pet"}}""")
   }
 
   it should "deserialize an array model" in {
-    val json = """{"type":"array","items":{"$ref":"Pet"}}"""
+    val json = """{"type":"array","items":{"$ref":"#/definitions/Pet"}}"""
     val p = m.readValue(json, classOf[Model])
     p.isInstanceOf[ArrayModel] should be (true)
     m.writeValueAsString(p) should equal (json)

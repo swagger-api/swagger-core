@@ -28,7 +28,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
         "type" : "string"
       },
       "address" : {
-        "$ref" : "Address"
+        "$ref" : "#/definitions/Address"
       },
       "properties" : {
         "type" : "object",
@@ -120,5 +120,10 @@ class ModelConverterTest extends FlatSpec with Matchers {
     schemas.size should be (1)
     val model = schemas.keySet().iterator().next()
     model should be ("MyModel")
+  }
+
+  it should "maintain property names" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[ModelPropertyName])
+    Json.prettyPrint(schemas)
   }
 }

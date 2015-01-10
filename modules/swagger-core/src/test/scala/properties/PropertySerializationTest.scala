@@ -152,11 +152,11 @@ class PropertySerializationTest extends FlatSpec with Matchers {
 
   it should "serialize a RefProperty" in {
     val p = new RefProperty("Dog")
-    m.writeValueAsString(p) should be ("""{"$ref":"Dog"}""")
+    m.writeValueAsString(p) should be ("""{"$ref":"#/definitions/Dog"}""")
   }
 
   it should "deserialize a RefProperty" in {
-    val json = """{"$ref":"Dog"}"""
+    val json = """{"$ref":"#/definitions/Dog"}"""
     val p = m.readValue(json, classOf[Property])
     p.getClass should be (classOf[RefProperty])
     m.writeValueAsString(p) should equal (json)

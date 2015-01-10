@@ -159,11 +159,11 @@ schema:
   it should "serialize a ref BodyParameter" in {
     val model = new RefModel("Cat")
     val p = new BodyParameter().schema(model)
-    m.writeValueAsString(p) should be ("""{"in":"body","required":false,"schema":{"$ref":"Cat"}}""")
+    m.writeValueAsString(p) should be ("""{"in":"body","required":false,"schema":{"$ref":"#/definitions/Cat"}}""")
   }
 
   it should "deserialize a ref BodyParameter" in {
-    val json = """{"in":"body","required":false,"schema":{"$ref":"Cat"}}"""
+    val json = """{"in":"body","required":false,"schema":{"$ref":"#/definitions/Cat"}}"""
     val p = m.readValue(json, classOf[Parameter])
     m.writeValueAsString(p) should equal (json)
   }
@@ -171,11 +171,11 @@ schema:
   it should "serialize an array BodyParameter" in {
     val model = new ArrayModel().items(new RefProperty("Cat"))
     val p = new BodyParameter().schema(model)
-    m.writeValueAsString(p) should be ("""{"in":"body","required":false,"schema":{"type":"array","items":{"$ref":"Cat"}}}""")
+    m.writeValueAsString(p) should be ("""{"in":"body","required":false,"schema":{"type":"array","items":{"$ref":"#/definitions/Cat"}}}""")
   }
 
   it should "deserialize an array BodyParameter" in {
-    val json = """{"in":"body","required":false,"schema":{"type":"array","items":{"$ref":"Cat"}}}"""
+    val json = """{"in":"body","required":false,"schema":{"type":"array","items":{"$ref":"#/definitions/Cat"}}}"""
     val p = m.readValue(json, classOf[Parameter])
     m.writeValueAsString(p) should equal (json)
   }

@@ -37,7 +37,7 @@ class CompositionTest extends FlatSpec with Matchers {
   },
   "Pet" : {
     "allOf" : [ {
-      "$ref" : "Human"
+      "$ref" : "#/definitions/Human"
     }, {
       "required" : [ "isDomestic", "name", "type" ],
       "properties" : {
@@ -78,7 +78,7 @@ class CompositionTest extends FlatSpec with Matchers {
   },
   "Human" : {
     "allOf" : [ {
-      "$ref" : "Animal"
+      "$ref" : "#/definitions/Animal"
     }, {
       "properties" : {
         "name" : {
@@ -98,7 +98,7 @@ class CompositionTest extends FlatSpec with Matchers {
   },
   "Pet" : {
     "allOf" : [ {
-      "$ref" : "Animal"
+      "$ref" : "#/definitions/Animal"
     }, {
       "required" : [ "isDomestic", "name", "type" ],
       "properties" : {

@@ -48,10 +48,10 @@ class ScalaModelTest extends FlatSpec with Matchers {
     keys(3) should be ("dateValue")
     keys(4) should be ("booleanValue")
 
-    m.writeValueAsString(schemas) should equal ("""{"CaseClassWithOptionLong":{"properties":{"intValue":{"type":"integer","format":"int32"},"longValue":{"type":"array","items":{"$ref":"Object"}},"setValue":{"type":"array","items":{"type":"string"}},"dateValue":{"type":"string","format":"date-time"},"booleanValue":{"type":"boolean"}}}}""")
+    m.writeValueAsString(schemas) should equal ("""{"CaseClassWithOptionLong":{"properties":{"intValue":{"type":"integer","format":"int32"},"longValue":{"type":"array","items":{"$ref":"#/definitions/Object"}},"setValue":{"type":"array","items":{"type":"string"}},"dateValue":{"type":"string","format":"date-time"},"booleanValue":{"type":"boolean"}}}}""")
   }
 
-  it should "convert a scala case class with nexted models" in {
+  it should "convert a scala case class with nested models" in {
     m.registerModule(DefaultScalaModule)
     val schemas = ModelConverters.getInstance().readAll(classOf[NestedModel])
 
@@ -71,7 +71,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
   "NestedModel" : {
     "properties" : {
       "complexModel" : {
-        "$ref" : "ComplexModel"
+        "$ref" : "#/definitions/ComplexModel"
       },
       "localtime" : {
         "type" : "string",
