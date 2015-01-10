@@ -1,20 +1,13 @@
 package com.wordnik.swagger.converter;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.properties.Property;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wordnik.swagger.models.Model;
-import com.wordnik.swagger.models.properties.Property;
+import java.util.*;
+import java.lang.reflect.Type;
 
 public class ModelConverterContextImpl implements ModelConverterContext {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ModelConverterContextImpl.class);
@@ -58,7 +51,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 		}
 		Property resolvedProperty = null;
 		for (ModelConverter modelConverter : converters) {
-			resolvedProperty = modelConverter.resolveProperty(type,this);
+			resolvedProperty = modelConverter.resolveProperty(type, this);
 			if(resolvedProperty!=null){
 				return resolvedProperty;
 			}
@@ -70,7 +63,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 	public Model resolve(Type type) {		
 		if(processedTypes.contains(type)){
 			return modelByType.get(type);
-		}else{
+		} else {
 			processedTypes.add(type);
 		}
 		if(LOGGER.isDebugEnabled()){
@@ -78,8 +71,8 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 		}
 		Model resolve = null;
 		for (ModelConverter modelConverter : converters) {
-			resolve = modelConverter.resolve(type,this);
-			if(resolve!=null){
+			resolve = modelConverter.resolve(type, this);
+			if(resolve != null){
 				break;
 			}
 		}
