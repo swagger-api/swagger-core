@@ -33,13 +33,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     return _mapper;
   }
 
-  public Property resolveProperty(Type type,ModelConverterContext context) {
+  public Property resolveProperty(Type type, ModelConverterContext context) {
     return resolveProperty(_mapper.constructType(type),context);
   }
 
-  public Property resolveProperty(JavaType propType,ModelConverterContext context) {
+  public Property resolveProperty(JavaType propType, ModelConverterContext context) {
     Property property = null;
-
     String typeName = _typeName(propType);
 
     // primitive or null
@@ -115,11 +114,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     return resolve(_mapper.constructType(type),context);
   }
 
-  public Model resolve(JavaType type,ModelConverterContext context) {
+  public Model resolve(JavaType type, ModelConverterContext context) {
     final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
     
     // Couple of possibilities for defining
     String name = _typeName(type, beanDesc);
+
     if("Object".equals(name)) {
 	    return new ModelImpl();
     }
@@ -127,7 +127,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     if(type.isMapLikeType()) {
       return null;
     }
-
 
     ModelImpl model = new ModelImpl()
       .name(name)
