@@ -19,17 +19,32 @@ class XmlModelTest extends FlatSpec with Matchers {
   it should "process an XML model attribute" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Monster])
     val model = schemas.get("Monster")
+
+    Json.prettyPrint(model)
     model should not be (null)
     model.isInstanceOf[ModelImpl] should be (true)
     var xml = model.asInstanceOf[ModelImpl].getXml()
 
-    // xml should not be (null)
-    // xml.getName() should equal("monster")
-    // val property = model.getProperties().get("children")
-    // property should not be (null)
-    // xml = property.getXml()
-    // xml.getWrapped should equal (true)
-    // xml.getName() should be ("children")
+    xml should not be (null)
+    xml.getName() should equal("monster")
+    val property = model.getProperties().get("children")
+    property should not be (null)
+    xml = property.getXml()
+    xml.getWrapped should equal (true)
+    xml.getName() should be ("children")
+  }
+
+  it should "not create an xml object" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[Address])
+    val model = schemas.get("Address")
+
+    model should not be (null)
+    model.isInstanceOf[ModelImpl] should be (true)
+
+    val property = model.getProperties().get("streetNumber")
+    var xml = property.getXml()
+
+    xml should be (null)
   }
 }
 

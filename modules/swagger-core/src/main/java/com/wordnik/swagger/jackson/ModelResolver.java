@@ -1,42 +1,29 @@
 package com.wordnik.swagger.jackson;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.converter.ModelConverter;
+import com.wordnik.swagger.converter.ModelConverterContext;
+import com.wordnik.swagger.models.*;
+import com.wordnik.swagger.models.properties.*;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyMetadata;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.converter.ModelConverter;
-import com.wordnik.swagger.converter.ModelConverterContext;
-import com.wordnik.swagger.models.ComposedModel;
-import com.wordnik.swagger.models.Model;
-import com.wordnik.swagger.models.ModelImpl;
-import com.wordnik.swagger.models.RefModel;
-import com.wordnik.swagger.models.Xml;
-import com.wordnik.swagger.models.properties.ArrayProperty;
-import com.wordnik.swagger.models.properties.MapProperty;
-import com.wordnik.swagger.models.properties.Property;
-import com.wordnik.swagger.models.properties.RefProperty;
-import com.wordnik.swagger.models.properties.StringProperty;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.annotation.*;
+import java.lang.reflect.Type;
+import java.util.*;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
-	
+	Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
+
   @SuppressWarnings("serial")
   public ModelResolver(ObjectMapper mapper) {
 	  super(mapper);
@@ -149,6 +136,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     // if XmlRootElement annotation, construct an Xml object and attach it to the model
     XmlRootElement rootAnnotation = beanDesc.getClassAnnotations().get(XmlRootElement.class);
     if(rootAnnotation != null && rootAnnotation.name() != null && !"".equals(rootAnnotation.name())) {
+      LOGGER.debug(rootAnnotation.toString());
       Xml xml = new Xml()
         .name(rootAnnotation.name());
       if(rootAnnotation.namespace() != null && !"".equals(rootAnnotation.namespace()) && !"##default".equals(rootAnnotation.namespace()))
@@ -218,8 +206,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
               Xml xml = new Xml();
               xml.setWrapped(true);
 
-              if(wrapper.name() != null && !"".equals(wrapper.name()))
-                xml.setName(wrapper.name());
+              if(wrapper.name() != null) {
+                if("##default".equals(wrapper.name()))
+                  xml.setName(propName);
+                else if(!"".equals(wrapper.name()))
+                  xml.setName(wrapper.name());
+              }
               if(wrapper.namespace() != null && !"".equals(wrapper.namespace()) && !"##default".equals(wrapper.namespace()))
                 xml.setNamespace(wrapper.namespace());
 
@@ -229,12 +221,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             XmlElement element = member.getAnnotation(XmlElement.class);
             if(element != null) {
               if(element.name() != null && !"".equals(element.name())) {
-                Xml xml = property.getXml();
-                if(xml == null) {
-                  xml = new Xml();
-                  property.setXml(xml);
+                // don't set Xml object if name is same
+                if(!element.name().equals(propName)) {
+                  Xml xml = property.getXml();
+                  if(xml == null) {
+                    xml = new Xml();
+                    property.setXml(xml);
+                  }
+                  xml.setName(element.name());
                 }
-                xml.setName(element.name());
               }
             }
           }
