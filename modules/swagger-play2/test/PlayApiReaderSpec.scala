@@ -1,5 +1,3 @@
-
-
 import play.modules.swagger._
 
 import org.specs2.mutable._
@@ -9,10 +7,9 @@ import test.testdata.DogController
 
 import com.wordnik.swagger.core.SwaggerSpec
 import com.wordnik.swagger.config.SwaggerConfig
-import com.wordnik.swagger.model.{Parameter, Operation}
+import com.wordnik.swagger.model._
 
 import org.mockito.Mockito._
-
 
 class PlayApiReaderSpec extends Specification with Mockito {
   "PlayApiReader.SwaggerUtils" should {
@@ -350,7 +347,7 @@ class PlayApiReaderSpec extends Specification with Mockito {
       val fullMethodName = reader.getFullMethodName(dogControllerClass, get1Method)
       val operation: Operation = reader.readMethod(get1Method, fullMethodName).get
       operation.parameters.length must beEqualTo(1)
-      operation.parameters.head must beEqualTo(Parameter("dogId", Some("ID of dog to fetch"), None, true, false, "long", null, "path", None))
+      operation.parameters.head must beEqualTo(Parameter("dogId", Some("ID of dog to fetch"), None, true, false, "long", AnyAllowableValues, "path", None))
     }
 
     "adds 'parameters' when defined by @ApiImplicitParams" in {
