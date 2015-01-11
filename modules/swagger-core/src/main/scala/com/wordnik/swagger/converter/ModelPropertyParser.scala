@@ -200,16 +200,30 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       var paramType = getDataType(genericReturnType, returnType, false)
       LOGGER.debug("inspecting " + paramType)
       var simpleName = Option(overrideDataType) match {
-        case Some(e) => e
+        case Some(e) => {
+          // split out the base part
+          val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9_]*)\\].*".r
+          val out = e match {
+            case ComplexTypeMatcher(t, e) => e.substring(e.lastIndexOf(".") + 1)
+            case _ => e
+          }
+          out
+        }
         case _ => getDataType(genericReturnType, returnType, true)
       }
       if (!"void".equals(paramType) && null != paramType && !processedFields.contains(name)) {
         if(!excludedFieldTypes.contains(paramType)) {
           val items = {
             val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9_]*)\\].*".r
-            paramType match {
+            val nameToUse = {
+              if(overrideDataType != null) 
+                overrideDataType
+              else 
+                paramType
+            }
+
+            nameToUse match {
               case ComplexTypeMatcher(containerType, basePart) => {
-                LOGGER.debug("containerType: " + containerType + ", basePart: " + basePart + ", simpleName: " + simpleName)
                 paramType = containerType
                 val typeRef = simpleName match {
                   case ComplexTypeMatcher(t, simpleTypeRef) => {
@@ -224,9 +238,13 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
                 if(isComplex(typeRef)) {
                   Some(ModelRef(null, Some(typeRef), Some(basePart)))
                 }
-                else Some(ModelRef(typeRef, None, Some(basePart)))
+                else {
+                  Some(ModelRef(typeRef, None, Some(basePart)))
+                }
               }
-              case _ => None
+              case _ => {
+                None
+              }
             }
           }
 
@@ -318,6 +336,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
           description = readString(e.value)
           notes = readString(e.notes)
           paramType = readString(e.dataType)
+          LOGGER.debug("using override param type " + paramType)
           if(e.required)
             required = true
           if(e.position != 0) position = e.position
