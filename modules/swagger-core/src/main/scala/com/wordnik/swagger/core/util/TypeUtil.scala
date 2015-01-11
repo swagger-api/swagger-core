@@ -70,7 +70,10 @@ object TypeUtil {
   def isParameterizedList(gt: Type): Boolean = {
     if (classOf[ParameterizedType].isAssignableFrom(gt.getClass)) {
       val tp = gt.asInstanceOf[ParameterizedType].getRawType
-      (tp == classOf[java.util.List[_]] || tp == classOf[scala.List[_]] || tp == classOf[Seq[_]])
+      (tp == classOf[java.util.List[_]] ||
+        tp == classOf[scala.List[_]] ||
+        tp == classOf[java.util.Collection[_]] ||
+        tp == classOf[Seq[_]])
     }
     else false
   }
