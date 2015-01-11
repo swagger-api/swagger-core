@@ -22,6 +22,7 @@ public class Operation {
   private List<Map<String, List<String>>> security;
   private String example;
   private ExternalDocs externalDocs;
+  private Boolean deprecated;
 
   public Operation summary(String summary) {
     this.setSummary(summary);
@@ -85,6 +86,10 @@ public class Operation {
   }
   public Operation externalDocs(ExternalDocs externalDocs) {
     this.setExternalDocs(externalDocs);
+    return this;
+  }
+  public Operation deprecated(Boolean deprecated) {
+    this.setDeprecated(deprecated);
     return this;
   }
 
@@ -205,6 +210,17 @@ public class Operation {
   }
 
   public void setExternalDocs(ExternalDocs value) {
-    externalDocs = value;
+    this.externalDocs = value;
+  }
+
+  public Boolean isDeprecated() {
+    return deprecated;
+  }
+
+  public void setDeprecated(Boolean value) {
+    if(value == null || value.equals(Boolean.FALSE))
+      this.deprecated = null;
+    else
+      this.deprecated = value;
   }
 }

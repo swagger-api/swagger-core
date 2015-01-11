@@ -49,6 +49,7 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
       .description("a longer description")
       .tag("Pet Operations")
       .operationId("get pet by id")
+      .deprecated(true)
 
     get.parameter(new QueryParameter()
       .name("tags")
