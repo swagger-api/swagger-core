@@ -18,7 +18,7 @@ import org.scalatest.Matchers
 class BoxedTypesTest extends FlatSpec with Matchers {
   implicit val formats = SwaggerSerializers.formats
 
-  "ModelConverters" should "format a BoxedType" in {
+  it should "format a BoxedType" in {
     val model = ModelConverters.read(classOf[BoxedTypesIssue31]).getOrElse(fail("no model found"))
     model.properties.size should be(5)
     write(model) should be( """{"id":"BoxedTypesIssue31","description":"Options of boxed types produces an Object ref instead of correct type","properties":{"stringSeq":{"type":"array","items":{"type":"string"}},"stringOpt":{"type":"string"},"intSeq":{"type":"array","description":"Integers in a Sequence Box","items":{"$ref":"Object"}},"intOpt":{"$ref":"Object","description":"Integer in an Option Box"},"justInt":{"type":"integer","format":"int32"}}}""")
