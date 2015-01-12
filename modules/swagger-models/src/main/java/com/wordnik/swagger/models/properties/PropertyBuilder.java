@@ -99,8 +99,13 @@ public class PropertyBuilder {
         .exclusiveMinimum(exclusiveMinimum)
         .exclusiveMaximum(exclusiveMinimum);
     }
-    // if(property == null)
-    //   System.out.println("no property for " + type + ", " + format);
+    if("object".equals(type) && format == null) {
+        // fall back to Map if type is object and format is missing
+      System.out.println("no format specified for object type, falling back to object");
+      property = new ObjectProperty();
+    }    
+    if(property == null)
+      System.out.println("no property for " + type + ", " + format);
     return property;
   }
 }

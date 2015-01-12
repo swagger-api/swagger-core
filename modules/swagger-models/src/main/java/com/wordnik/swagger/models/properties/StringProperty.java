@@ -68,8 +68,9 @@ public class StringProperty extends AbstractProperty implements Property {
     this.pattern = pattern;
   }
 
+  //TODO: implement additional formats
   public static boolean isType(String type, String format) {
-    if("string".equals(type) && format == null)
+    if("string".equals(type) && (format == null || "uri".equals(format) || "byte".equals(format)))
       return true;
     else return false;
   }
