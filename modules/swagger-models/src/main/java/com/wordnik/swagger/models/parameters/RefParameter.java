@@ -22,11 +22,11 @@ public class RefParameter extends AbstractParameter implements Parameter {
   }
 
   public String get$ref() {
-    return "#/definitions/" + ref;
+    return "#/parameters/" + ref;
   }
   public void set$ref(String ref) {
-    if(ref.indexOf("#/definitions/") == 0)
-      this.ref = ref.substring("#/definitions/".length());
+    if(ref.indexOf("#/parameters/") == 0)
+      this.ref = ref.substring("#/parameters/".length());
     else
       this.ref = ref;
   }
@@ -39,8 +39,8 @@ public class RefParameter extends AbstractParameter implements Parameter {
 
   @JsonIgnore
   public String getSimpleRef() {
-    if(ref.indexOf("#/definitions/") == 0)
-      return ref.substring("#/definitions/".length());
+    if(ref.indexOf("#/parameters/") == 0)
+      return ref.substring("#/parameters/".length());
     else
       return ref;
   }
