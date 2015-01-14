@@ -34,4 +34,6 @@ public interface Property {
 
   Xml getXml();
   void setXml(Xml xml);
+
+  String getDefaultValue();
 }

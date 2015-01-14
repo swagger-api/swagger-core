@@ -79,16 +79,6 @@ public class PropertyBuilder {
         .minLength(minLength)
         .maxLength(maxLength)
         .pattern(pattern);
-    // general properties
-    if(property != null) {
-      property
-        .title(title)
-        .description(description);
-      String example = (String)args.get("example");
-      if (example != null) {
-        property.setExample(example);
-      }
-    }
     // fallbacks
     if("integer".equals(type) && format == null) {
         // fall back to Integer if type is integer and format is missing
@@ -104,8 +94,20 @@ public class PropertyBuilder {
       System.out.println("no format specified for object type, falling back to object");
       property = new ObjectProperty();
     }    
-    if(property == null)
-      System.out.println("no property for " + type + ", " + format);
+    if (property == null) {
+      throw new IllegalArgumentException("Invalid property type (type=" + type + ", format=" + format + ")\n" + args);
+    }
+    // general properties
+    property
+      .title(title)
+      .description(description);
+    String example = (String)args.get("example");
+    if (example != null) {
+      property.setExample(example);
+    }
+    if (_default != null) {
+      property.setDefaultValue(_default);
+    }
     return property;
   }
 }
