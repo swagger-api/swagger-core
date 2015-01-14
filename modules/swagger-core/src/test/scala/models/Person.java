@@ -2,6 +2,9 @@ package models;
 
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder({ "id", "firstName", "address", "properties", "birthDate", "float", "double" })
 public class Person {
   private Long id;
   private String firstName;
