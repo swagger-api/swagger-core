@@ -63,7 +63,7 @@ class ParameterSerializationTest extends FlatSpec with Matchers {
       .items(new StringProperty())
       .collectionFormat("multi")
     m.writeValueAsString(p) should be ("""{"in":"path","required":true,"type":"array","items":{"type":"string"},"collectionFormat":"multi"}""")
-    yaml.writeValueAsString(p) should equal (
+    yaml.writeValueAsString(p).replace("\r", "") should equal (
 """---
 in: "path"
 required: true
@@ -71,7 +71,7 @@ type: "array"
 items:
   type: "string"
 collectionFormat: "multi"
-""")
+""".replace("\r", ""))
   }
 
   it should "deserialize a string array PathParameter" in {
@@ -97,12 +97,12 @@ collectionFormat: "multi"
   it should "serialize a HeaderParameter" in {
     val p = new HeaderParameter().property(new StringProperty())
     m.writeValueAsString(p) should be ("""{"in":"header","required":false,"type":"string"}""")
-    yaml.writeValueAsString(p) should equal(
+    yaml.writeValueAsString(p).replace("\r", "") should equal(
 """---
 in: "header"
 required: false
 type: "string"
-""")
+""".replace("\r", ""))
   }
 
   it should "deserialize a HeaderParameter" in {
@@ -138,7 +138,7 @@ type: "string"
       .name("Cat")
       .property("name", new StringProperty())
     val p = new BodyParameter().schema(model)
-    yaml.writeValueAsString(p) should equal(
+    yaml.writeValueAsString(p).replace("\r", "") should equal(
 """---
 in: "body"
 required: false
@@ -146,7 +146,7 @@ schema:
   properties:
     name:
       type: "string"
-""")
+""".replace("\r", ""))
   }
 
   it should "deserialize a BodyParameter" in {
