@@ -1,7 +1,8 @@
 package models.composition;
 
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+@JsonPropertyOrder({ "name", "type", "firstName", "lastName" })
 public class Human implements Animal {
   private String name;
   private String type;
