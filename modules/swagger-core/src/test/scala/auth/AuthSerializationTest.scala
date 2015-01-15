@@ -29,12 +29,12 @@ class AuthSerializationTest extends FlatSpec with Matchers {
     val auth = new ApiKeyAuthDefinition()
       .name("api-key")
       .in(In.HEADER)
-    Yaml.mapper.writeValueAsString(auth) should be (
+    Yaml.mapper.writeValueAsString(auth).replace("\r", "") should be (
     """---
 type: "apiKey"
 name: "api-key"
 in: "header"
-"""
+""".replace("\r", "")
     )
   }
 
