@@ -2,7 +2,7 @@ package com.wordnik.swagger.jaxrs.config;
 
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.jaxrs.Reader;
-import com.wordnik.swagger.config.Scanner;
+import com.wordnik.swagger.config.*;
 
 import com.wordnik.swagger.annotations.Api;
 

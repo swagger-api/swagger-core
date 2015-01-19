@@ -1,4 +1,4 @@
-package com.wordnik.swagger.jaxrs.config;
+package com.wordnik.swagger.config;
 
 import com.wordnik.swagger.config.Scanner;
 

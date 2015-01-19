@@ -1,15 +1,16 @@
 package com.wordnik.swagger.jaxrs.config;
 
 import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.config.Scanner;
-// import com.wordnik.swagger.config.{ SwaggerConfig, FilterFactory }
+import com.wordnik.swagger.config.*;
+
+///*, FilterFactory
 // import com.wordnik.swagger.core.filter.SwaggerSpecFilter
 
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 
-public class WebXMLReader /*implements SwaggerConfig*/ {
+public class WebXMLReader implements SwaggerConfig {
   String basePath, host, filterClass, apiVersion, title, scheme = "http";
 
   public WebXMLReader(ServletConfig servletConfig) {
