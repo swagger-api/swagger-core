@@ -80,6 +80,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       else if(valueType != null) {
         ArrayProperty arrayProperty = new ArrayProperty();
         Property innerType = getPrimitiveProperty(_typeName(valueType));
+        System.out.println(keyType);
+        System.out.println(innerType);
         if(innerType == null) {
           String propertyTypeName = _typeName(valueType);
           Model innerModel = context.resolve(valueType);
@@ -91,6 +93,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
           }
         }
         else {
+          if(keyType == null) {
+            Class<?> cls = propType.getRawClass();
+            if(cls != null) {
+              for(Class<?> a : cls.getInterfaces()) {
+                if(java.util.Set.class.equals(a))
+                  arrayProperty.setUniqueItems(true);
+              }
+            }
+          }
+
           arrayProperty.setItems(innerType);
           property = arrayProperty;
         }
@@ -254,13 +266,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
               }
             }
           }
-
           props.add(property);
-          // model.property(propName, property);
         }
       }
     }
-
 
     List<NamedType> nts = _intr.findSubtypes(beanDesc.getClassInfo());
     if (nts != null) {
