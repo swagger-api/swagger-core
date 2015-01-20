@@ -123,7 +123,7 @@ public class BeanConfig extends AbstractScanner implements Scanner {
 
     ScannerFactory.setScanner(this);
   }
-  public Boolean getScan() {
+  public boolean getScan() {
     return true;
   }
 
