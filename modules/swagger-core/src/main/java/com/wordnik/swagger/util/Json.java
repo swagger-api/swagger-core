@@ -54,7 +54,7 @@ public class Json {
 
   public static void prettyPrint(Object o) {
     try {
-      System.out.println(pretty().writeValueAsString(o));
+      System.out.println(pretty().writeValueAsString(o).replace("\r", ""));
     }
     catch (Exception e) {
       e.printStackTrace();

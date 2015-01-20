@@ -131,11 +131,11 @@ class ModelConverterTest extends FlatSpec with Matchers {
 
     val model = schemas.get(modelName)
 
-    val itr = model.getProperties().keySet().iterator()
+    val itr = new java.util.TreeSet(model.getProperties().keySet()).iterator()
     val prop1Name = itr.next()
     val prop2Name = itr.next()
 
-    prop1Name should be ("is_persistent")
-    prop2Name should be ("gettersAndHaters")
+    prop1Name should be ("gettersAndHaters")
+    prop2Name should be ("is_persistent")
   }
 }
