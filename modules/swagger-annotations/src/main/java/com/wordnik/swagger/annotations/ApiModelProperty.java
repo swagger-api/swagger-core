@@ -78,4 +78,9 @@ public @interface ApiModelProperty {
    * A sample value for the property
    **/
   String example() default "";
+
+  /**
+   * Allows a model property to be designated as read only
+   **/
+  boolean readOnly() default false;
 }

@@ -113,7 +113,6 @@ class ModelConverterTest extends FlatSpec with Matchers {
     }
   }
 }""")
-
   }
 
   it should "honor the ApiModel name" in {

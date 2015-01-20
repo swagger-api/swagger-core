@@ -28,7 +28,9 @@ public interface Property {
   String getExample();
   void setExample(String example);
 
-  // @JsonIgnore
+  Boolean getReadOnly();
+  void setReadOnly(Boolean example);
+
   void setPosition(Integer position);
   Integer getPosition();
 

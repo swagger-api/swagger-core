@@ -2,6 +2,7 @@ import com.wordnik.swagger.models._
 import com.wordnik.swagger.models.properties._
 import com.wordnik.swagger.converter._
 
+import models._
 import com.wordnik.swagger.util.Json
 
 import scala.collection.mutable.HashMap
@@ -56,5 +57,10 @@ class ModelSerializerTest extends FlatSpec with Matchers {
     model.setExternalDocs(new ExternalDocs("external docs", "http://swagger.io"));
 
     Json.mapper().writeValueAsString(model) should be ("""{"$ref":"#/definitions/Monster"}""")
+  }
+
+  it should "make a field readOnly by annotation" in {
+    val schemas = ModelConverters.getInstance().read(classOf[Car])
+    Json.mapper().writeValueAsString(schemas) should be ("""{"Car":{"properties":{"wheelCount":{"type":"integer","format":"int32","readOnly":true}}}}""")
   }
 }

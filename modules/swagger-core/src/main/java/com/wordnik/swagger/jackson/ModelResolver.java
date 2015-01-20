@@ -217,6 +217,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             property.setPosition(index);
           }
           property.setExample(_findExampleValue(member));
+          property.setReadOnly(_findReadOnly(member));
 
           if(property != null) {
             // check for XML annotations
