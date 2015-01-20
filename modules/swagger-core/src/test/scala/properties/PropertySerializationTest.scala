@@ -203,6 +203,17 @@ class PropertySerializationTest extends FlatSpec with Matchers {
     p.getClass should be (classOf[ArrayProperty])
     m.writeValueAsString(p) should equal (json)
   }
+
+  it should "serialize a string property with readOnly set" in {
+    val p = new StringProperty().readOnly()
+    m.writeValueAsString(p) should equal ("""{"type":"string","readOnly":true}""")
+  }
+
+  it should "serialize a string property with readOnly unset" in {
+    val p = new StringProperty()
+    p.setReadOnly(false)
+    m.writeValueAsString(p) should equal ("""{"type":"string"}""")
+  }
 /*
   it should "read a file property" in {
     val json = """{"type":"File"}"""

@@ -12,6 +12,7 @@ public abstract class AbstractProperty implements Property {
   Integer position;
   String description;
   String title;
+  Boolean readOnly;
 
   public Property title(String title) {
     this.setTitle(title);
@@ -19,6 +20,10 @@ public abstract class AbstractProperty implements Property {
   }
   public Property description(String description) {
     this.setDescription(description);
+    return this;
+  }
+  public Property readOnly() {
+    this.setReadOnly(Boolean.TRUE);
     return this;
   }
 
@@ -83,5 +88,15 @@ public abstract class AbstractProperty implements Property {
   }
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public Boolean getReadOnly() {
+    return readOnly;
+  }
+  public void setReadOnly(Boolean readOnly) {
+    if(Boolean.FALSE.equals(readOnly))
+      this.readOnly = null;
+    else
+      this.readOnly = readOnly;
   }
 }
