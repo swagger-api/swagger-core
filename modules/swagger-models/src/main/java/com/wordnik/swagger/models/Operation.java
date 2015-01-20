@@ -2,7 +2,7 @@ package com.wordnik.swagger.models;
 
 import com.wordnik.swagger.models.parameters.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ public class Operation {
   private String example;
   private ExternalDocs externalDocs;
   private Boolean deprecated;
+  private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
   public Operation summary(String summary) {
     this.setSummary(summary);
@@ -222,5 +223,17 @@ public class Operation {
       this.deprecated = null;
     else
       this.deprecated = value;
+  }
+
+  @JsonAnyGetter
+  public Map<String, Object> getVendorExtensions() {
+    return vendorExtensions;
+  }
+
+  @JsonAnySetter
+  public void setVendorExtension(String name, Object value) {
+    if (name.startsWith("x-")) {
+      vendorExtensions.put(name, value);
+    }
   }
 }

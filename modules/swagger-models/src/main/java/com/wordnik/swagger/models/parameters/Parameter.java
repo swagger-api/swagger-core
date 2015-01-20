@@ -1,5 +1,7 @@
 package com.wordnik.swagger.models.parameters;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public interface Parameter {
@@ -19,4 +21,6 @@ public interface Parameter {
 
   boolean getRequired();
   void setRequired(boolean required);
+
+  Map<String, Object> getVendorExtensions();
 }

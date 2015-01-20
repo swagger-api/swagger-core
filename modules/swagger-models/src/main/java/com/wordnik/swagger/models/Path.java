@@ -1,10 +1,13 @@
 package com.wordnik.swagger.models;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.wordnik.swagger.models.parameters.Parameter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +20,7 @@ public class Path {
   private Operation patch;
   private Operation options;
   private List<Parameter> parameters;
+  private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
   public Path set(String method, Operation op) {
     if("get".equals(method))
@@ -120,5 +124,17 @@ public class Path {
       return true;
     else
       return false;
+  }
+
+  @JsonAnyGetter
+  public Map<String, Object> getVendorExtensions() {
+    return vendorExtensions;
+  }
+
+  @JsonAnySetter
+  public void setVendorExtension(String name, Object value) {
+    if (name.startsWith("x-")) {
+      vendorExtensions.put(name, value);
+    }
   }
 }
