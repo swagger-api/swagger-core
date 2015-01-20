@@ -59,10 +59,7 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     val schema = response.getSchema()
     schema.getClass should be (classOf[MapProperty])
   }
-}
 
-@RunWith(classOf[JUnitRunner])
-class SimpleScannerTest2 extends FlatSpec with Matchers {
   it should "scan a resource with generics per 653" in {
     val swagger = new Reader(new Swagger()).read(classOf[Resource653])
     val path = swagger.getPaths().get("external/info")
@@ -74,7 +71,5 @@ class SimpleScannerTest2 extends FlatSpec with Matchers {
 
     response should not be (null)
     response.getSchema should be (null)
-
-    Json.prettyPrint(swagger)
   }
 }
