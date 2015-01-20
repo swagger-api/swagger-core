@@ -15,7 +15,6 @@ import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
 class SimpleScannerTest extends FlatSpec with Matchers {
-
   it should "scan a simple resource" in {
     val swagger = new Reader(new Swagger()).read(classOf[SimpleResource])
     swagger.getPaths().size should be (2)
@@ -48,6 +47,7 @@ class SimpleScannerTest extends FlatSpec with Matchers {
 
   it should "scan a resource with map return type" in {
     val swagger = new Reader(new Swagger()).read(classOf[ResourceWithMapReturnValue])
+
     val path = swagger.getPaths().get("/{id}")
     val get = path.getGet()
     get should not be (null)
@@ -58,5 +58,23 @@ class SimpleScannerTest extends FlatSpec with Matchers {
 
     val schema = response.getSchema()
     schema.getClass should be (classOf[MapProperty])
+  }
+}
+
+@RunWith(classOf[JUnitRunner])
+class SimpleScannerTest2 extends FlatSpec with Matchers {
+  it should "scan a resource with generics per 653" in {
+    val swagger = new Reader(new Swagger()).read(classOf[Resource653])
+    val path = swagger.getPaths().get("external/info")
+    val get = path.getGet()
+    get should not be (null)
+
+    get.getResponses() should not be (null)
+    val response = get.getResponses().get("default")
+
+    response should not be (null)
+    response.getSchema should be (null)
+
+    Json.prettyPrint(swagger)
   }
 }

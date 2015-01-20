@@ -1,13 +1,20 @@
 package com.wordnik.swagger.models.properties;
 
 public class ArrayProperty extends AbstractProperty implements Property {
-  Property items;
+  protected Boolean uniqueItems;
+  protected Property items;
+
   public ArrayProperty() {
     super.type = "array";
   }
   public ArrayProperty(Property items) {
     super.type = "array";
     setItems(items);
+  }
+
+  public ArrayProperty uniqueItems() {
+    this.setUniqueItems(true);
+    return this;
   }
 
   public ArrayProperty description(String description) {
@@ -25,5 +32,15 @@ public class ArrayProperty extends AbstractProperty implements Property {
   }
   public void setItems(Property items) {
     this.items = items;
+  }
+
+  public Boolean getUniqueItems() {
+    return uniqueItems;
+  }
+  public void setUniqueItems(Boolean uniqueItems) {
+    if(Boolean.TRUE.equals(uniqueItems))
+      this.uniqueItems = true;
+    else
+      this.uniqueItems = null;
   }
 }

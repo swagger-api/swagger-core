@@ -208,11 +208,14 @@ public class Reader {
         }
       }
     }
+
     if(responseClass == null) {
       // pick out response from method declaration
       Type t = method.getGenericReturnType();
       responseClass = method.getReturnType();
-      Map<String, Model> models = ModelConverters.getInstance().readAll(t);
+      if(!responseClass.equals(java.lang.Void.class) && !"void".equals(responseClass.toString())) {
+        Map<String, Model> models = ModelConverters.getInstance().readAll(t);
+      }
     }
     if(responseClass != null
       && !responseClass.equals(java.lang.Void.class)
@@ -232,10 +235,9 @@ public class Reader {
             .schema(responseProperty));
         }
       }
-      else {
+      else if(!responseClass.equals(java.lang.Void.class) && !"void".equals(responseClass.toString())) {
         Map<String, Model> models = ModelConverters.getInstance().read(responseClass);
         if(models.size() == 0) {
-          System.out.println("responseClass " + responseClass);
           Property p = ModelConverters.getInstance().readAsProperty(responseClass);
           operation.response(200, new Response()
             .description("successful operation")
@@ -321,7 +323,7 @@ public class Reader {
     // genericParamTypes = method.getGenericParameterTypes
     for(int i = 0; i < parameterTypes.length; i++) {
     	Class<?> cls = parameterTypes[i];
-    	Type type = genericParameterTypes[i];
+      	Type type = genericParameterTypes[i];
     	Parameter parameter = getParameter(cls, type, paramAnnotations[i]);
       if(parameter != null) {
         // add it
@@ -343,6 +345,11 @@ public class Reader {
     boolean isArray = false;
 
     // see if it's a collection type
+    Class<?>[] interfaces = cls.getInterfaces();
+    for(Class<?> a : interfaces) {
+      if(java.util.List.class.equals(a))
+        isArray = true;
+    }
     if(type instanceof ParameterizedType){
       ParameterizedType aType = (ParameterizedType) type;
       Type[] parameterArgTypes = aType.getActualTypeArguments();
@@ -361,7 +368,6 @@ public class Reader {
       if(!shouldIgnore)
         parameter = ext.processParameter(annotations, cls, isArray);
     }
-
     if(parameter == null) {
       for(Annotation annotation : annotations) {
         if(annotation instanceof QueryParam) {
@@ -483,8 +489,14 @@ public class Reader {
             bp.setName("body");
           bp.setDescription(param.value());
 
-          if(cls.isArray()) {
-            Class innerType = cls.getComponentType();
+          if(cls.isArray() || isArray) {
+            Class<?> innerType;
+            if(isArray) {
+              innerType = cls;
+            }
+            else {
+              innerType = cls.getComponentType();
+            }
             Property innerProperty = ModelConverters.getInstance().readAsProperty(innerType);
             if(innerProperty == null) {
               Map<String, Model> models = ModelConverters.getInstance().read(innerType);
