@@ -123,6 +123,9 @@ public class BeanConfig extends AbstractScanner implements Scanner {
 
     ScannerFactory.setScanner(this);
   }
+  public Boolean getScan() {
+    return true;
+  }
 
   public Set<Class<?>> classes() {
     ConfigurationBuilder config = new ConfigurationBuilder()
