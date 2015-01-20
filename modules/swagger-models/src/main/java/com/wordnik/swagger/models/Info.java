@@ -1,5 +1,11 @@
 package com.wordnik.swagger.models;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+
 public class Info {
   private String description;
   private String version;
@@ -7,6 +13,7 @@ public class Info {
   private String termsOfService;
   private Contact contact;
   private License license;
+  private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
   public Info version(String version) {
     this.setVersion(version);
@@ -73,5 +80,17 @@ public class Info {
   }
   public void setLicense(License license) {
     this.license = license;
+  }
+
+  @JsonAnyGetter
+  public Map<String, Object> getVendorExtensions() {
+    return vendorExtensions;
+  }
+
+  @JsonAnySetter
+  public void setVendorExtension(String name, Object value) {
+    if (name.startsWith("x-")) {
+      vendorExtensions.put(name, value);
+    }
   }
 }
