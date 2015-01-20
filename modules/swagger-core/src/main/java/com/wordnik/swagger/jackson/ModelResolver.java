@@ -1,5 +1,7 @@
 package com.wordnik.swagger.jackson;
 
+import com.wordnik.swagger.util.Json;
+
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.converter.ModelConverter;
 import com.wordnik.swagger.converter.ModelConverterContext;
@@ -51,7 +53,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     } else if (propType.isContainerType()) {
       JavaType keyType = propType.getKeyType();
       JavaType valueType = propType.getContentType();
-
       if(keyType != null && valueType != null) {
         MapProperty mapProperty = new MapProperty();
         Property innerType = getPrimitiveProperty(_typeName(valueType));
@@ -80,12 +81,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       else if(valueType != null) {
         ArrayProperty arrayProperty = new ArrayProperty();
         Property innerType = getPrimitiveProperty(_typeName(valueType));
-        System.out.println(keyType);
-        System.out.println(innerType);
         if(innerType == null) {
           String propertyTypeName = _typeName(valueType);
           Model innerModel = context.resolve(valueType);
-          if(innerModel != null) {            
+          if(innerModel != null) {
+            Class<?> cls = propType.getRawClass();
+            if(cls != null) {
+              if(java.util.Set.class.equals(cls))
+                arrayProperty.setUniqueItems(true);
+              else {
+                for(Class<?> a : cls.getInterfaces()) {
+                  if(java.util.Set.class.equals(a)) {
+                    arrayProperty.setUniqueItems(true);
+                  }
+                }
+              }
+            }
             context.defineModel(propertyTypeName, innerModel);
             innerType = new RefProperty(propertyTypeName);
             arrayProperty.setItems(innerType);
@@ -255,7 +266,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if(element != null) {
               if(element.name() != null && !"".equals(element.name())) {
                 // don't set Xml object if name is same
-                if(!element.name().equals(propName)) {
+                if(!element.name().equals(propName) && !"##default".equals(element.name())) {
                   Xml xml = property.getXml();
                   if(xml == null) {
                     xml = new Xml();

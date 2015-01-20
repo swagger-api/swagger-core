@@ -3,6 +3,7 @@ import models.composition.Pet;
 
 import com.wordnik.swagger.util.Json
 import com.wordnik.swagger.models._
+import com.wordnik.swagger.models.properties._
 import com.wordnik.swagger.converter._
 
 import org.junit.runner.RunWith
@@ -137,5 +138,38 @@ class ModelConverterTest extends FlatSpec with Matchers {
 
     prop1Name should be ("gettersAndHaters")
     prop2Name should be ("is_persistent")
+  }
+}
+
+@RunWith(classOf[JUnitRunner])
+class ModelConverterTest2 extends FlatSpec with Matchers {
+  it should "seralize a parameterized type per 606" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[Employee])
+    val employee = schemas.get("employee").asInstanceOf[ModelImpl]
+    val props = employee.getProperties()
+    val et = props.keySet().iterator()
+    
+    val id = props.get(et.next())
+    id.getClass should be (classOf[IntegerProperty])
+
+    val firstName = props.get(et.next())
+    firstName.getClass should be (classOf[StringProperty])
+
+    val lastName = props.get(et.next())
+    lastName.getClass should be (classOf[StringProperty])
+
+    val department = props.get(et.next())
+    department.getClass should be (classOf[RefProperty])
+
+    val manager = props.get(et.next())
+    manager.getClass should be (classOf[RefProperty])
+
+    val team = props.get(et.next())
+    team.getClass should be (classOf[ArrayProperty])
+    val ap = team.asInstanceOf[ArrayProperty]
+    ap.getUniqueItems should equal (true)
+
+    employee.getXml should not be (null)
+    employee.getXml.getName should be ("employee")
   }
 }
