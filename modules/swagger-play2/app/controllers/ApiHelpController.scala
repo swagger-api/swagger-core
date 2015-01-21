@@ -84,8 +84,8 @@ object ApiHelpController extends SwaggerBaseApiController {
           val msg = new ErrorResponse(500, s"api listing for path $path not found")
           logger.error(msg.message)
           val responseStr = if (returnXml) toXmlString(msg) else toJsonString(msg)
-          val contentType = s"application/${if (returnXml) "xml" else "json"}"
-          new SimpleResult(header = ResponseHeader(500), body = Enumerator(responseStr.getBytes)).as(contentType)
+          val contentType = s"application/${if (returnXml) "xml" else "json"}; charset=$Utf8"
+          new SimpleResult(header = ResponseHeader(500), body = Enumerator(responseStr.getBytes(Utf8))).as(contentType)
         case Some(apiListing) =>
           val responseStr = if (returnXml) toXmlString(apiListing) else toJsonString(apiListing)
           returnValue(responseStr)
@@ -94,6 +94,7 @@ object ApiHelpController extends SwaggerBaseApiController {
 }
 
 class SwaggerBaseApiController extends Controller {
+  final val Utf8 = Charset.forName("UTF-8")
   protected final val logger = Logger("swagger")
 
   protected def jaxbContext = JAXBContext.newInstance(classOf[String], classOf[ResourceListing])
@@ -173,7 +174,7 @@ class SwaggerBaseApiController extends Controller {
 
   protected def XmlResponse(data: AnyRef) = {
     val xmlValue = toXmlString(data)
-    new SimpleResult(header = ResponseHeader(200), body = Enumerator(xmlValue.getBytes)).as(s"application/xml")
+    new SimpleResult(header = ResponseHeader(200), body = Enumerator(xmlValue.getBytes(Utf8))).as(s"application/xml; charset=$Utf8")
   }
 
   protected def returnValue(obj: String)(implicit request: RequestHeader): Result = {
@@ -188,6 +189,6 @@ class SwaggerBaseApiController extends Controller {
 
   protected def JsonResponse(data: AnyRef) = {
     val jsonValue = toJsonString(data)
-    new SimpleResult(header = ResponseHeader(200), body = Enumerator(jsonValue.getBytes)).as(s"application/json")
+    new SimpleResult(header = ResponseHeader(200), body = Enumerator(jsonValue.getBytes(Utf8))).as(s"application/json; charset=$Utf8")
   }
 }
