@@ -96,6 +96,10 @@ public abstract class AbstractModelConverter implements ModelConverter {
     else if("dateTime".equals(typeName)) {
       property = new DateTimeProperty();
     }
+    else if("byte".equals(typeName)) {
+      property = new StringProperty();
+      ((StringProperty)property).setFormat("byte");
+    }
     return property;
   }
 
