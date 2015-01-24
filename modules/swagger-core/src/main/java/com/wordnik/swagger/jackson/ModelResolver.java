@@ -45,12 +45,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     // primitive or null
     property = getPrimitiveProperty(typeName);
-
     // modelProp.setQualifiedType(_typeQName(propType));
     // And then properties specific to subset of property types:
-    if (propType.isEnumType()) {
-      // _addEnumProps(propDef, propType.getRawClass(), modelProp);
-    } else if (propType.isContainerType()) {
+    if (propType.isContainerType()) {
       JavaType keyType = propType.getKeyType();
       JavaType valueType = propType.getContentType();
       if(keyType != null && valueType != null) {
@@ -125,12 +122,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     if(property == null) {
-      // complex type
-      String propertyTypeName = _typeName(propType);
-      Model innerModel =  context.resolve(propType);      
-      if(innerModel != null) {      
-        context.defineModel(propertyTypeName, innerModel);
-        property = new RefProperty(propertyTypeName);
+      if (propType.isEnumType()) {
+        property = new StringProperty();
+        _addEnumProps(propType.getRawClass(), property);
+      }
+      else {
+        // complex type
+        String propertyTypeName = _typeName(propType);
+        Model innerModel =  context.resolve(propType);      
+        if(innerModel != null) {      
+          context.defineModel(propertyTypeName, innerModel);
+          property = new RefProperty(propertyTypeName);
+        }
       }
     }
 
@@ -141,9 +144,38 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     return resolve(_mapper.constructType(type),context);
   }
 
+  protected void _addEnumProps(Class<?> propClass, Property property) {
+    final boolean useIndex =  _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
+    final boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    // List<AllowableValue> enums = new ArrayList<AllowableValue>();
+    @SuppressWarnings("unchecked")
+    Class<Enum<?>> enumClass = (Class<Enum<?>>) propClass;
+    for (Enum<?> en : enumClass.getEnumConstants()) {
+      String n;
+      if (useIndex) {
+        n = String.valueOf(en.ordinal());
+      } else if (useToString) {
+        n = en.toString();
+      } else {
+        n = _intr.findEnumValue(en);
+      }
+      if(property instanceof StringProperty) {
+        StringProperty sp = (StringProperty) property;
+        sp._enum(n);
+      }
+    }
+  }
+
+
   public Model resolve(JavaType type, ModelConverterContext context) {
     final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
-    
+
+    if (type.isEnumType()) {
+      // _addEnumProps(type.getRawClass());
+      // BeanPropertyDefinition propDef : beanDesc.findProperties();
+      // _addEnumProps(propDef, propType.getRawClass(), modelProp);
+    }
+
     // Couple of possibilities for defining
     String name = _typeName(type, beanDesc);
 
