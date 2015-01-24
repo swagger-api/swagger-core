@@ -56,6 +56,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       if(keyType != null && valueType != null) {
         MapProperty mapProperty = new MapProperty();
         Property innerType = getPrimitiveProperty(_typeName(valueType));
+
         if(innerType == null) { 
           String propertyTypeName = _typeName(valueType);
           Model innerModel =context.resolve(valueType); 
@@ -83,7 +84,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Property innerType = getPrimitiveProperty(_typeName(valueType));
         if(innerType == null) {
           String propertyTypeName = _typeName(valueType);
+
+
           Model innerModel = context.resolve(valueType);
+
           if(innerModel != null) {
             Class<?> cls = propType.getRawClass();
             if(cls != null) {
@@ -133,7 +137,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     return property;
   }
   
-  public Model resolve(Type type,ModelConverterContext context) {
+  public Model resolve(Type type, ModelConverterContext context) {
     return resolve(_mapper.constructType(type),context);
   }
 
@@ -142,6 +146,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     
     // Couple of possibilities for defining
     String name = _typeName(type, beanDesc);
+
 
     if("Object".equals(name)) {
 	    return new ModelImpl();
@@ -222,7 +227,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       final AnnotatedMember member = propDef.getPrimaryMember();
       if(member != null) {
         JavaType propType = member.getType(beanDesc.bindingsForBeanType());
-        property =context.resolveProperty(propType);
+        property = context.resolveProperty(propType);
 
         if(property != null) {
           property.setName(propName);
