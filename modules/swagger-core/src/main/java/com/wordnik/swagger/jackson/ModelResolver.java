@@ -9,6 +9,7 @@ import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.properties.*;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
@@ -171,14 +172,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
 
     if (type.isEnumType()) {
-      // _addEnumProps(type.getRawClass());
-      // BeanPropertyDefinition propDef : beanDesc.findProperties();
-      // _addEnumProps(propDef, propType.getRawClass(), modelProp);
+      // TODO how to handle if model provided is simply an enum
     }
 
     // Couple of possibilities for defining
     String name = _typeName(type, beanDesc);
-
 
     if("Object".equals(name)) {
 	    return new ModelImpl();
@@ -214,6 +212,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       if (parent != Void.class) {
         // model.setBaseModel(_typeName(_mapper.constructType(parent)));
       }
+    }
+
+    // see if @JsonIgnoreProperties exist
+    Set<String> propertiesToIgnore = new HashSet<String>();
+    JsonIgnoreProperties ignoreProperties = beanDesc.getClassAnnotations().get(JsonIgnoreProperties.class);
+    if(ignoreProperties != null) {
+      propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
     }
 
     String disc = (apiModel == null) ? "" : apiModel.discriminator();
@@ -257,7 +262,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       PropertyMetadata md = propDef.getMetadata();
 
       final AnnotatedMember member = propDef.getPrimaryMember();
-      if(member != null) {
+
+
+      if(member != null && !propertiesToIgnore.contains(propName)) {
         JavaType propType = member.getType(beanDesc.bindingsForBeanType());
         property = context.resolveProperty(propType);
 
