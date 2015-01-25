@@ -16,8 +16,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 	private final Map<String, Model> modelByName;
 	private final HashMap<Type,Model> modelByType;
 	private final Set<Type> processedTypes;
-	
-	
+
 	public ModelConverterContextImpl(List<ModelConverter> converters ) {
 		this.converters = converters;
 		modelByName = new TreeMap<String, Model>();
@@ -49,13 +48,11 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 		if(LOGGER.isDebugEnabled()){
 			LOGGER.debug(String.format("resolveProperty %s", type));
 		}
-		Property resolvedProperty = null;
-		for (ModelConverter modelConverter : converters) {
-			resolvedProperty = modelConverter.resolveProperty(type, this);
-			if(resolvedProperty!=null){
-				return resolvedProperty;
-			}
-		}		
+    Iterator<ModelConverter> converters = this.converters.iterator();
+    if(converters.hasNext()) {
+      ModelConverter converter = converters.next();
+      return converter.resolveProperty(type, this, converters);
+    }
 		return null;
 	}
 
@@ -69,14 +66,16 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 		if(LOGGER.isDebugEnabled()){
 			LOGGER.debug(String.format("resolve %s", type));
 		}
-		Model resolve = null;
-		for (ModelConverter modelConverter : converters) {
-			resolve = modelConverter.resolve(type, this);
-			if(resolve != null){
-				break;
-			}
-		}
-		modelByType.put(type, resolve);
-		return resolve;
+    Iterator<ModelConverter> converters = this.converters.iterator();
+    Model resolved = null;
+    if(converters.hasNext()) {
+      ModelConverter converter = converters.next();
+      resolved = converter.resolve(type, this, converters);
+    }
+    if(resolved != null) {
+      modelByType.put(type, resolved);
+    }
+
+		return resolved;
 	}
 }

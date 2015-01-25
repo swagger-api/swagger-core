@@ -15,11 +15,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ModelConverters {
 	private static final ModelConverters SINGLETON = new ModelConverters();
 	private final List<ModelConverter> converters;
+  private final Set<String> skippedPackages = new HashSet<String>();
+  private final Set<String> skippedClasses = new HashSet<String>();
+
+  static {
+    SINGLETON.skippedPackages.add("java.lang");
+  }
 
 	public static ModelConverters getInstance() {
 		return SINGLETON;
 	}
-	
+
 	public ModelConverters() {
 		converters = new CopyOnWriteArrayList<ModelConverter>();
 		converters.add(new ModelResolver(Json.mapper()));
@@ -28,10 +34,19 @@ public class ModelConverters {
 	public void addConverter(ModelConverter converter){
 		converters.add(0,converter);
 	}
-	
+
 	public void removeConverter(ModelConverter converter){
 		converters.remove(converter);
 	}
+
+  public void addPackageToSkip(String pkg) {
+    this.skippedPackages.add(pkg);
+  }
+
+  public void addClassToSkip(String cls) {
+    System.out.println("skipping class " + cls);
+    this.skippedClasses.add(cls);
+  }
 
 	public Property readAsProperty(Type type) {
 		ModelConverterContextImpl context = new ModelConverterContextImpl(
@@ -66,10 +81,21 @@ public class ModelConverters {
 	}
 
 	private boolean shouldProcess(Type type) {
+    boolean process = true;
 		if(type instanceof Class<?>){
 			Class<?> cls = (Class<?>) type;
-			return !cls.getName().startsWith("java.lang");		
+      String className = cls.getName();
+      for(String packageName: skippedPackages) {
+        if(className.startsWith(packageName)) {
+          process = false;
+        }
+      }
+      for(String classToSkip: skippedClasses) {
+        if(className.equals(classToSkip)) {
+          process = false;
+        }
+      }
 		}
-		return false;
+		return process;
 	}
 }

@@ -1,12 +1,5 @@
 package com.wordnik.swagger.model.override;
 
-import java.lang.reflect.Type;
-import java.util.Map.Entry;
-
-import scala.util.parsing.json.JSON;
-
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wordnik.swagger.converter.ModelConverter;
 import com.wordnik.swagger.converter.ModelConverterContext;
 import com.wordnik.swagger.jackson.AbstractModelConverter;
@@ -15,6 +8,15 @@ import com.wordnik.swagger.models.ModelImpl;
 import com.wordnik.swagger.models.properties.Property;
 import com.wordnik.swagger.util.Json;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.Map.*;
+
+import scala.util.parsing.json.JSON;
+
 public class GericModelConverter extends AbstractModelConverter {
 
 	protected GericModelConverter() {
@@ -22,12 +24,12 @@ public class GericModelConverter extends AbstractModelConverter {
 	}
 
 	@Override
-	public Property resolveProperty(Type type, ModelConverterContext context) {
-		return null;
+	public Property resolveProperty(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+		return chain.next().resolveProperty(type, context, chain);
 	}
 
 	@Override
-	public Model resolve(Type type, ModelConverterContext context) {
+	public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
 		if(type instanceof Class<?>){
 			Class<?> cls = (Class<?>) type;
 			if(GenericModel.class.isAssignableFrom(cls)){

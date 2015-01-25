@@ -35,11 +35,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     return _mapper;
   }
 
-  public Property resolveProperty(Type type, ModelConverterContext context) {
-    return resolveProperty(_mapper.constructType(type),context);
+  public Property resolveProperty(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
+    return resolveProperty(_mapper.constructType(type), context, next);
   }
 
-  public Property resolveProperty(JavaType propType, ModelConverterContext context) {
+  public Property resolveProperty(JavaType propType, ModelConverterContext context, Iterator<ModelConverter> next) {
     Property property = null;
     String typeName = _typeName(propType);
 
@@ -140,8 +140,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     return property;
   }
   
-  public Model resolve(Type type, ModelConverterContext context) {
-    return resolve(_mapper.constructType(type),context);
+  public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
+    return resolve(_mapper.constructType(type),context, next);
   }
 
   protected void _addEnumProps(Class<?> propClass, Property property) {
@@ -167,7 +167,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
   }
 
 
-  public Model resolve(JavaType type, ModelConverterContext context) {
+  public Model resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
     final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
 
     if (type.isEnumType()) {

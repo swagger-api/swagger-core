@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.converter.ModelConverterContextImpl;
+import com.wordnik.swagger.converter.*;
 import com.wordnik.swagger.models.Model;
 import com.wordnik.swagger.models.ModelImpl;
 import com.wordnik.swagger.models.Xml;
@@ -30,8 +30,8 @@ public class XMLInfoTest extends SwaggerTestBase {
   }
 
   public void testSimple() throws Exception {
-    final ModelResolver mr = modelResolver();
-    Model model = mr.resolve(XmlDecoratedBean.class,new ModelConverterContextImpl(mr));
+    final ModelConverter mr = modelResolver();
+    Model model = mr.resolve(XmlDecoratedBean.class, new ModelConverterContextImpl(mr), null);
     assertTrue(model instanceof ModelImpl);
 
     ModelImpl impl = (ModelImpl) model;

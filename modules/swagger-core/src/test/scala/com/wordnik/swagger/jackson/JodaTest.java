@@ -5,7 +5,7 @@ import java.util.Map;
 import org.joda.time.DateTime;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
-import com.wordnik.swagger.converter.ModelConverterContextImpl;
+import com.wordnik.swagger.converter.*;
 import com.wordnik.swagger.models.Model;
 import com.wordnik.swagger.models.properties.Property;
 
@@ -20,8 +20,8 @@ public class JodaTest extends SwaggerTestBase {
   }
 
   public void testSimple() throws Exception {
-    final ModelResolver mr = modelResolver();
-    Model model = mr.resolve(ModelWithJodaDateTime.class,new ModelConverterContextImpl(mr));
+    final ModelConverter mr = modelResolver();
+    Model model = mr.resolve(ModelWithJodaDateTime.class, new ModelConverterContextImpl(mr), null);
     assertNotNull(model);
 
     Map<String,Property> props = model.getProperties();

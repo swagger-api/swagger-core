@@ -1,17 +1,11 @@
 package com.wordnik.swagger.jackson;
 
 import java.lang.reflect.Type;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyName;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.Module.SetupContext;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
@@ -20,14 +14,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 import com.wordnik.swagger.converter.ModelConverter;
 import com.wordnik.swagger.converter.ModelConverterContext;
 import com.wordnik.swagger.models.Model;
-import com.wordnik.swagger.models.properties.BooleanProperty;
-import com.wordnik.swagger.models.properties.DateTimeProperty;
-import com.wordnik.swagger.models.properties.DoubleProperty;
-import com.wordnik.swagger.models.properties.FloatProperty;
-import com.wordnik.swagger.models.properties.IntegerProperty;
-import com.wordnik.swagger.models.properties.LongProperty;
-import com.wordnik.swagger.models.properties.Property;
-import com.wordnik.swagger.models.properties.StringProperty;
+import com.wordnik.swagger.models.properties.*;
 
 public abstract class AbstractModelConverter implements ModelConverter {
 	protected final ObjectMapper _mapper;
@@ -69,7 +56,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
   }
 
 	@Override
-	public Property resolveProperty(Type type, ModelConverterContext context) {
+	public Property resolveProperty(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
 		return null;
 	}
 
@@ -175,7 +162,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
   }
 
 	@Override
-	public Model resolve(Type type, ModelConverterContext context) {
+	public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
 		return null;
 	}
 }
