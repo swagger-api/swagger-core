@@ -65,7 +65,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
     if("boolean".equals(typeName)) {
       property = new BooleanProperty();
     }
-    if("string".equals(typeName)) {
+    else if("string".equals(typeName)) {
       property = new StringProperty();
     }
     else if("integer".equals(typeName)) {
@@ -82,6 +82,9 @@ public abstract class AbstractModelConverter implements ModelConverter {
     }
     else if("dateTime".equals(typeName)) {
       property = new DateTimeProperty();
+    }
+    else if("date".equals(typeName)) {
+      property = new DateProperty();
     }
     else if("byte".equals(typeName)) {
       property = new StringProperty();

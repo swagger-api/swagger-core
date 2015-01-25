@@ -85,6 +85,7 @@ public class TypeNameResolver {
   private static Map<String, String> externalTypes() {
     Map<String, String> map = new HashMap<String, String>();
     map.put("org.joda.time.DateTime", TYPE_DATE_TIME);
+    map.put("org.joda.time.LocalDate", TYPE_DATE);
     map.put("org.joda.time.ReadableDateTime", TYPE_DATE_TIME);
     map.put("javax.xml.datatype.XMLGregorianCalendar", TYPE_DATE_TIME);
     return map;
