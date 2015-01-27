@@ -3,6 +3,7 @@ package com.wordnik.swagger.jackson;
 import com.wordnik.swagger.util.Json;
 
 import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import com.wordnik.swagger.converter.ModelConverter;
 import com.wordnik.swagger.converter.ModelConverterContext;
 import com.wordnik.swagger.models.*;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -257,10 +259,60 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
       final AnnotatedMember member = propDef.getPrimaryMember();
 
-
       if(member != null && !propertiesToIgnore.contains(propName)) {
+        ApiModelProperty mp = member.getAnnotation(ApiModelProperty.class);
+
         JavaType propType = member.getType(beanDesc.bindingsForBeanType());
-        property = context.resolveProperty(propType);
+
+        if(mp != null && !"".equals(mp.dataType())) {
+          String or = mp.dataType();
+          JavaType innerJavaType = null;
+          LOGGER.debug("overriding datatype from " + propType + " to " + or);
+
+          if(or.toLowerCase().startsWith("list[")) {
+            String innerType = or.substring(5, or.length() - 1);
+            ArrayProperty p = new ArrayProperty();
+            Property primitiveProperty = getPrimitiveProperty(innerType);
+            if(primitiveProperty != null)
+              p.setItems(primitiveProperty);
+            else {
+              innerJavaType = getInnerType(innerType);
+              p.setItems(resolveProperty(innerJavaType, context, context.getConverters()));
+            }
+            property = p;
+          }
+          else if(or.toLowerCase().startsWith("map[")) {
+            int pos = or.indexOf(",");
+            if(pos > 0) {
+              String innerType = or.substring(pos + 1, or.length() - 1);
+              MapProperty p = new MapProperty();
+              Property primitiveProperty = getPrimitiveProperty(innerType);
+              if(primitiveProperty != null)
+                p.setAdditionalProperties(primitiveProperty);
+              else {
+                innerJavaType = getInnerType(innerType);
+                p.setAdditionalProperties(resolveProperty(innerJavaType, context, context.getConverters()));
+              }
+              property = p;
+            }
+          }
+          else {
+            Property primitiveProperty = getPrimitiveProperty(or);
+            if(primitiveProperty != null)
+              property = primitiveProperty;
+            else {
+              innerJavaType = getInnerType(or);
+              property = resolveProperty(innerJavaType, context, context.getConverters());
+            }
+          }
+          if(innerJavaType != null) {
+            resolve(innerJavaType, context, context.getConverters());
+          }
+        }
+
+        // no property from override, construct from propType
+        if(property == null)
+          property = context.resolveProperty(propType);
 
         if(property != null) {
           property.setName(propName);
@@ -356,5 +408,19 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     model.setProperties(modelProps);
     context.defineModel(name, model);
     return model;
+  }
+
+  protected JavaType getInnerType(String innerType) {
+    try{
+      Class<?> innerClass = Class.forName(innerType);
+      if(innerClass != null) {
+        TypeFactory tf = _mapper.getTypeFactory();
+        return tf.constructType(innerClass);
+      }
+    }
+    catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 }

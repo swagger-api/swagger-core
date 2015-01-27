@@ -29,7 +29,10 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 		converters.add(converter);
 	}
 	
-	
+  public Iterator<ModelConverter> getConverters() {
+    return converters.iterator();
+  }
+
 	@Override
 	public void defineModel(String name, Model model) {
 		if(LOGGER.isDebugEnabled()){
@@ -48,7 +51,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 		if(LOGGER.isDebugEnabled()){
 			LOGGER.debug(String.format("resolveProperty %s", type));
 		}
-    Iterator<ModelConverter> converters = this.converters.iterator();
+    Iterator<ModelConverter> converters = this.getConverters();
     if(converters.hasNext()) {
       ModelConverter converter = converters.next();
       return converter.resolveProperty(type, this, converters);
@@ -66,7 +69,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 		if(LOGGER.isDebugEnabled()){
 			LOGGER.debug(String.format("resolve %s", type));
 		}
-    Iterator<ModelConverter> converters = this.converters.iterator();
+    Iterator<ModelConverter> converters = this.getConverters();
     Model resolved = null;
     if(converters.hasNext()) {
       ModelConverter converter = converters.next();

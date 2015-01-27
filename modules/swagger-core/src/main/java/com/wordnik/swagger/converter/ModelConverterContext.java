@@ -1,9 +1,10 @@
 package com.wordnik.swagger.converter;
 
-import java.lang.reflect.Type;
-
 import com.wordnik.swagger.models.Model;
 import com.wordnik.swagger.models.properties.Property;
+
+import java.lang.reflect.Type;
+import java.util.Iterator;
 
 public interface ModelConverterContext {
 	
@@ -26,5 +27,10 @@ public interface ModelConverterContext {
 	 * @param cls The Model Class
 	 * @return a Model representation of the Class. Any referenced models will be defined already.
 	 */
-	public  Model resolve(Type type);
+	public Model resolve(Type type);
+
+  /**
+   * @return an Iterator of ModelConverters.  This iterator is not reused
+   */
+  public Iterator<ModelConverter> getConverters();
 }

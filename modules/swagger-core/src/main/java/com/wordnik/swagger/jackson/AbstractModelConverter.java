@@ -68,7 +68,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
     else if("string".equals(typeName)) {
       property = new StringProperty();
     }
-    else if("integer".equals(typeName)) {
+    else if("integer".equals(typeName) || "int".toLowerCase().equals(typeName)) {
       property = new IntegerProperty();
     }
     else if("long".equals(typeName)) {
