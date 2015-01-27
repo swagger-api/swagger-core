@@ -30,7 +30,6 @@ class JodaLocalDateConverterTest extends FlatSpec with Matchers {
     models.size should be(1)
 
     val model = models.get("ModelWithJodaLocalDate")
-    Json.prettyPrint(models)
 
     val dateTimeProperty = model.getProperties().get("createdAt")
     dateTimeProperty.isInstanceOf[DateProperty] should be (true)

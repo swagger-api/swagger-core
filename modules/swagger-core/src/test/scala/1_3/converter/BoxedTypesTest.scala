@@ -97,15 +97,14 @@ Json.pretty(models) should equal (
         "type" : "array",
         "description" : "Integers in a Sequence Box",
         "items" : {
-          "type" : "object"
+          "type" : "integer",
+          "format" : "int32"
         }
       },
       "intOpt" : {
-        "type" : "array",
-        "description" : "Integer in an Option Box",
-        "items" : {
-          "type" : "object"
-        }
+        "type" : "integer",
+        "format" : "int32",
+        "description" : "Integer in an Option Box"
       },
       "justInt" : {
         "type" : "integer",

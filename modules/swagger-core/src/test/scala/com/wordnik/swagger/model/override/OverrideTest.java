@@ -22,7 +22,7 @@ public class OverrideTest {
 
 		Assert.assertTrue(read.containsKey(GenericModel.class.getSimpleName()));
 		Model model = read.get(GenericModel.class.getSimpleName());
-    Json.prettyPrint(model);
+
 		Assert.assertTrue(model.getProperties().containsKey("name"));
 		Assert.assertEquals("string",model.getProperties().get("name").getType());
 		Assert.assertTrue(model.getProperties().containsKey("count"));
