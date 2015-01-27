@@ -16,27 +16,47 @@ import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
 class ScalaModelTest extends FlatSpec with Matchers {
-  val m = Json.mapper()
+  Json.mapper().registerModule(DefaultScalaModule)
 
   it should "convert a simple scala case class" in {
-    m.registerModule(DefaultScalaModule)
-
     val schemas = ModelConverters.getInstance().read(classOf[SimpleCaseClass])
-    println(m.writeValueAsString(schemas))
-    println("""{"SimpleCaseClass":{"properties":{"name":{"type":"string"},"count":{"type":"integer","format":"int32"}}}}""")
-    m.writeValueAsString(schemas) should equal ("""{"SimpleCaseClass":{"properties":{"name":{"type":"string"},"count":{"type":"integer","format":"int32"}}}}""")
+    Json.pretty(schemas) should equal (
+"""{
+  "SimpleCaseClass" : {
+    "properties" : {
+      "name" : {
+        "type" : "string"
+      },
+      "count" : {
+        "type" : "integer",
+        "format" : "int32"
+      }
+    }
+  }
+}""")
   }
 
   it should "convert a scala case class with List property" in {
-    m.registerModule(DefaultScalaModule)
-
     val schemas = ModelConverters.getInstance().read(classOf[CaseClassWithList])
-    m.writeValueAsString(schemas) should equal ("""{"CaseClassWithList":{"properties":{"name":{"type":"string"},"items":{"type":"array","items":{"type":"string"}}}}}""")
+    Json.pretty(schemas) should equal(
+"""{
+  "CaseClassWithList" : {
+    "properties" : {
+      "name" : {
+        "type" : "string"
+      },
+      "items" : {
+        "type" : "array",
+        "items" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}""")
   }
 
   it should "convert a scala case class with optional value" in {
-    m.registerModule(DefaultScalaModule)
-
     val schemas = ModelConverters.getInstance().read(classOf[CaseClassWithOptionLong])
     val props = (schemas.get("CaseClassWithOptionLong")).asInstanceOf[ModelImpl].getProperties()
     val propertyCount = props.keySet.size
@@ -48,13 +68,41 @@ class ScalaModelTest extends FlatSpec with Matchers {
     keys(3) should be ("dateValue")
     keys(4) should be ("booleanValue")
 
-    m.writeValueAsString(schemas) should equal ("""{"CaseClassWithOptionLong":{"properties":{"intValue":{"type":"integer","format":"int32"},"longValue":{"type":"array","items":{"$ref":"#/definitions/Object"}},"setValue":{"type":"array","items":{"type":"string"}},"dateValue":{"type":"string","format":"date-time"},"booleanValue":{"type":"boolean"}}}}""")
+    Json.pretty(schemas) should equal (
+"""{
+  "CaseClassWithOptionLong" : {
+    "properties" : {
+      "intValue" : {
+        "type" : "integer",
+        "format" : "int32"
+      },
+      "longValue" : {
+        "type" : "array",
+        "items" : {
+          "type" : "object"
+        }
+      },
+      "setValue" : {
+        "type" : "array",
+        "uniqueItems" : true,
+        "items" : {
+          "type" : "string"
+        }
+      },
+      "dateValue" : {
+        "type" : "string",
+        "format" : "date-time"
+      },
+      "booleanValue" : {
+        "type" : "boolean"
+      }
+    }
+  }
+}""")
   }
 
   it should "convert a scala case class with nested models" in {
-    m.registerModule(DefaultScalaModule)
     val schemas = ModelConverters.getInstance().readAll(classOf[NestedModel])
-
     Json.pretty(schemas) should equal ( 
 """{
   "ComplexModel" : {

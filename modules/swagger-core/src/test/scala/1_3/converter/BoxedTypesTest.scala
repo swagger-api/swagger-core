@@ -47,14 +47,14 @@ Json.pretty(models) should equal (
         "type" : "array",
         "description" : "Integers in a Sequence Box",
         "items" : {
-          "$ref" : "#/definitions/Object"
+          "type" : "object"
         }
       },
       "intOpt" : {
         "type" : "array",
         "description" : "Integer in an Option Box",
         "items" : {
-          "$ref" : "#/definitions/Object"
+          "type" : "object"
         }
       },
       "justInt" : {
@@ -97,14 +97,14 @@ Json.pretty(models) should equal (
         "type" : "array",
         "description" : "Integers in a Sequence Box",
         "items" : {
-          "$ref" : "#/definitions/Object"
+          "type" : "object"
         }
       },
       "intOpt" : {
         "type" : "array",
         "description" : "Integer in an Option Box",
         "items" : {
-          "$ref" : "#/definitions/Object"
+          "type" : "object"
         }
       },
       "justInt" : {
