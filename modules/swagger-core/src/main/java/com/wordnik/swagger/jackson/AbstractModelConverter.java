@@ -164,6 +164,23 @@ public abstract class AbstractModelConverter implements ModelConverter {
     return null;
   }
 
+  protected boolean _isSetType(Class<?> cls) {
+    if(cls != null) {
+
+      if(java.util.Set.class.equals(cls))
+        return true;
+      else {
+        for(Class<?> a : cls.getInterfaces()) {
+          // this is dirty and ugly and needs to be extended into a scala model converter.  But to avoid bringing in scala runtime...
+          if(java.util.Set.class.equals(a) || "interface scala.collection.Set".equals(a.toString())) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
 	@Override
 	public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
 		return null;

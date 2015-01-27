@@ -16,8 +16,7 @@ import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
 class BoxedTypesTest extends FlatSpec with Matchers {
-  val m = Json.mapper()
-  m.registerModule(DefaultScalaModule)
+  Json.mapper().registerModule(DefaultScalaModule)
 
   it should "format a BoxedType" in {
     val models = ModelConverters.getInstance().read(classOf[BoxedTypesIssue31])
