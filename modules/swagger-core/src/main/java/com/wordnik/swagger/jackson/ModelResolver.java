@@ -66,7 +66,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
               property = mapProperty;
             }
             else {
-              innerType = new StringProperty();
+              innerType = new ObjectProperty();
               mapProperty.additionalProperties(innerType);
               property = mapProperty;
             }
@@ -82,15 +82,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Property innerType = getPrimitiveProperty(_typeName(valueType));
         if(innerType == null) {
           String propertyTypeName = _typeName(valueType);
-          Model innerModel = context.resolve(valueType);
+          if(!"Object".equals(propertyTypeName)) {
+            Model innerModel = context.resolve(valueType);
 
-          if(innerModel != null) {
-            Class<?> cls = propType.getRawClass();
-            if(_isSetType(cls))
-              arrayProperty.setUniqueItems(true);
+            if(innerModel != null) {
+              Class<?> cls = propType.getRawClass();
+              if(_isSetType(cls))
+                arrayProperty.setUniqueItems(true);
 
-            context.defineModel(propertyTypeName, innerModel);
-            innerType = new RefProperty(propertyTypeName);
+              context.defineModel(propertyTypeName, innerModel);
+              innerType = new RefProperty(propertyTypeName);
+              arrayProperty.setItems(innerType);
+              property = arrayProperty;
+            }
+          }
+          else {
+            innerType = new ObjectProperty();
             arrayProperty.setItems(innerType);
             property = arrayProperty;
           }
