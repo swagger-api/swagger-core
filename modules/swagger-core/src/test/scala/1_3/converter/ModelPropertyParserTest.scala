@@ -13,13 +13,13 @@ import com.wordnik.swagger.annotations.ApiModelProperty
 
 import java.util.Date
 
+import scala.collection.JavaConverters._
+import scala.beans.BeanProperty
+
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
-
-import scala.collection.JavaConverters._
-import scala.beans.BeanProperty
 
 @RunWith(classOf[JUnitRunner])
 class ModelPropertyParserTest extends FlatSpec with Matchers {
