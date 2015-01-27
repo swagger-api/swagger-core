@@ -363,6 +363,21 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
               }
             }
+            XmlAttribute attr = member.getAnnotation(XmlAttribute.class);
+            if(attr != null) {
+              if(attr.name() != null && !"".equals(attr.name())) {
+                // don't set Xml object if name is same
+                if(!attr.name().equals(propName) && !"##default".equals(attr.name())) {
+                  Xml xml = property.getXml();
+                  if(xml == null) {
+                    xml = new Xml();
+                    property.setXml(xml);
+                  }
+                  xml.setName(attr.name());
+                }
+              }
+            }
+            
           }
           props.add(property);
         }
