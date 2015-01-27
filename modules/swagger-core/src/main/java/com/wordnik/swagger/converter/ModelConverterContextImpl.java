@@ -1,7 +1,9 @@
 package com.wordnik.swagger.converter;
 
 import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.ModelImpl;
 import com.wordnik.swagger.models.properties.Property;
+import com.wordnik.swagger.util.Json;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +38,11 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 	@Override
 	public void defineModel(String name, Model model) {
 		if(LOGGER.isDebugEnabled()){
-			LOGGER.debug(String.format("definemodel %s %s", name,model));
+			LOGGER.debug(String.format("defineModel %s %s", name, model));
 		}
-		
+		if("SnakeCaseModel".equals(name)) {
+      throw new RuntimeException("oops");
+    }
 		modelByName.put(name, model);
 	}
 	
@@ -77,6 +81,11 @@ public class ModelConverterContextImpl implements ModelConverterContext {
     }
     if(resolved != null) {
       modelByType.put(type, resolved);
+      if(resolved instanceof ModelImpl) {
+        ModelImpl impl = (ModelImpl) resolved;
+        if(impl.getName() != null)
+          modelByName.put(impl.getName(), resolved);
+      }
     }
 
 		return resolved;
