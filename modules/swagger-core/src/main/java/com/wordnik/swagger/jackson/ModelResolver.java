@@ -27,11 +27,11 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
-	Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
+  Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
 
   @SuppressWarnings("serial")
   public ModelResolver(ObjectMapper mapper) {
-	  super(mapper);
+    super(mapper);
   }
 
   public ObjectMapper objectMapper() {
@@ -172,7 +172,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     String name = _typeName(type, beanDesc);
 
     if("Object".equals(name)) {
-	    return new ModelImpl();
+      return new ModelImpl();
     }
     
     if(type.isMapLikeType()) {
@@ -405,7 +405,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
           impl.setDiscriminator(null);
           ComposedModel child = new ComposedModel()
             .parent(new RefModel(name))
-            .child(impl);		
+            .child(impl);    
           context.defineModel(impl.getName(), child);
         }
       }
