@@ -7,9 +7,9 @@ import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
 import com.wordnik.swagger.jaxrs.PATCH;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.parameters.*;
-import com.wordnik.swagger.models.parameters.Parameter;
 import com.wordnik.swagger.models.properties.*;
 import com.wordnik.swagger.util.Json;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -324,9 +324,9 @@ public class Reader {
     for(int i = 0; i < parameterTypes.length; i++) {
     	Class<?> cls = parameterTypes[i];
       	Type type = genericParameterTypes[i];
-    	Parameter parameter = getParameter(cls, type, paramAnnotations[i]);
-      if(parameter != null) {
-        // add it
+    	List<Parameter> parameters = getParameters(cls, type, paramAnnotations[i]);
+
+      for(Parameter parameter : parameters) {
         operation.parameter(parameter);
       }
     }
@@ -336,15 +336,10 @@ public class Reader {
     return operation;
   }
 
-  Parameter getParameter(Class<?> cls, Type type, Annotation[] annotations) {
+  List<Parameter> getParameters(Class<?> cls, Type type, Annotation[] annotations) {
     // look for path, query
-    Parameter parameter = null;
-    String defaultValue = null;
-    boolean allowMultiple;
-    String allowableValues;
     boolean isArray = false;
 
-    // see if it's a collection type
     Class<?>[] interfaces = cls.getInterfaces();
     for(Class<?> a : interfaces) {
       if(java.util.List.class.equals(a))
@@ -362,194 +357,18 @@ public class Reader {
       }
     }
 
-    boolean shouldIgnore = false;
-    for(SwaggerExtension ext : EXTENSIONS) {
-      shouldIgnore = ext.shouldIgnoreClass(cls);
-      if(!shouldIgnore)
-        parameter = ext.processParameter(annotations, cls, isArray);
-    }
-    if(parameter == null) {
-      for(Annotation annotation : annotations) {
-        if(annotation instanceof QueryParam) {
-          QueryParam param = (QueryParam) annotation;
-          QueryParameter qp = new QueryParameter()
-            .name(param.value());
-          qp.setDefaultValue(defaultValue);
-          Property schema = ModelConverters.getInstance().readAsProperty(cls);
-          if(schema != null)
-            qp.setProperty(schema);
-          parameter = qp;
-        }
-        else if(annotation instanceof PathParam) {
-          PathParam param = (PathParam) annotation;
-          PathParameter pp = new PathParameter()
-            .name(param.value());
-          pp.setDefaultValue(defaultValue);
-          Property schema = ModelConverters.getInstance().readAsProperty(cls);
-          if(schema != null)
-            pp.setProperty(schema);
-          parameter = pp;
-        }
-        else if(annotation instanceof HeaderParam) {
-          HeaderParam param = (HeaderParam) annotation;
-          HeaderParameter hp = new HeaderParameter()
-            .name(param.value());
-          hp.setDefaultValue(defaultValue);
-          Property schema = ModelConverters.getInstance().readAsProperty(cls);
-          if(schema != null)
-            hp.setProperty(schema);
-          parameter = hp;
-        }
-        else if(annotation instanceof CookieParam) {
-          CookieParam param = (CookieParam) annotation;
-          CookieParameter cp = new CookieParameter()
-            .name(param.value());
-          cp.setDefaultValue(defaultValue);
-          Property schema = ModelConverters.getInstance().readAsProperty(cls);
-          if(schema != null)
-            cp.setProperty(schema);
-          parameter = cp;
-        }
-        else if(annotation instanceof FormParam) {
-          FormParam param = (FormParam) annotation;
-          FormParameter fp = new FormParameter()
-            .name(param.value());
-          fp.setDefaultValue(defaultValue);
-          Property schema = ModelConverters.getInstance().readAsProperty(cls);
-          if(schema != null)
-            fp.setProperty(schema);
-          parameter = fp;
-        }
-        else if(annotation instanceof DefaultValue) {
-          DefaultValue defaultValueAnnotation = (DefaultValue) annotation;
-          // TODO: not supported yet
-          defaultValue = defaultValueAnnotation.value();
-        }
-      }
+    Iterator<SwaggerExtension> chain = SwaggerExtensions.chain();
+    List<Parameter> parameters = null;
+    if(chain.hasNext()) {
+      SwaggerExtension extension = chain.next();
+      parameters = extension.extractParameters(annotations, cls, isArray, chain);
     }
 
-    // lastly apply ApiParam
-    for(Annotation annotation: annotations) {
-      if(annotation instanceof ApiParam) {
-        ApiParam param = (ApiParam) annotation;
-        if(parameter != null) {
-          if(!"".equals(param.defaultValue())){
-            defaultValue = param.defaultValue();
-          }
-
-          // parameter.required(param.required());
-          if(param.name() != null && !"".equals(param.name()))
-            parameter.setName(param.name());
-          parameter.setDescription(param.value());
-          parameter.setAccess(param.access());
-          allowMultiple = param.allowMultiple() || isArray;
-          if(allowMultiple == true) {
-            if(parameter instanceof PathParameter) {
-              PathParameter p = (PathParameter) parameter;
-              Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
-              p.items(items)
-                .array(true)
-                .collectionFormat("multi");
-              p.setDefaultValue(defaultValue);
-            }
-            else if(parameter instanceof QueryParameter) {
-              QueryParameter p = (QueryParameter) parameter;
-              Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
-              p.items(items)
-                .array(true)
-                .collectionFormat("multi");
-              p.setDefaultValue(defaultValue);
-            }
-            else if(parameter instanceof HeaderParameter) {
-              HeaderParameter p = (HeaderParameter) parameter;
-              Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
-              p.items(items)
-                .array(true)
-                .collectionFormat("multi");
-              p.setDefaultValue(defaultValue);
-            }
-            else if(parameter instanceof CookieParameter) {
-              CookieParameter p = (CookieParameter) parameter;
-              Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
-              p.items(items)
-                .array(true)
-                .collectionFormat("multi");
-              p.setDefaultValue(defaultValue);
-            }
-          }
-
-          allowableValues = param.allowableValues();
-        }
-        else if(shouldIgnore == false) {
-          // must be a body param
-          BodyParameter bp = new BodyParameter();
-          if(param.name() != null && !"".equals(param.name()))
-            bp.setName(param.name());
-          else
-            bp.setName("body");
-          bp.setDescription(param.value());
-
-          if(cls.isArray() || isArray) {
-            Class<?> innerType;
-            if(isArray) {
-              innerType = cls;
-            }
-            else {
-              innerType = cls.getComponentType();
-            }
-            Property innerProperty = ModelConverters.getInstance().readAsProperty(innerType);
-            if(innerProperty == null) {
-              Map<String, Model> models = ModelConverters.getInstance().read(innerType);
-              if(models.size() > 0) {
-                for(String name: models.keySet()) {
-                  if(name.indexOf("java.util") == -1) {
-                    bp.setSchema(
-                      new ArrayModel().items(new RefProperty().asDefault(name))
-                    );
-                    swagger.addDefinition(name, models.get(name));
-                  }
-                }
-              }
-              models = ModelConverters.getInstance().readAll(innerType);
-              for(String key : models.keySet()) {
-                swagger.model(key, models.get(key));
-              }
-            }
-            else {
-              bp.setSchema(new ArrayModel().items(innerProperty));
-            }
-          }
-          else {
-            Map<String, Model> models = ModelConverters.getInstance().read(cls);
-            if(models.size() > 0) {
-              for(String name: models.keySet()) {
-                if(name.indexOf("java.util") == -1) {
-                  if(isArray)
-                    bp.setSchema(new ArrayModel().items(new RefProperty().asDefault(name)));
-                  else
-                    bp.setSchema(new RefModel().asDefault(name));
-                  swagger.addDefinition(name, models.get(name));
-                }
-              }
-              models = ModelConverters.getInstance().readAll(cls);
-              for(String key : models.keySet()) {
-                swagger.model(key, models.get(key));
-              }
-            }
-            else {
-              Property prop = ModelConverters.getInstance().readAsProperty(cls);
-              if(prop != null) {
-                ModelImpl model = new ModelImpl();
-                model.setType(prop.getType());
-                bp.setSchema(model);
-              }
-            }
-          }
-          parameter = bp;
-        }
-      }
+    for(Parameter parameter : parameters) {
+      ParameterProcessor.applyAnnotations(swagger, parameter, cls, annotations, isArray);
     }
-    return parameter;
+
+    return parameters;
   }
 
   boolean isPrimitive(Class<?> cls) {
