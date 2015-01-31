@@ -5,6 +5,7 @@ import com.wordnik.swagger.converter.ModelConverters;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
 import com.wordnik.swagger.jaxrs.PATCH;
+import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.parameters.*;
 import com.wordnik.swagger.models.properties.*;
@@ -338,27 +339,10 @@ public class Reader {
 
   List<Parameter> getParameters(Class<?> cls, Type type, Annotation[] annotations) {
     // look for path, query
-    boolean isArray = false;
-
-    Class<?>[] interfaces = cls.getInterfaces();
-    for(Class<?> a : interfaces) {
-      if(java.util.List.class.equals(a))
-        isArray = true;
-    }
-    if(type instanceof ParameterizedType){
-      ParameterizedType aType = (ParameterizedType) type;
-      Type[] parameterArgTypes = aType.getActualTypeArguments();
-      for(Type parameterArgType : parameterArgTypes){
-      	if(cls.isAssignableFrom(List.class)){
-      		isArray = true;
-      	}
-        Class<?> parameterArgClass = (Class<?>) parameterArgType;
-        cls = parameterArgClass;
-      }
-    }
-
+    boolean isArray = ParameterUtils.isMethodArgumentAnArray(cls, type);
     Iterator<SwaggerExtension> chain = SwaggerExtensions.chain();
     List<Parameter> parameters = null;
+
     if(chain.hasNext()) {
       SwaggerExtension extension = chain.next();
       parameters = extension.extractParameters(annotations, cls, isArray, chain);
