@@ -5,6 +5,9 @@ import com.wordnik.swagger.models.parameters.*;
 import com.wordnik.swagger.models.properties.*;
 import com.wordnik.swagger.converter.ModelConverters;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 import java.lang.reflect.*;
 import java.lang.annotation.Annotation;
@@ -18,8 +21,9 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 
-
 public class DefaultParameterExtension implements SwaggerExtension {
+  Logger LOGGER = LoggerFactory.getLogger(DefaultParameterExtension.class);
+
   public List<Parameter> extractParameters(Annotation[] annotations, Class<?> cls, boolean isArray, Iterator<SwaggerExtension> chain) {
     String defaultValue = null;
 
