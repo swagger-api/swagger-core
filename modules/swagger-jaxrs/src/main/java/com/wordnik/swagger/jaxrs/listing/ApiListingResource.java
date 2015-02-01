@@ -64,9 +64,9 @@ public class ApiListingResource {
     @Context ServletConfig sc,
     @Context HttpHeaders headers,
     @Context UriInfo uriInfo) {
-    Swagger swagger = (Swagger) context.getAttribute("swagger");
     if(!initialized) 
       scan(app, sc);
+    Swagger swagger = (Swagger) context.getAttribute("swagger");
     if(swagger != null) {
       SwaggerSpecFilter filterImpl = FilterFactory.getFilter();
       if(filterImpl != null) {
@@ -91,9 +91,9 @@ public class ApiListingResource {
     @Context ServletConfig sc,
     @Context HttpHeaders headers,
     @Context UriInfo uriInfo) {
-    Swagger swagger = (Swagger) context.getAttribute("swagger");
     if(!initialized) 
       scan(app, sc);
+    Swagger swagger = (Swagger) context.getAttribute("swagger");
     try{
       if(swagger != null) {
         SwaggerSpecFilter filterImpl = FilterFactory.getFilter();
