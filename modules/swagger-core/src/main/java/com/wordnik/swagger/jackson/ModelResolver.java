@@ -48,7 +48,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     // primitive or null
     property = getPrimitiveProperty(typeName);
-    // modelProp.setQualifiedType(_typeQName(propType));
     // And then properties specific to subset of property types:
     if (propType.isContainerType()) {
       JavaType keyType = propType.getKeyType();
@@ -142,6 +141,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     final boolean useIndex =  _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
     final boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
     // List<AllowableValue> enums = new ArrayList<AllowableValue>();
+
     @SuppressWarnings("unchecked")
     Class<Enum<?>> enumClass = (Class<Enum<?>>) propClass;
     for (Enum<?> en : enumClass.getEnumConstants()) {
@@ -328,6 +328,27 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
           }
           property.setExample(_findExampleValue(member));
           property.setReadOnly(_findReadOnly(member));
+
+
+
+          if(property instanceof StringProperty) {
+            if(mp != null) {
+              String allowableValues = mp.allowableValues();
+              LOGGER.debug("allowableValues " + allowableValues);
+              if(!"".equals(allowableValues)) {
+                String[] parts = allowableValues.split(",");
+                LOGGER.debug("found " + parts.length + " parts");
+                for(String part : parts) {
+                  if(property instanceof StringProperty) {
+                    StringProperty sp = (StringProperty) property;
+                    sp._enum(part.trim());
+                    LOGGER.debug("added enum value " + part);
+                  }          
+                }
+              }
+            }
+          }
+
 
           if(property != null) {
             // check for XML annotations
