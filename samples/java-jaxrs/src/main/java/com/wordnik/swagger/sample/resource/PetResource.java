@@ -72,7 +72,7 @@ public class PetResource {
   @POST
   @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
   @ApiOperation(value = "Add a new pet to the store")
-  @ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input") })
+  @ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input", response = com.wordnik.swagger.sample.model.ApiResponse.class) })
   public Response addPet(
       @ApiParam(value = "Pet object that needs to be added to the store", required = true) Pet pet) {
     Pet updatedPet = petData.addPet(pet);
