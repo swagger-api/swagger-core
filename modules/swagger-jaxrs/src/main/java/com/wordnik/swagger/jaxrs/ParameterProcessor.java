@@ -14,7 +14,7 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 
 public class ParameterProcessor {
-  public static void applyAnnotations(Swagger swagger, Parameter parameter, Class<?> cls, Annotation[] annotations, boolean isArray) {
+  public static Parameter applyAnnotations(Swagger swagger, Parameter parameter, Class<?> cls, Annotation[] annotations, boolean isArray) {
     String defaultValue = null;
     boolean shouldIgnore = false;
     boolean allowMultiple;
@@ -68,7 +68,6 @@ public class ParameterProcessor {
               p.setDefaultValue(defaultValue);
             }
           }
-
           allowableValues = param.allowableValues();
         }
         else if(shouldIgnore == false) {
@@ -140,5 +139,6 @@ public class ParameterProcessor {
         }
       }
     }
+    return parameter;
   } 
 }

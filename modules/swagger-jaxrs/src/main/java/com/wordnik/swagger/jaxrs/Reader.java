@@ -15,6 +15,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.HeaderParam;
@@ -31,6 +34,8 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 
 public class Reader {
+  Logger LOGGER = LoggerFactory.getLogger(Reader.class);
+
   List<SwaggerExtension> EXTENSIONS = SwaggerExtensions.getExtensions();
   Swagger swagger;
   static ObjectMapper m = Json.mapper();
@@ -348,8 +353,17 @@ public class Reader {
       parameters = extension.extractParameters(annotations, cls, isArray, chain);
     }
 
-    for(Parameter parameter : parameters) {
-      ParameterProcessor.applyAnnotations(swagger, parameter, cls, annotations, isArray);
+    if(parameters.size() > 0) {
+      for(Parameter parameter : parameters) {
+        ParameterProcessor.applyAnnotations(swagger, parameter, cls, annotations, isArray);
+      }
+    }
+    else {
+      LOGGER.debug("no parameter found, looking at body params");
+      Parameter param = ParameterProcessor.applyAnnotations(swagger, null, cls, annotations, isArray);
+      if(param != null) {
+        parameters.add(param);
+      }
     }
 
     return parameters;
