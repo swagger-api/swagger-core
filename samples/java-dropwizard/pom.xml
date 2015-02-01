@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0-M1</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-java-dropwizard-sample-app</artifactId>
   <packaging>jar</packaging>
   <name>swagger-java-dropwizard-app</name>
-  <version>1.5.0-SNAPSHOT</version>
+  <version>1.5.0-M1</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>
@@ -41,7 +41,7 @@
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>com.wordnik.swagger.sample.SwaggerSampleService</mainClass>
+                  <mainClass>com.wordnik.swagger.sample.SwaggerSampleApplication</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -57,6 +57,24 @@
               <goal>integration-test</goal>
               <goal>verify</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.googlecode.maven-download-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <executions>
+          <execution>
+            <id>swagger-ui</id>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <url>https://github.com/swagger-api/swagger-ui/archive/v${swagger-ui-version}.tar.gz</url>
+              <unpack>true</unpack>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+            </configuration>
           </execution>
         </executions>
       </plugin>

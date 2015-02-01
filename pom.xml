@@ -9,7 +9,7 @@
   <artifactId>swagger-project</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
-  <version>1.5.0-SNAPSHOT</version>
+  <version>1.5.0-M1</version>
   <url>https://github.com/wordnik/swagger-core</url>
   <scm>
     <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
@@ -371,14 +371,10 @@
         </property>
       </activation>
       <modules>
-        <module>samples/java-resteasy</module>
         <module>samples/java-jaxrs</module>
         <module>samples/java-dropwizard</module>
-        <module>samples/scala-jaxrs</module>
-        <module>samples/scala-servlet</module>
-        <module>samples/java-jaxrs-subresource</module>
-        <module>samples/scala-jaxrs-fileupload</module>
         <module>samples/java-jaxrs-cxf</module>
+        <module>samples/java-jersey-jaxrs</module>
       </modules>
     </profile>
     <profile>
@@ -526,6 +522,7 @@
     <joda-version>1.2</joda-version>
     <joda-time-version>2.2</joda-time-version>
 
+    <swagger-ui-version>2.1.0-M1</swagger-ui-version>
     <scala-version>2.10.4</scala-version>
     <felix-version>2.3.4</felix-version>
     <servlet-api-version>2.5</servlet-api-version>

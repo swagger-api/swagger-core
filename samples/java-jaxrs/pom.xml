@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0-M1</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-java-sample-app</artifactId>
   <packaging>war</packaging>
   <name>swagger-java-jaxrs-app</name>
-  <version>1.5.0-SNAPSHOT</version>
+  <version>1.5.0-M1</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>
@@ -69,6 +69,24 @@
             <goals>
               <goal>stop</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.googlecode.maven-download-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <executions>
+          <execution>
+            <id>swagger-ui</id>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <url>https://github.com/swagger-api/swagger-ui/archive/v${swagger-ui-version}.tar.gz</url>
+              <unpack>true</unpack>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+            </configuration>
           </execution>
         </executions>
       </plugin>

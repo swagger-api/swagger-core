@@ -7,12 +7,17 @@ import com.wordnik.swagger.util.Json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ModelConverters {
+  Logger LOGGER = LoggerFactory.getLogger(ModelConverters.class);
+
   private static final ModelConverters SINGLETON = new ModelConverters();
   private final List<ModelConverter> converters;
   private final Set<String> skippedPackages = new HashSet<String>();
@@ -44,7 +49,7 @@ public class ModelConverters {
   }
 
   public void addClassToSkip(String cls) {
-    System.out.println("skipping class " + cls);
+    LOGGER.warn("skipping class " + cls);
     this.skippedClasses.add(cls);
   }
 

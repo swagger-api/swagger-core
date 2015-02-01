@@ -6,10 +6,15 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.*; 
 import com.fasterxml.jackson.databind.node.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 import java.io.IOException;
 
 public class PropertyDeserializer extends JsonDeserializer<Property> {
+  Logger LOGGER = LoggerFactory.getLogger(PropertyDeserializer.class);
+
   @Override
   public Property deserialize(JsonParser jp, DeserializationContext ctxt) 
     throws IOException, JsonProcessingException {
@@ -161,7 +166,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
 
     Property output = PropertyBuilder.build(type, format, args);
     if(output == null) {
-      System.out.println("no property from " + type + ", " + format + ", " + args);
+      LOGGER.warn("no property from " + type + ", " + format + ", " + args);
       return null;
     }
     output.setDescription(description);
