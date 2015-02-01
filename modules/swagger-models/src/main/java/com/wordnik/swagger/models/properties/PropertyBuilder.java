@@ -1,8 +1,13 @@
 package com.wordnik.swagger.models.properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 
 public class PropertyBuilder {
+  static Logger LOGGER = LoggerFactory.getLogger(PropertyBuilder.class);
+
   public static Property build(String type, String format, Map<String, Object> args) {
     if(args == null) {
       args = new HashMap<String, Object>();
@@ -92,7 +97,7 @@ public class PropertyBuilder {
     // fallbacks
     if("integer".equals(type) && format == null) {
         // fall back to Integer if type is integer and format is missing
-      System.out.println("no format specified for integer type, falling back to int32");
+      LOGGER.debug("no format specified for integer type, falling back to int32");
       property = new IntegerProperty()
         .minimum(minimum)
         .maximum(maximum)
@@ -101,11 +106,11 @@ public class PropertyBuilder {
     }
     if("object".equals(type) && format == null) {
         // fall back to Map if type is object and format is missing
-      System.out.println("no format specified for object type, falling back to object");
+      LOGGER.debug("no format specified for object type, falling back to object");
       property = new ObjectProperty();
     }    
     if(property == null)
-      System.out.println("no property for " + type + ", " + format);
+      LOGGER.debug("no property for " + type + ", " + format);
     return property;
   }
 }

@@ -21,7 +21,6 @@ public class SecurityDefinition {
     if(def.scopes != null) 
     for(String key: def.scopes.keySet()) {
       String value = def.scopes.get(key);
-      System.out.println(key + " adding scope " + value);
       this.addScope(key, value);
     }
   }
