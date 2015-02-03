@@ -56,20 +56,6 @@ object ModelConverters {
     var model = read(cls, typeMap)
     val propertyNames = new HashSet[String]
     LOGGER.debug("loading class " + cls)
-    // add subTypes
-    model.map(_.subTypes.map(typeRef => {
-      try{
-        LOGGER.debug("loading subtype " + typeRef)
-        val cls = SwaggerContext.loadClass(typeRef)
-        read(cls, typeMap) match {
-          case Some(model) => output += cls.getName -> model
-          case _ =>
-        }
-      }
-      catch {
-        case e: Exception => LOGGER.error("can't load class " + typeRef)
-      }
-    }))
 
     // add properties
     model.map(m => {
@@ -104,6 +90,10 @@ object ModelConverters {
         }
         propertyNames += name
       }
+
+      // add subTypes
+      model.subTypes.map(typeRef => propertyNames += typeRef)
+
       for(r <- propertiesToRemove) {
         model.properties.remove(r)
         propertyNames -= r

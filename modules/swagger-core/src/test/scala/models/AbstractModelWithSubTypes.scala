@@ -4,6 +4,11 @@ import scala.annotation.meta.{getter, field}
 import com.wordnik.swagger.annotations.{ApiModelProperty, ApiModel}
 
 
+
+@ApiModel(description = "Class that has a field that is the AbstractBaseModelWithSubTypes")
+case class ModelWithFieldWithSubTypes(
+ @(ApiModelProperty @field)(value = "Contained field with sub-types") z: AbstractBaseModelWithSubTypes)
+
 @ApiModel(description = "I am an Abstract Base Model with Sub-Types",
   discriminator = "_type",
   subTypes = Array(classOf[Thing1], classOf[Thing2]))

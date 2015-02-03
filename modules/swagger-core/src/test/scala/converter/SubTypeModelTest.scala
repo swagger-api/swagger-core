@@ -58,4 +58,17 @@ class SubTypeModelTest extends FlatSpec with Matchers {
     attrADescription should be ('defined)
     attrADescription.get should equal ("Additional field a")
   }
+
+  it should "read a model and read in the subTypes of the model from a field" in {
+    val models = ModelConverters.readAll(classOf[ModelWithFieldWithSubTypes])
+    models.size should be (4)
+    val expectedModels = Seq("ModelWithFieldWithSubTypes", "AbstractBaseModelWithSubTypes", "Thing1", "Thing2")
+    expectedModels.foreach(m => {
+      val modelOpt = models.find(md => md.name == m)
+      modelOpt should be ('defined)
+    })
+    val attrADescription = models.find(m => m.name == "Thing1").flatMap(m => m.properties.get("a").flatMap(a => a.description))
+    attrADescription should be ('defined)
+    attrADescription.get should equal ("Override the abstract a")
+  }
 }
