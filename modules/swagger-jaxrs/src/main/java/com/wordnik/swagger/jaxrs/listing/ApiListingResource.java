@@ -28,7 +28,8 @@ public class ApiListingResource {
   @Context
   ServletContext context;
 
-  protected synchronized void scan (Application app, ServletConfig sc) {
+  protected synchronized Swagger scan (Application app, ServletConfig sc) {
+    Swagger swagger = null;
     Scanner scanner = ScannerFactory.getScanner();
     LOGGER.debug("using scanner " + scanner);
 
@@ -36,7 +37,6 @@ public class ApiListingResource {
       SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
 
       Set<Class<?>> classes = null;
-      Swagger swagger = null;
       if (scanner instanceof JaxrsScanner) {
         JaxrsScanner jaxrsScanner = (JaxrsScanner)scanner;
         classes = jaxrsScanner.classesFromContext(app, sc);
@@ -62,6 +62,7 @@ public class ApiListingResource {
       }
     }
     initialized = true;
+    return swagger;
   }
 
   @GET
@@ -74,7 +75,7 @@ public class ApiListingResource {
     @Context UriInfo uriInfo) {
     Swagger swagger = (Swagger) context.getAttribute("swagger");
     if(!initialized) 
-      scan(app, sc);
+      swagger = scan(app, sc);
     if(swagger != null) {
       SwaggerSpecFilter filterImpl = FilterFactory.getFilter();
       if(filterImpl != null) {
@@ -101,7 +102,7 @@ public class ApiListingResource {
     @Context UriInfo uriInfo) {
     Swagger swagger = (Swagger) context.getAttribute("swagger");
     if(!initialized) 
-      scan(app, sc);
+      swagger = scan(app, sc);
     try{
       if(swagger != null) {
         SwaggerSpecFilter filterImpl = FilterFactory.getFilter();
@@ -121,10 +122,6 @@ public class ApiListingResource {
         for(String part : parts) {
           int pos = part.indexOf("!<");
           int endPos = part.indexOf(">");
-          // dirty hack for https://github.com/FasterXML/jackson-dataformat-yaml/issues/22
-          // if(pos >= 0)
-          //   b.append(part.replace("!<", "in: ").replace(">", ""));
-          // else
             b.append(part);
           b.append("\n");
         }
