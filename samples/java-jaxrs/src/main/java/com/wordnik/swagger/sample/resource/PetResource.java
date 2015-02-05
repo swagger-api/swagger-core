@@ -112,6 +112,7 @@ public class PetResource {
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid tag value") })
   @Deprecated
   public Response findPetsByTags(
+    @HeaderParam("api_key") String api_key,
       @ApiParam(value = "Tags to filter by", required = true, allowMultiple = true) @QueryParam("tags") String tags) {
     return Response.ok(petData.findPetByTags(tags)).build();
   }
