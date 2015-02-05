@@ -87,7 +87,7 @@ public class PetResource {
   }
 
   @POST
-  @Path("/uploadImage")
+  @Path("/{petId}/uploadImage")
   @Consumes({MediaType.MULTIPART_FORM_DATA})
   @ApiOperation(value = "uploads an image")
   public Response uploadFile(
