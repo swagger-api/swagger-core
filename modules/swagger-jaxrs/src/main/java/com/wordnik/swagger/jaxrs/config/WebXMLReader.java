@@ -48,7 +48,7 @@ public class WebXMLReader implements SwaggerConfig {
     filterClass = servletConfig.getInitParameter("swagger.filter");
   }
 
-  public void read(Swagger swagger) {
+  public Swagger configure(Swagger swagger) {
     if(swagger != null) {
       Info info = swagger.getInfo();
       if(info == null)
@@ -61,5 +61,6 @@ public class WebXMLReader implements SwaggerConfig {
           .title(title)
           .version(apiVersion);
     }
+    return swagger;
   }
 }

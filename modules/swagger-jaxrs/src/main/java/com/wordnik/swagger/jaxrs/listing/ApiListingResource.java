@@ -36,6 +36,7 @@ public class ApiListingResource {
       SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
 
       Set<Class<?>> classes = null;
+      Swagger swagger = null;
       if (scanner instanceof JaxrsScanner) {
         JaxrsScanner jaxrsScanner = (JaxrsScanner)scanner;
         classes = jaxrsScanner.classesFromContext(app, sc);
@@ -44,13 +45,20 @@ public class ApiListingResource {
         classes = scanner.classes();
       }
       if(classes != null) {
-        Reader reader = new Reader((Swagger)context.getAttribute("swagger"));
-        Swagger swagger = reader.read(classes);
-        context.setAttribute("swagger", swagger);
-        WebXMLReader xmlReader = (WebXMLReader)context.getAttribute("reader");
-        if(xmlReader != null) {
-          xmlReader.read(swagger);
+        Reader reader = new Reader(swagger);
+        swagger = reader.read(classes);
+        if(scanner instanceof SwaggerConfig)
+          swagger = ((SwaggerConfig)scanner).configure(swagger);
+        else {
+          SwaggerConfig configurator = (SwaggerConfig)context.getAttribute("reader");
+          if(configurator != null) {
+            LOGGER.debug("configuring swagger with " + configurator);
+            configurator.configure(swagger);
+          }
+          else
+            LOGGER.debug("no configurator");
         }
+        context.setAttribute("swagger", swagger);
       }
     }
     initialized = true;

@@ -14,7 +14,7 @@ import org.reflections.util.ConfigurationBuilder;
 
 import java.util.Set;
 
-public class BeanConfig extends AbstractScanner implements Scanner {
+public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfig {
   Reader reader = new Reader(new Swagger());
 
   String resourcePackage;
@@ -120,9 +120,9 @@ public class BeanConfig extends AbstractScanner implements Scanner {
         .host(host)
         .basePath(basePath)
         .info(info);
-
     ScannerFactory.setScanner(this);
   }
+
   public boolean getScan() {
     return true;
   }
@@ -146,10 +146,15 @@ public class BeanConfig extends AbstractScanner implements Scanner {
         .name(license)
         .url(licenseUrl));
 
+    reader.getSwagger().setInfo(info);
     return new Reflections(config).getTypesAnnotatedWith(Api.class);
   }
 
   public Swagger getSwagger() {
     return reader.getSwagger();
+  }
+
+  public Swagger configure(Swagger swagger) {
+    return swagger.info(info);
   }
 }
