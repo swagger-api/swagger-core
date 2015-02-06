@@ -79,7 +79,6 @@ public class Reader {
       // the value will be used as a tag for 2.0
       String tag = api.value().replace("/", "");
       String description = api.description();
-      String basePath = api.basePath();
       int position = api.position();
       String produces = api.produces();
       String consumes = api.consumes();
