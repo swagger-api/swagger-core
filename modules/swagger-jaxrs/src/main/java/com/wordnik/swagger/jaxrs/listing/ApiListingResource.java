@@ -35,6 +35,7 @@ public class ApiListingResource {
 
     if(scanner != null) {
       SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
+      swagger = (Swagger)context.getAttribute("swagger");
 
       Set<Class<?>> classes = null;
       if (scanner instanceof JaxrsScanner) {
