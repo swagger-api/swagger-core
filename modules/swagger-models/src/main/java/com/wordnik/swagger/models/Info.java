@@ -13,7 +13,7 @@ public class Info {
   private String termsOfService;
   private Contact contact;
   private License license;
-  private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+  private Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
   public Info version(String version) {
     this.setVersion(version);
@@ -80,6 +80,26 @@ public class Info {
   }
   public void setLicense(License license) {
     this.license = license;
+  }
+
+  public Info mergeWith(Info info) {
+    if(info != null) {
+      if(this.description == null)
+        this.description = info.description;
+      if(this.version == null)
+        this.version = info.version;
+      if(this.title == null)
+        this.title = info.title;
+      if(this.termsOfService == null)
+        this.termsOfService = info.termsOfService;
+      if(this.contact == null)
+        this.contact = info.contact;
+      if(this.license == null)
+        this.license = info.license;
+      if(this.vendorExtensions == null)
+        this.vendorExtensions = info.vendorExtensions;
+    }
+    return this;
   }
 
   @JsonAnyGetter
