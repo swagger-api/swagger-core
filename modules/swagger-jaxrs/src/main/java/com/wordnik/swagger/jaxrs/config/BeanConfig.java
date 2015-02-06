@@ -105,7 +105,12 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     return basePath;
   }
   public void setBasePath(String basePath) {
-    this.basePath = basePath;
+    if(!"".equals(basePath) && basePath != null) {
+      if(!basePath.startsWith("/"))
+        this.basePath = "/" + basePath;
+      else
+        this.basePath = basePath;
+    }
   }
 
   public void setPrettyPrint(String prettyPrint) {
@@ -155,6 +160,8 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
   }
 
   public Swagger configure(Swagger swagger) {
-    return swagger.info(info);
+    return swagger.info(info)
+      .host(host)
+      .basePath(basePath);
   }
 }
