@@ -41,7 +41,8 @@
   <bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
     <property name="resourcePackage" value="com.wordnik.swagger.sample.resource"/>
     <property name="version" value="1.0.0"/>
-    <property name="basePath" value="http://localhost:8002/api"/>
+    <property name="host" value="http://localhost:8002"/>
+    <property name="basePath" value="/api"/>
     <property name="title" value="Petstore sample app"/>
     <property name="description" value="This is a app."/>
     <property name="contact" value="apiteam@wordnik.com"/>
