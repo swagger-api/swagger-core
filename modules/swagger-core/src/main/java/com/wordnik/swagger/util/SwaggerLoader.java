@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 
+@Deprecated
 public class SwaggerLoader {
   Logger LOGGER = LoggerFactory.getLogger(SwaggerLoader.class);
 
