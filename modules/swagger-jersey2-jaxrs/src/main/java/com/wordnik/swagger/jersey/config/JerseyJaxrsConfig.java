@@ -22,20 +22,3 @@ public class JerseyJaxrsConfig extends HttpServlet {
     }
   }
 }
-
-
-/*
-
-class JerseyJaxrsConfig extends HttpServlet {
-  override def init(servletConfig: ServletConfig) = {
-    super.init(servletConfig)
-
-    implicit val config = servletConfig
-    ConfigFactory.config = new WebXMLReader()
-    ScannerFactory.scanner = Some(new DefaultJaxrsScanner())
-    ClassReaders.reader = Some(new JerseyApiReader)
-  }
-}
-
-
-*/
