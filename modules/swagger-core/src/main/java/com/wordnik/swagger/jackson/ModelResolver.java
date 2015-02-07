@@ -38,7 +38,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     return _mapper;
   }
 
+  protected boolean shouldIgnoreClass(Type type) {
+    if(type instanceof Class) {
+      Class<?> cls = (Class)type;
+      if(cls.getName().startsWith("javax.ws.rs"))
+        return true;
+    }
+    else {
+      LOGGER.debug("can't check class " + type);
+    }
+    return false;
+  }
+
   public Property resolveProperty(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
+    if(this.shouldIgnoreClass(type))
+      return null;
+
     return resolveProperty(_mapper.constructType(type), context, next);
   }
 
@@ -134,6 +149,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
   }
   
   public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
+    if(this.shouldIgnoreClass(type))
+      return null;
+
     return resolve(_mapper.constructType(type),context, next);
   }
 
@@ -263,6 +281,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         if(mp != null && !"".equals(mp.dataType())) {
           String or = mp.dataType();
+
           JavaType innerJavaType = null;
           LOGGER.debug("overriding datatype from " + propType + " to " + or);
 

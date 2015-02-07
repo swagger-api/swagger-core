@@ -62,33 +62,36 @@ public abstract class AbstractModelConverter implements ModelConverter {
 
   protected Property getPrimitiveProperty(String typeName) {
     Property property = null;
-    if("boolean".equals(typeName)) {
+    if("boolean".equalsIgnoreCase(typeName)) {
       property = new BooleanProperty();
     }
-    else if("string".equals(typeName)) {
+    else if("string".equalsIgnoreCase(typeName)) {
       property = new StringProperty();
     }
-    else if("integer".equals(typeName) || "int".toLowerCase().equals(typeName)) {
+    else if("integer".equalsIgnoreCase(typeName) || "int".toLowerCase().equalsIgnoreCase(typeName)) {
       property = new IntegerProperty();
     }
-    else if("long".equals(typeName)) {
+    else if("long".equalsIgnoreCase(typeName)) {
       property = new LongProperty();
     }
-    else if("float".equals(typeName)) {
+    else if("float".equalsIgnoreCase(typeName)) {
       property = new FloatProperty();
     }
-    else if("double".equals(typeName)) {
+    else if("double".equalsIgnoreCase(typeName)) {
       property = new DoubleProperty();
     }
-    else if("dateTime".equals(typeName)) {
+    else if("dateTime".equalsIgnoreCase(typeName)) {
       property = new DateTimeProperty();
     }
-    else if("date".equals(typeName)) {
+    else if("date".equalsIgnoreCase(typeName)) {
       property = new DateProperty();
     }
-    else if("byte".equals(typeName)) {
+    else if("byte".equalsIgnoreCase(typeName)) {
       property = new StringProperty();
       ((StringProperty)property).setFormat("byte");
+    }
+    else if("object".equalsIgnoreCase(typeName)) {
+      property = new ObjectProperty();
     }
     return property;
   }

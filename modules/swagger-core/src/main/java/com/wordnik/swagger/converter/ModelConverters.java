@@ -79,6 +79,8 @@ public class ModelConverters {
     if (shouldProcess(type)) {
       ModelConverterContextImpl context = new ModelConverterContextImpl(
           converters);
+
+      LOGGER.debug("ModelConverters readAll");
       context.resolve(type);
       return context.getDefinedModels();
     }
