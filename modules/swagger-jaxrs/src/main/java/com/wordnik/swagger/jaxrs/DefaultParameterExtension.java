@@ -101,7 +101,6 @@ public class DefaultParameterExtension implements SwaggerExtension {
       output = true;
     else
       output = false;
-    System.out.println("checking class " + cls.getName() + ": " + output);
     return output;
   }
 }
