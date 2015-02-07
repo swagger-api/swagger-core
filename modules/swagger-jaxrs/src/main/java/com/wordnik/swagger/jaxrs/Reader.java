@@ -216,9 +216,11 @@ public class Reader {
 
     if(responseClass == null) {
       // pick out response from method declaration
+      LOGGER.debug("picking up response class from method " + method);
       Type t = method.getGenericReturnType();
       responseClass = method.getReturnType();
       if(!responseClass.equals(java.lang.Void.class) && !"void".equals(responseClass.toString())) {
+        LOGGER.debug("reading model " + responseClass);
         Map<String, Model> models = ModelConverters.getInstance().readAll(t);
       }
     }

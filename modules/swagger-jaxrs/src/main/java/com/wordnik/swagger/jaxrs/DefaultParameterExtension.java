@@ -97,6 +97,12 @@ public class DefaultParameterExtension implements SwaggerExtension {
   }
 
   public boolean shouldIgnoreClass(Class<?> cls) {
-    return false;
+    boolean output = false;
+    if(cls.getName().startsWith("javax.ws.rs"))
+      output = true;
+    else
+      output = false;
+    System.out.println("checking class " + cls.getName() + ": " + output);
+    return output;
   }
 }

@@ -72,4 +72,9 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     response should not be (null)
     response.getSchema should be (null)
   }
+
+  it should "scan a resource with javax.ws.core.Response " in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithResponse])
+    swagger.getDefinitions() should be (null)
+  }
 }
