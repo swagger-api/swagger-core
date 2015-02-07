@@ -65,7 +65,7 @@ public class Employee {
 
   @JsonProperty("department")
   @XmlElement(name = "department")
-  @ApiModelProperty(dataType = "link", required = true, value = "The department this employee belongs to.")
+  @ApiModelProperty(dataType = "models.Link", required = true, value = "The department this employee belongs to.")
   public Link<Department> getDept() {
     return dept;
   }
@@ -76,7 +76,7 @@ public class Employee {
 
   @JsonProperty("manager")
   @XmlElement(name = "manager")
-  @ApiModelProperty(dataType = "link", required = true, value = "The employee this employee reports to.")
+  @ApiModelProperty(dataType = "models.Link", required = true, value = "The employee this employee reports to.")
   public Link<Employee> getManager() {
     return manager;
   }

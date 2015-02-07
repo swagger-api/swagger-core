@@ -138,12 +138,10 @@ class ModelConverterTest extends FlatSpec with Matchers {
     prop1Name should be ("gettersAndHaters")
     prop2Name should be ("is_persistent")
   }
-}
 
-@RunWith(classOf[JUnitRunner])
-class ModelConverterTest2 extends FlatSpec with Matchers {
   it should "seralize a parameterized type per 606" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Employee])
+
     val employee = schemas.get("employee").asInstanceOf[ModelImpl]
     val props = employee.getProperties()
     val et = props.keySet().iterator()
@@ -170,5 +168,17 @@ class ModelConverterTest2 extends FlatSpec with Matchers {
 
     employee.getXml should not be (null)
     employee.getXml.getName should be ("employee")
+  }
+
+}
+@RunWith(classOf[JUnitRunner])
+class ModelConverterTest2 extends FlatSpec with Matchers {
+
+  it should "ignore hidden fields" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[ClientOptInput])
+
+    val model = schemas.get("ClientOptInput")
+    model.getProperties().size() should be (2)
+    Json.prettyPrint(model)
   }
 }
