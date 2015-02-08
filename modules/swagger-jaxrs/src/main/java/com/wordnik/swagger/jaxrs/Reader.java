@@ -349,9 +349,12 @@ public class Reader {
     Iterator<SwaggerExtension> chain = SwaggerExtensions.chain();
     List<Parameter> parameters = null;
 
+    LOGGER.debug("getParameters for " + cls);
+    Set<Class<?>> classesToSkip = new HashSet<Class<?>>();
     if(chain.hasNext()) {
       SwaggerExtension extension = chain.next();
-      parameters = extension.extractParameters(annotations, cls, isArray, chain);
+      LOGGER.debug("trying extension " + extension);
+      parameters = extension.extractParameters(annotations, cls, isArray, classesToSkip, chain);
     }
 
     if(parameters.size() > 0) {
@@ -361,9 +364,11 @@ public class Reader {
     }
     else {
       LOGGER.debug("no parameter found, looking at body params");
-      Parameter param = ParameterProcessor.applyAnnotations(swagger, null, cls, annotations, isArray);
-      if(param != null) {
-        parameters.add(param);
+      if(classesToSkip.contains(cls) == false) {
+        Parameter param = ParameterProcessor.applyAnnotations(swagger, null, cls, annotations, isArray);
+        if(param != null) {
+          parameters.add(param);
+        }
       }
     }
 

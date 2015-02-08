@@ -23,7 +23,7 @@ import javax.ws.rs.Produces;
 public class DefaultParameterExtension implements SwaggerExtension {
   Logger LOGGER = LoggerFactory.getLogger(DefaultParameterExtension.class);
 
-  public List<Parameter> extractParameters(Annotation[] annotations, Class<?> cls, boolean isArray, Iterator<SwaggerExtension> chain) {
+  public List<Parameter> extractParameters(Annotation[] annotations, Class<?> cls, boolean isArray, Set<Class<?>> classesToSkip, Iterator<SwaggerExtension> chain) {
     String defaultValue = null;
 
     if(this.shouldIgnoreClass(cls))
