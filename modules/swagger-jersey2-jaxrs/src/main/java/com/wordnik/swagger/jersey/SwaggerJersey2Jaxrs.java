@@ -1,23 +1,22 @@
 package com.wordnik.swagger.jersey;
 
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.AnnotatedField;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
 import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
 import com.wordnik.swagger.models.parameters.Parameter;
 import com.wordnik.swagger.util.Json;
 
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+
 import javax.ws.rs.BeanParam;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Swagger extension for handling JAX-RS 2.0 processing.
@@ -27,8 +26,15 @@ public class SwaggerJersey2Jaxrs implements SwaggerExtension {
   final ObjectMapper mapper = Json.mapper();
 
   public List<Parameter> extractParameters(final Annotation[] annotations, final Class<?> cls, final boolean isArray,
-                                         final Iterator<SwaggerExtension> chain) {
+                                         Set<Class<?>> classesToSkip, final Iterator<SwaggerExtension> chain) {
     List<Parameter> parameters = new ArrayList<Parameter>();
+
+    if(shouldIgnoreClass(cls) || classesToSkip.contains(cls)) {
+      classesToSkip.add(cls);
+      return parameters;
+    }
+
+
     BeanDescription beanDesc; // Use Jackson's logic for processing Beans
 
     for (final Annotation annotation : annotations) {
@@ -77,6 +83,7 @@ public class SwaggerJersey2Jaxrs implements SwaggerExtension {
               extensions.next().extractParameters(paramAnnotations.toArray(new Annotation[paramAnnotations.size()]),
                                                   paramClass,
                                                   ParameterUtils.isMethodArgumentAnArray(paramClass, paramType),
+                                                  classesToSkip,
                                                   extensions));
         }
       }
@@ -84,7 +91,7 @@ public class SwaggerJersey2Jaxrs implements SwaggerExtension {
 
     // Only call down to the other items in the chain if no parameters were produced and there is something to call
     if (parameters.size() == 0 && chain.hasNext())
-      parameters = chain.next().extractParameters(annotations, cls, isArray, chain);
+      parameters = chain.next().extractParameters(annotations, cls, isArray, classesToSkip, chain);
 
     return parameters;
   }
@@ -92,5 +99,4 @@ public class SwaggerJersey2Jaxrs implements SwaggerExtension {
   public boolean shouldIgnoreClass(final Class<?> cls) {
     return false;
   }
-
 }

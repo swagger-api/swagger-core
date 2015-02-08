@@ -33,10 +33,11 @@ class SwaggerJersey2JaxrsTest extends FlatSpec with Matchers {
     val paramAnnotations = method.getParameterAnnotations
     val paramTypes = method.getParameterTypes
     val parameters = (paramTypes,paramAnnotations).zipped
+    val classesToSkip = new java.util.HashSet[Class[_]]
 
     parameters.foreach{
       (paramType, paramAnnotations) =>
-        val swaggerParams = ext.extractParameters(paramAnnotations, paramType, false, chain)
+        val swaggerParams = ext.extractParameters(paramAnnotations, paramType, false, classesToSkip, chain)
 
         // Ensure proper number of parameters returned
         if (paramType == classOf[BaseBean]) {
