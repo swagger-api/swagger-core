@@ -2,7 +2,7 @@ organization := "com.wordnik"
 
 name := "swagger-core"
 
-version := "1.5.0-SNAPSHOT"
+version := "1.5.1-SNAPSHOT"
 
 libraryDependencies ++= Seq(
   "com.fasterxml.jackson.module"     % "jackson-module-jsonSchema"     % "2.4.1",

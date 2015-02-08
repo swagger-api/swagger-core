@@ -2,9 +2,9 @@
 
 ## Overview
 This is a java project to build a stand-alone server which implements the Swagger spec.  You can find out 
-more about both the spec and the framework at http://swagger.wordnik.com.  For more information 
+more about both the spec and the framework at http://swagger.io.  For more information 
 about Wordnik's APIs, please visit http://developer.wordnik.com.  There is an online version of this
-server at http://petstore.swagger.wordnik.com/api/api-docs
+server at http://petstore.swagger.io/api/api-docs
 
 This sample creates an `application` context through the `applicationContext.xml`, allowing the `JAXRSServerFactoryBean` to reflect over property packages to discover swagger-enabled resources.  This was originally contributed by [chadhahn](https://github.com/chadhahn) and adapted by [rvullriede](https://github.com/rvullriede).  Thank you for your contributions!
 
