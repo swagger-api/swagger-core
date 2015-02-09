@@ -61,10 +61,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     Property property = null;
     String typeName = _typeName(propType);
 
+    LOGGER.debug("resolveProperty " + propType);
+
     // primitive or null
     property = getPrimitiveProperty(typeName);
     // And then properties specific to subset of property types:
     if (propType.isContainerType()) {
+      LOGGER.debug("looking at container type");
       JavaType keyType = propType.getKeyType();
       JavaType valueType = propType.getContentType();
       if(keyType != null && valueType != null) {
@@ -96,11 +99,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         ArrayProperty arrayProperty = new ArrayProperty();
         Property innerType = getPrimitiveProperty(_typeName(valueType));
         if(innerType == null) {
+          LOGGER.debug("found primitive property type " + innerType);
           String propertyTypeName = _typeName(valueType);
           if(!"Object".equals(propertyTypeName)) {
             Model innerModel = context.resolve(valueType);
 
             if(innerModel != null) {
+              LOGGER.debug("found inner model " + innerModel);
               Class<?> cls = propType.getRawClass();
               if(_isSetType(cls))
                 arrayProperty.setUniqueItems(true);
@@ -111,6 +116,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
           }
           else {
+            LOGGER.debug("falling back to object type");
             innerType = new ObjectProperty();
             arrayProperty.setItems(innerType);
             property = arrayProperty;
