@@ -7,6 +7,9 @@ import com.wordnik.swagger.models.parameters.*;
 import com.wordnik.swagger.models.properties.*;
 import com.wordnik.swagger.util.Json;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.lang.reflect.ParameterizedType;
@@ -14,6 +17,8 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 
 public class ParameterProcessor {
+  static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
+
   public static Parameter applyAnnotations(Swagger swagger, Parameter parameter, Class<?> cls, Annotation[] annotations, boolean isArray) {
     String defaultValue = null;
     boolean shouldIgnore = false;
@@ -81,12 +86,12 @@ public class ParameterProcessor {
 
           if(cls.isArray() || isArray) {
             Class<?> innerType;
-            if(isArray) {
+            if(isArray) {// array has already been detected
               innerType = cls;
             }
-            else {
+            else
               innerType = cls.getComponentType();
-            }
+            LOGGER.debug("inner type: " + innerType + " from " + cls);
             Property innerProperty = ModelConverters.getInstance().readAsProperty(innerType);
             if(innerProperty == null) {
               Map<String, Model> models = ModelConverters.getInstance().read(innerType);
@@ -94,8 +99,7 @@ public class ParameterProcessor {
                 for(String name: models.keySet()) {
                   if(name.indexOf("java.util") == -1) {
                     bp.setSchema(
-                      new ArrayModel().items(new RefProperty().asDefault(name))
-                    );
+                      new ArrayModel().items(new RefProperty().asDefault(name)));
                     swagger.addDefinition(name, models.get(name));
                   }
                 }
@@ -106,8 +110,10 @@ public class ParameterProcessor {
               }
             }
             else {
+              LOGGER.debug("found inner property " + innerProperty);
               bp.setSchema(new ArrayModel().items(innerProperty));
             }
+            
           }
           else {
             Map<String, Model> models = ModelConverters.getInstance().read(cls);

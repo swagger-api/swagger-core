@@ -365,9 +365,21 @@ public class Reader {
     else {
       LOGGER.debug("no parameter found, looking at body params");
       if(classesToSkip.contains(cls) == false) {
-        Parameter param = ParameterProcessor.applyAnnotations(swagger, null, cls, annotations, isArray);
-        if(param != null) {
-          parameters.add(param);
+        if(type instanceof ParameterizedType) {
+          ParameterizedType ti = (ParameterizedType) type;
+          Type innerType = ti.getActualTypeArguments()[0];
+          if(innerType instanceof Class) {
+            Parameter param = ParameterProcessor.applyAnnotations(swagger, null, (Class)innerType, annotations, isArray);
+            if(param != null) {
+              parameters.add(param);
+            }            
+          }
+        }
+        else {
+          Parameter param = ParameterProcessor.applyAnnotations(swagger, null, cls, annotations, isArray);
+          if(param != null) {
+            parameters.add(param);
+          }
         }
       }
     }
