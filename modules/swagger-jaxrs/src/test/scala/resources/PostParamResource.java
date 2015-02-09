@@ -12,7 +12,8 @@ import java.util.*;
 @Path("/pet")
 @Api(value = "/pet", description = "Operations about pets")
 @Produces({"application/json", "application/xml"})
-public class PetResource {
+public class PostParamResource {
+  @Path("/singleObject")
   @POST
   @ApiOperation(value = "Add a single object")
   @ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input") })
@@ -45,6 +46,42 @@ public class PetResource {
   @ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input") })
   public Response addArrayOfPets(
       @ApiParam(value = "Pets to add", required = true) Pet[] pet) {
+    return Response.ok().entity("SUCCESS").build();
+  }
+
+  @Path("/singleString")
+  @POST
+  @ApiOperation(value = "Add a single string")
+  @ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input") })
+  public Response addSingleString(
+      @ApiParam(value = "String to add", required = true) String string) {
+    return Response.ok().entity("SUCCESS").build();
+  }
+
+  @Path("/listOfStrings")
+  @POST
+  @ApiOperation(value = "Add a list of strings")
+  @ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input") })
+  public Response addListOfStrings(
+      @ApiParam(value = "Pets to add", required = true) List<String> strings) {
+    return Response.ok().entity("SUCCESS").build();
+  }
+
+  @Path("/collectionOfStrings")
+  @POST
+  @ApiOperation(value = "Add a collection of strings")
+  @ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input") })
+  public Response addCollectionOfStrings(
+      @ApiParam(value = "Pets to add", required = true) Collection<String> strings) {
+    return Response.ok().entity("SUCCESS").build();
+  }
+
+  @Path("/arrayOfStrings")
+  @POST
+  @ApiOperation(value = "Add an array of object")
+  @ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input") })
+  public Response addArrayOfStrings(
+      @ApiParam(value = "Strings to add", required = true) String[] strings) {
     return Response.ok().entity("SUCCESS").build();
   }
 }
