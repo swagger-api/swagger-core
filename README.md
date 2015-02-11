@@ -27,7 +27,7 @@ The Swagger Specification has undergone 3 revisions since initial creation in 20
 
 Swagger core Version      | Release Date | Swagger Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-1.5.0 (in development)    | n/a          | 2.0           | [branch develop_2.0](https://github.com/swagger-api/swagger-core/tree/develop_2.0) | [1.5.0 Milestone](https://github.com/swagger-api/swagger-core/milestones/v1.5.0)
+1.5.0 (in development)    | n/a          | 2.0           | [branch develop_2.0](https://github.com/swagger-api/swagger-core/tree/develop_2.0) | [1.5 Milestone](https://github.com/swagger-api/swagger-core/milestones/v1.5)
 1.5.0-M1  | 2015-01-31          | 2.0           | [branch 1.5.0-M1](https://github.com/swagger-api/swagger-core/tree/1.5.0-M1) | JAX-RS support only
 1.3.12                     | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12)
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4)
