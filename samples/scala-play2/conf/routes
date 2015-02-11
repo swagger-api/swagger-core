@@ -5,6 +5,10 @@
 # Swagger - Root Resources Listing
 GET     /api-docs               controllers.ApiHelpController.getResources
 
+# Swagger UI
+GET     /api                    controllers.SwaggerUiController.api
+GET     /assets/*file           controllers.Assets.at(path="/public", file)
+
 # OPTIONS to support hosting UI off domain
 
 OPTIONS /*wholepath             @controllers.PetApiController.getOptions(wholepath)
