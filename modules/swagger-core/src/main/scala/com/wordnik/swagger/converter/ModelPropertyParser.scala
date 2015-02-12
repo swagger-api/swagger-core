@@ -205,10 +205,11 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       if (!"void".equals(paramType) && null != paramType && !processedFields.contains(name)) {
         if(!excludedFieldTypes.contains(paramType)) {
           val items = {
-            val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9_]*)\\].*".r
+            val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9$_]*)\\].*".r
             paramType match {
               case ComplexTypeMatcher(containerType, basePart) => {
-                LOGGER.debug("containerType: " + containerType + ", basePart: " + basePart + ", simpleName: " + simpleName)
+                val basePartNormalized = basePart.replace('$', '.')
+                LOGGER.debug("containerType: " + containerType + ", basePart: " + basePartNormalized + ", simpleName: " + simpleName)
                 paramType = containerType
                 val typeRef = simpleName match {
                   case ComplexTypeMatcher(t, simpleTypeRef) => {
@@ -221,9 +222,9 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
 
                 simpleName = containerType
                 if(isComplex(typeRef)) {
-                  Some(ModelRef(null, Some(typeRef), Some(basePart)))
+                  Some(ModelRef(null, Some(typeRef), Some(basePartNormalized)))
                 }
-                else Some(ModelRef(typeRef, None, Some(basePart)))
+                else Some(ModelRef(typeRef, None, Some(basePartNormalized)))
               }
               case _ => None
             }
@@ -509,8 +510,18 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       } else if (hostClass.getName.startsWith("java.lang.") && isSimple) {
         hostClass.getName.substring("java.lang.".length)
       } else {
-        if (isSimple) hostClass.getSimpleName
-        else hostClass.getName
+        if (isSimple) {
+          if (hostClass.isMemberClass)
+            hostClass.getDeclaringClass.getSimpleName + "." + hostClass.getSimpleName
+          else
+            hostClass.getSimpleName
+        }
+        else {
+          if (hostClass.isMemberClass)
+            hostClass.getDeclaringClass.getName + "." + hostClass.getName
+          else
+            hostClass.getName
+        }
       }
     }
     validateDatatype(name)
