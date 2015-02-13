@@ -157,7 +157,7 @@ object ModelUtil {
       toName(xmlEnum.value())
     else if (xmlRootElement != null) {
       if ("##default".equals(xmlRootElement.name())) {
-        cls.getSimpleName 
+        TypeUtil.getClassSimpleName(cls)
       } else {
         xmlRootElement.name() 
       }
@@ -168,7 +168,7 @@ object ModelUtil {
       else name
     }
     else if (cls.getName.indexOf(".") < 0) cls.getName
-    else cls.getSimpleName 
+    else TypeUtil.getClassSimpleName(cls)
   }
 
   def shoudIncludeModel(modelname: String) = {

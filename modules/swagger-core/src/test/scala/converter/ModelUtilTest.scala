@@ -9,6 +9,12 @@ import org.scalatest.Matchers
 class ModelUtilTest extends FlatSpec with Matchers {
   import com.wordnik.swagger.core.util.ModelUtil._
 
+  it should "convert a fully-qualified inner class type to a SwaggerTypes primitive" in {
+    val fqcn = "models.EmbeddedClassModel$InnerClass"
+    val cleanName = cleanDataType(fqcn)
+    cleanName should equal (fqcn)
+  }
+
   "ModelUtil cleanDataType" should "convert a fully-qualified primitive type to a SwaggerTypes primitive" in {
     val primitiveName = "java.lang.Integer"
     val cleanName = cleanDataType(primitiveName)

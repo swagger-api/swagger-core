@@ -2,6 +2,7 @@ package com.wordnik.swagger.converter
 
 import com.wordnik.swagger.core.SwaggerSpec
 import com.wordnik.swagger.annotations.ApiModel
+import com.wordnik.swagger.core.util.TypeUtil
 
 trait BaseConverter {
   def toDescriptionOpt(cls: Class[_]): Option[String] = {
@@ -27,7 +28,7 @@ trait BaseConverter {
       toName(xmlEnum.value())
     else if (xmlRootElement != null) {
       if ("##default".equals(xmlRootElement.name())) {
-        cls.getSimpleName 
+        TypeUtil.getClassSimpleName(cls)
       } else {
         xmlRootElement.name() 
       }
@@ -38,6 +39,6 @@ trait BaseConverter {
       else name
     }
     else if (cls.getName.indexOf(".") < 0) cls.getName
-    else cls.getSimpleName 
+    else TypeUtil.getClassSimpleName(cls)
   }
 }
