@@ -196,13 +196,13 @@ public class Operation {
   public void setSecurity(List<Map<String, List<String>>> security) {
     this.security = security;
   }
-  public void addSecurity(String name, List<String> security) {
+  public void addSecurity(String name, List<String> scopes) {
     if(this.security == null)
       this.security = new ArrayList<Map<String, List<String>>>();
     Map<String, List<String>> req = new HashMap<String, List<String>>();
-    if(security == null)
-      security = new ArrayList<String>();
-    req.put(name, security);
+    if(scopes == null)
+      scopes = new ArrayList<String>();
+    req.put(name, scopes);
     this.security.add(req);
   }
 
