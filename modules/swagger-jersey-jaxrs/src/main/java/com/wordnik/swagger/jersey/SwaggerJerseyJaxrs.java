@@ -8,10 +8,15 @@ import com.wordnik.swagger.models.properties.*;
 import com.sun.jersey.multipart.FormDataParam;
 import com.sun.jersey.api.core.InjectParam;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 import java.lang.annotation.Annotation;
 
 public class SwaggerJerseyJaxrs implements SwaggerExtension {
+  static Logger LOGGER = LoggerFactory.getLogger(SwaggerJerseyJaxrs.class);
+
   public List<Parameter> extractParameters(Annotation[] annotations, Class<?> cls, boolean isArray, Set<Class<?>> classesToSkip, Iterator<SwaggerExtension> chain) {
     List<Parameter> output = new ArrayList<Parameter>();
     if(shouldIgnoreClass(cls) || classesToSkip.contains(cls)) {
@@ -48,7 +53,7 @@ public class SwaggerJerseyJaxrs implements SwaggerExtension {
       output = true;
     else
       output = false;
-    System.out.println("should ignore " + cls + ": " + output);
+    LOGGER.debug("should ignore " + cls + ": " + output);
     return output;
   }
 }
