@@ -208,8 +208,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
             val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9$_]*)\\].*".r
             paramType match {
               case ComplexTypeMatcher(containerType, basePart) => {
-                val basePartNormalized = basePart.replace('$', '.')
-                LOGGER.debug("containerType: " + containerType + ", basePart: " + basePartNormalized + ", simpleName: " + simpleName)
+                LOGGER.debug("containerType: " + containerType + ", basePart: " + basePart + ", simpleName: " + simpleName)
                 paramType = containerType
                 val typeRef = simpleName match {
                   case ComplexTypeMatcher(t, simpleTypeRef) => {
@@ -222,9 +221,10 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
 
                 simpleName = containerType
                 if(isComplex(typeRef)) {
-                  Some(ModelRef(null, Some(typeRef), Some(basePartNormalized)))
+                  Some(ModelRef(null, Some(typeRef), Some(basePart)))
                 }
-                else Some(ModelRef(typeRef, None, Some(basePartNormalized)))
+                else
+                  Some(ModelRef(typeRef, None, Some(basePart)))
               }
               case _ => None
             }
@@ -501,7 +501,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         else hostClass.getName
       } else if (xmlRootElement != null) {
         if ("##default".equals(xmlRootElement.name())) {
-          if (isSimple) hostClass.getSimpleName
+          if (isSimple) TypeUtil.getClassSimpleName(hostClass)
           else hostClass.getName
         } else {
           if (isSimple) readString(xmlRootElement.name())
@@ -510,20 +510,11 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       } else if (hostClass.getName.startsWith("java.lang.") && isSimple) {
         hostClass.getName.substring("java.lang.".length)
       } else {
-        if (isSimple) {
-          if (hostClass.isMemberClass)
-            hostClass.getDeclaringClass.getSimpleName + "." + hostClass.getSimpleName
-          else
-            hostClass.getSimpleName
-        }
-        else {
-          if (hostClass.isMemberClass)
-            hostClass.getDeclaringClass.getName + "." + hostClass.getName
-          else
-            hostClass.getName
-        }
+        if (isSimple) TypeUtil.getClassSimpleName(hostClass)
+        else hostClass.getName
       }
     }
     validateDatatype(name)
   }
+
 }
