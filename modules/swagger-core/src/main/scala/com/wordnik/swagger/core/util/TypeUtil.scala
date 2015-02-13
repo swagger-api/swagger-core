@@ -228,4 +228,13 @@ object TypeUtil {
   }
 
   def addAllowablePackage(p: String) = Option(p).map(allowablePackages += p)
+
+  def getClassSimpleName(clazz: Class[_]): String = {
+    if (clazz.isMemberClass) {
+      val packageName = clazz.getPackage.getName
+      if (!packageName.isEmpty) clazz.getName.substring(packageName.length + 1) else clazz.getName
+    }
+    else
+      clazz.getSimpleName
+  }
 }

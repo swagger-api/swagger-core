@@ -205,7 +205,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       if (!"void".equals(paramType) && null != paramType && !processedFields.contains(name)) {
         if(!excludedFieldTypes.contains(paramType)) {
           val items = {
-            val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9_]*)\\].*".r
+            val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9$_]*)\\].*".r
             paramType match {
               case ComplexTypeMatcher(containerType, basePart) => {
                 LOGGER.debug("containerType: " + containerType + ", basePart: " + basePart + ", simpleName: " + simpleName)
@@ -223,7 +223,8 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
                 if(isComplex(typeRef)) {
                   Some(ModelRef(null, Some(typeRef), Some(basePart)))
                 }
-                else Some(ModelRef(typeRef, None, Some(basePart)))
+                else
+                  Some(ModelRef(typeRef, None, Some(basePart)))
               }
               case _ => None
             }
@@ -500,7 +501,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         else hostClass.getName
       } else if (xmlRootElement != null) {
         if ("##default".equals(xmlRootElement.name())) {
-          if (isSimple) hostClass.getSimpleName
+          if (isSimple) TypeUtil.getClassSimpleName(hostClass)
           else hostClass.getName
         } else {
           if (isSimple) readString(xmlRootElement.name())
@@ -509,10 +510,11 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       } else if (hostClass.getName.startsWith("java.lang.") && isSimple) {
         hostClass.getName.substring("java.lang.".length)
       } else {
-        if (isSimple) hostClass.getSimpleName
+        if (isSimple) TypeUtil.getClassSimpleName(hostClass)
         else hostClass.getName
       }
     }
     validateDatatype(name)
   }
+
 }
