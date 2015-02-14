@@ -141,6 +141,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         property = new StringProperty();
         _addEnumProps(propType.getRawClass(), property);
       }
+      else if (_isOptionalType(propType)) {
+        property = context.resolveProperty(propType.containedType(0));
+      }
       else {
         // complex type
         String propertyTypeName = _typeName(propType);
@@ -153,7 +156,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     return property;
   }
-  
+
+  private boolean _isOptionalType(JavaType propType) {
+    return "com.google.common.base.Optional".equals(propType.getRawClass().getCanonicalName());
+  }
+
   public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
     if(this.shouldIgnoreClass(type))
       return null;
