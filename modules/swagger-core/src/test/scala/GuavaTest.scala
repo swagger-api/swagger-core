@@ -23,6 +23,6 @@ class GuavaTest extends FlatSpec with Matchers {
     m.registerModule(new GuavaModule())
 
     val schemas = ModelConverters.getInstance().read(classOf[GuavaModel])
-    println(m.writeValueAsString(schemas)) //should equal ("""{"GuavaModel":{"properties":{"name":{"type":"string"}}}}""")
+    m.writeValueAsString(schemas) should equal ("""{"GuavaModel":{"properties":{"name":{"type":"string"}}}}""")
   }
 }
