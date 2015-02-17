@@ -37,7 +37,7 @@ case class LoginEndpoint(url: String)
 case class TokenRequestEndpoint(url: String, clientIdName: String, clientSecretName: String)
 case class TokenEndpoint(url: String, tokenName: String)
 
-case class ApiListingReference(path:String, description: Option[String], position: Int = 0)
+case class ApiListingReference(path:String, description: Option[String], position: Int = 0, pathAlias: Option[String] = None)
 
 trait AllowableValues
 case object AnyAllowableValues extends AllowableValues
@@ -80,6 +80,8 @@ case class ApiListing (
   apis: List[ApiDescription] = List(),
   models: Option[Map[String, Model]] = None,
   description: Option[String] = None,
+  filter: Option[String] = None,
+  pathAlias: Option[String] = None,
   position: Int = 0)
 
 case class ApiDescription (

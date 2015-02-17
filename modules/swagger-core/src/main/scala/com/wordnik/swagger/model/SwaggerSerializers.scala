@@ -594,12 +594,18 @@ trait Serializers {
           !!(json, RESOURCE, "path", "missing required field", ERROR)
           ""
         }),
-        (json \ "description").extractOpt[String]
+        (json \ "description").extractOpt[String],
+        pathAlias = (json \ "pathAlias").extractOpt[String]
       )
     }, {
       case x: ApiListingReference =>
       implicit val fmts = formats
-      ("path" -> x.path) ~
+        ("path" -> {
+          x.pathAlias match {
+            case Some(alias) => alias
+            case _ => x.path
+          }
+        }) ~
       ("description" -> x.description)
     }
   ))

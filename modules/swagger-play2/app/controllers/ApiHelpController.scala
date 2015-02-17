@@ -65,11 +65,11 @@ class ErrorResponse(@XmlElement var code: Int, @XmlElement var message: String) 
 
 object ApiHelpController extends SwaggerBaseApiController {
 
-  def getResources = Action {
+  def getResources(filter: String = null) = Action {
     request =>
       implicit val requestHeader: RequestHeader = request
 
-      val resourceListing = getResourceListing
+      val resourceListing = getResourceListing(if (filter == null || filter.trim.isEmpty) None else Some(filter))
 
       val responseStr = returnXml(request) match {
         case true => toXmlString(resourceListing)
@@ -112,7 +112,7 @@ class SwaggerBaseApiController extends Controller {
   /**
    * Get a list of all top level resources
    */
-  protected def getResourceListing(implicit requestHeader: RequestHeader) = {
+  protected def getResourceListing(filter: Option[String])(implicit requestHeader: RequestHeader) = {
     Logger("swagger").debug("ApiHelpInventory.getRootResources")
     val docRoot = ""
     val queryParams = (for((key, value) <- requestHeader.queryString) yield {
@@ -135,10 +135,10 @@ class SwaggerBaseApiController extends Controller {
     // val specs = l.getOrElse(Map: Map[String, com.wordnik.swagger.model.ApiListing] ()).map(_._2).toList
     val listings = (for (spec <- specs)
       yield f.filter(spec, FilterFactory.filter, queryParams, cookies, headers)
-    ).filter(m => m.apis.size > 0)
+    ).filter(m => m.apis.size > 0 && m.filter == filter)
 
     val references = (for (listing <- listings) yield {
-      ApiListingReference(listing.resourcePath, listing.description)
+      ApiListingReference(listing.resourcePath, listing.description, pathAlias = listing.pathAlias)
     }).toList
 
     references.foreach {
