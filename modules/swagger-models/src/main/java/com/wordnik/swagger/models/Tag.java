@@ -13,6 +13,10 @@ public class Tag {
     setDescription(description);
     return this;
   }
+  public Tag externalDocs(ExternalDocs externalDocs) {
+    setExternalDocs(externalDocs);
+    return this;
+  }
 
   public String getName() {
     return name;
@@ -33,5 +37,17 @@ public class Tag {
   }
   public void setExternalDocs(ExternalDocs externalDocs) {
     this.externalDocs = externalDocs;
+  }
+
+
+  @Override
+  public String toString() {
+    StringBuilder b = new StringBuilder();
+    b.append("Tag {\n");
+    b.append("\tname: ").append(getName()).append("\n");
+    b.append("\tdescription: ").append(getDescription()).append("\n");
+    b.append("\texternalDocs: ").append(getExternalDocs()).append("\n");
+    b.append("}");
+    return b.toString();
   }
 }

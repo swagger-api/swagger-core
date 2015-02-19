@@ -1,6 +1,12 @@
 package com.wordnik.swagger.jaxrs;
 
-import com.wordnik.swagger.annotations.*;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.Authorization;
+import com.wordnik.swagger.annotations.AuthorizationScope;
+import com.wordnik.swagger.annotations.ApiResponses;
+import com.wordnik.swagger.annotations.ApiResponse;
+
 import com.wordnik.swagger.converter.ModelConverters;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
@@ -76,9 +82,37 @@ public class Reader {
     }
 
     if(api != null) {
-      // the value will be used as a tag for 2.0
-      String tag = api.value().replace("/", "");
-      String description = api.description();
+      List<String> tagStrings = new ArrayList<String>();
+      // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
+      com.wordnik.swagger.annotations.Tags tags = api.tags();
+      boolean hasExplicitTags = false;
+      if(tags != null && tags.value().length > 0) {
+        for(com.wordnik.swagger.annotations.Tag tag : tags.value()) {
+          if(!"".equals(tag.value())) {
+            hasExplicitTags = true;
+            tagStrings.add(tag.value());
+            Tag tagObject = new Tag()
+              .name(tag.value())
+              .description(tag.description());
+
+            if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
+              tagObject.externalDocs(
+                new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
+            swagger.tag(tagObject);
+          }
+        }
+      }
+      if(!hasExplicitTags) {
+        // derive tag from api path + description
+        String tagString = api.value().replace("/", "");
+        tagStrings.add(tagString);
+        String description = api.description();
+        Tag tag = new Tag()
+          .name(tagString)
+          .description(description);
+        swagger.tag(tag);
+      }
+
       int position = api.position();
       String produces = api.produces();
       String consumes = api.consumes();
@@ -129,7 +163,8 @@ public class Reader {
               for(String mediaType: apiProduces)
                 operation.produces(mediaType);
 
-            operation.tag(tag);
+            for(String tagString : tagStrings)
+              operation.tag(tagString);
             for(SecurityRequirement security : securities)
               operation.security(security);
             Path path = swagger.getPath(operationPath);
@@ -393,7 +428,7 @@ public class Reader {
     Property property = ModelConverters.getInstance().readAsProperty(cls);
     if(property == null)
       out = false;
-    if("integer".equals(property.getType()))
+    else if("integer".equals(property.getType()))
       out = true;
     else if("string".equals(property.getType()))
       out = true;

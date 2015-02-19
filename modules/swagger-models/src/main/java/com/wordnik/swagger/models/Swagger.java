@@ -151,13 +151,15 @@ public class Swagger {
   public void addTag(Tag tag) {
     if(this.tags == null)
       this.tags = new ArrayList<Tag>();
-    boolean found = false;
-    for(Tag existing : this.tags) {
-      if(existing.equals(tag))
-        found = true;
+    if(tag != null && tag.getName() != null) {
+      boolean found = false;
+      for(Tag existing : this.tags) {
+        if(existing.getName().equals(tag.getName()))
+          found = true;
+      }
+      if(!found)
+        this.tags.add(tag);
     }
-    if(!found)
-      this.tags.add(tag);
   }
 
   public List<String> getConsumes() {

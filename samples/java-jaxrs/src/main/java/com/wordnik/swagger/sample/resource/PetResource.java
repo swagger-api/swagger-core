@@ -21,6 +21,8 @@ import com.wordnik.swagger.sample.data.PetData;
 import com.wordnik.swagger.sample.model.Pet;
 import com.wordnik.swagger.sample.exception.NotFoundException;
 
+import com.wordnik.swagger.jaxrs.PATCH;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.*;
@@ -32,6 +34,10 @@ import javax.ws.rs.*;
     @AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
     @AuthorizationScope(scope = "read:pets", description = "read your pets")
   })
+}, tags = {
+  @Tag(value = "pets",
+    description = "Operations about pets",
+    externalDocs = @ExternalDocs(value="Find out more", url = "http://swagger.io"))
 })
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class PetResource {
@@ -58,7 +64,7 @@ public class PetResource {
     }
   }
 
-  @DELETE
+  @PATCH
   @Path("/{petId}")
   @ApiOperation(value = "Deletes a pet")
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid pet value")})
