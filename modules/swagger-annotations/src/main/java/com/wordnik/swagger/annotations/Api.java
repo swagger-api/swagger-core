@@ -53,7 +53,7 @@ public @interface Api {
      * 
      * @since 1.5.2
      */
-    Tags tags() default @Tags();
+    Tag[] tags() default @Tag(value = "", description = "");
 
     /**
      * Corresponds to the `description` field of the Resource Listing API operation.
