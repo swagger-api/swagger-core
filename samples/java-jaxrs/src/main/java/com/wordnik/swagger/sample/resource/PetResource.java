@@ -36,7 +36,7 @@ import javax.ws.rs.*;
   })
 }, tags = {
   @Tag(value = "pets",
-    description = "Operations about pets",
+    description = "Everything about your Pets",
     externalDocs = @ExternalDocs(value="Find out more", url = "http://swagger.io"))
 })
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
