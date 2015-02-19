@@ -42,12 +42,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.*;
 
 @Path("/pet")
-@Api(value = "/pet", description = "Operations about pets", authorizations = {
+@Api(value = "/pet", authorizations = {
   @Authorization(value = "petstore_auth", type = "oauth2",
   scopes = {
     @AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
     @AuthorizationScope(scope = "read:pets", description = "read your pets")
   })
+}, tags = {
+  @com.wordnik.swagger.annotations.Tag(value = "pets",
+    description = "Everything about your Pets",
+    externalDocs = @ExternalDocs(value="Find out more", url = "http://swagger.io"))
 })
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class PetResource {
