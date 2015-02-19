@@ -47,6 +47,9 @@ public @interface Api {
      */
     String value();
 
+
+    Tags tags() default @Tags();
+
     /**
      * Corresponds to the `description` field of the Resource Listing API operation.
      * <p/>
