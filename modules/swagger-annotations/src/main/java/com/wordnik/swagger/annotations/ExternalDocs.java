@@ -27,9 +27,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExternalDocs {
-  /** Description of the external docs */
-  String value();
+  /** A short description of the target documentation. GFM syntax can be used for rich text representation. */
+  String value() default "";
 
-  /** url for the docs */
+  /** URL for the docs. */
   String url();
 }
