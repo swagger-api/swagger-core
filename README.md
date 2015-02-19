@@ -46,6 +46,8 @@ You need the following installed and available in your $PATH:
 
 <li>- Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
+<li>- Jackson 2.4.2 or greater
+
 ### To build from source (currently 1.5.2-M1-SNAPSHOT)
 ```
 # first time building locally
