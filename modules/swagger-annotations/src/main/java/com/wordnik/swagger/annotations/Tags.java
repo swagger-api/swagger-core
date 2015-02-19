@@ -22,6 +22,7 @@ import java.lang.annotation.*;
  * A wrapper to allow a list of multiple {@link com.wordnik.swagger.annotations.Tag} objects.
  *
  * @see com.wordnik.swagger.annotations.Tag
+ * @since 1.5.2
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
