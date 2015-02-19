@@ -84,10 +84,10 @@ public class Reader {
     if(api != null) {
       List<String> tagStrings = new ArrayList<String>();
       // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
-      com.wordnik.swagger.annotations.Tags tags = api.tags();
+      com.wordnik.swagger.annotations.Tag[] tags = api.tags();
       boolean hasExplicitTags = false;
-      if(tags != null && tags.value().length > 0) {
-        for(com.wordnik.swagger.annotations.Tag tag : tags.value()) {
+      if(tags != null && tags.length > 0) {
+        for(com.wordnik.swagger.annotations.Tag tag : tags) {
           if(!"".equals(tag.value())) {
             hasExplicitTags = true;
             tagStrings.add(tag.value());
