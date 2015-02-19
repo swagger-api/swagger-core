@@ -24,6 +24,8 @@ import java.lang.annotation.Target;
 /**
  * Represents a single tag in an {@link com.wordnik.swagger.annotations.Api}.  A Tag is an organizing object for the 
  * to the API.
+ * 
+ * @since 1.5.2
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
