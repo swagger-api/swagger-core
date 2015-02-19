@@ -77,4 +77,28 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     val swagger = new Reader(new Swagger()).read(classOf[ResourceWithResponse])
     swagger.getDefinitions() should be (null)
   }
+
+  it should "scan a resource with Response.Status return type per 877" in {
+    val swagger = new Reader(new Swagger()).read(classOf[Resource877])
+    val path = swagger.getPaths().get("external/info")
+    Json.prettyPrint(swagger)
+
+    swagger.getTags() should not be (null)
+    swagger.getTags().size() should be (1)
+    val tag = swagger.getTags().get(0)
+
+    tag.getName() should equal ("externalinfo")
+    tag.getDescription() should equal ("it's an api")
+    tag.getExternalDocs() should be (null)
+
+    Json.prettyPrint(swagger)
+  }
+}
+
+@RunWith(classOf[JUnitRunner])
+class SimpleScannerTest2 extends FlatSpec with Matchers {
+  it should "scan a resource with tags" in {
+    val swagger = new Reader(new Swagger()).read(classOf[TaggedResource])
+    Json.prettyPrint(swagger)
+  }
 }
