@@ -27,7 +27,7 @@ The Swagger Specification has undergone 3 revisions since initial creation in 20
 
 Swagger core Version      | Release Date | Swagger Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-1.5.1-M1    | 2015-02-13  | 2.0           | [branch develop_2.0](https://github.com/swagger-api/swagger-core/tree/develop_2.0) |
+1.5.2-M1-SNAPSHOT    | 2015-02-13  | 2.0           | [branch develop_2.0](https://github.com/swagger-api/swagger-core/tree/develop_2.0) |
 1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12)
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4)
 1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0)
@@ -46,7 +46,7 @@ You need the following installed and available in your $PATH:
 
 <li>- Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
-### To build from source (currently 1.5.1-M1)
+### To build from source (currently 1.5.2-M1-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
