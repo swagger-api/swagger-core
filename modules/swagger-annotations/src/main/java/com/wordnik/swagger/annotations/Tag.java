@@ -22,18 +22,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Represents a single tag in an Api.  A Tag is an organizing object for the 
- * to the api
+ * Represents a single tag in an {@link com.wordnik.swagger.annotations.Api}.  A Tag is an organizing object for the 
+ * to the API.
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Tag {
-  /** Name of the tag */
+  /** Name of the tag. */
   String value();
 
-  /** Description of the tag */
+  /** A short description for the tag. GFM syntax can be used for rich text representation. */
   String description() default "";
 
-  /** external docs */
+  /** Additional external documentation. */
   ExternalDocs externalDocs() default @ExternalDocs(value = "", url = "");
 }
