@@ -63,7 +63,13 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         }
       }
 
-      Option(hostClass.getSuperclass).map(parseRecursive(_))
+      if (hostClass.isInterface) {
+        for ( interf <- hostClass.getInterfaces) {
+          Option(interf).map(parseRecursive(_))
+        }
+      } else {
+        Option(hostClass.getSuperclass).map(parseRecursive(_))
+      }
     }
     else {
       LOGGER.debug("Not processing enum class " + hostClass)
