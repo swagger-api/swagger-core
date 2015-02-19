@@ -89,8 +89,11 @@ public class PetResource {
   @POST
   @Path("/{petId}/uploadImage")
   @Consumes({MediaType.MULTIPART_FORM_DATA})
-  @ApiOperation(value = "uploads an image")
+  @Produces({MediaType.APPLICATION_JSON})
+  @ApiOperation(value = "uploads an image",
+    response = com.wordnik.swagger.sample.model.ApiResponse.class)
   public Response uploadFile(
+    @ApiParam(value = "ID of pet to update", required = true) @PathParam("petId") Long petId,
     @ApiParam(value = "Additional data to pass to server") @FormDataParam("additionalMetadata") String testString,
     @ApiParam(value = "file to upload") @FormDataParam("file") InputStream inputStream,
     @ApiParam(value = "file detail") @FormDataParam("file") FormDataContentDisposition fileDetail) {
