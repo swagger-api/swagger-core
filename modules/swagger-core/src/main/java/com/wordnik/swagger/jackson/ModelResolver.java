@@ -41,7 +41,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
   protected boolean shouldIgnoreClass(Type type) {
     if(type instanceof Class) {
       Class<?> cls = (Class)type;
-      if(cls.getName().startsWith("javax.ws.rs"))
+      if(cls.getName().equals("javax.ws.rs.Response"))
         return true;
     }
     else {
@@ -65,6 +65,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     // primitive or null
     property = getPrimitiveProperty(typeName);
+    LOGGER.debug("got primitive property " + property);
     // And then properties specific to subset of property types:
     if (propType.isContainerType()) {
       LOGGER.debug("looking at container type");
@@ -194,7 +195,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
   public Model resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
     final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
-
     if (type.isEnumType()) {
       // TODO how to handle if model provided is simply an enum
     }
