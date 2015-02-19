@@ -12,6 +12,7 @@ public class Swagger {
   protected Info info;
   protected String host;
   protected String basePath;
+  protected List<Tag> tags;
   protected List<Scheme> schemes;
   protected List<String> consumes;
   protected List<String> produces;
@@ -37,6 +38,14 @@ public class Swagger {
   }
   public Swagger externalDocs(ExternalDocs value) {
     this.setExternalDocs(value);
+    return this;
+  }
+  public Swagger tags(List<Tag> tags) {
+    this.setTags(tags);
+    return this;
+  }
+  public Swagger tag(Tag tag) {
+    this.addTag(tag);
     return this;
   }
   public Swagger schemes(List<Scheme> schemes) {
@@ -131,6 +140,24 @@ public class Swagger {
     }
     if(!found)
       this.schemes.add(scheme);
+  }
+
+  public List<Tag> getTags() {
+    return tags;
+  }
+  public void setTags(List<Tag> tags) {
+    this.tags = tags;
+  }
+  public void addTag(Tag tag) {
+    if(this.tags == null)
+      this.tags = new ArrayList<Tag>();
+    boolean found = false;
+    for(Tag existing : this.tags) {
+      if(existing.equals(tag))
+        found = true;
+    }
+    if(!found)
+      this.tags.add(tag);
   }
 
   public List<String> getConsumes() {
