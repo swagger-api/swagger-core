@@ -40,9 +40,6 @@ public class ModelConverterContextImpl implements ModelConverterContext {
     if(LOGGER.isDebugEnabled()){
       LOGGER.debug(String.format("defineModel %s %s", name, model));
     }
-    if("SnakeCaseModel".equals(name)) {
-      throw new RuntimeException("oops");
-    }
     modelByName.put(name, model);
   }
   
@@ -77,6 +74,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
     Model resolved = null;
     if(converters.hasNext()) {
       ModelConverter converter = converters.next();
+      LOGGER.debug("trying extension " + converter);
       resolved = converter.resolve(type, this, converters);
     }
     if(resolved != null) {
