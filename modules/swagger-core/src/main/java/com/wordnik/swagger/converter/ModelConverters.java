@@ -80,7 +80,7 @@ public class ModelConverters {
       ModelConverterContextImpl context = new ModelConverterContextImpl(
           converters);
 
-      LOGGER.debug("ModelConverters readAll");
+      LOGGER.debug("ModelConverters readAll from " + type);
       context.resolve(type);
       return context.getDefinedModels();
     }
