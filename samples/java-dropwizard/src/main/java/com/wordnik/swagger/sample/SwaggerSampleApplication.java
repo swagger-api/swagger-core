@@ -1,10 +1,11 @@
 package com.wordnik.swagger.sample;
 
 import com.wordnik.swagger.sample.resource.*;
-
 import com.wordnik.swagger.jaxrs.config.*;
 import com.wordnik.swagger.jaxrs.listing.ApiListingResource;
 import com.wordnik.swagger.config.*;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -27,9 +28,12 @@ public class SwaggerSampleApplication extends Application <SwaggerSampleConfigur
   public void run(SwaggerSampleConfiguration configuration, Environment environment) {
     environment.jersey().register(new ApiListingResource());
     environment.jersey().register(new PetResource());
+    environment.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-    // SwaggerConfig config = ConfigFactory.config();
-    // config.setApiVersion("1.0.1");
-    // config.setBasePath("http://localhost:8000");
+    BeanConfig config = new BeanConfig();
+    config.setTitle("Swagger sample app");
+    config.setVersion("1.0.0");
+    config.setResourcePackage("com.wordnik.swagger.sample");
+    config.setScan(true);
   }
 }
