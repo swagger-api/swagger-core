@@ -1,5 +1,6 @@
 package models;
 
+import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import com.fasterxml.jackson.annotation.*;
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
 import java.util.Date;
 
+@ApiModel(description="a java model with subtypes")
 @JsonTypeInfo( use=JsonTypeInfo.Id.NAME, include=JsonTypeInfo.As.PROPERTY, property="type" )
 @JsonSubTypes( { @Type( value = JWildAnimal.class, name = "wild" ), 
                              @Type( value = JDomesticAnimal.class, name = "domestic" ) } )

@@ -35,15 +35,15 @@ class SwaggerSchemaConverter
         val sortedProperties = new LinkedHashMap[String, ModelProperty]()
         p.sortWith(_._1 < _._1).foreach(e => sortedProperties += e._2 -> e._3)
 
-        val parent = Option(cls.getAnnotation(classOf[ApiModel])) match {
+        val apiModelAnnotation: ApiModel = cls.getAnnotation(classOf[ApiModel])
+        val parent = Option(apiModelAnnotation) match {
           case Some(e) => Some(e.parent.getName)
           case _ => None
         }
         val discriminator = {
           val v = {
-            val apiAnno = cls.getAnnotation(classOf[ApiModel])
-            if(apiAnno != null && apiAnno.discriminator != null)
-              apiAnno.discriminator
+            if (apiModelAnnotation != null && apiModelAnnotation.discriminator != null && ! apiModelAnnotation.discriminator().isEmpty)
+              apiModelAnnotation.discriminator
             else if(cls.getAnnotation(classOf[JsonTypeInfo]) != null)
               cls.getAnnotation(classOf[JsonTypeInfo]).property
             else "" 
@@ -52,8 +52,8 @@ class SwaggerSchemaConverter
           else None
         }
         val subTypes = {
-          if(cls.getAnnotation(classOf[ApiModel]) != null)
-            cls.getAnnotation(classOf[ApiModel]).subTypes.map(_.getName).toList
+          if(apiModelAnnotation != null && apiModelAnnotation.subTypes() != null && ! apiModelAnnotation.subTypes().isEmpty)
+            apiModelAnnotation.subTypes.map(_.getName).toList
           else if(cls.getAnnotation(classOf[JsonSubTypes]) != null)
             (for(subType <- cls.getAnnotation(classOf[JsonSubTypes]).value) yield (subType.value.getName)).toList
           else List()
