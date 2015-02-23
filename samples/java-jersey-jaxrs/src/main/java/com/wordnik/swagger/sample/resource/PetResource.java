@@ -49,7 +49,7 @@ import javax.ws.rs.*;
     @AuthorizationScope(scope = "read:pets", description = "read your pets")
   })
 }, tags = {
-  @com.wordnik.swagger.annotations.Tag(value = "pets",
+  @com.wordnik.swagger.annotations.Tag(value = "pet",
     description = "Everything about your Pets",
     externalDocs = @ExternalDocs(value="Find out more", url = "http://swagger.io"))
 })
