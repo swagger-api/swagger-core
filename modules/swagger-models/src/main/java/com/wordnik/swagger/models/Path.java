@@ -105,6 +105,25 @@ public class Path {
     this.options = options;
   }
 
+  @JsonIgnore
+  public List<Operation> getOperations() {
+    List<Operation> allOperations = new ArrayList<Operation>();
+    if(get != null)
+      allOperations.add(get);
+    if(put != null)
+      allOperations.add(put);
+    if(post != null)
+      allOperations.add(post);
+    if(delete != null)
+      allOperations.add(delete);
+    if(patch != null)
+      allOperations.add(patch);
+    if(options != null)
+      allOperations.add(options);
+
+    return allOperations;
+  }
+
   public List<Parameter> getParameters() {
     return parameters;
   }
