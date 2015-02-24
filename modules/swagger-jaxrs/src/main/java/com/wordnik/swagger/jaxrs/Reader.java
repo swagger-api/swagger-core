@@ -167,7 +167,6 @@ public class Reader {
                   Tag tagObject = new Tag()
                     .name(tag.value())
                     .description(tag.description());
-
                   if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
                     tagObject.externalDocs(
                       new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
