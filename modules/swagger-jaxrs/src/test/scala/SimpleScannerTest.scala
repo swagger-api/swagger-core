@@ -64,7 +64,7 @@ class SimpleScannerTest extends FlatSpec with Matchers {
 
   it should "scan a resource with generics per 653" in {
     val swagger = new Reader(new Swagger()).read(classOf[Resource653])
-    val path = swagger.getPaths().get("external/info")
+    val path = swagger.getPaths().get("/external/info")
     val get = path.getGet()
     get should not be (null)
 
@@ -82,7 +82,7 @@ class SimpleScannerTest extends FlatSpec with Matchers {
 
   it should "scan a resource with Response.Status return type per 877" in {
     val swagger = new Reader(new Swagger()).read(classOf[Resource877])
-    val path = swagger.getPaths().get("external/info")
+    val path = swagger.getPaths().get("/external/info")
 
     swagger.getTags() should not be (null)
     swagger.getTags().size() should be (1)
@@ -95,7 +95,7 @@ class SimpleScannerTest extends FlatSpec with Matchers {
 
   it should "scan a resource with tags" in {
     val swagger = new Reader(new Swagger()).read(classOf[TaggedResource])
-    Json.prettyPrint(swagger)
+    swagger.getTags().size() should be (2)
   }
 }
 
