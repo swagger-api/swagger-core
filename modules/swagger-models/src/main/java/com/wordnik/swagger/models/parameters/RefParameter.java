@@ -25,7 +25,7 @@ public class RefParameter extends AbstractParameter implements Parameter {
     if(ref.startsWith("http"))
       return ref;
     else
-      return "#/definitions/" + ref;
+      return "#/parameters/" + ref;
   }
   public void set$ref(String ref) {
     if(ref.indexOf("#/parameters/") == 0)
