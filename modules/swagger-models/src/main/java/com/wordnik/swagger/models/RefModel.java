@@ -50,7 +50,10 @@ public class RefModel implements Model {
   }
 
   public String get$ref() {
-    return "#/definitions/" + ref;
+    if(ref.startsWith("http"))
+      return ref;
+    else
+      return "#/definitions/" + ref;
   }
   public void set$ref(String ref) {
     if(ref.indexOf("#/definitions/") == 0)

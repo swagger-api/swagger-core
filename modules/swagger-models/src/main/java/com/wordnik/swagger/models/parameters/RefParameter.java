@@ -22,7 +22,10 @@ public class RefParameter extends AbstractParameter implements Parameter {
   }
 
   public String get$ref() {
-    return "#/parameters/" + ref;
+    if(ref.startsWith("http"))
+      return ref;
+    else
+      return "#/definitions/" + ref;
   }
   public void set$ref(String ref) {
     if(ref.indexOf("#/parameters/") == 0)
