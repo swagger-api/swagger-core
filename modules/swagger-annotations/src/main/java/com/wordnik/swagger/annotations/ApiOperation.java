@@ -35,14 +35,19 @@ public @interface ApiOperation {
   /** long description of the operation */
   String notes() default "";
 
+  /**
+   * A list of tags for API documentation control. 
+   * Tags can be used for logical grouping of operations by resources or any other qualifier.
+   * 
+   * @since 1.5.2
+   */
+  Tag[] tags() default @Tag(value = "", description = "");
+
   /** default response class from the operation */
   Class<?> response() default Void.class;
 
   /** if the response class is within a container, specify it here */
   String responseContainer() default "";
-
-  /** currently not implemented in readers, reserved for future use */
-  String tags() default "";
 
   /** the HTTP method, i.e GET, PUT, POST, DELETE, PATCH, OPTIONS */
   String httpMethod() default "";

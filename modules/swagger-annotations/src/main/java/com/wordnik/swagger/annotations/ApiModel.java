@@ -28,33 +28,33 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ApiModel {
-    /**
-     * Provide an alternative name for the model.
-     * <p/>
-     * By default, the class name is used.
-     */
-    String value() default "";
+  /**
+   * Provide an alternative name for the model.
+   * <p/>
+   * By default, the class name is used.
+   */
+  String value() default "";
 
-    /**
-     * Provide a longer description of the class.
-     */
-    String description() default "";
+  /**
+   * Provide a longer description of the class.
+   */
+  String description() default "";
 
-    /**
-     * Provide a superclass for the model to allow describing inheritance.
-     */
-    Class<?> parent() default Void.class;
+  /**
+   * Provide a superclass for the model to allow describing inheritance.
+   */
+  Class<?> parent() default Void.class;
 
-    /**
-     * Supports model inheritance and polymorphism.
-     * <p/>
-     * This is the name of the field used as a discriminator. Based on this field,
-     * it would be possible to assert which sub type needs to be used.
-     */
-    String discriminator() default "";
+  /**
+   * Supports model inheritance and polymorphism.
+   * <p/>
+   * This is the name of the field used as a discriminator. Based on this field,
+   * it would be possible to assert which sub type needs to be used.
+   */
+  String discriminator() default "";
 
-    /**
-     * An array of the sub types inheriting from this model.
-     */
-    Class<?>[] subTypes() default {};
+  /**
+   * An array of the sub types inheriting from this model.
+   */
+  Class<?>[] subTypes() default {};
 }
