@@ -8,6 +8,8 @@ import com.wordnik.swagger.models.Swagger
 import com.wordnik.swagger.jaxrs.Reader
 import com.wordnik.swagger.util.Json
 
+import scala.collection.JavaConverters._
+
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
@@ -81,7 +83,6 @@ class SimpleScannerTest extends FlatSpec with Matchers {
   it should "scan a resource with Response.Status return type per 877" in {
     val swagger = new Reader(new Swagger()).read(classOf[Resource877])
     val path = swagger.getPaths().get("external/info")
-    Json.prettyPrint(swagger)
 
     swagger.getTags() should not be (null)
     swagger.getTags().size() should be (1)
@@ -90,7 +91,10 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     tag.getName() should equal ("externalinfo")
     tag.getDescription() should equal ("it's an api")
     tag.getExternalDocs() should be (null)
+  }
 
+  it should "scan a resource with tags" in {
+    val swagger = new Reader(new Swagger()).read(classOf[TaggedResource])
     Json.prettyPrint(swagger)
   }
 }
@@ -98,7 +102,19 @@ class SimpleScannerTest extends FlatSpec with Matchers {
 @RunWith(classOf[JUnitRunner])
 class SimpleScannerTest2 extends FlatSpec with Matchers {
   it should "scan a resource with tags" in {
-    val swagger = new Reader(new Swagger()).read(classOf[TaggedResource])
-    Json.prettyPrint(swagger)
+    val swagger = new Reader(new Swagger()).read(classOf[Resource841])
+    swagger.getTags().size() should be (3)
+
+    val rootTags = swagger.getPaths().get("/fun").getGet().getTags()
+    rootTags.size() should be (2)
+    (rootTags.asScala.toList.toSet & Set("tag1", "tag2")).size should be (2)
+
+    val thisTags = swagger.getPaths().get("/fun/this").getGet().getTags()
+    thisTags.size() should be (1)
+    (thisTags.asScala.toList.toSet & Set("tag1")).size should be (1)
+
+    val thatTags = swagger.getPaths().get("/fun/that").getGet().getTags()
+    thatTags.size() should be (1)
+    (thatTags.asScala.toList.toSet & Set("tag2")).size should be (1)
   }
 }

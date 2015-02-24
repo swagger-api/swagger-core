@@ -82,7 +82,7 @@ public class Reader {
     }
 
     if(api != null) {
-      List<String> tagStrings = new ArrayList<String>();
+      Set<String> tagStrings = new HashSet<String>();
       // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
       com.wordnik.swagger.annotations.Tag[] tags = api.tags();
       boolean hasExplicitTags = false;
@@ -155,6 +155,27 @@ public class Reader {
             break;
 
           Operation operation = parseMethod(method);
+
+          ApiOperation op = (ApiOperation) method.getAnnotation(ApiOperation.class);
+          if(op != null) {
+            com.wordnik.swagger.annotations.Tag[] operationTags = op.tags();
+            boolean hasExplicitTag = false;
+            for(com.wordnik.swagger.annotations.Tag tag : operationTags) {
+              if(!"".equals(tag.value())) {
+                operation.tag(tag.value());
+                if(!tagStrings.contains(tag.value())) {
+                  Tag tagObject = new Tag()
+                    .name(tag.value())
+                    .description(tag.description());
+
+                  if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
+                    tagObject.externalDocs(
+                      new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
+                  swagger.tag(tagObject);
+                }
+              }
+            }
+          }
           if(operation != null) {
             if(operation.getConsumes() == null)
               for(String mediaType: apiConsumes)
@@ -163,8 +184,10 @@ public class Reader {
               for(String mediaType: apiProduces)
                 operation.produces(mediaType);
 
-            for(String tagString : tagStrings)
-              operation.tag(tagString);
+            if(operation.getTags() == null) {
+              for(String tagString : tagStrings)
+                operation.tag(tagString);
+            }
             for(SecurityRequirement security : securities)
               operation.security(security);
             Path path = swagger.getPath(operationPath);
@@ -198,6 +221,8 @@ public class Reader {
       b.append(methodPath);
     }
     String output = b.toString();
+    if(!output.startsWith("/"))
+      output = "/" + output;
     if(output.endsWith("/") && output.length() > 1)
       return output.substring(0, output.length() - 1);
     else
@@ -217,9 +242,11 @@ public class Reader {
     if(apiOperation != null) {
       if(!"".equals(apiOperation.nickname()))
         operationId = method.getName();
+
       operation
         .summary(apiOperation.value())
         .description(apiOperation.notes());
+
       if(apiOperation.response() != null && !Void.class.equals(apiOperation.response())) {
         responseClass = apiOperation.response();
       }
