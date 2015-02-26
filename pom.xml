@@ -149,6 +149,7 @@
             <link>http://java.sun.com/javase/6/docs/api/</link>
           </links>
           <excludePackageNames>${javadoc.package.exclude}</excludePackageNames>
+          <additionalparam>-Xdoclint:none</additionalparam>
         </configuration>
         <executions>
           <execution>
