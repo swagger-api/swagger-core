@@ -471,7 +471,7 @@ public class Reader {
 
   String getHttpMethod(ApiOperation apiOperation, Method method) {
     if(apiOperation.httpMethod() != null && !"".equals(apiOperation.httpMethod()))
-      return apiOperation.httpMethod();
+      return apiOperation.httpMethod().toLowerCase();
     if(method.getAnnotation(javax.ws.rs.GET.class) != null)
       return "get";
     if(method.getAnnotation(javax.ws.rs.PUT.class) != null)

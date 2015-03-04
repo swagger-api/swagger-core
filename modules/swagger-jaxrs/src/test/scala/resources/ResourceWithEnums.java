@@ -13,6 +13,7 @@ public class ResourceWithEnums {
   @GET
   @Path("/{id}")
   @ApiOperation(value = "Get object by ID",
+    httpMethod = "GET",
     notes = "No details provided",
     response = Sample.class,
     position = 0)
