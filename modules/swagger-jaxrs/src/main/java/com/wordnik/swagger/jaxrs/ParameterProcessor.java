@@ -76,8 +76,7 @@ public class ParameterProcessor {
           allowableValues = param.allowableValues();
           if(allowableValues != null) {
             if (allowableValues.startsWith("range")) {
-              System.out.println("range values: " + allowableValues);
-              // handle range
+              // TODO handle range
             }
             else {
               String[] values = allowableValues.split(",");
