@@ -97,11 +97,8 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     val swagger = new Reader(new Swagger()).read(classOf[TaggedResource])
     swagger.getTags().size() should be (2)
   }
-}
 
-@RunWith(classOf[JUnitRunner])
-class SimpleScannerTest2 extends FlatSpec with Matchers {
-  it should "scan a resource with tags" in {
+  it should "scan a resource with tags in test 841" in {
     val swagger = new Reader(new Swagger()).read(classOf[Resource841])
     swagger.getTags().size() should be (3)
 
@@ -116,5 +113,10 @@ class SimpleScannerTest2 extends FlatSpec with Matchers {
     val thatTags = swagger.getPaths().get("/fun/that").getGet().getTags()
     thatTags.size() should be (1)
     (thatTags.asScala.toList.toSet & Set("tag2")).size should be (1)
+  }
+
+  it should "scan a resource with param enums" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithEnums])
+    Json.prettyPrint(swagger)
   }
 }

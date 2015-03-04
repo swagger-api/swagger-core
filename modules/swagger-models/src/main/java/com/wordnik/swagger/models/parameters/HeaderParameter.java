@@ -5,6 +5,8 @@ import com.wordnik.swagger.models.properties.Property;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import java.util.List;
+
 @JsonPropertyOrder({ "name", "in", "description", "required", "type", "items", "collectionFormat", "default"})
 public class HeaderParameter extends AbstractParameter implements SerializableParameter {;
   protected String type;
@@ -14,6 +16,7 @@ public class HeaderParameter extends AbstractParameter implements SerializablePa
 
   @JsonProperty("default")
   protected String defaultValue;
+  protected List<String> _enum;
 
   public HeaderParameter() {
     super.setIn("header");

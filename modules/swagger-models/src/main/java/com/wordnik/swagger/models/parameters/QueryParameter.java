@@ -5,6 +5,8 @@ import com.wordnik.swagger.models.properties.Property;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import java.util.List;
+
 @JsonPropertyOrder({ "name", "in", "description", "required", "type", "items", "collectionFormat", "default"})
 public class QueryParameter extends AbstractParameter implements SerializableParameter {;
   protected String type;
