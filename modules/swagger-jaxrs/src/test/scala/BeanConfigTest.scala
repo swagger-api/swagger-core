@@ -7,11 +7,13 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import scala.collection.JavaConverters._
+
 @RunWith(classOf[JUnitRunner])
 class BeanConfigTest extends FlatSpec with Matchers {
   it should "scan a simple resource" in {
     val bc = new BeanConfig()
-    bc.setResourcePackage("resources")
+    bc.setResourcePackage("com.my.project.resources,org.my.project.resources")
 
     bc.setHost("petstore.swagger.wordnik.com")
     bc.setBasePath("/api")
@@ -25,6 +27,7 @@ class BeanConfigTest extends FlatSpec with Matchers {
 
     val swagger = bc.getSwagger()
     swagger should not be (null)
-    // TODO: add checks
+    val keys = swagger.getPaths().keySet()
+    keys.asScala.toSet should be (Set("/packageA", "/packageB"))
   }
 }

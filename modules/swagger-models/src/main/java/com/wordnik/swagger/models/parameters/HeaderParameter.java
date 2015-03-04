@@ -5,14 +5,18 @@ import com.wordnik.swagger.models.properties.Property;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import java.util.List;
+
 @JsonPropertyOrder({ "name", "in", "description", "required", "type", "items", "collectionFormat", "default"})
 public class HeaderParameter extends AbstractParameter implements SerializableParameter {;
-  String type;
-  String format;
-  String collectionFormat;
-  Property items;
+  protected String type;
+  protected String format;
+  protected String collectionFormat;
+  protected Property items;
+
   @JsonProperty("default")
-  String defaultValue;
+  protected String defaultValue;
+  protected List<String> _enum;
 
   public HeaderParameter() {
     super.setIn("header");
@@ -41,6 +45,17 @@ public class HeaderParameter extends AbstractParameter implements SerializablePa
   public HeaderParameter items(Property items) {
     this.items = items;
     return this;
+  }
+  public HeaderParameter _enum(List<String> value) {
+    this._enum = value;
+    return this;
+  }
+
+  public List<String> getEnum() {
+    return _enum;
+  }
+  public void setEnum(List<String> _enum) {
+    this._enum = _enum;
   }
 
   public void setArray(boolean isArray) {

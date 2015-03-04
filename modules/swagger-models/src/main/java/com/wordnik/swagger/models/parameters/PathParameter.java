@@ -1,18 +1,22 @@
 package com.wordnik.swagger.models.parameters;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wordnik.swagger.models.properties.Property;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import java.util.List;
 
 @JsonPropertyOrder({ "name", "in", "description", "required", "type", "items", "collectionFormat", "default"})
 public class PathParameter extends AbstractParameter implements SerializableParameter {;
-  String type;
-  String format;
-  String collectionFormat;
-  Property items;
+  protected String type;
+  protected String format;
+  protected String collectionFormat;
+  protected Property items;
+  protected List<String> _enum;
+
   @JsonProperty("default")
-  String defaultValue;
+  protected String defaultValue;
 
   public PathParameter() {
     super.setIn("path");
@@ -42,6 +46,17 @@ public class PathParameter extends AbstractParameter implements SerializablePara
   public PathParameter property(Property property) {
     this.setProperty(property);
     return this;
+  }
+  public PathParameter _enum(List<String> value) {
+    this._enum = value;
+    return this;
+  }
+
+  public List<String> getEnum() {
+    return _enum;
+  }
+  public void setEnum(List<String> _enum) {
+    this._enum = _enum;
   }
 
   public void setArray(boolean isArray) {

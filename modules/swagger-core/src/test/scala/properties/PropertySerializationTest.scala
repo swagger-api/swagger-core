@@ -214,6 +214,7 @@ class PropertySerializationTest extends FlatSpec with Matchers {
     p.setReadOnly(false)
     m.writeValueAsString(p) should equal ("""{"type":"string"}""")
   }
+
 /*
   it should "read a file property" in {
     val json = """{"type":"File"}"""

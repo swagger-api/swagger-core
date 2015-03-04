@@ -11,6 +11,8 @@ import com.wordnik.swagger.models.properties.*;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
@@ -285,6 +287,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
       PropertyMetadata md = propDef.getMetadata();
 
+      boolean hasSetter = false, hasGetter = false;
+      if(propDef.getSetter() == null)
+        hasSetter = false;
+      else
+        hasSetter = true;
+      if(propDef.getGetter() != null) {
+        JsonProperty pd = propDef.getGetter().getAnnotation(JsonProperty.class);
+        if(pd != null)
+          hasGetter = true;
+      }
+      Boolean isReadOnly = null;
+      if(!hasSetter & hasGetter)
+        isReadOnly = Boolean.TRUE;
+      else
+        isReadOnly = Boolean.FALSE;
+
       final AnnotatedMember member = propDef.getPrimaryMember();
 
       if(member != null && !propertiesToIgnore.contains(propName)) {
@@ -360,8 +378,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
           }
           property.setExample(_findExampleValue(member));
           property.setReadOnly(_findReadOnly(member));
-
-
+          
+          if(property.getReadOnly() == null) {
+            if(isReadOnly)
+              property.setReadOnly(isReadOnly);
+          }
 
           if(property instanceof StringProperty) {
             if(mp != null) {

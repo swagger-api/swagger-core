@@ -74,6 +74,24 @@ public class ParameterProcessor {
             }
           }
           allowableValues = param.allowableValues();
+          if(allowableValues != null) {
+            if (allowableValues.startsWith("range")) {
+              // TODO handle range
+            }
+            else {
+              String[] values = allowableValues.split(",");
+              List<String> _enum = new ArrayList<String>();
+              for(String value : values) {
+                String trimmed = value.trim();
+                if(!trimmed.equals(""))
+                  _enum.add(trimmed);
+              }
+              if(parameter instanceof SerializableParameter) {
+                SerializableParameter p = (SerializableParameter) parameter;
+                p.setEnum(_enum);
+              }
+            }
+          }
         }
         else if(shouldIgnore == false) {
           // must be a body param
