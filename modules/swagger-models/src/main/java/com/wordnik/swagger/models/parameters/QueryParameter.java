@@ -7,12 +7,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({ "name", "in", "description", "required", "type", "items", "collectionFormat", "default"})
 public class QueryParameter extends AbstractParameter implements SerializableParameter {;
-  String type;
-  String format;
-  String collectionFormat;
-  Property items;
+  protected String type;
+  protected String format;
+  protected String collectionFormat;
+  protected Property items;
+
   @JsonProperty("default")
-  String defaultValue;
+  protected String defaultValue;
+  protected List<String> _enum;
 
   public QueryParameter() {
     super.setIn("query");
@@ -45,6 +47,17 @@ public class QueryParameter extends AbstractParameter implements SerializablePar
   public QueryParameter items(Property items) {
     this.items = items;
     return this;
+  }
+  public QueryParameter _enum(List<String> value) {
+    this._enum = value;
+    return this;
+  }
+
+  public List<String> getEnum() {
+    return _enum;
+  }
+  public void setEnum(List<String> _enum) {
+    this._enum = _enum;
   }
 
   public void setArray(boolean isArray) {
