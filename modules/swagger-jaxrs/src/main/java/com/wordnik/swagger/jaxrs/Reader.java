@@ -470,21 +470,23 @@ public class Reader {
   }
 
   String getHttpMethod(ApiOperation apiOperation, Method method) {
+
+
     if(apiOperation.httpMethod() != null && !"".equals(apiOperation.httpMethod()))
       return apiOperation.httpMethod().toLowerCase();
-    if(method.getAnnotation(javax.ws.rs.GET.class) != null)
+    else if(method.getAnnotation(javax.ws.rs.GET.class) != null)
       return "get";
-    if(method.getAnnotation(javax.ws.rs.PUT.class) != null)
+    else if(method.getAnnotation(javax.ws.rs.PUT.class) != null)
       return "put";
-    if(method.getAnnotation(javax.ws.rs.POST.class) != null)
+    else if(method.getAnnotation(javax.ws.rs.POST.class) != null)
       return "post";
-    if(method.getAnnotation(javax.ws.rs.DELETE.class) != null)
+    else if(method.getAnnotation(javax.ws.rs.DELETE.class) != null)
       return "delete";
-    if(method.getAnnotation(javax.ws.rs.OPTIONS.class) != null)
+    else if(method.getAnnotation(javax.ws.rs.OPTIONS.class) != null)
       return "options";
-    if(method.getAnnotation(javax.ws.rs.HEAD.class) != null)
+    else if(method.getAnnotation(javax.ws.rs.HEAD.class) != null)
       return "head";
-    if(method.getAnnotation(PATCH.class) != null)
+    else if(method.getAnnotation(PATCH.class) != null)
       return "patch";
 
     return null;
