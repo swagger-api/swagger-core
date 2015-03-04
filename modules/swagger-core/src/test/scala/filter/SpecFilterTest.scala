@@ -1,8 +1,9 @@
 package filter
 
 import com.wordnik.swagger.util._
-
 import com.wordnik.swagger.core.filter._
+
+import io.swagger.parser.SwaggerParser;
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -14,7 +15,7 @@ import scala.collection.JavaConverters._
 @RunWith(classOf[JUnitRunner])
 class SpecFilterTest extends FlatSpec with Matchers {
   it should "filter away get operations in a resource" in {
-    val swagger = new SwaggerLoader().read("src/test/scala/specFiles/petstore.json")
+    val swagger = new SwaggerParser().read("src/test/scala/specFiles/petstore.json")
     val filter = new NoGetOperationsFilter()
 
     val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
@@ -29,7 +30,7 @@ class SpecFilterTest extends FlatSpec with Matchers {
   }
 
   it should "filter away the store resource" in {
-    val swagger = new SwaggerLoader().read("src/test/scala/specFiles/petstore.json")
+    val swagger = new SwaggerParser().read("src/test/scala/specFiles/petstore.json")
     val filter = new NoUserOperationsFilter()
 
     val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
@@ -44,7 +45,7 @@ class SpecFilterTest extends FlatSpec with Matchers {
   }
 
   it should "filter away secret parameters" in {
-    val swagger = new SwaggerLoader().read("src/test/scala/specFiles/sampleSpec.json")
+    val swagger = new SwaggerParser().read("src/test/scala/specFiles/sampleSpec.json")
     val filter = new RemoveInternalParamsFilter()
 
     val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
@@ -63,7 +64,7 @@ class SpecFilterTest extends FlatSpec with Matchers {
   }
 
   it should "filter away internal model properties" in {
-    val swagger = new SwaggerLoader().read("src/test/scala/specFiles/sampleSpec.json")
+    val swagger = new SwaggerParser().read("src/test/scala/specFiles/sampleSpec.json")
     val filter = new InternalModelPropertiesRemoverFilter()
 
     val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
