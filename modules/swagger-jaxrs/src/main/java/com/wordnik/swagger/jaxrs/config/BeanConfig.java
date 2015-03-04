@@ -7,12 +7,14 @@ import com.wordnik.swagger.config.*;
 import com.wordnik.swagger.annotations.Api;
 
 import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
 import java.util.Set;
+import java.util.HashSet;
 
 public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfig {
   Reader reader = new Reader(new Swagger());
@@ -133,9 +135,20 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
   }
 
   public Set<Class<?>> classes() {
-    ConfigurationBuilder config = new ConfigurationBuilder()
-      .setUrls(ClasspathHelper.forPackage(resourcePackage))
-      .setScanners(new TypeAnnotationsScanner(), new SubTypesScanner());
+    ConfigurationBuilder config = new ConfigurationBuilder();
+    Set<String> acceptablePackages = new HashSet<String>();
+
+    if(resourcePackage != "") {
+      String[] parts = resourcePackage.split(",");
+      for(String pkg : parts) {
+        if(!"".equals(pkg)) {
+          acceptablePackages.add(pkg);
+          config.addUrls(ClasspathHelper.forPackage(pkg));
+        }
+      }
+    }
+
+    config.setScanners(new ResourcesScanner(), new TypeAnnotationsScanner(), new SubTypesScanner());
 
     this.info = new Info()
       .description(description)
@@ -152,7 +165,13 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         .url(licenseUrl));
 
     reader.getSwagger().setInfo(info);
-    return new Reflections(config).getTypesAnnotatedWith(Api.class);
+    Set<Class<?>> classes = new Reflections(config).getTypesAnnotatedWith(Api.class);
+    Set<Class<?>> output = new HashSet<Class<?>>();
+    for(Class<?> cls : classes) {
+      if(acceptablePackages.contains(cls.getPackage().getName()))
+        output.add(cls);
+    }
+    return output;
   }
 
   public Swagger getSwagger() {
