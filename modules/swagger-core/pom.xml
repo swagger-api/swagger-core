@@ -91,6 +91,12 @@
     </dependency>
 
     <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-parser</artifactId>
+      <version>${swagger-parser-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
       <artifactId>jackson-module-scala_2.10</artifactId>
       <version>${jackson-version}</version>

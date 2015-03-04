@@ -170,15 +170,18 @@ class ModelConverterTest extends FlatSpec with Matchers {
     employee.getXml.getName should be ("employee")
   }
 
-}
-@RunWith(classOf[JUnitRunner])
-class ModelConverterTest2 extends FlatSpec with Matchers {
-
   it should "ignore hidden fields" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[ClientOptInput])
 
     val model = schemas.get("ClientOptInput")
     model.getProperties().size() should be (2)
     Json.prettyPrint(model)
+  }
+
+  it should "set readOnly per #854" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[JacksonReadonlyModel])
+    val model = schemas.get("JacksonReadonlyModel").asInstanceOf[ModelImpl]
+    val prop = model.getProperties().get("count")
+    prop.getReadOnly() should equal (true)
   }
 }
