@@ -77,4 +77,6 @@ public @interface ApiOperation {
    * Allows an operation to be marked as hidden
    */
   boolean hidden() default false;
+
+  ResponseHeader[] responseHeaders() default @ResponseHeader(name = "", response = Void.class);
 }

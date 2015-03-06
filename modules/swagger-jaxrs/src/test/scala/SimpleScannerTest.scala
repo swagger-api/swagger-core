@@ -1,7 +1,7 @@
 import resources._
 
 import com.wordnik.swagger.jaxrs.config._
-import com.wordnik.swagger.models.parameters.PathParameter
+import com.wordnik.swagger.models.parameters._
 import com.wordnik.swagger.models.properties.MapProperty
 
 import com.wordnik.swagger.models.Swagger
@@ -117,6 +117,26 @@ class SimpleScannerTest extends FlatSpec with Matchers {
 
   it should "scan a resource with param enums" in {
     val swagger = new Reader(new Swagger()).read(classOf[ResourceWithEnums])
-    Json.prettyPrint(swagger)
+    val get = swagger.getPaths().get("/{id}").getGet()
+    val param = get.getParameters().get(2).asInstanceOf[SerializableParameter]
+    val _enum = param.getEnum()
+    _enum.asScala.toSet should equal (Set("a","b","c","d","e"))
+  }
+
+  it should "scan a resource with response headers" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithResponseHeaders])
+    val get = swagger.getPaths().get("/{id}").getGet()
+    val responses = get.getResponses()
+    val response200 = responses.get("200")
+    val headers200 = response200.getHeaders()
+    headers200.size should be (1)
+    headers200.get("foo").getDescription should be ("description")
+    headers200.get("foo").getType should be ("string")
+    
+    val response400 = responses.get("400")
+    val headers400 = response400.getHeaders()
+    headers400.size should be (1)
+    headers400.get("X-Rack-Cache").getDescription should be ("Explains whether or not a cache was used")
+    headers400.get("X-Rack-Cache").getType should be ("boolean")
   }
 }
