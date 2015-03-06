@@ -185,3 +185,11 @@ class ModelConverterTest extends FlatSpec with Matchers {
     prop.getReadOnly() should equal (true)
   }
 }
+@RunWith(classOf[JUnitRunner])
+class ModelConverterTest2 extends FlatSpec with Matchers {
+
+  it should "process a model with org.apache.commons.lang3.tuple.Pair properties" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithTuple2])
+    Json.prettyPrint(schemas)
+  }
+}
