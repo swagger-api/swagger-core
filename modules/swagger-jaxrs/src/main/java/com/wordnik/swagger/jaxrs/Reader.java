@@ -231,26 +231,28 @@ public class Reader {
   public Map<String, Property> parseResponseHeaders(com.wordnik.swagger.annotations.ResponseHeader[] headers) {
     Map<String,Property> responseHeaders = null;
     if(headers != null && headers.length > 0) {
-      if(responseHeaders == null)
-        responseHeaders = new HashMap<String, Property>();
       for(com.wordnik.swagger.annotations.ResponseHeader header : headers) {
         String name = header.name();
-        String description = header.description();
-        Class<?> cls = header.response();
-        String container = header.responseContainer();
+        if(!"".equals(name)) {
+          if(responseHeaders == null)
+            responseHeaders = new HashMap<String, Property>();
+          String description = header.description();
+          Class<?> cls = header.response();
+          String container = header.responseContainer();
 
-        if(!cls.equals(java.lang.Void.class) && !"void".equals(cls.toString())) {
-          Property responseProperty = null;
-          Property property = ModelConverters.getInstance().readAsProperty(cls);
-          if(property != null) {
-            if("list".equalsIgnoreCase(container))
-              responseProperty = new ArrayProperty(property);
-            else if("map".equalsIgnoreCase(container))
-              responseProperty = new MapProperty(property);
-            else
-              responseProperty = property;
-            responseProperty.setDescription(description);
-            responseHeaders.put(name, responseProperty);
+          if(!cls.equals(java.lang.Void.class) && !"void".equals(cls.toString())) {
+            Property responseProperty = null;
+            Property property = ModelConverters.getInstance().readAsProperty(cls);
+            if(property != null) {
+              if("list".equalsIgnoreCase(container))
+                responseProperty = new ArrayProperty(property);
+              else if("map".equalsIgnoreCase(container))
+                responseProperty = new MapProperty(property);
+              else
+                responseProperty = property;
+              responseProperty.setDescription(description);
+              responseHeaders.put(name, responseProperty);
+            }
           }
         }
       }

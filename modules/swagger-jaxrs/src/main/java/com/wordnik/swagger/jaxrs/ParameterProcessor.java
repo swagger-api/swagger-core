@@ -88,7 +88,8 @@ public class ParameterProcessor {
               }
               if(parameter instanceof SerializableParameter) {
                 SerializableParameter p = (SerializableParameter) parameter;
-                p.setEnum(_enum);
+                if(_enum.size() > 0)
+                  p.setEnum(_enum);
               }
             }
           }
