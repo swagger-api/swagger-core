@@ -22,6 +22,8 @@ import com.wordnik.swagger.sample.model.User;
 import com.wordnik.swagger.sample.exception.ApiException;
 import com.wordnik.swagger.sample.exception.NotFoundException;
 
+import java.util.Date;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
@@ -115,14 +117,22 @@ public class UserResource {
   @Path("/login")
   @ApiOperation(value = "Logs user into the system",
     response = String.class,
-    position = 6)
+    position = 6,
+    responseHeaders = {
+      @ResponseHeader(name = "X-Expires-After", description = "date in UTC when toekn expires", response = Date.class),
+      @ResponseHeader(name = "X-Rate-Limit", description = "calls per hour allowed by the user", response = Integer.class)
+    })
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid username/password supplied") })
   public Response loginUser(
       @ApiParam(value = "The user name for login", required = true) @QueryParam("username") String username,
       @ApiParam(value = "The password for login in clear text", required = true) @QueryParam("password") String password) {
+
+    Date date = new Date(System.currentTimeMillis() + 3600000);
     return Response.ok()
-        .entity("logged in user session:" + System.currentTimeMillis())
-        .build();
+      .header("X-Expires-After", date.toString())
+      .header("X-Rate-Limit", String.valueOf(5000))
+      .entity("logged in user session:" + System.currentTimeMillis())
+      .build();
   }
 
   @GET
