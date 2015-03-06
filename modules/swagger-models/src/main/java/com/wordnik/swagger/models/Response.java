@@ -26,6 +26,14 @@ public class Response {
     examples.put(type, example);
     return this;
   }
+  public Response header(String name, Property property) {
+    addHeader(name, property);
+    return this;
+  }
+  public Response headers(Map<String, Property> headers) {
+    this.headers = headers;
+    return this;
+  }
 
   public String getDescription() {
     return description;
@@ -51,8 +59,12 @@ public class Response {
   public Map<String, Property> getHeaders() {
     return headers;
   }
-
   public void setHeaders(Map<String, Property> headers) {
     this.headers = headers;
+  }
+  public void addHeader(String key, Property property) {
+    if(this.headers == null)
+      this.headers = new LinkedHashMap<String, Property>();
+    this.headers.put(key, property);
   }
 }

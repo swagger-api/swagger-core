@@ -228,6 +228,36 @@ public class Reader {
       return output;
   }
 
+  public Map<String, Property> parseResponseHeaders(com.wordnik.swagger.annotations.ResponseHeader[] headers) {
+    Map<String,Property> responseHeaders = null;
+    if(headers != null && headers.length > 0) {
+      if(responseHeaders == null)
+        responseHeaders = new HashMap<String, Property>();
+      for(com.wordnik.swagger.annotations.ResponseHeader header : headers) {
+        String name = header.name();
+        String description = header.description();
+        Class<?> cls = header.response();
+        String container = header.responseContainer();
+
+        if(!cls.equals(java.lang.Void.class) && !"void".equals(cls.toString())) {
+          Property responseProperty = null;
+          Property property = ModelConverters.getInstance().readAsProperty(cls);
+          if(property != null) {
+            if("list".equalsIgnoreCase(container))
+              responseProperty = new ArrayProperty(property);
+            else if("map".equalsIgnoreCase(container))
+              responseProperty = new MapProperty(property);
+            else
+              responseProperty = property;
+            responseProperty.setDescription(description);
+            responseHeaders.put(name, responseProperty);
+          }
+        }
+      }
+    }
+    return responseHeaders;
+  }
+
   public Operation parseMethod(Method method) {
     Operation operation = new Operation();
 
@@ -238,17 +268,20 @@ public class Reader {
     String responseContainer = null;
 
     Class<?> responseClass = null;
+    Map<String,Property> defaultResponseHeaders = new HashMap<String, Property>();
+
     if(apiOperation != null) {
       if(!"".equals(apiOperation.nickname()))
         operationId = method.getName();
+
+      defaultResponseHeaders = parseResponseHeaders(apiOperation.responseHeaders());
 
       operation
         .summary(apiOperation.value())
         .description(apiOperation.notes());
 
-      if(apiOperation.response() != null && !Void.class.equals(apiOperation.response())) {
+      if(apiOperation.response() != null && !Void.class.equals(apiOperation.response()))
         responseClass = apiOperation.response();
-      }
       if(!"".equals(apiOperation.responseContainer()))
         responseContainer = apiOperation.responseContainer();
       if(apiOperation.authorizations()!= null) {
@@ -300,7 +333,8 @@ public class Reader {
             responseProperty = property;
           operation.response(200, new Response()
             .description("successful operation")
-            .schema(responseProperty));
+            .schema(responseProperty)
+            .headers(defaultResponseHeaders));
         }
       }
       else if(!responseClass.equals(java.lang.Void.class) && !"void".equals(responseClass.toString())) {
@@ -309,7 +343,8 @@ public class Reader {
           Property p = ModelConverters.getInstance().readAsProperty(responseClass);
           operation.response(200, new Response()
             .description("successful operation")
-            .schema(p));
+            .schema(p)
+            .headers(defaultResponseHeaders));
         }
         for(String key: models.keySet()) {
           Property responseProperty = null;
@@ -322,7 +357,8 @@ public class Reader {
             responseProperty = new RefProperty().asDefault(key);
           operation.response(200, new Response()
             .description("successful operation")
-            .schema(responseProperty));
+            .schema(responseProperty)
+            .headers(defaultResponseHeaders));
           swagger.model(key, models.get(key));
         }
         models = ModelConverters.getInstance().readAll(responseClass);
@@ -352,8 +388,11 @@ public class Reader {
     List<ApiResponse> apiResponses = new ArrayList<ApiResponse>();
     if(responseAnnotation != null) {
       for(ApiResponse apiResponse: responseAnnotation.value()) {
+        Map<String,Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders());
+
         Response response = new Response()
-          .description(apiResponse.message());
+          .description(apiResponse.message())
+          .headers(responseHeaders);
 
         if(apiResponse.code() == 0)
           operation.defaultResponse(response);
