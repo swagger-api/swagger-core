@@ -119,13 +119,16 @@ public class ParameterProcessor {
                   if(name.indexOf("java.util") == -1) {
                     bp.setSchema(
                       new ArrayModel().items(new RefProperty().asDefault(name)));
-                    swagger.addDefinition(name, models.get(name));
+                    if(swagger != null)
+                      swagger.addDefinition(name, models.get(name));
                   }
                 }
               }
               models = ModelConverters.getInstance().readAll(innerType);
-              for(String key : models.keySet()) {
-                swagger.model(key, models.get(key));
+              if(swagger != null) {
+                for(String key : models.keySet()) {
+                  swagger.model(key, models.get(key));
+                }
               }
             }
             else {
@@ -143,12 +146,15 @@ public class ParameterProcessor {
                     bp.setSchema(new ArrayModel().items(new RefProperty().asDefault(name)));
                   else
                     bp.setSchema(new RefModel().asDefault(name));
-                  swagger.addDefinition(name, models.get(name));
+                  if(swagger != null)
+                    swagger.addDefinition(name, models.get(name));
                 }
               }
               models = ModelConverters.getInstance().readAll(cls);
-              for(String key : models.keySet()) {
-                swagger.model(key, models.get(key));
+              if(swagger != null) {
+                for(String key : models.keySet()) {
+                  swagger.model(key, models.get(key));
+                }
               }
             }
             else {
