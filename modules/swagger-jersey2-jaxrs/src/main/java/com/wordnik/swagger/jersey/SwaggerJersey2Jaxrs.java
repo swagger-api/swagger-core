@@ -87,8 +87,9 @@ public class SwaggerJersey2Jaxrs implements SwaggerExtension {
                                                   extensions);
 
           // since downstream processors won't know how to introspect @BeanParam, process here
-          for(Parameter param : parameters)
+          for(Parameter param : extracted)
             ParameterProcessor.applyAnnotations(null, param, paramClass, paramAnnotations.toArray(new Annotation[paramAnnotations.size()]), isArray);
+
           parameters.addAll(extracted);
         }
       }
