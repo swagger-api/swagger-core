@@ -1,5 +1,7 @@
 package params;
 
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
@@ -13,8 +15,11 @@ public class RefBean {
 
   @BeanParam
   public BaseBean beanParam;
+
   @HeaderParam("HeaderParam")
+  @ApiModelProperty("a header param")
   private String headerParam;
+
   private String pathParam;
   @QueryParam("QueryParam")
   private List<String> queryParam;
