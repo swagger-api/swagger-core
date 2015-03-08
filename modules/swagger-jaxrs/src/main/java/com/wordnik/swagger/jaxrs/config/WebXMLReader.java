@@ -3,14 +3,15 @@ package com.wordnik.swagger.jaxrs.config;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.config.*;
 
-///*, FilterFactory
-// import com.wordnik.swagger.core.filter.SwaggerSpecFilter
+import com.wordnik.swagger.core.filter.SwaggerSpecFilter;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 
 public class WebXMLReader implements SwaggerConfig {
+  Logger LOGGER = LoggerFactory.getLogger(WebXMLReader.class);
   String basePath, host, filterClass, apiVersion, title, scheme = "http";
 
   public WebXMLReader(ServletConfig servletConfig) {
@@ -46,6 +47,17 @@ public class WebXMLReader implements SwaggerConfig {
     }
 
     filterClass = servletConfig.getInitParameter("swagger.filter");
+    if(filterClass != null) {
+      try {
+        SwaggerSpecFilter filter = (SwaggerSpecFilter) Class.forName(filterClass).newInstance();
+        if(filter != null) {
+          FilterFactory.setFilter(filter);
+        }
+      }
+      catch (Exception e) {
+        LOGGER.error("failed to load filter", e);
+      }
+    }
   }
 
   public Swagger configure(Swagger swagger) {
