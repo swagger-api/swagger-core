@@ -45,7 +45,7 @@ public @interface Api {
    * <p/>
    * If the value isn't preceded with a slash, one would be added to it.
    */
-  String value();
+  String value() default "";
 
   /**
    * A list of tags for API documentation control. 
