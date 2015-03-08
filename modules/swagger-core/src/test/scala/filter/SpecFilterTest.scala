@@ -14,6 +14,13 @@ import scala.collection.JavaConverters._
 
 @RunWith(classOf[JUnitRunner])
 class SpecFilterTest extends FlatSpec with Matchers {
+  it should "clone everything" in {
+    val swagger = new SwaggerParser().read("src/test/scala/specFiles/petstore.json")
+    val filtered = new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null)
+
+    Json.pretty(swagger) should equal(Json.pretty(filtered))
+  }
+
   it should "filter away get operations in a resource" in {
     val swagger = new SwaggerParser().read("src/test/scala/specFiles/petstore.json")
     val filter = new NoGetOperationsFilter()

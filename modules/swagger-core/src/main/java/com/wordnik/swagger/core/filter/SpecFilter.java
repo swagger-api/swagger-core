@@ -14,6 +14,7 @@ public class SpecFilter {
   public Swagger filter(Swagger swagger, SwaggerSpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
     Swagger clone = new Swagger();
     clone.info(swagger.getInfo())
+      .tags(swagger.getTags())
       .host(swagger.getHost())
       .basePath(swagger.getBasePath())
       .schemes(swagger.getSchemes())
