@@ -119,12 +119,6 @@
       <artifactId>swagger-jersey2-jaxrs</artifactId>
       <scope>compile</scope>
       <version>1.5.3-M1-SNAPSHOT</version>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>jsr311-api</artifactId>
-          </exclusion>
-        </exclusions>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
