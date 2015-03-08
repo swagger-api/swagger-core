@@ -86,9 +86,11 @@ public class SpecFilter {
       .externalDocs(op.getExternalDocs());
 
     List<Parameter> clonedParams = new ArrayList<Parameter>();
-    for(Parameter param : op.getParameters()) {
-      if(filter.isParamAllowed(param, op, api, params, cookies, headers)) {
-        clonedParams.add(param);
+    if(op.getParameters() != null) {
+      for(Parameter param : op.getParameters()) {
+        if(filter.isParamAllowed(param, op, api, params, cookies, headers)) {
+          clonedParams.add(param);
+        }
       }
     }
     clonedOperation.setParameters(clonedParams);
