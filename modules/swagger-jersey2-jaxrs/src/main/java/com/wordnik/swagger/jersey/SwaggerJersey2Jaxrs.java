@@ -1,5 +1,6 @@
 package com.wordnik.swagger.jersey;
 
+import com.wordnik.swagger.jaxrs.ParameterProcessor;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
 import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
@@ -79,19 +80,24 @@ public class SwaggerJersey2Jaxrs implements SwaggerExtension {
           }
 
           // Re-process all Bean fields and let the default swagger-jaxrs/swagger-jersey-jaxrs processors do their thing
-          parameters.addAll(
-              extensions.next().extractParameters(paramAnnotations.toArray(new Annotation[paramAnnotations.size()]),
+          List<Parameter> extracted = extensions.next().extractParameters(paramAnnotations.toArray(new Annotation[paramAnnotations.size()]),
                                                   paramClass,
                                                   ParameterUtils.isMethodArgumentAnArray(paramClass, paramType),
                                                   classesToSkip,
-                                                  extensions));
+                                                  extensions);
+
+          // since downstream processors won't know how to introspect @BeanParam, process here
+          for(Parameter param : parameters)
+            ParameterProcessor.applyAnnotations(null, param, paramClass, paramAnnotations.toArray(new Annotation[paramAnnotations.size()]), isArray);
+          parameters.addAll(extracted);
         }
       }
     }
 
     // Only call down to the other items in the chain if no parameters were produced and there is something to call
-    if (parameters.size() == 0 && chain.hasNext())
+    if (parameters.size() == 0 && chain.hasNext()) {
       parameters = chain.next().extractParameters(annotations, cls, isArray, classesToSkip, chain);
+    }
 
     return parameters;
   }
