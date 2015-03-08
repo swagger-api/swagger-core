@@ -60,7 +60,8 @@ public class Reader {
     return this.swagger;
   }
 
-  public Swagger read(Class cls) {
+  protected Swagger read(Class<?> cls, String parentPath, boolean readHidden) {
+    System.out.println("reading " + cls + " with path " + parentPath);
     if(swagger == null)
       swagger = new Swagger();
     Api api = (Api) cls.getAnnotation(Api.class);
@@ -72,46 +73,19 @@ public class Reader {
 
     Annotation annotation;
     annotation = cls.getAnnotation(Consumes.class);
-    if(annotation != null) {
+    if(annotation != null)
       apiConsumes = ((Consumes)annotation).value();
-    }
 
     annotation = cls.getAnnotation(Produces.class);
-    if(annotation != null) {
+    if(annotation != null)
       apiProduces = ((Produces)annotation).value();
-    }
 
-    if(api != null && !api.hidden()) {
-      Set<String> tagStrings = new HashSet<String>();
+    // only read if allowing hidden apis OR api is not marked as hidden
+    if((api != null && readHidden) || (api != null && !api.hidden())) {
       // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
-      com.wordnik.swagger.annotations.Tag[] tags = api.tags();
-      boolean hasExplicitTags = false;
-      if(tags != null && tags.length > 0) {
-        for(com.wordnik.swagger.annotations.Tag tag : tags) {
-          if(!"".equals(tag.value())) {
-            hasExplicitTags = true;
-            tagStrings.add(tag.value());
-            Tag tagObject = new Tag()
-              .name(tag.value())
-              .description(tag.description());
-
-            if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
-              tagObject.externalDocs(
-                new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
-            swagger.tag(tagObject);
-          }
-        }
-      }
-      if(!hasExplicitTags) {
-        // derive tag from api path + description
-        String tagString = api.value().replace("/", "");
-        tagStrings.add(tagString);
-        String description = api.description();
-        Tag tag = new Tag()
-          .name(tagString)
-          .description(description);
-        swagger.tag(tag);
-      }
+      Map<String, Tag> tags = extractTags(api);
+      for(String tagName : tags.keySet())
+        swagger.tag(tags.get(tagName));
 
       int position = api.position();
       String produces = api.produces();
@@ -142,15 +116,22 @@ public class Reader {
 
       // parse the method
       Method methods[] = cls.getMethods();
-      for(Method method: methods) {
+      for(Method method : methods) {
         ApiOperation apiOperation = (ApiOperation) method.getAnnotation(ApiOperation.class);
         javax.ws.rs.Path methodPath = method.getAnnotation(javax.ws.rs.Path.class);
 
-        String operationPath = getPath(apiPath, methodPath);
+        String operationPath = getPath(apiPath, methodPath, parentPath);
         if(operationPath != null && apiOperation != null) {
+          if(isSubResource(method)) {
+            System.out.println("processing subresource for " + operationPath);
+            Type t = method.getGenericReturnType();
+            Class<?> responseClass = method.getReturnType();
+            Swagger subSwagger = read(responseClass, operationPath, true);
+          }
+
           String httpMethod = getHttpMethod(apiOperation, method);
 
-          // can't continue without the http method
+          // can't continue without a valid http method
           if(httpMethod == null)
             break;
 
@@ -163,13 +144,10 @@ public class Reader {
             for(com.wordnik.swagger.annotations.Tag tag : operationTags) {
               if(!"".equals(tag.value())) {
                 operation.tag(tag.value());
-                if(!tagStrings.contains(tag.value())) {
-                  Tag tagObject = new Tag()
-                    .name(tag.value())
-                    .description(tag.description());
+                if(tags.get(tag.value()) == null) {
+                  Tag tagObject = new Tag().name(tag.value()).description(tag.description());
                   if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
-                    tagObject.externalDocs(
-                      new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
+                    tagObject.externalDocs(new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
                   swagger.tag(tagObject);
                 }
               }
@@ -184,11 +162,12 @@ public class Reader {
                 operation.produces(mediaType);
 
             if(operation.getTags() == null) {
-              for(String tagString : tagStrings)
+              for(String tagString : tags.keySet())
                 operation.tag(tagString);
             }
             for(SecurityRequirement security : securities)
               operation.security(security);
+
             Path path = swagger.getPath(operationPath);
             if(path == null) {
               path = new Path();
@@ -202,10 +181,68 @@ public class Reader {
     return swagger;
   }
 
-  String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath) {
+  public Swagger read(Class cls) {
+    return read(cls, "", false);
+  }
+
+  protected boolean isSubResource(Method method) {
+    Type t = method.getGenericReturnType();
+    Class<?> responseClass = method.getReturnType();
+    if(responseClass != null && responseClass.getAnnotation(Api.class) != null) {
+      return true;
+    }
+    return false;
+  }
+
+  protected void readRecursive() {
+
+  }
+
+  protected Map<String, Tag> extractTags(Api api) {
+    Map<String, Tag> output = new LinkedHashMap<String, Tag>();
+
+    com.wordnik.swagger.annotations.Tag[] tags = api.tags();
+    boolean hasExplicitTags = false;
+    if(tags != null && tags.length > 0) {
+      for(com.wordnik.swagger.annotations.Tag tag : tags) {
+        if(!"".equals(tag.value())) {
+          hasExplicitTags = true;
+          Tag tagObject = new Tag()
+            .name(tag.value())
+            .description(tag.description());
+
+          if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
+            tagObject.externalDocs(
+              new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
+          output.put(tagObject.getName(), tagObject);
+        }
+      }
+    }
+    if(!hasExplicitTags) {
+      // derive tag from api path + description
+      String tagString = api.value().replace("/", "");
+      String description = api.description();
+      Tag tagObject = new Tag()
+        .name(tagString)
+        .description(description);
+      output.put(tagObject.getName(), tagObject);
+    }
+    return output;
+  }
+
+  String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath, String parentPath) {
     if(classLevelPath == null && methodLevelPath == null)
       return null;
     StringBuilder b = new StringBuilder();
+    if(parentPath != null && !"".equals(parentPath) && !"/".equals(parentPath)) {
+      if(!parentPath.startsWith("/"))
+        parentPath = "/" + parentPath;
+      if(parentPath.endsWith("/"))
+        parentPath = parentPath.substring(0, parentPath.length() - 1);
+
+      System.out.println("~~~ \n\n\n\ncreated path " + parentPath);
+      b.append(parentPath);
+    }
     if(classLevelPath != null) {
       b.append(classLevelPath.value());
     }
