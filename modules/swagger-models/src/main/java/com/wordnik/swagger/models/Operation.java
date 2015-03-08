@@ -17,7 +17,7 @@ public class Operation {
   private List<Scheme> schemes;
   private List<String> consumes;
   private List<String> produces;
-  private List<Parameter> parameters;
+  private List<Parameter> parameters = new ArrayList<Parameter>();
   private Map<String, Response> responses;
   private List<Map<String, List<String>>> security;
   private String example;
