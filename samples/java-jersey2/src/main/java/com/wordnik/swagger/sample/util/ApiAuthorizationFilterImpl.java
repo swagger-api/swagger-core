@@ -1,5 +1,5 @@
 /**
- *  Copyright 2014 Reverb Technologies, Inc.
+ *  Copyright 2015 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,9 +55,8 @@ public class ApiAuthorizationFilterImpl implements SwaggerSpecFilter {
     Map<String, List<String>> params,
     Map<String, String> cookies,
     Map<String, List<String>> headers) {
-    Json.prettyPrint(api);
     if(!api.getMethod().equals("get") || api.getPath().startsWith("/store"))
-      return false;
+      return checkKey(params, headers);
     return true;
   }
 
