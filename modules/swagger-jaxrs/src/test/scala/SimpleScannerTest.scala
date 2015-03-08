@@ -140,3 +140,12 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     headers400.get("X-Rack-Cache").getType should be ("boolean")
   }
 }
+
+@RunWith(classOf[JUnitRunner])
+class SimpleScannerTest2 extends FlatSpec with Matchers {
+
+  it should "not scan a hidden resource" in {
+    val swagger = new Reader(new Swagger()).read(classOf[HiddenResource])
+    val get = swagger.getPaths() should be (null)
+  }
+}

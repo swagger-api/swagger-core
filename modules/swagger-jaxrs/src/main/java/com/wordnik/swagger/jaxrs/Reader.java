@@ -81,7 +81,7 @@ public class Reader {
       apiProduces = ((Produces)annotation).value();
     }
 
-    if(api != null) {
+    if(api != null && !api.hidden()) {
       Set<String> tagStrings = new HashSet<String>();
       // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
       com.wordnik.swagger.annotations.Tag[] tags = api.tags();
@@ -273,6 +273,8 @@ public class Reader {
     Map<String,Property> defaultResponseHeaders = new HashMap<String, Property>();
 
     if(apiOperation != null) {
+      if(apiOperation.hidden())
+        return null;
       if(!"".equals(apiOperation.nickname()))
         operationId = method.getName();
 
