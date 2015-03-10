@@ -77,6 +77,10 @@ object ApiHelpController extends SwaggerBaseApiController {
       }
       returnValue(request, responseStr)
   }
+  
+  def getRootResource(path: String) = Action {
+    getResource("/" + path)
+  }
 
   def getResource(path: String) = Action {
     request =>
