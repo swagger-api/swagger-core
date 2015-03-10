@@ -63,7 +63,8 @@ class ErrorResponse(@XmlElement var code: Int, @XmlElement var message: String) 
   def setMessage(message: String) = this.message = message
 }
 
-object ApiHelpController extends SwaggerBaseApiController {
+trait ApiHelpController extends SwaggerBaseApiController {
+  this: Controller =>
 
   def getResources = Action {
     request =>
@@ -102,7 +103,11 @@ object ApiHelpController extends SwaggerBaseApiController {
   }
 }
 
-class SwaggerBaseApiController extends Controller {
+object ApiHelpController extends Controller with ApiHelpController
+
+trait SwaggerBaseApiController {
+  this: Controller =>
+
   protected def jaxbContext = JAXBContext.newInstance(classOf[String], classOf[ResourceListing])
 
   protected def returnXml(request: Request[_]) = request.path.contains(".xml")
