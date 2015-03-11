@@ -20,12 +20,12 @@ import java.lang.annotation.*;
 
 /**
  * Represents a single parameter in an API Operation.
- * <p/>
+ * <p>
  * While {@link com.wordnik.swagger.annotations.ApiParam} is bound to a JAX-RS parameter,
  * method or field, this allows you to manually define a parameter in a fine-tuned manner.
  * This is the only way to define parameters when using Servlets or other non-JAX-RS
  * environments.
- * <p/>
+ * <p>
  * This annotation must be used as a value of {@link com.wordnik.swagger.annotations.ApiImplicitParams}
  * in order to be parsed.
  *
@@ -37,7 +37,7 @@ import java.lang.annotation.*;
 public @interface ApiImplicitParam {
   /**
    * Name of the parameter.
-   * <p/>
+   * <p>
    * For proper Swagger functionality, follow these rules when naming your parameters based on {@link #paramType()}:
    * <ol>
    * <li>If {@code paramType} is "path", the name should be the associated section in the path.</li>
@@ -61,7 +61,7 @@ public @interface ApiImplicitParam {
 
   /**
    * Limits the acceptable values for this parameter.
-   * <p/>
+   * <p>
    * There are three ways to describe the allowable values:
    * <ol>
    * <li>To set a list of values, provide a comma-separated list surrounded by square brackets.
@@ -77,7 +77,7 @@ public @interface ApiImplicitParam {
 
   /**
    * Specifies if the parameter is required or not.
-   * <p/>
+   * <p>
    * Path parameters should always be set as required.
    */
   boolean required() default false;
@@ -96,7 +96,7 @@ public @interface ApiImplicitParam {
 
   /**
    * The data type of the parameter.
-   * <p/>
+   * <p>
    * This can be the class name or a primitive.
    */
   String dataType() default "";
