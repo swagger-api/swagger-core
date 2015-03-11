@@ -60,7 +60,7 @@ public class Reader {
     return this.swagger;
   }
 
-  protected Swagger read(Class<?> cls, String parentPath, boolean readHidden) {
+  protected Swagger read(Class<?> cls, String parentPath, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
     System.out.println("reading " + cls + " with path " + parentPath);
     if(swagger == null)
       swagger = new Swagger();
@@ -126,7 +126,7 @@ public class Reader {
             System.out.println("processing subresource for " + operationPath);
             Type t = method.getGenericReturnType();
             Class<?> responseClass = method.getReturnType();
-            Swagger subSwagger = read(responseClass, operationPath, true);
+            Swagger subSwagger = read(responseClass, operationPath, true, apiConsumes, apiProduces, null, null);
           }
 
           String httpMethod = getHttpMethod(apiOperation, method);
@@ -182,7 +182,8 @@ public class Reader {
   }
 
   public Swagger read(Class cls) {
-    return read(cls, "", false);
+    return read(cls, "", false, null, null, null, null);
+    // Class<?> cls, String parentPath, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters
   }
 
   protected boolean isSubResource(Method method) {
@@ -192,10 +193,6 @@ public class Reader {
       return true;
     }
     return false;
-  }
-
-  protected void readRecursive() {
-
   }
 
   protected Map<String, Tag> extractTags(Api api) {
@@ -208,8 +205,10 @@ public class Reader {
         if(!"".equals(tag.value())) {
           hasExplicitTags = true;
           Tag tagObject = new Tag()
-            .name(tag.value())
-            .description(tag.description());
+            .name(tag.value());
+
+          if(!"".equals(tag.description()))
+            tagObject.description(tag.description());
 
           if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
             tagObject.externalDocs(
@@ -223,8 +222,10 @@ public class Reader {
       String tagString = api.value().replace("/", "");
       String description = api.description();
       Tag tagObject = new Tag()
-        .name(tagString)
-        .description(description);
+        .name(tagString);
+
+      if(!"".equals(description))
+        tagObject.description(description);
       output.put(tagObject.getName(), tagObject);
     }
     return output;

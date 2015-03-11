@@ -17,9 +17,13 @@ import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
 class SubResourceScannerTest extends FlatSpec with Matchers {
-
   it should "scan a resource with subresources" in {
     val swagger = new Reader(new Swagger()).read(classOf[ResourceWithSubResources])
+    // Json.prettyPrint(swagger)
+  }
+
+  it should "scan another resource with subresources" in {
+    val swagger = new Reader(new Swagger()).read(classOf[TestResource])
     Json.prettyPrint(swagger)
   }
 }
