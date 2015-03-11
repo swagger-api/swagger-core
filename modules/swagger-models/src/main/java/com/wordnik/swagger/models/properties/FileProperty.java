@@ -1,8 +1,14 @@
 package com.wordnik.swagger.models.properties;
 
+import com.wordnik.swagger.models.Xml;
+
 public class FileProperty extends AbstractProperty implements Property {
   public FileProperty() {
     super.type = "file";
+  }
+  public FileProperty xml(Xml xml) {
+    this.setXml(xml);
+    return this;
   }
 
   public static boolean isType(String type, String format) {

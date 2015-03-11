@@ -1,5 +1,7 @@
 package com.wordnik.swagger.models.properties;
 
+import com.wordnik.swagger.models.Xml;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class RefProperty extends AbstractProperty implements Property {

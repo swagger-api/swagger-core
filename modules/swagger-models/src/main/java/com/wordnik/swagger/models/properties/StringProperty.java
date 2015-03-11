@@ -1,5 +1,7 @@
 package com.wordnik.swagger.models.properties;
 
+import com.wordnik.swagger.models.Xml;
+
 import java.util.*;
 
 public class StringProperty extends AbstractProperty implements Property {
@@ -9,6 +11,10 @@ public class StringProperty extends AbstractProperty implements Property {
 
   public StringProperty() {
     super.type = "string";
+  }
+  public StringProperty xml(Xml xml) {
+    this.setXml(xml);
+    return this;
   }
 
   public StringProperty example(String example) {
