@@ -1,5 +1,7 @@
 package com.wordnik.swagger.models.properties;
 
+import com.wordnik.swagger.models.Xml;
+
 public class ArrayProperty extends AbstractProperty implements Property {
   protected Boolean uniqueItems;
   protected Property items;
@@ -10,6 +12,10 @@ public class ArrayProperty extends AbstractProperty implements Property {
   public ArrayProperty(Property items) {
     super.type = "array";
     setItems(items);
+  }
+  public ArrayProperty xml(Xml xml) {
+    this.setXml(xml);
+    return this;
   }
 
   public ArrayProperty uniqueItems() {

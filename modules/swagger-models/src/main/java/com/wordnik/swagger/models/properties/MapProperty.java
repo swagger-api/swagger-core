@@ -1,5 +1,7 @@
 package com.wordnik.swagger.models.properties;
 
+import com.wordnik.swagger.models.Xml;
+
 public class MapProperty extends AbstractProperty implements Property {
   Property property;
 
@@ -9,6 +11,10 @@ public class MapProperty extends AbstractProperty implements Property {
   public MapProperty(Property property) {
     super.type = "object";
     this.property = property;
+  }
+  public MapProperty xml(Xml xml) {
+    this.setXml(xml);
+    return this;
   }
 
   public MapProperty additionalProperties(Property property) {

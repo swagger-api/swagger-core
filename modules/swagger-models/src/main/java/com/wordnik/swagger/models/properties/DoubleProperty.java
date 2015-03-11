@@ -1,9 +1,15 @@
 package com.wordnik.swagger.models.properties;
 
+import com.wordnik.swagger.models.Xml;
+
 public class DoubleProperty extends AbstractNumericProperty implements Property {
   public DoubleProperty() {
     super.type = "number";
     super.format = "double";
+  }
+  public DoubleProperty xml(Xml xml) {
+    this.setXml(xml);
+    return this;
   }
 
   public DoubleProperty example(Double example) {

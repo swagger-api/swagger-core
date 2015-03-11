@@ -1,5 +1,7 @@
 package com.wordnik.swagger.models.properties;
 
+import com.wordnik.swagger.models.Xml;
+
 import java.util.*;
 
 public class UUIDProperty extends AbstractProperty implements Property {
@@ -10,6 +12,10 @@ public class UUIDProperty extends AbstractProperty implements Property {
   public UUIDProperty() {
     super.type = "string";
     super.format = "uuid";
+  }
+  public UUIDProperty xml(Xml xml) {
+    this.setXml(xml);
+    return this;
   }
 
   public UUIDProperty minLength(Integer minLength) {

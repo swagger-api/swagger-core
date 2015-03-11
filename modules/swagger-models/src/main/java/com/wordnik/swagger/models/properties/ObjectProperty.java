@@ -1,10 +1,14 @@
 package com.wordnik.swagger.models.properties;
 
+import com.wordnik.swagger.models.Xml;
 
 public class ObjectProperty extends AbstractProperty implements Property {
-
   public ObjectProperty() {
     super.type = "object";
+  }
+  public ObjectProperty xml(Xml xml) {
+    this.setXml(xml);
+    return this;
   }
 
   public ObjectProperty example(String example) {

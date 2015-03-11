@@ -1,9 +1,15 @@
 package com.wordnik.swagger.models.properties;
 
+import com.wordnik.swagger.models.Xml;
+
 public class DateTimeProperty extends AbstractProperty implements Property {
   public DateTimeProperty() {
     super.type = "string";
     super.format = "date-time";
+  }
+  public DateTimeProperty xml(Xml xml) {
+    this.setXml(xml);
+    return this;
   }
 
   public DateTimeProperty example(String example) {
