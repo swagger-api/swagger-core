@@ -21,7 +21,9 @@ public class TestResource {
 
   @Path("/more")
   @ApiOperation("Get more")
-  public TestSubResource getSubResource() {
+  @Produces({MediaType.APPLICATION_XML})
+  public TestSubResource getSubResource(
+    @ApiParam("a query param") @QueryParam("qp") Integer qp) {
     return new TestSubResource();
   }
 }

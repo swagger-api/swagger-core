@@ -60,8 +60,14 @@ public class Reader {
     return this.swagger;
   }
 
+  public Swagger read(Class cls) {
+    return read(cls, "", false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
+  }
+
   protected Swagger read(Class<?> cls, String parentPath, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
-    System.out.println("reading " + cls + " with path " + parentPath);
+    Json.prettyPrint(parentProduces);
+    System.out.println("reading class " + cls);
+
     if(swagger == null)
       swagger = new Swagger();
     Api api = (Api) cls.getAnnotation(Api.class);
@@ -71,19 +77,12 @@ public class Reader {
     String[] apiConsumes = new String[0];
     String[] apiProduces = new String[0];
 
-    Annotation annotation;
-    annotation = cls.getAnnotation(Consumes.class);
-    if(annotation != null)
-      apiConsumes = ((Consumes)annotation).value();
-
-    annotation = cls.getAnnotation(Produces.class);
-    if(annotation != null)
-      apiProduces = ((Produces)annotation).value();
-
     // only read if allowing hidden apis OR api is not marked as hidden
     if((api != null && readHidden) || (api != null && !api.hidden())) {
       // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
       Map<String, Tag> tags = extractTags(api);
+      if(parentTags != null)
+        tags.putAll(parentTags);
       for(String tagName : tags.keySet())
         swagger.tag(tags.get(tagName));
 
@@ -122,68 +121,89 @@ public class Reader {
 
         String operationPath = getPath(apiPath, methodPath, parentPath);
         if(operationPath != null && apiOperation != null) {
-          if(isSubResource(method)) {
-            System.out.println("processing subresource for " + operationPath);
-            Type t = method.getGenericReturnType();
-            Class<?> responseClass = method.getReturnType();
-            Swagger subSwagger = read(responseClass, operationPath, true, apiConsumes, apiProduces, null, null);
-          }
-
           String httpMethod = getHttpMethod(apiOperation, method);
 
-          // can't continue without a valid http method
-          if(httpMethod == null)
-            break;
-
           Operation operation = parseMethod(method);
+          if(parentParameters != null) {
+            for(Parameter param : parentParameters) {
+              operation.parameter(param);
+            }
+          }
 
-          ApiOperation op = (ApiOperation) method.getAnnotation(ApiOperation.class);
-          if(op != null) {
-            com.wordnik.swagger.annotations.Tag[] operationTags = op.tags();
-            boolean hasExplicitTag = false;
-            for(com.wordnik.swagger.annotations.Tag tag : operationTags) {
-              if(!"".equals(tag.value())) {
-                operation.tag(tag.value());
-                if(tags.get(tag.value()) == null) {
-                  Tag tagObject = new Tag().name(tag.value()).description(tag.description());
-                  if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
-                    tagObject.externalDocs(new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
-                  swagger.tag(tagObject);
+          Annotation annotation;
+          annotation = cls.getAnnotation(Consumes.class);
+          if(annotation != null)
+            apiConsumes = ((Consumes)annotation).value();
+          if(parentConsumes != null) {
+            Set<String> both = new HashSet<String>(Arrays.asList(apiConsumes));
+            both.addAll(new HashSet<String>(Arrays.asList(parentConsumes)));
+            if(operation.getConsumes() != null)
+              both.addAll(new HashSet<String>(operation.getConsumes()));
+            apiConsumes = both.toArray(new String[both.size()]);
+          }
+
+          annotation = cls.getAnnotation(Produces.class);
+          if(annotation != null)
+            apiProduces = ((Produces)annotation).value();
+
+          if(parentProduces != null) {
+            Set<String> both = new HashSet<String>(Arrays.asList(apiProduces));
+            both.addAll(new HashSet<String>(Arrays.asList(parentProduces)));
+            if(operation.getProduces() != null)
+              both.addAll(new HashSet<String>(operation.getProduces()));
+            apiProduces = both.toArray(new String[both.size()]);
+          }
+          if(isSubResource(method)) {
+            Type t = method.getGenericReturnType();
+            Class<?> responseClass = method.getReturnType();
+            Swagger subSwagger = read(responseClass, operationPath, true, apiConsumes, apiProduces, tags, operation.getParameters());
+          }
+
+          // can't continue without a valid http method
+          if(httpMethod != null) {
+            ApiOperation op = (ApiOperation) method.getAnnotation(ApiOperation.class);
+            if(op != null) {
+              com.wordnik.swagger.annotations.Tag[] operationTags = op.tags();
+              boolean hasExplicitTag = false;
+              for(com.wordnik.swagger.annotations.Tag tag : operationTags) {
+                if(!"".equals(tag.value())) {
+                  operation.tag(tag.value());
+                  if(tags.get(tag.value()) == null) {
+                    Tag tagObject = new Tag().name(tag.value()).description(tag.description());
+                    if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
+                      tagObject.externalDocs(new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
+                    swagger.tag(tagObject);
+                  }
                 }
               }
             }
-          }
-          if(operation != null) {
-            if(operation.getConsumes() == null)
-              for(String mediaType: apiConsumes)
-                operation.consumes(mediaType);
-            if(operation.getProduces() == null)
-              for(String mediaType: apiProduces)
-                operation.produces(mediaType);
+            if(operation != null) {
+              if(operation.getConsumes() == null)
+                for(String mediaType: apiConsumes)
+                  operation.consumes(mediaType);
+              if(operation.getProduces() == null)
+                for(String mediaType: apiProduces)
+                  operation.produces(mediaType);
 
-            if(operation.getTags() == null) {
-              for(String tagString : tags.keySet())
-                operation.tag(tagString);
-            }
-            for(SecurityRequirement security : securities)
-              operation.security(security);
+              if(operation.getTags() == null) {
+                for(String tagString : tags.keySet())
+                  operation.tag(tagString);
+              }
+              for(SecurityRequirement security : securities)
+                operation.security(security);
 
-            Path path = swagger.getPath(operationPath);
-            if(path == null) {
-              path = new Path();
-              swagger.path(operationPath, path);
+              Path path = swagger.getPath(operationPath);
+              if(path == null) {
+                path = new Path();
+                swagger.path(operationPath, path);
+              }
+              path.set(httpMethod, operation);
             }
-            path.set(httpMethod, operation);
           }
         }
       }
     }
     return swagger;
-  }
-
-  public Swagger read(Class cls) {
-    return read(cls, "", false, null, null, null, null);
-    // Class<?> cls, String parentPath, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters
   }
 
   protected boolean isSubResource(Method method) {
@@ -226,7 +246,8 @@ public class Reader {
 
       if(!"".equals(description))
         tagObject.description(description);
-      output.put(tagObject.getName(), tagObject);
+      if(!"".equals(tagString))
+        output.put(tagObject.getName(), tagObject);
     }
     return output;
   }
@@ -241,7 +262,6 @@ public class Reader {
       if(parentPath.endsWith("/"))
         parentPath = parentPath.substring(0, parentPath.length() - 1);
 
-      System.out.println("~~~ \n\n\n\ncreated path " + parentPath);
       b.append(parentPath);
     }
     if(classLevelPath != null) {
@@ -355,14 +375,16 @@ public class Reader {
       LOGGER.debug("picking up response class from method " + method);
       Type t = method.getGenericReturnType();
       responseClass = method.getReturnType();
-      if(!responseClass.equals(java.lang.Void.class) && !"void".equals(responseClass.toString())) {
+      System.out.println("got response class " + responseClass);
+      if(!responseClass.equals(java.lang.Void.class) && !"void".equals(responseClass.toString()) && responseClass.getAnnotation(Api.class) == null) {
         LOGGER.debug("reading model " + responseClass);
         Map<String, Model> models = ModelConverters.getInstance().readAll(t);
       }
     }
     if(responseClass != null
       && !responseClass.equals(java.lang.Void.class)
-      && !responseClass.equals(javax.ws.rs.core.Response.class)) {
+      && !responseClass.equals(javax.ws.rs.core.Response.class)
+      && responseClass.getAnnotation(Api.class) == null) {
       if(isPrimitive(responseClass)) {
         Property responseProperty = null;
         Property property = ModelConverters.getInstance().readAsProperty(responseClass);

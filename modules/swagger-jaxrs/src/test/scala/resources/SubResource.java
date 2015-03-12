@@ -12,7 +12,7 @@ import java.util.*;
 public class SubResource {
   @ApiOperation(value="gets an object by ID", tags = {@Tag("Employees")})
   @GET
-  public void getTest(@ApiParam(value = "test") Long userId) {
+  public void getSubresourceOperation(@ApiParam(value = "test") Long userId) {
     return;
   }
 }
