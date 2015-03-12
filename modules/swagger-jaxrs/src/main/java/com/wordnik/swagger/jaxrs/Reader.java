@@ -221,13 +221,12 @@ public class Reader {
   protected Set<String> extractTags(Api api) {
     Set<String> output = new LinkedHashSet<String>();
 
-    String tagsString = api.tags();
     boolean hasExplicitTags = false;
-    if(!"".equals(tagsString)) {
-      hasExplicitTags = true;
-      String[] tags = tagsString.split(",");
-      for(String tag : tags)
+    for(String tag : api.tags()) {
+      if(!"".equals(tag)) {
+        hasExplicitTags = true;
         output.add(tag);
+      }
     }
     if(!hasExplicitTags) {
       // derive tag from api path + description

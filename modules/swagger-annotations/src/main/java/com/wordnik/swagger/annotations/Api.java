@@ -55,9 +55,9 @@ public @interface Api {
    * 
    * @since 1.5.2
    *
-   * @return a comma-separated string of tag values
+   * @return a string array of tag values
    */
-  String tags() default "";
+  String[] tags() default "";
 
   /**
    * Corresponds to the `description` field of the Resource Listing API operation.
