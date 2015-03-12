@@ -26,11 +26,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.*;
 
 @Path("/store")
-@Api(value="/store", tags = {
-  @Tag(value = "store",
-    description = "Access to Petstore orders",
-    externalDocs = @ExternalDocs(value="Find out more", url = "http://swagger.io"))
-})
+@Api(value="/store", tags = "store")
 @Produces({"application/json", "application/xml"})
 public class PetStoreResource {
   static StoreData storeData = new StoreData();
