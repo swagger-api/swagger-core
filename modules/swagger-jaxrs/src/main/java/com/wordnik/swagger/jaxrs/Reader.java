@@ -166,17 +166,11 @@ public class Reader {
           if(httpMethod != null) {
             ApiOperation op = (ApiOperation) method.getAnnotation(ApiOperation.class);
             if(op != null) {
-              com.wordnik.swagger.annotations.Tag[] operationTags = op.tags();
               boolean hasExplicitTag = false;
-              for(com.wordnik.swagger.annotations.Tag tag : operationTags) {
-                if(!"".equals(tag.value())) {
-                  operation.tag(tag.value());
-                  if(tags.get(tag.value()) == null) {
-                    Tag tagObject = new Tag().name(tag.value()).description(tag.description());
-                    if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
-                      tagObject.externalDocs(new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
-                    swagger.tag(tagObject);
-                  }
+              for(String tag : op.tags()) {
+                if(!"".equals(tag)) {
+                  operation.tag(tag);
+                  swagger.tag(new Tag().name(tag));
                 }
               }
             }

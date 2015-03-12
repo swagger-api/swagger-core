@@ -41,7 +41,7 @@ public @interface ApiOperation {
    * 
    * @since 1.5.2
    */
-  Tag[] tags() default @Tag(value = "", description = "");
+  String[] tags() default "";
 
   /** default response class from the operation */
   Class<?> response() default Void.class;
