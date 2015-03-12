@@ -18,13 +18,13 @@ public interface ModelConverterContext {
   public void defineModel(String name, Model model);
   
   /**
-   * @param cls the property Class
+   * @param type the property Class
    * @return a property representation of the Class. Any referenced models will be defined already.
    */
   public   Property resolveProperty(Type type);
 
   /** 
-   * @param cls The Model Class
+   * @param type The Model Class
    * @return a Model representation of the Class. Any referenced models will be defined already.
    */
   public Model resolve(Type type);

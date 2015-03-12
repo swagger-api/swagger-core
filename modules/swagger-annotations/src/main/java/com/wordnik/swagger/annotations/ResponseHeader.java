@@ -22,22 +22,29 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
+/**
+ * Represents a header that can be provided as part of the response.
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ResponseHeader {
-  /** Provide the name of the header */
+  /**
+   * Header's name.
+   */
   String name() default "";
 
-  /** long description of the response header */
+  /**
+   * Long description of the response header.
+   * */
   String description() default "";
 
   /** 
-   * datatype in the header
-   *
-   * @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#header-object
+   * Header's data type.
    */
   Class<?> response() default Void.class;
 
-  /** if the header type is within a container, specify it here */
+  /**
+   * If the header type is within a container, specify it here.
+   * */
   String responseContainer() default "";
 }

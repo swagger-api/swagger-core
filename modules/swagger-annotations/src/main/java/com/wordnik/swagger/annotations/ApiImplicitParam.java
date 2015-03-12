@@ -84,8 +84,6 @@ public @interface ApiImplicitParam {
 
   /**
    * Allows for filtering a parameter from the API documentation.
-   *
-   * @see com.wordnik.swagger.core.filter.SwaggerSpecFilter
    */
   String access() default "";
 
