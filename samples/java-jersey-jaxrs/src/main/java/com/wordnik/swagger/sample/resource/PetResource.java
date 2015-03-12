@@ -62,21 +62,20 @@ public class PetResource {
   @GET
   @Path("/{petId}")
   @ApiOperation(value = "Find pet by ID", 
-    notes = "Returns a pet when ID < 10.  ID > 10 or nonintegers will simulate API error conditions", 
+    notes = "Returns a single pet", 
     response = Pet.class,
     authorizations = @Authorization(value = "api_key", type = "api_key")
   )
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
-      @ApiResponse(code = 404, message = "Pet not found") })
+    @ApiResponse(code = 404, message = "Pet not found") })
   public Response getPetById(
-      @ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("petId") Long petId)
+      @ApiParam(value = "ID of pet to return") @PathParam("petId") Long petId)
       throws NotFoundException {
     Pet pet = petData.getPetbyId(petId);
-    if (null != pet) {
+    if (null != pet)
       return Response.ok().entity(pet).build();
-    } else {
+    else
       throw new NotFoundException(404, "Pet not found");
-    }
   }
 
   @DELETE

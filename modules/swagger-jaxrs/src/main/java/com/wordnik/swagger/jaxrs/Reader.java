@@ -61,6 +61,13 @@ public class Reader {
   }
 
   public Swagger read(Class cls) {
+    return read(cls, "", false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
+  }
+
+  protected Swagger read(Class<?> cls, String parentPath, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
+    Json.prettyPrint(parentProduces);
+    System.out.println("reading class " + cls);
+
     if(swagger == null)
       swagger = new Swagger();
     Api api = (Api) cls.getAnnotation(Api.class);
@@ -70,48 +77,14 @@ public class Reader {
     String[] apiConsumes = new String[0];
     String[] apiProduces = new String[0];
 
-    Annotation annotation;
-    annotation = cls.getAnnotation(Consumes.class);
-    if(annotation != null) {
-      apiConsumes = ((Consumes)annotation).value();
-    }
-
-    annotation = cls.getAnnotation(Produces.class);
-    if(annotation != null) {
-      apiProduces = ((Produces)annotation).value();
-    }
-
-    if(api != null) {
-      Set<String> tagStrings = new HashSet<String>();
+    // only read if allowing hidden apis OR api is not marked as hidden
+    if((api != null && readHidden) || (api != null && !api.hidden())) {
       // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
-      com.wordnik.swagger.annotations.Tag[] tags = api.tags();
-      boolean hasExplicitTags = false;
-      if(tags != null && tags.length > 0) {
-        for(com.wordnik.swagger.annotations.Tag tag : tags) {
-          if(!"".equals(tag.value())) {
-            hasExplicitTags = true;
-            tagStrings.add(tag.value());
-            Tag tagObject = new Tag()
-              .name(tag.value())
-              .description(tag.description());
-
-            if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
-              tagObject.externalDocs(
-                new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
-            swagger.tag(tagObject);
-          }
-        }
-      }
-      if(!hasExplicitTags) {
-        // derive tag from api path + description
-        String tagString = api.value().replace("/", "");
-        tagStrings.add(tagString);
-        String description = api.description();
-        Tag tag = new Tag()
-          .name(tagString)
-          .description(description);
-        swagger.tag(tag);
-      }
+      Map<String, Tag> tags = extractTags(api);
+      if(parentTags != null)
+        tags.putAll(parentTags);
+      for(String tagName : tags.keySet())
+        swagger.tag(tags.get(tagName));
 
       int position = api.position();
       String produces = api.produces();
@@ -142,59 +115,90 @@ public class Reader {
 
       // parse the method
       Method methods[] = cls.getMethods();
-      for(Method method: methods) {
+      for(Method method : methods) {
         ApiOperation apiOperation = (ApiOperation) method.getAnnotation(ApiOperation.class);
         javax.ws.rs.Path methodPath = method.getAnnotation(javax.ws.rs.Path.class);
 
-        String operationPath = getPath(apiPath, methodPath);
+        String operationPath = getPath(apiPath, methodPath, parentPath);
         if(operationPath != null && apiOperation != null) {
           String httpMethod = getHttpMethod(apiOperation, method);
 
-          // can't continue without the http method
-          if(httpMethod == null)
-            break;
-
           Operation operation = parseMethod(method);
+          if(parentParameters != null) {
+            for(Parameter param : parentParameters) {
+              operation.parameter(param);
+            }
+          }
 
-          ApiOperation op = (ApiOperation) method.getAnnotation(ApiOperation.class);
-          if(op != null) {
-            com.wordnik.swagger.annotations.Tag[] operationTags = op.tags();
-            boolean hasExplicitTag = false;
-            for(com.wordnik.swagger.annotations.Tag tag : operationTags) {
-              if(!"".equals(tag.value())) {
-                operation.tag(tag.value());
-                if(!tagStrings.contains(tag.value())) {
-                  Tag tagObject = new Tag()
-                    .name(tag.value())
-                    .description(tag.description());
-                  if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
-                    tagObject.externalDocs(
-                      new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
-                  swagger.tag(tagObject);
+          Annotation annotation;
+          annotation = cls.getAnnotation(Consumes.class);
+          if(annotation != null)
+            apiConsumes = ((Consumes)annotation).value();
+          if(parentConsumes != null) {
+            Set<String> both = new HashSet<String>(Arrays.asList(apiConsumes));
+            both.addAll(new HashSet<String>(Arrays.asList(parentConsumes)));
+            if(operation.getConsumes() != null)
+              both.addAll(new HashSet<String>(operation.getConsumes()));
+            apiConsumes = both.toArray(new String[both.size()]);
+          }
+
+          annotation = cls.getAnnotation(Produces.class);
+          if(annotation != null)
+            apiProduces = ((Produces)annotation).value();
+
+          if(parentProduces != null) {
+            Set<String> both = new HashSet<String>(Arrays.asList(apiProduces));
+            both.addAll(new HashSet<String>(Arrays.asList(parentProduces)));
+            if(operation.getProduces() != null)
+              both.addAll(new HashSet<String>(operation.getProduces()));
+            apiProduces = both.toArray(new String[both.size()]);
+          }
+          if(isSubResource(method)) {
+            Type t = method.getGenericReturnType();
+            Class<?> responseClass = method.getReturnType();
+            Swagger subSwagger = read(responseClass, operationPath, true, apiConsumes, apiProduces, tags, operation.getParameters());
+          }
+
+          // can't continue without a valid http method
+          if(httpMethod != null) {
+            ApiOperation op = (ApiOperation) method.getAnnotation(ApiOperation.class);
+            if(op != null) {
+              com.wordnik.swagger.annotations.Tag[] operationTags = op.tags();
+              boolean hasExplicitTag = false;
+              for(com.wordnik.swagger.annotations.Tag tag : operationTags) {
+                if(!"".equals(tag.value())) {
+                  operation.tag(tag.value());
+                  if(tags.get(tag.value()) == null) {
+                    Tag tagObject = new Tag().name(tag.value()).description(tag.description());
+                    if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
+                      tagObject.externalDocs(new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
+                    swagger.tag(tagObject);
+                  }
                 }
               }
             }
-          }
-          if(operation != null) {
-            if(operation.getConsumes() == null)
-              for(String mediaType: apiConsumes)
-                operation.consumes(mediaType);
-            if(operation.getProduces() == null)
-              for(String mediaType: apiProduces)
-                operation.produces(mediaType);
+            if(operation != null) {
+              if(operation.getConsumes() == null)
+                for(String mediaType: apiConsumes)
+                  operation.consumes(mediaType);
+              if(operation.getProduces() == null)
+                for(String mediaType: apiProduces)
+                  operation.produces(mediaType);
 
-            if(operation.getTags() == null) {
-              for(String tagString : tagStrings)
-                operation.tag(tagString);
+              if(operation.getTags() == null) {
+                for(String tagString : tags.keySet())
+                  operation.tag(tagString);
+              }
+              for(SecurityRequirement security : securities)
+                operation.security(security);
+
+              Path path = swagger.getPath(operationPath);
+              if(path == null) {
+                path = new Path();
+                swagger.path(operationPath, path);
+              }
+              path.set(httpMethod, operation);
             }
-            for(SecurityRequirement security : securities)
-              operation.security(security);
-            Path path = swagger.getPath(operationPath);
-            if(path == null) {
-              path = new Path();
-              swagger.path(operationPath, path);
-            }
-            path.set(httpMethod, operation);
           }
         }
       }
@@ -202,10 +206,64 @@ public class Reader {
     return swagger;
   }
 
-  String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath) {
+  protected boolean isSubResource(Method method) {
+    Type t = method.getGenericReturnType();
+    Class<?> responseClass = method.getReturnType();
+    if(responseClass != null && responseClass.getAnnotation(Api.class) != null) {
+      return true;
+    }
+    return false;
+  }
+
+  protected Map<String, Tag> extractTags(Api api) {
+    Map<String, Tag> output = new LinkedHashMap<String, Tag>();
+
+    com.wordnik.swagger.annotations.Tag[] tags = api.tags();
+    boolean hasExplicitTags = false;
+    if(tags != null && tags.length > 0) {
+      for(com.wordnik.swagger.annotations.Tag tag : tags) {
+        if(!"".equals(tag.value())) {
+          hasExplicitTags = true;
+          Tag tagObject = new Tag()
+            .name(tag.value());
+
+          if(!"".equals(tag.description()))
+            tagObject.description(tag.description());
+
+          if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
+            tagObject.externalDocs(
+              new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
+          output.put(tagObject.getName(), tagObject);
+        }
+      }
+    }
+    if(!hasExplicitTags) {
+      // derive tag from api path + description
+      String tagString = api.value().replace("/", "");
+      String description = api.description();
+      Tag tagObject = new Tag()
+        .name(tagString);
+
+      if(!"".equals(description))
+        tagObject.description(description);
+      if(!"".equals(tagString))
+        output.put(tagObject.getName(), tagObject);
+    }
+    return output;
+  }
+
+  String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath, String parentPath) {
     if(classLevelPath == null && methodLevelPath == null)
       return null;
     StringBuilder b = new StringBuilder();
+    if(parentPath != null && !"".equals(parentPath) && !"/".equals(parentPath)) {
+      if(!parentPath.startsWith("/"))
+        parentPath = "/" + parentPath;
+      if(parentPath.endsWith("/"))
+        parentPath = parentPath.substring(0, parentPath.length() - 1);
+
+      b.append(parentPath);
+    }
     if(classLevelPath != null) {
       b.append(classLevelPath.value());
     }
@@ -273,6 +331,8 @@ public class Reader {
     Map<String,Property> defaultResponseHeaders = new HashMap<String, Property>();
 
     if(apiOperation != null) {
+      if(apiOperation.hidden())
+        return null;
       if(!"".equals(apiOperation.nickname()))
         operationId = method.getName();
 
@@ -315,14 +375,16 @@ public class Reader {
       LOGGER.debug("picking up response class from method " + method);
       Type t = method.getGenericReturnType();
       responseClass = method.getReturnType();
-      if(!responseClass.equals(java.lang.Void.class) && !"void".equals(responseClass.toString())) {
+      System.out.println("got response class " + responseClass);
+      if(!responseClass.equals(java.lang.Void.class) && !"void".equals(responseClass.toString()) && responseClass.getAnnotation(Api.class) == null) {
         LOGGER.debug("reading model " + responseClass);
         Map<String, Model> models = ModelConverters.getInstance().readAll(t);
       }
     }
     if(responseClass != null
       && !responseClass.equals(java.lang.Void.class)
-      && !responseClass.equals(javax.ws.rs.core.Response.class)) {
+      && !responseClass.equals(javax.ws.rs.core.Response.class)
+      && responseClass.getAnnotation(Api.class) == null) {
       if(isPrimitive(responseClass)) {
         Property responseProperty = null;
         Property property = ModelConverters.getInstance().readAsProperty(responseClass);
