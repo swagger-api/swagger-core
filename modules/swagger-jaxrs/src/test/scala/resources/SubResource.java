@@ -10,7 +10,7 @@ import java.util.*;
 @Api(hidden = true)
 @Path("/{id}")
 public class SubResource {
-  @ApiOperation(value="gets an object by ID", tags = {@Tag("Employees")})
+  @ApiOperation(value="gets an object by ID", tags = "Employees")
   @GET
   public void getSubresourceOperation(@ApiParam(value = "test") Long userId) {
     return;

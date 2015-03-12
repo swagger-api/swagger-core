@@ -48,11 +48,7 @@ import javax.ws.rs.*;
     @AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
     @AuthorizationScope(scope = "read:pets", description = "read your pets")
   })
-}, tags = {
-  @com.wordnik.swagger.annotations.Tag(value = "pet",
-    description = "Everything about your Pets",
-    externalDocs = @ExternalDocs(value="Find out more", url = "http://swagger.io"))
-})
+}, tags = "pet")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class PetResource {
   private Logger LOGGER = LoggerFactory.getLogger(PetResource.class);

@@ -89,7 +89,7 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     val tag = swagger.getTags().get(0)
 
     tag.getName() should equal ("externalinfo")
-    tag.getDescription() should equal ("it's an api")
+    tag.getDescription() should be (null)
     tag.getExternalDocs() should be (null)
   }
 

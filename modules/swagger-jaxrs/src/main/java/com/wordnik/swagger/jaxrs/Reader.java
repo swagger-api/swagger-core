@@ -77,11 +77,17 @@ public class Reader {
     // only read if allowing hidden apis OR api is not marked as hidden
     if((api != null && readHidden) || (api != null && !api.hidden())) {
       // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
-      Map<String, Tag> tags = extractTags(api);
+      Set<String> tagStrings = extractTags(api);
+      Map<String, Tag> tags = new HashMap<String, Tag>();
+      for(String tagString : tagStrings) {
+        Tag tag = new Tag().name(tagString);
+        tags.put(tagString, tag);
+      }
       if(parentTags != null)
         tags.putAll(parentTags);
-      for(String tagName : tags.keySet())
+      for(String tagName: tags.keySet()) {
         swagger.tag(tags.get(tagName));
+      }
 
       int position = api.position();
       String produces = api.produces();
@@ -160,17 +166,11 @@ public class Reader {
           if(httpMethod != null) {
             ApiOperation op = (ApiOperation) method.getAnnotation(ApiOperation.class);
             if(op != null) {
-              com.wordnik.swagger.annotations.Tag[] operationTags = op.tags();
               boolean hasExplicitTag = false;
-              for(com.wordnik.swagger.annotations.Tag tag : operationTags) {
-                if(!"".equals(tag.value())) {
-                  operation.tag(tag.value());
-                  if(tags.get(tag.value()) == null) {
-                    Tag tagObject = new Tag().name(tag.value()).description(tag.description());
-                    if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
-                      tagObject.externalDocs(new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
-                    swagger.tag(tagObject);
-                  }
+              for(String tag : op.tags()) {
+                if(!"".equals(tag)) {
+                  operation.tag(tag);
+                  swagger.tag(new Tag().name(tag));
                 }
               }
             }
@@ -212,39 +212,21 @@ public class Reader {
     return false;
   }
 
-  protected Map<String, Tag> extractTags(Api api) {
-    Map<String, Tag> output = new LinkedHashMap<String, Tag>();
+  protected Set<String> extractTags(Api api) {
+    Set<String> output = new LinkedHashSet<String>();
 
-    com.wordnik.swagger.annotations.Tag[] tags = api.tags();
     boolean hasExplicitTags = false;
-    if(tags != null && tags.length > 0) {
-      for(com.wordnik.swagger.annotations.Tag tag : tags) {
-        if(!"".equals(tag.value())) {
-          hasExplicitTags = true;
-          Tag tagObject = new Tag()
-            .name(tag.value());
-
-          if(!"".equals(tag.description()))
-            tagObject.description(tag.description());
-
-          if(tag.externalDocs() != null && !"".equals(tag.externalDocs().value()))
-            tagObject.externalDocs(
-              new ExternalDocs(tag.externalDocs().value(), tag.externalDocs().url()));
-          output.put(tagObject.getName(), tagObject);
-        }
+    for(String tag : api.tags()) {
+      if(!"".equals(tag)) {
+        hasExplicitTags = true;
+        output.add(tag);
       }
     }
     if(!hasExplicitTags) {
       // derive tag from api path + description
       String tagString = api.value().replace("/", "");
-      String description = api.description();
-      Tag tagObject = new Tag()
-        .name(tagString);
-
-      if(!"".equals(description))
-        tagObject.description(description);
       if(!"".equals(tagString))
-        output.put(tagObject.getName(), tagObject);
+        output.add(tagString);
     }
     return output;
   }

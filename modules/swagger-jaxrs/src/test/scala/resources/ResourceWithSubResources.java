@@ -15,7 +15,7 @@ public class ResourceWithSubResources {
   @ApiOperation(value = "gets all employees",
     response = Employee.class,
     responseContainer = "list",
-    tags = {@Tag("Employees")})
+    tags = "Employees")
   @GET
   public SubResource getTest() {
     return new SubResource();
