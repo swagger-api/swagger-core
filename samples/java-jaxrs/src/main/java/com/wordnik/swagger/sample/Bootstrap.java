@@ -32,6 +32,18 @@ public class Bootstrap extends HttpServlet {
         .implicit("http://petstore.swagger.io/api/oauth/dialog")
         .scope("read:pets", "read your pets")
         .scope("write:pets", "modify pets in your account"));
+    swagger.tag(new Tag()
+      .name("pet")
+      .description("Everything about your Pets")
+      .externalDocs(new ExternalDocs("Find out more", "http://swagger.io")));
+    swagger.tag(new Tag()
+      .name("store")
+      .description("Operations about user"));
+    swagger.tag(new Tag()
+      .name("user")
+      .description("Access to Petstore orders")
+      .externalDocs(new ExternalDocs("Find out more about our store", "http://swagger.io")));
+
     context.setAttribute("swagger", swagger);
   }
 }

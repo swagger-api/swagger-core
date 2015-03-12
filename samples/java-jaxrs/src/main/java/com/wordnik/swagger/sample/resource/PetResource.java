@@ -34,7 +34,7 @@ import javax.ws.rs.*;
     @AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
     @AuthorizationScope(scope = "read:pets", description = "read your pets")
   })
-}, tags = "pets")
+}, tags = "pet")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class PetResource {
   static PetData petData = new PetData();
