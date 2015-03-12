@@ -65,9 +65,6 @@ public class Reader {
   }
 
   protected Swagger read(Class<?> cls, String parentPath, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
-    Json.prettyPrint(parentProduces);
-    System.out.println("reading class " + cls);
-
     if(swagger == null)
       swagger = new Swagger();
     Api api = (Api) cls.getAnnotation(Api.class);
@@ -375,7 +372,6 @@ public class Reader {
       LOGGER.debug("picking up response class from method " + method);
       Type t = method.getGenericReturnType();
       responseClass = method.getReturnType();
-      System.out.println("got response class " + responseClass);
       if(!responseClass.equals(java.lang.Void.class) && !"void".equals(responseClass.toString()) && responseClass.getAnnotation(Api.class) == null) {
         LOGGER.debug("reading model " + responseClass);
         Map<String, Model> models = ModelConverters.getInstance().readAll(t);
