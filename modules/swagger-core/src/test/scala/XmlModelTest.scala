@@ -45,6 +45,11 @@ class XmlModelTest extends FlatSpec with Matchers {
 
     xml should be (null)
   }
+
+  it should "stay hidden per 534" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[Issue534])
+    schemas.get("Issue534").getProperties().size() should be (1)
+  }
 }
 
 @XmlRootElement(name = "monster")
