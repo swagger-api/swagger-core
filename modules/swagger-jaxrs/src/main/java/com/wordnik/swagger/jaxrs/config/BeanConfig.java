@@ -20,6 +20,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
   Reader reader = new Reader(new Swagger());
 
   String resourcePackage;
+  String [] schemes;
   String title;
   String version;
   String description;
@@ -38,6 +39,13 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
   }
   public void setResourcePackage(String resourcePackage) {
     this.resourcePackage = resourcePackage;
+  }
+
+  public String[] getSchemes() {
+    return schemes;
+  }
+  public void setSchemes(String[] schemes) {
+    this.schemes = schemes;
   }
 
   public String getTitle() {
@@ -163,6 +171,10 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
       this.info.license(new License()
         .name(license)
         .url(licenseUrl));
+    if(schemes != null) {
+      for(String scheme : schemes)
+        reader.getSwagger().scheme(Scheme.forValue(scheme));
+    }
 
     reader.getSwagger().setInfo(info);
     Set<Class<?>> classes = new Reflections(config).getTypesAnnotatedWith(Api.class);
@@ -179,6 +191,10 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
   }
 
   public Swagger configure(Swagger swagger) {
+    if(schemes != null) {
+      for(String scheme : schemes)
+        swagger.scheme(Scheme.forValue(scheme));
+    }
     return swagger.info(info)
       .host(host)
       .basePath(basePath);

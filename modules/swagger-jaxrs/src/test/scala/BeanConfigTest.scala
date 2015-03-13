@@ -1,6 +1,7 @@
 import com.wordnik.swagger.jaxrs.config._
 
 import com.wordnik.swagger.util.Json
+import com.wordnik.swagger.models.Scheme
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -14,7 +15,7 @@ class BeanConfigTest extends FlatSpec with Matchers {
   it should "scan a simple resource" in {
     val bc = new BeanConfig()
     bc.setResourcePackage("com.my.project.resources,org.my.project.resources")
-
+    bc.setSchemes(List("http", "https").toArray);
     bc.setHost("petstore.swagger.wordnik.com")
     bc.setBasePath("/api")
     bc.setTitle("Petstore Sample API")
@@ -29,5 +30,7 @@ class BeanConfigTest extends FlatSpec with Matchers {
     swagger should not be (null)
     val keys = swagger.getPaths().keySet()
     keys.asScala.toSet should be (Set("/packageA", "/packageB"))
+    val schemes = swagger.getSchemes()
+    schemes.asScala.toSet should be (Set(Scheme.HTTP, Scheme.HTTPS))
   }
 }
