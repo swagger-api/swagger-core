@@ -1,5 +1,6 @@
 package com.wordnik.swagger.jersey;
 
+import com.wordnik.swagger.jaxrs.ext.AbstractSwaggerExtension;
 import com.wordnik.swagger.jaxrs.ParameterProcessor;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
@@ -22,8 +23,7 @@ import java.util.*;
 /**
  * Swagger extension for handling JAX-RS 2.0 processing.
  */
-public class SwaggerJersey2Jaxrs implements SwaggerExtension {
-
+public class SwaggerJersey2Jaxrs extends AbstractSwaggerExtension implements SwaggerExtension {
   final ObjectMapper mapper = Json.mapper();
 
   public List<Parameter> extractParameters(final Annotation[] annotations, final Class<?> cls, final boolean isArray,

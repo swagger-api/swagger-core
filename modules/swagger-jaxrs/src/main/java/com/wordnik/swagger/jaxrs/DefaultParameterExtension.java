@@ -5,6 +5,8 @@ import com.wordnik.swagger.models.parameters.*;
 import com.wordnik.swagger.models.properties.*;
 import com.wordnik.swagger.converter.ModelConverters;
 
+import com.wordnik.swagger.jaxrs.ext.AbstractSwaggerExtension;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +22,7 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 
-public class DefaultParameterExtension implements SwaggerExtension {
+public class DefaultParameterExtension extends AbstractSwaggerExtension implements SwaggerExtension {
   Logger LOGGER = LoggerFactory.getLogger(DefaultParameterExtension.class);
 
   public List<Parameter> extractParameters(Annotation[] annotations, Class<?> cls, boolean isArray, Set<Class<?>> classesToSkip, Iterator<SwaggerExtension> chain) {

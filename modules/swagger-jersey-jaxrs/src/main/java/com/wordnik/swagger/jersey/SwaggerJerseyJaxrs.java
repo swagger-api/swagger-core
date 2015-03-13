@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.lang.annotation.Annotation;
 
-public class SwaggerJerseyJaxrs implements SwaggerExtension {
+public class SwaggerJerseyJaxrs extends AbstractSwaggerExtension implements SwaggerExtension {
   static Logger LOGGER = LoggerFactory.getLogger(SwaggerJerseyJaxrs.class);
 
   public List<Parameter> extractParameters(Annotation[] annotations, Class<?> cls, boolean isArray, Set<Class<?>> classesToSkip, Iterator<SwaggerExtension> chain) {

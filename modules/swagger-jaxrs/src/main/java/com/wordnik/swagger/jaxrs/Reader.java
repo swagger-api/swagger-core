@@ -32,6 +32,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
+import javax.ws.rs.HttpMethod;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -42,7 +43,6 @@ import java.util.*;
 public class Reader {
   Logger LOGGER = LoggerFactory.getLogger(Reader.class);
 
-  List<SwaggerExtension> EXTENSIONS = SwaggerExtensions.getExtensions();
   Swagger swagger;
   static ObjectMapper m = Json.mapper();
 
@@ -124,7 +124,7 @@ public class Reader {
 
         String operationPath = getPath(apiPath, methodPath, parentPath);
         if(operationPath != null && apiOperation != null) {
-          String httpMethod = getHttpMethod(apiOperation, method);
+          String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
           Operation operation = parseMethod(method);
           if(parentParameters != null) {
@@ -535,8 +535,34 @@ public class Reader {
         }
       }
     }
-
     return parameters;
+  }
+
+  public String extractOperationMethod(ApiOperation apiOperation, Method method, Iterator<SwaggerExtension> chain) {
+    if(apiOperation.httpMethod() != null && !"".equals(apiOperation.httpMethod()))
+      return apiOperation.httpMethod().toLowerCase();
+    else if(method.getAnnotation(javax.ws.rs.GET.class) != null)
+      return "get";
+    else if(method.getAnnotation(javax.ws.rs.PUT.class) != null)
+      return "put";
+    else if(method.getAnnotation(javax.ws.rs.POST.class) != null)
+      return "post";
+    else if(method.getAnnotation(javax.ws.rs.DELETE.class) != null)
+      return "delete";
+    else if(method.getAnnotation(javax.ws.rs.OPTIONS.class) != null)
+      return "options";
+    else if(method.getAnnotation(javax.ws.rs.HEAD.class) != null)
+      return "head";
+    else if(method.getAnnotation(PATCH.class) != null)
+      return "patch";
+    else if(method.getAnnotation(HttpMethod.class) != null) {
+      HttpMethod httpMethod = (HttpMethod) method.getAnnotation(HttpMethod.class);
+      return httpMethod.value().toLowerCase();
+    }
+    else if(chain.hasNext())
+      return chain.next().extractOperationMethod(apiOperation, method, chain);
+    else
+      return null;
   }
 
   boolean isPrimitive(Class<?> cls) {
@@ -558,28 +584,5 @@ public class Reader {
     else if("file".equals(property.getType()))
       out = true;
     return out;
-  }
-
-  String getHttpMethod(ApiOperation apiOperation, Method method) {
-
-
-    if(apiOperation.httpMethod() != null && !"".equals(apiOperation.httpMethod()))
-      return apiOperation.httpMethod().toLowerCase();
-    else if(method.getAnnotation(javax.ws.rs.GET.class) != null)
-      return "get";
-    else if(method.getAnnotation(javax.ws.rs.PUT.class) != null)
-      return "put";
-    else if(method.getAnnotation(javax.ws.rs.POST.class) != null)
-      return "post";
-    else if(method.getAnnotation(javax.ws.rs.DELETE.class) != null)
-      return "delete";
-    else if(method.getAnnotation(javax.ws.rs.OPTIONS.class) != null)
-      return "options";
-    else if(method.getAnnotation(javax.ws.rs.HEAD.class) != null)
-      return "head";
-    else if(method.getAnnotation(PATCH.class) != null)
-      return "patch";
-
-    return null;
   }
 }
