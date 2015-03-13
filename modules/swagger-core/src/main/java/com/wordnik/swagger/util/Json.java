@@ -27,18 +27,6 @@ public class Json {
     if(mapper == null) {
       mapper = create();
     }
-
-    ServiceLoader<Module> loader = ServiceLoader.load(Module.class);
-    Iterator<Module> itr = loader.iterator();
-    while(itr.hasNext()) {
-      Module ext = itr.next();
-      if(ext == null)
-        LOGGER.error("failed to load extension " + ext);
-      else {
-        mapper.registerModule(ext);
-        LOGGER.debug("adding extension " + ext);
-      }
-    }
     return mapper;
   }
 
