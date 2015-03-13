@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ModelConverters {
-  Logger LOGGER = LoggerFactory.getLogger(ModelConverters.class);
+  static Logger LOGGER = LoggerFactory.getLogger(ModelConverters.class);
 
   private static final ModelConverters SINGLETON = new ModelConverters();
   private final List<ModelConverter> converters;
@@ -25,6 +25,18 @@ public class ModelConverters {
 
   static {
     SINGLETON.skippedPackages.add("java.lang");
+
+    ServiceLoader<ModelConverter> loader = ServiceLoader.load(ModelConverter.class);
+    Iterator<ModelConverter> itr = loader.iterator();
+    while(itr.hasNext()) {
+      ModelConverter ext = itr.next();
+      if(ext == null)
+        LOGGER.error("failed to load extension " + ext);
+      else {
+        SINGLETON.addConverter(ext);
+        LOGGER.debug("adding ModelConverter: " + ext);
+      }
+    }
   }
 
   public static ModelConverters getInstance() {
