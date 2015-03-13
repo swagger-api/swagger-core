@@ -332,7 +332,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
               p.setItems(primitiveProperty);
             else {
               innerJavaType = getInnerType(innerType);
-              p.setItems(resolveProperty(innerJavaType, context, context.getConverters()));
+              p.setItems(context.resolveProperty(innerJavaType));
             }
             property = p;
           }
@@ -346,7 +346,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 p.setAdditionalProperties(primitiveProperty);
               else {
                 innerJavaType = getInnerType(innerType);
-                p.setAdditionalProperties(resolveProperty(innerJavaType, context, context.getConverters()));
+                p.setAdditionalProperties(context.resolveProperty(innerJavaType));
               }
               property = p;
             }
@@ -357,11 +357,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
               property = primitiveProperty;
             else {
               innerJavaType = getInnerType(or);
-              property = resolveProperty(innerJavaType, context, context.getConverters());
+              property = context.resolveProperty(innerJavaType);
             }
           }
           if(innerJavaType != null) {
-            resolve(innerJavaType, context, context.getConverters());
+            context.resolve(innerJavaType);
           }
         }
 
