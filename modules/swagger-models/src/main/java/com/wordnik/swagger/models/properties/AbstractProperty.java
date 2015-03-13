@@ -7,6 +7,7 @@ public abstract class AbstractProperty implements Property {
   String type;
   String format;
   String example;
+  String _default;
   Xml xml;
   boolean required;
   Integer position;
@@ -20,6 +21,10 @@ public abstract class AbstractProperty implements Property {
   }
   public Property description(String description) {
     this.setDescription(description);
+    return this;
+  }
+  public Property _default(String _default) {
+    this.setDefault(_default);
     return this;
   }
   public Property readOnly() {
@@ -88,6 +93,13 @@ public abstract class AbstractProperty implements Property {
   }
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public String getDefault() {
+    return _default;
+  }
+  public void setDefault(String _default) {
+    this._default = _default;
   }
 
   public Boolean getReadOnly() {

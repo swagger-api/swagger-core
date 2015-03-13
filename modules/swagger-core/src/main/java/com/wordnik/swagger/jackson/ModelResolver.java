@@ -384,6 +384,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
           if (index != null) {
             property.setPosition(index);
           }
+          property.setDefault(_findDefaultValue(member));
           property.setExample(_findExampleValue(member));
           property.setReadOnly(_findReadOnly(member));
           

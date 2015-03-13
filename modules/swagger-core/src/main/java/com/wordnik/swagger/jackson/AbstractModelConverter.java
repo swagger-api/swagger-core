@@ -1,9 +1,5 @@
 package com.wordnik.swagger.jackson;
 
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.Module.SetupContext;
@@ -15,6 +11,12 @@ import com.wordnik.swagger.converter.ModelConverter;
 import com.wordnik.swagger.converter.ModelConverterContext;
 import com.wordnik.swagger.models.Model;
 import com.wordnik.swagger.models.properties.*;
+
+import javax.xml.bind.annotation.*;
+
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractModelConverter implements ModelConverter {
   protected final ObjectMapper _mapper;
@@ -149,17 +151,21 @@ public abstract class AbstractModelConverter implements ModelConverter {
     return type.getType().getName();
   }
 
+  protected String _findDefaultValue(Annotated a) {
+    XmlElement elem = a.getAnnotation(XmlElement.class);
+    if(elem != null) {
+      if(!elem.defaultValue().isEmpty()) {
+        return elem.defaultValue();
+      }
+    }
+    return null;
+  }
+
   protected String _findExampleValue(Annotated a) {
     ApiModelProperty prop = a.getAnnotation(ApiModelProperty.class);
     if (prop != null) {
       if (!prop.example().isEmpty()) {
         return prop.example();
-      }
-    }
-    XmlElement elem = a.getAnnotation(XmlElement.class);
-    if(elem != null) {
-      if(!elem.defaultValue().isEmpty()) {
-        return elem.defaultValue();
       }
     }
     return null;
