@@ -226,7 +226,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     // if XmlRootElement annotation, construct an Xml object and attach it to the model
     XmlRootElement rootAnnotation = beanDesc.getClassAnnotations().get(XmlRootElement.class);
-    if(rootAnnotation != null && rootAnnotation.name() != null && !"".equals(rootAnnotation.name())) {
+    if(rootAnnotation != null && !"".equals(rootAnnotation.name()) && !"##default".equals(rootAnnotation.name())) {
       LOGGER.debug(rootAnnotation.toString());
       Xml xml = new Xml()
         .name(rootAnnotation.name());
