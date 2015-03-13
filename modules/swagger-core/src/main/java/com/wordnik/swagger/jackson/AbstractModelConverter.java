@@ -154,7 +154,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
   protected String _findDefaultValue(Annotated a) {
     XmlElement elem = a.getAnnotation(XmlElement.class);
     if(elem != null) {
-      if(!elem.defaultValue().isEmpty()) {
+      if(!elem.defaultValue().isEmpty() && !"\u0000".equals(elem.defaultValue())) {
         return elem.defaultValue();
       }
     }
