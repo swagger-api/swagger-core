@@ -133,6 +133,16 @@ public class Reader {
             }
           }
 
+          String protocols = apiOperation.protocols();
+          if(!"".equals(protocols)) {
+            String[] parts = protocols.split(",");
+            for(String part : parts) {
+              String trimmed = part.trim();
+              if(!"".equals(trimmed))
+                operation.scheme(Scheme.forValue(trimmed));
+            }
+          }
+
           Annotation annotation;
           annotation = cls.getAnnotation(Consumes.class);
           if(annotation != null)

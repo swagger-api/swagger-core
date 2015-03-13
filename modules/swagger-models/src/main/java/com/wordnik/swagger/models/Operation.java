@@ -127,7 +127,6 @@ public class Operation {
     this.operationId = operationId;
   }
 
-  @JsonIgnore
   public List<Scheme> getSchemes() {
     return schemes;
   }
