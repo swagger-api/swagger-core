@@ -10,14 +10,34 @@ import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.Module;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Iterator;
+
+import java.util.ServiceLoader;
 
 public class Json {
+  static Logger LOGGER = LoggerFactory.getLogger(Json.class);
   static ObjectMapper mapper;
   public static ObjectMapper mapper() {
     if(mapper == null) {
       mapper = create();
+    }
+
+    ServiceLoader<Module> loader = ServiceLoader.load(Module.class);
+    Iterator<Module> itr = loader.iterator();
+    while(itr.hasNext()) {
+      Module ext = itr.next();
+      if(ext == null)
+        LOGGER.error("failed to load extension " + ext);
+      else {
+        mapper.registerModule(ext);
+        LOGGER.debug("adding extension " + ext);
+      }
     }
     return mapper;
   }
@@ -25,6 +45,7 @@ public class Json {
   public static ObjectMapper create() {
     mapper = new ObjectMapper();
 
+    // load any jackson modules 
     SimpleModule module = new SimpleModule();
     module.addDeserializer(Property.class, new PropertyDeserializer());
     module.addDeserializer(Model.class, new ModelDeserializer());
