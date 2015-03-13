@@ -433,7 +433,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             XmlElement element = member.getAnnotation(XmlElement.class);
             if(element != null) {
-              if(element.name() != null && !"".equals(element.name())) {
+              if(!element.name().isEmpty()) {
                 // don't set Xml object if name is same
                 if(!element.name().equals(propName) && !"##default".equals(element.name())) {
                   Xml xml = property.getXml();
@@ -447,7 +447,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
             XmlAttribute attr = member.getAnnotation(XmlAttribute.class);
             if(attr != null) {
-              if(attr.name() != null && !"".equals(attr.name())) {
+              if(!"".equals(attr.name())) {
                 // don't set Xml object if name is same
                 if(!attr.name().equals(propName) && !"##default".equals(attr.name())) {
                   Xml xml = property.getXml();

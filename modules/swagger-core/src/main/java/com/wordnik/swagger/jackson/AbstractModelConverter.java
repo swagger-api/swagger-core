@@ -156,6 +156,12 @@ public abstract class AbstractModelConverter implements ModelConverter {
         return prop.example();
       }
     }
+    XmlElement elem = a.getAnnotation(XmlElement.class);
+    if(elem != null) {
+      if(!elem.defaultValue().isEmpty()) {
+        return elem.defaultValue();
+      }
+    }
     return null;
   }
 
