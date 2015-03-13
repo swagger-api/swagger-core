@@ -241,6 +241,6 @@
   <properties>
     <java-version>1.6</java-version>
     <springframework-version>3.2.1.RELEASE</springframework-version>
-    <cxf-version>2.7.3</cxf-version>
+    <cxf-version>2.7.15</cxf-version>
   </properties>
 </project>
