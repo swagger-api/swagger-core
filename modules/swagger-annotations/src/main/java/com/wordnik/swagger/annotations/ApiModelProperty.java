@@ -33,6 +33,13 @@ public @interface ApiModelProperty {
   String value() default "";
 
   /**
+   * Allows overriding the name of the property
+   *
+   * @return the overridden property name
+   */
+  String name() default "";
+
+  /**
    * If the values that can be set are restricted, they can be set here. In the form of a comma separated list
    * <code>registered, active, closed</code>.
    *
