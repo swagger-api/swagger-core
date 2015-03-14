@@ -9,6 +9,9 @@ public class ModelWithBeanValidations {
   @Min(13) @Max(99)
   protected Integer age;
 
+  @Size(min=6, max=20)
+  protected String password;
+
   public Long getId() {
     return id;
   }
@@ -21,5 +24,12 @@ public class ModelWithBeanValidations {
   }
   public void setAge(Integer age) {
     this.age = age;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+  public void setPassword(String password) {
+    this.password = password;
   }
 }

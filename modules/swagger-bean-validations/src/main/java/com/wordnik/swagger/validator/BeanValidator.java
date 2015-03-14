@@ -58,6 +58,19 @@ public class BeanValidator extends AbstractModelConverter implements ModelConver
           ap.setMaximum(new Double(max.value()));
         }
       }
+      if(annos.containsKey("javax.validation.constraints.Size")) {
+        Size size = (Size) annos.get("javax.validation.constraints.Size");
+        if(property instanceof AbstractNumericProperty) {
+          AbstractNumericProperty ap = (AbstractNumericProperty) property;
+          ap.setMinimum(new Double(size.min()));
+          ap.setMaximum(new Double(size.max()));
+        }
+        if(property instanceof StringProperty) {
+          StringProperty sp = (StringProperty) property;
+          sp.minLength(new Integer(size.min()));
+          sp.maxLength(new Integer(size.max()));
+        }
+      }
 
       return property;
     }
