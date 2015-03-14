@@ -9,10 +9,7 @@ import com.wordnik.swagger.converter.ModelConverterContext;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.properties.*;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
@@ -24,6 +21,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import javax.xml.bind.annotation.*;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -52,14 +50,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     return false;
   }
 
-  public Property resolveProperty(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
+  public Property resolveProperty(Type type,
+      ModelConverterContext context,
+      Annotation[] annotations,
+      Iterator<ModelConverter> next) {
     if(this.shouldIgnoreClass(type))
       return null;
 
-    return resolveProperty(_mapper.constructType(type), context, next);
+    return resolveProperty(_mapper.constructType(type), context, annotations, next);
   }
 
-  public Property resolveProperty(JavaType propType, ModelConverterContext context, Iterator<ModelConverter> next) {
+  public Property resolveProperty(JavaType propType,
+      ModelConverterContext context,
+      Annotation[] annotations,
+      Iterator<ModelConverter> next) {
     Property property = null;
     String typeName = _typeName(propType);
 
@@ -67,10 +71,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     // primitive or null
     property = getPrimitiveProperty(typeName);
-    LOGGER.debug("got primitive property " + property);
     // And then properties specific to subset of property types:
     if (propType.isContainerType()) {
-      LOGGER.debug("looking at container type");
       JavaType keyType = propType.getKeyType();
       JavaType valueType = propType.getContentType();
       if(keyType != null && valueType != null) {
@@ -153,7 +155,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         _addEnumProps(propType.getRawClass(), property);
       }
       else if (_isOptionalType(propType)) {
-        property = context.resolveProperty(propType.containedType(0));
+        property = context.resolveProperty(propType.containedType(0), null);
       }
       else {
         // complex type
@@ -182,7 +184,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
   protected void _addEnumProps(Class<?> propClass, Property property) {
     final boolean useIndex =  _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
     final boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    // List<AllowableValue> enums = new ArrayList<AllowableValue>();
 
     @SuppressWarnings("unchecked")
     Class<Enum<?>> enumClass = (Class<Enum<?>>) propClass;
@@ -271,6 +272,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     for (BeanPropertyDefinition propDef : beanDesc.findProperties()) {
       Property property = null;
       String propName = propDef.getName();
+      Annotation[] annotations = null;
 
       // hack to avoid clobbering properties with get/is names
       // it's ugly but gets around https://github.com/swagger-api/swagger-core/issues/415
@@ -314,6 +316,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       final AnnotatedMember member = propDef.getPrimaryMember();
 
       if(member != null && !propertiesToIgnore.contains(propName)) {
+        List<Annotation> annotationList = new ArrayList<Annotation>();
+        for(Annotation a : member.annotations())
+          annotationList.add(a);
+
+        annotations = annotationList.toArray(new Annotation[annotationList.size()]);
+
         ApiModelProperty mp = member.getAnnotation(ApiModelProperty.class);
 
         JavaType propType = member.getType(beanDesc.bindingsForBeanType());
@@ -336,7 +344,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
               p.setItems(primitiveProperty);
             else {
               innerJavaType = getInnerType(innerType);
-              p.setItems(context.resolveProperty(innerJavaType));
+              p.setItems(context.resolveProperty(innerJavaType, annotations));
             }
             property = p;
           }
@@ -350,7 +358,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 p.setAdditionalProperties(primitiveProperty);
               else {
                 innerJavaType = getInnerType(innerType);
-                p.setAdditionalProperties(context.resolveProperty(innerJavaType));
+                p.setAdditionalProperties(context.resolveProperty(innerJavaType, annotations));
               }
               property = p;
             }
@@ -361,7 +369,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
               property = primitiveProperty;
             else {
               innerJavaType = getInnerType(or);
-              property = context.resolveProperty(innerJavaType);
+              property = context.resolveProperty(innerJavaType, annotations);
             }
           }
           if(innerJavaType != null) {
@@ -371,7 +379,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         // no property from override, construct from propType
         if(property == null)
-          property = context.resolveProperty(propType);
+          property = context.resolveProperty(propType, annotations);
 
         if(property != null) {
           property.setName(propName);
@@ -414,7 +422,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
               }
             }
           }
-
 
           if(property != null) {
             // check for XML annotations

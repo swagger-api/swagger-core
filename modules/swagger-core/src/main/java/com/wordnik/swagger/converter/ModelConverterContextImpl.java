@@ -8,6 +8,7 @@ import com.wordnik.swagger.util.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.util.*;
 import java.lang.reflect.Type;
 
@@ -48,14 +49,14 @@ public class ModelConverterContextImpl implements ModelConverterContext {
   }
 
   @Override
-  public Property resolveProperty(Type type) {
+  public Property resolveProperty(Type type, Annotation[] annotations) {
     if(LOGGER.isDebugEnabled()){
       LOGGER.debug(String.format("resolveProperty %s", type));
     }
     Iterator<ModelConverter> converters = this.getConverters();
     if(converters.hasNext()) {
       ModelConverter converter = converters.next();
-      return converter.resolveProperty(type, this, converters);
+      return converter.resolveProperty(type, this, annotations, converters);
     }
     return null;
   }

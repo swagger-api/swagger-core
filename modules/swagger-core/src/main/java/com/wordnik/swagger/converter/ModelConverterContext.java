@@ -3,6 +3,7 @@ package com.wordnik.swagger.converter;
 import com.wordnik.swagger.models.Model;
 import com.wordnik.swagger.models.properties.Property;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 
@@ -21,7 +22,7 @@ public interface ModelConverterContext {
    * @param type the property Class
    * @return a property representation of the Class. Any referenced models will be defined already.
    */
-  public   Property resolveProperty(Type type);
+  public   Property resolveProperty(Type type, Annotation[] annotations);
 
   /** 
    * @param type The Model Class

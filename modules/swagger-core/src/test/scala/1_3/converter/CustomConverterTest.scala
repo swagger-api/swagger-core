@@ -13,6 +13,7 @@ import com.wordnik.swagger.model._
 
 import org.joda.time.DateTime
 
+import java.lang.annotation.Annotation
 import java.lang.reflect.Type
 
 import scala.collection.mutable.LinkedHashMap
@@ -47,14 +48,14 @@ class CustomConverterTest extends FlatSpec with Matchers {
 
 class CustomConverter extends ModelConverter {
   @Override
-  def resolveProperty(`type`: Type, context: ModelConverterContext, chain: java.util.Iterator[ModelConverter]): Property = {
+  def resolveProperty(`type`: Type, context: ModelConverterContext, annotations: Array[Annotation], chain: java.util.Iterator[ModelConverter]): Property = {
     val jType = Json.mapper().constructType(`type`)
     if(jType != null) {
       var cls = jType.getRawClass
       if(cls.equals(classOf[Bar]))
         null
       else
-        chain.next().resolveProperty(`type`, context, chain);
+        chain.next().resolveProperty(`type`, context, annotations, chain);
     }
     else
       null

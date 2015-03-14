@@ -11,6 +11,7 @@ import com.wordnik.swagger.converter._
 import com.wordnik.swagger.util.Json
 import com.wordnik.swagger.models._
 
+import java.lang.annotation.Annotation
 import java.lang.reflect.Type
 import java.util.LinkedHashMap
 import javax.xml.bind.annotation._
@@ -69,10 +70,10 @@ class SnakeCaseModel {
  * simple converter to rename models and field names into snake_case
  */
 class SnakeCaseConverter extends ModelConverter {
-  def resolveProperty(`type`: Type, context: ModelConverterContext, chain: java.util.Iterator[ModelConverter]): Property = {
+  def resolveProperty(`type`: Type, context: ModelConverterContext, annotations: Array[Annotation], chain: java.util.Iterator[ModelConverter]): Property = {
     if(chain.hasNext()) {
       val converter = chain.next()
-      return converter.resolveProperty(`type`, context, chain)
+      return converter.resolveProperty(`type`, context, annotations, chain)
     }
     return null
   }

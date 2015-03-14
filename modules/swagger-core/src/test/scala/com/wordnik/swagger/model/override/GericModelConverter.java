@@ -11,6 +11,7 @@ import com.wordnik.swagger.util.Json;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.Map.*;
@@ -24,8 +25,8 @@ public class GericModelConverter extends AbstractModelConverter {
 	}
 
 	@Override
-	public Property resolveProperty(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
-		return chain.next().resolveProperty(type, context, chain);
+	public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {
+		return chain.next().resolveProperty(type, context, annotations, chain);
 	}
 
 	@Override
@@ -36,7 +37,7 @@ public class GericModelConverter extends AbstractModelConverter {
 				ModelImpl impl = new ModelImpl();
 				impl.setName(cls.getSimpleName());				
 				for (Entry<String, Class<?>> entry : GenericModel.getDeclaredProperties().entrySet()) {
-					impl.addProperty(entry.getKey(),context.resolveProperty(entry.getValue()));
+					impl.addProperty(entry.getKey(),context.resolveProperty(entry.getValue(), null));
 				}
 				context.defineModel(impl.getName(), impl);
 				return impl;
