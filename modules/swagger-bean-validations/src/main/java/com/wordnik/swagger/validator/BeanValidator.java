@@ -6,7 +6,7 @@ import com.wordnik.swagger.models.properties.*;
 import com.wordnik.swagger.jackson.AbstractModelConverter;
 import com.wordnik.swagger.util.Json;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
@@ -27,26 +27,42 @@ public class BeanValidator extends AbstractModelConverter implements ModelConver
 
   @Override
   public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {
-    Map<String, Class<Annotation>> allAnnotations = new HashMap<String, Class<Annotation>>();
+    System.out.println(annotations);
+    Map<String, Annotation> annos = new HashMap<String, Annotation>();
     if(annotations != null) {
-      for(Annotation a: annotations) {
-        Class<Annotation> anno = (Class<Annotation>)a.annotationType();
-        allAnnotations.put(anno.getName(), anno);
+      for(Annotation anno: annotations) {
+        // Annotation anno = (Annotation)a.annotationType();
+        annos.put(anno.annotationType().getName(), anno);
+        System.out.println("annos: " + anno);
       }
     }
     Property property = null;
 
-    if(allAnnotations.containsKey("javax.validation.constraints.NotNull")) {
-      if(chain.hasNext())
-        property = chain.next().resolveProperty(type, context, annotations, chain);
-      if(property != null)
+    if(chain.hasNext())
+      property = chain.next().resolveProperty(type, context, annotations, chain);
+    if(property != null) {
+      if(annos.containsKey("javax.validation.constraints.NotNull")) {
         property.setRequired(true);
+      }
+      if(annos.containsKey("javax.validation.constraints.Min")) {
+        if(property instanceof AbstractNumericProperty) {
+          Min min = (Min) annos.get("javax.validation.constraints.Min");
+          AbstractNumericProperty ap = (AbstractNumericProperty) property;
+          ap.setMinimum(new Double(min.value()));
+        }
+      }
+      if(annos.containsKey("javax.validation.constraints.Max")) {
+        if(property instanceof AbstractNumericProperty) {
+          Max max = (Max) annos.get("javax.validation.constraints.Max");
+          AbstractNumericProperty ap = (AbstractNumericProperty) property;
+          ap.setMaximum(new Double(max.value()));
+        }
+      }
+
       return property;
     }
     /*
 @Size(min = 2, max = 14)
-@Min(2)
-@Max(2)
 @DecimalMin(value=, inclusive=)
 @CreditCardNumber(ignoreNonDigitCharacters=)
 @Email
