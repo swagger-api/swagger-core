@@ -139,13 +139,17 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     headers400.get("X-Rack-Cache").getDescription should be ("Explains whether or not a cache was used")
     headers400.get("X-Rack-Cache").getType should be ("boolean")
   }
-}
-
-@RunWith(classOf[JUnitRunner])
-class SimpleScannerTest2 extends FlatSpec with Matchers {
 
   it should "not scan a hidden resource" in {
     val swagger = new Reader(new Swagger()).read(classOf[HiddenResource])
     val get = swagger.getPaths() should be (null)
+  }
+}
+
+@RunWith(classOf[JUnitRunner])
+class SimpleScannerTest2 extends FlatSpec with Matchers {
+  it should "correctly model an empty model per 499" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithEmptyModel])
+    Json.prettyPrint(swagger)
   }
 }
