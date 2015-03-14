@@ -318,7 +318,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         JavaType propType = member.getType(beanDesc.bindingsForBeanType());
 
-        if(mp != null && !"".equals(mp.dataType())) {
+        // allow override of name from annotation
+        if(mp != null && !mp.name().isEmpty())
+          propName = mp.name();
+
+        if(mp != null && !mp.dataType().isEmpty()) {
           String or = mp.dataType();
 
           JavaType innerJavaType = null;

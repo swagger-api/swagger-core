@@ -13,8 +13,6 @@ import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
 class ModelConverterTest extends FlatSpec with Matchers {
-  val m = Json.mapper()
-
   it should "convert a model" in {
     val schemas = ModelConverters.getInstance().read(classOf[Person])
     Json.pretty(schemas) should equal(
@@ -56,7 +54,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
 
   it should "convert a model with Joda DateTime" in {
     val schemas = ModelConverters.getInstance().read(classOf[JodaDateTimeModel])
-    m.writeValueAsString(schemas) should equal ("""{"JodaDateTimeModel":{"properties":{"createdAt":{"type":"string","format":"date-time"}}}}""")
+    Json.mapper().writeValueAsString(schemas) should equal ("""{"JodaDateTimeModel":{"properties":{"createdAt":{"type":"string","format":"date-time"}}}}""")
   }
 
   it should "read an interface" in {
@@ -198,5 +196,14 @@ class ModelConverterTest extends FlatSpec with Matchers {
     val model = schemas.get("EmptyModel").asInstanceOf[ModelImpl]
     model.getProperties() should be (null)
     model.getType should be ("object")
+  }
+}
+
+@RunWith(classOf[JUnitRunner])
+class ModelConverterTest2 extends FlatSpec with Matchers {
+  it should "override the property name" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithAltPropertyName])
+    val model = schemas.get("sample_model").asInstanceOf[ModelImpl]
+    Json.prettyPrint(model)
   }
 }
