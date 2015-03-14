@@ -188,6 +188,15 @@ class ModelConverterTest extends FlatSpec with Matchers {
   it should "process a model with org.apache.commons.lang3.tuple.Pair properties" in {
     ModelConverters.getInstance().addConverter(new ModelWithTuple2.TupleModelConverter(Json.mapper()))
     val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithTuple2])
-    Json.prettyPrint(schemas)
+    val model = schemas.get("MyPair").asInstanceOf[ModelImpl]
+    model.getType() should be ("object")
+    model.getProperties() should be (null)
+  }
+
+  it should "scan an empty model per 499" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[EmptyModel])
+    val model = schemas.get("EmptyModel").asInstanceOf[ModelImpl]
+    model.getProperties() should be (null)
+    model.getType should be ("object")
   }
 }

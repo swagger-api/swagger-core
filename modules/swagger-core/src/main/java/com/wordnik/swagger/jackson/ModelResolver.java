@@ -500,6 +500,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     for (Property prop : props) {
       modelProps.put(prop.getName(), prop);
     }
+    if(modelProps.size() == 0)
+      model.setType("object");
     model.setProperties(modelProps);
     return model;
   }
