@@ -402,7 +402,7 @@
     <module>modules/swagger-jaxrs</module>
     <module>modules/swagger-jersey2-jaxrs</module>
     <module>modules/swagger-jersey-jaxrs</module>
-    <module>modules/swagger-bean-validations</module>
+    <module>modules/swagger-hiberante-validations</module>
     <!--module>modules/swagger-servlet</module>
     <module>modules/swagger-utils</module-->
     <!--module>modules/swagger-oauth2-auth-server</module-->
