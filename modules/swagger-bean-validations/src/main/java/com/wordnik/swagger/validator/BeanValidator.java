@@ -7,6 +7,7 @@ import com.wordnik.swagger.jackson.AbstractModelConverter;
 import com.wordnik.swagger.util.Json;
 
 import javax.validation.constraints.*;
+import org.hibernate.validator.constraints.*;
 
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
@@ -30,11 +31,8 @@ public class BeanValidator extends AbstractModelConverter implements ModelConver
     System.out.println(annotations);
     Map<String, Annotation> annos = new HashMap<String, Annotation>();
     if(annotations != null) {
-      for(Annotation anno: annotations) {
-        // Annotation anno = (Annotation)a.annotationType();
+      for(Annotation anno: annotations)
         annos.put(anno.annotationType().getName(), anno);
-        System.out.println("annos: " + anno);
-      }
     }
     Property property = null;
 
@@ -43,6 +41,11 @@ public class BeanValidator extends AbstractModelConverter implements ModelConver
     if(property != null) {
       if(annos.containsKey("javax.validation.constraints.NotNull")) {
         property.setRequired(true);
+      }
+      if(annos.containsKey("org.hibernate.validator.constraints.NotBlank")) {
+        property.setRequired(true);
+        if(property instanceof StringProperty)
+          ((StringProperty)property).minLength(1);
       }
       if(annos.containsKey("javax.validation.constraints.Min")) {
         if(property instanceof AbstractNumericProperty) {
@@ -71,18 +74,54 @@ public class BeanValidator extends AbstractModelConverter implements ModelConver
           sp.maxLength(new Integer(size.max()));
         }
       }
+      if(annos.containsKey("javax.validation.constraints.DecimalMin")) {
+        DecimalMin min = (DecimalMin) annos.get("javax.validation.constraints.DecimalMin");
+        if(property instanceof AbstractNumericProperty) {
+          AbstractNumericProperty ap = (AbstractNumericProperty) property;
+          if(min.inclusive())
+            ap.setMinimum(new Double(min.value()));
+          else
+            ap.setExclusiveMinimum(new Double(min.value()));
+        }
+      }
+      if(annos.containsKey("javax.validation.constraints.DecimalMax")) {
+        DecimalMax max = (DecimalMax) annos.get("javax.validation.constraints.DecimalMax");
+        if(property instanceof AbstractNumericProperty) {
+          AbstractNumericProperty ap = (AbstractNumericProperty) property;
+          if(max.inclusive())
+            ap.setMaximum(new Double(max.value()));
+          else
+            ap.setExclusiveMaximum(new Double(max.value()));
+        }
+      }
+      if(annos.containsKey("org.hibernate.validator.constraints.Range")) {
+        if(property instanceof AbstractNumericProperty) {
+          Range range = (Range) annos.get("org.hibernate.validator.constraints.Range");
+          AbstractNumericProperty ap = (AbstractNumericProperty) property;
+          ap.setMinimum(new Double(range.min()));
+          ap.setMaximum(new Double(range.max()));
+        }
+      }
+      if(annos.containsKey("org.hibernate.validator.constraints.Length")) {
+        if(property instanceof StringProperty) {
+          Length length = (Length) annos.get("org.hibernate.validator.constraints.Length");
+          StringProperty sp = (StringProperty) property;
+          sp.minLength(new Integer(length.min()));
+          sp.maxLength(new Integer(length.max()));
+        }
+      }
+      if(annos.containsKey("org.hibernate.validator.constraints.Email")) {
+        if(property instanceof StringProperty) {
+          EmailProperty sp = new EmailProperty((StringProperty)property);
+          property = sp;
+        }
+      }
 
       return property;
     }
     /*
-@Size(min = 2, max = 14)
-@DecimalMin(value=, inclusive=)
 @CreditCardNumber(ignoreNonDigitCharacters=)
 @Email
-@Length(min=, max=)
-@NotBlank
-@Range(min=, max=)
-
     */
     return super.resolveProperty(type, context, annotations, chain);
   }
