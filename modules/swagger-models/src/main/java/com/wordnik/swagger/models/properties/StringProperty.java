@@ -16,12 +16,10 @@ public class StringProperty extends AbstractProperty implements Property {
     this.setXml(xml);
     return this;
   }
-
   public StringProperty example(String example) {
     this.setExample(example);
     return this;
   }
-
   public StringProperty minLength(Integer minLength) {
     this.setMinLength(minLength);
     return this;
