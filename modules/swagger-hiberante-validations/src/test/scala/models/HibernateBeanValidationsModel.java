@@ -3,7 +3,7 @@ package models;
 import javax.validation.constraints.*;
 import org.hibernate.validator.constraints.*;
 
-public class ModelWithBeanValidations {
+public class HibernateBeanValidationsModel {
   @NotNull
   protected Long id;
 

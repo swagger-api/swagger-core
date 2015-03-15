@@ -8,10 +8,10 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-bean-validations</artifactId>
+  <artifactId>swagger-hiberante-validations</artifactId>
   <packaging>jar</packaging>
   <version>1.5.3-M1-SNAPSHOT</version>
-  <name>swagger-bean-validations</name>
+  <name>swagger-hiberante-validations</name>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <defaultGoal>install</defaultGoal>
@@ -64,6 +64,7 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
       <version>${hibernate-validator-version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
      <groupId>ch.qos.logback</groupId>
