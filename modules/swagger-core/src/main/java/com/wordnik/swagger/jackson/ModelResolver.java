@@ -22,9 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import javax.xml.bind.annotation.*;
 import java.lang.reflect.Type;
 import java.util.*;
+
+import javax.xml.bind.annotation.*;
+import javax.validation.constraints.*;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
   Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
@@ -473,6 +475,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
             
           }
+          applyBeanValidatorAnnotations(property, annotations);
           props.add(property);
         }
       }
@@ -515,6 +518,64 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       model.setType("object");
     model.setProperties(modelProps);
     return model;
+  }
+
+  protected void applyBeanValidatorAnnotations(Property property, Annotation[] annotations) {
+    Map<String, Annotation> annos = new HashMap<String, Annotation>();
+    if(annotations != null) {
+      for(Annotation anno: annotations)
+        annos.put(anno.annotationType().getName(), anno);
+    }
+    if(annos.containsKey("javax.validation.constraints.NotNull")) {
+      property.setRequired(true);
+    }
+    if(annos.containsKey("javax.validation.constraints.Min")) {
+      if(property instanceof AbstractNumericProperty) {
+        Min min = (Min) annos.get("javax.validation.constraints.Min");
+        AbstractNumericProperty ap = (AbstractNumericProperty) property;
+        ap.setMinimum(new Double(min.value()));
+      }
+    }
+    if(annos.containsKey("javax.validation.constraints.Max")) {
+      if(property instanceof AbstractNumericProperty) {
+        Max max = (Max) annos.get("javax.validation.constraints.Max");
+        AbstractNumericProperty ap = (AbstractNumericProperty) property;
+        ap.setMaximum(new Double(max.value()));
+      }
+    }
+    if(annos.containsKey("javax.validation.constraints.Size")) {
+      Size size = (Size) annos.get("javax.validation.constraints.Size");
+      if(property instanceof AbstractNumericProperty) {
+        AbstractNumericProperty ap = (AbstractNumericProperty) property;
+        ap.setMinimum(new Double(size.min()));
+        ap.setMaximum(new Double(size.max()));
+      }
+      if(property instanceof StringProperty) {
+        StringProperty sp = (StringProperty) property;
+        sp.minLength(new Integer(size.min()));
+        sp.maxLength(new Integer(size.max()));
+      }
+    }
+    if(annos.containsKey("javax.validation.constraints.DecimalMin")) {
+      DecimalMin min = (DecimalMin) annos.get("javax.validation.constraints.DecimalMin");
+      if(property instanceof AbstractNumericProperty) {
+        AbstractNumericProperty ap = (AbstractNumericProperty) property;
+        if(min.inclusive())
+          ap.setMinimum(new Double(min.value()));
+        else
+          ap.setExclusiveMinimum(new Double(min.value()));
+      }
+    }
+    if(annos.containsKey("javax.validation.constraints.DecimalMax")) {
+      DecimalMax max = (DecimalMax) annos.get("javax.validation.constraints.DecimalMax");
+      if(property instanceof AbstractNumericProperty) {
+        AbstractNumericProperty ap = (AbstractNumericProperty) property;
+        if(max.inclusive())
+          ap.setMaximum(new Double(max.value()));
+        else
+          ap.setExclusiveMaximum(new Double(max.value()));
+      }
+    }
   }
 
   protected JavaType getInnerType(String innerType) {

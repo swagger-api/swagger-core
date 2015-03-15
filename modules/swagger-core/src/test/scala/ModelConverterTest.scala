@@ -197,10 +197,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
     model.getProperties() should be (null)
     model.getType should be ("object")
   }
-}
 
-@RunWith(classOf[JUnitRunner])
-class ModelConverterTest2 extends FlatSpec with Matchers {
   it should "override the property name" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithAltPropertyName])
     val model = schemas.get("sample_model").asInstanceOf[ModelImpl]
