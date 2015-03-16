@@ -1,19 +1,20 @@
 package com.wordnik.swagger.jackson;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.Module.SetupContext;
-import com.fasterxml.jackson.databind.introspect.Annotated;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import com.wordnik.swagger.converter.ModelConverter;
 import com.wordnik.swagger.converter.ModelConverterContext;
 import com.wordnik.swagger.models.Model;
 import com.wordnik.swagger.models.properties.*;
 
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.Module.SetupContext;
+import com.fasterxml.jackson.databind.introspect.Annotated;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import javax.xml.bind.annotation.*;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,8 +59,14 @@ public abstract class AbstractModelConverter implements ModelConverter {
   }
 
   @Override
-  public Property resolveProperty(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
-    return null;
+  public Property resolveProperty(Type type,
+    ModelConverterContext context,
+    Annotation[] annotations,
+    Iterator<ModelConverter> chain) {
+    if(chain.hasNext())
+      return chain.next().resolveProperty(type, context, annotations, chain);
+    else
+      return null;
   }
 
   protected Property getPrimitiveProperty(String typeName) {
@@ -197,7 +204,10 @@ public abstract class AbstractModelConverter implements ModelConverter {
   }
 
   @Override
-  public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
-    return null;
+  public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+    if(chain.hasNext())
+      return chain.next().resolve(type, context, chain);
+    else
+      return null;
   }
 }

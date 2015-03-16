@@ -73,6 +73,12 @@ public class PropertyBuilder {
         .exclusiveMaximum(exclusiveMinimum);
     if(RefProperty.isType(type, format))
       property = new RefProperty();
+    if(EmailProperty.isType(type, format))
+      property = new EmailProperty()
+        .minLength(minLength)
+        .maxLength(maxLength)
+        .pattern(pattern)
+        ._enum(_enum);
     if(StringProperty.isType(type, format))
       property = new StringProperty()
         .minLength(minLength)

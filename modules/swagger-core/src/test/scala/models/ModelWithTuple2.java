@@ -12,6 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 import java.util.*;
@@ -37,7 +38,7 @@ public class ModelWithTuple2 {
     }
 
     @Override
-    public Property resolveProperty(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {  
+    public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {  
       JavaType _type = Json.mapper().constructType(type);
       if(_type != null){
         Class<?> cls = _type.getRawClass();
@@ -48,7 +49,7 @@ public class ModelWithTuple2 {
         }
       }
       if(chain.hasNext())
-        return chain.next().resolveProperty(type, context, chain);
+        return chain.next().resolveProperty(type, context, annotations, chain);
       else
         return null;
     }

@@ -68,7 +68,7 @@ public class ModelConverters {
   public Property readAsProperty(Type type) {
     ModelConverterContextImpl context = new ModelConverterContextImpl(
         converters);
-    return context.resolveProperty(type);
+    return context.resolveProperty(type, null);
   }
 
   public Map<String, Model> read(Type type) {

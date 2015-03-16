@@ -9,6 +9,7 @@ import com.wordnik.swagger.converter.ModelConverterContext;
 
 import com.fasterxml.jackson.databind.JavaType;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -17,7 +18,7 @@ import java.util.*;
  */
 public class SamplePropertyConverter implements ModelConverter {
   @Override
-  public Property resolveProperty(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {  
+  public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {  
     JavaType _type = Json.mapper().constructType(type);
     if(_type != null){
       Class<?> cls = _type.getRawClass();
@@ -26,7 +27,7 @@ public class SamplePropertyConverter implements ModelConverter {
       }
     }
     if(chain.hasNext())
-      return chain.next().resolveProperty(type, context, chain);
+      return chain.next().resolveProperty(type, context, annotations, chain);
     else
       return null;
   }
