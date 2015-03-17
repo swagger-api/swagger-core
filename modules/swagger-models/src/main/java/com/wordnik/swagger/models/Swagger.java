@@ -16,7 +16,7 @@ public class Swagger {
   protected List<Scheme> schemes;
   protected List<String> consumes;
   protected List<String> produces;
-  protected List<SecurityRequirement> securityRequirement;
+  protected List<SecurityRequirement> securityRequirements;
   protected Map<String, Path> paths;
   protected Map<String, SecuritySchemeDefinition> securityDefinitions;
   protected Map<String, Model> definitions;
@@ -218,6 +218,18 @@ public class Swagger {
     if(this.securityDefinitions == null)
       this.securityDefinitions = new HashMap<String, SecuritySchemeDefinition>();
     this.securityDefinitions.put(name, securityDefinition);
+  }
+
+  public List<SecurityRequirement> getSecurityRequirement() {
+    return securityRequirements;
+  }
+  public void setSecurityRequirement(List<SecurityRequirement> securityRequirements) {
+    this.securityRequirements = securityRequirements;
+  }
+  public void addSecurityDefinition(SecurityRequirement securityRequirement) {
+    if(this.securityRequirements == null)
+      this.securityRequirements = new ArrayList<SecurityRequirement>();
+    this.securityRequirements.add(securityRequirement);
   }
 
   public void setDefinitions(Map<String, Model> definitions) {
