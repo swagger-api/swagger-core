@@ -2,6 +2,7 @@ package com.wordnik.swagger.jaxrs;
 
 import com.wordnik.swagger.converter.ModelConverters;
 import com.wordnik.swagger.annotations.*;
+import com.wordnik.swagger.jackson.ModelResolver;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.parameters.*;
 import com.wordnik.swagger.models.properties.*;
@@ -132,8 +133,17 @@ public class ParameterProcessor {
               }
             }
             else {
-              LOGGER.debug("found inner property " + innerProperty);
+              LOGGER.debug("yay - found inner property " + innerProperty);
               bp.setSchema(new ArrayModel().items(innerProperty));
+
+              // creation of ref property doesn't add model to definitions - do it now instead
+              if( innerProperty instanceof RefProperty && swagger != null) {
+                  Map<String, Model> models = ModelConverters.getInstance().read(innerType);
+                  String name = ((RefProperty)innerProperty).getSimpleRef();
+                  swagger.addDefinition(name, models.get(name));
+
+                  LOGGER.debug( "added model definition for RefProperty " + name );
+              }
             }
             
           }
