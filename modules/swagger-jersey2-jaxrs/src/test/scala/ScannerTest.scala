@@ -30,4 +30,16 @@ class ScannerTest extends FlatSpec with Matchers {
     limit.getName() should be ("limit")
     limit.getDescription() should be ("maximum number of records to return")
   }
+
+  it should "scan another resource" in {
+    val swagger = new Reader( new Swagger()).read( classOf[ResourceWithComplexBodyInputType])
+
+    Json.prettyPrint( swagger )
+
+    val post = swagger.getPaths().get( "/myapi/testPostWithBody" ).getPost()
+    post should not be (null)
+
+    swagger.getDefinitions() should not be (null)
+    swagger.getDefinitions().get( "ClassWithString" ) should not be (null)
+  }
 }
