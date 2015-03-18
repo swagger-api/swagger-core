@@ -133,7 +133,7 @@ public class ParameterProcessor {
               }
             }
             else {
-              LOGGER.debug("yay - found inner property " + innerProperty);
+              LOGGER.debug("found inner property " + innerProperty);
               bp.setSchema(new ArrayModel().items(innerProperty));
 
               // creation of ref property doesn't add model to definitions - do it now instead
