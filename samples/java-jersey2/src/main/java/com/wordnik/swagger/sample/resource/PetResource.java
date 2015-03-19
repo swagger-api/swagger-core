@@ -25,11 +25,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
 @Path("/pet")
-@Api(tags = {
-  @com.wordnik.swagger.annotations.Tag(value = "pet",
-    description = "Everything about your Pets",
-    externalDocs = @ExternalDocs(value="Find out more", url = "http://swagger.io"))
-})
+@Api(tags = {"pet"})
 @Produces({"application/json", "application/xml"})
 public class PetResource {
   static PetData petData = new PetData();
