@@ -11,6 +11,7 @@ public abstract class AbstractParameter {
   protected String description;
   protected boolean required = false;
   protected String access;
+  protected String pattern;
   private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
   public String getIn() {
@@ -46,6 +47,13 @@ public abstract class AbstractParameter {
   }
   public void setAccess(String access) {
     this.access = access;
+  }
+
+  public String getPattern() {
+    return pattern;
+  }
+  public void setPattern(String pattern) {
+    this.pattern = pattern;
   }
 
   @JsonAnyGetter

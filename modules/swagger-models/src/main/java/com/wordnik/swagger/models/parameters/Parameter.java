@@ -22,5 +22,8 @@ public interface Parameter {
   boolean getRequired();
   void setRequired(boolean required);
 
+  String getPattern();
+  void setPattern(String pattern);
+
   Map<String, Object> getVendorExtensions();
 }
