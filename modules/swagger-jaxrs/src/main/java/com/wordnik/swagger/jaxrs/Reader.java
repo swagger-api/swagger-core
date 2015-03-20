@@ -124,12 +124,44 @@ public class Reader {
 
         String operationPath = getPath(apiPath, methodPath, parentPath);
         if(operationPath != null && apiOperation != null) {
+          String [] pps = operationPath.split("/");
+          String [] pathParts = new String[pps.length];
+          Map<String, String> regexMap = new HashMap<String, String>();
+
+          for(int i = 0; i < pps.length; i++) {
+            String p = pps[i];
+            if(p.startsWith("{")) {
+              int pos = p.indexOf(":");
+              if(pos > 0) {
+                String left = p.substring(1, pos);
+                String right = p.substring(pos + 1, p.length()-1);
+                pathParts[i] = "{" + left + "}";
+                regexMap.put(left, right);
+              }
+              else
+                pathParts[i] = p;
+            }
+            else pathParts[i] = p;
+          }
+          StringBuilder pathBuilder = new StringBuilder();
+          for(String p : pathParts) {
+            if(!p.isEmpty())
+              pathBuilder.append("/").append(p);
+          }
+          operationPath = pathBuilder.toString();
+
           String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
           Operation operation = parseMethod(method);
           if(parentParameters != null) {
             for(Parameter param : parentParameters) {
               operation.parameter(param);
+            }
+          }
+          for(Parameter param : operation.getParameters()) {
+            if(regexMap.get(param.getName()) != null) {
+              String pattern = regexMap.get(param.getName());
+              param.setPattern(pattern);
             }
           }
 
