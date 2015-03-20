@@ -18,7 +18,7 @@ mvn package -Dlog4j.configuration=file:./conf/log4j.properties jetty:run
 This will start Jetty embedded on port 8002.
 
 ### Testing the server
-Once started, you can navigate to http://localhost:8002/api/api-docs to view the Swagger Resource Listing.
+Once started, you can navigate to http://localhost:8002/api/swagger.json to view the Swagger Resource Listing.
 This tells you that the server is up and ready to demonstrate Swagger.
 
 ### Using the UI
@@ -26,7 +26,7 @@ There is an HTML5-based API tool available in a separate project.  This lets you
 intuitive UI.  You can pull this code from here:  https://github.com/swagger-api/swagger-ui
 
 You can then open the dist/index.html file in any HTML5-enabled browser.  Upen opening, enter the
-URL of your server in the top-centered input box (default is http://localhost:8002/api/api-docs).  Click the "Explore"
+URL of your server in the top-centered input box (default is http://localhost:8002/api/swagger.json).  Click the "Explore"
 button and you should see the resources available on the server.
 
 ### Applying an API key
