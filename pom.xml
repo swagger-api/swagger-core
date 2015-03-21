@@ -535,7 +535,6 @@
     <jackson-version>2.4.2</jackson-version>
     <jackson-guava-version>2.4.2</jackson-guava-version>
     <logback-version>1.0.1</logback-version>
-    <swagger-parser-version>1.0.3-SNAPSHOT</swagger-parser-version>
 
     <junit-version>4.8.1</junit-version>
     <maven-plugin-version>1.0.0</maven-plugin-version>

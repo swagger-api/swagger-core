@@ -1,28 +1,31 @@
 package filter
 
+import com.wordnik.swagger.models.Swagger
 import com.wordnik.swagger.util._
 import com.wordnik.swagger.core.filter._
-
-import io.swagger.parser.SwaggerParser;
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import scala.io.Source
+
 import scala.collection.JavaConverters._
 
 @RunWith(classOf[JUnitRunner])
 class SpecFilterTest extends FlatSpec with Matchers {
   it should "clone everything" in {
-    val swagger = new SwaggerParser().read("src/test/scala/specFiles/petstore.json")
+    val json = Source.fromFile("src/test/scala/specFiles/petstore.json").mkString
+    val swagger = Json.mapper().readValue(json, classOf[Swagger])
     val filtered = new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null)
 
     Json.pretty(swagger) should equal(Json.pretty(filtered))
   }
 
   it should "filter away get operations in a resource" in {
-    val swagger = new SwaggerParser().read("src/test/scala/specFiles/petstore.json")
+    val json = Source.fromFile("src/test/scala/specFiles/petstore.json").mkString
+    val swagger = Json.mapper().readValue(json, classOf[Swagger])
     val filter = new NoGetOperationsFilter()
 
     val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
@@ -37,7 +40,8 @@ class SpecFilterTest extends FlatSpec with Matchers {
   }
 
   it should "filter away the store resource" in {
-    val swagger = new SwaggerParser().read("src/test/scala/specFiles/petstore.json")
+    val json = Source.fromFile("src/test/scala/specFiles/petstore.json").mkString
+    val swagger = Json.mapper().readValue(json, classOf[Swagger])
     val filter = new NoUserOperationsFilter()
 
     val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
@@ -52,7 +56,8 @@ class SpecFilterTest extends FlatSpec with Matchers {
   }
 
   it should "filter away secret parameters" in {
-    val swagger = new SwaggerParser().read("src/test/scala/specFiles/sampleSpec.json")
+    val json = Source.fromFile("src/test/scala/specFiles/sampleSpec.json").mkString
+    val swagger = Json.mapper().readValue(json, classOf[Swagger])
     val filter = new RemoveInternalParamsFilter()
 
     val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
@@ -71,7 +76,8 @@ class SpecFilterTest extends FlatSpec with Matchers {
   }
 
   it should "filter away internal model properties" in {
-    val swagger = new SwaggerParser().read("src/test/scala/specFiles/sampleSpec.json")
+    val json = Source.fromFile("src/test/scala/specFiles/sampleSpec.json").mkString
+    val swagger = Json.mapper().readValue(json, classOf[Swagger])
     val filter = new InternalModelPropertiesRemoverFilter()
 
     val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
