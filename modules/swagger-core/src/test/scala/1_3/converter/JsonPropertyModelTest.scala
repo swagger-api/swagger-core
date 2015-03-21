@@ -13,10 +13,12 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class JsonPropertyModelTest extends FlatSpec with Matchers {
   val models = ModelConverters.getInstance().read(classOf[ModelWithJsonProperty])
-  Json.pretty(models) should be (
+  models should serializeToJson (
 """{
   "ModelWithJsonProperty" : {
     "properties" : {

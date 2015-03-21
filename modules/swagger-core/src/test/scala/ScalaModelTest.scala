@@ -14,13 +14,15 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class ScalaModelTest extends FlatSpec with Matchers {
   Json.mapper().registerModule(DefaultScalaModule)
 
   it should "convert a simple scala case class" in {
     val schemas = ModelConverters.getInstance().read(classOf[SimpleCaseClass])
-    Json.pretty(schemas) should equal (
+    schemas should serializeToJson (
 """{
   "SimpleCaseClass" : {
     "properties" : {
@@ -38,7 +40,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
 
   it should "convert a scala case class with List property" in {
     val schemas = ModelConverters.getInstance().read(classOf[CaseClassWithList])
-    Json.pretty(schemas) should equal(
+    schemas should serializeToJson (
 """{
   "CaseClassWithList" : {
     "properties" : {
@@ -68,7 +70,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
     keys(3) should be ("dateValue")
     keys(4) should be ("booleanValue")
 
-    Json.pretty(schemas) should equal (
+    schemas should serializeToJson (
 """{
   "CaseClassWithOptionLong" : {
     "properties" : {
@@ -103,7 +105,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
 
   it should "convert a scala case class with nested models" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[NestedModel])
-    Json.pretty(schemas) should equal ( 
+    schemas should serializeToJson ( 
 """{
   "ComplexModel" : {
     "properties" : {
@@ -132,7 +134,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
 
   it should "read an interface" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Pet])
-    Json.pretty(schemas) should equal (
+    schemas should serializeToJson (
 """{
   "Pet" : {
     "required" : [ "isDomestic", "name", "type" ],
