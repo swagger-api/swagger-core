@@ -535,13 +535,12 @@
     <jackson-version>2.4.2</jackson-version>
     <jackson-guava-version>2.4.2</jackson-guava-version>
     <logback-version>1.0.1</logback-version>
-    <swagger-parser-version>1.0.3-SNAPSHOT</swagger-parser-version>
 
     <junit-version>4.8.1</junit-version>
     <maven-plugin-version>1.0.0</maven-plugin-version>
     <commons-lang-version>3.2.1</commons-lang-version>
     <slf4j-version>1.6.3</slf4j-version>
-    <scala-test-version>2.1.3</scala-test-version>
+    <scala-test-version>2.2.4</scala-test-version>
     <jetty-version>8.1.11.v20130520</jetty-version>
     <servlet-api-version>2.5</servlet-api-version>
     <scala-maven-plugin-version>3.1.5</scala-maven-plugin-version>

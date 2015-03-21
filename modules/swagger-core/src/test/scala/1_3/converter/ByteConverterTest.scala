@@ -15,13 +15,15 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class ByteConverterTest extends FlatSpec with Matchers {
   val m = Json.mapper()
   m.registerModule(DefaultScalaModule)
 
   val models = ModelConverters.getInstance().read(classOf[ByteConverterModel])
-  Json.pretty(models) should equal(
+  models should serializeToJson (
 """{
   "ByteConverterModel" : {
     "properties" : {

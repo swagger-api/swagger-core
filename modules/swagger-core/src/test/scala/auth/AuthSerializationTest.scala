@@ -13,6 +13,8 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class AuthSerializationTest extends FlatSpec with Matchers {
   it should "convert serialize a basic auth model" in {
@@ -28,13 +30,12 @@ class AuthSerializationTest extends FlatSpec with Matchers {
   }
 
   it should "convert serialize a header key model to yaml" in {
-    Yaml.mapper().convertValue(new ApiKeyAuthDefinition().name("api-key").in(In.HEADER),
-                               classOf[ObjectNode]) should equal (
-      Yaml.mapper().readValue("""---
+    val auth = new ApiKeyAuthDefinition().name("api-key").in(In.HEADER) 
+    auth should serializeToYaml ("""---
 type: "apiKey"
 name: "api-key"
 in: "header"
-""", classOf[ObjectNode]))
+""")
   }
 
   it should "convert serialize an oauth2 implicit flow model" in {
