@@ -14,6 +14,8 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class BoxedTypesTest extends FlatSpec with Matchers {
   Json.mapper().registerModule(DefaultScalaModule)
@@ -27,7 +29,7 @@ class BoxedTypesTest extends FlatSpec with Matchers {
     properties should not be (null)
     properties.size should be (5)
 
-Json.pretty(models) should equal (
+models should serializeToJson (
 """{
   "BoxedTypesIssue31" : {
     "properties" : {
@@ -77,7 +79,7 @@ Json.pretty(models) should equal (
     properties should not be (null)
     properties.size should be (5)
 
-Json.pretty(models) should equal (
+    models should serializeToJson (
 """{
   "BoxedTypesIssue31WithDataType" : {
     "properties" : {

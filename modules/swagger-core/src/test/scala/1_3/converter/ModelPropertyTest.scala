@@ -20,6 +20,8 @@ import org.scalatest.Matchers
 
 import scala.beans.BeanProperty
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class ModelPropertyTest extends FlatSpec with Matchers {
   Json.mapper().registerModule(DefaultScalaModule)
@@ -76,7 +78,7 @@ class ModelPropertyTest extends FlatSpec with Matchers {
 class ModelPropertyOverrideTest extends FlatSpec with Matchers {
   it should "read a model with property dataTypes configured #679" in {
     val models = ModelConverters.getInstance().readAll(classOf[ModelWithModelPropertyOverrides])
-    Json.pretty(models) should equal(
+    models should serializeToJson (
 """{
   "Children" : {
     "properties" : {

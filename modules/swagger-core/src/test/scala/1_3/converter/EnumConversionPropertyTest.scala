@@ -14,6 +14,8 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class EnumConversionPropertyTest extends FlatSpec with Matchers {
   val m = Json.mapper()
@@ -21,7 +23,7 @@ class EnumConversionPropertyTest extends FlatSpec with Matchers {
 
   it should "read a model with an enum property" in {
     val models = ModelConverters.getInstance().read(classOf[ModelWithEnumProperty])
-    Json.pretty(models) should be (
+    models should serializeToJson (
 """{
   "ModelWithEnumProperty" : {
     "properties" : {
@@ -36,7 +38,7 @@ class EnumConversionPropertyTest extends FlatSpec with Matchers {
 
   it should "read a model with enums" in {
     val models = ModelConverters.getInstance().read(classOf[ATM])
-    Json.pretty(models) should be (
+    models should serializeToJson (
 """{
   "ATM" : {
     "properties" : {

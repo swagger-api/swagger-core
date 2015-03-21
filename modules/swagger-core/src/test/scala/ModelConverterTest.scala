@@ -11,11 +11,13 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class ModelConverterTest extends FlatSpec with Matchers {
   it should "convert a model" in {
     val schemas = ModelConverters.getInstance().read(classOf[Person])
-    Json.pretty(schemas) should equal(
+    schemas should serializeToJson (
 """{
   "Person" : {
     "properties" : {
@@ -59,7 +61,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
 
   it should "read an interface" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Pet])
-    Json.pretty(schemas) should equal (
+    schemas should serializeToJson (
 """{
   "Pet" : {
     "required" : [ "isDomestic", "name", "type" ],
@@ -85,7 +87,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
 
   it should "read an inherited interface" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Cat])
-    Json.pretty(schemas) should equal (
+    schemas should serializeToJson (
 """{
   "Cat" : {
     "required" : [ "isDomestic", "name", "type" ],

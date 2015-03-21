@@ -20,11 +20,13 @@ import org.scalatest.Matchers
 
 import javax.xml.bind.annotation._
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class PropertyAnnotationTest extends FlatSpec with Matchers {
   it should "read annotations on a property" in {
     val a = ModelConverters.getInstance().readAll(classOf[ModelWithAnnotationOnProperty])
-    Json.pretty(a) should equal (
+    a should serializeToJson (
 """{
   "ModelWithAnnotationOnProperty" : {
     "properties" : {

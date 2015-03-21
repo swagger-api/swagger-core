@@ -13,10 +13,12 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class JsonIgnoreModelTest extends FlatSpec with Matchers {
   val models = ModelConverters.getInstance().read(classOf[ModelWithIgnoreAnnotation])
-  Json.pretty(models) should equal (
+  models should serializeToJson (
 """{
   "ModelWithIgnoreAnnotation" : {
     "properties" : {

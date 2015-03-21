@@ -14,6 +14,8 @@ import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import models.JCovariantGetter
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class CovariantGetterTest extends FlatSpec with Matchers {
   val m = Json.mapper()
@@ -22,7 +24,7 @@ class CovariantGetterTest extends FlatSpec with Matchers {
   it should "read a getter with covariant return type" in {
     val models = ModelConverters.getInstance().read(classOf[JCovariantGetter.Sub])
     models.size should be (1)
-Json.pretty(models) should be (
+    models should serializeToJson (
 """{
   "Sub" : {
     "properties" : {

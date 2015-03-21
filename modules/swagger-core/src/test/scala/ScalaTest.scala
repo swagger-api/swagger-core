@@ -11,13 +11,15 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class ScalaTest extends FlatSpec with Matchers {
   val m = Json.mapper()
 
   it should "convert a model with scala list" in {
     val schemas = ModelConverters.getInstance().read(classOf[ClassWithScalaField])
-    Json.pretty(schemas) should be (
+    schemas should serializeToJson (
 """{
   "ClassWithScalaField" : {
     "properties" : {
