@@ -43,7 +43,6 @@ public class ModelWithTuple2 {
       if(_type != null){
         Class<?> cls = _type.getRawClass();
         if(Pair.class.isAssignableFrom(cls)) {
-          System.out.println("assignable!");
           return new MapProperty()
             .additionalProperties(new StringProperty());
         }
