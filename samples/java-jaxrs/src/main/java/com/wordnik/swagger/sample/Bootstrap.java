@@ -19,7 +19,7 @@ public class Bootstrap extends HttpServlet {
         "you can use the api key \"special-key\" to test the authorization filters")
       .termsOfService("http://helloreverb.com/terms/")
       .contact(new Contact()
-        .email("apiteam@wordnik.com"))
+        .email("apiteam@swagger.io"))
       .license(new License()
         .name("Apache 2.0")
         .url("http://www.apache.org/licenses/LICENSE-2.0.html"));

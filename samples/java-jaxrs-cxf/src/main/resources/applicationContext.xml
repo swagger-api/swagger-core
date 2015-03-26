@@ -45,7 +45,7 @@
     <property name="basePath" value="/api"/>
     <property name="title" value="Petstore sample app"/>
     <property name="description" value="This is a app."/>
-    <property name="contact" value="apiteam@wordnik.com"/>
+    <property name="contact" value="apiteam@swagger.io"/>
     <property name="license" value="Apache 2.0 License"/>
     <property name="licenseUrl" value="http://www.apache.org/licenses/LICENSE-2.0.html"/>
     <!-- <property name="filterClass" value="com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl"/> -->
