@@ -138,4 +138,9 @@
       <artifactId>jersey-servlet</artifactId>
     </dependency>
   </dependencies>
+  <properties>
+    <coverage.complexity.minimum>0</coverage.complexity.minimum>
+    <coverage.line.minimum>0</coverage.line.minimum>
+    <coverage.missed.classes>0</coverage.missed.classes>
+  </properties>
 </project>
