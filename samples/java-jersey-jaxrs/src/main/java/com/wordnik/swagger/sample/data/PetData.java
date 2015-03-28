@@ -66,7 +66,7 @@ public class PetData {
 
   public void deletePet(long petId) {
     if(pets.size() > 0) {
-      for (int i = pets.size(); i >= 0; i++) {
+      for (int i = pets.size() - 1; i >= 0; i--) {
         Pet pet = pets.get(i);
         if(pet.getId() == petId) {
           pets.remove(i);

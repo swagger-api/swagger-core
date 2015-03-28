@@ -97,9 +97,10 @@ public class PetResource {
     @ApiParam(value = "file to upload") @FormDataParam("file") InputStream inputStream,
     @ApiParam(value = "file detail") @FormDataParam("file") FormDataContentDisposition fileDetail) {
     LOGGER.debug("testString: " + testString);
-
-    String uploadedFileLocation = "./" + fileDetail.getFileName();
+System.out.println("uploading file " + testString);
     try {
+      String uploadedFileLocation = "./" + fileDetail.getFileName();
+      System.out.println("uploading to " + uploadedFileLocation);
       IOUtils.copy(inputStream, new FileOutputStream(uploadedFileLocation));
       String msg = "additionalMetadata: " + testString + "\nFile uploaded to " + uploadedFileLocation + ", " + (new java.io.File(uploadedFileLocation)).length() + " bytes";
       com.wordnik.swagger.sample.model.ApiResponse output = new com.wordnik.swagger.sample.model.ApiResponse(200, msg);

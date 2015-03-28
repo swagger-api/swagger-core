@@ -56,7 +56,7 @@ public class PetStoreResource {
   public Response getOrderById(
       @ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("orderId") String orderId)
       throws NotFoundException {
-    Order order = storeData.findOrderById(ru.getLong(0, 10000, 0, orderId));
+    Order order = storeData.findOrderById(Long.parseLong(orderId));
     if (null != order) {
       return Response.ok().entity(order).build();
     } else {

@@ -60,6 +60,8 @@ public class UserData {
   }
 
   public void addUser(User user) {
+    if(user.getUsername() == null)
+      return;
     if (users.size() > 0) {
       for (int i = users.size() - 1; i >= 0; i--) {
         if (users.get(i).getUsername().equals(user.getUsername())) {
