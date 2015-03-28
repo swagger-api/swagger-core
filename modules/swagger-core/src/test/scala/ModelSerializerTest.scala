@@ -68,4 +68,31 @@ class ModelSerializerTest extends FlatSpec with Matchers {
     val schemas = ModelConverters.getInstance().read(classOf[Manufacturers])
     Json.mapper().writeValueAsString(schemas) should be ("""{"Manufacturers":{"properties":{"countries":{"type":"array","uniqueItems":true,"items":{"type":"string"}}}}}""")
   }
+
+  it should "deserialize a model with object example" in {
+    val json = """{
+      "title": "Error",
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "code": 1,
+        "message": "hello",
+        "fields": "abc"
+      }
+    }"""
+
+    val model = Json.mapper().readValue(json, classOf[ModelImpl])
+    Json.mapper().writeValueAsString(model.getExample()) should be ("""{"code":1,"message":"hello","fields":"abc"}""")
+  }
 }

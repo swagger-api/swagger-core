@@ -18,7 +18,7 @@ public class ModelImpl extends AbstractModel {
   private Map<String, Property> properties;
   private boolean isSimple = false;
   private String description;
-  private String example;
+  private Object example;
   private Property additionalProperties;
   private String discriminator;
   private Xml xml;
@@ -39,7 +39,7 @@ public class ModelImpl extends AbstractModel {
     this.addProperty(key, property);
     return this;
   }
-  public ModelImpl example(String example) {
+  public ModelImpl example(Object example) {
     this.setExample(example);
     return this;
   }
@@ -158,7 +158,7 @@ public class ModelImpl extends AbstractModel {
       }
   }
 
-  public String getExample() {
+  public Object getExample() {
     if(example == null) {
       // TODO: will add logic to construct examples based on payload here
     }
@@ -166,7 +166,7 @@ public class ModelImpl extends AbstractModel {
     return example;
   }
 
-  public void setExample(String example) {
+  public void setExample(Object example) {
     this.example = example;
   }
 

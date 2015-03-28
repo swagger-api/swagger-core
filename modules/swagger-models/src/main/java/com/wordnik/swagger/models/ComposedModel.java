@@ -12,7 +12,7 @@ public class ComposedModel extends AbstractModel {
   private Model child;
   private List<RefModel> interfaces;
   private String description;
-  private String example;
+  private Object example;
 
   public ComposedModel parent(Model model) {
     this.setParent(model);
@@ -41,10 +41,10 @@ public class ComposedModel extends AbstractModel {
 
   }
 
-  public String getExample() {
+  public Object getExample() {
     return example;
   }
-  public void setExample(String example) {
+  public void setExample(Object example) {
     this.example = example;
   }
 

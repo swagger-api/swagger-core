@@ -12,7 +12,7 @@ public class RefModel implements Model {
   private String description;
   private ExternalDocs externalDocs;
   private Map<String, Property> properties;
-  private String example;
+  private Object example;
 
   public RefModel(){}
   public RefModel(String ref){
@@ -63,10 +63,10 @@ public class RefModel implements Model {
   }
 
   @JsonIgnore
-  public String getExample() {
+  public Object getExample() {
     return example;
   }
-  public void setExample(String example) {
+  public void setExample(Object example) {
     this.example = example;
   }
 

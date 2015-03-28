@@ -11,8 +11,8 @@ public interface Model {
   Map<String, Property> getProperties();
   void setProperties(Map<String, Property> properties);
 
-  String getExample();
-  void setExample(String example);
+  Object getExample();
+  void setExample(Object example);
 
   ExternalDocs getExternalDocs();
 

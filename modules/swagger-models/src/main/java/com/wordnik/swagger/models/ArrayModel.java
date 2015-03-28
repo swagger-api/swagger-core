@@ -9,7 +9,7 @@ public class ArrayModel extends AbstractModel {
   private String type;
   private String description;
   private Property items;
-  private String example;
+  private Object example;
 
   public ArrayModel () {
     this.type = "array";
@@ -52,10 +52,10 @@ public class ArrayModel extends AbstractModel {
     this.properties = properties;
   }
 
-  public String getExample() {
+  public Object getExample() {
     return example;
   }
-  public void setExample(String example) {
+  public void setExample(Object example) {
     this.example = example;
   }
 
