@@ -30,7 +30,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     <property name="basePath" value="http://localhost:8080/java-grails2/api"/>
     <property name="title" value="Petstore sample app"/>
     <property name="description" value="This is a app."/>
-    <property name="contact" value="apiteam@wordnik.com"/>
+    <property name="contact" value="apiteam@swagger.io"/>
     <property name="license" value="Apache 2.0 License"/>
     <property name="licenseUrl" value="http://www.apache.org/licenses/LICENSE-2.0.html"/>
     <property name="scan" value="true"/>
