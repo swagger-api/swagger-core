@@ -66,7 +66,7 @@ public class PetData {
 
   public void deletePet(long petId) {
     if(pets.size() > 0) {
-      for (int i = pets.size(); i >= 0; i++) {
+      for (int i = pets.size() - 1; i >= 0; i--) {
         Pet pet = pets.get(i);
         if(pet.getId() == petId) {
           pets.remove(i);
@@ -76,10 +76,13 @@ public class PetData {
   }
 
   public List<Pet> findPetByStatus(String status) {
-    String[] statues = status.split(",");
     List<Pet> result = new java.util.ArrayList<Pet>();
+    if(status == null) {
+      return result;
+    }
+    String[] statuses = status.split(",");
     for (Pet pet : pets) {
-      for (String s : statues) {
+      for (String s : statuses) {
         if (s.equals(pet.getStatus())) {
           result.add(pet);
         }

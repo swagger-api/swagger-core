@@ -46,7 +46,7 @@ public class StoreData {
     return null;
   }
 
-  public void placeOrder(Order order) {
+  public Order placeOrder(Order order) {
     if (orders.size() > 0) {
       for (int i = orders.size() - 1; i >= 0; i--) {
         if (orders.get(i).getId() == order.getId()) {
@@ -55,6 +55,7 @@ public class StoreData {
       }
     }
     orders.add(order);
+    return order;
   }
 
   public void deleteOrder(long orderId) {
