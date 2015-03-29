@@ -30,48 +30,62 @@ public class ParameterProcessor {
       if(annotation instanceof ApiParam) {
         ApiParam param = (ApiParam) annotation;
         if(parameter != null) {
-          if(!"".equals(param.defaultValue())){
+          if(!param.defaultValue().isEmpty()){
             defaultValue = param.defaultValue();
           }
 
-          // parameter.required(param.required());
+          if(param.required() == true) {
+            System.out.println(param.required());
+            parameter.setRequired(param.required());
+          }
+
           if(param.name() != null && !"".equals(param.name()))
             parameter.setName(param.name());
           parameter.setDescription(param.value());
           parameter.setAccess(param.access());
           allowMultiple = param.allowMultiple() || isArray;
-          if(allowMultiple == true) {
-            if(parameter instanceof PathParameter) {
-              PathParameter p = (PathParameter) parameter;
+          if(parameter instanceof PathParameter) {
+            PathParameter p = (PathParameter) parameter;
+            if(defaultValue != null)
+              p.setDefaultValue(defaultValue);
+            if(allowMultiple == true) {
               Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
                 .collectionFormat("multi");
-              p.setDefaultValue(defaultValue);
             }
-            else if(parameter instanceof QueryParameter) {
-              QueryParameter p = (QueryParameter) parameter;
+          }
+          else if(parameter instanceof QueryParameter) {
+            QueryParameter p = (QueryParameter) parameter;
+            if(defaultValue != null)
+              p.setDefaultValue(defaultValue);
+            if(allowMultiple == true) {
               Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
                 .collectionFormat("multi");
-              p.setDefaultValue(defaultValue);
             }
-            else if(parameter instanceof HeaderParameter) {
-              HeaderParameter p = (HeaderParameter) parameter;
+          }
+          else if(parameter instanceof HeaderParameter) {
+            HeaderParameter p = (HeaderParameter) parameter;
+            if(defaultValue != null)
+              p.setDefaultValue(defaultValue);
+            if(allowMultiple == true) {
               Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
                 .collectionFormat("multi");
-              p.setDefaultValue(defaultValue);
             }
-            else if(parameter instanceof CookieParameter) {
-              CookieParameter p = (CookieParameter) parameter;
+          }
+          else if(parameter instanceof CookieParameter) {
+            CookieParameter p = (CookieParameter) parameter;
+            if(defaultValue != null)
+              p.setDefaultValue(defaultValue);
+            if(allowMultiple == true) {
               Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
               p.items(items)
                 .array(true)
                 .collectionFormat("multi");
-              p.setDefaultValue(defaultValue);
             }
           }
           allowableValues = param.allowableValues();

@@ -26,7 +26,7 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension implemen
   Logger LOGGER = LoggerFactory.getLogger(DefaultParameterExtension.class);
 
   public List<Parameter> extractParameters(Annotation[] annotations, Class<?> cls, boolean isArray, Set<Class<?>> classesToSkip, Iterator<SwaggerExtension> chain) {
-    String defaultValue = null;
+    String defaultValue = "";
 
     if(this.shouldIgnoreClass(cls))
       return new ArrayList<Parameter>();
@@ -34,11 +34,18 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension implemen
     List<Parameter> parameters = new ArrayList<Parameter>();
     Parameter parameter = null;
     for(Annotation annotation : annotations) {
+      if(annotation instanceof DefaultValue) {
+        DefaultValue defaultValueAnnotation = (DefaultValue) annotation;
+        defaultValue = defaultValueAnnotation.value();
+      }
       if(annotation instanceof QueryParam) {
         QueryParam param = (QueryParam) annotation;
         QueryParameter qp = new QueryParameter()
           .name(param.value());
-        qp.setDefaultValue(defaultValue);
+
+        if(!defaultValue.isEmpty()) {
+          qp.setDefaultValue(defaultValue);
+        }
         Property schema = ModelConverters.getInstance().readAsProperty(cls);
         if(schema != null)
           qp.setProperty(schema);
@@ -48,7 +55,8 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension implemen
         PathParam param = (PathParam) annotation;
         PathParameter pp = new PathParameter()
           .name(param.value());
-        pp.setDefaultValue(defaultValue);
+        if(!defaultValue.isEmpty())
+          pp.setDefaultValue(defaultValue);
         Property schema = ModelConverters.getInstance().readAsProperty(cls);
         if(schema != null)
           pp.setProperty(schema);
@@ -68,7 +76,8 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension implemen
         CookieParam param = (CookieParam) annotation;
         CookieParameter cp = new CookieParameter()
           .name(param.value());
-        cp.setDefaultValue(defaultValue);
+        if(!defaultValue.isEmpty())
+          cp.setDefaultValue(defaultValue);
         Property schema = ModelConverters.getInstance().readAsProperty(cls);
         if(schema != null)
           cp.setProperty(schema);
@@ -78,16 +87,12 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension implemen
         FormParam param = (FormParam) annotation;
         FormParameter fp = new FormParameter()
           .name(param.value());
-        fp.setDefaultValue(defaultValue);
+        if(!defaultValue.isEmpty())
+          fp.setDefaultValue(defaultValue);
         Property schema = ModelConverters.getInstance().readAsProperty(cls);
         if(schema != null)
           fp.setProperty(schema);
         parameter = fp;
-      }
-      else if(annotation instanceof DefaultValue) {
-        DefaultValue defaultValueAnnotation = (DefaultValue) annotation;
-        // TODO: not supported yet
-        defaultValue = defaultValueAnnotation.value();
       }
     }
     if(parameter != null) {

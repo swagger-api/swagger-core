@@ -144,12 +144,20 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     val swagger = new Reader(new Swagger()).read(classOf[HiddenResource])
     val get = swagger.getPaths() should be (null)
   }
+
+  it should "correctly model an empty model per 499" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithEmptyModel])
+    Json.prettyPrint(swagger)
+  }
 }
 
 @RunWith(classOf[JUnitRunner])
 class SimpleScannerTest2 extends FlatSpec with Matchers {
-  it should "correctly model an empty model per 499" in {
-    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithEmptyModel])
-    Json.prettyPrint(swagger)
+  it should "scan defaultValue and required per #937" in {
+    val swagger = new Reader(new Swagger()).read(classOf[Resource937])
+    val get = swagger.getPaths().get("/external/info").getGet()
+    val param = get.getParameters().get(0).asInstanceOf[QueryParameter]
+    param.getRequired should be (false)
+    param.getDefaultValue should be ("dogs")
   }
 }
