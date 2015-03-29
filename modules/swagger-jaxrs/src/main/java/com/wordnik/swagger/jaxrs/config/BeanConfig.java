@@ -28,7 +28,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
   String contact;
   String license;
   String licenseUrl;
-  // String filterClass;
+  String filterClass;
 
   Info info;
   String host;
@@ -110,6 +110,13 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
   public void setHost(String host) {
     this.host = host;
   }
+
+  public String getFilterClass() {
+    return filterClass;
+  }
+  public void setFilterClass(String filterClass) {
+    this.filterClass = filterClass;
+  }  
 
   public String getBasePath() {
     return basePath;

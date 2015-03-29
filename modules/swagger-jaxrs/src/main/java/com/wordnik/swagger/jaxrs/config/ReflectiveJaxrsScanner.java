@@ -24,6 +24,7 @@ public class ReflectiveJaxrsScanner implements SwaggerConfig, Scanner {
   protected String resourcePackage = "";
   protected Reflections reflections;
   protected Set<String> acceptablePackages;
+  protected String filterClass;
 
   public void setReflections(Reflections reflections) {
     this.reflections = reflections;
@@ -68,6 +69,14 @@ public class ReflectiveJaxrsScanner implements SwaggerConfig, Scanner {
         output.add(cls);
     }
     return output;
+  }
+
+  public void setFilterClass(String filterClass) {
+    this.filterClass = filterClass;
+  }
+
+  public String getFilterClass() {
+    return filterClass;
   }
   
   public boolean getPrettyPrint() {

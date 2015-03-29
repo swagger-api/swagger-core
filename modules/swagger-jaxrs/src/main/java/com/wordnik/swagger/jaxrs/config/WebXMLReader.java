@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.*;
 
 public class WebXMLReader implements SwaggerConfig {
-  Logger LOGGER = LoggerFactory.getLogger(WebXMLReader.class);
-  String basePath, host, filterClass, apiVersion, title, scheme = "http";
+  private Logger LOGGER = LoggerFactory.getLogger(WebXMLReader.class);
+  protected String basePath, host, filterClass, apiVersion, title, scheme = "http";
 
   public WebXMLReader(ServletConfig servletConfig) {
     Scanner scanner = new DefaultJaxrsScanner();
@@ -58,6 +58,10 @@ public class WebXMLReader implements SwaggerConfig {
         LOGGER.error("failed to load filter", e);
       }
     }
+  }
+
+  public String getFilterClass() {
+    return filterClass;
   }
 
   public Swagger configure(Swagger swagger) {
