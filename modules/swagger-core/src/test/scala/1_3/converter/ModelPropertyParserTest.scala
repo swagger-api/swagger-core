@@ -21,13 +21,15 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class ModelPropertyParserTest extends FlatSpec with Matchers {
   Json.mapper().registerModule(DefaultScalaModule)
 
   it should "extract a string list" in {
     val property = ModelConverters.getInstance().readAsProperty(classOf[List[String]])
-    Json.pretty(property) should equal(
+    property should serializeToJson (
 """{
   "type" : "array",
   "items" : {

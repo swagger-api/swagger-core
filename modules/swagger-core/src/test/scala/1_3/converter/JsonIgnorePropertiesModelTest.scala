@@ -13,11 +13,13 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class JsonIgnorePropertiesModelTest extends FlatSpec with Matchers {
   it should "ignore a property with ignore annotations" in {
     val models = ModelConverters.getInstance().read(classOf[ModelWithIgnorePropertiesAnnotation])
-    Json.pretty(models) should equal(
+    models should serializeToJson (
 """{
   "ModelWithIgnorePropertiesAnnotation" : {
     "properties" : {
