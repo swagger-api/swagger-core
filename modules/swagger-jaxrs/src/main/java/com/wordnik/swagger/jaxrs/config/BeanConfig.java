@@ -5,6 +5,8 @@ import com.wordnik.swagger.jaxrs.Reader;
 import com.wordnik.swagger.config.*;
 
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.core.filter.*;
+import com.wordnik.swagger.config.FilterFactory;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -13,10 +15,15 @@ import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Set;
 import java.util.HashSet;
 
 public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfig {
+  Logger LOGGER = LoggerFactory.getLogger(BeanConfig.class);
+
   Reader reader = new Reader(new Swagger());
 
   String resourcePackage;
@@ -201,6 +208,17 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     if(schemes != null) {
       for(String scheme : schemes)
         swagger.scheme(Scheme.forValue(scheme));
+    }
+    if(filterClass != null) {
+      try {
+        SwaggerSpecFilter filter = (SwaggerSpecFilter) Class.forName(filterClass).newInstance();
+        if(filter != null) {
+          FilterFactory.setFilter(filter);
+        }
+      }
+      catch (Exception e) {
+        LOGGER.error("failed to load filter", e);
+      }
     }
     return swagger.info(info)
       .host(host)

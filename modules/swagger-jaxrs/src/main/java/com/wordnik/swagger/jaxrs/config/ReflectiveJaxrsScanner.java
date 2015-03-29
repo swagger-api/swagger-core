@@ -3,7 +3,9 @@ package com.wordnik.swagger.jaxrs.config;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.config.Scanner;
 import com.wordnik.swagger.config.SwaggerConfig;
+import com.wordnik.swagger.config.FilterFactory;
 import com.wordnik.swagger.models.Swagger;
+import com.wordnik.swagger.core.filter.*;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -58,6 +60,18 @@ public class ReflectiveJaxrsScanner implements SwaggerConfig, Scanner {
   }
 
   public Swagger configure(Swagger swagger) {
+    if(filterClass != null) {
+      try {
+        SwaggerSpecFilter filter = (SwaggerSpecFilter) Class.forName(filterClass).newInstance();
+        if(filter != null) {
+          FilterFactory.setFilter(filter);
+        }
+      }
+      catch (Exception e) {
+        LOGGER.error("failed to load filter", e);
+      }
+    }
+
     return swagger;
   }
 
