@@ -35,7 +35,6 @@ public class ParameterProcessor {
           }
 
           if(param.required() == true) {
-            System.out.println(param.required());
             parameter.setRequired(param.required());
           }
 
