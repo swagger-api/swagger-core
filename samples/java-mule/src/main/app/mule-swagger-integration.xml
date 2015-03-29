@@ -34,7 +34,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
 			class="com.wordnik.swagger.jaxrs.config.BeanConfig">
 			<spring:property name="resourcePackage" value="com.wordnik.swagger.sample.resource" />
 			<spring:property name="version" value="1.0.0" />
-			<spring:property name="basePath" value="http://localhost:7001" />
+			<spring:property name="basePath" value="http://localhost:7002" />
 			<spring:property name="scan" value="true" />
 		</spring:bean>
 	</spring:beans>
@@ -42,7 +42,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
 	<flow name="muleSwaggerServicesFlow" doc:name="muleSwaggerServicesFlow">
 
 		<jetty:inbound-endpoint exchange-pattern="request-response"
-			address="http://localhost:7001" doc:name="Jetty Inbound Endpoint" />
+			address="http://localhost:7002" doc:name="Jetty Inbound Endpoint" />
 
 		<logger category="********** mule-swagger-integration Http Request received"
 			level="INFO" doc:name="Logger" />
