@@ -43,10 +43,10 @@ public class Bootstrap extends HttpServlet {
       .externalDocs(new ExternalDocs("Find out more", "http://swagger.io")));
     swagger.tag(new Tag()
       .name("store")
-      .description("Operations about user"));
+      .description("Access to Petstore orders"));
     swagger.tag(new Tag()
       .name("user")
-      .description("Access to Petstore orders")
+      .description("Operations about user")
       .externalDocs(new ExternalDocs("Find out more about our store", "http://swagger.io")));
 
     context.setAttribute("swagger", swagger);
