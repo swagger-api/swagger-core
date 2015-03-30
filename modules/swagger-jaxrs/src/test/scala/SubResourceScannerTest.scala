@@ -1,5 +1,7 @@
 import resources._
 
+import models._
+
 import com.wordnik.swagger.jaxrs.config._
 import com.wordnik.swagger.models.parameters._
 import com.wordnik.swagger.models.properties.MapProperty
@@ -18,8 +20,13 @@ import org.scalatest.Matchers
 @RunWith(classOf[JUnitRunner])
 class SubResourceScannerTest extends FlatSpec with Matchers {
   it should "scan a resource with subresources" in {
-    // val swagger = new Reader(new Swagger()).read(classOf[ResourceWithSubResources])
-    // Json.prettyPrint(swagger)
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithSubResources])
+
+    val employees = swagger.getPaths().get("/employees").getGet
+    employees.getOperationId() should be ("getTest")
+
+    val employeesId = swagger.getPaths().get("/employees/{id}").getGet
+    employeesId.getOperationId() should be ("getSubresourceOperation")
   }
 
   it should "scan another resource with subresources" in {
@@ -35,5 +42,13 @@ class SubResourceScannerTest extends FlatSpec with Matchers {
     (produces & Set("application/json", "application/xml")).size should be (2)
     
     swagger.getPaths().keySet().size() should be (2)
+  }
+
+  it should "find a body param" in {
+    val swagger = new Reader(new Swagger()).read(classOf[Resource942])
+    val post = swagger.getPaths().get("/test").getPost
+    val param = post.getParameters().get(0).asInstanceOf[BodyParameter];
+
+    param.getSchema should not be (null)
   }
 }
