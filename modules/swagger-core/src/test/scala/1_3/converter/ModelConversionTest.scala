@@ -17,6 +17,8 @@ import java.util.Date
 
 import scala.annotation.meta.field
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class ModelConversionTest extends FlatSpec with Matchers {
   Json.mapper().registerModule(DefaultScalaModule)
@@ -25,7 +27,7 @@ class ModelConversionTest extends FlatSpec with Matchers {
     val models = ModelConverters.getInstance().read(classOf[DateModel])
     val model = models.get("DateModel")
     model.getProperties().size should be (5)
-    Json.pretty(model) should equal(
+    model should serializeToJson (
 """{
   "properties" : {
     "date" : {
@@ -61,7 +63,7 @@ class ModelConversionTest extends FlatSpec with Matchers {
     val models = ModelConverters.getInstance().read(classOf[SetModel])
     val model = models.get("SetModel")
     model.getProperties().size should be (1)
-    Json.pretty(model) should be (
+    model should serializeToJson (
 """{
   "properties" : {
     "longs" : {

@@ -9,6 +9,8 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class CompositionTest extends FlatSpec with Matchers {
   val m = Json.mapper()
@@ -16,7 +18,7 @@ class CompositionTest extends FlatSpec with Matchers {
   ignore should "read a model with required params and description" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Human])
 
-    Json.pretty(schemas) should equal (
+    schemas should serializeToJson (
 """{
   "Human" : {
     "properties" : {
@@ -63,7 +65,7 @@ class CompositionTest extends FlatSpec with Matchers {
 
   ignore should "read a model with composition" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Animal])
-    Json.pretty(schemas) should equal (
+    schemas should serializeToJson (
 """{
   "Animal" : {
     "properties" : {

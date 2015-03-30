@@ -24,6 +24,8 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class SnakeCaseConverterTest extends FlatSpec with Matchers {
   it should "ignore properties with type Bar" in {
@@ -34,7 +36,7 @@ class SnakeCaseConverterTest extends FlatSpec with Matchers {
     converters.addConverter(snakeCaseConverter)
 
     val models = converters.readAll(classOf[SnakeCaseModel])
-    Json.pretty(models) should equal (
+    models should serializeToJson (
 """{
   "bar" : {
     "properties" : {
