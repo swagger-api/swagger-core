@@ -35,7 +35,7 @@ public class PetStoreResource {
 
   @GET
   @Path("/inventory")
-  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+  @Produces({MediaType.APPLICATION_JSON})
   @ApiOperation(value = "Returns pet inventories by status", 
     notes = "Returns a map of status codes to quantities", 
     response = Integer.class,

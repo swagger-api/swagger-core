@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.FileOutputStream;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
@@ -97,7 +98,6 @@ public class PetResource {
     @ApiParam(value = "file to upload") @FormDataParam("file") InputStream inputStream,
     @ApiParam(value = "file detail") @FormDataParam("file") FormDataContentDisposition fileDetail) {
     LOGGER.debug("testString: " + testString);
-System.out.println("uploading file " + testString);
     try {
       String uploadedFileLocation = "./" + fileDetail.getFileName();
       System.out.println("uploading to " + uploadedFileLocation);
@@ -142,7 +142,8 @@ System.out.println("uploading file " + testString);
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid status value") })
   public Response findPetsByStatus(
       @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available", allowableValues = "available,pending,sold", allowMultiple = true) @QueryParam("status") String status) {
-    return Response.ok(petData.findPetByStatus(status)).build();
+    List<Pet> pets = petData.findPetByStatus(status);
+    return Response.ok(pets.toArray(new Pet[pets.size()])).build();
   }
 
   @GET
@@ -155,7 +156,8 @@ System.out.println("uploading file " + testString);
   @Deprecated
   public Response findPetsByTags(
       @ApiParam(value = "Tags to filter by", required = true, allowMultiple = true) @QueryParam("tags") String tags) {
-    return Response.ok(petData.findPetByTags(tags)).build();
+    List<Pet> pets = petData.findPetByTags(tags);
+    return Response.ok(pets.toArray(new Pet[pets.size()])).build();
   }
 
   @POST
@@ -173,6 +175,4 @@ System.out.println("uploading file " + testString);
     System.out.println(status);
     return Response.ok().entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build();
   }
-
-
 }

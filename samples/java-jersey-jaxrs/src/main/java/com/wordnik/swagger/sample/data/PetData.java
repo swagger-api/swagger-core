@@ -92,8 +92,12 @@ public class PetData {
   }
 
   public List<Pet> findPetByTags(String tags) {
-    String[] tagList = tags.split(",");
     List<Pet> result = new java.util.ArrayList<Pet>();
+
+    if(tags == null) {
+      return result;
+    }    
+    String[] tagList = tags.split(",");
     for (Pet pet : pets) {
       if (null != pet.getTags()) {
         for (Tag tag : pet.getTags()) {
