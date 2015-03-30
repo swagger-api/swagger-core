@@ -69,6 +69,12 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>com.wordnik</groupId>
+      <artifactId>swagger-jersey-jaxrs</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
       <version>2.2</version>
