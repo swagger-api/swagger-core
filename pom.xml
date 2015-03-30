@@ -526,7 +526,7 @@
     <joda-version>1.2</joda-version>
     <joda-time-version>2.2</joda-time-version>
 
-    <swagger-ui-version>2.1.8-M1</swagger-ui-version>
+    <swagger-ui-version>2.1.0-M2</swagger-ui-version>
     <scala-version>2.10.4</scala-version>
     <felix-version>2.3.4</felix-version>
     <servlet-api-version>2.5</servlet-api-version>
