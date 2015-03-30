@@ -36,7 +36,7 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
 
     val swagger = new Swagger()
       .info(info)
-      .host("petstore.swagger.wordnik.com")
+      .host("petstore.swagger.io")
       .securityDefinition("api-key", new ApiKeyAuthDefinition("key", In.HEADER))
       .scheme(Scheme.HTTP)
       .consumes("application/json")
@@ -111,7 +111,7 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
 
     val swagger = new Swagger()
       .info(info)
-      .host("petstore.swagger.wordnik.com")
+      .host("petstore.swagger.io")
       .securityDefinition("api-key", new ApiKeyAuthDefinition("key", In.HEADER))
       .scheme(Scheme.HTTP)
       .consumes("application/json")

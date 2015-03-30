@@ -375,6 +375,9 @@
       </activation>
       <modules>
         <module>samples/java-jaxrs</module>
+        <module>samples/java-jersey2</module>
+        <module>samples/java-jaxrs-subresource</module>
+        <module>samples/java-jaxrs-no-webxml</module>
         <module>samples/java-dropwizard</module>
         <module>samples/java-jaxrs-cxf</module>
         <module>samples/java-jersey-jaxrs</module>

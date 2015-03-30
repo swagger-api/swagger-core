@@ -7,9 +7,9 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-java-sample-app</artifactId>
+  <artifactId>swagger-java-sample-app-no-webxml</artifactId>
   <packaging>war</packaging>
-  <name>swagger-java-jaxrs-app</name>
+  <name>swagger-java-jaxrs-app-no-webxml</name>
   <version>1.5.4-M1-SNAPSHOT</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>

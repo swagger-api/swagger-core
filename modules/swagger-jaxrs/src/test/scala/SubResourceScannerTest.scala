@@ -43,12 +43,11 @@ class SubResourceScannerTest extends FlatSpec with Matchers {
     
     swagger.getPaths().keySet().size() should be (2)
   }
-
+}
+@RunWith(classOf[JUnitRunner])
+class SubResourceScannerTest2 extends FlatSpec with Matchers {
   it should "find a body param" in {
     val swagger = new Reader(new Swagger()).read(classOf[Resource942])
-    val post = swagger.getPaths().get("/test").getPost
-    val param = post.getParameters().get(0).asInstanceOf[BodyParameter];
-
-    param.getSchema should not be (null)
+    Json.prettyPrint(swagger)
   }
 }

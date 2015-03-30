@@ -16,7 +16,7 @@ class BeanConfigTest extends FlatSpec with Matchers {
     val bc = new BeanConfig()
     bc.setResourcePackage("com.my.project.resources,org.my.project.resources")
     bc.setSchemes(List("http", "https").toArray);
-    bc.setHost("petstore.swagger.wordnik.com")
+    bc.setHost("petstore.swagger.io")
     bc.setBasePath("/api")
     bc.setTitle("Petstore Sample API")
     bc.setDescription("A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification")

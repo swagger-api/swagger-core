@@ -13,7 +13,7 @@
         "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
       }
     },
-    "basePath": "petstore.swagger.wordnik.com:80/api",
+    "basePath": "petstore.swagger.io:80/api",
     "paths": {},
 	"definitions": {
 	  "Pet" : {

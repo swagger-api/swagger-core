@@ -33,7 +33,7 @@ class SecurityDefinitionTest extends FlatSpec with Matchers {
 
     val swagger = new Swagger()
       .info(info)
-      .host("petstore.swagger.wordnik.com")
+      .host("petstore.swagger.io")
       .scheme(Scheme.HTTP)
       .consumes("application/json")
       .produces("application/json")

@@ -34,7 +34,7 @@
       }
     }
   ],
-  "host": "petstore.swagger.wordnik.com",
+  "host": "petstore.swagger.io",
   "basePath": "/api",
   "paths": {
     "/pet": {

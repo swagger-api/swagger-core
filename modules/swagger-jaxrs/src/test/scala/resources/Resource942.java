@@ -16,4 +16,9 @@ public class Resource942 {
   public void addTest(@ApiParam(required=false) Employee employee) {
     return;
   }
+
+  @GET
+  public Resource942SubResource getSub() {
+    return new Resource942SubResource();
+  }
 }
