@@ -35,7 +35,6 @@ public class ParameterProcessor {
           }
 
           if(param.required() == true) {
-            System.out.println(param.required());
             parameter.setRequired(param.required());
           }
 
@@ -159,7 +158,6 @@ public class ParameterProcessor {
                   LOGGER.debug( "added model definition for RefProperty " + name );
               }
             }
-            
           }
           else {
             Map<String, Model> models = ModelConverters.getInstance().read(cls);
