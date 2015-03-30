@@ -1,13 +1,19 @@
 package com.wordnik.swagger.mule;
 
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -23,7 +29,6 @@ import javax.ws.rs.core.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.spi.container.servlet.WebConfig;
 import com.wordnik.swagger.config.FilterFactory;
 import com.wordnik.swagger.config.Scanner;
 import com.wordnik.swagger.config.ScannerFactory;
@@ -35,8 +40,7 @@ import com.wordnik.swagger.jaxrs.config.JaxrsScanner;
 import com.wordnik.swagger.jaxrs.listing.SwaggerSerializers;
 import com.wordnik.swagger.models.Swagger;
 
-@Path ("/api-docs")
-@Produces (MediaType.APPLICATION_JSON)
+@Path ("/")
 public class ApiListingJSON {
 	private static final Logger	LOGGER		= LoggerFactory.getLogger(ApiListingJSON.class);
 	static boolean				initialized	= false;
@@ -47,7 +51,7 @@ public class ApiListingJSON {
 		LOGGER.debug("using scanner " + scanner);
 		if (scanner != null) {
 			SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
-			swagger = (Swagger) context.getAttribute("swagger");
+			swagger = swag;
 			Set<Class<?>> classes = null;
 			if (scanner instanceof JaxrsScanner) {
 				JaxrsScanner jaxrsScanner = (JaxrsScanner) scanner;
@@ -61,39 +65,32 @@ public class ApiListingJSON {
 				if (scanner instanceof SwaggerConfig)
 					swagger = ((SwaggerConfig) scanner).configure(swagger);
 				else {
-					SwaggerConfig configurator = (SwaggerConfig) context.getAttribute("reader");
-					if (configurator != null) {
-						LOGGER.debug("configuring swagger with " + configurator);
-						configurator.configure(swagger);
-					} else LOGGER.debug("no configurator");
 				}
-				context.setAttribute("swagger", swagger);
+				swag = swagger;
 			}
 		}
 		initialized = true;
 		return swagger;
 	}
 
-	// Doesn't work
-	@Context
-	ServletContext	context;
-
+	Swagger swag;
+	
 	@GET
-	public Response getListingJson(@Context Application app, /* Also doesn't work: @Context ServletConfig sc, */
-			@Context HttpHeaders headers, @Context UriInfo uriInfo) {
-		//		Swagger swagger = (Swagger) context.getAttribute("swagger");
-		//		if (!initialized)
-		//		Swagger swagger = scan(app, sc);
-		//		if (swagger != null) {
-		//			SwaggerSpecFilter filterImpl = FilterFactory.getFilter();
-		//			if (filterImpl != null) {
-		//				SpecFilter f = new SpecFilter();
-		//				swagger = f.filter(swagger, filterImpl, getQueryParams(uriInfo.getQueryParameters()),
-		//						getCookies(headers), getHeaders(headers));
-		//			}
-		//			return Response.ok().entity(swagger).build();
-		//		} else return Response.status(404).build();
-		return Response.ok("Hi").build();
+	@Produces (MediaType.APPLICATION_JSON)
+	@Path ("/swagger.json")
+	public Response getListingJson(@Context Application app, @Context HttpHeaders headers, @Context UriInfo uriInfo) {
+		Swagger swagger = swag;
+		if (!initialized)
+			swagger = scan(app, null);
+		if (swagger != null) {
+			SwaggerSpecFilter filterImpl = FilterFactory.getFilter();
+			if (filterImpl != null) {
+				SpecFilter f = new SpecFilter();
+				swagger = f.filter(swagger, filterImpl, getQueryParams(uriInfo.getQueryParameters()),
+						getCookies(headers), getHeaders(headers));
+			}
+			return Response.ok().entity(swagger).build();
+		} else return Response.status(404).build();
 	}
 
 	protected Map<String, List<String>> getQueryParams(MultivaluedMap<String, String> params) {
