@@ -13,7 +13,7 @@ import java.util.*;
 public class Resource942 {
   @ApiOperation(value="test")
   @POST
-  public void addTest(Employee employee) {
+  public void addTest(@ApiParam(required=false) Employee employee) {
     return;
   }
 }
