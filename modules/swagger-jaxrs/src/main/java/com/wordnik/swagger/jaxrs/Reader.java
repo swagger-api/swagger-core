@@ -61,10 +61,10 @@ public class Reader {
   }
 
   public Swagger read(Class cls) {
-    return read(cls, "", false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
+    return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
   }
 
-  protected Swagger read(Class<?> cls, String parentPath, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
+  protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
     if(swagger == null)
       swagger = new Swagger();
     Api api = (Api) cls.getAnnotation(Api.class);
@@ -201,10 +201,11 @@ public class Reader {
           if(isSubResource(method)) {
             Type t = method.getGenericReturnType();
             Class<?> responseClass = method.getReturnType();
-            Swagger subSwagger = read(responseClass, operationPath, true, apiConsumes, apiProduces, tags, operation.getParameters());
+            Swagger subSwagger = read(responseClass, operationPath, httpMethod, true, apiConsumes, apiProduces, tags, operation.getParameters());
           }
 
           // can't continue without a valid http method
+          httpMethod = httpMethod == null ? parentMethod : httpMethod;
           if(httpMethod != null) {
             ApiOperation op = (ApiOperation) method.getAnnotation(ApiOperation.class);
             if(op != null) {

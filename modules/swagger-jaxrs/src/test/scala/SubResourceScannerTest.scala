@@ -21,6 +21,7 @@ import org.scalatest.Matchers
 class SubResourceScannerTest extends FlatSpec with Matchers {
   it should "scan a resource with subresources" in {
     val swagger = new Reader(new Swagger()).read(classOf[ResourceWithSubResources])
+    Json.prettyPrint(swagger)
 
     val employees = swagger.getPaths().get("/employees").getGet
     employees.getOperationId() should be ("getTest")
@@ -46,8 +47,8 @@ class SubResourceScannerTest extends FlatSpec with Matchers {
 }
 @RunWith(classOf[JUnitRunner])
 class SubResourceScannerTest2 extends FlatSpec with Matchers {
-  it should "find a body param" in {
+  ignore should "find a body param" in {
     val swagger = new Reader(new Swagger()).read(classOf[Resource942])
-    Json.prettyPrint(swagger)
+
   }
 }
