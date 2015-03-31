@@ -1,0 +1,37 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:beans="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+  	http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+	<!-- Application Beans -->
+	<bean id="petResource" class="com.wordnik.swagger.sample.bean.PetResourceBean"/>
+
+	<bean id="userResource" class="com.wordnik.swagger.sample.bean.UserResourceBean"/>
+
+	<bean id="petStoreResource" class="com.wordnik.swagger.sample.bean.PetStoreResourceBean"/>
+
+
+    <!-- Swagger Beans -->
+    <bean id="apiListingResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON"/>
+    <bean id="apiDeclarationProvider" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider"/>
+    <bean id="resourceListingProvider" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider"/>
+
+    <!-- Swagger Configuration -->
+    <bean id="beanConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
+        <property name="title" value="Swagger Sample App"/>
+        <property name="version" value="1.0.0" />
+        <property name="basePath" value="http://localhost:8002/api"/>
+        <property name="filterClass" value="com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl"/>
+        <property name="resourcePackage" value="com.wordnik.swagger.sample.bean"/>
+        <property name="scan" value="true"/>
+    </bean>
+
+    <!-- API Origin Filter -->
+    <bean id="apiOriginFilter" class="com.wordnik.swagger.sample.util.ApiOriginFilter"/>
+
+    <!-- Swagger Documentation Authorization Declaration -->
+    <bean id="bootstrap" class="com.wordnik.swagger.sample.Bootstrap"/>
+ </beans>
