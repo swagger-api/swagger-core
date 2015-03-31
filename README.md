@@ -1,12 +1,14 @@
 # Swagger Core library
 
-[![Build Status](https://travis-ci.org/swagger-api/swagger-core.svg?branch=develop_2.0)](https://travis-ci.org/swagger-api/swagger-core)
+[![Build Status](https://travis-ci.org/swagger-api/swagger-core.svg?branch=master)](https://travis-ci.org/swagger-api/swagger-core)
 
 The goal of Swagger™ is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, Swagger removes the guesswork in calling the service.
 
-Swagger-core is the Java implementation of Swagger. Current version supports *JAX-RS*. Future milestone releases will add support for *plain Servlets* and *Play Framework*.
+Swagger-core is the Java implementation of Swagger. Current version supports *JAX-RS*.  Future milestone releases will add support for *plain Servlets* and *Play Framework*.
 
 Check out [Swagger-Spec](https://github.com/swagger-api/swagger-spec) for additional information about the Swagger project, including additional libraries with support for SpringMVC, other languages and more. 
+
+![Swagger Screenshot](https://raw.github.com/swagger-api/swagger-core/master/swagger-shot.jpg)
 
 ## See the Wiki!
 The [github wiki](https://github.com/swagger-api/swagger-core/wiki) contains documentation, samples, etc.  Start there.
@@ -27,10 +29,13 @@ The Swagger Specification has undergone 3 revisions since initial creation in 20
 
 Swagger core Version      | Release Date | Swagger Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-1.5.0-M2                  | 2015-03-30   | 2.0           | [master](https://github.com/swagger-api/swagger-core) |
-1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12)
-1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4)
-1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0)
+1.5.0-M2                  | 2015-03-30   | 2.0           | [master](https://github.com/swagger-api/swagger-core) | Supported
+1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Supported
+1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4) | Deprecated
+1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0) | Deprecated
+
+## Where is Scala support?
+To allow independent development, scala support has been moved into a separate project.  See the [swagger-scala-module](https://github.com/swagger-api/swagger-scala-module) for details.  Play! framework support is moving outside the swagger-core project as well.
 
 ## Overview
 This is a project to build the swagger-core library, which is required for the Reverb implementation of the Swagger spec. 
@@ -42,11 +47,10 @@ If you're interested in the change history of swagger and the swagger-core frame
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
-<li>- Java 6 (http://java.oracle.com)
+* Java 6 (http://java.oracle.com)
+* Apache maven 3.0.4 or greater (http://maven.apache.org/)
+* Jackson 2.4.2 or greater
 
-<li>- Apache maven 3.0.4 or greater (http://maven.apache.org/)
-
-<li>- Jackson 2.4.2 or greater
 
 ### To build from source (currently 1.5.0-M2)
 ```
@@ -59,14 +63,18 @@ Subsequent builds:
 mvn install
 ```
 
-This will build the modules and sample apps.
+This will build the modules.  To build sample apps, activate the `samples` profile:
+
+```
+mvn install -Psamples
+```
 
 Of course if you don't want to build locally you can grab artifacts from maven central:
 
 `http://repo1.maven.org/maven2/com/wordnik/`
 
 ## Sample Apps
-There are a number of sample apps in the [samples](https://github.com/swagger-api/swagger-core/tree/develop_2.0/samples) folder.
+There are a number of sample apps in the [samples](https://github.com/swagger-api/swagger-core/blob/master/samples) folder.
 
 ```
 
@@ -84,3 +92,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+

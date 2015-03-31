@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:jetty="http://www.mulesoft.org/schema/mule/jetty" xmlns:jersey="http://www.mulesoft.org/schema/mule/jersey"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.4.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jetty http://www.mulesoft.org/schema/mule/jetty/current/mule-jetty.xsd
+http://www.mulesoft.org/schema/mule/jersey http://www.mulesoft.org/schema/mule/jersey/current/mule-jersey.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+
+	<spring:beans>
+		<spring:bean id="petResource"
+			class="com.wordnik.swagger.sample.resource.PetResource">
+		</spring:bean>
+        <spring:bean id="petStoreResource"
+                     class="com.wordnik.swagger.sample.resource.PetStoreResource">
+        </spring:bean>
+        <spring:bean id="userResource"
+                     class="com.wordnik.swagger.sample.resource.UserResource">
+        </spring:bean>
+    </spring:beans>
+
+	<spring:beans>
+		<spring:bean id="apiListingJSON"
+			class="com.wordnik.swagger.mule.ApiListingJSON" />
+		<spring:bean id="swaggerConfig"
+			class="com.wordnik.swagger.jaxrs.config.BeanConfig">
+			<spring:property name="resourcePackage" value="com.wordnik.swagger.sample.resource" />
+			<spring:property name="version" value="1.0.0" />
+			<spring:property name="basePath" value="http://localhost:7001" />
+			<spring:property name="scan" value="true" />
+		</spring:bean>
+	</spring:beans>
+
+	<flow name="muleSwaggerServicesFlow" doc:name="muleSwaggerServicesFlow">
+
+		<jetty:inbound-endpoint exchange-pattern="request-response"
+			address="http://localhost:7001" doc:name="Jetty Inbound Endpoint" />
+
+		<logger category="********** mule-swagger-integration Http Request received"
+			level="INFO" doc:name="Logger" />
+
+		<choice doc:name="Choice">
+			<!-- Checks for CORS and enable it. OPTIONS HTTP verb is implicit requirement
+				for CORS that checks for permissions -->
+			<when expression="message.getInboundProperty('http.method') ==~ 'OPTIONS'"
+				evaluator="groovy">
+				<processor-chain doc:name="Processor Chain">
+					<flow-ref name="CORSConfiguration" doc:name="Flow Reference" />
+				</processor-chain>
+			</when>
+			<otherwise>
+				<processor-chain doc:name="Processor Chain">
+
+					<jersey:resources doc:name="REST">
+						<component>
+							<spring-object bean="petResource" />
+						</component>
+            <component>
+              <spring-object bean="petStoreResource" />
+            </component>
+            <component>
+              <spring-object bean="userResource" />
+            </component>
+            <component>
+							<spring-object bean="apiListingJSON" />
+						</component>
+					</jersey:resources>
+
+					<logger category="********** mule-swagger-integration response"
+						level="INFO" doc:name="Logger" />
+					<flow-ref name="CORSConfiguration" doc:name="Flow Reference" />
+				</processor-chain>
+			</otherwise>
+		</choice>
+
+		<catch-exception-strategy doc:name="Catch Exception Strategy">
+			<!-- The catch exception strategy sets the HTTP status code of the response
+				to 500 to indicate a server error. Mule sends the new message payload to
+				the caller. -->
+			<set-property propertyName="http.status" value="500"
+				doc:name="Property" />
+			<set-property propertyName="contentType" value="application/json"
+				doc:name="Property" />
+			<set-payload
+				value="{&quot;startPage&quot;:&quot;0&quot;, &quot;pageSize&quot;:&quot;0&quot;, &quot;totalRecords&quot;:&quot;0&quot;,&quot;returnCode&quot;:&quot;500&quot;,
+           		&quot;returnMessage&quot;:&quot;#[exception.cause.message]&quot;,&quot;systemMessage&quot;:&quot;Internal Error&quot;,&quot;result&quot;:&quot;null&quot;  }"
+				doc:name="Set Error Payload" />
+		</catch-exception-strategy>
+	</flow>
+
+	<!-- CORS configuration -->
+	<flow name="CORSConfiguration" doc:name="CORSConfiguration">
+		<set-property value="*" doc:name="Property"
+			propertyName="Access-Control-Allow-Origin" />
+		<set-property
+			value="accept, content-type"
+			doc:name="Property" propertyName="Access-Control-Allow-Headers" />
+		<set-property value="GET,POST,DELETE,PUT,PATCH,OPTIONS"
+			doc:name="Property" propertyName="Access-Control-Allow-Methods" />
+	</flow>
+</mule>
