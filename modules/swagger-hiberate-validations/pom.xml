@@ -3,14 +3,14 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project</artifactId>
-    <version>1.5.4-M1-SNAPSHOT</version>
+    <version>1.5.0-M2</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
   <artifactId>swagger-hiberate-validations</artifactId>
   <packaging>jar</packaging>
-  <version>1.5.4-M1-SNAPSHOT</version>
+  <version>1.5.0-M2</version>
   <name>swagger-hiberate-validations</name>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
