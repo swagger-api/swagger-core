@@ -1,5 +1,5 @@
 /**
- *  Copyright 2014 Reverb Technologies, Inc.
+ *  Copyright 2015 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,6 +60,8 @@ public class UserData {
   }
 
   public void addUser(User user) {
+    if(user.getUsername() == null)
+      return;
     if (users.size() > 0) {
       for (int i = users.size() - 1; i >= 0; i--) {
         if (users.get(i).getUsername().equals(user.getUsername())) {

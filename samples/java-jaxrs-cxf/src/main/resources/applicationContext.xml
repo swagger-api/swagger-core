@@ -14,8 +14,8 @@
   <context:component-scan base-package="com.wordnik.swagger.sample" />
 
   <!-- Swagger writers -->
-  <bean id="resourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider" />
-  <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" />
+  <bean id="swaggerWriter" class="com.wordnik.swagger.jaxrs.listing.SwaggerSerializers" />
+  <!-- <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" /> -->
 
   <!-- JSON mapper -->
   <bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
@@ -29,7 +29,7 @@
   <bean id="petStoreResource" class="com.wordnik.swagger.sample.resource.PetStoreResource" />
 
   <!-- Swagger API listing resource -->
-  <bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON" />
+  <bean id="swaggerResource" class="com.wordnik.swagger.jaxrs.listing.ApiListingResource" />
 
   <cxf:bus>
     <cxf:features>
@@ -41,13 +41,14 @@
   <bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
     <property name="resourcePackage" value="com.wordnik.swagger.sample.resource"/>
     <property name="version" value="1.0.0"/>
-    <property name="basePath" value="http://localhost:8002/api"/>
+    <property name="host" value="http://localhost:8002"/>
+    <property name="basePath" value="/api"/>
     <property name="title" value="Petstore sample app"/>
     <property name="description" value="This is a app."/>
-    <property name="contact" value="apiteam@wordnik.com"/>
+    <property name="contact" value="apiteam@swagger.io"/>
     <property name="license" value="Apache 2.0 License"/>
     <property name="licenseUrl" value="http://www.apache.org/licenses/LICENSE-2.0.html"/>
-    <property name="filterClass" value="com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl"/>
+    <!-- <property name="filterClass" value="com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl"/> -->
     <property name="scan" value="true"/>
   </bean>
 
@@ -59,17 +60,18 @@
         <ref bean="petResource" />
         <ref bean="petStoreResource" />
 
-        <ref bean="swaggerResourceJSON" />
+        <ref bean="swaggerResource" />
       </list>
     </property>
     <property name="providers">
       <list>
         <ref bean="jsonProvider" />
+        <ref bean="swaggerWriter" />
         <ref bean="exceptionMapper" />
 
         <!-- required for writing swagger classes -->
-        <ref bean="resourceWriter" />
-        <ref bean="apiWriter" />
+        <!-- <ref bean="resourceWriter" />
+        <ref bean="apiWriter" /> -->
       </list>
     </property>
   </bean>

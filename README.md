@@ -1,10 +1,10 @@
 # Swagger Core library
 
-[![Build Status](https://travis-ci.org/swagger-api/swagger-core.png?branch=master)](https://travis-ci.org/swagger-api/swagger-core)
+[![Build Status](https://travis-ci.org/swagger-api/swagger-core.svg?branch=develop_2.0)](https://travis-ci.org/swagger-api/swagger-core)
 
 The goal of Swagger™ is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, Swagger removes the guesswork in calling the service.
 
-Swagger-core is the Java/Scala implementation of Swagger. It supports *JAX-RS*, *plain Servlets*, and *Play Framework*.
+Swagger-core is the Java implementation of Swagger. Current version supports *JAX-RS*. Future milestone releases will add support for *plain Servlets* and *Play Framework*.
 
 Check out [Swagger-Spec](https://github.com/swagger-api/swagger-spec) for additional information about the Swagger project, including additional libraries with support for SpringMVC, other languages and more. 
 
@@ -20,22 +20,20 @@ The following methods are available to obtain support for Swagger:
 
 
 ## Get started with Swagger!
-See the guide on [getting started with swagger](https://github.com/swagger-api/swagger-core/wiki/Adding-Swagger-to-your-API) to get started with adding swagger to your API.
+See the guide on [getting started with swagger](https://github.com/swagger-api/swagger-core/wiki/Swagger-Core-JAX-RS-Project-Setup) to get started with adding swagger to your API.
 
 ## Compatibility
 The Swagger Specification has undergone 3 revisions since initial creation in 2010.  The swagger-core project has the following compatibilities with the swagger specification:
 
 Swagger core Version      | Release Date | Swagger Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-1.5.0 (in development)    | n/a          | 2.0           | [branch develop_2.0](https://github.com/swagger-api/swagger-core/tree/develop_2.0) | [1.5 Milestone](https://github.com/swagger-api/swagger-core/milestones/v1.5)
-1.5.0-M1  | 2015-01-31          | 2.0           | [branch 1.5.0-M1](https://github.com/swagger-api/swagger-core/tree/1.5.0-M1) | JAX-RS support only
-1.3.12                     | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12)
+1.5.0-M2                  | 2015-03-30   | 2.0           | [master](https://github.com/swagger-api/swagger-core) |
+1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12)
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4)
 1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0)
 
 ## Overview
-This is a project to build the swagger-core library, which is required for the Reverb implementation of the Swagger spec. For more information about Wordnik's APIs, please visit http://developer.wordnik.com.
-
+This is a project to build the swagger-core library, which is required for the Reverb implementation of the Swagger spec. 
 
 ### Change History
 If you're interested in the change history of swagger and the swagger-core framework, see [here](https://github.com/swagger-api/swagger-core/wiki/Changelog).
@@ -44,11 +42,13 @@ If you're interested in the change history of swagger and the swagger-core frame
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
-<li>- Java 7 (http://java.oracle.com)
+<li>- Java 6 (http://java.oracle.com)
 
 <li>- Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
-### To build from source (currently 1.3.12)
+<li>- Jackson 2.4.2 or greater
+
+### To build from source (currently 1.5.0-M2)
 ```
 # first time building locally
 mvn -N
@@ -66,36 +66,8 @@ Of course if you don't want to build locally you can grab artifacts from maven c
 `http://repo1.maven.org/maven2/com/wordnik/`
 
 ## Sample Apps
-There are a number of sample apps in the [samples](https://github.com/swagger-api/swagger-core/tree/master/samples) folder:
+There are a number of sample apps in the [samples](https://github.com/swagger-api/swagger-core/tree/develop_2.0/samples) folder.
 
-[java-jaxrs](https://github.com/swagger-api/swagger-core/tree/master/samples/java-jaxrs/README.md) Java-based swagger server with JAX-RS
-
-[scala-jaxrs](https://github.com/swagger-api/swagger-core/tree/master/samples/scala-jaxrs/README.md) Scala-based swagger server with JAX-RS
-
-[scala-jaxrs-apm](https://github.com/swagger-api/swagger-core/tree/master/samples/scala-jaxrs-apm/README.md) 
-Scala-based swagger server using wordnik-oss utils for Application Performance Monitoring (APM)
-
-To run a sample app after initial compile:
-
-```
-# run scala-jaxrs sample app
-cd samples/scala-jaxrs
-
-mvn jetty:run
-```
-
-And the [Play2](http://playframework.org) samples:
-
-[java-play2](https://github.com/swagger-api/swagger-core/tree/master/samples/java-play2) Java-based Play2 sample app
-
-[scala-play2](https://github.com/swagger-api/swagger-core/tree/master/samples/scala-play2) Scala-based Play2 sample app
-
-To run the Play2 sample apps:
-
-```
-cd samples/java-play2
-
-sbt run
 ```
 
 License

@@ -1,5 +1,5 @@
 /**
- *  Copyright 2014 Reverb Technologies, Inc.
+ *  Copyright 2015 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 
 /**
  * Provides additional information about Swagger models.
- * <p/>
+ * <p>
  * Classes will be introspected automatically as they are used as types in operations,
  * but you may want to manipulate the structure of the models.
  */
@@ -28,33 +28,33 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ApiModel {
-    /**
-     * Provide an alternative name for the model.
-     * <p/>
-     * By default, the class name is used.
-     */
-    String value() default "";
+  /**
+   * Provide an alternative name for the model.
+   * <p>
+   * By default, the class name is used.
+   */
+  String value() default "";
 
-    /**
-     * Provide a longer description of the class.
-     */
-    String description() default "";
+  /**
+   * Provide a longer description of the class.
+   */
+  String description() default "";
 
-    /**
-     * Provide a superclass for the model to allow describing inheritance.
-     */
-    Class<?> parent() default Void.class;
+  /**
+   * Provide a superclass for the model to allow describing inheritance.
+   */
+  Class<?> parent() default Void.class;
 
-    /**
-     * Supports model inheritance and polymorphism.
-     * <p/>
-     * This is the name of the field used as a discriminator. Based on this field,
-     * it would be possible to assert which sub type needs to be used.
-     */
-    String discriminator() default "";
+  /**
+   * Supports model inheritance and polymorphism.
+   * <p>
+   * This is the name of the field used as a discriminator. Based on this field,
+   * it would be possible to assert which sub type needs to be used.
+   */
+  String discriminator() default "";
 
-    /**
-     * An array of the sub types inheriting from this model.
-     */
-    Class<?>[] subTypes() default {};
+  /**
+   * An array of the sub types inheriting from this model.
+   */
+  Class<?>[] subTypes() default {};
 }

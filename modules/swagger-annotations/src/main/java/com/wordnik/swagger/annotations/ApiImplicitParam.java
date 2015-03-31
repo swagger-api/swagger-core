@@ -1,5 +1,5 @@
 /**
- *  Copyright 2014 Reverb Technologies, Inc.
+ *  Copyright 2015 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@ import java.lang.annotation.*;
 
 /**
  * Represents a single parameter in an API Operation.
- * <p/>
+ * <p>
  * While {@link com.wordnik.swagger.annotations.ApiParam} is bound to a JAX-RS parameter,
  * method or field, this allows you to manually define a parameter in a fine-tuned manner.
  * This is the only way to define parameters when using Servlets or other non-JAX-RS
  * environments.
- * <p/>
+ * <p>
  * This annotation must be used as a value of {@link com.wordnik.swagger.annotations.ApiImplicitParams}
  * in order to be parsed.
  *
@@ -35,76 +35,74 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ApiImplicitParam {
-    /**
-     * Name of the parameter.
-     * <p/>
-     * For proper Swagger functionality, follow these rules when naming your parameters based on {@link #paramType()}:
-     * <ol>
-     * <li>If {@code paramType} is "path", the name should be the associated section in the path.</li>
-     * <li>If {@code paramType} is "body", the name should be "body".</li>
-     * <li>For all other cases, the name should be the parameter name as your application expects to accept.</li>
-     * </ol>
-     *
-     * @see #paramType()
-     */
-    String name() default "";
+  /**
+   * Name of the parameter.
+   * <p>
+   * For proper Swagger functionality, follow these rules when naming your parameters based on {@link #paramType()}:
+   * <ol>
+   * <li>If {@code paramType} is "path", the name should be the associated section in the path.</li>
+   * <li>If {@code paramType} is "body", the name should be "body".</li>
+   * <li>For all other cases, the name should be the parameter name as your application expects to accept.</li>
+   * </ol>
+   *
+   * @see #paramType()
+   */
+  String name() default "";
 
-    /**
-     * A brief description of the parameter.
-     */
-    String value() default "";
+  /**
+   * A brief description of the parameter.
+   */
+  String value() default "";
 
-    /**
-     * Describes the default value for the parameter.
-     */
-    String defaultValue() default "";
+  /**
+   * Describes the default value for the parameter.
+   */
+  String defaultValue() default "";
 
-    /**
-     * Limits the acceptable values for this parameter.
-     * <p/>
-     * There are three ways to describe the allowable values:
-     * <ol>
-     * <li>To set a list of values, provide a comma-separated list surrounded by square brackets.
-     * For example: {@code [first, second, third]}.</li>
-     * <li>To set a range of values, start the value with "range", and surrounding by square
-     * brackets include the minimum and maximum values. For example: {@code range[1, 5]}.</li>
-     * <li>To set a minimum/maximum value, use the same format for range but use "infinity"
-     * or "-infinity" as the second value. For example, {@code range[1, infinity]} means the
-     * minimum allowable value of this parameter is 1.</li>
-     * </ol>
-     */
-    String allowableValues() default "";
+  /**
+   * Limits the acceptable values for this parameter.
+   * <p>
+   * There are three ways to describe the allowable values:
+   * <ol>
+   * <li>To set a list of values, provide a comma-separated list surrounded by square brackets.
+   * For example: {@code [first, second, third]}.</li>
+   * <li>To set a range of values, start the value with "range", and surrounding by square
+   * brackets include the minimum and maximum values. For example: {@code range[1, 5]}.</li>
+   * <li>To set a minimum/maximum value, use the same format for range but use "infinity"
+   * or "-infinity" as the second value. For example, {@code range[1, infinity]} means the
+   * minimum allowable value of this parameter is 1.</li>
+   * </ol>
+   */
+  String allowableValues() default "";
 
-    /**
-     * Specifies if the parameter is required or not.
-     * <p/>
-     * Path parameters should always be set as required.
-     */
-    boolean required() default false;
+  /**
+   * Specifies if the parameter is required or not.
+   * <p>
+   * Path parameters should always be set as required.
+   */
+  boolean required() default false;
 
-    /**
-     * Allows for filtering a parameter from the API documentation.
-     *
-     * @see com.wordnik.swagger.core.filter.SwaggerSpecFilter
-     */
-    String access() default "";
+  /**
+   * Allows for filtering a parameter from the API documentation.
+   */
+  String access() default "";
 
-    /**
-     * Specifies whether the parameter can accept multiple comma-separated values.
-     */
-    boolean allowMultiple() default false;
+  /**
+   * Specifies whether the parameter can accept multiple comma-separated values.
+   */
+  boolean allowMultiple() default false;
 
-    /**
-     * The data type of the parameter.
-     * <p/>
-     * This can be the class name or a primitive.
-     */
-    String dataType() default "";
+  /**
+   * The data type of the parameter.
+   * <p>
+   * This can be the class name or a primitive.
+   */
+  String dataType() default "";
 
-    /**
-     * The parameter type of the parameter.
-     *
-     * Valid values are {@code path}, {@code query}, {@code body}, {@code header} or {@code form}.
-     */
-    String paramType() default "";
+  /**
+   * The parameter type of the parameter.
+   *
+   * Valid values are {@code path}, {@code query}, {@code body}, {@code header} or {@code form}.
+   */
+  String paramType() default "";
 }

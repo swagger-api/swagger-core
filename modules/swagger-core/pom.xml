@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>com.wordnik</groupId>
-    <artifactId>swagger-project_2.10</artifactId>
-    <version>1.3.12</version>
+    <artifactId>swagger-project</artifactId>
+    <version>1.5.0-M2</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-core_2.10</artifactId>
-  <packaging>bundle</packaging>
+  <artifactId>swagger-core</artifactId>
+  <packaging>jar</packaging>
   <name>swagger-core</name>
-  <version>1.3.12</version>
+  <version>1.5.0-M2</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <defaultGoal>install</defaultGoal>
@@ -27,7 +27,6 @@
         <directory>src/test/resources</directory>
       </testResource>
     </testResources>
-
     <plugins>
       <plugin>
         <groupId>org.apache.felix</groupId>
@@ -41,19 +40,19 @@
               com.wordnik.swagger.core.util,
               com.wordnik.swagger.reader,
               com.wordnik.swagger.config,
-              com.wordnik.swagger.model
+              com.wordnik.swagger.models
             </Export-Package>
-            <Import-Package>
-              org.json4s.jackson,
-              *
-            </Import-Package>
           </instructions>
         </configuration>
       </plugin>
     </plugins>
-
   </build>
   <dependencies>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_2.10</artifactId>
@@ -69,62 +68,56 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-scala_2.10</artifactId>
-      <version>${jackson-scala-version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
       <version>${jackson-version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-jsonSchema</artifactId>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-joda</artifactId>
       <version>${jackson-version}</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.jaxrs</groupId>
-      <artifactId>jackson-jaxrs-json-provider</artifactId>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
       <version>${jackson-version}</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.wordnik</groupId>
-      <artifactId>swagger-annotations</artifactId>
+      <artifactId>swagger-models</artifactId>
       <version>${project.parent.version}</version>
+      <scope>compile</scope>
     </dependency>
+
     <dependency>
-      <groupId>org.json4s</groupId>
-      <artifactId>json4s-ext_2.10</artifactId>
-      <version>${json4s-version}</version>
-      <scope>compile</scope>
-    </dependency> 
-    <dependency>
-      <groupId>org.json4s</groupId>
-      <artifactId>json4s-native_2.10</artifactId>
-      <version>${json4s-version}</version>
-      <scope>compile</scope>
-    </dependency>    
-    <dependency>
-      <groupId>org.json4s</groupId>
-      <artifactId>json4s-jackson_2.10</artifactId>
-      <version>${json4s-version}</version>
-      <scope>compile</scope>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-scala_2.10</artifactId>
+      <version>${jackson-version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
-      <version>2.2</version>
+      <version>${joda-time-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>12.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.joda</groupId>
       <artifactId>joda-convert</artifactId>
-      <version>1.2</version>
+      <version>${joda-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-guava</artifactId>
+      <version>${jackson-guava-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -139,5 +132,23 @@
      <version>${logback-version}</version>
      <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>${validation-api-version}</version>
+    </dependency>
   </dependencies>
+  <properties>
+    <!-- TODO increase coverage -->
+    <validation-api-version>1.1.0.Final</validation-api-version>
+    <coverage.complexity.minimum>0.50</coverage.complexity.minimum>
+    <coverage.line.minimum>0.0</coverage.line.minimum>
+    <coverage.missed.classes>3</coverage.missed.classes>
+  </properties>
 </project>

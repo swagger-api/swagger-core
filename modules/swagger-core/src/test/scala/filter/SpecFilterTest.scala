@@ -1,111 +1,90 @@
 package filter
 
-import com.wordnik.swagger.core.util.ScalaJsonUtil
+import com.wordnik.swagger.models.Swagger
+import com.wordnik.swagger.util._
 import com.wordnik.swagger.core.filter._
-import com.wordnik.swagger.model._
-import com.wordnik.swagger.core.util._
-
-import org.json4s._
-import org.json4s.JsonDSL._
-import org.json4s.jackson.JsonMethods._
-import org.json4s.native.Serialization.{read, write}
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
+import scala.io.Source
+
+import scala.collection.JavaConverters._
+
 @RunWith(classOf[JUnitRunner])
 class SpecFilterTest extends FlatSpec with Matchers {
-  implicit val formats = SwaggerSerializers.formats
+  it should "clone everything" in {
+    val json = Source.fromFile("src/test/scala/specFiles/petstore.json").mkString
+    val swagger = Json.mapper().readValue(json, classOf[Swagger])
+    val filtered = new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null)
 
-  behavior of "SpecFilter"
-
-  it should "filter an api spec and return all models" in {
-    val spec = TestSpecs.getSimple
-    val p = new SpecFilter().filter(spec, new SimpleFilter, Map(), Map(), Map())
-    p.apis.size should be (4)
-    (p.models.get.keys.toSet & Set("Pet", "Category", "Tag")).size should be (3)
+    Json.pretty(swagger) should equal(Json.pretty(filtered))
   }
 
-  it should "filter away all non-get operations" in {
-    val spec = TestSpecs.getSimple
-    val p = new SpecFilter().filter(spec, new GetOnlyFilter, Map(), Map(), Map())
-    p.apis.size should be (3)
-    (p.models.get.keys.toSet & Set("Pet", "Category", "Tag")).size should be (3)
-  }
+  it should "filter away get operations in a resource" in {
+    val json = Source.fromFile("src/test/scala/specFiles/petstore.json").mkString
+    val swagger = Json.mapper().readValue(json, classOf[Swagger])
+    val filter = new NoGetOperationsFilter()
 
-  it should "filter away everything" in {
-    val spec = TestSpecs.getSimple
-    val p = new SpecFilter().filter(spec, new EatEverythingFilter, Map(), Map(), Map())
-    p.apis.size should be (0)
-    p.models should be (None)
-  }
+    val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
 
-  it should "filter away secret params" in {
-    val spec = TestSpecs.getSimple
-    val p = new SpecFilter().filter(spec, new SecretParamFilter, Map(), Map(), Map())
-
-    p.apis.foreach(api => {
-      if(api.path == "/pet.{format}") {
-        api.operations.foreach(op => {
-          if(op.method == "POST") {
-            op.parameters.size should be (0)
-          }
-        })
+    if(filtered.getPaths() != null) {
+      for((path, i) <- filtered.getPaths().asScala) {
+        i.getGet() should be (null)
       }
-    })
+    }
+    else
+      fail("paths should not be null")
   }
 
-  it should "return models in List properties" in {
-    val spec = TestSpecs.getReturnTypeWithList
-    val p = new SpecFilter().filter(spec, new SimpleFilter, Map(), Map(), Map())
-    p.apis.size should be (1)
-    p.models.get.size should be (2)
+  it should "filter away the store resource" in {
+    val json = Source.fromFile("src/test/scala/specFiles/petstore.json").mkString
+    val swagger = Json.mapper().readValue(json, classOf[Swagger])
+    val filter = new NoUserOperationsFilter()
+
+    val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
+
+    if(filtered.getPaths() != null) {
+      for((path, i) <- filtered.getPaths().asScala) {
+        path should not be ("/user")
+      }
+    }
+    else
+      fail("paths should not be null")
   }
 
-  it should "ensure order is preserved after filtering" in {
-    val spec = TestSpecs.ordered
-    val p = new SpecFilter().filter(spec, new SimpleFilter, Map(), Map(), Map())
+  it should "filter away secret parameters" in {
+    val json = Source.fromFile("src/test/scala/specFiles/sampleSpec.json").mkString
+    val swagger = Json.mapper().readValue(json, classOf[Swagger])
+    val filter = new RemoveInternalParamsFilter()
 
-    p.apis.size should be (1)
-    val ops = p.apis(0).operations
-    ops.size should be (2)
-    ops(0).method should be ("POST")
-    ops(1).method should be ("GET")
+    val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
+
+    if(filtered.getPaths() != null) {
+      for((path, i) <- filtered.getPaths().asScala) {
+        val get = i.getGet()
+        for(param <- get.getParameters().asScala) {
+          param.getDescription should not be (null)
+          param.getDescription.startsWith("secret") should not be (true)
+        }
+      }
+    }
+    else
+      fail("paths should not be null")
   }
 
-  it should "maintain declared subTypes" in {
-    val spec = TestSpecs.subTypes
-    spec.models.get.size should be (3)
+  it should "filter away internal model properties" in {
+    val json = Source.fromFile("src/test/scala/specFiles/sampleSpec.json").mkString
+    val swagger = Json.mapper().readValue(json, classOf[Swagger])
+    val filter = new InternalModelPropertiesRemoverFilter()
 
-    val filtered = new SpecFilter().filter(spec, new SimpleFilter, Map(), Map(), Map())
-    filtered.models.get.keys should be (Set("Animal", "WildAnimal", "DomesticAnimal"))
-  }
-}
-
-class SimpleFilter extends SwaggerSpecFilter {
-  override def isOperationAllowed(operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean = true
-  override def isParamAllowed(parameter: Parameter, operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean = true
-}
-
-class GetOnlyFilter extends SwaggerSpecFilter {
-  override def isOperationAllowed(operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean = {
-    if(operation.method != "GET") false
-    else true
-  }
-  override def isParamAllowed(parameter: Parameter, operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean = true
-}
-
-class EatEverythingFilter extends SwaggerSpecFilter {
-  override def isOperationAllowed(operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean = false
-  override def isParamAllowed(parameter: Parameter, operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean = true
-}
-
-class SecretParamFilter extends SwaggerSpecFilter {
-  override def isOperationAllowed(operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean = true
-  override def isParamAllowed(parameter: Parameter, operation: Operation, api: ApiDescription, params: java.util.Map[String, java.util.List[String]], cookies: java.util.Map[String, String], headers: java.util.Map[String, java.util.List[String]]): Boolean = {
-    if(parameter.paramAccess == Some("secret")) false
-    else true
+    val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
+    for((key, model) <- filtered.getDefinitions().asScala) {
+      for((propName, prop) <- model.getProperties().asScala) {
+        propName.startsWith("_") should be (false)
+      }
+    }
   }
 }

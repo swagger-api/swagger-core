@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>com.wordnik</groupId>
-    <artifactId>swagger-project_2.10</artifactId>
-    <version>1.3.12</version>
+    <artifactId>swagger-project</artifactId>
+    <version>1.5.0-M2</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-java-sample-app_2.10</artifactId>
+  <artifactId>swagger-java-sample-app</artifactId>
   <packaging>war</packaging>
   <name>swagger-java-jaxrs-app</name>
-  <version>1.3.12</version>
+  <version>1.5.0-M2</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>
@@ -120,7 +120,8 @@
   <dependencies>
     <dependency>
       <groupId>com.wordnik</groupId>
-      <artifactId>swagger-jaxrs_2.10</artifactId>
+      <artifactId>swagger-jaxrs</artifactId>
+      <version>${project.parent.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -162,4 +163,9 @@
       <artifactId>jersey-servlet</artifactId>
     </dependency>
   </dependencies>
+  <properties>
+    <coverage.complexity.minimum>0</coverage.complexity.minimum>
+    <coverage.line.minimum>0</coverage.line.minimum>
+    <coverage.missed.classes>0</coverage.missed.classes>
+  </properties>
 </project>

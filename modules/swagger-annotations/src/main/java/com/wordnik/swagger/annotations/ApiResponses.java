@@ -1,5 +1,5 @@
 /**
- *  Copyright 2014 Reverb Technologies, Inc.
+ *  Copyright 2015 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,22 +16,16 @@
 
 package com.wordnik.swagger.annotations;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * A wrapper to allow a list of multiple {@link com.wordnik.swagger.annotations.ApiResponse} objects.
- * <p/>
- * If you need to describe a single {@link com.wordnik.swagger.annotations.ApiResponse}, you still
- * must use this annotation and wrap the {@code @ApiResponse} in an array.
- *
- * @see com.wordnik.swagger.annotations.ApiResponse
+ * A simple array wrapper to contain multiple ApiResponse objects
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Inherited
 public @interface ApiResponses {
-    /**
-     * A list of {@link com.wordnik.swagger.annotations.ApiResponse}s provided by the API operation.
-     */
-    ApiResponse[] value();
+  ApiResponse[] value();
 }

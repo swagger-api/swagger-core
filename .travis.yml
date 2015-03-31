@@ -1,5 +1,6 @@
+sudo: false
 language: java
-script: mvn verify
+script: mvn clean verify
 jdk:
   - oraclejdk7
 

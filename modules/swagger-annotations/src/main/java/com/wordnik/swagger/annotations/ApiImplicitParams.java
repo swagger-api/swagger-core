@@ -1,5 +1,5 @@
 /**
- *  Copyright 2014 Reverb Technologies, Inc.
+ *  Copyright 2015 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ApiImplicitParams {
-    /**
-     * A list of {@link com.wordnik.swagger.annotations.ApiImplicitParam}s available to the API operation.
-     */
-    ApiImplicitParam[] value();
+  /**
+   * A list of {@link com.wordnik.swagger.annotations.ApiImplicitParam}s available to the API operation.
+   */
+  ApiImplicitParam[] value();
 }

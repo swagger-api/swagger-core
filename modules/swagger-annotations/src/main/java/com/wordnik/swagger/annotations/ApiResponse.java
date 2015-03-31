@@ -1,5 +1,5 @@
 /**
- *  Copyright 2014 Reverb Technologies, Inc.
+ *  Copyright 2015 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,46 +16,30 @@
 
 package com.wordnik.swagger.annotations;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 
 /**
- * Describes a possible response of an operation.
- * <p/>
- * This can be used to describe possible success and error codes from your REST API call.
- * You may or may not use this to describe the return type of the operation (normally a
- * successful code), but the successful response should be described as well using the
- * {@link ApiOperation}.
- * <p/>
- * If your API has uses a different response class for these responses, you can describe them
- * here by associating a response class with a response code.
- * Note, Swagger does not allow multiple response types for a single response code.
- * <p/>
- * This annotation is not used directly and will not be parsed by Swagger. It should be used
- * within the {@link ApiResponses}.
- *
- * @see ApiOperation
- * @see ApiResponses
+ * An ApiResponse represents a type of response from a server.  This can be used to
+ * describe both success codes as well as errors.
+ * If your Api has different response classes, you can describe them here by associating
+ * a response class with a response code.  Note, Swagger does not allow multiple response
+ * types for a single response code.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Inherited
 public @interface ApiResponse {
-    /**
-     * The HTTP status code of the response.
-     * <p/>
-     * The value should be one of the formal <a target="_blank" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">HTTP Status Code Definitions</a>.
-     */
-    int code();
+  /** Response code to describe */
+  int code();
 
-    /**
-     * Human-readable message to accompany the response.
-     */
-    String message();
+  /** Human-readable message to accompany the response */
+  String message();
 
-    /**
-     * Optional response class to describe the payload of the message.
-     * <p/>
-     * Corresponds to the `responseModel` field of the response message object.
-     */
-    Class<?> response() default Void.class;
+  /** Optional response class to describe the payload of the message */
+  Class<?> response() default Void.class;
+
+  ResponseHeader[] responseHeaders() default @ResponseHeader(name = "", response = Void.class);
 }

@@ -1,5 +1,5 @@
 /**
- *  Copyright 2014 Reverb Technologies, Inc.
+ *  Copyright 2015 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
 @Path("/pet")
-@Api(value = "/pet", description = "Operations about pets")
+@Api(tags = {"pet"})
 @Produces({"application/json", "application/xml"})
 public class PetResource {
   static PetData petData = new PetData();

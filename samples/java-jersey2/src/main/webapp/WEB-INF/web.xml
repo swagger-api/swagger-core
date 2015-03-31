@@ -16,9 +16,7 @@
     <init-param>
       <param-name>jersey.config.server.provider.classnames</param-name>
       <param-value>
-        com.wordnik.swagger.jersey.listing.ApiListingResourceJSON,
-        com.wordnik.swagger.jersey.listing.JerseyApiDeclarationProvider,
-        com.wordnik.swagger.jersey.listing.JerseyResourceListingProvider
+        com.wordnik.swagger.jersey.listing.ApiListingResourceJSON
       </param-value>
     </init-param>
     <init-param>

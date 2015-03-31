@@ -1,5 +1,5 @@
 /**
- *  Copyright 2014 Reverb Technologies, Inc.
+ *  Copyright 2015 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,12 @@
 
 package com.wordnik.swagger.sample.util;
 
-import com.wordnik.swagger.model.*;
+import com.wordnik.swagger.util.Json;
+import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.Operation;
+import com.wordnik.swagger.models.parameters.Parameter;
+import com.wordnik.swagger.models.properties.Property;
+import com.wordnik.swagger.model.ApiDescription;
 import com.wordnik.swagger.core.filter.SwaggerSpecFilter;
 
 import org.slf4j.*;
@@ -44,25 +49,35 @@ import javax.servlet.http.HttpServlet;
 public class ApiAuthorizationFilterImpl implements SwaggerSpecFilter {
   static Logger logger = LoggerFactory.getLogger(ApiAuthorizationFilterImpl.class);
 
-  public boolean isOperationAllowed(Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
-    boolean isAuthorized = checkKey(params, headers);
-    if(isAuthorized) {
-      return true;
-    }
-    else {
-      if(!"GET".equals(operation.method()) || api.path().indexOf("/store") != -1) {
-        return false;
-      }
-      else return true;
-    }
+  public boolean isOperationAllowed(
+    Operation operation,
+    ApiDescription api,
+    Map<String, List<String>> params,
+    Map<String, String> cookies,
+    Map<String, List<String>> headers) {
+    if(!api.getMethod().equals("get") || api.getPath().startsWith("/store"))
+      return checkKey(params, headers);
+    return true;
   }
 
-  public boolean isParamAllowed(Parameter parameter, Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
-    boolean isAuthorized = checkKey(params, headers);
-    if((parameter.paramAccess().isDefined() && parameter.paramAccess().get().equals("internal")) && !isAuthorized) 
-      return false;
-    else 
-      return true;
+  public boolean isParamAllowed(
+    Parameter parameter,
+    Operation operation,
+    ApiDescription api,
+    Map<String, List<String>> params,
+    Map<String, String> cookies,
+    Map<String, List<String>> headers) {
+    return true;
+  }
+
+  public boolean isPropertyAllowed(
+    Model model,
+    Property property,
+    String propertyName,
+    Map<String, List<String>> params,
+    Map<String, String> cookies,
+    Map<String, List<String>> headers) {
+    return true;
   }
 
   public boolean checkKey(Map<String, List<String>> params, Map<String, List<String>> headers) {

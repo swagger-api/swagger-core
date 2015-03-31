@@ -10,3 +10,4 @@ samples/scala-play2/logs
 .cache
 atlassian-ide-plugin.xml
 *.iml
+.java-version

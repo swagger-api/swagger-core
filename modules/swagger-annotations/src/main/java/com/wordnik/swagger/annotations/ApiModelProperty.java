@@ -1,5 +1,5 @@
 /**
- *  Copyright 2014 Reverb Technologies, Inc.
+ *  Copyright 2015 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,68 +16,78 @@
 
 package com.wordnik.swagger.annotations;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-/**
- * Adds and manipulates data of a model property.
+/** 
+ * An ApiModelProperty desecribes a property inside a model class.  The annotations can
+ * apply to a method, a property, etc., depending on how the model scanner is configured and
+ * used.
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Inherited
 public @interface ApiModelProperty {
-    /**
-     * A brief description of this property.
-     */
-    String value() default "";
+  /** Provide a human readable synopsis of this property */
+  String value() default "";
 
-    /**
-     * Limits the acceptable values for this property.
-     * <p/>
-     * There are three ways to describe the allowable values:
-     * <ol>
-     * <li>To set a list of values, provide a comma-separated list surrounded by square brackets.
-     * For example: {@code [first, second, third]}.</li>
-     * <li>To set a range of values, start the value with "range", and surrounding by square
-     * brackets include the minimum and maximum values. For example: {@code range[1, 5]}.</li>
-     * <li>To set a minimum/maximum value, use the same format for range but use "infinity"
-     * or "-infinity" as the second value. For example, {@code range[1, infinity]} means the
-     * minimum allowable value of this parameter is 1.</li>
-     * </ol>
-     */
-    String allowableValues() default "";
+  /**
+   * Allows overriding the name of the property
+   *
+   * @return the overridden property name
+   */
+  String name() default "";
 
-    /**
-     * Allows for filtering a property from the API documentation.
-     *
-     * @see com.wordnik.swagger.core.filter.SwaggerSpecFilter
-     */
-    String access() default "";
+  /**
+   * If the values that can be set are restricted, they can be set here. In the form of a comma separated list
+   * <code>registered, active, closed</code>.
+   *
+   * @return the allowable values
+   */
+  String allowableValues() default "";
 
-    /**
-     * Currently not in use.
-     */
-    String notes() default "";
+  /** 
+   * specify an optional access value for filtering in a Filter 
+   * implementation.  This
+   * allows you to hide certain parameters if a user doesn't have access to them
+   */
+  String access() default "";
 
-    /**
-     * The data type of the parameter.
-     * <p/>
-     * This can be the class name or a primitive. The value will override the data type as read from the class
-     * property.
-     */
-    String dataType() default "";
+  /** long description of the property */
+  String notes() default "";
 
-    /**
-     * Specifies if the parameter is required or not.
-     */
-    boolean required() default false;
+  /**
+   * The dataType. See the documentation for the supported datatypes. If the data type is a custom object, set
+   * it's name, or nothing. In case of an enum use 'string' and allowableValues for the enum constants.
+   */
+  String dataType() default "";
 
-    /**
-     * Allows explicitly ordering the property in the model.
-     */
-    int position() default 0;
+  /**
+   * Whether or not the property is required, defaults to false.
+   * 
+   * @return true if required, false otherwise
+   */
+  boolean required() default false;
 
-    /**
-     * Allows a model property to be hidden in the Swagger model definition.
-     */
-    boolean hidden() default false;
+  /**
+   * allows explicitly ordering the property in the model.  Since reflection has no guarantee on
+   * ordering, you should specify property order to keep models consistent across different VM implementations and versions.
+   */
+  int position() default 0;
+  
+  /**
+   * Allows a model property to be marked as hidden in the swagger model definition
+   */
+  boolean hidden() default false;
+
+  /**
+   * A sample value for the property
+   **/
+  String example() default "";
+
+  /**
+   * Allows a model property to be designated as read only
+   **/
+  boolean readOnly() default false;
 }

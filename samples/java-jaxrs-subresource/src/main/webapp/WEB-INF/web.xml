@@ -37,10 +37,6 @@
       <param-name>swagger.api.basepath</param-name>
       <param-value>http://localhost:8002/api</param-value>
     </init-param>
-    <init-param>
-      <param-name>swagger.filter</param-name>
-      <param-value>com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl</param-value>
-    </init-param>
     <load-on-startup>2</load-on-startup>
   </servlet>
   <filter>
