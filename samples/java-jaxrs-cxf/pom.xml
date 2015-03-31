@@ -21,6 +21,7 @@
         <artifactId>tomcat6-maven-plugin</artifactId>
         <version>2.1</version>
         <configuration>
+          <warSourceDirectory>target/${project.artifactId}-${project.version}</warSourceDirectory>
           <port>8002</port>
           <path>/</path>
         </configuration>
