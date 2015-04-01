@@ -1,5 +1,6 @@
 package com.wordnik.swagger.sample;
 
+import com.sun.jersey.spi.resource.Singleton;
 import com.wordnik.swagger.models.Contact;
 import com.wordnik.swagger.models.ExternalDocs;
 import com.wordnik.swagger.models.Info;
@@ -9,9 +10,11 @@ import com.wordnik.swagger.models.Tag;
 import com.wordnik.swagger.models.auth.ApiKeyAuthDefinition;
 import com.wordnik.swagger.models.auth.In;
 import com.wordnik.swagger.models.auth.OAuth2Definition;
+import com.wordnik.swagger.mule.MuleApiListing;
 
+@Singleton
 public class Bootstrap {
-	/** Ran on app init by Spring */
+	/** Run on app init by Spring */
 	public void start() {
 		Info info = new Info()
 				.title("Swagger Sample App")
@@ -33,5 +36,7 @@ public class Bootstrap {
 		swagger.tag(new Tag().name("store").description("Operations about user"));
 		swagger.tag(new Tag().name("user").description("Access to Petstore orders")
 				.externalDocs(new ExternalDocs("Find out more about our store", "http://swagger.io")));
+
+		MuleApiListing.init(swagger);
 	}
 }
