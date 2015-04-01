@@ -13,7 +13,7 @@
     <!-- TODO increase coverage and remove these overrides-->
     <coverage.complexity.minimum>0.00</coverage.complexity.minimum>
     <coverage.line.minimum>0.00</coverage.line.minimum>
-    <coverage.missed.classes>0</coverage.missed.classes>
+    <coverage.missed.classes>99</coverage.missed.classes>
   </properties>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
