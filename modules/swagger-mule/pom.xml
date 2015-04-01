@@ -35,32 +35,9 @@
       <version>${scala-test-version}</version>
     </dependency> -->
     <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-servlet</artifactId>
-      <version>1.16</version>
-	</dependency>
-    <dependency>
-	  <groupId>com.sun.jersey.contribs</groupId>
-	  <artifactId>jersey-multipart</artifactId>
-	  <version>1.16</version>
-	</dependency>
-    <dependency>
-	  <groupId>javax.servlet</groupId>
-	  <artifactId>servlet-api</artifactId>
-	  <version>2.3</version>
-	  <scope>compile</scope>
-	</dependency>
-	<dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-server</artifactId>
-      <version>1.16</version>
-      <scope>compile</scope>
-	</dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
-      <version>${junit-version}</version>
     </dependency>
     <dependency>
       <groupId>com.wordnik</groupId>
