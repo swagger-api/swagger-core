@@ -23,51 +23,52 @@ import com.wordnik.swagger.jaxrs.listing.SwaggerSerializers;
 import com.wordnik.swagger.models.Swagger;
 import com.wordnik.swagger.util.Json;
 
-@Path ("/")
+@Path("/")
 public class ApiListingJSON {
-	private static final Logger	LOGGER		= LoggerFactory.getLogger(ApiListingJSON.class);
-	static boolean				initialized	= false;
-	static Swagger				swagger;
+  private static final Logger LOGGER = LoggerFactory.getLogger(ApiListingJSON.class);
+  static boolean initialized = false;
+  static Swagger swagger;
 
-	public static void init(Swagger swagger) {
-		ApiListingJSON.swagger = swagger;
-	}
+  public static void init(Swagger swagger) {
+    ApiListingJSON.swagger = swagger;
+  }
 
-	protected synchronized void scan(Application app) {
-		Scanner scanner = ScannerFactory.getScanner();
-		LOGGER.debug("using scanner " + scanner);
-		if (scanner != null) {
-			SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
-			Set<Class<?>> classes = null;
-			classes = scanner.classes();
-			if (classes != null) {
-				Reader reader = new Reader(swagger);
-				swagger = reader.read(classes);
-				// This loads the Swagger root information from the mule-swagger-integration.xml instead of
-				// the Bootstrap initializer. Should I leave both ways in, or support only one ? The new API doesn't
-				// seem work very well in the bean xml syntax
-				
-				// swagger = ((SwaggerConfig) scanner).configure(swagger);
-			}
-		}
-		initialized = true;
-	}
+  protected synchronized void scan(Application app) {
+    Scanner scanner = ScannerFactory.getScanner();
+    LOGGER.debug("using scanner " + scanner);
+    if (scanner != null) {
+      SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
+      Set<Class<?>> classes = null;
+      classes = scanner.classes();
+      if (classes != null) {
+        Reader reader = new Reader(swagger);
+        swagger = reader.read(classes);
+        // This loads the Swagger root information from the mule-swagger-integration.xml instead of
+        // the Bootstrap initializer. Should I leave both ways in, or support only one ? The new API doesn't
+        // seem work very well in the bean xml syntax
 
-	@GET
-	@Produces (MediaType.APPLICATION_JSON)
-	@Path ("/swagger.json")
-	public Response getListingJson(@Context Application app, @Context HttpHeaders headers, @Context UriInfo uriInfo) {
-		// On first use scan the API and initialize Swagger
-		if (!initialized)
-			scan(app);
-		
-		if (swagger != null) {
-			try {
-				return Response.ok().entity(Json.mapper().writeValueAsString(swagger)).build();
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-				return Response.status(405).build();
-			}
-		} else return Response.status(404).build(); // This was a 404 in the example, but it seems more like a 405
-	}
+        // swagger = ((SwaggerConfig) scanner).configure(swagger);
+      }
+    }
+    initialized = true;
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/swagger.json")
+  public Response getListingJson(@Context Application app, @Context HttpHeaders headers, @Context UriInfo uriInfo) {
+    // On first use scan the API and initialize Swagger
+    if (!initialized)
+      scan(app);
+
+    if (swagger != null) {
+      try {
+        return Response.ok().entity(Json.mapper().writeValueAsString(swagger)).build();
+      } catch (JsonProcessingException e) {
+        // This should probably be logged in some project specific way but I couldn't find a standard way it's done
+        e.printStackTrace();
+        return Response.status(405).build();
+      }
+    } else return Response.status(404).build(); // This was a 404 in the example, but it seems more like a 405
+  }
 }

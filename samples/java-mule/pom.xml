@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project</artifactId>
@@ -10,7 +11,7 @@
   <artifactId>swagger-java-mule-app</artifactId>
   <packaging>mule</packaging>
   <name>swagger-java-mule-app</name>
-  <version>1.5.4-M1-SNAPSHOT</version>  
+  <version>1.5.4-M1-SNAPSHOT</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <pluginManagement>
