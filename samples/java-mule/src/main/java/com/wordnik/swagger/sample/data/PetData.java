@@ -1,5 +1,5 @@
 /**
- *  Copyright 2014 Reverb Technologies, Inc.
+ *  Copyright 2015 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,8 +18,7 @@ package com.wordnik.swagger.sample.data;
 
 import com.wordnik.swagger.sample.model.*;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 public class PetData {
   static List<Pet> pets = new ArrayList<Pet>();
@@ -65,6 +64,17 @@ public class PetData {
     return null;
   }
 
+  public void deletePet(long petId) {
+    if(pets.size() > 0) {
+      for (int i = pets.size(); i >= 0; i++) {
+        Pet pet = pets.get(i);
+        if(pet.getId() == petId) {
+          pets.remove(i);
+        }
+      }
+    }
+  }
+
   public List<Pet> findPetByStatus(String status) {
     String[] statues = status.split(",");
     List<Pet> result = new java.util.ArrayList<Pet>();
@@ -94,7 +104,16 @@ public class PetData {
     return result;
   }
 
-  public void addPet(Pet pet) {
+  public Pet addPet(Pet pet) {
+    if(pet.getId() == 0) {
+      long maxId = 0;
+      for (int i = pets.size() - 1; i >= 0; i--) {
+        if(pets.get(i).getId() > maxId) {
+          maxId = pets.get(i).getId();
+        }
+      }
+      pet.setId(maxId + 1);
+    }
     if (pets.size() > 0) {
       for (int i = pets.size() - 1; i >= 0; i--) {
         if (pets.get(i).getId() == pet.getId()) {
@@ -103,6 +122,23 @@ public class PetData {
       }
     }
     pets.add(pet);
+    return pet;
+  }
+
+  public Map<String, Integer> getInventoryByStatus() {
+    Map<String, Integer> output = new HashMap<String, Integer>();
+    for(Pet pet : pets) {
+      String status = pet.getStatus();
+      if(status != null && !"".equals(status)) {
+        Integer count = output.get(status);
+        if(count == null)
+          count = new Integer(1);
+        else
+          count = count.intValue() + 1;
+        output.put(status, count);
+      }
+    }
+    return output;
   }
 
   static Pet createPet(long id, Category cat, String name, String[] urls,
