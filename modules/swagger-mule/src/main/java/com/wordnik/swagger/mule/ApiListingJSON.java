@@ -24,13 +24,13 @@ import com.wordnik.swagger.models.Swagger;
 import com.wordnik.swagger.util.Json;
 
 @Path ("/")
-public class MuleApiListing {
-	private static final Logger	LOGGER		= LoggerFactory.getLogger(MuleApiListing.class);
+public class ApiListingJSON {
+	private static final Logger	LOGGER		= LoggerFactory.getLogger(ApiListingJSON.class);
 	static boolean				initialized	= false;
 	static Swagger				swagger;
 
 	public static void init(Swagger swagger) {
-		MuleApiListing.swagger = swagger;
+		ApiListingJSON.swagger = swagger;
 	}
 
 	protected synchronized void scan(Application app) {
