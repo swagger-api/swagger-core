@@ -10,7 +10,7 @@ import com.wordnik.swagger.models.Tag;
 import com.wordnik.swagger.models.auth.ApiKeyAuthDefinition;
 import com.wordnik.swagger.models.auth.In;
 import com.wordnik.swagger.models.auth.OAuth2Definition;
-import com.wordnik.swagger.mule.MuleApiListing;
+import com.wordnik.swagger.mule.ApiListingJSON;
 
 @Singleton
 public class Bootstrap {
@@ -37,6 +37,6 @@ public class Bootstrap {
 		swagger.tag(new Tag().name("user").description("Access to Petstore orders")
 				.externalDocs(new ExternalDocs("Find out more about our store", "http://swagger.io")));
 
-		MuleApiListing.init(swagger);
+		ApiListingJSON.init(swagger);
 	}
 }
