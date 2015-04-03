@@ -149,6 +149,30 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     val swagger = new Reader(new Swagger()).read(classOf[ResourceWithEmptyModel])
     Json.prettyPrint(swagger)
   }
+  
+  it should "scan a simple resource without annotations" in {
+    val swagger = new Reader(new Swagger()).read(classOf[SimpleResourceWithoutAnnotations])
+    swagger.getPaths().size should be (2)
+
+    val path = swagger.getPaths().get("/{id}")
+    val get = path.getGet()
+    get should not be (null)
+    get.getParameters().size should be (2)
+
+    val param1 = get.getParameters().get(0).asInstanceOf[PathParameter]
+
+    param1.getIn() should be ("path")
+    param1.getName() should be ("id")
+    param1.getRequired() should be (true)
+    param1.getDescription() should be (null)
+    param1.getDefaultValue() should be ("5")
+
+    val param2 = get.getParameters().get(1)
+    param2.getIn() should be ("query")
+    param2.getName() should be ("limit")
+    param2.getRequired() should be (false)
+    param2.getDescription() should be (null)
+  }
 }
 
 @RunWith(classOf[JUnitRunner])
@@ -161,3 +185,4 @@ class SimpleScannerTest2 extends FlatSpec with Matchers {
     param.getDefaultValue should be ("dogs")
   }
 }
+  

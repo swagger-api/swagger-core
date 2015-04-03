@@ -18,18 +18,10 @@ import com.wordnik.swagger.models.properties.*;
 import com.wordnik.swagger.util.Json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.CookieParam;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.HttpMethod;
@@ -74,11 +66,14 @@ public class Reader {
     String[] apiConsumes = new String[0];
     String[] apiProduces = new String[0];
 
+    Map<String, Tag> tags = new HashMap<String, Tag>();
+    List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
+    
     // only read if allowing hidden apis OR api is not marked as hidden
-    if((api != null && readHidden) || (api != null && !api.hidden())) {
+    final boolean readable = (api != null && readHidden) || (api != null && !api.hidden());
+    if(readable) {
       // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
-      Set<String> tagStrings = extractTags(api);
-      Map<String, Tag> tags = new HashMap<String, Tag>();
+      Set<String> tagStrings = extractTags(api);      
       for(String tagString : tagStrings) {
         Tag tag = new Tag().name(tagString);
         tags.put(tagString, tag);
@@ -94,8 +89,7 @@ public class Reader {
       String consumes = api.consumes();
       String schems = api.protocols();
       Authorization[] authorizations = api.authorizations();
-
-      List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
+      
       for(Authorization auth : authorizations) {
         if(auth.value() != null && !"".equals(auth.value())) {
           SecurityRequirement security = new SecurityRequirement();
@@ -109,7 +103,10 @@ public class Reader {
           securities.add(security);
         }
       }
-
+    }
+    
+    // allow reading the JAX-RS APIs without @Api annotation
+    if (api == null || readable) {
       // merge consumes, produces
 
       // look for method-level annotated properties
@@ -123,7 +120,7 @@ public class Reader {
         javax.ws.rs.Path methodPath = method.getAnnotation(javax.ws.rs.Path.class);
 
         String operationPath = getPath(apiPath, methodPath, parentPath);
-        if(operationPath != null && apiOperation != null) {
+        if(operationPath != null) {
           String [] pps = operationPath.split("/");
           String [] pathParts = new String[pps.length];
           Map<String, String> regexMap = new HashMap<String, String>();
@@ -165,14 +162,16 @@ public class Reader {
             }
           }
 
-          String protocols = apiOperation.protocols();
-          if(!"".equals(protocols)) {
-            String[] parts = protocols.split(",");
-            for(String part : parts) {
-              String trimmed = part.trim();
-              if(!"".equals(trimmed))
-                operation.scheme(Scheme.forValue(trimmed));
-            }
+          if (apiOperation != null) {
+	          String protocols = apiOperation.protocols();
+	          if(!"".equals(protocols)) {
+	            String[] parts = protocols.split(",");
+	            for(String part : parts) {
+	              String trimmed = part.trim();
+	              if(!"".equals(trimmed))
+	                operation.scheme(Scheme.forValue(trimmed));
+	            }
+	          }
           }
 
           Annotation annotation;
@@ -572,7 +571,7 @@ public class Reader {
   }
 
   public String extractOperationMethod(ApiOperation apiOperation, Method method, Iterator<SwaggerExtension> chain) {
-    if(apiOperation.httpMethod() != null && !"".equals(apiOperation.httpMethod()))
+    if(apiOperation != null && apiOperation.httpMethod() != null && !"".equals(apiOperation.httpMethod()))
       return apiOperation.httpMethod().toLowerCase();
     else if(method.getAnnotation(javax.ws.rs.GET.class) != null)
       return "get";
