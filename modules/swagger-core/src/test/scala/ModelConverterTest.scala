@@ -78,7 +78,8 @@ class ModelConverterTest extends FlatSpec with Matchers {
       },
       "isDomestic" : {
         "type" : "boolean",
-        "position" : 3
+        "position" : 3,
+        "default" : false
       }
     }
   }
@@ -108,7 +109,8 @@ class ModelConverterTest extends FlatSpec with Matchers {
       },
       "isDomestic" : {
         "type" : "boolean",
-        "position" : 3
+        "position" : 3,
+        "default": false
       }
     }
   }

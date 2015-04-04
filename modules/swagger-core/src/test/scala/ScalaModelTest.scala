@@ -96,7 +96,8 @@ class ScalaModelTest extends FlatSpec with Matchers {
         "format" : "date-time"
       },
       "booleanValue" : {
-        "type" : "boolean"
+        "type" : "boolean",
+        "default": false
       }
     }
   }
@@ -151,6 +152,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
       },
       "isDomestic" : {
         "type" : "boolean",
+        "default": false,
         "position" : 3
       }
     }

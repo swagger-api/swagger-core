@@ -15,15 +15,18 @@ class PropertySerializationTest extends FlatSpec with Matchers {
 
   it should "serialize a BooleanProperty" in {
     val p = new BooleanProperty()
-    m.writeValueAsString(p) should be ("""{"type":"boolean"}""")
+      ._default(true)
+
+    m.writeValueAsString(p) should be ("""{"type":"boolean","default":true}""")
   }
 
   it should "deserialize a BooleanProperty" in {
-    val json = """{"type":"boolean"}"""
+    val json = """{"type":"boolean","default":false}"""
     val p = m.readValue(json, classOf[Property])
     p.getType should be ("boolean")
     p.getFormat should be (null)
     p.getClass should be (classOf[BooleanProperty])
+    p.asInstanceOf[BooleanProperty].getDefault should equal (false)
     m.writeValueAsString(p) should equal (json)
   }
 
@@ -57,7 +60,8 @@ class PropertySerializationTest extends FlatSpec with Matchers {
 
   it should "serialize a DoubleProperty" in {
     val p = new DoubleProperty()
-    m.writeValueAsString(p) should be ("""{"type":"number","format":"double"}""")
+      ._default(3.14159)
+    m.writeValueAsString(p) should be ("""{"type":"number","format":"double","default":3.14159}""")
   }
 
   it should "deserialize a DoubleProperty" in {
@@ -71,7 +75,8 @@ class PropertySerializationTest extends FlatSpec with Matchers {
 
   it should "serialize a FloatProperty" in {
     val p = new FloatProperty()
-    m.writeValueAsString(p) should be ("""{"type":"number","format":"float"}""")
+      ._default(1.2f)
+    m.writeValueAsString(p) should be ("""{"type":"number","format":"float","default":1.2}""")
   }
 
   it should "deserialize a FloatProperty" in {
@@ -85,7 +90,8 @@ class PropertySerializationTest extends FlatSpec with Matchers {
 
   it should "serialize an IntegerProperty" in {
     val p = new IntegerProperty()
-    m.writeValueAsString(p) should be ("""{"type":"integer","format":"int32"}""")
+      ._default(32)
+    m.writeValueAsString(p) should be ("""{"type":"integer","format":"int32","default":32}""")
   }
 
   it should "deserialize a IntegerProperty" in {
@@ -99,7 +105,8 @@ class PropertySerializationTest extends FlatSpec with Matchers {
 
   it should "serialize a LongProperty" in {
     val p = new LongProperty()
-    m.writeValueAsString(p) should be ("""{"type":"integer","format":"int64"}""")
+      ._default(8675309L)
+    m.writeValueAsString(p) should be ("""{"type":"integer","format":"int64","default":8675309}""")
   }
 
   it should "deserialize a LongProperty" in {
@@ -164,7 +171,8 @@ class PropertySerializationTest extends FlatSpec with Matchers {
 
   it should "serialize a StringProperty" in {
     val p = new StringProperty()
-    m.writeValueAsString(p) should be ("""{"type":"string"}""")
+      ._default("Bob")
+    m.writeValueAsString(p) should be ("""{"type":"string","default":"Bob"}""")
   }
 
   it should "deserialize a StringProperty" in {
