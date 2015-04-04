@@ -30,6 +30,10 @@ public class LongProperty extends AbstractNumericProperty implements Property {
     }
     return this;
   }
+  public LongProperty _default(Long _default) {
+    this.setDefault(_default);
+    return this;
+  }
 
   public static boolean isType(String type, String format) {
     if("integer".equals(type) && "int64".equals(format))
