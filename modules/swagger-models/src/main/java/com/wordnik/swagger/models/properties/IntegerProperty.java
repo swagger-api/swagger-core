@@ -1,7 +1,6 @@
 package com.wordnik.swagger.models.properties;
 
 import com.wordnik.swagger.models.Xml;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class IntegerProperty extends AbstractNumericProperty implements Property {
   protected Integer _default;
@@ -31,6 +30,10 @@ public class IntegerProperty extends AbstractNumericProperty implements Property
     }
     return this;
   }
+  public IntegerProperty _default(Integer _default) {
+    this.setDefault(_default);
+    return this;
+  }
 
   public static boolean isType(String type, String format) {
     if("integer".equals(type) && "int32".equals(format))
@@ -44,7 +47,6 @@ public class IntegerProperty extends AbstractNumericProperty implements Property
   public void setDefault(Integer _default) {
     this._default = _default;
   }
-  @JsonIgnore
   public void setDefault(String _default) {
     this._default(_default);
   }

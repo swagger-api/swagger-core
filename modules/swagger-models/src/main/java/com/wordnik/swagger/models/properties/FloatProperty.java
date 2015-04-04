@@ -1,7 +1,6 @@
 package com.wordnik.swagger.models.properties;
 
 import com.wordnik.swagger.models.Xml;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class FloatProperty extends AbstractNumericProperty implements Property {
   protected Float _default;
@@ -31,6 +30,10 @@ public class FloatProperty extends AbstractNumericProperty implements Property {
     }
     return this;
   }
+  public FloatProperty _default(Float _default) {
+    this.setDefault(_default);
+    return this;
+  }
 
   public static boolean isType(String type, String format) {
     if("number".equals(type) && "float".equals(format))
@@ -44,7 +47,6 @@ public class FloatProperty extends AbstractNumericProperty implements Property {
   public void setDefault(Float _default) {
     this._default = _default;
   }
-  @JsonIgnore
   public void setDefault(String _default) {
     this._default(_default);
   }

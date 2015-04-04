@@ -32,8 +32,10 @@ public class PropertyBuilder {
     Boolean uniqueItems = (Boolean)args.get("uniqueItems");
 
     AbstractProperty property = null;
-    if(BooleanProperty.isType(type, format))
-      property = new BooleanProperty();
+    if(BooleanProperty.isType(type, format)) {
+      property = new BooleanProperty()
+        ._default(_default);
+    }
     if(DateProperty.isType(type, format))
       property = new DateProperty();
     if(DateTimeProperty.isType(type, format))

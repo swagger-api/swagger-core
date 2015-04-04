@@ -1,7 +1,6 @@
 package com.wordnik.swagger.models.properties;
 
 import com.wordnik.swagger.models.Xml;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class LongProperty extends AbstractNumericProperty implements Property {
   protected Long _default;
@@ -44,7 +43,6 @@ public class LongProperty extends AbstractNumericProperty implements Property {
   public void setDefault(Long _default) {
     this._default = _default;
   }
-  @JsonIgnore
   public void setDefault(String _default) {
     this._default(_default);
   }

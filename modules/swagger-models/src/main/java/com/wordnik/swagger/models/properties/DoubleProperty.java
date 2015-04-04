@@ -1,7 +1,6 @@
 package com.wordnik.swagger.models.properties;
 
 import com.wordnik.swagger.models.Xml;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class DoubleProperty extends AbstractNumericProperty implements Property {
   protected Double _default;
@@ -31,7 +30,10 @@ public class DoubleProperty extends AbstractNumericProperty implements Property 
     }
     return this;
   }
-
+  public DoubleProperty _default(Double _default) {
+    this.setDefault(_default);
+    return this;
+  }
   public static boolean isType(String type, String format) {
     if("number".equals(type) && "double".equals(format))
       return true;
@@ -44,7 +46,6 @@ public class DoubleProperty extends AbstractNumericProperty implements Property 
   public void setDefault(Double _default) {
     this._default = _default;
   }
-  @JsonIgnore
   public void setDefault(String _default) {
     this._default(_default);
   }
