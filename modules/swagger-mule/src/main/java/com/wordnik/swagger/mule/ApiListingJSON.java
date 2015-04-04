@@ -84,12 +84,7 @@ public class ApiListingJSON {
     if (swagger != null) {
       try {
         String yaml = Yaml.mapper().writeValueAsString(swagger);
-        String[] parts = yaml.split("\n");
-        StringBuilder b = new StringBuilder();
-        for (String part : parts) {
-          b.append(part + "\n");
-        }
-        return Response.ok().entity(b.toString()).type("text/plain").build();
+        return Response.ok().entity(yaml).type("text/plain").build();
       } catch (JsonProcessingException e) {
         // This should probably be logged in some project specific way but I couldn't find a standard way it's done
         e.printStackTrace();
