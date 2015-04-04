@@ -8,6 +8,7 @@ public class UUIDProperty extends AbstractProperty implements Property {
   protected List<String> _enum;
   protected Integer minLength = null, maxLength = null;
   protected String pattern = null;
+  protected String _default;
 
   public UUIDProperty() {
     super.type = "string";
@@ -30,6 +31,10 @@ public class UUIDProperty extends AbstractProperty implements Property {
     this.setPattern(pattern);
     return this;
   }
+  public UUIDProperty _default(String _default) {
+    this._default = _default;
+    return this;
+  }
 
   public Integer getMinLength() {
     return minLength;
@@ -50,6 +55,13 @@ public class UUIDProperty extends AbstractProperty implements Property {
   }
   public void setPattern(String pattern) {
     this.pattern = pattern;
+  }
+
+  public String getDefault() {
+    return _default;
+  }
+  public void setDefault(String _default) {
+    this._default = _default;
   }
 
   public static boolean isType(String type, String format) {

@@ -38,18 +38,22 @@ public class PropertyBuilder {
       property = new DateProperty();
     if(DateTimeProperty.isType(type, format))
       property = new DateTimeProperty();
-    if(DoubleProperty.isType(type, format))
+    if(DoubleProperty.isType(type, format)) {
       property = new DoubleProperty()
+        ._default(_default)
         .minimum(minimum)
         .maximum(maximum)
         .exclusiveMinimum(exclusiveMinimum)
         .exclusiveMaximum(exclusiveMinimum);
-    if(FloatProperty.isType(type, format))
+    }
+    if(FloatProperty.isType(type, format)) {
       property = new FloatProperty()
+        ._default(_default)
         .minimum(minimum)
         .maximum(maximum)
         .exclusiveMinimum(exclusiveMinimum)
         .exclusiveMaximum(exclusiveMinimum);
+    }
     if(FileProperty.isType(type, format)) {
       property = new FileProperty();
     }
@@ -59,18 +63,22 @@ public class PropertyBuilder {
         .maximum(maximum)
         .exclusiveMinimum(exclusiveMinimum)
         .exclusiveMaximum(exclusiveMinimum);
-    if(IntegerProperty.isType(type, format))
+    if(IntegerProperty.isType(type, format)) {
       property = new IntegerProperty()
+        ._default(_default)
         .minimum(minimum)
         .maximum(maximum)
         .exclusiveMinimum(exclusiveMinimum)
         .exclusiveMaximum(exclusiveMinimum);
-    if(LongProperty.isType(type, format))
+    }
+    if(LongProperty.isType(type, format)) {
       property = new LongProperty()
+        ._default(_default)
         .minimum(minimum)
         .maximum(maximum)
         .exclusiveMinimum(exclusiveMinimum)
         .exclusiveMaximum(exclusiveMinimum);
+    }
     if(RefProperty.isType(type, format))
       property = new RefProperty();
     if(EmailProperty.isType(type, format))
@@ -79,17 +87,21 @@ public class PropertyBuilder {
         .maxLength(maxLength)
         .pattern(pattern)
         ._enum(_enum);
-    if(StringProperty.isType(type, format))
+    if(StringProperty.isType(type, format)) {
       property = new StringProperty()
+        ._default(_default)
         .minLength(minLength)
         .maxLength(maxLength)
         .pattern(pattern)
         ._enum(_enum);
-    if(UUIDProperty.isType(type, format))
+    }
+    if(UUIDProperty.isType(type, format)) {
       property = new UUIDProperty()
+        ._default(_default)
         .minLength(minLength)
         .maxLength(maxLength)
         .pattern(pattern);
+    }
     // general properties
     if(property != null) {
       property
@@ -105,6 +117,7 @@ public class PropertyBuilder {
         // fall back to Integer if type is integer and format is missing
       LOGGER.debug("no format specified for integer type, falling back to int32");
       property = new IntegerProperty()
+        ._default(_default)
         .minimum(minimum)
         .maximum(maximum)
         .exclusiveMinimum(exclusiveMinimum)
