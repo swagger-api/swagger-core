@@ -72,7 +72,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
       description = (String) ((TextNode) detailNode).asText();
     detailNode = node.get("default");
     if(detailNode != null)
-      _default = (String) ((TextNode) detailNode).asText();
+      _default = detailNode.toString();
     detailNode = node.get("pattern");
     if(detailNode != null)
       pattern = (String) ((TextNode) detailNode).asText();

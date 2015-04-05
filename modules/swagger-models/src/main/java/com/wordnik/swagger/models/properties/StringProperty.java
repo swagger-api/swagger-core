@@ -1,6 +1,7 @@
 package com.wordnik.swagger.models.properties;
 
 import com.wordnik.swagger.models.Xml;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.*;
 
@@ -8,6 +9,7 @@ public class StringProperty extends AbstractProperty implements Property {
   protected List<String> _enum;
   protected Integer minLength = null, maxLength = null;
   protected String pattern = null;
+  protected String _default;
 
   public StringProperty() {
     super.type = "string";
@@ -43,6 +45,10 @@ public class StringProperty extends AbstractProperty implements Property {
     this._enum = value;
     return this;
   }
+  public StringProperty _default(String _default) {
+    this._default = _default;
+    return this;
+  }
 
   public List<String> getEnum() {
     return _enum;
@@ -70,6 +76,13 @@ public class StringProperty extends AbstractProperty implements Property {
   }
   public void setPattern(String pattern) {
     this.pattern = pattern;
+  }
+
+  public String getDefault() {
+    return _default;
+  }
+  public void setDefault(String _default) {
+    this._default = _default;
   }
 
   //TODO: implement additional formats

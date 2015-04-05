@@ -25,9 +25,6 @@ public interface Property {
   boolean getRequired();
   void setRequired(boolean required);
 
-  String getDefault();
-  void setDefault(String _default);
-
   String getExample();
   void setExample(String example);
 
@@ -39,4 +36,6 @@ public interface Property {
 
   Xml getXml();
   void setXml(Xml xml);
+
+  void setDefault(String _default);
 }

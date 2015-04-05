@@ -15,10 +15,11 @@ import javax.servlet.ServletContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
-import java.util.Set;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.Set;
 
 @Path("/")
 public class ApiListingResource {
@@ -37,7 +38,7 @@ public class ApiListingResource {
       SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
       swagger = (Swagger)context.getAttribute("swagger");
 
-      Set<Class<?>> classes = null;
+      Set<Class<?>> classes = new HashSet<Class<?>>();
       if (scanner instanceof JaxrsScanner) {
         JaxrsScanner jaxrsScanner = (JaxrsScanner)scanner;
         classes = jaxrsScanner.classesFromContext(app, sc);

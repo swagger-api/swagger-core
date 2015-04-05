@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project</artifactId>
-    <version>1.5.0-M2</version>
+    <version>1.5.1-M2</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-core</artifactId>
   <packaging>jar</packaging>
   <name>swagger-core</name>
-  <version>1.5.0-M2</version>
+  <version>1.5.1-M2</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <defaultGoal>install</defaultGoal>
