@@ -11,9 +11,11 @@ trait SerializationMatchers {
 
   class SerializeToStringMatcher(str: String, mapper: ObjectMapper) extends Matcher[Object] {
     def apply(left: Object) = {
+      val lhs = mapper.convertValue(left, classOf[ObjectNode])
+      val rhs = mapper.readValue(str, classOf[ObjectNode])
       MatchResult(
-        mapper.convertValue(left, classOf[ObjectNode]).equals(mapper.readValue(str, classOf[ObjectNode])),
-        s"""Serialized object does not equal expected serialized string"""",
+        lhs.equals(rhs),
+        s"""Serialized object:\n$lhs\ndoes not equal expected serialized string:\n$rhs"""",
         s"""Serialized object equals expected serialized string""""
       )
     }
