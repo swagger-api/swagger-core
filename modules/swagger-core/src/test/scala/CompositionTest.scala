@@ -15,7 +15,7 @@ import matchers.SerializationMatchers._
 class CompositionTest extends FlatSpec with Matchers {
   val m = Json.mapper()
 
-  ignore should "read a model with required params and description" in {
+  it should "read a model with required params and description" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Human])
 
     schemas should serializeToJson (
@@ -55,7 +55,8 @@ class CompositionTest extends FlatSpec with Matchers {
         },
         "isDomestic" : {
           "type" : "boolean",
-          "position" : 3
+          "position" : 3,
+          "default" : false
         }
       }
     } ]
@@ -63,7 +64,7 @@ class CompositionTest extends FlatSpec with Matchers {
 }""")
   }
 
-  ignore should "read a model with composition" in {
+  it should "read a model with composition" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Animal])
     schemas should serializeToJson (
 """{
@@ -116,7 +117,8 @@ class CompositionTest extends FlatSpec with Matchers {
         },
         "isDomestic" : {
           "type" : "boolean",
-          "position" : 3
+          "position" : 3,
+          "default" : false
         }
       }
     } ]
