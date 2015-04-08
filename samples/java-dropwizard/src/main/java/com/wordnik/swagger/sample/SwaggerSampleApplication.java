@@ -33,7 +33,7 @@ public class SwaggerSampleApplication extends Application <SwaggerSampleConfigur
     BeanConfig config = new BeanConfig();
     config.setTitle("Swagger sample app");
     config.setVersion("1.0.0");
-    config.setResourcePackage("com.wordnik.swagger.sample");
+    config.setResourcePackage("com.wordnik.swagger.sample.resource");
     config.setScan(true);
   }
 }
