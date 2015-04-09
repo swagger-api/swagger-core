@@ -1,5 +1,5 @@
 /**
- *  Copyright 2014 Reverb Technologies, Inc.
+ *  Copyright 2015 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,11 +17,12 @@
 package com.wordnik.swagger.sample.resource;
 
 import com.wordnik.swagger.annotations.*;
-import com.wordnik.swagger.sample.data.StoreData;
+import com.wordnik.swagger.sample.data.*;
 import com.wordnik.swagger.sample.model.Order;
 import com.wordnik.swagger.sample.exception.NotFoundException;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.*;
 
 @Path("/store")
@@ -29,7 +30,21 @@ import javax.ws.rs.*;
 @Produces({"application/json", "application/xml"})
 public class PetStoreResource {
   static StoreData storeData = new StoreData();
+  static PetData petData = new PetData();
   static JavaRestResourceUtil ru = new JavaRestResourceUtil();
+
+  @GET
+  @Path("/inventory")
+  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+  @ApiOperation(value = "Returns pet inventories by status", 
+    notes = "Returns a map of status codes to quantities", 
+    response = Integer.class,
+    responseContainer = "map",
+    authorizations = @Authorization(value = "api_key", type = "api_key")
+  )
+  public java.util.Map<String, Integer> getInventory() {
+    return petData.getInventoryByStatus();
+  }
 
   @GET
   @Path("/order/{orderId}")
@@ -51,13 +66,13 @@ public class PetStoreResource {
 
   @POST
   @Path("/order")
-  @ApiOperation(value = "Place an order for a pet",
-    response = Order.class)
+  @ApiOperation(value = "Place an order for a pet")
   @ApiResponses({ @ApiResponse(code = 400, message = "Invalid Order") })
-  public Response placeOrder(
-      @ApiParam(value = "order placed for purchasing the pet", required = true) Order order) {
+  public Order placeOrder(
+      @ApiParam(value = "order placed for purchasing the pet",
+        required = true) Order order) {
     storeData.placeOrder(order);
-    return Response.ok().entity("").build();
+    return storeData.placeOrder(order);
   }
 
   @DELETE
