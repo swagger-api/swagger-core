@@ -378,6 +378,7 @@
         <module>samples/java-jersey2</module>
         <module>samples/java-jaxrs-subresource</module>
         <module>samples/java-jaxrs-no-webxml</module>
+        <module>samples/java-mule</module>
         <module>samples/java-dropwizard</module>
         <module>samples/java-jaxrs-cxf</module>
         <module>samples/java-jersey-jaxrs</module>
@@ -401,6 +402,7 @@
   <modules>
     <module>modules/swagger-annotations</module>
     <module>modules/swagger-models</module>
+    <module>modules/swagger-mule</module>
     <module>modules/swagger-core</module>
     <module>modules/swagger-jaxrs</module>
     <module>modules/swagger-jersey2-jaxrs</module>

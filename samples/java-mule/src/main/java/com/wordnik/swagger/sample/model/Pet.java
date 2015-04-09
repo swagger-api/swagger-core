@@ -1,5 +1,5 @@
 /**
- *  Copyright 2014 Reverb Technologies, Inc.
+ *  Copyright 2015 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,6 +51,7 @@ public class Pet {
   }
 
   @XmlElement(name = "name")
+  @ApiModelProperty(example = "doggie", required = true)
   public String getName() {
     return name;
   }
@@ -60,7 +61,7 @@ public class Pet {
   }
 
   @XmlElementWrapper(name = "photoUrls")
-  @XmlElement(name = "photoUrl")
+  @XmlElement(name = "photoUrl", required = true)
   public List<String> getPhotoUrls() {
     return photoUrls;
   }
