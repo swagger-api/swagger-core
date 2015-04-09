@@ -21,7 +21,7 @@ Start Mule and it will deploy automatically.
 This sample application is available on port 7001.
 
 ### Testing the server
-Once started, you can navigate to http://localhost:7001/api-docs to view the Swagger Resource Listing.
+Once started, you can navigate to http://localhost:7001/swagger.json or http://localhost:7001/swagger.yaml to view the Swagger Resource Listing.
 This tells you that the server is up and ready to demonstrate Swagger.
 
 ### Using the UI
@@ -29,5 +29,5 @@ There is an HTML5-based API tool available in a separate project.  This lets you
 intuitive UI.  You can pull this code from here:  https://github.com/swagger-api/swagger-ui
 
 You can then open the dist/index.html file in any HTML5-enabled browser.  Upen opening, enter the
-URL of your server in the top-centered input box (default is http://localhost:7001/api-docs).  Click the "Explore"
+URL of your server in the top-centered input box (default is http://localhost:7001/swagger.json).  Click the "Explore"
 button and you should see the resources available on the server.
