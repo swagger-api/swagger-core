@@ -34,13 +34,12 @@
     </testResources>
   </build>
   <dependencies>
-  <!-- No more Scala, right ?
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_2.10</artifactId>
       <scope>test</scope>
       <version>${scala-test-version}</version>
-    </dependency> -->
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
