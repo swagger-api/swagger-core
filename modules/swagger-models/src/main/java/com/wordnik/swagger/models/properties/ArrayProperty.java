@@ -3,16 +3,19 @@ package com.wordnik.swagger.models.properties;
 import com.wordnik.swagger.models.Xml;
 
 public class ArrayProperty extends AbstractProperty implements Property {
+  public static final String TYPE = "array";
   protected Boolean uniqueItems;
   protected Property items;
 
   public ArrayProperty() {
-    super.type = "array";
+    super.type = TYPE;
   }
+
   public ArrayProperty(Property items) {
-    super.type = "array";
+    super.type = TYPE;
     setItems(items);
   }
+
   public ArrayProperty xml(Xml xml) {
     this.setXml(xml);
     return this;
@@ -36,6 +39,7 @@ public class ArrayProperty extends AbstractProperty implements Property {
   public Property getItems() {
     return items;
   }
+
   public void setItems(Property items) {
     this.items = items;
   }
@@ -43,10 +47,12 @@ public class ArrayProperty extends AbstractProperty implements Property {
   public Boolean getUniqueItems() {
     return uniqueItems;
   }
+
   public void setUniqueItems(Boolean uniqueItems) {
-    if(Boolean.TRUE.equals(uniqueItems))
-      this.uniqueItems = true;
-    else
-      this.uniqueItems = null;
+    this.uniqueItems = uniqueItems ? true : null;
+  }
+
+  public static boolean isType(String type) {
+    return TYPE.equals(type);
   }
 }

@@ -1,114 +1,90 @@
 package com.wordnik.swagger.jaxrs;
 
-import com.wordnik.swagger.converter.ModelConverters;
-import com.wordnik.swagger.annotations.*;
-import com.wordnik.swagger.jackson.ModelResolver;
-import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.models.parameters.*;
-import com.wordnik.swagger.models.properties.*;
-import com.wordnik.swagger.util.Json;
+import java.lang.annotation.Annotation;
+import java.util.EnumMap;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.lang.reflect.ParameterizedType;
-import java.lang.annotation.Annotation;
-import java.util.*;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.converter.ModelConverters;
+import com.wordnik.swagger.models.ArrayModel;
+import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.ModelImpl;
+import com.wordnik.swagger.models.RefModel;
+import com.wordnik.swagger.models.Swagger;
+import com.wordnik.swagger.models.parameters.AbstractSerializableParameter;
+import com.wordnik.swagger.models.parameters.BodyParameter;
+import com.wordnik.swagger.models.parameters.Parameter;
+import com.wordnik.swagger.models.properties.ArrayProperty;
+import com.wordnik.swagger.models.properties.Property;
+import com.wordnik.swagger.models.properties.PropertyBuilder;
+import com.wordnik.swagger.models.properties.RefProperty;
 
 public class ParameterProcessor {
   static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
+  private static final Table<Class<? extends AllowableValues>, Boolean, AbstractAllowableValuesProcessor> allowableValuesProcessors = HashBasedTable.create();
+
+  static {
+    allowableValuesProcessors.put(AllowableRangeValues.class, true, new ArgumentsRangeProcessor());
+    allowableValuesProcessors.put(AllowableRangeValues.class, false, new ParameterRangeProcessor());
+    allowableValuesProcessors.put(AllowableEnumValues.class, true, new ArgumentsEnumProcessor());
+    allowableValuesProcessors.put(AllowableEnumValues.class, false, new ParameterEnumProcessor());
+  }
 
   public static Parameter applyAnnotations(Swagger swagger, Parameter parameter, Class<?> cls, Annotation[] annotations, boolean isArray) {
-    String defaultValue = null;
-    boolean shouldIgnore = false;
-    boolean allowMultiple;
-    String allowableValues;
-
     for(Annotation annotation : annotations) {
       if(annotation instanceof ApiParam) {
         ApiParam param = (ApiParam) annotation;
-        if(parameter != null) {
-          if(!param.defaultValue().isEmpty()){
-            defaultValue = param.defaultValue();
+        if (parameter instanceof AbstractSerializableParameter) {
+          final AbstractSerializableParameter p = (AbstractSerializableParameter) parameter;
+
+          if (param.required()) {
+            p.setRequired(param.required());
+          }
+          final String name = param.name();
+          if (StringUtils.isNotEmpty(name)) {
+            p.setName(name);
+          }
+          p.setDescription(param.value());
+          p.setAccess(param.access());
+
+          AllowableValues allowableValues = null;
+          final String allowableValuesString = param.allowableValues();
+          if (allowableValuesString != null) {
+            allowableValues = AllowableRangeValues.create(allowableValuesString);
+            if (allowableValues == null) {
+              allowableValues = AllowableEnumValues.create(allowableValuesString);
+            }
           }
 
-          if(param.required() == true) {
-            parameter.setRequired(param.required());
-          }
+          final String defaultValue = param.defaultValue();
+          if (param.allowMultiple() || isArray) {
+            final Map<PropertyBuilder.PropertyId, Object> args = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
+            if (!defaultValue.isEmpty()) {
+              args.put(PropertyBuilder.PropertyId.DEFAULT, defaultValue);
+            }
+            if (allowableValues != null) {
+              allowableValuesProcessors.get(allowableValues.getClass(), true).process(args, allowableValues);
+            }
 
-          if(param.name() != null && !"".equals(param.name()))
-            parameter.setName(param.name());
-          parameter.setDescription(param.value());
-          parameter.setAccess(param.access());
-          allowMultiple = param.allowMultiple() || isArray;
-          if(parameter instanceof PathParameter) {
-            PathParameter p = (PathParameter) parameter;
-            if(defaultValue != null)
+            p.items(PropertyBuilder.build(p.getType(), p.getFormat(), args))
+              .type(ArrayProperty.TYPE)
+              .format(null)
+              .collectionFormat("multi");
+          } else {
+            if (!defaultValue.isEmpty()) {
               p.setDefaultValue(defaultValue);
-            if(allowMultiple == true) {
-              Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
-              p.items(items)
-                .array(true)
-                .collectionFormat("multi");
+            }
+            if (allowableValues != null) {
+              allowableValuesProcessors.get(allowableValues.getClass(), false).process(p, allowableValues);
             }
           }
-          else if(parameter instanceof QueryParameter) {
-            QueryParameter p = (QueryParameter) parameter;
-            if(defaultValue != null)
-              p.setDefaultValue(defaultValue);
-            if(allowMultiple == true) {
-              Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
-              p.items(items)
-                .array(true)
-                .collectionFormat("multi");
-            }
-          }
-          else if(parameter instanceof HeaderParameter) {
-            HeaderParameter p = (HeaderParameter) parameter;
-            if(defaultValue != null)
-              p.setDefaultValue(defaultValue);
-            if(allowMultiple == true) {
-              Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
-              p.items(items)
-                .array(true)
-                .collectionFormat("multi");
-            }
-          }
-          else if(parameter instanceof CookieParameter) {
-            CookieParameter p = (CookieParameter) parameter;
-            if(defaultValue != null)
-              p.setDefaultValue(defaultValue);
-            if(allowMultiple == true) {
-              Property items = PropertyBuilder.build(p.getType(), p.getFormat(), null);
-              p.items(items)
-                .array(true)
-                .collectionFormat("multi");
-            }
-          }
-          allowableValues = param.allowableValues();
-          if(allowableValues != null) {
-            if (allowableValues.startsWith("range")) {
-              // TODO handle range
-            }
-            else {
-              String[] values = allowableValues.split(",");
-              List<String> _enum = new ArrayList<String>();
-              for(String value : values) {
-                String trimmed = value.trim();
-                if(!trimmed.equals(""))
-                  _enum.add(trimmed);
-              }
-              if(parameter instanceof SerializableParameter) {
-                SerializableParameter p = (SerializableParameter) parameter;
-                if(_enum.size() > 0)
-                  p.setEnum(_enum);
-              }
-            }
-          }
-        }
-        else if(shouldIgnore == false) {
+        } else {
           // must be a body param
           BodyParameter bp = new BodyParameter();
           if(param.name() != null && !"".equals(param.name()))
@@ -155,7 +131,7 @@ public class ParameterProcessor {
                   String name = ((RefProperty)innerProperty).getSimpleRef();
                   swagger.addDefinition(name, models.get(name));
 
-                  LOGGER.debug( "added model definition for RefProperty " + name );
+                LOGGER.debug("added model definition for RefProperty " + name);
               }
             }
           }
@@ -193,5 +169,5 @@ public class ParameterProcessor {
       }
     }
     return parameter;
-  } 
+  }
 }

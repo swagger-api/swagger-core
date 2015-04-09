@@ -3,8 +3,10 @@ package com.wordnik.swagger.models.properties;
 import com.wordnik.swagger.models.Xml;
 
 public class ObjectProperty extends AbstractProperty implements Property {
+  public static final String TYPE = "object";
+
   public ObjectProperty() {
-    super.type = "object";
+    super.type = TYPE;
   }
   public ObjectProperty xml(Xml xml) {
     this.setXml(xml);
@@ -16,10 +18,12 @@ public class ObjectProperty extends AbstractProperty implements Property {
     return this;
   }
 
+  public static boolean isType(String type) {
+    return TYPE.equals(type);
+  }
+
   //TODO: implement additional formats
   public static boolean isType(String type, String format) {
-    if("object".equals(type))
-      return true;
-    else return false;
+    return isType(type);
   }
 }

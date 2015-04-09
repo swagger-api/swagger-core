@@ -1,8 +1,10 @@
+import javax.ws.rs.QueryParam
+
 import resources._
 
 import com.wordnik.swagger.jaxrs.config._
 import com.wordnik.swagger.models.parameters._
-import com.wordnik.swagger.models.properties.MapProperty
+import com.wordnik.swagger.models.properties.{IntegerProperty, MapProperty}
 
 import com.wordnik.swagger.models.Swagger
 import com.wordnik.swagger.jaxrs.Reader
@@ -121,6 +123,35 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     val param = get.getParameters().get(2).asInstanceOf[SerializableParameter]
     val _enum = param.getEnum()
     _enum.asScala.toSet should equal (Set("a","b","c","d","e"))
+  }
+
+  it should "scan a resource with param range" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithRanges])
+    val get = swagger.getPaths().get("/{id}").getGet()
+    val params = get.getParameters()
+
+    val param0 = params.get(0).asInstanceOf[PathParameter]
+    param0.getName should be ("id")
+    param0.getDefaultValue should be ("5")
+    Range(param0.getMinimum.toInt, param0.getMaximum.toInt) should equal (Range(0, 10))
+
+    val param1 = params.get(1).asInstanceOf[PathParameter]
+    param1.getName should be ("minValue")
+    param1.getMinimum should be (0)
+    param1.getMaximum should be (null)
+
+    val param2 = params.get(2).asInstanceOf[PathParameter]
+    param2.getName should be ("maxValue")
+    param2.getMinimum should be (null)
+    param2.getMaximum should be (100)
+
+    val param3 = params.get(3).asInstanceOf[PathParameter]
+    param3.getName should be ("values")
+    val items = param3.getItems.asInstanceOf[IntegerProperty]
+    items.getMinimum should be (0)
+    items.getMaximum should be (5)
+    items.getExclusiveMinimum().booleanValue should be (true)
+    items.getExclusiveMaximum().booleanValue should be (true)
   }
 
   it should "scan a resource with response headers" in {

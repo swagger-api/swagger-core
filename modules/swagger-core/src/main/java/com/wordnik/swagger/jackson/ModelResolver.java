@@ -1,39 +1,9 @@
 package com.wordnik.swagger.jackson;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyMetadata;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
@@ -42,18 +12,19 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import com.wordnik.swagger.converter.ModelConverter;
 import com.wordnik.swagger.converter.ModelConverterContext;
-import com.wordnik.swagger.models.ComposedModel;
-import com.wordnik.swagger.models.Model;
-import com.wordnik.swagger.models.ModelImpl;
-import com.wordnik.swagger.models.RefModel;
-import com.wordnik.swagger.models.Xml;
-import com.wordnik.swagger.models.properties.AbstractNumericProperty;
-import com.wordnik.swagger.models.properties.ArrayProperty;
-import com.wordnik.swagger.models.properties.MapProperty;
-import com.wordnik.swagger.models.properties.ObjectProperty;
-import com.wordnik.swagger.models.properties.Property;
-import com.wordnik.swagger.models.properties.RefProperty;
-import com.wordnik.swagger.models.properties.StringProperty;
+import com.wordnik.swagger.models.*;
+import com.wordnik.swagger.models.properties.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.*;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.*;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
   Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
@@ -565,7 +536,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if(min.inclusive())
           ap.setMinimum(new Double(min.value()));
         else
-          ap.setExclusiveMinimum(new Double(min.value()));
+          ap.setExclusiveMinimum(!min.inclusive());
       }
     }
     if(annos.containsKey("javax.validation.constraints.DecimalMax")) {
@@ -575,7 +546,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if(max.inclusive())
           ap.setMaximum(new Double(max.value()));
         else
-          ap.setExclusiveMaximum(new Double(max.value()));
+          ap.setExclusiveMaximum(!max.inclusive());
       }
     }
   }
