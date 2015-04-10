@@ -126,4 +126,32 @@ class CompositionTest extends FlatSpec with Matchers {
 }""")
   }
 
+  it should "create a model" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[AbstractBaseModelWithoutFields])
+    schemas should serializeToJson (
+      """{
+  "AbstractBaseModelWithoutFields" : {
+    "type" : "object",
+    "description" : "I am an Abstract Base Model without any declared fields and with Sub-Types"
+  },
+    "Thing3" : {
+      "allOf" : [ {
+      "$ref" : "#/definitions/AbstractBaseModelWithoutFields"
+      }, {
+      "properties" : {
+        "a" : {
+          "type" : "string",
+          "description" : "Additional field a"
+        },
+        "x" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "Additional field a"
+        }
+      },
+      "description" : "Thing3"
+    } ]
+  }
+}""")
+  }
 }
