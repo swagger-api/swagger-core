@@ -74,9 +74,9 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
     if (jst != null) {
       final JsonSubTypes.Type[] subTypes = jst.value();
       final List<NamedType> names = new ArrayList<NamedType>(subTypes.length);
-      for (JsonSubTypes.Type subType : subTypes)
+      for (JsonSubTypes.Type subType : subTypes) {
         names.add(new NamedType(subType.value()));
-
+      }
       if (!names.isEmpty()) {
         return names;
       }
@@ -86,9 +86,9 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
     if (api != null) {
       final Class<?>[] classes = api.subTypes();
       final List<NamedType> names = new ArrayList<NamedType>(classes.length);
-      for (Class<?> subType : classes)
+      for (Class<?> subType : classes) {
         names.add(new NamedType(subType));
-
+      }
       if (!names.isEmpty()) {
         return names;
       }
