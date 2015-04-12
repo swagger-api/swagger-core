@@ -27,6 +27,13 @@
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
+
+    <servlet>
+        <servlet-name>SwaggerBootstrap</servlet-name>
+        <servlet-class>com.wordnik.swagger.sample.Bootstrap</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
     <filter>
         <filter-name>ApiOriginFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
