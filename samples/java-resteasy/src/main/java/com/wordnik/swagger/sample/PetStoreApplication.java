@@ -23,9 +23,7 @@ public class PetStoreApplication extends Application {
         set.add(PetStoreResource.class);
 
         set.add(com.wordnik.swagger.jaxrs.listing.ApiListingResource.class);
-        set.add(com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider.class);
-        set.add(com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON.class);
-        set.add(com.wordnik.swagger.jaxrs.listing.ResourceListingProvider.class);
+        set.add(com.wordnik.swagger.jaxrs.listing.SwaggerSerializers.class);
 
         return set;
     }
