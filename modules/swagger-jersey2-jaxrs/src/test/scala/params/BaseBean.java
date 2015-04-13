@@ -29,4 +29,8 @@ public class BaseBean {
     this.formParam = formParam;
   }
 
+  public Integer getValueWithNoProperty() {
+    return 32;
+  }
+
 }

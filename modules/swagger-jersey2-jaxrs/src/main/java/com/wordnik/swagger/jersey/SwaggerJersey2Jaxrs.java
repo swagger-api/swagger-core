@@ -8,6 +8,8 @@ import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
 import com.wordnik.swagger.models.parameters.Parameter;
 import com.wordnik.swagger.util.Json;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
@@ -24,7 +26,14 @@ import java.util.*;
  * Swagger extension for handling JAX-RS 2.0 processing.
  */
 public class SwaggerJersey2Jaxrs extends AbstractSwaggerExtension implements SwaggerExtension {
-  final ObjectMapper mapper = Json.mapper();
+  final ObjectMapper mapper;
+
+  public SwaggerJersey2Jaxrs() {
+    mapper = Json.mapper();
+    mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+    mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+    mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.ANY);
+  }
 
   public List<Parameter> extractParameters(final Annotation[] annotations, final Class<?> cls, final boolean isArray,
                                          Set<Class<?>> classesToSkip, final Iterator<SwaggerExtension> chain) {
