@@ -35,7 +35,7 @@ public @interface ResponseHeader {
 
   /**
    * Long description of the response header.
-   * */
+   */
   String description() default "";
 
   /** 
@@ -44,7 +44,9 @@ public @interface ResponseHeader {
   Class<?> response() default Void.class;
 
   /**
-   * If the header type is within a container, specify it here.
-   * */
+   * Notes whether the response type is a list of values.
+   * <p/>
+   * Valid values are "List" or "Map". Any other value will be ignored.
+   */
   String responseContainer() default "";
 }

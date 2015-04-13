@@ -41,7 +41,6 @@ public @interface ApiImplicitParam {
    * For proper Swagger functionality, follow these rules when naming your parameters based on {@link #paramType()}:
    * <ol>
    * <li>If {@code paramType} is "path", the name should be the associated section in the path.</li>
-   * <li>If {@code paramType} is "body", the name should be "body".</li>
    * <li>For all other cases, the name should be the parameter name as your application expects to accept.</li>
    * </ol>
    *
@@ -64,8 +63,8 @@ public @interface ApiImplicitParam {
    * <p>
    * There are three ways to describe the allowable values:
    * <ol>
-   * <li>To set a list of values, provide a comma-separated list surrounded by square brackets.
-   * For example: {@code [first, second, third]}.</li>
+   * <li>To set a list of values, provide a comma-separated list.
+   * For example: {@code first, second, third}.</li>
    * <li>To set a range of values, start the value with "range", and surrounding by square
    * brackets include the minimum and maximum values. For example: {@code range[1, 5]}.</li>
    * <li>To set a minimum/maximum value, use the same format for range but use "infinity"
@@ -84,11 +83,13 @@ public @interface ApiImplicitParam {
 
   /**
    * Allows for filtering a parameter from the API documentation.
+   *<p/>
+   * See com.wordnik.swagger.core.filter.SwaggerSpecFilter for further details.
    */
   String access() default "";
 
   /**
-   * Specifies whether the parameter can accept multiple comma-separated values.
+   * Specifies whether the parameter can accept multiple values by having multiple occurrences.
    */
   boolean allowMultiple() default false;
 

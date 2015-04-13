@@ -22,62 +22,146 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Describes an operation or typically a HTTP method against a specific path.  Operations
- * with equivalent paths are grouped in an array in the Api Declaration.  See
- * https://github.com/wordnik/swagger-core/wiki/API-Declaration
+ * Describes an operation or typically a HTTP method against a specific path.
+ * <p/>
+ * Operations with equivalent paths are grouped in a single Operation Object.
+ * A combination of a HTTP method and a path creates a unique operation.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiOperation {
-  /** Brief description of the operation  */
+  /**
+   * Corresponds to the `summary` field of the operation.
+   * <p/>
+   * Provides a brief description of this operation. Should be 120 characters or less
+   * for proper visibility in Swagger-UI.
+   */
   String value();
 
-  /** long description of the operation */
+  /**
+   * Corresponds to the 'notes' field of the operation.
+   * <p/>
+   * A verbose description of the operation.
+   */
   String notes() default "";
 
   /**
-   * A list of tags for API documentation control. 
+   * A list of tags for API documentation control.
+   * <p/>
    * Tags can be used for logical grouping of operations by resources or any other qualifier.
+   * A non-empty value will override the value received from {@link Api#value()} or {@link Api#tags()}
+   * for this operation.
    * 
-   * @since 1.5.2
+   * @since 1.5.2-M1
    */
   String[] tags() default "";
 
-  /** default response class from the operation */
+  /**
+   * The response type of the operation.
+   * <p/>
+   * In JAX-RS applications, the return type of the method would automatically be used, unless it is
+   * {@code javax.ws.rs.core.Response}. In that case, the operation return type would default to `void`
+   * as the actual response type cannot be known.
+   * <p/>
+   * Setting this property would override any automatically-derived data type.
+   * <p/>
+   * If the value used is a class representing a primitive ({@code Integer}, {@code Long}, ...)
+   * the corresponding primitive type will be used.
+   */
   Class<?> response() default Void.class;
 
-  /** if the response class is within a container, specify it here */
+  /**
+   * Notes whether the response type is a list of values.
+   * <p/>
+   * Valid values are "List" or "Map". Any other value will be ignored.
+   */
   String responseContainer() default "";
 
-  /** the HTTP method, i.e GET, PUT, POST, DELETE, PATCH, OPTIONS */
+  /**
+   * Corresponds to the `method` field as the HTTP method used.
+   * <p/>
+   * If not stated, in JAX-RS applications, the following JAX-RS annotations would be scanned
+   * and used: {@code @GET}, {@code @HEAD}, {@code @POST}, {@code @PUT}, {@code @DELETE} and {@code @OPTIONS}.
+   * Note that even though not part of the JAX-RS specification, if you create and use the {@code @PATCH} annotation,
+   * it will also be parsed and used. If the httpMethod property is set, it will override the JAX-RS annotation.
+   * <p/>
+   * For Servlets, you must specify the HTTP method manually.
+   * <p/>
+   * Acceptable values are "GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS" and "PATCH".
+   */
   String httpMethod() default "";
 
-  /** allow explicit ordering of operations inside the Api Declaration */
+  /**
+   * Not used in 1.5.X, kept for legacy support.
+   */
+  @Deprecated
   int position() default 0;
 
-  /** the nickname for the operation, to override what is detected by the annotation scanner */
+  /**
+   * Corresponds to the `operationId` field.
+   * <p/>
+   * The operationId is used by third-party tools to uniquely identify this operation. In Swagger 2.0, this is
+   * no longer mandatory and if not provided will remain empty.
+   */
   String nickname() default "";
-  
-  /** content type produced by this Api */
+
+  /**
+   * Corresponds to the `produces` field of the operation.
+   * <p/>
+   * Takes in comma-separated values of content types.
+   * For example, "application/json, application/xml" would suggest this operation
+   * generates JSON and XML output.
+   * <p/>
+   * For JAX-RS resources, this would automatically take the value of the {@code @Produces}
+   * annotation if such exists. It can also be used to override the {@code @Produces} values
+   * for the Swagger documentation.
+   */
   String produces() default "";
 
-  /** media type consumed by this Api */
+  /**
+   * Corresponds to the `consumes` field of the operation.
+   * <p/>
+   * Takes in comma-separated values of content types.
+   * For example, "application/json, application/xml" would suggest this API Resource
+   * accepts JSON and XML input.
+   * <p/>
+   * For JAX-RS resources, this would automatically take the value of the {@code @Consumes}
+   * annotation if such exists. It can also be used to override the {@code @Consumes} values
+   * for the Swagger documentation.
+   */
   String consumes() default "";
 
-  /** protocols that this Api requires (i.e. https) */
+  /**
+   * Sets specific protocols (schemes) for this operation.
+   * <p/>
+   * Comma-separated values of the available protocols. Possible values: http, https, ws, wss.
+   *
+   * @return the protocols supported by the operations under the resource.
+   */
   String protocols() default "";
 
-  /** authorizations required by this Api */
-  //String authorizations() default "";
 
-  /** authorizations required by this Api */
+  /**
+   * Corresponds to the `security` field of the Operation Object.
+   * <p/>
+   * Takes in a list of the authorizations (security requirements) for this operation.
+   *
+   * @see Authorization
+   *
+   * @return an array of authorizations required by the server, or a single, empty authorization value if not set.
+   */
   Authorization[] authorizations() default @Authorization(value = "");
 
   /**
-   * Allows an operation to be marked as hidden
+   * Hides the operation from the list of operations.
    */
   boolean hidden() default false;
 
+  /**
+   * A list of possible headers provided alongside the response.
+   *
+   * @return a list of response headers.
+   */
   ResponseHeader[] responseHeaders() default @ResponseHeader(name = "", response = Void.class);
 
   /** HTTP status code */
