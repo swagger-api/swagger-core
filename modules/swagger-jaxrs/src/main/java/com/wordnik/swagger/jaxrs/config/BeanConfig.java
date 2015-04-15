@@ -160,7 +160,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     ConfigurationBuilder config = new ConfigurationBuilder();
     Set<String> acceptablePackages = new HashSet<String>();
 
-    if(resourcePackage != "") {
+    if(resourcePackage != null && !"".equals(resourcePackage)) {
       String[] parts = resourcePackage.split(",");
       for(String pkg : parts) {
         if(!"".equals(pkg)) {
