@@ -1,37 +1,63 @@
 package com.wordnik.swagger.jackson;
 
-import com.wordnik.swagger.util.Json;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
-import com.wordnik.swagger.converter.ModelConverter;
-import com.wordnik.swagger.converter.ModelConverterContext;
-import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.models.properties.*;
-
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.*;
-
-import javax.xml.bind.annotation.*;
-import javax.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyMetadata;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+import com.wordnik.swagger.converter.ModelConverter;
+import com.wordnik.swagger.converter.ModelConverterContext;
+import com.wordnik.swagger.models.ComposedModel;
+import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.ModelImpl;
+import com.wordnik.swagger.models.RefModel;
+import com.wordnik.swagger.models.Xml;
+import com.wordnik.swagger.models.properties.AbstractNumericProperty;
+import com.wordnik.swagger.models.properties.ArrayProperty;
+import com.wordnik.swagger.models.properties.MapProperty;
+import com.wordnik.swagger.models.properties.ObjectProperty;
+import com.wordnik.swagger.models.properties.Property;
+import com.wordnik.swagger.models.properties.RefProperty;
+import com.wordnik.swagger.models.properties.StringProperty;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
   Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
 
-  @SuppressWarnings("serial")
   public ModelResolver(ObjectMapper mapper) {
     super(mapper);
   }
@@ -42,7 +68,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
   protected boolean shouldIgnoreClass(Type type) {
     if(type instanceof Class) {
-      Class<?> cls = (Class)type;
+      Class<?> cls = (Class<?>)type;
       if(cls.getName().equals("javax.ws.rs.Response"))
         return true;
     }
@@ -218,7 +244,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     if("Object".equals(name)) {
       return new ModelImpl();
     }
-    
     if(type.isMapLikeType()) {
       return null;
     }
@@ -481,31 +506,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       }
     }
 
-    List<NamedType> nts = _intr.findSubtypes(beanDesc.getClassInfo());
-    if (nts != null) {
-      ArrayList<String> subtypeNames = new ArrayList<String>();
-      for (NamedType subtype : nts) {
-        Model subtypeModel = context.resolve(subtype.getType());
-
-        if(subtypeModel instanceof ModelImpl && subtypeModel != null) {
-          ModelImpl impl = (ModelImpl) subtypeModel;
-
-          // remove shared properties defined in the parent
-          if(model.getProperties() != null) {
-            for(String propertyName : model.getProperties().keySet()) {
-              if(impl.getProperties().containsKey(propertyName)) {
-                impl.getProperties().remove(propertyName);
-              }
-            }
-          }
-
-          impl.setDiscriminator(null);
-          ComposedModel child = new ComposedModel()
-            .parent(new RefModel(name))
-            .child(impl);    
-          context.defineModel(impl.getName(), child);
-        }
-      }
+    if (!resolveSubtypes(model, beanDesc, context)) {
+      model.setDiscriminator(null);
     }
 
     Collections.sort(props, getPropertyComparator());
@@ -590,5 +592,40 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       e.printStackTrace();
     }
     return null;
+  }
+
+  private boolean resolveSubtypes(ModelImpl model, BeanDescription bean, ModelConverterContext context) {
+    final List<NamedType> types = _intr.findSubtypes(bean.getClassInfo());
+    if (types ==  null) {
+      return false;
+    }
+    int count = 0;
+    final Class<?> beanClass = bean.getClassInfo().getAnnotated();
+    for (NamedType subtype : types) {
+      if (!beanClass.isAssignableFrom(subtype.getType())) {
+        continue;
+      }
+
+      final Model subtypeModel = context.resolve(subtype.getType());
+
+      if(subtypeModel instanceof ModelImpl) {
+        final ModelImpl impl = (ModelImpl) subtypeModel;
+
+        // remove shared properties defined in the parent
+        final Map<String, Property> baseProps = model.getProperties();
+        final Map<String, Property> subtypeProps = impl.getProperties();
+        if(baseProps != null && subtypeProps != null) {
+          for(String remove : baseProps.keySet()) {
+            subtypeProps.remove(remove);
+          }
+        }
+
+        impl.setDiscriminator(null);
+        ComposedModel child = new ComposedModel().parent(new RefModel(model.getName())).child(impl);
+        context.defineModel(impl.getName(), child);
+        ++count;
+      }
+    }
+    return count != 0;
   }
 }

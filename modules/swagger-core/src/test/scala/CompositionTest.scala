@@ -34,32 +34,7 @@ class CompositionTest extends FlatSpec with Matchers {
       "lastName" : {
         "type" : "string"
       }
-    },
-    "discriminator" : "type"
-  },
-  "Pet" : {
-    "allOf" : [ {
-      "$ref" : "#/definitions/Human"
-    }, {
-      "required" : [ "isDomestic", "name", "type" ],
-      "properties" : {
-        "type" : {
-          "type" : "string",
-          "position" : 1,
-          "description" : "The pet type"
-        },
-        "name" : {
-          "type" : "string",
-          "position" : 2,
-          "description" : "The name of the pet"
-        },
-        "isDomestic" : {
-          "type" : "boolean",
-          "position" : 3,
-          "default" : false
-        }
-      }
-    } ]
+    }
   }
 }""")
   }
