@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
+import com.wordnik.swagger.util.Yaml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,15 +29,7 @@ import java.lang.annotation.Annotation;
 public class SwaggerSerializers implements MessageBodyWriter <Swagger> {
   Logger LOGGER = LoggerFactory.getLogger(SwaggerSerializers.class);
 
-  static ObjectMapper yaml;
   static boolean prettyPrint = false;
-
-  static {
-    yaml = new ObjectMapper(new YAMLFactory());
-    yaml.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    yaml.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-    yaml.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-  }
 
   public static void setPrettyPrint(boolean shouldPrettyPrint) {
     SwaggerSerializers.prettyPrint = shouldPrettyPrint;
@@ -68,7 +61,7 @@ public class SwaggerSerializers implements MessageBodyWriter <Swagger> {
         out.write(Json.mapper().writeValueAsString(data).getBytes("utf-8"));
     }
     else if (mediaType.toString().startsWith("application/yaml"))
-      out.write(yaml.writeValueAsString(data).getBytes("utf-8"));
+      out.write(Yaml.mapper().writeValueAsString(data).getBytes("utf-8"));
     else if(mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE)) {
       headers.remove("Content-Type");
       headers.add("Content-Type", "application/json");
