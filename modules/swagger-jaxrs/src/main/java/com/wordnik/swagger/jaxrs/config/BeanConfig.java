@@ -191,7 +191,10 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     }
 
     reader.getSwagger().setInfo(info);
-    Set<Class<?>> classes = new Reflections(config).getTypesAnnotatedWith(Api.class);
+    final Reflections reflections = new Reflections(config);
+	Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Api.class);
+    classes.addAll(reflections.getTypesAnnotatedWith(javax.ws.rs.Path.class));
+    
     Set<Class<?>> output = new HashSet<Class<?>>();
     for(Class<?> cls : classes) {
       if(acceptablePackages.contains(cls.getPackage().getName()))
