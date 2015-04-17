@@ -19,7 +19,7 @@ import org.scalatest.Matchers
 class SimpleScannerTest extends FlatSpec with Matchers {
   it should "scan a simple resource" in {
     val swagger = new Reader(new Swagger()).read(classOf[SimpleResource])
-    swagger.getPaths().size should be (2)
+    swagger.getPaths().size should be (3)
 
     val path = swagger.getPaths().get("/{id}")
     val get = path.getGet()
@@ -39,6 +39,18 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     param2.getName() should be ("limit")
     param2.getRequired() should be (false)
     param2.getDescription() should be (null)
+
+    val path1 = swagger.getPaths().get("/{bodyparams}")
+
+    val bodyParam1 = path1.getPut().getParameters.get(0).asInstanceOf[BodyParameter]
+    bodyParam1.getIn() should be ("body")
+    bodyParam1.getName() should be ("body")
+    bodyParam1.getRequired() should be(true)
+
+    val bodyParam2 = path1.getPut().getParameters.get(1).asInstanceOf[BodyParameter]
+    bodyParam2.getIn() should be ("body")
+    bodyParam2.getName() should be ("body")
+    bodyParam2.getRequired() should be(false)
   }
 
   it should "scan a resource with void return type" in {
