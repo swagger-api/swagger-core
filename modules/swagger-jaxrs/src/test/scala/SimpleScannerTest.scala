@@ -40,14 +40,13 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     param2.getRequired() should be (false)
     param2.getDescription() should be (null)
 
-    val path1 = swagger.getPaths().get("/{bodyparams}")
-
-    val bodyParam1 = path1.getPut().getParameters.get(0).asInstanceOf[BodyParameter]
+    val params = swagger.getPaths().get("/{bodyparams}").getPut().getParameters()
+    val bodyParam1 = params.get(0).asInstanceOf[BodyParameter]
     bodyParam1.getIn() should be ("body")
     bodyParam1.getName() should be ("body")
     bodyParam1.getRequired() should be(true)
 
-    val bodyParam2 = path1.getPut().getParameters.get(1).asInstanceOf[BodyParameter]
+    val bodyParam2 = params.get(1).asInstanceOf[BodyParameter]
     bodyParam2.getIn() should be ("body")
     bodyParam2.getName() should be ("body")
     bodyParam2.getRequired() should be(false)
