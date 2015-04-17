@@ -70,18 +70,6 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
   
   @Override
   public List<NamedType> findSubtypes(Annotated a) {
-    final JsonSubTypes jst = a.getAnnotation(JsonSubTypes.class);
-    if (jst != null) {
-      final JsonSubTypes.Type[] subTypes = jst.value();
-      final List<NamedType> names = new ArrayList<NamedType>(subTypes.length);
-      for (JsonSubTypes.Type subType : subTypes) {
-        names.add(new NamedType(subType.value()));
-      }
-      if (!names.isEmpty()) {
-        return names;
-      }
-    }
-
     final ApiModel api = a.getAnnotation(ApiModel.class);
     if (api != null) {
       final Class<?>[] classes = api.subTypes();
