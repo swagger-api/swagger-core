@@ -1,39 +1,56 @@
 package com.wordnik.swagger.jaxrs;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.Authorization;
-import com.wordnik.swagger.annotations.AuthorizationScope;
-import com.wordnik.swagger.annotations.ApiResponses;
-import com.wordnik.swagger.annotations.ApiResponse;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.wordnik.swagger.converter.ModelConverters;
-import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
-import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
-import com.wordnik.swagger.jaxrs.PATCH;
-import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
-import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.models.parameters.*;
-import com.wordnik.swagger.models.properties.*;
-import com.wordnik.swagger.util.Json;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.Produces;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.HttpMethod;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.lang.reflect.ParameterizedType;
-import java.lang.annotation.Annotation;
-import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+import com.wordnik.swagger.annotations.Authorization;
+import com.wordnik.swagger.annotations.AuthorizationScope;
+import com.wordnik.swagger.converter.ModelConverters;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
+import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
+import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.Operation;
+import com.wordnik.swagger.models.Path;
+import com.wordnik.swagger.models.Response;
+import com.wordnik.swagger.models.Scheme;
+import com.wordnik.swagger.models.SecurityDefinition;
+import com.wordnik.swagger.models.SecurityRequirement;
+import com.wordnik.swagger.models.SecurityScope;
+import com.wordnik.swagger.models.Swagger;
+import com.wordnik.swagger.models.Tag;
+import com.wordnik.swagger.models.parameters.Parameter;
+import com.wordnik.swagger.models.properties.ArrayProperty;
+import com.wordnik.swagger.models.properties.MapProperty;
+import com.wordnik.swagger.models.properties.Property;
+import com.wordnik.swagger.models.properties.RefProperty;
+import com.wordnik.swagger.util.Json;
 
 public class Reader {
-  Logger LOGGER = LoggerFactory.getLogger(Reader.class);
+  private static Logger LOGGER = LoggerFactory.getLogger(Reader.class);
 
   Swagger swagger;
   static ObjectMapper m = Json.mapper();
@@ -43,7 +60,7 @@ public class Reader {
   }
 
   public Swagger read(Set<Class<?>> classes) {
-    for(Class cls: classes)
+    for(Class<?> cls: classes)
       read(cls);
     return swagger;
   }
@@ -52,7 +69,7 @@ public class Reader {
     return this.swagger;
   }
 
-  public Swagger read(Class cls) {
+  public Swagger read(Class<?> cls) {
     return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
   }
 
@@ -111,7 +128,7 @@ public class Reader {
 
       // look for method-level annotated properties
 
-      // handle subresources by looking at return type
+      // handle sub-resources by looking at return type
 
       // parse the method
       Method methods[] = cls.getMethods();
@@ -197,10 +214,9 @@ public class Reader {
               both.addAll(new HashSet<String>(operation.getProduces()));
             apiProduces = both.toArray(new String[both.size()]);
           }
-          if(isSubResource(method)) {
-            Type t = method.getGenericReturnType();
-            Class<?> responseClass = method.getReturnType();
-            Swagger subSwagger = read(responseClass, operationPath, httpMethod, true, apiConsumes, apiProduces, tags, operation.getParameters());
+          final Class<?> subResource = getSubResource(method);
+          if (subResource != null) {
+            read(subResource, operationPath, httpMethod, true, apiConsumes, apiProduces, tags, operation.getParameters());
           }
 
           // can't continue without a valid http method
@@ -245,13 +261,38 @@ public class Reader {
     return swagger;
   }
 
-  protected boolean isSubResource(Method method) {
-    Type t = method.getGenericReturnType();
-    Class<?> responseClass = method.getReturnType();
-    if(responseClass != null && responseClass.getAnnotation(Api.class) != null) {
-      return true;
+  protected Class<?> getSubResource(Method method) {
+    final Class<?> rawType = method.getReturnType();
+    final Class<?> type;
+    if (Class.class.equals(rawType)) {
+      type = getClassArgument(method.getGenericReturnType());
+      if (type == null) {
+        return null;
+      }
+    } else {
+      type = rawType;
     }
-    return false;
+    return type.getAnnotation(Api.class) != null ? type : null;
+  }
+
+  private static Class<?> getClassArgument(Type cls) {
+    if (cls instanceof ParameterizedType) {
+      final ParameterizedType parameterized = (ParameterizedType) cls;
+      final Type[] args = parameterized.getActualTypeArguments();
+      if (args.length != 1) {
+        LOGGER.error(String.format("Unexpected class definition: %s", cls));
+        return null;
+      }
+      final Type first = args[0];
+      if (first instanceof Class) {
+        return (Class<?>) first;
+      } else {
+        return null;
+      }
+    } else {
+      LOGGER.error(String.format("Unknown class definition: %s", cls));
+      return null;
+    }
   }
 
   protected Set<String> extractTags(Api api) {
