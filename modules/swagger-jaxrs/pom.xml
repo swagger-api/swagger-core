@@ -7,10 +7,8 @@
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.wordnik</groupId>
   <artifactId>swagger-jaxrs</artifactId>
   <packaging>jar</packaging>
-  <version>1.5.2-M2-SNAPSHOT</version>
   <name>swagger-jaxrs</name>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
