@@ -1,7 +1,5 @@
 package com.wordnik.swagger.jackson;
 
-import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import com.wordnik.swagger.converter.ModelConverter;
 import com.wordnik.swagger.converter.ModelConverterContext;
@@ -37,10 +35,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
             new SimpleModule("swagger", Version.unknownVersion()) {
               @Override
               public void setupModule(SetupContext context) {
-                context.insertAnnotationIntrospector(
-                        new AnnotationIntrospectorPair(
-                                new SwaggerAnnotationIntrospector(),
-                                new JacksonAnnotationIntrospector()));
+                context.insertAnnotationIntrospector(new SwaggerAnnotationIntrospector());
               }
             });
           _mapper = mapper;
