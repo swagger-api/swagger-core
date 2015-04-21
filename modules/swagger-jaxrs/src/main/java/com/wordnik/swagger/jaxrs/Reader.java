@@ -84,6 +84,9 @@ public class Reader {
     Map<String, Tag> tags = new HashMap<String, Tag>();
     List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
     
+    String[] consumes = new String[0];
+    String[] produces = new String[0];
+
     // only read if allowing hidden apis OR api is not marked as hidden
     final boolean readable = (api != null && readHidden) || (api != null && !api.hidden());
     if(readable) {
@@ -100,13 +103,11 @@ public class Reader {
       }
 
       int position = api.position();
-      String[] produces = new String[0];
       if (!api.produces().isEmpty()) {
         produces = new String[]{api.produces()};
       } else if (cls.getAnnotation(Produces.class) != null) {
         produces = ((Produces) cls.getAnnotation(Produces.class)).value();
       }
-      String[] consumes = new String[0];
       if (!api.consumes().isEmpty()){
         consumes = new String[]{api.consumes()};
       } else if (cls.getAnnotation(Consumes.class) != null){
