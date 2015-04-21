@@ -80,8 +80,6 @@ public class Reader {
     Map<String, SecurityScope> globalScopes = new HashMap<String, SecurityScope>();
 
     javax.ws.rs.Path apiPath = (javax.ws.rs.Path) cls.getAnnotation(javax.ws.rs.Path.class);
-    String[] apiConsumes = new String[0];
-    String[] apiProduces = new String[0];
 
     Map<String, Tag> tags = new HashMap<String, Tag>();
     List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
@@ -102,8 +100,18 @@ public class Reader {
       }
 
       int position = api.position();
-      String produces = api.produces();
-      String consumes = api.consumes();
+      String[] produces = new String[0];
+      if (!api.produces().isEmpty()) {
+        produces = new String[]{api.produces()};
+      } else if (cls.getAnnotation(Produces.class) != null) {
+        produces = ((Produces) cls.getAnnotation(Produces.class)).value();
+      }
+      String[] consumes = new String[0];
+      if (!api.consumes().isEmpty()){
+        consumes = new String[]{api.consumes()};
+      } else if (cls.getAnnotation(Consumes.class) != null){
+        consumes = ((Consumes)cls.getAnnotation(Consumes.class)).value();
+      }
       String schems = api.protocols();
       Authorization[] authorizations = api.authorizations();
       
@@ -191,10 +199,7 @@ public class Reader {
 	          }
           }
 
-          Annotation annotation;
-          annotation = cls.getAnnotation(Consumes.class);
-          if(annotation != null)
-            apiConsumes = ((Consumes)annotation).value();
+          String[] apiConsumes = consumes;
           if(parentConsumes != null) {
             Set<String> both = new HashSet<String>(Arrays.asList(apiConsumes));
             both.addAll(new HashSet<String>(Arrays.asList(parentConsumes)));
@@ -203,10 +208,7 @@ public class Reader {
             apiConsumes = both.toArray(new String[both.size()]);
           }
 
-          annotation = cls.getAnnotation(Produces.class);
-          if(annotation != null)
-            apiProduces = ((Produces)annotation).value();
-
+          String[] apiProduces = produces;
           if(parentProduces != null) {
             Set<String> both = new HashSet<String>(Arrays.asList(apiProduces));
             both.addAll(new HashSet<String>(Arrays.asList(parentProduces)));
@@ -430,6 +432,12 @@ public class Reader {
             operation.security(sec);
         }
       }
+      if (apiOperation.consumes() != null && !apiOperation.consumes().isEmpty()) {
+        operation.consumes(apiOperation.consumes());
+      }
+      if (apiOperation.produces() != null && !apiOperation.produces().isEmpty()) {
+        operation.produces(apiOperation.produces());
+      }
     }
 
     if(responseClass == null) {
@@ -496,18 +504,22 @@ public class Reader {
     operation.operationId(operationId);
 
     Annotation annotation;
-    annotation = method.getAnnotation(Consumes.class);
-    if(annotation != null) {
-      String[] apiConsumes = ((Consumes)annotation).value();
-      for(String mediaType: apiConsumes)
-        operation.consumes(mediaType);
+    if (apiOperation != null && apiOperation.consumes() != null && apiOperation.consumes().isEmpty()) {
+      annotation = method.getAnnotation(Consumes.class);
+      if(annotation != null) {
+        String[] apiConsumes = ((Consumes)annotation).value();
+        for(String mediaType: apiConsumes)
+          operation.consumes(mediaType);
+      }
     }
 
-    annotation = method.getAnnotation(Produces.class);
-    if(annotation != null) {
-      String[] apiProduces = ((Produces)annotation).value();
-      for(String mediaType: apiProduces)
-        operation.produces(mediaType);
+    if (apiOperation != null && apiOperation.produces() != null && apiOperation.produces().isEmpty()) {
+      annotation = method.getAnnotation(Produces.class);
+      if(annotation != null) {
+        String[] apiProduces = ((Produces)annotation).value();
+        for(String mediaType: apiProduces)
+          operation.produces(mediaType);
+      }
     }
 
     List<ApiResponse> apiResponses = new ArrayList<ApiResponse>();
