@@ -1,14 +1,15 @@
 package com.wordnik.swagger.models;
 
-import com.wordnik.swagger.models.Model;
-import com.wordnik.swagger.models.properties.Property;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import java.util.*;
+import com.wordnik.swagger.models.properties.Property;
 
 public class Response {
   private String description;
   private Property schema;
-  private Map<String, String> examples;
+  private Map<String, Object> examples;
   private Map<String, Property> headers;
 
   public Response schema(Property property) {
@@ -19,9 +20,9 @@ public class Response {
     this.setDescription(description);
     return this;
   }
-  public Response example(String type, String example) {
+  public Response example(String type, Object example) {
     if(examples == null) {
-      examples = new HashMap<String, String>();
+      examples = new HashMap<String, Object>();
     }
     examples.put(type, example);
     return this;
@@ -49,10 +50,10 @@ public class Response {
     this.schema = schema;
   }
 
-  public Map<String, String> getExamples() {
+  public Map<String, Object> getExamples() {
     return this.examples;
   }
-  public void setExamples(Map<String, String> examples) {
+  public void setExamples(Map<String, Object> examples) {
     this.examples = examples;
   }
 
