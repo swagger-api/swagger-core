@@ -1,13 +1,12 @@
 package resources;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+
 import models.Employee;
 
-import com.wordnik.swagger.annotations.*;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-
-import java.util.*;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 @Api("/employees")
 @Path("/employees")
@@ -19,5 +18,11 @@ public class ResourceWithSubResources {
   @GET
   public SubResource getTest() {
     return new SubResource();
+  }
+
+  @Path("noPath")
+  @ApiOperation(value="Returns sub-resource without @Path")
+  public NoPathSubResource getNoPathTest() {
+    return new NoPathSubResource();
   }
 }

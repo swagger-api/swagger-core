@@ -17,6 +17,17 @@ public class SubResourceHead {
   }
 
   /**
+   * This path is expected to be collected by
+   * {@link com.wordnik.swagger.jaxrs.Reader}.
+   *
+   * @return class instance of sub-resource
+   */
+  @Path("noPath")
+  public Class<NoPathSubResource> getNoPath() {
+    return NoPathSubResource.class;
+  }
+
+  /**
    * This path is expected to be skipped by
    * {@link com.wordnik.swagger.jaxrs.Reader} as {@link String} doesn't process
    * any requests.
