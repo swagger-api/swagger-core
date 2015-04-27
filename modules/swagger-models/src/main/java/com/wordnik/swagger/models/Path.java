@@ -3,6 +3,8 @@ package com.wordnik.swagger.models;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.wordnik.swagger.models.parameters.Parameter;
 
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @JsonPropertyOrder({ "get", "post", "put", "delete", "options", "patch"})
+@JsonInclude(Include.NON_NULL)
 public class Path {
   private Operation get;
   private Operation put;
