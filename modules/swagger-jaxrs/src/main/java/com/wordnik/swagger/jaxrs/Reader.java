@@ -79,8 +79,6 @@ public class Reader {
     Api api = (Api) cls.getAnnotation(Api.class);
     Map<String, SecurityScope> globalScopes = new HashMap<String, SecurityScope>();
 
-    javax.ws.rs.Path apiPath = (javax.ws.rs.Path) cls.getAnnotation(javax.ws.rs.Path.class);
-
     Map<String, Tag> tags = new HashMap<String, Tag>();
     List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
     
@@ -102,7 +100,6 @@ public class Reader {
         swagger.tag(tags.get(tagName));
       }
 
-      int position = api.position();
       if (!api.produces().isEmpty()) {
         produces = new String[]{api.produces()};
       } else if (cls.getAnnotation(Produces.class) != null) {
@@ -140,9 +137,9 @@ public class Reader {
       // handle sub-resources by looking at return type
 
       // parse the method
+      final javax.ws.rs.Path apiPath = cls.getAnnotation(javax.ws.rs.Path.class);
       Method methods[] = cls.getMethods();
       for(Method method : methods) {
-        ApiOperation apiOperation = (ApiOperation) method.getAnnotation(ApiOperation.class);
         javax.ws.rs.Path methodPath = method.getAnnotation(javax.ws.rs.Path.class);
 
         String operationPath = getPath(apiPath, methodPath, parentPath);
@@ -173,6 +170,7 @@ public class Reader {
           }
           operationPath = pathBuilder.toString();
 
+          final ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
           String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
           Operation operation = parseMethod(method);
@@ -318,8 +316,9 @@ public class Reader {
   }
 
   String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath, String parentPath) {
-    if(classLevelPath == null && methodLevelPath == null)
+    if (classLevelPath == null && methodLevelPath == null && parentPath == null) {
       return null;
+    }
     StringBuilder b = new StringBuilder();
     if(parentPath != null && !"".equals(parentPath) && !"/".equals(parentPath)) {
       if(!parentPath.startsWith("/"))
