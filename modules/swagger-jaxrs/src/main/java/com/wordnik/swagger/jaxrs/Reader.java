@@ -6,6 +6,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Produces;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,6 +88,7 @@ public class Reader {
     
     String[] consumes = new String[0];
     String[] produces = new String[0];
+    final Set<Scheme> globalSchemes = EnumSet.noneOf(Scheme.class);
 
     // only read if allowing hidden apis OR api is not marked as hidden
     final boolean readable = (api != null && readHidden) || (api != null && !api.hidden());
@@ -113,7 +116,7 @@ public class Reader {
       } else if (cls.getAnnotation(Consumes.class) != null){
         consumes = ((Consumes)cls.getAnnotation(Consumes.class)).value();
       }
-      String schems = api.protocols();
+      globalSchemes.addAll(parseSchemes(api.protocols()));
       Authorization[] authorizations = api.authorizations();
       
       for(Authorization auth : authorizations) {
@@ -189,15 +192,15 @@ public class Reader {
           }
 
           if (apiOperation != null) {
-	          String protocols = apiOperation.protocols();
-	          if(!"".equals(protocols)) {
-	            String[] parts = protocols.split(",");
-	            for(String part : parts) {
-	              String trimmed = part.trim();
-	              if(!"".equals(trimmed))
-	                operation.scheme(Scheme.forValue(trimmed));
-	            }
-	          }
+            for (Scheme scheme: parseSchemes(apiOperation.protocols())) {
+              operation.scheme(scheme);
+            }
+          }
+
+          if (operation.getSchemes() == null || operation.getSchemes().isEmpty()) {
+            for (Scheme scheme: globalSchemes) {
+              operation.scheme(scheme);
+            }
           }
 
           String[] apiConsumes = consumes;
@@ -670,5 +673,16 @@ public class Reader {
     else if("file".equals(property.getType()))
       out = true;
     return out;
+  }
+
+  private static Set<Scheme> parseSchemes(String schemes) {
+    final Set<Scheme> result = EnumSet.noneOf(Scheme.class);
+    for (String item : StringUtils.trimToEmpty(schemes).split(",")) {
+      final Scheme scheme = Scheme.forValue(StringUtils.trimToNull(item));
+      if (scheme != null) {
+        result.add(scheme);
+      }
+    }
+    return result;
   }
 }
