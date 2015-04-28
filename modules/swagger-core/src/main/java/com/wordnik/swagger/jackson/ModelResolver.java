@@ -163,8 +163,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         // complex type
         String propertyTypeName = _typeName(propType);
         Model innerModel =  context.resolve(propType);      
-        if(innerModel != null) {      
-          property = new RefProperty(propertyTypeName);
+        if(innerModel instanceof ModelImpl) {
+          property = new RefProperty(((ModelImpl)innerModel).getName());
         }
       }
     }
