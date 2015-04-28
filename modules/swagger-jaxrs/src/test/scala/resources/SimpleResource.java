@@ -60,4 +60,13 @@ public class SimpleResource {
     @CookieParam(value = "X-your-cookie") String cookieId) {
     return Response.ok().build();
   }
+
+  @PUT
+  @Path("/{bodyparams}")
+  @ApiOperation(value = "Body parameters test")
+  public Response sendBodyParams(
+          @ApiParam(value = "Required body parameter", required = true) String param0,
+          @ApiParam(value = "Non-required body parameter") String param1) {
+    return Response.ok().build();
+  }
 }

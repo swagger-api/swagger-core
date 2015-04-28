@@ -111,6 +111,7 @@ public class ParameterProcessor {
         else if(shouldIgnore == false) {
           // must be a body param
           BodyParameter bp = new BodyParameter();
+          bp.setRequired(param.required());
           if(param.name() != null && !"".equals(param.name()))
             bp.setName(param.name());
           else
