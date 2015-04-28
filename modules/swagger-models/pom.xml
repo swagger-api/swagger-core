@@ -6,11 +6,9 @@
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.wordnik</groupId>
   <artifactId>swagger-models</artifactId>
   <packaging>bundle</packaging>
   <name>swagger-models</name>
-  <version>1.5.2-M2-SNAPSHOT</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <defaultGoal>install</defaultGoal>
