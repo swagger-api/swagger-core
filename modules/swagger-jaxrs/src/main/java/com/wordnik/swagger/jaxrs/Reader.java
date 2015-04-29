@@ -361,18 +361,11 @@ public class Reader {
             responseHeaders = new HashMap<String, Property>();
           String description = header.description();
           Class<?> cls = header.response();
-          String container = header.responseContainer();
 
           if(!cls.equals(java.lang.Void.class) && !"void".equals(cls.toString())) {
-            Property responseProperty = null;
             Property property = ModelConverters.getInstance().readAsProperty(cls);
             if(property != null) {
-              if("list".equalsIgnoreCase(container))
-                responseProperty = new ArrayProperty(property);
-              else if("map".equalsIgnoreCase(container))
-                responseProperty = new MapProperty(property);
-              else
-                responseProperty = property;
+              Property responseProperty = wrapContainer(header.responseContainer(), property);
               responseProperty.setDescription(description);
               responseHeaders.put(name, responseProperty);
             }
@@ -576,8 +569,12 @@ public class Reader {
   }
 
   private Property wrapContainer(String container, Property property) {
-    if ("list".equalsIgnoreCase(container)) {
+    if ("list".equalsIgnoreCase(container) || "array".equalsIgnoreCase(container)) {
       return new ArrayProperty(property);
+    } else if ("set".equalsIgnoreCase(container)) {
+      ArrayProperty arrayProperty = new ArrayProperty(property);
+      arrayProperty.setUniqueItems(true);
+      return arrayProperty;
     } else if ("map".equalsIgnoreCase(container)) {
       return new MapProperty(property);
     }

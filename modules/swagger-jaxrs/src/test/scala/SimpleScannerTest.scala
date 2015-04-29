@@ -218,6 +218,21 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     val responses4 = paths.getDelete.getResponses;
     responses4.get("203").getSchema().getClass() should be (classOf[RefProperty])
     responses4.get("403").getSchema().getClass() should be (classOf[RefProperty])
+
+    val paths2 = swagger.getPaths().get("/{id}/name")
+    val responses5 = paths2.getGet.getResponses;
+    responses5.get("203").getSchema().getClass() should be (classOf[ArrayProperty])
+    responses5.get("203").getSchema().asInstanceOf[ArrayProperty].getUniqueItems() should be (null)
+    responses5.get("203").getHeaders().get("foo").getClass() should be (classOf[MapProperty])
+    responses5.get("403").getSchema().getClass() should be (classOf[ArrayProperty])
+    responses5.get("403").getSchema().asInstanceOf[ArrayProperty].getUniqueItems().booleanValue() should be (true)
+
+    val responses6 = paths2.getPut.getResponses;
+    responses6.get("203").getSchema().getClass() should be (classOf[ArrayProperty])
+    responses6.get("203").getSchema().asInstanceOf[ArrayProperty].getUniqueItems().booleanValue() should be (true)
+    responses6.get("203").getHeaders().get("foo").getClass() should be (classOf[ArrayProperty])
+    responses6.get("203").getHeaders().get("foo").asInstanceOf[ArrayProperty].getUniqueItems.booleanValue() should be (true)
+    responses6.get("403").getSchema().getClass() should be (classOf[ArrayProperty])
   }
 }
 
