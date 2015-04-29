@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:j2ee = "http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee  http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+  <!-- sample servlet -->
+  <servlet>
+    <servlet-name>SampleServlet</servlet-name>
+    <servlet-class>com.wordnik.swagger.sample.servlet.SampleServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SampleServlet</servlet-name>
+    <url-pattern>/sample/users</url-pattern>
+  </servlet-mapping>
+
+  <!-- swagger servlet reader -->
+  <servlet>
+    <servlet-name>DefaultServletReaderConfig</servlet-name>
+    <servlet-class>com.wordnik.swagger.servlet.config.DefaultServletReaderConfig</servlet-class>
+    <load-on-startup>2</load-on-startup>
+    <init-param>
+      <param-name>swagger.resource.package</param-name>
+      <param-value>com.wordnik.swagger.sample.servlet</param-value>
+    </init-param>
+    <init-param>
+      <param-name>swagger.api.basepath</param-name>
+      <param-value>http://localhost:8002</param-value>
+    </init-param>
+    <init-param>
+      <param-name>api.version</param-name>
+      <param-value>1.0.0</param-value>
+    </init-param>
+  </servlet>
+
+  <!-- swagger api declaration -->
+  <servlet>
+    <servlet-name>ApiDeclarationServlet</servlet-name>
+    <servlet-class>com.wordnik.swagger.servlet.listing.ApiDeclarationServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ApiDeclarationServlet</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+
+  <!--  this seems unneccessary for 2.0 <filter>
+    <filter-name>ApiOriginFilter</filter-name>
+    <filter-class>com.wordnik.swagger.sample.util.ApiOriginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>ApiOriginFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping> -->
+</web-app>
