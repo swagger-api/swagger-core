@@ -1,15 +1,13 @@
 package com.wordnik.swagger.jersey;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.ws.rs.BeanParam;
-
-import org.glassfish.jersey.media.multipart.FormDataParam;
+import com.wordnik.swagger.jaxrs.ext.AbstractSwaggerExtension;
+import com.wordnik.swagger.jaxrs.ParameterProcessor;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
+import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
+import com.wordnik.swagger.models.parameters.FormParameter;
+import com.wordnik.swagger.models.parameters.Parameter;
+import com.wordnik.swagger.util.Json;
 
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,14 +15,13 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.wordnik.swagger.jaxrs.ParameterProcessor;
-import com.wordnik.swagger.jaxrs.ext.AbstractSwaggerExtension;
-import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
-import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
-import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
-import com.wordnik.swagger.models.parameters.FormParameter;
-import com.wordnik.swagger.models.parameters.Parameter;
-import com.wordnik.swagger.util.Json;
+
+import javax.ws.rs.BeanParam;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.*;
+
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 /**
  * Swagger extension for handling JAX-RS 2.0 processing.
@@ -33,7 +30,7 @@ public class SwaggerJersey2Jaxrs extends AbstractSwaggerExtension implements Swa
   final ObjectMapper mapper = Json.mapper();
 
   public List<Parameter> extractParameters(final Annotation[] annotations, final Class<?> cls, final boolean isArray,
-                                         Set<Class<?>> classesToSkip, final Iterator<SwaggerExtension> chain) {
+                                           Set<Class<?>> classesToSkip, final Iterator<SwaggerExtension> chain) {
     List<Parameter> parameters = new ArrayList<Parameter>();
 
     if(shouldIgnoreClass(cls) || classesToSkip.contains(cls)) {
@@ -87,10 +84,10 @@ public class SwaggerJersey2Jaxrs extends AbstractSwaggerExtension implements Swa
 
           // Re-process all Bean fields and let the default swagger-jaxrs/swagger-jersey-jaxrs processors do their thing
           List<Parameter> extracted = extensions.next().extractParameters(paramAnnotations.toArray(new Annotation[paramAnnotations.size()]),
-                                                  paramClass,
-                                                  ParameterUtils.isMethodArgumentAnArray(paramClass, paramType),
-                                                  classesToSkip,
-                                                  extensions);
+                                                                          paramClass,
+                                                                          ParameterUtils.isMethodArgumentAnArray(paramClass, paramType),
+                                                                          classesToSkip,
+                                                                          extensions);
 
           // since downstream processors won't know how to introspect @BeanParam, process here
           for(Parameter param : extracted)

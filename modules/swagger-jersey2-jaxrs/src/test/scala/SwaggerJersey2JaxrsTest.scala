@@ -89,4 +89,5 @@ class SwaggerJersey2JaxrsTest extends FlatSpec with Matchers {
         }
     }
   }
+
 }
