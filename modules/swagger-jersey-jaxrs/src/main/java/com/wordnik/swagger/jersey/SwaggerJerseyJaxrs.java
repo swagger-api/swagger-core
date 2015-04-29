@@ -1,18 +1,21 @@
 package com.wordnik.swagger.jersey;
 
-import com.wordnik.swagger.converter.ModelConverters;
-import com.wordnik.swagger.jaxrs.ext.*;
-import com.wordnik.swagger.models.parameters.*;
-import com.wordnik.swagger.models.properties.*;
-
-import com.sun.jersey.multipart.FormDataParam;
-import com.sun.jersey.api.core.InjectParam;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.lang.annotation.Annotation;
+import com.sun.jersey.multipart.FormDataParam;
+import com.wordnik.swagger.converter.ModelConverters;
+import com.wordnik.swagger.jaxrs.ext.AbstractSwaggerExtension;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
+import com.wordnik.swagger.models.parameters.FormParameter;
+import com.wordnik.swagger.models.parameters.Parameter;
+import com.wordnik.swagger.models.properties.Property;
 
 public class SwaggerJerseyJaxrs extends AbstractSwaggerExtension implements SwaggerExtension {
   static Logger LOGGER = LoggerFactory.getLogger(SwaggerJerseyJaxrs.class);

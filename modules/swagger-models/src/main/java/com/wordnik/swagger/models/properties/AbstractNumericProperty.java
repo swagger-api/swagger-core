@@ -2,7 +2,8 @@ package com.wordnik.swagger.models.properties;
 
 
 public abstract class AbstractNumericProperty extends AbstractProperty implements Property {
-  protected Double minimum = null, maximum = null, exclusiveMinimum = null, exclusiveMaximum = null;
+  protected Double minimum, maximum;
+  protected Boolean exclusiveMinimum, exclusiveMaximum;
 
   public AbstractNumericProperty minimum(Double minimum) {
     this.setMinimum(minimum);
@@ -12,11 +13,11 @@ public abstract class AbstractNumericProperty extends AbstractProperty implement
     this.setMaximum(maximum);
     return this;
   }
-  public AbstractNumericProperty exclusiveMinimum(Double exclusiveMinimum) {
+  public AbstractNumericProperty exclusiveMinimum(Boolean exclusiveMinimum) {
     this.setExclusiveMinimum(exclusiveMinimum);
     return this;
   }
-  public AbstractNumericProperty exclusiveMaximum(Double exclusiveMaximum) {
+  public AbstractNumericProperty exclusiveMaximum(Boolean exclusiveMaximum) {
     this.setExclusiveMaximum(exclusiveMaximum);
     return this;
   }
@@ -35,17 +36,17 @@ public abstract class AbstractNumericProperty extends AbstractProperty implement
     this.maximum = maximum;
   }
 
-  public Double getExclusiveMinimum() {
+  public Boolean getExclusiveMinimum() {
     return exclusiveMinimum;
   }
-  public void setExclusiveMinimum(Double exclusiveMinimum) {
+  public void setExclusiveMinimum(Boolean exclusiveMinimum) {
     this.exclusiveMinimum = exclusiveMinimum;
   }
 
-  public Double getExclusiveMaximum() {
+  public Boolean getExclusiveMaximum() {
     return exclusiveMaximum;
   }
-  public void setExclusiveMaximum(Double exclusiveMaximum) {
+  public void setExclusiveMaximum(Boolean exclusiveMaximum) {
     this.exclusiveMaximum = exclusiveMaximum;
   }
 }

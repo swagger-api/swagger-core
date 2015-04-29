@@ -29,9 +29,9 @@ class BeanValidatorTest extends FlatSpec with Matchers {
     password.getMaxLength() should be (20)
 
     val minBalance = properties.get("minBalance").asInstanceOf[DoubleProperty]
-    minBalance.getExclusiveMinimum should be(0.1)
+    minBalance.getExclusiveMinimum().booleanValue() should be (true)
 
     val maxBalance = properties.get("maxBalance").asInstanceOf[DoubleProperty]
-    maxBalance.getExclusiveMaximum should be (1000000.0)
+    maxBalance.getExclusiveMaximum().booleanValue() should be (true)
   }
 }
