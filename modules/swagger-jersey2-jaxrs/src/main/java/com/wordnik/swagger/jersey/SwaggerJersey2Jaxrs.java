@@ -1,12 +1,15 @@
 package com.wordnik.swagger.jersey;
 
-import com.wordnik.swagger.jaxrs.ext.AbstractSwaggerExtension;
-import com.wordnik.swagger.jaxrs.ParameterProcessor;
-import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
-import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
-import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
-import com.wordnik.swagger.models.parameters.Parameter;
-import com.wordnik.swagger.util.Json;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.ws.rs.BeanParam;
+
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,11 +17,14 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-
-import javax.ws.rs.BeanParam;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.*;
+import com.wordnik.swagger.jaxrs.ParameterProcessor;
+import com.wordnik.swagger.jaxrs.ext.AbstractSwaggerExtension;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
+import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
+import com.wordnik.swagger.models.parameters.FormParameter;
+import com.wordnik.swagger.models.parameters.Parameter;
+import com.wordnik.swagger.util.Json;
 
 /**
  * Swagger extension for handling JAX-RS 2.0 processing.
@@ -91,6 +97,13 @@ public class SwaggerJersey2Jaxrs extends AbstractSwaggerExtension implements Swa
             ParameterProcessor.applyAnnotations(null, param, paramClass, paramAnnotations.toArray(new Annotation[paramAnnotations.size()]), isArray);
 
           parameters.addAll(extracted);
+        }
+      }
+      else if (annotation instanceof FormDataParam) {
+        FormDataParam fd = (FormDataParam) annotation;
+        if (java.io.InputStream.class.equals(cls)) {
+          Parameter param = new FormParameter().type("file").name(fd.value());
+          parameters.add(param);
         }
       }
     }
