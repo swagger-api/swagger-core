@@ -1,0 +1,91 @@
+package resources;
+
+import com.wordnik.swagger.annotations.*;
+import models.NotFoundModel;
+import models.Sample;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+
+public class ResourceWithApiResponseResponseContainer {
+  @GET
+  @Path("/{id}")
+  @ApiOperation(value = "Get object by ID",
+    notes = "No details provided",
+    response = Sample.class,
+    responseContainer = "map",
+    code = 200,
+    position = 0,
+    responseHeaders = {
+      @ResponseHeader(name = "foo", description = "description", response = String.class, responseContainer = "list")
+    })
+  @ApiResponses({
+    @ApiResponse(code = 400, message = "Invalid ID",
+      response = NotFoundModel.class,
+      responseContainer = "list",
+      responseHeaders = @ResponseHeader(name = "X-Rack-Cache", description = "Explains whether or not a cache was used", response = Boolean.class)),
+    @ApiResponse(code = 404, message = "object not found")})
+  public Response getTest() {
+    return Response.ok().entity("out").build();
+  }
+
+  @PUT
+  @Path("/{id}")
+  @ApiOperation(value = "Get object by ID",
+    notes = "No details provided",
+    response = Sample.class,
+    position = 0,
+    code = 201,
+    responseHeaders = {
+      @ResponseHeader(name = "foo", description = "description", response = String.class, responseContainer = "list")
+    })
+  @ApiResponses({
+    @ApiResponse(code = 401, message = "Unauthorized",
+      response = NotFoundModel.class,
+      responseContainer = "list",
+      responseHeaders = @ResponseHeader(name = "X-Rack-Cache", description = "Explains whether or not a cache was used", response = Boolean.class)),
+    @ApiResponse(code = 405, message = "Method Not Allowed")})
+  public Response putTest() {
+    return Response.ok().entity("out").build();
+  }
+
+  @POST
+  @Path("/{id}")
+  @ApiOperation(value = "Get object by ID",
+    notes = "No details provided",
+    response = Sample.class,
+    position = 0,
+    code = 202,
+    responseHeaders = {
+      @ResponseHeader(name = "foo", description = "description", response = String.class, responseContainer = "list")
+    })
+  @ApiResponses({
+    @ApiResponse(code = 402, message = "Invalid ID",
+      response = NotFoundModel.class,
+      responseHeaders = @ResponseHeader(name = "X-Rack-Cache", description = "Explains whether or not a cache was used", response = Boolean.class)),
+    @ApiResponse(code = 406, message = "Method Not Allowed")})
+  public Response postTest() {
+    return Response.ok().entity("out").build();
+  }
+
+  @DELETE
+  @Path("/{id}")
+  @ApiOperation(value = "Get object by ID",
+    notes = "No details provided",
+    response = Sample.class,
+    responseContainer = "other",
+    position = 0,
+    code = 203,
+    responseHeaders = {
+      @ResponseHeader(name = "foo", description = "description", response = String.class, responseContainer = "list")
+    })
+  @ApiResponses({
+    @ApiResponse(code = 403, message = "Forbidden",
+      response = NotFoundModel.class,
+      responseContainer = "wrongValue",
+      responseHeaders = @ResponseHeader(name = "X-Rack-Cache", description = "Explains whether or not a cache was used", response = Boolean.class)),
+    @ApiResponse(code = 407, message = "Proxy Authentication Required")})
+  public Response deleteTest() {
+    return Response.ok().entity("out").build();
+  }
+}
