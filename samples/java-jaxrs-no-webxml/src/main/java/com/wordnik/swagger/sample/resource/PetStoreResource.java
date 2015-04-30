@@ -40,7 +40,7 @@ public class PetStoreResource {
     notes = "Returns a map of status codes to quantities", 
     response = Integer.class,
     responseContainer = "map",
-    authorizations = @Authorization(value = "api_key", type = "api_key")
+    authorizations = @Authorization(value = "api_key")
   )
   public java.util.Map<String, Integer> getInventory() {
     return petData.getInventoryByStatus();

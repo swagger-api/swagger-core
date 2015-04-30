@@ -139,7 +139,7 @@ public @interface Api {
    *
    * @return an array of authorizations required by the server, or a single, empty authorization value if not set
    */
-  Authorization[] authorizations() default @Authorization(value = "", type = "");
+  Authorization[] authorizations() default @Authorization(value = "");
 
   /**
    * Hides the api.
