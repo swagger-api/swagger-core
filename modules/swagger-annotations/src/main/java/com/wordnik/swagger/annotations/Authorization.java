@@ -25,6 +25,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Authorization {
   String value();
-  String type();
   AuthorizationScope[] scopes() default @AuthorizationScope(scope = "", description = "");
 }

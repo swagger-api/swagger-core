@@ -38,7 +38,6 @@ import com.wordnik.swagger.models.Operation;
 import com.wordnik.swagger.models.Path;
 import com.wordnik.swagger.models.Response;
 import com.wordnik.swagger.models.Scheme;
-import com.wordnik.swagger.models.SecurityDefinition;
 import com.wordnik.swagger.models.SecurityRequirement;
 import com.wordnik.swagger.models.SecurityScope;
 import com.wordnik.swagger.models.Swagger;
@@ -419,10 +418,8 @@ public class Reader {
             security.setName(auth.value());
             AuthorizationScope[] scopes = auth.scopes();
             for(AuthorizationScope scope : scopes) {
-              SecurityDefinition definition = new SecurityDefinition(auth.type());
               if(scope.scope() != null && !"".equals(scope.scope())) {
                 security.addScope(scope.scope());
-                definition.scope(scope.scope(), scope.description());
               }
             }
             securities.add(security);
