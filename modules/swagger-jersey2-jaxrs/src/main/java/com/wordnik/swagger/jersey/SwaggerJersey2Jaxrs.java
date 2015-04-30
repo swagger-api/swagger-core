@@ -5,6 +5,7 @@ import com.wordnik.swagger.jaxrs.ParameterProcessor;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
 import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
+import com.wordnik.swagger.models.parameters.FormParameter;
 import com.wordnik.swagger.models.parameters.Parameter;
 import com.wordnik.swagger.util.Json;
 
@@ -20,6 +21,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.*;
 
+import org.glassfish.jersey.media.multipart.FormDataParam;
+
 /**
  * Swagger extension for handling JAX-RS 2.0 processing.
  */
@@ -27,7 +30,7 @@ public class SwaggerJersey2Jaxrs extends AbstractSwaggerExtension implements Swa
   final ObjectMapper mapper = Json.mapper();
 
   public List<Parameter> extractParameters(final Annotation[] annotations, final Class<?> cls, final boolean isArray,
-                                         Set<Class<?>> classesToSkip, final Iterator<SwaggerExtension> chain) {
+                                           Set<Class<?>> classesToSkip, final Iterator<SwaggerExtension> chain) {
     List<Parameter> parameters = new ArrayList<Parameter>();
 
     if(shouldIgnoreClass(cls) || classesToSkip.contains(cls)) {
@@ -81,16 +84,23 @@ public class SwaggerJersey2Jaxrs extends AbstractSwaggerExtension implements Swa
 
           // Re-process all Bean fields and let the default swagger-jaxrs/swagger-jersey-jaxrs processors do their thing
           List<Parameter> extracted = extensions.next().extractParameters(paramAnnotations.toArray(new Annotation[paramAnnotations.size()]),
-                                                  paramClass,
-                                                  ParameterUtils.isMethodArgumentAnArray(paramClass, paramType),
-                                                  classesToSkip,
-                                                  extensions);
+                                                                          paramClass,
+                                                                          ParameterUtils.isMethodArgumentAnArray(paramClass, paramType),
+                                                                          classesToSkip,
+                                                                          extensions);
 
           // since downstream processors won't know how to introspect @BeanParam, process here
           for(Parameter param : extracted)
             ParameterProcessor.applyAnnotations(null, param, paramClass, paramAnnotations.toArray(new Annotation[paramAnnotations.size()]), isArray);
 
           parameters.addAll(extracted);
+        }
+      }
+      else if (annotation instanceof FormDataParam) {
+        FormDataParam fd = (FormDataParam) annotation;
+        if (java.io.InputStream.class.equals(cls)) {
+          Parameter param = new FormParameter().type("file").name(fd.value());
+          parameters.add(param);
         }
       }
     }
