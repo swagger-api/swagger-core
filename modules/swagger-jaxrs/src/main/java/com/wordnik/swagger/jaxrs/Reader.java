@@ -18,6 +18,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Produces;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -316,7 +317,7 @@ public class Reader {
   }
 
   String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath, String parentPath) {
-    if (classLevelPath == null && methodLevelPath == null && parentPath == null) {
+    if (classLevelPath == null && methodLevelPath == null && StringUtils.isEmpty(parentPath)) {
       return null;
     }
     StringBuilder b = new StringBuilder();
