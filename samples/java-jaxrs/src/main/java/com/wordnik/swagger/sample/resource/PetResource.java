@@ -53,7 +53,7 @@ public class PetResource {
       @ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("petId") Long petId)
       throws NotFoundException {
     Pet pet = petData.getPetbyId(petId);
-    if (null != pet) {
+    if (pet != null) {
       return Response.ok().entity(pet).build();
     } else {
       throw new NotFoundException(404, "Pet not found");
@@ -126,14 +126,23 @@ public class PetResource {
     consumes = MediaType.APPLICATION_FORM_URLENCODED)
   @ApiResponses(value = {
     @ApiResponse(code = 405, message = "Invalid input")})
-  public Response  updatePetWithForm (
-   @ApiParam(value = "ID of pet that needs to be updated", required = true)@PathParam("petId") String petId,
+  public Response updatePetWithForm (
+   @ApiParam(value = "ID of pet that needs to be updated", required = true)@PathParam("petId") Long petId,
    @ApiParam(value = "Updated name of the pet", required = false)@FormParam("name") String name,
    @ApiParam(value = "Updated status of the pet", required = false)@FormParam("status") String status) {
     System.out.println(name);
     System.out.println(status);
-    return Response.ok().entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build();
+
+    Pet pet = petData.getPetbyId(petId);
+    if(pet != null) {
+      if(name != null && !"".equals(name))
+        pet.setName(name);
+      if(status != null && !"".equals(status))
+        pet.setStatus(status);
+      petData.addPet(pet);
+      return Response.ok().build();
+    }
+    else
+      return Response.status(404).build();
   }
-
-
 }
