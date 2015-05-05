@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiImplicitParam;
 import com.wordnik.swagger.annotations.ApiImplicitParams;
@@ -33,7 +35,6 @@ import com.wordnik.swagger.annotations.AuthorizationScope;
 import com.wordnik.swagger.converter.ModelConverters;
 import com.wordnik.swagger.jackson.AbstractModelConverter;
 import com.wordnik.swagger.jaxrs.PATCH;
-import com.wordnik.swagger.jaxrs.ParameterProcessor;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
 import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
@@ -45,7 +46,13 @@ import com.wordnik.swagger.models.Scheme;
 import com.wordnik.swagger.models.SecurityRequirement;
 import com.wordnik.swagger.models.Swagger;
 import com.wordnik.swagger.models.Tag;
+import com.wordnik.swagger.models.parameters.BodyParameter;
+import com.wordnik.swagger.models.parameters.CookieParameter;
+import com.wordnik.swagger.models.parameters.FormParameter;
+import com.wordnik.swagger.models.parameters.HeaderParameter;
 import com.wordnik.swagger.models.parameters.Parameter;
+import com.wordnik.swagger.models.parameters.PathParameter;
+import com.wordnik.swagger.models.parameters.QueryParameter;
 import com.wordnik.swagger.models.properties.ArrayProperty;
 import com.wordnik.swagger.models.properties.MapProperty;
 import com.wordnik.swagger.models.properties.Property;
@@ -54,6 +61,15 @@ import com.wordnik.swagger.util.Json;
 
 public class ServletReader extends AbstractModelConverter {
   Logger LOGGER = LoggerFactory.getLogger(ServletReader.class);
+  private static final Table<Class<? extends AllowableValues>, Boolean, AbstractAllowableValuesProcessor> allowableValuesProcessors = HashBasedTable
+    .create();
+
+  static {
+    allowableValuesProcessors.put(AllowableRangeValues.class, true, new ArgumentsRangeProcessor());
+    allowableValuesProcessors.put(AllowableRangeValues.class, false, new ParameterRangeProcessor());
+    allowableValuesProcessors.put(AllowableEnumValues.class, true, new ArgumentsEnumProcessor());
+    allowableValuesProcessors.put(AllowableEnumValues.class, false, new ParameterEnumProcessor());
+  }
 
   Swagger swagger;
   static ObjectMapper m = Json.mapper();
@@ -131,7 +147,6 @@ public class ServletReader extends AbstractModelConverter {
       for (Method method : methods) {
         ApiOperation apiOperation = (ApiOperation) method.getAnnotation(ApiOperation.class);
 
-        System.out.println("-> " + method.getName());
         String operationPath = api.value();
         ApiImplicitParams apiImplicitParams = (ApiImplicitParams) method.getAnnotation(ApiImplicitParams.class);
 
@@ -160,12 +175,6 @@ public class ServletReader extends AbstractModelConverter {
               pathBuilder.append("/").append(p);
           }
           operationPath = pathBuilder.toString();
-
-          if (apiImplicitParams != null) {
-            for (ApiImplicitParam param : apiImplicitParams.value()) {
-              operationPath += "/{" + param.name() + "}";
-            }
-          }
 
           String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
@@ -247,8 +256,12 @@ public class ServletReader extends AbstractModelConverter {
                 for (String tagString : tags.keySet())
                   operation.tag(tagString);
               }
-              for (SecurityRequirement security : securities)
-                operation.security(security);
+              // Only add global @Api securities if operation doesn't already have more specific securities
+              if (operation.getSecurity() == null) {
+                for (SecurityRequirement security : securities) {
+                  operation.security(security);
+                }
+              }
 
               Path path = swagger.getPath(operationPath);
               if (path == null) {
@@ -390,10 +403,8 @@ public class ServletReader extends AbstractModelConverter {
             security.setName(auth.value());
             AuthorizationScope[] scopes = auth.scopes();
             for (AuthorizationScope scope : scopes) {
-              SecurityDefinition definition = new SecurityDefinition(auth.type());
               if (scope.scope() != null && !"".equals(scope.scope())) {
                 security.addScope(scope.scope());
-                definition.scope(scope.scope(), scope.description());
               }
             }
             securities.add(security);
@@ -523,25 +534,61 @@ public class ServletReader extends AbstractModelConverter {
     ApiImplicitParams params = method.getAnnotation(ApiImplicitParams.class);
     if (params != null && params.value() != null) {
       ApiImplicitParam[] implParams = params.value();
-      Class[] parameterTypes = new Class[implParams.length];
+      //      Class[] parameterTypes = new Class[implParams.length];
       for (int i = 0; i < implParams.length; i++) {
-        Property prop = getPrimitiveProperty(implParams[i].dataType());
-        //                parameterTypes[i] = getParameters(prop.getClass())
-        //                  Datet
-      }
-      Type[] genericParameterTypes = method.getGenericParameterTypes();
-      Annotation[][] paramAnnotations = method.getParameterAnnotations();
-      // paramTypes = method.getParameterTypes
-      // genericParamTypes = method.getGenericParameterTypes
-      for (int i = 0; i < parameterTypes.length; i++) {
-        Class<?> cls = parameterTypes[i];
-        Type type = genericParameterTypes[i];
-        List<Parameter> parameters = getParameters(cls, type, paramAnnotations[i]);
-
-        for (Parameter parameter : parameters) {
-          operation.parameter(parameter);
+        ApiImplicitParam inParam = implParams[i];
+        //        //                parameterTypes[i] = getParameters(prop.getClass())
+        //        //                  Datet
+        String pt = inParam.paramType();
+        Parameter outParam = null;
+        if ("query".equals(pt)) {
+          outParam = new QueryParameter();
+        } else if ("header".equals(pt)) {
+          outParam = new HeaderParameter();
+        } else if ("path".equals(pt)) {
+          outParam = new PathParameter();
+        } else if ("formData".equals(pt)) {
+          outParam = new FormParameter();
+        } else if ("body".equals(pt)) {
+          outParam = new BodyParameter();
+        } else if ("cookie".equals(pt)) {
+          outParam = new CookieParameter();
+        }
+        if (outParam != null) {
+          //          outParam.setAccess(inParam.access());
+          //          outParam.setDescription(inParam.value());
+          //          outParam.setIn(inParam.paramType());
+          //          outParam.setName(inParam.name());
+          //          outParam.setRequired(inParam.required());
+          //          if (outParam instanceof AbstractSerializableParameter) {
+          //            final AbstractSerializableParameter p = (AbstractSerializableParameter) outParam;
+          //            AllowableValues allowableValues = null;
+          //            final String allowableValuesString = inParam.allowableValues();
+          //            if (allowableValuesString != null) {
+          //              allowableValues = AllowableRangeValues.create(allowableValuesString);
+          //              if (allowableValues == null) {
+          //                allowableValues = AllowableEnumValues.create(allowableValuesString);
+          //              }
+          //            }
+          //          }
+          outParam = ParameterProcessor.parseApiImplicit(swagger, outParam, null, inParam,
+            getPrimitiveProperty(inParam.dataType()));
+          operation.parameter(outParam);
         }
       }
+      //      Type[] genericParameterTypes = method.getGenericParameterTypes();
+      //      Annotation[][] paramAnnotations = method.getParameterAnnotations();
+      //      // paramTypes = method.getParameterTypes
+      //      // genericParamTypes = method.getGenericParameterTypes
+      //      for (int i = 0; i < parameterTypes.length; i++) {
+      //        Class<?> cls = parameterTypes[i];
+      //        Type type = genericParameterTypes[i];
+      //        List<Parameter> parameters = getParameters(cls, type, paramAnnotations[i]);
+      //
+      //        for (Parameter parameter : parameters) {
+      //          operation.parameter(parameter);
+      //        }
+      //      }
     }
 
     //    // process parameters
@@ -556,55 +603,73 @@ public class ServletReader extends AbstractModelConverter {
     //      }
     //    }
 
+    // -->
+    // process parameters
+    //    Class[] parameterTypes = method.getParameterTypes();
+    //    Type[] genericParameterTypes = method.getGenericParameterTypes();
+    //    Annotation[][] paramAnnotations = method.getParameterAnnotations();
+    //    // paramTypes = method.getParameterTypes
+    //    // genericParamTypes = method.getGenericParameterTypes
+    //    for(int i = 0; i < parameterTypes.length; i++) {
+    //      Class<?> cls = parameterTypes[i];
+    //        Type type = genericParameterTypes[i];
+    //      List<Parameter> parameters = getParameters(cls, type, paramAnnotations[i]);
+    //
+    //      for(Parameter parameter : parameters) {
+    //        operation.parameter(parameter);
+    //      }
+    //    }
+    // <--
+
     if (operation.getResponses() == null) {
       operation.defaultResponse(new Response().description("successful operation"));
     }
     return operation;
   }
 
-  List<Parameter> getParameters(Class<?> cls, Type type, Annotation[] annotations) {
-    // look for path, query
-    boolean isArray = ParameterUtils.isMethodArgumentAnArray(cls, type);
-    Iterator<SwaggerExtension> chain = SwaggerExtensions.chain();
-    List<Parameter> parameters = null;
-
-    LOGGER.debug("getParameters for " + cls);
-    Set<Class<?>> classesToSkip = new HashSet<Class<?>>();
-    if (chain.hasNext()) {
-      SwaggerExtension extension = chain.next();
-      LOGGER.debug("trying extension " + extension);
-      parameters = extension.extractParameters(annotations, cls, isArray, classesToSkip, chain);
-    }
-
-    if (parameters.size() > 0) {
-      for (Parameter parameter : parameters) {
-        ParameterProcessor.applyAnnotations(swagger, parameter, cls, annotations, isArray);
-      }
-    }
-    else {
-      LOGGER.debug("no parameter found, looking at body params");
-      if (classesToSkip.contains(cls) == false) {
-        if (type instanceof ParameterizedType) {
-          ParameterizedType ti = (ParameterizedType) type;
-          Type innerType = ti.getActualTypeArguments()[0];
-          if (innerType instanceof Class) {
-            Parameter param = ParameterProcessor.applyAnnotations(swagger, null, (Class) innerType, annotations,
-              isArray);
-            if (param != null) {
-              parameters.add(param);
-            }
-          }
-        }
-        else {
-          Parameter param = ParameterProcessor.applyAnnotations(swagger, null, cls, annotations, isArray);
-          if (param != null) {
-            parameters.add(param);
-          }
-        }
-      }
-    }
-    return parameters;
-  }
+  //  List<Parameter> getParameters(Class<?> cls, Type type, Annotation[] annotations) {
+  //    // look for path, query
+  //    boolean isArray = ParameterUtils.isMethodArgumentAnArray(cls, type);
+  //    Iterator<SwaggerExtension> chain = SwaggerExtensions.chain();
+  //    List<Parameter> parameters = null;
+  //
+  //    LOGGER.debug("getParameters for " + cls);
+  //    Set<Class<?>> classesToSkip = new HashSet<Class<?>>();
+  //    if (chain.hasNext()) {
+  //      SwaggerExtension extension = chain.next();
+  //      LOGGER.debug("trying extension " + extension);
+  //      parameters = extension.extractParameters(annotations, cls, isArray, classesToSkip, chain);
+  //    }
+  //
+  //    if (parameters.size() > 0) {
+  //      for (Parameter parameter : parameters) {
+  //        ParameterProcessor.applyAnnotations(swagger, parameter, cls, annotations, isArray);
+  //      }
+  //    }
+  //    else {
+  //      LOGGER.debug("no parameter found, looking at body params");
+  //      if (classesToSkip.contains(cls) == false) {
+  //        if (type instanceof ParameterizedType) {
+  //          ParameterizedType ti = (ParameterizedType) type;
+  //          Type innerType = ti.getActualTypeArguments()[0];
+  //          if (innerType instanceof Class) {
+  //            Parameter param = ParameterProcessor.applyAnnotations(swagger, null, (Class) innerType, annotations,
+  //              isArray);
+  //            if (param != null) {
+  //              parameters.add(param);
+  //            }
+  //          }
+  //        }
+  //        else {
+  //          Parameter param = ParameterProcessor.applyAnnotations(swagger, null, cls, annotations, isArray);
+  //          if (param != null) {
+  //            parameters.add(param);
+  //          }
+  //        }
+  //      }
+  //    }
+  //    return parameters;
+  //  }
 
   public String extractOperationMethod(ApiOperation apiOperation, Method method, Iterator<SwaggerExtension> chain) {
     if (apiOperation.httpMethod() != null && !"".equals(apiOperation.httpMethod()))

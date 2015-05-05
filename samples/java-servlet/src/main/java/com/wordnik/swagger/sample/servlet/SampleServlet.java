@@ -30,12 +30,11 @@ import com.wordnik.swagger.models.auth.OAuth2Definition;
 import com.wordnik.swagger.sample.model.Pet;
 import com.wordnik.swagger.servlet.listing.ApiDeclarationServlet;
 
-@Api(value = "/pet", description = "Operatioooons about pets", authorizations = {
-  @Authorization(value = "petstore_auth", type = "oauth2",
-    scopes = {
-      @AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
-      @AuthorizationScope(scope = "read:pets", description = "read your pets")
-    })
+@Api(value = "/pet/{petId}", description = "Operatioooons about pets", authorizations = {
+  @Authorization(value = "petstore_auth", scopes = {
+    @AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
+    @AuthorizationScope(scope = "read:pets", description = "read your pets")
+  })
 }, tags = "pet")
 public class SampleServlet extends HttpServlet {
   @Override
@@ -72,7 +71,7 @@ public class SampleServlet extends HttpServlet {
     response = Pet.class,
     httpMethod = "get",
 
-    authorizations = @Authorization(value = "api_key", type = "api_key")
+    authorizations = @Authorization(value = "api_key")
     )
     @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid ID supplied"),
@@ -81,10 +80,9 @@ public class SampleServlet extends HttpServlet {
       @ApiImplicitParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true,
         paramType = "path", name = "petId", dataType = "int"),
       @ApiImplicitParam(value = "Dummy to test multiple params", allowableValues = "range[1,5]", required = true,
-        paramType = "path", name = "petDummy")
+        paramType = "path", name = "petDummy", dataType = "string")
     })
-    public void getPetById(
-      @ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("petId") Long petId) {
+    public void getPetById() {
     return;
   }
 }

@@ -14,7 +14,5 @@ public class DefaultServletReaderConfig extends HttpServlet {
     BeanConfig bc = new BeanConfig();
     bc.setResourcePackage(servletConfig.getInitParameter("swagger.resource.package"));
     bc.setScan(true);
-
-    System.out.println("BEEEEEEP\007");
   }
 }

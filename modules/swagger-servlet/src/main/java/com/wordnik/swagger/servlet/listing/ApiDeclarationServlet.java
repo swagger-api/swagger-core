@@ -52,25 +52,6 @@ public class ApiDeclarationServlet extends HttpServlet {
     initialized = true;
   }
 
-  //  //  @Path("/swagger.yaml")
-  //  public Response getListingYaml(@Context Application app, @Context HttpHeaders headers, @Context UriInfo uriInfo) {
-  //    // On first use scan the API and initialize Swagger
-  //    if (!initialized)
-  //      scan(app);
-  //
-  //    if (swagger != null) {
-  //      try {
-  //        String yaml = Yaml.mapper().writeValueAsString(swagger);
-  //        return Response.ok().entity(yaml).type("text/plain").build();
-  //      } catch (JsonProcessingException e) {
-  //        // This should probably be logged in some project specific way but I couldn't find a standard way it's done
-  //        e.printStackTrace();
-  //        return Response.status(405).build();
-  //      }
-  //    } else return Response.status(404).build(); // This was a 404 in the example, but it seems more like a 405
-  //  }
-  //  
-
   protected void doGet(HttpServletRequest req, HttpServletResponse response)
     throws ServletException, IOException {
     if (req.getRequestURI().equals("/swagger.json")) {
