@@ -6,6 +6,4 @@ if [[ $# -eq 1 ]] ; then
 	PORT=${1}
 fi
 
-mvn compile jetty:run -Djetty.port=${PORT}
-
-
+mvn package jetty:run -Djetty.port=${PORT}

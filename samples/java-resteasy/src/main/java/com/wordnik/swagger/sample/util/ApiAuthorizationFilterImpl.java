@@ -1,5 +1,5 @@
 /**
- *  Copyright 2014 Reverb Technologies, Inc.
+ *  Copyright 2015 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,10 @@ package com.wordnik.swagger.sample.util;
 import com.wordnik.swagger.model.*;
 import com.wordnik.swagger.core.filter.SwaggerSpecFilter;
 
+import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.Operation;
+import com.wordnik.swagger.models.parameters.Parameter;
+import com.wordnik.swagger.models.properties.Property;
 import org.slf4j.*;
 
 import java.util.Map;
@@ -50,7 +54,7 @@ public class ApiAuthorizationFilterImpl implements SwaggerSpecFilter {
       return true;
     }
     else {
-      if(!"GET".equals(operation.method()) || api.path().indexOf("/store") != -1) {
+      if(!"GET".equalsIgnoreCase(api.getMethod()) || api.getPath().indexOf("/store") != -1) {
         return false;
       }
       else return true;
@@ -59,10 +63,15 @@ public class ApiAuthorizationFilterImpl implements SwaggerSpecFilter {
 
   public boolean isParamAllowed(Parameter parameter, Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
     boolean isAuthorized = checkKey(params, headers);
-    if((parameter.paramAccess().isDefined() && parameter.paramAccess().get().equals("internal")) && !isAuthorized) 
+    if("internal".equals(parameter.getAccess()) && !isAuthorized)
       return false;
-    else 
+    else
       return true;
+  }
+
+  @Override
+  public boolean isPropertyAllowed(Model model, Property property, String propertyName, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    return true;
   }
 
   public boolean checkKey(Map<String, List<String>> params, Map<String, List<String>> headers) {
