@@ -88,4 +88,44 @@ public class ResourceWithApiResponseResponseContainer {
   public Response deleteTest() {
     return Response.ok().entity("out").build();
   }
+
+  @GET
+  @Path("/{id}/name")
+  @ApiOperation(value = "Get object by ID",
+    notes = "No details provided",
+    response = Sample.class,
+    responseContainer = "array",
+    position = 0,
+    code = 203,
+    responseHeaders = {
+      @ResponseHeader(name = "foo", description = "description", response = String.class, responseContainer = "map")
+    })
+  @ApiResponses({
+    @ApiResponse(code = 403, message = "Forbidden",
+      response = NotFoundModel.class,
+      responseContainer = "set",
+      responseHeaders = @ResponseHeader(name = "X-Rack-Cache", description = "Explains whether or not a cache was used", response = Boolean.class))})
+  public Response getNameTest() {
+    return Response.ok().entity("out").build();
+  }
+
+  @PUT
+  @Path("/{id}/name")
+  @ApiOperation(value = "Get object by ID",
+    notes = "No details provided",
+    response = Sample.class,
+    responseContainer = "set",
+    position = 0,
+    code = 203,
+    responseHeaders = {
+      @ResponseHeader(name = "foo", description = "description", response = String.class, responseContainer = "set")
+    })
+  @ApiResponses({
+    @ApiResponse(code = 403, message = "Forbidden",
+      response = NotFoundModel.class,
+      responseContainer = "array",
+      responseHeaders = @ResponseHeader(name = "X-Rack-Cache", description = "Explains whether or not a cache was used", response = Boolean.class))})
+  public Response putNameTest() {
+    return Response.ok().entity("out").build();
+  }
 }
