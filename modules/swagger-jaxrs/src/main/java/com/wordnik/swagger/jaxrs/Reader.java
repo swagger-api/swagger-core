@@ -58,7 +58,7 @@ public class Reader {
   static ObjectMapper m = Json.mapper();
 
   public Reader(Swagger swagger) {
-    this.swagger = swagger;
+    this.swagger = swagger == null ? new Swagger() : swagger;
   }
 
   public Swagger read(Set<Class<?>> classes) {
@@ -76,8 +76,6 @@ public class Reader {
   }
 
   protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
-    if(swagger == null)
-      swagger = new Swagger();
     Api api = (Api) cls.getAnnotation(Api.class);
     Map<String, SecurityScope> globalScopes = new HashMap<String, SecurityScope>();
 
