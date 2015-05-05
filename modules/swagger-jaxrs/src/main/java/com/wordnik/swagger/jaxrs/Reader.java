@@ -52,6 +52,7 @@ import com.wordnik.swagger.models.properties.RefProperty;
 import com.wordnik.swagger.util.Json;
 
 public class Reader {
+  private static final String SUCCESSFUL_OPERATION = "successful operation";
   private static Logger LOGGER = LoggerFactory.getLogger(Reader.class);
 
   Swagger swagger;
@@ -457,18 +458,16 @@ public class Reader {
       && !responseClass.equals(java.lang.Void.class)
       && !responseClass.equals(javax.ws.rs.core.Response.class)
       && responseClass.getAnnotation(Api.class) == null) {
+      int responseCode = 200;
+      if (apiOperation != null) {
+        responseCode = apiOperation.code();
+      }
       if(isPrimitive(responseClass)) {
-        Property responseProperty = null;
         Property property = ModelConverters.getInstance().readAsProperty(responseClass);
         if(property != null) {
-          if("list".equalsIgnoreCase(responseContainer))
-            responseProperty = new ArrayProperty(property);
-          else if("map".equalsIgnoreCase(responseContainer))
-            responseProperty = new MapProperty(property);
-          else
-            responseProperty = property;
-          operation.response(200, new Response()
-            .description("successful operation")
+          Property responseProperty = wrapContainer(responseContainer, property);
+          operation.response(responseCode, new Response()
+            .description(SUCCESSFUL_OPERATION)
             .schema(responseProperty)
             .headers(defaultResponseHeaders));
         }
@@ -477,22 +476,16 @@ public class Reader {
         Map<String, Model> models = ModelConverters.getInstance().read(responseClass);
         if(models.size() == 0) {
           Property p = ModelConverters.getInstance().readAsProperty(responseClass);
-          operation.response(200, new Response()
-            .description("successful operation")
+          operation.response(responseCode, new Response()
+            .description(SUCCESSFUL_OPERATION)
             .schema(p)
             .headers(defaultResponseHeaders));
         }
         for(String key: models.keySet()) {
-          Property responseProperty = null;
-
-          if("list".equalsIgnoreCase(responseContainer))
-            responseProperty = new ArrayProperty(new RefProperty().asDefault(key));
-          else if("map".equalsIgnoreCase(responseContainer))
-            responseProperty = new MapProperty(new RefProperty().asDefault(key));
-          else
-            responseProperty = new RefProperty().asDefault(key);
-          operation.response(200, new Response()
-            .description("successful operation")
+          Property property = new RefProperty().asDefault(key);
+          Property responseProperty = wrapContainer(responseContainer, property);
+          operation.response(responseCode, new Response()
+            .description(SUCCESSFUL_OPERATION)
             .schema(responseProperty)
             .headers(defaultResponseHeaders));
           swagger.model(key, models.get(key));
@@ -543,7 +536,9 @@ public class Reader {
         if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
           Map<String, Model> models = ModelConverters.getInstance().read(responseClass);
           for(String key: models.keySet()) {
-            response.schema(new RefProperty().asDefault(key));
+            Property property =  new RefProperty().asDefault(key);
+            Property responseProperty = wrapContainer(apiResponse.responseContainer(), property);
+            response.schema(responseProperty);
             swagger.model(key, models.get(key));
           }
           models = ModelConverters.getInstance().readAll(responseClass);
@@ -578,9 +573,18 @@ public class Reader {
       }
     }
     if(operation.getResponses() == null) {
-      operation.defaultResponse(new Response().description("successful operation"));
+      operation.defaultResponse(new Response().description(SUCCESSFUL_OPERATION));
     }
     return operation;
+  }
+
+  private Property wrapContainer(String container, Property property) {
+    if ("list".equalsIgnoreCase(container)) {
+      return new ArrayProperty(property);
+    } else if ("map".equalsIgnoreCase(container)) {
+      return new MapProperty(property);
+    }
+    return property;
   }
 
   List<Parameter> getParameters(Class<?> cls, Type type, Annotation[] annotations) {

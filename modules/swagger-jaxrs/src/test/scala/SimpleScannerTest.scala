@@ -5,8 +5,9 @@ import resources._
 import com.wordnik.swagger.jaxrs.config._
 import com.wordnik.swagger.models.parameters._
 import com.wordnik.swagger.models.properties.{IntegerProperty, MapProperty}
+import com.wordnik.swagger.models.properties.{ArrayProperty, RefProperty, MapProperty}
 
-import com.wordnik.swagger.models.Swagger
+import com.wordnik.swagger.models.{Response, Swagger}
 import com.wordnik.swagger.jaxrs.Reader
 import com.wordnik.swagger.util.Json
 
@@ -214,6 +215,41 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     param2.getName() should be ("limit")
     param2.getRequired() should be (false)
     param2.getDescription() should be (null)
+  }
+
+  it should "scan resource with ApiOperation.code() value" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithApiOperationCode])
+    val paths = swagger.getPaths().get("/{id}")
+    val responses1 = paths.getGet.getResponses;
+    responses1.size() should be (3);
+    responses1.containsKey("202") should be (true);
+    responses1.containsKey("200") should be (false);
+    responses1.get("202").getDescription should be("successful operation");
+
+    val responses2 = paths.getPut.getResponses;
+    responses2.size() should be (3);
+    responses2.containsKey("200") should be (true);
+    responses2.get("200").getDescription should be("successful operation");
+  }
+
+  it should "scan resource with ApiResponse.responseContainer() value" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithApiResponseResponseContainer])
+    val paths = swagger.getPaths().get("/{id}")
+    val responses1 = paths.getGet.getResponses;
+    responses1.get("200").getSchema().getClass() should be (classOf[MapProperty])
+    responses1.get("400").getSchema().getClass() should be (classOf[ArrayProperty])
+
+    val responses2 = paths.getPut.getResponses;
+    responses2.get("201").getSchema().getClass() should be (classOf[RefProperty])
+    responses2.get("401").getSchema().getClass() should be (classOf[ArrayProperty])
+
+    val responses3 = paths.getPost.getResponses;
+    responses3.get("202").getSchema().getClass() should be (classOf[RefProperty])
+    responses3.get("402").getSchema().getClass() should be (classOf[RefProperty])
+
+    val responses4 = paths.getDelete.getResponses;
+    responses4.get("203").getSchema().getClass() should be (classOf[RefProperty])
+    responses4.get("403").getSchema().getClass() should be (classOf[RefProperty])
   }
 }
 

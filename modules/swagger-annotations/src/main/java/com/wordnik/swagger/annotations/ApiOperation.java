@@ -79,4 +79,7 @@ public @interface ApiOperation {
   boolean hidden() default false;
 
   ResponseHeader[] responseHeaders() default @ResponseHeader(name = "", response = Void.class);
+
+  /** HTTP status code */
+  int code() default 200;
 }
