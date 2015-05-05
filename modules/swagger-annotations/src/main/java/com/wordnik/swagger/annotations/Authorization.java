@@ -23,9 +23,9 @@ import java.lang.annotation.Target;
 
 /**
  * Defines an authorization scheme to be used on a resource or an operation.
- * <p/>
+ * <p>
  * The authorization scheme used needs to be declared at the Swagger root level first.
- * <p/>
+ * <p>
  * This annotation is not used directly and will not be parsed by Swagger. It should be used
  * within either {@link com.wordnik.swagger.annotations.Api} or {@link com.wordnik.swagger.annotations.ApiOperation}.
  *
@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 public @interface Authorization {
   /**
    * The name of the authorization scheme to be used on this resource/operation.
-   * <p/>
+   * <p>
    * The name must be defined in the Resource Listing's authorization section,
    */
   String value();

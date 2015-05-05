@@ -45,7 +45,7 @@ public @interface ResponseHeader {
 
   /**
    * Declares a container wrapping the response header.
-   * <p/>
+   * <p>
    * Valid values are "List" or "Set". Any other value will be ignored.
    */
   String responseContainer() default "";

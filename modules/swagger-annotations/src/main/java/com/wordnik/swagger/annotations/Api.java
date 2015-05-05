@@ -21,7 +21,7 @@ import java.lang.annotation.*;
 
 /**
  * Marks a class as a Swagger resource.
- * <p/>
+ * <p>
  * By default, Swagger-Core will only include and introspect only classes that are annotated
  * with {@code @Api} and will ignore other resources (JAX-RS endpoints, Servlets and
  * so on).
@@ -32,13 +32,13 @@ import java.lang.annotation.*;
 public @interface Api {
   /**
    * Implicitly sets a tag for the operations, legacy support (read description).
-   * <p/>
+   * <p>
    * In swagger-core 1.3.X, this was used as the 'path' that is to host the API Declaration of the
    * resource. This is no longer relevant in swagger-core 1.5.X.
-   * <p/>
+   * <p>
    * If {@link #tags()} is <i>not</i> used, this value will be used to set the tag for the operations described by this
    * resource. Otherwise, the value will be ignored.
-   * <p/>
+   * <p>
    * The leading / (if exists) will be removed.
    *
    * @return tag name for operations under this resource, unless {@link #tags()} is defined.
@@ -48,7 +48,7 @@ public @interface Api {
   /**
    * A list of tags for API documentation control. 
    * Tags can be used for logical grouping of operations by resources or any other qualifier.
-   * <p/>
+   * <p>
    * A non-empty value will override the value provided in {@link #value()}.
    * 
    * @since 1.5.2-M1
@@ -83,11 +83,11 @@ public @interface Api {
 
   /**
    * Corresponds to the `produces` field of the operations under this resource.
-   * <p/>
+   * <p>
    * Takes in comma-separated values of content types.
    * For example, "application/json, application/xml" would suggest the operations
    * generate JSON and XML output.
-   * <p/>
+   * <p>
    * For JAX-RS resources, this would automatically take the value of the {@code @Produces}
    * annotation if such exists. It can also be used to override the {@code @Produces} values
    * for the Swagger documentation.
@@ -98,11 +98,11 @@ public @interface Api {
 
   /**
    * Corresponds to the `consumes` field of the operations under this resource.
-   * <p/>
+   * <p>
    * Takes in comma-separated values of content types.
    * For example, "application/json, application/xml" would suggest the operations
    * accept JSON and XML input.
-   * <p/>
+   * <p>
    * For JAX-RS resources, this would automatically take the value of the {@code @Consumes}
    * annotation if such exists. It can also be used to override the {@code @Consumes} values
    * for the Swagger documentation.
@@ -113,7 +113,7 @@ public @interface Api {
 
   /**
    * Sets specific protocols (schemes) for the operations under this resource.
-   * <p/>
+   * <p>
    * Comma-separated values of the available protocols. Possible values: http, https, ws, wss.
    * 
    * @return the protocols supported by the operations under the resource.
@@ -122,7 +122,7 @@ public @interface Api {
 
   /**
    * Corresponds to the `security` field of the Operation Object.
-   * <p/>
+   * <p>
    * Takes in a list of the authorizations (security requirements) for the operations under this resource.
    * This may be overridden by specific operations.
    *
