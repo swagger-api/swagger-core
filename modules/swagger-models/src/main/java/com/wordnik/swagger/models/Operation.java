@@ -1,13 +1,13 @@
 package com.wordnik.swagger.models;
 
-import com.wordnik.swagger.models.parameters.*;
-
-import com.fasterxml.jackson.annotation.*;
-
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.wordnik.swagger.models.parameters.Parameter;
 
 public class Operation {
   private List<String> tags;
@@ -130,13 +130,18 @@ public class Operation {
   public List<Scheme> getSchemes() {
     return schemes;
   }
+
   public void setSchemes(List<Scheme> schemes) {
     this.schemes = schemes;
   }
+
   public void addScheme(Scheme scheme) {
-    if(this.schemes == null)
-      this.schemes = new ArrayList<Scheme>();
-    this.schemes.add(scheme);
+    if (schemes == null) {
+      schemes = new ArrayList<Scheme>();
+    }
+    if (!schemes.contains(scheme)) {
+      schemes.add(scheme);
+    }
   }
 
   public List<String> getConsumes() {

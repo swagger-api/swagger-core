@@ -1,35 +1,32 @@
 package com.wordnik.swagger.models;
 
-import com.fasterxml.jackson.annotation.*;
-
-import java.util.Map;
-import java.util.HashMap;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Scheme {
-  HTTP, HTTPS, WS, WSS;
+  HTTP("http"),
+  HTTPS("https"),
+  WS("ws"),
+  WSS("wss");
 
-  // the below is required to write the enums as lowercase
-  private static Map<String, Scheme> names = new HashMap<String, Scheme>();
+  private final String value;
 
-  static {
-    names.put("http", HTTP);
-    names.put("https", HTTPS);
-    names.put("ws", WS);
-    names.put("wss", WSS);
+  private Scheme(String value) {
+    this.value = value;
   }
 
   @JsonCreator
   public static Scheme forValue(String value) {
-    return names.get(value.toLowerCase());
+    for (Scheme item : Scheme.values()) {
+      if (item.toValue().equalsIgnoreCase(value)) {
+        return item;
+      }
+    }
+    return null;
   }
 
   @JsonValue
   public String toValue() {
-    for (Map.Entry<String, Scheme> entry : names.entrySet()) {
-      if (entry.getValue() == this)
-        return entry.getKey();
-    }
-
-    return null; // or fail
+    return value;
   }
 }

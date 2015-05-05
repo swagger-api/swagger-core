@@ -1,11 +1,14 @@
 package com.wordnik.swagger.models;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.wordnik.swagger.models.auth.SecuritySchemeDefinition;
-
-import com.fasterxml.jackson.annotation.*;
 import com.wordnik.swagger.models.parameters.Parameter;
-
-import java.util.*;
 
 public class Swagger {
   protected String swagger = "2.0";
@@ -127,19 +130,18 @@ public class Swagger {
   public List<Scheme> getSchemes() {
     return schemes;
   }
+
   public void setSchemes(List<Scheme> schemes) {
     this.schemes = schemes;
   }
+
   public void addScheme(Scheme scheme) {
-    if(this.schemes == null)
-      this.schemes = new ArrayList<Scheme>();
-    boolean found = false;
-    for(Scheme existing : this.schemes) {
-      if(existing.equals(scheme))
-        found = true;
+    if (schemes == null) {
+      schemes = new ArrayList<Scheme>();
     }
-    if(!found)
-      this.schemes.add(scheme);
+    if (!schemes.contains(scheme)) {
+      schemes.add(scheme);
+    }
   }
 
   public List<Tag> getTags() {
