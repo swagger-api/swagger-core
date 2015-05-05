@@ -69,6 +69,10 @@ public @interface ApiResponse {
    */
   ResponseHeader[] responseHeaders() default @ResponseHeader(name = "", response = Void.class);
 
-  /** if the response class is within a container, specify it here */
+  /**
+   * Declares a container wrapping the response.
+   * <p/>
+   * Valid values are "List", "Set" or "Map". Any other value will be ignored.
+   */
   String responseContainer() default "";
 }

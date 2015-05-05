@@ -71,9 +71,9 @@ public @interface ApiOperation {
   Class<?> response() default Void.class;
 
   /**
-   * Notes whether the response type is a list of values.
+   * Declares a container wrapping the response.
    * <p/>
-   * Valid values are "List" or "Map". Any other value will be ignored.
+   * Valid values are "List", "Set" or "Map". Any other value will be ignored.
    */
   String responseContainer() default "";
 

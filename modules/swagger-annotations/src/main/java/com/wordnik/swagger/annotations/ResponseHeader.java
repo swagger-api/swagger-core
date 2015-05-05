@@ -44,9 +44,9 @@ public @interface ResponseHeader {
   Class<?> response() default Void.class;
 
   /**
-   * Notes whether the response type is a list of values.
+   * Declares a container wrapping the response header.
    * <p/>
-   * Valid values are "List" or "Map". Any other value will be ignored.
+   * Valid values are "List" or "Set". Any other value will be ignored.
    */
   String responseContainer() default "";
 }
