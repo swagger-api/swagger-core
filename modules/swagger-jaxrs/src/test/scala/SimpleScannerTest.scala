@@ -255,7 +255,7 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     val responses5 = paths2.getGet.getResponses;
     responses5.get("203").getSchema().getClass() should be (classOf[ArrayProperty])
     responses5.get("203").getSchema().asInstanceOf[ArrayProperty].getUniqueItems() should be (null)
-    responses5.get("203").getHeaders().get("foo").getClass() should be (classOf[MapProperty])
+    responses5.get("203").getHeaders().get("foo").getClass() should not be (classOf[MapProperty])
     responses5.get("403").getSchema().getClass() should be (classOf[ArrayProperty])
     responses5.get("403").getSchema().asInstanceOf[ArrayProperty].getUniqueItems().booleanValue() should be (true)
 
