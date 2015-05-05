@@ -44,7 +44,7 @@ import javax.ws.rs.*;
 
 @Path("/pet")
 @Api(value = "/pet", authorizations = {
-  @Authorization(value = "petstore_auth", type = "oauth2",
+  @Authorization(value = "petstore_auth",
   scopes = {
     @AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
     @AuthorizationScope(scope = "read:pets", description = "read your pets")
@@ -61,7 +61,7 @@ public class PetResource {
   @ApiOperation(value = "Find pet by ID", 
     notes = "Returns a single pet", 
     response = Pet.class,
-    authorizations = @Authorization(value = "api_key", type = "api_key")
+    authorizations = @Authorization(value = "api_key")
   )
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
     @ApiResponse(code = 404, message = "Pet not found") })
