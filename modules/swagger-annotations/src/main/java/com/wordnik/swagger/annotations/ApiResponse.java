@@ -42,4 +42,7 @@ public @interface ApiResponse {
   Class<?> response() default Void.class;
 
   ResponseHeader[] responseHeaders() default @ResponseHeader(name = "", response = Void.class);
+
+  /** if the response class is within a container, specify it here */
+  String responseContainer() default "";
 }
