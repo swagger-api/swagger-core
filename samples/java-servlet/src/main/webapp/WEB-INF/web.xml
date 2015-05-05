@@ -7,6 +7,7 @@
   <servlet>
     <servlet-name>SampleServlet</servlet-name>
     <servlet-class>com.wordnik.swagger.sample.servlet.SampleServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>SampleServlet</servlet-name>
@@ -23,12 +24,16 @@
       <param-value>com.wordnik.swagger.sample.servlet</param-value>
     </init-param>
     <init-param>
+      <param-name>api.version</param-name>
+      <param-value>1.0.0</param-value>
+    </init-param>
+    <init-param>
       <param-name>swagger.api.basepath</param-name>
       <param-value>http://localhost:8002</param-value>
     </init-param>
     <init-param>
-      <param-name>api.version</param-name>
-      <param-value>1.0.0</param-value>
+      <param-name>swagger.api.title</param-name>
+      <param-value>Swagger Sample App</param-value>
     </init-param>
   </servlet>
 

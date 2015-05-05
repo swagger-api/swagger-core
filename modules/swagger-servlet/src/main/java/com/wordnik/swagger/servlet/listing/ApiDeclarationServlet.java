@@ -1,7 +1,6 @@
 package com.wordnik.swagger.servlet.listing;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Set;
 
 import javax.servlet.ServletConfig;
@@ -16,10 +15,11 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wordnik.swagger.config.Scanner;
 import com.wordnik.swagger.config.ScannerFactory;
-import com.wordnik.swagger.jaxrs.Reader;
 import com.wordnik.swagger.jaxrs.listing.SwaggerSerializers;
 import com.wordnik.swagger.models.Swagger;
+import com.wordnik.swagger.servlet.ServletReader;
 import com.wordnik.swagger.util.Json;
+import com.wordnik.swagger.util.Yaml;
 
 public class ApiDeclarationServlet extends HttpServlet {
   private static final Logger LOGGER = LoggerFactory.getLogger(ApiDeclarationServlet.class);
@@ -45,35 +45,13 @@ public class ApiDeclarationServlet extends HttpServlet {
       Set<Class<?>> classes = null;
       classes = scanner.classes();
       if (classes != null) {
-        Reader reader = new Reader(swagger);
+        ServletReader reader = new ServletReader(swagger);
         swagger = reader.read(classes);
-        // This loads the Swagger root information from the mule-swagger-integration.xml instead of
-        // the Bootstrap initializer. Should I leave both ways in, or support only one ? The new API doesn't
-        // seem work very well in the bean xml syntax
-
-        // swagger = ((SwaggerConfig) scanner).configure(swagger);
       }
     }
     initialized = true;
   }
 
-  ////  @Path("/swagger.json")
-  //  public Response getListingJson(@Context Application app, @Context HttpHeaders headers, @Context UriInfo uriInfo) {
-  //    // On first use scan the API and initialize Swagger
-  //    if (!initialized)
-  //      scan(app);
-  //
-  //    if (swagger != null) {
-  //      try {
-  //        return Response.ok().entity(Json.mapper().writeValueAsString(swagger)).build();
-  //      } catch (JsonProcessingException e) {
-  //        // This should probably be logged in some project specific way but I couldn't find a standard way it's done
-  //        e.printStackTrace();
-  //        return Response.status(405).build();
-  //      }
-  //    } else return Response.status(404).build(); // This was a 404 in the example, but it seems more like a 405
-  //  }
-  //
   //  //  @Path("/swagger.yaml")
   //  public Response getListingYaml(@Context Application app, @Context HttpHeaders headers, @Context UriInfo uriInfo) {
   //    // On first use scan the API and initialize Swagger
@@ -92,26 +70,23 @@ public class ApiDeclarationServlet extends HttpServlet {
   //    } else return Response.status(404).build(); // This was a 404 in the example, but it seems more like a 405
   //  }
   //  
+
   protected void doGet(HttpServletRequest req, HttpServletResponse response)
     throws ServletException, IOException {
-    System.out.println("##########" + req.getRequestURI() + "|" + req.getServletPath());
-    if (req.getRequestURI().toLowerCase().equals("/swagger.json")) {
+    if (req.getRequestURI().equals("/swagger.json")) {
       if (swagger != null) {
         try {
-          System.out.println("$############$$$$$$$$$$ " + Json.mapper().writeValueAsString(swagger));
           response.getWriter().println(Json.mapper().writeValueAsString(swagger));
-          return;
         } catch (JsonProcessingException e) {
-          // This should probably be logged in some project specific way but I couldn't find a standard way it's done
           e.printStackTrace();
-          return;
         }
       }
-    } else {
-      PrintWriter out = response.getWriter();
-      out.println("{\"apiVersion\":\"1.0.0\",\"swaa123aaggerVersion\":\"1.2\",\"apis\":[{\"path\":\"/sample\"}]}");
-      out.flush();
-      out.close();
+    } else if (req.getRequestURI().equals("/swagger.yaml")) {
+      try {
+        response.getWriter().println(Yaml.mapper().writeValueAsString(swagger));
+      } catch (JsonProcessingException e) {
+        e.printStackTrace();
+      }
     }
   }
 }
