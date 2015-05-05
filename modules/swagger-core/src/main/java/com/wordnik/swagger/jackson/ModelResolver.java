@@ -14,6 +14,8 @@ import com.wordnik.swagger.converter.ModelConverter;
 import com.wordnik.swagger.converter.ModelConverterContext;
 import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.properties.*;
+import com.wordnik.swagger.util.Json;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +46,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return true;
     }
     else {
-      LOGGER.debug("can't check class " + type);
+      if(type instanceof com.fasterxml.jackson.core.type.ResolvedType) {
+        com.fasterxml.jackson.core.type.ResolvedType rt = (com.fasterxml.jackson.core.type.ResolvedType) type;
+        LOGGER.debug("Can't check class " + type + ", " + rt.getRawClass().getName());
+        if(rt.getRawClass().equals(Class.class))
+          return true;
+      }
     }
     return false;
   }
@@ -106,10 +113,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
           LOGGER.debug("no primitive property type from " + valueType);
           String propertyTypeName = _typeName(valueType);
           LOGGER.debug("using name " + propertyTypeName);
-          if(!"Object".equals(propertyTypeName)) {
+          if (valueType.isEnumType()) {
+            property = new StringProperty();
+            _addEnumProps(valueType.getRawClass(), property);
+            arrayProperty.setItems(property);
+            property = arrayProperty;
+          }
+          else if(!"Object".equals(propertyTypeName)) {
             Model innerModel = context.resolve(valueType);
-            LOGGER.debug("got inner model " + innerModel);
-
+            LOGGER.debug("got inner model " + Json.pretty(innerModel));
             if(innerModel != null) {
               LOGGER.debug("found inner model " + innerModel);
               // model name may be overriding what was detected

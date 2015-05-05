@@ -207,4 +207,9 @@ class ModelConverterTest extends FlatSpec with Matchers {
     val model = schemas.get("sample_model").asInstanceOf[ModelImpl]
     Json.prettyPrint(model)
   }
+
+  it should "convert a model with enum array" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithEnumArray])
+    schemas.size should equal(1)
+  }
 }
