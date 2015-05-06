@@ -9,6 +9,7 @@ import com.wordnik.swagger.models.properties.{ArrayProperty, RefProperty, MapPro
 
 import com.wordnik.swagger.models.{Response, Swagger}
 import com.wordnik.swagger.jaxrs.Reader
+import com.wordnik.swagger.jaxrs.config.DefaultReaderConfig
 import com.wordnik.swagger.util.Json
 
 import scala.collection.JavaConverters._
@@ -194,10 +195,12 @@ class SimpleScannerTest extends FlatSpec with Matchers {
   }
   
   it should "scan a simple resource without annotations" in {
-    val swagger = new Reader(new Swagger()).read(classOf[SimpleResourceWithoutAnnotations])
-    swagger.getPaths().size should be (2)
+    val config = new DefaultReaderConfig()
+    config.setScanAllResources(true)
+    val swagger = new Reader(new Swagger(), config).read(classOf[SimpleResourceWithoutAnnotations])
+    swagger.getPaths() .size should be (2)
 
-    val path = swagger.getPaths().get("/{id}")
+    val path = swagger.getPaths().get("/top/{id}")
     val get = path.getGet()
     get should not be (null)
     get.getParameters().size should be (2)
@@ -215,6 +218,14 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     param2.getName() should be ("limit")
     param2.getRequired() should be (false)
     param2.getDescription() should be (null)
+  }
+
+  it should "check ignoring of routes in a simple resource without annotations" in {
+    val config = new DefaultReaderConfig()
+    config.setScanAllResources(true)
+    config.setIgnoredRoutes(List("/top").asJavaCollection)
+    val swagger = new Reader(new Swagger(), config).read(classOf[SimpleResourceWithoutAnnotations])
+    swagger.getPaths() should be (null)
   }
 
   it should "scan resource with ApiOperation.code() value" in {
@@ -278,4 +289,3 @@ class SimpleScannerTest2 extends FlatSpec with Matchers {
     param.getDefaultValue should be ("dogs")
   }
 }
-  

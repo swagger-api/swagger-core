@@ -23,7 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -31,6 +30,8 @@ import com.wordnik.swagger.annotations.ApiResponses;
 import com.wordnik.swagger.annotations.Authorization;
 import com.wordnik.swagger.annotations.AuthorizationScope;
 import com.wordnik.swagger.converter.ModelConverters;
+import com.wordnik.swagger.jaxrs.config.DefaultReaderConfig;
+import com.wordnik.swagger.jaxrs.config.ReaderConfig;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
 import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
@@ -48,17 +49,25 @@ import com.wordnik.swagger.models.properties.ArrayProperty;
 import com.wordnik.swagger.models.properties.MapProperty;
 import com.wordnik.swagger.models.properties.Property;
 import com.wordnik.swagger.models.properties.RefProperty;
-import com.wordnik.swagger.util.Json;
 
 public class Reader {
+  private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
   private static final String SUCCESSFUL_OPERATION = "successful operation";
-  private static Logger LOGGER = LoggerFactory.getLogger(Reader.class);
+  private static final String PATH_DELIMITER = "/";
+  private static final String OPEN_BRACKET = "{";
+  private static final String CLOSE_BRACKET = "}";
+  private static final String COLON = ":";
 
-  Swagger swagger;
-  static ObjectMapper m = Json.mapper();
+  private Swagger swagger;
+  private final ReaderConfig config;
 
   public Reader(Swagger swagger) {
+    this(swagger, null);
+  }
+
+  public Reader(Swagger swagger, ReaderConfig config) {
     this.swagger = swagger == null ? new Swagger() : swagger;
+    this.config = new DefaultReaderConfig(config);
   }
 
   public Swagger read(Set<Class<?>> classes) {
@@ -81,7 +90,7 @@ public class Reader {
 
     Map<String, Tag> tags = new HashMap<String, Tag>();
     List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
-    
+
     String[] consumes = new String[0];
     String[] produces = new String[0];
     final Set<Scheme> globalSchemes = EnumSet.noneOf(Scheme.class);
@@ -113,7 +122,7 @@ public class Reader {
       }
       globalSchemes.addAll(parseSchemes(api.protocols()));
       Authorization[] authorizations = api.authorizations();
-      
+
       for(Authorization auth : authorizations) {
         if(auth.value() != null && !"".equals(auth.value())) {
           SecurityRequirement security = new SecurityRequirement();
@@ -128,9 +137,9 @@ public class Reader {
         }
       }
     }
-    
+
     // allow reading the JAX-RS APIs without @Api annotation
-    if (api == null || readable) {
+    if (readable || (api == null && config.isScanAllResources())) {
       // merge consumes, produces
 
       // look for method-level annotated properties
@@ -143,34 +152,9 @@ public class Reader {
       for(Method method : methods) {
         javax.ws.rs.Path methodPath = method.getAnnotation(javax.ws.rs.Path.class);
 
-        String operationPath = getPath(apiPath, methodPath, parentPath);
-        if(operationPath != null) {
-          String [] pps = operationPath.split("/");
-          String [] pathParts = new String[pps.length];
-          Map<String, String> regexMap = new HashMap<String, String>();
-
-          for(int i = 0; i < pps.length; i++) {
-            String p = pps[i];
-            if(p.startsWith("{")) {
-              int pos = p.indexOf(":");
-              if(pos > 0) {
-                String left = p.substring(1, pos);
-                String right = p.substring(pos + 1, p.length()-1);
-                pathParts[i] = "{" + left + "}";
-                regexMap.put(left, right);
-              }
-              else
-                pathParts[i] = p;
-            }
-            else pathParts[i] = p;
-          }
-          StringBuilder pathBuilder = new StringBuilder();
-          for(String p : pathParts) {
-            if(!p.isEmpty())
-              pathBuilder.append("/").append(p);
-          }
-          operationPath = pathBuilder.toString();
-
+        final Map<String, String> patterns = new HashMap<String, String>();
+        final String operationPath = createFullPath(parentPath, apiPath, methodPath, patterns);
+        if(operationPath != null && !isIgnored(operationPath)) {
           final ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
           String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
@@ -181,8 +165,8 @@ public class Reader {
             }
           }
           for(Parameter param : operation.getParameters()) {
-            if(regexMap.get(param.getName()) != null) {
-              String pattern = regexMap.get(param.getName());
+            final String pattern = patterns.get(param.getName());
+            if(pattern != null) {
               param.setPattern(pattern);
             }
           }
@@ -316,39 +300,34 @@ public class Reader {
     return output;
   }
 
-  String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath, String parentPath) {
+  private String createFullPath(String parentPath, javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath,
+      Map<String, String> patterns) {
     if (classLevelPath == null && methodLevelPath == null && StringUtils.isEmpty(parentPath)) {
       return null;
     }
     StringBuilder b = new StringBuilder();
-    if(parentPath != null && !"".equals(parentPath) && !"/".equals(parentPath)) {
-      if(!parentPath.startsWith("/"))
-        parentPath = "/" + parentPath;
-      if(parentPath.endsWith("/"))
-        parentPath = parentPath.substring(0, parentPath.length() - 1);
-
-      b.append(parentPath);
-    }
-    if(classLevelPath != null) {
-      b.append(classLevelPath.value());
-    }
-    if(methodLevelPath != null && !"/".equals(methodLevelPath.value())) {
-      String methodPath = methodLevelPath.value();
-      if(!methodPath.startsWith("/") && !b.toString().endsWith("/")) {
-        b.append("/");
+    for (String part : Arrays.asList(parentPath, getPathValue(classLevelPath), getPathValue(methodLevelPath))) {
+      for (String item : StringUtils.split(StringUtils.trimToEmpty(part), PATH_DELIMITER)) {
+        final String value = StringUtils.trimToNull(item);
+        if (value == null) {
+          continue;
+        }
+        b.append(PATH_DELIMITER);
+        if (value.startsWith(OPEN_BRACKET)) {
+          final int colon = value.indexOf(COLON);
+          if (colon > 0) {
+            final String name = StringUtils.trim(value.substring(1, colon));
+            patterns.put(name, StringUtils.trim(value.substring(colon + 1, value.length() - 1)));
+            b.append(OPEN_BRACKET).append(name).append(CLOSE_BRACKET);
+          } else {
+            b.append(value);
+          }
+        } else {
+          b.append(value);
+        }
       }
-      if(methodPath.endsWith("/")) {
-        methodPath = methodPath.substring(0, methodPath.length() -1);
-      }
-      b.append(methodPath);
     }
-    String output = b.toString();
-    if(!output.startsWith("/"))
-      output = "/" + output;
-    if(output.endsWith("/") && output.length() > 1)
-      return output.substring(0, output.length() - 1);
-    else
-      return output;
+    return b.length() > 0 ? b.toString() : PATH_DELIMITER;
   }
 
   public Map<String, Property> parseResponseHeaders(com.wordnik.swagger.annotations.ResponseHeader[] headers) {
@@ -679,5 +658,19 @@ public class Reader {
       }
     }
     return result;
+  }
+
+  private boolean isIgnored(String path) {
+    for (String item : config.getIgnoredRoutes()) {
+      final int length = item.length();
+      if (path.startsWith(item) && (path.length() == length || path.startsWith(PATH_DELIMITER, length))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static String getPathValue(javax.ws.rs.Path path) {
+    return path == null ? null : path.value();
   }
 }
