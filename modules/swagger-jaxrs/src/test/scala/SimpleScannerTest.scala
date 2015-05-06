@@ -266,6 +266,13 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     responses6.get("203").getHeaders().get("foo").asInstanceOf[ArrayProperty].getUniqueItems.booleanValue() should be (true)
     responses6.get("403").getSchema().getClass() should be (classOf[ArrayProperty])
   }
+
+  it should "scan a resource with inner class" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithInnerClass])
+    swagger.getPath("/description").getGet().getResponses().get("200").getSchema().asInstanceOf[ArrayProperty].
+      getItems().asInstanceOf[RefProperty].get$ref() should be ("#/definitions/Description")
+    swagger.getDefinitions().containsKey("Description") should be (true)
+  }
 }
 
 @RunWith(classOf[JUnitRunner])
