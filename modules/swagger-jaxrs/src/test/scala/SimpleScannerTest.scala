@@ -1,22 +1,18 @@
-import javax.ws.rs.QueryParam
-
-import resources._
-
-import com.wordnik.swagger.jaxrs.config._
-import com.wordnik.swagger.models.parameters._
-import com.wordnik.swagger.models.properties.{IntegerProperty, MapProperty}
-import com.wordnik.swagger.models.properties.{ArrayProperty, RefProperty, MapProperty}
-
-import com.wordnik.swagger.models.{Response, Swagger}
-import com.wordnik.swagger.jaxrs.Reader
-import com.wordnik.swagger.util.Json
-
 import scala.collection.JavaConverters._
 
 import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
+import org.scalatest.junit.JUnitRunner
+
+import com.wordnik.swagger.jaxrs.Reader
+import com.wordnik.swagger.models.Swagger
+import com.wordnik.swagger.models.parameters._
+import com.wordnik.swagger.models.properties._
+import com.wordnik.swagger.util.Json
+
+import models.TestEnum
+import resources._
 
 @RunWith(classOf[JUnitRunner])
 class SimpleScannerTest extends FlatSpec with Matchers {
@@ -135,6 +131,15 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     val param = get.getParameters().get(2).asInstanceOf[SerializableParameter]
     val _enum = param.getEnum()
     _enum.asScala.toSet should equal (Set("a","b","c","d","e"))
+
+    val checkEnumHandling = swagger.getPath("/checkEnumHandling/{v0}").getGet().getParameters()
+    val allEnumValues = (for (item <- TestEnum.values()) yield item.name()).toSet
+    val v0 = checkEnumHandling.get(0).asInstanceOf[SerializableParameter]
+    v0.getEnum().asScala.toSet should be (allEnumValues)
+    val v1 = checkEnumHandling.get(1).asInstanceOf[SerializableParameter]
+    v1.getItems().asInstanceOf[StringProperty].getEnum().asScala.toSet should be (allEnumValues)
+    val v3 = checkEnumHandling.get(3).asInstanceOf[SerializableParameter]
+    v3.getEnum().asScala.toSet should be (Set("A", "B", "C"))
   }
 
   it should "scan a resource with param range" in {

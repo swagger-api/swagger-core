@@ -1,30 +1,30 @@
-import java.io.{InputStream};
+import java.io.InputStream
 
-import javax.ws.rs.BeanParam
+import scala.collection.JavaConverters._
 
-import com.wordnik.swagger.converter.ModelConverters
-import com.wordnik.swagger.util.Json
-import com.wordnik.swagger.jaxrs.ext.SwaggerExtension
+import org.glassfish.jersey.media.multipart.{FormDataContentDisposition, FormDataParam}
+import org.junit.runner.RunWith
+import org.scalatest.FlatSpec
+import org.scalatest.Matchers
+import org.scalatest.junit.JUnitRunner
 
-import com.wordnik.swagger.jaxrs.DefaultParameterExtension
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions
 import com.wordnik.swagger.jersey.SwaggerJersey2Jaxrs
-import com.wordnik.swagger.models.parameters.{QueryParameter, FormParameter, CookieParameter}
-import org.glassfish.jersey.media.multipart.{FormDataContentDisposition, FormDataParam}
+import com.wordnik.swagger.models.parameters.{FormParameter, HeaderParameter}
 
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.{FlatSpec, Matchers}
-
-import params.{BaseBean, ChildBean, RefBean}
-import scala.collection.JavaConverters._
+import javax.ws.rs.BeanParam
+import models.TestEnum
+import params.BaseBean
+import params.ChildBean
+import params.EnumBean
+import params.RefBean
 
 @RunWith(classOf[JUnitRunner])
 class SwaggerJersey2JaxrsTest extends FlatSpec with Matchers {
 
   // Here so that we can get the params with the @BeanParam annotation instantiated properly
   def testRoute(@BeanParam baseBean: BaseBean, @BeanParam childBean: ChildBean, @BeanParam refBean: RefBean,
-                nonBean: Int) = {}
+                @BeanParam enumBean: EnumBean, nonBean: Int) = {}
 
   def testFormDataParamRoute(@FormDataParam("file") uploadedInputStream: InputStream,
                              @FormDataParam("file") fileDetail:FormDataContentDisposition) = {}
@@ -41,7 +41,7 @@ class SwaggerJersey2JaxrsTest extends FlatSpec with Matchers {
   /* Unit test for `SwaggerJersey2Jaxrs#processParameter(Annotation[], Class<?>, boolean)` */
   it should "return the proper @BeanParam Parameters based on the call to extractParameters" in {
     val ext = new SwaggerJersey2Jaxrs();
-    val method = getClass.getMethod("testRoute", classOf[BaseBean], classOf[ChildBean], classOf[RefBean], classOf[Int])
+    val method = getClass.getMethod("testRoute", classOf[BaseBean], classOf[ChildBean], classOf[RefBean], classOf[EnumBean], classOf[Int])
     val paramAnnotations = method.getParameterAnnotations
     val paramTypes = method.getParameterTypes
     val parameters = (paramTypes,paramAnnotations).zipped
@@ -58,10 +58,15 @@ class SwaggerJersey2JaxrsTest extends FlatSpec with Matchers {
           swaggerParams.size should be(5)
         } else if (paramType == classOf[RefBean]) {
           swaggerParams.size should be(5)
+        } else if (paramType == classOf[EnumBean]) {
+          swaggerParams.size should be (1)
+          val enumParam = swaggerParams.get(0).asInstanceOf[HeaderParameter]
+          enumParam.getType should be ("string")
+          enumParam.getEnum().asScala.toSet should be ((for (item <- TestEnum.values()) yield item.name()).toSet)
         } else if (paramType == classOf[Int]) {
           swaggerParams.size should be(0)
         } else {
-          fail("This should not happen but just in case")
+          fail(s"""Parameter of type ${paramType.getName()} was not expected""")
         }
 
         // Ensure the proper parameter type and name is returned (The rest is handled by pre-existing logic)
