@@ -38,4 +38,10 @@ public interface Property {
   void setXml(Xml xml);
 
   void setDefault(String _default);
+
+  @JsonIgnore
+  String getAccess();
+
+  @JsonIgnore
+  void setAccess(String access);
 }

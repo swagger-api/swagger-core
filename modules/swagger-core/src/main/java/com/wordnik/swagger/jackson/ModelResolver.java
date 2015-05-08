@@ -394,6 +394,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if(property != null) {
           property.setName(propName);
 
+          if (mp != null && !mp.access().isEmpty()) {
+            property.setAccess(mp.access());
+          }
+
           Boolean required = md.getRequired();
           if(required != null)
             property.setRequired(required);

@@ -28,6 +28,7 @@ class PostParamTest extends FlatSpec with Matchers {
     val petPostBodyParam = (petPost.getParameters().get(0)).asInstanceOf[BodyParameter]
     petPostBodyParam.getName() should equal ("body")
     (petPostBodyParam.getSchema().isInstanceOf[Model]) should be (true)
+    swagger.getDefinitions.get("Pet").getProperties.get("status").getAccess() should be ("public")
   }
 
   it should "find a Post operation with list of objects" in {
