@@ -9,8 +9,8 @@ import java.util.*;
 
 import javax.xml.bind.annotation.*;
 
-@XmlType(propOrder = { "required", "properties"})
-@JsonPropertyOrder({ "required", "properties"})
+@XmlType(propOrder = {"type", "required", "discriminator", "properties"})
+@JsonPropertyOrder({"type", "required", "discriminator", "properties"})
 public class ModelImpl extends AbstractModel {
   public static final String OBJECT = "object";
   private String type;
