@@ -21,6 +21,7 @@ class JsonPropertyModelTest extends FlatSpec with Matchers {
   models should serializeToJson (
 """{
   "ModelWithJsonProperty" : {
+    "type":"object",
     "properties" : {
       "theCount" : {
         "type" : "integer",

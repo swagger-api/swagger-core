@@ -21,6 +21,7 @@ class JsonIgnoreModelTest extends FlatSpec with Matchers {
   models should serializeToJson (
 """{
   "ModelWithIgnoreAnnotation" : {
+    "type":"object",
     "properties" : {
       "name" : {
         "type" : "string"

@@ -39,6 +39,7 @@ class SnakeCaseConverterTest extends FlatSpec with Matchers {
     models should serializeToJson (
 """{
   "bar" : {
+    "type": "object",
     "properties" : {
       "foo" : {
         "type" : "string"
@@ -46,6 +47,7 @@ class SnakeCaseConverterTest extends FlatSpec with Matchers {
     }
   },
   "snake_case_model" : {
+    "type": "object",
     "properties" : {
       "bar" : {
         "$ref" : "#/definitions/bar"

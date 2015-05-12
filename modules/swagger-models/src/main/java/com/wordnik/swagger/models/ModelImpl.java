@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.*;
 @XmlType(propOrder = { "required", "properties"})
 @JsonPropertyOrder({ "required", "properties"})
 public class ModelImpl extends AbstractModel {
+  public static final String OBJECT = "object";
   private String type;
   private String name;
   private List<String> required;
@@ -27,6 +28,12 @@ public class ModelImpl extends AbstractModel {
     this.setDiscriminator(discriminator);
     return this;
   }
+
+  public ModelImpl type(String type) {
+    this.setType(type);
+    return this;
+  }
+
   public ModelImpl name(String name) {
     this.setName(name);
     return this;
@@ -90,7 +97,7 @@ public class ModelImpl extends AbstractModel {
     return additionalProperties;
   }
   public void setAdditionalProperties(Property additionalProperties) {
-    this.setType("object");
+    type(OBJECT);
     this.additionalProperties = additionalProperties;
   }
 
