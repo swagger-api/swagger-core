@@ -594,9 +594,13 @@ public class Reader {
     }
 
     if(parameters.size() > 0) {
+      final List<Parameter> processed = new ArrayList<Parameter>(parameters.size());
       for(Parameter parameter : parameters) {
-        ParameterProcessor.applyAnnotations(swagger, parameter, cls, annotations, isArray);
+        if (ParameterProcessor.applyAnnotations(swagger, parameter, cls, annotations, isArray) != null) {
+          processed.add(parameter);
+        }
       }
+      parameters = processed;
     }
     else {
       LOGGER.debug("no parameter found, looking at body params");
