@@ -1,3 +1,5 @@
+import java.util
+
 import models._
 
 import com.wordnik.swagger.models._
@@ -8,8 +10,6 @@ import com.wordnik.swagger.models.parameters._
 import com.wordnik.swagger.converter._
 import com.wordnik.swagger.util.Json
 
-import scala.collection.mutable.HashMap
-import scala.collection.JavaConverters._
 import scala.io.Source
 
 import org.junit.runner.RunWith
@@ -32,7 +32,13 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
       .name("Wordnik API Team")
       .email("foo@bar.baz")
       .url("http://swagger.io")
+
     info.setContact(contact)
+
+    val map : util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]
+    map.put( "name", "value");
+    info.setVendorExtension( "x-test2", map )
+    info.setVendorExtension( "x-test", "value" )
 
     val swagger = new Swagger()
       .info(info)
