@@ -19,6 +19,9 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Produces;
 
+import com.wordnik.swagger.annotations.ExtensionProperty;
+import com.wordnik.swagger.annotations.Extension;
+import com.wordnik.swagger.models.Info;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -233,6 +236,10 @@ public class Reader {
                   swagger.tag(new Tag().name(tag));
                 }
               }
+
+              if( operation != null ){
+                addExtensionProperties( op.extensions(), operation.getVendorExtensions());
+              }
             }
             if(operation != null) {
               if(operation.getConsumes() == null)
@@ -260,7 +267,46 @@ public class Reader {
         }
       }
     }
+
+    Extension[] extensions = api.infoExtensions();
+    if( extensions.length > 0 ) {
+      if( swagger.getInfo() == null ){
+        swagger.setInfo( new Info() );
+      }
+      addExtensionProperties(extensions, swagger.getInfo().getVendorExtensions());
+    }
+
     return swagger;
+  }
+
+  private void addExtensionProperties(Extension [] extensions, Map<String, Object> map) {
+    for( Extension extension : extensions ) {
+      String name = extension.name();
+      if (name.length() > 0) {
+
+        if( !name.startsWith("x-")){
+          name = "x-" + name;
+        }
+
+        if( !map.containsKey( name )) {
+          map.put(name, new HashMap<String, Object>());
+        }
+
+        map = (Map<String, Object>) map.get(name);
+      }
+
+      for (ExtensionProperty property : extension.properties()) {
+        if (!property.name().isEmpty() && !property.value().isEmpty()) {
+
+          String propertyName = property.name();
+          if( name.isEmpty() && !propertyName.startsWith( "x-")){
+            propertyName = "x-" + propertyName;
+          }
+
+          map.put(propertyName, property.value());
+        }
+      }
+    }
   }
 
   protected Class<?> getSubResource(Method method) {

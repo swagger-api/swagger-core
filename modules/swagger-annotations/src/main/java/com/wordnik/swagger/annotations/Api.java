@@ -138,4 +138,10 @@ public @interface Api {
    * @return true if the api should be hidden from the swagger documentation
    */
   boolean hidden() default false;
+
+  /**
+   * @return an optional array of extensions
+   */
+
+  Extension[] infoExtensions() default @Extension( properties = @ExtensionProperty(name="",value=""));
 }
