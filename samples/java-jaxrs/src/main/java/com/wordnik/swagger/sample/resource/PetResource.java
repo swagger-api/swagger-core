@@ -23,8 +23,11 @@ import com.wordnik.swagger.sample.exception.NotFoundException;
 
 import com.wordnik.swagger.jaxrs.PATCH;
 
+import java.io.*;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.*;
 
 @Path("/pet")
@@ -58,6 +61,35 @@ public class PetResource {
     } else {
       throw new NotFoundException(404, "Pet not found");
     }
+  }
+
+  @GET
+  @Path("/{petId}/download")
+  @ApiOperation(value = "Find pet by ID", 
+    notes = "Returns a pet when ID < 10.  ID > 10 or nonintegers will simulate API error conditions", 
+    response = Pet.class,
+    authorizations = @Authorization(value = "api_key")
+  )
+  @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
+      @ApiResponse(code = 404, message = "Pet not found") })
+  public Response downloadFile(
+      @ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("petId") Long petId)
+      throws NotFoundException {
+      StreamingOutput stream = new StreamingOutput() {
+      @Override
+      public void write(OutputStream output) throws IOException {
+        try {
+          // TODO: write file content to output;
+          output.write("hello, world".getBytes());
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+      }
+    };
+
+    return Response.ok(stream, "application/force-download")
+            .header("Content-Disposition", "attachment; filename = foo.bar")
+            .build();
   }
 
   @PATCH

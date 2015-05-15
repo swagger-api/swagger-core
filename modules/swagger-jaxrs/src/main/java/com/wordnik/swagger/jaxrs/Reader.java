@@ -175,6 +175,8 @@ public class Reader {
           String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
           Operation operation = parseMethod(method);
+          if(operation == null) 
+            continue;
           if(parentParameters != null) {
             for(Parameter param : parentParameters) {
               operation.parameter(param);

@@ -266,16 +266,18 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     responses6.get("203").getHeaders().get("foo").asInstanceOf[ArrayProperty].getUniqueItems.booleanValue() should be (true)
     responses6.get("403").getSchema().getClass() should be (classOf[ArrayProperty])
   }
-}
 
-@RunWith(classOf[JUnitRunner])
-class SimpleScannerTest2 extends FlatSpec with Matchers {
   it should "scan defaultValue and required per #937" in {
     val swagger = new Reader(new Swagger()).read(classOf[Resource937])
     val get = swagger.getPaths().get("/external/info").getGet()
     val param = get.getParameters().get(0).asInstanceOf[QueryParameter]
     param.getRequired should be (false)
     param.getDefaultValue should be ("dogs")
+  }
+
+  it should "scan a resource with all hidden values #1073" in {
+    val swagger = new Reader(new Swagger()).read(classOf[Resource1073])
+    Json.prettyPrint(swagger)
   }
 }
   

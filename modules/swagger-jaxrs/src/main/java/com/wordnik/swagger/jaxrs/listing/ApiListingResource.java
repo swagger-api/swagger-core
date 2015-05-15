@@ -1,5 +1,6 @@
 package com.wordnik.swagger.jaxrs.listing;
 
+import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.config.*;
 import com.wordnik.swagger.core.filter.*;
 import com.wordnik.swagger.jaxrs.Reader;
@@ -70,6 +71,7 @@ public class ApiListingResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/swagger.json")
+  @ApiOperation(value = "The swagger definition in JSON", hidden = true)
   public Response getListingJson(
     @Context Application app,
     @Context ServletConfig sc,
@@ -97,6 +99,7 @@ public class ApiListingResource {
   @GET
   @Produces("application/yaml")
   @Path("/swagger.yaml")
+  @ApiOperation(value = "The swagger definition in YAML", hidden = true)
   public Response getListingYaml(
     @Context Application app,
     @Context ServletConfig sc,
