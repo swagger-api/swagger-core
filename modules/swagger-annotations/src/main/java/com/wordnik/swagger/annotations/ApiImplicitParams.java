@@ -25,7 +25,6 @@ import java.lang.annotation.*;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Inherited
 public @interface ApiImplicitParams {
   /**
    * A list of {@link com.wordnik.swagger.annotations.ApiImplicitParam}s available to the API operation.
