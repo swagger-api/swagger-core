@@ -268,12 +268,14 @@ public class Reader {
       }
     }
 
-    Extension[] extensions = api.infoExtensions();
-    if( extensions.length > 0 ) {
-      if( swagger.getInfo() == null ){
-        swagger.setInfo( new Info() );
+    if( api != null ) {
+      Extension[] extensions = api.infoExtensions();
+      if (extensions.length > 0) {
+        if (swagger.getInfo() == null) {
+          swagger.setInfo(new Info());
+        }
+        addExtensionProperties(extensions, swagger.getInfo().getVendorExtensions());
       }
-      addExtensionProperties(extensions, swagger.getInfo().getVendorExtensions());
     }
 
     return swagger;

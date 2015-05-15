@@ -30,7 +30,5 @@ class ExtensionScannerTest extends FlatSpec with Matchers {
     json.indexOf( "\"x-test\" : {" ) should not be -1
     json.indexOf( "\"x-test1\" : \"value1\"" ) should not be -1
     json.indexOf( "\"x-test2\" : \"value2\"" ) should not be -1
-
-    System.out.println( json )
   }
 }
