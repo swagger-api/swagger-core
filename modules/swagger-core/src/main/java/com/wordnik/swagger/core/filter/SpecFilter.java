@@ -1,14 +1,18 @@
 package com.wordnik.swagger.core.filter;
 
-import com.wordnik.swagger.core.filter.SwaggerSpecFilter;
-import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.models.parameters.*;
-import com.wordnik.swagger.models.properties.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.wordnik.swagger.model.ApiDescription;
-
-import com.wordnik.swagger.util.Json;
-
-import java.util.*;
+import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.Operation;
+import com.wordnik.swagger.models.Path;
+import com.wordnik.swagger.models.Swagger;
+import com.wordnik.swagger.models.parameters.Parameter;
+import com.wordnik.swagger.models.properties.Property;
 
 public class SpecFilter {
   public Swagger filter(Swagger swagger, SwaggerSpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
@@ -33,9 +37,10 @@ public class SpecFilter {
       ops.put("options", path.getOptions());
 
       Path clonedPath = new Path();
-      for(String key: ops.keySet()) {
-        Operation op = ops.get(key);
+      for(Map.Entry<String, Operation> entry: ops.entrySet()) {
+        final Operation op = entry.getValue();
         if(op != null) {
+          final String key = entry.getKey();
           ApiDescription desc = new ApiDescription(resourcePath, key);
           if(filter.isOperationAllowed(op, desc, params, cookies, headers)) {
             clonedPath.set(key, filterOperation(filter, op, desc, params, cookies, headers));
@@ -46,17 +51,18 @@ public class SpecFilter {
         clone.path(resourcePath, clonedPath);
     }
 
-    Map<String, Model> definitions = filterDefinitions(filter, swagger.getDefinitions(), params, cookies, headers);
     clone.setSecurityDefinitions(swagger.getSecurityDefinitions());
-    clone.setDefinitions(definitions);
+    clone.setDefinitions(filterDefinitions(filter, swagger.getDefinitions(), params, cookies, headers));
     return clone;
   }
 
   public Map<String, Model> filterDefinitions(SwaggerSpecFilter filter, Map<String, Model> definitions, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
-    Map<String, Model> clonedDefinitions = new LinkedHashMap<String, Model>();
-
-    for(String key: definitions.keySet()) {
-      Model definition = definitions.get(key);
+    if (definitions == null) {
+      return null;
+    }
+    final Map<String, Model> clonedDefinitions = new LinkedHashMap<String, Model>();
+    for(Map.Entry<String, Model> entry: definitions.entrySet()) {
+      final Model definition = entry.getValue();
       Map<String, Property> clonedProperties = new LinkedHashMap<String, Property>();
       for(String propName: definition.getProperties().keySet()) {
         Property property = definition.getProperties().get(propName);
@@ -70,7 +76,7 @@ public class SpecFilter {
       Model clonedModel = (Model)definition.clone();
       clonedModel.getProperties().clear();
       clonedModel.setProperties(clonedProperties);
-      clonedDefinitions.put(key, clonedModel);
+      clonedDefinitions.put(entry.getKey(), clonedModel);
     }
     return clonedDefinitions;
   }
