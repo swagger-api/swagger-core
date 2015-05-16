@@ -28,6 +28,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 public @interface ApiOperation {
   /** Brief description of the operation  */
   String value();
