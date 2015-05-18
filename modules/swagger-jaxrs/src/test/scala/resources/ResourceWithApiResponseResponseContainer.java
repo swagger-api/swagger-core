@@ -7,6 +7,7 @@ import models.Sample;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
+@Api
 public class ResourceWithApiResponseResponseContainer {
   @GET
   @Path("/{id}")

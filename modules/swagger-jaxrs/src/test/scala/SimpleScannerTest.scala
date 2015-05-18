@@ -194,7 +194,9 @@ class SimpleScannerTest extends FlatSpec with Matchers {
   }
   
   it should "scan a simple resource without annotations" in {
-    val swagger = new Reader(new Swagger()).read(classOf[SimpleResourceWithoutAnnotations])
+    val config = new DefaultReaderConfig()
+    config.setScanAllResources(true)
+    val swagger = new Reader(new Swagger(), config).read(classOf[SimpleResourceWithoutAnnotations])
     swagger.getPaths().size should be (2)
 
     val path = swagger.getPaths().get("/{id}")
