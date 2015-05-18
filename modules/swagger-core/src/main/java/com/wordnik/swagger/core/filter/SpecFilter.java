@@ -53,6 +53,9 @@ public class SpecFilter {
   }
 
   public Map<String, Model> filterDefinitions(SwaggerSpecFilter filter, Map<String, Model> definitions, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    if (definitions == null) {
+      return null;
+    }
     Map<String, Model> clonedDefinitions = new LinkedHashMap<String, Model>();
 
     for(String key: definitions.keySet()) {
