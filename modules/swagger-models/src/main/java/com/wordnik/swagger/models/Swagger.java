@@ -173,7 +173,10 @@ public class Swagger {
   public void addConsumes(String consumes) {
     if(this.consumes == null)
       this.consumes = new ArrayList<String>();
-    this.consumes.add(consumes);
+
+    if( !this.consumes.contains( consumes )){
+      this.consumes.add(consumes);
+    }
   }
 
   public List<String> getProduces() {
@@ -185,7 +188,10 @@ public class Swagger {
   public void addProduces(String produces) {
     if(this.produces == null)
       this.produces = new ArrayList<String>();
-    this.produces.add(produces);
+
+    if( !this.produces.contains(produces)) {
+      this.produces.add(produces);
+    }
   }
 
   public Map<String, Path> getPaths() {

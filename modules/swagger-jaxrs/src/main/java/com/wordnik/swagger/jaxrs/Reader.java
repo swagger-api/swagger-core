@@ -21,6 +21,7 @@ import javax.ws.rs.Produces;
 
 import com.wordnik.swagger.annotations.ExtensionProperty;
 import com.wordnik.swagger.annotations.Extension;
+import com.wordnik.swagger.annotations.SwaggerConfig;
 import com.wordnik.swagger.models.Info;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -79,6 +80,11 @@ public class Reader {
   }
 
   protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
+    SwaggerConfig config = cls.getAnnotation(SwaggerConfig.class);
+    if( config != null ){
+      readSwaggerConfig( cls, config );
+    }
+
     Api api = (Api) cls.getAnnotation(Api.class);
     Map<String, SecurityScope> globalScopes = new HashMap<String, SecurityScope>();
 
@@ -268,6 +274,7 @@ public class Reader {
       }
     }
 
+    /*
     if( api != null ) {
       Extension[] extensions = api.infoExtensions();
       if (extensions.length > 0) {
@@ -276,9 +283,30 @@ public class Reader {
         }
         addExtensionProperties(extensions, swagger.getInfo().getVendorExtensions());
       }
-    }
+    } */
 
     return swagger;
+  }
+
+  private void readSwaggerConfig(Class<?> cls, SwaggerConfig config) {
+
+    com.wordnik.swagger.annotations.Info infoConfig = config.info();
+    Info info = swagger.getInfo();
+    if( info == null ){
+      info = new Info();
+      swagger.setInfo(info);
+    }
+
+    addExtensionProperties( infoConfig.extensions(), info.getVendorExtensions());
+
+    for( String consume: config.consumes()){
+      swagger.addConsumes(consume);
+    }
+
+    for( String produce: config.produces()){
+      swagger.addProduces( produce );
+    }
+
   }
 
   private void addExtensionProperties(Extension [] extensions, Map<String, Object> map) {
