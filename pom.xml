@@ -360,40 +360,6 @@
       </build>
     </profile>
     <profile>
-      <!-- The auth module, which is not complete -->
-      <id>auth</id>
-      <activation>
-        <property>
-          <name>env</name>
-          <value>auth</value>
-        </property>
-      </activation>
-      <modules>
-        <module>samples/scala-oauth-authorization-server</module>
-      </modules>
-    </profile>
-    <profile>
-      <!-- Samples -->
-      <id>samples</id>
-      <activation>
-        <property>
-          <name>env</name>
-          <value>samples</value>
-        </property>
-      </activation>
-      <modules>
-        <module>samples/java-jaxrs</module>
-        <module>samples/java-jersey2</module>
-        <module>samples/java-jaxrs-subresource</module>
-        <module>samples/java-jaxrs-no-webxml</module>
-        <module>samples/java-mule</module>
-        <module>samples/java-dropwizard</module>
-        <module>samples/java-jaxrs-cxf</module>
-        <module>samples/java-jersey-jaxrs</module>
-        <module>samples/java-jaxrs-no-annotations</module>
-      </modules>
-    </profile>
-    <profile>
       <!-- These modules need a little love -->
       <id>disabled</id>
       <activation>
