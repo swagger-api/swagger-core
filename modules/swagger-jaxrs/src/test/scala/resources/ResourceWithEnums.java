@@ -1,5 +1,7 @@
 package resources;
 
+import java.util.Collection;
+
 import models.*;
 
 import com.wordnik.swagger.annotations.*;
@@ -32,5 +34,18 @@ public class ResourceWithEnums {
     out.setName("foo");
     out.setValue("bar");
     return Response.ok().entity(out).build();
+  }
+
+  @GET
+  @Path("/checkEnumHandling/{v0}")
+  @ApiOperation(value = "Checks enum handling", response = EnumHolder.class)
+  public EnumHolder checkEnumHandling(
+      @PathParam("v0") TestEnum value0,
+      @QueryParam("v1") TestEnum[] value1,
+      @QueryParam("v2") Collection<TestEnum> value2,
+      @ApiParam(value = "Enum value with allowed values", allowableValues = "A,B,C") @QueryParam("v3") TestEnum value3,
+      @ApiParam(value = "Array of strings with allowed values", allowableValues = "D,E,F") @QueryParam("v4") String[] value4,
+      @ApiParam(value = "Collection of strings with allowed values", allowableValues = "G,H,I") @QueryParam("v5") Collection<String> value5) {
+    return null;
   }
 }
