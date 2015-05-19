@@ -384,7 +384,8 @@ public class Reader {
           if(!cls.equals(java.lang.Void.class) && !"void".equals(cls.toString())) {
             Property property = ModelConverters.getInstance().readAsProperty(cls);
             if(property != null) {
-              Property responseProperty = wrapContainer(header.responseContainer(), property);
+              Property responseProperty = ContainerWrapper.wrapContainer(header.responseContainer(), property,
+                ContainerWrapper.ARRAY, ContainerWrapper.LIST, ContainerWrapper.SET);
               responseProperty.setDescription(description);
               responseHeaders.put(name, responseProperty);
             }
@@ -472,7 +473,7 @@ public class Reader {
       if(isPrimitive(responseClass)) {
         Property property = ModelConverters.getInstance().readAsProperty(responseClass);
         if(property != null) {
-          Property responseProperty = wrapContainer(responseContainer, property);
+          Property responseProperty = ContainerWrapper.wrapContainer(responseContainer, property);
           operation.response(responseCode, new Response()
             .description(SUCCESSFUL_OPERATION)
             .schema(responseProperty)
@@ -490,7 +491,7 @@ public class Reader {
         }
         for(String key: models.keySet()) {
           Property property = new RefProperty().asDefault(key);
-          Property responseProperty = wrapContainer(responseContainer, property);
+          Property responseProperty = ContainerWrapper.wrapContainer(responseContainer, property);
           operation.response(responseCode, new Response()
             .description(SUCCESSFUL_OPERATION)
             .schema(responseProperty)
@@ -544,7 +545,7 @@ public class Reader {
           Map<String, Model> models = ModelConverters.getInstance().read(responseClass);
           for(String key: models.keySet()) {
             Property property =  new RefProperty().asDefault(key);
-            Property responseProperty = wrapContainer(apiResponse.responseContainer(), property);
+            Property responseProperty = ContainerWrapper.wrapContainer(apiResponse.responseContainer(), property);
             response.schema(responseProperty);
             swagger.model(key, models.get(key));
           }
@@ -583,19 +584,6 @@ public class Reader {
       operation.defaultResponse(new Response().description(SUCCESSFUL_OPERATION));
     }
     return operation;
-  }
-
-  private Property wrapContainer(String container, Property property) {
-    if ("list".equalsIgnoreCase(container) || "array".equalsIgnoreCase(container)) {
-      return new ArrayProperty(property);
-    } else if ("set".equalsIgnoreCase(container)) {
-      ArrayProperty arrayProperty = new ArrayProperty(property);
-      arrayProperty.setUniqueItems(true);
-      return arrayProperty;
-    } else if ("map".equalsIgnoreCase(container)) {
-      return new MapProperty(property);
-    }
-    return property;
   }
 
   List<Parameter> getParameters(Class<?> cls, Type type, Annotation[] annotations) {
@@ -714,4 +702,58 @@ public class Reader {
     return false;
   }
 
+  enum ContainerWrapper {
+    LIST("list") {
+      @Override
+      protected Property doWrap(Property property) {
+        return new ArrayProperty(property);
+      }
+    },
+    ARRAY("array") {
+      @Override
+      protected Property doWrap(Property property) {
+        return new ArrayProperty(property);
+      }
+    },
+    MAP("map") {
+      @Override
+      protected Property doWrap(Property property) {
+        return new MapProperty(property);
+      }
+    },
+    SET("set") {
+      @Override
+      protected Property doWrap(Property property) {
+        ArrayProperty arrayProperty = new ArrayProperty(property);
+        arrayProperty.setUniqueItems(true);
+        return arrayProperty;
+      }
+    };
+
+    private final String container;
+
+    ContainerWrapper(String container) {
+      this.container = container;
+    }
+
+    public Property wrap(String container, Property property) {
+      if (this.container.equalsIgnoreCase(container)) {
+        return doWrap(property);
+      }
+      return null;
+    }
+
+    public static Property wrapContainer(String container, Property property, ContainerWrapper... allowed) {
+      final Set<ContainerWrapper> tmp = allowed.length > 0 ? EnumSet.copyOf(Arrays.asList(allowed)) : EnumSet.allOf(ContainerWrapper.class);
+      for (ContainerWrapper wrapper : tmp) {
+        final Property prop = wrapper.wrap(container, property);
+        if (prop != null) {
+          return prop;
+        }
+      }
+      return property;
+    }
+
+    protected abstract Property doWrap(Property property);
+  }
 }
