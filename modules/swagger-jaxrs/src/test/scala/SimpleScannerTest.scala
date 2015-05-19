@@ -268,6 +268,17 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     responses6.get("203").getHeaders().get("foo").asInstanceOf[ArrayProperty].getUniqueItems.booleanValue() should be (true)
     responses6.get("403").getSchema().getClass() should be (classOf[ArrayProperty])
   }
+<<<<<<< HEAD
+=======
+
+  it should "scan a resource with inner class" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithInnerClass])
+    swagger.getPath("/description").getGet().getResponses().get("200").getSchema().asInstanceOf[ArrayProperty].
+      getItems().asInstanceOf[RefProperty].get$ref() should be ("#/definitions/Description")
+    swagger.getDefinitions().containsKey("Description") should be (true)
+  }
+}
+>>>>>>> a005a2fe620d9cf91cc328a95d0a58247b924537
 
   it should "scan defaultValue and required per #937" in {
     val swagger = new Reader(new Swagger()).read(classOf[Resource937])
