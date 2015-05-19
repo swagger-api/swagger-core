@@ -13,6 +13,7 @@ public abstract class AbstractProperty implements Property {
   String description;
   String title;
   Boolean readOnly;
+  private String access;
 
   public Property title(String title) {
     this.setTitle(title);
@@ -102,5 +103,15 @@ public abstract class AbstractProperty implements Property {
 
   public void setDefault(String _default) {
     // do nothing
+  }
+
+  @Override
+  public String getAccess() {
+    return access;
+  }
+
+  @Override
+  public void setAccess(String access) {
+    this.access = access;
   }
 }

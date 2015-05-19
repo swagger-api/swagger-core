@@ -74,7 +74,7 @@ public class Pet {
 	}
 
 	@XmlElement(name = "status")
-	@ApiModelProperty(value = "pet status in the store", allowableValues = "available,pending,sold")
+	@ApiModelProperty(value = "pet status in the store", allowableValues = "available,pending,sold", access = "public")
 	public String getStatus() {
 		return status;
 	}
