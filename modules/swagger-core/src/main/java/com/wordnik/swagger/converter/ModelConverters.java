@@ -100,21 +100,23 @@ public class ModelConverters {
   }
 
   private boolean shouldProcess(Type type) {
-    boolean process = true;
     if(type instanceof Class<?>){
       Class<?> cls = (Class<?>) type;
+      if (cls.isPrimitive()) {
+        return false;
+      }
       String className = cls.getName();
       for(String packageName: skippedPackages) {
         if(className.startsWith(packageName)) {
-          process = false;
+          return false;
         }
       }
       for(String classToSkip: skippedClasses) {
         if(className.equals(classToSkip)) {
-          process = false;
+          return false;
         }
       }
     }
-    return process;
+    return true;
   }
 }
