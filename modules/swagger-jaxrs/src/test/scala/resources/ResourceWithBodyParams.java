@@ -75,7 +75,7 @@ public class ResourceWithBodyParams {
   @POST
   @Path("/testShort")
   @ApiOperation("Tests parameter of the short type")
-  public void testPrimitiveShort(short input) {
+  public void testPrimitiveShort(@ApiParam(value = "a short input") short input) {
   }
 
   @POST

@@ -295,8 +295,30 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     swagger.getDefinitions().containsKey("Description") should be (true)
   }
 
+  it should "scan defaultValue and required per #937" in {
+    val swagger = new Reader(new Swagger()).read(classOf[Resource937])
+    val get = swagger.getPaths().get("/external/info").getGet()
+    val param = get.getParameters().get(0).asInstanceOf[QueryParameter]
+    param.getRequired should be (false)
+    param.getDefaultValue should be ("dogs")
+  }
+
+  it should "scan a resource with all hidden values #1073" in {
+    val swagger = new Reader(new Swagger()).read(classOf[Resource1073])
+    swagger.getPaths() should be (null)
+  }
+}
+  
+@RunWith(classOf[JUnitRunner])
+class SimpleScannerTest2 extends FlatSpec with Matchers {
   it should "scan a resource with body parameters" in {
     val swagger = new Reader(new Swagger()).read(classOf[ResourceWithBodyParams])
+    val param = swagger.getPaths().get("/testShort").getPost().getParameters().get(0).asInstanceOf[BodyParameter]
+    param.getDescription() should be ("a short input")
+    val schema = param.getSchema.asInstanceOf[ModelImpl]
+
+    schema.getType() should be ("integer")
+    schema.getFormat() should be ("int32")
 
     swagger.getDefinitions().keySet().asScala should be (Set("Tag"))
 
@@ -326,18 +348,4 @@ class SimpleScannerTest extends FlatSpec with Matchers {
       item.getParameters().size() should be (1)
     }
   }
-
-  it should "scan defaultValue and required per #937" in {
-    val swagger = new Reader(new Swagger()).read(classOf[Resource937])
-    val get = swagger.getPaths().get("/external/info").getGet()
-    val param = get.getParameters().get(0).asInstanceOf[QueryParameter]
-    param.getRequired should be (false)
-    param.getDefaultValue should be ("dogs")
-  }
-
-  it should "scan a resource with all hidden values #1073" in {
-    val swagger = new Reader(new Swagger()).read(classOf[Resource1073])
-    Json.prettyPrint(swagger)
-  }
 }
-  

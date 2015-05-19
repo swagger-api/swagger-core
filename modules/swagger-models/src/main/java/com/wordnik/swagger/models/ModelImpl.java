@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.*;
 public class ModelImpl extends AbstractModel {
   public static final String OBJECT = "object";
   private String type;
+  private String format;
   private String name;
   private List<String> required;
   private Map<String, Property> properties;
@@ -31,6 +32,11 @@ public class ModelImpl extends AbstractModel {
 
   public ModelImpl type(String type) {
     this.setType(type);
+    return this;
+  }
+
+  public ModelImpl format(String format) {
+    this.setFormat(format);
     return this;
   }
 
@@ -106,6 +112,13 @@ public class ModelImpl extends AbstractModel {
   }
   public void setType(String type) {
     this.type = type;
+  }
+
+  public String getFormat() {
+    return format;
+  }
+  public void setFormat(String format) {
+    this.format = format;
   }
 
   public void addRequired(String name) {

@@ -1,5 +1,7 @@
 package com.wordnik.swagger.jaxrs;
 
+import com.wordnik.swagger.util.Json;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.EnumMap;
@@ -108,7 +110,6 @@ public class ParameterProcessor {
         } else {
           innerType = cls.getComponentType();
         }
-        LOGGER.debug("inner type: " + innerType + " from " + cls);
         Property innerProperty = ModelConverters.getInstance().readAsProperty(innerType);
         if(innerProperty == null) {
           Map<String, Model> models = ModelConverters.getInstance().read(innerType);
@@ -168,6 +169,8 @@ public class ParameterProcessor {
           if(prop != null) {
             ModelImpl model = new ModelImpl();
             model.setType(prop.getType());
+            model.setFormat(prop.getFormat());
+            model.setDescription(prop.getDescription());
             bp.setSchema(model);
           }
         }
