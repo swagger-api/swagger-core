@@ -390,6 +390,7 @@
         <module>samples/java-dropwizard</module>
         <module>samples/java-jaxrs-cxf</module>
         <module>samples/java-jersey-jaxrs</module>
+        <module>samples/java-jaxrs-no-annotations</module>
       </modules>
     </profile>
     <profile>
