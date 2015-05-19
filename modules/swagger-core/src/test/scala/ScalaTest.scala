@@ -23,6 +23,7 @@ class ScalaTest extends FlatSpec with Matchers {
     schemas should serializeToJson (
 """{
   "ClassWithScalaField" : {
+    "type": "object",
     "properties" : {
       "id" : {
         "type" : "integer",

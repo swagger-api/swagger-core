@@ -231,9 +231,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       return null;
     }
 
-    ModelImpl model = new ModelImpl()
-      .name(name)
-      .description(_description(beanDesc.getClassInfo()));
+    final ModelImpl model = new ModelImpl().type(ModelImpl.OBJECT).name(name)
+        .description(_description(beanDesc.getClassInfo()));
 
     // if XmlRootElement annotation, construct an Xml object and attach it to the model
     XmlRootElement rootAnnotation = beanDesc.getClassAnnotations().get(XmlRootElement.class);
@@ -499,8 +498,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     for (Property prop : props) {
       modelProps.put(prop.getName(), prop);
     }
-    if(modelProps.size() == 0)
-      model.setType("object");
     model.setProperties(modelProps);
     return model;
   }

@@ -21,6 +21,7 @@ class CompositionTest extends FlatSpec with Matchers {
     schemas should serializeToJson (
 """{
   "Human" : {
+    "type": "object",
     "properties" : {
       "name" : {
         "type" : "string"
@@ -44,6 +45,7 @@ class CompositionTest extends FlatSpec with Matchers {
     schemas should serializeToJson (
 """{
   "Animal" : {
+    "type": "object",
     "properties" : {
       "name" : {
         "type" : "string"
@@ -58,6 +60,7 @@ class CompositionTest extends FlatSpec with Matchers {
     "allOf" : [ {
       "$ref" : "#/definitions/Animal"
     }, {
+      "type": "object",
       "properties" : {
         "name" : {
           "type" : "string"
@@ -78,6 +81,7 @@ class CompositionTest extends FlatSpec with Matchers {
     "allOf" : [ {
       "$ref" : "#/definitions/Animal"
     }, {
+      "type": "object",
       "required" : [ "isDomestic", "name", "type" ],
       "properties" : {
         "type" : {
@@ -113,6 +117,7 @@ class CompositionTest extends FlatSpec with Matchers {
       "allOf" : [ {
       "$ref" : "#/definitions/AbstractBaseModelWithoutFields"
       }, {
+       "type": "object",
       "properties" : {
         "a" : {
           "type" : "string",

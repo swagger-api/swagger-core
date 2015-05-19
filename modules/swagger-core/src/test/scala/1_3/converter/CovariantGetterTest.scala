@@ -27,6 +27,7 @@ class CovariantGetterTest extends FlatSpec with Matchers {
     models should serializeToJson (
 """{
   "Sub" : {
+    "type":"object",
     "properties" : {
       "myProperty" : {
         "type" : "integer",

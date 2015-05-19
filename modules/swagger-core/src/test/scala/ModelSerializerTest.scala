@@ -1,17 +1,29 @@
-import com.wordnik.swagger.models._
-import com.wordnik.swagger.models.properties._
-import com.wordnik.swagger.converter._
-
-import models._
-import com.wordnik.swagger.util.Json
-
+import scala.collection.JavaConverters.mutableMapAsJavaMapConverter
+import scala.collection.JavaConverters.seqAsJavaListConverter
 import scala.collection.mutable.HashMap
-import scala.collection.JavaConverters._
 
 import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
+import org.scalatest.junit.JUnitRunner
+
+import com.wordnik.swagger.converter.ModelConverters
+import com.wordnik.swagger.models.ArrayModel
+import com.wordnik.swagger.models.ExternalDocs
+import com.wordnik.swagger.models.Model
+import com.wordnik.swagger.models.ModelImpl
+import com.wordnik.swagger.models.RefModel
+import com.wordnik.swagger.models.properties.DateProperty
+import com.wordnik.swagger.models.properties.DateTimeProperty
+import com.wordnik.swagger.models.properties.IntegerProperty
+import com.wordnik.swagger.models.properties.LongProperty
+import com.wordnik.swagger.models.properties.Property
+import com.wordnik.swagger.models.properties.RefProperty
+import com.wordnik.swagger.util.Json
+
+import matchers.SerializationMatchers.serializeToJson
+import models.Car
+import models.Manufacturers
 
 @RunWith(classOf[JUnitRunner])
 class ModelSerializerTest extends FlatSpec with Matchers {
@@ -61,12 +73,12 @@ class ModelSerializerTest extends FlatSpec with Matchers {
 
   it should "make a field readOnly by annotation" in {
     val schemas = ModelConverters.getInstance().read(classOf[Car])
-    Json.mapper().writeValueAsString(schemas) should be ("""{"Car":{"properties":{"wheelCount":{"type":"integer","format":"int32","readOnly":true}}}}""")
+    schemas should serializeToJson ("""{"Car":{"type":"object","properties":{"wheelCount":{"type":"integer","format":"int32","readOnly":true}}}}""")
   }
 
   it should "serialize a model with a Set" in {
     val schemas = ModelConverters.getInstance().read(classOf[Manufacturers])
-    Json.mapper().writeValueAsString(schemas) should be ("""{"Manufacturers":{"properties":{"countries":{"type":"array","uniqueItems":true,"items":{"type":"string"}}}}}""")
+    schemas should serializeToJson ("""{"Manufacturers":{"type":"object","properties":{"countries":{"type":"array","uniqueItems":true,"items":{"type":"string"}}}}}""")
   }
 
   it should "deserialize a model with object example" in {

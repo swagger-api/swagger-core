@@ -32,6 +32,7 @@ class BoxedTypesTest extends FlatSpec with Matchers {
 models should serializeToJson (
 """{
   "BoxedTypesIssue31" : {
+    "type": "object",
     "properties" : {
       "stringSeq" : {
         "type" : "array",
@@ -82,6 +83,7 @@ models should serializeToJson (
     models should serializeToJson (
 """{
   "BoxedTypesIssue31WithDataType" : {
+    "type": "object",
     "properties" : {
       "stringSeq" : {
         "type" : "array",

@@ -25,6 +25,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
     schemas should serializeToJson (
 """{
   "SimpleCaseClass" : {
+    "type": "object",
     "properties" : {
       "name" : {
         "type" : "string"
@@ -43,6 +44,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
     schemas should serializeToJson (
 """{
   "CaseClassWithList" : {
+    "type": "object",
     "properties" : {
       "name" : {
         "type" : "string"
@@ -73,6 +75,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
     schemas should serializeToJson (
 """{
   "CaseClassWithOptionLong" : {
+    "type": "object",
     "properties" : {
       "intValue" : {
         "type" : "integer",
@@ -109,6 +112,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
     schemas should serializeToJson ( 
 """{
   "ComplexModel" : {
+    "type": "object",
     "properties" : {
       "name" : {
         "type" : "string"
@@ -120,6 +124,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
     }
   },
   "NestedModel" : {
+    "type": "object",
     "properties" : {
       "complexModel" : {
         "$ref" : "#/definitions/ComplexModel"
@@ -138,6 +143,7 @@ class ScalaModelTest extends FlatSpec with Matchers {
     schemas should serializeToJson (
 """{
   "Pet" : {
+    "type": "object",
     "required" : [ "isDomestic", "name", "type" ],
     "properties" : {
       "type" : {
