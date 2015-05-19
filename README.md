@@ -38,7 +38,7 @@ Swagger core Version      | Release Date | Swagger Spec compatibility | Notes | 
 To allow independent development, scala support has been moved into a separate project.  See the [swagger-scala-module](https://github.com/swagger-api/swagger-scala-module) for details.  Play! framework support is moving outside the swagger-core project as well.
 
 ## Overview
-This is a project to build the swagger-core library, which is required for the Reverb implementation of the Swagger spec. 
+This is a project to build the swagger-core library, which is required for the Swagger implementation of the Swagger spec. 
 
 ### Change History
 If you're interested in the change history of swagger and the swagger-core framework, see [here](https://github.com/swagger-api/swagger-core/wiki/Changelog).
@@ -81,7 +81,7 @@ There are a number of sample apps in the [samples](https://github.com/swagger-ap
 License
 -------
 
-Copyright 2015 Reverb Technologies, Inc.
+Copyright 2015 SmartBear Software
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

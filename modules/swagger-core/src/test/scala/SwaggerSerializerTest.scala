@@ -29,7 +29,7 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
       .title("Swagger Petstore")
 
     val contact = new Contact()
-      .name("Wordnik API Team")
+      .name("Swagger API Team")
       .email("foo@bar.baz")
       .url("http://swagger.io")
     info.setContact(contact)
@@ -104,7 +104,7 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
       .title("Swagger Petstore")
 
     val contact = new Contact()
-      .name("Wordnik API Team")
+      .name("Swagger API Team")
       .email("foo@bar.baz")
       .url("http://swagger.io")
     info.setContact(contact)
