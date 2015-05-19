@@ -13,6 +13,8 @@ import scala.io.Source
 
 import scala.collection.JavaConverters._
 
+import matchers.SerializationMatchers._
+
 @RunWith(classOf[JUnitRunner])
 class SpecFilterTest extends FlatSpec with Matchers {
   it should "clone everything" in {
@@ -21,6 +23,14 @@ class SpecFilterTest extends FlatSpec with Matchers {
     val filtered = new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null)
 
     Json.pretty(swagger) should equal(Json.pretty(filtered))
+  }
+
+  it should "clone everything from JSON without models" in {
+    val json = Source.fromFile("src/test/scala/specFiles/noModels.json").mkString
+    val swagger = Json.mapper().readValue(json, classOf[Swagger])
+    val filtered = new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null)
+
+    filtered should serializeToJson(json)
   }
 
   it should "filter away get operations in a resource" in {
