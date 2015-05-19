@@ -5,7 +5,7 @@
     "description": "A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification",
     "title": "Petstore Sample API",
     "contact": {
-      "name": "Wordnik API Team"
+      "name": "Swagger API Team"
     },
     "license": {
       "name": "MIT",

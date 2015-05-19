@@ -21,7 +21,7 @@ class BeanConfigTest extends FlatSpec with Matchers {
     bc.setTitle("Petstore Sample API")
     bc.setDescription("A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification")
     bc.setTermsOfServiceUrl("http://helloreverb.com/terms/")
-    bc.setContact("Wordnik API Team")
+    bc.setContact("Swagger API Team")
     bc.setLicense("MIT")
     bc.setLicenseUrl("http://github.com/gruntjs/grunt/blob/master/LICENSE-MIT")
     bc.setScan(true)
