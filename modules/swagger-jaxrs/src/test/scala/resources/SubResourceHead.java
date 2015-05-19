@@ -2,6 +2,9 @@ package resources;
 
 import javax.ws.rs.Path;
 
+import com.wordnik.swagger.annotations.Api;
+
+@Api
 @Path("/head")
 public class SubResourceHead {
 

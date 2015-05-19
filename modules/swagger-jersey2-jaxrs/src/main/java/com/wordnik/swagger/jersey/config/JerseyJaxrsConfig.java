@@ -14,11 +14,6 @@ public class JerseyJaxrsConfig extends HttpServlet {
 
     servletConfig.getServletContext().setAttribute("reader", new WebXMLReader(servletConfig));
     servletConfig.getServletContext().setAttribute("scanner", new DefaultJaxrsScanner());
-    if("true".equals(servletConfig.getInitParameter("scan.all.resources"))) {
-      // scan all resources, not just those annotated
-    }
-    else {
-
-    }
+    ReaderConfigUtils.initReaderConfig(servletConfig);
   }
 }

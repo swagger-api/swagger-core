@@ -48,7 +48,7 @@ public class ApiListingResource {
         classes = scanner.classes();
       }
       if(classes != null) {
-        Reader reader = new Reader(swagger);
+        Reader reader = new Reader(swagger, ReaderConfigUtils.getReaderConfig(context));
         swagger = reader.read(classes);
         if(scanner instanceof SwaggerConfig)
           swagger = ((SwaggerConfig)scanner).configure(swagger);

@@ -31,6 +31,8 @@ import com.wordnik.swagger.annotations.ApiResponses;
 import com.wordnik.swagger.annotations.Authorization;
 import com.wordnik.swagger.annotations.AuthorizationScope;
 import com.wordnik.swagger.converter.ModelConverters;
+import com.wordnik.swagger.jaxrs.config.DefaultReaderConfig;
+import com.wordnik.swagger.jaxrs.config.ReaderConfig;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
 import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
@@ -51,14 +53,21 @@ import com.wordnik.swagger.models.properties.RefProperty;
 import com.wordnik.swagger.util.Json;
 
 public class Reader {
+  private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
   private static final String SUCCESSFUL_OPERATION = "successful operation";
-  private static Logger LOGGER = LoggerFactory.getLogger(Reader.class);
+  private static final String PATH_DELIMITER = "/";
 
   Swagger swagger;
+  private final ReaderConfig config;
   static ObjectMapper m = Json.mapper();
 
   public Reader(Swagger swagger) {
+    this(swagger, null);
+  }
+
+  public Reader(Swagger swagger, ReaderConfig config) {
     this.swagger = swagger == null ? new Swagger() : swagger;
+    this.config = new DefaultReaderConfig(config);
   }
 
   public Swagger read(Set<Class<?>> classes) {
@@ -130,7 +139,7 @@ public class Reader {
     }
     
     // allow reading the JAX-RS APIs without @Api annotation
-    if (api == null || readable) {
+    if (readable || (api == null && config.isScanAllResources())) {
       // merge consumes, produces
 
       // look for method-level annotated properties
@@ -170,6 +179,10 @@ public class Reader {
               pathBuilder.append("/").append(p);
           }
           operationPath = pathBuilder.toString();
+
+          if (isIgnored(operationPath)) {
+            continue;
+          }
 
           final ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
           String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
@@ -682,4 +695,15 @@ public class Reader {
     }
     return result;
   }
+
+  private boolean isIgnored(String path) {
+    for (String item : config.getIgnoredRoutes()) {
+      final int length = item.length();
+      if (path.startsWith(item) && (path.length() == length || path.startsWith(PATH_DELIMITER, length))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 }
