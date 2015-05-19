@@ -261,8 +261,12 @@ public class Reader {
                 for(String tagString : tags.keySet())
                   operation.tag(tagString);
               }
-              for(SecurityRequirement security : securities)
-                operation.security(security);
+              // Only add global @Api securities if operation doesn't already have more specific securities
+              if (operation.getSecurity() == null) {
+                for(SecurityRequirement security : securities) {
+                  operation.security(security);
+                }
+              }  
 
               Path path = swagger.getPath(operationPath);
               if(path == null) {
