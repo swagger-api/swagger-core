@@ -1,3 +1,17 @@
+import javax.ws.rs.QueryParam
+
+import resources._
+
+import com.wordnik.swagger.jaxrs.config._
+import com.wordnik.swagger.models._
+import com.wordnik.swagger.models.parameters._
+import com.wordnik.swagger.models.properties.{IntegerProperty, MapProperty}
+import com.wordnik.swagger.models.properties.{ArrayProperty, RefProperty, MapProperty}
+
+import com.wordnik.swagger.models.{Response, Swagger}
+import com.wordnik.swagger.jaxrs.Reader
+import com.wordnik.swagger.util.Json
+
 import scala.collection.JavaConverters._
 
 import org.junit.runner.RunWith
@@ -273,8 +287,6 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     responses6.get("203").getHeaders().get("foo").asInstanceOf[ArrayProperty].getUniqueItems.booleanValue() should be (true)
     responses6.get("403").getSchema().getClass() should be (classOf[ArrayProperty])
   }
-<<<<<<< HEAD
-=======
 
   it should "scan a resource with inner class" in {
     val swagger = new Reader(new Swagger()).read(classOf[ResourceWithInnerClass])
@@ -282,8 +294,38 @@ class SimpleScannerTest extends FlatSpec with Matchers {
       getItems().asInstanceOf[RefProperty].get$ref() should be ("#/definitions/Description")
     swagger.getDefinitions().containsKey("Description") should be (true)
   }
-}
->>>>>>> a005a2fe620d9cf91cc328a95d0a58247b924537
+
+  it should "scan a resource with body parameters" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithBodyParams])
+
+    swagger.getDefinitions().keySet().asScala should be (Set("Tag"))
+
+    def testParam(path: String, name: String, description: String): Model = {
+      val param = swagger.getPath(path).getPost().getParameters().get(0).asInstanceOf[BodyParameter]
+      param.getIn should be ("body")
+      param.getName should be (name)
+      param.getDescription should be (description)
+      param.getSchema
+    }
+
+    def testString(path: String, name: String, description: String) = {
+      testParam(path, name, description).asInstanceOf[ModelImpl].getType() should be ("string")
+    }
+    testString("/testApiString", "input", "String parameter")
+    testString("/testString", "body", null)
+
+    def testObject(path: String, name: String, description: String) = {
+      testParam(path, name, description).asInstanceOf[RefModel].getSimpleRef() should be ("Tag")
+    }
+    testObject("/testApiObject", "input", "Object parameter")
+    testObject("/testObject", "body", null)
+
+    var list = swagger.getPaths().values().asScala.map { _.getPost() }.filter { _.getOperationId().startsWith("testPrimitive") }
+    list.size should be (16)
+    for (item <- list) {
+      item.getParameters().size() should be (1)
+    }
+  }
 
   it should "scan defaultValue and required per #937" in {
     val swagger = new Reader(new Swagger()).read(classOf[Resource937])
