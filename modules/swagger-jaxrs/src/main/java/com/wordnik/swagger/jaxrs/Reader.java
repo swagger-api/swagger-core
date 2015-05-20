@@ -44,6 +44,8 @@ import com.wordnik.swagger.annotations.ApiResponses;
 import com.wordnik.swagger.annotations.Authorization;
 import com.wordnik.swagger.annotations.AuthorizationScope;
 import com.wordnik.swagger.converter.ModelConverters;
+import com.wordnik.swagger.jaxrs.config.DefaultReaderConfig;
+import com.wordnik.swagger.jaxrs.config.ReaderConfig;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
 import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
@@ -64,8 +66,10 @@ import com.wordnik.swagger.models.properties.RefProperty;
 import com.wordnik.swagger.util.Json;
 
 public class Reader {
+  private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
   private static final String SUCCESSFUL_OPERATION = "successful operation";
-  private static Logger LOGGER = LoggerFactory.getLogger(Reader.class);
+  private static final String PATH_DELIMITER = "/";
+
   private final ReaderConfig config;
 
   private Swagger swagger;
@@ -241,10 +245,16 @@ public class Reader {
           }
           operationPath = pathBuilder.toString();
 
+          if (isIgnored(operationPath)) {
+            continue;
+          }
+
           final ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
           String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
           Operation operation = parseMethod(method);
+          if(operation == null)
+            continue;
           if(parentParameters != null) {
             for(Parameter param : parentParameters) {
               operation.parameter(param);
@@ -320,8 +330,12 @@ public class Reader {
                 for(String tagString : tags.keySet())
                   operation.tag(tagString);
               }
-              for(SecurityRequirement security : securities)
-                operation.security(security);
+              // Only add global @Api securities if operation doesn't already have more specific securities
+              if (operation.getSecurity() == null) {
+                for(SecurityRequirement security : securities) {
+                  operation.security(security);
+                }
+              }
 
               Path path = swagger.getPath(operationPath);
               if(path == null) {
@@ -585,7 +599,8 @@ public class Reader {
           if(!cls.equals(java.lang.Void.class) && !"void".equals(cls.toString())) {
             Property property = ModelConverters.getInstance().readAsProperty(cls);
             if(property != null) {
-              Property responseProperty = wrapContainer(header.responseContainer(), property);
+              Property responseProperty = ContainerWrapper.wrapContainer(header.responseContainer(), property,
+                      ContainerWrapper.ARRAY, ContainerWrapper.LIST, ContainerWrapper.SET);
               responseProperty.setDescription(description);
               responseHeaders.put(name, responseProperty);
             }
@@ -673,7 +688,7 @@ public class Reader {
       if(isPrimitive(responseClass)) {
         Property property = ModelConverters.getInstance().readAsProperty(responseClass);
         if(property != null) {
-          Property responseProperty = wrapContainer(responseContainer, property);
+          Property responseProperty = ContainerWrapper.wrapContainer(responseContainer, property);
           operation.response(responseCode, new Response()
             .description(SUCCESSFUL_OPERATION)
             .schema(responseProperty)
@@ -691,7 +706,7 @@ public class Reader {
         }
         for(String key: models.keySet()) {
           Property property = new RefProperty().asDefault(key);
-          Property responseProperty = wrapContainer(responseContainer, property);
+          Property responseProperty = ContainerWrapper.wrapContainer(responseContainer, property);
           operation.response(responseCode, new Response()
             .description(SUCCESSFUL_OPERATION)
             .schema(responseProperty)
@@ -745,7 +760,7 @@ public class Reader {
           Map<String, Model> models = ModelConverters.getInstance().read(responseClass);
           for(String key: models.keySet()) {
             Property property =  new RefProperty().asDefault(key);
-            Property responseProperty = wrapContainer(apiResponse.responseContainer(), property);
+            Property responseProperty = ContainerWrapper.wrapContainer(apiResponse.responseContainer(), property);
             response.schema(responseProperty);
             swagger.model(key, models.get(key));
           }
@@ -814,9 +829,13 @@ public class Reader {
     }
 
     if(parameters.size() > 0) {
+      final List<Parameter> processed = new ArrayList<Parameter>(parameters.size());
       for(Parameter parameter : parameters) {
-        ParameterProcessor.applyAnnotations(swagger, parameter, cls, annotations, isArray);
+        if (ParameterProcessor.applyAnnotations(swagger, parameter, cls, annotations, isArray) != null) {
+          processed.add(parameter);
+        }
       }
+      parameters = processed;
     }
     else {
       LOGGER.debug("no parameter found, looking at body params");
@@ -901,15 +920,76 @@ public class Reader {
     return result;
   }
 
-  public ObjectMapper getObjectMapper() {
-    return m;
+  private boolean isIgnored(String path) {
+    for (String item : config.getIgnoredRoutes()) {
+      final int length = item.length();
+      if (path.startsWith(item) && (path.length() == length || path.startsWith(PATH_DELIMITER, length))) {
+        return true;
+      }
+    }
+    return false;
   }
 
-  public void setObjectMapper(ObjectMapper m) {
-    Reader.m = m;
+  enum ContainerWrapper {
+    LIST("list") {
+      @Override
+      protected Property doWrap(Property property) {
+        return new ArrayProperty(property);
+      }
+    },
+    ARRAY("array") {
+      @Override
+      protected Property doWrap(Property property) {
+        return new ArrayProperty(property);
+      }
+    },
+    MAP("map") {
+      @Override
+      protected Property doWrap(Property property) {
+        return new MapProperty(property);
+      }
+    },
+    SET("set") {
+      @Override
+      protected Property doWrap(Property property) {
+        ArrayProperty arrayProperty = new ArrayProperty(property);
+        arrayProperty.setUniqueItems(true);
+        return arrayProperty;
+      }
+    };
+
+    private final String container;
+
+    ContainerWrapper(String container) {
+      this.container = container;
+    }
+
+    public Property wrap(String container, Property property) {
+      if (this.container.equalsIgnoreCase(container)) {
+        return doWrap(property);
+      }
+      return null;
+    }
+
+    public static Property wrapContainer(String container, Property property, ContainerWrapper... allowed) {
+      final Set<ContainerWrapper> tmp = allowed.length > 0 ? EnumSet.copyOf(Arrays.asList(allowed)) : EnumSet.allOf(ContainerWrapper.class);
+      for (ContainerWrapper wrapper : tmp) {
+        final Property prop = wrapper.wrap(container, property);
+        if (prop != null) {
+          return prop;
+        }
+      }
+      return property;
+    }
+
+    protected abstract Property doWrap(Property property);
   }
 
-  public ReaderConfig getReaderConfig() {
+  public ReaderConfig getConfig() {
     return config;
+  }
+
+  public static ObjectMapper getM() {
+    return m;
   }
 }
