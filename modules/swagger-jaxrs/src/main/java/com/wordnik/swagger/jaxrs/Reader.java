@@ -25,6 +25,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ExtensionProperty;
 import com.wordnik.swagger.annotations.Extension;
 import com.wordnik.swagger.annotations.SwaggerConfig;
+import com.wordnik.swagger.jaxrs.config.DefaultReaderConfig;
+import com.wordnik.swagger.jaxrs.config.ReaderConfig;
 import com.wordnik.swagger.jaxrs.config.ReaderListener;
 import com.wordnik.swagger.models.Contact;
 import com.wordnik.swagger.models.ExternalDocs;
@@ -64,6 +66,7 @@ import com.wordnik.swagger.util.Json;
 public class Reader {
   private static final String SUCCESSFUL_OPERATION = "successful operation";
   private static Logger LOGGER = LoggerFactory.getLogger(Reader.class);
+  private final ReaderConfig config;
 
   private Swagger swagger;
   private static ObjectMapper m = Json.mapper();
@@ -71,7 +74,12 @@ public class Reader {
   private Map<Class<?>,ReaderListener> listeners = new HashMap<Class<?>, ReaderListener>();
 
   public Reader(Swagger swagger) {
+    this(swagger, null);
+  }
+
+  public Reader(Swagger swagger, ReaderConfig config) {
     this.swagger = swagger == null ? new Swagger() : swagger;
+    this.config = new DefaultReaderConfig(config);
   }
 
   public synchronized Swagger read(Set<Class<?>> classes) {
@@ -133,9 +141,9 @@ public class Reader {
   }
 
   protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
-    SwaggerConfig config = cls.getAnnotation(SwaggerConfig.class);
-    if( config != null ){
-      readSwaggerConfig( cls, config );
+    SwaggerConfig swaggerConfig = cls.getAnnotation(SwaggerConfig.class);
+    if( swaggerConfig != null ){
+      readSwaggerConfig( cls, swaggerConfig );
     }
 
     Api api = (Api) cls.getAnnotation(Api.class);
@@ -192,7 +200,7 @@ public class Reader {
     }
     
     // allow reading the JAX-RS APIs without @Api annotation
-    if (api == null || readable) {
+    if (readable || (api == null && config.isScanAllResources())) {
       // merge consumes, produces
 
       // look for method-level annotated properties
@@ -899,5 +907,9 @@ public class Reader {
 
   public void setObjectMapper(ObjectMapper m) {
     Reader.m = m;
+  }
+
+  public ReaderConfig getReaderConfig() {
+    return config;
   }
 }
