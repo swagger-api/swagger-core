@@ -45,4 +45,29 @@ public class BooleanProperty extends AbstractProperty implements Property {
   public void setDefault(String _default) {
     this._default(_default);
   }
+
+  @Override
+  public int hashCode() {
+  	final int prime = 31;
+  	int result = 1;
+  	result = prime * result + ((_default == null) ? 0 : _default.hashCode());
+  	return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+  	if (this == obj)
+  		return true;
+  	if (obj == null)
+  		return false;
+  	if (getClass() != obj.getClass())
+  		return false;
+  	BooleanProperty other = (BooleanProperty) obj;
+  	if (_default == null) {
+  		if (other._default != null)
+  			return false;
+  	} else if (!_default.equals(other._default))
+  		return false;
+  	return true;
+  }
 }

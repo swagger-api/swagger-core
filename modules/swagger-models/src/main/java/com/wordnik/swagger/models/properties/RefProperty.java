@@ -1,7 +1,5 @@
 package com.wordnik.swagger.models.properties;
 
-import com.wordnik.swagger.models.Xml;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class RefProperty extends AbstractProperty implements Property {
@@ -61,5 +59,30 @@ public class RefProperty extends AbstractProperty implements Property {
     if("$ref".equals(type))
       return true;
     else return false;
+  }
+
+  @Override
+  public int hashCode() {
+  	final int prime = 31;
+  	int result = 1;
+  	result = prime * result + ((ref == null) ? 0 : ref.hashCode());
+  	return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+  	if (this == obj)
+  		return true;
+  	if (obj == null)
+  		return false;
+  	if (getClass() != obj.getClass())
+  		return false;
+  	RefProperty other = (RefProperty) obj;
+  	if (ref == null) {
+  		if (other.ref != null)
+  			return false;
+  	} else if (!ref.equals(other.ref))
+  		return false;
+  	return true;
   }
 }

@@ -67,4 +67,64 @@ public abstract class AbstractParameter {
       vendorExtensions.put(name, value);
     }
   }
+
+  @Override
+  public int hashCode() {
+  	final int prime = 31;
+  	int result = 1;
+  	result = prime * result + ((access == null) ? 0 : access.hashCode());
+  	result = prime * result
+  			+ ((description == null) ? 0 : description.hashCode());
+  	result = prime * result + ((in == null) ? 0 : in.hashCode());
+  	result = prime * result + ((name == null) ? 0 : name.hashCode());
+  	result = prime * result + ((pattern == null) ? 0 : pattern.hashCode());
+  	result = prime * result + (required ? 1231 : 1237);
+  	result = prime * result
+  			+ ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
+  	return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+  	if (this == obj)
+  		return true;
+  	if (obj == null)
+  		return false;
+  	if (getClass() != obj.getClass())
+  		return false;
+  	AbstractParameter other = (AbstractParameter) obj;
+  	if (access == null) {
+  		if (other.access != null)
+  			return false;
+  	} else if (!access.equals(other.access))
+  		return false;
+  	if (description == null) {
+  		if (other.description != null)
+  			return false;
+  	} else if (!description.equals(other.description))
+  		return false;
+  	if (in == null) {
+  		if (other.in != null)
+  			return false;
+  	} else if (!in.equals(other.in))
+  		return false;
+  	if (name == null) {
+  		if (other.name != null)
+  			return false;
+  	} else if (!name.equals(other.name))
+  		return false;
+  	if (pattern == null) {
+  		if (other.pattern != null)
+  			return false;
+  	} else if (!pattern.equals(other.pattern))
+  		return false;
+  	if (required != other.required)
+  		return false;
+  	if (vendorExtensions == null) {
+  		if (other.vendorExtensions != null)
+  			return false;
+  	} else if (!vendorExtensions.equals(other.vendorExtensions))
+  		return false;
+  	return true;
+  }
 }

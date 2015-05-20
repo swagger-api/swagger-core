@@ -88,4 +88,56 @@ public class RefModel implements Model {
 
     return cloned;
   }
+
+  @Override
+  public int hashCode() {
+  	final int prime = 31;
+  	int result = 1;
+  	result = prime * result
+  			+ ((description == null) ? 0 : description.hashCode());
+  	result = prime * result + ((example == null) ? 0 : example.hashCode());
+  	result = prime * result
+  			+ ((externalDocs == null) ? 0 : externalDocs.hashCode());
+  	result = prime * result
+  			+ ((properties == null) ? 0 : properties.hashCode());
+  	result = prime * result + ((ref == null) ? 0 : ref.hashCode());
+  	return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+  	if (this == obj)
+  		return true;
+  	if (obj == null)
+  		return false;
+  	if (getClass() != obj.getClass())
+  		return false;
+  	RefModel other = (RefModel) obj;
+  	if (description == null) {
+  		if (other.description != null)
+  			return false;
+  	} else if (!description.equals(other.description))
+  		return false;
+  	if (example == null) {
+  		if (other.example != null)
+  			return false;
+  	} else if (!example.equals(other.example))
+  		return false;
+  	if (externalDocs == null) {
+  		if (other.externalDocs != null)
+  			return false;
+  	} else if (!externalDocs.equals(other.externalDocs))
+  		return false;
+  	if (properties == null) {
+  		if (other.properties != null)
+  			return false;
+  	} else if (!properties.equals(other.properties))
+  		return false;
+  	if (ref == null) {
+  		if (other.ref != null)
+  			return false;
+  	} else if (!ref.equals(other.ref))
+  		return false;
+  	return true;
+  }
 }

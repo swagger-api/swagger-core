@@ -167,4 +167,87 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     final T result = (T) this;
     return result;
   }
+
+  @Override
+  public int hashCode() {
+  	final int prime = 31;
+  	int result = super.hashCode();
+  	result = prime * result + ((_enum == null) ? 0 : _enum.hashCode());
+  	result = prime * result
+  			+ ((collectionFormat == null) ? 0 : collectionFormat.hashCode());
+  	result = prime * result
+  			+ ((defaultValue == null) ? 0 : defaultValue.hashCode());
+  	result = prime * result
+  			+ ((exclusiveMaximum == null) ? 0 : exclusiveMaximum.hashCode());
+  	result = prime * result
+  			+ ((exclusiveMinimum == null) ? 0 : exclusiveMinimum.hashCode());
+  	result = prime * result + ((format == null) ? 0 : format.hashCode());
+  	result = prime * result + ((items == null) ? 0 : items.hashCode());
+  	result = prime * result + ((maximum == null) ? 0 : maximum.hashCode());
+  	result = prime * result + ((minimum == null) ? 0 : minimum.hashCode());
+  	result = prime * result + ((type == null) ? 0 : type.hashCode());
+  	return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+  	if (this == obj)
+  		return true;
+  	if (!super.equals(obj))
+  		return false;
+  	if (getClass() != obj.getClass())
+  		return false;
+  	AbstractSerializableParameter<?> other = (AbstractSerializableParameter<?>) obj;
+  	if (_enum == null) {
+  		if (other._enum != null)
+  			return false;
+  	} else if (!_enum.equals(other._enum))
+  		return false;
+  	if (collectionFormat == null) {
+  		if (other.collectionFormat != null)
+  			return false;
+  	} else if (!collectionFormat.equals(other.collectionFormat))
+  		return false;
+  	if (defaultValue == null) {
+  		if (other.defaultValue != null)
+  			return false;
+  	} else if (!defaultValue.equals(other.defaultValue))
+  		return false;
+  	if (exclusiveMaximum == null) {
+  		if (other.exclusiveMaximum != null)
+  			return false;
+  	} else if (!exclusiveMaximum.equals(other.exclusiveMaximum))
+  		return false;
+  	if (exclusiveMinimum == null) {
+  		if (other.exclusiveMinimum != null)
+  			return false;
+  	} else if (!exclusiveMinimum.equals(other.exclusiveMinimum))
+  		return false;
+  	if (format == null) {
+  		if (other.format != null)
+  			return false;
+  	} else if (!format.equals(other.format))
+  		return false;
+  	if (items == null) {
+  		if (other.items != null)
+  			return false;
+  	} else if (!items.equals(other.items))
+  		return false;
+  	if (maximum == null) {
+  		if (other.maximum != null)
+  			return false;
+  	} else if (!maximum.equals(other.maximum))
+  		return false;
+  	if (minimum == null) {
+  		if (other.minimum != null)
+  			return false;
+  	} else if (!minimum.equals(other.minimum))
+  		return false;
+  	if (type == null) {
+  		if (other.type != null)
+  			return false;
+  	} else if (!type.equals(other.type))
+  		return false;
+  	return true;
+  }
 }
