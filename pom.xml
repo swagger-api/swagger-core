@@ -10,7 +10,7 @@
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
   <version>1.5.2-M2-SNAPSHOT</version>
-  <url>https://github.com/wordnik/swagger-core</url>
+  <url>https://github.com/swagger-api/swagger-core</url>
   <scm>
     <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
     <developerConnection>scm:git:git@github.com:swagger-api/swagger-core.git</developerConnection>
@@ -28,7 +28,7 @@
   </developers>
   <issueManagement>
     <system>github</system>
-    <url>https://github.com/wordnik/swagger-core/issues</url>
+    <url>https://github.com/swagger-api/swagger-core/issues</url>
   </issueManagement>
   <mailingLists>
     <mailingList>

@@ -60,7 +60,7 @@ public class PetResource {
     }
   }
 
-  @PATCH
+  @DELETE
   @Path("/{petId}")
   @ApiOperation(value = "Deletes a pet")
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid pet value")})
