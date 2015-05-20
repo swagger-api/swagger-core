@@ -307,10 +307,7 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     val swagger = new Reader(new Swagger()).read(classOf[Resource1073])
     swagger.getPaths() should be (null)
   }
-}
-  
-@RunWith(classOf[JUnitRunner])
-class SimpleScannerTest2 extends FlatSpec with Matchers {
+
   it should "scan a resource with body parameters" in {
     val swagger = new Reader(new Swagger()).read(classOf[ResourceWithBodyParams])
     val param = swagger.getPaths().get("/testShort").getPost().getParameters().get(0).asInstanceOf[BodyParameter]
@@ -347,5 +344,13 @@ class SimpleScannerTest2 extends FlatSpec with Matchers {
     for (item <- list) {
       item.getParameters().size() should be (1)
     }
+  }
+
+  it should "verify top-level path params per #1085" in {
+    val swagger = new Reader(new Swagger()).read(classOf[Resource1085])
+    val params = swagger.getPaths().get("/external/info/{id}").getGet().getParameters()
+    val param = params.get(0)
+    param.getName() should be ("id")
+    param.isInstanceOf[PathParameter] should be (true)
   }
 }
