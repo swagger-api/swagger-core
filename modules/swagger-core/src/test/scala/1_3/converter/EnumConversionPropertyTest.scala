@@ -26,6 +26,7 @@ class EnumConversionPropertyTest extends FlatSpec with Matchers {
     models should serializeToJson (
 """{
   "ModelWithEnumProperty" : {
+    "type": "object",
     "properties" : {
       "enumValue" : {
         "type" : "string",
@@ -41,6 +42,7 @@ class EnumConversionPropertyTest extends FlatSpec with Matchers {
     models should serializeToJson (
 """{
   "ATM" : {
+    "type": "object",
     "properties" : {
       "currency" : {
         "type" : "string",

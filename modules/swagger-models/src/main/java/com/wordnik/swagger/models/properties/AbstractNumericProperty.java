@@ -49,4 +49,49 @@ public abstract class AbstractNumericProperty extends AbstractProperty implement
   public void setExclusiveMaximum(Boolean exclusiveMaximum) {
     this.exclusiveMaximum = exclusiveMaximum;
   }
+
+  @Override
+  public int hashCode() {
+  	final int prime = 31;
+  	int result = super.hashCode();
+  	result = prime * result
+  			+ ((exclusiveMaximum == null) ? 0 : exclusiveMaximum.hashCode());
+  	result = prime * result
+  			+ ((exclusiveMinimum == null) ? 0 : exclusiveMinimum.hashCode());
+  	result = prime * result + ((maximum == null) ? 0 : maximum.hashCode());
+  	result = prime * result + ((minimum == null) ? 0 : minimum.hashCode());
+  	return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+  	if (this == obj)
+  		return true;
+  	if (!super.equals(obj))
+  		return false;
+  	if (getClass() != obj.getClass())
+  		return false;
+  	AbstractNumericProperty other = (AbstractNumericProperty) obj;
+  	if (exclusiveMaximum == null) {
+  		if (other.exclusiveMaximum != null)
+  			return false;
+  	} else if (!exclusiveMaximum.equals(other.exclusiveMaximum))
+  		return false;
+  	if (exclusiveMinimum == null) {
+  		if (other.exclusiveMinimum != null)
+  			return false;
+  	} else if (!exclusiveMinimum.equals(other.exclusiveMinimum))
+  		return false;
+  	if (maximum == null) {
+  		if (other.maximum != null)
+  			return false;
+  	} else if (!maximum.equals(other.maximum))
+  		return false;
+  	if (minimum == null) {
+  		if (other.minimum != null)
+  			return false;
+  	} else if (!minimum.equals(other.minimum))
+  		return false;
+  	return true;
+  }
 }

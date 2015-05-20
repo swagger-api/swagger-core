@@ -3,6 +3,7 @@ import javax.ws.rs.QueryParam
 import resources._
 
 import com.wordnik.swagger.jaxrs.config._
+import com.wordnik.swagger.models._
 import com.wordnik.swagger.models.parameters._
 import com.wordnik.swagger.models.properties.{IntegerProperty, MapProperty}
 import com.wordnik.swagger.models.properties.{ArrayProperty, RefProperty, MapProperty}
@@ -14,9 +15,18 @@ import com.wordnik.swagger.util.Json
 import scala.collection.JavaConverters._
 
 import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
+import org.scalatest.junit.JUnitRunner
+
+import com.wordnik.swagger.jaxrs.Reader
+import com.wordnik.swagger.models.Swagger
+import com.wordnik.swagger.models.parameters._
+import com.wordnik.swagger.models.properties._
+import com.wordnik.swagger.util.Json
+
+import models.TestEnum
+import resources._
 
 @RunWith(classOf[JUnitRunner])
 class SimpleScannerTest extends FlatSpec with Matchers {
@@ -135,6 +145,15 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     val param = get.getParameters().get(2).asInstanceOf[SerializableParameter]
     val _enum = param.getEnum()
     _enum.asScala.toSet should equal (Set("a","b","c","d","e"))
+
+    val checkEnumHandling = swagger.getPath("/checkEnumHandling/{v0}").getGet().getParameters()
+    val allEnumValues = (for (item <- TestEnum.values()) yield item.name()).toSet
+    val v0 = checkEnumHandling.get(0).asInstanceOf[SerializableParameter]
+    v0.getEnum().asScala.toSet should be (allEnumValues)
+    val v1 = checkEnumHandling.get(1).asInstanceOf[SerializableParameter]
+    v1.getItems().asInstanceOf[StringProperty].getEnum().asScala.toSet should be (allEnumValues)
+    val v3 = checkEnumHandling.get(3).asInstanceOf[SerializableParameter]
+    v3.getEnum().asScala.toSet should be (Set("A", "B", "C"))
   }
 
   it should "scan a resource with param range" in {
@@ -194,7 +213,9 @@ class SimpleScannerTest extends FlatSpec with Matchers {
   }
   
   it should "scan a simple resource without annotations" in {
-    val swagger = new Reader(new Swagger()).read(classOf[SimpleResourceWithoutAnnotations])
+    val config = new DefaultReaderConfig()
+    config.setScanAllResources(true)
+    val swagger = new Reader(new Swagger(), config).read(classOf[SimpleResourceWithoutAnnotations])
     swagger.getPaths().size should be (2)
 
     val path = swagger.getPaths().get("/{id}")
@@ -255,7 +276,7 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     val responses5 = paths2.getGet.getResponses;
     responses5.get("203").getSchema().getClass() should be (classOf[ArrayProperty])
     responses5.get("203").getSchema().asInstanceOf[ArrayProperty].getUniqueItems() should be (null)
-    responses5.get("203").getHeaders().get("foo").getClass() should be (classOf[MapProperty])
+    responses5.get("203").getHeaders().get("foo").getClass() should not be (classOf[MapProperty])
     responses5.get("403").getSchema().getClass() should be (classOf[ArrayProperty])
     responses5.get("403").getSchema().asInstanceOf[ArrayProperty].getUniqueItems().booleanValue() should be (true)
 
@@ -266,10 +287,14 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     responses6.get("203").getHeaders().get("foo").asInstanceOf[ArrayProperty].getUniqueItems.booleanValue() should be (true)
     responses6.get("403").getSchema().getClass() should be (classOf[ArrayProperty])
   }
-}
 
-@RunWith(classOf[JUnitRunner])
-class SimpleScannerTest2 extends FlatSpec with Matchers {
+  it should "scan a resource with inner class" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithInnerClass])
+    swagger.getPath("/description").getGet().getResponses().get("200").getSchema().asInstanceOf[ArrayProperty].
+      getItems().asInstanceOf[RefProperty].get$ref() should be ("#/definitions/Description")
+    swagger.getDefinitions().containsKey("Description") should be (true)
+  }
+
   it should "scan defaultValue and required per #937" in {
     val swagger = new Reader(new Swagger()).read(classOf[Resource937])
     val get = swagger.getPaths().get("/external/info").getGet()
@@ -277,5 +302,68 @@ class SimpleScannerTest2 extends FlatSpec with Matchers {
     param.getRequired should be (false)
     param.getDefaultValue should be ("dogs")
   }
+
+  it should "scan a resource with all hidden values #1073" in {
+    val swagger = new Reader(new Swagger()).read(classOf[Resource1073])
+    swagger.getPaths() should be (null)
+  }
+
+  it should "scan a resource with body parameters" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithBodyParams])
+    val param = swagger.getPaths().get("/testShort").getPost().getParameters().get(0).asInstanceOf[BodyParameter]
+    param.getDescription() should be ("a short input")
+    val schema = param.getSchema.asInstanceOf[ModelImpl]
+
+    schema.getType() should be ("integer")
+    schema.getFormat() should be ("int32")
+
+    swagger.getDefinitions().keySet().asScala should be (Set("Tag"))
+
+    def testParam(path: String, name: String, description: String): Model = {
+      val param = swagger.getPath(path).getPost().getParameters().get(0).asInstanceOf[BodyParameter]
+      param.getIn should be ("body")
+      param.getName should be (name)
+      param.getDescription should be (description)
+      param.getSchema
+    }
+
+    def testString(path: String, name: String, description: String) = {
+      testParam(path, name, description).asInstanceOf[ModelImpl].getType() should be ("string")
+    }
+    testString("/testApiString", "input", "String parameter")
+    testString("/testString", "body", null)
+
+    def testObject(path: String, name: String, description: String) = {
+      testParam(path, name, description).asInstanceOf[RefModel].getSimpleRef() should be ("Tag")
+    }
+    testObject("/testApiObject", "input", "Object parameter")
+    testObject("/testObject", "body", null)
+
+    var list = swagger.getPaths().values().asScala.map { _.getPost() }.filter { _.getOperationId().startsWith("testPrimitive") }
+    list.size should be (16)
+    for (item <- list) {
+      item.getParameters().size() should be (1)
+    }
+  }
+
+  it should "verify top-level path params per #1085" in {
+    val swagger = new Reader(new Swagger()).read(classOf[Resource1085])
+    val params = swagger.getPaths().get("/external/info/{id}").getGet().getParameters()
+    val param = params.get(0)
+    param.getName() should be ("id")
+    param.isInstanceOf[PathParameter] should be (true)
+  }
+
+  it should "verify top-level auth #1041" in {
+    val swagger = new Reader(new Swagger()).read(classOf[Resource1041])
+    val path1 = swagger.getPaths().get("/external/info/path1").getGet()
+    val security1 = path1.getSecurity()
+    security1.size should be (1)
+    security1.get(0).get("my_auth") should not be (null)
+
+    val path2 = swagger.getPaths().get("/external/info/path2").getGet()
+    val security2 = path2.getSecurity()
+    security2.size should be (1)
+    security2.get(0).get("your_auth") should not be (null)
+  }
 }
-  

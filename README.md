@@ -29,7 +29,7 @@ The Swagger Specification has undergone 3 revisions since initial creation in 20
 
 Swagger core Version      | Release Date | Swagger Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-1.5.2-M2-SNAPSHOT                  | 2015-04-05   | 2.0           | [master](https://github.com/swagger-api/swagger-core) | Supported
+1.5.3-M2-SNAPSHOT                  | 2015-04-05   | 2.0           | [master](https://github.com/swagger-api/swagger-core) | Supported
 1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Supported
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4) | Deprecated
 1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0) | Deprecated
@@ -38,7 +38,7 @@ Swagger core Version      | Release Date | Swagger Spec compatibility | Notes | 
 To allow independent development, scala support has been moved into a separate project.  See the [swagger-scala-module](https://github.com/swagger-api/swagger-scala-module) for details.  Play! framework support is moving outside the swagger-core project as well.
 
 ## Overview
-This is a project to build the swagger-core library, which is required for the Reverb implementation of the Swagger spec. 
+This is a project to build the swagger-core library, which is required for the Swagger implementation of the Swagger spec. 
 
 ### Change History
 If you're interested in the change history of swagger and the swagger-core framework, see [here](https://github.com/swagger-api/swagger-core/wiki/Changelog).
@@ -52,7 +52,7 @@ You need the following installed and available in your $PATH:
 * Jackson 2.4.2 or greater
 
 
-### To build from source (currently 1.5.2-M2-SNAPSHOT)
+### To build from source (currently 1.5.3-M2-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
@@ -81,7 +81,7 @@ There are a number of sample apps in the [samples](https://github.com/swagger-ap
 License
 -------
 
-Copyright 2015 Reverb Technologies, Inc.
+Copyright 2015 SmartBear Software
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

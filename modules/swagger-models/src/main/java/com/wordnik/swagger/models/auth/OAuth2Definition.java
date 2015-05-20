@@ -76,4 +76,54 @@ public class OAuth2Definition implements SecuritySchemeDefinition {
   public void setType(String type) {
     this.type = type;
   }
+
+@Override
+public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result
+			+ ((authorizationUrl == null) ? 0 : authorizationUrl.hashCode());
+	result = prime * result + ((flow == null) ? 0 : flow.hashCode());
+	result = prime * result + ((scopes == null) ? 0 : scopes.hashCode());
+	result = prime * result + ((tokenUrl == null) ? 0 : tokenUrl.hashCode());
+	result = prime * result + ((type == null) ? 0 : type.hashCode());
+	return result;
+}
+
+@Override
+public boolean equals(Object obj) {
+	if (this == obj)
+		return true;
+	if (obj == null)
+		return false;
+	if (getClass() != obj.getClass())
+		return false;
+	OAuth2Definition other = (OAuth2Definition) obj;
+	if (authorizationUrl == null) {
+		if (other.authorizationUrl != null)
+			return false;
+	} else if (!authorizationUrl.equals(other.authorizationUrl))
+		return false;
+	if (flow == null) {
+		if (other.flow != null)
+			return false;
+	} else if (!flow.equals(other.flow))
+		return false;
+	if (scopes == null) {
+		if (other.scopes != null)
+			return false;
+	} else if (!scopes.equals(other.scopes))
+		return false;
+	if (tokenUrl == null) {
+		if (other.tokenUrl != null)
+			return false;
+	} else if (!tokenUrl.equals(other.tokenUrl))
+		return false;
+	if (type == null) {
+		if (other.type != null)
+			return false;
+	} else if (!type.equals(other.type))
+		return false;
+	return true;
+}
 }

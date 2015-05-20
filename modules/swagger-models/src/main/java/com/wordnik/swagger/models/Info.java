@@ -113,4 +113,68 @@ public class Info {
       vendorExtensions.put(name, value);
     }
   }
+
+  @Override
+  public int hashCode() {
+  	final int prime = 31;
+  	int result = 1;
+  	result = prime * result + ((contact == null) ? 0 : contact.hashCode());
+  	result = prime * result
+  			+ ((description == null) ? 0 : description.hashCode());
+  	result = prime * result + ((license == null) ? 0 : license.hashCode());
+  	result = prime * result
+  			+ ((termsOfService == null) ? 0 : termsOfService.hashCode());
+  	result = prime * result + ((title == null) ? 0 : title.hashCode());
+  	result = prime * result
+  			+ ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
+  	result = prime * result + ((version == null) ? 0 : version.hashCode());
+  	return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+  	if (this == obj)
+  		return true;
+  	if (obj == null)
+  		return false;
+  	if (getClass() != obj.getClass())
+  		return false;
+  	Info other = (Info) obj;
+  	if (contact == null) {
+  		if (other.contact != null)
+  			return false;
+  	} else if (!contact.equals(other.contact))
+  		return false;
+  	if (description == null) {
+  		if (other.description != null)
+  			return false;
+  	} else if (!description.equals(other.description))
+  		return false;
+  	if (license == null) {
+  		if (other.license != null)
+  			return false;
+  	} else if (!license.equals(other.license))
+  		return false;
+  	if (termsOfService == null) {
+  		if (other.termsOfService != null)
+  			return false;
+  	} else if (!termsOfService.equals(other.termsOfService))
+  		return false;
+  	if (title == null) {
+  		if (other.title != null)
+  			return false;
+  	} else if (!title.equals(other.title))
+  		return false;
+  	if (vendorExtensions == null) {
+  		if (other.vendorExtensions != null)
+  			return false;
+  	} else if (!vendorExtensions.equals(other.vendorExtensions))
+  		return false;
+  	if (version == null) {
+  		if (other.version != null)
+  			return false;
+  	} else if (!version.equals(other.version))
+  		return false;
+  	return true;
+  }
 }

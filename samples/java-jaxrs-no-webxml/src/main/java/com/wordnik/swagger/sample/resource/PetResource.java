@@ -1,5 +1,5 @@
 /**
- *  Copyright 2015 Reverb Technologies, Inc.
+ *  Copyright 2015 SmartBear Software
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class PetResource {
     }
   }
 
-  @PATCH
+  @DELETE
   @Path("/{petId}")
   @ApiOperation(value = "Deletes a pet")
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid pet value")})

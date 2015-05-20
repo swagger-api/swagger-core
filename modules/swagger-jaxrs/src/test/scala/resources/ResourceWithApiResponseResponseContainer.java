@@ -7,6 +7,7 @@ import models.Sample;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
+@Api
 public class ResourceWithApiResponseResponseContainer {
   @GET
   @Path("/{id}")
@@ -98,7 +99,7 @@ public class ResourceWithApiResponseResponseContainer {
     position = 0,
     code = 203,
     responseHeaders = {
-      @ResponseHeader(name = "foo", description = "description", response = String.class, responseContainer = "map")
+      @ResponseHeader(name = "foo", description = "description", response = String.class, responseContainer = "list")
     })
   @ApiResponses({
     @ApiResponse(code = 403, message = "Forbidden",

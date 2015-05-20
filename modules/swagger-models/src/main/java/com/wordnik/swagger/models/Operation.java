@@ -20,7 +20,6 @@ public class Operation {
   private List<Parameter> parameters = new ArrayList<Parameter>();
   private Map<String, Response> responses;
   private List<Map<String, List<String>>> security;
-  private String example;
   private ExternalDocs externalDocs;
   private Boolean deprecated;
   private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
@@ -239,5 +238,108 @@ public class Operation {
     if (name.startsWith("x-")) {
       vendorExtensions.put(name, value);
     }
+  }
+
+  @Override
+  public int hashCode() {
+  	final int prime = 31;
+  	int result = 1;
+  	result = prime * result + ((consumes == null) ? 0 : consumes.hashCode());
+  	result = prime * result
+  			+ ((deprecated == null) ? 0 : deprecated.hashCode());
+  	result = prime * result
+  			+ ((description == null) ? 0 : description.hashCode());
+  	result = prime * result
+  			+ ((externalDocs == null) ? 0 : externalDocs.hashCode());
+  	result = prime * result
+  			+ ((operationId == null) ? 0 : operationId.hashCode());
+  	result = prime * result
+  			+ ((parameters == null) ? 0 : parameters.hashCode());
+  	result = prime * result + ((produces == null) ? 0 : produces.hashCode());
+  	result = prime * result + ((responses == null) ? 0 : responses.hashCode());
+  	result = prime * result + ((schemes == null) ? 0 : schemes.hashCode());
+  	result = prime * result + ((security == null) ? 0 : security.hashCode());
+  	result = prime * result + ((summary == null) ? 0 : summary.hashCode());
+  	result = prime * result + ((tags == null) ? 0 : tags.hashCode());
+  	result = prime * result
+  			+ ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
+  	return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+  	if (this == obj)
+  		return true;
+  	if (obj == null)
+  		return false;
+  	if (getClass() != obj.getClass())
+  		return false;
+  	Operation other = (Operation) obj;
+  	if (consumes == null) {
+  		if (other.consumes != null)
+  			return false;
+  	} else if (!consumes.equals(other.consumes))
+  		return false;
+  	if (deprecated == null) {
+  		if (other.deprecated != null)
+  			return false;
+  	} else if (!deprecated.equals(other.deprecated))
+  		return false;
+  	if (description == null) {
+  		if (other.description != null)
+  			return false;
+  	} else if (!description.equals(other.description))
+  		return false;
+  	if (externalDocs == null) {
+  		if (other.externalDocs != null)
+  			return false;
+  	} else if (!externalDocs.equals(other.externalDocs))
+  		return false;
+  	if (operationId == null) {
+  		if (other.operationId != null)
+  			return false;
+  	} else if (!operationId.equals(other.operationId))
+  		return false;
+  	if (parameters == null) {
+  		if (other.parameters != null)
+  			return false;
+  	} else if (!parameters.equals(other.parameters))
+  		return false;
+  	if (produces == null) {
+  		if (other.produces != null)
+  			return false;
+  	} else if (!produces.equals(other.produces))
+  		return false;
+  	if (responses == null) {
+  		if (other.responses != null)
+  			return false;
+  	} else if (!responses.equals(other.responses))
+  		return false;
+  	if (schemes == null) {
+  		if (other.schemes != null)
+  			return false;
+  	} else if (!schemes.equals(other.schemes))
+  		return false;
+  	if (security == null) {
+  		if (other.security != null)
+  			return false;
+  	} else if (!security.equals(other.security))
+  		return false;
+  	if (summary == null) {
+  		if (other.summary != null)
+  			return false;
+  	} else if (!summary.equals(other.summary))
+  		return false;
+  	if (tags == null) {
+  		if (other.tags != null)
+  			return false;
+  	} else if (!tags.equals(other.tags))
+  		return false;
+  	if (vendorExtensions == null) {
+  		if (other.vendorExtensions != null)
+  			return false;
+  	} else if (!vendorExtensions.equals(other.vendorExtensions))
+  		return false;
+  	return true;
   }
 }

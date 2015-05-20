@@ -11,3 +11,4 @@ samples/scala-play2/logs
 atlassian-ide-plugin.xml
 *.iml
 .java-version
+sonar-project.properties

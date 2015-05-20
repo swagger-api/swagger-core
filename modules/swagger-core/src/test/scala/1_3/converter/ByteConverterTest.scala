@@ -26,6 +26,7 @@ class ByteConverterTest extends FlatSpec with Matchers {
   models should serializeToJson (
 """{
   "ByteConverterModel" : {
+    "type": "object",
     "properties" : {
       "myBytes" : {
         "type" : "array",
