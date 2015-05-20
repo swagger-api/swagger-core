@@ -85,7 +85,7 @@ public class StringProperty extends AbstractProperty implements Property {
 
   //TODO: implement additional formats
   public static boolean isType(String type, String format) {
-    boolean formatMatchStringType = "uri".equals(format) || "byte".equals(format) || "url".equals(format);
+    boolean formatMatchStringType = "uri".equals(format) || "url".equals(format);
     if("string".equals(type) && (format == null || formatMatchStringType))
       return true;
     else return false;
