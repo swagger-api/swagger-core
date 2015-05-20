@@ -8,10 +8,10 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-hiberate-validations</artifactId>
+  <artifactId>swagger-hibernate-validations</artifactId>
   <packaging>jar</packaging>
   <version>1.5.2-M2-SNAPSHOT</version>
-  <name>swagger-hiberate-validations</name>
+  <name>swagger-hibernate-validations</name>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <defaultGoal>install</defaultGoal>
