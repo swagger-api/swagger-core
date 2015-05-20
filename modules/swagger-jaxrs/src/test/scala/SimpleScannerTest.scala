@@ -354,7 +354,7 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     param.isInstanceOf[PathParameter] should be (true)
   }
 
-  it should "verify top-level path params per #1085" in {
+  it should "verify top-level auth #1041" in {
     val swagger = new Reader(new Swagger()).read(classOf[Resource1041])
     val path1 = swagger.getPaths().get("/external/info/path1").getGet()
     val security1 = path1.getSecurity()

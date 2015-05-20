@@ -52,6 +52,14 @@ class XmlModelTest extends FlatSpec with Matchers {
   }
 }
 
+@RunWith(classOf[JUnitRunner])
+class XmlModelTest2 extends FlatSpec with Matchers {
+  it should "honor xml annotations" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[Message])
+    Json.prettyPrint(schemas)
+  }
+}
+
 @XmlRootElement(name = "monster")
 class Monster {
   @BeanProperty
