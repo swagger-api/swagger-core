@@ -1,7 +1,7 @@
 package com.wordnik.swagger.annotations;
 
 public @interface License {
-    String value() default "";
+    String name() default "";
 
     /**
      * URL for the license.

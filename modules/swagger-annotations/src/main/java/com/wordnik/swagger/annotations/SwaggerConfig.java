@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
  * Annotation that configures definition level metadata. Still missing are the following:
  * - Security Definitions
  * - Security Requirements
+ * - Parameters
  * - Responses
  */
 
@@ -82,15 +83,6 @@ public @interface SwaggerConfig {
      */
 
     Info info() default @Info();
-
-    /**
-     * Shared parameter definitions that can be referred to in operations using the localReference
-     * annotation property.
-     *
-     * @return list of shared parameter definitions
-     */
-
-    ApiParam [] parameters() default @ApiParam();
 
     /**
      * Reference to external documentation for this Swagger definition

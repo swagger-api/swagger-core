@@ -89,13 +89,4 @@ public @interface ApiParam {
    * Specifies whether the parameter can accept multiple values by having multiple occurrences.
    */
   boolean allowMultiple() default false;
-
-  /**
-   * Refers to a parameter defined at the SwaggerConfig level. Not applicable to ApiParams defined
-   * within a SwaggerConfig itself.
-   *
-   * @return name of a parameter defined at the SwaggerConfig level
-   */
-
-  String localReference() default "";
 }

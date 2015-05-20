@@ -19,10 +19,17 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Produces;
 
+import com.fasterxml.jackson.databind.util.BeanUtil;
+import com.fasterxml.jackson.dataformat.yaml.snakeyaml.introspector.PropertyUtils;
+import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ExtensionProperty;
 import com.wordnik.swagger.annotations.Extension;
 import com.wordnik.swagger.annotations.SwaggerConfig;
+import com.wordnik.swagger.jaxrs.config.ReaderListener;
+import com.wordnik.swagger.models.Contact;
+import com.wordnik.swagger.models.ExternalDocs;
 import com.wordnik.swagger.models.Info;
+import com.wordnik.swagger.models.License;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,16 +65,40 @@ public class Reader {
   private static final String SUCCESSFUL_OPERATION = "successful operation";
   private static Logger LOGGER = LoggerFactory.getLogger(Reader.class);
 
-  Swagger swagger;
-  static ObjectMapper m = Json.mapper();
+  private Swagger swagger;
+  private static ObjectMapper m = Json.mapper();
+
+  private Map<Class<?>,ReaderListener> listeners = new HashMap<Class<?>, ReaderListener>();
 
   public Reader(Swagger swagger) {
     this.swagger = swagger == null ? new Swagger() : swagger;
   }
 
-  public Swagger read(Set<Class<?>> classes) {
+  public synchronized Swagger read(Set<Class<?>> classes) {
+
+    listeners.clear();
+
+    for(Class<?> cls: classes) {
+      if( ReaderListener.class.isAssignableFrom( ReaderListener.class ) && listeners.containsKey( cls )){
+        try {
+          listeners.put( cls, (ReaderListener) cls.newInstance());
+        } catch (Exception e) {
+          LOGGER.error("Failed to create ReaderListener", e);
+        }
+      }
+    }
+
+    for( ReaderListener listener : listeners.values()){
+      listener.beforeScan( this, swagger );
+    }
+
     for(Class<?> cls: classes)
       read(cls);
+
+    for( ReaderListener listener : listeners.values()){
+      listener.afterScan( this, swagger);
+    }
+
     return swagger;
   }
 
@@ -76,7 +107,29 @@ public class Reader {
   }
 
   public Swagger read(Class<?> cls) {
-    return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
+    if( ReaderListener.class.isAssignableFrom(cls) && !listeners.containsKey( cls )){
+      ReaderListener listener = null;
+      try {
+        listener = (ReaderListener) cls.newInstance();
+      } catch (Exception e) {
+        LOGGER.error("Failed to create ReaderListener", e);
+      }
+
+      if( listener != null ){
+        listener.beforeScan( this, swagger );
+      }
+
+      Swagger result = read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
+
+      if( listener != null ){
+        listener.afterScan( this, result );
+      }
+
+      return result;
+    }
+    else {
+      return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
+    }
   }
 
   protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
@@ -274,30 +327,20 @@ public class Reader {
       }
     }
 
-    /*
-    if( api != null ) {
-      Extension[] extensions = api.infoExtensions();
-      if (extensions.length > 0) {
-        if (swagger.getInfo() == null) {
-          swagger.setInfo(new Info());
-        }
-        addExtensionProperties(extensions, swagger.getInfo().getVendorExtensions());
-      }
-    } */
-
     return swagger;
   }
 
-  private void readSwaggerConfig(Class<?> cls, SwaggerConfig config) {
+  protected void readSwaggerConfig(Class<?> cls, SwaggerConfig config) {
 
-    com.wordnik.swagger.annotations.Info infoConfig = config.info();
-    Info info = swagger.getInfo();
-    if( info == null ){
-      info = new Info();
-      swagger.setInfo(info);
+    if( !config.basePath().isEmpty()){
+      swagger.setBasePath( config.basePath());
     }
 
-    addExtensionProperties( infoConfig.extensions(), info.getVendorExtensions());
+    if( !config.host().isEmpty()){
+      swagger.setHost( config.host());
+    }
+
+    readInfoConfig(config);
 
     for( String consume: config.consumes()){
       swagger.addConsumes(consume);
@@ -307,6 +350,97 @@ public class Reader {
       swagger.addProduces( produce );
     }
 
+    if( !config.externalDocs().value().isEmpty() ){
+      ExternalDocs externalDocs = swagger.getExternalDocs();
+      if( externalDocs == null ){
+        externalDocs = new ExternalDocs();
+        swagger.setExternalDocs(externalDocs);
+      }
+
+      externalDocs.setDescription(config.externalDocs().value());
+
+      if( !config.externalDocs().url().isEmpty()){
+        externalDocs.setUrl( config.externalDocs().url() );
+      }
+    }
+
+    for( com.wordnik.swagger.annotations.Tag tagConfig : config.tags()){
+      if( !tagConfig.value().isEmpty()){
+        Tag tag = new Tag();
+        tag.setName( tagConfig.value() );
+        tag.setDescription( tagConfig.description());
+
+        if( !tagConfig.externalDocs().value().isEmpty() ){
+           tag.setExternalDocs( new ExternalDocs( tagConfig.externalDocs().value(),
+                   tagConfig.externalDocs().url()));
+        }
+
+        swagger.addTag( tag );
+      }
+    }
+
+    for( SwaggerConfig.Scheme scheme : config.schemes()){
+      if( scheme != SwaggerConfig.Scheme.DEFAULT ){
+        swagger.addScheme( Scheme.forValue( scheme.name()));
+      }
+    }
+  }
+
+  protected void readInfoConfig(SwaggerConfig config) {
+    com.wordnik.swagger.annotations.Info infoConfig = config.info();
+    Info info = swagger.getInfo();
+    if( info == null ){
+      info = new Info();
+      swagger.setInfo(info);
+    }
+
+    if( !infoConfig.description().isEmpty() ){
+      info.setDescription( infoConfig.description());
+    }
+
+    if( !infoConfig.termsOfService().isEmpty() ){
+      info.setTermsOfService( infoConfig.termsOfService());
+    }
+
+    if( !infoConfig.title().isEmpty() ){
+      info.setTitle(infoConfig.title());
+    }
+
+    if( !infoConfig.version().isEmpty() ){
+      info.setVersion(infoConfig.version());
+    }
+
+    if( !infoConfig.contact().name().isEmpty() ){
+      Contact contact = info.getContact();
+      if( contact == null ){
+        contact = new Contact();
+        info.setContact( contact );
+      }
+
+      contact.setName( infoConfig.contact().name() );
+      if( !infoConfig.contact().email().isEmpty() ){
+        contact.setEmail( infoConfig.contact().email());
+      }
+
+      if( !infoConfig.contact().url().isEmpty() ){
+        contact.setUrl(infoConfig.contact().url());
+      }
+    }
+
+    if( !infoConfig.license().name().isEmpty() ){
+      License license = info.getLicense();
+      if( license == null ){
+        license = new License();
+        info.setLicense( license );
+      }
+
+      license.setName( infoConfig.license().name());
+      if( !infoConfig.license().url().isEmpty() ){
+        license.setUrl( infoConfig.license().url());
+      }
+    }
+
+    addExtensionProperties(infoConfig.extensions(), info.getVendorExtensions());
   }
 
   private void addExtensionProperties(Extension [] extensions, Map<String, Object> map) {
@@ -755,5 +889,13 @@ public class Reader {
       }
     }
     return result;
+  }
+
+  public ObjectMapper getObjectMapper() {
+    return m;
+  }
+
+  public void setObjectMapper(ObjectMapper m) {
+    Reader.m = m;
   }
 }
