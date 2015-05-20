@@ -1,18 +1,16 @@
 package filter;
 
-import com.wordnik.swagger.util.Json;
-import com.wordnik.swagger.core.filter.*;
+import java.util.List;
+import java.util.Map;
 
-import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.models.properties.*;
-import com.wordnik.swagger.model.ApiDescription;
-
-import java.util.*;
+import com.wordnik.swagger.core.filter.AbstractSpecFilter;
+import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.properties.Property;
 
 /**
  * Sample filter to model properties starting with "_" unless a header
  * "super-user" is passed
- **/
+ */
 public class InternalModelPropertiesRemoverFilter extends AbstractSpecFilter {
   @Override
   public boolean isPropertyAllowed(

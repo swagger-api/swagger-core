@@ -29,6 +29,7 @@ class PropertyAnnotationTest extends FlatSpec with Matchers {
     a should serializeToJson (
 """{
   "ModelWithAnnotationOnProperty" : {
+    "type": "object",
     "properties" : {
       "count" : {
         "type" : "integer",

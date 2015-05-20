@@ -1,5 +1,5 @@
 /**
- *  Copyright 2015 Reverb Technologies, Inc.
+ *  Copyright 2015 SmartBear Software
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,10 +22,7 @@ import java.lang.annotation.*;
 /**
  * Marks a class as a Swagger resource.
  * <p>
- * The resource affects both the root document of Swagger, the Resource
- * Listing, and the API Declaration of that specific resource.
- * <p>
- * Swagger will only include and introspect only classes that are annotated
+ * By default, Swagger-Core will only include and introspect only classes that are annotated
  * with {@code @Api} and will ignore other resources (JAX-RS endpoints, Servlets and
  * so on).
  */
@@ -34,85 +31,77 @@ import java.lang.annotation.*;
 @Inherited
 public @interface Api {
   /**
-   * The 'path' that is going to be used to host the API Declaration of the
-   * resource.
+   * Implicitly sets a tag for the operations, legacy support (read description).
    * <p>
-   * For JAX-RS resources, this would normally have the same value as the {@code @Path}
-   * on the resource, but can be any other value as well. It will serve as the path
-   * where the documentation is hosted.
+   * In swagger-core 1.3.X, this was used as the 'path' that is to host the API Declaration of the
+   * resource. This is no longer relevant in swagger-core 1.5.X.
    * <p>
-   * For Servlets, this path has to be the path serving the Servlet.
+   * If {@link #tags()} is <i>not</i> used, this value will be used to set the tag for the operations described by this
+   * resource. Otherwise, the value will be ignored.
    * <p>
-   * If the value isn't preceded with a slash, one would be added to it.
-   * 
-   * @return the document location value, or empty string if not set
+   * The leading / (if exists) will be removed.
+   *
+   * @return tag name for operations under this resource, unless {@link #tags()} is defined.
    */
   String value() default "";
 
   /**
    * A list of tags for API documentation control. 
    * Tags can be used for logical grouping of operations by resources or any other qualifier.
+   * <p>
+   * A non-empty value will override the value provided in {@link #value()}.
    * 
-   * @since 1.5.2
+   * @since 1.5.2-M1
    *
    * @return a string array of tag values
    */
   String[] tags() default "";
 
   /**
-   * Corresponds to the `description` field of the Resource Listing API operation.
-   * <p>
-   * This should be a short description of the resource.
+   * Not used in 1.5.X, kept for legacy support.
    *
-   * @return a longer description about this API
+   * @return a longer description about this API, no longer used.
    */
+  @Deprecated
   String description() default "";
 
   /**
-   * Corresponds to the `basePath` field of the API Declaration.
-   * <p>
-   * The `basePath` is derived automatically by Swagger. This property allows
-   * overriding the default value if needed.  for swagger 2.0 specifications, this
-   * value is no longer supported
+   * Not used in 1.5.X, kept for legacy support.
    *
-   * @since 1.3.7
-   *
-   * @return the basePath for this operation
+   * @return the basePath for this operation, no longer used.
    */
   @Deprecated
   String basePath() default "";
 
   /**
-   * Optional explicit ordering of this API resource in the Resource Listing.
-   * As of swagger-spec 2.0, this value is no longer used
+   * Not used in 1.5.X, kept for legacy support.
    *
-   *
-   * @return the position of this API in the resource listing
+   * @return the position of this API in the resource listing, no longer used.
    */
   @Deprecated
   int position() default 0;
 
   /**
-   * Corresponds to the `produces` field of the API Declaration.
+   * Corresponds to the `produces` field of the operations under this resource.
    * <p>
    * Takes in comma-separated values of content types.
-   * For example, "application/json, application/xml" would suggest this API Resource
-   * generates JSON and XML output.
+   * For example, "application/json, application/xml" would suggest the operations
+   * generate JSON and XML output.
    * <p>
    * For JAX-RS resources, this would automatically take the value of the {@code @Produces}
    * annotation if such exists. It can also be used to override the {@code @Produces} values
    * for the Swagger documentation.
    *
-   * @return the supported media types supported by the server, or an empty string if not set
+   * @return the supported media types supported by the server, or an empty string if not set.
    */
   String produces() default "";
 
   /**
-   * Corresponds to the `consumes` field of the API Declaration.
+   * Corresponds to the `consumes` field of the operations under this resource.
    * <p>
    * Takes in comma-separated values of content types.
-   * For example, "application/json, application/xml" would suggest this API Resource
-   * accepts JSON and XML input.
+   * For example, "application/json, application/xml" would suggest the operations
+   * accept JSON and XML input.
    * <p>
    * For JAX-RS resources, this would automatically take the value of the {@code @Consumes}
    * annotation if such exists. It can also be used to override the {@code @Consumes} values
@@ -123,28 +112,28 @@ public @interface Api {
   String consumes() default "";
 
   /**
-   * This property is currently not in use.
+   * Sets specific protocols (schemes) for the operations under this resource.
+   * <p>
+   * Comma-separated values of the available protocols. Possible values: http, https, ws, wss.
    * 
-   * @return the protocols supported by the server
+   * @return the protocols supported by the operations under the resource.
    */
   String protocols() default "";
 
   /**
-   * Corresponds to the `authorizations` field of the API Declaration.
+   * Corresponds to the `security` field of the Operation Object.
    * <p>
-   * Takes in a list of the required authorizations for this API Resource.
+   * Takes in a list of the authorizations (security requirements) for the operations under this resource.
    * This may be overridden by specific operations.
    *
    * @see Authorization
    *
-   * @return an array of authorizations required by the server, or a single, empty authorization value if not set
+   * @return an array of authorizations required by the server, or a single, empty authorization value if not set.
    */
-  Authorization[] authorizations() default @Authorization(value = "", type = "");
+  Authorization[] authorizations() default @Authorization(value = "");
 
   /**
-   * Hides the api.
-   *
-   * @since 1.3.8
+   * Hides the operations under this resource.
    *
    * @return true if the api should be hidden from the swagger documentation
    */

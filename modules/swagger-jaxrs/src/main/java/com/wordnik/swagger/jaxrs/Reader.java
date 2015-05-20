@@ -1,57 +1,77 @@
 package com.wordnik.swagger.jaxrs;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.Authorization;
-import com.wordnik.swagger.annotations.AuthorizationScope;
-import com.wordnik.swagger.annotations.ApiResponses;
-import com.wordnik.swagger.annotations.ApiResponse;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.wordnik.swagger.converter.ModelConverters;
-import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
-import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
-import com.wordnik.swagger.jaxrs.PATCH;
-import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
-import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.models.parameters.*;
-import com.wordnik.swagger.models.properties.*;
-import com.wordnik.swagger.util.Json;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.Produces;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.CookieParam;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.HttpMethod;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.lang.reflect.ParameterizedType;
-import java.lang.annotation.Annotation;
-import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+import com.wordnik.swagger.annotations.Authorization;
+import com.wordnik.swagger.annotations.AuthorizationScope;
+import com.wordnik.swagger.converter.ModelConverters;
+import com.wordnik.swagger.jaxrs.config.DefaultReaderConfig;
+import com.wordnik.swagger.jaxrs.config.ReaderConfig;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
+import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
+import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.Operation;
+import com.wordnik.swagger.models.Path;
+import com.wordnik.swagger.models.Response;
+import com.wordnik.swagger.models.Scheme;
+import com.wordnik.swagger.models.SecurityRequirement;
+import com.wordnik.swagger.models.SecurityScope;
+import com.wordnik.swagger.models.Swagger;
+import com.wordnik.swagger.models.Tag;
+import com.wordnik.swagger.models.parameters.Parameter;
+import com.wordnik.swagger.models.properties.ArrayProperty;
+import com.wordnik.swagger.models.properties.MapProperty;
+import com.wordnik.swagger.models.properties.Property;
+import com.wordnik.swagger.models.properties.RefProperty;
+import com.wordnik.swagger.util.Json;
 
 public class Reader {
-  Logger LOGGER = LoggerFactory.getLogger(Reader.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
+  private static final String SUCCESSFUL_OPERATION = "successful operation";
+  private static final String PATH_DELIMITER = "/";
 
   Swagger swagger;
+  private final ReaderConfig config;
   static ObjectMapper m = Json.mapper();
 
   public Reader(Swagger swagger) {
-    this.swagger = swagger;
+    this(swagger, null);
+  }
+
+  public Reader(Swagger swagger, ReaderConfig config) {
+    this.swagger = swagger == null ? new Swagger() : swagger;
+    this.config = new DefaultReaderConfig(config);
   }
 
   public Swagger read(Set<Class<?>> classes) {
-    for(Class cls: classes)
+    for(Class<?> cls: classes)
       read(cls);
     return swagger;
   }
@@ -60,25 +80,26 @@ public class Reader {
     return this.swagger;
   }
 
-  public Swagger read(Class cls) {
+  public Swagger read(Class<?> cls) {
     return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
   }
 
   protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
-    if(swagger == null)
-      swagger = new Swagger();
     Api api = (Api) cls.getAnnotation(Api.class);
     Map<String, SecurityScope> globalScopes = new HashMap<String, SecurityScope>();
 
-    javax.ws.rs.Path apiPath = (javax.ws.rs.Path) cls.getAnnotation(javax.ws.rs.Path.class);
-    String[] apiConsumes = new String[0];
-    String[] apiProduces = new String[0];
+    Map<String, Tag> tags = new HashMap<String, Tag>();
+    List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
+    
+    String[] consumes = new String[0];
+    String[] produces = new String[0];
+    final Set<Scheme> globalSchemes = EnumSet.noneOf(Scheme.class);
 
     // only read if allowing hidden apis OR api is not marked as hidden
-    if((api != null && readHidden) || (api != null && !api.hidden())) {
+    final boolean readable = (api != null && readHidden) || (api != null && !api.hidden());
+    if(readable) {
       // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
-      Set<String> tagStrings = extractTags(api);
-      Map<String, Tag> tags = new HashMap<String, Tag>();
+      Set<String> tagStrings = extractTags(api);      
       for(String tagString : tagStrings) {
         Tag tag = new Tag().name(tagString);
         tags.put(tagString, tag);
@@ -89,13 +110,19 @@ public class Reader {
         swagger.tag(tags.get(tagName));
       }
 
-      int position = api.position();
-      String produces = api.produces();
-      String consumes = api.consumes();
-      String schems = api.protocols();
+      if (!api.produces().isEmpty()) {
+        produces = new String[]{api.produces()};
+      } else if (cls.getAnnotation(Produces.class) != null) {
+        produces = ((Produces) cls.getAnnotation(Produces.class)).value();
+      }
+      if (!api.consumes().isEmpty()){
+        consumes = new String[]{api.consumes()};
+      } else if (cls.getAnnotation(Consumes.class) != null){
+        consumes = ((Consumes)cls.getAnnotation(Consumes.class)).value();
+      }
+      globalSchemes.addAll(parseSchemes(api.protocols()));
       Authorization[] authorizations = api.authorizations();
-
-      List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
+      
       for(Authorization auth : authorizations) {
         if(auth.value() != null && !"".equals(auth.value())) {
           SecurityRequirement security = new SecurityRequirement();
@@ -109,21 +136,24 @@ public class Reader {
           securities.add(security);
         }
       }
-
+    }
+    
+    // allow reading the JAX-RS APIs without @Api annotation
+    if (readable || (api == null && config.isScanAllResources())) {
       // merge consumes, produces
 
       // look for method-level annotated properties
 
-      // handle subresources by looking at return type
+      // handle sub-resources by looking at return type
 
       // parse the method
+      final javax.ws.rs.Path apiPath = cls.getAnnotation(javax.ws.rs.Path.class);
       Method methods[] = cls.getMethods();
       for(Method method : methods) {
-        ApiOperation apiOperation = (ApiOperation) method.getAnnotation(ApiOperation.class);
         javax.ws.rs.Path methodPath = method.getAnnotation(javax.ws.rs.Path.class);
 
         String operationPath = getPath(apiPath, methodPath, parentPath);
-        if(operationPath != null && apiOperation != null) {
+        if(operationPath != null) {
           String [] pps = operationPath.split("/");
           String [] pathParts = new String[pps.length];
           Map<String, String> regexMap = new HashMap<String, String>();
@@ -150,9 +180,16 @@ public class Reader {
           }
           operationPath = pathBuilder.toString();
 
+          if (isIgnored(operationPath)) {
+            continue;
+          }
+
+          final ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
           String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
           Operation operation = parseMethod(method);
+          if(operation == null) 
+            continue;
           if(parentParameters != null) {
             for(Parameter param : parentParameters) {
               operation.parameter(param);
@@ -165,20 +202,19 @@ public class Reader {
             }
           }
 
-          String protocols = apiOperation.protocols();
-          if(!"".equals(protocols)) {
-            String[] parts = protocols.split(",");
-            for(String part : parts) {
-              String trimmed = part.trim();
-              if(!"".equals(trimmed))
-                operation.scheme(Scheme.forValue(trimmed));
+          if (apiOperation != null) {
+            for (Scheme scheme: parseSchemes(apiOperation.protocols())) {
+              operation.scheme(scheme);
             }
           }
 
-          Annotation annotation;
-          annotation = cls.getAnnotation(Consumes.class);
-          if(annotation != null)
-            apiConsumes = ((Consumes)annotation).value();
+          if (operation.getSchemes() == null || operation.getSchemes().isEmpty()) {
+            for (Scheme scheme: globalSchemes) {
+              operation.scheme(scheme);
+            }
+          }
+
+          String[] apiConsumes = consumes;
           if(parentConsumes != null) {
             Set<String> both = new HashSet<String>(Arrays.asList(apiConsumes));
             both.addAll(new HashSet<String>(Arrays.asList(parentConsumes)));
@@ -187,10 +223,7 @@ public class Reader {
             apiConsumes = both.toArray(new String[both.size()]);
           }
 
-          annotation = cls.getAnnotation(Produces.class);
-          if(annotation != null)
-            apiProduces = ((Produces)annotation).value();
-
+          String[] apiProduces = produces;
           if(parentProduces != null) {
             Set<String> both = new HashSet<String>(Arrays.asList(apiProduces));
             both.addAll(new HashSet<String>(Arrays.asList(parentProduces)));
@@ -198,10 +231,9 @@ public class Reader {
               both.addAll(new HashSet<String>(operation.getProduces()));
             apiProduces = both.toArray(new String[both.size()]);
           }
-          if(isSubResource(method)) {
-            Type t = method.getGenericReturnType();
-            Class<?> responseClass = method.getReturnType();
-            Swagger subSwagger = read(responseClass, operationPath, httpMethod, true, apiConsumes, apiProduces, tags, operation.getParameters());
+          final Class<?> subResource = getSubResource(method);
+          if (subResource != null) {
+            read(subResource, operationPath, httpMethod, true, apiConsumes, apiProduces, tags, operation.getParameters());
           }
 
           // can't continue without a valid http method
@@ -229,8 +261,12 @@ public class Reader {
                 for(String tagString : tags.keySet())
                   operation.tag(tagString);
               }
-              for(SecurityRequirement security : securities)
-                operation.security(security);
+              // Only add global @Api securities if operation doesn't already have more specific securities
+              if (operation.getSecurity() == null) {
+                for(SecurityRequirement security : securities) {
+                  operation.security(security);
+                }
+              }  
 
               Path path = swagger.getPath(operationPath);
               if(path == null) {
@@ -246,13 +282,38 @@ public class Reader {
     return swagger;
   }
 
-  protected boolean isSubResource(Method method) {
-    Type t = method.getGenericReturnType();
-    Class<?> responseClass = method.getReturnType();
-    if(responseClass != null && responseClass.getAnnotation(Api.class) != null) {
-      return true;
+  protected Class<?> getSubResource(Method method) {
+    final Class<?> rawType = method.getReturnType();
+    final Class<?> type;
+    if (Class.class.equals(rawType)) {
+      type = getClassArgument(method.getGenericReturnType());
+      if (type == null) {
+        return null;
+      }
+    } else {
+      type = rawType;
     }
-    return false;
+    return type.getAnnotation(Api.class) != null ? type : null;
+  }
+
+  private static Class<?> getClassArgument(Type cls) {
+    if (cls instanceof ParameterizedType) {
+      final ParameterizedType parameterized = (ParameterizedType) cls;
+      final Type[] args = parameterized.getActualTypeArguments();
+      if (args.length != 1) {
+        LOGGER.error(String.format("Unexpected class definition: %s", cls));
+        return null;
+      }
+      final Type first = args[0];
+      if (first instanceof Class) {
+        return (Class<?>) first;
+      } else {
+        return null;
+      }
+    } else {
+      LOGGER.error(String.format("Unknown class definition: %s", cls));
+      return null;
+    }
   }
 
   protected Set<String> extractTags(Api api) {
@@ -275,8 +336,9 @@ public class Reader {
   }
 
   String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath, String parentPath) {
-    if(classLevelPath == null && methodLevelPath == null)
+    if (classLevelPath == null && methodLevelPath == null && StringUtils.isEmpty(parentPath)) {
       return null;
+    }
     StringBuilder b = new StringBuilder();
     if(parentPath != null && !"".equals(parentPath) && !"/".equals(parentPath)) {
       if(!parentPath.startsWith("/"))
@@ -318,18 +380,12 @@ public class Reader {
             responseHeaders = new HashMap<String, Property>();
           String description = header.description();
           Class<?> cls = header.response();
-          String container = header.responseContainer();
 
           if(!cls.equals(java.lang.Void.class) && !"void".equals(cls.toString())) {
-            Property responseProperty = null;
             Property property = ModelConverters.getInstance().readAsProperty(cls);
             if(property != null) {
-              if("list".equalsIgnoreCase(container))
-                responseProperty = new ArrayProperty(property);
-              else if("map".equalsIgnoreCase(container))
-                responseProperty = new MapProperty(property);
-              else
-                responseProperty = property;
+              Property responseProperty = ContainerWrapper.wrapContainer(header.responseContainer(), property,
+                ContainerWrapper.ARRAY, ContainerWrapper.LIST, ContainerWrapper.SET);
               responseProperty.setDescription(description);
               responseHeaders.put(name, responseProperty);
             }
@@ -376,10 +432,8 @@ public class Reader {
             security.setName(auth.value());
             AuthorizationScope[] scopes = auth.scopes();
             for(AuthorizationScope scope : scopes) {
-              SecurityDefinition definition = new SecurityDefinition(auth.type());
               if(scope.scope() != null && !"".equals(scope.scope())) {
                 security.addScope(scope.scope());
-                definition.scope(scope.scope(), scope.description());
               }
             }
             securities.add(security);
@@ -389,6 +443,12 @@ public class Reader {
           for(SecurityRequirement sec : securities)
             operation.security(sec);
         }
+      }
+      if (apiOperation.consumes() != null && !apiOperation.consumes().isEmpty()) {
+        operation.consumes(apiOperation.consumes());
+      }
+      if (apiOperation.produces() != null && !apiOperation.produces().isEmpty()) {
+        operation.produces(apiOperation.produces());
       }
     }
 
@@ -406,18 +466,16 @@ public class Reader {
       && !responseClass.equals(java.lang.Void.class)
       && !responseClass.equals(javax.ws.rs.core.Response.class)
       && responseClass.getAnnotation(Api.class) == null) {
+      int responseCode = 200;
+      if (apiOperation != null) {
+        responseCode = apiOperation.code();
+      }
       if(isPrimitive(responseClass)) {
-        Property responseProperty = null;
         Property property = ModelConverters.getInstance().readAsProperty(responseClass);
         if(property != null) {
-          if("list".equalsIgnoreCase(responseContainer))
-            responseProperty = new ArrayProperty(property);
-          else if("map".equalsIgnoreCase(responseContainer))
-            responseProperty = new MapProperty(property);
-          else
-            responseProperty = property;
-          operation.response(200, new Response()
-            .description("successful operation")
+          Property responseProperty = ContainerWrapper.wrapContainer(responseContainer, property);
+          operation.response(responseCode, new Response()
+            .description(SUCCESSFUL_OPERATION)
             .schema(responseProperty)
             .headers(defaultResponseHeaders));
         }
@@ -426,22 +484,16 @@ public class Reader {
         Map<String, Model> models = ModelConverters.getInstance().read(responseClass);
         if(models.size() == 0) {
           Property p = ModelConverters.getInstance().readAsProperty(responseClass);
-          operation.response(200, new Response()
-            .description("successful operation")
+          operation.response(responseCode, new Response()
+            .description(SUCCESSFUL_OPERATION)
             .schema(p)
             .headers(defaultResponseHeaders));
         }
         for(String key: models.keySet()) {
-          Property responseProperty = null;
-
-          if("list".equalsIgnoreCase(responseContainer))
-            responseProperty = new ArrayProperty(new RefProperty().asDefault(key));
-          else if("map".equalsIgnoreCase(responseContainer))
-            responseProperty = new MapProperty(new RefProperty().asDefault(key));
-          else
-            responseProperty = new RefProperty().asDefault(key);
-          operation.response(200, new Response()
-            .description("successful operation")
+          Property property = new RefProperty().asDefault(key);
+          Property responseProperty = ContainerWrapper.wrapContainer(responseContainer, property);
+          operation.response(responseCode, new Response()
+            .description(SUCCESSFUL_OPERATION)
             .schema(responseProperty)
             .headers(defaultResponseHeaders));
           swagger.model(key, models.get(key));
@@ -456,18 +508,22 @@ public class Reader {
     operation.operationId(operationId);
 
     Annotation annotation;
-    annotation = method.getAnnotation(Consumes.class);
-    if(annotation != null) {
-      String[] apiConsumes = ((Consumes)annotation).value();
-      for(String mediaType: apiConsumes)
-        operation.consumes(mediaType);
+    if (apiOperation != null && apiOperation.consumes() != null && apiOperation.consumes().isEmpty()) {
+      annotation = method.getAnnotation(Consumes.class);
+      if(annotation != null) {
+        String[] apiConsumes = ((Consumes)annotation).value();
+        for(String mediaType: apiConsumes)
+          operation.consumes(mediaType);
+      }
     }
 
-    annotation = method.getAnnotation(Produces.class);
-    if(annotation != null) {
-      String[] apiProduces = ((Produces)annotation).value();
-      for(String mediaType: apiProduces)
-        operation.produces(mediaType);
+    if (apiOperation != null && apiOperation.produces() != null && apiOperation.produces().isEmpty()) {
+      annotation = method.getAnnotation(Produces.class);
+      if(annotation != null) {
+        String[] apiProduces = ((Produces)annotation).value();
+        for(String mediaType: apiProduces)
+          operation.produces(mediaType);
+      }
     }
 
     List<ApiResponse> apiResponses = new ArrayList<ApiResponse>();
@@ -488,7 +544,9 @@ public class Reader {
         if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
           Map<String, Model> models = ModelConverters.getInstance().read(responseClass);
           for(String key: models.keySet()) {
-            response.schema(new RefProperty().asDefault(key));
+            Property property =  new RefProperty().asDefault(key);
+            Property responseProperty = ContainerWrapper.wrapContainer(apiResponse.responseContainer(), property);
+            response.schema(responseProperty);
             swagger.model(key, models.get(key));
           }
           models = ModelConverters.getInstance().readAll(responseClass);
@@ -523,7 +581,7 @@ public class Reader {
       }
     }
     if(operation.getResponses() == null) {
-      operation.defaultResponse(new Response().description("successful operation"));
+      operation.defaultResponse(new Response().description(SUCCESSFUL_OPERATION));
     }
     return operation;
   }
@@ -543,9 +601,13 @@ public class Reader {
     }
 
     if(parameters.size() > 0) {
+      final List<Parameter> processed = new ArrayList<Parameter>(parameters.size());
       for(Parameter parameter : parameters) {
-        ParameterProcessor.applyAnnotations(swagger, parameter, cls, annotations, isArray);
+        if (ParameterProcessor.applyAnnotations(swagger, parameter, cls, annotations, isArray) != null) {
+          processed.add(parameter);
+        }
       }
+      parameters = processed;
     }
     else {
       LOGGER.debug("no parameter found, looking at body params");
@@ -572,7 +634,7 @@ public class Reader {
   }
 
   public String extractOperationMethod(ApiOperation apiOperation, Method method, Iterator<SwaggerExtension> chain) {
-    if(apiOperation.httpMethod() != null && !"".equals(apiOperation.httpMethod()))
+    if(apiOperation != null && apiOperation.httpMethod() != null && !"".equals(apiOperation.httpMethod()))
       return apiOperation.httpMethod().toLowerCase();
     else if(method.getAnnotation(javax.ws.rs.GET.class) != null)
       return "get";
@@ -617,5 +679,81 @@ public class Reader {
     else if("file".equals(property.getType()))
       out = true;
     return out;
+  }
+
+  private static Set<Scheme> parseSchemes(String schemes) {
+    final Set<Scheme> result = EnumSet.noneOf(Scheme.class);
+    for (String item : StringUtils.trimToEmpty(schemes).split(",")) {
+      final Scheme scheme = Scheme.forValue(StringUtils.trimToNull(item));
+      if (scheme != null) {
+        result.add(scheme);
+      }
+    }
+    return result;
+  }
+
+  private boolean isIgnored(String path) {
+    for (String item : config.getIgnoredRoutes()) {
+      final int length = item.length();
+      if (path.startsWith(item) && (path.length() == length || path.startsWith(PATH_DELIMITER, length))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  enum ContainerWrapper {
+    LIST("list") {
+      @Override
+      protected Property doWrap(Property property) {
+        return new ArrayProperty(property);
+      }
+    },
+    ARRAY("array") {
+      @Override
+      protected Property doWrap(Property property) {
+        return new ArrayProperty(property);
+      }
+    },
+    MAP("map") {
+      @Override
+      protected Property doWrap(Property property) {
+        return new MapProperty(property);
+      }
+    },
+    SET("set") {
+      @Override
+      protected Property doWrap(Property property) {
+        ArrayProperty arrayProperty = new ArrayProperty(property);
+        arrayProperty.setUniqueItems(true);
+        return arrayProperty;
+      }
+    };
+
+    private final String container;
+
+    ContainerWrapper(String container) {
+      this.container = container;
+    }
+
+    public Property wrap(String container, Property property) {
+      if (this.container.equalsIgnoreCase(container)) {
+        return doWrap(property);
+      }
+      return null;
+    }
+
+    public static Property wrapContainer(String container, Property property, ContainerWrapper... allowed) {
+      final Set<ContainerWrapper> tmp = allowed.length > 0 ? EnumSet.copyOf(Arrays.asList(allowed)) : EnumSet.allOf(ContainerWrapper.class);
+      for (ContainerWrapper wrapper : tmp) {
+        final Property prop = wrapper.wrap(container, property);
+        if (prop != null) {
+          return prop;
+        }
+      }
+      return property;
+    }
+
+    protected abstract Property doWrap(Property property);
   }
 }

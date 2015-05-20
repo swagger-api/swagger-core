@@ -81,6 +81,7 @@ class ModelPropertyOverrideTest extends FlatSpec with Matchers {
     models should serializeToJson (
 """{
   "Children" : {
+    "type": "object",
     "properties" : {
       "name" : {
         "type" : "string"
@@ -88,6 +89,7 @@ class ModelPropertyOverrideTest extends FlatSpec with Matchers {
     }
   },
   "ModelWithModelPropertyOverrides" : {
+    "type": "object",
     "properties" : {
       "children" : {
         "type" : "array",

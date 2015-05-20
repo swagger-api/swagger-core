@@ -20,6 +20,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
     schemas should serializeToJson (
 """{
   "Person" : {
+    "type": "object",
     "properties" : {
       "id" : {
         "type" : "integer",
@@ -56,7 +57,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
 
   it should "convert a model with Joda DateTime" in {
     val schemas = ModelConverters.getInstance().read(classOf[JodaDateTimeModel])
-    Json.mapper().writeValueAsString(schemas) should equal ("""{"JodaDateTimeModel":{"properties":{"createdAt":{"type":"string","format":"date-time"}}}}""")
+    schemas should serializeToJson ("""{"JodaDateTimeModel":{"type": "object","properties":{"createdAt":{"type":"string","format":"date-time"}}}}""")
   }
 
   it should "read an interface" in {
@@ -64,6 +65,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
     schemas should serializeToJson (
 """{
   "Pet" : {
+    "type": "object",
     "required" : [ "isDomestic", "name", "type" ],
     "properties" : {
       "type" : {
@@ -91,6 +93,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
     schemas should serializeToJson (
 """{
   "Cat" : {
+    "type": "object",
     "required" : [ "isDomestic", "name", "type" ],
     "properties" : {
       "clawCount" : {
@@ -206,5 +209,10 @@ class ModelConverterTest extends FlatSpec with Matchers {
     val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithAltPropertyName])
     val model = schemas.get("sample_model").asInstanceOf[ModelImpl]
     Json.prettyPrint(model)
+  }
+
+  it should "convert a model with enum array" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithEnumArray])
+    schemas.size should equal(1)
   }
 }

@@ -37,7 +37,7 @@ class ParameterSerializationTest extends FlatSpec with Matchers {
 
   it should "serialize a with array QueryParameter" in {
     val p = new QueryParameter()
-      .array(true)
+      .`type`(ArrayProperty.TYPE)
       .items(new StringProperty())
       .collectionFormat("multi")
     m.writeValueAsString(p) should be ("""{"in":"query","required":false,"type":"array","items":{"type":"string"},"collectionFormat":"multi"}""")
@@ -63,7 +63,7 @@ class ParameterSerializationTest extends FlatSpec with Matchers {
 
   it should "serialize a with string array PathParameter" in {
     val p = new PathParameter()
-      .array(true)
+      .`type`(ArrayProperty.TYPE)
       .items(new StringProperty())
       .collectionFormat("multi")
     m.writeValueAsString(p) should be ("""{"in":"path","required":true,"type":"array","items":{"type":"string"},"collectionFormat":"multi"}""")
@@ -86,7 +86,7 @@ collectionFormat: "multi"
 
   it should "serialize a with integer array PathParameter" in {
     val p = new PathParameter()
-      .array(true)
+      .`type`(ArrayProperty.TYPE)
       .items(new IntegerProperty())
       .collectionFormat("multi")
     m.writeValueAsString(p) should be ("""{"in":"path","required":true,"type":"array","items":{"type":"integer","format":"int32"},"collectionFormat":"multi"}""")
@@ -117,7 +117,7 @@ type: "string"
 
   it should "serialize a string array HeaderParameter" in {
     val p = new HeaderParameter()
-      .array(true)
+      .`type`(ArrayProperty.TYPE)
       .property(new StringProperty())
       .collectionFormat("multi")
     m.writeValueAsString(p) should be ("""{"in":"header","required":false,"type":"string","collectionFormat":"multi"}""")

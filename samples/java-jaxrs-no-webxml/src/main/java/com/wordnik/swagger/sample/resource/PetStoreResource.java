@@ -1,5 +1,5 @@
 /**
- *  Copyright 2015 Reverb Technologies, Inc.
+ *  Copyright 2015 SmartBear Software
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class PetStoreResource {
     notes = "Returns a map of status codes to quantities", 
     response = Integer.class,
     responseContainer = "map",
-    authorizations = @Authorization(value = "api_key", type = "api_key")
+    authorizations = @Authorization(value = "api_key")
   )
   public java.util.Map<String, Integer> getInventory() {
     return petData.getInventoryByStatus();

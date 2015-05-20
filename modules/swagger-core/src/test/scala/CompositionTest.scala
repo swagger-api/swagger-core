@@ -15,12 +15,13 @@ import matchers.SerializationMatchers._
 class CompositionTest extends FlatSpec with Matchers {
   val m = Json.mapper()
 
-  ignore should "read a model with required params and description" in {
+  it should "read a model with required params and description" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Human])
 
     schemas should serializeToJson (
 """{
   "Human" : {
+    "type": "object",
     "properties" : {
       "name" : {
         "type" : "string"
@@ -34,40 +35,17 @@ class CompositionTest extends FlatSpec with Matchers {
       "lastName" : {
         "type" : "string"
       }
-    },
-    "discriminator" : "type"
-  },
-  "Pet" : {
-    "allOf" : [ {
-      "$ref" : "#/definitions/Human"
-    }, {
-      "required" : [ "isDomestic", "name", "type" ],
-      "properties" : {
-        "type" : {
-          "type" : "string",
-          "position" : 1,
-          "description" : "The pet type"
-        },
-        "name" : {
-          "type" : "string",
-          "position" : 2,
-          "description" : "The name of the pet"
-        },
-        "isDomestic" : {
-          "type" : "boolean",
-          "position" : 3
-        }
-      }
-    } ]
+    }
   }
 }""")
   }
 
-  ignore should "read a model with composition" in {
+  it should "read a model with composition" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Animal])
     schemas should serializeToJson (
 """{
   "Animal" : {
+    "type": "object",
     "properties" : {
       "name" : {
         "type" : "string"
@@ -82,6 +60,7 @@ class CompositionTest extends FlatSpec with Matchers {
     "allOf" : [ {
       "$ref" : "#/definitions/Animal"
     }, {
+      "type": "object",
       "properties" : {
         "name" : {
           "type" : "string"
@@ -102,6 +81,7 @@ class CompositionTest extends FlatSpec with Matchers {
     "allOf" : [ {
       "$ref" : "#/definitions/Animal"
     }, {
+      "type": "object",
       "required" : [ "isDomestic", "name", "type" ],
       "properties" : {
         "type" : {
@@ -116,7 +96,8 @@ class CompositionTest extends FlatSpec with Matchers {
         },
         "isDomestic" : {
           "type" : "boolean",
-          "position" : 3
+          "position" : 3,
+          "default" : false
         }
       }
     } ]
@@ -124,4 +105,33 @@ class CompositionTest extends FlatSpec with Matchers {
 }""")
   }
 
+  it should "create a model" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[AbstractBaseModelWithoutFields])
+    schemas should serializeToJson (
+"""{
+  "AbstractBaseModelWithoutFields" : {
+    "type" : "object",
+    "description" : "I am an Abstract Base Model without any declared fields and with Sub-Types"
+  },
+    "Thing3" : {
+      "allOf" : [ {
+      "$ref" : "#/definitions/AbstractBaseModelWithoutFields"
+      }, {
+       "type": "object",
+      "properties" : {
+        "a" : {
+          "type" : "string",
+          "description" : "Additional field a"
+        },
+        "x" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "Additional field a"
+        }
+      },
+      "description" : "Thing3"
+    } ]
+  }
+}""")
+  }
 }

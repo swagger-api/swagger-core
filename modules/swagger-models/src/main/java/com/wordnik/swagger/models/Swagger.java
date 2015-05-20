@@ -1,11 +1,14 @@
 package com.wordnik.swagger.models;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.wordnik.swagger.models.auth.SecuritySchemeDefinition;
-
-import com.fasterxml.jackson.annotation.*;
 import com.wordnik.swagger.models.parameters.Parameter;
-
-import java.util.*;
 
 public class Swagger {
   protected String swagger = "2.0";
@@ -127,19 +130,18 @@ public class Swagger {
   public List<Scheme> getSchemes() {
     return schemes;
   }
+
   public void setSchemes(List<Scheme> schemes) {
     this.schemes = schemes;
   }
+
   public void addScheme(Scheme scheme) {
-    if(this.schemes == null)
-      this.schemes = new ArrayList<Scheme>();
-    boolean found = false;
-    for(Scheme existing : this.schemes) {
-      if(existing.equals(scheme))
-        found = true;
+    if (schemes == null) {
+      schemes = new ArrayList<Scheme>();
     }
-    if(!found)
-      this.schemes.add(scheme);
+    if (!schemes.contains(scheme)) {
+      schemes.add(scheme);
+    }
   }
 
   public List<Tag> getTags() {
@@ -270,5 +272,117 @@ public class Swagger {
 
   public void setExternalDocs(ExternalDocs value) {
     externalDocs = value;
+  }
+
+  @Override
+  public int hashCode() {
+  	final int prime = 31;
+  	int result = 1;
+  	result = prime * result + ((basePath == null) ? 0 : basePath.hashCode());
+  	result = prime * result + ((consumes == null) ? 0 : consumes.hashCode());
+  	result = prime * result
+  			+ ((definitions == null) ? 0 : definitions.hashCode());
+  	result = prime * result
+  			+ ((externalDocs == null) ? 0 : externalDocs.hashCode());
+  	result = prime * result + ((host == null) ? 0 : host.hashCode());
+  	result = prime * result + ((info == null) ? 0 : info.hashCode());
+  	result = prime * result
+  			+ ((parameters == null) ? 0 : parameters.hashCode());
+  	result = prime * result + ((paths == null) ? 0 : paths.hashCode());
+  	result = prime * result + ((produces == null) ? 0 : produces.hashCode());
+  	result = prime * result + ((schemes == null) ? 0 : schemes.hashCode());
+  	result = prime
+  			* result
+  			+ ((securityDefinitions == null) ? 0 : securityDefinitions
+  					.hashCode());
+  	result = prime
+  			* result
+  			+ ((securityRequirements == null) ? 0 : securityRequirements
+  					.hashCode());
+  	result = prime * result + ((swagger == null) ? 0 : swagger.hashCode());
+  	result = prime * result + ((tags == null) ? 0 : tags.hashCode());
+  	return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+  	if (this == obj)
+  		return true;
+  	if (obj == null)
+  		return false;
+  	if (getClass() != obj.getClass())
+  		return false;
+  	Swagger other = (Swagger) obj;
+  	if (basePath == null) {
+  		if (other.basePath != null)
+  			return false;
+  	} else if (!basePath.equals(other.basePath))
+  		return false;
+  	if (consumes == null) {
+  		if (other.consumes != null)
+  			return false;
+  	} else if (!consumes.equals(other.consumes))
+  		return false;
+  	if (definitions == null) {
+  		if (other.definitions != null)
+  			return false;
+  	} else if (!definitions.equals(other.definitions))
+  		return false;
+  	if (externalDocs == null) {
+  		if (other.externalDocs != null)
+  			return false;
+  	} else if (!externalDocs.equals(other.externalDocs))
+  		return false;
+  	if (host == null) {
+  		if (other.host != null)
+  			return false;
+  	} else if (!host.equals(other.host))
+  		return false;
+  	if (info == null) {
+  		if (other.info != null)
+  			return false;
+  	} else if (!info.equals(other.info))
+  		return false;
+  	if (parameters == null) {
+  		if (other.parameters != null)
+  			return false;
+  	} else if (!parameters.equals(other.parameters))
+  		return false;
+  	if (paths == null) {
+  		if (other.paths != null)
+  			return false;
+  	} else if (!paths.equals(other.paths))
+  		return false;
+  	if (produces == null) {
+  		if (other.produces != null)
+  			return false;
+  	} else if (!produces.equals(other.produces))
+  		return false;
+  	if (schemes == null) {
+  		if (other.schemes != null)
+  			return false;
+  	} else if (!schemes.equals(other.schemes))
+  		return false;
+  	if (securityDefinitions == null) {
+  		if (other.securityDefinitions != null)
+  			return false;
+  	} else if (!securityDefinitions.equals(other.securityDefinitions))
+  		return false;
+  	if (securityRequirements == null) {
+  		if (other.securityRequirements != null)
+  			return false;
+  	} else if (!securityRequirements.equals(other.securityRequirements))
+  		return false;
+  	if (swagger == null) {
+  		if (other.swagger != null)
+  			return false;
+  	} else if (!swagger.equals(other.swagger))
+  		return false;
+  	if (tags == null) {
+  		if (other.tags != null)
+  			return false;
+  	} else if (!tags.equals(other.tags))
+  		return false;
+  	return true;
   }
 }

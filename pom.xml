@@ -9,8 +9,8 @@
   <artifactId>swagger-project</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
-  <version>1.5.1-M2</version>
-  <url>https://github.com/wordnik/swagger-core</url>
+  <version>1.5.2-M2</version>
+  <url>https://github.com/swagger-api/swagger-core</url>
   <scm>
     <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
     <developerConnection>scm:git:git@github.com:swagger-api/swagger-core.git</developerConnection>
@@ -28,7 +28,7 @@
   </developers>
   <issueManagement>
     <system>github</system>
-    <url>https://github.com/wordnik/swagger-core/issues</url>
+    <url>https://github.com/swagger-api/swagger-core/issues</url>
   </issueManagement>
   <mailingLists>
     <mailingList>
@@ -49,6 +49,14 @@
     <testSourceDirectory>src/test/scala</testSourceDirectory>
     <outputDirectory>target/classes</outputDirectory>
     <testOutputDirectory>target/test-classes</testOutputDirectory>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <excludes>
+          <exclude>logback.xml</exclude>
+        </excludes>
+      </resource>
+    </resources>
     <extensions>
       <extension>
         <groupId>org.jvnet.wagon-svn</groupId>
@@ -378,9 +386,11 @@
         <module>samples/java-jersey2</module>
         <module>samples/java-jaxrs-subresource</module>
         <module>samples/java-jaxrs-no-webxml</module>
+        <module>samples/java-mule</module>
         <module>samples/java-dropwizard</module>
         <module>samples/java-jaxrs-cxf</module>
         <module>samples/java-jersey-jaxrs</module>
+        <module>samples/java-jaxrs-no-annotations</module>
       </modules>
     </profile>
     <profile>
@@ -401,11 +411,12 @@
   <modules>
     <module>modules/swagger-annotations</module>
     <module>modules/swagger-models</module>
+    <module>modules/swagger-mule</module>
     <module>modules/swagger-core</module>
     <module>modules/swagger-jaxrs</module>
     <module>modules/swagger-jersey2-jaxrs</module>
     <module>modules/swagger-jersey-jaxrs</module>
-    <module>modules/swagger-hiberate-validations</module>
+    <module>modules/swagger-hibernate-validations</module>
     <!--module>modules/swagger-servlet</module>
     <module>modules/swagger-utils</module-->
     <!--module>modules/swagger-oauth2-auth-server</module-->
@@ -529,7 +540,7 @@
     <joda-version>1.2</joda-version>
     <joda-time-version>2.2</joda-time-version>
 
-    <swagger-ui-version>2.1.0-M2</swagger-ui-version>
+    <swagger-ui-version>2.1.5-M2</swagger-ui-version>
     <scala-version>2.10.4</scala-version>
     <felix-version>2.3.4</felix-version>
     <servlet-api-version>2.5</servlet-api-version>

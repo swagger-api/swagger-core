@@ -2,15 +2,13 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project</artifactId>
-    <version>1.5.1-M2</version>
+    <version>1.5.2-M2</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.wordnik</groupId>
   <artifactId>swagger-core</artifactId>
   <packaging>jar</packaging>
   <name>swagger-core</name>
-  <version>1.5.1-M2</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <defaultGoal>install</defaultGoal>
@@ -31,6 +29,7 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
+        <version>${felix-version}</version>
         <extensions>true</extensions>
         <configuration>
           <instructions>

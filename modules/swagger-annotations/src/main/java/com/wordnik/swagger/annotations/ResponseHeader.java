@@ -1,5 +1,5 @@
 /**
- *  Copyright 2015 Reverb Technologies, Inc.
+ *  Copyright 2015 SmartBear Software
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public @interface ResponseHeader {
 
   /**
    * Long description of the response header.
-   * */
+   */
   String description() default "";
 
   /** 
@@ -44,7 +44,9 @@ public @interface ResponseHeader {
   Class<?> response() default Void.class;
 
   /**
-   * If the header type is within a container, specify it here.
-   * */
+   * Declares a container wrapping the response header.
+   * <p>
+   * Valid values are "List" or "Set". Any other value will be ignored.
+   */
   String responseContainer() default "";
 }

@@ -28,4 +28,29 @@ public class BodyParameter extends AbstractParameter implements Parameter {
   public Model getSchema() {
     return schema;
   }
+
+  @Override
+  public int hashCode() {
+  	final int prime = 31;
+  	int result = super.hashCode();
+  	result = prime * result + ((schema == null) ? 0 : schema.hashCode());
+  	return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+  	if (this == obj)
+  		return true;
+  	if (!super.equals(obj))
+  		return false;
+  	if (getClass() != obj.getClass())
+  		return false;
+  	BodyParameter other = (BodyParameter) obj;
+  	if (schema == null) {
+  		if (other.schema != null)
+  			return false;
+  	} else if (!schema.equals(other.schema))
+  		return false;
+  	return true;
+  }
 }

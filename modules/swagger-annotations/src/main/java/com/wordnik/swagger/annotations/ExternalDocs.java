@@ -1,5 +1,5 @@
 /**
- *  Copyright 2015 Reverb Technologies, Inc.
+ *  Copyright 2015 SmartBear Software
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,14 +24,18 @@ import java.lang.annotation.Target;
 /**
  * Represents an external documentation description.
  * 
- * @since 1.5.2
+ * @since 1.5.2-M1
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExternalDocs {
-  /** A short description of the target documentation. GFM syntax can be used for rich text representation. */
+  /**
+   * A short description of the target documentation. GFM syntax can be used for rich text representation.
+   */
   String value() default "";
 
-  /** URL for the docs. */
+  /**
+   * URL for the docs.
+   */
   String url();
 }

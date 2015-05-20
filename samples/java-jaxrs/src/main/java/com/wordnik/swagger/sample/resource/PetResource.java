@@ -1,5 +1,5 @@
 /**
- *  Copyright 2015 Reverb Technologies, Inc.
+ *  Copyright 2015 SmartBear Software
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,13 +23,16 @@ import com.wordnik.swagger.sample.exception.NotFoundException;
 
 import com.wordnik.swagger.jaxrs.PATCH;
 
+import java.io.*;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.*;
 
 @Path("/pet")
 @Api(value = "/pet", description = "Operations about pets", authorizations = {
-  @Authorization(value = "petstore_auth", type = "oauth2",
+  @Authorization(value = "petstore_auth",
   scopes = {
     @AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
     @AuthorizationScope(scope = "read:pets", description = "read your pets")
@@ -45,7 +48,7 @@ public class PetResource {
   @ApiOperation(value = "Find pet by ID", 
     notes = "Returns a pet when ID < 10.  ID > 10 or nonintegers will simulate API error conditions", 
     response = Pet.class,
-    authorizations = @Authorization(value = "api_key", type = "api_key")
+    authorizations = @Authorization(value = "api_key")
   )
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
       @ApiResponse(code = 404, message = "Pet not found") })
@@ -53,14 +56,43 @@ public class PetResource {
       @ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("petId") Long petId)
       throws NotFoundException {
     Pet pet = petData.getPetbyId(petId);
-    if (null != pet) {
+    if (pet != null) {
       return Response.ok().entity(pet).build();
     } else {
       throw new NotFoundException(404, "Pet not found");
     }
   }
 
-  @PATCH
+  @GET
+  @Path("/{petId}/download")
+  @ApiOperation(value = "Find pet by ID", 
+    notes = "Returns a pet when ID < 10.  ID > 10 or nonintegers will simulate API error conditions", 
+    response = Pet.class,
+    authorizations = @Authorization(value = "api_key")
+  )
+  @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid ID supplied"),
+      @ApiResponse(code = 404, message = "Pet not found") })
+  public Response downloadFile(
+      @ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("petId") Long petId)
+      throws NotFoundException {
+      StreamingOutput stream = new StreamingOutput() {
+      @Override
+      public void write(OutputStream output) throws IOException {
+        try {
+          // TODO: write file content to output;
+          output.write("hello, world".getBytes());
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+      }
+    };
+
+    return Response.ok(stream, "application/force-download")
+            .header("Content-Disposition", "attachment; filename = foo.bar")
+            .build();
+  }
+
+  @DELETE
   @Path("/{petId}")
   @ApiOperation(value = "Deletes a pet")
   @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid pet value")})
@@ -126,14 +158,23 @@ public class PetResource {
     consumes = MediaType.APPLICATION_FORM_URLENCODED)
   @ApiResponses(value = {
     @ApiResponse(code = 405, message = "Invalid input")})
-  public Response  updatePetWithForm (
-   @ApiParam(value = "ID of pet that needs to be updated", required = true)@PathParam("petId") String petId,
+  public Response updatePetWithForm (
+   @ApiParam(value = "ID of pet that needs to be updated", required = true)@PathParam("petId") Long petId,
    @ApiParam(value = "Updated name of the pet", required = false)@FormParam("name") String name,
    @ApiParam(value = "Updated status of the pet", required = false)@FormParam("status") String status) {
     System.out.println(name);
     System.out.println(status);
-    return Response.ok().entity(new com.wordnik.swagger.sample.model.ApiResponse(200, "SUCCESS")).build();
+
+    Pet pet = petData.getPetbyId(petId);
+    if(pet != null) {
+      if(name != null && !"".equals(name))
+        pet.setName(name);
+      if(status != null && !"".equals(status))
+        pet.setStatus(status);
+      petData.addPet(pet);
+      return Response.ok().build();
+    }
+    else
+      return Response.status(404).build();
   }
-
-
 }

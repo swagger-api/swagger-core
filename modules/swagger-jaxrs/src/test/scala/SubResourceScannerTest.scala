@@ -28,6 +28,9 @@ class SubResourceScannerTest extends FlatSpec with Matchers {
 
     val employeesId = swagger.getPaths().get("/employees/{id}").getGet
     employeesId.getOperationId() should be ("getSubresourceOperation")
+
+    val noPath = swagger.getPath("/employees/noPath").getGet
+    noPath.getOperationId() should be ("getGreeting")
   }
 
   it should "scan another resource with subresources" in {
@@ -43,6 +46,22 @@ class SubResourceScannerTest extends FlatSpec with Matchers {
     (produces & Set("application/json", "application/xml")).size should be (2)
     
     swagger.getPaths().keySet().size() should be (2)
+  }
+
+  it should "scan resource with class-based sub-resources" in {
+    val swagger = new Reader(new Swagger()).read(classOf[SubResourceHead])
+
+    swagger.getPaths().size() should be (3)
+
+    val noPath = swagger.getPath("/head/noPath").getGet()
+    noPath.getOperationId() should be ("getGreeting")
+
+    val hello = swagger.getPath("/head/tail/hello").getGet()
+    hello.getOperationId() should be ("getGreeting")
+
+    val echo = swagger.getPath("/head/tail/{string}").getGet()
+    echo.getOperationId() should be ("getEcho")
+    echo.getParameters().size() should be (1)
   }
 }
 @RunWith(classOf[JUnitRunner])

@@ -29,6 +29,7 @@ class ModelConversionTest extends FlatSpec with Matchers {
     model.getProperties().size should be (5)
     model should serializeToJson (
 """{
+  "type": "object",
   "properties" : {
     "date" : {
       "type" : "string",
@@ -65,6 +66,7 @@ class ModelConversionTest extends FlatSpec with Matchers {
     model.getProperties().size should be (1)
     model should serializeToJson (
 """{
+  "type": "object",
   "properties" : {
     "longs" : {
       "type" : "array",

@@ -1,15 +1,7 @@
 import resources._
 
-import com.wordnik.swagger.jaxrs.config._
-import com.wordnik.swagger.models.Scheme
-import com.wordnik.swagger.models.parameters._
-import com.wordnik.swagger.models.properties.MapProperty
-
-import com.wordnik.swagger.models.Swagger
+import com.wordnik.swagger.models.{Scheme, Swagger}
 import com.wordnik.swagger.jaxrs.Reader
-import com.wordnik.swagger.util.Json
-
-import scala.collection.JavaConverters._
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -18,9 +10,23 @@ import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
 class ResourceWithSchemeTest extends FlatSpec with Matchers {
+
+  val reader = new Reader(new Swagger())
+
+  def getSwagger(resource: Class[_]) = reader.read(resource)
+  def loadSchemes(swagger: Swagger, path: String) = swagger.getPaths().get(path).getGet().getSchemes()
+
   it should "scan another resource with subresources" in {
-    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithScheme])
-    val get = swagger.getPaths().get("/test/status").getGet()
-    get.getSchemes().get(0) should equal (Scheme.HTTPS)
+    val swagger = getSwagger(classOf[ResourceWithScheme])
+    loadSchemes(swagger, "/test/status").toArray should equal (Array(Scheme.HTTPS))
+    loadSchemes(swagger, "/test/value").toArray should equal (Array(Scheme.WS, Scheme.WSS))
+    loadSchemes(swagger, "/test/notes").toArray should equal (Array(Scheme.HTTP))
+    loadSchemes(swagger, "/test/description").toArray should equal (Array(Scheme.HTTP))
+  }
+
+  it should "scan resource without schemes" in {
+    val swagger = getSwagger(classOf[ResourceWithoutScheme])
+    loadSchemes(swagger, "/test/status") should equal (null)
+    loadSchemes(swagger, "/test/value") should equal (null)
   }
 }

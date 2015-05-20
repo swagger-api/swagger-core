@@ -156,4 +156,73 @@ public class Path {
       vendorExtensions.put(name, value);
     }
   }
+
+  @Override
+  public int hashCode() {
+  	final int prime = 31;
+  	int result = 1;
+  	result = prime * result + ((delete == null) ? 0 : delete.hashCode());
+  	result = prime * result + ((get == null) ? 0 : get.hashCode());
+  	result = prime * result + ((options == null) ? 0 : options.hashCode());
+  	result = prime * result
+  			+ ((parameters == null) ? 0 : parameters.hashCode());
+  	result = prime * result + ((patch == null) ? 0 : patch.hashCode());
+  	result = prime * result + ((post == null) ? 0 : post.hashCode());
+  	result = prime * result + ((put == null) ? 0 : put.hashCode());
+  	result = prime * result
+  			+ ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
+  	return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+  	if (this == obj)
+  		return true;
+  	if (obj == null)
+  		return false;
+  	if (getClass() != obj.getClass())
+  		return false;
+  	Path other = (Path) obj;
+  	if (delete == null) {
+  		if (other.delete != null)
+  			return false;
+  	} else if (!delete.equals(other.delete))
+  		return false;
+  	if (get == null) {
+  		if (other.get != null)
+  			return false;
+  	} else if (!get.equals(other.get))
+  		return false;
+  	if (options == null) {
+  		if (other.options != null)
+  			return false;
+  	} else if (!options.equals(other.options))
+  		return false;
+  	if (parameters == null) {
+  		if (other.parameters != null)
+  			return false;
+  	} else if (!parameters.equals(other.parameters))
+  		return false;
+  	if (patch == null) {
+  		if (other.patch != null)
+  			return false;
+  	} else if (!patch.equals(other.patch))
+  		return false;
+  	if (post == null) {
+  		if (other.post != null)
+  			return false;
+  	} else if (!post.equals(other.post))
+  		return false;
+  	if (put == null) {
+  		if (other.put != null)
+  			return false;
+  	} else if (!put.equals(other.put))
+  		return false;
+  	if (vendorExtensions == null) {
+  		if (other.vendorExtensions != null)
+  			return false;
+  	} else if (!vendorExtensions.equals(other.vendorExtensions))
+  		return false;
+  	return true;
+  }
 }

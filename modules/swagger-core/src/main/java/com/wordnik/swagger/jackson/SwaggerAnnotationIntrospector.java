@@ -1,5 +1,6 @@
 package com.wordnik.swagger.jackson;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -10,6 +11,8 @@ import com.fasterxml.jackson.databind.jsontype.NamedType;
 
 import javax.xml.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
@@ -67,7 +70,19 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
   
   @Override
   public List<NamedType> findSubtypes(Annotated a) {
-    return null;
+    final ApiModel api = a.getAnnotation(ApiModel.class);
+    if (api != null) {
+      final Class<?>[] classes = api.subTypes();
+      final List<NamedType> names = new ArrayList<NamedType>(classes.length);
+      for (Class<?> subType : classes) {
+        names.add(new NamedType(subType));
+      }
+      if (!names.isEmpty()) {
+        return names;
+      }
+    }
+
+    return Collections.emptyList();
   }
 
   @Override    

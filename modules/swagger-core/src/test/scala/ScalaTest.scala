@@ -9,6 +9,7 @@ import scala.collection.JavaConverters._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
+
 import org.scalatest.Matchers
 
 import matchers.SerializationMatchers._
@@ -22,6 +23,7 @@ class ScalaTest extends FlatSpec with Matchers {
     schemas should serializeToJson (
 """{
   "ClassWithScalaField" : {
+    "type": "object",
     "properties" : {
       "id" : {
         "type" : "integer",
