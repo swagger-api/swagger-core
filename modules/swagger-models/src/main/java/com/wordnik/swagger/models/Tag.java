@@ -1,9 +1,16 @@
 package com.wordnik.swagger.models;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class Tag {
   private String name;
   private String description;
   private ExternalDocs externalDocs;
+  private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
   public Tag name(String name) {
     setName(name);
@@ -39,6 +46,17 @@ public class Tag {
     this.externalDocs = externalDocs;
   }
 
+  @JsonAnyGetter
+  public Map<String, Object> getVendorExtensions() {
+    return vendorExtensions;
+  }
+
+  @JsonAnySetter
+  public void setVendorExtension(String name, Object value) {
+    if (name.startsWith("x-")) {
+      vendorExtensions.put(name, value);
+    }
+  }
 
   @Override
   public String toString() {
@@ -47,6 +65,7 @@ public class Tag {
     b.append("\tname: ").append(getName()).append("\n");
     b.append("\tdescription: ").append(getDescription()).append("\n");
     b.append("\texternalDocs: ").append(getExternalDocs()).append("\n");
+    b.append("\textensions:" ).append(vendorExtensions.toString());
     b.append("}");
     return b.toString();
   }

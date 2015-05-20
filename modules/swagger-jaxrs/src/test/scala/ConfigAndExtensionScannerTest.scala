@@ -1,7 +1,7 @@
 import java.util
 
 import com.wordnik.swagger.jaxrs.Reader
-import com.wordnik.swagger.models.Swagger
+import com.wordnik.swagger.models.{Scheme, Swagger}
 import com.wordnik.swagger.util.Json
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, FlatSpec}
@@ -26,9 +26,42 @@ class ConfigAndExtensionScannerTest extends FlatSpec with Matchers {
     info.getLicense().getName() should be ("Apache 2.0")
     info.getLicense().getUrl() should be ("http://www.apache.org")
 
-    swagger.getTags().size() should be (3)
+    swagger.getConsumes().size() should be (2)
+    swagger.getConsumes().contains( "application/json" )
+    swagger.getConsumes().contains( "application/xml" )
 
-    var extensions: util.Map[String, AnyRef] = swagger.getInfo().getVendorExtensions()
+    swagger.getProduces().size() should be (2)
+    swagger.getProduces().contains( "application/json" )
+    swagger.getProduces().contains( "application/xml" )
+
+    swagger.getExternalDocs().getDescription() should be ("test")
+    swagger.getExternalDocs().getUrl() should be ("http://swagger.io")
+
+    swagger.getSchemes().size() should be (2)
+    swagger.getSchemes().contains( Scheme.HTTP );
+    swagger.getSchemes().contains( Scheme.HTTPS );
+
+    swagger.getTags().size() should be (6)
+    swagger.getTags().get( 0 ).getName() should be ("Tag-added-before-read" )
+
+    swagger.getTags().get( 1 ).getName() should be ("mytag" )
+    swagger.getTags().get( 1 ).getDescription() should be ("my tag" )
+
+    swagger.getTags().get( 2 ).getName() should be ("anothertag" )
+    swagger.getTags().get( 2 ).getDescription() should be ("another tag" )
+    swagger.getTags().get( 2 ).getExternalDocs().getDescription() should be ("test")
+    swagger.getTags().get( 2 ).getExternalDocs().getUrl() should be ("http://swagger.io")
+
+    swagger.getTags().get( 3 ).getName() should be ("tagwithextensions" )
+    swagger.getTags().get( 3 ).getDescription() should be ("my tag" )
+    var extensions: util.Map[String, AnyRef] = swagger.getTags().get( 3 ).getVendorExtensions()
+    extensions.size() should be (1)
+    extensions.get("x-test") should be ("value")
+
+    swagger.getTags().get( 4 ).getName() should be ("externalinfo" )
+    swagger.getTags().get( 5 ).getName() should be ("Tag-added-after-read" )
+
+    extensions = swagger.getInfo().getVendorExtensions()
     extensions.size() should be (3)
     extensions.get("x-test1") should be ( "value1")
     extensions.get("x-test2") should be ( "value2")

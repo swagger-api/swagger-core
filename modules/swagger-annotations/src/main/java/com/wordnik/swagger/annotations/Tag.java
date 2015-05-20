@@ -1,7 +1,7 @@
 package com.wordnik.swagger.annotations;
 
 public @interface Tag {
-    String value() default "";
+    String name() default "";
 
     String description() default "";
 

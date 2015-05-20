@@ -2,6 +2,7 @@ package resources;
 
 import com.wordnik.swagger.annotations.*;
 import com.wordnik.swagger.annotations.Contact;
+import com.wordnik.swagger.annotations.ExternalDocs;
 import com.wordnik.swagger.annotations.Info;
 import com.wordnik.swagger.annotations.License;
 import com.wordnik.swagger.jaxrs.Reader;
@@ -31,7 +32,17 @@ import java.util.*;
                    @ExtensionProperty( name = "test2", value = "value2")
             })
         }
-   )
+   ),
+        consumes = {"application/json","application/xml"},
+        produces = {"application/json","application/xml"},
+        schemes = {SwaggerConfig.Scheme.HTTP, SwaggerConfig.Scheme.HTTPS},
+        tags = {
+                @com.wordnik.swagger.annotations.Tag( name ="mytag", description="my tag"),
+                @com.wordnik.swagger.annotations.Tag( name ="anothertag", description="another tag",
+                    externalDocs = @ExternalDocs( value = "test", url = "http://swagger.io")),
+                @com.wordnik.swagger.annotations.Tag( name ="tagwithextensions", description="my tag",
+                        extensions = @Extension( properties = {@ExtensionProperty(name="test", value = "value")}))
+        }, externalDocs = @ExternalDocs( value = "test", url = "http://swagger.io")
 )
 @Api(value = "/external/info/" )
 @Path("who/cares")

@@ -365,15 +365,17 @@ public class Reader {
     }
 
     for( com.wordnik.swagger.annotations.Tag tagConfig : config.tags()){
-      if( !tagConfig.value().isEmpty()){
+      if( !tagConfig.name().isEmpty()){
         Tag tag = new Tag();
-        tag.setName( tagConfig.value() );
+        tag.setName( tagConfig.name() );
         tag.setDescription( tagConfig.description());
 
         if( !tagConfig.externalDocs().value().isEmpty() ){
            tag.setExternalDocs( new ExternalDocs( tagConfig.externalDocs().value(),
                    tagConfig.externalDocs().url()));
         }
+
+        addExtensionProperties( tagConfig.extensions(), tag.getVendorExtensions());
 
         swagger.addTag( tag );
       }
