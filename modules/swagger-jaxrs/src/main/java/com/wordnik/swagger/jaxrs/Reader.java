@@ -107,7 +107,7 @@ public class Reader {
     listeners.clear();
 
     for(Class<?> cls: classes) {
-      if( ReaderListener.class.isAssignableFrom( ReaderListener.class ) && listeners.containsKey( cls )){
+      if( ReaderListener.class.isAssignableFrom( cls ) && listeners.containsKey( cls )){
         try {
           listeners.put( cls, (ReaderListener) cls.newInstance());
         } catch (Exception e) {
