@@ -1005,7 +1005,7 @@ public class Reader {
     return config;
   }
 
-  public static ObjectMapper getM() {
+  public static ObjectMapper getObjectMapper() {
     return m;
   }
 }
