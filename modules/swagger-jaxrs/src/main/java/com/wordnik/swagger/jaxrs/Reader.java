@@ -817,18 +817,6 @@ public class Reader {
     return operation;
   }
 
-  private Property wrapContainer(String container, Property property) {
-    if ("list".equalsIgnoreCase(container) || "array".equalsIgnoreCase(container)) {
-      return new ArrayProperty(property);
-    } else if ("set".equalsIgnoreCase(container)) {
-      ArrayProperty arrayProperty = new ArrayProperty(property);
-      arrayProperty.setUniqueItems(true);
-      return arrayProperty;
-    } else if ("map".equalsIgnoreCase(container)) {
-      return new MapProperty(property);
-    }
-    return property;
-  }
 
   List<Parameter> getParameters(Class<?> cls, Type type, Annotation[] annotations) {
     // look for path, query
