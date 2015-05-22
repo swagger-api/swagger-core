@@ -1,11 +1,18 @@
 package io.swagger.models;
 
-import com.fasterxml.jackson.annotation.*;
 import io.swagger.models.properties.Property;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @XmlType(propOrder = {"type", "required", "discriminator", "properties"})
 @JsonPropertyOrder({"type", "required", "discriminator", "properties"})
@@ -22,6 +29,8 @@ public class ModelImpl extends AbstractModel {
   private Property additionalProperties;
   private String discriminator;
   private Xml xml;
+  @JsonProperty("default")
+  private String defaultValue;
 
   public ModelImpl discriminator(String discriminator) {
     this.setDiscriminator(discriminator);
@@ -163,7 +172,7 @@ public class ModelImpl extends AbstractModel {
           property.setRequired(true);
       }
     }
-    properties.put(key, property);    
+    properties.put(key, property);
   }
 
   public Map<String, Property> getProperties() {
@@ -195,6 +204,14 @@ public class ModelImpl extends AbstractModel {
     this.xml = xml;
   }
 
+  public String getDefaultValue() {
+    return defaultValue;
+  }
+
+  public void setDefaultValue(String defaultValue) {
+    this.defaultValue = defaultValue;
+  }
+
   public Object clone() {
     ModelImpl cloned = new ModelImpl();
     super.cloneTo(cloned);
@@ -208,6 +225,7 @@ public class ModelImpl extends AbstractModel {
     cloned.additionalProperties = this.additionalProperties;
     cloned.discriminator = this.discriminator;
     cloned.xml = this.xml;
+    cloned.defaultValue = this.defaultValue;
 
     return cloned;
   }
@@ -233,6 +251,7 @@ public class ModelImpl extends AbstractModel {
   	result = prime * result + ((required == null) ? 0 : required.hashCode());
   	result = prime * result + ((type == null) ? 0 : type.hashCode());
   	result = prime * result + ((xml == null) ? 0 : xml.hashCode());
+    result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
   	return result;
   }
 
@@ -297,6 +316,11 @@ public class ModelImpl extends AbstractModel {
   			return false;
   	} else if (!xml.equals(other.xml))
   		return false;
+    if (defaultValue == null) {
+      if (other.defaultValue != null)
+        return false;
+    } else if (!defaultValue.equals(other.defaultValue))
+      return false;
   	return true;
   }
 }

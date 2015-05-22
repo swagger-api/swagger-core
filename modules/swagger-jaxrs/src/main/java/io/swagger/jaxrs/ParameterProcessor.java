@@ -1,6 +1,20 @@
 package io.swagger.jaxrs;
 
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiParam;
+import io.swagger.converter.ModelConverters;
+import io.swagger.models.ArrayModel;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.RefModel;
+import io.swagger.models.Swagger;
+import io.swagger.models.parameters.AbstractSerializableParameter;
+import io.swagger.models.parameters.BodyParameter;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.PropertyBuilder;
+import io.swagger.models.properties.RefProperty;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -9,12 +23,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.core.Context;
 
-import io.swagger.models.ModelImpl;
-import io.swagger.models.Swagger;
-import io.swagger.models.parameters.AbstractSerializableParameter;
-import io.swagger.models.properties.PropertyBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,16 +34,6 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import io.swagger.annotations.ApiParam;
-import io.swagger.converter.ModelConverters;
-import io.swagger.models.ArrayModel;
-import io.swagger.models.Model;
-import io.swagger.models.RefModel;
-import io.swagger.models.parameters.BodyParameter;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
 
 public class ParameterProcessor {
   static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
@@ -52,6 +53,7 @@ public class ParameterProcessor {
       return null;
     }
     final ParamWrapper<?> param = helper.getApiParam();
+    final String defaultValue = helper.getDefaultValue();
     final JavaType javaType = TypeFactory.defaultInstance().constructType(type);
     if (parameter instanceof AbstractSerializableParameter) {
       final AbstractSerializableParameter<?> p = (AbstractSerializableParameter<?>) parameter;
@@ -80,7 +82,6 @@ public class ParameterProcessor {
         }
       }
 
-      final String defaultValue = param.getDefaultValue();
       if (p.getItems() != null || param.isAllowMultiple()) {
         if (p.getItems() == null) {
           // Convert to array
@@ -102,14 +103,14 @@ public class ParameterProcessor {
         }
 
         final Map<PropertyBuilder.PropertyId, Object> args = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
-        if (!defaultValue.isEmpty()) {
+        if (StringUtils.isNotEmpty(defaultValue)) {
           args.put(PropertyBuilder.PropertyId.DEFAULT, defaultValue);
         }
         processAllowedValues(allowableValues, true, args);
         PropertyBuilder.merge(p.getItems(), args);
         p.collectionFormat("csv");
       } else {
-        if (!defaultValue.isEmpty()) {
+        if (StringUtils.isNotEmpty(defaultValue)) {
           p.setDefaultValue(defaultValue);
         }
         processAllowedValues(allowableValues, false, p);
@@ -147,6 +148,9 @@ public class ParameterProcessor {
         }
         else {
           LOGGER.debug("found inner property " + innerProperty);
+          if (StringUtils.isNotEmpty(defaultValue)) {
+            innerProperty.setDefault(defaultValue);
+          }
           bp.setSchema(new ArrayModel().items(innerProperty));
 
           // creation of ref property doesn't add model to definitions - do it now instead
@@ -182,6 +186,9 @@ public class ParameterProcessor {
             model.setType(prop.getType());
             model.setFormat(prop.getFormat());
             model.setDescription(prop.getDescription());
+            if (StringUtils.isNotEmpty(defaultValue)) {
+              model.setDefaultValue(defaultValue);
+            }
             bp.setSchema(model);
           }
         }
@@ -209,12 +216,14 @@ public class ParameterProcessor {
     private static final ApiParam DEFAULT_API_PARAM = getDefaultApiParam(null);
     private boolean context;
     private ParamWrapper apiParam = new ApiParamWrapper(DEFAULT_API_PARAM);
+    private String defaultValue;
 
     /**
      * Constructs an instance.
      * @param annotations array or parameter annotations
      */
     public AnnotationsHelper(List<Annotation> annotations) {
+      String rsDefault = null;
       for (Annotation item : annotations) {
         if (item instanceof Context) {
           context = true;
@@ -222,8 +231,11 @@ public class ParameterProcessor {
           apiParam = new ApiParamWrapper((ApiParam) item);
         } else if (item instanceof ApiImplicitParam) {
           apiParam = new ApiImplicitParamWrapper((ApiImplicitParam) item);
+        } else if (item instanceof DefaultValue) {
+          rsDefault = ((DefaultValue) item).value();
         }
       }
+      defaultValue = StringUtils.isNotEmpty(apiParam.getDefaultValue()) ? apiParam.getDefaultValue() : rsDefault;
     }
 
     /**
@@ -241,6 +253,14 @@ public class ParameterProcessor {
      */
     public ParamWrapper getApiParam() {
       return apiParam;
+    }
+
+    /**
+     * Returns default value from annotation.
+     * @return default value from annotation
+     */
+    public String getDefaultValue() {
+      return defaultValue;
     }
 
     /**
