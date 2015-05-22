@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project</artifactId>
-    <version>1.5.3-M2-SNAPSHOT</version>
+    <version>1.5.2-M2</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-java-dropwizard-sample-app</artifactId>
   <packaging>jar</packaging>
   <name>swagger-java-dropwizard-app</name>
-  <version>1.5.3-M2-SNAPSHOT</version>
+  <version>1.5.2-M2</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>

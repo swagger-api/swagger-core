@@ -2,7 +2,7 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project</artifactId>
-    <version>1.5.3-M2-SNAPSHOT</version>
+    <version>1.5.2-M2</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-jersey2-sample-app</artifactId>
   <packaging>war</packaging>
   <name>swagger-jersey2-jaxrs-app</name>
-  <version>1.5.3-M2-SNAPSHOT</version>
+  <version>1.5.2-M2</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>
@@ -118,7 +118,7 @@
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-jersey2-jaxrs</artifactId>
       <scope>compile</scope>
-      <version>1.5.3-M2-SNAPSHOT</version>
+      <version>1.5.2-M2</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
