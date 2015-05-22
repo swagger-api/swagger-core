@@ -2,13 +2,13 @@
   <parent>
     <groupId>com.wordnik</groupId>
     <artifactId>swagger-project</artifactId>
-    <version>1.5.2-M2</version>
+    <version>1.5.3-M2-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
   <artifactId>swagger-jaxrs-wink-sample</artifactId>
-  <version>1.5.2-M2</version>
+  <version>1.5.3-M2-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>swagger-jaxrs-wink-sample</name>
   <developers>
