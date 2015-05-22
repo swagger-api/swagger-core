@@ -8,10 +8,14 @@ import org.scalatest.{Matchers, FlatSpec}
 import org.scalatest.junit.JUnitRunner
 import resources.{ResourceWithConfigAndExtensions}
 
+import scala.collection.JavaConversions
+import scala.collection.JavaConverters._
+
 @RunWith(classOf[JUnitRunner])
 class ConfigAndExtensionScannerTest extends FlatSpec with Matchers {
   it should "scan a resource with extensions" in {
-    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithConfigAndExtensions])
+    var classes : Set[Class[_]] = Set( classOf[ResourceWithConfigAndExtensions])
+    val swagger = new Reader(new Swagger()).read( JavaConversions.setAsJavaSet(classes))
     swagger.getPaths().size should be (1)
 
     var info = swagger.getInfo()

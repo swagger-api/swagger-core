@@ -91,8 +91,6 @@ public class Reader {
   private Swagger swagger;
   private static ObjectMapper m = Json.mapper();
 
-  private Map<Class<?>,ReaderListener> listeners = new HashMap<Class<?>, ReaderListener>();
-
   public Reader(Swagger swagger) {
     this(swagger, null);
   }
@@ -102,12 +100,21 @@ public class Reader {
     this.config = new DefaultReaderConfig(config);
   }
 
-  public synchronized Swagger read(Set<Class<?>> classes) {
+  /**
+   * Scans a set of classes for both ReaderListeners and Swagger annotations. All found listeners will
+   * be instantiated before any of the classes are scanned for Swagger annotations - so they can be invoked
+   * accordingly.
+   *
+   * @param classes a set of classes to scan
+   * @return the generated Swagger definition
+   */
 
-    listeners.clear();
+  public Swagger read(Set<Class<?>> classes) {
+
+    Map<Class<?>,ReaderListener> listeners = new HashMap<Class<?>, ReaderListener>();
 
     for(Class<?> cls: classes) {
-      if( ReaderListener.class.isAssignableFrom( cls ) && listeners.containsKey( cls )){
+      if( ReaderListener.class.isAssignableFrom( cls ) && !listeners.containsKey( cls )){
         try {
           listeners.put( cls, (ReaderListener) cls.newInstance());
         } catch (Exception e) {
@@ -117,14 +124,24 @@ public class Reader {
     }
 
     for( ReaderListener listener : listeners.values()){
-      listener.beforeScan( this, swagger );
+      try {
+        listener.beforeScan(this, swagger);
+      }
+      catch( Exception e ){
+        LOGGER.error( "Unexpected error invoking beforeScan listener [" + listener.getClass().getName() + "]", e );
+      }
     }
 
     for(Class<?> cls: classes)
       read(cls);
 
     for( ReaderListener listener : listeners.values()){
-      listener.afterScan( this, swagger);
+      try {
+        listener.afterScan( this, swagger);
+      }
+      catch( Exception e ){
+        LOGGER.error( "Unexpected error invoking afterScan listener [" + listener.getClass().getName() + "]", e );
+      }
     }
 
     return swagger;
@@ -134,30 +151,12 @@ public class Reader {
     return this.swagger;
   }
 
+  /**
+   * Scans a single class for Swagger annotations - does not invoke ReaderListeners
+   */
+
   public Swagger read(Class<?> cls) {
-    if( ReaderListener.class.isAssignableFrom(cls) && !listeners.containsKey( cls )){
-      ReaderListener listener = null;
-      try {
-        listener = (ReaderListener) cls.newInstance();
-      } catch (Exception e) {
-        LOGGER.error("Failed to create ReaderListener", e);
-      }
-
-      if( listener != null ){
-        listener.beforeScan( this, swagger );
-      }
-
-      Swagger result = read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
-
-      if( listener != null ){
-        listener.afterScan( this, result );
-      }
-
-      return result;
-    }
-    else {
-      return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
-    }
+     return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
   }
 
   protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
