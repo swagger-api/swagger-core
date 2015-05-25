@@ -3,14 +3,15 @@ package com.wordnik.swagger.models.properties;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class RefProperty extends AbstractProperty implements Property {
+  private static final String TYPE = "ref";
   String ref;
 
   public RefProperty() {
-    super.type = "ref";
+    setType(TYPE);
   }
 
   public RefProperty(String ref) {
-    super.type = "ref";
+    this();
     set$ref(ref);
   }
 
@@ -56,7 +57,7 @@ public class RefProperty extends AbstractProperty implements Property {
   }
 
   public static boolean isType(String type, String format) {
-    if("$ref".equals(type))
+    if (TYPE.equals(type))
       return true;
     else return false;
   }

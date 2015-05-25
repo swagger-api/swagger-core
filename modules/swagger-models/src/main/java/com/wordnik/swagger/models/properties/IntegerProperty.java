@@ -3,10 +3,11 @@ package com.wordnik.swagger.models.properties;
 import com.wordnik.swagger.models.Xml;
 
 public class IntegerProperty extends AbstractNumericProperty implements Property {
+  public static final String TYPE = "integer";
   protected Integer _default;
 
   public IntegerProperty() {
-    super.type = "integer";
+    super.type = TYPE;
     super.format = "int32";
   }
   public IntegerProperty xml(Xml xml) {
@@ -36,7 +37,7 @@ public class IntegerProperty extends AbstractNumericProperty implements Property
   }
 
   public static boolean isType(String type, String format) {
-    if("integer".equals(type) && "int32".equals(format))
+    if (TYPE.equals(type) && "int32".equals(format))
       return true;
     else return false;
   }

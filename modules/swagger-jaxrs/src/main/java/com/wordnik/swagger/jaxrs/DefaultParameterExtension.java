@@ -4,14 +4,11 @@ import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
 import com.wordnik.swagger.models.parameters.*;
 import com.wordnik.swagger.models.properties.*;
 import com.wordnik.swagger.converter.ModelConverters;
-
 import com.wordnik.swagger.jaxrs.ext.AbstractSwaggerExtension;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.PathParam;
@@ -19,16 +16,14 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
 
-public class DefaultParameterExtension extends AbstractSwaggerExtension implements SwaggerExtension {
-  Logger LOGGER = LoggerFactory.getLogger(DefaultParameterExtension.class);
+public class DefaultParameterExtension extends AbstractSwaggerExtension {
 
-  public List<Parameter> extractParameters(Annotation[] annotations, Class<?> cls, boolean isArray, Set<Class<?>> classesToSkip, Iterator<SwaggerExtension> chain) {
+  @Override
+  public List<Parameter> extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip, Iterator<SwaggerExtension> chain) {
     String defaultValue = "";
 
-    if(this.shouldIgnoreClass(cls))
+    if(shouldIgnoreType(type, typesToSkip))
       return new ArrayList<Parameter>();
 
     List<Parameter> parameters = new ArrayList<Parameter>();
@@ -46,7 +41,7 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension implemen
         if(!defaultValue.isEmpty()) {
           qp.setDefaultValue(defaultValue);
         }
-        Property schema = ModelConverters.getInstance().readAsProperty(cls);
+        Property schema = createProperty(type);
         if(schema != null)
           qp.setProperty(schema);
         parameter = qp;
@@ -57,7 +52,7 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension implemen
           .name(param.value());
         if(!defaultValue.isEmpty())
           pp.setDefaultValue(defaultValue);
-        Property schema = ModelConverters.getInstance().readAsProperty(cls);
+        Property schema = createProperty(type);
         if(schema != null)
           pp.setProperty(schema);
         parameter = pp;
@@ -67,7 +62,7 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension implemen
         HeaderParameter hp = new HeaderParameter()
           .name(param.value());
         hp.setDefaultValue(defaultValue);
-        Property schema = ModelConverters.getInstance().readAsProperty(cls);
+        Property schema = createProperty(type);
         if(schema != null)
           hp.setProperty(schema);
         parameter = hp;
@@ -78,7 +73,7 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension implemen
           .name(param.value());
         if(!defaultValue.isEmpty())
           cp.setDefaultValue(defaultValue);
-        Property schema = ModelConverters.getInstance().readAsProperty(cls);
+        Property schema = createProperty(type);
         if(schema != null)
           cp.setProperty(schema);
         parameter = cp;
@@ -89,7 +84,7 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension implemen
           .name(param.value());
         if(!defaultValue.isEmpty())
           fp.setDefaultValue(defaultValue);
-        Property schema = ModelConverters.getInstance().readAsProperty(cls);
+        Property schema = createProperty(type);
         if(schema != null)
           fp.setProperty(schema);
         parameter = fp;
@@ -102,12 +97,23 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension implemen
     return parameters;
   }
 
-  public boolean shouldIgnoreClass(Class<?> cls) {
-    boolean output = false;
-    if(cls.getName().startsWith("javax.ws.rs"))
-      output = true;
-    else
-      output = false;
-    return output;
+  @Override
+  protected boolean shouldIgnoreClass(Class<?> cls) {
+    return cls.getName().startsWith("javax.ws.rs.");
+  }
+
+  private Property createProperty(Type type) {
+    return enforcePrimitive(ModelConverters.getInstance().readAsProperty(type));
+  }
+
+  private Property enforcePrimitive(Property in) {
+    if (in instanceof RefProperty) {
+      return new StringProperty();
+    }
+    if (in instanceof ArrayProperty) {
+      final ArrayProperty array = (ArrayProperty) in;
+      array.setItems(enforcePrimitive(array.getItems()));
+    }
+    return in;
   }
 }
