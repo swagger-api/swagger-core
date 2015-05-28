@@ -295,8 +295,7 @@ public class Reader {
   private void readImplicitParameters(Method method, Operation operation) {
     ApiImplicitParams implicitParams = method.getAnnotation(ApiImplicitParams.class);
     if( implicitParams != null && implicitParams.value().length > 0 ){
-       for(ApiImplicitParam param : implicitParams.value())
-       {
+       for(ApiImplicitParam param : implicitParams.value()) {
          Parameter p = readImplicitParam(param);
          if (p != null) {
            operation.addParameter( p );
@@ -307,19 +306,19 @@ public class Reader {
 
   protected Parameter readImplicitParam(ApiImplicitParam param) {
     Parameter p;
-    if( param.paramType().equals("path") ){
+    if( param.paramType().equalsIgnoreCase("path") ){
       p = new PathParameter();
     }
-    else if( param.paramType().equals("query")){
+    else if( param.paramType().equalsIgnoreCase("query")){
       p = new QueryParameter();
     }
-    else if( param.paramType().equals("form")){
+    else if( param.paramType().equalsIgnoreCase("form") || param.paramType().equalsIgnoreCase("formData")){
       p = new FormParameter();
     }
-    else if( param.paramType().equals("body")){
+    else if( param.paramType().equalsIgnoreCase("body")){
       p = new BodyParameter();
     }
-    else if( param.paramType().equals("header")){
+    else if (param.paramType().equalsIgnoreCase("header")){
       p = new HeaderParameter();
     }
     else {
