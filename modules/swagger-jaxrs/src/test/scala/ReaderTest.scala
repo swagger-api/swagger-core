@@ -4,7 +4,7 @@ import javax.ws.rs._
 import com.wordnik.swagger.jaxrs.Reader
 import com.wordnik.swagger.models.Swagger
 import javax.ws.rs.core.MediaType
-import com.wordnik.swagger.models.parameters.{QueryParameter, FormParameter, HeaderParameter, PathParameter}
+import com.wordnik.swagger.models.parameters._
 import org.junit.runner.RunWith
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
@@ -98,7 +98,7 @@ class ReaderTest extends FlatSpec with Matchers {
 
     var params = swagger.getPaths().get( "/testString").getPost().getParameters()
     params should not be null
-    params.size() should be (6)
+    params.size() should be (7)
     params.get(0).getName() should be ("sort")
     params.get(0).getIn() should be ("query")
     params.get(1).getName() should be ("type")
@@ -111,6 +111,8 @@ class ReaderTest extends FlatSpec with Matchers {
     params.get(4).getIn() should be ("formData")
     params.get(5).getName() should be ("height")
     params.get(5).getIn() should be ("query")
+    params.get(6).getName() should be ("body")
+    params.get(6).getIn() should be ("body")
 
     var pathParam : PathParameter = params.get(1).asInstanceOf[PathParameter]
     pathParam.getEnum().size() should be (3)
@@ -125,5 +127,8 @@ class ReaderTest extends FlatSpec with Matchers {
     var queryParam : QueryParameter = params.get(5).asInstanceOf[QueryParameter]
     queryParam.getMinimum() should be (3)
     queryParam.getMaximum() should be (4)
+
+    var bodyParam : BodyParameter = params.get(6).asInstanceOf[BodyParameter]
+    bodyParam.getRequired() should be (true)
   }
 }

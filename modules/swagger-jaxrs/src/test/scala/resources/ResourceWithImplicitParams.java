@@ -22,6 +22,7 @@ public class ResourceWithImplicitParams {
           @ApiImplicitParam(name = "width", paramType = "form", dataType = "int", allowableValues = "range[infinity,1]"),
           @ApiImplicitParam(name = "width", paramType = "formData", dataType = "int", allowableValues = "range[infinity,1]"),
           @ApiImplicitParam(name = "height", paramType = "query", dataType = "int", allowableValues = "range[3,4]"),
+          @ApiImplicitParam(name = "body", paramType = "body", dataType = "string", required = true),
           @ApiImplicitParam(name = "width", paramType = "unknown")
   })
   @ApiOperation("Test operation with implicit parameters")
