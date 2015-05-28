@@ -16,6 +16,7 @@ import com.wordnik.swagger.models.*;
 import com.wordnik.swagger.models.properties.*;
 import com.wordnik.swagger.util.Json;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,7 +126,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if(innerModel != null) {
               LOGGER.debug("found inner model " + innerModel);
               // model name may be overriding what was detected
-              if(innerModel instanceof ModelImpl) {
+              if( StringUtils.isNotEmpty(innerModel.getReference())){
+                propertyTypeName = innerModel.getReference();
+              }
+              else if(innerModel instanceof ModelImpl) {
                 ModelImpl impl = (ModelImpl) innerModel;
                 if(impl.getName() != null)
                   propertyTypeName = impl.getName();
@@ -173,7 +177,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         String propertyTypeName = _typeName(propType);
         Model innerModel =  context.resolve(propType);      
         if(innerModel instanceof ModelImpl) {
-          property = new RefProperty(((ModelImpl)innerModel).getName());
+          ModelImpl mi = (ModelImpl) innerModel;
+          property = new RefProperty( StringUtils.isNotEmpty( mi.getReference() ) ? mi.getReference() : mi.getName());
         }
       }
     }
@@ -251,7 +256,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       if(apiModel.value() != null && !"".equals(apiModel.value())) {
         name = apiModel.value();
         model.setName(name);
+
       }
+
+      if(StringUtils.isNotEmpty( apiModel.reference())) {
+        model.setReference(apiModel.reference());
+      }
+
       Class<?> parent = apiModel.parent();
       if (parent != Void.class) {
         // model.setBaseModel(_typeName(_mapper.constructType(parent)));
@@ -387,8 +398,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         // no property from override, construct from propType
-        if(property == null)
-          property = context.resolveProperty(propType, annotations);
+        if(property == null) {
+          if( mp != null && StringUtils.isNotEmpty(mp.reference())){
+            property = new RefProperty( mp.reference());
+          } else {
+            property = context.resolveProperty(propType, annotations);
+          }
+        }
 
         if(property != null) {
           property.setName(propName);

@@ -1,7 +1,10 @@
 package com.wordnik.swagger.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public abstract class AbstractModel implements Model {
   private ExternalDocs externalDocs;
+  private String reference;
 
   @Override
   public ExternalDocs getExternalDocs() {
@@ -45,5 +48,16 @@ public abstract class AbstractModel implements Model {
   	} else if (!externalDocs.equals(other.externalDocs))
   		return false;
   	return true;
+  }
+
+  @JsonIgnore
+  @Override
+  public String getReference() {
+    return reference;
+  }
+
+  @Override
+  public void setReference(String reference) {
+    this.reference = reference;
   }
 }

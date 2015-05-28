@@ -99,7 +99,7 @@ public @interface ApiModelProperty {
   boolean readOnly() default false;
 
   /**
-   * Specifies a reference to the corresponding type definition.
+   * Specifies a reference to the corresponding type definition, overrides any other metadata specified
    */
 
   String reference() default "";

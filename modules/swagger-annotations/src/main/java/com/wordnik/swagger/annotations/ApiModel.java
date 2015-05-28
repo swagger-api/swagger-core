@@ -59,7 +59,7 @@ public @interface ApiModel {
   Class<?>[] subTypes() default {};
 
   /**
-   * Specifies a reference to the corresponding type definition.
+   * Specifies a reference to the corresponding type definition, overrides any other metadata specified
    */
 
   String reference() default "";

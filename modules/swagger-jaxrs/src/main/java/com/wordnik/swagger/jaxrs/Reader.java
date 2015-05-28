@@ -452,7 +452,12 @@ public class Reader {
       }
     }
 
-    if(responseClass == null) {
+    if( apiOperation != null && StringUtils.isNotEmpty( apiOperation.responseReference() )){
+      Response response = new Response().description(SUCCESSFUL_OPERATION);
+      response.schema( new RefProperty( apiOperation.responseReference() ));
+      operation.addResponse(String.valueOf(apiOperation.code()), response);
+    }
+    else if(responseClass == null ) {
       // pick out response from method declaration
       LOGGER.debug("picking up response class from method " + method);
       Type t = method.getGenericReturnType();
@@ -490,7 +495,11 @@ public class Reader {
             .headers(defaultResponseHeaders));
         }
         for(String key: models.keySet()) {
-          Property property = new RefProperty().asDefault(key);
+          Model model = models.get( key );
+          Property property = StringUtils.isNotEmpty( model.getReference() ) ?
+                  new RefProperty( model.getReference() ) :
+                  new RefProperty().asDefault(key);
+
           Property responseProperty = ContainerWrapper.wrapContainer(responseContainer, property);
           operation.response(responseCode, new Response()
             .description(SUCCESSFUL_OPERATION)
@@ -541,17 +550,31 @@ public class Reader {
           operation.response(apiResponse.code(), response);
 
         responseClass = apiResponse.response();
-        if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
+
+        if( StringUtils.isNotEmpty( apiResponse.reference() )){
+          response.schema( new RefProperty( apiResponse.reference() ));
+        }
+        else if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
           Map<String, Model> models = ModelConverters.getInstance().read(responseClass);
           for(String key: models.keySet()) {
-            Property property =  new RefProperty().asDefault(key);
+            Model model = models.get( key );
+            Property property = StringUtils.isNotEmpty( model.getReference() ) ?
+                    new RefProperty( model.getReference() ) :
+                    new RefProperty().asDefault(key);
+
             Property responseProperty = ContainerWrapper.wrapContainer(apiResponse.responseContainer(), property);
             response.schema(responseProperty);
-            swagger.model(key, models.get(key));
+
+            if( StringUtils.isEmpty(model.getReference())) {
+              swagger.model(key, models.get(key));
+            }
           }
           models = ModelConverters.getInstance().readAll(responseClass);
           for(String key: models.keySet()) {
-            swagger.model(key, models.get(key));
+            Model model = models.get(key);
+            if( StringUtils.isEmpty(model.getReference())) {
+              swagger.model(key, model);
+            }
           }
         }
       }
@@ -580,8 +603,10 @@ public class Reader {
         operation.parameter(parameter);
       }
     }
+
     if(operation.getResponses() == null) {
-      operation.defaultResponse(new Response().description(SUCCESSFUL_OPERATION));
+      Response response = new Response().description(SUCCESSFUL_OPERATION);
+      operation.defaultResponse(response);
     }
     return operation;
   }

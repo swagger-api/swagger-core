@@ -82,7 +82,7 @@ public @interface ApiOperation {
    * will be used as-is, and will override any specified response() class.
    */
 
-  String reference() default "";
+  String responseReference() default "";
 
   /**
    * Corresponds to the `method` field as the HTTP method used.
