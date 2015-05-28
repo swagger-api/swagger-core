@@ -64,7 +64,7 @@ public @interface ApiResponse {
 
   /**
    * Specifies a reference to the response type. The specified reference can be either local or remote and
-   * will be used as-is, and will override and specified response() class.
+   * will be used as-is, and will override any specified response() class.
    */
 
   String reference() default "";
