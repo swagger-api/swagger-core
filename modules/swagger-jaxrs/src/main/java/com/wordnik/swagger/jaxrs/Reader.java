@@ -19,6 +19,14 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Produces;
 
+import com.wordnik.swagger.annotations.ApiImplicitParam;
+import com.wordnik.swagger.annotations.ApiImplicitParams;
+import com.wordnik.swagger.models.parameters.AbstractSerializableParameter;
+import com.wordnik.swagger.models.parameters.BodyParameter;
+import com.wordnik.swagger.models.parameters.FormParameter;
+import com.wordnik.swagger.models.parameters.HeaderParameter;
+import com.wordnik.swagger.models.parameters.PathParameter;
+import com.wordnik.swagger.models.parameters.QueryParameter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -274,12 +282,84 @@ public class Reader {
                 swagger.path(operationPath, path);
               }
               path.set(httpMethod, operation);
+
+              readImplicitParameters(method, operation);
             }
           }
         }
       }
     }
     return swagger;
+  }
+
+  private void readImplicitParameters(Method method, Operation operation) {
+    ApiImplicitParams implicitParams = method.getAnnotation(ApiImplicitParams.class);
+    if( implicitParams != null && implicitParams.value().length > 0 ){
+       for(ApiImplicitParam param : implicitParams.value())
+       {
+         Parameter p = readImplicitParam(param);
+         if (p != null) {
+           operation.addParameter( p );
+         }
+       }
+    }
+  }
+
+  protected Parameter readImplicitParam(ApiImplicitParam param) {
+    Parameter p;
+    if( param.paramType().equals("path") ){
+      p = new PathParameter();
+    }
+    else if( param.paramType().equals("query")){
+      p = new QueryParameter();
+    }
+    else if( param.paramType().equals("form")){
+      p = new FormParameter();
+    }
+    else if( param.paramType().equals("body")){
+      p = new BodyParameter();
+    }
+    else if( param.paramType().equals("header")){
+      p = new HeaderParameter();
+    }
+    else {
+      LOGGER.warn( "Unkown implicit parameter type: [" + param.paramType() + "]");
+      return null;
+    }
+
+    if( p instanceof AbstractSerializableParameter){
+      AbstractSerializableParameter asb = (AbstractSerializableParameter) p;
+      asb.setDefaultValue( param.defaultValue() );
+      asb.setType( param.dataType() );
+
+      String values = param.allowableValues();
+      if( values.startsWith("range[")){
+        int ix = values.indexOf( ',');
+        if( ix > 0 ) {
+          String v1 = values.substring( 6, ix );
+          String v2 = values.substring( ix+1, values.length()-1 );
+
+          try {
+            asb.setMaximum( Double.parseDouble( v2 ));
+          }
+          catch (NumberFormatException e ){}
+
+          try {
+            asb.setMinimum(Double.parseDouble(v1));
+          }
+          catch (NumberFormatException e ){}
+        }
+      }
+      else {
+         asb.setEnum(Arrays.asList(values.split(",")));
+      }
+    }
+
+    p.setName( param.name() );
+    p.setRequired( param.required());
+    p.setAccess( param.access() );
+    p.setDescription( param.value());
+    return p;
   }
 
   protected Class<?> getSubResource(Method method) {

@@ -4,6 +4,7 @@ import javax.ws.rs._
 import com.wordnik.swagger.jaxrs.Reader
 import com.wordnik.swagger.models.Swagger
 import javax.ws.rs.core.MediaType
+import com.wordnik.swagger.models.parameters.{QueryParameter, FormParameter, HeaderParameter, PathParameter}
 import org.junit.runner.RunWith
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
@@ -89,5 +90,37 @@ class ReaderTest extends FlatSpec with Matchers {
       true
     else
       false
+  }
+
+  it should "scan implicit params" in {
+    val reader = new Reader(new Swagger())
+    val swagger = reader.read(classOf[ResourceWithImplicitParams])
+
+    var params = swagger.getPaths().get( "/testString").getPost().getParameters()
+    params should not be null
+    params.size() should be (5)
+    params.get(0).getName() should be ("sort")
+    params.get(0).getIn() should be ("query")
+    params.get(1).getName() should be ("type")
+    params.get(1).getIn() should be ("path")
+    params.get(2).getName() should be ("size")
+    params.get(2).getIn() should be ("header")
+    params.get(3).getName() should be ("width")
+    params.get(3).getIn() should be ("formData")
+    params.get(4).getName() should be ("height")
+    params.get(4).getIn() should be ("query")
+
+    var pathParam : PathParameter = params.get(1).asInstanceOf[PathParameter]
+    pathParam.getEnum().size() should be (3)
+
+    var headerParam : HeaderParameter = params.get(2).asInstanceOf[HeaderParameter]
+    headerParam.getMinimum() should be (1)
+
+    var formParam : FormParameter = params.get(3).asInstanceOf[FormParameter]
+    formParam.getMaximum() should be (1)
+
+    var queryParam : QueryParameter = params.get(4).asInstanceOf[QueryParameter]
+    queryParam.getMinimum() should be (3)
+    queryParam.getMaximum() should be (4)
   }
 }
