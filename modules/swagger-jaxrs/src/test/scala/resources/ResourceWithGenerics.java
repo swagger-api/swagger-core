@@ -2,11 +2,14 @@ package resources;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
+import models.GenericType;
+import models.GenericTypeWithApiModel;
 import models.Tag;
 import models.TestEnum;
 
@@ -73,4 +76,29 @@ public class ResourceWithGenerics {
   @ApiOperation("Tests object container as body parameter")
   public void test2DInBody(List<List<Tag>> list) {
   }
+
+  @ApiOperation(value="Tests generic type")
+  @POST
+  @Path("/testGenericType")
+  public void testGenericType(GenericType<String> type) {
+  }
+
+  @ApiOperation(value="Tests generic type")
+  @POST
+  @Path("/testStringBasedGenericType")
+  public void testStringBasedGenericType(GenericType<UUID> type) {
+  }
+
+  @ApiOperation(value="Tests complex generic type")
+  @POST
+  @Path("/testComplexGenericType")
+  public void testComplexGenericType(GenericType<GenericType<String>> type) {
+  }
+
+  @ApiOperation(value="Tests renamed generic type")
+  @POST
+  @Path("/testRenamedGenericType")
+  public void testRenamedGenericType(GenericTypeWithApiModel<GenericTypeWithApiModel<String>> type) {
+  }
+
 }

@@ -245,19 +245,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       model.xml(xml);
     }
 
-    ApiModel apiModel = beanDesc.getClassAnnotations().get(ApiModel.class);
-    // TODO
-    if (apiModel != null) {
-      if(apiModel.value() != null && !"".equals(apiModel.value())) {
-        name = apiModel.value();
-        model.setName(name);
-      }
-      Class<?> parent = apiModel.parent();
-      if (parent != Void.class) {
-        // model.setBaseModel(_typeName(_mapper.constructType(parent)));
-      }
-    }
-
     // see if @JsonIgnoreProperties exist
     Set<String> propertiesToIgnore = new HashSet<String>();
     JsonIgnoreProperties ignoreProperties = beanDesc.getClassAnnotations().get(JsonIgnoreProperties.class);
@@ -265,6 +252,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
     }
 
+    final ApiModel apiModel = beanDesc.getClassAnnotations().get(ApiModel.class);
     String disc = (apiModel == null) ? "" : apiModel.discriminator();
     if (disc.isEmpty()) {
       // longer method would involve AnnotationIntrospector.findTypeResolver(...) but:
