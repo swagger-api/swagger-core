@@ -98,7 +98,7 @@ class ReaderTest extends FlatSpec with Matchers {
 
     var params = swagger.getPaths().get( "/testString").getPost().getParameters()
     params should not be null
-    params.size() should be (5)
+    params.size() should be (6)
     params.get(0).getName() should be ("sort")
     params.get(0).getIn() should be ("query")
     params.get(1).getName() should be ("type")
@@ -107,8 +107,10 @@ class ReaderTest extends FlatSpec with Matchers {
     params.get(2).getIn() should be ("header")
     params.get(3).getName() should be ("width")
     params.get(3).getIn() should be ("formData")
-    params.get(4).getName() should be ("height")
-    params.get(4).getIn() should be ("query")
+    params.get(4).getName() should be ("width")
+    params.get(4).getIn() should be ("formData")
+    params.get(5).getName() should be ("height")
+    params.get(5).getIn() should be ("query")
 
     var pathParam : PathParameter = params.get(1).asInstanceOf[PathParameter]
     pathParam.getEnum().size() should be (3)
@@ -119,7 +121,7 @@ class ReaderTest extends FlatSpec with Matchers {
     var formParam : FormParameter = params.get(3).asInstanceOf[FormParameter]
     formParam.getMaximum() should be (1)
 
-    var queryParam : QueryParameter = params.get(4).asInstanceOf[QueryParameter]
+    var queryParam : QueryParameter = params.get(5).asInstanceOf[QueryParameter]
     queryParam.getMinimum() should be (3)
     queryParam.getMaximum() should be (4)
   }

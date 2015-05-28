@@ -296,7 +296,7 @@ public class Reader {
     ApiImplicitParams implicitParams = method.getAnnotation(ApiImplicitParams.class);
     if( implicitParams != null && implicitParams.value().length > 0 ){
        for(ApiImplicitParam param : implicitParams.value()) {
-         Parameter p = readImplicitParam(param);
+         Parameter p = readImplicitParam(param, method.getDeclaringClass());
          if (p != null) {
            operation.addParameter( p );
          }
@@ -304,7 +304,7 @@ public class Reader {
     }
   }
 
-  protected Parameter readImplicitParam(ApiImplicitParam param) {
+  protected Parameter readImplicitParam(ApiImplicitParam param, Class<?> apiClass) {
     Parameter p;
     if( param.paramType().equalsIgnoreCase("path") ){
       p = new PathParameter();
@@ -326,39 +326,7 @@ public class Reader {
       return null;
     }
 
-    if( p instanceof AbstractSerializableParameter){
-      AbstractSerializableParameter asb = (AbstractSerializableParameter) p;
-      asb.setDefaultValue( param.defaultValue() );
-      asb.setType( param.dataType() );
-
-      String values = param.allowableValues();
-      if( values.startsWith("range[")){
-        int ix = values.indexOf( ',');
-        if( ix > 0 ) {
-          String v1 = values.substring( 6, ix );
-          String v2 = values.substring( ix+1, values.length()-1 );
-
-          try {
-            asb.setMaximum( Double.parseDouble( v2 ));
-          }
-          catch (NumberFormatException e ){}
-
-          try {
-            asb.setMinimum(Double.parseDouble(v1));
-          }
-          catch (NumberFormatException e ){}
-        }
-      }
-      else {
-         asb.setEnum(Arrays.asList(values.split(",")));
-      }
-    }
-
-    p.setName( param.name() );
-    p.setRequired( param.required());
-    p.setAccess( param.access() );
-    p.setDescription( param.value());
-    return p;
+    return ParameterProcessor.applyAnnotations( swagger, p, apiClass, new Annotation[]{param}, false );
   }
 
   protected Class<?> getSubResource(Method method) {

@@ -1,5 +1,6 @@
 package com.wordnik.swagger.jaxrs;
 
+import com.wordnik.swagger.annotations.ApiImplicitParam;
 import com.wordnik.swagger.util.Json;
 
 import java.lang.annotation.Annotation;
@@ -47,33 +48,33 @@ public class ParameterProcessor {
     if (helper.isContext()) {
       return null;
     }
-    final ApiParam param = helper.getApiParam();
+    final ParamWrapper<?> param = helper.getApiParam();
     if (parameter instanceof AbstractSerializableParameter) {
       final AbstractSerializableParameter<?> p = (AbstractSerializableParameter<?>) parameter;
 
-      if (param.required()) {
+      if (param.isRequired()) {
         p.setRequired(true);
       }
-      if (StringUtils.isNotEmpty(param.name())) {
-        p.setName(param.name());
+      if (StringUtils.isNotEmpty(param.getName())) {
+        p.setName(param.getName());
       }
-      if (StringUtils.isNotEmpty(param.value())) {
-        p.setDescription(param.value());
+      if (StringUtils.isNotEmpty(param.getDescription())) {
+        p.setDescription(param.getDescription());
       }
-      if (StringUtils.isNotEmpty(param.access())) {
-        p.setAccess(param.access());
+      if (StringUtils.isNotEmpty(param.getAccess())) {
+        p.setAccess(param.getAccess());
       }
 
       AllowableValues allowableValues = null;
-      if (StringUtils.isNotEmpty(param.allowableValues())) {
-        allowableValues = AllowableRangeValues.create(param.allowableValues());
+      if (StringUtils.isNotEmpty(param.getAllowableValues())) {
+        allowableValues = AllowableRangeValues.create(param.getAllowableValues());
         if (allowableValues == null) {
-          allowableValues = AllowableEnumValues.create(param.allowableValues());
+          allowableValues = AllowableEnumValues.create(param.getAllowableValues());
         }
       }
 
-      final String defaultValue = param.defaultValue();
-      if (param.allowMultiple() || isArray) {
+      final String defaultValue = param.getDefaultValue();
+      if (param.isAllowMultiple() || isArray) {
         final Map<PropertyBuilder.PropertyId, Object> args = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
         if (!defaultValue.isEmpty()) {
           args.put(PropertyBuilder.PropertyId.DEFAULT, defaultValue);
@@ -97,10 +98,10 @@ public class ParameterProcessor {
     } else {
       // must be a body param
       BodyParameter bp = new BodyParameter();
-      bp.setRequired(param.required());
-      bp.setName(StringUtils.isNotEmpty(param.name()) ? param.name() : "body");
-      if (StringUtils.isNotEmpty(param.value())) {
-        bp.setDescription(param.value());
+      bp.setRequired(param.isRequired());
+      bp.setName(StringUtils.isNotEmpty(param.getName()) ? param.getName() : "body");
+      if (StringUtils.isNotEmpty(param.getDescription())) {
+        bp.setDescription(param.getDescription());
       }
 
       if(cls.isArray() || isArray) {
@@ -194,7 +195,7 @@ public class ParameterProcessor {
   private static class AnnotationsHelper {
     private static final ApiParam DEFAULT_API_PARAM = getDefaultApiParam(null);
     private boolean context;
-    private ApiParam apiParam = DEFAULT_API_PARAM;
+    private ParamWrapper apiParam = new ApiParamWrapper(DEFAULT_API_PARAM);
 
     /**
      * Constructs an instance.
@@ -205,7 +206,9 @@ public class ParameterProcessor {
         if (item instanceof Context) {
           context = true;
         } else if (item instanceof ApiParam) {
-          apiParam = (ApiParam) item;
+          apiParam = new ApiParamWrapper((ApiParam) item);
+        } else if (item instanceof ApiImplicitParam) {
+          apiParam = new ApiImplicitParamWrapper((ApiImplicitParam) item);
         }
       }
     }
@@ -223,7 +226,7 @@ public class ParameterProcessor {
      * a default one will be returned.
      * @return @{@link ApiParam} annotation
      */
-    public ApiParam getApiParam() {
+    public ParamWrapper getApiParam() {
       return apiParam;
     }
 
@@ -240,6 +243,158 @@ public class ParameterProcessor {
         }
       }
       throw new IllegalStateException("Failed to locate default @ApiParam");
+    }
+  }
+
+  /**
+   * Wraps either an @ApiParam or and @ApiImplicitParam
+   */
+
+  public interface ParamWrapper<T> {
+    String getName();
+
+    String getDescription();
+
+    String getDefaultValue();
+
+    String getAllowableValues();
+
+    boolean isRequired();
+
+    String getAccess();
+
+    boolean isAllowMultiple();
+
+    String getDataType();
+
+    String getParamType();
+
+    T getAnnotation();
+  }
+
+  /**
+   * Wrapper implementation for ApiParam annotation
+   */
+
+  private final static class ApiParamWrapper implements ParamWrapper<ApiParam>{
+
+    private final ApiParam apiParam;
+
+    private ApiParamWrapper(ApiParam apiParam) {
+      this.apiParam = apiParam;
+    }
+
+    @Override
+    public String getName() {
+      return apiParam.name();
+    }
+
+    @Override
+    public String getDescription() {
+      return apiParam.value();
+    }
+
+    @Override
+    public String getDefaultValue() {
+      return apiParam.defaultValue();
+    }
+
+    @Override
+    public String getAllowableValues() {
+      return apiParam.allowableValues();
+    }
+
+    @Override
+    public boolean isRequired() {
+      return apiParam.required();
+    }
+
+    @Override
+    public String getAccess() {
+      return apiParam.access();
+    }
+
+    @Override
+    public boolean isAllowMultiple() {
+      return apiParam.allowMultiple();
+    }
+
+    @Override
+    public String getDataType() {
+      return null;
+    }
+
+    @Override
+    public String getParamType() {
+      return null;
+    }
+
+    @Override
+    public ApiParam getAnnotation() {
+      return apiParam;
+    }
+  }
+
+  /**
+   * Wrapper implementation for ApiImplicitParam annotation
+   */
+
+  private final static class ApiImplicitParamWrapper implements ParamWrapper<ApiImplicitParam>{
+
+    private final ApiImplicitParam apiParam;
+
+    private ApiImplicitParamWrapper(ApiImplicitParam apiParam) {
+      this.apiParam = apiParam;
+    }
+
+    @Override
+    public String getName() {
+      return apiParam.name();
+    }
+
+    @Override
+    public String getDescription() {
+      return apiParam.value();
+    }
+
+    @Override
+    public String getDefaultValue() {
+      return apiParam.defaultValue();
+    }
+
+    @Override
+    public String getAllowableValues() {
+      return apiParam.allowableValues();
+    }
+
+    @Override
+    public boolean isRequired() {
+      return apiParam.required();
+    }
+
+    @Override
+    public String getAccess() {
+      return apiParam.access();
+    }
+
+    @Override
+    public boolean isAllowMultiple() {
+      return apiParam.allowMultiple();
+    }
+
+    @Override
+    public String getDataType() {
+      return apiParam.dataType();
+    }
+
+    @Override
+    public String getParamType() {
+      return apiParam.paramType();
+    }
+
+    @Override
+    public ApiImplicitParam getAnnotation() {
+      return apiParam;
     }
   }
 }
