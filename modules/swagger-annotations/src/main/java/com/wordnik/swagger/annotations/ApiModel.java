@@ -57,4 +57,10 @@ public @interface ApiModel {
    * An array of the sub types inheriting from this model.
    */
   Class<?>[] subTypes() default {};
+
+  /**
+   * Specifies a reference to the corresponding type definition.
+   */
+
+  String reference() default "";
 }

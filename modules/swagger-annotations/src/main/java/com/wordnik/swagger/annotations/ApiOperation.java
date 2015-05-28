@@ -78,6 +78,13 @@ public @interface ApiOperation {
   String responseContainer() default "";
 
   /**
+   * Specifies a reference to the response type. The specified reference can be either local or remote and
+   * will be used as-is, and will override and specified response() class.
+   */
+
+  String reference() default "";
+
+  /**
    * Corresponds to the `method` field as the HTTP method used.
    * <p>
    * If not stated, in JAX-RS applications, the following JAX-RS annotations would be scanned
