@@ -114,6 +114,7 @@ class ReaderTest extends FlatSpec with Matchers {
 
     var pathParam : PathParameter = params.get(1).asInstanceOf[PathParameter]
     pathParam.getEnum().size() should be (3)
+    pathParam.getType() should be ("string")
 
     var headerParam : HeaderParameter = params.get(2).asInstanceOf[HeaderParameter]
     headerParam.getMinimum() should be (1)

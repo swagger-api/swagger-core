@@ -64,6 +64,9 @@ public class ParameterProcessor {
       if (StringUtils.isNotEmpty(param.getAccess())) {
         p.setAccess(param.getAccess());
       }
+      if( StringUtils.isNotEmpty(param.getDataType()) ){
+         p.setType(param.getDataType());
+      }
 
       AllowableValues allowableValues = null;
       if (StringUtils.isNotEmpty(param.getAllowableValues())) {
