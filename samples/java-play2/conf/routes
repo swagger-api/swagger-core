@@ -9,7 +9,7 @@ GET           /api-docs                    controllers.ApiHelpController.getReso
 # OPTIONS /*wholepath           controllers.PetApiController.getOptions(wholepath)
 
 # OPTIONS to support Swagger hosting UI
-GET           /swagger                     controllers.SwaggerController.getSwagger
+GET           /swagger                     controllers.BaseApiController.getSwagger
 
 
 # Map static resources from the /public folder to the /assets URL path

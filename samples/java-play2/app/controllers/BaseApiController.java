@@ -38,4 +38,9 @@ public class BaseApiController extends Controller {
 
         return status(code, w.toString());
     }
+
+
+    public static Result getSwagger() {
+        return ok(views.html.swagger.render());
+    }
 }
