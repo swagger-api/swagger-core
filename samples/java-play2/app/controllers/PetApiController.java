@@ -31,6 +31,7 @@ public class PetApiController extends BaseApiController {
 
     @ApiOperation(value = "Add a new pet to the store", httpMethod = "POST")
     @ApiResponses(value = {@ApiResponse(code = 405, message = "Invalid input")})
+    @ApiImplicitParams({@ApiImplicitParam(value = "Pet object that needs to be updated in the store", required = true, dataType = "Pet", paramType = "body")})
     public static Result addPet() {
         Object o = request().body().asJson();
         try {
@@ -63,7 +64,6 @@ public class PetApiController extends BaseApiController {
             response = Pet.class,
             responseContainer = "List", httpMethod = "GET")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid status value")})
-
     public static Result findPetsByStatus(
             @ApiParam(value = "Status values that need to be considered for filter", required = true, defaultValue = "available", allowableValues = "available,pending,sold", allowMultiple = true) @QueryParam("status") String status) {
         return JsonResponse(petData.findPetByStatus(status));
