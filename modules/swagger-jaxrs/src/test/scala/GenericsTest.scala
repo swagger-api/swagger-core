@@ -1,4 +1,5 @@
 import scala.collection.JavaConverters.asScalaBufferConverter
+import scala.collection.JavaConverters.asScalaSetConverter
 
 import org.junit.runner.RunWith
 import org.scalatest.FlatSpec
@@ -7,7 +8,9 @@ import org.scalatest.junit.JUnitRunner
 
 import com.wordnik.swagger.jaxrs.Reader
 import com.wordnik.swagger.models.ArrayModel
+import com.wordnik.swagger.models.ModelImpl
 import com.wordnik.swagger.models.Operation
+import com.wordnik.swagger.models.RefModel
 import com.wordnik.swagger.models.Swagger
 import com.wordnik.swagger.models.parameters.BodyParameter
 import com.wordnik.swagger.models.parameters.QueryParameter
@@ -49,6 +52,10 @@ class GenericsTest extends FlatSpec with Matchers {
     p.getItems should be (null)
   }
 
+  def testGenericType(op: Operation, `type`: String) = {
+    getBodyParameter(op, 0).getSchema.asInstanceOf[RefModel].getSimpleRef should be (`type`)
+  }
+
   def getOperation(name: String) = {
     swagger.getPath("/generics/" + name).getPost
   }
@@ -59,6 +66,10 @@ class GenericsTest extends FlatSpec with Matchers {
 
   def getBodyParameter(op: Operation, index: Int) = {
     op.getParameters.get(index).asInstanceOf[BodyParameter]
+  }
+
+  def getProperty(`type`: String, name: String) = {
+    swagger.getDefinitions.get(`type`).asInstanceOf[ModelImpl].getProperties.get(name)
   }
 
   it should "check collections of integers" in {
@@ -138,5 +149,38 @@ class GenericsTest extends FlatSpec with Matchers {
     val p = getBodyParameter(op, 0)
     val ddArray = p.getSchema.asInstanceOf[ArrayModel]
     ddArray.getItems.asInstanceOf[ArrayProperty].getItems.asInstanceOf[RefProperty].getSimpleRef should be ("Tag")
+  }
+
+  it should "check parameters of generic types" in {
+    val genericTypes = Set("GenericTypeString", "GenericTypeUUID", "GenericTypeGenericTypeString",
+        "RenamedGenericTypeString", "RenamedGenericTypeRenamedGenericTypeString")
+    (swagger.getDefinitions.keySet.asScala & genericTypes) should be (genericTypes)
+
+    val opString = getOperation("testGenericType")
+    testGenericType(opString, "GenericTypeString")
+    val strValue = getProperty("GenericTypeString", "value")
+    strValue should not be (null)
+    strValue.getClass().getName() should be (classOf[StringProperty].getName)
+
+    val opUUID = getOperation("testStringBasedGenericType")
+    testGenericType(opUUID, "GenericTypeUUID")
+    val uuidValue = getProperty("GenericTypeUUID", "value")
+    uuidValue should not be (null)
+    // TODO
+    //uuidValue.getClass().getName() should be (classOf[UUIDProperty].getName)
+
+    val opComplex = getOperation("testComplexGenericType")
+    testGenericType(opComplex, "GenericTypeGenericTypeString")
+    val complexValue = getProperty("GenericTypeGenericTypeString", "value")
+    complexValue should not be (null)
+    complexValue.getClass().getName() should be (classOf[RefProperty].getName)
+    complexValue.asInstanceOf[RefProperty].getSimpleRef should be ("GenericTypeString")
+
+    val opRenamed = getOperation("testRenamedGenericType")
+    testGenericType(opRenamed, "RenamedGenericTypeRenamedGenericTypeString")
+    val renamedComplexValue = getProperty("RenamedGenericTypeRenamedGenericTypeString", "value")
+    renamedComplexValue should not be (null)
+    renamedComplexValue.isInstanceOf[RefProperty] should be (true)
+    renamedComplexValue.asInstanceOf[RefProperty].getSimpleRef should be ("RenamedGenericTypeString")
   }
 }
