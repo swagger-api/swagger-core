@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
+import models.GenericListWrapper;
 import models.GenericType;
 import models.GenericTypeWithApiModel;
 import models.Tag;
@@ -101,4 +103,10 @@ public class ResourceWithGenerics {
   public void testRenamedGenericType(GenericTypeWithApiModel<GenericTypeWithApiModel<String>> type) {
   }
 
+  @ApiOperation(value="Tests generic result")
+  @GET
+  @Path("testGenericResult")
+  public GenericListWrapper<Tag> testGenericResult() {
+    return null;
+  }
 }

@@ -183,4 +183,19 @@ class GenericsTest extends FlatSpec with Matchers {
     renamedComplexValue.isInstanceOf[RefProperty] should be (true)
     renamedComplexValue.asInstanceOf[RefProperty].getSimpleRef should be ("RenamedGenericTypeString")
   }
+
+  it should "check generic result" in {
+    val op = swagger.getPath("/generics/testGenericResult").getGet
+    val schema = op.getResponses().get("200").getSchema
+    schema.getClass.getName should be (classOf[RefProperty].getName)
+    schema.asInstanceOf[RefProperty].getSimpleRef should be ("GenericListWrapperTag")
+
+    val entries = getProperty("GenericListWrapperTag", "entries")
+    entries should not be (null)
+    entries.getClass.getName should be (classOf[ArrayProperty].getName)
+
+    val items = entries.asInstanceOf[ArrayProperty].getItems
+    items.getClass.getName should be (classOf[RefProperty].getName)
+    items.asInstanceOf[RefProperty].getSimpleRef should be ("Tag")
+  }
 }
