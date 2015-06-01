@@ -24,7 +24,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -404,7 +406,7 @@ public class Reader {
     String operationId = method.getName();
     String responseContainer = null;
 
-    Class<?> responseClass = null;
+    Type responseType = null;
     Map<String,Property> defaultResponseHeaders = new HashMap<String, Property>();
 
     if(apiOperation != null) {
@@ -419,8 +421,8 @@ public class Reader {
         .summary(apiOperation.value())
         .description(apiOperation.notes());
 
-      if(apiOperation.response() != null && !Void.class.equals(apiOperation.response()))
-        responseClass = apiOperation.response();
+      if(apiOperation.response() != null && !isVoid(apiOperation.response()))
+        responseType = apiOperation.response();
       if(!"".equals(apiOperation.responseContainer()))
         responseContainer = apiOperation.responseContainer();
       if(apiOperation.authorizations()!= null) {
@@ -451,26 +453,18 @@ public class Reader {
       }
     }
 
-    if(responseClass == null) {
+    if(responseType == null) {
       // pick out response from method declaration
       LOGGER.debug("picking up response class from method " + method);
-      Type t = method.getGenericReturnType();
-      responseClass = method.getReturnType();
-      if(!responseClass.equals(java.lang.Void.class) && !"void".equals(responseClass.toString()) && responseClass.getAnnotation(Api.class) == null) {
-        LOGGER.debug("reading model " + responseClass);
-        Map<String, Model> models = ModelConverters.getInstance().readAll(t);
-      }
+      responseType = method.getGenericReturnType();
     }
-    if(responseClass != null
-      && !responseClass.equals(java.lang.Void.class)
-      && !responseClass.equals(javax.ws.rs.core.Response.class)
-      && responseClass.getAnnotation(Api.class) == null) {
+    if(isValidResponse(responseType)) {
       int responseCode = 200;
       if (apiOperation != null) {
         responseCode = apiOperation.code();
       }
-      if(isPrimitive(responseClass)) {
-        Property property = ModelConverters.getInstance().readAsProperty(responseClass);
+      if(isPrimitive(responseType)) {
+        Property property = ModelConverters.getInstance().readAsProperty(responseType);
         if(property != null) {
           Property responseProperty = ContainerWrapper.wrapContainer(responseContainer, property);
           operation.response(responseCode, new Response()
@@ -478,11 +472,10 @@ public class Reader {
             .schema(responseProperty)
             .headers(defaultResponseHeaders));
         }
-      }
-      else if(!responseClass.equals(java.lang.Void.class) && !"void".equals(responseClass.toString())) {
-        Map<String, Model> models = ModelConverters.getInstance().read(responseClass);
+      } else {
+        Map<String, Model> models = ModelConverters.getInstance().read(responseType);
         if(models.size() == 0) {
-          Property p = ModelConverters.getInstance().readAsProperty(responseClass);
+          Property p = ModelConverters.getInstance().readAsProperty(responseType);
           operation.response(responseCode, new Response()
             .description(SUCCESSFUL_OPERATION)
             .schema(p)
@@ -497,7 +490,7 @@ public class Reader {
             .headers(defaultResponseHeaders));
           swagger.model(key, models.get(key));
         }
-        models = ModelConverters.getInstance().readAll(responseClass);
+        models = ModelConverters.getInstance().readAll(responseType);
         for(String key: models.keySet()) {
           swagger.model(key, models.get(key));
         }
@@ -539,16 +532,16 @@ public class Reader {
         else
           operation.response(apiResponse.code(), response);
 
-        responseClass = apiResponse.response();
-        if(responseClass != null && !responseClass.equals(java.lang.Void.class)) {
-          Map<String, Model> models = ModelConverters.getInstance().read(responseClass);
+        responseType = apiResponse.response();
+        if(responseType != null && !isVoid(responseType)) {
+          Map<String, Model> models = ModelConverters.getInstance().read(responseType);
           for(String key: models.keySet()) {
             Property property =  new RefProperty().asDefault(key);
             Property responseProperty = ContainerWrapper.wrapContainer(apiResponse.responseContainer(), property);
             response.schema(responseProperty);
             swagger.model(key, models.get(key));
           }
-          models = ModelConverters.getInstance().readAll(responseClass);
+          models = ModelConverters.getInstance().readAll(responseType);
           for(String key: models.keySet()) {
             swagger.model(key, models.get(key));
           }
@@ -642,10 +635,10 @@ public class Reader {
       return null;
   }
 
-  boolean isPrimitive(Class<?> cls) {
+  boolean isPrimitive(Type type) {
     boolean out = false;
 
-    Property property = ModelConverters.getInstance().readAsProperty(cls);
+    Property property = ModelConverters.getInstance().readAsProperty(type);
     if(property == null)
       out = false;
     else if("integer".equals(property.getType()))
@@ -682,6 +675,24 @@ public class Reader {
       }
     }
     return false;
+  }
+
+  private static boolean isVoid(Type type) {
+    final Class<?> cls = TypeFactory.defaultInstance().constructType(type).getRawClass();
+    return Void.class.isAssignableFrom(cls) || Void.TYPE.isAssignableFrom(cls);
+  }
+
+  private static boolean isValidResponse(Type type) {
+    final JavaType javaType = TypeFactory.defaultInstance().constructType(type);
+    if (isVoid(javaType)) {
+      return false;
+    }
+    final Class<?> cls = javaType.getRawClass();
+    return !javax.ws.rs.core.Response.class.isAssignableFrom(cls) && !isResourceClass(cls);
+  }
+
+  private static boolean isResourceClass(Class<?> cls) {
+    return cls.getAnnotation(Api.class) != null;
   }
 
   enum ContainerWrapper {

@@ -215,4 +215,15 @@ class ModelConverterTest extends FlatSpec with Matchers {
     val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithEnumArray])
     schemas.size should equal(1)
   }
+
+  def getGenericType(cls: Class[_] = null) = {
+    getClass.getMethods.toList.find { _.getName.equals("getGenericType") }.get.getGenericParameterTypes.toList(0)
+  }
+
+  it should "check handling of Class<?> type" in {
+    val `type` = getGenericType()
+    `type`.isInstanceOf[Class[_]] should be (false)
+    val schemas = ModelConverters.getInstance().readAll(`type`)
+    schemas.size should equal(0)
+  }
 }
