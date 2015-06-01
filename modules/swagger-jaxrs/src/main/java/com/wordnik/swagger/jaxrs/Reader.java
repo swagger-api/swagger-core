@@ -35,12 +35,9 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Produces;
 
-import com.fasterxml.jackson.databind.util.BeanUtil;
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.introspector.PropertyUtils;
-import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ExtensionProperty;
 import com.wordnik.swagger.annotations.Extension;
-import com.wordnik.swagger.annotations.SwaggerConfig;
+import com.wordnik.swagger.annotations.SwaggerDefinition;
 import com.wordnik.swagger.jaxrs.config.DefaultReaderConfig;
 import com.wordnik.swagger.jaxrs.config.ReaderConfig;
 import com.wordnik.swagger.jaxrs.config.ReaderListener;
@@ -60,8 +57,6 @@ import com.wordnik.swagger.annotations.ApiResponses;
 import com.wordnik.swagger.annotations.Authorization;
 import com.wordnik.swagger.annotations.AuthorizationScope;
 import com.wordnik.swagger.converter.ModelConverters;
-import com.wordnik.swagger.jaxrs.config.DefaultReaderConfig;
-import com.wordnik.swagger.jaxrs.config.ReaderConfig;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
 import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
@@ -160,9 +155,9 @@ public class Reader {
   }
 
   protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
-    SwaggerConfig swaggerConfig = cls.getAnnotation(SwaggerConfig.class);
-    if( swaggerConfig != null ){
-      readSwaggerConfig( cls, swaggerConfig );
+    SwaggerDefinition swaggerDefinition = cls.getAnnotation(SwaggerDefinition.class);
+    if( swaggerDefinition != null ){
+      readSwaggerConfig( cls, swaggerDefinition);
     }
 
     Api api = (Api) cls.getAnnotation(Api.class);
@@ -367,7 +362,7 @@ public class Reader {
     return swagger;
   }
 
-  protected void readSwaggerConfig(Class<?> cls, SwaggerConfig config) {
+  protected void readSwaggerConfig(Class<?> cls, SwaggerDefinition config) {
 
     if( !config.basePath().isEmpty()){
       swagger.setBasePath( config.basePath());
@@ -418,14 +413,14 @@ public class Reader {
       }
     }
 
-    for( SwaggerConfig.Scheme scheme : config.schemes()){
-      if( scheme != SwaggerConfig.Scheme.DEFAULT ){
+    for( SwaggerDefinition.Scheme scheme : config.schemes()){
+      if( scheme != SwaggerDefinition.Scheme.DEFAULT ){
         swagger.addScheme( Scheme.forValue( scheme.name()));
       }
     }
   }
 
-  protected void readInfoConfig(SwaggerConfig config) {
+  protected void readInfoConfig(SwaggerDefinition config) {
     com.wordnik.swagger.annotations.Info infoConfig = config.info();
     Info info = swagger.getInfo();
     if( info == null ){

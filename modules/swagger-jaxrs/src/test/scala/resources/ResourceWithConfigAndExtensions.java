@@ -14,7 +14,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.Path;
 import java.util.*;
 
-@SwaggerConfig(
+@SwaggerDefinition(
    info = @Info(
        description = "Custom description",
        version = "V1.2.3",
@@ -35,7 +35,7 @@ import java.util.*;
    ),
         consumes = {"application/json","application/xml"},
         produces = {"application/json","application/xml"},
-        schemes = {SwaggerConfig.Scheme.HTTP, SwaggerConfig.Scheme.HTTPS},
+        schemes = {SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS},
         tags = {
                 @com.wordnik.swagger.annotations.Tag( name ="mytag", description="my tag"),
                 @com.wordnik.swagger.annotations.Tag( name ="anothertag", description="another tag",

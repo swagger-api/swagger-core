@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface SwaggerConfig {
+public @interface SwaggerDefinition {
 
     /**
      * @return the host to specify in the generated Swagger definition - keep empty for default
