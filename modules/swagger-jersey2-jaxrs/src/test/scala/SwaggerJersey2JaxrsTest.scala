@@ -12,6 +12,8 @@ import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions
 import com.wordnik.swagger.jersey.SwaggerJersey2Jaxrs
 import com.wordnik.swagger.models.parameters.{FormParameter, HeaderParameter}
 
+import java.lang.annotation.Annotation
+import java.lang.reflect.Type
 import javax.ws.rs.BeanParam
 import models.TestEnum
 import params.BaseBean
@@ -29,28 +31,26 @@ class SwaggerJersey2JaxrsTest extends FlatSpec with Matchers {
   def testFormDataParamRoute(@FormDataParam("file") uploadedInputStream: InputStream,
                              @FormDataParam("file") fileDetail:FormDataContentDisposition) = {}
 
-  /* Unit test for `SwaggerJersey2Jaxrs#shouldIgnoreClass(Class<?>)` */
-  it should "return false for all types passed to shouldIgnoreClass" in {
-    val ext = new SwaggerJersey2Jaxrs()
-
-    ext.shouldIgnoreClass(classOf[BaseBean]) should be (false)
-    ext.shouldIgnoreClass(classOf[ChildBean]) should be (false)
-    ext.shouldIgnoreClass(classOf[RefBean]) should be (false)
+  it should "not skip all types passed to extension" in {
+    for (cls <- List(classOf[BaseBean], classOf[ChildBean], classOf[RefBean])) {
+      val typesToSkip = new java.util.HashSet[Type]
+      new SwaggerJersey2Jaxrs().extractParameters(List[Annotation]().asJava, cls, typesToSkip, SwaggerExtensions.chain())
+      typesToSkip.size should be (0)
+    }
   }
 
-  /* Unit test for `SwaggerJersey2Jaxrs#processParameter(Annotation[], Class<?>, boolean)` */
   it should "return the proper @BeanParam Parameters based on the call to extractParameters" in {
     val ext = new SwaggerJersey2Jaxrs();
     val method = getClass.getMethod("testRoute", classOf[BaseBean], classOf[ChildBean], classOf[RefBean], classOf[EnumBean], classOf[Int])
     val paramAnnotations = method.getParameterAnnotations
-    val paramTypes = method.getParameterTypes
+    val paramTypes = method.getGenericParameterTypes
     val parameters = (paramTypes,paramAnnotations).zipped
-    val classesToSkip = new java.util.HashSet[Class[_]]
-    val chain = SwaggerExtensions.chain()
 
     parameters.foreach{
       (paramType, paramAnnotations) =>
-        val swaggerParams = new SwaggerJersey2Jaxrs().extractParameters(paramAnnotations, paramType, false, classesToSkip, chain)
+        val typesToSkip = new java.util.HashSet[Type]
+        val chain = SwaggerExtensions.chain()
+        val swaggerParams = new SwaggerJersey2Jaxrs().extractParameters(paramAnnotations.toList.asJava, paramType, typesToSkip, chain)
         // Ensure proper number of parameters returned
         if (paramType == classOf[BaseBean]) {
           swaggerParams.size should be (2)
@@ -66,7 +66,7 @@ class SwaggerJersey2JaxrsTest extends FlatSpec with Matchers {
         } else if (paramType == classOf[Int]) {
           swaggerParams.size should be(0)
         } else {
-          fail(s"""Parameter of type ${paramType.getName()} was not expected""")
+          fail(s"""Parameter of type ${paramType} was not expected""")
         }
 
         // Ensure the proper parameter type and name is returned (The rest is handled by pre-existing logic)
@@ -81,11 +81,11 @@ class SwaggerJersey2JaxrsTest extends FlatSpec with Matchers {
     val paramAnnotations = method.getParameterAnnotations
     val paramTypes = method.getParameterTypes
     val parameters = (paramTypes,paramAnnotations).zipped
-    val classesToSkip = new java.util.HashSet[Class[_]]
-    val chain = SwaggerExtensions.chain()
     parameters.foreach {
       (paramType, paramAnnotations) =>
-        val swaggerParams = new SwaggerJersey2Jaxrs().extractParameters(paramAnnotations, paramType, false, classesToSkip, chain)
+        val typesToSkip = new java.util.HashSet[Type]
+        val chain = SwaggerExtensions.chain()
+        val swaggerParams = new SwaggerJersey2Jaxrs().extractParameters(paramAnnotations.toList.asJava, paramType, typesToSkip, chain)
         //swaggerParams.get(0) shouldBe a [FormParameter]
         if (paramType == classOf[InputStream]) {
           swaggerParams.get(0).asInstanceOf[FormParameter].getType should be("file")

@@ -6,6 +6,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +36,6 @@ import com.wordnik.swagger.jaxrs.config.DefaultReaderConfig;
 import com.wordnik.swagger.jaxrs.config.ReaderConfig;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
 import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
-import com.wordnik.swagger.jaxrs.utils.ParameterUtils;
 import com.wordnik.swagger.models.Model;
 import com.wordnik.swagger.models.Operation;
 import com.wordnik.swagger.models.Path;
@@ -59,7 +59,6 @@ public class Reader {
 
   Swagger swagger;
   private final ReaderConfig config;
-  static ObjectMapper m = Json.mapper();
 
   public Reader(Swagger swagger) {
     this(swagger, null);
@@ -566,15 +565,11 @@ public class Reader {
       hidden = apiOperation.hidden();
 
     // process parameters
-    Class[] parameterTypes = method.getParameterTypes();
     Type[] genericParameterTypes = method.getGenericParameterTypes();
     Annotation[][] paramAnnotations = method.getParameterAnnotations();
-    // paramTypes = method.getParameterTypes
-    // genericParamTypes = method.getGenericParameterTypes
-    for(int i = 0; i < parameterTypes.length; i++) {
-    	Class<?> cls = parameterTypes[i];
-      	Type type = genericParameterTypes[i];
-    	List<Parameter> parameters = getParameters(cls, type, paramAnnotations[i]);
+    for(int i = 0; i < genericParameterTypes.length; i++) {
+      Type type = genericParameterTypes[i];
+      List<Parameter> parameters = getParameters(type,Arrays.asList(paramAnnotations[i]));
 
       for(Parameter parameter : parameters) {
         operation.parameter(parameter);
@@ -586,51 +581,38 @@ public class Reader {
     return operation;
   }
 
-  List<Parameter> getParameters(Class<?> cls, Type type, Annotation[] annotations) {
-    // look for path, query
-    boolean isArray = ParameterUtils.isMethodArgumentAnArray(cls, type);
-    Iterator<SwaggerExtension> chain = SwaggerExtensions.chain();
-    List<Parameter> parameters = null;
-
-    LOGGER.debug("getParameters for " + cls);
-    Set<Class<?>> classesToSkip = new HashSet<Class<?>>();
-    if(chain.hasNext()) {
-      SwaggerExtension extension = chain.next();
-      LOGGER.debug("trying extension " + extension);
-      parameters = extension.extractParameters(annotations, cls, isArray, classesToSkip, chain);
+  private List<Parameter> getParameters(Type type, List <Annotation> annotations) {
+    final Iterator<SwaggerExtension> chain = SwaggerExtensions.chain();
+    if (!chain.hasNext()) {
+      return Collections.emptyList();
     }
+    LOGGER.debug("getParameters for " + type);
+    Set<Type> typesToSkip = new HashSet<Type>();
+    final SwaggerExtension extension = chain.next();
+    LOGGER.debug("trying extension " + extension);
+
+    final List<Parameter> parameters = extension.extractParameters(annotations, type, typesToSkip, chain);
 
     if(parameters.size() > 0) {
       final List<Parameter> processed = new ArrayList<Parameter>(parameters.size());
       for(Parameter parameter : parameters) {
-        if (ParameterProcessor.applyAnnotations(swagger, parameter, cls, annotations, isArray) != null) {
+        if (ParameterProcessor.applyAnnotations(swagger, parameter, type, annotations) != null) {
           processed.add(parameter);
         }
       }
-      parameters = processed;
+      return processed;
     }
     else {
       LOGGER.debug("no parameter found, looking at body params");
-      if(classesToSkip.contains(cls) == false) {
-        if(type instanceof ParameterizedType) {
-          ParameterizedType ti = (ParameterizedType) type;
-          Type innerType = ti.getActualTypeArguments()[0];
-          if(innerType instanceof Class) {
-            Parameter param = ParameterProcessor.applyAnnotations(swagger, null, (Class)innerType, annotations, isArray);
-            if(param != null) {
-              parameters.add(param);
-            }            
-          }
-        }
-        else {
-          Parameter param = ParameterProcessor.applyAnnotations(swagger, null, cls, annotations, isArray);
-          if(param != null) {
-            parameters.add(param);
-          }
+      final List<Parameter> body = new ArrayList<Parameter>();
+      if (!typesToSkip.contains(type)) {
+        Parameter param = ParameterProcessor.applyAnnotations(swagger, null, type, annotations);
+        if (param != null) {
+          body.add(param);
         }
       }
+      return body;
     }
-    return parameters;
   }
 
   public String extractOperationMethod(ApiOperation apiOperation, Method method, Iterator<SwaggerExtension> chain) {

@@ -10,124 +10,38 @@ import java.util.Map;
 public class PropertyBuilder {
   static Logger LOGGER = LoggerFactory.getLogger(PropertyBuilder.class);
 
+  /**
+   * Creates new property on the passed arguments.
+   * @param type property type
+   * @param format property format
+   * @param args mapping of argument identifier to value
+   * @return new property instance or <code>null</code> for unknown types
+   */
   public static Property build(String type, String format, Map<PropertyId, Object> args) {
-    if(args == null) {
+    final Processor processor = Processor.fromType(type, format);
+    if (processor == null) {
+      return null;
+    }
+    if (args == null) {
       args = Collections.emptyMap();
     }
+    return processor.build(args);
+  }
 
-    List<String> _enum = PropertyId.ENUM.findValue(args);
-    String title = PropertyId.TITLE.findValue(args);
-    String description = PropertyId.DESCRIPTION.findValue(args);
-    String _default = PropertyId.DEFAULT.findValue(args);
-    String pattern = PropertyId.PATTERN.findValue(args);
-    Integer minLength = PropertyId.MIN_LENGTH.findValue(args);
-    Integer maxLength = PropertyId.MAX_LENGTH.findValue(args);
-    Double minimum = PropertyId.MINIMUM.findValue(args);
-    Double maximum = PropertyId.MAXIMUM.findValue(args);
-    Boolean exclusiveMinimum = PropertyId.EXCLUSIVE_MINIMUM.findValue(args);
-    Boolean exclusiveMaximum = PropertyId.EXCLUSIVE_MAXIMUM.findValue(args);
-
-    AbstractProperty property = null;
-    if(BooleanProperty.isType(type, format)) {
-      property = new BooleanProperty()
-        ._default(_default);
-    }
-    if(DateProperty.isType(type, format))
-      property = new DateProperty();
-    if(DateTimeProperty.isType(type, format))
-      property = new DateTimeProperty();
-    if(DoubleProperty.isType(type, format)) {
-      property = new DoubleProperty()
-        ._default(_default)
-        .minimum(minimum)
-        .maximum(maximum)
-        .exclusiveMinimum(exclusiveMinimum)
-        .exclusiveMaximum(exclusiveMaximum);
-    }
-    if(FloatProperty.isType(type, format)) {
-      property = new FloatProperty()
-        ._default(_default)
-        .minimum(minimum)
-        .maximum(maximum)
-        .exclusiveMinimum(exclusiveMinimum)
-        .exclusiveMaximum(exclusiveMaximum);
-    }
-    if(FileProperty.isType(type, format)) {
-      property = new FileProperty();
-    }
-    if(DecimalProperty.isType(type, format))
-      property = new DecimalProperty()
-        .minimum(minimum)
-        .maximum(maximum)
-        .exclusiveMinimum(exclusiveMinimum)
-        .exclusiveMaximum(exclusiveMaximum);
-    if(IntegerProperty.isType(type, format)) {
-      property = new IntegerProperty()
-        ._default(_default)
-        .minimum(minimum)
-        .maximum(maximum)
-        .exclusiveMinimum(exclusiveMinimum)
-        .exclusiveMaximum(exclusiveMaximum);
-    }
-    if(LongProperty.isType(type, format)) {
-      property = new LongProperty()
-        ._default(_default)
-        .minimum(minimum)
-        .maximum(maximum)
-        .exclusiveMinimum(exclusiveMinimum)
-        .exclusiveMaximum(exclusiveMaximum);
-    }
-    if(RefProperty.isType(type, format))
-      property = new RefProperty();
-    if(EmailProperty.isType(type, format))
-      property = new EmailProperty()
-        .minLength(minLength)
-        .maxLength(maxLength)
-        .pattern(pattern)
-        ._enum(_enum);
-    if(StringProperty.isType(type, format)) {
-      property = new StringProperty()
-        ._default(_default)
-        .minLength(minLength)
-        .maxLength(maxLength)
-        .pattern(pattern)
-        ._enum(_enum);
-    }
-    if(UUIDProperty.isType(type, format)) {
-      property = new UUIDProperty()
-        ._default(_default)
-        .minLength(minLength)
-        .maxLength(maxLength)
-        .pattern(pattern);
-    }
-    // general properties
-    if(property != null) {
-      property
-        .title(title)
-        .description(description);
-      String example = PropertyId.EXAMPLE.findValue (args);
-      if (example != null) {
-        property.setExample(example);
+  /**
+   * Merges passed arguments into an existing property instance.
+   * @param property property to be updated
+   * @param args mapping of argument identifier to value. <code>null</code>s
+   *          will replace existing values
+   * @return updated property instance
+   */
+  public static Property merge(Property property, Map<PropertyId, Object> args) {
+    if (args != null && !args.isEmpty()) {
+      final Processor processor = Processor.fromType(property.getType(), property.getFormat());
+      if (processor != null) {
+        processor.merge(property, args);
       }
     }
-    // fallbacks
-    if("integer".equals(type) && format == null) {
-        // fall back to Integer if type is integer and format is missing
-      LOGGER.debug("no format specified for integer type, falling back to int32");
-      property = new IntegerProperty()
-        ._default(_default)
-        .minimum(minimum)
-        .maximum(maximum)
-        .exclusiveMinimum(exclusiveMinimum)
-        .exclusiveMaximum(exclusiveMaximum);
-    }
-    if(ObjectProperty.isType(type) && format == null) {
-        // fall back to Map if type is object and format is missing
-      LOGGER.debug("no format specified for object type, falling back to object");
-      property = new ObjectProperty();
-    }    
-    if(property == null)
-      LOGGER.debug("no property for " + type + ", " + format);
     return property;
   }
 
@@ -164,7 +78,415 @@ public class PropertyBuilder {
     }
 
     public <T> T findValue(Map<PropertyId, Object> args) {
-      return (T) args.get(this);
+      @SuppressWarnings("unchecked")
+      final T value = (T) args.get(this);
+      return value;
+    }
+  }
+
+  private enum Processor {
+    BOOLEAN {
+      @Override
+      protected boolean isType(String type, String format) {
+        return BooleanProperty.isType(type, format);
+      }
+
+      @Override
+      protected BooleanProperty create() {
+        return new BooleanProperty();
+      }
+
+      @Override
+      public Property merge(Property property, Map<PropertyId, Object> args) {
+        super.merge(property, args);
+        if (property instanceof BooleanProperty) {
+          final BooleanProperty resolved = (BooleanProperty) property;
+          if (args.containsKey(PropertyId.DEFAULT)) {
+            final String value = PropertyId.DEFAULT.findValue(args);
+            if (value != null) {
+              resolved.setDefault(value);
+            } else {
+              resolved.setDefault((Boolean) null);
+            }
+          }
+        }
+        return property;
+      }
+    },
+    STRING {
+      @Override
+      protected boolean isType(String type, String format) {
+        return StringProperty.isType(type, format);
+      }
+
+      @Override
+      protected StringProperty create() {
+        return new StringProperty();
+      }
+
+      @Override
+      public Property merge(Property property, Map<PropertyId, Object> args) {
+        super.merge(property, args);
+        if (property instanceof StringProperty) {
+          mergeString((StringProperty) property, args);
+        }
+        return property;
+      }
+    },
+    DATE {
+      @Override
+      protected boolean isType(String type, String format) {
+        return DateProperty.isType(type, format);
+      }
+
+      @Override
+      protected DateProperty create() {
+        return new DateProperty();
+      }
+    },
+    DATE_TIME {
+      @Override
+      protected boolean isType(String type, String format) {
+        return DateTimeProperty.isType(type, format);
+      }
+
+      @Override
+      protected DateTimeProperty create() {
+        return new DateTimeProperty();
+      }
+    },
+    INTEGER {
+      @Override
+      protected boolean isType(String type, String format) {
+        if (IntegerProperty.isType(type, format)) {
+          return true;
+        }
+        if (IntegerProperty.TYPE.equals(type) && format == null) {
+          LOGGER.debug("no format specified for integer type, falling back to int32");
+          return true;
+        }
+        return false;
+      }
+
+      @Override
+      protected IntegerProperty create() {
+        return new IntegerProperty();
+      }
+
+      @Override
+      public Property merge(Property property, Map<PropertyId, Object> args) {
+        super.merge(property, args);
+        if (property instanceof IntegerProperty) {
+          final IntegerProperty resolved = (IntegerProperty) property;
+          mergeNumeric(resolved, args);
+          if (args.containsKey(PropertyId.DEFAULT)) {
+            final String value = PropertyId.DEFAULT.findValue(args);
+            if (value != null) {
+              resolved.setDefault(value);
+            } else {
+              resolved.setDefault((Integer) null);
+            }
+          }
+        }
+        return property;
+      }
+    },
+    LONG {
+      @Override
+      protected boolean isType(String type, String format) {
+        return LongProperty.isType(type, format);
+      }
+
+      @Override
+      protected LongProperty create() {
+        return new LongProperty();
+      }
+
+      @Override
+      public Property merge(Property property, Map<PropertyId, Object> args) {
+        super.merge(property, args);
+        if (property instanceof LongProperty) {
+          final LongProperty resolved = (LongProperty) property;
+          mergeNumeric(resolved, args);
+          if (args.containsKey(PropertyId.DEFAULT)) {
+            final String value = PropertyId.DEFAULT.findValue(args);
+            if (value != null) {
+              resolved.setDefault(value);
+            } else {
+              resolved.setDefault((Long) null);
+            }
+          }
+        }
+        return property;
+      }
+    },
+    FLOAT {
+      @Override
+      protected boolean isType(String type, String format) {
+        return FloatProperty.isType(type, format);
+      }
+
+      @Override
+      protected FloatProperty create() {
+        return new FloatProperty();
+      }
+
+      @Override
+      public Property merge(Property property, Map<PropertyId, Object> args) {
+        super.merge(property, args);
+        if (property instanceof FloatProperty) {
+          final FloatProperty resolved = (FloatProperty) property;
+          mergeNumeric(resolved, args);
+          if (args.containsKey(PropertyId.DEFAULT)) {
+            final String value = PropertyId.DEFAULT.findValue(args);
+            if (value != null) {
+              resolved.setDefault(value);
+            } else {
+              resolved.setDefault((Float) null);
+            }
+          }
+        }
+        return property;
+      }
+    },
+    DOUBLE {
+      @Override
+      protected boolean isType(String type, String format) {
+        return DoubleProperty.isType(type, format);
+      }
+
+      @Override
+      protected DoubleProperty create() {
+        return new DoubleProperty();
+      }
+
+      @Override
+      public Property merge(Property property, Map<PropertyId, Object> args) {
+        super.merge(property, args);
+        if (property instanceof DoubleProperty) {
+          final DoubleProperty resolved = (DoubleProperty) property;
+          mergeNumeric(resolved, args);
+          if (args.containsKey(PropertyId.DEFAULT)) {
+            final String value = PropertyId.DEFAULT.findValue(args);
+            if (value != null) {
+              resolved.setDefault(value);
+            } else {
+              resolved.setDefault((Double) null);
+            }
+          }
+        }
+        return property;
+      }
+    },
+    DECIMAL {
+      @Override
+      protected boolean isType(String type, String format) {
+        return DecimalProperty.isType(type, format);
+      }
+
+      @Override
+      protected DecimalProperty create() {
+        return new DecimalProperty();
+      }
+
+      @Override
+      public Property merge(Property property, Map<PropertyId, Object> args) {
+        super.merge(property, args);
+        if (property instanceof DecimalProperty) {
+          final DecimalProperty resolved = (DecimalProperty) property;
+          mergeNumeric(resolved, args);
+        }
+        return property;
+      }
+    },
+    FILE {
+      @Override
+      protected boolean isType(String type, String format) {
+        return FileProperty.isType(type, format);
+      }
+
+      @Override
+      protected FileProperty create() {
+        return new FileProperty();
+      }
+    },
+    REFERENCE {
+      @Override
+      protected boolean isType(String type, String format) {
+        return RefProperty.isType(type, format);
+      }
+
+      @Override
+      protected RefProperty create() {
+        return new RefProperty();
+      }
+    },
+    E_MAIL {
+      @Override
+      protected boolean isType(String type, String format) {
+        return EmailProperty.isType(type, format);
+      }
+
+      @Override
+      protected EmailProperty create() {
+        return new EmailProperty();
+      }
+
+      @Override
+      public Property merge(Property property, Map<PropertyId, Object> args) {
+        super.merge(property, args);
+        if (property instanceof EmailProperty) {
+          mergeString((EmailProperty) property, args);
+        }
+        return property;
+      }
+    },
+    UUID {
+      @Override
+      protected boolean isType(String type, String format) {
+        return UUIDProperty.isType(type, format);
+      }
+
+      @Override
+      protected UUIDProperty create() {
+        return new UUIDProperty();
+      }
+
+      @Override
+      public Property merge(Property property, Map<PropertyId, Object> args) {
+        super.merge(property, args);
+        if (property instanceof UUIDProperty) {
+          final UUIDProperty resolved = (UUIDProperty) property;
+          if (args.containsKey(PropertyId.DEFAULT)) {
+            final String value = PropertyId.DEFAULT.findValue(args);
+            property.setDefault(value);
+          }
+          if (args.containsKey(PropertyId.MIN_LENGTH)) {
+            final Integer value = PropertyId.MIN_LENGTH.findValue(args);
+            resolved.setMinLength(value);
+          }
+          if (args.containsKey(PropertyId.MAX_LENGTH)) {
+            final Integer value = PropertyId.MAX_LENGTH.findValue(args);
+            resolved.setMaxLength(value);
+          }
+          if (args.containsKey(PropertyId.PATTERN)) {
+            final String value = PropertyId.PATTERN.findValue(args);
+            resolved.setPattern(value);
+          }
+        }
+        return property;
+      }
+    },
+    OBJECT {
+      @Override
+      protected boolean isType(String type, String format) {
+        if (ObjectProperty.isType(type, format)) {
+          return true;
+        }
+        if (ObjectProperty.TYPE.equals(type) && format == null) {
+          LOGGER.debug("no format specified for object type, falling back to object");
+          return true;
+        }
+        return false;
+      }
+
+      @Override
+      protected ObjectProperty create() {
+        return new ObjectProperty();
+      }
+    };
+
+    protected abstract boolean isType(String type, String format);
+
+    protected abstract Property create();
+
+    protected <N extends AbstractNumericProperty> N mergeNumeric(N property, Map<PropertyId, Object> args) {
+      if (args.containsKey(PropertyId.MINIMUM)) {
+        final Double value = PropertyId.MINIMUM.findValue(args);
+        property.setMinimum(value);
+      }
+      if (args.containsKey(PropertyId.MAXIMUM)) {
+        final Double value = PropertyId.MAXIMUM.findValue(args);
+        property.setMaximum(value);
+      }
+      if (args.containsKey(PropertyId.EXCLUSIVE_MINIMUM)) {
+        final Boolean value = PropertyId.EXCLUSIVE_MINIMUM.findValue(args);
+        property.setExclusiveMinimum(value);
+      }
+      if (args.containsKey(PropertyId.EXCLUSIVE_MAXIMUM)) {
+        final Boolean value = PropertyId.EXCLUSIVE_MAXIMUM.findValue(args);
+        property.setExclusiveMaximum(value);
+      }
+      return property;
+    }
+
+    protected <N extends StringProperty> N mergeString(N property, Map<PropertyId, Object> args) {
+      if (args.containsKey(PropertyId.DEFAULT)) {
+        final String value = PropertyId.DEFAULT.findValue(args);
+        property.setDefault(value);
+      }
+      if (args.containsKey(PropertyId.MIN_LENGTH)) {
+        final Integer value = PropertyId.MIN_LENGTH.findValue(args);
+        property.setMinLength(value);
+      }
+      if (args.containsKey(PropertyId.MAX_LENGTH)) {
+        final Integer value = PropertyId.MAX_LENGTH.findValue(args);
+        property.setMaxLength(value);
+      }
+      if (args.containsKey(PropertyId.PATTERN)) {
+        final String value = PropertyId.PATTERN.findValue(args);
+        property.setPattern(value);
+      }
+      if (args.containsKey(PropertyId.ENUM)) {
+        final List<String> value = PropertyId.ENUM.findValue(args);
+        property.setEnum(value);
+      }
+      return property;
+    }
+
+    /**
+     * Creates new property on the passed arguments.
+     * @param args mapping of argument identifier to value
+     * @return new property instance
+     */
+    public Property build(Map<PropertyId, Object> args) {
+      return merge(create(), args);
+    }
+
+    /**
+     * Merges passed arguments into an existing property instance.
+     * @param property property to be updated
+     * @param args mapping of argument identifier to value. <code>null</code>s
+     *          will replace existing values
+     * @return updated property instance
+     */
+    public Property merge(Property property, Map<PropertyId, Object> args) {
+      if (property instanceof AbstractProperty) {
+        final AbstractProperty resolved = (AbstractProperty) property;
+        if (args.containsKey(PropertyId.TITLE)) {
+          final String value = PropertyId.TITLE.findValue(args);
+          resolved.setTitle(value);
+        }
+        if (args.containsKey(PropertyId.DESCRIPTION)) {
+          final String value = PropertyId.DESCRIPTION.findValue(args);
+          resolved.setDescription(value);
+        }
+        if (args.containsKey(PropertyId.EXAMPLE)) {
+          final String value = PropertyId.EXAMPLE.findValue(args);
+          resolved.setExample(value);
+        }
+      }
+      return property;
+    }
+
+    public static Processor fromType(String type, String format) {
+      for (Processor item : values()) {
+        if (item.isType(type, format)) {
+          return item;
+        }
+      }
+      LOGGER.error("no property for " + type + ", " + format);
+      return null;
     }
   }
 }
