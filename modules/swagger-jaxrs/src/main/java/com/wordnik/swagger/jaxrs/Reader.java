@@ -46,6 +46,7 @@ import com.wordnik.swagger.models.Contact;
 import com.wordnik.swagger.models.ExternalDocs;
 import com.wordnik.swagger.models.Info;
 import com.wordnik.swagger.models.License;
+import com.wordnik.swagger.jaxrs.utils.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -227,7 +228,10 @@ public class Reader {
       final javax.ws.rs.Path apiPath = cls.getAnnotation(javax.ws.rs.Path.class);
       Method methods[] = cls.getMethods();
       for(Method method : methods) {
-        javax.ws.rs.Path methodPath = method.getAnnotation(javax.ws.rs.Path.class);
+        if (ReflectionUtils.isOverriddenMethod(method, cls)) {
+          continue;
+        }
+        javax.ws.rs.Path methodPath = getAnnotation(method, javax.ws.rs.Path.class);
 
         String operationPath = getPath(apiPath, methodPath, parentPath);
         if(operationPath != null) {
@@ -261,7 +265,7 @@ public class Reader {
             continue;
           }
 
-          final ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
+          final ApiOperation apiOperation = getAnnotation(method, ApiOperation.class);
           String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
           Operation operation = parseMethod(method);
@@ -316,10 +320,9 @@ public class Reader {
           // can't continue without a valid http method
           httpMethod = httpMethod == null ? parentMethod : httpMethod;
           if(httpMethod != null) {
-            ApiOperation op = (ApiOperation) method.getAnnotation(ApiOperation.class);
-            if(op != null) {
+            if(apiOperation != null) {
               boolean hasExplicitTag = false;
-              for(String tag : op.tags()) {
+              for(String tag : apiOperation.tags()) {
                 if(!"".equals(tag)) {
                   operation.tag(tag);
                   swagger.tag(new Tag().name(tag));
@@ -626,8 +629,8 @@ public class Reader {
   public Operation parseMethod(Method method) {
     Operation operation = new Operation();
 
-    ApiOperation apiOperation = (ApiOperation) method.getAnnotation(ApiOperation.class);
-    ApiResponses responseAnnotation = method.getAnnotation(ApiResponses.class);
+    ApiOperation apiOperation = getAnnotation(method, ApiOperation.class);
+    ApiResponses responseAnnotation = getAnnotation(method, ApiResponses.class);
 
     String operationId = method.getName();
     String responseContainer = null;
@@ -727,7 +730,7 @@ public class Reader {
 
     Annotation annotation;
     if (apiOperation != null && apiOperation.consumes() != null && apiOperation.consumes().isEmpty()) {
-      annotation = method.getAnnotation(Consumes.class);
+      annotation = getAnnotation(method, Consumes.class);
       if(annotation != null) {
         String[] apiConsumes = ((Consumes)annotation).value();
         for(String mediaType: apiConsumes)
@@ -736,7 +739,7 @@ public class Reader {
     }
 
     if (apiOperation != null && apiOperation.produces() != null && apiOperation.produces().isEmpty()) {
-      annotation = method.getAnnotation(Produces.class);
+      annotation = getAnnotation(method, Produces.class);
       if(annotation != null) {
         String[] apiProduces = ((Produces)annotation).value();
         for(String mediaType: apiProduces)
@@ -800,6 +803,17 @@ public class Reader {
     return operation;
   }
 
+  private static <A extends Annotation> A getAnnotation(Method method, Class<A> annotationClass) {
+    A annotation = method.getAnnotation(annotationClass);
+    if (annotation == null) {
+      Method superclassMethod = ReflectionUtils.getOverriddenMethod(method);
+      if (superclassMethod != null) {
+        annotation = getAnnotation(superclassMethod, annotationClass);
+      }
+    }
+    return annotation;
+  }
+
   private List<Parameter> getParameters(Type type, List <Annotation> annotations) {
     final Iterator<SwaggerExtension> chain = SwaggerExtensions.chain();
     if (!chain.hasNext()) {
@@ -854,8 +868,9 @@ public class Reader {
     else if(method.getAnnotation(HttpMethod.class) != null) {
       HttpMethod httpMethod = (HttpMethod) method.getAnnotation(HttpMethod.class);
       return httpMethod.value().toLowerCase();
-    }
-    else if(chain.hasNext())
+    } else if ((ReflectionUtils.getOverriddenMethod(method)) != null){
+      return extractOperationMethod(apiOperation, ReflectionUtils.getOverriddenMethod(method), chain);
+    } else if(chain.hasNext())
       return chain.next().extractOperationMethod(apiOperation, method, chain);
     else
       return null;
