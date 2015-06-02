@@ -85,9 +85,7 @@ public class Reader {
   private static final String PATH_DELIMITER = "/";
 
   private final ReaderConfig config;
-
   private Swagger swagger;
-  private static ObjectMapper m = Json.mapper();
 
   public Reader(Swagger swagger) {
     this(swagger, null);
@@ -330,7 +328,7 @@ public class Reader {
               }
 
               if( operation != null ){
-                addExtensionProperties( op.extensions(), operation.getVendorExtensions());
+                addExtensionProperties( apiOperation.extensions(), operation.getVendorExtensions());
               }
             }
             if(operation != null) {
@@ -993,9 +991,5 @@ public class Reader {
 
   public ReaderConfig getConfig() {
     return config;
-  }
-
-  public static ObjectMapper getObjectMapper() {
-    return m;
   }
 }
