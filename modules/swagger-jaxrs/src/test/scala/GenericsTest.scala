@@ -18,6 +18,7 @@ import com.wordnik.swagger.models.properties.ArrayProperty
 import com.wordnik.swagger.models.properties.Property
 import com.wordnik.swagger.models.properties.RefProperty
 import com.wordnik.swagger.models.properties.StringProperty
+import com.wordnik.swagger.models.properties.UUIDProperty
 
 import models.TestEnum
 import resources.ResourceWithGenerics
@@ -166,8 +167,7 @@ class GenericsTest extends FlatSpec with Matchers {
     testGenericType(opUUID, "GenericTypeUUID")
     val uuidValue = getProperty("GenericTypeUUID", "value")
     uuidValue should not be (null)
-    // TODO
-    //uuidValue.getClass().getName() should be (classOf[UUIDProperty].getName)
+    uuidValue.getClass().getName() should be (classOf[UUIDProperty].getName)
 
     val opComplex = getOperation("testComplexGenericType")
     testGenericType(opComplex, "GenericTypeGenericTypeString")

@@ -226,4 +226,40 @@ class ModelConverterTest extends FlatSpec with Matchers {
     val schemas = ModelConverters.getInstance().readAll(`type`)
     schemas.size should equal(0)
   }
+
+  it should "convert a model with Formatted strings" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithFormattedStrings])
+    val model = schemas.get("ModelWithFormattedStrings").asInstanceOf[ModelImpl]
+    model should serializeToJson (
+    """{
+      "type" : "object",
+      "properties" : {
+        "uuid" : {
+          "type" : "string",
+          "format" : "uuid"
+      },
+        "uri" : {
+          "type" : "string",
+          "format" : "uri"
+      },
+        "url" : {
+          "type" : "string",
+          "format" : "url"
+      },
+        "date" : {
+           "type" : "string",
+           "format" : "date-time"
+      },
+        "aByte" : {
+          "type" : "string",
+          "format" : "byte"
+      },
+        "aByteObject" : {
+          "type" : "string",
+          "format" : "byte"
+      }
+      }
+    }"""
+    )
+  }
 }

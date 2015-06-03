@@ -36,16 +36,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Produces;
 
-import com.wordnik.swagger.annotations.ExtensionProperty;
-import com.wordnik.swagger.annotations.Extension;
-import com.wordnik.swagger.annotations.SwaggerDefinition;
-import com.wordnik.swagger.jaxrs.config.DefaultReaderConfig;
-import com.wordnik.swagger.jaxrs.config.ReaderConfig;
-import com.wordnik.swagger.jaxrs.config.ReaderListener;
-import com.wordnik.swagger.models.Contact;
-import com.wordnik.swagger.models.ExternalDocs;
-import com.wordnik.swagger.models.Info;
-import com.wordnik.swagger.models.License;
 import com.wordnik.swagger.jaxrs.utils.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -356,6 +346,8 @@ public class Reader {
                 swagger.path(operationPath, path);
               }
               path.set(httpMethod, operation);
+
+              readImplicitParameters(method, operation);
             }
           }
         }
@@ -363,6 +355,43 @@ public class Reader {
     }
 
     return swagger;
+  }
+
+  private void readImplicitParameters(Method method, Operation operation) {
+    ApiImplicitParams implicitParams = method.getAnnotation(ApiImplicitParams.class);
+    if( implicitParams != null && implicitParams.value().length > 0 ){
+       for(ApiImplicitParam param : implicitParams.value()) {
+         Parameter p = readImplicitParam(param, method.getDeclaringClass());
+         if (p != null) {
+           operation.addParameter( p );
+         }
+       }
+    }
+  }
+
+  protected Parameter readImplicitParam(ApiImplicitParam param, Class<?> apiClass) {
+    Parameter p;
+    if( param.paramType().equalsIgnoreCase("path") ){
+      p = new PathParameter();
+    }
+    else if( param.paramType().equalsIgnoreCase("query")){
+      p = new QueryParameter();
+    }
+    else if( param.paramType().equalsIgnoreCase("form") || param.paramType().equalsIgnoreCase("formData")){
+      p = new FormParameter();
+    }
+    else if( param.paramType().equalsIgnoreCase("body")){
+      p = new BodyParameter();
+    }
+    else if (param.paramType().equalsIgnoreCase("header")){
+      p = new HeaderParameter();
+    }
+    else {
+      LOGGER.warn( "Unkown implicit parameter type: [" + param.paramType() + "]");
+      return null;
+    }
+
+    return ParameterProcessor.applyAnnotations( swagger, p, apiClass, Arrays.asList(new Annotation[]{param}));
   }
 
   protected void readSwaggerConfig(Class<?> cls, SwaggerDefinition config) {

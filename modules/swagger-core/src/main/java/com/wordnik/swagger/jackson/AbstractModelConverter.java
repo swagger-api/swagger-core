@@ -96,11 +96,16 @@ public abstract class AbstractModelConverter implements ModelConverter {
       property = new DateProperty();
     }
     else if("byte".equalsIgnoreCase(typeName)) {
-      property = new StringProperty();
-      ((StringProperty)property).setFormat("byte");
+      property = new StringProperty("byte");
     }
     else if("object".equalsIgnoreCase(typeName)) {
       property = new ObjectProperty();
+    } else if ("uuid".equalsIgnoreCase(typeName)) {
+      property = new UUIDProperty();
+    } else if ("url".equalsIgnoreCase(typeName)) {
+      property = new StringProperty("url");
+    } else if ("uri".equalsIgnoreCase(typeName)) {
+      property = new StringProperty("uri");
     }
     return property;
   }
