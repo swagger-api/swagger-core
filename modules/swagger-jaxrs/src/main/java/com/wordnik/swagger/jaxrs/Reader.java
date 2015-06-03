@@ -330,7 +330,7 @@ public class Reader {
       return null;
     }
 
-    return ParameterProcessor.applyAnnotations( swagger, p, apiClass, new Annotation[]{param}, false );
+    return ParameterProcessor.applyAnnotations( swagger, p, apiClass, Arrays.asList(new Annotation[]{param}));
   }
 
   protected Class<?> getSubResource(Method method) {

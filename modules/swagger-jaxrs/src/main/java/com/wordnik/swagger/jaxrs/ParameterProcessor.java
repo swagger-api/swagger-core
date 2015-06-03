@@ -54,7 +54,6 @@ public class ParameterProcessor {
     }
     final ParamWrapper<?> param = helper.getApiParam();
     final JavaType javaType = TypeFactory.defaultInstance().constructType(type);
-    final ApiParam param = helper.getApiParam();
     if (parameter instanceof AbstractSerializableParameter) {
       final AbstractSerializableParameter<?> p = (AbstractSerializableParameter<?>) parameter;
 
@@ -82,8 +81,8 @@ public class ParameterProcessor {
         }
       }
 
-      final String defaultValue = param.defaultValue();
-      if (p.getItems() != null || param.allowMultiple()) {
+      final String defaultValue = param.getDefaultValue();
+      if (p.getItems() != null || param.isAllowMultiple()) {
         if (p.getItems() == null) {
           // Convert to array
           final Map<PropertyBuilder.PropertyId, Object> args = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
@@ -102,8 +101,7 @@ public class ParameterProcessor {
           Property items = PropertyBuilder.build(p.getType(), p.getFormat(), args);
           p.type(ArrayProperty.TYPE).format(null).items(items);
         }
-      final String defaultValue = param.getDefaultValue();
-      if (param.isAllowMultiple() || isArray) {
+
         final Map<PropertyBuilder.PropertyId, Object> args = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
         if (!defaultValue.isEmpty()) {
           args.put(PropertyBuilder.PropertyId.DEFAULT, defaultValue);
