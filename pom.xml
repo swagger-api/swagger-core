@@ -391,6 +391,7 @@
         <module>samples/java-jaxrs-cxf</module>
         <module>samples/java-jersey-jaxrs</module>
         <module>samples/java-jaxrs-no-annotations</module>
+        <module>samples/java-servlet</module>
       </modules>
     </profile>
     <profile>

@@ -1,4 +1,4 @@
-package models;
+package com.wordnik.swagger.sample.models;
 
 import com.wordnik.swagger.annotations.*;
 
@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.*;
 public class Pet {
 	private long id;
 	private Category category;
-	private CategoryWithApiModel categoryWithApiModel;
 	private String name;
 	private List<String> photoUrls = new ArrayList<String>();
 	private List<Tag> tags = new ArrayList<Tag>();
@@ -33,15 +32,6 @@ public class Pet {
 
 	public void setCategory(Category category) {
 		this.category = category;
-	}
-
-	@XmlElement(name = "categoryWithApiModel")
-	public CategoryWithApiModel getCategoryWithApiModel() {
-		return categoryWithApiModel;
-	}
-
-	public void setCategoryWithApiModel(CategoryWithApiModel category) {
-		this.categoryWithApiModel = categoryWithApiModel;
 	}
 
 	@XmlElement(name = "name")
@@ -74,7 +64,7 @@ public class Pet {
 	}
 
 	@XmlElement(name = "status")
-	@ApiModelProperty(value = "pet status in the store", allowableValues = "available,pending,sold", access = "public")
+	@ApiModelProperty(value = "pet status in the store", allowableValues = "available,pending,sold")
 	public String getStatus() {
 		return status;
 	}
