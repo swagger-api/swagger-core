@@ -103,7 +103,9 @@ public class TypeNameResolver {
     
     // Date, Calendar types are not exact matches (but sub-types), not added here
 
-    _add(map, "string", UUID.class, URL.class, URI.class);
+    _add(map, "uuid", UUID.class);
+    _add(map, "url", URL.class);
+    _add(map, "uri", URI.class);
 
     return map;
   }
