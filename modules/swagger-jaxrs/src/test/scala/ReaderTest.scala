@@ -5,6 +5,7 @@ import com.wordnik.swagger.annotations.ApiOperation
 import com.wordnik.swagger.jaxrs.Reader
 import com.wordnik.swagger.models.Swagger
 import javax.ws.rs.core.MediaType
+import com.wordnik.swagger.models.parameters.{QueryParameter, PathParameter}
 import org.junit.runner.RunWith
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
@@ -78,6 +79,24 @@ class ReaderTest extends FlatSpec with Matchers {
     swagger.getPaths().get("/{id}").getPut.getProduces.get(0) should equal ({"text/plain"})
     swagger.getPaths().get("/{id}/value").getPut.getConsumes.get(0) should equal ("application/xml")
     swagger.getPaths().get("/{id}/value").getPut.getProduces.get(0) should equal ("text/plain")
+  }
+
+  it should "scan class level and field level annotations" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithKnownInjections])
+
+    val resourceParameters = swagger.getPaths().get("/resource/{id}").getGet().getParameters()
+    resourceParameters should not equal (null)
+    resourceParameters.size() should equal (3)
+    resourceParameters.get(0).asInstanceOf[PathParameter].getName() should equal ("id")
+    resourceParameters.get(1).asInstanceOf[QueryParameter].getName() should equal ("fieldParam")
+    resourceParameters.get(2).asInstanceOf[QueryParameter].getName() should equal ("methodParam")
+
+    val subResourceParameters = swagger.getPaths().get("/resource/{id}/subresource").getGet().getParameters()
+    subResourceParameters should not equal (null)
+    subResourceParameters.size() should equal (3)
+    subResourceParameters.get(0).asInstanceOf[PathParameter].getName() should equal ("id")
+    subResourceParameters.get(1).asInstanceOf[QueryParameter].getName() should equal ("fieldParam")
+    subResourceParameters.get(2).asInstanceOf[QueryParameter].getName() should equal ("subResourceParam")
   }
 
   def isValidRestPath(method: Method) = {
