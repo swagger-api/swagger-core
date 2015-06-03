@@ -16,6 +16,56 @@
 
 package com.wordnik.swagger.jaxrs;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiImplicitParam;
+import com.wordnik.swagger.annotations.ApiImplicitParams;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+import com.wordnik.swagger.annotations.Authorization;
+import com.wordnik.swagger.annotations.AuthorizationScope;
+import com.wordnik.swagger.annotations.Extension;
+import com.wordnik.swagger.annotations.ExtensionProperty;
+import com.wordnik.swagger.annotations.SwaggerDefinition;
+import com.wordnik.swagger.converter.ModelConverters;
+import com.wordnik.swagger.jaxrs.config.DefaultReaderConfig;
+import com.wordnik.swagger.jaxrs.config.ReaderConfig;
+import com.wordnik.swagger.jaxrs.config.ReaderListener;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
+import com.wordnik.swagger.jaxrs.utils.ReflectionUtils;
+import com.wordnik.swagger.models.Contact;
+import com.wordnik.swagger.models.ExternalDocs;
+import com.wordnik.swagger.models.Info;
+import com.wordnik.swagger.models.License;
+import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.Operation;
+import com.wordnik.swagger.models.Path;
+import com.wordnik.swagger.models.Response;
+import com.wordnik.swagger.models.Scheme;
+import com.wordnik.swagger.models.SecurityRequirement;
+import com.wordnik.swagger.models.SecurityScope;
+import com.wordnik.swagger.models.Swagger;
+import com.wordnik.swagger.models.Tag;
+import com.wordnik.swagger.models.parameters.BodyParameter;
+import com.wordnik.swagger.models.parameters.FormParameter;
+import com.wordnik.swagger.models.parameters.HeaderParameter;
+import com.wordnik.swagger.models.parameters.Parameter;
+import com.wordnik.swagger.models.parameters.PathParameter;
+import com.wordnik.swagger.models.parameters.QueryParameter;
+import com.wordnik.swagger.models.properties.ArrayProperty;
+import com.wordnik.swagger.models.properties.MapProperty;
+import com.wordnik.swagger.models.properties.Property;
+import com.wordnik.swagger.models.properties.RefProperty;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.Produces;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -31,43 +81,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.Produces;
-
-import com.wordnik.swagger.jaxrs.utils.ReflectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
-import com.wordnik.swagger.annotations.Authorization;
-import com.wordnik.swagger.annotations.AuthorizationScope;
-import com.wordnik.swagger.converter.ModelConverters;
-import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
-import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
-import com.wordnik.swagger.models.Model;
-import com.wordnik.swagger.models.Operation;
-import com.wordnik.swagger.models.Path;
-import com.wordnik.swagger.models.Response;
-import com.wordnik.swagger.models.Scheme;
-import com.wordnik.swagger.models.SecurityRequirement;
-import com.wordnik.swagger.models.SecurityScope;
-import com.wordnik.swagger.models.Swagger;
-import com.wordnik.swagger.models.Tag;
-import com.wordnik.swagger.models.parameters.Parameter;
-import com.wordnik.swagger.models.properties.ArrayProperty;
-import com.wordnik.swagger.models.properties.MapProperty;
-import com.wordnik.swagger.models.properties.Property;
-import com.wordnik.swagger.models.properties.RefProperty;
-import com.wordnik.swagger.util.Json;
 
 public class Reader {
   private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
@@ -509,7 +522,7 @@ public class Reader {
     addExtensionProperties(infoConfig.extensions(), info.getVendorExtensions());
   }
 
-  private void addExtensionProperties(Extension [] extensions, Map<String, Object> map) {
+  private void addExtensionProperties(Extension[] extensions, Map<String, Object> map) {
     for( Extension extension : extensions ) {
       String name = extension.name();
       if (name.length() > 0) {
