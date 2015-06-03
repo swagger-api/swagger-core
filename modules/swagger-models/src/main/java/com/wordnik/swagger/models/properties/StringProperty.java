@@ -10,8 +10,14 @@ public class StringProperty extends AbstractProperty implements Property {
   protected String _default;
 
   public StringProperty() {
-    super.type = "string";
+    this(null);
   }
+
+  public StringProperty(String format) {
+    super.type = "string";
+    super.format = format;
+  }
+
   public StringProperty xml(Xml xml) {
     this.setXml(xml);
     return this;
