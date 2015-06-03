@@ -4,8 +4,7 @@ import com.wordnik.swagger.jackson.ModelResolver;
 import com.wordnik.swagger.models.Model;
 import com.wordnik.swagger.models.properties.Property;
 import com.wordnik.swagger.util.Json;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,21 +99,19 @@ public class ModelConverters {
   }
 
   private boolean shouldProcess(Type type) {
-    if(type instanceof Class<?>){
-      Class<?> cls = (Class<?>) type;
-      if (cls.isPrimitive()) {
+    final Class<?> cls = TypeFactory.defaultInstance().constructType(type).getRawClass();
+    if (cls.isPrimitive()) {
+      return false;
+    }
+    String className = cls.getName();
+    for(String packageName: skippedPackages) {
+      if(className.startsWith(packageName)) {
         return false;
       }
-      String className = cls.getName();
-      for(String packageName: skippedPackages) {
-        if(className.startsWith(packageName)) {
-          return false;
-        }
-      }
-      for(String classToSkip: skippedClasses) {
-        if(className.equals(classToSkip)) {
-          return false;
-        }
+    }
+    for(String classToSkip: skippedClasses) {
+      if(className.equals(classToSkip)) {
+        return false;
       }
     }
     return true;

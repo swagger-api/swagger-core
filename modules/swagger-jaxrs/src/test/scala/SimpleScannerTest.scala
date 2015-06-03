@@ -152,6 +152,8 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     v0.getEnum().asScala.toSet should be (allEnumValues)
     val v1 = checkEnumHandling.get(1).asInstanceOf[SerializableParameter]
     v1.getItems().asInstanceOf[StringProperty].getEnum().asScala.toSet should be (allEnumValues)
+    val v2 = checkEnumHandling.get(2).asInstanceOf[SerializableParameter]
+    v2.getItems().asInstanceOf[StringProperty].getEnum().asScala.toSet should be (allEnumValues)
     val v3 = checkEnumHandling.get(3).asInstanceOf[SerializableParameter]
     v3.getEnum().asScala.toSet should be (Set("A", "B", "C"))
   }

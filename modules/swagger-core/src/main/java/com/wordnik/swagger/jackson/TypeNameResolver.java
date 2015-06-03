@@ -6,7 +6,11 @@ import java.net.URI;
 import java.net.URL;
 import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
+
 import com.fasterxml.jackson.databind.JavaType;
+import com.wordnik.swagger.annotations.ApiModel;
 
 /**
  * Helper class used for converting well-known (property) types into
@@ -38,9 +42,31 @@ public class TypeNameResolver {
   protected TypeNameResolver() { }
 
   public String nameForType(JavaType type) {
+    if (type.hasGenericTypes()) {
+      return nameForGenericType(type);
+    }
     final Class<?> raw = type.getRawClass();
-    String name = findStdName(raw);
-    return (name == null) ? name = raw.getSimpleName() : name;
+    final String name = findStdName(raw);
+    return (name == null) ? nameForClass(raw) : name;
+  }
+
+
+  protected String nameForClass(Class<?> cls) {
+    final ApiModel model = cls.getAnnotation(ApiModel.class);
+    final String modelName = model == null ? null : StringUtils.trimToNull(model.value());
+    return modelName == null ? cls.getSimpleName() : modelName;
+  }
+
+  protected String nameForGenericType(JavaType type) {
+    final StringBuilder generic = new StringBuilder(nameForClass(type.getRawClass()));
+    final int count = type.containedTypeCount();
+    for (int i = 0; i < count; ++i) {
+      final JavaType arg = type.containedType(i);
+      final Class<?> argClass = arg.getRawClass();
+      final String argName = findStdName(argClass) != null ? nameForClass(argClass) : nameForType(arg);
+      generic.append(WordUtils.capitalize(argName));
+    }
+    return generic.toString();
   }
 
   protected String findStdName(Class<?> raw) {
@@ -77,7 +103,9 @@ public class TypeNameResolver {
     
     // Date, Calendar types are not exact matches (but sub-types), not added here
 
-    _add(map, "string", UUID.class, URL.class, URI.class);
+    _add(map, "uuid", UUID.class);
+    _add(map, "url", URL.class);
+    _add(map, "uri", URI.class);
 
     return map;
   }
@@ -90,7 +118,7 @@ public class TypeNameResolver {
     map.put("javax.xml.datatype.XMLGregorianCalendar", TYPE_DATE_TIME);
     return map;
   }
-  
+
   private static Map<Class<?>, String> _add(Map<Class<?>, String> map, String name,
       Class<?>... types) {
     for (Class<?> type : types) {

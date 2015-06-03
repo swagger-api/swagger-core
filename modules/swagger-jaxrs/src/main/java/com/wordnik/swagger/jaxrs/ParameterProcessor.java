@@ -5,7 +5,9 @@ import com.wordnik.swagger.util.Json;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.Context;
@@ -14,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -43,12 +47,14 @@ public class ParameterProcessor {
     ALLOWED_VALUES_PROCESSORS.put(AllowableEnumValues.class, false, new ParameterEnumProcessor());
   }
 
-  public static Parameter applyAnnotations(Swagger swagger, Parameter parameter, Class<?> cls, Annotation[] annotations, boolean isArray) {
+  public static Parameter applyAnnotations(Swagger swagger, Parameter parameter, Type type, List<Annotation> annotations) {
     final AnnotationsHelper helper = new AnnotationsHelper(annotations);
     if (helper.isContext()) {
       return null;
     }
     final ParamWrapper<?> param = helper.getApiParam();
+    final JavaType javaType = TypeFactory.defaultInstance().constructType(type);
+    final ApiParam param = helper.getApiParam();
     if (parameter instanceof AbstractSerializableParameter) {
       final AbstractSerializableParameter<?> p = (AbstractSerializableParameter<?>) parameter;
 
@@ -76,27 +82,40 @@ public class ParameterProcessor {
         }
       }
 
+      final String defaultValue = param.defaultValue();
+      if (p.getItems() != null || param.allowMultiple()) {
+        if (p.getItems() == null) {
+          // Convert to array
+          final Map<PropertyBuilder.PropertyId, Object> args = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
+          args.put(PropertyBuilder.PropertyId.DEFAULT, p.getDefaultValue());
+          p.setDefaultValue(null);
+          args.put(PropertyBuilder.PropertyId.ENUM, p.getEnum());
+          p.setEnum(null);
+          args.put(PropertyBuilder.PropertyId.MINIMUM, p.getMinimum());
+          p.setMinimum(null);
+          args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM, p.isExclusiveMinimum());
+          p.setExclusiveMinimum(null);
+          args.put(PropertyBuilder.PropertyId.MAXIMUM, p.getMaximum());
+          p.setMaximum(null);
+          args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM, p.isExclusiveMaximum());
+          p.setExclusiveMaximum(null);
+          Property items = PropertyBuilder.build(p.getType(), p.getFormat(), args);
+          p.type(ArrayProperty.TYPE).format(null).items(items);
+        }
       final String defaultValue = param.getDefaultValue();
       if (param.isAllowMultiple() || isArray) {
         final Map<PropertyBuilder.PropertyId, Object> args = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
         if (!defaultValue.isEmpty()) {
           args.put(PropertyBuilder.PropertyId.DEFAULT, defaultValue);
         }
-        if (allowableValues != null) {
-          processAllowedValues(allowableValues, true, args);
-        }
-
-        p.items(PropertyBuilder.build(p.getType(), p.getFormat(), args))
-          .type(ArrayProperty.TYPE)
-          .format(null)
-          .collectionFormat("multi");
+        processAllowedValues(allowableValues, true, args);
+        PropertyBuilder.merge(p.getItems(), args);
+        p.collectionFormat("csv");
       } else {
         if (!defaultValue.isEmpty()) {
           p.setDefaultValue(defaultValue);
         }
-        if (allowableValues != null) {
-          processAllowedValues(allowableValues, false, p);
-        }
+        processAllowedValues(allowableValues, false, p);
       }
     } else {
       // must be a body param
@@ -107,13 +126,8 @@ public class ParameterProcessor {
         bp.setDescription(param.getDescription());
       }
 
-      if(cls.isArray() || isArray) {
-        final Class<?> innerType;
-        if(isArray) {// array has already been detected
-          innerType = cls;
-        } else {
-          innerType = cls.getComponentType();
-        }
+      if(javaType.isContainerType()) {
+        final Type innerType = javaType.getContentType();
         Property innerProperty = ModelConverters.getInstance().readAsProperty(innerType);
         if(innerProperty == null) {
           Map<String, Model> models = ModelConverters.getInstance().read(innerType);
@@ -147,29 +161,25 @@ public class ParameterProcessor {
             LOGGER.debug("added model definition for RefProperty " + name);
           }
         }
-      }
-      else {
-        Map<String, Model> models = ModelConverters.getInstance().read(cls);
+      } else {
+        Map<String, Model> models = ModelConverters.getInstance().read(type);
         if(models.size() > 0) {
           for(String name: models.keySet()) {
             if(name.indexOf("java.util") == -1) {
-              if(isArray)
-                bp.setSchema(new ArrayModel().items(new RefProperty().asDefault(name)));
-              else
-                bp.setSchema(new RefModel().asDefault(name));
-              if(swagger != null)
+              bp.setSchema(new RefModel().asDefault(name));
+              if(swagger != null) {
                 swagger.addDefinition(name, models.get(name));
+              }
             }
           }
-          models = ModelConverters.getInstance().readAll(cls);
           if(swagger != null) {
-            for(String key : models.keySet()) {
-              swagger.model(key, models.get(key));
+            for(Map.Entry<String, Model> entry : ModelConverters.getInstance().readAll(type).entrySet()) {
+              swagger.model(entry.getKey(), entry.getValue());
             }
           }
         }
         else {
-          Property prop = ModelConverters.getInstance().readAsProperty(cls);
+          Property prop = ModelConverters.getInstance().readAsProperty(type);
           if(prop != null) {
             ModelImpl model = new ModelImpl();
             model.setType(prop.getType());
@@ -185,6 +195,9 @@ public class ParameterProcessor {
   }
 
   private static <C> void processAllowedValues(AllowableValues values, boolean key, C container) {
+    if (values == null) {
+      return;
+    }
     @SuppressWarnings("unchecked")
     final AbstractAllowableValuesProcessor<C, AllowableValues> processor =
         (AbstractAllowableValuesProcessor<C, AllowableValues>) ALLOWED_VALUES_PROCESSORS.get(values.getClass(), key);
@@ -204,7 +217,7 @@ public class ParameterProcessor {
      * Constructs an instance.
      * @param annotations array or parameter annotations
      */
-    public AnnotationsHelper(Annotation[] annotations) {
+    public AnnotationsHelper(List<Annotation> annotations) {
       for (Annotation item : annotations) {
         if (item instanceof Context) {
           context = true;
