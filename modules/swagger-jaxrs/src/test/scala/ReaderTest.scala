@@ -1,6 +1,7 @@
 import java.lang.reflect.Method
 import javax.ws.rs._
 
+import com.wordnik.swagger.annotations.ApiOperation
 import com.wordnik.swagger.jaxrs.Reader
 import com.wordnik.swagger.models.Swagger
 import javax.ws.rs.core.MediaType
@@ -89,5 +90,25 @@ class ReaderTest extends FlatSpec with Matchers {
       true
     else
       false
+  }
+
+  it should "scan overridden method in descendantResource" in {
+    val reader = new Reader(new Swagger())
+    val swagger = reader.read(classOf[DescendantResource])
+    val overriddenMethodWithTypedParam = swagger.getPaths().get("/pet/{petId1}").getGet
+    overriddenMethodWithTypedParam should not equal (null)
+    overriddenMethodWithTypedParam.getParameters.get(0).getDescription should equal("ID of pet to return child")
+
+    val methodWithoutTypedParam = swagger.getPaths().get("/pet/{petId2}").getGet
+    methodWithoutTypedParam should not equal (null)
+
+    val overriddenMethodWithoutTypedParam = swagger.getPaths().get("/pet/{petId3}").getGet
+    overriddenMethodWithoutTypedParam should not equal (null)
+
+    val methodWithoutTypedParamFromDescendant = swagger.getPaths().get("/pet/{petId4}").getGet
+    methodWithoutTypedParamFromDescendant should not equal (null)
+
+    val methodFromInterface = swagger.getPaths().get("/pet/{petId5}").getGet
+    methodFromInterface should not equal (null)
   }
 }
