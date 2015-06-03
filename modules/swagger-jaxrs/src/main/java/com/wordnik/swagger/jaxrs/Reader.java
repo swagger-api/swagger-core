@@ -723,6 +723,9 @@ public class Reader {
   }
 
   private static boolean isValidResponse(Type type) {
+    if( type == null ){
+      return false;
+    }
     final JavaType javaType = TypeFactory.defaultInstance().constructType(type);
     if (isVoid(javaType)) {
       return false;
