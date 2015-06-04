@@ -3,10 +3,7 @@ package io.swagger.jaxrs;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiParam;
 import io.swagger.converter.ModelConverters;
-import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.RefModel;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.parameters.BodyParameter;
@@ -14,7 +11,6 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
-import io.swagger.models.properties.RefProperty;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -123,74 +119,15 @@ public class ParameterProcessor {
       if (StringUtils.isNotEmpty(param.getDescription())) {
         bp.setDescription(param.getDescription());
       }
-
-      if(javaType.isContainerType()) {
-        final Type innerType = javaType.getContentType();
-        Property innerProperty = ModelConverters.getInstance().readAsProperty(innerType);
-        if(innerProperty == null) {
-          Map<String, Model> models = ModelConverters.getInstance().read(innerType);
-          if(models.size() > 0) {
-            for(String name: models.keySet()) {
-              if(name.indexOf("java.util") == -1) {
-                bp.setSchema(
-                  new ArrayModel().items(new RefProperty().asDefault(name)));
-                if(swagger != null)
-                  swagger.addDefinition(name, models.get(name));
-              }
-            }
-          }
-          models = ModelConverters.getInstance().readAll(innerType);
-          if(swagger != null) {
-            for(String key : models.keySet()) {
-              swagger.model(key, models.get(key));
-            }
-          }
+      final Property property = ModelConverters.getInstance().readAsProperty(javaType);
+      if (property != null) {
+        final Map<PropertyBuilder.PropertyId, Object> args = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
+        if (StringUtils.isNotEmpty(defaultValue)) {
+          args.put(PropertyBuilder.PropertyId.DEFAULT, defaultValue);
         }
-        else {
-          LOGGER.debug("found inner property " + innerProperty);
-          if (StringUtils.isNotEmpty(defaultValue)) {
-            innerProperty.setDefault(defaultValue);
-          }
-          bp.setSchema(new ArrayModel().items(innerProperty));
-
-          // creation of ref property doesn't add model to definitions - do it now instead
-          if( innerProperty instanceof RefProperty && swagger != null) {
-              Map<String, Model> models = ModelConverters.getInstance().read(innerType);
-              String name = ((RefProperty)innerProperty).getSimpleRef();
-              swagger.addDefinition(name, models.get(name));
-
-            LOGGER.debug("added model definition for RefProperty " + name);
-          }
-        }
-      } else {
-        Map<String, Model> models = ModelConverters.getInstance().read(type);
-        if(models.size() > 0) {
-          for(String name: models.keySet()) {
-            if(name.indexOf("java.util") == -1) {
-              bp.setSchema(new RefModel().asDefault(name));
-              if(swagger != null) {
-                swagger.addDefinition(name, models.get(name));
-              }
-            }
-          }
-          if(swagger != null) {
-            for(Map.Entry<String, Model> entry : ModelConverters.getInstance().readAll(type).entrySet()) {
-              swagger.model(entry.getKey(), entry.getValue());
-            }
-          }
-        }
-        else {
-          Property prop = ModelConverters.getInstance().readAsProperty(type);
-          if(prop != null) {
-            ModelImpl model = new ModelImpl();
-            model.setType(prop.getType());
-            model.setFormat(prop.getFormat());
-            model.setDescription(prop.getDescription());
-            if (StringUtils.isNotEmpty(defaultValue)) {
-              model.setDefaultValue(defaultValue);
-            }
-            bp.setSchema(model);
-          }
+        bp.setSchema(PropertyBuilder.toModel(PropertyBuilder.merge(property, args)));
+        for (Map.Entry<String, Model> entry : ModelConverters.getInstance().readAll(javaType).entrySet()) {
+          swagger.addDefinition(entry.getKey(), entry.getValue());
         }
       }
       parameter = bp;
@@ -215,7 +152,7 @@ public class ParameterProcessor {
   private static class AnnotationsHelper {
     private static final ApiParam DEFAULT_API_PARAM = getDefaultApiParam(null);
     private boolean context;
-    private ParamWrapper apiParam = new ApiParamWrapper(DEFAULT_API_PARAM);
+    private ParamWrapper<?> apiParam = new ApiParamWrapper(DEFAULT_API_PARAM);
     private String defaultValue;
 
     /**
@@ -251,7 +188,7 @@ public class ParameterProcessor {
      * a default one will be returned.
      * @return @{@link ApiParam} annotation
      */
-    public ParamWrapper getApiParam() {
+    public ParamWrapper<?> getApiParam() {
       return apiParam;
     }
 
@@ -283,7 +220,7 @@ public class ParameterProcessor {
    * Wraps either an @ApiParam or and @ApiImplicitParam
    */
 
-  public interface ParamWrapper<T> {
+  public interface ParamWrapper<T extends Annotation> {
     String getName();
 
     String getDescription();

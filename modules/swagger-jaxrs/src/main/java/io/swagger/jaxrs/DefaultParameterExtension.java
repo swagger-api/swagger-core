@@ -97,16 +97,20 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension {
   }
 
   private Property createProperty(Type type) {
-    return enforcePrimitive(ModelConverters.getInstance().readAsProperty(type));
+    return enforcePrimitive(ModelConverters.getInstance().readAsProperty(type), 0);
   }
 
-  private Property enforcePrimitive(Property in) {
+  private Property enforcePrimitive(Property in, int level) {
     if (in instanceof RefProperty) {
       return new StringProperty();
     }
     if (in instanceof ArrayProperty) {
-      final ArrayProperty array = (ArrayProperty) in;
-      array.setItems(enforcePrimitive(array.getItems()));
+      if (level == 0) {
+        final ArrayProperty array = (ArrayProperty) in;
+        array.setItems(enforcePrimitive(array.getItems(), level + 1));
+      } else {
+        return new StringProperty();
+      }
     }
     return in;
   }
