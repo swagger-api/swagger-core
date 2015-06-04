@@ -2,9 +2,11 @@ package converter
 
 import com.wordnik.swagger.converter._
 import com.wordnik.swagger.annotations._
-import com.wordnik.swagger.util.Json
 
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import io.swagger.annotations.{ApiModelProperty, ApiModel}
+import io.swagger.converter.ModelConverters
+import io.swagger.util.Json
 
 import scala.collection.JavaConverters._
 import scala.annotation.meta.field

@@ -75,7 +75,7 @@
     
   <!--servlet>
     <servlet-name>DefaultJaxrsConfig</servlet-name>
-    <servlet-class>com.wordnik.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
+    <servlet-class>DefaultJaxrsConfig</servlet-class>
     <init-param>
       <param-name>api.version</param-name>
       <param-value>1.0.0</param-value>

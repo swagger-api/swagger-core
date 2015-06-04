@@ -16,7 +16,6 @@
 
 package com.wordnik.swagger.sample.util;
 
-import com.wordnik.swagger.model.*;
 import com.wordnik.swagger.core.filter.SwaggerSpecFilter;
 
 import com.wordnik.swagger.models.Model;

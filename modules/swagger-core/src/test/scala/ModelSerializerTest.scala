@@ -1,3 +1,8 @@
+import io.swagger.converter.ModelConverters
+import io.swagger.models._
+import io.swagger.models.properties._
+import io.swagger.util.Json
+
 import scala.collection.JavaConverters.mutableMapAsJavaMapConverter
 import scala.collection.JavaConverters.seqAsJavaListConverter
 import scala.collection.mutable.HashMap
@@ -6,20 +11,7 @@ import org.junit.runner.RunWith
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import org.scalatest.junit.JUnitRunner
-
-import com.wordnik.swagger.converter.ModelConverters
-import com.wordnik.swagger.models.ArrayModel
-import com.wordnik.swagger.models.ExternalDocs
-import com.wordnik.swagger.models.Model
-import com.wordnik.swagger.models.ModelImpl
-import com.wordnik.swagger.models.RefModel
-import com.wordnik.swagger.models.properties.DateProperty
-import com.wordnik.swagger.models.properties.DateTimeProperty
-import com.wordnik.swagger.models.properties.IntegerProperty
-import com.wordnik.swagger.models.properties.LongProperty
-import com.wordnik.swagger.models.properties.Property
-import com.wordnik.swagger.models.properties.RefProperty
-import com.wordnik.swagger.util.Json
+import LongProperty
 
 import matchers.SerializationMatchers.serializeToJson
 import models.Car

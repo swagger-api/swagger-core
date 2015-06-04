@@ -1,8 +1,8 @@
 package resources;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import models.*;
-
-import com.wordnik.swagger.annotations.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

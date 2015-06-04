@@ -1,7 +1,9 @@
 // import models.composition._
-import models._
 
-import com.wordnik.swagger.util.Json
+import io.swagger.converter.ModelConverters
+import io.swagger.models.properties.{StringProperty, DoubleProperty, IntegerProperty}
+import io.swagger.util.Json
+import models._
 import com.wordnik.swagger.models._
 import com.wordnik.swagger.models.properties._
 import com.wordnik.swagger.converter._

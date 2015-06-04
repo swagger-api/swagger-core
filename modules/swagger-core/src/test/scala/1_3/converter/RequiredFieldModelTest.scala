@@ -1,5 +1,6 @@
 package converter
 
+import io.swagger.converter.ModelConverters
 import models._
 
 import com.wordnik.swagger.converter._

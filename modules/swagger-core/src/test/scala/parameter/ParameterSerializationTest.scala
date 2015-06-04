@@ -11,6 +11,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.core.JsonGenerator.Feature
 import com.fasterxml.jackson.databind._
 import com.fasterxml.jackson.annotation._
+import io.swagger.models.{ModelImpl, ArrayModel, RefModel}
+import io.swagger.models.parameters._
+import io.swagger.models.properties.{StringProperty, IntegerProperty, ArrayProperty, RefProperty}
+import io.swagger.util.{Yaml, Json}
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

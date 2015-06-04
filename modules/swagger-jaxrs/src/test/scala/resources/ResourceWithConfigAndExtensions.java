@@ -1,14 +1,18 @@
 package resources;
 
-import com.wordnik.swagger.annotations.*;
-import com.wordnik.swagger.annotations.Contact;
-import com.wordnik.swagger.annotations.ExternalDocs;
-import com.wordnik.swagger.annotations.Info;
-import com.wordnik.swagger.annotations.License;
-import com.wordnik.swagger.jaxrs.Reader;
-import com.wordnik.swagger.jaxrs.config.ReaderListener;
-import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.models.Tag;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Contact;
+import io.swagger.annotations.Extension;
+import io.swagger.annotations.ExtensionProperty;
+import io.swagger.annotations.ExternalDocs;
+import io.swagger.annotations.Info;
+import io.swagger.annotations.License;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.jaxrs.Reader;
+import io.swagger.jaxrs.config.ReaderListener;
+import io.swagger.models.Swagger;
 
 import javax.ws.rs.*;
 import javax.ws.rs.Path;
@@ -37,10 +41,10 @@ import java.util.*;
         produces = {"application/json","application/xml"},
         schemes = {SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS},
         tags = {
-                @com.wordnik.swagger.annotations.Tag( name ="mytag", description="my tag"),
-                @com.wordnik.swagger.annotations.Tag( name ="anothertag", description="another tag",
+                @Tag( name ="mytag", description="my tag"),
+                @Tag( name ="anothertag", description="another tag",
                     externalDocs = @ExternalDocs( value = "test", url = "http://swagger.io")),
-                @com.wordnik.swagger.annotations.Tag( name ="tagwithextensions", description="my tag",
+                @Tag( name ="tagwithextensions", description="my tag",
                         extensions = @Extension( properties = {@ExtensionProperty(name="test", value = "value")}))
         }, externalDocs = @ExternalDocs( value = "test", url = "http://swagger.io")
 )
@@ -57,11 +61,11 @@ public class ResourceWithConfigAndExtensions implements ReaderListener {
 
     @Override
     public void beforeScan(Reader reader, Swagger swagger) {
-        swagger.addTag( new Tag().name( "Tag-added-before-read"));
+        swagger.addTag( new io.swagger.models.Tag().name( "Tag-added-before-read"));
     }
 
     @Override
     public void afterScan(Reader reader, Swagger swagger) {
-        swagger.addTag( new Tag().name( "Tag-added-after-read"));
+        swagger.addTag( new io.swagger.models.Tag().name( "Tag-added-after-read"));
     }
 }

@@ -1,5 +1,9 @@
 package converter
 
+import io.swagger.annotations.ApiModelProperty
+import io.swagger.converter.ModelConverters
+import io.swagger.models.properties._
+import io.swagger.util.Json
 import models._
 
 import com.wordnik.swagger.converter._
@@ -7,7 +11,6 @@ import com.wordnik.swagger.models._
 import com.wordnik.swagger.models.properties._
 
 import com.wordnik.swagger.util._
-import com.wordnik.swagger.annotations.ApiModelProperty
 
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 

@@ -1,3 +1,8 @@
+import io.swagger.jaxrs.Reader
+import io.swagger.models._
+import io.swagger.models.parameters.{QueryParameter, BodyParameter}
+import io.swagger.models.properties._
+
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.collection.JavaConverters.asScalaSetConverter
 
@@ -5,20 +10,6 @@ import org.junit.runner.RunWith
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import org.scalatest.junit.JUnitRunner
-
-import com.wordnik.swagger.jaxrs.Reader
-import com.wordnik.swagger.models.ArrayModel
-import com.wordnik.swagger.models.ModelImpl
-import com.wordnik.swagger.models.Operation
-import com.wordnik.swagger.models.RefModel
-import com.wordnik.swagger.models.Swagger
-import com.wordnik.swagger.models.parameters.BodyParameter
-import com.wordnik.swagger.models.parameters.QueryParameter
-import com.wordnik.swagger.models.properties.ArrayProperty
-import com.wordnik.swagger.models.properties.Property
-import com.wordnik.swagger.models.properties.RefProperty
-import com.wordnik.swagger.models.properties.StringProperty
-import com.wordnik.swagger.models.properties.UUIDProperty
 
 import models.TestEnum
 import resources.ResourceWithGenerics

@@ -1,7 +1,7 @@
 package models;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel( reference = "http://swagger.io/schemas.json#/Models")
 public class ModelWithReference {

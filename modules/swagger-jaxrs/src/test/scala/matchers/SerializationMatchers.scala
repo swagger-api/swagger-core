@@ -1,5 +1,6 @@
 package matchers
 
+import io.swagger.util.{Yaml, Json}
 import org.scalatest.matchers.MatchResult
 import org.scalatest.matchers.Matcher
 

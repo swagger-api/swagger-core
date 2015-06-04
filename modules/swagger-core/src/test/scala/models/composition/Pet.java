@@ -1,6 +1,6 @@
 package models.composition;
 
-import com.wordnik.swagger.annotations.*;
+import io.swagger.annotations.ApiModelProperty;
 
 public interface Pet extends Animal {
   @ApiModelProperty(position = 1, required = true, value = "The pet type")

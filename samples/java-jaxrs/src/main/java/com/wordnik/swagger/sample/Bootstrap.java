@@ -1,9 +1,5 @@
 package com.wordnik.swagger.sample;
 
-import com.wordnik.swagger.models.*;
-
-import com.wordnik.swagger.models.auth.*;
-
 import javax.servlet.http.HttpServlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletConfig;

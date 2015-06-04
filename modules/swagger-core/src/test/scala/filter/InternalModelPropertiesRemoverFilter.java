@@ -3,9 +3,9 @@ package filter;
 import java.util.List;
 import java.util.Map;
 
-import com.wordnik.swagger.core.filter.AbstractSpecFilter;
-import com.wordnik.swagger.models.Model;
-import com.wordnik.swagger.models.properties.Property;
+import io.swagger.core.filter.AbstractSpecFilter;
+import io.swagger.models.Model;
+import io.swagger.models.properties.Property;
 
 /**
  * Sample filter to model properties starting with "_" unless a header

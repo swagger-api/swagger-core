@@ -1,10 +1,12 @@
 package converter
 
+import io.swagger.converter.ModelConverters
+import io.swagger.models.ModelImpl
+import io.swagger.util.Json
 import models._
 
 import com.wordnik.swagger.converter._
 import com.wordnik.swagger.models._
-import com.wordnik.swagger.util.Json
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

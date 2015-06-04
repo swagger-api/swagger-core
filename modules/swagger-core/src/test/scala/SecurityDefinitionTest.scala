@@ -1,7 +1,11 @@
+import io.swagger.converter.ModelConverters
+import io.swagger.models.auth.OAuth2Definition
+import io.swagger.models.parameters.{PathParameter, QueryParameter}
+import io.swagger.models.properties.{LongProperty, StringProperty, RefProperty}
+import io.swagger.models._
+import io.swagger.util.Json
 import models._
 import models.composition.Pet;
-
-import com.wordnik.swagger.util.Json
 import com.wordnik.swagger.models._
 import com.wordnik.swagger.models.auth._
 import com.wordnik.swagger.converter._

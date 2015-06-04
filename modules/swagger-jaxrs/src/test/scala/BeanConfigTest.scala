@@ -1,7 +1,7 @@
 import com.wordnik.swagger.jaxrs.config._
-
-import com.wordnik.swagger.util.Json
-import com.wordnik.swagger.models.Scheme
+import io.swagger.jaxrs.config.BeanConfig
+import io.swagger.models.Scheme
+import io.swagger.util.Json
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

@@ -3,9 +3,10 @@ package converter
 import com.wordnik.swagger.model._
 import com.wordnik.swagger.annotations._
 import com.wordnik.swagger.converter._
-import com.wordnik.swagger.util.Json
 
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import io.swagger.converter.ModelConverters
+import io.swagger.util.Json
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

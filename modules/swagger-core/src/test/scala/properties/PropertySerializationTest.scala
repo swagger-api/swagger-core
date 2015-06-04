@@ -1,6 +1,6 @@
 import com.wordnik.swagger.models.properties._
-
-import com.wordnik.swagger.util.Json
+import io.swagger.models.properties._
+import io.swagger.util.Json
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

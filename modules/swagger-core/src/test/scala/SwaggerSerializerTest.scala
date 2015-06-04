@@ -1,5 +1,11 @@
 import java.util
 
+import io.swagger.converter.ModelConverters
+import io.swagger.models.auth.{ApiKeyAuthDefinition, In}
+import io.swagger.models.parameters.{RefParameter, PathParameter, QueryParameter, BodyParameter}
+import io.swagger.models.properties.{LongProperty, StringProperty, RefProperty}
+import io.swagger.models._
+import io.swagger.util.Json
 import models._
 
 import com.wordnik.swagger.models._
@@ -8,7 +14,6 @@ import com.wordnik.swagger.models.properties._
 import com.wordnik.swagger.models.parameters._
 
 import com.wordnik.swagger.converter._
-import com.wordnik.swagger.util.Json
 
 import scala.io.Source
 

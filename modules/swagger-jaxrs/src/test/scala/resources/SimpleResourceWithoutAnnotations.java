@@ -1,8 +1,7 @@
 package resources;
 
+import io.swagger.annotations.ApiParam;
 import models.*;
-
-import com.wordnik.swagger.annotations.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;

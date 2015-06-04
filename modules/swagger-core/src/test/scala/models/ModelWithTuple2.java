@@ -1,11 +1,15 @@
 package models;
 
-import com.wordnik.swagger.jackson.AbstractModelConverter;
-import com.wordnik.swagger.annotations.ApiModelProperty;
-import com.wordnik.swagger.util.Json;
-import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.models.properties.*;
-import com.wordnik.swagger.converter.*;
+import io.swagger.converter.ModelConverter;
+import io.swagger.converter.ModelConverterContext;
+import io.swagger.jackson.AbstractModelConverter;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.properties.MapProperty;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.StringProperty;
+import io.swagger.util.Json;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -38,7 +42,7 @@ public class ModelWithTuple2 {
     }
 
     @Override
-    public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {  
+    public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {
       JavaType _type = Json.mapper().constructType(type);
       if(_type != null){
         Class<?> cls = _type.getRawClass();

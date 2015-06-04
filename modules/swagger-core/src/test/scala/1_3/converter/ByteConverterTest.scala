@@ -7,6 +7,8 @@ import com.wordnik.swagger.converter._
 import com.wordnik.swagger.util._
 
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import io.swagger.converter.ModelConverters
+import io.swagger.util.Json
 
 import scala.beans.BeanProperty
 

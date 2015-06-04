@@ -17,7 +17,7 @@
 package com.wordnik.swagger.sample.util;
 
 import com.wordnik.swagger.model.*;
-import com.wordnik.swagger.core.filter.SwaggerSpecFilter;
+import SwaggerSpecFilter;
 
 import org.slf4j.*;
 

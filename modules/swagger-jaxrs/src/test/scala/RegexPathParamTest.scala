@@ -1,12 +1,12 @@
+import io.swagger.jaxrs.Reader
+import io.swagger.models.Swagger
+import io.swagger.models.properties.MapProperty
+import io.swagger.util.Json
 import resources._
 
 import com.wordnik.swagger.jaxrs.config._
 import com.wordnik.swagger.models.parameters._
-import com.wordnik.swagger.models.properties.MapProperty
 
-import com.wordnik.swagger.models.Swagger
-import com.wordnik.swagger.jaxrs.Reader
-import com.wordnik.swagger.util.Json
 
 import scala.collection.JavaConverters._
 

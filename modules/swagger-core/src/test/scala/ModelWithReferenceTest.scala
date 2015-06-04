@@ -1,4 +1,5 @@
 import com.wordnik.swagger.converter._
+import io.swagger.converter.ModelConverters
 import matchers.SerializationMatchers._
 import models._
 import org.junit.runner.RunWith

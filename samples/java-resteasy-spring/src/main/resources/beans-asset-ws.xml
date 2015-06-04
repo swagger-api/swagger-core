@@ -14,11 +14,11 @@
 	<bean id="petStoreResource" class="com.wordnik.swagger.sample.bean.PetStoreResourceBean"/>
 
     <!-- Swagger Beans -->
-    <bean id="apiListingResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResource"/>
-    <bean id="apiDeclarationProvider" class="com.wordnik.swagger.jaxrs.listing.SwaggerSerializers"/>
+    <bean id="apiListingResourceJSON" class="ApiListingResource"/>
+    <bean id="apiDeclarationProvider" class="SwaggerSerializers"/>
 
     <!-- Swagger Configuration -->
-    <bean id="beanConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
+    <bean id="beanConfig" class="BeanConfig">
         <property name="title" value="Swagger Sample App"/>
         <property name="version" value="1.0.0" />
         <property name="schemes" value="http" />

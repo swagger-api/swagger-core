@@ -1,8 +1,7 @@
 package models;
 
-import com.wordnik.swagger.annotations.*;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModel;
 
 @ApiModel(value = "Foo")
 public class Foo1 extends Bar1 {

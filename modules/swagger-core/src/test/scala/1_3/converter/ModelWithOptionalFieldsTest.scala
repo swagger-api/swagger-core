@@ -1,9 +1,10 @@
 package converter
 
+import io.swagger.converter.ModelConverters
+import io.swagger.util.Json
 import models._
 
 import com.wordnik.swagger.converter._
-import com.wordnik.swagger.util.Json
 
 import com.fasterxml.jackson.datatype.guava.GuavaModule
 

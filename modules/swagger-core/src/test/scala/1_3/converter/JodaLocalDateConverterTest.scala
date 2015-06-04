@@ -1,5 +1,9 @@
 package converter
 
+import io.swagger.annotations.ApiModelProperty
+import io.swagger.converter.ModelConverters
+import io.swagger.models.properties.{StringProperty, DateProperty}
+import io.swagger.util.Json
 import models._
 
 import com.wordnik.swagger.annotations._

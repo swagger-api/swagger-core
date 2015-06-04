@@ -1,5 +1,9 @@
 import java.io.InputStream
 
+import io.swagger.jaxrs.ext.SwaggerExtensions
+import io.swagger.jersey.SwaggerJersey2Jaxrs
+import io.swagger.models.parameters.{HeaderParameter, FormParameter}
+
 import scala.collection.JavaConverters._
 
 import org.glassfish.jersey.media.multipart.{FormDataContentDisposition, FormDataParam}
@@ -7,10 +11,7 @@ import org.junit.runner.RunWith
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import org.scalatest.junit.JUnitRunner
-
-import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions
-import com.wordnik.swagger.jersey.SwaggerJersey2Jaxrs
-import com.wordnik.swagger.models.parameters.{FormParameter, HeaderParameter}
+import com.wordnik.swagger.models.parameters.HeaderParameter
 
 import java.lang.annotation.Annotation
 import java.lang.reflect.Type

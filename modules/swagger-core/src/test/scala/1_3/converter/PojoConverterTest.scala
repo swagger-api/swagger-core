@@ -2,12 +2,13 @@ package converter
 
 import com.wordnik.swagger.converter._
 
-import com.wordnik.swagger.util.Json
-import com.wordnik.swagger.annotations.ApiModelProperty
-
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
 import java.util.Date
+
+import io.swagger.annotations.ApiModelProperty
+import io.swagger.converter.ModelConverters
+import io.swagger.util.Json
 
 import scala.beans.BeanProperty
 

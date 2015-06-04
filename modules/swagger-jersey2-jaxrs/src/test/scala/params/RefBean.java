@@ -1,6 +1,6 @@
 package params;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.HeaderParam;

@@ -1,16 +1,20 @@
 import javax.ws.rs.QueryParam
 
+import io.swagger.jaxrs.Reader
+import io.swagger.jaxrs.config.DefaultReaderConfig
+import io.swagger.models.parameters.{PathParameter, QueryParameter, SerializableParameter, BodyParameter}
+import io.swagger.models.properties._
+import io.swagger.models.{ModelImpl, Model, RefModel, Swagger}
+import io.swagger.util.Json
 import resources._
 
 import com.wordnik.swagger.jaxrs.config._
 import com.wordnik.swagger.models._
 import com.wordnik.swagger.models.parameters._
-import com.wordnik.swagger.models.properties.{IntegerProperty, MapProperty}
-import com.wordnik.swagger.models.properties.{ArrayProperty, RefProperty, MapProperty}
+import com.wordnik.swagger.models.properties.MapProperty
+import com.wordnik.swagger.models.properties.MapProperty
 
-import com.wordnik.swagger.models.{Response, Swagger}
-import com.wordnik.swagger.jaxrs.Reader
-import com.wordnik.swagger.util.Json
+import com.wordnik.swagger.models.Swagger
 
 import scala.collection.JavaConverters._
 
@@ -19,11 +23,10 @@ import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import org.scalatest.junit.JUnitRunner
 
-import com.wordnik.swagger.jaxrs.Reader
-import com.wordnik.swagger.models.Swagger
+import Reader
 import com.wordnik.swagger.models.parameters._
 import com.wordnik.swagger.models.properties._
-import com.wordnik.swagger.util.Json
+import Json
 
 import models.TestEnum
 import resources._

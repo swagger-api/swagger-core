@@ -16,8 +16,6 @@
 
 package com.wordnik.swagger.sample.model;
 
-import com.wordnik.swagger.annotations.*;
-
 import java.util.Date;
 
 import javax.xml.bind.annotation.*;

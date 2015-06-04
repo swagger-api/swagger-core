@@ -1,6 +1,7 @@
 package models;
 
-import com.wordnik.swagger.annotations.*;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.*;
 

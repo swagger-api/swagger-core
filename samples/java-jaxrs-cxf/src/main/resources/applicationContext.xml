@@ -14,7 +14,7 @@
   <context:component-scan base-package="com.wordnik.swagger.sample" />
 
   <!-- Swagger writers -->
-  <bean id="swaggerWriter" class="com.wordnik.swagger.jaxrs.listing.SwaggerSerializers" />
+  <bean id="swaggerWriter" class="SwaggerSerializers" />
   <!-- <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" /> -->
 
   <!-- JSON mapper -->
@@ -29,7 +29,7 @@
   <bean id="petStoreResource" class="com.wordnik.swagger.sample.resource.PetStoreResource" />
 
   <!-- Swagger API listing resource -->
-  <bean id="swaggerResource" class="com.wordnik.swagger.jaxrs.listing.ApiListingResource" />
+  <bean id="swaggerResource" class="ApiListingResource" />
 
   <cxf:bus>
     <cxf:features>
@@ -38,7 +38,7 @@
   </cxf:bus>
 
   <!-- this scans the classes for resources -->
-  <bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
+  <bean id="swaggerConfig" class="BeanConfig">
     <property name="resourcePackage" value="com.wordnik.swagger.sample.resource"/>
     <property name="version" value="1.0.0"/>
     <property name="host" value="http://localhost:8002"/>

@@ -1,8 +1,8 @@
 import java.util
-
-import com.wordnik.swagger.jaxrs.Reader
-import com.wordnik.swagger.models.{Scheme, Swagger}
-import com.wordnik.swagger.util.Json
+import com.wordnik.swagger.models.Swagger
+import io.swagger.jaxrs.Reader
+import io.swagger.models.{Swagger, Scheme}
+import io.swagger.util.Json
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, FlatSpec}
 import org.scalatest.junit.JUnitRunner

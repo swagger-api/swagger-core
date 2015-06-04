@@ -16,7 +16,6 @@
 
 package com.wordnik.swagger.sample.resource;
 
-import com.wordnik.swagger.annotations.*;
 import com.wordnik.swagger.sample.data.PetData;
 import com.wordnik.swagger.sample.model.Pet;
 import com.wordnik.swagger.sample.exception.NotFoundException;
@@ -28,8 +27,6 @@ import org.apache.commons.io.IOUtils;
 
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.FileOutputStream;
 import java.util.List;

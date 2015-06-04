@@ -1,10 +1,8 @@
 package filter;
 
-import com.wordnik.swagger.core.filter.*;
-
-import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.models.parameters.*;
-import com.wordnik.swagger.model.ApiDescription;
+import io.swagger.core.filter.AbstractSpecFilter;
+import io.swagger.model.ApiDescription;
+import io.swagger.models.Operation;
 
 import java.util.*;
 

@@ -1,6 +1,6 @@
 package models;
 
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiParam;
 
 import javax.ws.rs.*;
 
