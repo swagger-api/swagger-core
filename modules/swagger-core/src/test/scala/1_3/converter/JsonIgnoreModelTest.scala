@@ -1,10 +1,11 @@
 package converter
 
+import io.swagger.converter.ModelConverters
 import models._
 
-import com.wordnik.swagger.converter._
+import io.swagger.converter._
 
-import com.wordnik.swagger.util._
+import io.swagger.util._
 
 import java.util.Date
 

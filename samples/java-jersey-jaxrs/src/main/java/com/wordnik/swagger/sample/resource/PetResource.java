@@ -14,12 +14,11 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.resource;
+package io.swagger.sample.resource;
 
-import com.wordnik.swagger.annotations.*;
-import com.wordnik.swagger.sample.data.PetData;
-import com.wordnik.swagger.sample.model.Pet;
-import com.wordnik.swagger.sample.exception.NotFoundException;
+import io.swagger.sample.data.PetData;
+import io.swagger.sample.model.Pet;
+import io.swagger.sample.exception.NotFoundException;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
@@ -28,8 +27,6 @@ import org.apache.commons.io.IOUtils;
 
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.FileOutputStream;
 import java.util.List;
@@ -91,7 +88,7 @@ public class PetResource {
   @Consumes({MediaType.MULTIPART_FORM_DATA})
   @Produces({MediaType.APPLICATION_JSON})
   @ApiOperation(value = "uploads an image",
-    response = com.wordnik.swagger.sample.model.ApiResponse.class)
+    response = io.swagger.sample.model.ApiResponse.class)
   public Response uploadFile(
     @ApiParam(value = "ID of pet to update", required = true) @PathParam("petId") Long petId,
     @ApiParam(value = "Additional data to pass to server") @FormDataParam("additionalMetadata") String testString,
@@ -103,7 +100,7 @@ public class PetResource {
       System.out.println("uploading to " + uploadedFileLocation);
       IOUtils.copy(inputStream, new FileOutputStream(uploadedFileLocation));
       String msg = "additionalMetadata: " + testString + "\nFile uploaded to " + uploadedFileLocation + ", " + (new java.io.File(uploadedFileLocation)).length() + " bytes";
-      com.wordnik.swagger.sample.model.ApiResponse output = new com.wordnik.swagger.sample.model.ApiResponse(200, msg);
+      io.swagger.sample.model.ApiResponse output = new io.swagger.sample.model.ApiResponse(200, msg);
       return Response.status(200).entity(output).build();
     }
     catch (Exception e) {

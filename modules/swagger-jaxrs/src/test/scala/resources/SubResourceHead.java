@@ -2,7 +2,8 @@ package resources;
 
 import javax.ws.rs.Path;
 
-import com.wordnik.swagger.annotations.Api;
+import io.swagger.annotations.Api;
+import io.swagger.jaxrs.Reader;
 
 @Api
 @Path("/head")
@@ -10,7 +11,7 @@ public class SubResourceHead {
 
   /**
    * This path is expected to be collected by
-   * {@link com.wordnik.swagger.jaxrs.Reader}.
+   * {@link Reader}.
    *
    * @return class instance of sub-resource
    */
@@ -21,7 +22,7 @@ public class SubResourceHead {
 
   /**
    * This path is expected to be collected by
-   * {@link com.wordnik.swagger.jaxrs.Reader}.
+   * {@link Reader}.
    *
    * @return class instance of sub-resource
    */
@@ -32,7 +33,7 @@ public class SubResourceHead {
 
   /**
    * This path is expected to be skipped by
-   * {@link com.wordnik.swagger.jaxrs.Reader} as {@link String} doesn't process
+   * {@link Reader} as {@link String} doesn't process
    * any requests.
    *
    * @return string class
@@ -44,7 +45,7 @@ public class SubResourceHead {
 
   /**
    * This path is expected to be skipped by
-   * {@link com.wordnik.swagger.jaxrs.Reader} as resource class is unknown here.
+   * {@link Reader} as resource class is unknown here.
    *
    * @return <code>null</code>
    */
@@ -55,7 +56,7 @@ public class SubResourceHead {
 
   /**
    * This path is expected to be skipped by
-   * {@link com.wordnik.swagger.jaxrs.Reader} as resource class is unknown here.
+   * {@link Reader} as resource class is unknown here.
    *
    * @return <code>null</code>
    */
@@ -66,7 +67,7 @@ public class SubResourceHead {
 
   /**
    * This path is expected to be skipped by
-   * {@link com.wordnik.swagger.jaxrs.Reader} as method result is an array.
+   * {@link Reader} as method result is an array.
    *
    * @return <code>null</code>
    */

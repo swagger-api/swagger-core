@@ -1,7 +1,7 @@
 package models.composition;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description = "I am an Abstract Base Model with Sub-Types",
         discriminator = "_type",

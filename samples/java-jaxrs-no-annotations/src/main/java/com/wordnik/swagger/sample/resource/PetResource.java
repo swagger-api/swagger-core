@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.resource;
+package io.swagger.sample.resource;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -25,9 +25,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
-import com.wordnik.swagger.sample.data.PetData;
-import com.wordnik.swagger.sample.exception.NotFoundException;
-import com.wordnik.swagger.sample.model.Pet;
+import io.swagger.sample.data.PetData;
+import io.swagger.sample.exception.NotFoundException;
+import io.swagger.sample.model.Pet;
 
 @Path("/pet")
 @Produces({"application/json", "application/xml"})

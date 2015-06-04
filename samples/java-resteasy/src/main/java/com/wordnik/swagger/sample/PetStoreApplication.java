@@ -1,8 +1,8 @@
-package com.wordnik.swagger.sample;
+package io.swagger.sample;
 
-import com.wordnik.swagger.sample.resource.PetResource;
-import com.wordnik.swagger.sample.resource.PetStoreResource;
-import com.wordnik.swagger.sample.resource.UserResource;
+import io.swagger.sample.resource.PetResource;
+import io.swagger.sample.resource.PetStoreResource;
+import io.swagger.sample.resource.UserResource;
 
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
@@ -22,8 +22,8 @@ public class PetStoreApplication extends Application {
         set.add(UserResource.class);
         set.add(PetStoreResource.class);
 
-        set.add(com.wordnik.swagger.jaxrs.listing.ApiListingResource.class);
-        set.add(com.wordnik.swagger.jaxrs.listing.SwaggerSerializers.class);
+        set.add(io.swagger.jaxrs.listing.ApiListingResource.class);
+        set.add(io.swagger.jaxrs.listing.SwaggerSerializers.class);
 
         return set;
     }

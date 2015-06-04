@@ -1,12 +1,11 @@
 package resources;
 
-import com.wordnik.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import java.util.*;
 
 @Path("test")
 @Produces(MediaType.APPLICATION_JSON)

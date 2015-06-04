@@ -34,7 +34,7 @@
 
     <servlet>
         <servlet-name>SwaggerBootstrap</servlet-name>
-        <servlet-class>com.wordnik.swagger.sample.Bootstrap</servlet-class>
+        <servlet-class>io.swagger.sample.Bootstrap</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 

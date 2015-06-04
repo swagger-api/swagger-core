@@ -1,8 +1,9 @@
+import io.swagger.models.ModelImpl
+import io.swagger.models.properties.{LongProperty, StringProperty}
+import io.swagger.util.Json
 import models._
-
-import com.wordnik.swagger.util.Json
-import com.wordnik.swagger.models._
-import com.wordnik.swagger.models.properties._
+import io.swagger.models._
+import io.swagger.models.properties._
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

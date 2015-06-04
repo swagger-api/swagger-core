@@ -14,12 +14,12 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.data;
+package io.swagger.sample.data;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wordnik.swagger.sample.model.User;
+import io.swagger.sample.model.User;
 
 public class UserData {
   static List<User> users = new ArrayList<User>();

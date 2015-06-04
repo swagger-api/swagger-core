@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <groupId>com.wordnik</groupId>
+    <groupId>io.swagger</groupId>
     <artifactId>swagger-project</artifactId>
     <version>1.5.3-M2-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.wordnik</groupId>
+  <groupId>io.swagger</groupId>
   <artifactId>swagger-jaxrs-wink-sample</artifactId>
   <version>1.5.3-M2-SNAPSHOT</version>
   <packaging>war</packaging>
@@ -129,7 +129,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.wordnik</groupId>
+      <groupId>io.swagger</groupId>
       <artifactId>swagger-jaxrs</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>

@@ -1,6 +1,6 @@
 package models;
 
-import com.wordnik.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModel;
 
 @ApiModel("RenamedGenericType")
 public class GenericTypeWithApiModel<T> {

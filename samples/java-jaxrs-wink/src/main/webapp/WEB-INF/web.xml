@@ -6,7 +6,7 @@
     <servlet-class>org.apache.wink.server.internal.servlet.RestServlet</servlet-class>
     <init-param>
       <param-name>javax.ws.rs.Application</param-name>
-      <param-value>com.wordnik.swagger.sample.resources.ResourceConfiguration</param-value>
+      <param-value>io.swagger.sample.resources.ResourceConfiguration</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
@@ -16,7 +16,7 @@
   </servlet-mapping>
   <servlet>
     <servlet-name>DefaultJaxrsConfig</servlet-name>
-    <servlet-class>com.wordnik.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
+    <servlet-class>DefaultJaxrsConfig</servlet-class>
     <init-param>
       <param-name>api.version</param-name>
       <param-value>1.0.0</param-value>
@@ -27,17 +27,17 @@
     </init-param>
     <init-param>
       <param-name>swagger.filter</param-name>
-      <param-value>com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl</param-value>
+      <param-value>io.swagger.sample.util.ApiAuthorizationFilterImpl</param-value>
     </init-param>
     <load-on-startup>2</load-on-startup>
   </servlet>
   <filter>
     <filter-name>ApiOriginFilter</filter-name>
-    <filter-class>com.wordnik.swagger.sample.util.ApiOriginFilter</filter-class>
+    <filter-class>io.swagger.sample.util.ApiOriginFilter</filter-class>
   </filter>
   <servlet>
     <servlet-name>Bootstrap</servlet-name>
-    <servlet-class>com.wordnik.swagger.sample.Bootstrap</servlet-class>
+    <servlet-class>io.swagger.sample.Bootstrap</servlet-class>
     <load-on-startup>2</load-on-startup>
   </servlet>
   <session-config>

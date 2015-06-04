@@ -14,14 +14,13 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.bean;
+package io.swagger.sample.bean;
 
-import com.wordnik.swagger.annotations.*;
-import com.wordnik.swagger.sample.data.UserData;
-import com.wordnik.swagger.sample.model.User;
-import com.wordnik.swagger.sample.exception.ApiException;
-import com.wordnik.swagger.sample.exception.NotFoundException;
-import com.wordnik.swagger.sample.resource.UserResource;
+import io.swagger.sample.data.UserData;
+import io.swagger.sample.model.User;
+import io.swagger.sample.exception.ApiException;
+import io.swagger.sample.exception.NotFoundException;
+import io.swagger.sample.resource.UserResource;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.Response;

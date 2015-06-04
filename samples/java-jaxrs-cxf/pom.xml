@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <parent>
-    <groupId>com.wordnik</groupId>
+    <groupId>io.swagger</groupId>
     <artifactId>swagger-project</artifactId>
     <version>1.5.3-M2-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.wordnik</groupId>
+  <groupId>io.swagger</groupId>
   <artifactId>swagger-java-cxf-sample</artifactId>
   <packaging>war</packaging>
   <name>swagger-java-cxf-sample</name>
@@ -214,7 +214,7 @@
 
     <!-- Swagger Stuff -->
     <dependency>
-      <groupId>com.wordnik</groupId>
+      <groupId>io.swagger</groupId>
       <artifactId>swagger-jaxrs</artifactId>
       <version>${project.parent.version}</version>
       <scope>compile</scope>

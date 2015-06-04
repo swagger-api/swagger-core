@@ -11,25 +11,25 @@
 
   <import resource="classpath:META-INF/cxf/cxf.xml" />
 
-  <context:component-scan base-package="com.wordnik.swagger.sample" />
+  <context:component-scan base-package="io.swagger.sample" />
 
   <!-- Swagger writers -->
-  <bean id="swaggerWriter" class="com.wordnik.swagger.jaxrs.listing.SwaggerSerializers" />
-  <!-- <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" /> -->
+  <bean id="swaggerWriter" class="SwaggerSerializers" />
+  <!-- <bean id="apiWriter" class="io.swagger.jaxrs.listing.ApiDeclarationProvider" /> -->
 
   <!-- JSON mapper -->
   <bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
 
   <!-- Exception mapper -->
-  <bean id="exceptionMapper" class="com.wordnik.swagger.sample.resource.SampleExceptionMapper" />
+  <bean id="exceptionMapper" class="io.swagger.sample.resource.SampleExceptionMapper" />
 
   <!-- Application resources -->
-  <bean id="userResource" class="com.wordnik.swagger.sample.resource.UserResource" />
-  <bean id="petResource" class="com.wordnik.swagger.sample.resource.PetResource" />
-  <bean id="petStoreResource" class="com.wordnik.swagger.sample.resource.PetStoreResource" />
+  <bean id="userResource" class="io.swagger.sample.resource.UserResource" />
+  <bean id="petResource" class="io.swagger.sample.resource.PetResource" />
+  <bean id="petStoreResource" class="io.swagger.sample.resource.PetStoreResource" />
 
   <!-- Swagger API listing resource -->
-  <bean id="swaggerResource" class="com.wordnik.swagger.jaxrs.listing.ApiListingResource" />
+  <bean id="swaggerResource" class="ApiListingResource" />
 
   <cxf:bus>
     <cxf:features>
@@ -38,8 +38,8 @@
   </cxf:bus>
 
   <!-- this scans the classes for resources -->
-  <bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
-    <property name="resourcePackage" value="com.wordnik.swagger.sample.resource"/>
+  <bean id="swaggerConfig" class="BeanConfig">
+    <property name="resourcePackage" value="io.swagger.sample.resource"/>
     <property name="version" value="1.0.0"/>
     <property name="host" value="http://localhost:8002"/>
     <property name="basePath" value="/api"/>
@@ -48,7 +48,7 @@
     <property name="contact" value="apiteam@swagger.io"/>
     <property name="license" value="Apache 2.0 License"/>
     <property name="licenseUrl" value="http://www.apache.org/licenses/LICENSE-2.0.html"/>
-    <!-- <property name="filterClass" value="com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl"/> -->
+    <!-- <property name="filterClass" value="io.swagger.sample.util.ApiAuthorizationFilterImpl"/> -->
     <property name="scan" value="true"/>
   </bean>
 

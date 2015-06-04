@@ -1,6 +1,6 @@
 package models;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiModelProperty;
 
 public abstract class JCovariantGetter {
   @ApiModelProperty(position = 1)

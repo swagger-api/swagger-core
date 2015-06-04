@@ -1,7 +1,7 @@
 package models;
 
-import com.wordnik.swagger.annotations.*;
-import com.wordnik.swagger.models.Swagger;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.Swagger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

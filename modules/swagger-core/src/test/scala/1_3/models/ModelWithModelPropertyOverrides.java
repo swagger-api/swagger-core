@@ -1,8 +1,6 @@
 package models;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
-
-import java.util.*;
+import io.swagger.annotations.ApiModelProperty;
 
 public class ModelWithModelPropertyOverrides {
   @ApiModelProperty(dataType = "List[models.Children]")

@@ -1,13 +1,14 @@
+import io.swagger.jaxrs.Reader
+import io.swagger.models.parameters.BodyParameter
+import io.swagger.models.properties.{StringProperty, RefProperty}
+import io.swagger.models.{ArrayModel, Model, Swagger}
+import io.swagger.util.Json
 import resources._
 
-import com.wordnik.swagger.jaxrs.config._
-import com.wordnik.swagger.models._
-import com.wordnik.swagger.models.parameters._
-import com.wordnik.swagger.models.properties._
-
-import com.wordnik.swagger.models.Swagger
-import com.wordnik.swagger.jaxrs.Reader
-import com.wordnik.swagger.util.Json
+import io.swagger.jaxrs.config._
+import io.swagger.models._
+import io.swagger.models.parameters._
+import io.swagger.models.properties._
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

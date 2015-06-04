@@ -1,10 +1,7 @@
-package com.wordnik.swagger.sample;
+package io.swagger.sample;
 
-import com.wordnik.swagger.config.ScannerFactory;
-import com.wordnik.swagger.models.*;
-import com.wordnik.swagger.jaxrs.config.ReflectiveJaxrsScanner;
-
-import com.wordnik.swagger.models.auth.*;
+import io.swagger.config.ScannerFactory;
+import io.swagger.jaxrs.config.ReflectiveJaxrsScanner;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.ServletContext;
@@ -15,7 +12,7 @@ public class Bootstrap extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     ReflectiveJaxrsScanner scanner = new ReflectiveJaxrsScanner();
-    scanner.setResourcePackage("com.wordnik.swagger.sample.resource");
+    scanner.setResourcePackage("io.swagger.sample.resource");
     ScannerFactory.setScanner(scanner);
     Info info = new Info()
       .title("Swagger Sample App")

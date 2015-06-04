@@ -1,10 +1,7 @@
 package models.composition;
 
-import com.wordnik.swagger.annotations.*;
-
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 
 @JsonTypeInfo(
   use = JsonTypeInfo.Id.NAME,

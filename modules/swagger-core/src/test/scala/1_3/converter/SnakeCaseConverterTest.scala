@@ -1,15 +1,18 @@
 package converter
 
+import io.swagger.converter.{ModelConverterContext, ModelConverters, ModelConverter}
+import io.swagger.models.{ModelImpl, Model}
+import io.swagger.models.properties.{RefProperty, Property}
+import io.swagger.util.Json
 import models._
 
-import com.wordnik.swagger.converter._
-import com.wordnik.swagger.models._
-import com.wordnik.swagger.models.properties._
+import io.swagger.converter._
+import io.swagger.models._
+import io.swagger.models.properties._
 
-import com.wordnik.swagger.annotations._
-import com.wordnik.swagger.converter._
-import com.wordnik.swagger.util.Json
-import com.wordnik.swagger.models._
+import io.swagger.annotations._
+import io.swagger.converter._
+import io.swagger.models._
 
 import java.lang.annotation.Annotation
 import java.lang.reflect.Type

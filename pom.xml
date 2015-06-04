@@ -5,10 +5,10 @@
     <version>5</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.wordnik</groupId>
+  <groupId>io.swagger</groupId>
   <artifactId>swagger-project</artifactId>
   <packaging>pom</packaging>
-  <name>wordnik-swagger-project</name>
+  <name>swagger-project</name>
   <version>1.5.3-M2-SNAPSHOT</version>
   <url>https://github.com/swagger-api/swagger-core</url>
   <scm>
@@ -189,7 +189,7 @@
               <mode>development</mode>
               <url>${project.url}</url>
               <implementation-version>${project.version}</implementation-version>
-              <package>com.wordnik</package>
+              <package>io.swagger</package>
             </manifestEntries>
           </archive>
         </configuration>
@@ -248,19 +248,19 @@
         <configuration>
           <excludes>
             <!-- TODO remove these excludes and add tests -->
-            <exclude>**/com/wordnik/swagger/config/FilterFactory.*</exclude>
-            <exclude>**/com/wordnik/swagger/model/ApiInfo.*</exclude>
-            <exclude>**/com/wordnik/swagger/util/Yaml.*</exclude>
-            <exclude>**/com/wordnik/swagger/jackson/*</exclude>
-            <exclude>**/com/wordnik/swagger/converter/ModelConverters.*</exclude>
+            <exclude>**/io/swagger/config/FilterFactory.*</exclude>
+            <exclude>**/io/swagger/model/ApiInfo.*</exclude>
+            <exclude>**/io/swagger/util/Yaml.*</exclude>
+            <exclude>**/io/swagger/jackson/*</exclude>
+            <exclude>**/io/swagger/converter/ModelConverters.*</exclude>
             
             <!-- JAXRS -->
-            <exclude>**/com/wordnik/swagger/jaxrs/json/JacksonJsonProvider.*</exclude>
-            <exclude>**/com/wordnik/swagger/jaxrs/listing/ApiListingResource.*</exclude>
-            <exclude>**/com/wordnik/swagger/jaxrs/listing/SwaggerSerializers.*</exclude>
-            <exclude>**/com/wordnik/swagger/jaxrs/config/WebXMLReader.*</exclude>
-            <exclude>**/com/wordnik/swagger/jaxrs/config/DefaultJaxrsScanner.*</exclude>
-            <exclude>**/com/wordnik/swagger/jaxrs/config/DefaultJaxrsConfig.*</exclude>
+            <exclude>**/io/swagger/jaxrs/json/JacksonJsonProvider.*</exclude>
+            <exclude>**/io/swagger/jaxrs/listing/ApiListingResource.*</exclude>
+            <exclude>**/io/swagger/jaxrs/listing/SwaggerSerializers.*</exclude>
+            <exclude>**/io/swagger/jaxrs/config/WebXMLReader.*</exclude>
+            <exclude>**/io/swagger/jaxrs/config/DefaultJaxrsScanner.*</exclude>
+            <exclude>**/io/swagger/jaxrs/config/DefaultJaxrsConfig.*</exclude>
 
           </excludes>
           <rules>

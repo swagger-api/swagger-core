@@ -17,24 +17,24 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
 
 	<spring:beans>
 		<spring:bean id="petResource"
-			class="com.wordnik.swagger.sample.resource.PetResource">
+			class="io.swagger.sample.resource.PetResource">
 		</spring:bean>
         <spring:bean id="petStoreResource"
-                     class="com.wordnik.swagger.sample.resource.PetStoreResource">
+                     class="io.swagger.sample.resource.PetStoreResource">
         </spring:bean>
         <spring:bean id="userResource"
-                     class="com.wordnik.swagger.sample.resource.UserResource">
+                     class="io.swagger.sample.resource.UserResource">
         </spring:bean>
     </spring:beans>
 
 	<spring:beans>
 		<spring:bean id="bootstrap" init-method="start" lazy-init="false"
-			class="com.wordnik.swagger.sample.Bootstrap" />
+			class="io.swagger.sample.Bootstrap" />
 		<spring:bean id="apiListingJSON"
-			class="com.wordnik.swagger.mule.ApiListingJSON" />
+			class="ApiListingJSON" />
 		<spring:bean id="swaggerConfig"
-			class="com.wordnik.swagger.jaxrs.config.BeanConfig">
-			<spring:property name="resourcePackage" value="com.wordnik.swagger.sample.resource" />
+			class="BeanConfig">
+			<spring:property name="resourcePackage" value="io.swagger.sample.resource" />
 			<spring:property name="version" value="1.0.0" />
 			<spring:property name="host" value="localhost:7001" />
 			<spring:property name="basePath" value="/" />

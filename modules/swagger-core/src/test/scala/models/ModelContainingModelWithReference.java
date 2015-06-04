@@ -1,6 +1,6 @@
 package models;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiModelProperty;
 
 public class ModelContainingModelWithReference {
     public ModelWithReference getModel(){

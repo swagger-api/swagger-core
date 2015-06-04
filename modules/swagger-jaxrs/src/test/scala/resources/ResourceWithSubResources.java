@@ -5,8 +5,8 @@ import javax.ws.rs.Path;
 
 import models.Employee;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Api("/employees")
 @Path("/employees")

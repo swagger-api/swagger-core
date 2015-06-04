@@ -16,8 +16,8 @@
 
 import java.net.URL
 
-import com.wordnik.swagger.models.Swagger
-import com.wordnik.swagger.util.Json
+import io.swagger.models.Swagger
+import io.swagger.util.Json
 
 import org.junit.runner.RunWith
 

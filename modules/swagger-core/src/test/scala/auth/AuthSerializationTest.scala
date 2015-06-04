@@ -1,8 +1,7 @@
+import io.swagger.models.auth.{OAuth2Definition, ApiKeyAuthDefinition, BasicAuthDefinition, In}
+import io.swagger.util.{Yaml, Json}
 import models._
-
-import com.wordnik.swagger.util.Json
-import com.wordnik.swagger.util.Yaml
-import com.wordnik.swagger.models.auth._
+import io.swagger.models.auth._
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 

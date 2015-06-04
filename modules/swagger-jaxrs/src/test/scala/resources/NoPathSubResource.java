@@ -2,8 +2,8 @@ package resources;
 
 import javax.ws.rs.GET;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * The <code>NoPathSubResource</code> class defines test sub-resource without

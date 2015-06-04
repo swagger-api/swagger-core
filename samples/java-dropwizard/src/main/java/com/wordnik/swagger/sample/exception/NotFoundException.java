@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.exception;
+package io.swagger.sample.exception;
 
 public class NotFoundException extends ApiException {
 	private int code;

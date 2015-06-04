@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>com.wordnik</groupId>
+    <groupId>io.swagger</groupId>
     <artifactId>swagger-project</artifactId>
     <version>1.5.3-M2-SNAPSHOT</version>
     <relativePath>../..</relativePath>
@@ -33,9 +33,9 @@
         <configuration>
           <instructions>
             <Export-Package>
-              com.wordnik.swagger.models.parameters,
-              com.wordnik.swagger.models.properties,
-              com.wordnik.swagger.models
+              io.swagger.models.parameters,
+              io.swagger.models.properties,
+              io.swagger.models
             </Export-Package>
           </instructions>
         </configuration>
@@ -54,7 +54,7 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.wordnik</groupId>
+      <groupId>io.swagger</groupId>
       <artifactId>swagger-annotations</artifactId>
       <version>${project.parent.version}</version>
       <scope>compile</scope>

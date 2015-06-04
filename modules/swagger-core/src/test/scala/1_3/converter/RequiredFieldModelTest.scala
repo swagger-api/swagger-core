@@ -1,11 +1,12 @@
 package converter
 
+import io.swagger.converter.ModelConverters
 import models._
 
-import com.wordnik.swagger.converter._
-import com.wordnik.swagger.util._
-import com.wordnik.swagger.model._
-import com.wordnik.swagger.annotations._
+import io.swagger.converter._
+import io.swagger.util._
+import io.swagger.model._
+import io.swagger.annotations._
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

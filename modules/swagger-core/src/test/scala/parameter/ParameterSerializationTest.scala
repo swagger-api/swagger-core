@@ -1,9 +1,9 @@
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.wordnik.swagger.models._
-import com.wordnik.swagger.models.properties._
-import com.wordnik.swagger.models.parameters._
+import io.swagger.models._
+import io.swagger.models.properties._
+import io.swagger.models.parameters._
 
-import com.wordnik.swagger.util._
+import io.swagger.util._
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -11,6 +11,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.core.JsonGenerator.Feature
 import com.fasterxml.jackson.databind._
 import com.fasterxml.jackson.annotation._
+import io.swagger.models.{ModelImpl, ArrayModel, RefModel}
+import io.swagger.models.parameters._
+import io.swagger.models.properties.{StringProperty, IntegerProperty, ArrayProperty, RefProperty}
+import io.swagger.util.{Yaml, Json}
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

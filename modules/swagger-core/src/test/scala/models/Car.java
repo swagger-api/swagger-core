@@ -1,8 +1,6 @@
 package models;
 
-import models.composition.Pet;
-
-import com.wordnik.swagger.annotations.*;
+import io.swagger.annotations.ApiModelProperty;
 
 public class Car {
   @ApiModelProperty(readOnly = true)

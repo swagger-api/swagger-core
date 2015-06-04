@@ -14,16 +14,16 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.resources;
+package io.swagger.sample.resources;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
-import com.wordnik.swagger.sample.data.PetData;
-import com.wordnik.swagger.sample.exception.NotFoundException;
-import com.wordnik.swagger.sample.model.Pet;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.sample.data.PetData;
+import io.swagger.sample.exception.NotFoundException;
+import io.swagger.sample.model.Pet;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;

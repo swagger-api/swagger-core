@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.data;
+package io.swagger.sample.data;
 
-import com.wordnik.swagger.sample.model.*;
+import io.swagger.sample.model.*;
 
 import java.util.List;
 import java.util.ArrayList;

@@ -1,0 +1,121 @@
+package io.swagger.models.properties;
+
+import io.swagger.models.Xml;
+
+import java.util.*;
+
+public class UUIDProperty extends AbstractProperty implements Property {
+  protected List<String> _enum;
+  protected Integer minLength = null, maxLength = null;
+  protected String pattern = null;
+  protected String _default;
+
+  public UUIDProperty() {
+    super.type = "string";
+    super.format = "uuid";
+  }
+  public UUIDProperty xml(Xml xml) {
+    this.setXml(xml);
+    return this;
+  }
+
+  public UUIDProperty minLength(Integer minLength) {
+    this.setMinLength(minLength);
+    return this;
+  }
+  public UUIDProperty maxLength(Integer maxLength) {
+    this.setMaxLength(maxLength);
+    return this;
+  }
+  public UUIDProperty pattern(String pattern) {
+    this.setPattern(pattern);
+    return this;
+  }
+  public UUIDProperty _default(String _default) {
+    this._default = _default;
+    return this;
+  }
+
+  public Integer getMinLength() {
+    return minLength;
+  }
+  public void setMinLength(Integer minLength) {
+    this.minLength = minLength;
+  }
+
+  public Integer getMaxLength() {
+    return maxLength;
+  }
+  public void setMaxLength(Integer maxLength) {
+    this.maxLength = maxLength;
+  }
+
+  public String getPattern() {
+    return pattern;
+  }
+  public void setPattern(String pattern) {
+    this.pattern = pattern;
+  }
+
+  public String getDefault() {
+    return _default;
+  }
+  public void setDefault(String _default) {
+    this._default = _default;
+  }
+
+  public static boolean isType(String type, String format) {
+    if("string".equals(type) && "uuid".equals(format))
+      return true;
+    else return false;
+  }
+
+  @Override
+  public int hashCode() {
+  	final int prime = 31;
+  	int result = 1;
+  	result = prime * result + ((_default == null) ? 0 : _default.hashCode());
+  	result = prime * result + ((_enum == null) ? 0 : _enum.hashCode());
+  	result = prime * result + ((maxLength == null) ? 0 : maxLength.hashCode());
+  	result = prime * result + ((minLength == null) ? 0 : minLength.hashCode());
+  	result = prime * result + ((pattern == null) ? 0 : pattern.hashCode());
+  	return result;
+  }
+  
+  @Override
+  public boolean equals(Object obj) {
+  	if (this == obj)
+  		return true;
+  	if (obj == null)
+  		return false;
+  	if (getClass() != obj.getClass())
+  		return false;
+  	UUIDProperty other = (UUIDProperty) obj;
+  	if (_default == null) {
+  		if (other._default != null)
+  			return false;
+  	} else if (!_default.equals(other._default))
+  		return false;
+  	if (_enum == null) {
+  		if (other._enum != null)
+  			return false;
+  	} else if (!_enum.equals(other._enum))
+  		return false;
+  	if (maxLength == null) {
+  		if (other.maxLength != null)
+  			return false;
+  	} else if (!maxLength.equals(other.maxLength))
+  		return false;
+  	if (minLength == null) {
+  		if (other.minLength != null)
+  			return false;
+  	} else if (!minLength.equals(other.minLength))
+  		return false;
+  	if (pattern == null) {
+  		if (other.pattern != null)
+  			return false;
+  	} else if (!pattern.equals(other.pattern))
+  		return false;
+  	return true;
+  }
+}

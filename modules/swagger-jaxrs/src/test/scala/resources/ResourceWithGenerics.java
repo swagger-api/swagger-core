@@ -15,9 +15,9 @@ import models.GenericTypeWithApiModel;
 import models.Tag;
 import models.TestEnum;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api
 @Path("/generics")

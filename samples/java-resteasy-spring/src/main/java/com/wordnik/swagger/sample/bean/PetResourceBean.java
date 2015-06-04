@@ -14,12 +14,12 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.bean;
+package io.swagger.sample.bean;
 
-import com.wordnik.swagger.sample.data.PetData;
-import com.wordnik.swagger.sample.model.Pet;
-import com.wordnik.swagger.sample.exception.NotFoundException;
-import com.wordnik.swagger.sample.resource.PetResource;
+import io.swagger.sample.data.PetData;
+import io.swagger.sample.model.Pet;
+import io.swagger.sample.exception.NotFoundException;
+import io.swagger.sample.resource.PetResource;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;

@@ -1,13 +1,13 @@
-import com.wordnik.swagger.converter.ModelConverters
+import io.swagger.converter.ModelConverters
+import io.swagger.jaxrs.Reader
+import io.swagger.models.Swagger
+import io.swagger.models.properties.RefProperty
 import models.Pet
 import resources._
 import matchers.SerializationMatchers._
 
 import org.scalatest.{FlatSpec, Matchers}
-import com.wordnik.swagger.models.properties.{RefProperty, MapProperty}
-
-import com.wordnik.swagger.models.Swagger
-import com.wordnik.swagger.jaxrs.Reader
+import io.swagger.models.properties.MapProperty
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

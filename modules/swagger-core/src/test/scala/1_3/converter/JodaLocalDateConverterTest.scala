@@ -1,12 +1,16 @@
 package converter
 
+import io.swagger.annotations.ApiModelProperty
+import io.swagger.converter.ModelConverters
+import io.swagger.models.properties.{StringProperty, DateProperty}
+import io.swagger.util.Json
 import models._
 
-import com.wordnik.swagger.annotations._
-import com.wordnik.swagger.converter._
-import com.wordnik.swagger.util._
-import com.wordnik.swagger.models._
-import com.wordnik.swagger.models.properties._
+import io.swagger.annotations._
+import io.swagger.converter._
+import io.swagger.util._
+import io.swagger.models._
+import io.swagger.models.properties._
 
 import org.joda.time.LocalDate
 

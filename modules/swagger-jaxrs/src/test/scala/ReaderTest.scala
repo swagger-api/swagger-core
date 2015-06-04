@@ -1,11 +1,11 @@
 import java.lang.reflect.Method
 import javax.ws.rs._
-
-import com.wordnik.swagger.annotations.ApiOperation
-import com.wordnik.swagger.jaxrs.Reader
-import com.wordnik.swagger.models.Swagger
 import javax.ws.rs.core.MediaType
-import com.wordnik.swagger.models.parameters._
+import io.swagger.models.parameters._
+import io.swagger.annotations.ApiOperation
+import io.swagger.jaxrs.Reader
+import io.swagger.models.Swagger
+import io.swagger.models.parameters._
 import org.junit.runner.RunWith
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
