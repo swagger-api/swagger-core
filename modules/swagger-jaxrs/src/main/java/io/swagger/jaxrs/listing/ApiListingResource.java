@@ -135,7 +135,7 @@ public class ApiListingResource {
             b.append(part);
           b.append("\n");
         }
-        return Response.ok().entity(b.toString()).type("text/plain").build();
+        return Response.ok().entity(b.toString()).type("application/yaml").build();
       }
     }
     catch (Exception e) {

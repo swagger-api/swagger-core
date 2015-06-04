@@ -51,8 +51,11 @@ public class SwaggerSerializers implements MessageBodyWriter <Swagger> {
       else
         out.write(Json.mapper().writeValueAsString(data).getBytes("utf-8"));
     }
-    else if (mediaType.toString().startsWith("application/yaml"))
+    else if (mediaType.toString().startsWith("application/yaml")) {
+      headers.remove("Content-Type");
+      headers.add("Content-Type", "application/yaml");
       out.write(Yaml.mapper().writeValueAsString(data).getBytes("utf-8"));
+    }
     else if(mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE)) {
       headers.remove("Content-Type");
       headers.add("Content-Type", "application/json");
