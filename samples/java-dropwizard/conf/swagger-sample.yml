@@ -1,8 +1,0 @@
-defaultName: Swagger-sample
-logging:
-  level: ERROR
-  appenders:
-    - type: console
-      threshold: ALL
-      timeZone: UTC
-      target: stdout

@@ -372,41 +372,6 @@
         <module>samples/scala-oauth-authorization-server</module>
       </modules>
     </profile>
-    <profile>
-      <!-- Samples -->
-      <id>samples</id>
-      <activation>
-        <property>
-          <name>env</name>
-          <value>samples</value>
-        </property>
-      </activation>
-      <modules>
-        <module>samples/java-jaxrs</module>
-        <module>samples/java-jersey2</module>
-        <module>samples/java-jaxrs-subresource</module>
-        <module>samples/java-jaxrs-no-webxml</module>
-        <module>samples/java-mule</module>
-        <module>samples/java-dropwizard</module>
-        <module>samples/java-jaxrs-cxf</module>
-        <module>samples/java-jersey-jaxrs</module>
-        <module>samples/java-jaxrs-no-annotations</module>
-      </modules>
-    </profile>
-    <profile>
-      <!-- These modules need a little love -->
-      <id>disabled</id>
-      <activation>
-        <property>
-          <name>env</name>
-          <value>disabled</value>
-        </property>
-      </activation>
-      <modules>
-        <module>modules/swagger-jaxrs-utils</module>
-        <module>samples/scala-jaxrs-apm</module>
-      </modules>
-    </profile>
   </profiles>
   <modules>
     <module>modules/swagger-annotations</module>
