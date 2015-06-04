@@ -3,14 +3,14 @@
   <parent>
     <groupId>io.swagger</groupId>
     <artifactId>swagger-project</artifactId>
-    <version>1.5.3-M2-SNAPSHOT</version>
+    <version>1.5.0-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.swagger</groupId>
   <artifactId>swagger-hibernate-validations</artifactId>
   <packaging>jar</packaging>
-  <version>1.5.3-M2-SNAPSHOT</version>
+  <version>1.5.0-SNAPSHOT</version>
   <name>swagger-hibernate-validations</name>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>

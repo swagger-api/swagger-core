@@ -2,7 +2,7 @@
   <parent>
     <groupId>io.swagger</groupId>
     <artifactId>swagger-project</artifactId>
-    <version>1.5.3-M2-SNAPSHOT</version>
+    <version>1.5.0-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
   <artifactId>swagger-java-jersey-sample-app</artifactId>
   <packaging>war</packaging>
   <name>swagger-java-jersey-jaxrs-app</name>
-  <version>1.5.3-M2-SNAPSHOT</version>
+  <version>1.5.0-SNAPSHOT</version>
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>
