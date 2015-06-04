@@ -1,7 +1,7 @@
-package com.wordnik.swagger.sample;
+package io.swagger.sample;
 
-import com.wordnik.swagger.sample.resource.*;
-import com.wordnik.swagger.jaxrs.listing.ApiListingResource;
+import io.swagger.sample.resource.*;
+import io.swagger.jaxrs.listing.ApiListingResource;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -31,7 +31,7 @@ public class SwaggerSampleApplication extends Application <SwaggerSampleConfigur
     BeanConfig config = new BeanConfig();
     config.setTitle("Swagger sample app");
     config.setVersion("1.0.0");
-    config.setResourcePackage("com.wordnik.swagger.sample.resource");
+    config.setResourcePackage("io.swagger.sample.resource");
     config.setScan(true);
   }
 }

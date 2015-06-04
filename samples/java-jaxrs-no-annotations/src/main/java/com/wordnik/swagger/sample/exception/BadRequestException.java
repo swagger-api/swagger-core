@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.exception;
+package io.swagger.sample.exception;
 
 public class BadRequestException extends ApiException{
   private static final long serialVersionUID = 1L;

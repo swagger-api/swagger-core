@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.resource;
+package io.swagger.sample.resource;
 
 import javax.ws.rs.*;
 

@@ -27,7 +27,7 @@
     <!-- configure a security filter -->
     <init-param>
       <param-name>swagger.security.filter</param-name>
-      <param-value>com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl</param-value>
+      <param-value>io.swagger.sample.util.ApiAuthorizationFilterImpl</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
@@ -35,7 +35,7 @@
   <!-- add the origin filter for JQuery CORS support -->
   <filter>
     <filter-name>ApiOriginFilter</filter-name>
-    <filter-class>com.wordnik.swagger.sample.util.ApiOriginFilter</filter-class>
+    <filter-class>io.swagger.sample.util.ApiOriginFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>ApiOriginFilter</filter-name>

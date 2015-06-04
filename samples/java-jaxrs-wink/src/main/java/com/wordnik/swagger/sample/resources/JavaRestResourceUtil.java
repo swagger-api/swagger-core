@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.resources;
+package io.swagger.sample.resources;
 
 import java.text.SimpleDateFormat;
 

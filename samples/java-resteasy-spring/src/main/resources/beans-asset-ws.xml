@@ -7,11 +7,11 @@
 
 
 	<!-- Application Beans -->
-	<bean id="petResource" class="com.wordnik.swagger.sample.bean.PetResourceBean"/>
+	<bean id="petResource" class="io.swagger.sample.bean.PetResourceBean"/>
 
-	<bean id="userResource" class="com.wordnik.swagger.sample.bean.UserResourceBean"/>
+	<bean id="userResource" class="io.swagger.sample.bean.UserResourceBean"/>
 
-	<bean id="petStoreResource" class="com.wordnik.swagger.sample.bean.PetStoreResourceBean"/>
+	<bean id="petStoreResource" class="io.swagger.sample.bean.PetStoreResourceBean"/>
 
     <!-- Swagger Beans -->
     <bean id="apiListingResourceJSON" class="ApiListingResource"/>
@@ -24,11 +24,11 @@
         <property name="schemes" value="http" />
         <property name="host" value="localhost:8002" />
         <property name="basePath" value="/api"/>
-        <property name="filterClass" value="com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl"/>
-        <property name="resourcePackage" value="com.wordnik.swagger.sample.resource"/>
+        <property name="filterClass" value="io.swagger.sample.util.ApiAuthorizationFilterImpl"/>
+        <property name="resourcePackage" value="io.swagger.sample.resource"/>
         <property name="scan" value="true"/>
     </bean>
 
     <!-- API Origin Filter -->
-    <bean id="apiOriginFilter" class="com.wordnik.swagger.sample.util.ApiOriginFilter"/>
+    <bean id="apiOriginFilter" class="io.swagger.sample.util.ApiOriginFilter"/>
  </beans>

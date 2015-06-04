@@ -1,9 +1,9 @@
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.wordnik.swagger.models._
-import com.wordnik.swagger.models.properties._
-import com.wordnik.swagger.models.parameters._
+import io.swagger.models._
+import io.swagger.models.properties._
+import io.swagger.models.parameters._
 
-import com.wordnik.swagger.util._
+import io.swagger.util._
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode

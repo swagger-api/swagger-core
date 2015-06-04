@@ -1,5 +1,5 @@
 import java.util
-import com.wordnik.swagger.models.Swagger
+import io.swagger.models.Swagger
 import io.swagger.jaxrs.Reader
 import io.swagger.models.{Swagger, Scheme}
 import io.swagger.util.Json

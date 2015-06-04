@@ -3,7 +3,7 @@ package models
 import io.swagger.annotations.{ApiModelProperty, ApiModel}
 import models.OrderSize.OrderSize
 
-import com.wordnik.swagger.annotations.ApiModelProperty
+import io.swagger.annotations.ApiModelProperty
 
 import scala.annotation.meta.field
 

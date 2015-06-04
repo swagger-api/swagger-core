@@ -14,17 +14,17 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.resource;
+package io.swagger.sample.resource;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.wordnik.swagger.sample.exception.ApiException;
-import com.wordnik.swagger.sample.exception.BadRequestException;
-import com.wordnik.swagger.sample.exception.NotFoundException;
-import com.wordnik.swagger.sample.model.ApiResponse;
+import io.swagger.sample.exception.ApiException;
+import io.swagger.sample.exception.BadRequestException;
+import io.swagger.sample.exception.NotFoundException;
+import io.swagger.sample.model.ApiResponse;
 
 @Provider
 public class SampleExceptionMapper implements ExceptionMapper<Exception> {

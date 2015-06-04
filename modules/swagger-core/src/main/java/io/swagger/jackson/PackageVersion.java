@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.util.VersionUtil;
 
 public final class PackageVersion implements Versioned {
   public final static Version VERSION = VersionUtil.parseVersion(
-    "0.5.1-SNAPSHOT", "com.wordnik", "swagger-core");
+    "0.5.1-SNAPSHOT", "io.swagger", "swagger-core");
 
   @Override
   public Version version() {

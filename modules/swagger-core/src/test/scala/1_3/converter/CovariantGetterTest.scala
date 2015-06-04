@@ -4,8 +4,8 @@ import io.swagger.converter.ModelConverters
 import io.swagger.util.Json
 import models._
 
-import com.wordnik.swagger.model._
-import com.wordnik.swagger.converter._
+import io.swagger.model._
+import io.swagger.converter._
 
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 

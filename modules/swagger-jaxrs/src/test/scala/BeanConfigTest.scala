@@ -1,4 +1,4 @@
-import com.wordnik.swagger.jaxrs.config._
+import io.swagger.jaxrs.config._
 import io.swagger.jaxrs.config.BeanConfig
 import io.swagger.models.Scheme
 import io.swagger.util.Json
@@ -20,7 +20,7 @@ class BeanConfigTest extends FlatSpec with Matchers {
     bc.setBasePath("/api")
     bc.setTitle("Petstore Sample API")
     bc.setDescription("A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification")
-    bc.setTermsOfServiceUrl("http://helloreverb.com/terms/")
+    bc.setTermsOfServiceUrl("http://swagger.io/terms/")
     bc.setContact("Swagger API Team")
     bc.setLicense("MIT")
     bc.setLicenseUrl("http://github.com/gruntjs/grunt/blob/master/LICENSE-MIT")

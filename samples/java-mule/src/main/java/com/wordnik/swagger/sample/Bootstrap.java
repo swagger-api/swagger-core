@@ -1,16 +1,16 @@
-package com.wordnik.swagger.sample;
+package io.swagger.sample;
 
 import com.sun.jersey.spi.resource.Singleton;
-import com.wordnik.swagger.models.Contact;
-import com.wordnik.swagger.models.ExternalDocs;
-import com.wordnik.swagger.models.Info;
-import com.wordnik.swagger.models.License;
-import com.wordnik.swagger.models.Swagger;
-import com.wordnik.swagger.models.Tag;
-import com.wordnik.swagger.models.auth.ApiKeyAuthDefinition;
-import com.wordnik.swagger.models.auth.In;
-import com.wordnik.swagger.models.auth.OAuth2Definition;
-import com.wordnik.swagger.mule.ApiListingJSON;
+import io.swagger.models.Contact;
+import io.swagger.models.ExternalDocs;
+import io.swagger.models.Info;
+import io.swagger.models.License;
+import io.swagger.models.Swagger;
+import io.swagger.models.Tag;
+import io.swagger.models.auth.ApiKeyAuthDefinition;
+import io.swagger.models.auth.In;
+import io.swagger.models.auth.OAuth2Definition;
+import io.swagger.mule.ApiListingJSON;
 
 @Singleton
 public class Bootstrap {

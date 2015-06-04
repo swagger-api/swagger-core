@@ -7,7 +7,7 @@ import resources._
 import matchers.SerializationMatchers._
 
 import org.scalatest.{FlatSpec, Matchers}
-import com.wordnik.swagger.models.properties.MapProperty
+import io.swagger.models.properties.MapProperty
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

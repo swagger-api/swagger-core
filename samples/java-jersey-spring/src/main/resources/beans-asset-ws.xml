@@ -7,7 +7,7 @@
 
 
 	<!-- Application Beans -->
-    <context:component-scan base-package="com.wordnik.swagger.sample"/>
+    <context:component-scan base-package="io.swagger.sample"/>
 
     <!-- Swagger Beans -->
     <bean id="apiListingResource" class="ApiListingResource"/>
@@ -20,12 +20,12 @@
         <property name="schemes" value="http" />
         <property name="host" value="localhost:8002" />
         <property name="basePath" value="/api"/>
-        <property name="filterClass" value="com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl"/>
-        <property name="resourcePackage" value="com.wordnik.swagger.sample.resource"/>
+        <property name="filterClass" value="io.swagger.sample.util.ApiAuthorizationFilterImpl"/>
+        <property name="resourcePackage" value="io.swagger.sample.resource"/>
         <property name="scan" value="true"/>
     </bean>
 
     <!-- API Origin Filter -->
-    <bean id="apiOriginFilter" class="com.wordnik.swagger.sample.util.ApiOriginFilter"/>
+    <bean id="apiOriginFilter" class="io.swagger.sample.util.ApiOriginFilter"/>
 
  </beans>

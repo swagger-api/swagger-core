@@ -28,6 +28,7 @@ import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
 import io.swagger.annotations.Extension;
 import io.swagger.annotations.ExtensionProperty;
+import io.swagger.annotations.Info;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.converter.ModelConverters;
 import io.swagger.annotations.ResponseHeader;

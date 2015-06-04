@@ -1,7 +1,7 @@
 package converter
 
-import com.wordnik.swagger.converter._
-import com.wordnik.swagger.annotations._
+import io.swagger.converter._
+import io.swagger.annotations._
 
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import io.swagger.annotations.{ApiModelProperty, ApiModel}

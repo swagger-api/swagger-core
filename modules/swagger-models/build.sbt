@@ -1,4 +1,4 @@
-organization := "com.wordnik"
+organization := "io.swagger"
 
 name := "swagger-core"
 

@@ -1,4 +1,4 @@
-import com.wordnik.swagger.converter._
+import io.swagger.converter._
 import io.swagger.converter.ModelConverters
 import matchers.SerializationMatchers._
 import models._

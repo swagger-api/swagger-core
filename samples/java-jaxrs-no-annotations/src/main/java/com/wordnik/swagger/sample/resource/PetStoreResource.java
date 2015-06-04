@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.resource;
+package io.swagger.sample.resource;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -24,9 +24,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import com.wordnik.swagger.sample.data.StoreData;
-import com.wordnik.swagger.sample.exception.NotFoundException;
-import com.wordnik.swagger.sample.model.Order;
+import io.swagger.sample.data.StoreData;
+import io.swagger.sample.exception.NotFoundException;
+import io.swagger.sample.model.Order;
 
 @Path("/store")
 @Produces({"application/json", "application/xml"})

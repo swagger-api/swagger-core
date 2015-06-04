@@ -14,14 +14,14 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.data;
+package io.swagger.sample.data;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wordnik.swagger.sample.model.Category;
-import com.wordnik.swagger.sample.model.Pet;
-import com.wordnik.swagger.sample.model.Tag;
+import io.swagger.sample.model.Category;
+import io.swagger.sample.model.Pet;
+import io.swagger.sample.model.Tag;
 
 public class PetData {
   static List<Pet> pets = new ArrayList<Pet>();

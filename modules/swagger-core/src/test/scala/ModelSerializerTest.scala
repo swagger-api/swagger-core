@@ -11,7 +11,6 @@ import org.junit.runner.RunWith
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import org.scalatest.junit.JUnitRunner
-import LongProperty
 
 import matchers.SerializationMatchers.serializeToJson
 import models.Car

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.util;
+package io.swagger.sample.util;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package com.wordnik.swagger.sample;
+package io.swagger.sample;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.ServletContext;

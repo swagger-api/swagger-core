@@ -1,6 +1,6 @@
 package converter
 
-import com.wordnik.swagger.converter._
+import io.swagger.converter._
 
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 

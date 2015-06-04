@@ -1,12 +1,12 @@
-package com.wordnik.swagger.sample.resource;
+package io.swagger.sample.resource;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
-import com.wordnik.swagger.sample.exception.ApiException;
-import com.wordnik.swagger.sample.model.User;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.sample.exception.ApiException;
+import io.swagger.sample.model.User;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;

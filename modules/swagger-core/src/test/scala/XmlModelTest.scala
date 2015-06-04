@@ -3,8 +3,8 @@ import io.swagger.models.ModelImpl
 import io.swagger.util.Json
 import models._
 import models.composition.Pet;
-import com.wordnik.swagger.models._
-import com.wordnik.swagger.converter._
+import io.swagger.models._
+import io.swagger.converter._
 
 import javax.xml.bind.annotation._
 

@@ -2,7 +2,7 @@ import io.swagger.jaxrs.Reader
 import io.swagger.models.{Swagger, Scheme}
 import resources._
 
-import com.wordnik.swagger.models.Swagger
+import io.swagger.models.Swagger
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

@@ -4,8 +4,8 @@ import io.swagger.models.properties.MapProperty
 import io.swagger.util.Json
 import resources._
 
-import com.wordnik.swagger.jaxrs.config._
-import com.wordnik.swagger.models.parameters._
+import io.swagger.jaxrs.config._
+import io.swagger.models.parameters._
 
 
 import scala.collection.JavaConverters._

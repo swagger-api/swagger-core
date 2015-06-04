@@ -1,4 +1,4 @@
-package com.wordnik.swagger.sample.resources;
+package io.swagger.sample.resources;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
@@ -17,8 +17,8 @@ public class ResourceConfiguration extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<Class<?>>();
 
-        classes.add(com.wordnik.swagger.jaxrs.listing.ApiListingResource.class);
-        classes.add(com.wordnik.swagger.jaxrs.listing.SwaggerSerializers.class);
+        classes.add(io.swagger.jaxrs.listing.ApiListingResource.class);
+        classes.add(io.swagger.jaxrs.listing.SwaggerSerializers.class);
 
         addRestResources(classes);
 

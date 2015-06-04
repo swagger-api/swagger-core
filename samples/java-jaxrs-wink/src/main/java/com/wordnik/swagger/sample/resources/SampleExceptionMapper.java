@@ -14,11 +14,11 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.resources;
+package io.swagger.sample.resources;
 
-import com.wordnik.swagger.sample.exception.ApiException;
-import com.wordnik.swagger.sample.exception.BadRequestException;
-import com.wordnik.swagger.sample.model.ApiResponse;
+import io.swagger.sample.exception.ApiException;
+import io.swagger.sample.exception.BadRequestException;
+import io.swagger.sample.model.ApiResponse;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ext.*;

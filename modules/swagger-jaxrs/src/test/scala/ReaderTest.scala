@@ -1,7 +1,7 @@
 import java.lang.reflect.Method
 import javax.ws.rs._
 import javax.ws.rs.core.MediaType
-import com.wordnik.swagger.models.parameters._
+import io.swagger.models.parameters._
 import io.swagger.annotations.ApiOperation
 import io.swagger.jaxrs.Reader
 import io.swagger.models.Swagger

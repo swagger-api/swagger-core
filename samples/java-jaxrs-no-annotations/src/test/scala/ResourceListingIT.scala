@@ -24,9 +24,9 @@ import org.scalatest.Matchers
 import org.scalatest.junit.JUnitRunner
 
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.wordnik.swagger.models.Swagger
-import com.wordnik.swagger.util.Json
-import com.wordnik.swagger.util.Yaml
+import io.swagger.models.Swagger
+import io.swagger.util.Json
+import io.swagger.util.Yaml
 
 
 @RunWith(classOf[JUnitRunner])

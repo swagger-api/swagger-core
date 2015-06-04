@@ -1,4 +1,4 @@
-import com.wordnik.swagger.models._
+import io.swagger.models._
 import io.swagger.models.Swagger
 import io.swagger.util.Json
 

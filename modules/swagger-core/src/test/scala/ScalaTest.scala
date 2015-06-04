@@ -2,7 +2,7 @@ import io.swagger.converter.ModelConverters
 import io.swagger.util.Json
 import models._
 import models.composition.Pet;
-import com.wordnik.swagger.converter._
+import io.swagger.converter._
 
 import scala.collection.JavaConverters._
 

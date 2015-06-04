@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.data;
+package io.swagger.sample.data;
 
-import com.wordnik.swagger.sample.model.Order;
+import io.swagger.sample.model.Order;
 
 import java.util.Date;
 import java.util.List;

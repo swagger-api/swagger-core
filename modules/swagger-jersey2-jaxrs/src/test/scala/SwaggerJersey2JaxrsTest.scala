@@ -11,7 +11,7 @@ import org.junit.runner.RunWith
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import org.scalatest.junit.JUnitRunner
-import com.wordnik.swagger.models.parameters.HeaderParameter
+import io.swagger.models.parameters.HeaderParameter
 
 import java.lang.annotation.Annotation
 import java.lang.reflect.Type

@@ -1,12 +1,12 @@
-package com.wordnik.swagger.sample;
+package io.swagger.sample;
 
-import com.wordnik.swagger.models.Contact;
-import com.wordnik.swagger.models.ExternalDocs;
-import com.wordnik.swagger.models.Info;
-import com.wordnik.swagger.models.License;
-import com.wordnik.swagger.models.Swagger;
-import com.wordnik.swagger.models.Tag;
-import com.wordnik.swagger.models.auth.OAuth2Definition;
+import io.swagger.models.Contact;
+import io.swagger.models.ExternalDocs;
+import io.swagger.models.Info;
+import io.swagger.models.License;
+import io.swagger.models.Swagger;
+import io.swagger.models.Tag;
+import io.swagger.models.auth.OAuth2Definition;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;

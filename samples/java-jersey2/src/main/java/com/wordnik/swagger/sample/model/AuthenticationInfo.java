@@ -1,6 +1,6 @@
-package com.wordnik.swagger.sample.model;
+package io.swagger.sample.model;
 
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiParam;
 
 import javax.ws.rs.*;
 

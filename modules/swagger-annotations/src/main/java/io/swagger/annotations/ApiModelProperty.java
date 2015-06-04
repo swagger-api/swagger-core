@@ -56,7 +56,7 @@ public @interface ApiModelProperty {
   String allowableValues() default "";
 
   /**
-   * Allows for filtering a property from the API documentation. See com.wordnik.swagger.core.filter.SwaggerSpecFilter.
+   * Allows for filtering a property from the API documentation. See io.swagger.core.filter.SwaggerSpecFilter.
    */
   String access() default "";
 

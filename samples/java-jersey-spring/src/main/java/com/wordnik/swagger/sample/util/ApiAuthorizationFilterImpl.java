@@ -14,14 +14,14 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.util;
+package io.swagger.sample.util;
 
-import com.wordnik.swagger.core.filter.SwaggerSpecFilter;
+import io.swagger.core.filter.SwaggerSpecFilter;
 
-import com.wordnik.swagger.models.Model;
-import com.wordnik.swagger.models.Operation;
-import com.wordnik.swagger.models.parameters.Parameter;
-import com.wordnik.swagger.models.properties.Property;
+import io.swagger.models.Model;
+import io.swagger.models.Operation;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.Property;
 import org.slf4j.*;
 
 import java.util.Map;

@@ -6,7 +6,7 @@ import org.scalatest.matchers.Matcher
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.wordnik.swagger.util._
+import io.swagger.util._
 
 trait SerializationMatchers {
 

@@ -10,6 +10,7 @@ import io.swagger.annotations.ExternalDocs;
 import io.swagger.annotations.Info;
 import io.swagger.annotations.License;
 import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.ReaderListener;
 import io.swagger.models.Swagger;

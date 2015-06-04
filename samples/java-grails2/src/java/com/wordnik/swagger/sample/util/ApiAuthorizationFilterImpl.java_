@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.util;
+package io.swagger.sample.util;
 
-import com.wordnik.swagger.model.*;
+import io.swagger.model.*;
 import SwaggerSpecFilter;
 
 import org.slf4j.*;

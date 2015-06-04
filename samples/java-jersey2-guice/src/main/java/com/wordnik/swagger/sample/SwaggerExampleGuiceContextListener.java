@@ -1,12 +1,12 @@
-package com.wordnik.swagger.sample;
+package io.swagger.sample;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import com.wordnik.swagger.jaxrs.config.BeanConfig;
-import com.wordnik.swagger.sample.util.ApiOriginFilter;
+import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.sample.util.ApiOriginFilter;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 import java.util.HashMap;
@@ -34,8 +34,8 @@ public class SwaggerExampleGuiceContextListener extends GuiceServletContextListe
                 beanConfig.setSchemes(new String[]{"http"});
                 beanConfig.setHost("localhost:8002");
                 beanConfig.setBasePath("/api");
-                beanConfig.setFilterClass("com.wordnik.swagger.sample.util.ApiAuthorizationFilterImpl");
-                beanConfig.setResourcePackage("com.wordnik.swagger.sample.resource");
+                beanConfig.setFilterClass("io.swagger.sample.util.ApiAuthorizationFilterImpl");
+                beanConfig.setResourcePackage("io.swagger.sample.resource");
                 beanConfig.setScan(true);
 
                 filter("/*").through(ApiOriginFilter.class);

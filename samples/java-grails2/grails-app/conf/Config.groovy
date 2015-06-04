@@ -1,7 +1,7 @@
 org.grails.jaxrs.url.mappings = ['/api','/swagger.*']
 org.grails.jaxrs.provider.init.parameters = [
   'com.sun.jersey.config.property.packages': 
-    'com.wordnik.swagger.sample.resource;com.wordnik.swagger.jaxrs.listing;com.wordnik.swagger.jaxrs.json']
+    'io.swagger.sample.resource;io.swagger.jaxrs.listing;io.swagger.jaxrs.json']
 
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
@@ -62,7 +62,7 @@ environments {
 }
 
 logback = {
-    debug  'com.wordnik.swagger'
+    debug  'io.swagger'
     error  'org.codehaus.groovy',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
            'org.codehaus.groovy.grails.web.sitemesh',       // layouts
@@ -84,7 +84,7 @@ log4j = {
         console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
     }
 
-    debug  'com.wordnik.swagger'
+    debug  'io.swagger'
 
     debug  'com.jersey'
 

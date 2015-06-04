@@ -14,13 +14,13 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.resource;
+package io.swagger.sample.resource;
 
-import com.wordnik.swagger.sample.data.PetData;
-import com.wordnik.swagger.sample.model.Pet;
-import com.wordnik.swagger.sample.exception.NotFoundException;
+import io.swagger.sample.data.PetData;
+import io.swagger.sample.model.Pet;
+import io.swagger.sample.exception.NotFoundException;
 
-import com.wordnik.swagger.jaxrs.PATCH;
+import io.swagger.jaxrs.PATCH;
 
 import java.io.*;
 
@@ -105,7 +105,7 @@ public class PetResource {
   @POST
   @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
   @ApiOperation(value = "Add a new pet to the store")
-  @ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input", response = com.wordnik.swagger.sample.model.ApiResponse.class) })
+  @ApiResponses(value = { @ApiResponse(code = 405, message = "Invalid input", response = io.swagger.sample.model.ApiResponse.class) })
   public Response addPet(
       @ApiParam(value = "Pet object that needs to be added to the store", required = true) Pet pet) {
     Pet updatedPet = petData.addPet(pet);

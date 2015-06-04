@@ -1,7 +1,7 @@
 package filter
 
-import com.wordnik.swagger.util._
-import com.wordnik.swagger.core.filter._
+import io.swagger.util._
+import io.swagger.core.filter._
 import io.swagger.core.filter.SpecFilter
 import io.swagger.models.Swagger
 import io.swagger.util.Json

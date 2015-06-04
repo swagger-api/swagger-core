@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.wordnik.swagger.sample.model;
+package io.swagger.sample.model;
 
 import javax.xml.bind.annotation.XmlTransient;
 
