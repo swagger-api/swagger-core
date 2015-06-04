@@ -16,18 +16,29 @@
 
 package com.wordnik.swagger.annotations;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * A wrapper to allow a list of multiple {@link com.wordnik.swagger.annotations.ApiImplicitParam} objects.
- *
- * @see com.wordnik.swagger.annotations.ApiImplicitParam
+ * License metadata available within the info section of a Swagger definition, see
+ * https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#licenseObject
  */
-@Target(ElementType.METHOD)
+
+@Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ApiImplicitParams {
-  /**
-   * A list of {@link com.wordnik.swagger.annotations.ApiImplicitParam}s available to the API operation.
-   */
-  ApiImplicitParam[] value();
+public @interface License {
+
+    /**
+     * @return the name of the license
+     */
+
+    String name();
+
+    /**
+     * @return an optional URL for the license.
+     */
+
+    String url() default "";
 }

@@ -1,5 +1,71 @@
+/**
+ *  Copyright 2015 SmartBear Software
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.wordnik.swagger.jaxrs;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiImplicitParam;
+import com.wordnik.swagger.annotations.ApiImplicitParams;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+import com.wordnik.swagger.annotations.Authorization;
+import com.wordnik.swagger.annotations.AuthorizationScope;
+import com.wordnik.swagger.annotations.Extension;
+import com.wordnik.swagger.annotations.ExtensionProperty;
+import com.wordnik.swagger.annotations.SwaggerDefinition;
+import com.wordnik.swagger.converter.ModelConverters;
+import com.wordnik.swagger.jaxrs.config.DefaultReaderConfig;
+import com.wordnik.swagger.jaxrs.config.ReaderConfig;
+import com.wordnik.swagger.jaxrs.config.ReaderListener;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
+import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
+import com.wordnik.swagger.jaxrs.utils.ReflectionUtils;
+import com.wordnik.swagger.models.Contact;
+import com.wordnik.swagger.models.ExternalDocs;
+import com.wordnik.swagger.models.Info;
+import com.wordnik.swagger.models.License;
+import com.wordnik.swagger.models.Model;
+import com.wordnik.swagger.models.Operation;
+import com.wordnik.swagger.models.Path;
+import com.wordnik.swagger.models.Response;
+import com.wordnik.swagger.models.Scheme;
+import com.wordnik.swagger.models.SecurityRequirement;
+import com.wordnik.swagger.models.SecurityScope;
+import com.wordnik.swagger.models.Swagger;
+import com.wordnik.swagger.models.Tag;
+import com.wordnik.swagger.models.parameters.BodyParameter;
+import com.wordnik.swagger.models.parameters.FormParameter;
+import com.wordnik.swagger.models.parameters.HeaderParameter;
+import com.wordnik.swagger.models.parameters.Parameter;
+import com.wordnik.swagger.models.parameters.PathParameter;
+import com.wordnik.swagger.models.parameters.QueryParameter;
+import com.wordnik.swagger.models.properties.ArrayProperty;
+import com.wordnik.swagger.models.properties.MapProperty;
+import com.wordnik.swagger.models.properties.Property;
+import com.wordnik.swagger.models.properties.RefProperty;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.Produces;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -16,60 +82,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.Produces;
-
-import com.wordnik.swagger.annotations.ApiImplicitParam;
-import com.wordnik.swagger.annotations.ApiImplicitParams;
-import com.wordnik.swagger.models.parameters.AbstractSerializableParameter;
-import com.wordnik.swagger.models.parameters.BodyParameter;
-import com.wordnik.swagger.models.parameters.FormParameter;
-import com.wordnik.swagger.models.parameters.HeaderParameter;
-import com.wordnik.swagger.models.parameters.PathParameter;
-import com.wordnik.swagger.models.parameters.QueryParameter;
-import com.wordnik.swagger.jaxrs.utils.ReflectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
-import com.wordnik.swagger.annotations.Authorization;
-import com.wordnik.swagger.annotations.AuthorizationScope;
-import com.wordnik.swagger.converter.ModelConverters;
-import com.wordnik.swagger.jaxrs.config.DefaultReaderConfig;
-import com.wordnik.swagger.jaxrs.config.ReaderConfig;
-import com.wordnik.swagger.jaxrs.ext.SwaggerExtension;
-import com.wordnik.swagger.jaxrs.ext.SwaggerExtensions;
-import com.wordnik.swagger.models.Model;
-import com.wordnik.swagger.models.Operation;
-import com.wordnik.swagger.models.Path;
-import com.wordnik.swagger.models.Response;
-import com.wordnik.swagger.models.Scheme;
-import com.wordnik.swagger.models.SecurityRequirement;
-import com.wordnik.swagger.models.SecurityScope;
-import com.wordnik.swagger.models.Swagger;
-import com.wordnik.swagger.models.Tag;
-import com.wordnik.swagger.models.parameters.Parameter;
-import com.wordnik.swagger.models.properties.ArrayProperty;
-import com.wordnik.swagger.models.properties.MapProperty;
-import com.wordnik.swagger.models.properties.Property;
-import com.wordnik.swagger.models.properties.RefProperty;
-import com.wordnik.swagger.util.Json;
-
 public class Reader {
   private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
   private static final String SUCCESSFUL_OPERATION = "successful operation";
   private static final String PATH_DELIMITER = "/";
 
-  Swagger swagger;
   private final ReaderConfig config;
+  private Swagger swagger;
 
   public Reader(Swagger swagger) {
     this(swagger, null);
@@ -80,9 +99,50 @@ public class Reader {
     this.config = new DefaultReaderConfig(config);
   }
 
+  /**
+   * Scans a set of classes for both ReaderListeners and Swagger annotations. All found listeners will
+   * be instantiated before any of the classes are scanned for Swagger annotations - so they can be invoked
+   * accordingly.
+   *
+   * @param classes a set of classes to scan
+   * @return the generated Swagger definition
+   */
+
   public Swagger read(Set<Class<?>> classes) {
+
+    Map<Class<?>,ReaderListener> listeners = new HashMap<Class<?>, ReaderListener>();
+
+    for(Class<?> cls: classes) {
+      if( ReaderListener.class.isAssignableFrom( cls ) && !listeners.containsKey( cls )){
+        try {
+          listeners.put( cls, (ReaderListener) cls.newInstance());
+        } catch (Exception e) {
+          LOGGER.error("Failed to create ReaderListener", e);
+        }
+      }
+    }
+
+    for( ReaderListener listener : listeners.values()){
+      try {
+        listener.beforeScan(this, swagger);
+      }
+      catch( Exception e ){
+        LOGGER.error( "Unexpected error invoking beforeScan listener [" + listener.getClass().getName() + "]", e );
+      }
+    }
+
     for(Class<?> cls: classes)
       read(cls);
+
+    for( ReaderListener listener : listeners.values()){
+      try {
+        listener.afterScan( this, swagger);
+      }
+      catch( Exception e ){
+        LOGGER.error( "Unexpected error invoking afterScan listener [" + listener.getClass().getName() + "]", e );
+      }
+    }
+
     return swagger;
   }
 
@@ -90,11 +150,20 @@ public class Reader {
     return this.swagger;
   }
 
+  /**
+   * Scans a single class for Swagger annotations - does not invoke ReaderListeners
+   */
+
   public Swagger read(Class<?> cls) {
-    return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
+     return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
   }
 
   protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
+    SwaggerDefinition swaggerDefinition = cls.getAnnotation(SwaggerDefinition.class);
+    if( swaggerDefinition != null ){
+      readSwaggerConfig( cls, swaggerDefinition);
+    }
+
     Api api = (Api) cls.getAnnotation(Api.class);
     Map<String, SecurityScope> globalScopes = new HashMap<String, SecurityScope>();
 
@@ -201,7 +270,7 @@ public class Reader {
           String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
           Operation operation = parseMethod(method);
-          if(operation == null) 
+          if(operation == null)
             continue;
           if(parentParameters != null) {
             for(Parameter param : parentParameters) {
@@ -260,6 +329,10 @@ public class Reader {
                   swagger.tag(new Tag().name(tag));
                 }
               }
+
+              if( operation != null ){
+                addExtensionProperties( apiOperation.extensions(), operation.getVendorExtensions());
+              }
             }
             if(operation != null) {
               if(operation.getConsumes() == null)
@@ -278,7 +351,7 @@ public class Reader {
                 for(SecurityRequirement security : securities) {
                   operation.security(security);
                 }
-              }  
+              }
 
               Path path = swagger.getPath(operationPath);
               if(path == null) {
@@ -293,6 +366,7 @@ public class Reader {
         }
       }
     }
+
     return swagger;
   }
 
@@ -331,6 +405,151 @@ public class Reader {
     }
 
     return ParameterProcessor.applyAnnotations( swagger, p, apiClass, Arrays.asList(new Annotation[]{param}));
+  }
+
+  protected void readSwaggerConfig(Class<?> cls, SwaggerDefinition config) {
+
+    if( !config.basePath().isEmpty()){
+      swagger.setBasePath( config.basePath());
+    }
+
+    if( !config.host().isEmpty()){
+      swagger.setHost( config.host());
+    }
+
+    readInfoConfig(config);
+
+    for( String consume: config.consumes()){
+      swagger.addConsumes(consume);
+    }
+
+    for( String produce: config.produces()){
+      swagger.addProduces( produce );
+    }
+
+    if( !config.externalDocs().value().isEmpty() ){
+      ExternalDocs externalDocs = swagger.getExternalDocs();
+      if( externalDocs == null ){
+        externalDocs = new ExternalDocs();
+        swagger.setExternalDocs(externalDocs);
+      }
+
+      externalDocs.setDescription(config.externalDocs().value());
+
+      if( !config.externalDocs().url().isEmpty()){
+        externalDocs.setUrl( config.externalDocs().url() );
+      }
+    }
+
+    for( com.wordnik.swagger.annotations.Tag tagConfig : config.tags()){
+      if( !tagConfig.name().isEmpty()){
+        Tag tag = new Tag();
+        tag.setName( tagConfig.name() );
+        tag.setDescription( tagConfig.description());
+
+        if( !tagConfig.externalDocs().value().isEmpty() ){
+           tag.setExternalDocs( new ExternalDocs( tagConfig.externalDocs().value(),
+                   tagConfig.externalDocs().url()));
+        }
+
+        addExtensionProperties( tagConfig.extensions(), tag.getVendorExtensions());
+
+        swagger.addTag( tag );
+      }
+    }
+
+    for( SwaggerDefinition.Scheme scheme : config.schemes()){
+      if( scheme != SwaggerDefinition.Scheme.DEFAULT ){
+        swagger.addScheme( Scheme.forValue( scheme.name()));
+      }
+    }
+  }
+
+  protected void readInfoConfig(SwaggerDefinition config) {
+    com.wordnik.swagger.annotations.Info infoConfig = config.info();
+    Info info = swagger.getInfo();
+    if( info == null ){
+      info = new Info();
+      swagger.setInfo(info);
+    }
+
+    if( !infoConfig.description().isEmpty() ){
+      info.setDescription( infoConfig.description());
+    }
+
+    if( !infoConfig.termsOfService().isEmpty() ){
+      info.setTermsOfService( infoConfig.termsOfService());
+    }
+
+    if( !infoConfig.title().isEmpty() ){
+      info.setTitle(infoConfig.title());
+    }
+
+    if( !infoConfig.version().isEmpty() ){
+      info.setVersion(infoConfig.version());
+    }
+
+    if( !infoConfig.contact().name().isEmpty() ){
+      Contact contact = info.getContact();
+      if( contact == null ){
+        contact = new Contact();
+        info.setContact( contact );
+      }
+
+      contact.setName( infoConfig.contact().name() );
+      if( !infoConfig.contact().email().isEmpty() ){
+        contact.setEmail( infoConfig.contact().email());
+      }
+
+      if( !infoConfig.contact().url().isEmpty() ){
+        contact.setUrl(infoConfig.contact().url());
+      }
+    }
+
+    if( !infoConfig.license().name().isEmpty() ){
+      License license = info.getLicense();
+      if( license == null ){
+        license = new License();
+        info.setLicense( license );
+      }
+
+      license.setName( infoConfig.license().name());
+      if( !infoConfig.license().url().isEmpty() ){
+        license.setUrl( infoConfig.license().url());
+      }
+    }
+
+    addExtensionProperties(infoConfig.extensions(), info.getVendorExtensions());
+  }
+
+  private void addExtensionProperties(Extension[] extensions, Map<String, Object> map) {
+    for( Extension extension : extensions ) {
+      String name = extension.name();
+      if (name.length() > 0) {
+
+        if( !name.startsWith("x-")){
+          name = "x-" + name;
+        }
+
+        if( !map.containsKey( name )) {
+          map.put(name, new HashMap<String, Object>());
+        }
+
+        map = (Map<String, Object>) map.get(name);
+      }
+
+      for (ExtensionProperty property : extension.properties()) {
+        if (!property.name().isEmpty() && !property.value().isEmpty()) {
+
+          String propertyName = property.name();
+          if( name.isEmpty() && !propertyName.startsWith( "x-")){
+            propertyName = "x-" + propertyName;
+          }
+
+          map.put(propertyName, property.value());
+        }
+      }
+    }
   }
 
   protected Class<?> getSubResource(Method method) {
@@ -436,7 +655,7 @@ public class Reader {
             Property property = ModelConverters.getInstance().readAsProperty(cls);
             if(property != null) {
               Property responseProperty = ContainerWrapper.wrapContainer(header.responseContainer(), property,
-                ContainerWrapper.ARRAY, ContainerWrapper.LIST, ContainerWrapper.SET);
+                      ContainerWrapper.ARRAY, ContainerWrapper.LIST, ContainerWrapper.SET);
               responseProperty.setDescription(description);
               responseHeaders.put(name, responseProperty);
             }
@@ -810,5 +1029,9 @@ public class Reader {
     }
 
     protected abstract Property doWrap(Property property);
+  }
+
+  public ReaderConfig getConfig() {
+    return config;
   }
 }

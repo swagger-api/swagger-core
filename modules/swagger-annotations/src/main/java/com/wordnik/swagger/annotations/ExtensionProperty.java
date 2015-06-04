@@ -16,18 +16,30 @@
 
 package com.wordnik.swagger.annotations;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * A wrapper to allow a list of multiple {@link com.wordnik.swagger.annotations.ApiImplicitParam} objects.
+ * A name/value property within a Swagger extension
  *
- * @see com.wordnik.swagger.annotations.ApiImplicitParam
+ * @see Extension
  */
-@Target(ElementType.METHOD)
+
+@Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ApiImplicitParams {
-  /**
-   * A list of {@link com.wordnik.swagger.annotations.ApiImplicitParam}s available to the API operation.
-   */
-  ApiImplicitParam[] value();
+public @interface ExtensionProperty {
+
+    /**
+     * @return the name of the property
+     */
+
+    String name();
+
+    /**
+     * @return the value of the property
+     */
+
+    String value();
 }
