@@ -63,6 +63,13 @@ public @interface ApiResponse {
   Class<?> response() default Void.class;
 
   /**
+   * Specifies a reference to the response type. The specified reference can be either local or remote and
+   * will be used as-is, and will override any specified response() class.
+   */
+
+  String reference() default "";
+
+  /**
    * A list of possible headers provided alongside the response.
    *
    * @return a list of response headers.

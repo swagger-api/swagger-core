@@ -16,5 +16,8 @@ public interface Model {
 
   ExternalDocs getExternalDocs();
 
+  String getReference();
+  void setReference( String reference );
+
   Object clone();
 }

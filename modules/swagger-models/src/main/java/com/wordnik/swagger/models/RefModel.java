@@ -140,4 +140,15 @@ public class RefModel implements Model {
   		return false;
   	return true;
   }
+
+  @Override
+  @JsonIgnore
+  public String getReference() {
+    return ref;
+  }
+
+  @Override
+  public void setReference(String reference) {
+    this.ref = reference;
+  }
 }

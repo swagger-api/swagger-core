@@ -97,4 +97,10 @@ public @interface ApiModelProperty {
    * Allows a model property to be designated as read only.
    */
   boolean readOnly() default false;
+
+  /**
+   * Specifies a reference to the corresponding type definition, overrides any other metadata specified
+   */
+
+  String reference() default "";
 }
