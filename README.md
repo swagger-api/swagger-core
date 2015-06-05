@@ -73,14 +73,13 @@ Of course if you don't want to build locally you can grab artifacts from maven c
 
 `http://repo1.maven.org/maven2/io/swagger/`
 
-## Sample Apps
-There are a number of sample apps in the [samples](https://github.com/swagger-api/swagger-core/blob/master/samples) folder.
+## Sample Apps - *UPDATED*
+The samples have moved to [a new repository](https://github.com/swagger-api/swagger-samples) and contain various integrations and configurations.
+
+
+## License
 
 ```
-
-License
--------
-
 Copyright 2015 SmartBear Software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -92,4 +91,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
+```
