@@ -18,10 +18,12 @@ package io.swagger.jaxrs;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.google.common.collect.Collections2;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
@@ -68,11 +70,14 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Produces;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -83,13 +88,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Reader {
   private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
   private static final String SUCCESSFUL_OPERATION = "successful operation";
   private static final String PATH_DELIMITER = "/";
 
+  private static final Set<Class<? extends Annotation>> FIELD_ANNOTATIONS;
   private final ReaderConfig config;
   private Swagger swagger;
+
+  static {
+    final Set<Class<? extends Annotation>> fieldAnnotations = new HashSet<Class<? extends Annotation>>();
+    fieldAnnotations.add(PathParam.class);
+    fieldAnnotations.add(QueryParam.class);
+    fieldAnnotations.add(HeaderParam.class);
+    fieldAnnotations.add(ApiParam.class);
+    fieldAnnotations.add(ApiImplicitParam.class);
+    FIELD_ANNOTATIONS = Collections.unmodifiableSet(fieldAnnotations);
+  }
 
   public Reader(Swagger swagger) {
     this(swagger, null);
@@ -270,8 +297,8 @@ public class Reader {
           final ApiOperation apiOperation = getAnnotation(method, ApiOperation.class);
           String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
-          Operation operation = parseMethod(method);
-          if(operation == null)
+          Operation operation = parseMethod(method, collectGlobalParameters(cls));
+          if(operation == null) 
             continue;
           if(parentParameters != null) {
             for(Parameter param : parentParameters) {
@@ -668,6 +695,10 @@ public class Reader {
   }
 
   public Operation parseMethod(Method method) {
+    return parseMethod(method, Collections.<Parameter> emptyList());
+  }
+
+  private Operation parseMethod(Method method, List<Parameter> globalParameters) {
     Operation operation = new Operation();
 
     ApiOperation apiOperation = getAnnotation(method, ApiOperation.class);
@@ -851,6 +882,10 @@ public class Reader {
       hidden = apiOperation.hidden();
 
     // process parameters
+    for (Parameter globalParameter : globalParameters) {
+      operation.parameter(globalParameter);
+    }
+
     Type[] genericParameterTypes = method.getGenericParameterTypes();
     Annotation[][] paramAnnotations = method.getParameterAnnotations();
     for(int i = 0; i < genericParameterTypes.length; i++) {
@@ -1003,6 +1038,31 @@ public class Reader {
 
   private static boolean isResourceClass(Class<?> cls) {
     return cls.getAnnotation(Api.class) != null;
+  }
+
+  private List<Parameter> collectGlobalParameters(Class<?> cls) {
+    final List<Parameter> globalParameters = new ArrayList<Parameter>();
+
+    // look for constructor-level annotated properties
+    final Constructor<?> constructor = ReflectionUtils.findConstructor(cls);
+    if (constructor != null) {
+      final Type[] genericParameterTypes = constructor.getGenericParameterTypes();
+      final Annotation[][] annotations = constructor.getParameterAnnotations();
+      for (int i = 0; i < genericParameterTypes.length; i++) {
+        globalParameters.addAll(getParameters(genericParameterTypes[i], Arrays.asList(annotations[i])));
+      }
+    }
+
+    // look for field-level annotated properties
+    for (Field field : cls.getDeclaredFields()) {
+      final List<Annotation> annotations = Arrays.asList(field.getAnnotations());
+      final Collection<Class<? extends Annotation>> types = Collections2.transform(annotations, ReflectionUtils.createAnnotationTypeGetter());
+      if (!Collections.disjoint(types, FIELD_ANNOTATIONS)) {
+        globalParameters.addAll(getParameters(field.getGenericType(), annotations));
+      }
+    }
+
+    return globalParameters;
   }
 
   enum ContainerWrapper {
