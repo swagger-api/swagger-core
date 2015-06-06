@@ -38,18 +38,25 @@ public class TypeNameResolver {
    * specifically for Joda lib.
    */
   protected final static Map<String, String> EXTERNAL_TYPES = externalTypes();
-  
-  protected TypeNameResolver() { }
+
+  protected TypeNameResolver() {
+  }
 
   public String nameForType(JavaType type) {
     if (type.hasGenericTypes()) {
       return nameForGenericType(type);
     }
-    final Class<?> raw = type.getRawClass();
-    final String name = findStdName(raw);
-    return (name == null) ? nameForClass(raw) : name;
+    final String name = findStdName(type);
+    return (name == null) ? nameForClass(type) : name;
   }
 
+  public boolean isStdType(JavaType type) {
+    return findStdName(type) != null;
+  }
+
+  protected String nameForClass(JavaType type) {
+    return nameForClass(type.getRawClass());
+  }
 
   protected String nameForClass(Class<?> cls) {
     final ApiModel model = cls.getAnnotation(ApiModel.class);
@@ -58,18 +65,18 @@ public class TypeNameResolver {
   }
 
   protected String nameForGenericType(JavaType type) {
-    final StringBuilder generic = new StringBuilder(nameForClass(type.getRawClass()));
+    final StringBuilder generic = new StringBuilder(nameForClass(type));
     final int count = type.containedTypeCount();
     for (int i = 0; i < count; ++i) {
       final JavaType arg = type.containedType(i);
-      final Class<?> argClass = arg.getRawClass();
-      final String argName = findStdName(argClass) != null ? nameForClass(argClass) : nameForType(arg);
+      final String argName = findStdName(arg) != null ? nameForClass(arg) : nameForType(arg);
       generic.append(WordUtils.capitalize(argName));
     }
     return generic.toString();
   }
 
-  protected String findStdName(Class<?> raw) {
+  protected String findStdName(JavaType type) {
+    final Class<?> raw = type.getRawClass();
     String name = JDK_TYPES.get(raw);
     if (name == null) {
       name = EXTERNAL_TYPES.get(raw.getName());
@@ -86,7 +93,7 @@ public class TypeNameResolver {
     }
     return name;
   }
-  
+
   private static Map<Class<?>, String> jdkTypes() {
     Map<Class<?>, String> map = new HashMap<Class<?>, String>();
     _add(map, "boolean", Boolean.class, Boolean.TYPE);

@@ -12,7 +12,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
-import io.swagger.util.Json;
 
 import io.swagger.models.ComposedModel;
 import io.swagger.models.Model;
@@ -22,11 +21,11 @@ import io.swagger.models.Xml;
 import io.swagger.models.properties.AbstractNumericProperty;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
-import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,85 +91,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     if (propType.isContainerType()) {
       JavaType keyType = propType.getKeyType();
       JavaType valueType = propType.getContentType();
-      if(keyType != null && valueType != null) {
-        MapProperty mapProperty = new MapProperty();
-        Property innerType = getPrimitiveProperty(_typeName(valueType));
-
-        if(innerType == null) { 
-          String propertyTypeName = _typeName(valueType);
-          Model innerModel = context.resolve(valueType);
-          if(innerModel != null) {
-            if(!"Object".equals(propertyTypeName)) {              
-              innerType = new RefProperty(propertyTypeName);
-              mapProperty.additionalProperties(innerType);
-              property = mapProperty;
-            }
-            else {
-              innerType = new ObjectProperty();
-              mapProperty.additionalProperties(innerType);
-              property = mapProperty;
-            }
-          }
+      if (keyType != null && valueType != null) {
+        property = new MapProperty().additionalProperties(context.resolveProperty(valueType, new Annotation[] {}));
+      } else if (valueType != null) {
+        ArrayProperty arrayProperty =
+            new ArrayProperty().items(context.resolveProperty(valueType, new Annotation[] {}));
+        if (_isSetType(propType.getRawClass())) {
+          arrayProperty.setUniqueItems(true);
         }
-        else {
-          mapProperty.additionalProperties(innerType);
-          property = mapProperty;
-        }
-      }
-      else if(valueType != null) {
-        ArrayProperty arrayProperty = new ArrayProperty();
-        Property innerType = getPrimitiveProperty(_typeName(valueType));
-        if(innerType == null) {
-          LOGGER.debug("no primitive property type from " + valueType);
-          String propertyTypeName = _typeName(valueType);
-          LOGGER.debug("using name " + propertyTypeName);
-          if (valueType.isEnumType()) {
-            property = new StringProperty();
-            _addEnumProps(valueType.getRawClass(), property);
-            arrayProperty.setItems(property);
-            property = arrayProperty;
-          }
-          else if(!"Object".equals(propertyTypeName)) {
-            Model innerModel = context.resolve(valueType);
-            LOGGER.debug("got inner model " + Json.pretty(innerModel));
-            if(innerModel != null) {
-              LOGGER.debug("found inner model " + innerModel);
-              // model name may be overriding what was detected
-              if( StringUtils.isNotEmpty(innerModel.getReference())){
-                propertyTypeName = innerModel.getReference();
-              }
-              else if(innerModel instanceof ModelImpl) {
-                ModelImpl impl = (ModelImpl) innerModel;
-                if(impl.getName() != null)
-                  propertyTypeName = impl.getName();
-              }
-              Class<?> cls = propType.getRawClass();
-              if(_isSetType(cls))
-                arrayProperty.setUniqueItems(true);
-
-              innerType = new RefProperty(propertyTypeName);
-              arrayProperty.setItems(innerType);
-              property = arrayProperty;
-            }
-          }
-          else {
-            LOGGER.debug("falling back to object type");
-            innerType = new ObjectProperty();
-            arrayProperty.setItems(innerType);
-            property = arrayProperty;
-          }
-        }
-        else {
-          if(keyType == null) {
-            Class<?> cls = propType.getRawClass();
-
-            if(_isSetType(cls))
-              arrayProperty.setUniqueItems(true);
-          }
-
-          arrayProperty.setItems(innerType);
-          property = arrayProperty;
-        }
+        property = arrayProperty;
       }
     }
 
@@ -184,8 +113,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
       }
       else {
         // complex type
-        String propertyTypeName = _typeName(propType);
-        Model innerModel =  context.resolve(propType);      
+        Model innerModel =  context.resolve(propType);
         if(innerModel instanceof ModelImpl) {
           ModelImpl mi = (ModelImpl) innerModel;
           property = new RefProperty( StringUtils.isNotEmpty( mi.getReference() ) ? mi.getReference() : mi.getName());
@@ -231,19 +159,21 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
 
   public Model resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
-    final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
-    if (type.isEnumType()) {
-      // TODO how to handle if model provided is simply an enum
+    if (type.isEnumType() || _typeNameResolver.isStdType(type)) {
+      // We don't build models for primitive types
+      return null;
     }
-
+    if (type.isContainerType()) {
+      // We treat collections as primitive types, just need to add models for values (if any)
+      context.resolve(type.getContentType());
+      return null;
+    }
+    final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
     // Couple of possibilities for defining
     String name = _typeName(type, beanDesc);
 
     if("Object".equals(name)) {
       return new ModelImpl();
-    }
-    if(type.isMapLikeType()) {
-      return null;
     }
 
     final ModelImpl model = new ModelImpl().type(ModelImpl.OBJECT).name(name)

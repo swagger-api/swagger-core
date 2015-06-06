@@ -8,9 +8,8 @@ import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
-import io.swagger.models.properties.StringProperty;
-import io.swagger.util.Json;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.fasterxml.jackson.databind.JavaType;
@@ -18,7 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-
 import java.util.*;
 
 public class ModelWithTuple2 {
@@ -36,48 +34,49 @@ public class ModelWithTuple2 {
     public Integer age;
   }
 
-  public static class TupleModelConverter extends AbstractModelConverter implements ModelConverter {
-    public TupleModelConverter(ObjectMapper mapper) {
+  public static class TupleAsMapModelConverter extends AbstractModelConverter {
+
+    public TupleAsMapModelConverter(ObjectMapper mapper) {
       super(mapper);
     }
 
     @Override
-    public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {
-      JavaType _type = Json.mapper().constructType(type);
-      if(_type != null){
-        Class<?> cls = _type.getRawClass();
-        if(Pair.class.isAssignableFrom(cls)) {
-          return new MapProperty()
-            .additionalProperties(new StringProperty());
-        }
+    public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+      final JavaType javaType = _mapper.constructType(type);
+      if (Pair.class.isAssignableFrom(javaType.getRawClass())) {
+        final JavaType left = javaType.containedType(0);
+        final String name = "MapOf" + WordUtils.capitalize(_typeName(left));
+
+        return new ModelImpl().name(name).additionalProperties(context.resolveProperty(left, new Annotation[] {}));
       }
-      if(chain.hasNext())
-        return chain.next().resolveProperty(type, context, annotations, chain);
-      else
-        return null;
+      return super.resolve(type, context, chain);
+    }
+  }
+
+  public static class TupleAsMapPropertyConverter extends AbstractModelConverter {
+
+    public TupleAsMapPropertyConverter(ObjectMapper mapper) {
+      super(mapper);
+    }
+
+    @Override
+    public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations,
+        Iterator<ModelConverter> chain) {
+      final JavaType javaType = _mapper.constructType(type);
+      if (Pair.class.isAssignableFrom(javaType.getRawClass())) {
+        final JavaType left = javaType.containedType(0);
+        return new MapProperty(context.resolveProperty(left, new Annotation[] {}));
+      }
+      return super.resolveProperty(type, context, annotations, chain);
     }
 
     @Override
     public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
-      JavaType _type = Json.mapper().constructType(type);
-      if(_type != null){
-        Class<?> cls = _type.getRawClass();
-        if(Pair.class.isAssignableFrom(cls)) {
-          String name = _typeName(_type); // use name from type?
-          name = "MyPair";
-
-          ModelImpl model = new ModelImpl()
-            .name(name)
-            .additionalProperties(new StringProperty());
-
-          return model;
-        }
-      }
-
-      if(chain.hasNext())
-        return chain.next().resolve(type, context, chain);
-      else
+      final JavaType javaType = _mapper.constructType(type);
+      if (Pair.class.isAssignableFrom(javaType.getRawClass())) {
         return null;
+      }
+      return super.resolve(type, context, chain);
     }
   }
 }

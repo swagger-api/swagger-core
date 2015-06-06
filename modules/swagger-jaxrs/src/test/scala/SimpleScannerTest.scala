@@ -2,12 +2,13 @@ import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.DefaultReaderConfig
 import io.swagger.models.parameters.{BodyParameter, PathParameter, QueryParameter, SerializableParameter}
 import io.swagger.models.properties.{MapProperty, _}
-import io.swagger.models.{Model, ModelImpl, RefModel, Swagger}
-import io.swagger.util.Json
+import io.swagger.models.{ArrayModel, Model, ModelImpl, RefModel, Swagger}
 import models.TestEnum
 import org.junit.runner.RunWith
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
+
+import models.TestEnum
 import resources._
 
 import scala.collection.JavaConverters._
@@ -195,7 +196,11 @@ class SimpleScannerTest extends FlatSpec with Matchers {
 
   it should "correctly model an empty model per 499" in {
     val swagger = new Reader(new Swagger()).read(classOf[ResourceWithEmptyModel])
-    Json.prettyPrint(swagger)
+    swagger.getDefinitions.size should be (1)
+    val empty = swagger.getDefinitions.get("EmptyModel").asInstanceOf[ModelImpl]
+    empty.getType should be ("object")
+    empty.getProperties should be (null)
+    empty.getAdditionalProperties should be (null)
   }
   
   it should "scan a simple resource without annotations" in {
@@ -351,5 +356,61 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     val security2 = path2.getSecurity()
     security2.size should be (1)
     security2.get(0).get("your_auth") should not be (null)
+  }
+
+  it should "check response models processing" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithTypedResponses])
+    swagger.getDefinitions.keySet().asScala should be (Set("Tag"))
+    for ((key, path) <- swagger.getPaths.asScala) {
+      key.substring(key.lastIndexOf("/") + 1) match {
+        case "testPrimitiveResponses" =>
+          val expected = Map("400" -> ("string", "uri"),
+              "401" -> ("string", "url"),
+              "402" -> ("string", "uuid"),
+              "403" -> ("integer", "int64"),
+              "404" -> ("string", null))
+          for ((code, response) <- path.getGet.getResponses.asScala) {
+            val property = expected(code)
+            response.getSchema.getType should be (property._1)
+            response.getSchema.getFormat should be (property._2)
+          }
+        case "testObjectResponse" =>
+          val op = path.getGet
+          val response = op.getResponses.get("200").getSchema
+          response.asInstanceOf[RefProperty].getSimpleRef should be ("Tag")
+          op.getParameters.size should be (1)
+          val model = op.getParameters.get(0).asInstanceOf[BodyParameter].getSchema
+          model.asInstanceOf[RefModel].getSimpleRef should be ("Tag")
+        case "testObjectsResponse" =>
+          val op = path.getGet
+          val response = op.getResponses.get("200").getSchema
+          response.asInstanceOf[ArrayProperty].getItems.asInstanceOf[RefProperty].getSimpleRef should be ("Tag")
+          op.getParameters.size should be (1)
+          val model = op.getParameters.get(0).asInstanceOf[BodyParameter].getSchema
+          model.asInstanceOf[ArrayModel].getItems.asInstanceOf[RefProperty].getSimpleRef should be ("Tag")
+        case "testStringResponse" =>
+          val op = path.getGet
+          val response = op.getResponses.get("200").getSchema
+          response.getClass should be (classOf[StringProperty])
+          op.getParameters.size should be (1)
+          val model = op.getParameters.get(0).asInstanceOf[BodyParameter].getSchema
+          model.asInstanceOf[ModelImpl].getType should be ("string")
+        case "testStringsResponse" =>
+          val op = path.getGet
+          val response = op.getResponses.get("200").getSchema
+          response.asInstanceOf[ArrayProperty].getItems.getClass should be (classOf[StringProperty])
+          op.getParameters.size should be (1)
+          val model = op.getParameters.get(0).asInstanceOf[BodyParameter].getSchema
+          model.asInstanceOf[ArrayModel].getItems.getClass should be (classOf[StringProperty])
+        case "testMapResponse" =>
+          val op = path.getGet
+          val response = op.getResponses.get("200").getSchema
+          response.asInstanceOf[MapProperty].getAdditionalProperties().asInstanceOf[RefProperty].getSimpleRef should be ("Tag")
+          op.getParameters.size should be (1)
+          val model = op.getParameters.get(0).asInstanceOf[BodyParameter].getSchema.asInstanceOf[ModelImpl]
+          model.getProperties should be (null)
+          model.getAdditionalProperties.asInstanceOf[RefProperty].getSimpleRef should be ("Tag")
+      }
+    }
   }
 }

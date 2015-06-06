@@ -668,7 +668,7 @@ public class Reader {
       return output;
   }
 
-  public Map<String, Property> parseResponseHeaders(ResponseHeader[] headers) {
+  private Map<String, Property> parseResponseHeaders(ResponseHeader[] headers) {
     Map<String,Property> responseHeaders = null;
     if(headers != null && headers.length > 0) {
       for(ResponseHeader header : headers) {
@@ -679,13 +679,14 @@ public class Reader {
           String description = header.description();
           Class<?> cls = header.response();
 
-          if(!cls.equals(java.lang.Void.class) && !"void".equals(cls.toString())) {
-            Property property = ModelConverters.getInstance().readAsProperty(cls);
+          if(!isVoid(cls)) {
+            final Property property = ModelConverters.getInstance().readAsProperty(cls);
             if(property != null) {
               Property responseProperty = ContainerWrapper.wrapContainer(header.responseContainer(), property,
                       ContainerWrapper.ARRAY, ContainerWrapper.LIST, ContainerWrapper.SET);
               responseProperty.setDescription(description);
               responseHeaders.put(name, responseProperty);
+              appendModels(cls);
             }
           }
         }
@@ -765,45 +766,13 @@ public class Reader {
       responseType = method.getGenericReturnType();
     }
     if(isValidResponse(responseType)) {
-      int responseCode = 200;
-      if (apiOperation != null) {
-        responseCode = apiOperation.code();
-      }
-      if(isPrimitive(responseType)) {
-        Property property = ModelConverters.getInstance().readAsProperty(responseType);
-        if(property != null) {
-          Property responseProperty = ContainerWrapper.wrapContainer(responseContainer, property);
-          operation.response(responseCode, new Response()
-            .description(SUCCESSFUL_OPERATION)
-            .schema(responseProperty)
+      final Property property = ModelConverters.getInstance().readAsProperty(responseType);
+      if (property != null) {
+        final Property responseProperty = ContainerWrapper.wrapContainer(responseContainer, property);
+        final int responseCode = apiOperation == null ? 200 : apiOperation.code();
+        operation.response(responseCode, new Response().description(SUCCESSFUL_OPERATION).schema(responseProperty)
             .headers(defaultResponseHeaders));
-        }
-      } else {
-        Map<String, Model> models = ModelConverters.getInstance().read(responseType);
-        if(models.size() == 0) {
-          Property p = ModelConverters.getInstance().readAsProperty(responseType);
-          operation.response(responseCode, new Response()
-            .description(SUCCESSFUL_OPERATION)
-            .schema(p)
-            .headers(defaultResponseHeaders));
-        }
-        for(String key: models.keySet()) {
-          Model model = models.get( key );
-          Property property = StringUtils.isNotEmpty( model.getReference() ) ?
-                  new RefProperty( model.getReference() ) :
-                  new RefProperty().asDefault(key);
-
-          Property responseProperty = ContainerWrapper.wrapContainer(responseContainer, property);
-          operation.response(responseCode, new Response()
-            .description(SUCCESSFUL_OPERATION)
-            .schema(responseProperty)
-            .headers(defaultResponseHeaders));
-          swagger.model(key, models.get(key));
-        }
-        models = ModelConverters.getInstance().readAll(responseType);
-        for(String key: models.keySet()) {
-          swagger.model(key, models.get(key));
-        }
+        appendModels(responseType);
       }
     }
 
@@ -842,32 +811,14 @@ public class Reader {
         else
           operation.response(apiResponse.code(), response);
 
-        responseType = apiResponse.response();
-
         if( StringUtils.isNotEmpty( apiResponse.reference() )){
           response.schema( new RefProperty( apiResponse.reference() ));
-        }
-        else if(responseType != null && !isVoid(responseType)) {
-          Map<String, Model> models = ModelConverters.getInstance().read(responseType);
-          for(String key: models.keySet()) {
-            Model model = models.get( key );
-            Property property = StringUtils.isNotEmpty( model.getReference() ) ?
-                    new RefProperty( model.getReference() ) :
-                    new RefProperty().asDefault(key);
-
-            Property responseProperty = ContainerWrapper.wrapContainer(apiResponse.responseContainer(), property);
-            response.schema(responseProperty);
-
-            if( StringUtils.isEmpty(model.getReference())) {
-              swagger.model(key, models.get(key));
-            }
-          }
-          models = ModelConverters.getInstance().readAll(responseType);
-          for(String key: models.keySet()) {
-            Model model = models.get(key);
-            if( StringUtils.isEmpty(model.getReference())) {
-              swagger.model(key, model);
-            }
+        } else if (!isVoid(apiResponse.response())) {
+          responseType = apiResponse.response();
+          final Property property = ModelConverters.getInstance().readAsProperty(responseType);
+          if (property != null) {
+            response.schema(ContainerWrapper.wrapContainer(apiResponse.responseContainer(), property));
+            appendModels(responseType);
           }
         }
       }
@@ -977,25 +928,11 @@ public class Reader {
       return null;
   }
 
-  boolean isPrimitive(Type type) {
-    boolean out = false;
-
-    Property property = ModelConverters.getInstance().readAsProperty(type);
-    if(property == null)
-      out = false;
-    else if("integer".equals(property.getType()))
-      out = true;
-    else if("string".equals(property.getType()))
-      out = true;
-    else if("number".equals(property.getType()))
-      out = true;
-    else if("boolean".equals(property.getType()))
-      out = true;
-    else if("array".equals(property.getType()))
-      out = true;
-    else if("file".equals(property.getType()))
-      out = true;
-    return out;
+  private void appendModels(Type type) {
+    final Map<String, Model> models = ModelConverters.getInstance().readAll(type);
+    for(Map.Entry<String, Model> entry : models.entrySet()) {
+      swagger.model(entry.getKey(), entry.getValue());
+    }
   }
 
   private static Set<Scheme> parseSchemes(String schemes) {

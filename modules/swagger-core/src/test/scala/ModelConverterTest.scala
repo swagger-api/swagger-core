@@ -1,12 +1,16 @@
+import scala.collection.JavaConverters.mapAsScalaMapConverter
+
+import java.net.URI
+import java.net.URL
+import java.util.UUID
+
 import io.swagger.converter.ModelConverters
 import io.swagger.models.ModelImpl
-import io.swagger.models.properties.{StringProperty, IntegerProperty, ArrayProperty, RefProperty}
+import io.swagger.models.properties.{StringProperty, IntegerProperty, ArrayProperty, MapProperty, RefProperty}
 import io.swagger.util.Json
+
 import models._
 import models.composition.Pet;
-import io.swagger.models._
-import io.swagger.models.properties._
-import io.swagger.converter._
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -182,7 +186,6 @@ class ModelConverterTest extends FlatSpec with Matchers {
 
     val model = schemas.get("ClientOptInput")
     model.getProperties().size() should be (2)
-    Json.prettyPrint(model)
   }
 
   it should "set readOnly per #854" in {
@@ -193,11 +196,44 @@ class ModelConverterTest extends FlatSpec with Matchers {
   }
 
   it should "process a model with org.apache.commons.lang3.tuple.Pair properties" in {
-    ModelConverters.getInstance().addConverter(new ModelWithTuple2.TupleModelConverter(Json.mapper()))
-    val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithTuple2])
-    val model = schemas.get("MyPair").asInstanceOf[ModelImpl]
-    model.getType() should be ("object")
-    model.getProperties() should be (null)
+    val asMapCpnverter = new ModelWithTuple2.TupleAsMapModelConverter(Json.mapper());
+    ModelConverters.getInstance().addConverter(asMapCpnverter)
+    val asMap = ModelConverters.getInstance().readAll(classOf[ModelWithTuple2])
+    ModelConverters.getInstance().removeConverter(asMapCpnverter)
+    asMap.size() should be (4)
+    for (pair <- List("MapOfString", "MapOfComplexLeft")) {
+      val model = asMap.get(pair).asInstanceOf[ModelImpl]
+      model.getType() should be ("object")
+      model.getProperties() should be (null)
+      model.getAdditionalProperties should not be (null)
+    }
+
+    val asPropertyConverter = new ModelWithTuple2.TupleAsMapPropertyConverter(Json.mapper());
+    ModelConverters.getInstance().addConverter(asPropertyConverter)
+    val asProperty = ModelConverters.getInstance().readAll(classOf[ModelWithTuple2])
+    ModelConverters.getInstance().removeConverter(asPropertyConverter)
+    asProperty.size() should be (2)
+    for ((name, property) <- asProperty.get("ModelWithTuple2").asInstanceOf[ModelImpl].getProperties.asScala) {
+      name match {
+        case "timesheetStates" =>
+          property.getClass() should be (classOf[MapProperty])
+        case "manyPairs" =>
+          property.getClass() should be (classOf[ArrayProperty])
+          property.asInstanceOf[ArrayProperty].getItems should not be (null)
+          property.asInstanceOf[ArrayProperty].getItems.getClass should be (classOf[MapProperty])
+          val items = property.asInstanceOf[ArrayProperty].getItems.asInstanceOf[MapProperty]
+          items.getAdditionalProperties should not be (null)
+          items.getAdditionalProperties.getClass should be (classOf[StringProperty])
+        case "complexLeft" =>
+          property.getClass() should be (classOf[ArrayProperty])
+          property.asInstanceOf[ArrayProperty].getItems should not be (null)
+          property.asInstanceOf[ArrayProperty].getItems.getClass should be (classOf[MapProperty])
+          val items = property.asInstanceOf[ArrayProperty].getItems.asInstanceOf[MapProperty]
+          items.getAdditionalProperties should not be (null)
+          items.getAdditionalProperties.getClass should be (classOf[RefProperty])
+          items.getAdditionalProperties.asInstanceOf[RefProperty].getSimpleRef should be ("ComplexLeft")
+      }
+    }
   }
 
   it should "scan an empty model per 499" in {
@@ -222,7 +258,7 @@ class ModelConverterTest extends FlatSpec with Matchers {
     getClass.getMethods.toList.find { _.getName.equals("getGenericType") }.get.getGenericParameterTypes.toList(0)
   }
 
-  it should "check handling of Class<?> type" in {
+  it should "check handling of the Class<?> type" in {
     val `type` = getGenericType()
     `type`.isInstanceOf[Class[_]] should be (false)
     val schemas = ModelConverters.getInstance().readAll(`type`)
@@ -263,5 +299,15 @@ class ModelConverterTest extends FlatSpec with Matchers {
       }
     }"""
     )
+  }
+
+  it should "check handling of string types" in {
+    for (cls <- List(classOf[URI], classOf[URL], classOf[UUID])) {
+      val schemas = ModelConverters.getInstance().readAll(cls)
+      schemas.size should equal(0)
+      val property = ModelConverters.getInstance().readAsProperty(cls)
+      property should not be (null)
+      property.getType should be ("string")
+    }
   }
 }

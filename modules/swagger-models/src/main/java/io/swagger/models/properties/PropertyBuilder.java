@@ -1,11 +1,16 @@
 package io.swagger.models.properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.swagger.models.ArrayModel;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.RefModel;
 
 public class PropertyBuilder {
   static Logger LOGGER = LoggerFactory.getLogger(PropertyBuilder.class);
@@ -37,12 +42,25 @@ public class PropertyBuilder {
    */
   public static Property merge(Property property, Map<PropertyId, Object> args) {
     if (args != null && !args.isEmpty()) {
-      final Processor processor = Processor.fromType(property.getType(), property.getFormat());
+      final Processor processor = Processor.fromProperty(property);
       if (processor != null) {
         processor.merge(property, args);
       }
     }
     return property;
+  }
+
+  /**
+   * Converts passed property into a model.
+   * @param property property to be converted
+   * @return model instance or <code>null</code> for unknown types
+   */
+  public static Model toModel(Property property) {
+    final Processor processor = Processor.fromProperty(property);
+    if (processor != null) {
+      return processor.toModel(property);
+    }
+    return null;
   }
 
   public enum PropertyId {
@@ -85,7 +103,7 @@ public class PropertyBuilder {
   }
 
   private enum Processor {
-    BOOLEAN {
+    BOOLEAN(BooleanProperty.class) {
       @Override
       protected boolean isType(String type, String format) {
         return BooleanProperty.isType(type, format);
@@ -113,7 +131,7 @@ public class PropertyBuilder {
         return property;
       }
     },
-    STRING {
+    STRING(StringProperty.class) {
       @Override
       protected boolean isType(String type, String format) {
         return StringProperty.isType(type, format);
@@ -132,8 +150,17 @@ public class PropertyBuilder {
         }
         return property;
       }
+
+      @Override
+      public Model toModel(Property property) {
+        if (isType(property)) {
+          return createStringModel((StringProperty) property);
+        }
+        return null;
+      }
+
     },
-    DATE {
+    DATE(DateProperty.class) {
       @Override
       protected boolean isType(String type, String format) {
         return DateProperty.isType(type, format);
@@ -144,7 +171,7 @@ public class PropertyBuilder {
         return new DateProperty();
       }
     },
-    DATE_TIME {
+    DATE_TIME(DateTimeProperty.class) {
       @Override
       protected boolean isType(String type, String format) {
         return DateTimeProperty.isType(type, format);
@@ -155,7 +182,7 @@ public class PropertyBuilder {
         return new DateTimeProperty();
       }
     },
-    INTEGER {
+    INTEGER(IntegerProperty.class) {
       @Override
       protected boolean isType(String type, String format) {
         if (IntegerProperty.isType(type, format)) {
@@ -190,8 +217,22 @@ public class PropertyBuilder {
         }
         return property;
       }
+
+      @Override
+      public Model toModel(Property property) {
+        if (isType(property)) {
+          final IntegerProperty resolved = (IntegerProperty) property;
+          final ModelImpl model = createModel(resolved);
+          final Integer defaultValue = resolved.getDefault();
+          if (defaultValue != null) {
+            model.setDefaultValue(defaultValue.toString());
+          }
+          return model;
+        }
+        return null;
+      }
     },
-    LONG {
+    LONG(LongProperty.class) {
       @Override
       protected boolean isType(String type, String format) {
         return LongProperty.isType(type, format);
@@ -219,8 +260,22 @@ public class PropertyBuilder {
         }
         return property;
       }
+
+      @Override
+      public Model toModel(Property property) {
+        if (isType(property)) {
+          final LongProperty resolved = (LongProperty) property;
+          final ModelImpl model = createModel(resolved);
+          final Long defaultValue = resolved.getDefault();
+          if (defaultValue != null) {
+            model.setDefaultValue(defaultValue.toString());
+          }
+          return model;
+        }
+        return null;
+      }
     },
-    FLOAT {
+    FLOAT(FloatProperty.class) {
       @Override
       protected boolean isType(String type, String format) {
         return FloatProperty.isType(type, format);
@@ -248,8 +303,22 @@ public class PropertyBuilder {
         }
         return property;
       }
+
+      @Override
+      public Model toModel(Property property) {
+        if (isType(property)) {
+          final FloatProperty resolved = (FloatProperty) property;
+          final ModelImpl model = createModel(resolved);
+          final Float defaultValue = resolved.getDefault();
+          if (defaultValue != null) {
+            model.setDefaultValue(defaultValue.toString());
+          }
+          return model;
+        }
+        return null;
+      }
     },
-    DOUBLE {
+    DOUBLE(DoubleProperty.class) {
       @Override
       protected boolean isType(String type, String format) {
         return DoubleProperty.isType(type, format);
@@ -277,8 +346,22 @@ public class PropertyBuilder {
         }
         return property;
       }
+
+      @Override
+      public Model toModel(Property property) {
+        if (isType(property)) {
+          final DoubleProperty resolved = (DoubleProperty) property;
+          final ModelImpl model = createModel(resolved);
+          final Double defaultValue = resolved.getDefault();
+          if (defaultValue != null) {
+            model.setDefaultValue(defaultValue.toString());
+          }
+          return model;
+        }
+        return null;
+      }
     },
-    DECIMAL {
+    DECIMAL(DecimalProperty.class) {
       @Override
       protected boolean isType(String type, String format) {
         return DecimalProperty.isType(type, format);
@@ -299,7 +382,7 @@ public class PropertyBuilder {
         return property;
       }
     },
-    FILE {
+    FILE(FileProperty.class) {
       @Override
       protected boolean isType(String type, String format) {
         return FileProperty.isType(type, format);
@@ -310,7 +393,7 @@ public class PropertyBuilder {
         return new FileProperty();
       }
     },
-    REFERENCE {
+    REFERENCE(RefProperty.class) {
       @Override
       protected boolean isType(String type, String format) {
         return RefProperty.isType(type, format);
@@ -320,8 +403,19 @@ public class PropertyBuilder {
       protected RefProperty create() {
         return new RefProperty();
       }
+
+      @Override
+      public Model toModel(Property property) {
+        if (property instanceof RefProperty) {
+          final RefProperty resolved = (RefProperty) property;
+          final RefModel model = new RefModel(resolved.get$ref());
+          model.setDescription(resolved.getDescription());
+          return model;
+        }
+        return null;
+      }
     },
-    E_MAIL {
+    E_MAIL(EmailProperty.class) {
       @Override
       protected boolean isType(String type, String format) {
         return EmailProperty.isType(type, format);
@@ -340,8 +434,16 @@ public class PropertyBuilder {
         }
         return property;
       }
+
+      @Override
+      public Model toModel(Property property) {
+        if (isType(property)) {
+          return createStringModel((StringProperty) property);
+        }
+        return null;
+      }
     },
-    UUID {
+    UUID(UUIDProperty.class) {
       @Override
       protected boolean isType(String type, String format) {
         return UUIDProperty.isType(type, format);
@@ -376,8 +478,19 @@ public class PropertyBuilder {
         }
         return property;
       }
+
+      @Override
+      public Model toModel(Property property) {
+        if (isType(property)) {
+          final UUIDProperty resolved = (UUIDProperty) property;
+          final ModelImpl model = createModel(resolved);
+          model.setDefaultValue(resolved.getDefault());
+          return model;
+        }
+        return null;
+      }
     },
-    OBJECT {
+    OBJECT(ObjectProperty.class) {
       @Override
       protected boolean isType(String type, String format) {
         if (ObjectProperty.isType(type, format)) {
@@ -394,9 +507,64 @@ public class PropertyBuilder {
       protected ObjectProperty create() {
         return new ObjectProperty();
       }
+    },
+    ARRAY(ArrayProperty.class) {
+
+      @Override
+      protected boolean isType(String type, String format) {
+        return ArrayProperty.isType(type);
+      }
+
+      @Override
+      protected ArrayProperty create() {
+        return new ArrayProperty();
+      }
+
+      @Override
+      public Model toModel(Property property) {
+        if (property instanceof ArrayProperty) {
+          final ArrayProperty resolved = (ArrayProperty) property;
+          final ArrayModel model = new ArrayModel().items(resolved.getItems()).description(resolved.getDescription());
+          return model;
+        }
+        return null;
+      }
+    },
+    MAP(MapProperty.class) {
+
+      @Override
+      protected boolean isType(String type, String format) {
+        // Note: It's impossible to distinct MAP and OBJECT as they use the same
+        // set of values for type and format
+        return MapProperty.isType(type, format);
+      }
+
+      @Override
+      protected MapProperty create() {
+        return new MapProperty();
+      }
+
+      @Override
+      public Model toModel(Property property) {
+        if (property instanceof MapProperty) {
+          final MapProperty resolved = (MapProperty) property;
+          return createModel(property).additionalProperties(resolved.getAdditionalProperties());
+        }
+        return null;
+      }
     };
 
+    private final Class<? extends Property> type;
+
+    Processor(Class<? extends Property> type) {
+      this.type = type;
+    }
+
     protected abstract boolean isType(String type, String format);
+
+    protected boolean isType(Property property) {
+      return type.isInstance(property);
+    }
 
     protected abstract Property create();
 
@@ -444,6 +612,17 @@ public class PropertyBuilder {
       return property;
     }
 
+    protected ModelImpl createModel(Property property) {
+      return new ModelImpl().type(property.getType()).format(property.getFormat())
+          .description(property.getDescription());
+    }
+
+    protected ModelImpl createStringModel(StringProperty property) {
+      final ModelImpl model = createModel(property);
+      model.setDefaultValue(property.getDefault());
+      return model;
+    }
+
     /**
      * Creates new property on the passed arguments.
      * @param args mapping of argument identifier to value
@@ -479,6 +658,15 @@ public class PropertyBuilder {
       return property;
     }
 
+    /**
+     * Converts passed property into a model.
+     * @param property property to be converted
+     * @return model instance or <code>null</code> for unknown types
+     */
+    public Model toModel(Property property) {
+      return createModel(property);
+    }
+
     public static Processor fromType(String type, String format) {
       for (Processor item : values()) {
         if (item.isType(type, format)) {
@@ -486,6 +674,16 @@ public class PropertyBuilder {
         }
       }
       LOGGER.error("no property for " + type + ", " + format);
+      return null;
+    }
+
+    public static Processor fromProperty(Property property) {
+      for (Processor item : values()) {
+        if (item.isType(property)) {
+          return item;
+        }
+      }
+      LOGGER.error("no property for " + (property == null ? "null" : property.getClass().getName()));
       return null;
     }
   }
