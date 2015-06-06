@@ -166,6 +166,8 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     ConfigurationBuilder config = new ConfigurationBuilder();
     Set<String> acceptablePackages = new HashSet<String>();
 
+    boolean allowAllPackages = false;
+
     if(resourcePackage != null && !"".equals(resourcePackage)) {
       String[] parts = resourcePackage.split(",");
       for(String pkg : parts) {
@@ -174,6 +176,9 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
           config.addUrls(ClasspathHelper.forPackage(pkg));
         }
       }
+    }
+    else {
+      allowAllPackages = true;
     }
 
     config.setScanners(new ResourcesScanner(), new TypeAnnotationsScanner(), new SubTypesScanner());
@@ -198,13 +203,21 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
 
     reader.getSwagger().setInfo(info);
     final Reflections reflections = new Reflections(config);
-	Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Api.class);
+	  Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Api.class);
     classes.addAll(reflections.getTypesAnnotatedWith(javax.ws.rs.Path.class));
     
     Set<Class<?>> output = new HashSet<Class<?>>();
     for(Class<?> cls : classes) {
-      if(acceptablePackages.contains(cls.getPackage().getName()))
+      if(allowAllPackages) {
         output.add(cls);
+      }
+      else {
+        for(String pkg : acceptablePackages) {
+          if(cls.getPackage().getName().startsWith(pkg)) {
+            output.add(cls);
+          }
+        }
+      }
     }
     return output;
   }
