@@ -1,9 +1,9 @@
 package resources;
 
 import com.google.common.collect.Lists;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -23,7 +23,7 @@ public class ResourceWithComplexBodyInputType {
     @Path("testPostWithBody")
     @ApiOperation(response = String.class, value = "Returns string with provided parameter")
     public String testPostWithBody(@ApiParam(name = "body", value = "input parameters in json form")
-                                       List<ClassWithString> items) {
+                                   List<ClassWithString> items) {
 
         List<String> result = Lists.newArrayList();
         return String.format("Given parameters are %s", Arrays.toString(result.toArray(new String[result.size()])));

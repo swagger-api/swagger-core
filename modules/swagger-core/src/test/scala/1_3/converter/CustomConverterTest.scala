@@ -1,29 +1,17 @@
 package converter
 
-import models._
-
-import com.wordnik.swagger.converter._
-import com.wordnik.swagger.models._
-import com.wordnik.swagger.models.properties._
-
-import com.wordnik.swagger.annotations._
-import com.wordnik.swagger.converter._
-import com.wordnik.swagger.util._
-import com.wordnik.swagger.model._
-
-import org.joda.time.DateTime
-
 import java.lang.annotation.Annotation
 import java.lang.reflect.Type
 
-import scala.collection.mutable.LinkedHashMap
-import scala.annotation.meta.field
-import scala.beans.BeanProperty
-
+import io.swagger.converter.{ModelConverter, ModelConverterContext, ModelConverters}
+import io.swagger.models.Model
+import io.swagger.models.properties.Property
+import io.swagger.util.Json
 import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
+
+import scala.beans.BeanProperty
 
 @RunWith(classOf[JUnitRunner])
 class CustomConverterTest extends FlatSpec with Matchers {
@@ -36,10 +24,10 @@ class CustomConverterTest extends FlatSpec with Matchers {
 
     val model = models.get("Foo")
     model should not be (null)
-    model.getProperties.size should be (1)
+    model.getProperties.size should be(1)
 
     val barProperty = model.getProperties.get("bar")
-    barProperty should be (null)
+    barProperty should be(null)
 
     val titleProperty = model.getProperties.get("title")
     titleProperty should not be (null)
@@ -50,9 +38,9 @@ class CustomConverter extends ModelConverter {
   @Override
   def resolveProperty(`type`: Type, context: ModelConverterContext, annotations: Array[Annotation], chain: java.util.Iterator[ModelConverter]): Property = {
     val jType = Json.mapper().constructType(`type`)
-    if(jType != null) {
+    if (jType != null) {
       var cls = jType.getRawClass
-      if(cls.equals(classOf[Bar]))
+      if (cls.equals(classOf[Bar]))
         null
       else
         chain.next().resolveProperty(`type`, context, annotations, chain);
@@ -60,7 +48,7 @@ class CustomConverter extends ModelConverter {
     else
       null
   }
-  
+
   @Override
   def resolve(`type`: Type, context: ModelConverterContext, chain: java.util.Iterator[ModelConverter]): Model = {
     return chain.next().resolve(`type`, context, chain)

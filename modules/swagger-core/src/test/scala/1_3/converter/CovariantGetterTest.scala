@@ -1,20 +1,13 @@
 package converter
 
-import models._
-import com.wordnik.swagger.util.Json
-
-import com.wordnik.swagger.model._
-import com.wordnik.swagger.converter._
-
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-import models.JCovariantGetter
-
+import io.swagger.converter.ModelConverters
+import io.swagger.util.Json
 import matchers.SerializationMatchers._
+import models.JCovariantGetter
+import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class CovariantGetterTest extends FlatSpec with Matchers {
@@ -23,9 +16,9 @@ class CovariantGetterTest extends FlatSpec with Matchers {
 
   it should "read a getter with covariant return type" in {
     val models = ModelConverters.getInstance().read(classOf[JCovariantGetter.Sub])
-    models.size should be (1)
-    models should serializeToJson (
-"""{
+    models.size should be(1)
+    models should serializeToJson(
+      """{
   "Sub" : {
     "type":"object",
     "properties" : {

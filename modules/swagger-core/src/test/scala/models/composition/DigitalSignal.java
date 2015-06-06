@@ -1,16 +1,16 @@
 package models.composition;
 
-import com.wordnik.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModel;
 
 @ApiModel(description = "AnalogSignal", parent = DigitalSignal.class)
 public class DigitalSignal extends AbstractSignal implements Signal {
-  private boolean digitalValue;
+    private boolean digitalValue;
 
-  public boolean getDigitalValue() {
-    return digitalValue;
-  }
+    public boolean getDigitalValue() {
+        return digitalValue;
+    }
 
-  public void setDigitalValue(boolean digitalValue) {
-    this.digitalValue = digitalValue;
-  }
+    public void setDigitalValue(boolean digitalValue) {
+        this.digitalValue = digitalValue;
+    }
 }

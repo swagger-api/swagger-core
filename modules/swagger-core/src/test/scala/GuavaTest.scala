@@ -1,14 +1,11 @@
-import org.junit.runner.RunWith
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-import org.scalatest.junit.JUnitRunner
-
 import com.fasterxml.jackson.datatype.guava.GuavaModule
-import com.wordnik.swagger.converter.ModelConverters
-import com.wordnik.swagger.util.Json
-
+import io.swagger.converter.ModelConverters
+import io.swagger.util.Json
 import matchers.SerializationMatchers.serializeToJson
 import models.GuavaModel
+import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class GuavaTest extends FlatSpec with Matchers {
@@ -18,6 +15,6 @@ class GuavaTest extends FlatSpec with Matchers {
     m.registerModule(new GuavaModule())
 
     val schemas = ModelConverters.getInstance().read(classOf[GuavaModel])
-    schemas should serializeToJson ("""{"GuavaModel":{"type": "object","properties":{"name":{"type":"string"}}}}""")
+    schemas should serializeToJson( """{"GuavaModel":{"type": "object","properties":{"name":{"type":"string"}}}}""")
   }
 }

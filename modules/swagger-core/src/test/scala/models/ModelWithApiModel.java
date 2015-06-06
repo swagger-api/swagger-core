@@ -1,8 +1,8 @@
 package models;
 
-import com.wordnik.swagger.annotations.*;
+import io.swagger.annotations.ApiModel;
 
 @ApiModel("MyModel")
 public class ModelWithApiModel {
-  public String name;
+    public String name;
 }

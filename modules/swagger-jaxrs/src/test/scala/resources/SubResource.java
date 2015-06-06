@@ -1,26 +1,26 @@
 package resources;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import models.Employee;
 
-import com.wordnik.swagger.annotations.*;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-
-import java.util.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 @Api(hidden = true)
 public class SubResource {
-  @ApiOperation(value="gets an object by ID", tags = "Employees", response = Employee.class, responseContainer = "list")
-  @GET
-  public void getAllEmployees() {
-    return;
-  }
+    @ApiOperation(value = "gets an object by ID", tags = "Employees", response = Employee.class, responseContainer = "list")
+    @GET
+    public void getAllEmployees() {
+        return;
+    }
 
-  @ApiOperation(value="gets an object by ID", tags = "Employees", response = Employee.class)
-  @GET
-  @Path("{id}")
-  public Employee getSubresourceOperation(@ApiParam(value = "test") @PathParam("id") Long userId) {
-    return null;
-  }
+    @ApiOperation(value = "gets an object by ID", tags = "Employees", response = Employee.class)
+    @GET
+    @Path("{id}")
+    public Employee getSubresourceOperation(@ApiParam(value = "test") @PathParam("id") Long userId) {
+        return null;
+    }
 }

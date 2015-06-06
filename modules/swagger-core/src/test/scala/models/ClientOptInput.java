@@ -1,38 +1,37 @@
 package models;
 
-import com.wordnik.swagger.annotations.*;
-import com.wordnik.swagger.models.Swagger;
-
 import com.fasterxml.jackson.databind.JsonNode;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.Swagger;
 
 public class ClientOptInput {
-  private String opts;
-  private JsonNode model;
-  private Swagger swagger;
+    private String opts;
+    private JsonNode model;
+    private Swagger swagger;
 
+    public String getOpts() {
+        return opts;
+    }
 
-  public void setOpts(String opts) {
-    this.opts = opts;
-  }
+    public void setOpts(String opts) {
+        this.opts = opts;
+    }
 
-  public String getOpts() {
-    return opts;
-  }
+    @ApiModelProperty(hidden = true)
+    public JsonNode getModel() {
+        return model;
+    }
 
-  public void setModel(JsonNode model) {
-    this.model = model;
-  }
+    public void setModel(JsonNode model) {
+        this.model = model;
+    }
 
-  @ApiModelProperty(hidden = true)
-  public JsonNode getModel() {
-    return model;
-  }
-  public void setSwagger(Swagger swagger) {
-    this.swagger = swagger;
-  }
+    @ApiModelProperty(dataType = "Object")
+    public Swagger getSwagger() {
+        return swagger;
+    }
 
-  @ApiModelProperty(dataType="Object")
-  public Swagger getSwagger() {
-    return swagger;
-  }
+    public void setSwagger(Swagger swagger) {
+        this.swagger = swagger;
+    }
 }

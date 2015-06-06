@@ -1,19 +1,15 @@
 package filter
 
-import com.wordnik.swagger.models.Swagger
-import com.wordnik.swagger.util._
-import com.wordnik.swagger.core.filter._
-
+import io.swagger.core.filter.SpecFilter
+import io.swagger.models.Swagger
+import io.swagger.util.Json
+import matchers.SerializationMatchers._
 import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-
-import scala.io.Source
 
 import scala.collection.JavaConverters._
-
-import matchers.SerializationMatchers._
+import scala.io.Source
 
 @RunWith(classOf[JUnitRunner])
 class SpecFilterTest extends FlatSpec with Matchers {
@@ -40,9 +36,9 @@ class SpecFilterTest extends FlatSpec with Matchers {
 
     val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
 
-    if(filtered.getPaths() != null) {
-      for((path, i) <- filtered.getPaths().asScala) {
-        i.getGet() should be (null)
+    if (filtered.getPaths() != null) {
+      for ((path, i) <- filtered.getPaths().asScala) {
+        i.getGet() should be(null)
       }
     }
     else
@@ -56,8 +52,8 @@ class SpecFilterTest extends FlatSpec with Matchers {
 
     val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
 
-    if(filtered.getPaths() != null) {
-      for((path, i) <- filtered.getPaths().asScala) {
+    if (filtered.getPaths() != null) {
+      for ((path, i) <- filtered.getPaths().asScala) {
         path should not be ("/user")
       }
     }
@@ -72,10 +68,10 @@ class SpecFilterTest extends FlatSpec with Matchers {
 
     val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
 
-    if(filtered.getPaths() != null) {
-      for((path, i) <- filtered.getPaths().asScala) {
+    if (filtered.getPaths() != null) {
+      for ((path, i) <- filtered.getPaths().asScala) {
         val get = i.getGet()
-        for(param <- get.getParameters().asScala) {
+        for (param <- get.getParameters().asScala) {
           param.getDescription should not be (null)
           param.getDescription.startsWith("secret") should not be (true)
         }
@@ -91,9 +87,9 @@ class SpecFilterTest extends FlatSpec with Matchers {
     val filter = new InternalModelPropertiesRemoverFilter()
 
     val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
-    for((key, model) <- filtered.getDefinitions().asScala) {
-      for((propName, prop) <- model.getProperties().asScala) {
-        propName.startsWith("_") should be (false)
+    for ((key, model) <- filtered.getDefinitions().asScala) {
+      for ((propName, prop) <- model.getProperties().asScala) {
+        propName.startsWith("_") should be(false)
       }
     }
   }

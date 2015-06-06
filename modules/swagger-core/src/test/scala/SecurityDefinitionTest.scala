@@ -1,19 +1,13 @@
+import io.swagger.converter.ModelConverters
+import io.swagger.models._
+import io.swagger.models.auth.OAuth2Definition
+import io.swagger.models.parameters.{PathParameter, QueryParameter}
+import io.swagger.models.properties.{LongProperty, RefProperty, StringProperty}
+import io.swagger.util.Json
 import models._
-import models.composition.Pet;
-
-import com.wordnik.swagger.util.Json
-import com.wordnik.swagger.models._
-import com.wordnik.swagger.models.auth._
-import com.wordnik.swagger.converter._
-import com.wordnik.swagger.models.parameters._
-import com.wordnik.swagger.models.properties._
-
-import scala.collection.JavaConverters._
-
 import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
 class SecurityDefinitionTest extends FlatSpec with Matchers {
@@ -75,7 +69,7 @@ class SecurityDefinitionTest extends FlatSpec with Matchers {
     get.response(200, response)
       .defaultResponse(errorResponse)
       .security(new SecurityRequirement("internal_oauth2")
-        .scope("user:email"))
+      .scope("user:email"))
       .security(new SecurityRequirement("api_key"))
 
     swagger.path("/pets", new Path().get(get))

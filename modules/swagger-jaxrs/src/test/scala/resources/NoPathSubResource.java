@@ -1,9 +1,9 @@
 package resources;
 
-import javax.ws.rs.GET;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import javax.ws.rs.GET;
 
 /**
  * The <code>NoPathSubResource</code> class defines test sub-resource without
@@ -12,9 +12,9 @@ import com.wordnik.swagger.annotations.ApiOperation;
 @Api()
 public class NoPathSubResource {
 
-  @ApiOperation(value = "Returns greeting")
-  @GET
-  public String getGreeting() {
-    return "Hello!";
-  }
+    @ApiOperation(value = "Returns greeting")
+    @GET
+    public String getGreeting() {
+        return "Hello!";
+    }
 }

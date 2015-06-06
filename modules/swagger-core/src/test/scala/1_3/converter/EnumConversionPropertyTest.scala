@@ -1,20 +1,13 @@
 package converter
 
-import models._
-
-import com.wordnik.swagger.converter._
-import com.wordnik.swagger.util._
-
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-
-import java.util.Date
-
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-
+import io.swagger.converter.ModelConverters
+import io.swagger.util.Json
 import matchers.SerializationMatchers._
+import models._
+import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class EnumConversionPropertyTest extends FlatSpec with Matchers {
@@ -23,8 +16,8 @@ class EnumConversionPropertyTest extends FlatSpec with Matchers {
 
   it should "read a model with an enum property" in {
     val models = ModelConverters.getInstance().read(classOf[ModelWithEnumProperty])
-    models should serializeToJson (
-"""{
+    models should serializeToJson(
+      """{
   "ModelWithEnumProperty" : {
     "type": "object",
     "properties" : {
@@ -39,8 +32,8 @@ class EnumConversionPropertyTest extends FlatSpec with Matchers {
 
   it should "read a model with enums" in {
     val models = ModelConverters.getInstance().read(classOf[ATM])
-    models should serializeToJson (
-"""{
+    models should serializeToJson(
+      """{
   "ATM" : {
     "type": "object",
     "properties" : {
