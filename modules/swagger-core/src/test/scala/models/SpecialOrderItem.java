@@ -1,6 +1,6 @@
 package models;
 
 public class SpecialOrderItem {
-  public String name;
-  public Long id;
+    public String name;
+    public Long id;
 }

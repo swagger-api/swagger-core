@@ -1,17 +1,17 @@
 /**
- *  Copyright 2015 SmartBear Software
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright 2015 SmartBear Software
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.swagger.annotations;
@@ -58,7 +58,7 @@ public @interface SwaggerDefinition {
      *
      * @return a list of global level consumes.
      */
-    String [] consumes() default "";
+    String[] consumes() default "";
 
     /**
      * Global level produces for this swagger definition.
@@ -68,7 +68,7 @@ public @interface SwaggerDefinition {
      *
      * @return a list of global level consumes
      */
-    String [] produces() default "";
+    String[] produces() default "";
 
     /**
      * The transfer protocol of the API.
@@ -77,12 +77,7 @@ public @interface SwaggerDefinition {
      *
      * @return list of supported transfer protocols, keep empty for default
      */
-    Scheme [] schemes() default Scheme.DEFAULT;
-
-    /**
-     * Enumeration with valid schemes
-     */
-    enum Scheme { DEFAULT, HTTP, HTTPS, WS, WSS };
+    Scheme[] schemes() default Scheme.DEFAULT;
 
     /**
      * Global tags that can be used to tag individual Apis and ApiOperations.
@@ -91,7 +86,9 @@ public @interface SwaggerDefinition {
      *
      * @return list of globally defined tags
      */
-    Tag [] tags() default @Tag( name = "" );
+    Tag[] tags() default @Tag(name = "");
+
+    ;
 
     /**
      * General metadata for this Swagger definition.
@@ -100,12 +97,19 @@ public @interface SwaggerDefinition {
      *
      * @return general metadata for this Swagger definition
      */
-    Info info() default @Info( title = "", version = "" );
+    Info info() default @Info(title = "", version = "");
 
     /**
      * Reference to external documentation for this Swagger definition.
      *
      * @return a reference to external documentation
      */
-    ExternalDocs externalDocs() default @ExternalDocs( url = "");
+    ExternalDocs externalDocs() default @ExternalDocs(url = "");
+
+    /**
+     * Enumeration with valid schemes
+     */
+    enum Scheme {
+        DEFAULT, HTTP, HTTPS, WS, WSS
+    }
 }

@@ -1,12 +1,8 @@
-import io.swagger.jaxrs.config._
 import io.swagger.jaxrs.config.BeanConfig
 import io.swagger.models.Scheme
-import io.swagger.util.Json
-
 import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
 
 import scala.collection.JavaConverters._
 
@@ -29,9 +25,9 @@ class BeanConfigTest extends FlatSpec with Matchers {
     val swagger = bc.getSwagger()
     swagger should not be (null)
     val keys = swagger.getPaths().keySet()
-    keys.asScala.toSet should be (Set("/packageA", "/packageB"))
+    keys.asScala.toSet should be(Set("/packageA", "/packageB"))
     val schemes = swagger.getSchemes()
-    schemes.asScala.toSet should be (Set(Scheme.HTTP, Scheme.HTTPS))
+    schemes.asScala.toSet should be(Set(Scheme.HTTP, Scheme.HTTPS))
   }
 
   it should "deep scan packages per #1011" in {
@@ -51,8 +47,8 @@ class BeanConfigTest extends FlatSpec with Matchers {
     val swagger = bc.getSwagger()
     swagger should not be (null)
     val keys = swagger.getPaths().keySet()
-    keys.asScala.toSet should be (Set("/packageA", "/packageB"))
+    keys.asScala.toSet should be(Set("/packageA", "/packageB"))
     val schemes = swagger.getSchemes()
-    schemes.asScala.toSet should be (Set(Scheme.HTTP, Scheme.HTTPS))
+    schemes.asScala.toSet should be(Set(Scheme.HTTP, Scheme.HTTPS))
   }
 }

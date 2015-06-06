@@ -10,16 +10,18 @@ import java.util.Collection;
  */
 public interface ReaderConfig {
 
-  /**
-   * Checks if all resources, but not those with the
-   * {@link Api} annotation has to be processed.
-   * @return <code>true</code> if all resource has to be processed
-   */
-  boolean isScanAllResources();
+    /**
+     * Checks if all resources, but not those with the
+     * {@link Api} annotation has to be processed.
+     *
+     * @return <code>true</code> if all resource has to be processed
+     */
+    boolean isScanAllResources();
 
-  /**
-   * Returns paths of resources to be ignored.
-   * @return collection of paths
-   */
-  Collection<String> getIgnoredRoutes();
+    /**
+     * Returns paths of resources to be ignored.
+     *
+     * @return collection of paths
+     */
+    Collection<String> getIgnoredRoutes();
 }

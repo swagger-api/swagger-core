@@ -5,6 +5,6 @@ import java.util.List;
 
 public class GenericListWrapper<T> {
 
-  public long someValue;
-  public List<T> entries = Collections.emptyList();
+    public long someValue;
+    public List<T> entries = Collections.emptyList();
 }

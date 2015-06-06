@@ -1,15 +1,10 @@
 import io.swagger.converter.ModelConverters
 import io.swagger.util.Json
-import models.composition._
-import io.swagger.models._
-import io.swagger.converter._
-
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-
 import matchers.SerializationMatchers._
+import models.composition._
+import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class CompositionTest extends FlatSpec with Matchers {
@@ -18,8 +13,8 @@ class CompositionTest extends FlatSpec with Matchers {
   it should "read a model with required params and description" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Human])
 
-    schemas should serializeToJson (
-"""{
+    schemas should serializeToJson(
+      """{
   "Human" : {
     "type": "object",
     "properties" : {
@@ -42,8 +37,8 @@ class CompositionTest extends FlatSpec with Matchers {
 
   it should "read a model with composition" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Animal])
-    schemas should serializeToJson (
-"""{
+    schemas should serializeToJson(
+      """{
   "Animal" : {
     "type": "object",
     "properties" : {
@@ -107,8 +102,8 @@ class CompositionTest extends FlatSpec with Matchers {
 
   it should "create a model" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[AbstractBaseModelWithoutFields])
-    schemas should serializeToJson (
-"""{
+    schemas should serializeToJson(
+      """{
   "AbstractBaseModelWithoutFields" : {
     "type" : "object",
     "description" : "I am an Abstract Base Model without any declared fields and with Sub-Types"
@@ -139,7 +134,7 @@ class CompositionTest extends FlatSpec with Matchers {
   it should "create a ModelWithFieldWithSubTypes" in {
     val schema = ModelConverters.getInstance().readAll(classOf[ModelWithFieldWithSubTypes])
     schema should serializeToJson(
-"""
+      """
   {
     "AbstractBaseModelWithSubTypes" : {
       "type" : "object",

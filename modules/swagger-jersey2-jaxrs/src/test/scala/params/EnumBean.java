@@ -1,19 +1,19 @@
 package params;
 
-import javax.ws.rs.HeaderParam;
-
 import models.TestEnum;
+
+import javax.ws.rs.HeaderParam;
 
 public class EnumBean {
 
-  @HeaderParam("HeaderParam")
-  private TestEnum value;
+    @HeaderParam("HeaderParam")
+    private TestEnum value;
 
-  public TestEnum getValue() {
-    return value;
-  }
+    public TestEnum getValue() {
+        return value;
+    }
 
-  public void setValue(TestEnum value) {
-    this.value = value;
-  }
+    public void setValue(TestEnum value) {
+        this.value = value;
+    }
 }

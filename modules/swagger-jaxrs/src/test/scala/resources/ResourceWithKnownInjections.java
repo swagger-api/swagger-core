@@ -15,50 +15,50 @@ import javax.ws.rs.core.Request;
 @Produces({"application/json", "application/xml"})
 public class ResourceWithKnownInjections {
 
-  private Integer constructorParam;
-  @QueryParam("fieldParam")
-  private String fieldParam; // injection into a class field
+    private Integer constructorParam;
+    @QueryParam("fieldParam")
+    private String fieldParam; // injection into a class field
 
-  // injection into a constructor parameter
-  public ResourceWithKnownInjections(@PathParam("id") Integer constructorParam) {
-    this.constructorParam = constructorParam;
-  }
-
-  @GET
-  public String get(@QueryParam("methodParam") String methodParam) {
-    // injection into a resource method parameter
-    final StringBuilder sb = new StringBuilder();
-    sb.append("Constructor param: ").append(constructorParam).append("\n");
-    sb.append("Field param: ").append(fieldParam).append("\n");
-    sb.append("Method param: ").append(methodParam).append("\n");
-    return sb.toString();
-  }
-
-  @Path("/subresource")
-  public SubResource subResourceLocator(@QueryParam("subResourceParam") String subResourceParam) {
-    // injection into a sub resource locator parameter
-    return new SubResource(subResourceParam);
-  }
-
-  @Context
-  public void setRequest(Request request) {
-    // injection into a setter method
-  }
-
-  @Api(description = "Sub resource")
-  public static class SubResource {
-
-    private String subResourceParam;
-
-    public SubResource(String subResourceParam) {
-      this.subResourceParam = subResourceParam;
+    // injection into a constructor parameter
+    public ResourceWithKnownInjections(@PathParam("id") Integer constructorParam) {
+        this.constructorParam = constructorParam;
     }
 
     @GET
-    public String get() {
-      final StringBuilder sb = new StringBuilder();
-      sb.append("Sub Resource: ").append(subResourceParam);
-      return sb.toString();
+    public String get(@QueryParam("methodParam") String methodParam) {
+        // injection into a resource method parameter
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Constructor param: ").append(constructorParam).append("\n");
+        sb.append("Field param: ").append(fieldParam).append("\n");
+        sb.append("Method param: ").append(methodParam).append("\n");
+        return sb.toString();
     }
-  }
+
+    @Path("/subresource")
+    public SubResource subResourceLocator(@QueryParam("subResourceParam") String subResourceParam) {
+        // injection into a sub resource locator parameter
+        return new SubResource(subResourceParam);
+    }
+
+    @Context
+    public void setRequest(Request request) {
+        // injection into a setter method
+    }
+
+    @Api(description = "Sub resource")
+    public static class SubResource {
+
+        private String subResourceParam;
+
+        public SubResource(String subResourceParam) {
+            this.subResourceParam = subResourceParam;
+        }
+
+        @GET
+        public String get() {
+            final StringBuilder sb = new StringBuilder();
+            sb.append("Sub Resource: ").append(subResourceParam);
+            return sb.toString();
+        }
+    }
 }

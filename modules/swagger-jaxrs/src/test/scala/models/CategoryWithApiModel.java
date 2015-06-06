@@ -1,7 +1,8 @@
 package models;
 
-import javax.xml.bind.annotation.*;
 import io.swagger.annotations.ApiModel;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 @ApiModel("MyCategory")
 @XmlRootElement(name = "CategoryWithApiModel")

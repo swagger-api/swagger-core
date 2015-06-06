@@ -1,28 +1,16 @@
 package converter
 
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import io.swagger.annotations.ApiModelProperty
 import io.swagger.converter.ModelConverters
-import io.swagger.models.properties.{StringProperty, DateProperty}
+import io.swagger.models.properties.{DateProperty, StringProperty}
 import io.swagger.util.Json
-import models._
-
-import io.swagger.annotations._
-import io.swagger.converter._
-import io.swagger.util._
-import io.swagger.models._
-import io.swagger.models.properties._
-
 import org.joda.time.LocalDate
-
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-
-import scala.collection.mutable.LinkedHashMap
-import scala.annotation.meta.field
-
 import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
+
+import scala.annotation.meta.field
 
 @RunWith(classOf[JUnitRunner])
 class JodaLocalDateConverterTest extends FlatSpec with Matchers {
@@ -36,19 +24,19 @@ class JodaLocalDateConverterTest extends FlatSpec with Matchers {
     val model = models.get("ModelWithJodaLocalDate")
 
     val dateTimeProperty = model.getProperties().get("createdAt")
-    dateTimeProperty.isInstanceOf[DateProperty] should be (true)
+    dateTimeProperty.isInstanceOf[DateProperty] should be(true)
     dateTimeProperty.getPosition should be(1)
     dateTimeProperty.getRequired should be(true)
-    dateTimeProperty.getDescription should be ("creation localDate")
+    dateTimeProperty.getDescription should be("creation localDate")
 
     val nameProperty = model.getProperties().get("name")
-    nameProperty.isInstanceOf[StringProperty] should be (true)
+    nameProperty.isInstanceOf[StringProperty] should be(true)
     nameProperty.getPosition should be(2)
-    nameProperty.getDescription should be ("name of the model")
+    nameProperty.getDescription should be("name of the model")
   }
 }
 
 
 case class ModelWithJodaLocalDate(
-  @(ApiModelProperty@field)(value = "name of the model", position = 2) name: String,
-  @(ApiModelProperty@field)(value = "creation localDate", required = true, position = 1) createdAt: LocalDate)
+                                   @(ApiModelProperty@field)(value = "name of the model", position = 2) name: String,
+                                   @(ApiModelProperty@field)(value = "creation localDate", required = true, position = 1) createdAt: LocalDate)

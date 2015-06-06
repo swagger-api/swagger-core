@@ -11,14 +11,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 public interface InterfaceResource {
-  @GET
-  @Path("/{petId5}")
-  @ApiOperation(value = "Find pet by ID",
-    notes = "Returns a single pet",
-    response = String.class
-  )
-  @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"),
-    @ApiResponse(code = 404, message = "Pet not found")})
-  Response methodFromInterface(
-    @ApiParam(value = "ID of pet to return") @PathParam("petId5") Number petId);
+    @GET
+    @Path("/{petId5}")
+    @ApiOperation(value = "Find pet by ID",
+            notes = "Returns a single pet",
+            response = String.class
+    )
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"),
+            @ApiResponse(code = 404, message = "Pet not found")})
+    Response methodFromInterface(
+            @ApiParam(value = "ID of pet to return") @PathParam("petId5") Number petId);
 }

@@ -1,29 +1,35 @@
 package io.swagger.models.parameters;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.Map;
+
 public interface Parameter {
-  String getIn();
-  void setIn(String in);
+    String getIn();
 
-  @JsonIgnore
-  String getAccess();
-  @JsonIgnore
-  void setAccess(String access);
+    void setIn(String in);
 
-  String getName();
-  void setName(String name);
+    @JsonIgnore
+    String getAccess();
 
-  String getDescription();
-  void setDescription(String description);
+    @JsonIgnore
+    void setAccess(String access);
 
-  boolean getRequired();
-  void setRequired(boolean required);
+    String getName();
 
-  String getPattern();
-  void setPattern(String pattern);
+    void setName(String name);
 
-  Map<String, Object> getVendorExtensions();
+    String getDescription();
+
+    void setDescription(String description);
+
+    boolean getRequired();
+
+    void setRequired(boolean required);
+
+    String getPattern();
+
+    void setPattern(String pattern);
+
+    Map<String, Object> getVendorExtensions();
 }

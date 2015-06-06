@@ -3,12 +3,12 @@ package models;
 import io.swagger.annotations.ApiModelProperty;
 
 public class ModelContainingModelWithReference {
-    public ModelWithReference getModel(){
+    public ModelWithReference getModel() {
         return null;
     }
 
-    @ApiModelProperty( reference = "http://swagger.io/schemas.json#/Models/AnotherModel")
-    public ModelWithReference getAnotherModel(){
+    @ApiModelProperty(reference = "http://swagger.io/schemas.json#/Models/AnotherModel")
+    public ModelWithReference getAnotherModel() {
         return null;
     }
 }

@@ -1,9 +1,9 @@
 package models;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "Employee")
 public class Employee {
-  public long id;
-  public String name;
+    public long id;
+    public String name;
 }

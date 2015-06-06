@@ -1,47 +1,56 @@
 package io.swagger.models.properties;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.models.Xml;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public interface Property {
-  Property title(String title);
-  Property description(String description);
-  
-  String getType();
-  String getFormat();
+    Property title(String title);
 
-  String getTitle();
-  void setTitle(String title);
+    Property description(String description);
 
-  String getDescription();
-  void setDescription(String title);
+    String getType();
 
-  @JsonIgnore
-  String getName();
-  void setName(String name);
+    String getFormat();
 
-  @JsonIgnore
-  boolean getRequired();
-  void setRequired(boolean required);
+    String getTitle();
 
-  String getExample();
-  void setExample(String example);
+    void setTitle(String title);
 
-  Boolean getReadOnly();
-  void setReadOnly(Boolean example);
+    String getDescription();
 
-  void setPosition(Integer position);
-  Integer getPosition();
+    void setDescription(String title);
 
-  Xml getXml();
-  void setXml(Xml xml);
+    @JsonIgnore
+    String getName();
 
-  void setDefault(String _default);
+    void setName(String name);
 
-  @JsonIgnore
-  String getAccess();
+    @JsonIgnore
+    boolean getRequired();
 
-  @JsonIgnore
-  void setAccess(String access);
+    void setRequired(boolean required);
+
+    String getExample();
+
+    void setExample(String example);
+
+    Boolean getReadOnly();
+
+    void setReadOnly(Boolean example);
+
+    Integer getPosition();
+
+    void setPosition(Integer position);
+
+    Xml getXml();
+
+    void setXml(Xml xml);
+
+    void setDefault(String _default);
+
+    @JsonIgnore
+    String getAccess();
+
+    @JsonIgnore
+    void setAccess(String access);
 }

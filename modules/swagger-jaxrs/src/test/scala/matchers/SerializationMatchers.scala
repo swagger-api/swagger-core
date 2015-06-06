@@ -1,14 +1,15 @@
 package matchers
 
-import io.swagger.util.{Yaml, Json}
-import org.scalatest.matchers.MatchResult
-import org.scalatest.matchers.Matcher
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import io.swagger.util._
+import io.swagger.util.{Json, Yaml}
+import org.scalatest.matchers.{MatchResult, Matcher}
 
 trait SerializationMatchers {
+
+  def serializeToYaml(yamlStr: String) = new SerializeToStringMatcher(yamlStr, Yaml.mapper())
+
+  def serializeToJson(jsonStr: String) = new SerializeToStringMatcher(jsonStr, Json.mapper())
 
   class SerializeToStringMatcher(str: String, mapper: ObjectMapper) extends Matcher[Object] {
     def apply(left: Object) = {
@@ -21,9 +22,6 @@ trait SerializationMatchers {
       )
     }
   }
-
-  def serializeToYaml(yamlStr: String) = new SerializeToStringMatcher(yamlStr, Yaml.mapper())
-  def serializeToJson(jsonStr: String) = new SerializeToStringMatcher(jsonStr, Json.mapper())
 }
 
 object SerializationMatchers extends SerializationMatchers

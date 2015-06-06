@@ -1,17 +1,12 @@
+import javax.xml.bind.annotation._
+
 import io.swagger.converter.ModelConverters
 import io.swagger.models.ModelImpl
 import io.swagger.util.Json
 import models._
-import models.composition.Pet;
-import io.swagger.models._
-import io.swagger.converter._
-
-import javax.xml.bind.annotation._
-
 import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
 
 import scala.beans.BeanProperty
 
@@ -22,7 +17,7 @@ class XmlModelTest extends FlatSpec with Matchers {
     val model = schemas.get("Monster")
 
     model should not be (null)
-    model.isInstanceOf[ModelImpl] should be (true)
+    model.isInstanceOf[ModelImpl] should be(true)
     var xml = model.asInstanceOf[ModelImpl].getXml()
 
     xml should not be (null)
@@ -30,8 +25,8 @@ class XmlModelTest extends FlatSpec with Matchers {
     val property = model.getProperties().get("children")
     property should not be (null)
     xml = property.getXml()
-    xml.getWrapped should equal (true)
-    xml.getName() should be ("children")
+    xml.getWrapped should equal(true)
+    xml.getName() should be("children")
   }
 
   it should "not create an xml object" in {
@@ -39,17 +34,17 @@ class XmlModelTest extends FlatSpec with Matchers {
     val model = schemas.get("Address")
 
     model should not be (null)
-    model.isInstanceOf[ModelImpl] should be (true)
+    model.isInstanceOf[ModelImpl] should be(true)
 
     val property = model.getProperties().get("streetNumber")
     var xml = property.getXml()
 
-    xml should be (null)
+    xml should be(null)
   }
 
   it should "stay hidden per 534" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Issue534])
-    schemas.get("Issue534").getProperties().size() should be (1)
+    schemas.get("Issue534").getProperties().size() should be(1)
   }
 }
 

@@ -1,11 +1,5 @@
 package io.swagger.jackson;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.converter.ModelConverter;
@@ -15,41 +9,46 @@ import io.swagger.models.ModelImpl;
 import io.swagger.models.Xml;
 import io.swagger.models.properties.Property;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
+
 public class XMLInfoTest extends SwaggerTestBase {
-  @XmlRootElement(name="xmlDecoratedBean")
-  @ApiModel(description="DESC")
-  static class XmlDecoratedBean {
-    @XmlElement(name="elementB")
-    public int b;
+    public void testSimple() throws Exception {
+        final ModelConverter mr = modelResolver();
+        Model model = mr.resolve(XmlDecoratedBean.class, new ModelConverterContextImpl(mr), null);
+        assertTrue(model instanceof ModelImpl);
 
-    @XmlElementWrapper(name = "items")
-    @XmlElement(name = "item")
-    public List<String> items;
+        ModelImpl impl = (ModelImpl) model;
 
-    @JsonProperty("elementC")
-    public String c;
-  }
+        Xml xml = impl.getXml();
+        assertNotNull(xml);
+        assertEquals(xml.getName(), "xmlDecoratedBean");
 
-  public void testSimple() throws Exception {
-    final ModelConverter mr = modelResolver();
-    Model model = mr.resolve(XmlDecoratedBean.class, new ModelConverterContextImpl(mr), null);
-    assertTrue(model instanceof ModelImpl);
+        Property property = impl.getProperties().get("items");
+        assertNotNull(property);
+        xml = property.getXml();
 
-    ModelImpl impl = (ModelImpl) model;
+        assertNotNull(xml);
+        assertEquals(xml.getName(), "item");
+        assertTrue(xml.getWrapped());
 
-    Xml xml = impl.getXml();
-    assertNotNull(xml);
-    assertEquals(xml.getName(), "xmlDecoratedBean");
+        property = impl.getProperties().get("elementC");
+        assertNotNull(property);
+    }
 
-    Property property = impl.getProperties().get("items");
-    assertNotNull(property);
-    xml = property.getXml();
+    @XmlRootElement(name = "xmlDecoratedBean")
+    @ApiModel(description = "DESC")
+    static class XmlDecoratedBean {
+        @XmlElement(name = "elementB")
+        public int b;
 
-    assertNotNull(xml);
-    assertEquals(xml.getName(), "item");
-    assertTrue(xml.getWrapped());
+        @XmlElementWrapper(name = "items")
+        @XmlElement(name = "item")
+        public List<String> items;
 
-    property = impl.getProperties().get("elementC");
-    assertNotNull(property);
-  }
+        @JsonProperty("elementC")
+        public String c;
+    }
 }

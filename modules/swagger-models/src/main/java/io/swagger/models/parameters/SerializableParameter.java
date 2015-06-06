@@ -5,18 +5,23 @@ import io.swagger.models.properties.Property;
 import java.util.List;
 
 public interface SerializableParameter extends Parameter {
-  String getType();
-  void setType(String type);
+    String getType();
 
-  void setItems(Property items);
-  Property getItems();
+    void setType(String type);
 
-  String getFormat();
-  void setFormat(String format);
+    Property getItems();
 
-  String getCollectionFormat();
-  void setCollectionFormat(String collectionFormat);
+    void setItems(Property items);
 
-  List<String> getEnum();
-  void setEnum(List<String> _enum);
+    String getFormat();
+
+    void setFormat(String format);
+
+    String getCollectionFormat();
+
+    void setCollectionFormat(String collectionFormat);
+
+    List<String> getEnum();
+
+    void setEnum(List<String> _enum);
 }

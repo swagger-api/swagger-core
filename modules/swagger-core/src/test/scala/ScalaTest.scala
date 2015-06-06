@@ -1,18 +1,9 @@
 import io.swagger.converter.ModelConverters
 import io.swagger.util.Json
-import models._
-import models.composition.Pet;
-import io.swagger.converter._
-
-import scala.collection.JavaConverters._
-
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-
-import org.scalatest.Matchers
-
 import matchers.SerializationMatchers._
+import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class ScalaTest extends FlatSpec with Matchers {
@@ -20,8 +11,8 @@ class ScalaTest extends FlatSpec with Matchers {
 
   it should "convert a model with scala list" in {
     val schemas = ModelConverters.getInstance().read(classOf[ClassWithScalaField])
-    schemas should serializeToJson (
-"""{
+    schemas should serializeToJson(
+      """{
   "ClassWithScalaField" : {
     "type": "object",
     "properties" : {
@@ -50,7 +41,7 @@ class ScalaTest extends FlatSpec with Matchers {
 }
 
 case class ClassWithScalaField(id: Int,
-  name: String,
-  longField: Long,
-  listOfStrings: List[String]
-)
+                               name: String,
+                               longField: Long,
+                               listOfStrings: List[String]
+                                )
