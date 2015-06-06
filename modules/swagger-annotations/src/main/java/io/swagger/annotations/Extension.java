@@ -23,22 +23,25 @@ import java.lang.annotation.Target;
 
 /**
  * An optionally named list of extension properties.
+ *
+ * @since 1.5.0
  */
-
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Extension {
 
     /**
+     * An option name for these extensions.
+     *
      * @return an option name for these extensions - will be prefixed with "x-"
      */
-
     String name() default "";
 
     /**
+     * The extension properties.
+     *
      * @see ExtensionProperty
      * @return the actual extension properties
      */
-
     ExtensionProperty[] properties();
 }

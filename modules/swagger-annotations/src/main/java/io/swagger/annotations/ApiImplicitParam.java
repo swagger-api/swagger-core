@@ -65,7 +65,8 @@ public @interface ApiImplicitParam {
    * <li>To set a list of values, provide a comma-separated list.
    * For example: {@code first, second, third}.</li>
    * <li>To set a range of values, start the value with "range", and surrounding by square
-   * brackets include the minimum and maximum values. For example: {@code range[1, 5]}.</li>
+   * brackets include the minimum and maximum values, or round brackets for exclusive minimum and maximum values.
+   * For example: {@code range[1, 5]}, {@code range(1, 5)}, {@code range[1, 5)}.</li>
    * <li>To set a minimum/maximum value, use the same format for range but use "infinity"
    * or "-infinity" as the second value. For example, {@code range[1, infinity]} means the
    * minimum allowable value of this parameter is 1.</li>

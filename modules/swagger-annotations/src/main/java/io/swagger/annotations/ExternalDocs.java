@@ -23,8 +23,8 @@ import java.lang.annotation.Target;
 
 /**
  * Represents an external documentation description.
- * 
- * @since 1.5.2-M1
+ *
+ * @since 1.5.0
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

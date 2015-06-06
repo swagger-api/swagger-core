@@ -24,6 +24,8 @@ import java.lang.annotation.Target;
 /**
  * License metadata available within the info section of a Swagger definition, see
  * https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#licenseObject
+ *
+ * @since 1.5.0
  */
 
 @Target(ElementType.ANNOTATION_TYPE)
@@ -31,14 +33,16 @@ import java.lang.annotation.Target;
 public @interface License {
 
     /**
+     * The name of the license.
+     *
      * @return the name of the license
      */
-
     String name();
 
     /**
+     * An optional URL for the license.
+     *
      * @return an optional URL for the license.
      */
-
     String url() default "";
 }
