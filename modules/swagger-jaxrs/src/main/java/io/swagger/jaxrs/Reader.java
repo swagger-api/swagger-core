@@ -945,35 +945,6 @@ public class Reader {
         return result;
     }
 
-    public String extractOperationMethod(ApiOperation apiOperation, Method method, Iterator<SwaggerExtension> chain) {
-        if (apiOperation != null && apiOperation.httpMethod() != null && !"".equals(apiOperation.httpMethod())) {
-            return apiOperation.httpMethod().toLowerCase();
-        } else if (method.getAnnotation(javax.ws.rs.GET.class) != null) {
-            return "get";
-        } else if (method.getAnnotation(javax.ws.rs.PUT.class) != null) {
-            return "put";
-        } else if (method.getAnnotation(javax.ws.rs.POST.class) != null) {
-            return "post";
-        } else if (method.getAnnotation(javax.ws.rs.DELETE.class) != null) {
-            return "delete";
-        } else if (method.getAnnotation(javax.ws.rs.OPTIONS.class) != null) {
-            return "options";
-        } else if (method.getAnnotation(javax.ws.rs.HEAD.class) != null) {
-            return "head";
-        } else if (method.getAnnotation(PATCH.class) != null) {
-            return "patch";
-        } else if (method.getAnnotation(HttpMethod.class) != null) {
-            HttpMethod httpMethod = (HttpMethod) method.getAnnotation(HttpMethod.class);
-            return httpMethod.value().toLowerCase();
-        } else if ((ReflectionUtils.getOverriddenMethod(method)) != null) {
-            return extractOperationMethod(apiOperation, ReflectionUtils.getOverriddenMethod(method), chain);
-        } else if (chain.hasNext()) {
-            return chain.next().extractOperationMethod(apiOperation, method, chain);
-        } else {
-            return null;
-        }
-    }
-
     private void appendModels(Type type) {
         final Map<String, Model> models = ModelConverters.getInstance().readAll(type);
         for (Map.Entry<String, Model> entry : models.entrySet()) {
