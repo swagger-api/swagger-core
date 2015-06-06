@@ -1,19 +1,13 @@
 package converter
 
+import com.fasterxml.jackson.datatype.guava.GuavaModule
 import io.swagger.converter.ModelConverters
 import io.swagger.util.Json
-import models._
-
-import io.swagger.converter._
-
-import com.fasterxml.jackson.datatype.guava.GuavaModule
-
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-
 import matchers.SerializationMatchers._
+import models._
+import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class ModelWithOptionalFieldsTest extends FlatSpec with Matchers {
@@ -21,8 +15,8 @@ class ModelWithOptionalFieldsTest extends FlatSpec with Matchers {
 
   ignore should "read a model with guava optionals" in {
     val property = ModelConverters.getInstance().readAll(classOf[ModelWithOptionalFields])
-    property should serializeToJson (
-"""{
+    property should serializeToJson(
+      """{
   "ModelWithOptionalFields" : {
     "id" : "ModelWithOptionalFields",
     "properties" : {

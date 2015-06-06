@@ -2,22 +2,26 @@ package io.swagger.models;
 
 import io.swagger.models.properties.Property;
 
-import java.util.*;
+import java.util.Map;
 
 public interface Model {
-  String getDescription();
-  void setDescription(String description);
+    String getDescription();
 
-  Map<String, Property> getProperties();
-  void setProperties(Map<String, Property> properties);
+    void setDescription(String description);
 
-  Object getExample();
-  void setExample(Object example);
+    Map<String, Property> getProperties();
 
-  ExternalDocs getExternalDocs();
+    void setProperties(Map<String, Property> properties);
 
-  String getReference();
-  void setReference( String reference );
+    Object getExample();
 
-  Object clone();
+    void setExample(Object example);
+
+    ExternalDocs getExternalDocs();
+
+    String getReference();
+
+    void setReference(String reference);
+
+    Object clone();
 }

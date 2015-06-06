@@ -1,26 +1,14 @@
 package converter
 
-import io.swagger.annotations.ApiModelProperty
-import io.swagger.converter.ModelConverters
-import io.swagger.models.properties.{LongProperty, DateTimeProperty, MapProperty}
-import io.swagger.util.Json
-import models._
-
-import io.swagger.converter._
-import io.swagger.models._
-import io.swagger.models.properties._
-
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-
-
 import java.util.Date
 
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import io.swagger.converter.ModelConverters
+import io.swagger.models.properties.{DateTimeProperty, LongProperty, MapProperty}
+import io.swagger.util.Json
 import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-
-import scala.beans.BeanProperty
 
 @RunWith(classOf[JUnitRunner])
 class MapTest extends FlatSpec with Matchers {
@@ -31,11 +19,11 @@ class MapTest extends FlatSpec with Matchers {
 
     val model = models.get("ModelWithLongMapValue")
     val id = model.getProperties().get("id")
-    id.isInstanceOf[LongProperty] should be (true)
+    id.isInstanceOf[LongProperty] should be(true)
     val p = model.getProperties().get("longMap")
-    p.isInstanceOf[MapProperty] should be (true)
+    p.isInstanceOf[MapProperty] should be(true)
     val map = p.asInstanceOf[MapProperty]
-    map.getAdditionalProperties().isInstanceOf[LongProperty] should be (true)
+    map.getAdditionalProperties().isInstanceOf[LongProperty] should be(true)
   }
 
   it should "read a model with map and date value" in {
@@ -43,13 +31,14 @@ class MapTest extends FlatSpec with Matchers {
 
     val model = models.get("ModelWithDateMapValue")
     val id = model.getProperties().get("id")
-    id.isInstanceOf[LongProperty] should be (true)
+    id.isInstanceOf[LongProperty] should be(true)
     val p = model.getProperties().get("dateMap")
-    p.isInstanceOf[MapProperty] should be (true)
+    p.isInstanceOf[MapProperty] should be(true)
     val map = p.asInstanceOf[MapProperty]
-    map.getAdditionalProperties().isInstanceOf[DateTimeProperty] should be (true)
+    map.getAdditionalProperties().isInstanceOf[DateTimeProperty] should be(true)
   }
 }
 
 case class ModelWithLongMapValue(id: Long, longMap: Map[String, java.lang.Long])
+
 case class ModelWithDateMapValue(id: Long, dateMap: Map[String, Date])

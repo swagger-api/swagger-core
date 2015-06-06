@@ -7,8 +7,8 @@ import java.util.Map;
 
 class ArgumentsEnumProcessor extends AbstractEnumProcessor<Map<PropertyBuilder.PropertyId, Object>> {
 
-  @Override
-  protected void setEnum(Map<PropertyBuilder.PropertyId, Object> container, List<String> items) {
-    container.put(PropertyBuilder.PropertyId.ENUM, items);
-  }
+    @Override
+    protected void setEnum(Map<PropertyBuilder.PropertyId, Object> container, List<String> items) {
+        container.put(PropertyBuilder.PropertyId.ENUM, items);
+    }
 }

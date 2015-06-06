@@ -5,25 +5,27 @@ package io.swagger.model;
  **/
 @Deprecated
 public class ApiDescription {
-  private String path;
-  private String method;
+    private String path;
+    private String method;
 
-  public ApiDescription(String path, String method) {
-    this.setPath(path);
-    this.setMethod(method);
-  }
+    public ApiDescription(String path, String method) {
+        this.setPath(path);
+        this.setMethod(method);
+    }
 
-  public String getPath() {
-    return path;
-  }
-  public void setPath(String path) {
-    this.path = path;
-  }
+    public String getPath() {
+        return path;
+    }
 
-  public String getMethod() {
-    return method;
-  }
-  public void setMethod(String method) {
-    this.method = method;
-  }
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
 }

@@ -1,17 +1,17 @@
 /**
- *  Copyright 2015 SmartBear Software
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright 2015 SmartBear Software
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.swagger.annotations;
@@ -43,43 +43,43 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiResponse {
-  /**
-   * The HTTP status code of the response.
-   * <p>
-   * The value should be one of the formal <a target="_blank" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">HTTP Status Code Definitions</a>.
-   */
-  int code();
+    /**
+     * The HTTP status code of the response.
+     * <p>
+     * The value should be one of the formal <a target="_blank" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">HTTP Status Code Definitions</a>.
+     */
+    int code();
 
-  /**
-   * Human-readable message to accompany the response.
-   */
-  String message();
+    /**
+     * Human-readable message to accompany the response.
+     */
+    String message();
 
-  /**
-   * Optional response class to describe the payload of the message.
-   * <p>
-   * Corresponds to the `schema` field of the response message object.
-   */
-  Class<?> response() default Void.class;
+    /**
+     * Optional response class to describe the payload of the message.
+     * <p>
+     * Corresponds to the `schema` field of the response message object.
+     */
+    Class<?> response() default Void.class;
 
-  /**
-   * Specifies a reference to the response type. The specified reference can be either local or remote and
-   * will be used as-is, and will override any specified response() class.
-   */
+    /**
+     * Specifies a reference to the response type. The specified reference can be either local or remote and
+     * will be used as-is, and will override any specified response() class.
+     */
 
-  String reference() default "";
+    String reference() default "";
 
-  /**
-   * A list of possible headers provided alongside the response.
-   *
-   * @return a list of response headers.
-   */
-  ResponseHeader[] responseHeaders() default @ResponseHeader(name = "", response = Void.class);
+    /**
+     * A list of possible headers provided alongside the response.
+     *
+     * @return a list of response headers.
+     */
+    ResponseHeader[] responseHeaders() default @ResponseHeader(name = "", response = Void.class);
 
-  /**
-   * Declares a container wrapping the response.
-   * <p>
-   * Valid values are "List", "Set" or "Map". Any other value will be ignored.
-   */
-  String responseContainer() default "";
+    /**
+     * Declares a container wrapping the response.
+     * <p>
+     * Valid values are "List", "Set" or "Map". Any other value will be ignored.
+     */
+    String responseContainer() default "";
 }

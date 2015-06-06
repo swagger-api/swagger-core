@@ -1,33 +1,20 @@
 package converter
 
-import io.swagger.converter.{ModelConverterContext, ModelConverters, ModelConverter}
-import io.swagger.models.{ModelImpl, Model}
-import io.swagger.models.properties.{RefProperty, Property}
-import io.swagger.util.Json
-import models._
-
-import io.swagger.converter._
-import io.swagger.models._
-import io.swagger.models.properties._
-
-import io.swagger.annotations._
-import io.swagger.converter._
-import io.swagger.models._
-
 import java.lang.annotation.Annotation
 import java.lang.reflect.Type
 import java.util.LinkedHashMap
 import javax.xml.bind.annotation._
 
+import io.swagger.converter.{ModelConverter, ModelConverterContext, ModelConverters}
+import io.swagger.models.properties.{Property, RefProperty}
+import io.swagger.models.{Model, ModelImpl}
+import matchers.SerializationMatchers._
+import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.junit.JUnitRunner
+
 import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
-
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-
-import matchers.SerializationMatchers._
 
 @RunWith(classOf[JUnitRunner])
 class SnakeCaseConverterTest extends FlatSpec with Matchers {
@@ -39,8 +26,8 @@ class SnakeCaseConverterTest extends FlatSpec with Matchers {
     converters.addConverter(snakeCaseConverter)
 
     val models = converters.readAll(classOf[SnakeCaseModel])
-    models should serializeToJson (
-"""{
+    models should serializeToJson(
+      """{
   "bar" : {
     "type": "object",
     "properties" : {
@@ -67,18 +54,20 @@ class SnakeCaseConverterTest extends FlatSpec with Matchers {
   }
 }
 
-@XmlRootElement(name="snakeCaseModel")
+@XmlRootElement(name = "snakeCaseModel")
 class SnakeCaseModel {
-  @BeanProperty var bar:Bar = null
-  @BeanProperty var title:String = null
+  @BeanProperty var bar: Bar = null
+  @BeanProperty var title: String = null
 }
 
 /**
  * simple converter to rename models and field names into snake_case
  */
 class SnakeCaseConverter extends ModelConverter {
+  val primitives = Set("string", "integer", "number", "boolean", "long")
+
   def resolveProperty(`type`: Type, context: ModelConverterContext, annotations: Array[Annotation], chain: java.util.Iterator[ModelConverter]): Property = {
-    if(chain.hasNext()) {
+    if (chain.hasNext()) {
       val converter = chain.next()
       return converter.resolveProperty(`type`, context, annotations, chain)
     }
@@ -86,16 +75,16 @@ class SnakeCaseConverter extends ModelConverter {
   }
 
   def resolve(`type`: Type, context: ModelConverterContext, chain: java.util.Iterator[ModelConverter]): Model = {
-    if(chain.hasNext()) {
+    if (chain.hasNext()) {
       val converter = chain.next()
       val model = converter.resolve(`type`, context, chain)
-      if(model != null) {
+      if (model != null) {
         val properties = model.getProperties()
         val updatedProperties = new LinkedHashMap[String, Property]
-        for(key <- properties.keySet.asScala) {
+        for (key <- properties.keySet.asScala) {
           val convertedKey = toSnakeCase(key)
           val prop = properties.get(key)
-          if(prop.isInstanceOf[RefProperty]) {
+          if (prop.isInstanceOf[RefProperty]) {
             val ref = prop.asInstanceOf[RefProperty]
             ref.set$ref(toSnakeCase(ref.getSimpleRef()));
           }
@@ -104,7 +93,7 @@ class SnakeCaseConverter extends ModelConverter {
         model.getProperties().clear()
         model.setProperties(updatedProperties)
         val name = (model.asInstanceOf[ModelImpl]).getName
-        if(model.isInstanceOf[ModelImpl]) {
+        if (model.isInstanceOf[ModelImpl]) {
           val impl = model.asInstanceOf[ModelImpl]
           impl.setName(toSnakeCase(impl.getName()))
         }
@@ -114,10 +103,9 @@ class SnakeCaseConverter extends ModelConverter {
     return null
   }
 
-  val primitives = Set("string", "integer", "number", "boolean", "long")
   def toSnakeCase(str: String) = {
-    val o = "[A-Z\\d]".r.replaceAllIn(str, {m => "_" + m.group(0).toLowerCase()})
-    if(o.startsWith("_")) o.substring(1)
+    val o = "[A-Z\\d]".r.replaceAllIn(str, { m => "_" + m.group(0).toLowerCase() })
+    if (o.startsWith("_")) o.substring(1)
     else o
   }
 }

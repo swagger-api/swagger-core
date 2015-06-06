@@ -1,21 +1,15 @@
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import io.swagger.converter.ModelConverters
 import io.swagger.models.ModelImpl
 import io.swagger.util.Json
+import matchers.SerializationMatchers._
 import models._
-import models.composition.Pet;
-import io.swagger.models._
-import io.swagger.converter._
-
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import models.composition.Pet
+import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.junit.JUnitRunner
 
 import scala.collection.JavaConverters._
-
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-
-import matchers.SerializationMatchers._
 
 @RunWith(classOf[JUnitRunner])
 class ScalaModelTest extends FlatSpec with Matchers {
@@ -23,8 +17,8 @@ class ScalaModelTest extends FlatSpec with Matchers {
 
   it should "convert a simple scala case class" in {
     val schemas = ModelConverters.getInstance().read(classOf[SimpleCaseClass])
-    schemas should serializeToJson (
-"""{
+    schemas should serializeToJson(
+      """{
   "SimpleCaseClass" : {
     "type": "object",
     "properties" : {
@@ -42,8 +36,8 @@ class ScalaModelTest extends FlatSpec with Matchers {
 
   it should "convert a scala case class with List property" in {
     val schemas = ModelConverters.getInstance().read(classOf[CaseClassWithList])
-    schemas should serializeToJson (
-"""{
+    schemas should serializeToJson(
+      """{
   "CaseClassWithList" : {
     "type": "object",
     "properties" : {
@@ -67,14 +61,14 @@ class ScalaModelTest extends FlatSpec with Matchers {
     val propertyCount = props.keySet.size
 
     val keys = props.keySet.asScala.toList
-    keys(0) should be ("intValue")
-    keys(1) should be ("longValue")
-    keys(2) should be ("setValue")
-    keys(3) should be ("dateValue")
-    keys(4) should be ("booleanValue")
+    keys(0) should be("intValue")
+    keys(1) should be("longValue")
+    keys(2) should be("setValue")
+    keys(3) should be("dateValue")
+    keys(4) should be("booleanValue")
 
-    schemas should serializeToJson (
-"""{
+    schemas should serializeToJson(
+      """{
   "CaseClassWithOptionLong" : {
     "type": "object",
     "properties" : {
@@ -110,8 +104,8 @@ class ScalaModelTest extends FlatSpec with Matchers {
 
   it should "convert a scala case class with nested models" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[NestedModel])
-    schemas should serializeToJson ( 
-"""{
+    schemas should serializeToJson(
+      """{
   "ComplexModel" : {
     "type": "object",
     "properties" : {
@@ -141,8 +135,8 @@ class ScalaModelTest extends FlatSpec with Matchers {
 
   it should "read an interface" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[Pet])
-    schemas should serializeToJson (
-"""{
+    schemas should serializeToJson(
+      """{
   "Pet" : {
     "type": "object",
     "required" : [ "isDomestic", "name", "type" ],

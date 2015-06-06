@@ -1,14 +1,8 @@
 import io.swagger.models.ModelImpl
 import io.swagger.models.properties.{LongProperty, StringProperty}
-import io.swagger.util.Json
-import models._
-import io.swagger.models._
-import io.swagger.models.properties._
-
 import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
 class ModelExampleTest extends FlatSpec with Matchers {
@@ -22,8 +16,8 @@ class ModelExampleTest extends FlatSpec with Matchers {
     val model = new ModelImpl()
       .property("name", new StringProperty().example("Tony"))
       .property("id", new LongProperty().example(123))
-      .example("""{"name":"Fred","id":123456"}""")
+      .example( """{"name":"Fred","id":123456"}""")
 
-    model.getExample should equal("""{"name":"Fred","id":123456"}""")
+    model.getExample should equal( """{"name":"Fred","id":123456"}""")
   }
 }

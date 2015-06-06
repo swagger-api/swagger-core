@@ -5,6 +5,7 @@ import models.composition.Pet;
 
 @ApiModel(parent = Pet.class)
 public interface Cat extends Pet {
-  Integer getClawCount();
-  void setClawCount(Integer name);
+    Integer getClawCount();
+
+    void setClawCount(Integer name);
 }

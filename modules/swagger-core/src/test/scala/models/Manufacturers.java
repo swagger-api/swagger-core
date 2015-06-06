@@ -1,14 +1,15 @@
 package models;
 
-import java.util.*;
+import java.util.HashSet;
 
 public class Manufacturers {
-  private HashSet<String> countries;
+    private HashSet<String> countries;
 
-  public HashSet<String> getCountries() {
-    return countries;
-  }
-  public void setCountries(HashSet<String> countries) {
-    this.countries = countries;
-  }
+    public HashSet<String> getCountries() {
+        return countries;
+    }
+
+    public void setCountries(HashSet<String> countries) {
+        this.countries = countries;
+    }
 }

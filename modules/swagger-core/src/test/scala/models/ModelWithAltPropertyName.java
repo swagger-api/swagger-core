@@ -5,18 +5,18 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel("sample_model")
 public class ModelWithAltPropertyName {
-  protected int id;
+    protected int id;
 
-  @ApiModelProperty(
-    access = "public",
-    name = "the_id",
-    notes = "Note, this is server generated.",
-    value = "Read-only")
-  public int getId() {
-    return id;
-  }
+    @ApiModelProperty(
+            access = "public",
+            name = "the_id",
+            notes = "Note, this is server generated.",
+            value = "Read-only")
+    public int getId() {
+        return id;
+    }
 
-  public void setId( int id ) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 }

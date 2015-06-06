@@ -1,12 +1,11 @@
 package io.swagger.jaxrs.config;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * The <code>ReaderConfigUtils</code> class defines helper methods for handling
@@ -14,34 +13,34 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ReaderConfigUtils {
 
-  private ReaderConfigUtils() {
-  }
+    private ReaderConfigUtils() {
+    }
 
-  public static void initReaderConfig(ServletConfig config) {
-    if("true".equals(config.getInitParameter("scan.all.resources"))) {
-      final DefaultReaderConfig rc = new DefaultReaderConfig();
-      rc.setScanAllResources(true);
-      final Set<String> ignoredRoutes = new LinkedHashSet<String>();
-      for (String item : StringUtils.trimToEmpty(config.getInitParameter("ignore.routes")).split(",")) {
-        final String route = StringUtils.trimToNull(item);
-        if (route != null) {
-          ignoredRoutes.add(route);
+    public static void initReaderConfig(ServletConfig config) {
+        if ("true".equals(config.getInitParameter("scan.all.resources"))) {
+            final DefaultReaderConfig rc = new DefaultReaderConfig();
+            rc.setScanAllResources(true);
+            final Set<String> ignoredRoutes = new LinkedHashSet<String>();
+            for (String item : StringUtils.trimToEmpty(config.getInitParameter("ignore.routes")).split(",")) {
+                final String route = StringUtils.trimToNull(item);
+                if (route != null) {
+                    ignoredRoutes.add(route);
+                }
+            }
+            rc.setIgnoredRoutes(ignoredRoutes);
+            config.getServletContext().setAttribute(getAttributeName(), rc);
         }
-      }
-      rc.setIgnoredRoutes(ignoredRoutes);
-      config.getServletContext().setAttribute(getAttributeName(), rc);
     }
-  }
 
-  public static ReaderConfig getReaderConfig(ServletContext context) {
-    final Object attr = context.getAttribute(getAttributeName());
-    if (attr instanceof ReaderConfig) {
-      return (ReaderConfig) attr;
+    public static ReaderConfig getReaderConfig(ServletContext context) {
+        final Object attr = context.getAttribute(getAttributeName());
+        if (attr instanceof ReaderConfig) {
+            return (ReaderConfig) attr;
+        }
+        return null;
     }
-    return null;
-  }
 
-  private static String getAttributeName() {
-    return ReaderConfig.class.getName();
-  }
+    private static String getAttributeName() {
+        return ReaderConfig.class.getName();
+    }
 }

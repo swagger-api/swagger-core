@@ -1,26 +1,17 @@
 import java.util
 
 import io.swagger.converter.ModelConverters
-import io.swagger.models.auth.{ApiKeyAuthDefinition, In}
-import io.swagger.models.parameters.{RefParameter, PathParameter, QueryParameter, BodyParameter}
-import io.swagger.models.properties.{LongProperty, StringProperty, RefProperty}
 import io.swagger.models._
+import io.swagger.models.auth.{ApiKeyAuthDefinition, In}
+import io.swagger.models.parameters.{BodyParameter, PathParameter, QueryParameter, RefParameter}
+import io.swagger.models.properties.{LongProperty, RefProperty, StringProperty}
 import io.swagger.util.Json
 import models._
-
-import io.swagger.models._
-import io.swagger.models.auth._
-import io.swagger.models.properties._
-import io.swagger.models.parameters._
-
-import io.swagger.converter._
+import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.junit.JUnitRunner
 
 import scala.io.Source
-
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
 
 @RunWith(classOf[JUnitRunner])
 class SwaggerSerializerTest extends FlatSpec with Matchers {
@@ -40,10 +31,10 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
 
     info.setContact(contact)
 
-    val map : util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]
-    map.put( "name", "value");
-    info.setVendorExtension( "x-test2", map )
-    info.setVendorExtension( "x-test", "value" )
+    val map: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]
+    map.put("name", "value");
+    info.setVendorExtension("x-test2", map)
+    info.setVendorExtension("x-test", "value")
 
     val swagger = new Swagger()
       .info(info)
@@ -93,13 +84,13 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
       .operationId("add pet")
       .defaultResponse(errorResponse)
       .parameter(new BodyParameter()
-        .description("the pet to add")
-        .schema(new RefModel().asDefault("Person")))
+      .description("the pet to add")
+      .schema(new RefModel().asDefault("Person")))
 
     swagger.path("/pets", new Path().get(get).post(post))
     val swaggerJson = Json.mapper().writeValueAsString(swagger)
     val rebuilt = Json.mapper().readValue(swaggerJson, classOf[Swagger])
-    Json.pretty(swagger) should equal (Json.pretty(rebuilt))
+    Json.pretty(swagger) should equal(Json.pretty(rebuilt))
   }
 
   it should "read the uber api" in {
@@ -148,6 +139,6 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
 
     val swaggerJson = Json.mapper().writeValueAsString(swagger)
     val rebuilt = Json.mapper().readValue(swaggerJson, classOf[Swagger])
-    Json.pretty(swagger) should equal (Json.pretty(rebuilt))
+    Json.pretty(swagger) should equal(Json.pretty(rebuilt))
   }
 }
