@@ -1,24 +1,18 @@
 package play.modules.swagger
 
-import com.wordnik.swagger.annotations._
-import com.wordnik.swagger.config._
-import com.wordnik.swagger.core.util._
-import com.wordnik.swagger.jaxrs.{MutableParameter, JaxrsApiReader}
-import com.wordnik.swagger.model.Parameter
-import com.wordnik.swagger.model.ApiDescription
-import com.wordnik.swagger.model.Operation
-import com.wordnik.swagger.model.ResponseMessage
-import com.wordnik.swagger.core.ApiValues._
-import com.wordnik.swagger.model.ApiListing
-
-import play.api.{Configuration, Logger}
-import play.core.Router.Routes
-
 import java.lang.annotation.Annotation
 import java.lang.reflect.Method
-
-import javax.ws.rs.core.Context
 import javax.ws.rs._
+import javax.ws.rs.core.Context
+
+import com.wordnik.swagger.annotations._
+import com.wordnik.swagger.config._
+import com.wordnik.swagger.core.ApiValues._
+import com.wordnik.swagger.core.util._
+import com.wordnik.swagger.jaxrs.{JaxrsApiReader, MutableParameter}
+import com.wordnik.swagger.model.{ApiDescription, ApiListing, Operation, Parameter, ResponseMessage}
+import play.api.Logger
+import play.api.routing.Router
 
 import scala.collection.mutable.ListBuffer
 
@@ -30,7 +24,7 @@ object SwaggerUtils {
   }
 }
 
-class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
+class PlayApiReader(val router: Router) extends JaxrsApiReader {
   private var _routesCache: Map[String, RouteEntry] = null
 
   override
@@ -439,7 +433,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
   }
 
   private def populateRoutesCache: Map[String, RouteEntry] = {
-    val r = routes.get.documentation
+    val r = router.documentation
     (for (route <- r) yield {
       val httpMethod = route._1
       val path = SwaggerUtils.convertPathString(route._2)

@@ -16,14 +16,17 @@
 
 package play.modules.swagger
 
+import javax.inject.Inject
+
 import com.wordnik.swagger.core.{SwaggerSpec, SwaggerContext}
+import play.api.routing.Router
 import play.api.{Logger, Application, Plugin}
 import play.api.Play._
 import com.wordnik.swagger.config.{FilterFactory, SwaggerConfig, ConfigFactory, ScannerFactory}
 import com.wordnik.swagger.reader.ClassReaders
 import com.wordnik.swagger.core.filter.SwaggerSpecFilter
 
-class SwaggerPlugin(application: Application) extends Plugin {
+class SwaggerPlugin @Inject() (application: Application, router: Router) extends Plugin {
 
   override def onStart() {
     Logger("swagger").info("Plugin - starting initialisation")
@@ -52,8 +55,8 @@ class SwaggerPlugin(application: Application) extends Plugin {
     SwaggerContext.registerClassLoader(current.classloader)
     ConfigFactory.config.apiVersion = apiVersion
     ConfigFactory.config.basePath = basePath
-    ScannerFactory.setScanner(new PlayApiScanner(current.routes))
-    ClassReaders.reader = Some(new PlayApiReader(current.routes))
+    ScannerFactory.setScanner(new PlayApiScanner(router))
+    ClassReaders.reader = Some(new PlayApiReader(router))
 
     current.configuration.getString("swagger.filter") match {
       case Some(e) if (e != "") => {

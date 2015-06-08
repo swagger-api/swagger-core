@@ -1,35 +1,30 @@
 package play.modules.swagger
 
 import com.wordnik.swagger.annotations.Api
-import com.wordnik.swagger.core.SwaggerContext
 import com.wordnik.swagger.config._
-
+import com.wordnik.swagger.core.SwaggerContext
 import play.api.Logger
-import play.core.Router.Routes
+import play.api.routing.Router
 
 /**
  * Identifies Play Controllers annotated as Swagger API's.
  * Uses the Play Router to identify Controllers, and then tests each for the API annotation.
  */
-class PlayApiScanner(routes: Option[Routes]) extends Scanner {
+class PlayApiScanner(router: Router) extends Scanner {
 
   def classes(): List[Class[_]] = {
     Logger("swagger").warn("ControllerScanner - looking for controllers with API annotation")
 
     // get controller names from application routes
-    val controllers = (routes match {
-      case Some(r) => {
-        for (doc <- r.documentation) yield {
+    val controllers = (for (doc <- router.documentation) yield {
           Logger("swagger").debug("route: " + doc.toString())
           val m1 = doc._3.lastIndexOf("(") match {
             case i: Int if (i > 0) => doc._3.substring(0, i)
             case _ => doc._3
           }
-          Some(m1.substring(0, m1.lastIndexOf(".")).replace("@", ""))
-        }
-      }
-      case None => Seq(None)
-    }).flatten.distinct.toList
+          m1.substring(0, m1.lastIndexOf(".")).replace("@", "")
+        }).distinct
+
 
     controllers.collect {
       case className: String if {
@@ -43,7 +38,7 @@ class PlayApiScanner(routes: Option[Routes]) extends Scanner {
       } =>
         Logger("swagger").info("Found API controller:  %s".format(className))
         SwaggerContext.loadClass(className)
-    }
+    }.toList
 
   }
 }

@@ -1,16 +1,14 @@
-import sbt._
-import Keys._
-import play.Play.autoImport._
 import play.PlayScala
-import PlayKeys._
+import sbt.Keys._
+import sbt._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2"
-  val appVersion = "1.3.12"
+  val appVersion = "1.3.12_play24"
 
   checksums in update := Nil
 
-  scalaVersion:= "2.10.4"
+  scalaVersion:= "2.11.5"
 
   val appDependencies = Seq(
     "org.slf4j" % "slf4j-api" % "1.6.4",
@@ -19,8 +17,8 @@ object ApplicationBuild extends Build {
     "org.mockito" % "mockito-core" % "1.9.5" % "test")
 
   val main = Project(appName, file(".")).enablePlugins(PlayScala).settings(
-    crossScalaVersions := Seq("2.10.4", "2.11.1"),
-    scalaVersion := "2.10.4",
+    crossScalaVersions := Seq("2.11.5"),
+    scalaVersion := "2.11.5",
     version := appVersion,
     libraryDependencies ++= appDependencies,
     publishTo <<= version { (v: String) =>
