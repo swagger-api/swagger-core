@@ -66,17 +66,19 @@ public class SpecFilter {
         for (String key : definitions.keySet()) {
             Model definition = definitions.get(key);
             Map<String, Property> clonedProperties = new LinkedHashMap<String, Property>();
-            for (String propName : definition.getProperties().keySet()) {
-                Property property = definition.getProperties().get(propName);
-                if (property != null) {
-                    boolean shouldInclude = filter.isPropertyAllowed(definition, property, propName, params, cookies, headers);
-                    if (shouldInclude) {
-                        clonedProperties.put(propName, property);
+            if (definition.getProperties() != null) {
+                for (String propName : definition.getProperties().keySet()) {
+                    Property property = definition.getProperties().get(propName);
+                    if (property != null) {
+                        boolean shouldInclude = filter.isPropertyAllowed(definition, property, propName, params, cookies, headers);
+                        if (shouldInclude) {
+                            clonedProperties.put(propName, property);
+                        }
                     }
                 }
             }
             Model clonedModel = (Model) definition.clone();
-            clonedModel.getProperties().clear();
+            if (clonedModel.getProperties() != null) clonedModel.getProperties().clear();
             clonedModel.setProperties(clonedProperties);
             clonedDefinitions.put(key, clonedModel);
         }

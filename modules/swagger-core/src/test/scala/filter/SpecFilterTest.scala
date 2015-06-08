@@ -1,12 +1,12 @@
 package filter
 
 import io.swagger.core.filter.SpecFilter
-import io.swagger.models.Swagger
+import io.swagger.models.{ModelImpl, Swagger}
 import io.swagger.util.Json
 import matchers.SerializationMatchers._
 import org.junit.runner.RunWith
-import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
+import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.JavaConverters._
 import scala.io.Source
@@ -92,5 +92,19 @@ class SpecFilterTest extends FlatSpec with Matchers {
         propName.startsWith("_") should be(false)
       }
     }
+  }
+
+  it should "filter models where some fields have no properties" in {
+    val modelName = "Array"
+    val model = new ModelImpl().`type`(ModelImpl.OBJECT).name(modelName)
+
+    val swagger = new Swagger()
+    swagger.addDefinition(modelName, model)
+
+    val filtered = new SpecFilter().filterDefinitions(new NoOpOperationsFilter(), swagger.getDefinitions,
+      null, null, null)
+
+    if (filtered.size() != 1)
+      fail("ModelImpl with no properties failed to filter")
   }
 }
