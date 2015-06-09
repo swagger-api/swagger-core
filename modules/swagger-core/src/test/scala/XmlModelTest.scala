@@ -9,6 +9,7 @@ import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
 
 import scala.beans.BeanProperty
+import scala.collection.JavaConverters.mapAsScalaMapConverter
 
 @RunWith(classOf[JUnitRunner])
 class XmlModelTest extends FlatSpec with Matchers {
@@ -26,7 +27,7 @@ class XmlModelTest extends FlatSpec with Matchers {
     property should not be (null)
     xml = property.getXml()
     xml.getWrapped should equal(true)
-    xml.getName() should be("children")
+    xml.getName() should be (null)
   }
 
   it should "not create an xml object" in {
@@ -46,13 +47,42 @@ class XmlModelTest extends FlatSpec with Matchers {
     val schemas = ModelConverters.getInstance().readAll(classOf[Issue534])
     schemas.get("Issue534").getProperties().size() should be(1)
   }
-}
 
-@RunWith(classOf[JUnitRunner])
-class XmlModelTest2 extends FlatSpec with Matchers {
-  it should "honor xml annotations" in {
-    val schemas = ModelConverters.getInstance().readAll(classOf[Message])
-    Json.prettyPrint(schemas)
+  it should "process a model with JAXB annotations" in {
+    val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithJAXBAnnotations])
+    schemas.size should be (1)
+    val model = schemas.get("ModelWithJAXBAnnotations")
+    model should not be (null)
+    model.isInstanceOf[ModelImpl] should be (true)
+    var rootXml = model.asInstanceOf[ModelImpl].getXml()
+    rootXml should not be (null)
+    rootXml.getName() should equal("rootName")
+    for ((name, property) <- model.getProperties.asScala) {
+      name match {
+        case "id" =>
+          var xml = property.getXml
+          xml should not be (null)
+          xml.getName should be (null)
+          xml.getAttribute should equal (true)
+          xml.getWrapped should be (null)
+        case "name" =>
+          var xml = property.getXml
+          xml should not be (null)
+          xml.getName should be ("renamed")
+          xml.getAttribute should be (null)
+          xml.getWrapped should be (null)
+        case "list" | "forcedElement" =>
+          property.getXml should be (null)
+        case "wrappedList" =>
+          var xml = property.getXml
+          xml should not be (null)
+          xml.getName should be (null)
+          xml.getAttribute should be (null)
+          xml.getWrapped should equal (true)
+        case _ =>
+          fail(s"""Property "${name}" was not expected""")
+      }
+    }
   }
 }
 
