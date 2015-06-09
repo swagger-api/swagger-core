@@ -11,7 +11,7 @@ Check out [Swagger-Spec](https://github.com/swagger-api/swagger-spec) for additi
 ![Swagger Screenshot](https://raw.github.com/swagger-api/swagger-core/master/swagger-shot.jpg)
 
 ## See the Wiki!
-The [github wiki](https://github.com/swagger-api/swagger-core/wiki) contains documentation, samples, etc.  Start there.
+The [github wiki](https://github.com/swagger-api/swagger-core/wiki) contains documentation, samples, contributions, etc. Start there.
 
 ## Support
 The following methods are available to obtain support for Swagger:
