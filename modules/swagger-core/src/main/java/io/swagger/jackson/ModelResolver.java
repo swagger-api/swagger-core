@@ -190,7 +190,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         final ModelImpl model = new ModelImpl().type(ModelImpl.OBJECT).name(name)
                 .description(_description(beanDesc.getClassInfo()));
-        context.defineModel(name,model,type,null);
+
+        if(!type.isContainerType()) {
+            // define the model here to support self/cyclic referencing of models
+            context.defineModel(name, model, type, null);
+        }
 
         if (type.isContainerType()) {
             // We treat collections as primitive types, just need to add models for values (if any)

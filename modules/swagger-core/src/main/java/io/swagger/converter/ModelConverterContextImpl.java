@@ -49,14 +49,14 @@ public class ModelConverterContextImpl implements ModelConverterContext {
     }
 
     @Override
-    public void defineModel(String name, Model model, Type type, String oldName) {
+    public void defineModel(String name, Model model, Type type, String prevName) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(String.format("defineModel %s %s", name, model));
         }
         modelByName.put(name, model);
 
-        if(StringUtils.isNotBlank(oldName)) {
-            modelByName.remove(oldName);
+        if(StringUtils.isNotBlank(prevName)) {
+            modelByName.remove(prevName);
         }
 
         if(type != null) {

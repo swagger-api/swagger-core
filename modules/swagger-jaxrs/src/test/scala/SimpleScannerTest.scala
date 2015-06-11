@@ -306,7 +306,7 @@ class SimpleScannerTest extends FlatSpec with Matchers {
     schema.getType() should be("integer")
     schema.getFormat() should be("int32")
 
-    swagger.getDefinitions().keySet().asScala should be(Set("Tag","Array"))
+    swagger.getDefinitions().keySet().asScala should be(Set("Tag"))
 
     def testParam(path: String, name: String, description: String): Model = {
       val param = swagger.getPath(path).getPost().getParameters().get(0).asInstanceOf[BodyParameter]
@@ -362,7 +362,7 @@ class SimpleScannerTest extends FlatSpec with Matchers {
 
   it should "check response models processing" in {
     val swagger = new Reader(new Swagger()).read(classOf[ResourceWithTypedResponses])
-    swagger.getDefinitions.keySet().asScala should be(Set("Map","Tag","List"))
+    swagger.getDefinitions.keySet().asScala should be(Set("Tag"))
     for ((key, path) <- swagger.getPaths.asScala) {
       key.substring(key.lastIndexOf("/") + 1) match {
         case "testPrimitiveResponses" =>
