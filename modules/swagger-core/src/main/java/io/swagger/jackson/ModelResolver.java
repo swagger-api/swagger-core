@@ -245,13 +245,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (member != null) {
                     String altName = member.getName();
                     if (altName != null) {
-                        if (altName.startsWith("get")) {
-                            if (!Character.isUpperCase(altName.charAt(3))) {
+                        final int length = altName.length();
+                        for (String prefix : Arrays.asList("get", "is")) {
+                            final int offset = prefix.length();
+                            if (altName.startsWith(prefix) && length > offset
+                                    && !Character.isUpperCase(altName.charAt(offset))) {
                                 propName = altName;
-                            }
-                        } else if (altName.startsWith("is")) {
-                            if (!Character.isUpperCase(altName.charAt(2))) {
-                                propName = altName;
+                                break;
                             }
                         }
                     }
