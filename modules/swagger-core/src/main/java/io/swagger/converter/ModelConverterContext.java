@@ -25,8 +25,9 @@ public interface ModelConverterContext {
      * @param name  the name of the model
      * @param model the Model
      * @param type the Type
+     * @param prevName the (optional) previous name
      */
-    public void defineModel(String name, Model model, Type type);
+    public void defineModel(String name, Model model, Type type, String prevName);
 
     /**
      * @param type the property Class
