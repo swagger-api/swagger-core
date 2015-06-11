@@ -44,10 +44,19 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 
     @Override
     public void defineModel(String name, Model model) {
+        defineModel(name,model,null);
+    }
+
+    @Override
+    public void defineModel(String name, Model model, Type type) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(String.format("defineModel %s %s", name, model));
         }
         modelByName.put(name, model);
+
+        if(type != null) {
+            modelByType.put(type,model);
+        }
     }
 
     public Map<String, Model> getDefinedModels() {

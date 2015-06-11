@@ -179,11 +179,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             // We don't build models for primitive types
             return null;
         }
-        if (type.isContainerType()) {
-            // We treat collections as primitive types, just need to add models for values (if any)
-            context.resolve(type.getContentType());
-            return null;
-        }
+
         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
         // Couple of possibilities for defining
         String name = _typeName(type, beanDesc);
@@ -194,7 +190,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         final ModelImpl model = new ModelImpl().type(ModelImpl.OBJECT).name(name)
                 .description(_description(beanDesc.getClassInfo()));
+        context.defineModel(name,model,type);
 
+        if (type.isContainerType()) {
+            // We treat collections as primitive types, just need to add models for values (if any)
+            context.resolve(type.getContentType());
+            return null;
+        }
         // if XmlRootElement annotation, construct an Xml object and attach it to the model
         XmlRootElement rootAnnotation = beanDesc.getClassAnnotations().get(XmlRootElement.class);
         if (rootAnnotation != null && !"".equals(rootAnnotation.name()) && !"##default".equals(rootAnnotation.name())) {

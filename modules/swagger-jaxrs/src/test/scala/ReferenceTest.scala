@@ -28,135 +28,141 @@ class ReferenceTest extends FlatSpec with Matchers {
     val swagger = reader.read(classOf[ResourceWithReferences])
 
     swagger should serializeToJson(
-      """{
-  "swagger": "2.0",
-  "tags": [
-    {
-      "name": "basic"
+    """{"swagger": "2.0", "tags": [
+      {
+        "name": "basic"
+      }
+      ], "paths": {
+      "/anotherModel": {
+      "get": {
+      "tags": ["basic"],
+      "summary": "Get Another Model",
+      "description": "",
+      "operationId": "getAnotherModel",
+      "parameters": [],
+      "responses": {
+      "200": {
+      "description": "successful operation",
+      "schema": {
+      "$ref": "http://swagger.io/schemas.json#/Models"
     }
-  ],
-  "paths": {
-    "/anotherModel": {
-      "get": {
-        "tags": [
-          "basic"
-        ],
-        "summary": "Get Another Model",
-        "description": "",
-        "operationId": "getAnotherModel",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "$ref": "http://swagger.io/schemas.json#/Models"
-            }
-          }
-        }
-      }
-    },
-    "/model": {
-      "get": {
-        "tags": [
-          "basic"
-        ],
-        "summary": "Get Model",
-        "description": "",
-        "operationId": "getModel",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "$ref": "#/definitions/ModelContainingModelWithReference"
-            }
-          }
-        }
-      }
-    },
-    "/some": {
-      "get": {
-        "tags": [
-          "basic"
-        ],
-        "summary": "Get Some",
-        "description": "",
-        "operationId": "getSome",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "$ref": "http://swagger.io/schemas.json#/Models/SomeResponse"
-            }
-          }
-        }
-      }
-    },
-    "/test": {
-      "get": {
-        "tags": [
-          "basic"
-        ],
-        "operationId": "getTest",
-        "parameters": [],
-        "responses": {
-          "500": {
-            "description": "Error",
-            "schema": {
-              "$ref": "http://swagger.io/schemas.json#/Models/ErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/testSome": {
-      "get": {
-        "tags": [
-          "basic"
-        ],
-        "summary": "Get Some",
-        "description": "",
-        "operationId": "getTestSome",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "$ref": "http://swagger.io/schemas.json#/Models/SomeResponse"
-            }
-          },
-          "500": {
-            "description": "Error",
-            "schema": {
-              "$ref": "http://swagger.io/schemas.json#/Models/ErrorResponse"
-            }
-          }
-        }
-      }
     }
-  },
-  "definitions": {
-    "ModelWithReference": {
+    }
+    }
+    },
+      "/model": {
+      "get": {
+      "tags": ["basic"],
+      "summary": "Get Model",
+      "description": "",
+      "operationId": "getModel",
+      "parameters": [],
+      "responses": {
+      "200": {
+      "description": "successful operation",
+      "schema": {
+      "$ref": "#/definitions/ModelContainingModelWithReference"
+    }
+    }
+    }
+    }
+    },
+      "/some": {
+      "get": {
+      "tags": ["basic"],
+      "summary": "Get Some",
+      "description": "",
+      "operationId": "getSome",
+      "parameters": [],
+      "responses": {
+      "200": {
+      "description": "successful operation",
+      "schema": {
+      "$ref": "http://swagger.io/schemas.json#/Models/SomeResponse"
+    }
+    }
+    }
+    }
+    },
+      "/test": {
+      "get": {
+      "tags": ["basic"],
+      "operationId": "getTest",
+      "parameters": [],
+      "responses": {
+      "500": {
+      "description": "Error",
+      "schema": {
+      "$ref": "http://swagger.io/schemas.json#/Models/ErrorResponse"
+    }
+    }
+    }
+    }
+    },
+      "/testSome": {
+      "get": {
+      "tags": ["basic"],
+      "summary": "Get Some",
+      "description": "",
+      "operationId": "getTestSome",
+      "parameters": [],
+      "responses": {
+      "200": {
+      "description": "successful operation",
+      "schema": {
+      "$ref": "http://swagger.io/schemas.json#/Models/SomeResponse"
+    }
+    },
+      "500": {
+      "description": "Error",
+      "schema": {
+      "$ref": "http://swagger.io/schemas.json#/Models/ErrorResponse"
+    }
+    }
+    }
+    }
+    }
+    }, "definitions": {
+      "ModelWithReference": {
       "type": "object",
       "properties": {
-        "description": {
-          "$ref": "http://swagger.io/schemas.json#/Models/Description"
-        }
-      }
+      "nested": {
+      "type": "array",
+      "description": "SubModelWithSelfReference",
+      "items": {
+      "$ref": "#/definitions/SubModelWithSelfReference"
+    }
     },
-    "ModelContainingModelWithReference": {
+      "description": {
+      "$ref": "http://swagger.io/schemas.json#/Models/Description"
+    }
+    }
+    },
+      "ModelContainingModelWithReference": {
       "type": "object",
       "properties": {
-        "model": {
-          "$ref": "http://swagger.io/schemas.json#/Models"
-        },
-        "anotherModel": {
-          "$ref": "http://swagger.io/schemas.json#/Models/AnotherModel"
-        }
-      }
+      "model": {
+      "$ref": "http://swagger.io/schemas.json#/Models"
+    },
+      "anotherModel": {
+      "$ref": "http://swagger.io/schemas.json#/Models/AnotherModel"
     }
-  }
-}""")
+    }
+    },
+      "SubModelWithSelfReference": {
+      "type": "object",
+      "properties": {
+      "references": {
+      "type": "array",
+      "description": "References",
+      "items": {
+      "$ref": "#/definitions/SubModelWithSelfReference"
+    }
+    }
+    }
+    }
+    }}
+"""
+    )
   }
 }
