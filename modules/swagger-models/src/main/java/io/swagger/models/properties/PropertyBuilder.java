@@ -162,6 +162,17 @@ public class PropertyBuilder {
             }
 
         },
+        BYTE_ARRAY(ByteArrayProperty.class) {
+            @Override
+            protected boolean isType(String type, String format) {
+                return ByteArrayProperty.isType(type, format);
+            }
+
+            @Override
+            protected ByteArrayProperty create() {
+                return new ByteArrayProperty();
+            }
+        },
         DATE(DateProperty.class) {
             @Override
             protected boolean isType(String type, String format) {
