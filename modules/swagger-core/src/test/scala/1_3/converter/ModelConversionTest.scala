@@ -1,23 +1,17 @@
 package converter
 
-import com.wordnik.swagger.model._
-import com.wordnik.swagger.annotations._
-import com.wordnik.swagger.converter._
-
-import com.wordnik.swagger.util.Json
-
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-
 import java.util.Date
 
-import scala.annotation.meta.field
-
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import io.swagger.annotations.ApiModelProperty
+import io.swagger.converter.ModelConverters
+import io.swagger.util.Json
 import matchers.SerializationMatchers._
+import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.junit.JUnitRunner
+
+import scala.annotation.meta.field
 
 @RunWith(classOf[JUnitRunner])
 class ModelConversionTest extends FlatSpec with Matchers {
@@ -26,9 +20,9 @@ class ModelConversionTest extends FlatSpec with Matchers {
   it should "format a date" in {
     val models = ModelConverters.getInstance().read(classOf[DateModel])
     val model = models.get("DateModel")
-    model.getProperties().size should be (5)
-    model should serializeToJson (
-"""{
+    model.getProperties().size should be(5)
+    model should serializeToJson(
+      """{
   "type": "object",
   "properties" : {
     "date" : {
@@ -63,9 +57,9 @@ class ModelConversionTest extends FlatSpec with Matchers {
   it should "format a set" in {
     val models = ModelConverters.getInstance().read(classOf[SetModel])
     val model = models.get("SetModel")
-    model.getProperties().size should be (1)
-    model should serializeToJson (
-"""{
+    model.getProperties().size should be(1)
+    model should serializeToJson(
+      """{
   "type": "object",
   "properties" : {
     "longs" : {
@@ -82,10 +76,10 @@ class ModelConversionTest extends FlatSpec with Matchers {
 }
 
 case class DateModel(
-  @(ApiModelProperty @field)(position=1) date: Date,
-  @(ApiModelProperty @field)(position=2) intValue: Int,
-  @(ApiModelProperty @field)(position=3) longValue: Long,
-  @(ApiModelProperty @field)(position=4) floatValue: Float,
-  @(ApiModelProperty @field)(position=5) doubleValue: Double)
+                      @(ApiModelProperty@field)(position = 1) date: Date,
+                      @(ApiModelProperty@field)(position = 2) intValue: Int,
+                      @(ApiModelProperty@field)(position = 3) longValue: Long,
+                      @(ApiModelProperty@field)(position = 4) floatValue: Float,
+                      @(ApiModelProperty@field)(position = 5) doubleValue: Double)
 
 case class SetModel(longs: Set[java.lang.Long])

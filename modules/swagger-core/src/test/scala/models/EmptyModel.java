@@ -1,3 +1,4 @@
 package models;
 
-public class EmptyModel {}
+public class EmptyModel {
+}

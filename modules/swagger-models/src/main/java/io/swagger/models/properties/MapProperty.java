@@ -1,0 +1,76 @@
+package io.swagger.models.properties;
+
+import io.swagger.models.Xml;
+
+public class MapProperty extends AbstractProperty implements Property {
+    Property property;
+
+    public MapProperty() {
+        super.type = "object";
+    }
+
+    public MapProperty(Property property) {
+        super.type = "object";
+        this.property = property;
+    }
+
+    public static boolean isType(String type, String format) {
+        if ("object".equals(type) && format == null) {
+            return true;
+        }
+        return false;
+    }
+
+    public MapProperty xml(Xml xml) {
+        this.setXml(xml);
+        return this;
+    }
+
+    public MapProperty additionalProperties(Property property) {
+        this.setAdditionalProperties(property);
+        return this;
+    }
+
+    public MapProperty description(String description) {
+        this.setDescription(description);
+        return this;
+    }
+
+    public Property getAdditionalProperties() {
+        return property;
+    }
+
+    public void setAdditionalProperties(Property property) {
+        this.property = property;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((property == null) ? 0 : property.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        MapProperty other = (MapProperty) obj;
+        if (property == null) {
+            if (other.property != null) {
+                return false;
+            }
+        } else if (!property.equals(other.property)) {
+            return false;
+        }
+        return true;
+    }
+}

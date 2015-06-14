@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <groupId>com.wordnik</groupId>
-    <artifactId>swagger-project</artifactId>
-    <version>1.5.2-M2-SNAPSHOT</version>
-    <relativePath>../..</relativePath>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.wordnik</groupId>
-  <artifactId>swagger-annotations</artifactId>
-  <version>1.5.2-M2-SNAPSHOT</version>
-  <packaging>bundle</packaging>
-  <name>swagger-annotations</name>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-project</artifactId>
+        <version>1.5.0</version>
+        <relativePath>../..</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>io.swagger</groupId>
+    <artifactId>swagger-annotations</artifactId>
+    <version>1.5.0</version>
+    <packaging>bundle</packaging>
+    <name>swagger-annotations</name>
 
-  <build>
-    <sourceDirectory>src/main/java</sourceDirectory>
-    <defaultGoal>install</defaultGoal>
+    <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <defaultGoal>install</defaultGoal>
 
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Export-Package>com.wordnik.swagger.annotations</Export-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>io.swagger.annotations</Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
 
-  </build>
+    </build>
 </project>

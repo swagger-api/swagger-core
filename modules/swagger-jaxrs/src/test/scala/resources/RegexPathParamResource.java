@@ -1,18 +1,20 @@
 package resources;
 
-import com.wordnik.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
-
-import java.util.*;
 
 @Api(value = "/external/info/")
 public class RegexPathParamResource {
-  @GET
-  @ApiOperation(value="this", tags="tag1")
-  @Path("/{report_type:[aA-zZ]+}")
-  public Response getThis(@ApiParam(value = "test") @PathParam("report_type") String param) {
-    return Response.ok().build();
-  }
+    @GET
+    @ApiOperation(value = "this", tags = "tag1")
+    @Path("/{report_type:[aA-zZ]+}")
+    public Response getThis(@ApiParam(value = "test") @PathParam("report_type") String param) {
+        return Response.ok().build();
+    }
 }

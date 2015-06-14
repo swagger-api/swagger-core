@@ -1,6 +1,6 @@
 package params;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.HeaderParam;
@@ -13,48 +13,48 @@ import java.util.List;
  */
 public class RefBean {
 
-  @BeanParam
-  public BaseBean beanParam;
+    @BeanParam
+    public BaseBean beanParam;
 
-  @HeaderParam("HeaderParam")
-  @ApiModelProperty("a header param")
-  private String headerParam;
+    @HeaderParam("HeaderParam")
+    @ApiModelProperty("a header param")
+    private String headerParam;
 
-  private String pathParam;
-  @QueryParam("QueryParam")
-  private List<String> queryParam;
+    private String pathParam;
+    @QueryParam("QueryParam")
+    private List<String> queryParam;
 
-  public BaseBean getBeanParam() {
-    return beanParam;
-  }
+    public BaseBean getBeanParam() {
+        return beanParam;
+    }
 
-  public void setBeanParam(BaseBean beanParam) {
-    this.beanParam = beanParam;
-  }
+    public void setBeanParam(BaseBean beanParam) {
+        this.beanParam = beanParam;
+    }
 
-  public String getHeaderParam() {
-    return headerParam;
-  }
+    public String getHeaderParam() {
+        return headerParam;
+    }
 
-  public void setHeaderParam(String headerParam) {
-    this.headerParam = headerParam;
-  }
+    public void setHeaderParam(String headerParam) {
+        this.headerParam = headerParam;
+    }
 
-  public String getPathParam() {
-    return pathParam;
-  }
+    public String getPathParam() {
+        return pathParam;
+    }
 
-  @PathParam("PathParam")
-  public void setPathParam(String pathParam) {
-    this.pathParam = pathParam;
-  }
+    @PathParam("PathParam")
+    public void setPathParam(String pathParam) {
+        this.pathParam = pathParam;
+    }
 
-  public List<String> getQueryParam() {
-    return queryParam;
-  }
+    public List<String> getQueryParam() {
+        return queryParam;
+    }
 
-  public void setQueryParam(List<String> queryParam) {
-    this.queryParam = queryParam;
-  }
+    public void setQueryParam(List<String> queryParam) {
+        this.queryParam = queryParam;
+    }
 
 }

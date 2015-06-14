@@ -1,19 +1,9 @@
-import resources._
-
-import com.wordnik.swagger.jaxrs.config._
-import com.wordnik.swagger.models.parameters._
-import com.wordnik.swagger.models.properties.MapProperty
-
-import com.wordnik.swagger.models.Swagger
-import com.wordnik.swagger.jaxrs.Reader
-import com.wordnik.swagger.util.Json
-
-import scala.collection.JavaConverters._
-
+import io.swagger.jaxrs.Reader
+import io.swagger.models.Swagger
 import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
+import resources._
 
 @RunWith(classOf[JUnitRunner])
 class RegexPathParamTest extends FlatSpec with Matchers {
@@ -21,7 +11,7 @@ class RegexPathParamTest extends FlatSpec with Matchers {
     val swagger = new Reader(new Swagger()).read(classOf[RegexPathParamResource])
     val get = swagger.getPaths().get("/{report_type}").getGet()
     val param = get.getParameters().get(0)
-    param.getName() should be ("report_type")
-    param.getPattern() should be ("[aA-zZ]+")
+    param.getName() should be("report_type")
+    param.getPattern() should be("[aA-zZ]+")
   }
 }

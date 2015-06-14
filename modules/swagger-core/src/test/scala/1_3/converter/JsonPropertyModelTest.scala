@@ -1,25 +1,17 @@
 package converter
 
-import models._
-
-import com.wordnik.swagger.converter._
-
-import com.wordnik.swagger.util._
-
-import java.util.Date
-
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-
+import io.swagger.converter.ModelConverters
 import matchers.SerializationMatchers._
+import models._
+import org.junit.runner.RunWith
+import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class JsonPropertyModelTest extends FlatSpec with Matchers {
   val models = ModelConverters.getInstance().read(classOf[ModelWithJsonProperty])
-  models should serializeToJson (
-"""{
+  models should serializeToJson(
+    """{
   "ModelWithJsonProperty" : {
     "type":"object",
     "properties" : {

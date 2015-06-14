@@ -1,11 +1,11 @@
 package models;
 
+import io.swagger.annotations.ApiModel;
 import models.composition.Pet;
-
-import com.wordnik.swagger.annotations.*;
 
 @ApiModel(parent = Pet.class)
 public interface Cat extends Pet {
-  Integer getClawCount();
-  void setClawCount(Integer name);
+    Integer getClawCount();
+
+    void setClawCount(Integer name);
 }

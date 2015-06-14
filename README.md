@@ -11,7 +11,7 @@ Check out [Swagger-Spec](https://github.com/swagger-api/swagger-spec) for additi
 ![Swagger Screenshot](https://raw.github.com/swagger-api/swagger-core/master/swagger-shot.jpg)
 
 ## See the Wiki!
-The [github wiki](https://github.com/swagger-api/swagger-core/wiki) contains documentation, samples, etc.  Start there.
+The [github wiki](https://github.com/swagger-api/swagger-core/wiki) contains documentation, samples, contributions, etc. Start there.
 
 ## Support
 The following methods are available to obtain support for Swagger:
@@ -29,7 +29,7 @@ The Swagger Specification has undergone 3 revisions since initial creation in 20
 
 Swagger core Version      | Release Date | Swagger Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-1.5.2-M2-SNAPSHOT                  | 2015-04-05   | 2.0           | [master](https://github.com/swagger-api/swagger-core) | Supported
+1.5.0                     | 2015-06-06   | 2.0           | [master](https://github.com/swagger-api/swagger-core) | Supported
 1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Supported
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4) | Deprecated
 1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0) | Deprecated
@@ -43,7 +43,6 @@ This is a project to build the swagger-core library, which is required for the S
 ### Change History
 If you're interested in the change history of swagger and the swagger-core framework, see [here](https://github.com/swagger-api/swagger-core/wiki/Changelog).
 
-
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
@@ -52,7 +51,7 @@ You need the following installed and available in your $PATH:
 * Jackson 2.4.2 or greater
 
 
-### To build from source (currently 1.5.2-M2-SNAPSHOT)
+### To build from source (currently 1.5.0)
 ```
 # first time building locally
 mvn -N
@@ -63,24 +62,19 @@ Subsequent builds:
 mvn install
 ```
 
-This will build the modules.  To build sample apps, activate the `samples` profile:
-
-```
-mvn install -Psamples
-```
+This will build the modules.
 
 Of course if you don't want to build locally you can grab artifacts from maven central:
 
-`http://repo1.maven.org/maven2/com/wordnik/`
+`http://repo1.maven.org/maven2/io/swagger/`
 
-## Sample Apps
-There are a number of sample apps in the [samples](https://github.com/swagger-api/swagger-core/blob/master/samples) folder.
+## Sample Apps - *UPDATED*
+The samples have moved to [a new repository](https://github.com/swagger-api/swagger-samples) and contain various integrations and configurations.
+
+
+## License
 
 ```
-
-License
--------
-
 Copyright 2015 SmartBear Software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -92,4 +86,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
+```
