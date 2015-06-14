@@ -6,30 +6,24 @@ import java.util.*;
 
 public class ByteArrayProperty extends AbstractProperty implements Property {
 
-  protected byte[] _default;
 
   public ByteArrayProperty() {
-    super.type = "byte-array";
-  }
-
-
-
-  public ByteArrayProperty _default(byte[] _default) {
- //   this._default = _default;
-    return this;
-  }
-
-
-  public byte[] getDefault() {
-    return _default;
-  }
-  public void setDefault(byte[] _default) {
-    //this._default = _default;
+    super.type = "string";
+    super.format = "byte";
   }
 
   public static boolean isType(String type, String format) {
     if("string".equals(type) &&  "byte".equals(format))
       return true;
     else return false;
+  }
+  public ByteArrayProperty xml(Xml xml) {
+     this.setXml(xml);
+     return this;
+  }
+
+  public ByteArrayProperty example(String example) {
+     this.setExample(example);
+     return this;
   }
 }
