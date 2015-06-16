@@ -13,17 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.models.Model;
-import io.swagger.models.properties.BooleanProperty;
-import io.swagger.models.properties.DateProperty;
-import io.swagger.models.properties.DateTimeProperty;
-import io.swagger.models.properties.DoubleProperty;
-import io.swagger.models.properties.FloatProperty;
-import io.swagger.models.properties.IntegerProperty;
-import io.swagger.models.properties.LongProperty;
-import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
-import io.swagger.models.properties.StringProperty;
-import io.swagger.models.properties.UUIDProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.lang.annotation.Annotation;
@@ -86,38 +76,6 @@ public abstract class AbstractModelConverter implements ModelConverter {
         } else {
             return null;
         }
-    }
-
-    protected Property getPrimitiveProperty(String typeName) {
-        Property property = null;
-        if ("boolean".equalsIgnoreCase(typeName)) {
-            property = new BooleanProperty();
-        } else if ("string".equalsIgnoreCase(typeName)) {
-            property = new StringProperty();
-        } else if ("integer".equalsIgnoreCase(typeName) || "int".toLowerCase().equalsIgnoreCase(typeName)) {
-            property = new IntegerProperty();
-        } else if ("long".equalsIgnoreCase(typeName)) {
-            property = new LongProperty();
-        } else if ("float".equalsIgnoreCase(typeName)) {
-            property = new FloatProperty();
-        } else if ("double".equalsIgnoreCase(typeName)) {
-            property = new DoubleProperty();
-        } else if ("dateTime".equalsIgnoreCase(typeName)) {
-            property = new DateTimeProperty();
-        } else if ("date".equalsIgnoreCase(typeName)) {
-            property = new DateProperty();
-        } else if ("byte".equalsIgnoreCase(typeName)) {
-            property = new StringProperty("byte");
-        } else if ("object".equalsIgnoreCase(typeName)) {
-            property = new ObjectProperty();
-        } else if ("uuid".equalsIgnoreCase(typeName)) {
-            property = new UUIDProperty();
-        } else if ("url".equalsIgnoreCase(typeName)) {
-            property = new StringProperty("url");
-        } else if ("uri".equalsIgnoreCase(typeName)) {
-            property = new StringProperty("uri");
-        }
-        return property;
     }
 
     protected String _description(Annotated ann) {

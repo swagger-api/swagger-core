@@ -2,21 +2,16 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
-public class IntegerProperty extends AbstractNumericProperty implements Property {
-    public static final String TYPE = "integer";
+public class IntegerProperty extends BaseIntegerProperty {
+    private static final String FORMAT = "int32";
     protected Integer _default;
 
     public IntegerProperty() {
-        super.type = TYPE;
-        super.format = "int32";
+        super(FORMAT);
     }
 
     public static boolean isType(String type, String format) {
-        if (TYPE.equals(type) && "int32".equals(format)) {
-            return true;
-        } else {
-            return false;
-        }
+        return TYPE.equals(type) && FORMAT.equals(format);
     }
 
     public IntegerProperty xml(Xml xml) {

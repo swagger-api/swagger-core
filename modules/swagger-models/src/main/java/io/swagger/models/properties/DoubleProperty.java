@@ -2,20 +2,16 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
-public class DoubleProperty extends AbstractNumericProperty implements Property {
+public class DoubleProperty extends DecimalProperty {
+    private static final String FORMAT = "double";
     protected Double _default;
 
     public DoubleProperty() {
-        super.type = "number";
-        super.format = "double";
+        super(FORMAT);
     }
 
     public static boolean isType(String type, String format) {
-        if ("number".equals(type) && "double".equals(format)) {
-            return true;
-        } else {
-            return false;
-        }
+        return TYPE.equals(type) && FORMAT.equals(format);
     }
 
     public DoubleProperty xml(Xml xml) {

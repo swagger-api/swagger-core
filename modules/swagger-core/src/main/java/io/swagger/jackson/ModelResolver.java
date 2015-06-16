@@ -28,6 +28,7 @@ import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
+import io.swagger.util.PrimitiveType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -97,14 +98,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                     ModelConverterContext context,
                                     Annotation[] annotations,
                                     Iterator<ModelConverter> next) {
-        Property property = null;
-        String typeName = _typeName(propType);
-
         LOGGER.debug("resolveProperty " + propType);
 
-        // primitive or null
-        property = getPrimitiveProperty(typeName);
-        // And then properties specific to subset of property types:
+        Property property = null;
         if (propType.isContainerType()) {
             JavaType keyType = propType.getKeyType();
             JavaType valueType = propType.getContentType();
@@ -118,6 +114,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
                 property = arrayProperty;
             }
+        } else {
+            property = PrimitiveType.createProperty(propType);
         }
 
         if (property == null) {
@@ -175,7 +173,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
 
     public Model resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
-        if (type.isEnumType() || _typeNameResolver.isStdType(type)) {
+        if (type.isEnumType() || PrimitiveType.fromType(type) != null) {
             // We don't build models for primitive types
             return null;
         }
@@ -313,7 +311,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     if (or.toLowerCase().startsWith("list[")) {
                         String innerType = or.substring(5, or.length() - 1);
                         ArrayProperty p = new ArrayProperty();
-                        Property primitiveProperty = getPrimitiveProperty(innerType);
+                        Property primitiveProperty = PrimitiveType.createProperty(innerType);
                         if (primitiveProperty != null) {
                             p.setItems(primitiveProperty);
                         } else {
@@ -326,7 +324,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         if (pos > 0) {
                             String innerType = or.substring(pos + 1, or.length() - 1);
                             MapProperty p = new MapProperty();
-                            Property primitiveProperty = getPrimitiveProperty(innerType);
+                            Property primitiveProperty = PrimitiveType.createProperty(innerType);
                             if (primitiveProperty != null) {
                                 p.setAdditionalProperties(primitiveProperty);
                             } else {
@@ -336,7 +334,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             property = p;
                         }
                     } else {
-                        Property primitiveProperty = getPrimitiveProperty(or);
+                        Property primitiveProperty = PrimitiveType.createProperty(or);
                         if (primitiveProperty != null) {
                             property = primitiveProperty;
                         } else {
