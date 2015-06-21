@@ -1,5 +1,6 @@
 package io.swagger.models.properties;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.models.Xml;
 
 public class BooleanProperty extends AbstractProperty implements Property {
@@ -45,6 +46,7 @@ public class BooleanProperty extends AbstractProperty implements Property {
         return _default;
     }
 
+    @JsonIgnore
     public void setDefault(String _default) {
         this._default(_default);
     }

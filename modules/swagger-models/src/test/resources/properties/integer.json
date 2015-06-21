@@ -1,0 +1,5 @@
+{
+  "type": "integer",
+  "format": "int32",
+  "description": "User Status"
+}

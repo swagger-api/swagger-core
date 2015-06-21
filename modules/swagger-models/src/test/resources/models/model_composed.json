@@ -1,0 +1,47 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/definitions/Slice"
+    },
+    {
+      "properties": {
+        "size": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "numberOfElements": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalPages": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "first": {
+          "type": "boolean"
+        },
+        "totalElements": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "number": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sort": {
+          "$ref": "#/definitions/Sort"
+        },
+        "content": {
+          "type": "array",
+          "uniqueItems": false,
+          "items": {
+            "$ref": "#/definitions/Object"
+          }
+        },
+        "last": {
+          "type": "boolean"
+        }
+      }
+    }
+  ]
+}
