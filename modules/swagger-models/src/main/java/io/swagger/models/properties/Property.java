@@ -1,8 +1,13 @@
 package io.swagger.models.properties;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import io.swagger.models.Xml;
+import io.swagger.models.deserializers.property.PropertyTypeResolver;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
+@JsonTypeResolver(PropertyTypeResolver.class)
 public interface Property {
     Property title(String title);
 

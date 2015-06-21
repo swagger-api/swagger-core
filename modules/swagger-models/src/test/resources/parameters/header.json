@@ -1,0 +1,7 @@
+{
+  "name": "api_key",
+  "in": "header",
+  "description": "",
+  "required": false,
+  "type": "string"
+}

@@ -1,9 +1,14 @@
 package io.swagger.models.parameters;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+import io.swagger.models.deserializers.parameter.ParameterTypeResolver;
 
 import java.util.Map;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
+@JsonTypeResolver(ParameterTypeResolver.class)
 public interface Parameter {
     String getIn();
 

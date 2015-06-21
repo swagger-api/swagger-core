@@ -1,9 +1,14 @@
 package io.swagger.models;
 
-import io.swagger.models.properties.Property;
-
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+import io.swagger.models.deserializers.model.ModelTypeResolver;
+import io.swagger.models.properties.Property;
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
+@JsonTypeResolver(ModelTypeResolver.class)
 public interface Model {
     String getDescription();
 

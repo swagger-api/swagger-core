@@ -1,0 +1,7 @@
+{
+  "name": "petId",
+  "in": "path",
+  "description": "ID of pet to return",
+  "required": true,
+  "$ref": "#/parameters/petId"
+}
