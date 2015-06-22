@@ -3,15 +3,18 @@ import java.lang.annotation.Annotation
 import java.lang.reflect.Type
 import javax.ws.rs.BeanParam
 
+import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.ext.SwaggerExtensions
 import io.swagger.jersey.SwaggerJersey2Jaxrs
-import io.swagger.models.parameters.{FormParameter, HeaderParameter}
+import io.swagger.models.Swagger
+import io.swagger.models.parameters.{QueryParameter, FormParameter, HeaderParameter}
 import models.TestEnum
 import org.glassfish.jersey.media.multipart.{FormDataContentDisposition, FormDataParam}
 import org.junit.runner.RunWith
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
 import params.{BaseBean, ChildBean, EnumBean, RefBean}
+import resources.ResourceWithKnownInjections
 
 import scala.collection.JavaConverters._
 
@@ -89,4 +92,15 @@ class SwaggerJersey2JaxrsTest extends FlatSpec with Matchers {
     }
   }
 
+  it should "scan class level and field level annotations" in {
+    val swagger = new Reader(new Swagger()).read(classOf[ResourceWithKnownInjections])
+
+    val resourceParameters = swagger.getPaths().get("/resource/{id}").getGet().getParameters()
+    resourceParameters should not equal (null)
+    resourceParameters.size() should equal(4)
+    resourceParameters.get(0).asInstanceOf[QueryParameter].getName() should equal("fieldParam")
+    resourceParameters.get(1).asInstanceOf[QueryParameter].getName() should equal("skip")
+    resourceParameters.get(2).asInstanceOf[QueryParameter].getName() should equal("limit")
+    resourceParameters.get(3).asInstanceOf[QueryParameter].getName() should equal("methodParam")
+  }
 }
