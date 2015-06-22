@@ -829,11 +829,6 @@ public class Reader {
             operation.setDeprecated(true);
         }
 
-        boolean hidden = false;
-        if (apiOperation != null) {
-            hidden = apiOperation.hidden();
-        }
-
         // process parameters
         for (Parameter globalParameter : globalParameters) {
             operation.parameter(globalParameter);
