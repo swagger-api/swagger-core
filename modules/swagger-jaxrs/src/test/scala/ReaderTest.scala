@@ -181,4 +181,11 @@ class ReaderTest extends FlatSpec with Matchers {
     var bodyParam: BodyParameter = params.get(6).asInstanceOf[BodyParameter]
     bodyParam.getRequired() should be(true)
   }
+
+  it should "scan Deprecated annotation" in {
+    val reader = new Reader(new Swagger())
+    val swagger = reader.read(classOf[ResourceWithDeprecatedMethod])
+    swagger.getPaths().get("/testDeprecated").getGet().isDeprecated() should equal(true)
+    swagger.getPaths().get("/testAllowed").getGet.isDeprecated() should be(null)
+  }
 }

@@ -825,10 +825,8 @@ public class Reader {
                 }
             }
         }
-        boolean isDeprecated = false;
-        annotation = method.getAnnotation(Deprecated.class);
-        if (annotation != null) {
-            isDeprecated = true;
+        if (method.getAnnotation(Deprecated.class) != null) {
+            operation.setDeprecated(true);
         }
 
         boolean hidden = false;
