@@ -274,7 +274,7 @@ public class Reader {
                             pathBuilder.append("/").append(p);
                         }
                     }
-                    operationPath = pathBuilder.toString();
+                    operationPath = pathBuilder.length() > 0 ? pathBuilder.toString() : PATH_DELIMITER;
 
                     if (isIgnored(operationPath)) {
                         continue;
