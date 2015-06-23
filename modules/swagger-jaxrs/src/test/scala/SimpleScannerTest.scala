@@ -15,7 +15,7 @@ import scala.collection.JavaConverters._
 class SimpleScannerTest extends FlatSpec with Matchers {
   it should "scan a simple resource" in {
     val swagger = new Reader(new Swagger()).read(classOf[SimpleResource])
-    swagger.getPaths().size should be(4)
+    swagger.getPaths().size should be(3)
 
     val path = swagger.getPaths().get("/{id}")
     val get = path.getGet()
@@ -414,13 +414,5 @@ class SimpleScannerTest extends FlatSpec with Matchers {
           model.getAdditionalProperties.asInstanceOf[RefProperty].getSimpleRef should be("Tag")
       }
     }
-  }
-
-  it should "scan a method with hidden params" in {
-    val swagger = new Reader(new Swagger()).read(classOf[SimpleResource])
-    val path = swagger.getPaths().get("/hidden/{id}")
-    val get = path.getGet()
-    get should not be (null)
-    get.getParameters().size should be(0)
   }
 }
