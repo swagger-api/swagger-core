@@ -188,4 +188,12 @@ class ReaderTest extends FlatSpec with Matchers {
     swagger.getPaths().get("/testDeprecated").getGet().isDeprecated() should equal(true)
     swagger.getPaths().get("/testAllowed").getGet.isDeprecated() should be(null)
   }
+
+  it should "scan empty path annotation" in {
+    val reader = new Reader(new Swagger())
+    val swagger = reader.read(classOf[ResourceWithEmptyPath])
+
+    swagger.getPaths().get("/").getGet() should not be(null)
+
+  }
 }
