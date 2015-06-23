@@ -87,13 +87,13 @@ public class SimpleResource {
     @GET
     @Path("/hidden/{id}")
     public Response hiddenParamsMethod(
-    		@ApiParam(hidden = true) String body,
-    		@ApiParam(hidden = true) @CookieParam("X-your-cookie") String cookieId,
-    		@ApiParam(hidden = true) @FormParam("field") String formParam,
-    		@ApiParam(hidden = true) @HeaderParam("Authorization") String headerParam,
-    		@ApiParam(hidden = true) @PathParam("id") String pathParam,
-    		@ApiParam(hidden = true) @QueryParam("dateUpdated") java.util.Date dateUpdated
-    		) {
-    	return Response.ok().build();
+            @ApiParam(hidden = true) String body,
+            @ApiParam(hidden = true) @CookieParam("X-your-cookie") String cookieId,
+            @ApiParam(hidden = true) @FormParam("field") String formParam,
+            @ApiParam(hidden = true) @HeaderParam("Authorization") String headerParam,
+            @ApiParam(hidden = true) @PathParam("id") String pathParam,
+            @ApiParam(hidden = true) @QueryParam("dateUpdated") java.util.Date dateUpdated
+            ) {
+        return Response.ok().build();
     }
 }

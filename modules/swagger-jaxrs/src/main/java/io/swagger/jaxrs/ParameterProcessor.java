@@ -40,7 +40,7 @@ public class ParameterProcessor {
         }
         final ParamWrapper<?> param = helper.getApiParam();
         if (param.isHidden()) {
-        	return null;
+            return null;
         }
         final String defaultValue = helper.getDefaultValue();
         final JavaType javaType = TypeFactory.defaultInstance().constructType(type);
@@ -145,7 +145,7 @@ public class ParameterProcessor {
     public interface ParamWrapper<T extends Annotation> {
         String getName();
 
-		String getDescription();
+        String getDescription();
 
         String getDefaultValue();
 
@@ -371,10 +371,10 @@ public class ParameterProcessor {
             return apiParam;
         }
 
-		@Override
-		public boolean isHidden() {
-			return false;
-		}
+        @Override
+        public boolean isHidden() {
+            return false;
+        }
     }
 
     static {
