@@ -10,6 +10,7 @@ import models.Sample;
 
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PUT;
@@ -81,5 +82,18 @@ public class SimpleResource {
             @ApiParam(value = "Required body parameter", required = true) String param0,
             @ApiParam(value = "Non-required body parameter") String param1) {
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("/hidden/{id}")
+    public Response hiddenParamsMethod(
+    		@ApiParam(hidden = true) String body,
+    		@ApiParam(hidden = true) @CookieParam("X-your-cookie") String cookieId,
+    		@ApiParam(hidden = true) @FormParam("field") String formParam,
+    		@ApiParam(hidden = true) @HeaderParam("Authorization") String headerParam,
+    		@ApiParam(hidden = true) @PathParam("id") String pathParam,
+    		@ApiParam(hidden = true) @QueryParam("dateUpdated") java.util.Date dateUpdated
+    		) {
+    	return Response.ok().build();
     }
 }

@@ -39,6 +39,9 @@ public class ParameterProcessor {
             return null;
         }
         final ParamWrapper<?> param = helper.getApiParam();
+        if (param.isHidden()) {
+        	return null;
+        }
         final String defaultValue = helper.getDefaultValue();
         final JavaType javaType = TypeFactory.defaultInstance().constructType(type);
         if (parameter instanceof AbstractSerializableParameter) {
@@ -142,7 +145,7 @@ public class ParameterProcessor {
     public interface ParamWrapper<T extends Annotation> {
         String getName();
 
-        String getDescription();
+		String getDescription();
 
         String getDefaultValue();
 
@@ -159,6 +162,8 @@ public class ParameterProcessor {
         String getParamType();
 
         T getAnnotation();
+        
+        boolean isHidden();
     }
 
     /**
@@ -298,12 +303,16 @@ public class ParameterProcessor {
         public ApiParam getAnnotation() {
             return apiParam;
         }
+
+        @Override
+        public boolean isHidden() {
+            return apiParam.hidden();
+        }
     }
 
     /**
      * Wrapper implementation for ApiImplicitParam annotation
      */
-
     private final static class ApiImplicitParamWrapper implements ParamWrapper<ApiImplicitParam> {
 
         private final ApiImplicitParam apiParam;
@@ -361,6 +370,11 @@ public class ParameterProcessor {
         public ApiImplicitParam getAnnotation() {
             return apiParam;
         }
+
+		@Override
+		public boolean isHidden() {
+			return false;
+		}
     }
 
     static {
