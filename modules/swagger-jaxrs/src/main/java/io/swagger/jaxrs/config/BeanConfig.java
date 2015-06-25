@@ -12,6 +12,7 @@ import io.swagger.models.Info;
 import io.swagger.models.License;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
+import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
@@ -195,11 +196,26 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
 
         config.setScanners(new ResourcesScanner(), new TypeAnnotationsScanner(), new SubTypesScanner());
 
-        this.info = new Info()
-                .description(description)
-                .title(title)
-                .version(version)
-                .termsOfService(termsOfServiceUrl);
+        info = getSwagger().getInfo();
+        if( info == null ){
+           info = new Info();
+        }
+
+        if(StringUtils.isNotBlank(description)){
+            info.description( description );
+        }
+
+        if( StringUtils.isNotBlank( title )){
+            info.title(title);
+        }
+
+        if( StringUtils.isNotBlank(version)){
+            info.version(version);
+        }
+
+        if( StringUtils.isNotBlank(termsOfServiceUrl)){
+            info.termsOfService(termsOfServiceUrl);
+        }
 
         if (contact != null) {
             this.info.contact(new Contact()
