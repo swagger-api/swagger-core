@@ -1,8 +1,10 @@
 import java.lang.reflect.Method
+import java.util
 import javax.ws.rs._
 import javax.ws.rs.core.MediaType
 
 import io.swagger.jaxrs.Reader
+import io.swagger.jaxrs.config.ReaderConfig
 import io.swagger.models.Swagger
 import io.swagger.models.parameters._
 import org.junit.runner.RunWith
@@ -195,5 +197,22 @@ class ReaderTest extends FlatSpec with Matchers {
 
     swagger.getPaths().get("/").getGet() should not be(null)
 
+  }
+
+  it should "not scan sub-resource with no @Api annotation when not scanning all resources" in {
+    val reader = new Reader(new Swagger())
+    val swagger = reader.read(classOf[ResourceWithSubResourceNoApiAnnotation])
+
+    swagger.getPaths().get("/employees/{id}") should be(null)
+  }
+
+  it should "scan sub-resource with no @Api annotation when scanning all resources" in {
+    val reader = new Reader(new Swagger(), new ReaderConfig {
+      override def getIgnoredRoutes: util.Collection[String] = new util.ArrayList[String]()
+      override def isScanAllResources: Boolean = true
+    })
+    val swagger = reader.read(classOf[ResourceWithSubResourceNoApiAnnotation])
+
+    swagger.getPaths().get("/employees/{id}") should not be(null)
   }
 }
