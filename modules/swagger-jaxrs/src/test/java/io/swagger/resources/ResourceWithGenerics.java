@@ -1,4 +1,4 @@
-package resources;
+package io.swagger.resources;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -7,7 +7,7 @@ import models.GenericListWrapper;
 import models.GenericType;
 import models.GenericTypeWithApiModel;
 import models.Tag;
-import models.TestEnum;
+import io.swagger.models.TestEnum;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
