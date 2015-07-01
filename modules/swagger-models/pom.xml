@@ -36,6 +36,7 @@
                         <Export-Package>
                             io.swagger.models.parameters,
                             io.swagger.models.properties,
+                            io.swagger.models.refs,
                             io.swagger.models
                         </Export-Package>
                     </instructions>
@@ -60,5 +61,16 @@
             <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.10</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>
