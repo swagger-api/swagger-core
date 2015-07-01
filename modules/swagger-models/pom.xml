@@ -71,6 +71,12 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
+    <properties>
+        <!-- TODO increase coverage -->
+        <validation-api-version>1.1.0.Final</validation-api-version>
+        <coverage.complexity.minimum>0.00</coverage.complexity.minimum>
+        <coverage.line.minimum>0.0</coverage.line.minimum>
+        <!--<coverage.missed.classes>3</coverage.missed.classes>-->
+    </properties>
 </project>
