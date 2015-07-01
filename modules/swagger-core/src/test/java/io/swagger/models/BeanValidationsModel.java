@@ -1,4 +1,4 @@
-package models;
+package io.swagger.models;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
