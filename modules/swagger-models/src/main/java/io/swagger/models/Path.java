@@ -43,6 +43,38 @@ public class Path {
         }
         return null;
     }
+    
+    public Path setOrMerge(String method, Operation op) {
+        Operation operation = get(method);
+        if (operation != null) {
+            operation.merge(op);
+            return this;
+        } else {
+            return set(method, op);
+        }
+    }
+
+    public Operation get(String method) {
+        if ("get".equals(method)) {
+            return getGet();
+        }
+        if ("put".equals(method)) {
+            return getPut();
+        }
+        if ("post".equals(method)) {
+            return getPost();
+        }
+        if ("delete".equals(method)) {
+            return getDelete();
+        }
+        if ("patch".equals(method)) {
+            return getPatch();
+        }
+        if ("options".equals(method)) {
+            return getOptions();
+        }
+        return null;
+    }
 
     public Path get(Operation get) {
         this.get = get;
