@@ -95,7 +95,9 @@ class SnakeCaseConverter extends ModelConverter {
         val name = (model.asInstanceOf[ModelImpl]).getName
         if (model.isInstanceOf[ModelImpl]) {
           val impl = model.asInstanceOf[ModelImpl]
+          val prevName = impl.getName()
           impl.setName(toSnakeCase(impl.getName()))
+          context.defineModel(impl.getName,impl,`type`,prevName)
         }
         return model
       }

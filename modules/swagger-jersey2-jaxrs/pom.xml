@@ -91,6 +91,11 @@
             <artifactId>jersey-media-multipart</artifactId>
             <version>${jersey2-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <properties>
         <!-- TODO increase coverage and remove these overrides-->

@@ -143,6 +143,11 @@
             <artifactId>validation-api</artifactId>
             <version>${validation-api-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <properties>
         <!-- TODO increase coverage -->
