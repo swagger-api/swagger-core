@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import models.Category;
 import models.CategoryWithApiModel;
-import models.Tag;
+import io.swagger.models.duplicated.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class Pet {
     private CategoryWithApiModel categoryWithApiModel;
     private String name;
     private List<String> photoUrls = new ArrayList<String>();
-    private List<models.Tag> tags = new ArrayList<models.Tag>();
+    private List<Tag> tags = new ArrayList<Tag>();
     private String status;
 
     @XmlElement(name = "id")
@@ -71,7 +71,7 @@ public class Pet {
 
     @XmlElementWrapper(name = "tags")
     @XmlElement(name = "tag")
-    public List<models.Tag> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 

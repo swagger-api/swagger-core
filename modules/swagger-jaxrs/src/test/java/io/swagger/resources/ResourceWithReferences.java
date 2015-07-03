@@ -1,11 +1,11 @@
-package resources;
+package io.swagger.resources;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import models.ModelContainingModelWithReference;
-import models.ModelWithReference;
+import io.swagger.models.ModelContainingModelWithReference;
+import io.swagger.models.ModelWithReference;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
