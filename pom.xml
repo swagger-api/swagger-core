@@ -47,7 +47,6 @@
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
         <scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>
-        <testSourceDirectory>src/test/scala</testSourceDirectory>
         <outputDirectory>target/classes</outputDirectory>
         <testOutputDirectory>target/test-classes</testOutputDirectory>
         <resources>
@@ -130,6 +129,27 @@
                         </launcher>
                     </launchers>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire-version}</version>
+                <configuration>
+                    <testNGArtifactName>none:none</testNGArtifactName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>test-testng</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <junitArtifactName>none:none</junitArtifactName>
+                            <testNGArtifactName>org.testng:testng</testNGArtifactName>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -469,6 +489,12 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
                 <version>${servlet-api-version}</version>
@@ -517,6 +543,8 @@
         <logback-version>1.0.1</logback-version>
 
         <junit-version>4.8.2</junit-version>
+        <testng-version>6.9.4</testng-version>
+        <surefire-version>2.18.1</surefire-version>
         <maven-plugin-version>1.0.0</maven-plugin-version>
         <commons-lang-version>3.2.1</commons-lang-version>
         <slf4j-version>1.6.3</slf4j-version>

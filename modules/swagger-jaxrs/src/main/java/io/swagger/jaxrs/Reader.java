@@ -437,11 +437,15 @@ public class Reader {
         readInfoConfig(config);
 
         for (String consume : config.consumes()) {
-            swagger.addConsumes(consume);
+            if( StringUtils.isNotEmpty( consume )) {
+                swagger.addConsumes(consume);
+            }
         }
 
         for (String produce : config.produces()) {
-            swagger.addProduces(produce);
+            if( StringUtils.isNotEmpty( produce )) {
+                swagger.addProduces(produce);
+            }
         }
 
         if (!config.externalDocs().value().isEmpty()) {
