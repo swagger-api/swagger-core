@@ -101,7 +101,7 @@ public class ReflectionUtils {
 
     /**
      * Searches for constructor suitable for resource instantiation.
-     * <p/>
+     * <p>
      * If more constructors exists the one with the most injectable parameters will be selected.
      *
      * @param cls is the class where to search
