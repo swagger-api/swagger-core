@@ -169,10 +169,8 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     public void setScan(boolean shouldScan) {
         Set<Class<?>> classes = classes();
         if (classes != null) {
-            reader.read(classes)
-                    .host(host)
-                    .basePath(basePath)
-                    .info(info);
+            reader.getSwagger().host(host).basePath(basePath).info(info);
+            reader.read(classes);
         }
         ScannerFactory.setScanner(this);
     }
