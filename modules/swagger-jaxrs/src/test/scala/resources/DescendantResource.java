@@ -58,4 +58,9 @@ public class DescendantResource extends AbstractResource<Long> implements Interf
     public Response methodFromInterface(@ApiParam(value = "Method to check ArrayIndexOutOfBoundsException") @PathParam("petId6") Number petId, String str) {
         return null;
     }
+
+    @Override
+    public Response deprecatedMethodFromInterface(Number petId) {
+        return null;
+    }
 }
