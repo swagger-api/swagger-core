@@ -104,11 +104,18 @@ public class ParameterProcessor {
         } else {
             // must be a body param
             BodyParameter bp = new BodyParameter();
+
             bp.setRequired(param.isRequired());
             bp.setName(StringUtils.isNotEmpty(param.getName()) ? param.getName() : "body");
+
             if (StringUtils.isNotEmpty(param.getDescription())) {
                 bp.setDescription(param.getDescription());
             }
+
+            if (StringUtils.isNotEmpty(param.getAccess())) {
+                bp.setAccess(param.getAccess());
+            }
+
             final Property property = ModelConverters.getInstance().readAsProperty(javaType);
             if (property != null) {
                 final Map<PropertyBuilder.PropertyId, Object> args = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
