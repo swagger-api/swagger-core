@@ -1,9 +1,9 @@
-package resources;
+package io.swagger.resources;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import models.Tag;
+import io.swagger.models.duplicated.Tag;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
