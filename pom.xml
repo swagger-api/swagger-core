@@ -136,10 +136,6 @@
                 <version>${surefire-version}</version>
                 <configuration>
                     <testNGArtifactName>none:none</testNGArtifactName>
-                    <reportsDirectory>${project.build.directory}/surefire-reports/scala</reportsDirectory>
-                    <excludes>
-                        <exclude>**/*TestNG.java</exclude>
-                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
@@ -151,13 +147,6 @@
                         <configuration>
                             <junitArtifactName>none:none</junitArtifactName>
                             <testNGArtifactName>org.testng:testng</testNGArtifactName>
-                            <reportsDirectory>${project.build.directory}/surefire-reports/java</reportsDirectory>
-                            <includes>
-                                <include>**/*TestNG.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>**/*Test.java</exclude>
-                            </excludes>
                         </configuration>
                     </execution>
                 </executions>

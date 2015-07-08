@@ -169,10 +169,16 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     public void setScan(boolean shouldScan) {
         Set<Class<?>> classes = classes();
         if (classes != null) {
-            reader.read(classes)
-                    .host(host)
-                    .basePath(basePath)
-                    .info(info);
+            Swagger swagger = reader.read(classes);
+            if( StringUtils.isNotBlank( host )){
+                swagger.setHost(host);
+            }
+
+            if( StringUtils.isNotBlank( basePath )){
+                swagger.setBasePath(basePath);
+            }
+
+            updateInfoFromConfig();
         }
         ScannerFactory.setScanner(this);
     }
@@ -197,6 +203,27 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
 
         config.setScanners(new ResourcesScanner(), new TypeAnnotationsScanner(), new SubTypesScanner());
 
+        final Reflections reflections = new Reflections(config);
+        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Api.class);
+        classes.addAll(reflections.getTypesAnnotatedWith(javax.ws.rs.Path.class));
+        classes.addAll(reflections.getTypesAnnotatedWith(SwaggerDefinition.class ));
+
+        Set<Class<?>> output = new HashSet<Class<?>>();
+        for (Class<?> cls : classes) {
+            if (allowAllPackages) {
+                output.add(cls);
+            } else {
+                for (String pkg : acceptablePackages) {
+                    if (cls.getPackage().getName().startsWith(pkg)) {
+                        output.add(cls);
+                    }
+                }
+            }
+        }
+        return output;
+    }
+
+    private void updateInfoFromConfig() {
         info = getSwagger().getInfo();
         if( info == null ){
            info = new Info();
@@ -234,24 +261,6 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         }
 
         reader.getSwagger().setInfo(info);
-        final Reflections reflections = new Reflections(config);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Api.class);
-        classes.addAll(reflections.getTypesAnnotatedWith(javax.ws.rs.Path.class));
-        classes.addAll(reflections.getTypesAnnotatedWith(SwaggerDefinition.class ));
-
-        Set<Class<?>> output = new HashSet<Class<?>>();
-        for (Class<?> cls : classes) {
-            if (allowAllPackages) {
-                output.add(cls);
-            } else {
-                for (String pkg : acceptablePackages) {
-                    if (cls.getPackage().getName().startsWith(pkg)) {
-                        output.add(cls);
-                    }
-                }
-            }
-        }
-        return output;
     }
 
     public Swagger getSwagger() {

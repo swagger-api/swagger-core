@@ -1,11 +1,19 @@
 package io.swagger.jaxrs.utils;
 
+import io.swagger.jaxrs.Reader;
+
+import io.swagger.converter.PrimitiveType;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -18,8 +26,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ReflectionUtils {
-
     private static final Set<Class<? extends Annotation>> CONSTRUCTOR_ANNOTATIONS;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtils.class);
+
+    public static Type typeFromString(String type) {
+        final PrimitiveType primitive = PrimitiveType.fromName(type);
+        if (primitive != null) {
+            return primitive.getType();
+        }
+        try {
+            return Class.forName(type);
+        } catch (Exception e) {
+            LOGGER.error(String.format("Failed to resolve '%s' into class", type), e);
+        }
+        return null;
+    }
 
     /**
      * Checks if the method methodToFind is the overridden method from the superclass.
@@ -101,7 +122,7 @@ public class ReflectionUtils {
 
     /**
      * Searches for constructor suitable for resource instantiation.
-     * <p/>
+     * <p>
      * If more constructors exists the one with the most injectable parameters will be selected.
      *
      * @param cls is the class where to search

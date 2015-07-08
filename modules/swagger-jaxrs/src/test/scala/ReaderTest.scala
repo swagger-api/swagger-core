@@ -5,6 +5,7 @@ import javax.ws.rs.core.MediaType
 
 import io.swagger.jaxrs.Reader
 import io.swagger.jaxrs.config.ReaderConfig
+import io.swagger.models.ModelImpl
 import io.swagger.models.Swagger
 import io.swagger.models.parameters._
 import org.junit.runner.RunWith
@@ -148,6 +149,8 @@ class ReaderTest extends FlatSpec with Matchers {
     val reader = new Reader(new Swagger())
     val swagger = reader.read(classOf[ResourceWithImplicitParams])
 
+    swagger.getDefinitions should be (null)
+
     var params = swagger.getPaths().get("/testString").getPost().getParameters()
     params should not be null
     params.size() should be(7)
@@ -182,6 +185,7 @@ class ReaderTest extends FlatSpec with Matchers {
 
     var bodyParam: BodyParameter = params.get(6).asInstanceOf[BodyParameter]
     bodyParam.getRequired() should be(true)
+    bodyParam.getSchema.asInstanceOf[ModelImpl].getType should be ("string")
   }
 
   it should "scan Deprecated annotation" in {
