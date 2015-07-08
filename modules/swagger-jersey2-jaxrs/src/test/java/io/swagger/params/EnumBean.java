@@ -1,6 +1,6 @@
-package params;
+package io.swagger.params;
 
-import models.TestEnum;
+import io.swagger.models.TestEnum;
 
 import javax.ws.rs.HeaderParam;
 

@@ -1,7 +1,7 @@
-package resources;
+package io.swagger.resources;
 
 import io.swagger.annotations.Api;
-import models.Pagination;
+import io.swagger.models.Pagination;
 
 import javax.inject.Inject;
 import javax.ws.rs.BeanParam;

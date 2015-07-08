@@ -1,4 +1,4 @@
-package models;
+package io.swagger.models;
 
 public enum TestEnum {
     ONE, TWO, THREE;
