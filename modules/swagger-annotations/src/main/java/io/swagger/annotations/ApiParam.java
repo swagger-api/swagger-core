@@ -87,4 +87,9 @@ public @interface ApiParam {
      * Specifies whether the parameter can accept multiple values by having multiple occurrences.
      */
     boolean allowMultiple() default false;
+
+    /**
+     * Hides the parameter from the list of parameters.
+     */
+    boolean hidden() default false;
 }
