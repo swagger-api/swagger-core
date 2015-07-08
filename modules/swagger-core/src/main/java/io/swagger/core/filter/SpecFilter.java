@@ -1,10 +1,7 @@
 package io.swagger.core.filter;
 
 import io.swagger.model.ApiDescription;
-import io.swagger.models.Model;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.Swagger;
+import io.swagger.models.*;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 
@@ -36,7 +33,7 @@ public class SpecFilter {
             ops.put("patch", path.getPatch());
             ops.put("options", path.getOptions());
 
-            Path clonedPath = new Path();
+            Path clonedPath = new PathImpl();
             for (String key : ops.keySet()) {
                 Operation op = ops.get(key);
                 if (op != null) {

@@ -41,18 +41,7 @@ import io.swagger.jaxrs.config.ReaderListener;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
 import io.swagger.jaxrs.utils.ReflectionUtils;
-import io.swagger.models.Contact;
-import io.swagger.models.ExternalDocs;
-import io.swagger.models.License;
-import io.swagger.models.Model;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.Response;
-import io.swagger.models.Scheme;
-import io.swagger.models.SecurityRequirement;
-import io.swagger.models.SecurityScope;
-import io.swagger.models.Swagger;
-import io.swagger.models.Tag;
+import io.swagger.models.*;
 import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
@@ -379,7 +368,7 @@ public class Reader {
 
                             Path path = swagger.getPath(operationPath);
                             if (path == null) {
-                                path = new Path();
+                                path = new PathImpl();
                                 swagger.path(operationPath, path);
                             }
                             path.set(httpMethod, operation);

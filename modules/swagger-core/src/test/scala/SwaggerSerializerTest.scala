@@ -87,7 +87,7 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
       .description("the pet to add")
       .schema(new RefModel().asDefault("Person")))
 
-    swagger.path("/pets", new Path().get(get).post(post))
+    swagger.path("/pets", new PathImpl().get(get).post(post))
     val swaggerJson = Json.mapper().writeValueAsString(swagger)
     val rebuilt = Json.mapper().readValue(swaggerJson, classOf[Swagger])
     Json.pretty(swagger) should equal(Json.pretty(rebuilt))
@@ -135,7 +135,34 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
 
     swagger
       .parameter("foo", parameter)
-      .path("/pets", new Path().get(get))
+      .path("/pets", new PathImpl().get(get))
+
+    val swaggerJson = Json.mapper().writeValueAsString(swagger)
+    val rebuilt = Json.mapper().readValue(swaggerJson, classOf[Swagger])
+    Json.pretty(swagger) should equal(Json.pretty(rebuilt))
+  }
+
+  it should "write a spec with path references" in {
+    val info = new Info()
+      .version("1.0.0")
+      .title("Swagger Petstore")
+
+    val contact = new Contact()
+      .name("Swagger API Team")
+      .email("foo@bar.baz")
+      .url("http://swagger.io")
+    info.setContact(contact)
+
+    val swagger = new Swagger()
+      .info(info)
+      .host("petstore.swagger.io")
+      .securityDefinition("api-key", new ApiKeyAuthDefinition("key", In.HEADER))
+      .scheme(Scheme.HTTP)
+      .consumes("application/json")
+      .produces("application/json")
+
+
+    swagger.path("/health", new RefPath("http://my.company.com/paths/health.json"))
 
     val swaggerJson = Json.mapper().writeValueAsString(swagger)
     val rebuilt = Json.mapper().readValue(swaggerJson, classOf[Swagger])

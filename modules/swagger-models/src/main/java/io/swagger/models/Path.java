@@ -3,271 +3,64 @@ package io.swagger.models;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.models.parameters.Parameter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@JsonPropertyOrder({"get", "post", "put", "delete", "options", "patch"})
-public class Path {
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
-    private Operation get;
-    private Operation put;
-    private Operation post;
-    private Operation delete;
-    private Operation patch;
-    private Operation options;
-    private List<Parameter> parameters;
+/**
+ * Created by russellb337 on 7/8/15.
+ */
+public interface Path {
+    Path set(String method, Operation op);
 
-    public Path set(String method, Operation op) {
-        if ("get".equals(method)) {
-            return get(op);
-        }
-        if ("put".equals(method)) {
-            return put(op);
-        }
-        if ("post".equals(method)) {
-            return post(op);
-        }
-        if ("delete".equals(method)) {
-            return delete(op);
-        }
-        if ("patch".equals(method)) {
-            return patch(op);
-        }
-        if ("options".equals(method)) {
-            return options(op);
-        }
-        return null;
-    }
+    Path get(Operation get);
 
-    public Path get(Operation get) {
-        this.get = get;
-        return this;
-    }
+    Path put(Operation put);
 
-    public Path put(Operation put) {
-        this.put = put;
-        return this;
-    }
+    Path post(Operation post);
 
-    public Path post(Operation post) {
-        this.post = post;
-        return this;
-    }
+    Path delete(Operation delete);
 
-    public Path delete(Operation delete) {
-        this.delete = delete;
-        return this;
-    }
+    Path patch(Operation patch);
 
-    public Path patch(Operation patch) {
-        this.patch = patch;
-        return this;
-    }
+    Path options(Operation options);
 
-    public Path options(Operation options) {
-        this.options = options;
-        return this;
-    }
+    Operation getGet();
 
-    public Operation getGet() {
-        return get;
-    }
+    void setGet(Operation get);
 
-    public void setGet(Operation get) {
-        this.get = get;
-    }
+    Operation getPut();
 
-    public Operation getPut() {
-        return put;
-    }
+    void setPut(Operation put);
 
-    public void setPut(Operation put) {
-        this.put = put;
-    }
+    Operation getPost();
 
-    public Operation getPost() {
-        return post;
-    }
+    void setPost(Operation post);
 
-    public void setPost(Operation post) {
-        this.post = post;
-    }
+    Operation getDelete();
 
-    public Operation getDelete() {
-        return delete;
-    }
+    void setDelete(Operation delete);
 
-    public void setDelete(Operation delete) {
-        this.delete = delete;
-    }
+    Operation getPatch();
 
-    public Operation getPatch() {
-        return patch;
-    }
+    void setPatch(Operation patch);
 
-    public void setPatch(Operation patch) {
-        this.patch = patch;
-    }
+    Operation getOptions();
 
-    public Operation getOptions() {
-        return options;
-    }
+    void setOptions(Operation options);
 
-    public void setOptions(Operation options) {
-        this.options = options;
-    }
+    List<Operation> getOperations();
 
-    @JsonIgnore
-    public List<Operation> getOperations() {
-        List<Operation> allOperations = new ArrayList<Operation>();
-        if (get != null) {
-            allOperations.add(get);
-        }
-        if (put != null) {
-            allOperations.add(put);
-        }
-        if (post != null) {
-            allOperations.add(post);
-        }
-        if (delete != null) {
-            allOperations.add(delete);
-        }
-        if (patch != null) {
-            allOperations.add(patch);
-        }
-        if (options != null) {
-            allOperations.add(options);
-        }
+    List<Parameter> getParameters();
 
-        return allOperations;
-    }
+    void setParameters(List<Parameter> parameters);
 
-    public List<Parameter> getParameters() {
-        return parameters;
-    }
+    void addParameter(Parameter parameter);
 
-    public void setParameters(List<Parameter> parameters) {
-        this.parameters = parameters;
-    }
+    boolean isEmpty();
 
-    public void addParameter(Parameter parameter) {
-        if (this.parameters == null) {
-            this.parameters = new ArrayList<Parameter>();
-        }
-        this.parameters.add(parameter);
-    }
+    Map<String, Object> getVendorExtensions();
 
-    @JsonIgnore
-    public boolean isEmpty() {
-        if (get == null && put == null && post == null && delete == null && patch == null && options == null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getVendorExtensions() {
-        return vendorExtensions;
-    }
-
-    @JsonAnySetter
-    public void setVendorExtension(String name, Object value) {
-        if (name.startsWith("x-")) {
-            vendorExtensions.put(name, value);
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((delete == null) ? 0 : delete.hashCode());
-        result = prime * result + ((get == null) ? 0 : get.hashCode());
-        result = prime * result + ((options == null) ? 0 : options.hashCode());
-        result = prime * result
-                + ((parameters == null) ? 0 : parameters.hashCode());
-        result = prime * result + ((patch == null) ? 0 : patch.hashCode());
-        result = prime * result + ((post == null) ? 0 : post.hashCode());
-        result = prime * result + ((put == null) ? 0 : put.hashCode());
-        result = prime * result
-                + ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Path other = (Path) obj;
-        if (delete == null) {
-            if (other.delete != null) {
-                return false;
-            }
-        } else if (!delete.equals(other.delete)) {
-            return false;
-        }
-        if (get == null) {
-            if (other.get != null) {
-                return false;
-            }
-        } else if (!get.equals(other.get)) {
-            return false;
-        }
-        if (options == null) {
-            if (other.options != null) {
-                return false;
-            }
-        } else if (!options.equals(other.options)) {
-            return false;
-        }
-        if (parameters == null) {
-            if (other.parameters != null) {
-                return false;
-            }
-        } else if (!parameters.equals(other.parameters)) {
-            return false;
-        }
-        if (patch == null) {
-            if (other.patch != null) {
-                return false;
-            }
-        } else if (!patch.equals(other.patch)) {
-            return false;
-        }
-        if (post == null) {
-            if (other.post != null) {
-                return false;
-            }
-        } else if (!post.equals(other.post)) {
-            return false;
-        }
-        if (put == null) {
-            if (other.put != null) {
-                return false;
-            }
-        } else if (!put.equals(other.put)) {
-            return false;
-        }
-        if (vendorExtensions == null) {
-            if (other.vendorExtensions != null) {
-                return false;
-            }
-        } else if (!vendorExtensions.equals(other.vendorExtensions)) {
-            return false;
-        }
-        return true;
-    }
+    void setVendorExtension(String name, Object value);
 }

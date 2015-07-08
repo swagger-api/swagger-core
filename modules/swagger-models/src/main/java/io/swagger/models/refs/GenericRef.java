@@ -15,6 +15,8 @@ public class GenericRef {
         this.format = computeRefFormat(ref);
         this.type = type;
 
+        validateFormatAndType(format, type);
+
         if (format == RefFormat.INTERNAL && !ref.startsWith("#/")) {
             /* this is an internal path that did not start with a #/, we must be in some of ModelResolver code
             while currently relies on the ability to create RefModel/RefProperty objects via a constructor call like
@@ -27,6 +29,12 @@ public class GenericRef {
         }
 
         this.simpleRef = computeSimpleRef(this.ref, format, type);
+    }
+
+    private void validateFormatAndType(RefFormat format, RefType type) {
+        if(type == RefType.PATH) {
+
+        }
     }
 
     public RefFormat getFormat() {

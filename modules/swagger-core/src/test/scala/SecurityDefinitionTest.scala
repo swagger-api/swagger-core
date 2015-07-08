@@ -72,7 +72,7 @@ class SecurityDefinitionTest extends FlatSpec with Matchers {
       .scope("user:email"))
       .security(new SecurityRequirement("api_key"))
 
-    swagger.path("/pets", new Path().get(get))
+    swagger.path("/pets", new PathImpl().get(get))
 
     val json = Json.mapper.writeValueAsString(swagger)
   }
