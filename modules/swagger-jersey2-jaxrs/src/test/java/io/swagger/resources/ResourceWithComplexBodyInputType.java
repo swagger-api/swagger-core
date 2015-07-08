@@ -1,6 +1,7 @@
-package resources;
+package io.swagger.resources;
 
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
