@@ -78,7 +78,9 @@ public class SpecFilter {
                 }
             }
             Model clonedModel = (Model) definition.clone();
-            if (clonedModel.getProperties() != null) clonedModel.getProperties().clear();
+            if (clonedModel.getProperties() != null) {
+                clonedModel.getProperties().clear();
+            }
             clonedModel.setProperties(clonedProperties);
             clonedDefinitions.put(key, clonedModel);
         }
