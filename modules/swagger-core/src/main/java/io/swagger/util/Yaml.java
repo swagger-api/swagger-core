@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.swagger.models.Model;
 import io.swagger.models.Path;
+import io.swagger.models.Response;
 import io.swagger.models.auth.SecuritySchemeDefinition;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
@@ -23,6 +24,7 @@ public class Yaml {
             // mapper.registerModule(new JodaModule());
             SimpleModule module = new SimpleModule();
             module.addDeserializer(Path.class, new PathDeserializer());
+            module.addDeserializer(Response.class, new ResponseDeserializer());
             module.addDeserializer(Model.class, new ModelDeserializer());
             module.addDeserializer(Property.class, new PropertyDeserializer());
             module.addDeserializer(Parameter.class, new ParameterDeserializer());

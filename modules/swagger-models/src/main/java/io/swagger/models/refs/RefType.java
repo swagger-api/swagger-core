@@ -5,5 +5,7 @@ package io.swagger.models.refs;
  */
 public enum RefType {
     DEFINITION,
-    PATH, PARAMETER
+    PARAMETER,
+    PATH,
+    RESPONSE
 }

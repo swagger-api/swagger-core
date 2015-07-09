@@ -58,11 +58,11 @@ class SecurityDefinitionTest extends FlatSpec with Matchers {
       .property(new LongProperty())
     )
 
-    val response = new Response()
+    val response = new ResponseImpl()
       .description("pets returned")
       .schema(new RefProperty().asDefault("Person"))
 
-    val errorResponse = new Response()
+    val errorResponse = new ResponseImpl()
       .description("error response")
       .schema(new RefProperty().asDefault("Error"))
 

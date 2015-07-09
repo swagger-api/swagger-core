@@ -179,6 +179,7 @@ public class RefPath implements Path {
     }
 
     @Override
+    @JsonIgnore
     public boolean isEmpty() {
         throw new RuntimeException("Not implemented");
     }

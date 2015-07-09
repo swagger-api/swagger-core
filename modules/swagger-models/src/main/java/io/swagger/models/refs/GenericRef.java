@@ -32,8 +32,11 @@ public class GenericRef {
     }
 
     private void validateFormatAndType(RefFormat format, RefType type) {
-        if(type == RefType.PATH) {
-
+        if(type == RefType.PATH || type == RefType.RESPONSE) {
+            if(format == RefFormat.INTERNAL) {
+                //PATH AND RESPONSE refs  can only be URL or RELATIVE
+                throw new RuntimeException(type + " refs can not be internal references");
+            }
         }
     }
 

@@ -88,7 +88,26 @@ class GenericRefTest extends FlatSpec with Matchers {
     assertSimpleRef(RefType.PARAMETER, "#/parameters/foo", "foo")
     assertSimpleRef(RefType.DEFINITION, "foo", "foo")
     assertSimpleRef(RefType.PARAMETER, "foo", "foo")
-  } 
+  }
+
+  def assertExceptionThrownInConstructor(path: RefType): Unit = {
+    var exceptionThrown = false;
+    try {
+      new GenericRef(path, "#/paths/foo")
+    } catch {
+      case t: Throwable => {
+        exceptionThrown = true;
+      }
+    }
+  }
+
+  it should "not allow internal path refs" in {
+    assertExceptionThrownInConstructor(RefType.PATH)
+  }
+
+  it should "not allow internal response refs" in {
+    assertExceptionThrownInConstructor(RefType.RESPONSE)
+  }
 
 
 }

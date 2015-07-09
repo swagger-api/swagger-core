@@ -65,12 +65,12 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
       .property(new LongProperty())
     )
 
-    val response = new Response()
+    val response = new ResponseImpl()
       .description("pets returned")
       .schema(new RefProperty().asDefault("Person"))
       .example("application/json", "fun!")
 
-    val errorResponse = new Response()
+    val errorResponse = new ResponseImpl()
       .description("error response")
       .schema(new RefProperty().asDefault("Error"))
 
@@ -168,4 +168,42 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
     val rebuilt = Json.mapper().readValue(swaggerJson, classOf[Swagger])
     Json.pretty(swagger) should equal(Json.pretty(rebuilt))
   }
+
+  it should "write a spec with response references" in {
+    val info = new Info()
+      .version("1.0.0")
+      .title("Swagger Petstore")
+
+    val contact = new Contact()
+      .name("Swagger API Team")
+      .email("foo@bar.baz")
+      .url("http://swagger.io")
+    info.setContact(contact)
+
+    val swagger = new Swagger()
+      .info(info)
+      .host("petstore.swagger.io")
+      .securityDefinition("api-key", new ApiKeyAuthDefinition("key", In.HEADER))
+      .scheme(Scheme.HTTP)
+      .consumes("application/json")
+      .produces("application/json")
+
+
+    val get = new Operation()
+      .produces("application/json")
+      .summary("finds pets in the system")
+      .description("a longer description")
+      .tag("Pet Operations")
+      .operationId("get pet by id")
+      .response(200, new RefResponse("http://my.company.com/responses/response.json"))
+
+    swagger
+      .path("/pets", new PathImpl().get(get))
+
+    val swaggerJson = Json.mapper().writeValueAsString(swagger)
+    val rebuilt = Json.mapper().readValue(swaggerJson, classOf[Swagger])
+    Json.pretty(swagger) should equal(Json.pretty(rebuilt))
+  }
+
+
 }

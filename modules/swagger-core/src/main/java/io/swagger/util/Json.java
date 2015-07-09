@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.swagger.models.Model;
 import io.swagger.models.Path;
+import io.swagger.models.Response;
 import io.swagger.models.auth.SecuritySchemeDefinition;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
@@ -32,6 +33,7 @@ public class Json {
         // load any jackson modules
         SimpleModule module = new SimpleModule();
         module.addDeserializer(Path.class, new PathDeserializer());
+        module.addDeserializer(Response.class, new ResponseDeserializer());
         module.addDeserializer(Property.class, new PropertyDeserializer());
         module.addDeserializer(Model.class, new ModelDeserializer());
         module.addDeserializer(Parameter.class, new ParameterDeserializer());
