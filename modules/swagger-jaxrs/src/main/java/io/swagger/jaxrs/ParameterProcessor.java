@@ -39,6 +39,9 @@ public class ParameterProcessor {
             return null;
         }
         final ParamWrapper<?> param = helper.getApiParam();
+        if (param.isHidden()) {
+            return null;
+        }
         final String defaultValue = helper.getDefaultValue();
         final JavaType javaType = TypeFactory.defaultInstance().constructType(type);
         if (parameter instanceof AbstractSerializableParameter) {
@@ -104,11 +107,18 @@ public class ParameterProcessor {
         } else {
             // must be a body param
             BodyParameter bp = new BodyParameter();
+
             bp.setRequired(param.isRequired());
             bp.setName(StringUtils.isNotEmpty(param.getName()) ? param.getName() : "body");
+
             if (StringUtils.isNotEmpty(param.getDescription())) {
                 bp.setDescription(param.getDescription());
             }
+
+            if (StringUtils.isNotEmpty(param.getAccess())) {
+                bp.setAccess(param.getAccess());
+            }
+
             final Property property = ModelConverters.getInstance().readAsProperty(javaType);
             if (property != null) {
                 final Map<PropertyBuilder.PropertyId, Object> args = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
@@ -159,6 +169,8 @@ public class ParameterProcessor {
         String getParamType();
 
         T getAnnotation();
+        
+        boolean isHidden();
     }
 
     /**
@@ -298,12 +310,16 @@ public class ParameterProcessor {
         public ApiParam getAnnotation() {
             return apiParam;
         }
+
+        @Override
+        public boolean isHidden() {
+            return apiParam.hidden();
+        }
     }
 
     /**
      * Wrapper implementation for ApiImplicitParam annotation
      */
-
     private final static class ApiImplicitParamWrapper implements ParamWrapper<ApiImplicitParam> {
 
         private final ApiImplicitParam apiParam;
@@ -360,6 +376,11 @@ public class ParameterProcessor {
         @Override
         public ApiImplicitParam getAnnotation() {
             return apiParam;
+        }
+
+        @Override
+        public boolean isHidden() {
+            return false;
         }
     }
 

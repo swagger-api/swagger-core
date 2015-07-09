@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverter;
@@ -27,6 +28,7 @@ import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,10 +38,8 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -179,11 +179,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             // We don't build models for primitive types
             return null;
         }
-        if (type.isContainerType()) {
-            // We treat collections as primitive types, just need to add models for values (if any)
-            context.resolve(type.getContentType());
-            return null;
-        }
+
         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
         // Couple of possibilities for defining
         String name = _typeName(type, beanDesc);
@@ -195,6 +191,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final ModelImpl model = new ModelImpl().type(ModelImpl.OBJECT).name(name)
                 .description(_description(beanDesc.getClassInfo()));
 
+        if(!type.isContainerType()) {
+            // define the model here to support self/cyclic referencing of models
+            context.defineModel(name, model, type, null);
+        }
+
+        if (type.isContainerType()) {
+            // We treat collections as primitive types, just need to add models for values (if any)
+            context.resolve(type.getContentType());
+            return null;
+        }
         // if XmlRootElement annotation, construct an Xml object and attach it to the model
         XmlRootElement rootAnnotation = beanDesc.getClassAnnotations().get(XmlRootElement.class);
         if (rootAnnotation != null && !"".equals(rootAnnotation.name()) && !"##default".equals(rootAnnotation.name())) {
@@ -401,58 +407,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         }
                     }
 
-                    if (property != null) {
-                        // check for XML annotations
-                        XmlElementWrapper wrapper = member.getAnnotation(XmlElementWrapper.class);
-
-                        if (wrapper != null) {
-                            Xml xml = new Xml();
-                            xml.setWrapped(true);
-
-                            if (wrapper.name() != null) {
-                                if ("##default".equals(wrapper.name())) {
-                                    xml.setName(propName);
-                                } else if (!"".equals(wrapper.name())) {
-                                    xml.setName(wrapper.name());
-                                }
-                            }
-                            if (wrapper.namespace() != null && !"".equals(wrapper.namespace()) && !"##default".equals(wrapper.namespace())) {
-                                xml.setNamespace(wrapper.namespace());
-                            }
-
-                            property.setXml(xml);
-                        }
-
-                        XmlElement element = member.getAnnotation(XmlElement.class);
-                        if (element != null) {
-                            if (!element.name().isEmpty()) {
-                                // don't set Xml object if name is same
-                                if (!element.name().equals(propName) && !"##default".equals(element.name())) {
-                                    Xml xml = property.getXml();
-                                    if (xml == null) {
-                                        xml = new Xml();
-                                        property.setXml(xml);
-                                    }
-                                    xml.setName(element.name());
-                                }
-                            }
-                        }
-                        XmlAttribute attr = member.getAnnotation(XmlAttribute.class);
-                        if (attr != null) {
-                            if (!"".equals(attr.name())) {
-                                // don't set Xml object if name is same
-                                if (!attr.name().equals(propName) && !"##default".equals(attr.name())) {
-                                    Xml xml = property.getXml();
-                                    if (xml == null) {
-                                        xml = new Xml();
-                                        property.setXml(xml);
-                                    }
-                                    xml.setName(attr.name());
-                                }
-                            }
-                        }
-
-                    }
+                    JAXBAnnotationsHelper.apply(member, property);
                     applyBeanValidatorAnnotations(property, annotations);
                     props.add(property);
                 }

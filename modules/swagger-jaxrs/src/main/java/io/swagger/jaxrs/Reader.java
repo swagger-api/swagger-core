@@ -19,6 +19,7 @@ package io.swagger.jaxrs;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.collect.Collections2;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -52,7 +53,6 @@ import io.swagger.models.SecurityRequirement;
 import io.swagger.models.SecurityScope;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
-import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
@@ -62,6 +62,7 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,7 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -274,7 +276,7 @@ public class Reader {
                             pathBuilder.append("/").append(p);
                         }
                     }
-                    operationPath = pathBuilder.toString();
+                    operationPath = pathBuilder.length() > 0 ? pathBuilder.toString() : PATH_DELIMITER;
 
                     if (isIgnored(operationPath)) {
                         continue;
@@ -396,7 +398,7 @@ public class Reader {
         ApiImplicitParams implicitParams = method.getAnnotation(ApiImplicitParams.class);
         if (implicitParams != null && implicitParams.value().length > 0) {
             for (ApiImplicitParam param : implicitParams.value()) {
-                Parameter p = readImplicitParam(param, method.getDeclaringClass());
+                Parameter p = readImplicitParam(param);
                 if (p != null) {
                     operation.addParameter(p);
                 }
@@ -404,8 +406,8 @@ public class Reader {
         }
     }
 
-    protected Parameter readImplicitParam(ApiImplicitParam param, Class<?> apiClass) {
-        Parameter p;
+    protected Parameter readImplicitParam(ApiImplicitParam param) {
+        final Parameter p;
         if (param.paramType().equalsIgnoreCase("path")) {
             p = new PathParameter();
         } else if (param.paramType().equalsIgnoreCase("query")) {
@@ -413,15 +415,16 @@ public class Reader {
         } else if (param.paramType().equalsIgnoreCase("form") || param.paramType().equalsIgnoreCase("formData")) {
             p = new FormParameter();
         } else if (param.paramType().equalsIgnoreCase("body")) {
-            p = new BodyParameter();
+            p = null;
         } else if (param.paramType().equalsIgnoreCase("header")) {
             p = new HeaderParameter();
         } else {
             LOGGER.warn("Unkown implicit parameter type: [" + param.paramType() + "]");
             return null;
         }
-
-        return ParameterProcessor.applyAnnotations(swagger, p, apiClass, Arrays.asList(new Annotation[]{param}));
+        final Type type = ReflectionUtils.typeFromString(param.dataType());
+        return ParameterProcessor.applyAnnotations(swagger, p, type == null ? String.class : type,
+                Arrays.<Annotation>asList(param));
     }
 
     protected void readSwaggerConfig(Class<?> cls, SwaggerDefinition config) {
@@ -437,11 +440,15 @@ public class Reader {
         readInfoConfig(config);
 
         for (String consume : config.consumes()) {
-            swagger.addConsumes(consume);
+            if( StringUtils.isNotEmpty( consume )) {
+                swagger.addConsumes(consume);
+            }
         }
 
         for (String produce : config.produces()) {
-            swagger.addProduces(produce);
+            if( StringUtils.isNotEmpty( produce )) {
+                swagger.addProduces(produce);
+            }
         }
 
         if (!config.externalDocs().value().isEmpty()) {
@@ -825,15 +832,8 @@ public class Reader {
                 }
             }
         }
-        boolean isDeprecated = false;
-        annotation = method.getAnnotation(Deprecated.class);
-        if (annotation != null) {
-            isDeprecated = true;
-        }
-
-        boolean hidden = false;
-        if (apiOperation != null) {
-            hidden = apiOperation.hidden();
+        if (method.getAnnotation(Deprecated.class) != null) {
+            operation.setDeprecated(true);
         }
 
         // process parameters

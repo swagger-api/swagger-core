@@ -3,6 +3,7 @@ import javax.ws.rs._
 import javax.ws.rs.core.MediaType
 
 import io.swagger.jaxrs.Reader
+import io.swagger.models.ModelImpl
 import io.swagger.models.Swagger
 import io.swagger.models.parameters._
 import org.junit.runner.RunWith
@@ -140,11 +141,15 @@ class ReaderTest extends FlatSpec with Matchers {
 
     val methodFromInterface = swagger.getPaths().get("/pet/{petId5}").getGet
     methodFromInterface should not equal (null)
+
+    swagger.getPaths().get("/pet/{petId6}").getGet should not equal (null)
   }
 
   it should "scan implicit params" in {
     val reader = new Reader(new Swagger())
     val swagger = reader.read(classOf[ResourceWithImplicitParams])
+
+    swagger.getDefinitions should be (null)
 
     var params = swagger.getPaths().get("/testString").getPost().getParameters()
     params should not be null
@@ -180,5 +185,21 @@ class ReaderTest extends FlatSpec with Matchers {
 
     var bodyParam: BodyParameter = params.get(6).asInstanceOf[BodyParameter]
     bodyParam.getRequired() should be(true)
+    bodyParam.getSchema.asInstanceOf[ModelImpl].getType should be ("string")
+  }
+
+  it should "scan Deprecated annotation" in {
+    val reader = new Reader(new Swagger())
+    val swagger = reader.read(classOf[ResourceWithDeprecatedMethod])
+    swagger.getPaths().get("/testDeprecated").getGet().isDeprecated() should equal(true)
+    swagger.getPaths().get("/testAllowed").getGet.isDeprecated() should be(null)
+  }
+
+  it should "scan empty path annotation" in {
+    val reader = new Reader(new Swagger())
+    val swagger = reader.read(classOf[ResourceWithEmptyPath])
+
+    swagger.getPaths().get("/").getGet() should not be(null)
+
   }
 }

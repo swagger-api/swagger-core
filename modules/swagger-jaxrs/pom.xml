@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.5.0</version>
+        <version>1.5.1-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -119,6 +119,11 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -4,14 +4,14 @@
     <parent>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.5.0</version>
+        <version>1.5.1-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.swagger</groupId>
     <artifactId>swagger-jersey2-jaxrs</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.0</version>
+    <version>1.5.1-SNAPSHOT</version>
     <name>swagger-jersey2-jaxrs (Jersey 2.x support)</name>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -90,6 +90,11 @@
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-multipart</artifactId>
             <version>${jersey2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <properties>
