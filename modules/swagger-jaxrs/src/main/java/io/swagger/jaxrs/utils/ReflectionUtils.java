@@ -109,6 +109,9 @@ public class ReflectionUtils {
             }
             Class<?>[] pt = method.getParameterTypes();
             Type[] gpt = method.getGenericParameterTypes();
+            if (pTypes.length != pt.length || gpTypes.length != gpt.length) {
+                continue;
+            }
             for (int j = 0; j < pTypes.length; j++) {
                 Class<?> parameterType = pTypes[j];
                 if (!(pt[j].equals(parameterType) || (!gpt[j].equals(gpTypes[j]) && pt[j].isAssignableFrom(parameterType)))) {
