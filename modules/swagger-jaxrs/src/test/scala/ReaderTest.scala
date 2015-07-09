@@ -141,6 +141,8 @@ class ReaderTest extends FlatSpec with Matchers {
 
     val methodFromInterface = swagger.getPaths().get("/pet/{petId5}").getGet
     methodFromInterface should not equal (null)
+
+    swagger.getPaths().get("/pet/{petId6}").getGet should not equal (null)
   }
 
   it should "scan implicit params" in {
