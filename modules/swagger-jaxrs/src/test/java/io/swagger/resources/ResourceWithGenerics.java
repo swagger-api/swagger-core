@@ -3,16 +3,17 @@ package io.swagger.resources;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import models.GenericListWrapper;
-import models.GenericType;
-import models.GenericTypeWithApiModel;
-import models.Tag;
+import io.swagger.models.GenericListWrapper;
+import io.swagger.models.GenericType;
+import io.swagger.models.GenericTypeWithApiModel;
+import io.swagger.models.duplicated.Tag;
 import io.swagger.models.TestEnum;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
+
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
