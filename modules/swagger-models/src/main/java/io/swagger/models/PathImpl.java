@@ -169,6 +169,34 @@ public class PathImpl implements Path {
     }
 
     @Override
+    @JsonIgnore
+    public Map<HttpMethod, Operation> getOperationMap() {
+        Map<HttpMethod, Operation> result = new HashMap<HttpMethod, Operation>();
+
+        if (get != null) {
+            result.put(HttpMethod.GET, get);
+        }
+        if (put != null) {
+            result.put(HttpMethod.PUT, put);
+        }
+        if (post != null) {
+            result.put(HttpMethod.POST, post);
+        }
+        if (delete != null) {
+            result.put(HttpMethod.DELETE, delete);
+        }
+        if (patch != null) {
+            result.put(HttpMethod.PATCH, patch);
+        }
+        if (options != null) {
+            result.put(HttpMethod.OPTIONS, options);
+            result.put(HttpMethod.OPTIONS, options);
+        }
+
+        return result;
+    }
+
+    @Override
     public List<Parameter> getParameters() {
         return parameters;
     }

@@ -162,6 +162,13 @@ public class RefPath implements Path {
         throw new RuntimeException("Not implemented");
     }
 
+
+    @Override
+    @JsonIgnore
+    public Map<HttpMethod, Operation> getOperationMap() {
+        throw new RuntimeException("Not implemented");
+    }
+
     @Override
     @JsonIgnore
     public List<Parameter> getParameters() {

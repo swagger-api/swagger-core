@@ -1,8 +1,5 @@
 package io.swagger.models;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.models.parameters.Parameter;
 
 import java.util.List;
@@ -51,6 +48,8 @@ public interface Path {
     void setOptions(Operation options);
 
     List<Operation> getOperations();
+
+    Map<HttpMethod, Operation> getOperationMap();
 
     List<Parameter> getParameters();
 
