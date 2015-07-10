@@ -53,10 +53,8 @@ public class ReflectionUtils {
         Class<?> superClass = cls.getSuperclass();
         if (superClass != null && !(superClass.getClass().equals(Object.class))) {
             for (Method method : superClass.getMethods()) {
-                if (!method.getName().equals(methodToFind.getName()) || !method.getReturnType().isAssignableFrom(methodToFind.getReturnType())) {
-                    continue;
-                }
-                if (Arrays.equals(method.getParameterTypes(), methodToFind.getParameterTypes()) &&
+                if (method.getName().equals(methodToFind.getName()) && method.getReturnType().isAssignableFrom(methodToFind.getReturnType())
+                        && Arrays.equals(method.getParameterTypes(), methodToFind.getParameterTypes()) &&
                         !Arrays.equals(method.getGenericParameterTypes(), methodToFind.getGenericParameterTypes())) {
                     return true;
                 }
@@ -100,27 +98,33 @@ public class ReflectionUtils {
      */
     public static Method findMethod(Method methodToFind, Class<?> cls) {
         String methodToSearch = methodToFind.getName();
-        Class<?>[] pTypes = methodToFind.getParameterTypes();
-        Type[] gpTypes = methodToFind.getGenericParameterTypes();
-        methodLoop:
+        Class<?>[] soughtForParameterType = methodToFind.getParameterTypes();
+        Type[] soughtForGenericParameterType = methodToFind.getGenericParameterTypes();
         for (Method method : cls.getMethods()) {
-            if (!method.getName().equals(methodToSearch) || !method.getReturnType().isAssignableFrom(methodToFind.getReturnType())) {
-                continue;
-            }
-            Class<?>[] pt = method.getParameterTypes();
-            Type[] gpt = method.getGenericParameterTypes();
-            if (pTypes.length != pt.length || gpTypes.length != gpt.length) {
-                continue;
-            }
-            for (int j = 0; j < pTypes.length; j++) {
-                Class<?> parameterType = pTypes[j];
-                if (!(pt[j].equals(parameterType) || (!gpt[j].equals(gpTypes[j]) && pt[j].isAssignableFrom(parameterType)))) {
-                    continue methodLoop;
+            if (method.getName().equals(methodToSearch) && method.getReturnType().isAssignableFrom(methodToFind.getReturnType())) {
+                Class<?>[] srcParameterTypes = method.getParameterTypes();
+                Type[] srcGenericParameterTypes = method.getGenericParameterTypes();
+                if (soughtForParameterType.length == srcParameterTypes.length &&
+                        soughtForGenericParameterType.length == srcGenericParameterTypes.length) {
+                    if (hasIdenticalParameters(srcParameterTypes, soughtForParameterType, srcGenericParameterTypes, soughtForGenericParameterType)) {
+                        return method;
+                    }
                 }
             }
-            return method;
         }
         return null;
+    }
+
+    private static boolean hasIdenticalParameters(Class<?>[] srcParameterTypes, Class<?>[] soughtForParameterType,
+                                                  Type[] srcGenericParameterTypes, Type[] soughtForGenericParameterType) {
+        for (int j = 0; j < soughtForParameterType.length; j++) {
+            Class<?> parameterType = soughtForParameterType[j];
+            if (!(srcParameterTypes[j].equals(parameterType) || (!srcGenericParameterTypes[j].equals(soughtForGenericParameterType[j]) &&
+                    srcParameterTypes[j].isAssignableFrom(parameterType)))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
