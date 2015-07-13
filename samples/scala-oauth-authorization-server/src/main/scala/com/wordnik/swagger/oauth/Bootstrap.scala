@@ -16,21 +16,17 @@ class Bootstrap extends HttpServlet {
   val oauth = OAuth(
     List(
       AuthorizationScope("write:pets", "Modify pets in your account"),
-      AuthorizationScope("read:pets", "Read your pets")),
+      AuthorizationScope("read:pets", "Read your pets"),
+      AuthorizationScope("write:users", "Modify users"),
+      AuthorizationScope("read:users", "Read user info")
+    ),
     List(
       ImplicitGrant(
-        LoginEndpoint("http://localhost:8002/oauth/dialog"),
+        LoginEndpoint("http://petstore.swagger.io/api/oauth/dialog"),
         "access_token"
-      ),
-      AuthorizationCodeGrant(
-        TokenRequestEndpoint("http://petstore.swagger.wordnik.com/oauth/requestToken",
-          "client_id",
-          "client_secret"),
-        TokenEndpoint("http://petstore.swagger.wordnik.com/oauth/token",
-          "auth_code"
-        )
+      )
     )
-  ))
+  )
   ConfigFactory.config.authorizations = List(oauth)
 
   val info = ApiInfo(
