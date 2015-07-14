@@ -12,6 +12,7 @@ import org.junit.runner.RunWith
 import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.junit.JUnitRunner
 
+import scala.collection.JavaConverters.asScalaSetConverter
 import scala.collection.JavaConverters.mapAsScalaMapConverter
 
 @RunWith(classOf[JUnitRunner])
@@ -240,8 +241,9 @@ class ModelConverterTest extends FlatSpec with Matchers {
 
   it should "override the property name" in {
     val schemas = ModelConverters.getInstance().readAll(classOf[ModelWithAltPropertyName])
-    val model = schemas.get("sample_model").asInstanceOf[ModelImpl]
-    Json.prettyPrint(model)
+    val properties = schemas.get("sample_model").asInstanceOf[ModelImpl].getProperties
+    properties.get("id") should be (null)
+    properties.get("the_id") should not be null
   }
 
   it should "convert a model with enum array" in {
@@ -306,5 +308,11 @@ class ModelConverterTest extends FlatSpec with Matchers {
       property should not be (null)
       property.getType should be("string")
     }
+  }
+
+  it should "scan a model per #1155" in {
+    var model = ModelConverters.getInstance().read(classOf[Model1155])
+    model.get("Model1155").getProperties.keySet.asScala should be (Set("valid", "value", "is", "get", "isA", "getA",
+        "is_persistent", "gettersAndHaters"))
   }
 }
