@@ -19,7 +19,6 @@ package io.swagger.jaxrs;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.collect.Collections2;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -62,7 +61,6 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +71,6 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -144,6 +141,14 @@ public class Reader {
             }
         }
 
+        // process SwaggerDefinitions first - so we get tags in desired order
+        for (Class<?> cls : classes) {
+            SwaggerDefinition swaggerDefinition = cls.getAnnotation(SwaggerDefinition.class);
+            if (swaggerDefinition != null) {
+                readSwaggerConfig(cls, swaggerDefinition);
+            }
+        }
+
         for (Class<?> cls : classes) {
             read(cls);
         }
@@ -172,11 +177,6 @@ public class Reader {
     }
 
     protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
-        SwaggerDefinition swaggerDefinition = cls.getAnnotation(SwaggerDefinition.class);
-        if (swaggerDefinition != null) {
-            readSwaggerConfig(cls, swaggerDefinition);
-        }
-
         Api api = (Api) cls.getAnnotation(Api.class);
         Map<String, SecurityScope> globalScopes = new HashMap<String, SecurityScope>();
 
