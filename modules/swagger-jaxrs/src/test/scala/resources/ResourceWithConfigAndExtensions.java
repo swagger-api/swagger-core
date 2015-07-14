@@ -52,7 +52,7 @@ import java.util.ArrayList;
 @Api(value = "/external/info/")
 @Path("who/cares")
 public class ResourceWithConfigAndExtensions implements ReaderListener {
-    @ApiOperation(value = "test.", extensions = {
+    @ApiOperation(value = "test.", tags = {"tagwithextensions", "mytag", "testingtag"}, extensions = {
             @Extension(properties = @ExtensionProperty(name = "test", value = "value"))
     })
     @GET
