@@ -107,4 +107,24 @@ class SpecFilterTest extends FlatSpec with Matchers {
     if (filtered.size() != 1)
       fail("ModelImpl with no properties failed to filter")
   }
+
+  it should "contain all tags in the top level Swagger object" in {
+    val json = Source.fromFile("src/test/scala/specFiles/petstore.json").mkString
+    val swagger = Json.mapper().readValue(json, classOf[Swagger])
+    val filter = new NoOpOperationsFilter()
+    val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
+    getTagNames(filtered) should be(Set("pet", "user", "store"))
+  }
+
+  it should "not contain user tags in the top level Swagger object" in {
+    val json = Source.fromFile("src/test/scala/specFiles/petstore.json").mkString
+    val swagger = Json.mapper().readValue(json, classOf[Swagger])
+    val filter = new NoUserOperationsFilter
+    val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
+    getTagNames(filtered) should be(Set("pet", "store"))
+  }
+
+  def getTagNames(swagger: Swagger) = {
+    (for (item <- swagger.getTags.asScala) yield item.getName).toSet
+  }
 }
