@@ -31,11 +31,12 @@ public class ModelDeserializer extends JsonDeserializer<Model> {
             // we only support one parent, no multiple inheritance or composition
             model = Json.mapper().convertValue(node, ComposedModel.class);
             List<Model> allComponents = model.getAllOf();
-            if (allComponents.size() >= 2) {
+            if (allComponents.size() >= 1) {
                 model.setParent(allComponents.get(0));
-                model.setChild(allComponents.get(allComponents.size() - 1));
+                model.setChild(new ModelImpl());
             }
             if (allComponents.size() >= 2) {
+            	model.setChild(allComponents.get(allComponents.size() - 1));
                 List<RefModel> interfaces = new ArrayList<RefModel>();
                 int size = allComponents.size();
                 for (Model m : allComponents.subList(1, size - 1)) {
