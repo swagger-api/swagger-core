@@ -33,19 +33,20 @@ public class ModelDeserializer extends JsonDeserializer<Model> {
             List<Model> allComponents = model.getAllOf();
             if (allComponents.size() >= 1) {
                 model.setParent(allComponents.get(0));
-                model.setChild(new ModelImpl());
-            }
-            if (allComponents.size() >= 2) {
-            	model.setChild(allComponents.get(allComponents.size() - 1));
-                List<RefModel> interfaces = new ArrayList<RefModel>();
-                int size = allComponents.size();
-                for (Model m : allComponents.subList(1, size - 1)) {
-                    if (m instanceof RefModel) {
-                        RefModel ref = (RefModel) m;
-                        interfaces.add(ref);
-                    }
-                }
-                model.setInterfaces(interfaces);
+                if (allComponents.size() >= 2) {
+	            	model.setChild(allComponents.get(allComponents.size() - 1));
+	                List<RefModel> interfaces = new ArrayList<RefModel>();
+	                int size = allComponents.size();
+	                for (Model m : allComponents.subList(1, size - 1)) {
+	                    if (m instanceof RefModel) {
+	                        RefModel ref = (RefModel) m;
+	                        interfaces.add(ref);
+	                    }
+	                }
+	                model.setInterfaces(interfaces);
+	            } else {
+	            	model.setChild(new ModelImpl());
+	            }
             }
             return model;
         } else {
