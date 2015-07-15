@@ -8,15 +8,15 @@ import java.util.Map;
  * Created by russellb337 on 7/9/15.
  */
 public interface Response {
-    ResponseImpl schema(Property property);
+    Response schema(Property property);
 
-    ResponseImpl description(String description);
+    Response description(String description);
 
-    ResponseImpl example(String type, Object example);
+    Response example(String type, Object example);
 
-    ResponseImpl header(String name, Property property);
+    Response header(String name, Property property);
 
-    ResponseImpl headers(Map<String, Property> headers);
+    Response headers(Map<String, Property> headers);
 
     String getDescription();
 

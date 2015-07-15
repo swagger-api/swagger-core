@@ -52,27 +52,27 @@ public class RefResponse implements Response {
     }
 
     @Override
-    public ResponseImpl schema(Property property) {
+    public Response schema(Property property) {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public ResponseImpl description(String description) {
+    public Response description(String description) {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public ResponseImpl example(String type, Object example) {
+    public Response example(String type, Object example) {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public ResponseImpl header(String name, Property property) {
+    public Response header(String name, Property property) {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public ResponseImpl headers(Map<String, Property> headers) {
+    public Response headers(Map<String, Property> headers) {
         throw new RuntimeException("Not implemented");
     }
 
