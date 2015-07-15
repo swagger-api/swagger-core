@@ -194,6 +194,13 @@ class ReaderTest extends FlatSpec with Matchers {
     swagger.getPaths().get("/testDeprecated").getGet().isDeprecated() should equal(true)
     swagger.getPaths().get("/testAllowed").getGet.isDeprecated() should be(null)
   }
+  
+  it should "scan Deprecated annotation from interfaceResource" in {
+    val reader = new Reader(new Swagger())
+    val swagger = reader.read(classOf[DescendantResource])
+    var deprecatedMethod = swagger.getPaths().get("/pet/deprecated/{petId7}").getGet
+    deprecatedMethod.isDeprecated() should equal(true)
+  }
 
   it should "scan empty path annotation" in {
     val reader = new Reader(new Swagger())
