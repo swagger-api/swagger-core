@@ -1,10 +1,14 @@
 package io.swagger.models.properties;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.models.refs.GenericRef;
+import io.swagger.models.refs.RefConstants;
+import io.swagger.models.refs.RefFormat;
+import io.swagger.models.refs.RefType;
 
 public class RefProperty extends AbstractProperty implements Property {
     private static final String TYPE = "ref";
-    String ref;
+    private GenericRef genericRef;
 
     public RefProperty() {
         setType(TYPE);
@@ -24,7 +28,7 @@ public class RefProperty extends AbstractProperty implements Property {
     }
 
     public RefProperty asDefault(String ref) {
-        this.set$ref("#/definitions/" + ref);
+        this.set$ref(RefConstants.INTERNAL_DEFINITION_PREFIX + ref);
         return this;
     }
 
@@ -46,35 +50,28 @@ public class RefProperty extends AbstractProperty implements Property {
     }
 
     public String get$ref() {
-        if (ref.startsWith("http")) {
-            return ref;
-        } else {
-            return "#/definitions/" + ref;
-        }
+        return genericRef.getRef();
     }
 
     public void set$ref(String ref) {
-        if (ref.indexOf("#/definitions/") == 0) {
-            this.ref = ref.substring("#/definitions/".length());
-        } else {
-            this.ref = ref;
-        }
+        this.genericRef = new GenericRef(RefType.DEFINITION, ref);
+    }
+
+    @JsonIgnore
+    public RefFormat getRefFormat() {
+        return this.genericRef.getFormat();
     }
 
     @JsonIgnore
     public String getSimpleRef() {
-        if (ref.indexOf("#/definitions/") == 0) {
-            return ref.substring("#/definitions/".length());
-        } else {
-            return ref;
-        }
+        return genericRef.getSimpleRef();
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((ref == null) ? 0 : ref.hashCode());
+        result = prime * result + ((genericRef == null) ? 0 : genericRef.hashCode());
         return result;
     }
 
@@ -90,11 +87,11 @@ public class RefProperty extends AbstractProperty implements Property {
             return false;
         }
         RefProperty other = (RefProperty) obj;
-        if (ref == null) {
-            if (other.ref != null) {
+        if (genericRef == null) {
+            if (other.genericRef != null) {
                 return false;
             }
-        } else if (!ref.equals(other.ref)) {
+        } else if (!genericRef.equals(other.genericRef)) {
             return false;
         }
         return true;
