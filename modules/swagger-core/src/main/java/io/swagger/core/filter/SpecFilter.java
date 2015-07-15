@@ -5,20 +5,24 @@ import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
+import io.swagger.models.Tag;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class SpecFilter {
     public Swagger filter(Swagger swagger, SwaggerSpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         Swagger clone = new Swagger();
         clone.info(swagger.getInfo())
-                .tags(swagger.getTags())
+                .tags(swagger.getTags() == null ? null : new ArrayList<Tag>(swagger.getTags()))
                 .host(swagger.getHost())
                 .basePath(swagger.getBasePath())
                 .schemes(swagger.getSchemes())
@@ -26,6 +30,8 @@ public class SpecFilter {
                 .produces(swagger.getProduces())
                 .externalDocs(swagger.getExternalDocs());
 
+        final Set<String> filteredTags = new HashSet<String>();
+        final Set<String> allowedTags = new HashSet<String>();
         for (String resourcePath : swagger.getPaths().keySet()) {
             Path path = swagger.getPaths().get(resourcePath);
             Map<String, Operation> ops = new HashMap<String, Operation>();
@@ -41,13 +47,32 @@ public class SpecFilter {
                 Operation op = ops.get(key);
                 if (op != null) {
                     ApiDescription desc = new ApiDescription(resourcePath, key);
+                    final Set<String> tags;
                     if (filter.isOperationAllowed(op, desc, params, cookies, headers)) {
                         clonedPath.set(key, filterOperation(filter, op, desc, params, cookies, headers));
+                        tags = allowedTags;
+                    } else {
+                        tags = filteredTags;
+                    }
+                    if (op.getTags() != null) {
+                        tags.addAll(op.getTags());
                     }
                 }
             }
             if (!clonedPath.isEmpty()) {
                 clone.path(resourcePath, clonedPath);
+            }
+        }
+        final List<Tag> tags = clone.getTags();
+        filteredTags.removeAll(allowedTags);
+        if (tags != null && !filteredTags.isEmpty()) {
+            for (Iterator<Tag> it = tags.iterator(); it.hasNext(); ) {
+                if (filteredTags.contains(it.next().getName())) {
+                    it.remove();
+                }
+            }
+            if (clone.getTags().isEmpty()) {
+                clone.setTags(null);
             }
         }
 
