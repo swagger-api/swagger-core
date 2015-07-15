@@ -97,7 +97,6 @@ public class ParameterProcessor {
                 }
                 processAllowedValues(allowableValues, true, args);
                 PropertyBuilder.merge(p.getItems(), args);
-                p.collectionFormat("csv");
             } else {
                 if (StringUtils.isNotEmpty(defaultValue)) {
                     p.setDefaultValue(defaultValue);

@@ -566,7 +566,7 @@ public class PropertyBuilder {
                     return item;
                 }
             }
-            LOGGER.error("no property for " + type + ", " + format);
+            LOGGER.debug("no property for " + type + ", " + format);
             return null;
         }
 

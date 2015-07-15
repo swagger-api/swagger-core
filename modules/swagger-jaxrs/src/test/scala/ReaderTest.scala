@@ -6,6 +6,7 @@ import io.swagger.jaxrs.Reader
 import io.swagger.models.ModelImpl
 import io.swagger.models.Swagger
 import io.swagger.models.parameters._
+import io.swagger.util.Json
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
@@ -103,12 +104,27 @@ class ReaderTest extends FlatSpec with Matchers {
     resourceParameters.get(1).asInstanceOf[QueryParameter].getName() should equal("fieldParam")
     resourceParameters.get(2).asInstanceOf[QueryParameter].getName() should equal("methodParam")
 
-    val subResourceParameters = swagger.getPaths().get("/resource/{id}/subresource").getGet().getParameters()
-    subResourceParameters should not equal (null)
-    subResourceParameters.size() should equal(3)
-    subResourceParameters.get(0).asInstanceOf[PathParameter].getName() should equal("id")
-    subResourceParameters.get(1).asInstanceOf[QueryParameter].getName() should equal("fieldParam")
-    subResourceParameters.get(2).asInstanceOf[QueryParameter].getName() should equal("subResourceParam")
+    val subResourceParameters1 = swagger.getPaths().get("/resource/{id}/subresource1").getGet().getParameters()
+    subResourceParameters1 should not equal (null)
+    subResourceParameters1.size() should equal(3)
+    subResourceParameters1.get(0).asInstanceOf[PathParameter].getName() should equal("id")
+    subResourceParameters1.get(1).asInstanceOf[QueryParameter].getName() should equal("fieldParam")
+    subResourceParameters1.get(2).asInstanceOf[QueryParameter].getName() should equal("subResourceParam")
+
+    val subResourceParameters2 = swagger.getPaths().get("/resource/{id}/subresource2").getGet().getParameters()
+    subResourceParameters2 should not equal (null)
+    subResourceParameters2.size() should equal(4)
+    subResourceParameters2.get(0).asInstanceOf[QueryParameter].getName() should equal("subConstructorParam")
+    subResourceParameters2.get(1).asInstanceOf[PathParameter].getName() should equal("id")
+    subResourceParameters2.get(2).asInstanceOf[QueryParameter].getName() should equal("fieldParam")
+    subResourceParameters2.get(3).asInstanceOf[QueryParameter].getName() should equal("subResourceParam")
+
+    val subResourceParameters3 = swagger.getPaths().get("/resource/{id}/subresource3").getGet().getParameters()
+    subResourceParameters3 should not equal (null)
+    subResourceParameters3.size() should equal(3)
+    subResourceParameters3.get(0).asInstanceOf[PathParameter].getName() should equal("id")
+    subResourceParameters3.get(1).asInstanceOf[QueryParameter].getName() should equal("fieldParam")
+    subResourceParameters3.get(2).asInstanceOf[QueryParameter].getName() should equal("subResourceParam")
   }
 
   def isValidRestPath(method: Method) = {
@@ -141,6 +157,8 @@ class ReaderTest extends FlatSpec with Matchers {
 
     val methodFromInterface = swagger.getPaths().get("/pet/{petId5}").getGet
     methodFromInterface should not equal (null)
+
+    swagger.getPaths().get("/pet/{petId6}").getGet should not equal (null)
   }
 
   it should "scan implicit params" in {
@@ -191,6 +209,13 @@ class ReaderTest extends FlatSpec with Matchers {
     val swagger = reader.read(classOf[ResourceWithDeprecatedMethod])
     swagger.getPaths().get("/testDeprecated").getGet().isDeprecated() should equal(true)
     swagger.getPaths().get("/testAllowed").getGet.isDeprecated() should be(null)
+  }
+  
+  it should "scan Deprecated annotation from interfaceResource" in {
+    val reader = new Reader(new Swagger())
+    val swagger = reader.read(classOf[DescendantResource])
+    var deprecatedMethod = swagger.getPaths().get("/pet/deprecated/{petId7}").getGet
+    deprecatedMethod.isDeprecated() should equal(true)
   }
 
   it should "scan empty path annotation" in {

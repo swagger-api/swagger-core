@@ -25,7 +25,7 @@ class GenericsTest extends FlatSpec with Matchers {
     p.getName should be(name)
     p.getType should be("array")
     p.getFormat should be(null)
-    p.getCollectionFormat should be("csv")
+    p.getCollectionFormat should be("multi")
     p.getItems should not be (null)
     val schema = p.getItems.asInstanceOf[Property]
     schema.getType should be(`type`)

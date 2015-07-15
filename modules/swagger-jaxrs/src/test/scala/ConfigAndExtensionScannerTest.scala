@@ -44,7 +44,7 @@ class ConfigAndExtensionScannerTest extends FlatSpec with Matchers {
     swagger.getSchemes().contains(Scheme.HTTP);
     swagger.getSchemes().contains(Scheme.HTTPS);
 
-    swagger.getTags().size() should be(6)
+    swagger.getTags().size() should be(7)
     swagger.getTags().get(0).getName() should be("Tag-added-before-read")
 
     swagger.getTags().get(1).getName() should be("mytag")
@@ -62,7 +62,8 @@ class ConfigAndExtensionScannerTest extends FlatSpec with Matchers {
     extensions.get("x-test") should be("value")
 
     swagger.getTags().get(4).getName() should be("externalinfo")
-    swagger.getTags().get(5).getName() should be("Tag-added-after-read")
+    swagger.getTags().get(5).getName() should be("testingtag")
+    swagger.getTags().get(6).getName() should be("Tag-added-after-read")
 
     extensions = swagger.getInfo().getVendorExtensions()
     extensions.size() should be(3)
