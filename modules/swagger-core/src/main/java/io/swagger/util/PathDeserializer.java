@@ -22,7 +22,7 @@ public class PathDeserializer extends JsonDeserializer<Path> {
         if (sub != null) {
             return Json.mapper().convertValue(sub, RefPath.class);
         } else {
-            Path path = Json.mapper().convertValue(node, PathImpl.class);;
+            Path path = Json.mapper().convertValue(node, PathImpl.class);
             return path;
         }
     }
