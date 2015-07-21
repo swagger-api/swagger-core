@@ -380,7 +380,7 @@ public class Reader {
                                 path = new Path();
                                 swagger.path(operationPath, path);
                             }
-                            path.setOrMerge(httpMethod, operation);
+                            path.set(httpMethod, operation);
 
                             readImplicitParameters(method, operation);
                         }
