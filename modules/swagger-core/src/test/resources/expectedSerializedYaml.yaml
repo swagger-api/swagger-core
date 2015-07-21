@@ -1,0 +1,19 @@
+---
+swagger: "2.0"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /health:
+    get:
+      parameters: []
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/health"
+definitions:
+  health:
+    properties:
+      isHealthy:
+        type: "boolean"
