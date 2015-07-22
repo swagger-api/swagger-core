@@ -26,8 +26,11 @@ import io.swagger.models.properties.AbstractNumericProperty;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
+import io.swagger.models.properties.PropertyBuilder;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
+import io.swagger.util.AllowableValues;
+import io.swagger.util.AllowableValuesUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -388,25 +391,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             property.setReadOnly(isReadOnly);
                         }
                     }
-
-                    if (property instanceof StringProperty) {
-                        if (mp != null) {
-                            String allowableValues = mp.allowableValues();
-                            LOGGER.debug("allowableValues " + allowableValues);
-                            if (!"".equals(allowableValues)) {
-                                String[] parts = allowableValues.split(",");
-                                LOGGER.debug("found " + parts.length + " parts");
-                                for (String part : parts) {
-                                    if (property instanceof StringProperty) {
-                                        StringProperty sp = (StringProperty) property;
-                                        sp._enum(part.trim());
-                                        LOGGER.debug("added enum value " + part);
-                                    }
-                                }
-                            }
+                    if (mp != null) {
+                        final AllowableValues allowableValues = AllowableValuesUtils.create(mp.allowableValues());
+                        if (allowableValues != null) {
+                            final Map<PropertyBuilder.PropertyId, Object> args = allowableValues.asPropertyArguments();
+                            PropertyBuilder.merge(property, args);
                         }
                     }
-
                     JAXBAnnotationsHelper.apply(member, property);
                     applyBeanValidatorAnnotations(property, annotations);
                     props.add(property);
