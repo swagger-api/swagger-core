@@ -36,7 +36,7 @@ import java.util.Set;
 
 @Path("/")
 public class ApiListingResource {
-    static boolean initialized = false;
+    boolean initialized = false;
     Logger LOGGER = LoggerFactory.getLogger(ApiListingResource.class);
     @Context
     ServletContext context;
