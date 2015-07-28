@@ -57,6 +57,7 @@ class XmlModelTest extends FlatSpec with Matchers {
     var rootXml = model.asInstanceOf[ModelImpl].getXml()
     rootXml should not be (null)
     rootXml.getName() should equal("rootName")
+
     for ((name, property) <- model.getProperties.asScala) {
       name match {
         case "id" =>
@@ -76,13 +77,52 @@ class XmlModelTest extends FlatSpec with Matchers {
         case "wrappedList" =>
           var xml = property.getXml
           xml should not be (null)
-          xml.getName should be (null)
+          xml.getName should be ("wrappedListItems")
           xml.getAttribute should be (null)
           xml.getWrapped should equal (true)
         case _ =>
           fail(s"""Property "${name}" was not expected""")
       }
     }
+  }
+
+  it should "deserialize a model" in {
+    val yaml = """
+---
+type: "object"
+properties:
+  id:
+    type: "string"
+    xml:
+      attribute: true
+  name:
+    type: "string"
+    xml:
+      name: "renamed"
+  list:
+    type: "array"
+    items:
+      type: "string"
+  wrappedList:
+    type: "array"
+    xml:
+      name: "wrappedListItems"
+      wrapped: true
+    items:
+      type: "string"
+  forcedElement:
+    type: "array"
+    items:
+      type: "string"
+xml:
+  name: "rootName"
+    """
+    val model = io.swagger.util.Yaml.mapper().readValue(yaml, classOf[ModelImpl])
+
+    val wrappedList = model.getProperties.get("wrappedList")
+    wrappedList should not be (null)
+    wrappedList.getXml() should not be (null)
+    wrappedList.getXml().getName() should be ("wrappedListItems")
   }
 }
 
