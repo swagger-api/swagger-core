@@ -83,7 +83,11 @@ public class ReflectionUtils {
         Type[] gpTypes = methodToFind.getGenericParameterTypes();
         methodLoop:
         for (Method method : cls.getMethods()) {
-            if (!method.getName().equals(methodToSearch) || !method.getReturnType().isAssignableFrom(methodToFind.getReturnType())) {
+            if (
+            	!method.getName().equals(methodToSearch) || 
+            	!method.getReturnType().isAssignableFrom(methodToFind.getReturnType()) ||
+            	method.getParameterTypes().length != pTypes.length
+            	) {
                 continue;
             }
             Class<?>[] pt = method.getParameterTypes();
