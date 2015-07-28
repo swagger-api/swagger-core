@@ -48,7 +48,8 @@ class JAXBAnnotationsHelper {
         if (wrapper != null) {
             final Xml xml = getXml(property);
             xml.setWrapped(true);
-            setName(wrapper.namespace(), wrapper.name(), property);
+            if(!"##default".equals(wrapper.name()) && !wrapper.name().isEmpty())
+              xml.setName(wrapper.name());
         }
         final XmlElement element = member.getAnnotation(XmlElement.class);
         if (element != null) {

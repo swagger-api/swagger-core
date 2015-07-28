@@ -23,7 +23,8 @@ public class ModelWithJAXBAnnotations {
 
     public List<String> list;
 
-    @XmlElementWrapper
+    @XmlElementWrapper(name="wrappedListItems")
+    @XmlElement(name="wrappedList")
     public List<String> wrappedList;
 
     @XmlAttribute(name = "doNotUseMe")
