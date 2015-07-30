@@ -2,17 +2,20 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
-public class DecimalProperty extends AbstractNumericProperty implements Property {
+public class DecimalProperty extends AbstractNumericProperty {
+    public static final String TYPE = "number";
+
     public DecimalProperty() {
-        super.type = "number";
+        this(null);
+    }
+
+    public DecimalProperty(String format) {
+        super.type = TYPE;
+        super.format = format;
     }
 
     public static boolean isType(String type, String format) {
-        if ("number".equals(type) && format == null) {
-            return true;
-        } else {
-            return false;
-        }
+        return TYPE.equals(type) && format == null;
     }
 
     public DecimalProperty xml(Xml xml) {
