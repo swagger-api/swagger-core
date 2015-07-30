@@ -1,9 +1,9 @@
-package resources;
+package io.swagger.resources;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import models.Employee;
+import io.swagger.models.Employee;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
