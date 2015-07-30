@@ -55,7 +55,7 @@ public class ConfigAndExtensionScannerTest {
         assertTrue(swagger.getSchemes().contains(Scheme.HTTP));
         assertTrue(swagger.getSchemes().contains(Scheme.HTTPS));
 
-        assertEquals(swagger.getTags().size(), 6);
+        assertEquals(swagger.getTags().size(), 7);
         assertEquals(swagger.getTags().get(0).getName(), "Tag-added-before-read");
 
         assertEquals(swagger.getTags().get(1).getName(), "mytag");
@@ -73,7 +73,8 @@ public class ConfigAndExtensionScannerTest {
         assertEquals(extensions.get("x-test"), "value");
 
         assertEquals(swagger.getTags().get(4).getName(), "externalinfo");
-        assertEquals(swagger.getTags().get(5).getName(), "Tag-added-after-read");
+        assertEquals(swagger.getTags().get(5).getName(), "testingtag");
+        assertEquals(swagger.getTags().get(6).getName(), "Tag-added-after-read");
 
         extensions = swagger.getInfo().getVendorExtensions();
         assertEquals(extensions.size(), 3);

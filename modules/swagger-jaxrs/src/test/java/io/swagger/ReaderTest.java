@@ -124,7 +124,7 @@ public class ReaderTest {
         assertEquals(resourceParameters.get(1).getName(), "fieldParam");
         assertEquals(resourceParameters.get(2).getName(), "methodParam");
 
-        List<Parameter> subResourceParameters = getGet(swagger, "/resource/{id}/subresource").getParameters();
+        List<Parameter> subResourceParameters = getGet(swagger, "/resource/{id}/subresource1").getParameters();
         assertNotNull(subResourceParameters);
         assertEquals(subResourceParameters.size(), 3);
         assertEquals(subResourceParameters.get(0).getName(), "id");
