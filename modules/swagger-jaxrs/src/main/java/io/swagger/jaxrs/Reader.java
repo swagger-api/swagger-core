@@ -36,6 +36,7 @@ import io.swagger.jaxrs.config.ReaderListener;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
 import io.swagger.jaxrs.utils.ReaderUtils;
+import io.swagger.jaxrs.utils.PathUtils;
 import io.swagger.jaxrs.utils.ReflectionUtils;
 import io.swagger.models.Contact;
 import io.swagger.models.ExternalDocs;
@@ -251,35 +252,9 @@ public class Reader {
                 javax.ws.rs.Path methodPath = getAnnotation(method, javax.ws.rs.Path.class);
 
                 String operationPath = getPath(apiPath, methodPath, parentPath);
+                Map<String, String> regexMap = new HashMap<String, String>();
+                operationPath = PathUtils.parsePath(operationPath, regexMap);
                 if (operationPath != null) {
-                    String[] pps = operationPath.split("/");
-                    String[] pathParts = new String[pps.length];
-                    Map<String, String> regexMap = new HashMap<String, String>();
-
-                    for (int i = 0; i < pps.length; i++) {
-                        String p = pps[i];
-                        if (p.startsWith("{")) {
-                            int pos = p.indexOf(":");
-                            if (pos > 0) {
-                                String left = p.substring(1, pos);
-                                String right = p.substring(pos + 1, p.length() - 1);
-                                pathParts[i] = "{" + left + "}";
-                                regexMap.put(left, right);
-                            } else {
-                                pathParts[i] = p;
-                            }
-                        } else {
-                            pathParts[i] = p;
-                        }
-                    }
-                    StringBuilder pathBuilder = new StringBuilder();
-                    for (String p : pathParts) {
-                        if (!p.isEmpty()) {
-                            pathBuilder.append("/").append(p);
-                        }
-                    }
-                    operationPath = pathBuilder.length() > 0 ? pathBuilder.toString() : PATH_DELIMITER;
-
                     if (isIgnored(operationPath)) {
                         continue;
                     }
