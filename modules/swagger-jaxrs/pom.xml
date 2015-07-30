@@ -143,6 +143,12 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io-version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <properties>
         <coverage.complexity.minimum>0.29</coverage.complexity.minimum>
