@@ -139,6 +139,10 @@
             <artifactId>testng</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+        </dependency>
     </dependencies>
     <properties>
         <coverage.complexity.minimum>0.29</coverage.complexity.minimum>

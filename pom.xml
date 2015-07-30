@@ -508,6 +508,12 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${mockito-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
                 <version>${servlet-api-version}</version>
@@ -558,6 +564,7 @@
 
         <junit-version>4.8.2</junit-version>
         <testng-version>6.9.4</testng-version>
+        <mockito-version>1.9.5</mockito-version>
         <surefire-version>2.18.1</surefire-version>
         <maven-plugin-version>1.0.0</maven-plugin-version>
         <commons-lang-version>3.2.1</commons-lang-version>
