@@ -564,7 +564,21 @@ public class Reader {
         } else {
             type = rawType;
         }
-        return type.getAnnotation(Api.class) != null ? type : null;
+
+        if (type.getAnnotation(Api.class) != null) {
+            return type;
+        }
+
+        if (config.isScanAllResources()) {
+            // For sub-resources that are not annotated with  @Api, look for any HttpMethods.
+            for (Method m : type.getMethods()) {
+                if (extractOperationMethod(null, m, null) != null) {
+                    return type;
+                }
+            }
+        }
+
+        return null;
     }
 
     private static Class<?> getClassArgument(Type cls) {
@@ -902,7 +916,7 @@ public class Reader {
             return httpMethod.value().toLowerCase();
         } else if ((ReflectionUtils.getOverriddenMethod(method)) != null) {
             return extractOperationMethod(apiOperation, ReflectionUtils.getOverriddenMethod(method), chain);
-        } else if (chain.hasNext()) {
+        } else if (chain != null && chain.hasNext()) {
             return chain.next().extractOperationMethod(apiOperation, method, chain);
         } else {
             return null;
