@@ -36,6 +36,7 @@ import io.swagger.jaxrs.config.ReaderListener;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
 import io.swagger.jaxrs.utils.ReaderUtils;
+import io.swagger.jaxrs.utils.PathUtils;
 import io.swagger.jaxrs.utils.ReflectionUtils;
 import io.swagger.models.*;
 import io.swagger.models.parameters.FormParameter;
@@ -240,35 +241,9 @@ public class Reader {
                 javax.ws.rs.Path methodPath = getAnnotation(method, javax.ws.rs.Path.class);
 
                 String operationPath = getPath(apiPath, methodPath, parentPath);
+                Map<String, String> regexMap = new HashMap<String, String>();
+                operationPath = PathUtils.parsePath(operationPath, regexMap);
                 if (operationPath != null) {
-                    String[] pps = operationPath.split("/");
-                    String[] pathParts = new String[pps.length];
-                    Map<String, String> regexMap = new HashMap<String, String>();
-
-                    for (int i = 0; i < pps.length; i++) {
-                        String p = pps[i];
-                        if (p.startsWith("{")) {
-                            int pos = p.indexOf(":");
-                            if (pos > 0) {
-                                String left = p.substring(1, pos);
-                                String right = p.substring(pos + 1, p.length() - 1);
-                                pathParts[i] = "{" + left + "}";
-                                regexMap.put(left, right);
-                            } else {
-                                pathParts[i] = p;
-                            }
-                        } else {
-                            pathParts[i] = p;
-                        }
-                    }
-                    StringBuilder pathBuilder = new StringBuilder();
-                    for (String p : pathParts) {
-                        if (!p.isEmpty()) {
-                            pathBuilder.append("/").append(p);
-                        }
-                    }
-                    operationPath = pathBuilder.length() > 0 ? pathBuilder.toString() : PATH_DELIMITER;
-
                     if (isIgnored(operationPath)) {
                         continue;
                     }
@@ -578,7 +553,21 @@ public class Reader {
         } else {
             type = rawType;
         }
-        return type.getAnnotation(Api.class) != null ? type : null;
+
+        if (type.getAnnotation(Api.class) != null) {
+            return type;
+        }
+
+        if (config.isScanAllResources()) {
+            // For sub-resources that are not annotated with  @Api, look for any HttpMethods.
+            for (Method m : type.getMethods()) {
+                if (extractOperationMethod(null, m, null) != null) {
+                    return type;
+                }
+            }
+        }
+
+        return null;
     }
 
     private static Class<?> getClassArgument(Type cls) {
@@ -916,7 +905,7 @@ public class Reader {
             return httpMethod.value().toLowerCase();
         } else if ((ReflectionUtils.getOverriddenMethod(method)) != null) {
             return extractOperationMethod(apiOperation, ReflectionUtils.getOverriddenMethod(method), chain);
-        } else if (chain.hasNext()) {
+        } else if (chain != null && chain.hasNext()) {
             return chain.next().extractOperationMethod(apiOperation, method, chain);
         } else {
             return null;

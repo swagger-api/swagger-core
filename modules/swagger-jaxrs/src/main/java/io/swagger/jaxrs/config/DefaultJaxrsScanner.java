@@ -8,9 +8,7 @@ import java.util.Set;
 public class DefaultJaxrsScanner extends AbstractScanner implements JaxrsScanner {
     private boolean prettyPrint = false;
 
-    public Set<Class<?>> classesFromContext(
-            Application app,
-            ServletConfig sc) {
+    public Set<Class<?>> classesFromContext(Application app, ServletConfig sc) {
         Set<Class<?>> output = new HashSet<Class<?>>();
         if (app != null) {
             Set<Class<?>> clz = app.getClasses();
@@ -20,9 +18,7 @@ public class DefaultJaxrsScanner extends AbstractScanner implements JaxrsScanner
             Set<Object> singletons = app.getSingletons();
             if (singletons != null) {
                 for (Object o : singletons) {
-                    if (o instanceof Class) {
-                        output.add((Class) o);
-                    }
+                    output.add(o.getClass());
                 }
             }
         }

@@ -3,18 +3,15 @@ package io.swagger.models.properties;
 import io.swagger.models.Xml;
 
 public class BooleanProperty extends AbstractProperty implements Property {
+    public static final String TYPE = "boolean";
     protected Boolean _default;
 
     public BooleanProperty() {
-        super.type = "boolean";
+        super.type = TYPE;
     }
 
     public static boolean isType(String type, String format) {
-        if ("boolean".equals(type)) {
-            return true;
-        } else {
-            return false;
-        }
+        return TYPE.equals(type);
     }
 
     public BooleanProperty xml(Xml xml) {

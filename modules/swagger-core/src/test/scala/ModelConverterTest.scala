@@ -2,8 +2,9 @@ import java.net.{URI, URL}
 import java.util.UUID
 
 import io.swagger.converter.ModelConverters
+import io.swagger.models.Model
 import io.swagger.models.ModelImpl
-import io.swagger.models.properties.{ArrayProperty, IntegerProperty, MapProperty, RefProperty, StringProperty}
+import io.swagger.models.properties._
 import io.swagger.util.Json
 import matchers.SerializationMatchers._
 import models._
@@ -314,5 +315,38 @@ class ModelConverterTest extends FlatSpec with Matchers {
     var model = ModelConverters.getInstance().read(classOf[Model1155])
     model.get("Model1155").getProperties.keySet.asScala should be (Set("valid", "value", "is", "get", "isA", "getA",
         "is_persistent", "gettersAndHaters"))
+  }
+
+  it should "scan a model with numbers" in {
+    var models = ModelConverters.getInstance().readAll(classOf[ModelWithNumbers])
+    models.size should be (1)
+    def checkType(property: Property, cls: Class[_], `type`: String, format: String) = {
+      cls.isInstance(property) should be (true)
+      property.getType should be (`type`)
+      property.getFormat should be (format)
+    }
+    def checkModel(model: Model) = {
+      for ((name, property) <- model.getProperties.asScala) {
+        name match {
+          case "shortPrimitive" | "shortObject" | "intPrimitive" | "intObject" =>
+            checkType(property, classOf[IntegerProperty], "integer", "int32")
+          case "longPrimitive" | "longObject" =>
+            checkType(property, classOf[LongProperty], "integer", "int64")
+          case "floatPrimitive" | "floatObject" =>
+            checkType(property, classOf[FloatProperty], "number", "float")
+          case "doublePrimitive" | "doubleObject" =>
+            checkType(property, classOf[DoubleProperty], "number", "double")
+          case "bigInteger" =>
+            checkType(property, classOf[BaseIntegerProperty], "integer", null)
+          case "bigDecimal" =>
+            checkType(property, classOf[DecimalProperty], "number", null)
+        }
+      }
+    }
+    var model=  models.get("ModelWithNumbers")
+    // Check if we get required properties after building models from classes.
+    checkModel(model)
+    // Check if we get required properties after deserialization from JSON
+    checkModel(Json.mapper().readValue(Json.pretty(model), classOf[Model]))
   }
 }
