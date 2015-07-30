@@ -1,8 +1,8 @@
-package resources;
+package io.swagger.resources;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import models.Sample;
+import io.swagger.models.Sample;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -12,8 +12,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Api(value = "/basic", description = "Basic resource")
-public class NoConsumesProducesResource {
+@Api(value = "/basic", description = "Basic resource", produces = MediaType.APPLICATION_ATOM_XML, consumes = MediaType.APPLICATION_XHTML_XML)
+@Produces({"application/xml"})
+@Consumes({"application/yaml"})
+public class BothConsumesProducesResource {
 
     @GET
     @Path("/{id}")
@@ -36,6 +38,32 @@ public class NoConsumesProducesResource {
             produces = "text/plain",
             consumes = "application/xml")
     public Response bothConsumesProduces() {
+        return Response.ok().entity("ok").build();
+    }
+
+    @GET
+    @Path("/{id}/{name}/value")
+    @Produces("text/html")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Get simple string value",
+            notes = "No details provided",
+            response = String.class,
+            position = 0,
+            produces = "text/plain")
+    public Response oneConsumesBothProduces() {
+        return Response.ok().entity("ok").build();
+    }
+
+    @GET
+    @Path("/{id}/{type}/value")
+    @Produces("text/html")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Get simple string value",
+            notes = "No details provided",
+            response = String.class,
+            position = 0,
+            consumes = "application/xml")
+    public Response bothConsumesOneProduces() {
         return Response.ok().entity("ok").build();
     }
 

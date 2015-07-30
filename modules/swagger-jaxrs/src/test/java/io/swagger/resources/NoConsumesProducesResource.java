@@ -1,8 +1,8 @@
-package resources;
+package io.swagger.resources;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import models.Sample;
+import io.swagger.models.Sample;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -12,8 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Api(value = "/basic", description = "Basic resource", produces = MediaType.APPLICATION_ATOM_XML, consumes = MediaType.APPLICATION_XHTML_XML)
-public class ApiConsumesProducesResource {
+@Api(value = "/basic", description = "Basic resource")
+public class NoConsumesProducesResource {
 
     @GET
     @Path("/{id}")
