@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 @Path("/")
 public class ApiListingResource {
-    static boolean initialized = false;
+    boolean initialized = false;
     Logger LOGGER = LoggerFactory.getLogger(ApiListingResource.class);
     @Context
     ServletContext context;
