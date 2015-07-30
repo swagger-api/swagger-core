@@ -1,7 +1,7 @@
-package resources;
+package io.swagger.resources;
 
 import io.swagger.annotations.ApiParam;
-import models.Sample;
+import io.swagger.models.Sample;
 
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.DefaultValue;

@@ -1,8 +1,8 @@
-package resources;
+package io.swagger.resources;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import models.Namespace.Description;
+import io.swagger.models.Namespace.Description;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
