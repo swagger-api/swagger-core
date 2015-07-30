@@ -1,4 +1,4 @@
-package models;
+package io.swagger.models;
 
 public class EnumHolder {
     private TestEnum value;

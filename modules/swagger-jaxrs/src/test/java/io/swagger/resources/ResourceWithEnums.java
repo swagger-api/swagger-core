@@ -1,14 +1,14 @@
-package resources;
+package io.swagger.resources;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import models.EnumHolder;
-import models.NotFoundModel;
-import models.Sample;
-import models.TestEnum;
+import io.swagger.models.EnumHolder;
+import io.swagger.models.NotFoundModel;
+import io.swagger.models.Sample;
+import io.swagger.models.TestEnum;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;

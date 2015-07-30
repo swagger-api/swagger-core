@@ -1,12 +1,12 @@
-package resources;
+package io.swagger.resources;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ResponseHeader;
-import models.NotFoundModel;
-import models.Sample;
+import io.swagger.models.NotFoundModel;
+import io.swagger.models.Sample;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
