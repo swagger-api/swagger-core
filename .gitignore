@@ -12,3 +12,8 @@ atlassian-ide-plugin.xml
 *.iml
 .java-version
 sonar-project.properties
+.cache-main
+.cache-tests
+.tmpBin/
+test-output/
+
