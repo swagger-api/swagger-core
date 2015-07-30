@@ -35,7 +35,7 @@ public class ParameterProcessor {
 
     public static Parameter applyAnnotations(Swagger swagger, Parameter parameter, Type type, List<Annotation> annotations) {
         final AnnotationsHelper helper = new AnnotationsHelper(annotations);
-        if (helper.isContext()) {
+        if (helper.isContext() && parameter.getVendorExtensions().isEmpty()) {
             return null;
         }
         final ParamWrapper<?> param = helper.getApiParam();
