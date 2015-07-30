@@ -5,7 +5,7 @@ import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.AbstractSerializableParameter;
 import org.testng.annotations.Test;
-import resources.CollectionFormatResource;
+import io.swagger.resources.CollectionFormatResource;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;

@@ -2,8 +2,6 @@ package io.swagger.models;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import models.Category;
-import models.CategoryWithApiModel;
 import io.swagger.models.duplicated.Tag;
 
 import java.util.ArrayList;
