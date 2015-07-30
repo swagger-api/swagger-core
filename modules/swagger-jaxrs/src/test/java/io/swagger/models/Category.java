@@ -1,10 +1,10 @@
-package io.swagger.models.duplicated;
+package io.swagger.models;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "Tag")
-public class Tag {
+@XmlRootElement(name = "Category")
+public class Category {
     private long id;
     private String name;
 
