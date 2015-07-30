@@ -1,7 +1,6 @@
 package io.swagger.util;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,9 +16,9 @@ public class ResponseDeserializer extends JsonDeserializer<Response> {
         JsonNode sub = node.get("$ref");
 
         if (sub != null) {
-            return Json.mapper().convertValue(sub, RefResponse.class);
+            return Json.mapper().convertValue(node, RefResponse.class);
         } else {
-            ResponseImpl response = Json.mapper().convertValue(node, ResponseImpl.class);
+            Response response = Json.responseMapper().convertValue(node, Response.class);
             return response;
         }
     }

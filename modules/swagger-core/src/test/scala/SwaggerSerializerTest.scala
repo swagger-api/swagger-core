@@ -65,12 +65,12 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
       .property(new LongProperty())
     )
 
-    val response = new ResponseImpl()
+    val response = new Response()
       .description("pets returned")
       .schema(new RefProperty().asDefault("Person"))
       .example("application/json", "fun!")
 
-    val errorResponse = new ResponseImpl()
+    val errorResponse = new Response()
       .description("error response")
       .schema(new RefProperty().asDefault("Error"))
 
@@ -87,7 +87,7 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
       .description("the pet to add")
       .schema(new RefModel().asDefault("Person")))
 
-    swagger.path("/pets", new PathImpl().get(get).post(post))
+    swagger.path("/pets", new Path().get(get).post(post))
     val swaggerJson = Json.mapper().writeValueAsString(swagger)
     val rebuilt = Json.mapper().readValue(swaggerJson, classOf[Swagger])
     Json.pretty(swagger) should equal(Json.pretty(rebuilt))
@@ -135,7 +135,7 @@ class SwaggerSerializerTest extends FlatSpec with Matchers {
 
     swagger
       .parameter("foo", parameter)
-      .path("/pets", new PathImpl().get(get))
+      .path("/pets", new Path().get(get))
 
     val swaggerJson = Json.mapper().writeValueAsString(swagger)
     val rebuilt = Json.mapper().readValue(swaggerJson, classOf[Swagger])

@@ -23,7 +23,9 @@ public class JsonSerializationTest {
         String swaggerJson = Json.mapper().writeValueAsString(swagger);
         Swagger rebuilt = Json.mapper().readValue(swaggerJson, Swagger.class);
 
-        assertEquals(rebuilt.getPath("/health"), expectedPath);
+        final Path path = rebuilt.getPath("/health");
+        final RefPath actualPath = (RefPath) path;
+        assertEquals(actualPath, expectedPath);
     }
 
     @Test
@@ -34,7 +36,7 @@ public class JsonSerializationTest {
                 .produces("application/json");
 
         final RefResponse expectedResponse = new RefResponse("http://my.company.com/paths/health.json");
-        swagger.path("/health", new PathImpl().get(new Operation().response(200, expectedResponse)));
+        swagger.path("/health", new Path().get(new Operation().response(200, expectedResponse)));
 
         String swaggerJson = Json.mapper().writeValueAsString(swagger);
         Swagger rebuilt = Json.mapper().readValue(swaggerJson, Swagger.class);

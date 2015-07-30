@@ -11,10 +11,12 @@ import java.util.Map;
 
 /**
  * Created by Helmsdown on 7/8/15.
+ *
+ * This class extends directly from Path for now. At some future date we will need
+ * to make {@link io.swagger.models.Path} an interface to follow the pattern established by
+ * {@link io.swagger.models.Model}, {@link io.swagger.models.properties.Property} and {@link io.swagger.models.parameters.Parameter}
  */
-public class RefPath implements Path {
-
-    //TODO what should I do in the methods required by Path interface
+public class RefPath extends Path {
 
     private GenericRef genericRef;
 
@@ -53,154 +55,5 @@ public class RefPath implements Path {
     public RefFormat getRefFormat() {
         return this.genericRef.getFormat();
     }
-
-
-    @Override
-    public Path set(String method, Operation op) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public Path get(Operation get) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public Path put(Operation put) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public Path post(Operation post) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public Path delete(Operation delete) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public Path patch(Operation patch) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public Path options(Operation options) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @JsonIgnore
-    public Operation getGet() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void setGet(Operation get) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @JsonIgnore
-    public Operation getPut() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void setPut(Operation put) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @JsonIgnore
-    public Operation getPost() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void setPost(Operation post) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @JsonIgnore
-    public Operation getDelete() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void setDelete(Operation delete) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @JsonIgnore
-    public Operation getPatch() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void setPatch(Operation patch) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @JsonIgnore
-    public Operation getOptions() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void setOptions(Operation options) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @JsonIgnore
-    public List<Operation> getOperations() {
-        throw new RuntimeException("Not implemented");
-    }
-
-
-    @Override
-    @JsonIgnore
-    public Map<HttpMethod, Operation> getOperationMap() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @JsonIgnore
-    public List<Parameter> getParameters() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void setParameters(List<Parameter> parameters) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void addParameter(Parameter parameter) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isEmpty() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @JsonIgnore
-    public Map<String, Object> getVendorExtensions() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void setVendorExtension(String name, Object value) {
-        throw new RuntimeException("Not implemented");
-    }
-
 
 }

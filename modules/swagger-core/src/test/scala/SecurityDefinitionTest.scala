@@ -58,11 +58,11 @@ class SecurityDefinitionTest extends FlatSpec with Matchers {
       .property(new LongProperty())
     )
 
-    val response = new ResponseImpl()
+    val response = new Response()
       .description("pets returned")
       .schema(new RefProperty().asDefault("Person"))
 
-    val errorResponse = new ResponseImpl()
+    val errorResponse = new Response()
       .description("error response")
       .schema(new RefProperty().asDefault("Error"))
 
@@ -72,7 +72,7 @@ class SecurityDefinitionTest extends FlatSpec with Matchers {
       .scope("user:email"))
       .security(new SecurityRequirement("api_key"))
 
-    swagger.path("/pets", new PathImpl().get(get))
+    swagger.path("/pets", new Path().get(get))
 
     val json = Json.mapper.writeValueAsString(swagger)
   }

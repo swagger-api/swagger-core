@@ -1,65 +1,298 @@
 package io.swagger.models;
 
+import com.fasterxml.jackson.annotation.*;
 import io.swagger.models.parameters.Parameter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by russellb337 on 7/8/15.
- */
-public interface Path {
-    Path set(String method, Operation op);
+@JsonPropertyOrder({"get", "post", "put", "delete", "options", "patch"})
+public class Path {
 
-    Path get(Operation get);
+    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private Operation get;
+    private Operation put;
+    private Operation post;
+    private Operation delete;
+    private Operation patch;
+    private Operation options;
+    private List<Parameter> parameters;
 
-    Path put(Operation put);
+    public Path set(String method, Operation op) {
+        if ("get".equals(method)) {
+            return get(op);
+        }
+        if ("put".equals(method)) {
+            return put(op);
+        }
+        if ("post".equals(method)) {
+            return post(op);
+        }
+        if ("delete".equals(method)) {
+            return delete(op);
+        }
+        if ("patch".equals(method)) {
+            return patch(op);
+        }
+        if ("options".equals(method)) {
+            return options(op);
+        }
+        return null;
+    }
 
-    Path post(Operation post);
+    public Path get(Operation get) {
+        this.get = get;
+        return this;
+    }
 
-    Path delete(Operation delete);
+    public Path put(Operation put) {
+        this.put = put;
+        return this;
+    }
 
-    Path patch(Operation patch);
+    public Path post(Operation post) {
+        this.post = post;
+        return this;
+    }
 
-    Path options(Operation options);
+    public Path delete(Operation delete) {
+        this.delete = delete;
+        return this;
+    }
 
-    Operation getGet();
+    public Path patch(Operation patch) {
+        this.patch = patch;
+        return this;
+    }
 
-    void setGet(Operation get);
+    public Path options(Operation options) {
+        this.options = options;
+        return this;
+    }
 
-    Operation getPut();
+    public Operation getGet() {
+        return get;
+    }
 
-    void setPut(Operation put);
+    public void setGet(Operation get) {
+        this.get = get;
+    }
 
-    Operation getPost();
+    public Operation getPut() {
+        return put;
+    }
 
-    void setPost(Operation post);
+    public void setPut(Operation put) {
+        this.put = put;
+    }
 
-    Operation getDelete();
+    public Operation getPost() {
+        return post;
+    }
 
-    void setDelete(Operation delete);
+    public void setPost(Operation post) {
+        this.post = post;
+    }
 
-    Operation getPatch();
+    public Operation getDelete() {
+        return delete;
+    }
 
-    void setPatch(Operation patch);
+    public void setDelete(Operation delete) {
+        this.delete = delete;
+    }
 
-    Operation getOptions();
+    public Operation getPatch() {
+        return patch;
+    }
 
-    void setOptions(Operation options);
+    public void setPatch(Operation patch) {
+        this.patch = patch;
+    }
 
-    List<Operation> getOperations();
+    public Operation getOptions() {
+        return options;
+    }
 
-    Map<HttpMethod, Operation> getOperationMap();
+    public void setOptions(Operation options) {
+        this.options = options;
+    }
 
-    List<Parameter> getParameters();
+    @JsonIgnore
+    public List<Operation> getOperations() {
+        List<Operation> allOperations = new ArrayList<Operation>();
+        if (get != null) {
+            allOperations.add(get);
+        }
+        if (put != null) {
+            allOperations.add(put);
+        }
+        if (post != null) {
+            allOperations.add(post);
+        }
+        if (delete != null) {
+            allOperations.add(delete);
+        }
+        if (patch != null) {
+            allOperations.add(patch);
+        }
+        if (options != null) {
+            allOperations.add(options);
+        }
 
-    void setParameters(List<Parameter> parameters);
+        return allOperations;
+    }
 
-    void addParameter(Parameter parameter);
+    @JsonIgnore
+    public Map<HttpMethod, Operation> getOperationMap() {
+        Map<HttpMethod, Operation> result = new HashMap<HttpMethod, Operation>();
 
-    boolean isEmpty();
+        if (get != null) {
+            result.put(HttpMethod.GET, get);
+        }
+        if (put != null) {
+            result.put(HttpMethod.PUT, put);
+        }
+        if (post != null) {
+            result.put(HttpMethod.POST, post);
+        }
+        if (delete != null) {
+            result.put(HttpMethod.DELETE, delete);
+        }
+        if (patch != null) {
+            result.put(HttpMethod.PATCH, patch);
+        }
+        if (options != null) {
+            result.put(HttpMethod.OPTIONS, options);
+            result.put(HttpMethod.OPTIONS, options);
+        }
 
-    Map<String, Object> getVendorExtensions();
+        return result;
+    }
 
-    void setVendorExtension(String name, Object value);
+    public List<Parameter> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(List<Parameter> parameters) {
+        this.parameters = parameters;
+    }
+
+    public void addParameter(Parameter parameter) {
+        if (this.parameters == null) {
+            this.parameters = new ArrayList<Parameter>();
+        }
+        this.parameters.add(parameter);
+    }
+
+    @JsonIgnore
+    public boolean isEmpty() {
+        if (get == null && put == null && post == null && delete == null && patch == null && options == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getVendorExtensions() {
+        return vendorExtensions;
+    }
+
+    @JsonAnySetter
+    public void setVendorExtension(String name, Object value) {
+        if (name.startsWith("x-")) {
+            vendorExtensions.put(name, value);
+        }
+    }
+
+
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((delete == null) ? 0 : delete.hashCode());
+        result = prime * result + ((get == null) ? 0 : get.hashCode());
+        result = prime * result + ((options == null) ? 0 : options.hashCode());
+        result = prime * result
+                + ((parameters == null) ? 0 : parameters.hashCode());
+        result = prime * result + ((patch == null) ? 0 : patch.hashCode());
+        result = prime * result + ((post == null) ? 0 : post.hashCode());
+        result = prime * result + ((put == null) ? 0 : put.hashCode());
+        result = prime * result
+                + ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Path other = (Path) obj;
+        if (delete == null) {
+            if (other.delete != null) {
+                return false;
+            }
+        } else if (!delete.equals(other.delete)) {
+            return false;
+        }
+        if (get == null) {
+            if (other.get != null) {
+                return false;
+            }
+        } else if (!get.equals(other.get)) {
+            return false;
+        }
+        if (options == null) {
+            if (other.options != null) {
+                return false;
+            }
+        } else if (!options.equals(other.options)) {
+            return false;
+        }
+        if (parameters == null) {
+            if (other.parameters != null) {
+                return false;
+            }
+        } else if (!parameters.equals(other.parameters)) {
+            return false;
+        }
+        if (patch == null) {
+            if (other.patch != null) {
+                return false;
+            }
+        } else if (!patch.equals(other.patch)) {
+            return false;
+        }
+        if (post == null) {
+            if (other.post != null) {
+                return false;
+            }
+        } else if (!post.equals(other.post)) {
+            return false;
+        }
+        if (put == null) {
+            if (other.put != null) {
+                return false;
+            }
+        } else if (!put.equals(other.put)) {
+            return false;
+        }
+        if (vendorExtensions == null) {
+            if (other.vendorExtensions != null) {
+                return false;
+            }
+        } else if (!vendorExtensions.equals(other.vendorExtensions)) {
+            return false;
+        }
+        return true;
+    }
 }

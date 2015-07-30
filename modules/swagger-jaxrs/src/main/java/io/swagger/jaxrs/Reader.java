@@ -370,7 +370,7 @@ public class Reader {
 
                             Path path = swagger.getPath(operationPath);
                             if (path == null) {
-                                path = new PathImpl();
+                                path = new Path();
                                 swagger.path(operationPath, path);
                             }
                             path.set(httpMethod, operation);
@@ -754,7 +754,7 @@ public class Reader {
         }
 
         if (apiOperation != null && StringUtils.isNotEmpty(apiOperation.responseReference())) {
-            Response response = new ResponseImpl().description(SUCCESSFUL_OPERATION);
+            Response response = new Response().description(SUCCESSFUL_OPERATION);
             response.schema(new RefProperty(apiOperation.responseReference()));
             operation.addResponse(String.valueOf(apiOperation.code()), response);
         } else if (responseType == null) {
@@ -767,7 +767,7 @@ public class Reader {
             if (property != null) {
                 final Property responseProperty = ContainerWrapper.wrapContainer(responseContainer, property);
                 final int responseCode = apiOperation == null ? 200 : apiOperation.code();
-                operation.response(responseCode, new ResponseImpl().description(SUCCESSFUL_OPERATION).schema(responseProperty)
+                operation.response(responseCode, new Response().description(SUCCESSFUL_OPERATION).schema(responseProperty)
                         .headers(defaultResponseHeaders));
                 appendModels(responseType);
             }
@@ -801,7 +801,7 @@ public class Reader {
             for (ApiResponse apiResponse : responseAnnotation.value()) {
                 Map<String, Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders());
 
-                Response response = new ResponseImpl()
+                Response response = new Response()
                         .description(apiResponse.message())
                         .headers(responseHeaders);
 
@@ -844,7 +844,7 @@ public class Reader {
         }
 
         if (operation.getResponses() == null) {
-            Response response = new ResponseImpl().description(SUCCESSFUL_OPERATION);
+            Response response = new Response().description(SUCCESSFUL_OPERATION);
             operation.defaultResponse(response);
         }
         return operation;

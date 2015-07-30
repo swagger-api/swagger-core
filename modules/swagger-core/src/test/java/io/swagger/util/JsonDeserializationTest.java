@@ -29,7 +29,7 @@ public class JsonDeserializationTest {
         final Path petPath = swagger.getPath("/pet");
         assertTrue(petPath instanceof RefPath);
         assertEquals(((RefPath) petPath).get$ref(), "http://my.company.com/paths/health.json");
-        assertTrue(swagger.getPath("/user") instanceof PathImpl);
+        assertTrue(swagger.getPath("/user") instanceof Path);
     }
 
     @Test
@@ -40,7 +40,7 @@ public class JsonDeserializationTest {
 
         assertIsRefResponse(responseMap.get("405"), "http://my.company.com/responses/errors.json#/method-not-allowed");
         assertIsRefResponse(responseMap.get("404"), "http://my.company.com/responses/errors.json#/not-found");
-        assertTrue(responseMap.get("400") instanceof ResponseImpl);
+        assertTrue(responseMap.get("400") instanceof Response);
     }
 
     private void assertIsRefResponse(Response response, String expectedRef) {

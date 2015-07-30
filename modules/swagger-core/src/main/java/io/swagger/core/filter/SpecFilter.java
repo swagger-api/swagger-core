@@ -38,7 +38,7 @@ public class SpecFilter {
             ops.put("patch", path.getPatch());
             ops.put("options", path.getOptions());
 
-            Path clonedPath = new PathImpl();
+            Path clonedPath = new Path();
             for (String key : ops.keySet()) {
                 Operation op = ops.get(key);
                 if (op != null) {

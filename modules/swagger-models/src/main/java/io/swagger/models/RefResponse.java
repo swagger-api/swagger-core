@@ -9,9 +9,13 @@ import io.swagger.models.refs.RefType;
 import java.util.Map;
 
 /**
- * Created by russellb337 on 7/9/15.
+ * Created by Helmsdown on 7/8/15.
+ *
+ * This class extends directly from Response for now. At some future date we will need
+ * to make {@link io.swagger.models.Response} an interface to follow the pattern established by
+ * {@link io.swagger.models.Model}, {@link io.swagger.models.properties.Property} and {@link io.swagger.models.parameters.Parameter}
  */
-public class RefResponse implements Response {
+public class RefResponse extends Response {
 
     private GenericRef genericRef;
 
@@ -51,77 +55,4 @@ public class RefResponse implements Response {
         return this.genericRef.getFormat();
     }
 
-    @Override
-    public Response schema(Property property) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public Response description(String description) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public Response example(String type, Object example) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public Response header(String name, Property property) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public Response headers(Map<String, Property> headers) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @JsonIgnore
-    public String getDescription() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void setDescription(String description) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @JsonIgnore
-    public Property getSchema() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void setSchema(Property schema) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @JsonIgnore
-    public Map<String, Object> getExamples() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void setExamples(Map<String, Object> examples) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @JsonIgnore
-    public Map<String, Property> getHeaders() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void setHeaders(Map<String, Property> headers) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public void addHeader(String key, Property property) {
-        throw new RuntimeException("Not implemented");
-    }
 }
