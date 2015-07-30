@@ -1,9 +1,13 @@
-package io.swagger.jaxrs;
+package io.swagger.util;
+
+import io.swagger.models.properties.PropertyBuilder;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
-class AllowableEnumValues implements AllowableValues {
+public class AllowableEnumValues implements AllowableValues {
 
     private final List<String> items;
 
@@ -24,5 +28,12 @@ class AllowableEnumValues implements AllowableValues {
 
     public List<String> getItems() {
         return items;
+    }
+
+    @Override
+    public Map<PropertyBuilder.PropertyId, Object> asPropertyArguments() {
+        final Map<PropertyBuilder.PropertyId, Object> map = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
+        map.put(PropertyBuilder.PropertyId.ENUM, items);
+        return map;
     }
 }

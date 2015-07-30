@@ -1,9 +1,13 @@
-package io.swagger.jaxrs;
+package io.swagger.util;
 
+import io.swagger.models.properties.PropertyBuilder;
+
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class AllowableRangeValues implements AllowableValues {
+public class AllowableRangeValues implements AllowableValues {
 
     private static final Pattern RANGE_PATTERN = Pattern.compile("range(\\[|\\()([^,\\s]+)\\s*,\\s*([^\\]\\s]+)\\s*(\\]|\\))");
     private static final String POSITIVE_INFINITY_KEY = "infinity";
@@ -13,10 +17,10 @@ class AllowableRangeValues implements AllowableValues {
 
     private final Double minimum;
     private final Double maximum;
-    private final Boolean exclusiveMinimum;
-    private final Boolean exclusiveMaximum;
+    private final boolean exclusiveMinimum;
+    private final boolean exclusiveMaximum;
 
-    private AllowableRangeValues(Double minimum, Boolean exclusiveMinimum, Double maximum, Boolean exclusiveMaximum) {
+    private AllowableRangeValues(Double minimum, boolean exclusiveMinimum, Double maximum, boolean exclusiveMaximum) {
         this.minimum = minimum;
         this.exclusiveMinimum = exclusiveMinimum;
         this.maximum = maximum;
@@ -38,7 +42,7 @@ class AllowableRangeValues implements AllowableValues {
         }
     }
 
-    private static Boolean isExclusiveRange(String value) {
+    private static boolean isExclusiveRange(String value) {
         return OPEN_EXCLUSIVE_RANGE_KEY.equals(value) || CLOSE_EXCLUSIVE_RANGE_KEY.equals(value);
     }
 
@@ -56,5 +60,19 @@ class AllowableRangeValues implements AllowableValues {
 
     public boolean isExclusiveMaximum() {
         return exclusiveMaximum;
+    }
+
+    @Override
+    public Map<PropertyBuilder.PropertyId, Object> asPropertyArguments() {
+        final Map<PropertyBuilder.PropertyId, Object> map = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
+        map.put(PropertyBuilder.PropertyId.MINIMUM, minimum);
+        map.put(PropertyBuilder.PropertyId.MAXIMUM, maximum);
+        if (exclusiveMinimum) {
+            map.put(PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM, exclusiveMinimum);
+        }
+        if (exclusiveMaximum) {
+            map.put(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM, exclusiveMaximum);
+        }
+        return map;
     }
 }
