@@ -1,12 +1,12 @@
-package resources;
+package io.swagger.resources;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import models.NotFoundModel;
-import models.Pagination;
-import models.TestBeanParam;
+import io.swagger.models.NotFoundModel;
+import io.swagger.models.Pagination;
+import io.swagger.models.TestBeanParam;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.DefaultValue;
