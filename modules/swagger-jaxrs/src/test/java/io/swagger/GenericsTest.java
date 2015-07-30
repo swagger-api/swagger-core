@@ -42,7 +42,7 @@ public class GenericsTest {
         assertEquals(p.getName(), name);
         assertEquals(p.getType(), "array");
         assertEquals(p.getFormat(), null);
-        assertEquals(p.getCollectionFormat(), "csv");
+        assertEquals(p.getCollectionFormat(), "multi");
         assertNotEquals(p.getItems(), null);
         Property schema = p.getItems();
         assertEquals(schema.getType(), type);
