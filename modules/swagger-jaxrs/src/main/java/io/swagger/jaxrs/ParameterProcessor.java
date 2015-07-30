@@ -2,8 +2,6 @@ package io.swagger.jaxrs;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiParam;
 import io.swagger.converter.ModelConverters;
@@ -15,6 +13,9 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
+import io.swagger.util.AllowableValues;
+import io.swagger.util.AllowableValuesUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ParameterProcessor {
-    private static final Table<Class<? extends AllowableValues>, Boolean, AbstractAllowableValuesProcessor<?, ?>> ALLOWED_VALUES_PROCESSORS =
-            HashBasedTable.create();
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
     public static Parameter applyAnnotations(Swagger swagger, Parameter parameter, Type type, List<Annotation> annotations) {
@@ -63,13 +62,7 @@ public class ParameterProcessor {
                 p.setType(param.getDataType());
             }
 
-            AllowableValues allowableValues = null;
-            if (StringUtils.isNotEmpty(param.getAllowableValues())) {
-                allowableValues = AllowableRangeValues.create(param.getAllowableValues());
-                if (allowableValues == null) {
-                    allowableValues = AllowableEnumValues.create(param.getAllowableValues());
-                }
-            }
+            AllowableValues allowableValues = AllowableValuesUtils.create(param.getAllowableValues());
 
             if (p.getItems() != null || param.isAllowMultiple()) {
                 if (p.getItems() == null) {
@@ -95,13 +88,15 @@ public class ParameterProcessor {
                 if (StringUtils.isNotEmpty(defaultValue)) {
                     args.put(PropertyBuilder.PropertyId.DEFAULT, defaultValue);
                 }
-                processAllowedValues(allowableValues, true, args);
+                if (allowableValues != null) {
+                    args.putAll(allowableValues.asPropertyArguments());
+                }
                 PropertyBuilder.merge(p.getItems(), args);
             } else {
                 if (StringUtils.isNotEmpty(defaultValue)) {
                     p.setDefaultValue(defaultValue);
                 }
-                processAllowedValues(allowableValues, false, p);
+                processAllowedValues(allowableValues, p);
             }
         } else {
             // must be a body param
@@ -134,14 +129,27 @@ public class ParameterProcessor {
         return parameter;
     }
 
-    private static <C> void processAllowedValues(AllowableValues values, boolean key, C container) {
-        if (values == null) {
+    private static void processAllowedValues(AllowableValues allowableValues, AbstractSerializableParameter<?> p) {
+        if (allowableValues == null){
             return;
         }
-        @SuppressWarnings("unchecked")
-        final AbstractAllowableValuesProcessor<C, AllowableValues> processor =
-                (AbstractAllowableValuesProcessor<C, AllowableValues>) ALLOWED_VALUES_PROCESSORS.get(values.getClass(), key);
-        processor.process(container, values);
+        Map<PropertyBuilder.PropertyId, Object> args = allowableValues.asPropertyArguments();
+        if (args.containsKey(PropertyBuilder.PropertyId.ENUM)) {
+            p.setEnum((List<String>) args.get(PropertyBuilder.PropertyId.ENUM));
+        } else {
+            if (args.containsKey(PropertyBuilder.PropertyId.MINIMUM)) {
+                p.setMinimum((Double) args.get(PropertyBuilder.PropertyId.MINIMUM));
+            }
+            if (args.containsKey(PropertyBuilder.PropertyId.MAXIMUM)) {
+                p.setMaximum((Double) args.get(PropertyBuilder.PropertyId.MAXIMUM));
+            }
+            if (args.containsKey(PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM)) {
+                p.setExclusiveMinimum((Boolean) args.get(PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM) ? true : null);
+            }
+            if (args.containsKey(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM)) {
+                p.setExclusiveMaximum((Boolean) args.get(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM) ? true : null);
+            }
+        }
     }
 
     /**
@@ -381,12 +389,5 @@ public class ParameterProcessor {
         public boolean isHidden() {
             return false;
         }
-    }
-
-    static {
-        ALLOWED_VALUES_PROCESSORS.put(AllowableRangeValues.class, true, new ArgumentsRangeProcessor());
-        ALLOWED_VALUES_PROCESSORS.put(AllowableRangeValues.class, false, new ParameterRangeProcessor());
-        ALLOWED_VALUES_PROCESSORS.put(AllowableEnumValues.class, true, new ArgumentsEnumProcessor());
-        ALLOWED_VALUES_PROCESSORS.put(AllowableEnumValues.class, false, new ParameterEnumProcessor());
     }
 }
