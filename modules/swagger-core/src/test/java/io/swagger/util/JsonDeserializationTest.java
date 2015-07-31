@@ -2,12 +2,9 @@ package io.swagger.util;
 
 import io.swagger.TestUtils;
 import io.swagger.models.*;
-import org.apache.commons.io.IOUtils;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -18,17 +15,17 @@ public class JsonDeserializationTest {
 
     @Test
     public void testDeserializePetStoreFile() throws Exception {
-        deserializeFile("src/test/scala/specFiles/petstore.json");
+        TestUtils.deserializeJsonFileFromClasspath("specFiles/petstore.json", Swagger.class);
     }
 
     @Test
     public void testDeserializeCompositionTest() throws Exception {
-        deserializeFile("src/test/scala/specFiles/compositionTest.json");
+        TestUtils.deserializeJsonFileFromClasspath("specFiles/compositionTest.json", Swagger.class);
     }
 
     @Test
     public void testDeserializeAPathRef() throws Exception {
-        final Swagger swagger = deserializeFile("src/test/scala/specFiles/pathRef.json");
+        final Swagger swagger = TestUtils.deserializeJsonFileFromClasspath("specFiles/pathRef.json", Swagger.class);
 
         final Path petPath = swagger.getPath("/pet");
         assertTrue(petPath instanceof RefPath);
@@ -38,7 +35,7 @@ public class JsonDeserializationTest {
 
     @Test
     public void testDeserializeAResponseRef() throws Exception {
-        final Swagger swagger = deserializeFile("src/test/scala/specFiles/responseRef.json");
+        final Swagger swagger = TestUtils.deserializeJsonFileFromClasspath("specFiles/responseRef.json", Swagger.class);
 
         final Map<String, Response> responseMap = swagger.getPath("/pet").getPut().getResponses();
 
@@ -53,12 +50,6 @@ public class JsonDeserializationTest {
         RefResponse refResponse = (RefResponse) response;
         assertEquals(refResponse.get$ref(), expectedRef);
     }
-
-    private Swagger deserializeFile(String pathname) throws java.io.IOException {
-        return Json.mapper().readValue(new File(pathname), Swagger.class);
-    }
-
-
 
     @Test
     public void testDeserializeSecurityRequirement() throws Exception {
