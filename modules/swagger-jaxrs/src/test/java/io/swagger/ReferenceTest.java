@@ -25,6 +25,7 @@ public class ReferenceTest {
     @Test(description = "Scan a model with common reference and reference with ApiModel")
     public void scanModel() {
         final Map<String, Property> props = ModelConverters.getInstance().readAll(Pet.class).get("Pet").getProperties();
+
         final RefProperty category = (RefProperty) props.get("category");
         assertEquals(category.getType(), "ref");
         assertEquals(category.get$ref(), "#/definitions/Category");

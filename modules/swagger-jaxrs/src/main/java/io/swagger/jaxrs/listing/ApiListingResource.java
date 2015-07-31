@@ -11,6 +11,7 @@ import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.JaxrsScanner;
 import io.swagger.jaxrs.config.ReaderConfigUtils;
 import io.swagger.models.Swagger;
+import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 
 import java.util.HashMap;
@@ -37,6 +38,8 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 @Path("/")
 public class ApiListingResource {
@@ -131,9 +134,18 @@ public class ApiListingResource {
         Swagger swagger = process(app, sc, headers, uriInfo);
 
         if (swagger != null) {
-            return Response.ok().entity(swagger).build();
+            String swaggerJson = toJson(swagger);
+            return Response.ok().entity(swaggerJson).build();
         } else {
             return Response.status(404).build();
+        }
+    }
+
+    private String toJson(Swagger swagger) {
+        try {
+            return Json.mapper().writeValueAsString(swagger);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("can't serialize swagger object to JSON", e);
         }
     }
 

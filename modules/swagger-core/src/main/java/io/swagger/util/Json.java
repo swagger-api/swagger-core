@@ -6,11 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import io.swagger.models.Model;
-import io.swagger.models.auth.SecuritySchemeDefinition;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.properties.Property;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,16 +21,11 @@ public class Json {
         return mapper;
     }
 
-    public static ObjectMapper create() {
+    private static ObjectMapper create() {
         mapper = new ObjectMapper();
 
-        // load any jackson modules
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(Property.class, new PropertyDeserializer());
-        module.addDeserializer(Model.class, new ModelDeserializer());
-        module.addDeserializer(Parameter.class, new ParameterDeserializer());
-        module.addDeserializer(SecuritySchemeDefinition.class, new SecurityDefinitionDeserializer());
-        mapper.registerModule(module);
+        mapper.registerModule(new SwaggerJacksonModule());
+
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
