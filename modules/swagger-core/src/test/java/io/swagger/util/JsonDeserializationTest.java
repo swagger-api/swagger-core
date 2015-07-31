@@ -1,13 +1,17 @@
 package io.swagger.util;
 
+import io.swagger.TestUtils;
 import io.swagger.models.*;
+import org.apache.commons.io.IOUtils;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 
 public class JsonDeserializationTest {
@@ -52,5 +56,42 @@ public class JsonDeserializationTest {
 
     private Swagger deserializeFile(String pathname) throws java.io.IOException {
         return Json.mapper().readValue(new File(pathname), Swagger.class);
+    }
+
+
+
+    @Test
+    public void testDeserializeSecurityRequirement() throws Exception {
+        final Swagger swagger = TestUtils.deserializeJsonFileFromClasspath("specFiles/securityDefinitions.json", Swagger.class);
+
+        final List<SecurityRequirement> security = swagger.getSecurity();
+        final List<SecurityRequirement> securityRequirements = swagger.getSecurityRequirement();
+        assertNotNull(security);
+        assertEquals(security, securityRequirements);
+
+        assertEquals(security.size(), 2);
+
+        {
+            final SecurityRequirement securityRequirement = security.get(0);
+            final Map<String, List<String>> requirements = securityRequirement.getRequirements();
+            final List<String> basic_auth = requirements.get("basic_auth");
+            assertNotNull(basic_auth);
+            assertTrue(basic_auth.isEmpty());
+
+            final List<String> api_key = requirements.get("api_key");
+            assertNotNull(api_key);
+            assertTrue(api_key.isEmpty());
+        }
+
+        {
+            final SecurityRequirement securityRequirement = security.get(1);
+            final Map<String, List<String>> requirements = securityRequirement.getRequirements();
+            final List<String> oauth2 = requirements.get("oauth2");
+            assertNotNull(oauth2);
+            assertFalse(oauth2.isEmpty());
+
+            assertEquals(oauth2.get(0), "hello");
+            assertEquals(oauth2.get(1), "world");
+        }
     }
 }

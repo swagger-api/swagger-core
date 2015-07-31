@@ -285,10 +285,7 @@ public class Swagger {
 
     @Deprecated
     public void addSecurityDefinition(SecurityRequirement securityRequirement) {
-        if (this.security == null) {
-            this.security = new ArrayList<SecurityRequirement>();
-        }
-        this.security.add(securityRequirement);
+        this.addSecurity(securityRequirement);
     }
 
     @JsonIgnore //remove JsonIgnore when getSecurityRequirement() method is deleted in next major version

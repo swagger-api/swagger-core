@@ -13,7 +13,7 @@ public class SecurityRequirement {
     private String name;
     private List<String> scopes;
 //    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
-    private Map<String, List<String>> requirements;
+    private Map<String, List<String>> requirements = new HashMap<String, List<String>>();
 
     public SecurityRequirement() {
     }
@@ -93,8 +93,8 @@ public class SecurityRequirement {
     }
 
     @JsonAnySetter
-    public void setRequirements(Map<String, List<String>> requirements) {
-        this.requirements = requirements;
+    public void setRequirements(String name, List<String> scopes) {
+        requirements.put(name, scopes);
     }
 
     @Override
