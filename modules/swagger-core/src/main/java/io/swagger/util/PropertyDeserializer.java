@@ -73,17 +73,6 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         return propertyFromNode(node);
     }
 
-    private boolean isReserved(String propertyName){
-        PropertyBuilder.PropertyId[] reserved = PropertyBuilder.PropertyId.values();
-        boolean isReserved = false;
-        for(int i = 0; i < reserved.length; i++){
-          if(reserved[i].getPropertyName().equals(propertyName)){
-            isReserved = true;
-          }
-        }
-        return isReserved;
-    }
-
     Property propertyFromNode(JsonNode node) {
         final String type = getString(node, PropertyBuilder.PropertyId.TYPE);
         final String format = getString(node, PropertyBuilder.PropertyId.FORMAT);
@@ -107,10 +96,8 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
               if(detailNode != null){
                   for(Iterator<Map.Entry<String,JsonNode>> iter = detailNode.fields(); iter.hasNext();){
                       Map.Entry<String,JsonNode> field = iter.next();
-                      if(!isReserved(field.getKey())){
-                          Property property = propertyFromNode(field.getValue());
-                          properties.put(field.getKey(), property);
-                      }
+                      Property property = propertyFromNode(field.getValue());
+                      properties.put(field.getKey(), property);
                   }
               }
               return new ObjectProperty(properties);
