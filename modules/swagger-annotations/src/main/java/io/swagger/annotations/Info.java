@@ -76,8 +76,8 @@ public @interface Info {
     /**
      * Optional list of extensions for this API.
      *
-     * @see Extension
      * @return optional list of extensions for this API
+     * @see Extension
      */
     Extension[] extensions() default @Extension(properties = @ExtensionProperty(name = "", value = ""));
 }

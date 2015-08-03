@@ -32,7 +32,7 @@ public interface ReaderListener {
      * Called before the Swagger definition gets populated from scanned classes. Use this method to
      * pre-process the Swagger definition before it gets populated.
      *
-     * @param reader the reader used to read annotations and build the Swagger definition
+     * @param reader  the reader used to read annotations and build the Swagger definition
      * @param swagger the initial swagger definition
      */
 
@@ -42,7 +42,7 @@ public interface ReaderListener {
      * Called after a Swagger definition has been populated from scanned classes. Use this method to
      * post-process Swagger definitions.
      *
-     * @param reader the reader used to read annotations and build the Swagger definition
+     * @param reader  the reader used to read annotations and build the Swagger definition
      * @param swagger the configured Swagger definition
      */
 

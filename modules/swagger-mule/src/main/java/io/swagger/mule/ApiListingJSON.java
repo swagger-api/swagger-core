@@ -3,6 +3,7 @@ package io.swagger.mule;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.config.Scanner;
 import io.swagger.config.ScannerFactory;
+import io.swagger.config.SwaggerConfig;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 import io.swagger.models.Swagger;
@@ -42,11 +43,9 @@ public class ApiListingJSON {
             if (classes != null) {
                 Reader reader = new Reader(swagger);
                 swagger = reader.read(classes);
-                // This loads the Swagger root information from the mule-swagger-integration.xml instead of
-                // the Bootstrap initializer. Should I leave both ways in, or support only one ? The new API doesn't
-                // seem work very well in the bean xml syntax
-
-                // swagger = ((SwaggerConfig) scanner).configure(swagger);
+                if (scanner instanceof SwaggerConfig) {
+                    swagger = ((SwaggerConfig) scanner).configure(swagger);
+                }
             }
         }
         initialized = true;

@@ -2,12 +2,15 @@ package io.swagger.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.models.properties.Property;
+import io.swagger.models.refs.GenericRef;
+import io.swagger.models.refs.RefConstants;
+import io.swagger.models.refs.RefFormat;
+import io.swagger.models.refs.RefType;
 
 import java.util.Map;
 
 public class RefModel implements Model {
-    // internally, the ref value is never fully qualified
-    private String ref;
+    private GenericRef genericRef;
     private String description;
     private ExternalDocs externalDocs;
     private Map<String, Property> properties;
@@ -21,7 +24,7 @@ public class RefModel implements Model {
     }
 
     public RefModel asDefault(String ref) {
-        this.set$ref("#/definitions/" + ref);
+        this.set$ref(RefConstants.INTERNAL_DEFINITION_PREFIX + ref);
         return this;
     }
 
@@ -46,27 +49,20 @@ public class RefModel implements Model {
 
     @JsonIgnore
     public String getSimpleRef() {
-        if (ref.indexOf("#/definitions/") == 0) {
-            return ref.substring("#/definitions/".length());
-        } else {
-            return ref;
-        }
+        return genericRef.getSimpleRef();
     }
 
     public String get$ref() {
-        if (ref.startsWith("http")) {
-            return ref;
-        } else {
-            return "#/definitions/" + ref;
-        }
+        return genericRef.getRef();
     }
 
     public void set$ref(String ref) {
-        if (ref.indexOf("#/definitions/") == 0) {
-            this.ref = ref.substring("#/definitions/".length());
-        } else {
-            this.ref = ref;
-        }
+        this.genericRef = new GenericRef(RefType.DEFINITION, ref);
+    }
+
+    @JsonIgnore
+    public RefFormat getRefFormat() {
+        return this.genericRef.getFormat();
     }
 
     @JsonIgnore
@@ -89,7 +85,7 @@ public class RefModel implements Model {
 
     public Object clone() {
         RefModel cloned = new RefModel();
-        cloned.ref = this.ref;
+        cloned.genericRef = this.genericRef; //GenericRef is an immutable class
         cloned.description = this.description;
         cloned.properties = this.properties;
         cloned.example = this.example;
@@ -108,7 +104,7 @@ public class RefModel implements Model {
                 + ((externalDocs == null) ? 0 : externalDocs.hashCode());
         result = prime * result
                 + ((properties == null) ? 0 : properties.hashCode());
-        result = prime * result + ((ref == null) ? 0 : ref.hashCode());
+        result = prime * result + ((genericRef == null) ? 0 : genericRef.hashCode());
         return result;
     }
 
@@ -152,11 +148,11 @@ public class RefModel implements Model {
         } else if (!properties.equals(other.properties)) {
             return false;
         }
-        if (ref == null) {
-            if (other.ref != null) {
+        if (genericRef == null) {
+            if (other.genericRef != null) {
                 return false;
             }
-        } else if (!ref.equals(other.ref)) {
+        } else if (!genericRef.equals(other.genericRef)) {
             return false;
         }
         return true;
@@ -165,11 +161,11 @@ public class RefModel implements Model {
     @Override
     @JsonIgnore
     public String getReference() {
-        return ref;
+        return genericRef.getRef();
     }
 
     @Override
     public void setReference(String reference) {
-        this.ref = reference;
+        this.genericRef = new GenericRef(RefType.DEFINITION, reference);
     }
 }

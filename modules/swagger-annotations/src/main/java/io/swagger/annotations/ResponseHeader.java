@@ -21,7 +21,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
  * Represents a header that can be provided as part of the response.
  */
@@ -45,7 +44,7 @@ public @interface ResponseHeader {
 
     /**
      * Declares a container wrapping the response header.
-     * <p>
+     * <p/>
      * Valid values are "List" or "Set". Any other value will be ignored.
      */
     String responseContainer() default "";

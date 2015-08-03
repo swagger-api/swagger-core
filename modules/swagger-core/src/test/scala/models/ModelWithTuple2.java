@@ -25,7 +25,7 @@ public class ModelWithTuple2 {
     @ApiModelProperty(value = "set of pairs", required = true)
     public Set<Pair<String, String>> manyPairs;
 
-    @ApiModelProperty(value = "set of pairs wiht complex left", required = true)
+    @ApiModelProperty(value = "set of pairs with complex left", required = true)
     public Set<Pair<ComplexLeft, String>> complexLeft;
 
     static class ComplexLeft {

@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import io.swagger.models.Xml;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.ObjectProperty;
@@ -68,13 +70,48 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
     public Property deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
         JsonNode node = jp.getCodec().readTree(jp);
-        return propertyFromNode(node);
+        Property property = propertyFromNode(node);
+        property.setXml(getXml(node));
+        return property;
+    }
+
+    public Xml getXml(JsonNode node) {
+        Xml xml = null;
+
+        if (node instanceof ObjectNode) {
+            ObjectNode obj = (ObjectNode) ((ObjectNode) node).get("xml");
+            if (obj != null) {
+                xml = new Xml();
+                JsonNode n = obj.get("name");
+                if (n != null) {
+                    xml.name(n.asText());
+                }
+                n = obj.get("namespace");
+                if (n != null) {
+                    xml.namespace(n.asText());
+                }
+                n = obj.get("prefix");
+                if (n != null) {
+                    xml.prefix(n.asText());
+                }
+                n = obj.get("attribute");
+                if (n != null) {
+                    xml.attribute(n.asBoolean());
+                }
+                n = obj.get("wrapped");
+                if (n != null) {
+                    xml.wrapped(n.asBoolean());
+                }
+            }
+        }
+        return xml;
     }
 
     Property propertyFromNode(JsonNode node) {
         final String type = getString(node, PropertyBuilder.PropertyId.TYPE);
         final String format = getString(node, PropertyBuilder.PropertyId.FORMAT);
         final String description = getString(node, PropertyBuilder.PropertyId.DESCRIPTION);
+        final Xml xml = getXml(node);
 
         JsonNode detailNode = node.get("$ref");
         if (detailNode != null) {

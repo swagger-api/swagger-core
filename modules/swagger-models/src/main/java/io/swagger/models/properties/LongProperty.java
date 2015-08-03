@@ -2,20 +2,16 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
-public class LongProperty extends AbstractNumericProperty implements Property {
+public class LongProperty extends BaseIntegerProperty {
+    private static final String FORMAT = "int64";
     protected Long _default;
 
     public LongProperty() {
-        super.type = "integer";
-        super.format = "int64";
+        super(FORMAT);
     }
 
     public static boolean isType(String type, String format) {
-        if ("integer".equals(type) && "int64".equals(format)) {
-            return true;
-        } else {
-            return false;
-        }
+        return TYPE.equals(type) && FORMAT.equals(format);
     }
 
     public LongProperty xml(Xml xml) {

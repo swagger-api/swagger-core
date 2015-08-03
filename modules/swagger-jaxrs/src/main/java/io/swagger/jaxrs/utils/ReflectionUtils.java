@@ -1,25 +1,34 @@
 package io.swagger.jaxrs.utils;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
+import io.swagger.converter.PrimitiveType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 public class ReflectionUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtils.class);
 
-    private static final Set<Class<? extends Annotation>> CONSTRUCTOR_ANNOTATIONS;
+    public static Type typeFromString(String type) {
+        final PrimitiveType primitive = PrimitiveType.fromName(type);
+        if (primitive != null) {
+            return primitive.getType();
+        }
+        try {
+            return Class.forName(type);
+        } catch (Exception e) {
+            LOGGER.error(String.format("Failed to resolve '%s' into class", type), e);
+        }
+        return null;
+    }
 
     /**
      * Checks if the method methodToFind is the overridden method from the superclass.
@@ -32,10 +41,8 @@ public class ReflectionUtils {
         Class<?> superClass = cls.getSuperclass();
         if (superClass != null && !(superClass.getClass().equals(Object.class))) {
             for (Method method : superClass.getMethods()) {
-                if (!method.getName().equals(methodToFind.getName()) || !method.getReturnType().isAssignableFrom(methodToFind.getReturnType())) {
-                    continue;
-                }
-                if (Arrays.equals(method.getParameterTypes(), methodToFind.getParameterTypes()) &&
+                if (method.getName().equals(methodToFind.getName()) && method.getReturnType().isAssignableFrom(methodToFind.getReturnType())
+                        && Arrays.equals(method.getParameterTypes(), methodToFind.getParameterTypes()) &&
                         !Arrays.equals(method.getGenericParameterTypes(), methodToFind.getGenericParameterTypes())) {
                     return true;
                 }
@@ -79,56 +86,33 @@ public class ReflectionUtils {
      */
     public static Method findMethod(Method methodToFind, Class<?> cls) {
         String methodToSearch = methodToFind.getName();
-        Class<?>[] pTypes = methodToFind.getParameterTypes();
-        Type[] gpTypes = methodToFind.getGenericParameterTypes();
-        methodLoop:
+        Class<?>[] soughtForParameterType = methodToFind.getParameterTypes();
+        Type[] soughtForGenericParameterType = methodToFind.getGenericParameterTypes();
         for (Method method : cls.getMethods()) {
-            if (!method.getName().equals(methodToSearch) || !method.getReturnType().isAssignableFrom(methodToFind.getReturnType())) {
-                continue;
-            }
-            Class<?>[] pt = method.getParameterTypes();
-            Type[] gpt = method.getGenericParameterTypes();
-            for (int j = 0; j < pTypes.length; j++) {
-                Class<?> parameterType = pTypes[j];
-                if (!(pt[j].equals(parameterType) || (!gpt[j].equals(gpTypes[j]) && pt[j].isAssignableFrom(parameterType)))) {
-                    continue methodLoop;
+            if (method.getName().equals(methodToSearch) && method.getReturnType().isAssignableFrom(methodToFind.getReturnType())) {
+                Class<?>[] srcParameterTypes = method.getParameterTypes();
+                Type[] srcGenericParameterTypes = method.getGenericParameterTypes();
+                if (soughtForParameterType.length == srcParameterTypes.length &&
+                        soughtForGenericParameterType.length == srcGenericParameterTypes.length) {
+                    if (hasIdenticalParameters(srcParameterTypes, soughtForParameterType, srcGenericParameterTypes, soughtForGenericParameterType)) {
+                        return method;
+                    }
                 }
             }
-            return method;
         }
         return null;
     }
 
-    /**
-     * Searches for constructor suitable for resource instantiation.
-     * <p/>
-     * If more constructors exists the one with the most injectable parameters will be selected.
-     *
-     * @param cls is the class where to search
-     * @return the suitable constructor
-     */
-    public static Constructor<?> findConstructor(Class<?> cls) {
-        if (cls.isLocalClass() || (cls.isMemberClass() && !Modifier.isStatic(cls.getModifiers()))) {
-            return null;
-        }
-
-        Constructor<?> selected = null;
-        int selectedCount = 0;
-        int maxParams = -1;
-        for (Constructor<?> constructor : cls.getDeclaredConstructors()) {
-            final Class<?>[] parameterTypes = constructor.getParameterTypes();
-            if (parameterTypes.length >= maxParams && isCompatible(constructor)) {
-                if (parameterTypes.length > maxParams) {
-                    maxParams = parameterTypes.length;
-                    selectedCount = 0;
-                }
-
-                selected = constructor;
-                selectedCount++;
+    private static boolean hasIdenticalParameters(Class<?>[] srcParameterTypes, Class<?>[] soughtForParameterType,
+                                                  Type[] srcGenericParameterTypes, Type[] soughtForGenericParameterType) {
+        for (int j = 0; j < soughtForParameterType.length; j++) {
+            Class<?> parameterType = soughtForParameterType[j];
+            if (!(srcParameterTypes[j].equals(parameterType) || (!srcGenericParameterTypes[j].equals(soughtForGenericParameterType[j]) &&
+                    srcParameterTypes[j].isAssignableFrom(parameterType)))) {
+                return false;
             }
         }
-
-        return selectedCount == 1 ? selected : null;
+        return true;
     }
 
     /**
@@ -145,43 +129,31 @@ public class ReflectionUtils {
         };
     }
 
-    /**
-     * Checks if the passed constructor is suitable for resource instantiation.
-     * Repeats the logic of the {@link org.glassfish.jersey.internal.inject.JerseyClassAnalyzer#isCompatible(java.lang.reflect.Constructor)}
-     *
-     * @param constructor the constructor to be checked
-     * @return true if the constructor is suitable or false otherwise
-     */
-    private static boolean isCompatible(Constructor<?> constructor) {
-        for (Annotation annotation : constructor.getAnnotations()) {
+    public static boolean isContext(List<Annotation> annotations) {
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof Context) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isInject(List<Annotation> annotations) {
+        for (Annotation annotation : annotations) {
             // use string name to avoid additional dependencies
             if ("javax.inject.Inject".equals(annotation.annotationType().getName())) {
                 return true;
             }
         }
+        return false;
+    }
 
+    public static boolean isConstructorCompatible(Constructor<?> constructor) {
         if (!Modifier.isPublic(constructor.getModifiers())) {
             final int access = Modifier.PUBLIC | Modifier.PROTECTED | Modifier.PRIVATE;
             return constructor.getParameterTypes().length == 0 &&
                     (constructor.getDeclaringClass().getModifiers() & access) == constructor.getModifiers();
         }
-
-        for (Annotation[] paramAnnotations : constructor.getParameterAnnotations()) {
-            final Collection<Class<? extends Annotation>> tmp = Collections2.transform(Arrays.asList(paramAnnotations),
-                    ReflectionUtils.createAnnotationTypeGetter());
-            if (Collections.disjoint(tmp, CONSTRUCTOR_ANNOTATIONS)) {
-                return false;
-            }
-        }
-
         return true;
-    }
-
-    static {
-        final Set<Class<? extends Annotation>> constructorAnnotations = new HashSet<Class<? extends Annotation>>();
-        constructorAnnotations.add(PathParam.class);
-        constructorAnnotations.add(QueryParam.class);
-        constructorAnnotations.add(HeaderParam.class);
-        CONSTRUCTOR_ANNOTATIONS = Collections.unmodifiableSet(constructorAnnotations);
     }
 }

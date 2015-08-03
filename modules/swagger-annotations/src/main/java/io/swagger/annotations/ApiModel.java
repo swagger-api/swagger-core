@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 
 /**
  * Provides additional information about Swagger models.
- * <p>
+ * <p/>
  * Classes will be introspected automatically as they are used as types in operations,
  * but you may want to manipulate the structure of the models.
  */
@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
 public @interface ApiModel {
     /**
      * Provide an alternative name for the model.
-     * <p>
+     * <p/>
      * By default, the class name is used.
      */
     String value() default "";
@@ -51,7 +51,7 @@ public @interface ApiModel {
 
     /**
      * Supports model inheritance and polymorphism.
-     * <p>
+     * <p/>
      * This is the name of the field used as a discriminator. Based on this field,
      * it would be possible to assert which sub type needs to be used.
      */

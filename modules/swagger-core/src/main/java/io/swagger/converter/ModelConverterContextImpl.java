@@ -3,6 +3,7 @@ package io.swagger.converter;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.Property;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,10 +45,23 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 
     @Override
     public void defineModel(String name, Model model) {
+        defineModel(name, model, null, null);
+    }
+
+    @Override
+    public void defineModel(String name, Model model, Type type, String prevName) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(String.format("defineModel %s %s", name, model));
         }
         modelByName.put(name, model);
+
+        if (StringUtils.isNotBlank(prevName)) {
+            modelByName.remove(prevName);
+        }
+
+        if (type != null) {
+            modelByType.put(type, model);
+        }
     }
 
     public Map<String, Model> getDefinedModels() {

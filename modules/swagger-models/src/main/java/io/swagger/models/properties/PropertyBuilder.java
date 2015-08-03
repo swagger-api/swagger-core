@@ -184,17 +184,10 @@ public class PropertyBuilder {
                 return new DateTimeProperty();
             }
         },
-        INTEGER(IntegerProperty.class) {
+        INT(IntegerProperty.class) {
             @Override
             protected boolean isType(String type, String format) {
-                if (IntegerProperty.isType(type, format)) {
-                    return true;
-                }
-                if (IntegerProperty.TYPE.equals(type) && format == null) {
-                    LOGGER.debug("no format specified for integer type, falling back to int32");
-                    return true;
-                }
-                return false;
+                return IntegerProperty.isType(type, format);
             }
 
             @Override
@@ -361,6 +354,27 @@ public class PropertyBuilder {
                     return model;
                 }
                 return null;
+            }
+        },
+        INTEGER(BaseIntegerProperty.class) {
+            @Override
+            protected boolean isType(String type, String format) {
+                return BaseIntegerProperty.isType(type, format);
+            }
+
+            @Override
+            protected BaseIntegerProperty create() {
+                return new BaseIntegerProperty();
+            }
+
+            @Override
+            public Property merge(Property property, Map<PropertyId, Object> args) {
+                super.merge(property, args);
+                if (property instanceof BaseIntegerProperty) {
+                    final BaseIntegerProperty resolved = (BaseIntegerProperty) property;
+                    mergeNumeric(resolved, args);
+                }
+                return property;
             }
         },
         DECIMAL(DecimalProperty.class) {
@@ -566,7 +580,7 @@ public class PropertyBuilder {
                     return item;
                 }
             }
-            LOGGER.error("no property for " + type + ", " + format);
+            LOGGER.debug("no property for " + type + ", " + format);
             return null;
         }
 
