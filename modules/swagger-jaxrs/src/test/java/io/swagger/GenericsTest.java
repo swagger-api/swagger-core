@@ -1,14 +1,14 @@
 package io.swagger;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertTrue;
-
+import com.google.common.base.Functions;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Operation;
 import io.swagger.models.RefModel;
 import io.swagger.models.Swagger;
+import io.swagger.models.TestEnum;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.properties.ArrayProperty;
@@ -17,16 +17,15 @@ import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.models.properties.UUIDProperty;
 import io.swagger.resources.ResourceWithGenerics;
-import io.swagger.models.TestEnum;
-
-import com.google.common.base.Functions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
 
 public class GenericsTest {
     private final Swagger swagger = new Reader(new Swagger()).read(ResourceWithGenerics.class);

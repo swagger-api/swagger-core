@@ -1,10 +1,5 @@
 package io.swagger;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
@@ -14,23 +9,17 @@ import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
-import io.swagger.resources.SimpleMethods;
 import io.swagger.resources.ApiConsumesProducesResource;
 import io.swagger.resources.BothConsumesProducesResource;
 import io.swagger.resources.DescendantResource;
 import io.swagger.resources.NoConsumesProducesResource;
-import io.swagger.resources.RsConsumesProducesResource;
 import io.swagger.resources.ResourceWithDeprecatedMethod;
 import io.swagger.resources.ResourceWithEmptyPath;
 import io.swagger.resources.ResourceWithImplicitParams;
 import io.swagger.resources.ResourceWithKnownInjections;
-
+import io.swagger.resources.RsConsumesProducesResource;
+import io.swagger.resources.SimpleMethods;
 import org.testng.annotations.Test;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -39,6 +28,15 @@ import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.core.MediaType;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 public class ReaderTest {
     private static final String APPLICATION_XML = "application/xml";

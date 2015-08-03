@@ -170,11 +170,11 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         Set<Class<?>> classes = classes();
         if (classes != null) {
             Swagger swagger = reader.read(classes);
-            if( StringUtils.isNotBlank( host )){
+            if (StringUtils.isNotBlank(host)) {
                 swagger.setHost(host);
             }
 
-            if( StringUtils.isNotBlank( basePath )){
+            if (StringUtils.isNotBlank(basePath)) {
                 swagger.setBasePath(basePath);
             }
 
@@ -206,7 +206,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         final Reflections reflections = new Reflections(config);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Api.class);
         classes.addAll(reflections.getTypesAnnotatedWith(javax.ws.rs.Path.class));
-        classes.addAll(reflections.getTypesAnnotatedWith(SwaggerDefinition.class ));
+        classes.addAll(reflections.getTypesAnnotatedWith(SwaggerDefinition.class));
 
         Set<Class<?>> output = new HashSet<Class<?>>();
         for (Class<?> cls : classes) {
@@ -225,23 +225,23 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
 
     private void updateInfoFromConfig() {
         info = getSwagger().getInfo();
-        if( info == null ){
-           info = new Info();
+        if (info == null) {
+            info = new Info();
         }
 
-        if(StringUtils.isNotBlank(description)){
-            info.description( description );
+        if (StringUtils.isNotBlank(description)) {
+            info.description(description);
         }
 
-        if( StringUtils.isNotBlank( title )){
+        if (StringUtils.isNotBlank(title)) {
             info.title(title);
         }
 
-        if( StringUtils.isNotBlank(version)){
+        if (StringUtils.isNotBlank(version)) {
             info.version(version);
         }
 
-        if( StringUtils.isNotBlank(termsOfServiceUrl)){
+        if (StringUtils.isNotBlank(termsOfServiceUrl)) {
             info.termsOfService(termsOfServiceUrl);
         }
 

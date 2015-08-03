@@ -16,6 +16,8 @@
 
 package io.swagger.jaxrs;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -35,8 +37,8 @@ import io.swagger.jaxrs.config.ReaderConfig;
 import io.swagger.jaxrs.config.ReaderListener;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
-import io.swagger.jaxrs.utils.ReaderUtils;
 import io.swagger.jaxrs.utils.PathUtils;
+import io.swagger.jaxrs.utils.ReaderUtils;
 import io.swagger.jaxrs.utils.ReflectionUtils;
 import io.swagger.models.Contact;
 import io.swagger.models.ExternalDocs;
@@ -59,13 +61,13 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
-
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.Produces;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -82,10 +84,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.Produces;
-
 public class Reader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
     private static final String SUCCESSFUL_OPERATION = "successful operation";
@@ -93,8 +91,6 @@ public class Reader {
 
     private final ReaderConfig config;
     private Swagger swagger;
-
-
 
     public Reader(Swagger swagger) {
         this(swagger, null);
@@ -417,13 +413,13 @@ public class Reader {
         readInfoConfig(config);
 
         for (String consume : config.consumes()) {
-            if( StringUtils.isNotEmpty( consume )) {
+            if (StringUtils.isNotEmpty(consume)) {
                 swagger.addConsumes(consume);
             }
         }
 
         for (String produce : config.produces()) {
-            if( StringUtils.isNotEmpty( produce )) {
+            if (StringUtils.isNotEmpty(produce)) {
                 swagger.addProduces(produce);
             }
         }
@@ -923,8 +919,6 @@ public class Reader {
         }
     }
 
-
-
     private static Set<Scheme> parseSchemes(String schemes) {
         final Set<Scheme> result = EnumSet.noneOf(Scheme.class);
         for (String item : StringUtils.trimToEmpty(schemes).split(",")) {
@@ -941,7 +935,9 @@ public class Reader {
         for (Map.Entry<String, Model> entry : models.entrySet()) {
             swagger.model(entry.getKey(), entry.getValue());
         }
-    }    private static boolean isVoid(Type type) {
+    }
+
+    private static boolean isVoid(Type type) {
         final Class<?> cls = TypeFactory.defaultInstance().constructType(type).getRawClass();
         return Void.class.isAssignableFrom(cls) || Void.TYPE.isAssignableFrom(cls);
     }
@@ -954,7 +950,9 @@ public class Reader {
             }
         }
         return false;
-    }    private static boolean isValidResponse(Type type) {
+    }
+
+    private static boolean isValidResponse(Type type) {
         if (type == null) {
             return false;
         }

@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverter;
@@ -29,10 +28,9 @@ import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
-import io.swagger.util.PrimitiveType;
 import io.swagger.util.AllowableValues;
 import io.swagger.util.AllowableValuesUtils;
-
+import io.swagger.util.PrimitiveType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +41,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -174,7 +171,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-
     public Model resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
         if (type.isEnumType() || PrimitiveType.fromType(type) != null) {
             // We don't build models for primitive types
@@ -192,7 +188,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final ModelImpl model = new ModelImpl().type(ModelImpl.OBJECT).name(name)
                 .description(_description(beanDesc.getClassInfo()));
 
-        if(!type.isContainerType()) {
+        if (!type.isContainerType()) {
             // define the model here to support self/cyclic referencing of models
             context.defineModel(name, model, type, null);
         }

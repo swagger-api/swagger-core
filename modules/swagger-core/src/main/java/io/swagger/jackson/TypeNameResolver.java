@@ -1,10 +1,8 @@
 package io.swagger.jackson;
 
 import com.fasterxml.jackson.databind.JavaType;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.util.PrimitiveType;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 

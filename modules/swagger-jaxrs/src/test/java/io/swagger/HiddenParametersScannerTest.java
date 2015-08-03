@@ -1,17 +1,16 @@
 package io.swagger;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.resources.HiddenParametersResource;
-
 import org.testng.annotations.Test;
 
 import java.util.List;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 public class HiddenParametersScannerTest {
     private final Swagger swagger = new Reader(new Swagger()).read(HiddenParametersResource.class);

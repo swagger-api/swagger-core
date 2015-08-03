@@ -1,8 +1,6 @@
 package io.swagger.params;
 
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.params.BaseBean;
-import io.swagger.params.ChildBean;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.HeaderParam;

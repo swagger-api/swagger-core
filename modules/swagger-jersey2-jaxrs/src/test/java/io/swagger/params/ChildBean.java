@@ -1,7 +1,5 @@
 package io.swagger.params;
 
-import io.swagger.params.BaseBean;
-
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;

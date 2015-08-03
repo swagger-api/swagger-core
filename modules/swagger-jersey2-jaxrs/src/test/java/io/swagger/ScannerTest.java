@@ -1,8 +1,5 @@
 package io.swagger;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
@@ -13,11 +10,12 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.resources.ResourceWithBeanParams;
 import io.swagger.resources.ResourceWithComplexBodyInputType;
-import io.swagger.util.Json;
-
 import org.testng.annotations.Test;
 
 import java.util.List;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 public class ScannerTest {
 

@@ -6,7 +6,6 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;
 
-
 public class TestBeanParam {
 
     @HeaderParam("test order annotation 1")

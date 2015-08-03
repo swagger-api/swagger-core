@@ -15,7 +15,6 @@ import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
 import io.swagger.util.AllowableValues;
 import io.swagger.util.AllowableValuesUtils;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,7 +129,7 @@ public class ParameterProcessor {
     }
 
     private static void processAllowedValues(AllowableValues allowableValues, AbstractSerializableParameter<?> p) {
-        if (allowableValues == null){
+        if (allowableValues == null) {
             return;
         }
         Map<PropertyBuilder.PropertyId, Object> args = allowableValues.asPropertyArguments();
@@ -176,7 +175,7 @@ public class ParameterProcessor {
         String getParamType();
 
         T getAnnotation();
-        
+
         boolean isHidden();
     }
 

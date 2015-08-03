@@ -1,20 +1,19 @@
 package io.swagger;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-
 import io.swagger.models.properties.PropertyBuilder;
-import io.swagger.util.AllowableRangeValues;
 import io.swagger.util.AllowableEnumValues;
+import io.swagger.util.AllowableRangeValues;
 import io.swagger.util.AllowableValuesUtils;
-
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 public class AllowableValuesTest {
 

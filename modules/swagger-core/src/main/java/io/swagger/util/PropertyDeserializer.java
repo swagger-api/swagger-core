@@ -8,13 +8,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import io.swagger.models.Xml;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
 import io.swagger.models.properties.RefProperty;
-import io.swagger.models.Xml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,35 +76,35 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
     }
 
     public Xml getXml(JsonNode node) {
-      Xml xml = null;
+        Xml xml = null;
 
-      if(node instanceof ObjectNode) {
-        ObjectNode obj = (ObjectNode)((ObjectNode) node).get("xml");
-        if(obj != null) {
-          xml = new Xml();
-          JsonNode n = obj.get("name");
-          if(n != null) {
-              xml.name(n.asText());
-          }
-          n = obj.get("namespace");
-          if(n != null) {
-              xml.namespace(n.asText());
-          }
-          n = obj.get("prefix");
-          if(n != null) {
-              xml.prefix(n.asText());
-          }
-          n = obj.get("attribute");
-          if(n != null) {
-              xml.attribute(n.asBoolean());
-          }
-          n = obj.get("wrapped");
-          if(n != null) {
-              xml.wrapped(n.asBoolean());
-          }
+        if (node instanceof ObjectNode) {
+            ObjectNode obj = (ObjectNode) ((ObjectNode) node).get("xml");
+            if (obj != null) {
+                xml = new Xml();
+                JsonNode n = obj.get("name");
+                if (n != null) {
+                    xml.name(n.asText());
+                }
+                n = obj.get("namespace");
+                if (n != null) {
+                    xml.namespace(n.asText());
+                }
+                n = obj.get("prefix");
+                if (n != null) {
+                    xml.prefix(n.asText());
+                }
+                n = obj.get("attribute");
+                if (n != null) {
+                    xml.attribute(n.asBoolean());
+                }
+                n = obj.get("wrapped");
+                if (n != null) {
+                    xml.wrapped(n.asBoolean());
+                }
+            }
         }
-      }
-      return xml;
+        return xml;
     }
 
     Property propertyFromNode(JsonNode node) {

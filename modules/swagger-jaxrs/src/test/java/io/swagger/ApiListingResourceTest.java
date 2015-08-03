@@ -1,12 +1,11 @@
 package io.swagger;
 
-import static org.testng.Assert.assertNull;
-
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.models.Swagger;
-
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertNull;
 
 /**
  * The <code>ApiListingResourceTest</code> test should confirm that scanning of

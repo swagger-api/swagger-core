@@ -6,14 +6,13 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.models.GenericListWrapper;
 import io.swagger.models.GenericType;
 import io.swagger.models.GenericTypeWithApiModel;
-import io.swagger.models.duplicated.Tag;
 import io.swagger.models.TestEnum;
+import io.swagger.models.duplicated.Tag;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
-
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;

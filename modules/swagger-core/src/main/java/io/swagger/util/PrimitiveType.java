@@ -1,5 +1,6 @@
 package io.swagger.util;
 
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.models.properties.BaseIntegerProperty;
 import io.swagger.models.properties.BooleanProperty;
 import io.swagger.models.properties.DateProperty;
@@ -13,8 +14,6 @@ import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.models.properties.UUIDProperty;
-
-import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -31,7 +30,6 @@ public enum PrimitiveType {
      * Boolean.
      */
     BOOLEAN(Boolean.class, BooleanProperty.TYPE) {
-
         @Override
         public BooleanProperty createProperty() {
             return new BooleanProperty();
@@ -41,7 +39,6 @@ public enum PrimitiveType {
      * String.
      */
     STRING(String.class, StringProperty.TYPE) {
-
         @Override
         public StringProperty createProperty() {
             return new StringProperty();
@@ -51,7 +48,6 @@ public enum PrimitiveType {
      * Byte.
      */
     BYTE(Byte.class, "byte") {
-
         @Override
         public StringProperty createProperty() {
             return new StringProperty(StringProperty.Format.BYTE);
@@ -61,7 +57,6 @@ public enum PrimitiveType {
      * URI string.
      */
     URI(java.net.URI.class) {
-
         @Override
         public StringProperty createProperty() {
             return new StringProperty(StringProperty.Format.URI);
@@ -71,7 +66,6 @@ public enum PrimitiveType {
      * URL string.
      */
     URL(java.net.URL.class) {
-
         @Override
         public StringProperty createProperty() {
             return new StringProperty(StringProperty.Format.URL);
@@ -81,7 +75,6 @@ public enum PrimitiveType {
      * UUID string.
      */
     UUID(java.util.UUID.class) {
-
         @Override
         public UUIDProperty createProperty() {
             return new UUIDProperty();
@@ -91,7 +84,6 @@ public enum PrimitiveType {
      * 32-bit integer.
      */
     INT(Integer.class, IntegerProperty.TYPE) {
-
         @Override
         public IntegerProperty createProperty() {
             return new IntegerProperty();
@@ -101,7 +93,6 @@ public enum PrimitiveType {
      * 64-bit integer.
      */
     LONG(Long.class, "long") {
-
         @Override
         public LongProperty createProperty() {
             return new LongProperty();
@@ -111,7 +102,6 @@ public enum PrimitiveType {
      * 32-bit decimal.
      */
     FLOAT(Float.class, "float") {
-
         @Override
         public FloatProperty createProperty() {
             return new FloatProperty();
@@ -121,7 +111,6 @@ public enum PrimitiveType {
      * 64-bit decimal.
      */
     DOUBLE(Double.class, "double") {
-
         @Override
         public DoubleProperty createProperty() {
             return new DoubleProperty();
@@ -131,7 +120,6 @@ public enum PrimitiveType {
      * Generic integer number without specific format.
      */
     INTEGER(java.math.BigInteger.class) {
-
         @Override
         public BaseIntegerProperty createProperty() {
             return new BaseIntegerProperty();
@@ -141,7 +129,6 @@ public enum PrimitiveType {
      * Generic decimal number without specific format.
      */
     DECIMAL(java.math.BigDecimal.class) {
-
         @Override
         public DecimalProperty createProperty() {
             return new DecimalProperty();
@@ -151,7 +138,6 @@ public enum PrimitiveType {
      * Date.
      */
     DATE(DateStub.class, "date") {
-
         @Override
         public DateProperty createProperty() {
             return new DateProperty();
@@ -161,7 +147,6 @@ public enum PrimitiveType {
      * Date and time.
      */
     DATE_TIME(java.util.Date.class, "dateTime") {
-
         @Override
         public DateTimeProperty createProperty() {
             return new DateTimeProperty();
@@ -171,7 +156,6 @@ public enum PrimitiveType {
      * Generic object.
      */
     OBJECT(Object.class) {
-
         @Override
         public ObjectProperty createProperty() {
             return new ObjectProperty();

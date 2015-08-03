@@ -1,6 +1,5 @@
 package io.swagger.models.properties;
 
-
 public abstract class AbstractNumericProperty extends AbstractProperty implements Property {
     protected Double minimum, maximum;
     protected Boolean exclusiveMinimum, exclusiveMaximum;

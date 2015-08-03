@@ -1,23 +1,20 @@
 package io.swagger;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.resources.Resource942;
 import io.swagger.resources.ResourceWithSubResources;
 import io.swagger.resources.SubResourceHead;
 import io.swagger.resources.TestResource;
-import io.swagger.resources.Resource942;
-import io.swagger.util.Json;
-
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class SubResourceScannerTest {
 

@@ -1,14 +1,12 @@
 package io.swagger.jackson;
 
+import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import io.swagger.models.Xml;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
-
-import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-
 import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,7 +25,8 @@ class JAXBAnnotationsHelper {
 
     /**
      * Applies annotations to property's {@link Xml} definition.
-     * @param member annotations provider
+     *
+     * @param member   annotations provider
      * @param property property instance to be updated
      */
     public static void apply(AnnotatedMember member, Property property) {
@@ -40,7 +39,8 @@ class JAXBAnnotationsHelper {
 
     /**
      * Puts definitions for XML element.
-     * @param member annotations provider
+     *
+     * @param member   annotations provider
      * @param property property instance to be updated
      */
     private static void applyElement(AnnotatedMember member, Property property) {
@@ -48,8 +48,9 @@ class JAXBAnnotationsHelper {
         if (wrapper != null) {
             final Xml xml = getXml(property);
             xml.setWrapped(true);
-            if(!"##default".equals(wrapper.name()) && !wrapper.name().isEmpty())
-              xml.setName(wrapper.name());
+            if (!"##default".equals(wrapper.name()) && !wrapper.name().isEmpty()) {
+                xml.setName(wrapper.name());
+            }
         }
         final XmlElement element = member.getAnnotation(XmlElement.class);
         if (element != null) {
@@ -57,10 +58,10 @@ class JAXBAnnotationsHelper {
         }
     }
 
-
     /**
      * Puts definitions for XML attribute.
-     * @param member annotations provider
+     *
+     * @param member   annotations provider
      * @param property property instance to be updated
      */
     private static void applyAttribute(AnnotatedMember member, Property property) {
@@ -84,8 +85,9 @@ class JAXBAnnotationsHelper {
 
     /**
      * Puts name space and name for XML node or attribute.
-     * @param ns name space
-     * @param name name
+     *
+     * @param ns       name space
+     * @param name     name
      * @param property property instance to be updated
      * @return <code>true</code> if name space and name have been set
      */
@@ -116,13 +118,14 @@ class JAXBAnnotationsHelper {
 
     /**
      * Checks whether the passed property can be represented as node attribute.
+     *
      * @param property property instance to be checked
      * @return <code>true</code> if the passed property can be represented as
-     *         node attribute
+     * node attribute
      */
     private static boolean isAttributeAllowed(Property property) {
-        for (Class<?> item : new Class<?>[] { ArrayProperty.class, MapProperty.class, ObjectProperty.class,
-                RefProperty.class }) {
+        for (Class<?> item : new Class<?>[]{ArrayProperty.class, MapProperty.class, ObjectProperty.class,
+                RefProperty.class}) {
             if (item.isInstance(property)) {
                 return false;
             }

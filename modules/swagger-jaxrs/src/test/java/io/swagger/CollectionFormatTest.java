@@ -4,13 +4,13 @@ import io.swagger.jaxrs.Reader;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.AbstractSerializableParameter;
-import org.testng.annotations.Test;
 import io.swagger.resources.CollectionFormatResource;
+import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-public class CollectionFormatTest{
+public class CollectionFormatTest {
     private static final String MULTI = "multi";
     private static final String CSV = "csv";
     private final Swagger swagger = new Reader(new Swagger()).read(CollectionFormatResource.class);

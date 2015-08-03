@@ -8,6 +8,6 @@ import java.util.List;
  * Created by simon00t on 10-6-2015.
  */
 public class SubModelWithSelfReference {
-    @ApiModelProperty(value="References")
+    @ApiModelProperty(value = "References")
     public List<SubModelWithSelfReference> references;
 }

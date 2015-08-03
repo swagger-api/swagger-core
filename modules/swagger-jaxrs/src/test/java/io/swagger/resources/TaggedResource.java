@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
-
 import java.util.ArrayList;
 
 @Api(value = "/external/info/", tags = {"external_info", "user_info"})
