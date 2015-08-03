@@ -13,6 +13,6 @@ public class ModelWithReference {
         return "Swagger";
     }
 
-    @ApiModelProperty(value="SubModelWithSelfReference")
+    @ApiModelProperty(value = "SubModelWithSelfReference")
     public List<SubModelWithSelfReference> nested;
 }

@@ -36,6 +36,7 @@ public class StringProperty extends AbstractProperty implements Property {
             return null;
         }
     }
+
     public StringProperty() {
         this((String) null);
     }

@@ -2,12 +2,11 @@ package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 @XmlRootElement(name = "rootName")
 public class ModelWithJAXBAnnotations {
@@ -23,8 +22,8 @@ public class ModelWithJAXBAnnotations {
 
     public List<String> list;
 
-    @XmlElementWrapper(name="wrappedListItems")
-    @XmlElement(name="wrappedList")
+    @XmlElementWrapper(name = "wrappedListItems")
+    @XmlElement(name = "wrappedList")
     public List<String> wrappedList;
 
     @XmlAttribute(name = "doNotUseMe")

@@ -18,7 +18,6 @@ import javax.ws.rs.core.Response;
 public abstract class AbstractResource<T extends Number> {
     private Logger LOGGER = LoggerFactory.getLogger(AbstractResource.class);
 
-
     @GET
     @Path("/{petId1}")
     @ApiOperation(value = "Find pet by ID",

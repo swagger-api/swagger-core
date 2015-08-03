@@ -1,19 +1,17 @@
 package io.swagger;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-
-import io.swagger.jaxrs.config.DefaultJaxrsScanner;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import io.swagger.jaxrs.config.DefaultJaxrsScanner;
 import org.testng.annotations.Test;
 
+import javax.ws.rs.core.Application;
 import java.util.Set;
 
-import javax.ws.rs.core.Application;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 public class DefaultJaxrsScannerTest {
 

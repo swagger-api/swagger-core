@@ -45,7 +45,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 
     @Override
     public void defineModel(String name, Model model) {
-        defineModel(name,model,null,null);
+        defineModel(name, model, null, null);
     }
 
     @Override
@@ -55,12 +55,12 @@ public class ModelConverterContextImpl implements ModelConverterContext {
         }
         modelByName.put(name, model);
 
-        if(StringUtils.isNotBlank(prevName)) {
+        if (StringUtils.isNotBlank(prevName)) {
             modelByName.remove(prevName);
         }
 
-        if(type != null) {
-            modelByType.put(type,model);
+        if (type != null) {
+            modelByType.put(type, model);
         }
     }
 

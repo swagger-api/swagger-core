@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
-
 import java.util.Map;
 
 public class PathUtils {
@@ -19,7 +18,7 @@ public class PathUtils {
     public static String parsePath(String uri, Map<String, String> patterns) {
         if (uri == null) {
             return null;
-        } else if (StringUtils.isBlank(uri)){
+        } else if (StringUtils.isBlank(uri)) {
             return String.valueOf(SLASH);
         }
         CharacterIterator ci = new StringCharacterIterator(uri);
@@ -64,7 +63,7 @@ public class PathUtils {
             return null;
         }
         String regex = StringUtils.trimToNull(regexBuffer.toString());
-        if (regex == null){
+        if (regex == null) {
             return null;
         }
         StringBuilder pathBuffer = new StringBuilder();

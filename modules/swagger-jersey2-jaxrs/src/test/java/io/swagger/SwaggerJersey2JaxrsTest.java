@@ -1,33 +1,27 @@
 package io.swagger;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
-
+import com.google.common.base.Functions;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
 import io.swagger.jersey.SwaggerJersey2Jaxrs;
 import io.swagger.models.Swagger;
+import io.swagger.models.TestEnum;
 import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
-import io.swagger.models.TestEnum;
 import io.swagger.params.BaseBean;
 import io.swagger.params.ChildBean;
 import io.swagger.params.EnumBean;
 import io.swagger.params.RefBean;
 import io.swagger.resources.ResourceWithKnownInjections;
-
-import com.google.common.base.Functions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
-
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.testng.annotations.Test;
 import org.testng.internal.collections.Pair;
 
+import javax.ws.rs.BeanParam;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -39,7 +33,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.ws.rs.BeanParam;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.fail;
 
 public class SwaggerJersey2JaxrsTest {
 
@@ -125,7 +121,7 @@ public class SwaggerJersey2JaxrsTest {
     }
 
     @Test(description = "scan class level and field level annotations")
-    public void scanClassAnfFieldLevelAnnotations(){
+    public void scanClassAnfFieldLevelAnnotations() {
         final Swagger swagger = new Reader(new Swagger()).read(ResourceWithKnownInjections.class);
         final List<Parameter> resourceParameters = swagger.getPaths().get("/resource/{id}").getGet().getParameters();
         assertNotNull(resourceParameters);
@@ -136,7 +132,7 @@ public class SwaggerJersey2JaxrsTest {
         assertEquals(getName(resourceParameters, 3), "methodParam");
     }
 
-    private String getName(List<Parameter> resourceParameters, int i){
+    private String getName(List<Parameter> resourceParameters, int i) {
         return resourceParameters.get(i).getName();
     }
 }

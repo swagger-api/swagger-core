@@ -23,7 +23,7 @@ public enum PrimitiveType {
     private final Type type;
     private final Set<String> names;
 
-    private PrimitiveType(Type type, String name, String ... aliases) {
+    private PrimitiveType(Type type, String name, String... aliases) {
         this.type = type;
         final Set<String> tmpNames = new HashSet<String>();
         tmpNames.add(name.toUpperCase());

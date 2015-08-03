@@ -1,6 +1,5 @@
 package io.swagger.jackson;
 
-
 import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.models.Model;
 import io.swagger.models.properties.ArrayProperty;

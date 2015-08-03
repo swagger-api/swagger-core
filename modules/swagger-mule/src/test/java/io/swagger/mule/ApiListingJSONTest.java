@@ -2,7 +2,6 @@ package io.swagger.mule;
 
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

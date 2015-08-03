@@ -12,12 +12,9 @@ import io.swagger.jaxrs.config.JaxrsScanner;
 import io.swagger.jaxrs.config.ReaderConfigUtils;
 import io.swagger.models.Swagger;
 import io.swagger.util.Yaml;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -33,10 +30,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Path("/")
 public class ApiListingResource {
@@ -150,9 +148,9 @@ public class ApiListingResource {
         try {
             if (swagger != null) {
                 String yaml = Yaml.mapper().writeValueAsString(swagger);
-              StringBuilder b = new StringBuilder();
-                    String[] parts = yaml.split("\n");
-              for (String part : parts) {
+                StringBuilder b = new StringBuilder();
+                String[] parts = yaml.split("\n");
+                for (String part : parts) {
                     b.append(part);
                     b.append("\n");
                 }
@@ -185,7 +183,6 @@ public class ApiListingResource {
         }
         return output;
     }
-
 
     protected Map<String, List<String>> getHeaders(HttpHeaders headers) {
         Map<String, List<String>> output = new HashMap<String, List<String>>();

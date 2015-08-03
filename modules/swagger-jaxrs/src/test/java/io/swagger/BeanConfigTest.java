@@ -1,18 +1,17 @@
 package io.swagger;
 
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertEquals;
-
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
+import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 public class BeanConfigTest {
     private final Set expectedKeys = new HashSet<String>(Arrays.asList("/packageA", "/packageB"));

@@ -34,7 +34,6 @@ public abstract class AbstractModelConverter implements ModelConverter {
      */
     protected Map<JavaType, String> _resolvedTypeNames = new ConcurrentHashMap<JavaType, String>();
 
-
     protected AbstractModelConverter(ObjectMapper mapper) {
         mapper.registerModule(
                 new SimpleModule("swagger", Version.unknownVersion()) {

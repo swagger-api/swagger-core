@@ -1,23 +1,21 @@
 package io.swagger;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.Info;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
-import io.swagger.util.Json;
-
-import org.testng.annotations.Test;
-
 import io.swagger.resources.ResourceWithConfigAndExtensions;
+import io.swagger.util.Json;
+import org.testng.annotations.Test;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 public class ConfigAndExtensionScannerTest {
 

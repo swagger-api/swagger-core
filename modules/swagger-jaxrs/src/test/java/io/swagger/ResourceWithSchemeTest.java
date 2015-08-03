@@ -1,18 +1,17 @@
 package io.swagger;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
 import io.swagger.resources.ResourceWithScheme;
 import io.swagger.resources.ResourceWithoutScheme;
-
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 public class ResourceWithSchemeTest {
     private final Reader reader = new Reader(new Swagger());

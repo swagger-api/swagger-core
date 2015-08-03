@@ -5,7 +5,6 @@ package io.swagger.models.refs;
  */
 public class GenericRef {
 
-
     private final RefFormat format;
     private final RefType type;
     private final String ref;
@@ -47,14 +46,24 @@ public class GenericRef {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         GenericRef that = (GenericRef) o;
 
-        if (format != that.format) return false;
-        if (type != that.type) return false;
-        if (ref != null ? !ref.equals(that.ref) : that.ref != null) return false;
+        if (format != that.format) {
+            return false;
+        }
+        if (type != that.type) {
+            return false;
+        }
+        if (ref != null ? !ref.equals(that.ref) : that.ref != null) {
+            return false;
+        }
         return !(simpleRef != null ? !simpleRef.equals(that.simpleRef) : that.simpleRef != null);
 
     }
@@ -108,6 +117,5 @@ public class GenericRef {
 
         return result;
     }
-
 
 }

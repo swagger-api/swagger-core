@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * Adds additional meta-data for operation parameters.
- * <p>
+ * <p/>
  * This annotation can be used only in combination of JAX-RS 1.x/2.x annotations.
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD})
@@ -31,10 +31,10 @@ import java.lang.annotation.Target;
 public @interface ApiParam {
     /**
      * The parameter name.
-     * <p>
+     * <p/>
      * The name of the parameter will be derived from the field/method/parameter name,
      * however you can override it.
-     * <p>
+     * <p/>
      * Path parameters must always be named as the path section they represent.
      */
     String name() default "";
@@ -46,7 +46,7 @@ public @interface ApiParam {
 
     /**
      * Describes the default value for the parameter.
-     * <p>
+     * <p/>
      * If the parameter is annotated with JAX-RS's {@code @DefaultValue}, that value would
      * be used, but can be overridden by setting this property.
      */
@@ -54,7 +54,7 @@ public @interface ApiParam {
 
     /**
      * Limits the acceptable values for this parameter.
-     * <p>
+     * <p/>
      * There are three ways to describe the allowable values:
      * <ol>
      * <li>To set a list of values, provide a comma-separated list.
@@ -71,14 +71,14 @@ public @interface ApiParam {
 
     /**
      * Specifies if the parameter is required or not.
-     * <p>
+     * <p/>
      * Path parameters will always be set as required, whether you set this property or not.
      */
     boolean required() default false;
 
     /**
      * Allows for filtering a parameter from the API documentation.
-     *<p>
+     * <p/>
      * See io.swagger.core.filter.SwaggerSpecFilter for further details.
      */
     String access() default "";

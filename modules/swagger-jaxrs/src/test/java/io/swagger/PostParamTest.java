@@ -1,10 +1,5 @@
 package io.swagger;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
@@ -16,8 +11,12 @@ import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.resources.PostParamResource;
-
 import org.testng.annotations.Test;
+
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 public class PostParamTest {
     private static final String BODY = "body";

@@ -7,7 +7,6 @@ import io.swagger.models.properties.DoubleProperty;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

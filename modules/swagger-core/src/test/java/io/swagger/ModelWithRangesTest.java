@@ -1,20 +1,18 @@
 package io.swagger;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-
 import io.swagger.converter.ModelConverters;
 import io.swagger.models.ModelWithRanges;
 import io.swagger.models.properties.DoubleProperty;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
-
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.Map;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 public class ModelWithRangesTest {
 

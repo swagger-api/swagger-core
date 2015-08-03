@@ -1,14 +1,13 @@
 package io.swagger;
 
-import static org.testng.Assert.assertEquals;
-
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.resources.RegexPathParamResource;
-
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
 
 public class RegexPathParamTest {
 
