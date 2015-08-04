@@ -52,6 +52,7 @@ You need the following installed and available in your $PATH:
 
 
 ### To build from source (currently 1.5.2)
+
 ```
 # first time building locally
 mvn -N
