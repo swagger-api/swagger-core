@@ -1,4 +1,4 @@
-package models;
+package io.swagger.models;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
