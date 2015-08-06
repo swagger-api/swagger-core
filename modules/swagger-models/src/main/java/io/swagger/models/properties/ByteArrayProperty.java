@@ -9,11 +9,11 @@ public class ByteArrayProperty extends AbstractProperty implements Property {
 
   public ByteArrayProperty() {
     super.type = "string";
-    super.format = "byte";
+    super.format = "binary";
   }
 
   public static boolean isType(String type, String format) {
-    if("string".equals(type) &&  "byte".equals(format))
+    if("string".equals(type) &&  "binary".equals(format))
       return true;
     else return false;
   }
