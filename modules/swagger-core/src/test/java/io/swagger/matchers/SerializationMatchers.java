@@ -1,9 +1,11 @@
 package io.swagger.matchers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +23,7 @@ public class SerializationMatchers {
     }
 
     private static boolean apply(Object objectToSerialize, String str, ObjectMapper mapper) {
-        ObjectNode lhs = mapper.convertValue(objectToSerialize, ObjectNode.class);
+        final ObjectNode lhs = mapper.convertValue(objectToSerialize, ObjectNode.class);
         ObjectNode rhs = null;
         try {
             rhs = mapper.readValue(str, ObjectNode.class);

@@ -1,4 +1,4 @@
-package models;
+package io.swagger.models;
 
 import com.google.common.base.Optional;
 

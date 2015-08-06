@@ -1,4 +1,4 @@
-package models.composition;
+package io.swagger.models.composition;
 
 import io.swagger.annotations.ApiModel;
 
