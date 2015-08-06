@@ -1,7 +1,7 @@
 import java.util
 
 import io.swagger.converter.ModelConverters
-import io.swagger.models._
+import io.swagger.models.{Info, Contact, Swagger, Scheme, Operation, Response, RefModel, Path}
 import io.swagger.models.auth.{ApiKeyAuthDefinition, In}
 import io.swagger.models.parameters.{BodyParameter, PathParameter, QueryParameter, RefParameter}
 import io.swagger.models.properties.{LongProperty, RefProperty, StringProperty}

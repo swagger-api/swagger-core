@@ -1,8 +1,7 @@
-package models;
+package io.swagger.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.Swagger;
 
 public class ClientOptInput {
     private String opts;

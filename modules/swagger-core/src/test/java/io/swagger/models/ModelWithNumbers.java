@@ -1,4 +1,4 @@
-package models;
+package io.swagger.models;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

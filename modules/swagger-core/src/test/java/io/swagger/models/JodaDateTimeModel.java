@@ -1,4 +1,4 @@
-package models;
+package io.swagger.models;
 
 import org.joda.time.DateTime;
 

@@ -1,4 +1,4 @@
-package models;
+package io.swagger.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -23,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonInclude(Include.NON_EMPTY)
 @JsonTypeInfo(include = As.WRAPPER_OBJECT, use = Id.NAME)
 @ApiModel(description = "Represents a Department in the system", value = "department")
-public class Department extends AbstractModel {
+public class Department {
     private String name;
     private String deptCode;
     private Link<Department> parent;

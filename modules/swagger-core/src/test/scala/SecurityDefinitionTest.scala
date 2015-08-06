@@ -1,5 +1,5 @@
 import io.swagger.converter.ModelConverters
-import io.swagger.models._
+import io.swagger.models.{Scheme, Swagger, Contact, Info, Operation, Response, SecurityRequirement, Path}
 import io.swagger.models.auth.OAuth2Definition
 import io.swagger.models.parameters.{PathParameter, QueryParameter}
 import io.swagger.models.properties.{LongProperty, RefProperty, StringProperty}

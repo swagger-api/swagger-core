@@ -1,4 +1,4 @@
-package models;
+package io.swagger.models;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;

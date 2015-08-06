@@ -1,4 +1,4 @@
-package models;
+package io.swagger.models;
 
 import java.net.URI;
 import java.net.URL;
