@@ -1,0 +1,9 @@
+{
+  "swagger" : "2.0",
+  "securityRequirement" : [ {
+    "basic_auth" : [ ],
+    "api_key" : [ ]
+  }, {
+    "oauth2" : [ "hello", "world" ]
+  } ]
+}

@@ -59,6 +59,11 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         return castThis();
     }
 
+    @JsonIgnore
+    protected String getDefaultCollectionFormat() {
+        return "csv";
+    }
+
     public T items(Property items) {
         this.items = items;
         return castThis();
@@ -99,6 +104,7 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
 
     public void setType(String type) {
         this.type = type;
+        setCollectionFormat(ArrayProperty.isType(type) ? getDefaultCollectionFormat() : null);
     }
 
     public String getCollectionFormat() {
@@ -110,7 +116,7 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     }
 
     public void setProperty(Property property) {
-        this.type = property.getType();
+        setType(property.getType());
         this.format = property.getFormat();
         if (property instanceof StringProperty) {
             final StringProperty string = (StringProperty) property;

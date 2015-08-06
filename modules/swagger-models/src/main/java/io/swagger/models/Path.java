@@ -1,9 +1,6 @@
 package io.swagger.models;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
 import io.swagger.models.parameters.Parameter;
 
 import java.util.ArrayList;
@@ -11,12 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@JsonPropertyOrder({"get", "post", "put", "delete", "options", "patch"})
+@JsonPropertyOrder({"get", "head", "post", "put", "delete", "options", "patch"})
 public class Path {
+
     private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
     private Operation get;
     private Operation put;
     private Operation post;
+    private Operation head;
     private Operation delete;
     private Operation patch;
     private Operation options;
@@ -28,6 +27,9 @@ public class Path {
         }
         if ("put".equals(method)) {
             return put(op);
+        }
+        if ("head".equals(method)) {
+            return head(op);
         }
         if ("post".equals(method)) {
             return post(op);
@@ -46,6 +48,11 @@ public class Path {
 
     public Path get(Operation get) {
         this.get = get;
+        return this;
+    }
+
+    public Path head(Operation head) {
+        this.head = head;
         return this;
     }
 
@@ -80,6 +87,14 @@ public class Path {
 
     public void setGet(Operation get) {
         this.get = get;
+    }
+
+    public Operation getHead() {
+        return head;
+    }
+
+    public void setHead(Operation head) {
+        this.head = head;
     }
 
     public Operation getPut() {
@@ -131,6 +146,9 @@ public class Path {
         if (put != null) {
             allOperations.add(put);
         }
+        if (head != null) {
+            allOperations.add(head);
+        }
         if (post != null) {
             allOperations.add(post);
         }
@@ -145,6 +163,33 @@ public class Path {
         }
 
         return allOperations;
+    }
+
+    @JsonIgnore
+    public Map<HttpMethod, Operation> getOperationMap() {
+        Map<HttpMethod, Operation> result = new HashMap<HttpMethod, Operation>();
+
+        if (get != null) {
+            result.put(HttpMethod.GET, get);
+        }
+        if (put != null) {
+            result.put(HttpMethod.PUT, put);
+        }
+        if (post != null) {
+            result.put(HttpMethod.POST, post);
+        }
+        if (delete != null) {
+            result.put(HttpMethod.DELETE, delete);
+        }
+        if (patch != null) {
+            result.put(HttpMethod.PATCH, patch);
+        }
+        if (options != null) {
+            result.put(HttpMethod.OPTIONS, options);
+            result.put(HttpMethod.OPTIONS, options);
+        }
+
+        return result;
     }
 
     public List<Parameter> getParameters() {
@@ -164,7 +209,7 @@ public class Path {
 
     @JsonIgnore
     public boolean isEmpty() {
-        if (get == null && put == null && post == null && delete == null && patch == null && options == null) {
+        if (get == null && put == null && head == null && post == null && delete == null && patch == null && options == null) {
             return true;
         } else {
             return false;
@@ -183,12 +228,13 @@ public class Path {
         }
     }
 
-    @Override
+
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((delete == null) ? 0 : delete.hashCode());
         result = prime * result + ((get == null) ? 0 : get.hashCode());
+        result = prime * result + ((head == null) ? 0 : head.hashCode());
         result = prime * result + ((options == null) ? 0 : options.hashCode());
         result = prime * result
                 + ((parameters == null) ? 0 : parameters.hashCode());
@@ -224,6 +270,13 @@ public class Path {
                 return false;
             }
         } else if (!get.equals(other.get)) {
+            return false;
+        }
+        if (head == null) {
+            if (other.head != null) {
+                return false;
+            }
+        } else if (!head.equals(other.head)) {
             return false;
         }
         if (options == null) {

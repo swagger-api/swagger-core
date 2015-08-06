@@ -2,20 +2,17 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
-public class FloatProperty extends AbstractNumericProperty implements Property {
+public class FloatProperty extends DecimalProperty {
+    private static final String FORMAT = "float";
+
     protected Float _default;
 
     public FloatProperty() {
-        super.type = "number";
-        super.format = "float";
+        super(FORMAT);
     }
 
     public static boolean isType(String type, String format) {
-        if ("number".equals(type) && "float".equals(format)) {
-            return true;
-        } else {
-            return false;
-        }
+        return TYPE.equals(type) && FORMAT.equals(format);
     }
 
     public FloatProperty xml(Xml xml) {

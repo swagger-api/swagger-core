@@ -1,9 +1,13 @@
 package io.swagger.models.parameters;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.models.refs.GenericRef;
+import io.swagger.models.refs.RefConstants;
+import io.swagger.models.refs.RefFormat;
+import io.swagger.models.refs.RefType;
 
 public class RefParameter extends AbstractParameter implements Parameter {
-    String ref;
+    private GenericRef genericRef;
 
     public RefParameter(String ref) {
         set$ref(ref);
@@ -18,7 +22,7 @@ public class RefParameter extends AbstractParameter implements Parameter {
     }
 
     public RefParameter asDefault(String ref) {
-        this.set$ref("#/parameters/" + ref);
+        this.set$ref(RefConstants.INTERNAL_PARAMETER_PREFIX + ref);
         return this;
     }
 
@@ -28,19 +32,16 @@ public class RefParameter extends AbstractParameter implements Parameter {
     }
 
     public String get$ref() {
-        if (ref.startsWith("http")) {
-            return ref;
-        } else {
-            return "#/parameters/" + ref;
-        }
+        return genericRef.getRef();
     }
 
     public void set$ref(String ref) {
-        if (ref.indexOf("#/parameters/") == 0) {
-            this.ref = ref.substring("#/parameters/".length());
-        } else {
-            this.ref = ref;
-        }
+        this.genericRef = new GenericRef(RefType.PARAMETER, ref);
+    }
+
+    @JsonIgnore
+    public RefFormat getRefFormat() {
+        return this.genericRef.getFormat();
     }
 
     @Override
@@ -51,18 +52,14 @@ public class RefParameter extends AbstractParameter implements Parameter {
 
     @JsonIgnore
     public String getSimpleRef() {
-        if (ref.indexOf("#/parameters/") == 0) {
-            return ref.substring("#/parameters/".length());
-        } else {
-            return ref;
-        }
+        return genericRef.getSimpleRef();
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((ref == null) ? 0 : ref.hashCode());
+        result = prime * result + ((genericRef == null) ? 0 : genericRef.hashCode());
         return result;
     }
 
@@ -78,11 +75,11 @@ public class RefParameter extends AbstractParameter implements Parameter {
             return false;
         }
         RefParameter other = (RefParameter) obj;
-        if (ref == null) {
-            if (other.ref != null) {
+        if (genericRef == null) {
+            if (other.genericRef != null) {
                 return false;
             }
-        } else if (!ref.equals(other.ref)) {
+        } else if (!genericRef.equals(other.genericRef)) {
             return false;
         }
         return true;

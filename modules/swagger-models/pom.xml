@@ -3,7 +3,7 @@
     <parent>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.5.0</version>
+        <version>1.5.3-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -34,8 +34,10 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
+                            io.swagger.models.auth,
                             io.swagger.models.parameters,
                             io.swagger.models.properties,
+                            io.swagger.models.refs,
                             io.swagger.models
                         </Export-Package>
                     </instructions>
@@ -60,5 +62,27 @@
             <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+        </dependency>
     </dependencies>
+    <properties>
+        <!-- TODO increase coverage -->
+        <validation-api-version>1.1.0.Final</validation-api-version>
+        <coverage.complexity.minimum>0.00</coverage.complexity.minimum>
+        <coverage.line.minimum>0.0</coverage.line.minimum>
+        <!-- Setting this to a really high number since this module has almost no coverage -->
+        <coverage.missed.classes>100</coverage.missed.classes>
+    </properties>
 </project>

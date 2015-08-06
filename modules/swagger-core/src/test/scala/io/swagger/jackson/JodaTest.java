@@ -9,7 +9,6 @@ import org.joda.time.DateTime;
 
 import java.util.Map;
 
-
 public class JodaTest extends SwaggerTestBase {
     public void testSimple() throws Exception {
         final ModelConverter mr = modelResolver();

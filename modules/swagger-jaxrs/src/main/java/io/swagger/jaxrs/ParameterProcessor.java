@@ -2,8 +2,6 @@ package io.swagger.jaxrs;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiParam;
 import io.swagger.converter.ModelConverters;
@@ -15,6 +13,8 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
+import io.swagger.util.AllowableValues;
+import io.swagger.util.AllowableValuesUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ParameterProcessor {
-    private static final Table<Class<? extends AllowableValues>, Boolean, AbstractAllowableValuesProcessor<?, ?>> ALLOWED_VALUES_PROCESSORS =
-            HashBasedTable.create();
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
     public static Parameter applyAnnotations(Swagger swagger, Parameter parameter, Type type, List<Annotation> annotations) {
@@ -39,6 +37,9 @@ public class ParameterProcessor {
             return null;
         }
         final ParamWrapper<?> param = helper.getApiParam();
+        if (param.isHidden()) {
+            return null;
+        }
         final String defaultValue = helper.getDefaultValue();
         final JavaType javaType = TypeFactory.defaultInstance().constructType(type);
         if (parameter instanceof AbstractSerializableParameter) {
@@ -60,13 +61,7 @@ public class ParameterProcessor {
                 p.setType(param.getDataType());
             }
 
-            AllowableValues allowableValues = null;
-            if (StringUtils.isNotEmpty(param.getAllowableValues())) {
-                allowableValues = AllowableRangeValues.create(param.getAllowableValues());
-                if (allowableValues == null) {
-                    allowableValues = AllowableEnumValues.create(param.getAllowableValues());
-                }
-            }
+            AllowableValues allowableValues = AllowableValuesUtils.create(param.getAllowableValues());
 
             if (p.getItems() != null || param.isAllowMultiple()) {
                 if (p.getItems() == null) {
@@ -92,23 +87,31 @@ public class ParameterProcessor {
                 if (StringUtils.isNotEmpty(defaultValue)) {
                     args.put(PropertyBuilder.PropertyId.DEFAULT, defaultValue);
                 }
-                processAllowedValues(allowableValues, true, args);
+                if (allowableValues != null) {
+                    args.putAll(allowableValues.asPropertyArguments());
+                }
                 PropertyBuilder.merge(p.getItems(), args);
-                p.collectionFormat("csv");
             } else {
                 if (StringUtils.isNotEmpty(defaultValue)) {
                     p.setDefaultValue(defaultValue);
                 }
-                processAllowedValues(allowableValues, false, p);
+                processAllowedValues(allowableValues, p);
             }
         } else {
             // must be a body param
             BodyParameter bp = new BodyParameter();
+
             bp.setRequired(param.isRequired());
             bp.setName(StringUtils.isNotEmpty(param.getName()) ? param.getName() : "body");
+
             if (StringUtils.isNotEmpty(param.getDescription())) {
                 bp.setDescription(param.getDescription());
             }
+
+            if (StringUtils.isNotEmpty(param.getAccess())) {
+                bp.setAccess(param.getAccess());
+            }
+
             final Property property = ModelConverters.getInstance().readAsProperty(javaType);
             if (property != null) {
                 final Map<PropertyBuilder.PropertyId, Object> args = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
@@ -125,14 +128,27 @@ public class ParameterProcessor {
         return parameter;
     }
 
-    private static <C> void processAllowedValues(AllowableValues values, boolean key, C container) {
-        if (values == null) {
+    private static void processAllowedValues(AllowableValues allowableValues, AbstractSerializableParameter<?> p) {
+        if (allowableValues == null) {
             return;
         }
-        @SuppressWarnings("unchecked")
-        final AbstractAllowableValuesProcessor<C, AllowableValues> processor =
-                (AbstractAllowableValuesProcessor<C, AllowableValues>) ALLOWED_VALUES_PROCESSORS.get(values.getClass(), key);
-        processor.process(container, values);
+        Map<PropertyBuilder.PropertyId, Object> args = allowableValues.asPropertyArguments();
+        if (args.containsKey(PropertyBuilder.PropertyId.ENUM)) {
+            p.setEnum((List<String>) args.get(PropertyBuilder.PropertyId.ENUM));
+        } else {
+            if (args.containsKey(PropertyBuilder.PropertyId.MINIMUM)) {
+                p.setMinimum((Double) args.get(PropertyBuilder.PropertyId.MINIMUM));
+            }
+            if (args.containsKey(PropertyBuilder.PropertyId.MAXIMUM)) {
+                p.setMaximum((Double) args.get(PropertyBuilder.PropertyId.MAXIMUM));
+            }
+            if (args.containsKey(PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM)) {
+                p.setExclusiveMinimum((Boolean) args.get(PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM) ? true : null);
+            }
+            if (args.containsKey(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM)) {
+                p.setExclusiveMaximum((Boolean) args.get(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM) ? true : null);
+            }
+        }
     }
 
     /**
@@ -159,6 +175,8 @@ public class ParameterProcessor {
         String getParamType();
 
         T getAnnotation();
+
+        boolean isHidden();
     }
 
     /**
@@ -298,12 +316,16 @@ public class ParameterProcessor {
         public ApiParam getAnnotation() {
             return apiParam;
         }
+
+        @Override
+        public boolean isHidden() {
+            return apiParam.hidden();
+        }
     }
 
     /**
      * Wrapper implementation for ApiImplicitParam annotation
      */
-
     private final static class ApiImplicitParamWrapper implements ParamWrapper<ApiImplicitParam> {
 
         private final ApiImplicitParam apiParam;
@@ -361,12 +383,10 @@ public class ParameterProcessor {
         public ApiImplicitParam getAnnotation() {
             return apiParam;
         }
-    }
 
-    static {
-        ALLOWED_VALUES_PROCESSORS.put(AllowableRangeValues.class, true, new ArgumentsRangeProcessor());
-        ALLOWED_VALUES_PROCESSORS.put(AllowableRangeValues.class, false, new ParameterRangeProcessor());
-        ALLOWED_VALUES_PROCESSORS.put(AllowableEnumValues.class, true, new ArgumentsEnumProcessor());
-        ALLOWED_VALUES_PROCESSORS.put(AllowableEnumValues.class, false, new ParameterEnumProcessor());
+        @Override
+        public boolean isHidden() {
+            return false;
+        }
     }
 }

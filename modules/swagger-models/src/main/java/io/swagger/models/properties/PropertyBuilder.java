@@ -4,10 +4,12 @@ import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.RefModel;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,10 +29,16 @@ public class PropertyBuilder {
         if (processor == null) {
             return null;
         }
-        if (args == null) {
-            args = Collections.emptyMap();
+        final Map<PropertyId, Object> safeArgs = args == null ? Collections.<PropertyId, Object>emptyMap() : args;
+        final Map<PropertyId, Object> fixedArgs;
+        if (format != null) {
+            fixedArgs = new EnumMap<PropertyId, Object>(PropertyId.class);
+            fixedArgs.putAll(safeArgs);
+            fixedArgs.put(PropertyId.FORMAT, format);
+        } else {
+            fixedArgs = safeArgs;
         }
-        return processor.build(args);
+        return processor.build(fixedArgs);
     }
 
     /**
@@ -195,17 +203,10 @@ public class PropertyBuilder {
                 return new DateTimeProperty();
             }
         },
-        INTEGER(IntegerProperty.class) {
+        INT(IntegerProperty.class) {
             @Override
             protected boolean isType(String type, String format) {
-                if (IntegerProperty.isType(type, format)) {
-                    return true;
-                }
-                if (IntegerProperty.TYPE.equals(type) && format == null) {
-                    LOGGER.debug("no format specified for integer type, falling back to int32");
-                    return true;
-                }
-                return false;
+                return IntegerProperty.isType(type, format);
             }
 
             @Override
@@ -372,6 +373,27 @@ public class PropertyBuilder {
                     return model;
                 }
                 return null;
+            }
+        },
+        INTEGER(BaseIntegerProperty.class) {
+            @Override
+            protected boolean isType(String type, String format) {
+                return BaseIntegerProperty.isType(type, format);
+            }
+
+            @Override
+            protected BaseIntegerProperty create() {
+                return new BaseIntegerProperty();
+            }
+
+            @Override
+            public Property merge(Property property, Map<PropertyId, Object> args) {
+                super.merge(property, args);
+                if (property instanceof BaseIntegerProperty) {
+                    final BaseIntegerProperty resolved = (BaseIntegerProperty) property;
+                    mergeNumeric(resolved, args);
+                }
+                return property;
             }
         },
         DECIMAL(DecimalProperty.class) {
@@ -577,7 +599,7 @@ public class PropertyBuilder {
                     return item;
                 }
             }
-            LOGGER.error("no property for " + type + ", " + format);
+            LOGGER.debug("no property for " + type + ", " + format);
             return null;
         }
 
@@ -675,6 +697,9 @@ public class PropertyBuilder {
         public Property merge(Property property, Map<PropertyId, Object> args) {
             if (property instanceof AbstractProperty) {
                 final AbstractProperty resolved = (AbstractProperty) property;
+                if (resolved.getFormat() == null) {
+                    resolved.setFormat(PropertyId.FORMAT.<String>findValue(args));
+                }
                 if (args.containsKey(PropertyId.TITLE)) {
                     final String value = PropertyId.TITLE.findValue(args);
                     resolved.setTitle(value);

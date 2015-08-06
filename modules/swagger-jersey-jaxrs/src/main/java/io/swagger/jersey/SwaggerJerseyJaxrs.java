@@ -11,6 +11,7 @@ import io.swagger.models.properties.Property;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -48,6 +49,11 @@ public class SwaggerJerseyJaxrs extends AbstractSwaggerExtension {
 
     @Override
     protected boolean shouldIgnoreClass(Class<?> cls) {
-        return com.sun.jersey.core.header.FormDataContentDisposition.class.isAssignableFrom(cls);
+        for (Class<?> item : Arrays.asList(com.sun.jersey.core.header.FormDataContentDisposition.class, com.sun.jersey.multipart.FormDataBodyPart.class)) {
+            if (item.isAssignableFrom(cls)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -40,8 +40,8 @@ public @interface Extension {
     /**
      * The extension properties.
      *
-     * @see ExtensionProperty
      * @return the actual extension properties
+     * @see ExtensionProperty
      */
     ExtensionProperty[] properties();
 }

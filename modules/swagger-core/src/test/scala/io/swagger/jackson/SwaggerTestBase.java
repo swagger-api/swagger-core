@@ -21,7 +21,6 @@ public abstract class SwaggerTestBase extends TestCase {
         return mapper;
     }
 
-
     protected ModelResolver modelResolver() {
         return new ModelResolver(new ObjectMapper());
     }

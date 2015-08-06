@@ -41,7 +41,7 @@ public @interface ApiModelProperty {
 
     /**
      * Limits the acceptable values for this parameter.
-     * <p>
+     * <p/>
      * There are three ways to describe the allowable values:
      * <ol>
      * <li>To set a list of values, provide a comma-separated list.
@@ -68,7 +68,7 @@ public @interface ApiModelProperty {
 
     /**
      * The data type of the parameter.
-     * <p>
+     * <p/>
      * This can be the class name or a primitive. The value will override the data type as read from the class
      * property.
      */

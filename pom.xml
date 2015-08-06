@@ -10,7 +10,7 @@
     <artifactId>swagger-project</artifactId>
     <packaging>pom</packaging>
     <name>swagger-project</name>
-    <version>1.5.0</version>
+    <version>1.5.3-SNAPSHOT</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
@@ -47,7 +47,6 @@
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
         <scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>
-        <testSourceDirectory>src/test/scala</testSourceDirectory>
         <outputDirectory>target/classes</outputDirectory>
         <testOutputDirectory>target/test-classes</testOutputDirectory>
         <resources>
@@ -79,6 +78,19 @@
         <directory>target</directory>
         <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                  <execution>
+                    <id>enforce-versions</id>
+                    <goals>
+                      <goal>enforce</goal>
+                    </goals>
+                  </execution>
+                </executions>
+            </plugin>              
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -130,6 +142,27 @@
                         </launcher>
                     </launchers>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire-version}</version>
+                <configuration>
+                    <testNGArtifactName>none:none</testNGArtifactName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>test-testng</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <junitArtifactName>none:none</junitArtifactName>
+                            <testNGArtifactName>org.testng:testng</testNGArtifactName>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -469,6 +502,18 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${mockito-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
                 <version>${servlet-api-version}</version>
@@ -512,20 +557,25 @@
         <servlet-api-version>2.5</servlet-api-version>
         <jersey-version>1.13</jersey-version>
         <jersey2-version>2.1</jersey2-version>
-        <jackson-version>2.4.2</jackson-version>
-        <jackson-guava-version>2.4.2</jackson-guava-version>
+        <jackson-version>2.4.5</jackson-version>
+        <jackson-scala-version>2.4.5-1</jackson-scala-version>
+        <jackson-guava-version>2.4.5</jackson-guava-version>
         <logback-version>1.0.1</logback-version>
 
         <junit-version>4.8.2</junit-version>
+        <testng-version>6.9.4</testng-version>
+        <mockito-version>1.9.5</mockito-version>
+        <surefire-version>2.18.1</surefire-version>
         <maven-plugin-version>1.0.0</maven-plugin-version>
         <commons-lang-version>3.2.1</commons-lang-version>
         <slf4j-version>1.6.3</slf4j-version>
-        <scala-test-version>2.1.3</scala-test-version>
+        <scala-test-version>2.2.2</scala-test-version>
         <jetty-version>8.1.11.v20130520</jetty-version>
         <servlet-api-version>2.5</servlet-api-version>
         <scala-maven-plugin-version>3.1.5</scala-maven-plugin-version>
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
+        <commons-io-version>2.4</commons-io-version>
     </properties>
 </project>

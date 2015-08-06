@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * A wrapper to allow a list of multiple {@link ApiResponse} objects.
- * <p>
+ * <p/>
  * If you need to describe a single {@link ApiResponse}, you still
  * must use this annotation and wrap the {@code @ApiResponse} in an array.
  *

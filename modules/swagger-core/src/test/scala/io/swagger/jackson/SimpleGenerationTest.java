@@ -87,7 +87,6 @@ public class SimpleGenerationTest extends SwaggerTestBase {
         ModelResolver modelResolver = modelResolver();
         ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
-
         Model model = context
                 .resolve(TheCount.class);
 
@@ -104,7 +103,6 @@ public class SimpleGenerationTest extends SwaggerTestBase {
         ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
         Model model = context
                 .resolve(StringDateMapBean.class);
-
 
         Map<String, Property> props = model.getProperties();
         assertEquals(1, props.size());

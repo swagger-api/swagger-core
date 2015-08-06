@@ -25,8 +25,12 @@ import io.swagger.models.properties.AbstractNumericProperty;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
+import io.swagger.models.properties.PropertyBuilder;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
+import io.swagger.util.AllowableValues;
+import io.swagger.util.AllowableValuesUtils;
+import io.swagger.util.PrimitiveType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +40,6 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -97,14 +98,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                     ModelConverterContext context,
                                     Annotation[] annotations,
                                     Iterator<ModelConverter> next) {
-        Property property = null;
-        String typeName = _typeName(propType);
-
         LOGGER.debug("resolveProperty " + propType);
 
-        // primitive or null
-        property = getPrimitiveProperty(typeName);
-        // And then properties specific to subset of property types:
+        Property property = null;
         if (propType.isContainerType()) {
             JavaType keyType = propType.getKeyType();
             JavaType valueType = propType.getContentType();
@@ -118,6 +114,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
                 property = arrayProperty;
             }
+        } else {
+            property = PrimitiveType.createProperty(propType);
         }
 
         if (property == null) {
@@ -173,17 +171,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-
     public Model resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
-        if (type.isEnumType() || _typeNameResolver.isStdType(type)) {
+        if (type.isEnumType() || PrimitiveType.fromType(type) != null) {
             // We don't build models for primitive types
             return null;
         }
-        if (type.isContainerType()) {
-            // We treat collections as primitive types, just need to add models for values (if any)
-            context.resolve(type.getContentType());
-            return null;
-        }
+
         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
         // Couple of possibilities for defining
         String name = _typeName(type, beanDesc);
@@ -195,6 +188,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final ModelImpl model = new ModelImpl().type(ModelImpl.OBJECT).name(name)
                 .description(_description(beanDesc.getClassInfo()));
 
+        if (!type.isContainerType()) {
+            // define the model here to support self/cyclic referencing of models
+            context.defineModel(name, model, type, null);
+        }
+
+        if (type.isContainerType()) {
+            // We treat collections as primitive types, just need to add models for values (if any)
+            context.resolve(type.getContentType());
+            return null;
+        }
         // if XmlRootElement annotation, construct an Xml object and attach it to the model
         XmlRootElement rootAnnotation = beanDesc.getClassAnnotations().get(XmlRootElement.class);
         if (rootAnnotation != null && !"".equals(rootAnnotation.name()) && !"##default".equals(rootAnnotation.name())) {
@@ -245,13 +248,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (member != null) {
                     String altName = member.getName();
                     if (altName != null) {
-                        if (altName.startsWith("get")) {
-                            if (!Character.isUpperCase(altName.charAt(3))) {
+                        final int length = altName.length();
+                        for (String prefix : Arrays.asList("get", "is")) {
+                            final int offset = prefix.length();
+                            if (altName.startsWith(prefix) && length > offset
+                                    && !Character.isUpperCase(altName.charAt(offset))) {
                                 propName = altName;
-                            }
-                        } else if (altName.startsWith("is")) {
-                            if (!Character.isUpperCase(altName.charAt(2))) {
-                                propName = altName;
+                                break;
                             }
                         }
                     }
@@ -307,7 +310,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     if (or.toLowerCase().startsWith("list[")) {
                         String innerType = or.substring(5, or.length() - 1);
                         ArrayProperty p = new ArrayProperty();
-                        Property primitiveProperty = getPrimitiveProperty(innerType);
+                        Property primitiveProperty = PrimitiveType.createProperty(innerType);
                         if (primitiveProperty != null) {
                             p.setItems(primitiveProperty);
                         } else {
@@ -320,7 +323,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         if (pos > 0) {
                             String innerType = or.substring(pos + 1, or.length() - 1);
                             MapProperty p = new MapProperty();
-                            Property primitiveProperty = getPrimitiveProperty(innerType);
+                            Property primitiveProperty = PrimitiveType.createProperty(innerType);
                             if (primitiveProperty != null) {
                                 p.setAdditionalProperties(primitiveProperty);
                             } else {
@@ -330,7 +333,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             property = p;
                         }
                     } else {
-                        Property primitiveProperty = getPrimitiveProperty(or);
+                        Property primitiveProperty = PrimitiveType.createProperty(or);
                         if (primitiveProperty != null) {
                             property = primitiveProperty;
                         } else {
@@ -382,77 +385,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             property.setReadOnly(isReadOnly);
                         }
                     }
-
-                    if (property instanceof StringProperty) {
-                        if (mp != null) {
-                            String allowableValues = mp.allowableValues();
-                            LOGGER.debug("allowableValues " + allowableValues);
-                            if (!"".equals(allowableValues)) {
-                                String[] parts = allowableValues.split(",");
-                                LOGGER.debug("found " + parts.length + " parts");
-                                for (String part : parts) {
-                                    if (property instanceof StringProperty) {
-                                        StringProperty sp = (StringProperty) property;
-                                        sp._enum(part.trim());
-                                        LOGGER.debug("added enum value " + part);
-                                    }
-                                }
-                            }
+                    if (mp != null) {
+                        final AllowableValues allowableValues = AllowableValuesUtils.create(mp.allowableValues());
+                        if (allowableValues != null) {
+                            final Map<PropertyBuilder.PropertyId, Object> args = allowableValues.asPropertyArguments();
+                            PropertyBuilder.merge(property, args);
                         }
                     }
-
-                    if (property != null) {
-                        // check for XML annotations
-                        XmlElementWrapper wrapper = member.getAnnotation(XmlElementWrapper.class);
-
-                        if (wrapper != null) {
-                            Xml xml = new Xml();
-                            xml.setWrapped(true);
-
-                            if (wrapper.name() != null) {
-                                if ("##default".equals(wrapper.name())) {
-                                    xml.setName(propName);
-                                } else if (!"".equals(wrapper.name())) {
-                                    xml.setName(wrapper.name());
-                                }
-                            }
-                            if (wrapper.namespace() != null && !"".equals(wrapper.namespace()) && !"##default".equals(wrapper.namespace())) {
-                                xml.setNamespace(wrapper.namespace());
-                            }
-
-                            property.setXml(xml);
-                        }
-
-                        XmlElement element = member.getAnnotation(XmlElement.class);
-                        if (element != null) {
-                            if (!element.name().isEmpty()) {
-                                // don't set Xml object if name is same
-                                if (!element.name().equals(propName) && !"##default".equals(element.name())) {
-                                    Xml xml = property.getXml();
-                                    if (xml == null) {
-                                        xml = new Xml();
-                                        property.setXml(xml);
-                                    }
-                                    xml.setName(element.name());
-                                }
-                            }
-                        }
-                        XmlAttribute attr = member.getAnnotation(XmlAttribute.class);
-                        if (attr != null) {
-                            if (!"".equals(attr.name())) {
-                                // don't set Xml object if name is same
-                                if (!attr.name().equals(propName) && !"##default".equals(attr.name())) {
-                                    Xml xml = property.getXml();
-                                    if (xml == null) {
-                                        xml = new Xml();
-                                        property.setXml(xml);
-                                    }
-                                    xml.setName(attr.name());
-                                }
-                            }
-                        }
-
-                    }
+                    JAXBAnnotationsHelper.apply(member, property);
                     applyBeanValidatorAnnotations(property, annotations);
                     props.add(property);
                 }

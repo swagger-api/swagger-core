@@ -1,5 +1,7 @@
 package io.swagger.models;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import io.swagger.models.properties.Property;
 
 import java.util.HashMap;
@@ -11,6 +13,7 @@ public class Response {
     private Property schema;
     private Map<String, Object> examples;
     private Map<String, Property> headers;
+    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
     public Response schema(Property property) {
         this.setSchema(property);
@@ -79,6 +82,18 @@ public class Response {
         this.headers.put(key, property);
     }
 
+    @JsonAnyGetter
+    public Map<String, Object> getVendorExtensions() {
+        return vendorExtensions;
+    }
+
+    @JsonAnySetter
+    public void setVendorExtension(String name, Object value) {
+        if (name.startsWith("x-")) {
+            vendorExtensions.put(name, value);
+        }
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -88,6 +103,8 @@ public class Response {
         result = prime * result + ((examples == null) ? 0 : examples.hashCode());
         result = prime * result + ((headers == null) ? 0 : headers.hashCode());
         result = prime * result + ((schema == null) ? 0 : schema.hashCode());
+        result = prime * result
+                + ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
         return result;
     }
 
@@ -129,6 +146,13 @@ public class Response {
                 return false;
             }
         } else if (!schema.equals(other.schema)) {
+            return false;
+        }
+        if (vendorExtensions == null) {
+            if (other.vendorExtensions != null) {
+                return false;
+            }
+        } else if (!vendorExtensions.equals(other.vendorExtensions)) {
             return false;
         }
         return true;
