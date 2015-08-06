@@ -1,6 +1,6 @@
 package io.swagger.models.auth;
 
-public class ApiKeyAuthDefinition implements SecuritySchemeDefinition {
+public class ApiKeyAuthDefinition extends AbstractSecuritySchemeDefinition {
     private String type = "apiKey";
     private String name;
     private In in;
@@ -48,10 +48,10 @@ public class ApiKeyAuthDefinition implements SecuritySchemeDefinition {
         this.type = type;
     }
 
-    @Override
+        @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
+        int result = super.hashCode();
         result = prime * result + ((in == null) ? 0 : in.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
@@ -64,6 +64,9 @@ public class ApiKeyAuthDefinition implements SecuritySchemeDefinition {
             return true;
         }
         if (obj == null) {
+            return false;
+        }
+        if (!super.equals(obj)) {
             return false;
         }
         if (getClass() != obj.getClass()) {

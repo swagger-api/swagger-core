@@ -1,48 +1,19 @@
 package io.swagger.util;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import io.swagger.models.Model;
-import io.swagger.models.auth.SecuritySchemeDefinition;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.properties.Property;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Json {
-    static Logger LOGGER = LoggerFactory.getLogger(Json.class);
-    static ObjectMapper mapper;
+
+    private static ObjectMapper mapper;
 
     public static ObjectMapper mapper() {
-        if (mapper == null) {
-            mapper = create();
+        if(mapper == null) {
+            mapper = ObjectMapperFactory.createJson();
         }
         return mapper;
     }
-
-    public static ObjectMapper create() {
-        mapper = new ObjectMapper();
-
-        // load any jackson modules
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(Property.class, new PropertyDeserializer());
-        module.addDeserializer(Model.class, new ModelDeserializer());
-        module.addDeserializer(Parameter.class, new ParameterDeserializer());
-        module.addDeserializer(SecuritySchemeDefinition.class, new SecurityDefinitionDeserializer());
-        mapper.registerModule(module);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        return mapper;
-    }
-
     public static ObjectWriter pretty() {
         return mapper().writer(new DefaultPrettyPrinter());
     }
@@ -51,6 +22,7 @@ public class Json {
         try {
             return pretty().writeValueAsString(o);
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -61,5 +33,36 @@ public class Json {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /*
+        TODO the following code is a hack to get past the fact that Path and Response are not interfaces, it can be deleted as part of the refactor to make Path and Response interfaces
+
+        pathMapper and responseMapper are ObjectMappers that are only going to be used during deserialization of Paths and Responses.
+        We need them because:
+         1) RefPath extends Path
+         2) RefResponse extends Response
+
+         And when we detect we are deserializing a "normal" Path or Response (e.g. its not a ref) we need skip
+         the PathDeserializer and ResponseDeserializer logic, lest we get into a stack overflow problem
+     */
+    private static ObjectMapper pathMapper;
+    private static ObjectMapper responseMapper;
+
+
+    protected static ObjectMapper pathMapper() {
+        if (pathMapper == null) {
+            pathMapper = ObjectMapperFactory.createJson(false, true);
+        }
+
+        return pathMapper;
+    }
+
+    protected static ObjectMapper responseMapper() {
+        if (responseMapper == null) {
+            responseMapper = ObjectMapperFactory.createJson(false, false);
+        }
+
+        return responseMapper;
     }
 }
