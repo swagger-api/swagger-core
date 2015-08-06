@@ -50,7 +50,6 @@ public class StringProperty extends AbstractProperty implements Property {
         super.format = format;
     }
 
-    //TODO: implement additional formats
     public static boolean isType(String type, String format) {
         return TYPE.equals(type) && (format == null || Format.fromName(format) != null);
     }
