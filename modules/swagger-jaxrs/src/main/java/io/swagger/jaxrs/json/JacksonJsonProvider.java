@@ -27,7 +27,7 @@ import javax.ws.rs.ext.Provider;
 @Provider
 @Produces({MediaType.APPLICATION_JSON})
 public class JacksonJsonProvider extends JacksonJaxbJsonProvider {
-    private static ObjectMapper commonMapper = Json.create();
+    private static ObjectMapper commonMapper = Json.mapper();
 
     public JacksonJsonProvider() {
         super.setMapper(commonMapper);

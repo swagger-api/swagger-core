@@ -1,10 +1,16 @@
 package io.swagger.models;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class AbstractModel implements Model {
     private ExternalDocs externalDocs;
     private String reference;
+    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
     @Override
     public ExternalDocs getExternalDocs() {
@@ -13,6 +19,18 @@ public abstract class AbstractModel implements Model {
 
     public void setExternalDocs(ExternalDocs value) {
         externalDocs = value;
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getVendorExtensions() {
+        return vendorExtensions;
+    }
+
+    @JsonAnySetter
+    public void setVendorExtension(String name, Object value) {
+        if (name.startsWith("x-")) {
+            vendorExtensions.put(name, value);
+        }
     }
 
     public void cloneTo(Object clone) {
@@ -30,6 +48,8 @@ public abstract class AbstractModel implements Model {
         int result = 1;
         result = prime * result
                 + ((externalDocs == null) ? 0 : externalDocs.hashCode());
+        result = prime * result
+                + ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
         return result;
     }
 
@@ -52,6 +72,13 @@ public abstract class AbstractModel implements Model {
         } else if (!externalDocs.equals(other.externalDocs)) {
             return false;
         }
+        if (vendorExtensions == null) {
+            if (other.vendorExtensions != null) {
+                return false;
+            }
+        } else if (!vendorExtensions.equals(other.vendorExtensions)) {
+            return false;
+        }
         return true;
     }
 
@@ -65,4 +92,6 @@ public abstract class AbstractModel implements Model {
     public void setReference(String reference) {
         this.reference = reference;
     }
+
+
 }

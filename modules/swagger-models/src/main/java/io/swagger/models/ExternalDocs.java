@@ -1,5 +1,11 @@
 package io.swagger.models;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Container for a <a href="https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#externalDocumentationObject">External Documentation Object</a>.
  */
@@ -13,6 +19,8 @@ public class ExternalDocs {
      * Required. The URL for the target documentation. Value MUST be in the format of a URL.
      */
     private String url;
+
+    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
     public ExternalDocs() {
     }
@@ -48,6 +56,18 @@ public class ExternalDocs {
         this.url = url;
     }
 
+    @JsonAnyGetter
+    public Map<String, Object> getVendorExtensions() {
+        return vendorExtensions;
+    }
+
+    @JsonAnySetter
+    public void setVendorExtension(String name, Object value) {
+        if (name.startsWith("x-")) {
+            vendorExtensions.put(name, value);
+        }
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -55,6 +75,8 @@ public class ExternalDocs {
         result = prime * result
                 + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
+        result = prime * result
+                + ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
         return result;
     }
 
@@ -82,6 +104,13 @@ public class ExternalDocs {
                 return false;
             }
         } else if (!url.equals(other.url)) {
+            return false;
+        }
+        if (vendorExtensions == null) {
+            if (other.vendorExtensions != null) {
+                return false;
+            }
+        } else if (!vendorExtensions.equals(other.vendorExtensions)) {
             return false;
         }
         return true;
