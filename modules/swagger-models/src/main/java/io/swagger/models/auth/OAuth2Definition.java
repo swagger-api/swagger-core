@@ -3,7 +3,7 @@ package io.swagger.models.auth;
 import java.util.HashMap;
 import java.util.Map;
 
-public class OAuth2Definition implements SecuritySchemeDefinition {
+public class OAuth2Definition extends AbstractSecuritySchemeDefinition {
     private String type = "oauth2";
     private String authorizationUrl;
     private String tokenUrl;
@@ -93,7 +93,7 @@ public class OAuth2Definition implements SecuritySchemeDefinition {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
+        int result = super.hashCode();
         result = prime * result
                 + ((authorizationUrl == null) ? 0 : authorizationUrl.hashCode());
         result = prime * result + ((flow == null) ? 0 : flow.hashCode());
@@ -109,6 +109,9 @@ public class OAuth2Definition implements SecuritySchemeDefinition {
             return true;
         }
         if (obj == null) {
+            return false;
+        }
+        if (!super.equals(obj)) {
             return false;
         }
         if (getClass() != obj.getClass()) {

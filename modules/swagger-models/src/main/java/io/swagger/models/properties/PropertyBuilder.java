@@ -4,10 +4,12 @@ import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.RefModel;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,10 +29,16 @@ public class PropertyBuilder {
         if (processor == null) {
             return null;
         }
-        if (args == null) {
-            args = Collections.emptyMap();
+        final Map<PropertyId, Object> safeArgs = args == null ? Collections.<PropertyId, Object>emptyMap() : args;
+        final Map<PropertyId, Object> fixedArgs;
+        if (format != null) {
+            fixedArgs = new EnumMap<PropertyId, Object>(PropertyId.class);
+            fixedArgs.putAll(safeArgs);
+            fixedArgs.put(PropertyId.FORMAT, format);
+        } else {
+            fixedArgs = safeArgs;
         }
-        return processor.build(args);
+        return processor.build(fixedArgs);
     }
 
     /**
@@ -161,6 +169,17 @@ public class PropertyBuilder {
                 return null;
             }
 
+        },
+        BYTE_ARRAY(ByteArrayProperty.class) {
+            @Override
+            protected boolean isType(String type, String format) {
+                return ByteArrayProperty.isType(type, format);
+            }
+
+            @Override
+            protected ByteArrayProperty create() {
+                return new ByteArrayProperty();
+            }
         },
         DATE(DateProperty.class) {
             @Override
@@ -678,6 +697,9 @@ public class PropertyBuilder {
         public Property merge(Property property, Map<PropertyId, Object> args) {
             if (property instanceof AbstractProperty) {
                 final AbstractProperty resolved = (AbstractProperty) property;
+                if (resolved.getFormat() == null) {
+                    resolved.setFormat(PropertyId.FORMAT.<String>findValue(args));
+                }
                 if (args.containsKey(PropertyId.TITLE)) {
                     final String value = PropertyId.TITLE.findValue(args);
                     resolved.setTitle(value);

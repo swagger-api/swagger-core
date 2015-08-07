@@ -1,4 +1,4 @@
-import io.swagger.models.Response
+import io.swagger.models.{Response}
 import io.swagger.util.Json
 import org.junit.runner.RunWith
 import org.scalatest.{FlatSpec, Matchers}

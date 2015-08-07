@@ -29,7 +29,7 @@ class ModelSerializerTest extends FlatSpec with Matchers {
   }
 
   it should "deserialize a model" in {
-    val json = """{"required":["intValue"],"properties":{"dateValue":{"type":"string","format":"date"},"longValue":{"type":"integer","format":"int64"},"dateTimeValue":{"type":"string","format":"date-time"},"intValue":{"type":"integer","format":"int32"}}}"""
+    val json = """{"required":["intValue"],"properties":{"dateValue":{"type":"string","format":"date"},"longValue":{"type":"integer","format":"int64"},"dateTimeValue":{"type":"string","format":"date-time"},"intValue":{"type":"integer","format":"int32"},"byteArrayValue":{"type":"string","format":"binary"}}}"""
 
     val p = m.readValue(json, classOf[Model])
     m.writeValueAsString(p) should equal(json)

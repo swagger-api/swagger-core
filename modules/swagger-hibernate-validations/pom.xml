@@ -4,14 +4,14 @@
     <parent>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.5.2</version>
+        <version>1.5.3-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.swagger</groupId>
     <artifactId>swagger-hibernate-validations</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.2</version>
+    <version>1.5.3-SNAPSHOT</version>
     <name>swagger-hibernate-validations</name>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -78,24 +78,6 @@
             <artifactId>logback-core</artifactId>
             <version>${logback-version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.10</artifactId>
-            <version>${scala-test-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${scala-version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>

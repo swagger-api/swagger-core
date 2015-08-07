@@ -1,6 +1,11 @@
 package io.swagger.models.properties;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import io.swagger.models.Xml;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class AbstractProperty implements Property {
     String name;
@@ -14,6 +19,7 @@ public abstract class AbstractProperty implements Property {
     String title;
     Boolean readOnly;
     private String access;
+    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
     public Property title(String title) {
         this.setTitle(title);
@@ -128,6 +134,18 @@ public abstract class AbstractProperty implements Property {
         this.access = access;
     }
 
+    @JsonAnyGetter
+    public Map<String, Object> getVendorExtensions() {
+        return vendorExtensions;
+    }
+
+    @JsonAnySetter
+    public void setVendorExtension(String name, Object value) {
+        if (name.startsWith("x-")) {
+            vendorExtensions.put(name, value);
+        }
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -144,6 +162,7 @@ public abstract class AbstractProperty implements Property {
         result = prime * result + ((title == null) ? 0 : title.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((xml == null) ? 0 : xml.hashCode());
+        result = prime * result + ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
         return result;
     }
 
@@ -230,6 +249,13 @@ public abstract class AbstractProperty implements Property {
                 return false;
             }
         } else if (!xml.equals(other.xml)) {
+            return false;
+        }
+        if (vendorExtensions == null) {
+            if (other.vendorExtensions != null) {
+                return false;
+            }
+        } else if (!vendorExtensions.equals(other.vendorExtensions)) {
             return false;
         }
         return true;

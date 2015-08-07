@@ -1,9 +1,6 @@
 package io.swagger.models;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
 import io.swagger.models.parameters.Parameter;
 
 import java.util.ArrayList;
@@ -13,6 +10,7 @@ import java.util.Map;
 
 @JsonPropertyOrder({"get", "head", "post", "put", "delete", "options", "patch"})
 public class Path {
+
     private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
     private Operation get;
     private Operation put;
@@ -167,6 +165,33 @@ public class Path {
         return allOperations;
     }
 
+    @JsonIgnore
+    public Map<HttpMethod, Operation> getOperationMap() {
+        Map<HttpMethod, Operation> result = new HashMap<HttpMethod, Operation>();
+
+        if (get != null) {
+            result.put(HttpMethod.GET, get);
+        }
+        if (put != null) {
+            result.put(HttpMethod.PUT, put);
+        }
+        if (post != null) {
+            result.put(HttpMethod.POST, post);
+        }
+        if (delete != null) {
+            result.put(HttpMethod.DELETE, delete);
+        }
+        if (patch != null) {
+            result.put(HttpMethod.PATCH, patch);
+        }
+        if (options != null) {
+            result.put(HttpMethod.OPTIONS, options);
+            result.put(HttpMethod.OPTIONS, options);
+        }
+
+        return result;
+    }
+
     public List<Parameter> getParameters() {
         return parameters;
     }
@@ -203,7 +228,7 @@ public class Path {
         }
     }
 
-    @Override
+
     public int hashCode() {
         final int prime = 31;
         int result = 1;
