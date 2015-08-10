@@ -18,7 +18,8 @@ public enum PrimitiveType {
     URI(java.net.URI.class, "uri"),
     URL(java.net.URL.class, "url"),
     UUID(java.util.UUID.class, "uuid"),
-    DATE_TIME(Date.class, "dateTime");
+    DATE_TIME(Date.class, "dateTime"),
+    FILE(java.io.File.class, "file");
 
     private final Type type;
     private final Set<String> names;
