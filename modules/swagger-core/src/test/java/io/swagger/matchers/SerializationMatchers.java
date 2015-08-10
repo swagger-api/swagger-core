@@ -1,5 +1,7 @@
 package io.swagger.matchers;
 
+import static org.testng.Assert.fail;
+
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 
@@ -14,15 +16,15 @@ import java.io.IOException;
 public class SerializationMatchers {
     private static final Logger LOGGER = LoggerFactory.getLogger(SerializationMatchers.class);
 
-    public static boolean compareAsYaml(Object objectToSerialize, String yamlStr) {
-        return apply(objectToSerialize, yamlStr, Yaml.mapper());
+    public static void assertEqualsToYaml(Object objectToSerialize, String yamlStr) {
+        apply(objectToSerialize, yamlStr, Yaml.mapper());
     }
 
-    public static boolean compareAsJson(Object objectToSerialize, String jsonStr) {
-        return apply(objectToSerialize, jsonStr, Json.mapper());
+    public static void assertEqualsToJson(Object objectToSerialize, String jsonStr) {
+        apply(objectToSerialize, jsonStr, Json.mapper());
     }
 
-    private static boolean apply(Object objectToSerialize, String str, ObjectMapper mapper) {
+    private static void apply(Object objectToSerialize, String str, ObjectMapper mapper) {
         final ObjectNode lhs = mapper.convertValue(objectToSerialize, ObjectNode.class);
         ObjectNode rhs = null;
         try {
@@ -30,6 +32,8 @@ public class SerializationMatchers {
         } catch (IOException e) {
             LOGGER.error("Failed to read value", e);
         }
-        return lhs.equals(rhs);
+        if (!lhs.equals(rhs)) {
+            fail(String.format("Serialized object:\n%s\ndoes not equal to expected serialized string:\n%s", lhs, rhs));
+        }
     }
 }

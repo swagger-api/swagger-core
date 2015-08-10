@@ -8,6 +8,8 @@ import io.swagger.models.Swagger;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.resources.ResourceWithReferences;
+import io.swagger.util.ResourceUtils;
+
 import org.apache.commons.io.IOUtils;
 import org.testng.annotations.Test;
 
@@ -36,7 +38,7 @@ public class ReferenceTest {
     @Test(description = "Scan API with operation and response references")
     public void scanAPI() throws IOException {
         final Swagger swagger = new Reader(new Swagger()).read(ResourceWithReferences.class);
-        final InputStream in = getClass().getClassLoader().getResourceAsStream("ResourceWithReferences.json");
-        assertTrue(SerializationMatchers.compareAsJson(swagger, IOUtils.toString(in, StandardCharsets.UTF_8)));
+        final String json = ResourceUtils.loadClassResource(getClass(), "ResourceWithReferences.json");
+        SerializationMatchers.assertEqualsToJson(swagger, json);
     }
 }

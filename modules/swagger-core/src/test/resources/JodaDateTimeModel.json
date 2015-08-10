@@ -1,0 +1,11 @@
+{
+    "JodaDateTimeModel": {
+        "type": "object",
+        "properties": {
+            "createdAt": {
+                "type": "string",
+                "format": "date-time"
+            }
+        }
+    }
+}

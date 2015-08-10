@@ -1,4 +1,4 @@
-package models;
+package io.swagger.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -71,7 +72,7 @@ public class Employee {
 
     @JsonProperty("department")
     @XmlElement(name = "department")
-    @ApiModelProperty(dataType = "models.Link", required = true, value = "The department this employee belongs to.")
+    @ApiModelProperty(dataType = "io.swagger.models.Link", required = true, value = "The department this employee belongs to.")
     public Link<Department> getDept() {
         return dept;
     }
@@ -82,7 +83,7 @@ public class Employee {
 
     @JsonProperty("manager")
     @XmlElement(name = "manager")
-    @ApiModelProperty(dataType = "models.Link", required = true, value = "The employee this employee reports to.")
+    @ApiModelProperty(dataType = "io.swagger.models.Link", required = true, value = "The employee this employee reports to.")
     public Link<Employee> getManager() {
         return manager;
     }

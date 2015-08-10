@@ -1,4 +1,4 @@
-package models;
+package io.swagger.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonInclude(Include.NON_EMPTY)
 @JsonTypeInfo(include = As.WRAPPER_OBJECT, use = Id.NAME)
 @ApiModel(description = "Represents an association to another resource in the system", value = "link")
-public class Link<T> extends AbstractModel {
+public class Link<T> {
     private String href;
     private String rel;
     private String status;
