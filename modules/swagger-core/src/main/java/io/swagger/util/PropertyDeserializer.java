@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class PropertyDeserializer extends JsonDeserializer<Property> {
     Logger LOGGER = LoggerFactory.getLogger(PropertyDeserializer.class);
@@ -125,6 +127,17 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                 if (items != null) {
                     return new MapProperty(items).description(description);
                 }
+            } else {
+              detailNode = node.get("properties");
+              Map<String, Property> properties = new HashMap<String, Property>();
+              if(detailNode != null){
+                  for(Iterator<Map.Entry<String,JsonNode>> iter = detailNode.fields(); iter.hasNext();){
+                      Map.Entry<String,JsonNode> field = iter.next();
+                      Property property = propertyFromNode(field.getValue());
+                      properties.put(field.getKey(), property);
+                  }
+              }
+              return new ObjectProperty(properties);
             }
         }
         if (ArrayProperty.isType(type)) {
