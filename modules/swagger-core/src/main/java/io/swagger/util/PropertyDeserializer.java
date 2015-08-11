@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class PropertyDeserializer extends JsonDeserializer<Property> {
     Logger LOGGER = LoggerFactory.getLogger(PropertyDeserializer.class);
@@ -125,6 +127,17 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                 if (items != null) {
                     return new MapProperty(items).description(description);
                 }
+            } else {
+              detailNode = node.get("properties");
+              Map<String, Property> properties = new HashMap<String, Property>();
+              if(detailNode != null){
+                  for(Iterator<Map.Entry<String,JsonNode>> iter = detailNode.fields(); iter.hasNext();){
+                      Map.Entry<String,JsonNode> field = iter.next();
+                      Property property = propertyFromNode(field.getValue());
+                      properties.put(field.getKey(), property);
+                  }
+              }
+              return new ObjectProperty(properties);
             }
         }
         if (ArrayProperty.isType(type)) {
@@ -156,6 +169,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM, getBoolean(node, PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM));
         args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM, getBoolean(node, PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM));
         args.put(PropertyBuilder.PropertyId.UNIQUE_ITEMS, getBoolean(node, PropertyBuilder.PropertyId.UNIQUE_ITEMS));
+        args.put(PropertyBuilder.PropertyId.READ_ONLY, getBoolean(node, PropertyBuilder.PropertyId.READ_ONLY));
 
         Property output = PropertyBuilder.build(type, format, args);
         if (output == null) {

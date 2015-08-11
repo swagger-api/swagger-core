@@ -293,6 +293,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 annotations = annotationList.toArray(new Annotation[annotationList.size()]);
 
                 ApiModelProperty mp = member.getAnnotation(ApiModelProperty.class);
+                
+                if(mp != null && mp.readOnly()) {
+                  isReadOnly = mp.readOnly();
+                }
 
                 JavaType propType = member.getType(beanDesc.bindingsForBeanType());
 

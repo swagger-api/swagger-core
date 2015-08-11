@@ -1,0 +1,29 @@
+{
+    "type": "object",
+    "properties": {
+        "uuid": {
+            "type": "string",
+            "format": "uuid"
+        },
+        "uri": {
+            "type": "string",
+            "format": "uri"
+        },
+        "url": {
+            "type": "string",
+            "format": "url"
+        },
+        "date": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "aByte": {
+            "type": "string",
+            "format": "byte"
+        },
+        "aByteObject": {
+            "type": "string",
+            "format": "byte"
+        }
+    }
+}
