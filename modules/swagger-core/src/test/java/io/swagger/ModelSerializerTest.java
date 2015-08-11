@@ -1,5 +1,6 @@
 package io.swagger;
 
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -22,13 +23,14 @@ import io.swagger.util.Json;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
+ 
 public class ModelSerializerTest {
     private final ObjectMapper m = Json.mapper();
 
@@ -190,5 +192,35 @@ public class ModelSerializerTest {
 
         final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
         assertEquals(Json.mapper().writeValueAsString(model.getExample()), "{\"code\":1,\"message\":\"hello\",\"fields\":\"abc\"}");
+    }
+
+    @Test(description = "it should deserialize a model with read-only property")
+    public void deserializeModelWithReadOnlyProperty() throws IOException {
+        final String json = "{\n" +
+                "   \"properties\":{\n" +
+                "      \"id\":{\n" +
+                "         \"type\":\"integer\",\n" +
+                "         \"format\":\"int32\",\n" +
+                "         \"readOnly\":true\n" +
+                "      }\n" +
+                "   }\n" +
+                "}";
+
+        final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
+        Property property = model.getProperties().get("id");
+        assertTrue(property.getReadOnly());
+    }
+
+    @Test(description = "it should generate a JSON with read-only from pojo, #1161")
+    public void readOnlyJsonGeneration() throws IOException {
+        Map<String, Model> models = ModelConverters.getInstance().read(io.swagger.models.ReadOnlyModel.class);
+
+        Model model = models.get("ReadOnlyModel");
+
+        Property id = model.getProperties().get("id");
+        assertTrue(id.getReadOnly());
+        
+        Property readWriteId = model.getProperties().get("readWriteId");
+        assertNull(readWriteId.getReadOnly());
     }
 }
