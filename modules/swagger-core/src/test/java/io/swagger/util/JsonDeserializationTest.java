@@ -86,7 +86,7 @@ public class JsonDeserializationTest {
         }
     }
 
-    @Test
+    @Test (description = "should deserialize a property with vendor extensions of different types")
     public void testDeserializePropertyWithVendorExtensions() throws Exception {
 
         Swagger swagger = TestUtils.deserializeJsonFileFromClasspath("specFiles/propertyWithVendorExtensions.json", Swagger.class);
