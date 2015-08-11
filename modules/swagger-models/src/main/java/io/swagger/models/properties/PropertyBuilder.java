@@ -94,6 +94,7 @@ public class PropertyBuilder {
         EXAMPLE("example"),
         TYPE("type"),
         FORMAT("format"),
+        READ_ONLY("readOnly"),
         VENDOR_EXTENSIONS("vendorExtensions");
 
         private String propertyName;
@@ -696,6 +697,9 @@ public class PropertyBuilder {
          * @return updated property instance
          */
         public Property merge(Property property, Map<PropertyId, Object> args) {
+            if(args.containsKey(PropertyId.READ_ONLY)) {
+                property.setReadOnly(PropertyId.READ_ONLY.<Boolean>findValue(args));
+            }
             if (property instanceof AbstractProperty) {
                 final AbstractProperty resolved = (AbstractProperty) property;
                 if (resolved.getFormat() == null) {

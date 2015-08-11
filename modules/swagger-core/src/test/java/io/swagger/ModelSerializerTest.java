@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
- 
+
 public class ModelSerializerTest {
     private final ObjectMapper m = Json.mapper();
 
@@ -205,7 +205,6 @@ public class ModelSerializerTest {
                 "      }\n" +
                 "   }\n" +
                 "}";
-
         final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
         Property property = model.getProperties().get("id");
         assertTrue(property.getReadOnly());
