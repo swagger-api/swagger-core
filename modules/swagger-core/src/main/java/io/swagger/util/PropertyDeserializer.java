@@ -64,6 +64,27 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         return result.isEmpty() ? null : result;
     }
 
+    //because of the complexity of deserializing properties we must handle vendor extensions by hand
+    private static Map<String, Object> getVendorExtensions(JsonNode node) {
+
+        Map result = new HashMap<String, Object>();
+
+        Iterator<String> fieldNameIter = node.fieldNames();
+        while (fieldNameIter.hasNext()) {
+            String fieldName = fieldNameIter.next();
+
+            if(fieldName.startsWith("x-")) {
+                JsonNode extensionField = node.get(fieldName);
+
+                Object extensionObject = Json.mapper().convertValue(extensionField, Object.class);
+                result.put(fieldName, extensionObject);
+            }
+
+        }
+
+        return result;
+    }
+
     private static JsonNode getDetailNode(JsonNode node, PropertyBuilder.PropertyId type) {
         return node.get(type.getPropertyName());
     }
@@ -170,6 +191,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM, getBoolean(node, PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM));
         args.put(PropertyBuilder.PropertyId.UNIQUE_ITEMS, getBoolean(node, PropertyBuilder.PropertyId.UNIQUE_ITEMS));
         args.put(PropertyBuilder.PropertyId.READ_ONLY, getBoolean(node, PropertyBuilder.PropertyId.READ_ONLY));
+        args.put(PropertyBuilder.PropertyId.VENDOR_EXTENSIONS, getVendorExtensions(node));
 
         Property output = PropertyBuilder.build(type, format, args);
         if (output == null) {
