@@ -93,7 +93,8 @@ public class PropertyBuilder {
         UNIQUE_ITEMS("uniqueItems"),
         EXAMPLE("example"),
         TYPE("type"),
-        FORMAT("format");
+        FORMAT("format"),
+        VENDOR_EXTENSIONS("vendorExtensions");
 
         private String propertyName;
 
@@ -711,6 +712,10 @@ public class PropertyBuilder {
                 if (args.containsKey(PropertyId.EXAMPLE)) {
                     final String value = PropertyId.EXAMPLE.findValue(args);
                     resolved.setExample(value);
+                }
+                if(args.containsKey(PropertyId.VENDOR_EXTENSIONS)) {
+                    final Map<String, Object> value = PropertyId.VENDOR_EXTENSIONS.findValue(args);
+                    resolved.setVendorExtensionMap(value);
                 }
             }
             return property;

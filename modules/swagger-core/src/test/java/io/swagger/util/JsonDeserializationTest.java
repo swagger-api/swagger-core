@@ -85,4 +85,42 @@ public class JsonDeserializationTest {
             assertEquals(oauth2.get(1), "world");
         }
     }
+
+    @Test
+    public void testDeserializePropertyWithVendorExtensions() throws Exception {
+
+        Swagger swagger = TestUtils.deserializeJsonFileFromClasspath("specFiles/propertyWithVendorExtensions.json", Swagger.class);
+
+        Map<String, Object> vendorExtensions = swagger.getDefinitions().get("Health").getProperties().get("status").getVendorExtensions();
+
+        assertNotNull(vendorExtensions);
+        assertEquals(6, vendorExtensions.size());
+
+        String xStringValue = (String) vendorExtensions.get("x-string-value");
+        assertNotNull(xStringValue);
+        assertEquals(xStringValue, "Hello World");
+
+        assertTrue(vendorExtensions.containsKey("x-null-value"));
+        assertNull(vendorExtensions.get("x-null-value"));
+
+        Map<String, String> xMapValue = (Map) vendorExtensions.get("x-map-value");
+        assertNotNull(xMapValue);
+        assertEquals(xMapValue.get("hello"), "world");
+        assertEquals(xMapValue.get("foo"), "bar");
+
+        List<String> xListValue = (List) vendorExtensions.get("x-list-value");
+        assertNotNull(xListValue);
+        assertEquals(xListValue.get(0), "Hello");
+        assertEquals(xListValue.get(1), "World");
+
+        Integer xNumberValue = (Integer) vendorExtensions.get("x-number-value");
+        assertNotNull(xNumberValue);
+        assertEquals(xNumberValue.intValue(), 123);
+
+        Boolean xBooleanValue = (Boolean) vendorExtensions.get("x-boolean-value");
+        assertNotNull(xBooleanValue);
+        assertTrue(xBooleanValue);
+
+        assertFalse(vendorExtensions.containsKey("not-an-extension"));
+    }
 }
