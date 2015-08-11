@@ -59,22 +59,18 @@ public class ArrayProperty extends AbstractProperty implements Property {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
+        int result = super.hashCode();
         result = prime * result + ((items == null) ? 0 : items.hashCode());
-        result = prime * result
-                + ((uniqueItems == null) ? 0 : uniqueItems.hashCode());
+        result = prime * result + ((uniqueItems == null) ? 0 : uniqueItems.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+        if (!super.equals(obj)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof ArrayProperty)) {
             return false;
         }
         ArrayProperty other = (ArrayProperty) obj;
