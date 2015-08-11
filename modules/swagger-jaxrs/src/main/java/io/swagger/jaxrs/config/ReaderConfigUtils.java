@@ -17,9 +17,12 @@ public class ReaderConfigUtils {
     }
 
     public static void initReaderConfig(ServletConfig config) {
-        if ("true".equals(config.getInitParameter("scan.all.resources")) || config.getInitParameter("ignore.routes") != null) {
+        if ("true".equals(config.getInitParameter("scan.all.resources"))
+                || config.getInitParameter("ignore.routes") != null
+                || "true".equals(config.getInitParameter("path.from.declaration"))) {
             final DefaultReaderConfig rc = new DefaultReaderConfig();
             rc.setScanAllResources("true".equals(config.getInitParameter("scan.all.resources")));
+            rc.setPathFromDeclaration("true".equals(config.getInitParameter("path.from.declaration")));
             final Set<String> ignoredRoutes = new LinkedHashSet<String>();
             for (String item : StringUtils.trimToEmpty(config.getInitParameter("ignore.routes")).split(",")) {
                 final String route = StringUtils.trimToNull(item);

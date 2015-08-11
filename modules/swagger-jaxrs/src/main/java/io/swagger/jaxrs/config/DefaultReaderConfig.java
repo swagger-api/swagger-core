@@ -11,6 +11,7 @@ import java.util.HashSet;
 public class DefaultReaderConfig implements ReaderConfig {
     private boolean scanAllResources;
     private Collection<String> ignoredRoutes = Collections.emptySet();
+    private boolean pathFromDeclaration;
 
     /**
      * Creates default configuration.
@@ -27,6 +28,7 @@ public class DefaultReaderConfig implements ReaderConfig {
         }
         setScanAllResources(src.isScanAllResources());
         setIgnoredRoutes(src.getIgnoredRoutes());
+        setPathFromDeclaration(src.isPathFromDeclaration());
     }
 
     @Override
@@ -46,5 +48,14 @@ public class DefaultReaderConfig implements ReaderConfig {
     public void setIgnoredRoutes(Collection<String> ignoredRoutes) {
         this.ignoredRoutes = ignoredRoutes == null || ignoredRoutes.isEmpty() ? Collections.<String>emptySet()
                 : Collections.unmodifiableCollection(new HashSet<String>(ignoredRoutes));
+    }
+
+    @Override
+    public boolean isPathFromDeclaration() {
+        return pathFromDeclaration;
+    }
+
+    public void setPathFromDeclaration(boolean pathFromDeclaration) {
+        this.pathFromDeclaration = pathFromDeclaration;
     }
 }
