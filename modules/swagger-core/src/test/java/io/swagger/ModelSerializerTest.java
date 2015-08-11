@@ -237,13 +237,4 @@ public class ModelSerializerTest {
         Property readWriteId = model.getProperties().get("readWriteId");
         assertNull(readWriteId.getReadOnly());
     }
-
-    @org.junit.Test//(description = "it should override @JsonIgnore with @ApiModelProperty")
-    public void readModelWithIgnoreProperties() throws IOException {
-        Map<String, Model> models = ModelConverters.getInstance().read(io.swagger.models.IgnorePropertyModel.class);
-
-        Model model = models.get("IgnorePropertyModel");
-System.out.println("IgnorePropertyModel");
-        Json.prettyPrint(model);
-    }
 }
