@@ -1,11 +1,14 @@
 package io.swagger.jaxrs.utils;
 
+import io.swagger.util.PrimitiveType;
+
 import com.google.common.base.Function;
-import io.swagger.converter.PrimitiveType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Context;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -20,7 +23,7 @@ public class ReflectionUtils {
     public static Type typeFromString(String type) {
         final PrimitiveType primitive = PrimitiveType.fromName(type);
         if (primitive != null) {
-            return primitive.getType();
+            return primitive.getKeyClass();
         }
         try {
             return Class.forName(type);
