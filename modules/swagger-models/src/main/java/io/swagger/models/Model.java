@@ -24,4 +24,6 @@ public interface Model {
     void setReference(String reference);
 
     Object clone();
+
+    Map<String, Object> getVendorExtensions();
 }

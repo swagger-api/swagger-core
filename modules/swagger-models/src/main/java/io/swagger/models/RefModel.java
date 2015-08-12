@@ -94,6 +94,12 @@ public class RefModel implements Model {
     }
 
     @Override
+    @JsonIgnore
+    public Map<String, Object> getVendorExtensions() {
+        return null;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

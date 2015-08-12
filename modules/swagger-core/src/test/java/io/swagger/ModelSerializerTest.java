@@ -210,6 +210,21 @@ public class ModelSerializerTest {
         assertTrue(property.getReadOnly());
     }
 
+    /*
+    @Test(description = "it should deserialize a model with custom format")
+    public void deserializeModelWithCustomFormat() throws IOException {
+        final String json = "{\n" +
+                "   \"properties\":{\n" +
+                "      \"id\":{\n" +
+                "         \"type\":\"string\",\n" +
+                "         \"format\":\"custom\"\n" +
+                "      }\n" +
+                "   }\n" +
+                "}";
+        final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
+        Json.prettyPrint(model);
+    }*/
+
     @Test(description = "it should generate a JSON with read-only from pojo, #1161")
     public void readOnlyJsonGeneration() throws IOException {
         Map<String, Model> models = ModelConverters.getInstance().read(io.swagger.models.ReadOnlyModel.class);
