@@ -146,6 +146,10 @@ public abstract class AbstractProperty implements Property {
         }
     }
 
+    public void setVendorExtensionMap(Map<String, Object> vendorExtensionMap) {
+        this.vendorExtensions.putAll(vendorExtensionMap);
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

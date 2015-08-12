@@ -22,14 +22,14 @@ The following methods are available to obtain support for Swagger:
 
 
 ## Get started with Swagger!
-See the guide on [getting started with swagger](https://github.com/swagger-api/swagger-core/wiki/Swagger-Core-JAX-RS-Project-Setup) to get started with adding swagger to your API.
+See the guide on [getting started with swagger](https://github.com/swagger-api/swagger-core/wiki/Swagger-Core-JAX-RS-Project-Setup-1.5.X) to get started with adding swagger to your API.
 
 ## Compatibility
 The Swagger Specification has undergone 3 revisions since initial creation in 2010.  The swagger-core project has the following compatibilities with the swagger specification:
 
 Swagger core Version      | Release Date | Swagger Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-1.5.3-SNAPSHOT            |              | 2.0           | [master](https://github.com/swagger-api/swagger-core) | Under Development
+1.5.3            |              | 2.0           | [master](https://github.com/swagger-api/swagger-core) | Under Development
 1.5.2 (**current stable**)        | 2015-08-04   | 2.0           | [tag v1.5.2](https://github.com/swagger-api/swagger-core/tree/v1.5.2) | Supported
 1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Supported
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4) | Deprecated
@@ -52,7 +52,7 @@ You need the following installed and available in your $PATH:
 * Jackson 2.4.2 or greater
 
 
-### To build from source (currently 1.5.3-SNAPSHOT)
+### To build from source (currently 1.5.3)
 ```
 # first time building locally
 mvn -N

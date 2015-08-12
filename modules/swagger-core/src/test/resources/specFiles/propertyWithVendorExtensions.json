@@ -1,0 +1,38 @@
+{
+    "swagger": "2.0",
+    "paths": {
+        "/health": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/Health"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Health": {
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "x-string-value": "Hello World",
+                    "x-null-value": null,
+                    "x-map-value": {
+                        "hello": "world",
+                        "foo": "bar"
+                    },
+                    "x-list-value": [
+                        "Hello", "World"
+                    ],
+                    "x-number-value": 123,
+                    "x-boolean-value": true,
+                    "not-an-extension": "foobar"
+                }
+            }
+        }
+    }
+}

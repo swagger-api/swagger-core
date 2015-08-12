@@ -124,6 +124,15 @@ class SpecFilterTest extends FlatSpec with Matchers {
     getTagNames(filtered) should be(Set("pet", "store"))
   }
 
+  it should "filter with null definitions" in {
+    val json = Source.fromFile("src/test/scala/specFiles/petstore.json").mkString
+    val swagger = Json.mapper().readValue(json, classOf[Swagger])
+    swagger.setDefinitions(null)
+
+    val filter = new InternalModelPropertiesRemoverFilter
+    val filtered = new SpecFilter().filter(swagger, filter, null, null, null)
+  }
+
   def getTagNames(swagger: Swagger) = {
     (for (item <- swagger.getTags.asScala) yield item.getName).toSet
   }

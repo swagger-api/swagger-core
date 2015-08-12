@@ -258,7 +258,10 @@ public class Reader {
                     final ApiOperation apiOperation = getAnnotation(method, ApiOperation.class);
                     String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
-                    Operation operation = parseMethod(method, globalParameters);
+                    Operation operation = null;
+                    if(apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) { 
+                        operation = parseMethod(method, globalParameters);
+                    }
                     if (operation == null) {
                         continue;
                     }

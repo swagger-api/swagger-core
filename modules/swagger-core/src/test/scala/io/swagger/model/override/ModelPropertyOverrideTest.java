@@ -9,7 +9,7 @@ public class ModelPropertyOverrideTest {
     @Test
     public void OverrideTest() throws Exception {
         ModelConverters.getInstance().addConverter(new SamplePropertyConverter());
-        Json.prettyPrint(ModelConverters.getInstance().read(MyPojo.class));
+        String json = Json.pretty(ModelConverters.getInstance().read(MyPojo.class));
     }
 
     public static class MyPojo {

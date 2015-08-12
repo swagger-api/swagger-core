@@ -3,6 +3,8 @@ package io.swagger.models.properties;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.models.Xml;
 
+import java.util.Map;
+
 public interface Property {
     Property title(String title);
 
@@ -53,4 +55,6 @@ public interface Property {
 
     @JsonIgnore
     void setAccess(String access);
+
+    Map<String, Object> getVendorExtensions();
 }
