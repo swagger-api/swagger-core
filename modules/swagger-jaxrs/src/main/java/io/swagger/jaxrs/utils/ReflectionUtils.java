@@ -8,11 +8,16 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.core.Context;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ReflectionUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtils.class);
@@ -155,5 +160,31 @@ public class ReflectionUtils {
                     (constructor.getDeclaringClass().getModifiers() & access) == constructor.getModifiers();
         }
         return true;
+    }
+
+    /**
+     * Returns the list of declared fields from the class <code>cls</code> and its superclasses
+     * excluding <code>Object</code> class. If the field from child class hides the field from superclass,
+     * the field from superclass won't be added to the result list.
+     *
+     * @param cls is the processing class
+     * @return list of Fields
+     */
+    public static List<Field> getDeclaredFields(Class<?> cls) {
+        if (cls.equals(Object.class)) {
+            return Collections.emptyList();
+        }
+        final List<Field> fields = new ArrayList<Field>();
+        final Set<String> fieldNames = new HashSet<String>();
+        for (Field field : cls.getDeclaredFields()) {
+            fields.add(field);
+            fieldNames.add(field.getName());
+        }
+        for (Field field : getDeclaredFields(cls.getSuperclass())) {
+            if (!fieldNames.contains(field.getName())) {
+                fields.add(field);
+            }
+        }
+        return fields;
     }
 }

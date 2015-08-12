@@ -82,7 +82,7 @@ public class ReaderUtils {
      */
     public static List<Parameter> collectFieldParameters(Class<?> cls, Swagger swagger) {
         final List<Parameter> parameters = new ArrayList<Parameter>();
-        for (Field field : cls.getDeclaredFields()) {
+        for (Field field : ReflectionUtils.getDeclaredFields(cls)) {
             final List<Annotation> annotations = Arrays.asList(field.getAnnotations());
             final Type genericType = field.getGenericType();
             for (Parameter parameter : collectParameters(genericType, annotations)) {
