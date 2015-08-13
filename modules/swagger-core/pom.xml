@@ -8,7 +8,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>swagger-core</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>swagger-core</name>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -37,10 +37,12 @@
                         <Export-Package>
                             io.swagger.converter,
                             io.swagger.core,
+                            io.swagger.core.filter,
                             io.swagger.core.util,
                             io.swagger.reader,
                             io.swagger.config,
-                            io.swagger.models
+                            io.swagger.models,
+                            io.swagger.util
                         </Export-Package>
                     </instructions>
                 </configuration>
