@@ -1,7 +1,5 @@
 package io.swagger.jaxrs;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiParam;
 import io.swagger.converter.ModelConverters;
@@ -41,7 +39,6 @@ public class ParameterProcessor {
             return null;
         }
         final String defaultValue = helper.getDefaultValue();
-        final JavaType javaType = TypeFactory.defaultInstance().constructType(type);
         if (parameter instanceof AbstractSerializableParameter) {
             final AbstractSerializableParameter<?> p = (AbstractSerializableParameter<?>) parameter;
 
@@ -112,14 +109,14 @@ public class ParameterProcessor {
                 bp.setAccess(param.getAccess());
             }
 
-            final Property property = ModelConverters.getInstance().readAsProperty(javaType);
+            final Property property = ModelConverters.getInstance().readAsProperty(type);
             if (property != null) {
                 final Map<PropertyBuilder.PropertyId, Object> args = new EnumMap<PropertyBuilder.PropertyId, Object>(PropertyBuilder.PropertyId.class);
                 if (StringUtils.isNotEmpty(defaultValue)) {
                     args.put(PropertyBuilder.PropertyId.DEFAULT, defaultValue);
                 }
                 bp.setSchema(PropertyBuilder.toModel(PropertyBuilder.merge(property, args)));
-                for (Map.Entry<String, Model> entry : ModelConverters.getInstance().readAll(javaType).entrySet()) {
+                for (Map.Entry<String, Model> entry : ModelConverters.getInstance().readAll(type).entrySet()) {
                     swagger.addDefinition(entry.getKey(), entry.getValue());
                 }
             }
