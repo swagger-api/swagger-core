@@ -7,6 +7,7 @@ import io.swagger.models.properties.DateProperty;
 import io.swagger.models.properties.DateTimeProperty;
 import io.swagger.models.properties.DecimalProperty;
 import io.swagger.models.properties.DoubleProperty;
+import io.swagger.models.properties.FileProperty;
 import io.swagger.models.properties.FloatProperty;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.LongProperty;
@@ -141,6 +142,15 @@ public enum PrimitiveType {
         @Override
         public DateProperty createProperty() {
             return new DateProperty();
+        }
+    },
+    /**
+     * File.
+     */
+    FILE(java.io.File.class, "file") {
+        @Override
+        public FileProperty createProperty() {
+            return new FileProperty();
         }
     },
     /**
