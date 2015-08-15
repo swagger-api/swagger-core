@@ -1,12 +1,12 @@
 /**
  * Copyright 2015 SmartBear Software
- * <p/>
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,10 +23,10 @@ import java.lang.annotation.Target;
 
 /**
  * Describes an OAuth2 authorization scope.
- * <p/>
+ * <p>
  * Used to define an authorization scope that is used by an operation for
  * a defined authorization scheme.
- * <p/>
+ * <p>
  * This annotation is not used directly and will not be parsed by Swagger. It should be used
  * within the {@link Authorization}.
  *
@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
 public @interface AuthorizationScope {
     /**
      * The scope of the OAuth2 Authorization scheme to be used.
-     * <p/>
+     * <p>
      * The scope should be previously declared in the Swagger Object's securityDefinition section.
      */
     String scope();
