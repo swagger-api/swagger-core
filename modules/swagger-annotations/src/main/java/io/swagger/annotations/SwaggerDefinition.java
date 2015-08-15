@@ -1,12 +1,12 @@
 /**
  * Copyright 2015 SmartBear Software
- * <p/>
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,7 +52,7 @@ public @interface SwaggerDefinition {
 
     /**
      * Global level consumes for this swagger definition.
-     * <p/>
+     * <p>
      * These will be added to all api definitions that don't have local overrides - see
      * https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#swagger-object
      *
@@ -62,7 +62,7 @@ public @interface SwaggerDefinition {
 
     /**
      * Global level produces for this swagger definition.
-     * <p/>
+     * <p>
      * These will be added to all api definitions that don't have local overrides - see
      * https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#swagger-object
      *
@@ -72,7 +72,7 @@ public @interface SwaggerDefinition {
 
     /**
      * The transfer protocol of the API.
-     * <p/>
+     * <p>
      * Setting this to Scheme.DEFAULT will result in the result being generated from the hosting container.
      *
      * @return list of supported transfer protocols, keep empty for default
@@ -81,7 +81,7 @@ public @interface SwaggerDefinition {
 
     /**
      * Global tags that can be used to tag individual Apis and ApiOperations.
-     * <p/>
+     * <p>
      * See https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#tagObject
      *
      * @return list of globally defined tags
@@ -92,7 +92,7 @@ public @interface SwaggerDefinition {
 
     /**
      * General metadata for this Swagger definition.
-     * <p/>
+     * <p>
      * See https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#infoObject
      *
      * @return general metadata for this Swagger definition
