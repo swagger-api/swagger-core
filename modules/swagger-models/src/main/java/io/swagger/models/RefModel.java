@@ -8,6 +8,7 @@ import io.swagger.models.refs.RefFormat;
 import io.swagger.models.refs.RefType;
 
 import java.util.Map;
+import java.util.List;
 
 public class RefModel implements Model {
     private GenericRef genericRef;
@@ -15,6 +16,7 @@ public class RefModel implements Model {
     private ExternalDocs externalDocs;
     private Map<String, Property> properties;
     private Object example;
+    private List<String> _enum;
 
     public RefModel() {
     }
@@ -173,5 +175,15 @@ public class RefModel implements Model {
     @Override
     public void setReference(String reference) {
         this.genericRef = new GenericRef(RefType.DEFINITION, reference);
+    }
+
+    @Override
+    public List<String> getEnum() {
+	return _enum;
+    }
+
+    @Override
+    public void setEnum(List<String> _enum) {
+	this._enum = _enum;
     }
 }
