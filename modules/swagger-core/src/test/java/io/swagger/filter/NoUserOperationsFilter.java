@@ -1,4 +1,4 @@
-package filter;
+package io.swagger.filter;
 
 import io.swagger.core.filter.AbstractSpecFilter;
 import io.swagger.model.ApiDescription;
@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Sample filter to avoid all get operations for the resource
+ * Sample filter to avoid all resources for the /user resource
  **/
-public class NoGetOperationsFilter extends AbstractSpecFilter {
+public class NoUserOperationsFilter extends AbstractSpecFilter {
     @Override
     public boolean isOperationAllowed(
             Operation operation,
@@ -18,7 +18,7 @@ public class NoGetOperationsFilter extends AbstractSpecFilter {
             Map<String, List<String>> params,
             Map<String, String> cookies,
             Map<String, List<String>> headers) {
-        if ("get".equals(api.getMethod())) {
+        if (api.getPath().startsWith("/user")) {
             return false;
         }
         return true;
