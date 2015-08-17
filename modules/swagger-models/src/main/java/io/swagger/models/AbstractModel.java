@@ -6,11 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 public abstract class AbstractModel implements Model {
     private ExternalDocs externalDocs;
     private String reference;
     private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private List<String> _enum;
 
     @Override
     public ExternalDocs getExternalDocs() {
@@ -93,5 +95,13 @@ public abstract class AbstractModel implements Model {
         this.reference = reference;
     }
 
+    @Override
+    public List<String> getEnum() {
+	return _enum;
+    }
 
+    @Override
+    public void setEnum(List<String> _enum) {
+	this._enum = _enum;
+    }
 }
