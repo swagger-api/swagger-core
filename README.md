@@ -30,7 +30,7 @@ The Swagger Specification has undergone 3 revisions since initial creation in 20
 Swagger core Version      | Release Date | Swagger Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
 1.5.4-SNAPSHOT            |              | 2.0           | [master](https://github.com/swagger-api/swagger-core) | Under Development
-1.5.2 (**current stable**)        | 2015-08-04   | 2.0           | [tag v1.5.2](https://github.com/swagger-api/swagger-core/tree/v1.5.2) | Supported
+1.5.3 (**current stable**)        | 2015-08-04   | 2.0           | [tag v1.5.3](https://github.com/swagger-api/swagger-core/tree/v1.5.3) | Supported
 1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Supported
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4) | Deprecated
 1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0) | Deprecated
