@@ -1,4 +1,4 @@
-package filter;
+package io.swagger.filter;
 
 import io.swagger.core.filter.AbstractSpecFilter;
 import io.swagger.model.ApiDescription;
