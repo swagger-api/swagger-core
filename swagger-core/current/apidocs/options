@@ -1,0 +1,26 @@
+-classpath
+'/Users/ron/git/swagger-core/modules/swagger-annotations/target/classes'
+-encoding
+'UTF-8'
+-protected
+-source
+'1.6'
+-sourcepath
+'/Users/ron/git/swagger-core/modules/swagger-annotations/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2015. All Rights Reserved.'
+-charset
+'UTF-8'
+-d
+'/Users/ron/git/swagger-core/modules/swagger-annotations/target/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'swagger-annotations 1.5.3 API'
+-link
+'http://java.sun.com/javase/6/docs/api'
+-use
+-version
+-windowtitle
+'swagger-annotations 1.5.3 API'
