@@ -1,9 +1,15 @@
 package io.swagger.models.parameters;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.BaseIntegerProperty;
+import io.swagger.models.properties.BooleanProperty;
+import io.swagger.models.properties.DecimalProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
 
@@ -11,6 +17,7 @@ import java.util.List;
 
 @JsonPropertyOrder({"name", "in", "description", "required", "type", "items", "collectionFormat", "default", "maximum", "exclusiveMaximum", "minimum", "exclusiveMinimum"})
 public abstract class AbstractSerializableParameter<T extends AbstractSerializableParameter<T>> extends AbstractParameter implements SerializableParameter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSerializableParameter.class);
     protected String type;
     protected String format;
     protected String collectionFormat;
@@ -21,7 +28,7 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     protected Boolean exclusiveMinimum;
     protected Double minimum;
 
-    @JsonProperty("default")
+    @JsonIgnore
     protected String defaultValue;
 
     public T property(Property property) {
@@ -133,6 +140,30 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
 
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    public Object getDefault() {
+        if (defaultValue == null) {
+            return null;
+        }
+        try {
+            if (BaseIntegerProperty.TYPE.equals(type)) {
+                return Long.valueOf(defaultValue);
+            } else if (DecimalProperty.TYPE.equals(type)) {
+                return Double.valueOf(defaultValue);
+            } else if (BooleanProperty.TYPE.equals(type)) {
+                if ("true".equalsIgnoreCase(defaultValue) || "false".equalsIgnoreCase(defaultValue)) {
+                    return Boolean.valueOf(defaultValue);
+                }
+            }
+        } catch (NumberFormatException e) {
+            LOGGER.warn(String.format("Illegal DefaultValue %s for parameter type %s", defaultValue, type), e);
+        }
+        return defaultValue;
+    }
+
+    public void setDefault(Object defaultValue) {
+        this.defaultValue = defaultValue == null ? null : defaultValue.toString();
     }
 
     public Boolean isExclusiveMaximum() {
