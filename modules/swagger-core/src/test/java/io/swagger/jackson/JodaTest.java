@@ -1,34 +1,42 @@
 package io.swagger.jackson;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.FileAssert.fail;
+
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.models.Model;
 import io.swagger.models.properties.Property;
+
 import org.joda.time.DateTime;
+import org.testng.annotations.Test;
 
 import java.util.Map;
 
 public class JodaTest extends SwaggerTestBase {
+
+    @Test
     public void testSimple() throws Exception {
         final ModelConverter mr = modelResolver();
-        Model model = mr.resolve(ModelWithJodaDateTime.class, new ModelConverterContextImpl(mr), null);
+        final Model model = mr.resolve(ModelWithJodaDateTime.class, new ModelConverterContextImpl(mr), null);
         assertNotNull(model);
 
-        Map<String, Property> props = model.getProperties();
-        assertEquals(2, props.size());
+        final Map<String, Property> props = model.getProperties();
+        assertEquals(props.size(), 2);
 
         for (Map.Entry<String, Property> entry : props.entrySet()) {
-            String name = entry.getKey();
-            Property prop = entry.getValue();
+            final String name = entry.getKey();
+            final Property prop = entry.getValue();
 
             if ("name".equals(name)) {
-                assertEquals("string", prop.getType());
+                assertEquals(prop.getType(), "string");
             } else if ("createdAt".equals(name)) {
-                assertEquals("string", prop.getType());
-                assertEquals("date-time", prop.getFormat());
+                assertEquals(prop.getType(), "string");
+                assertEquals(prop.getFormat(), "date-time");
             } else {
-                fail("Unknown property '" + name + "'");
+                fail(String.format("Unknown property '%s'", name));
             }
         }
     }
