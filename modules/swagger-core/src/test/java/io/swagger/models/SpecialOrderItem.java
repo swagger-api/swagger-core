@@ -1,4 +1,4 @@
-package models;
+package io.swagger.models;
 
 public class SpecialOrderItem {
     public String name;
