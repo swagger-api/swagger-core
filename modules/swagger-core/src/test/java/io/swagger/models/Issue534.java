@@ -2,8 +2,6 @@ package io.swagger.models;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import models.SpecialOrderItem;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.List;
