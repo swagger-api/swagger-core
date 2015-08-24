@@ -1,6 +1,12 @@
 package io.swagger.jackson;
 
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.testng.annotations.Test;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContextImpl;
@@ -15,27 +21,28 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 public class XMLInfoTest extends SwaggerTestBase {
+
+    @Test
     public void testSimple() throws Exception {
         final ModelConverter mr = modelResolver();
-        Model model = mr.resolve(XmlDecoratedBean.class, new ModelConverterContextImpl(mr), null);
+        final Model model = mr.resolve(XmlDecoratedBean.class, new ModelConverterContextImpl(mr), null);
         assertTrue(model instanceof ModelImpl);
 
-        ModelImpl impl = (ModelImpl) model;
+        final ModelImpl impl = (ModelImpl) model;
 
-        Xml xml = impl.getXml();
+        final Xml xml = impl.getXml();
         assertNotNull(xml);
         assertEquals(xml.getName(), "xmlDecoratedBean");
 
-        Property property = impl.getProperties().get("items");
+        final Property property = impl.getProperties().get("items");
         assertNotNull(property);
-        xml = property.getXml();
+        final Xml propertyXml = property.getXml();
 
-        assertNotNull(xml);
-        assertEquals(xml.getName(), "item");
-        assertTrue(xml.getWrapped());
+        assertNotNull(propertyXml);
+        assertEquals(propertyXml.getName(), "item");
+        assertTrue(propertyXml.getWrapped());
 
-        property = impl.getProperties().get("elementC");
-        assertNotNull(property);
+        assertNotNull(impl.getProperties().get("elementC"));
     }
 
     @XmlRootElement(name = "xmlDecoratedBean")

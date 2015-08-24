@@ -5,9 +5,8 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import junit.framework.TestCase;
 
-public abstract class SwaggerTestBase extends TestCase {
+public abstract class SwaggerTestBase{
     static ObjectMapper mapper;
 
     public static ObjectMapper mapper() {

@@ -1,20 +1,22 @@
 package io.swagger.jackson;
 
+import static org.testng.Assert.assertNotNull;
+
 import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.models.Model;
 
+import org.testng.annotations.Test;
+
 public class ATMTest extends SwaggerTestBase {
+
+    @Test
     public void testATMModel() throws Exception {
+        final ModelResolver modelResolver = new ModelResolver(mapper());
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
-        ModelResolver modelResolver = new ModelResolver(mapper());
-        ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
-
-        Model model = context
+        final Model model = context
                 .resolve(ATM.class);
         assertNotNull(model);
-    /*
-    prettyPrint(model);
-    */
     }
 
     public enum Currency {USA, CANADA}

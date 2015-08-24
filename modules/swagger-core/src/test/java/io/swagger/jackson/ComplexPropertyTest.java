@@ -1,14 +1,19 @@
 package io.swagger.jackson;
 
+import static org.testng.Assert.assertNotNull;
+
 import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.models.Model;
 
+import org.testng.annotations.Test;
+
 public class ComplexPropertyTest extends SwaggerTestBase {
+
+    @Test
     public void testOuterBean() throws Exception {
-        ModelResolver modelResolver = modelResolver();
-        ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
-        ;
-        Model model = context
+        final ModelResolver modelResolver = modelResolver();
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+        final Model model = context
                 .resolve(OuterBean.class);
         assertNotNull(model);
     }
