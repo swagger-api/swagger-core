@@ -63,7 +63,7 @@ public class ModelDeserializer extends JsonDeserializer<Model> {
                 model = Json.mapper().convertValue(node, ModelImpl.class);
             }
             if (null == model) {
-                LOGGER.warn("Model is null!");
+                LOGGER.warn("Missing Model for Node: " + node);
             }
             return model;
         }
