@@ -3,8 +3,9 @@ package io.swagger.jaxrs.listing;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.config.FilterFactory;
 import io.swagger.config.Scanner;
-import io.swagger.config.ScannerFactory;
+import io.swagger.config.ScannerSingleton;
 import io.swagger.config.SwaggerConfig;
+import io.swagger.config.SwaggerConfigMap;
 import io.swagger.core.filter.SpecFilter;
 import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs.Reader;
@@ -45,12 +46,18 @@ public class ApiListingResource {
 
     protected synchronized Swagger scan(Application app, ServletConfig sc) {
         Swagger swagger = null;
-        Scanner scanner = ScannerFactory.getScanner();
+        Scanner scanner = ScannerSingleton.getScanner();
         LOGGER.debug("using scanner " + scanner);
 
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
-            swagger = (Swagger) context.getAttribute("swagger");
+
+            String swaggerId = sc.getInitParameter("swagger.id");
+            if (swaggerId == null) {
+                swaggerId = "default";
+            }
+            String swaggerContextId = "swagger-" + swaggerId;
+            swagger = (Swagger) context.getAttribute(swaggerContextId);
 
             Set<Class<?>> classes = new HashSet<Class<?>>();
             if (scanner instanceof JaxrsScanner) {
@@ -65,7 +72,7 @@ public class ApiListingResource {
                 if (scanner instanceof SwaggerConfig) {
                     swagger = ((SwaggerConfig) scanner).configure(swagger);
                 } else {
-                    SwaggerConfig configurator = (SwaggerConfig) context.getAttribute("reader");
+                    SwaggerConfig configurator = SwaggerConfigMap.getConfig(swaggerId);
                     if (configurator != null) {
                         LOGGER.debug("configuring swagger with " + configurator);
                         configurator.configure(swagger);
@@ -73,7 +80,7 @@ public class ApiListingResource {
                         LOGGER.debug("no configurator");
                     }
                 }
-                context.setAttribute("swagger", swagger);
+                context.setAttribute(swaggerContextId, swagger);
             }
         }
         initialized = true;

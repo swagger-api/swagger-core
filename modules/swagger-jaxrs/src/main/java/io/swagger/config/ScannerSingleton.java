@@ -1,7 +1,9 @@
 package io.swagger.config;
 
-public class ScannerFactory {
-    private static Scanner SCANNER;
+import io.swagger.jaxrs.config.DefaultJaxrsScanner;
+
+public class ScannerSingleton {
+    private static Scanner SCANNER = new DefaultJaxrsScanner();
 
     public static Scanner getScanner() {
         return SCANNER;
