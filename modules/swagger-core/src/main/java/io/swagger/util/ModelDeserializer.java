@@ -12,11 +12,16 @@ import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.RefModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ModelDeserializer extends JsonDeserializer<Model> {
+    Logger LOGGER = LoggerFactory.getLogger(ModelDeserializer.class);
+
     @Override
     public Model deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
@@ -56,6 +61,9 @@ public class ModelDeserializer extends JsonDeserializer<Model> {
                 model = Json.mapper().convertValue(node, ArrayModel.class);
             } else {
                 model = Json.mapper().convertValue(node, ModelImpl.class);
+            }
+            if (null == model) {
+                LOGGER.warn("Model is null!");
             }
             return model;
         }
