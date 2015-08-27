@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PropertyBuilder {
-    static Logger LOGGER = LoggerFactory.getLogger(PropertyBuilder.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(PropertyBuilder.class);
 
     /**
      * Creates new property on the passed arguments.
@@ -140,37 +140,9 @@ public class PropertyBuilder {
                         }
                     }
                 }
+
                 return property;
             }
-        },
-        STRING(StringProperty.class) {
-            @Override
-            protected boolean isType(String type, String format) {
-                return StringProperty.isType(type, format);
-            }
-
-            @Override
-            protected StringProperty create() {
-                return new StringProperty();
-            }
-
-            @Override
-            public Property merge(Property property, Map<PropertyId, Object> args) {
-                super.merge(property, args);
-                if (property instanceof StringProperty) {
-                    mergeString((StringProperty) property, args);
-                }
-                return property;
-            }
-
-            @Override
-            public Model toModel(Property property) {
-                if (isType(property)) {
-                    return createStringModel((StringProperty) property);
-                }
-                return null;
-            }
-
         },
         BYTE_ARRAY(ByteArrayProperty.class) {
             @Override
@@ -377,6 +349,10 @@ public class PropertyBuilder {
                 return null;
             }
         },
+
+        // note: this must be in the enum order after both INT and LONG
+        // (and any integer types added in the future), so the more specific
+        // ones will be found first.
         INTEGER(BaseIntegerProperty.class) {
             @Override
             protected boolean isType(String type, String format) {
@@ -398,6 +374,10 @@ public class PropertyBuilder {
                 return property;
             }
         },
+
+        // note: this must be in the enum order after both DOUBLE and FLOAT
+        // (and any number types added in the future), so the more specific
+        // ones will be found first.
         DECIMAL(DecimalProperty.class) {
             @Override
             protected boolean isType(String type, String format) {
@@ -530,14 +510,7 @@ public class PropertyBuilder {
         OBJECT(ObjectProperty.class) {
             @Override
             protected boolean isType(String type, String format) {
-                if (ObjectProperty.isType(type, format)) {
-                    return true;
-                }
-                if (ObjectProperty.TYPE.equals(type) && format == null) {
-                    LOGGER.debug("no format specified for object type, falling back to object");
-                    return true;
-                }
-                return false;
+                return ObjectProperty.isType(type, format);
             }
 
             @Override
@@ -587,7 +560,42 @@ public class PropertyBuilder {
                 }
                 return null;
             }
-        };
+        },
+
+        // String is intentionally last, so it is found after the more specific property
+        // types which also use the "string" type.
+        STRING(StringProperty.class) {
+            @Override
+            protected boolean isType(final String type, final String format) {
+                return StringProperty.isType(type, format);
+            }
+
+            @Override
+            protected StringProperty create() {
+                return new StringProperty();
+            }
+
+            @Override
+            public Property merge(final Property property, final Map<PropertyId, Object> args) {
+                super.merge(property, args);
+                if (property instanceof StringProperty) {
+                    mergeString((StringProperty) property, args);
+                }
+
+                return property;
+            }
+
+            @Override
+            public Model toModel(final Property property) {
+                if (isType(property)) {
+                    return createStringModel((StringProperty) property);
+                }
+
+                return null;
+            }
+
+        },
+        ;
 
         private final Class<? extends Property> type;
 

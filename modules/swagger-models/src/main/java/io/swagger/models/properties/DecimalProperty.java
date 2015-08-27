@@ -5,6 +5,10 @@ import io.swagger.models.Xml;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The DecimalProperty class defines properties for (decimal) numbers without a specific format, or with a custom
+ * format. The two standard formats are defined in {@link DoubleProperty} and {@link FloatProperty}.
+ */
 public class DecimalProperty extends AbstractNumericProperty {
     public static final String TYPE = "number";
 
@@ -18,7 +22,7 @@ public class DecimalProperty extends AbstractNumericProperty {
     }
 
     public static boolean isType(String type, String format) {
-        return TYPE.equals(type) && format == null;
+        return TYPE.equals(type);
     }
 
     public DecimalProperty xml(Xml xml) {

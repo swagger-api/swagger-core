@@ -1,8 +1,8 @@
 package io.swagger.models.properties;
 
 /**
- * The <code>BaseIntegerProperty</code> class defines property for integers
- * without specific format.
+ * The <code>BaseIntegerProperty</code> class defines property for integers without specific format, or with a custom
+ * format.
  */
 public class BaseIntegerProperty extends AbstractNumericProperty {
     public static final String TYPE = "integer";
@@ -17,6 +17,6 @@ public class BaseIntegerProperty extends AbstractNumericProperty {
     }
 
     public static boolean isType(String type, String format) {
-        return TYPE.equals(type) && format == null;
+        return TYPE.equals(type);
     }
 }
