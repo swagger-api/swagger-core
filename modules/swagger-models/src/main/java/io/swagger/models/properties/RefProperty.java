@@ -2,7 +2,6 @@ package io.swagger.models.properties;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.models.refs.GenericRef;
-import io.swagger.models.refs.RefConstants;
 import io.swagger.models.refs.RefFormat;
 import io.swagger.models.refs.RefType;
 
@@ -28,7 +27,7 @@ public class RefProperty extends AbstractProperty implements Property {
     }
 
     public RefProperty asDefault(String ref) {
-        this.set$ref(RefConstants.INTERNAL_DEFINITION_PREFIX + ref);
+        this.set$ref(RefType.DEFINITION.getInternalPrefix() + ref);
         return this;
     }
 
