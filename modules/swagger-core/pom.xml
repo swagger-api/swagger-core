@@ -41,7 +41,7 @@
                             io.swagger.core.util,
                             io.swagger.reader,
                             io.swagger.config,
-                            io.swagger.models,
+                            io.swagger.model,
                             io.swagger.util
                         </Export-Package>
                     </instructions>
