@@ -44,7 +44,9 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
+                            io.swagger.jaxrs,
                             io.swagger.jaxrs.config,
+                            io.swagger.jaxrs.ext,
                             io.swagger.jaxrs.listing
                         </Export-Package>
                         <Import-Package>
