@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PropertyBuilder {
-    static Logger LOGGER = LoggerFactory.getLogger(PropertyBuilder.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(PropertyBuilder.class);
 
     /**
      * Creates new property on the passed arguments.
@@ -601,8 +601,23 @@ public class PropertyBuilder {
                     return item;
                 }
             }
-            LOGGER.debug("no property for " + type + ", " + format);
-            return null;
+
+            if (format != null) {
+                LOGGER.debug("no property for " + type + ", " + format + ", trying again without the format.");
+
+                // if none was found, try again without the format:
+                for (final Processor item : values()) {
+                    if (item.isType(type, null)) {
+                        return item;
+                    }
+                }
+
+                LOGGER.debug("no property for " + type + ", null, either.");
+                return null;
+            } else {
+                LOGGER.debug("no property for " + type + ", " + format);
+                return null;
+            }
         }
 
         public static Processor fromProperty(Property property) {
