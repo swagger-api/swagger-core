@@ -14,7 +14,7 @@ public class ResourceTest1343 {
         return reader.read(resource);
     }
 
-    @org.junit.Test///(description = "scan resource 1343")
+    @Test(description = "scan resource 1343")
     public void scanResource1343() {
         Swagger swagger = getSwagger(Resource1343.class);
         Json.prettyPrint(swagger);

@@ -13,10 +13,10 @@ import io.swagger.models.properties.StringProperty;
 import io.swagger.resources.PostParamResource;
 import org.testng.annotations.Test;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 public class PostParamTest {
     private static final String BODY = "body";
