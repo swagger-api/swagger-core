@@ -7,6 +7,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.Cat;
@@ -50,6 +51,7 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
@@ -306,4 +308,55 @@ public class ModelConverterTest {
             }
         }
     }
+
+    @Test
+    public void formatDate() {
+        final Map<String, Model> models = ModelConverters.getInstance().read(DateModel.class);
+        final Model model = models.get("DateModel");
+        assertEquals(model.getProperties().size(), 5);
+        final String json = "{" +
+                "   \"type\":\"object\"," +
+                "   \"properties\":{" +
+                "      \"date\":{" +
+                "         \"type\":\"string\"," +
+                "         \"format\":\"date-time\"," +
+                "         \"position\":1" +
+                "      }," +
+                "      \"intValue\":{" +
+                "         \"type\":\"integer\"," +
+                "         \"format\":\"int32\"," +
+                "         \"position\":2" +
+                "      }," +
+                "      \"longValue\":{" +
+                "         \"type\":\"integer\"," +
+                "         \"format\":\"int64\"," +
+                "         \"position\":3" +
+                "      }," +
+                "      \"floatValue\":{" +
+                "         \"type\":\"number\"," +
+                "         \"format\":\"float\"," +
+                "         \"position\":4" +
+                "      }," +
+                "      \"doubleValue\":{" +
+                "         \"type\":\"number\"," +
+                "         \"format\":\"double\"," +
+                "         \"position\":5" +
+                "      }" +
+                "   }" +
+                "}";
+        SerializationMatchers.assertEqualsToJson(model, json);
+    }
+
+class DateModel {
+    @ApiModelProperty(position = 1)
+    public Date date;
+    @ApiModelProperty(position=2)
+    public int intValue;
+    @ApiModelProperty(position=3)
+    public Long longValue;
+    @ApiModelProperty(position=4)
+    public Float floatValue;
+    @ApiModelProperty(position=5)
+    public Double doubleValue;
+}
 }
