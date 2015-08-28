@@ -61,11 +61,6 @@
             <artifactId>servlet-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-jaxrs</artifactId>
             <version>${project.parent.version}</version>
@@ -100,7 +95,7 @@
     </dependencies>
     <properties>
         <!-- TODO increase coverage and remove these overrides-->
-        <coverage.complexity.minimum>0.35</coverage.complexity.minimum>
+        <coverage.complexity.minimum>0.50</coverage.complexity.minimum>
         <coverage.line.minimum>0.00</coverage.line.minimum>
         <coverage.missed.classes>2</coverage.missed.classes>
     </properties>
