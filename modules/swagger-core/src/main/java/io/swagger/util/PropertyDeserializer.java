@@ -1,5 +1,15 @@
 package io.swagger.util;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -15,16 +25,6 @@ import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
 import io.swagger.models.properties.RefProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
 
 public class PropertyDeserializer extends JsonDeserializer<Property> {
     Logger LOGGER = LoggerFactory.getLogger(PropertyDeserializer.class);
@@ -146,7 +146,9 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
             if (detailNode != null) {
                 Property items = propertyFromNode(detailNode);
                 if (items != null) {
-                    return new MapProperty(items).description(description);
+                    MapProperty mapProperty = new MapProperty(items).description(description);
+                    mapProperty.setVendorExtensionMap(getVendorExtensions(node));
+                    return mapProperty;
                 }
             } else {
               detailNode = node.get("properties");
@@ -158,7 +160,9 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                       properties.put(field.getKey(), property);
                   }
               }
-              return new ObjectProperty(properties);
+                ObjectProperty objectProperty = new ObjectProperty(properties);
+                objectProperty.setVendorExtensionMap(getVendorExtensions(node));
+                return objectProperty;
             }
         }
         if (ArrayProperty.isType(type)) {
