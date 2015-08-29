@@ -27,9 +27,19 @@ public class PropertyBuilder {
     public static Property build(String type, String format, Map<PropertyId, Object> args) {
         final Processor processor = Processor.fromType(type, format);
         if (processor == null) {
+            if (System.getProperty("debugParser") != null) {
+                new Throwable("").printStackTrace();
+            }
+            LOGGER.warn("No Resulting Property for Type: " + type + "\tFormat: " + format);
             return null;
         }
-        final Map<PropertyId, Object> safeArgs = args == null ? Collections.<PropertyId, Object>emptyMap() : args;
+        final Map<PropertyId, Object> safeArgs;
+        if (args == null) {
+            LOGGER.warn("Empty Args for Type: " + type + "\tFormat: " + format);
+            safeArgs = Collections.<PropertyId, Object>emptyMap();
+        } else {
+            safeArgs = args;
+        }
         final Map<PropertyId, Object> fixedArgs;
         if (format != null) {
             fixedArgs = new EnumMap<PropertyId, Object>(PropertyId.class);
@@ -97,7 +107,7 @@ public class PropertyBuilder {
         READ_ONLY("readOnly"),
         VENDOR_EXTENSIONS("vendorExtensions");
 
-        private String propertyName;
+        private final String propertyName;
 
         private PropertyId(String propertyName) {
             this.propertyName = propertyName;
@@ -612,6 +622,9 @@ public class PropertyBuilder {
                 }
             }
             LOGGER.error("no property for " + (property == null ? "null" : property.getClass().getName()));
+            if (System.getProperty("debugParser") != null) {
+                Thread.dumpStack();
+            }
             return null;
         }
 

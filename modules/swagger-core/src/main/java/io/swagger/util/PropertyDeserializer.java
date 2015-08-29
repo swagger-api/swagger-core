@@ -17,6 +17,8 @@ import io.swagger.models.properties.PropertyBuilder;
 import io.swagger.models.properties.RefProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -193,9 +195,20 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         args.put(PropertyBuilder.PropertyId.READ_ONLY, getBoolean(node, PropertyBuilder.PropertyId.READ_ONLY));
         args.put(PropertyBuilder.PropertyId.VENDOR_EXTENSIONS, getVendorExtensions(node));
 
+        if (null == type) {
+            LOGGER.error("Missing Type for Node: " + node);
+        }
         Property output = PropertyBuilder.build(type, format, args);
         if (output == null) {
-            LOGGER.warn("no property from " + type + ", " + format + ", " + args);
+            if (System.getProperty("debugParser") != null) {
+                new Throwable("").printStackTrace();
+            }
+            LOGGER.warn("propertyFromNode: no property from \n" // 
+                + "\tType: " + type + "\n" //
+                + "\tFormat: " + format + "\n" //
+                + "\tArgs: " + ReflectionToStringBuilder.toString(args, ToStringStyle.MULTI_LINE_STYLE) + "\n" //
+                + "\tNode: " + node + "\n" //
+            );
             return null;
         }
         output.setDescription(description);
