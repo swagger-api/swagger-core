@@ -165,7 +165,9 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
             detailNode = node.get("items");
             if (detailNode != null) {
                 Property subProperty = propertyFromNode(detailNode);
-                return new ArrayProperty().items(subProperty).description(description);
+                ArrayProperty arrayProperty = new ArrayProperty().items(subProperty).description(description);
+                arrayProperty.setVendorExtensionMap(getVendorExtensions(node));
+                return arrayProperty;
             }
         }
 
