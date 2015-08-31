@@ -19,6 +19,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+                <version>${felix-version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -36,7 +37,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-enforcer-plugin</artifactId>
-                        <version>1.4</version>
+                        <version>${enforcer-plugin-version}</version>
                         <executions>
                             <execution>
                                 <id>enforce-no-snapshots</id>

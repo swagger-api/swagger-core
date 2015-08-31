@@ -30,6 +30,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+                <version>${felix-version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -66,15 +67,6 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
         </dependency>
     </dependencies>
     <properties>
