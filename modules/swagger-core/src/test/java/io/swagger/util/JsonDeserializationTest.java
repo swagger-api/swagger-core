@@ -4,7 +4,6 @@ import io.swagger.TestUtils;
 import io.swagger.models.*;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -122,5 +121,12 @@ public class JsonDeserializationTest {
         assertTrue(xBooleanValue);
 
         assertFalse(vendorExtensions.containsKey("not-an-extension"));
+
+        //check for vendor extensions in array property types
+        vendorExtensions = swagger.getDefinitions().get("Health").getProperties().get("array").getVendorExtensions();
+
+        xStringValue = (String) vendorExtensions.get("x-string-value");
+        assertNotNull(xStringValue);
+        assertEquals(xStringValue, "string_value");
     }
 }
