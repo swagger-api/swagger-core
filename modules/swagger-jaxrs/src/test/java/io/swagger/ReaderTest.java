@@ -111,7 +111,7 @@ public class ReaderTest {
         assertEquals(getPut(swagger, "/{id}/value").getProduces().get(0), TEXT_PLAIN);
     }
 
-    @org.junit.Test//(description = "scan class level and field level annotations")
+    @Test(description = "scan class level and field level annotations")
     public void scanClassAndFieldLevelAnnotations() {
         Swagger swagger = getSwagger(ResourceWithKnownInjections.class);
 

@@ -80,9 +80,9 @@
     <properties>
         <!-- TODO increase coverage -->
         <validation-api-version>1.1.0.Final</validation-api-version>
-        <coverage.complexity.minimum>0.00</coverage.complexity.minimum>
+        <coverage.complexity.minimum>0.07</coverage.complexity.minimum>
         <coverage.line.minimum>0.0</coverage.line.minimum>
         <!-- Setting this to a really high number since this module has almost no coverage -->
-        <coverage.missed.classes>100</coverage.missed.classes>
+        <coverage.missed.classes>40</coverage.missed.classes>
     </properties>
 </project>
