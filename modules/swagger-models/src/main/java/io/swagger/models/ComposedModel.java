@@ -99,6 +99,19 @@ public class ComposedModel extends AbstractModel {
             }
         }
     }
+    
+    public Object clone() {
+        ComposedModel cloned = new ComposedModel();
+        super.cloneTo(cloned);
+        cloned.allOf = this.allOf;
+        cloned.parent = this.parent;
+        cloned.child = this.child;
+        cloned.interfaces = this.interfaces;
+        cloned.description = this.description;
+        cloned.example = this.example;
+
+        return cloned;
+    }
 
     @Override
     public int hashCode() {
