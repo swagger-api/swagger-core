@@ -39,10 +39,21 @@ import java.util.Set;
 
 @Path("/")
 public class ApiListingResource {
-    boolean initialized = false;
     Logger LOGGER = LoggerFactory.getLogger(ApiListingResource.class);
     @Context
     ServletContext context;
+
+    private String getSwaggerId(ServletConfig sc) {
+        String swaggerId = sc.getInitParameter("swagger.id");
+        if (swaggerId == null) {
+            swaggerId = "default";
+        }
+        return swaggerId;
+    }
+
+    private String getSwaggerContextId(String swaggerId) {
+        return "swagger-" + swaggerId;
+    }
 
     protected synchronized Swagger scan(Application app, ServletConfig sc) {
         Swagger swagger = null;
@@ -52,11 +63,8 @@ public class ApiListingResource {
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
 
-            String swaggerId = sc.getInitParameter("swagger.id");
-            if (swaggerId == null) {
-                swaggerId = "default";
-            }
-            String swaggerContextId = "swagger-" + swaggerId;
+            String swaggerId = getSwaggerId(sc);
+            String swaggerContextId = getSwaggerContextId(swaggerId);
             swagger = (Swagger) context.getAttribute(swaggerContextId);
 
             Set<Class<?>> classes = new HashSet<Class<?>>();
@@ -83,7 +91,6 @@ public class ApiListingResource {
                 context.setAttribute(swaggerContextId, swagger);
             }
         }
-        initialized = true;
         return swagger;
     }
 
@@ -92,15 +99,18 @@ public class ApiListingResource {
             ServletConfig sc,
             HttpHeaders headers,
             UriInfo uriInfo) {
-        Swagger swagger = (Swagger) context.getAttribute("swagger");
-        if (!initialized) {
+        String swaggerContextId = getSwaggerContextId(getSwaggerId(sc));
+        Swagger swagger = (Swagger) context.getAttribute(swaggerContextId);
+        if (swagger == null) {
             swagger = scan(app, sc);
         }
+
         if (swagger != null) {
             SwaggerSpecFilter filterImpl = FilterFactory.getFilter();
             if (filterImpl != null) {
                 SpecFilter f = new SpecFilter();
-                swagger = f.filter(swagger, filterImpl, getQueryParams(uriInfo.getQueryParameters()), getCookies(headers),
+                swagger = f.filter(swagger, filterImpl, getQueryParams(uriInfo.getQueryParameters()),
+                        getCookies(headers),
                         getHeaders(headers));
             }
         }
