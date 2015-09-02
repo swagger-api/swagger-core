@@ -2,12 +2,31 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DoubleProperty extends DecimalProperty {
     private static final String FORMAT = "double";
     protected Double _default;
+    protected List<Double> _enum;
 
     public DoubleProperty() {
         super(FORMAT);
+    }
+
+    public DoubleProperty _enum(Double value) {
+        if (this._enum == null) {
+            this._enum = new ArrayList<Double>();
+        }
+        if (!_enum.contains(value)) {
+            _enum.add(value);
+        }
+        return this;
+    }
+
+    public DoubleProperty _enum(List<Double> value) {
+        this._enum = value;
+        return this;
     }
 
     public static boolean isType(String type, String format) {
@@ -50,6 +69,14 @@ public class DoubleProperty extends DecimalProperty {
 
     public void setDefault(Double _default) {
         this._default = _default;
+    }
+
+    public List<Double> getEnum() {
+        return _enum;
+    }
+
+    public void setEnum(List<Double> _enum) {
+        this._enum = _enum;
     }
 
     @Override

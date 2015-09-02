@@ -2,6 +2,9 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DecimalProperty extends AbstractNumericProperty {
     public static final String TYPE = "number";
 

@@ -2,13 +2,32 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FloatProperty extends DecimalProperty {
     private static final String FORMAT = "float";
+    protected List<Float> _enum;
 
     protected Float _default;
 
     public FloatProperty() {
         super(FORMAT);
+    }
+
+    public FloatProperty _enum(Float value) {
+        if (this._enum == null) {
+            this._enum = new ArrayList<Float>();
+        }
+        if (!_enum.contains(value)) {
+            _enum.add(value);
+        }
+        return this;
+    }
+
+    public FloatProperty _enum(List<Float> value) {
+        this._enum = value;
+        return this;
     }
 
     public static boolean isType(String type, String format) {
@@ -51,6 +70,14 @@ public class FloatProperty extends DecimalProperty {
 
     public void setDefault(Float _default) {
         this._default = _default;
+    }
+
+    public List<Float> getEnum() {
+        return _enum;
+    }
+
+    public void setEnum(List<Float> _enum) {
+        this._enum = _enum;
     }
 
     @Override
