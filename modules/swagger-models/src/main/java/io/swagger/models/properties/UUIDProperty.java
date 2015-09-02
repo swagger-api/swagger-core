@@ -2,6 +2,7 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UUIDProperty extends AbstractProperty implements Property {
@@ -13,6 +14,21 @@ public class UUIDProperty extends AbstractProperty implements Property {
     public UUIDProperty() {
         super.type = "string";
         super.format = "uuid";
+    }
+
+    public UUIDProperty _enum(String value) {
+        if (this._enum == null) {
+            this._enum = new ArrayList<String>();
+        }
+        if (!_enum.contains(value)) {
+            _enum.add(value);
+        }
+        return this;
+    }
+
+    public UUIDProperty _enum(List<String> value) {
+        this._enum = value;
+        return this;
     }
 
     public static boolean isType(String type, String format) {
@@ -78,6 +94,14 @@ public class UUIDProperty extends AbstractProperty implements Property {
 
     public void setDefault(String _default) {
         this._default = _default;
+    }
+
+    public List<String> getEnum() {
+        return _enum;
+    }
+
+    public void setEnum(List<String> _enum) {
+        this._enum = _enum;
     }
 
     @Override

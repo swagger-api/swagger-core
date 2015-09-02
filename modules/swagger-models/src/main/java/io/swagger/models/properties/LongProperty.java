@@ -2,12 +2,31 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LongProperty extends BaseIntegerProperty {
     private static final String FORMAT = "int64";
     protected Long _default;
+    protected List<Long> _enum;
 
     public LongProperty() {
         super(FORMAT);
+    }
+
+    public LongProperty _enum(Long value) {
+        if (this._enum == null) {
+            this._enum = new ArrayList<Long>();
+        }
+        if (!_enum.contains(value)) {
+            _enum.add(value);
+        }
+        return this;
+    }
+
+    public LongProperty _enum(List<Long> value) {
+        this._enum = value;
+        return this;
     }
 
     public static boolean isType(String type, String format) {
@@ -50,6 +69,14 @@ public class LongProperty extends BaseIntegerProperty {
 
     public void setDefault(Long _default) {
         this._default = _default;
+    }
+
+    public List<Long> getEnum() {
+        return _enum;
+    }
+
+    public void setEnum(List<Long> _enum) {
+        this._enum = _enum;
     }
 
     @Override
