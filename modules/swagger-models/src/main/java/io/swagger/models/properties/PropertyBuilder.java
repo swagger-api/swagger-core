@@ -721,6 +721,88 @@ public class PropertyBuilder {
                     final Map<String, Object> value = PropertyId.VENDOR_EXTENSIONS.findValue(args);
                     resolved.setVendorExtensionMap(value);
                 }
+                if(args.containsKey(PropertyId.ENUM)) {
+                    final List<String> values = PropertyId.ENUM.findValue(args);
+                    if(values != null) {
+                        if(property instanceof IntegerProperty) {
+                            IntegerProperty p = (IntegerProperty) property;
+                            for(String value : values) {
+                              try {
+                                p._enum(Integer.parseInt(value));
+                              }
+                              catch(Exception e) {
+                                // continue
+                              }
+                            }                            
+                        }
+                        if(property instanceof LongProperty) {
+                          LongProperty p = (LongProperty) property;
+                          for(String value : values) {
+                            try {
+                              p._enum(Long.parseLong(value));
+                            }
+                            catch(Exception e) {
+                              // continue
+                            }
+                          }                            
+                        }
+                        if(property instanceof DoubleProperty) {
+                            DoubleProperty p = (DoubleProperty) property;
+                            for(String value : values) {
+                              try {
+                                p._enum(Double.parseDouble(value));
+                              }
+                              catch(Exception e) {
+                                // continue
+                              }
+                            }                            
+                        }
+                        if(property instanceof FloatProperty) {
+                          FloatProperty p = (FloatProperty) property;
+                          for(String value : values) {
+                            try {
+                              p._enum(Float.parseFloat(value));
+                            }
+                            catch(Exception e) {
+                              // continue
+                            }
+                          }                            
+                       }
+                       if(property instanceof DateProperty) {
+                          DateProperty p = (DateProperty) property;
+                          for(String value : values) {
+                            try {
+                              p._enum(value);
+                            }
+                            catch(Exception e) {
+                              // continue
+                            }
+                          }                            
+                       }
+                       if(property instanceof DateTimeProperty) {
+                         DateTimeProperty p = (DateTimeProperty) property;
+                         for(String value : values) {
+                           try {
+                             p._enum(value);
+                           }
+                           catch(Exception e) {
+                             // continue
+                           }
+                         }                            
+                       }
+                       if(property instanceof UUIDProperty) {
+                         UUIDProperty p = (UUIDProperty) property;
+                         for(String value : values) {
+                           try {
+                             p._enum(value);
+                           }
+                           catch(Exception e) {
+                             // continue
+                           }
+                         }                            
+                       }
+                    }
+                }
             }
             return property;
         }

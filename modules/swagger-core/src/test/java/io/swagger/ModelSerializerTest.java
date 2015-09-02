@@ -1,6 +1,7 @@
 package io.swagger;
 
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -236,5 +237,26 @@ public class ModelSerializerTest {
         
         Property readWriteId = model.getProperties().get("readWriteId");
         assertNull(readWriteId.getReadOnly());
+    }
+
+    @Test(groups="foo", description = "it should generate an integer field with enum")
+    public void integerEnumGeneration() throws IOException {
+        final String json = "{\n" +
+                "   \"properties\":{\n" +
+                "      \"id\":{\n" +
+                "         \"description\":\"fun!\",\n" +
+                "         \"type\":\"integer\",\n" +
+                "         \"format\":\"int32\",\n" +
+                "         \"readOnly\":true,\n" +
+                "         \"enum\": [ 0, 1]\n" +
+                "      }\n" +
+                "   }\n" +
+                "}";
+        final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
+        IntegerProperty p = (IntegerProperty)model.getProperties().get("id");
+
+        assertNotNull(p.getEnum());
+        assertEquals(p.getEnum().get(0), new Integer(0));
+        assertEquals(p.getEnum().get(1), new Integer(1));
     }
 }
