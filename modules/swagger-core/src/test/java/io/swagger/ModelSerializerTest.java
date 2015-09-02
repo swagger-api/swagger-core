@@ -239,7 +239,7 @@ public class ModelSerializerTest {
         assertNull(readWriteId.getReadOnly());
     }
 
-    @Test(groups="foo", description = "it should generate an integer field with enum")
+    @Test(description = "it should generate an integer field with enum")
     public void integerEnumGeneration() throws IOException {
         final String json = "{\n" +
                 "   \"properties\":{\n" +
