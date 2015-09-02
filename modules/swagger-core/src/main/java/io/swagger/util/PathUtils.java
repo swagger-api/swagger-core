@@ -1,4 +1,4 @@
-package io.swagger.jaxrs.utils;
+package io.swagger.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PathUtils {
     private static Logger LOGGER = LoggerFactory.getLogger(PathUtils.class);
@@ -14,6 +16,7 @@ public class PathUtils {
     private static final char OPEN = '{';
     private static final char CLOSE = '}';
     private static final char SLASH = '/';
+    private static final Pattern TRIM_PATTERN = Pattern.compile("^/*(.*?)/*$");
 
     public static String parsePath(String uri, Map<String, String> patterns) {
         if (uri == null) {
@@ -43,6 +46,25 @@ public class PathUtils {
             }
         } while ((c = ci.next()) != CharacterIterator.DONE);
         return pathBuffer.toString();
+    }
+
+    public static String collectPath(String... pathParts) {
+        final StringBuilder sb = new StringBuilder();
+        for (String item : pathParts) {
+            if (StringUtils.isBlank(item)) {
+                continue;
+            }
+            final String path = trimPath(item);
+            if (StringUtils.isNotBlank(path)) {
+                sb.append(SLASH).append(path);
+            }
+        }
+        return sb.length() > 0 ? sb.toString() : String.valueOf(SLASH);
+    }
+
+    private static String trimPath(String value) {
+        final Matcher matcher = TRIM_PATTERN.matcher(value);
+        return matcher.find() && StringUtils.isNotBlank(matcher.group(1)) ? matcher.group(1) : null;
     }
 
     private static String cutParameter(CharacterIterator ci, Map<String, String> patterns) {

@@ -37,9 +37,7 @@ import io.swagger.jaxrs.config.ReaderConfig;
 import io.swagger.jaxrs.config.ReaderListener;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
-import io.swagger.jaxrs.utils.PathUtils;
 import io.swagger.jaxrs.utils.ReaderUtils;
-import io.swagger.jaxrs.utils.ReflectionUtils;
 import io.swagger.models.Contact;
 import io.swagger.models.ExternalDocs;
 import io.swagger.models.License;
@@ -61,6 +59,10 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
+import io.swagger.util.ParameterProcessor;
+import io.swagger.util.PathUtils;
+import io.swagger.util.ReflectionUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -245,7 +247,7 @@ public class Reader {
                 if (ReflectionUtils.isOverriddenMethod(method, cls)) {
                     continue;
                 }
-                javax.ws.rs.Path methodPath = getAnnotation(method, javax.ws.rs.Path.class);
+                javax.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class);
 
                 String operationPath = getPath(apiPath, methodPath, parentPath);
                 Map<String, String> regexMap = new HashMap<String, String>();
@@ -255,7 +257,7 @@ public class Reader {
                         continue;
                     }
 
-                    final ApiOperation apiOperation = getAnnotation(method, ApiOperation.class);
+                    final ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
                     String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
                     Operation operation = null;
@@ -694,8 +696,8 @@ public class Reader {
     private Operation parseMethod(Class<?> cls, Method method, List<Parameter> globalParameters) {
         Operation operation = new Operation();
 
-        ApiOperation apiOperation = getAnnotation(method, ApiOperation.class);
-        ApiResponses responseAnnotation = getAnnotation(method, ApiResponses.class);
+        ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
+        ApiResponses responseAnnotation = ReflectionUtils.getAnnotation(method, ApiResponses.class);
 
         String operationId = method.getName();
         String responseContainer = null;
@@ -776,7 +778,7 @@ public class Reader {
 
         Annotation annotation;
         if (apiOperation != null && apiOperation.consumes() != null && apiOperation.consumes().isEmpty()) {
-            annotation = getAnnotation(method, Consumes.class);
+            annotation = ReflectionUtils.getAnnotation(method, Consumes.class);
             if (annotation != null) {
                 String[] apiConsumes = ((Consumes) annotation).value();
                 for (String mediaType : apiConsumes) {
@@ -786,7 +788,7 @@ public class Reader {
         }
 
         if (apiOperation != null && apiOperation.produces() != null && apiOperation.produces().isEmpty()) {
-            annotation = getAnnotation(method, Produces.class);
+            annotation = ReflectionUtils.getAnnotation(method, Produces.class);
             if (annotation != null) {
                 String[] apiProduces = ((Produces) annotation).value();
                 for (String mediaType : apiProduces) {
@@ -822,7 +824,7 @@ public class Reader {
                 }
             }
         }
-        if (getAnnotation(method, Deprecated.class) != null) {
+        if (ReflectionUtils.getAnnotation(method, Deprecated.class) != null) {
             operation.setDeprecated(true);
         }
 
@@ -847,17 +849,6 @@ public class Reader {
             operation.defaultResponse(response);
         }
         return operation;
-    }
-
-    private static <A extends Annotation> A getAnnotation(Method method, Class<A> annotationClass) {
-        A annotation = method.getAnnotation(annotationClass);
-        if (annotation == null) {
-            Method superclassMethod = ReflectionUtils.getOverriddenMethod(method);
-            if (superclassMethod != null) {
-                annotation = getAnnotation(superclassMethod, annotationClass);
-            }
-        }
-        return annotation;
     }
 
     private List<Parameter> getParameters(Type type, List<Annotation> annotations) {

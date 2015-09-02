@@ -1,13 +1,8 @@
-package io.swagger.jaxrs.utils;
+package io.swagger.util;
 
-import io.swagger.util.PrimitiveType;
-
-import com.google.common.base.Function;
-
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.core.Context;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -47,7 +42,7 @@ public class ReflectionUtils {
      */
     public static boolean isOverriddenMethod(Method methodToFind, Class<?> cls) {
         Class<?> superClass = cls.getSuperclass();
-        if (superClass != null && !(superClass.getClass().equals(Object.class))) {
+        if (superClass != null && !(superClass.equals(Object.class))) {
             for (Method method : superClass.getMethods()) {
                 if (method.getName().equals(methodToFind.getName()) && method.getReturnType().isAssignableFrom(methodToFind.getReturnType())
                         && Arrays.equals(method.getParameterTypes(), methodToFind.getParameterTypes()) &&
@@ -69,7 +64,7 @@ public class ReflectionUtils {
     public static Method getOverriddenMethod(Method method) {
         Class<?> declaringClass = method.getDeclaringClass();
         Class<?> superClass = declaringClass.getSuperclass();
-        if (superClass != null && !(superClass.getClass().equals(Object.class))) {
+        if (superClass != null && !(superClass.equals(Object.class))) {
             Method result = findMethod(method, superClass);
             if (result == null) {
                 for (Class<?> anInterface : declaringClass.getInterfaces()) {
@@ -112,7 +107,7 @@ public class ReflectionUtils {
     }
 
     private static boolean hasIdenticalParameters(Class<?>[] srcParameterTypes, Class<?>[] soughtForParameterType,
-                                                  Type[] srcGenericParameterTypes, Type[] soughtForGenericParameterType) {
+            Type[] srcGenericParameterTypes, Type[] soughtForGenericParameterType) {
         for (int j = 0; j < soughtForParameterType.length; j++) {
             Class<?> parameterType = soughtForParameterType[j];
             if (!(srcParameterTypes[j].equals(parameterType) || (!srcGenericParameterTypes[j].equals(soughtForGenericParameterType[j]) &&
@@ -121,29 +116,6 @@ public class ReflectionUtils {
             }
         }
         return true;
-    }
-
-    /**
-     * Returns an implementation of {@link Function} for getting annotation types.
-     *
-     * @return the implementation of {@link Function} for getting annotation types
-     */
-    public static Function<Annotation, Class<? extends Annotation>> createAnnotationTypeGetter() {
-        return new Function<Annotation, Class<? extends Annotation>>() {
-            @Override
-            public Class<? extends Annotation> apply(Annotation annotation) {
-                return annotation.annotationType();
-            }
-        };
-    }
-
-    public static boolean isContext(List<Annotation> annotations) {
-        for (Annotation annotation : annotations) {
-            if (annotation instanceof Context) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static boolean isInject(List<Annotation> annotations) {
@@ -189,5 +161,35 @@ public class ReflectionUtils {
             }
         }
         return fields;
+    }
+
+    /**
+     * Returns an annotation by type from a method.
+     *
+     * @param method          is the method to find
+     * @param annotationClass is the type of annotation
+     * @param <A>             is the type of annotation
+     * @return annotation if it is found
+     */
+    public static <A extends Annotation> A getAnnotation(Method method, Class<A> annotationClass) {
+        A annotation = method.getAnnotation(annotationClass);
+        if (annotation == null) {
+            Method superclassMethod = getOverriddenMethod(method);
+            if (superclassMethod != null) {
+                annotation = getAnnotation(superclassMethod, annotationClass);
+            }
+        }
+        return annotation;
+    }
+
+    /**
+     * Checks if the type is void.
+     *
+     * @param type is the type to check
+     * @return true if the type is void
+     */
+    public static boolean isVoid(Type type) {
+        final Class<?> cls = TypeFactory.defaultInstance().constructType(type).getRawClass();
+        return Void.class.isAssignableFrom(cls) || Void.TYPE.isAssignableFrom(cls);
     }
 }
