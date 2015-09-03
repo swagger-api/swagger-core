@@ -4,6 +4,7 @@ import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
+
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.DefaultReaderConfig;
 import io.swagger.models.ArrayModel;
@@ -49,7 +50,9 @@ import io.swagger.resources.ResourceWithTypedResponses;
 import io.swagger.resources.ResourceWithVoidReturns;
 import io.swagger.resources.SimpleResource;
 import io.swagger.resources.SimpleResourceWithoutAnnotations;
+import io.swagger.resources.SimpleSelfReferencingSubResource;
 import io.swagger.resources.TaggedResource;
+
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -316,6 +319,19 @@ public class SimpleScannerTest {
         assertEquals(param2.getName(), "limit");
         assertFalse(param2.getRequired());
         assertNull(param2.getDescription());
+    }
+
+    @Test(description = "scan a simple self-referencing subresource")
+    public void scanSimpleSelfReferencingSubResource() {
+        DefaultReaderConfig config = new DefaultReaderConfig();
+        config.setScanAllResources(true);
+        Swagger swagger = new Reader(new Swagger(), config).read(SimpleSelfReferencingSubResource.class);
+
+        assertEquals(swagger.getPaths().size(), 1);
+
+        Operation get = getGet(swagger, "/sub");
+        assertNotNull(get);
+        assertEquals(get.getParameters().size(), 0);
     }
 
     @Test(description = "scan resource with ApiOperation.code() value")
