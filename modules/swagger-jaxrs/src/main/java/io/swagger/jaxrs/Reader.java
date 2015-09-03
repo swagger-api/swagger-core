@@ -92,6 +92,8 @@ public class Reader {
     private final ReaderConfig config;
     private Swagger swagger;
 
+    private Set<Class<?>> scannedResources;
+
     public Reader(Swagger swagger) {
         this(swagger, null);
     }
@@ -99,6 +101,7 @@ public class Reader {
     public Reader(Swagger swagger, ReaderConfig config) {
         this.swagger = swagger == null ? new Swagger() : swagger;
         this.config = new DefaultReaderConfig(config);
+        this.scannedResources =  new HashSet<Class<?>>();
     }
 
     /**
@@ -309,7 +312,8 @@ public class Reader {
                         apiProduces = both.toArray(new String[both.size()]);
                     }
                     final Class<?> subResource = getSubResource(method);
-                    if (subResource != null) {
+                    if (subResource != null && !scannedResources.contains(subResource)) {
+                        scannedResources.add(subResource);
                         read(subResource, operationPath, httpMethod, true, apiConsumes, apiProduces, tags, operation.getParameters());
                     }
 
