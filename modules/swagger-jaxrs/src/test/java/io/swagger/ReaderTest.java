@@ -10,6 +10,7 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.resources.ApiConsumesProducesResource;
+import io.swagger.resources.BookResource;
 import io.swagger.resources.BothConsumesProducesResource;
 import io.swagger.resources.DescendantResource;
 import io.swagger.resources.NoConsumesProducesResource;
@@ -212,6 +213,35 @@ public class ReaderTest {
     public void scanEmptyPathAnnotation() {
         Swagger swagger = getSwagger(ResourceWithEmptyPath.class);
         assertNotNull(getGet(swagger, "/"));
+    }
+
+    @Test(description = "it should scan parameters from base resource class")
+    public void scanParametersFromBaseResource(){
+        Swagger swagger = getSwagger(BookResource.class);
+        assertNotNull(swagger);
+
+        List<Parameter> parameters =  getGet(swagger, "/{id}/v1/books/{name}").getParameters();
+        assertEquals(parameters.size(), 4);
+
+        Parameter description = parameters.get(0);
+        assertTrue(description instanceof PathParameter);
+        assertEquals(description.getName(), "description");
+        assertEquals(description.getDescription(), "Overriden description");
+
+        Parameter id = parameters.get(1);
+        assertTrue(id instanceof PathParameter);
+        assertEquals(id.getName(), "id");
+        assertEquals(id.getDescription(), "The Identifier of entity");
+
+        Parameter test = parameters.get(2);
+        assertTrue(test instanceof QueryParameter);
+        assertEquals(test.getName(), "test");
+        assertEquals(test.getDescription(), "Test Query Param");
+
+        Parameter name = parameters.get(3);
+        assertTrue(name instanceof PathParameter);
+        assertEquals(name.getName(), "name");
+        assertEquals(name.getDescription(), "The books name");
     }
 
     private Swagger getSwagger(Class<?> cls) {
