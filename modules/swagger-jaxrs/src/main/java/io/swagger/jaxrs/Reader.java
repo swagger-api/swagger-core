@@ -260,7 +260,7 @@ public class Reader {
 
                     Operation operation = null;
                     if(apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) { 
-                        operation = parseMethod(method, globalParameters);
+                        operation = parseMethod(cls, method, globalParameters);
                     }
                     if (operation == null) {
                         continue;
@@ -688,10 +688,10 @@ public class Reader {
     }
 
     public Operation parseMethod(Method method) {
-        return parseMethod(method, Collections.<Parameter>emptyList());
+        return parseMethod(method.getDeclaringClass(), method, Collections.<Parameter>emptyList());
     }
 
-    private Operation parseMethod(Method method, List<Parameter> globalParameters) {
+    private Operation parseMethod(Class<?> cls, Method method, List<Parameter> globalParameters) {
         Operation operation = new Operation();
 
         ApiOperation apiOperation = getAnnotation(method, ApiOperation.class);
@@ -834,7 +834,7 @@ public class Reader {
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         Annotation[][] paramAnnotations = method.getParameterAnnotations();
         for (int i = 0; i < genericParameterTypes.length; i++) {
-            Type type = genericParameterTypes[i];
+            final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
             List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
 
             for (Parameter parameter : parameters) {
@@ -871,7 +871,6 @@ public class Reader {
         LOGGER.debug("trying extension " + extension);
 
         final List<Parameter> parameters = extension.extractParameters(annotations, type, typesToSkip, chain);
-
         if (parameters.size() > 0) {
             final List<Parameter> processed = new ArrayList<Parameter>(parameters.size());
             for (Parameter parameter : parameters) {
