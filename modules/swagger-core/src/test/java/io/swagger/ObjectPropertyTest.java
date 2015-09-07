@@ -1,16 +1,17 @@
 package io.swagger;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import java.io.IOException;
+
+import org.testng.annotations.Test;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.util.Json;
-
-import org.testng.annotations.Test;
-
-import java.io.IOException;
 
 public class ObjectPropertyTest {
     @Test (description = "convert a model with object properties")
@@ -22,6 +23,7 @@ public class ObjectPropertyTest {
                 "      }," +
                 "      \"someObject\":{" +
                 "         \"type\":\"object\"," +
+                "        \"x-foo\": \"vendor x\"," +
                 "         \"properties\":{" +
                 "            \"innerId\":{" +
                 "               \"type\":\"string\"" +
@@ -40,5 +42,9 @@ public class ObjectPropertyTest {
 
         Property sp = op.getProperties().get("innerId");
         assertTrue(sp instanceof StringProperty);
+
+        assertTrue(op.getVendorExtensions() != null);
+        assertNotNull(op.getVendorExtensions().get("x-foo"));
+        assertEquals(op.getVendorExtensions().get("x-foo"), "vendor x");
     }
 }
