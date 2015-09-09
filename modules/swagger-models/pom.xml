@@ -30,6 +30,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+                <version>${felix-version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -67,22 +68,13 @@
             <artifactId>testng</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-        </dependency>
     </dependencies>
     <properties>
         <!-- TODO increase coverage -->
         <validation-api-version>1.1.0.Final</validation-api-version>
-        <coverage.complexity.minimum>0.00</coverage.complexity.minimum>
+        <coverage.complexity.minimum>0.07</coverage.complexity.minimum>
         <coverage.line.minimum>0.0</coverage.line.minimum>
         <!-- Setting this to a really high number since this module has almost no coverage -->
-        <coverage.missed.classes>100</coverage.missed.classes>
+        <coverage.missed.classes>41</coverage.missed.classes>
     </properties>
 </project>

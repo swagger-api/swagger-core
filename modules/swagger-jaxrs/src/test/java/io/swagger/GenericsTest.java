@@ -5,6 +5,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.ArrayModel;
+import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.RefModel;
 import io.swagger.models.Swagger;
@@ -17,14 +18,18 @@ import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.models.properties.UUIDProperty;
 import io.swagger.resources.ResourceWithGenerics;
+import io.swagger.resources.generics.UserApiRoute;
+
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 public class GenericsTest {
@@ -210,5 +215,17 @@ public class GenericsTest {
         Property items = ((ArrayProperty) entries).getItems();
         assertEquals(items.getClass().getName(), RefProperty.class.getName());
         assertEquals(((RefProperty) items).getSimpleRef(), "Tag");
+    }
+
+    @Test(description = "scan model with Generic Type")
+    public void scanModelWithGenericType() {
+        final Swagger swagger = new Reader(new Swagger()).read(UserApiRoute.class);
+        assertNotNull(swagger);
+        final Model userEntity = swagger.getDefinitions().get("UserEntity");
+        assertNotNull(userEntity);
+        final Map<String, Property> properties = userEntity.getProperties();
+        assertEquals(properties.size(), 2);
+        assertNotNull(properties.get("id"));
+        assertNotNull(properties.get("name"));
     }
 }

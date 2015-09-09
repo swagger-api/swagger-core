@@ -15,6 +15,7 @@ import io.swagger.params.BaseBean;
 import io.swagger.params.ChildBean;
 import io.swagger.params.EnumBean;
 import io.swagger.params.RefBean;
+import io.swagger.resources.ResourceWithFormData;
 import io.swagger.resources.ResourceWithKnownInjections;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -130,6 +131,16 @@ public class SwaggerJersey2JaxrsTest {
         assertEquals(getName(resourceParameters, 1), "skip");
         assertEquals(getName(resourceParameters, 2), "limit");
         assertEquals(getName(resourceParameters, 3), "methodParam");
+    }
+
+    @Test(description = "FormDataBodyPart should be ignored when generating the Swagger document")
+    public void testFormDataBodyPart() {
+        final Swagger swagger = new Reader(new Swagger()).read(ResourceWithFormData.class);
+        final List<Parameter> parameters = swagger.getPath("/test/document/{documentName}.json").getPost().getParameters();
+        assertEquals(parameters.size(), 3);
+        assertEquals(parameters.get(0).getName(), "documentName");
+        assertEquals(parameters.get(1).getName(), "input");
+        assertEquals(parameters.get(2).getName(), "id");
     }
 
     private String getName(List<Parameter> resourceParameters, int i) {

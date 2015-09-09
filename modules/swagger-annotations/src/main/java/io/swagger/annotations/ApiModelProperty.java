@@ -1,12 +1,12 @@
 /**
  * Copyright 2015 SmartBear Software
- * <p/>
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ public @interface ApiModelProperty {
 
     /**
      * Limits the acceptable values for this parameter.
-     * <p/>
+     * <p>
      * There are three ways to describe the allowable values:
      * <ol>
      * <li>To set a list of values, provide a comma-separated list.
@@ -68,7 +68,7 @@ public @interface ApiModelProperty {
 
     /**
      * The data type of the parameter.
-     * <p/>
+     * <p>
      * This can be the class name or a primitive. The value will override the data type as read from the class
      * property.
      */

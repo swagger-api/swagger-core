@@ -1,25 +1,37 @@
 package io.swagger;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import io.swagger.converter.ModelConverters;
-import io.swagger.matchers.SerializationMatchers;
-import io.swagger.models.*;
-import io.swagger.models.properties.*;
+import java.io.IOException;
+
+import org.testng.annotations.Test;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.properties.ObjectProperty;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.StringProperty;
 import io.swagger.util.Json;
 
-import org.apache.commons.io.IOUtils;
-import org.testng.annotations.Test;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-
 public class ObjectPropertyTest {
-    @org.junit.Test //(description = "convert a model with object properties")
+    @Test (description = "convert a model with object properties")
     public void readModelWithObjectProperty() throws IOException {
-        String json = "{\n\"properties\": {\n\"id\": {\n\"type\": \"string\"\n},\n\"someObject\": {\n\"type\": \"object\",\n\"properties\": {\n\"innerId\": {\n\"type\": \"string\"\n}\n}\n}\n}\n}";
+        String json = "{" +
+                "   \"properties\":{" +
+                "      \"id\":{" +
+                "         \"type\":\"string\"" +
+                "      }," +
+                "      \"someObject\":{" +
+                "         \"type\":\"object\"," +
+                "        \"x-foo\": \"vendor x\"," +
+                "         \"properties\":{" +
+                "            \"innerId\":{" +
+                "               \"type\":\"string\"" +
+                "            }" +
+                "         }" +
+                "      }" +
+                "   }" +
+                "}";
 
         ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
 
@@ -30,5 +42,9 @@ public class ObjectPropertyTest {
 
         Property sp = op.getProperties().get("innerId");
         assertTrue(sp instanceof StringProperty);
+
+        assertTrue(op.getVendorExtensions() != null);
+        assertNotNull(op.getVendorExtensions().get("x-foo"));
+        assertEquals(op.getVendorExtensions().get("x-foo"), "vendor x");
     }
 }

@@ -4,6 +4,9 @@ import io.swagger.models.Xml;
 
 import java.util.List;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EmailProperty extends StringProperty {
     public EmailProperty() {
         super.type = "string";
@@ -26,6 +29,21 @@ public class EmailProperty extends StringProperty {
         this.description = prop.getDescription();
         this.title = prop.getTitle();
         this.readOnly = prop.getReadOnly();
+    }
+
+    public EmailProperty _enum(String value) {
+        if (this._enum == null) {
+            this._enum = new ArrayList<String>();
+        }
+        if (!_enum.contains(value)) {
+            _enum.add(value);
+        }
+        return this;
+    }
+
+    public EmailProperty _enum(List<String> value) {
+        this._enum = value;
+        return this;
     }
 
     public static boolean isType(String type, String format) {
@@ -58,16 +76,6 @@ public class EmailProperty extends StringProperty {
 
     public EmailProperty pattern(String pattern) {
         super.pattern(pattern);
-        return this;
-    }
-
-    public EmailProperty _enum(String value) {
-        super._enum(value);
-        return this;
-    }
-
-    public EmailProperty _enum(List<String> value) {
-        super._enum(value);
         return this;
     }
 }
