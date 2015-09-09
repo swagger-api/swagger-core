@@ -43,6 +43,8 @@ public class GenericRefTest {
     public void testGetFullRef() throws Exception {
         assertRefStringIsUnchanged(RefType.DEFINITION, "./path/to/model.json");
         assertRefStringIsUnchanged(RefType.DEFINITION, "./path/to/model.json#/thing");
+        assertRefStringIsUnchanged(RefType.DEFINITION, "/path/to/model.json");
+        assertRefStringIsUnchanged(RefType.DEFINITION, "/path/to/model.json#/thing");
         assertRefStringIsUnchanged(RefType.PARAMETER, "./path/to/parameters.json#/param");
         assertRefStringIsUnchanged(RefType.PARAMETER, "./path/to/parameters.json#/param");
         assertRefStringIsUnchanged(RefType.DEFINITION, "#/definitions/foo");
@@ -60,6 +62,8 @@ public class GenericRefTest {
     public void testGetSimpleRef() throws Exception {
         assertSimpleRefMatchesRef(RefType.DEFINITION, "./path/to/model.json");
         assertSimpleRefMatchesRef(RefType.DEFINITION, "./path/to/model.json#/thing");
+        assertSimpleRefMatchesRef(RefType.DEFINITION, "/path/to/model.json");
+        assertSimpleRefMatchesRef(RefType.DEFINITION, "/path/to/model.json#/thing");
         assertSimpleRefMatchesRef(RefType.PARAMETER, "./path/to/parameters.json#/param");
         assertSimpleRefMatchesRef(RefType.PARAMETER, "./path/to/parameters.json#/param");
 
