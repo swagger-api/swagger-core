@@ -121,8 +121,7 @@ public class GenericRef {
             result = RefFormat.URL;
         } else if (ref.startsWith("#/")) {
             result = RefFormat.INTERNAL;
-        } else if (ref.startsWith(".")) {
-            //this means that all relative paths must start with ./ or ../
+        } else if (ref.startsWith(".") || ref.startsWith("/")) {
             result = RefFormat.RELATIVE;
         }
 
