@@ -2,7 +2,7 @@ package io.swagger.jackson;
 
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
 public class SimpleGenerationTest extends SwaggerTestBase {
     private final ModelResolver modelResolver = new ModelResolver(new ObjectMapper());
