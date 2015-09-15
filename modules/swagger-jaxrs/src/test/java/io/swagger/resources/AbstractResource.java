@@ -63,6 +63,20 @@ public abstract class AbstractResource<T extends Number> {
         return Response.ok().entity(pet).build();
     }
 
+    @GET
+    @Path("/{petId8}")
+    @ApiOperation(value = "Find pet by ID",
+            notes = "Returns a single pet",
+            response = String.class,
+            authorizations = @Authorization(value = "api_key")
+    )
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"),
+            @ApiResponse(code = 404, message = "Pet not found")})
+    public Response overridenMethodWithoutParamAnnotations(@PathParam("petId8") Long petId) {
+        String pet = "dog";
+        return Response.ok().entity(pet).build();
+    }
+
     @DELETE
     @Path("/{petId1}")
     @ApiOperation(value = "Deletes a pet")

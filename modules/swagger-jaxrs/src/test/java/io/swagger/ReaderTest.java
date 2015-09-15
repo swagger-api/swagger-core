@@ -146,7 +146,9 @@ public class ReaderTest {
         Swagger swagger = getSwagger(DescendantResource.class);
         Operation overriddenMethodWithTypedParam = getGet(swagger, "/pet/{petId1}");
         assertNotNull(overriddenMethodWithTypedParam);
-        assertEquals(overriddenMethodWithTypedParam.getParameters().get(0).getDescription(), "ID of pet to return child");
+        Parameter firstParameter = overriddenMethodWithTypedParam.getParameters().get(0);
+        assertEquals(firstParameter.getDescription(), "ID of pet to return child");
+        assertEquals(firstParameter.getName(), "petId1");
 
         Operation methodWithoutTypedParam = getGet(swagger, "/pet/{petId2}");
         assertNotNull(methodWithoutTypedParam);
@@ -159,6 +161,10 @@ public class ReaderTest {
 
         Operation methodFromInterface = getGet(swagger, "/pet/{petId5}");
         assertNotNull(methodFromInterface);
+
+        Operation overriddenMethodWithoutParamAnnotation = getGet(swagger, "/pet/{petId8}");
+        assertNotNull(overriddenMethodWithoutParamAnnotation);
+        assertEquals(overriddenMethodWithoutParamAnnotation.getParameters().get(0).getName(), "petId8");
     }
 
     @Test(description = "scan implicit params")

@@ -49,6 +49,10 @@ public class DescendantResource extends AbstractResource<Long> implements Interf
         return super.overriddenMethodWithoutTypedParam(petId);
     }
 
+    public Response overridenMethodWithoutParamAnnotations(Long petId) {
+        return super.overridenMethodWithoutParamAnnotations(petId);
+    }
+
     @Override
     public Response methodFromInterface(@ApiParam(value = "ID of pet to return") Number petId) {
         return null;

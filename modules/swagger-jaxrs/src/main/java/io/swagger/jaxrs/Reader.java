@@ -61,6 +61,7 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -832,7 +833,8 @@ public class Reader {
         }
 
         Type[] genericParameterTypes = method.getGenericParameterTypes();
-        Annotation[][] paramAnnotations = method.getParameterAnnotations();
+        Annotation[][] paramAnnotations = getMergedParameterAnnotations(method);
+
         for (int i = 0; i < genericParameterTypes.length; i++) {
             final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
             List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
@@ -847,6 +849,56 @@ public class Reader {
             operation.defaultResponse(response);
         }
         return operation;
+    }
+
+    /**
+     * Returns the parameter annotations for a given method, merged with those of overriden methods. If the same
+     * annotation is provided in the overriden method, the annotation of the overriding method prevails
+     *
+     * @param method the method to get the annotations for
+     * @return a two-dimensional array of annotations per parameter of the same format returned from
+     * {@link Method#getParameterAnnotations()}
+     */
+    private static Annotation[][] getMergedParameterAnnotations(Method method) {
+        Annotation[][] paramAnnotations = method.getParameterAnnotations();
+        Method superclassMethod = ReflectionUtils.getOverriddenMethod(method);
+
+        // If this is not an overriden method, this method is simply a call to method.getParameterAnnotations()
+        if (superclassMethod == null)
+            return paramAnnotations;
+
+        // Keep a set of classes we have found, because we won't override annotations of the same class
+        @SuppressWarnings("unchecked")
+        Set<Class<? extends Annotation>>[] annotationsByClassPerParam =
+                (Set<Class<? extends Annotation>>[]) new HashSet<?>[paramAnnotations.length];
+        for (int i = 0; i < paramAnnotations.length; i++) {
+            Annotation[] paramAnnotation = paramAnnotations[i];
+            annotationsByClassPerParam[i] = new HashSet<Class<? extends Annotation>>();
+            for (Annotation annotation : paramAnnotation) {
+                annotationsByClassPerParam[i].add(annotation.annotationType());
+            }
+        }
+
+        while (superclassMethod != null) {
+            Annotation[][] superParamAnnotations = superclassMethod.getParameterAnnotations();
+            for (int i = 0; i < paramAnnotations.length; i++) {
+                ArrayList<Annotation> annotationsToAdd = new ArrayList<Annotation>();
+                final Annotation[] superParamAnnotation = superParamAnnotations[i];
+                for (Annotation superAnnotation : superParamAnnotation) {
+                    if (!annotationsByClassPerParam[i].contains(superAnnotation.annotationType())) {
+                        annotationsToAdd.add(superAnnotation);
+                        annotationsByClassPerParam[i].add(superAnnotation.annotationType());
+                    }
+                }
+                if (annotationsToAdd.size() > 0) {
+                    paramAnnotations[i] = ArrayUtils.addAll(paramAnnotations[i],
+                            annotationsToAdd.toArray(new Annotation[0]));
+                }
+            }
+            superclassMethod = ReflectionUtils.getOverriddenMethod(superclassMethod);
+        }
+
+        return paramAnnotations;
     }
 
     private static <A extends Annotation> A getAnnotation(Method method, Class<A> annotationClass) {
