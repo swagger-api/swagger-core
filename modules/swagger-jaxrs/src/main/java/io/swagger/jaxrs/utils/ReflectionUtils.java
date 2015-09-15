@@ -183,9 +183,11 @@ public class ReflectionUtils {
             fields.add(field);
             fieldNames.add(field.getName());
         }
-        for (Field field : getDeclaredFields(cls.getSuperclass())) {
-            if (!fieldNames.contains(field.getName())) {
-                fields.add(field);
+        if (cls.getSuperclass() != null) {
+            for (Field field : getDeclaredFields(cls.getSuperclass())) {
+                if (!fieldNames.contains(field.getName())) {
+                    fields.add(field);
+                }
             }
         }
         return fields;
