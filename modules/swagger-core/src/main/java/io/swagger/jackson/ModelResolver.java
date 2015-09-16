@@ -403,9 +403,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        if (!resolveSubtypes(model, beanDesc, context)) {
-            model.setDiscriminator(null);
-        }
 
         Collections.sort(props, getPropertyComparator());
 
@@ -414,6 +411,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             modelProps.put(prop.getName(), prop);
         }
         model.setProperties(modelProps);
+
+        /**
+         * This must be done after model.setProperties so that the model's set
+         * of properties is available to filter from any subtypes
+         **/
+        if (!resolveSubtypes(model, beanDesc, context)) {
+            model.setDiscriminator(null);
+        }
         return model;
     }
 
