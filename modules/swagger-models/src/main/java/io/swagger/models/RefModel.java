@@ -3,7 +3,6 @@ package io.swagger.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.models.properties.Property;
 import io.swagger.models.refs.GenericRef;
-import io.swagger.models.refs.RefConstants;
 import io.swagger.models.refs.RefFormat;
 import io.swagger.models.refs.RefType;
 
@@ -24,7 +23,7 @@ public class RefModel implements Model {
     }
 
     public RefModel asDefault(String ref) {
-        this.set$ref(RefConstants.INTERNAL_DEFINITION_PREFIX + ref);
+        this.set$ref(RefType.DEFINITION.getInternalPrefix() + ref);
         return this;
     }
 

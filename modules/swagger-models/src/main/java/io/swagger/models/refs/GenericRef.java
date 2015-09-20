@@ -1,7 +1,7 @@
 package io.swagger.models.refs;
 
 /**
- * A class the encapsulates logic that is common to RefModel, RefParameter, and RefProperty
+ * A class the encapsulates logic that is common to RefModel, RefParameter, and RefProperty.
  */
 public class GenericRef {
 
@@ -14,29 +14,18 @@ public class GenericRef {
         this.format = computeRefFormat(ref);
         this.type = type;
 
-        validateFormatAndType(format, type);
-
         if (format == RefFormat.INTERNAL && !ref.startsWith("#/")) {
             /* this is an internal path that did not start with a #/, we must be in some of ModelResolver code
             while currently relies on the ability to create RefModel/RefProperty objects via a constructor call like
             1) new RefModel("Animal")..and expects get$ref to return #/definitions/Animal
             2) new RefModel("http://blah.com/something/file.json")..and expects get$ref to turn the URL
              */
-            this.ref = getPrefixForType(type) + ref;
+            this.ref = type.getInternalPrefix() + ref;
         } else {
             this.ref = ref;
         }
 
         this.simpleRef = computeSimpleRef(this.ref, format, type);
-    }
-
-    private void validateFormatAndType(RefFormat format, RefType type) {
-        if(type == RefType.PATH || type == RefType.RESPONSE) {
-            if(format == RefFormat.INTERNAL) {
-                //PATH AND RESPONSE refs  can only be URL or RELATIVE
-                throw new RuntimeException(type + " refs can not be internal references");
-            }
-        }
     }
 
     public RefFormat getFormat() {
@@ -92,24 +81,8 @@ public class GenericRef {
         String result = ref;
         //simple refs really only apply to internal refs
         if (format == RefFormat.INTERNAL) {
-            String prefix = getPrefixForType(type);
+            String prefix = type.getInternalPrefix();
             result = ref.substring(prefix.length());
-        }
-        return result;
-    }
-
-    private static String getPrefixForType(RefType refType) {
-        String result;
-
-        switch (refType) {
-            case DEFINITION:
-                result = RefConstants.INTERNAL_DEFINITION_PREFIX;
-                break;
-            case PARAMETER:
-                result = RefConstants.INTERNAL_PARAMETER_PREFIX;
-                break;
-            default:
-                throw new RuntimeException("No logic implemented for RefType of " + refType);
         }
 
         return result;

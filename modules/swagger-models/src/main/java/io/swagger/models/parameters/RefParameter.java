@@ -2,7 +2,6 @@ package io.swagger.models.parameters;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.models.refs.GenericRef;
-import io.swagger.models.refs.RefConstants;
 import io.swagger.models.refs.RefFormat;
 import io.swagger.models.refs.RefType;
 
@@ -22,7 +21,7 @@ public class RefParameter extends AbstractParameter implements Parameter {
     }
 
     public RefParameter asDefault(String ref) {
-        this.set$ref(RefConstants.INTERNAL_PARAMETER_PREFIX + ref);
+        this.set$ref(RefType.PARAMETER.getInternalPrefix() + ref);
         return this;
     }
 
