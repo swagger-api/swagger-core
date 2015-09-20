@@ -39,6 +39,7 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.lang.annotation.Annotation;
@@ -474,6 +475,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 } else {
                     ap.setExclusiveMaximum(!max.inclusive());
                 }
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.Pattern")) {
+            Pattern pattern = (Pattern) annos.get("javax.validation.constraints.Pattern");
+            if (property instanceof StringProperty) {
+                StringProperty ap = (StringProperty) property;
+                ap.setPattern(pattern.regexp());
             }
         }
     }
