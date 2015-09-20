@@ -4,6 +4,7 @@ import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
+
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.DefaultReaderConfig;
 import io.swagger.models.ArrayModel;
@@ -49,7 +50,9 @@ import io.swagger.resources.ResourceWithTypedResponses;
 import io.swagger.resources.ResourceWithVoidReturns;
 import io.swagger.resources.SimpleResource;
 import io.swagger.resources.SimpleResourceWithoutAnnotations;
+import io.swagger.resources.SimpleSelfReferencingSubResource;
 import io.swagger.resources.TaggedResource;
+
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -317,6 +320,24 @@ public class SimpleScannerTest {
         assertFalse(param2.getRequired());
         assertNull(param2.getDescription());
     }
+
+    @Test(description = "scan a simple self-referencing subresource")
+    public void scanSimpleSelfReferencingSubResource() {
+        DefaultReaderConfig config = new DefaultReaderConfig();
+        config.setScanAllResources(true);
+        Swagger swagger = new Reader(new Swagger(), config).read(SimpleSelfReferencingSubResource.class);
+
+        assertEquals(swagger.getPaths().size(), 2);
+
+        // these two paths are directly reachable without passing thru a recursive reference
+        Operation retrieve = getGet(swagger, "/sub");
+        assertNotNull(retrieve);
+        assertEquals(retrieve.getParameters().size(), 0);
+
+        retrieve = getGet(swagger, "/sub/recurse2");
+        assertNotNull(retrieve);
+        assertEquals(retrieve.getParameters().size(), 0);
+}
 
     @Test(description = "scan resource with ApiOperation.code() value")
     public void scanResourceWithApiOperationCodeValue() {
