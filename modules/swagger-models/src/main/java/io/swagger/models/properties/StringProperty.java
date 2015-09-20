@@ -5,6 +5,10 @@ import io.swagger.models.Xml;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The StringProperty class defines properties for strings without a specific format, for standard formats which don't
+ * need specific handling, or for custom formats.
+ */
 public class StringProperty extends AbstractProperty implements Property {
     public static final String TYPE = "string";
     protected List<String> _enum;
@@ -51,7 +55,7 @@ public class StringProperty extends AbstractProperty implements Property {
     }
 
     public static boolean isType(String type, String format) {
-        return TYPE.equals(type) && (format == null || Format.fromName(format) != null);
+        return TYPE.equals(type);
     }
 
     public StringProperty xml(Xml xml) {
