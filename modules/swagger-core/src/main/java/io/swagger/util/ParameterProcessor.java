@@ -1,4 +1,4 @@
-package io.swagger.jaxrs;
+package io.swagger.util;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiParam;
@@ -11,14 +11,13 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
-import io.swagger.util.AllowableValues;
-import io.swagger.util.AllowableValuesUtils;
+
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.core.Context;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -194,14 +193,18 @@ public class ParameterProcessor {
         public AnnotationsHelper(List<Annotation> annotations) {
             String rsDefault = null;
             for (Annotation item : annotations) {
-                if (item instanceof Context) {
+                if ("javax.ws.rs.core.Context".equals(item.annotationType().getName())) {
                     context = true;
                 } else if (item instanceof ApiParam) {
                     apiParam = new ApiParamWrapper((ApiParam) item);
                 } else if (item instanceof ApiImplicitParam) {
                     apiParam = new ApiImplicitParamWrapper((ApiImplicitParam) item);
-                } else if (item instanceof DefaultValue) {
-                    rsDefault = ((DefaultValue) item).value();
+                } else if ("javax.ws.rs.DefaultValue".equals(item.annotationType().getName())) {
+                    try {
+                        rsDefault = (String) item.getClass().getMethod("value").invoke(item);
+                    } catch (Exception ex) {
+                        LOGGER.error("Invocation of value method failed", ex);
+                    }
                 }
             }
             defaultValue = StringUtils.isNotEmpty(apiParam.getDefaultValue()) ? apiParam.getDefaultValue() : rsDefault;

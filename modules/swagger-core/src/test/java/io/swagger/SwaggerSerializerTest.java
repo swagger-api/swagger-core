@@ -2,12 +2,13 @@ package io.swagger;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.Contact;
-import io.swagger.models.Info;
 import io.swagger.models.Error;
+import io.swagger.models.Info;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
@@ -26,6 +27,7 @@ import io.swagger.models.properties.LongProperty;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.util.Json;
+import io.swagger.util.OutputReplacer;
 import io.swagger.util.ResourceUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -166,5 +168,50 @@ public class SwaggerSerializerTest {
         final String swaggerJson = Json.mapper().writeValueAsString(swagger);
         final Swagger rebuilt = Json.mapper().readValue(swaggerJson, Swagger.class);
         assertEquals(Json.pretty(swagger), Json.pretty(rebuilt));
+    }
+
+    @Test
+    public void prettyPrintTest() throws IOException {
+        final String json = ResourceUtils.loadClassResource(getClass(), "uber.json");
+        final Swagger swagger = Json.mapper().readValue(json, Swagger.class);
+        final String outputStream = OutputReplacer.OUT.run(new OutputReplacer.Function() {
+            @Override
+            public void run() {
+                Json.prettyPrint(swagger);
+            }
+        });
+        SerializationMatchers.assertEqualsToJson(swagger, outputStream);
+    }
+
+    @Test
+    public void exceptionsTest() throws IOException {
+        final String outputStream1 = OutputReplacer.ERROR.run(new OutputReplacer.Function() {
+            @Override
+            public void run() {
+                Json.pretty(new ThrowHelper());
+            }
+        });
+        assertTrue(outputStream1.contains(ThrowHelper.MESSAGE));
+
+        final String outputStream2 = OutputReplacer.ERROR.run(new OutputReplacer.Function() {
+            @Override
+            public void run() {
+                Json.prettyPrint(new ThrowHelper());
+            }
+        });
+        assertTrue(outputStream2.contains(ThrowHelper.MESSAGE));
+    }
+
+    static class ThrowHelper {
+
+        public static final String MESSAGE = "Test exception";
+
+        public String getValue() throws IOException {
+            throw new IOException(MESSAGE);
+        }
+
+        public void setValue(String value) {
+
+        }
     }
 }

@@ -1,12 +1,13 @@
 package io.swagger;
 
-import io.swagger.jaxrs.utils.PathUtils;
+import static org.testng.Assert.assertEquals;
+
+import io.swagger.util.PathUtils;
+
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.testng.Assert.assertEquals;
 
 public class PathUtilsTest {
 
@@ -76,6 +77,18 @@ public class PathUtilsTest {
         assertEquals(regexMap.get("regex"), "/(?!\\{\\})\\w*|/\\{\\w+:*([^\\{\\}]*(\\{.*\\})*)*\\}");
     }
 
+    @Test(description = "collect path")
+    public void collectPath() {
+        final String path = PathUtils.collectPath("api", "/users/", "{userId}/");
+        assertEquals(path, "/api/users/{userId}");
+    }
+
+    @Test(description = "collect path with many slashes inside")
+    public void collectPathWithSlashesInside() {
+        final String path = PathUtils.collectPath("///api/users///", "///getUser///", "/ /");
+        assertEquals(path, "/api/users/getUser");
+    }
+
     @Test(description = "not fail when passed path is null")
     public void testNullPath() {
         final Map<String, String> regexMap = new HashMap<String, String>();
@@ -94,6 +107,18 @@ public class PathUtilsTest {
     public void testEmptyPath() {
         final Map<String, String> regexMap = new HashMap<String, String>();
         final String path = PathUtils.parsePath("", regexMap);
+        assertEquals(path, "/");
+    }
+
+    @Test(description = "not fail when passed path is null")
+    public void testNullCollectedPath() {
+        final String path = PathUtils.collectPath(null, null);
+        assertEquals(path, "/");
+    }
+
+    @Test(description = "not fail when passed path is empty")
+    public void testEmptyCollectedPath() {
+        final String path = PathUtils.collectPath("");
         assertEquals(path, "/");
     }
 }

@@ -225,6 +225,11 @@
                         <exclude>**/io/swagger/jaxrs/config/DefaultJaxrsScanner.*</exclude>
                         <exclude>**/io/swagger/jaxrs/config/DefaultJaxrsConfig.*</exclude>
 
+                        <!-- Servlet -->
+                        <exclude>**/io/swagger/servlet/config/WebXMLReader.*</exclude>
+                        <exclude>**/io/swagger/servlet/config/ServletScanner.*</exclude>
+                        <exclude>**/io/swagger/servlet/config/DefaultServletConfig.*</exclude>
+                        <exclude>**/io/swagger/servlet/listing/ApiDeclarationServlet.*</exclude>
                     </excludes>
                     <rules>
                         <rule>
@@ -337,8 +342,8 @@
         <module>modules/swagger-jersey2-jaxrs</module>
         <module>modules/swagger-jersey-jaxrs</module>
         <module>modules/swagger-hibernate-validations</module>
-        <!--module>modules/swagger-servlet</module>
-        <module>modules/swagger-utils</module-->
+        <module>modules/swagger-servlet</module>
+        <!--module>modules/swagger-utils</module-->
         <!--module>modules/swagger-oauth2-auth-server</module-->
     </modules>
     <reporting>
@@ -460,6 +465,16 @@
                 <version>${commons-io-version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>${reflections-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava-version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
@@ -473,6 +488,8 @@
         <jackson-version>2.4.5</jackson-version>
         <jackson-guava-version>2.4.5</jackson-guava-version>
         <logback-version>1.0.1</logback-version>
+        <reflections-version>0.9.10</reflections-version>
+        <guava-version>18.0</guava-version>
 
         <testng-version>6.9.4</testng-version>
         <mockito-version>1.9.5</mockito-version>
