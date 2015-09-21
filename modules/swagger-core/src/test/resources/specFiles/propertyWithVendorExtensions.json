@@ -31,6 +31,13 @@
                     "x-number-value": 123,
                     "x-boolean-value": true,
                     "not-an-extension": "foobar"
+                },
+                "array": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Health"
+                    },
+                    "x-string-value": "string_value"
                 }
             }
         }

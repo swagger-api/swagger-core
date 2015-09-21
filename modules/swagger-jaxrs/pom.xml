@@ -44,7 +44,9 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
+                            io.swagger.jaxrs,
                             io.swagger.jaxrs.config,
+                            io.swagger.jaxrs.ext,
                             io.swagger.jaxrs.listing
                         </Export-Package>
                         <Import-Package>
@@ -57,11 +59,6 @@
         </plugins>
     </build>
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
@@ -102,18 +99,10 @@
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.9</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>18.0</version>
         </dependency>
 
         <dependency>
@@ -148,8 +137,8 @@
         </dependency>
     </dependencies>
     <properties>
-        <coverage.complexity.minimum>0.29</coverage.complexity.minimum>
+        <coverage.complexity.minimum>0.60</coverage.complexity.minimum>
         <coverage.line.minimum>0.00</coverage.line.minimum>
-        <coverage.missed.classes>5</coverage.missed.classes>
+        <coverage.missed.classes>3</coverage.missed.classes>
     </properties>
 </project>

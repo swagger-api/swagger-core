@@ -1,12 +1,12 @@
 /**
  * Copyright 2015 SmartBear Software
- * <p/>
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,9 +37,7 @@ import io.swagger.jaxrs.config.ReaderConfig;
 import io.swagger.jaxrs.config.ReaderListener;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
-import io.swagger.jaxrs.utils.PathUtils;
 import io.swagger.jaxrs.utils.ReaderUtils;
-import io.swagger.jaxrs.utils.ReflectionUtils;
 import io.swagger.models.Contact;
 import io.swagger.models.ExternalDocs;
 import io.swagger.models.License;
@@ -61,6 +59,10 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
+import io.swagger.util.ParameterProcessor;
+import io.swagger.util.PathUtils;
+import io.swagger.util.ReflectionUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,10 +166,13 @@ public class Reader {
      */
 
     public Swagger read(Class<?> cls) {
-        return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>());
+        return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
+    }
+    protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
+        return read(cls, parentPath, parentMethod, readHidden, parentConsumes, parentProduces, parentTags, parentParameters, new HashSet<Class<?>>());
     }
 
-    protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
+    private Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters, Set<Class<?>> scannedResources) {
         Api api = (Api) cls.getAnnotation(Api.class);
         Map<String, SecurityScope> globalScopes = new HashMap<String, SecurityScope>();
 
@@ -245,7 +250,7 @@ public class Reader {
                 if (ReflectionUtils.isOverriddenMethod(method, cls)) {
                     continue;
                 }
-                javax.ws.rs.Path methodPath = getAnnotation(method, javax.ws.rs.Path.class);
+                javax.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class);
 
                 String operationPath = getPath(apiPath, methodPath, parentPath);
                 Map<String, String> regexMap = new HashMap<String, String>();
@@ -255,12 +260,12 @@ public class Reader {
                         continue;
                     }
 
-                    final ApiOperation apiOperation = getAnnotation(method, ApiOperation.class);
+                    final ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
                     String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
                     Operation operation = null;
                     if(apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) { 
-                        operation = parseMethod(method, globalParameters);
+                        operation = parseMethod(cls, method, globalParameters);
                     }
                     if (operation == null) {
                         continue;
@@ -309,8 +314,9 @@ public class Reader {
                         apiProduces = both.toArray(new String[both.size()]);
                     }
                     final Class<?> subResource = getSubResource(method);
-                    if (subResource != null) {
-                        read(subResource, operationPath, httpMethod, true, apiConsumes, apiProduces, tags, operation.getParameters());
+                    if (subResource != null && !scannedResources.contains(subResource)) {
+                        scannedResources.add(subResource);
+                        read(subResource, operationPath, httpMethod, true, apiConsumes, apiProduces, tags, operation.getParameters(), scannedResources);
                     }
 
                     // can't continue without a valid http method
@@ -688,14 +694,14 @@ public class Reader {
     }
 
     public Operation parseMethod(Method method) {
-        return parseMethod(method, Collections.<Parameter>emptyList());
+        return parseMethod(method.getDeclaringClass(), method, Collections.<Parameter>emptyList());
     }
 
-    private Operation parseMethod(Method method, List<Parameter> globalParameters) {
+    private Operation parseMethod(Class<?> cls, Method method, List<Parameter> globalParameters) {
         Operation operation = new Operation();
 
-        ApiOperation apiOperation = getAnnotation(method, ApiOperation.class);
-        ApiResponses responseAnnotation = getAnnotation(method, ApiResponses.class);
+        ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
+        ApiResponses responseAnnotation = ReflectionUtils.getAnnotation(method, ApiResponses.class);
 
         String operationId = method.getName();
         String responseContainer = null;
@@ -776,7 +782,7 @@ public class Reader {
 
         Annotation annotation;
         if (apiOperation != null && apiOperation.consumes() != null && apiOperation.consumes().isEmpty()) {
-            annotation = getAnnotation(method, Consumes.class);
+            annotation = ReflectionUtils.getAnnotation(method, Consumes.class);
             if (annotation != null) {
                 String[] apiConsumes = ((Consumes) annotation).value();
                 for (String mediaType : apiConsumes) {
@@ -786,7 +792,7 @@ public class Reader {
         }
 
         if (apiOperation != null && apiOperation.produces() != null && apiOperation.produces().isEmpty()) {
-            annotation = getAnnotation(method, Produces.class);
+            annotation = ReflectionUtils.getAnnotation(method, Produces.class);
             if (annotation != null) {
                 String[] apiProduces = ((Produces) annotation).value();
                 for (String mediaType : apiProduces) {
@@ -822,7 +828,7 @@ public class Reader {
                 }
             }
         }
-        if (getAnnotation(method, Deprecated.class) != null) {
+        if (ReflectionUtils.getAnnotation(method, Deprecated.class) != null) {
             operation.setDeprecated(true);
         }
 
@@ -834,7 +840,7 @@ public class Reader {
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         Annotation[][] paramAnnotations = method.getParameterAnnotations();
         for (int i = 0; i < genericParameterTypes.length; i++) {
-            Type type = genericParameterTypes[i];
+            final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
             List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
 
             for (Parameter parameter : parameters) {
@@ -849,17 +855,6 @@ public class Reader {
         return operation;
     }
 
-    private static <A extends Annotation> A getAnnotation(Method method, Class<A> annotationClass) {
-        A annotation = method.getAnnotation(annotationClass);
-        if (annotation == null) {
-            Method superclassMethod = ReflectionUtils.getOverriddenMethod(method);
-            if (superclassMethod != null) {
-                annotation = getAnnotation(superclassMethod, annotationClass);
-            }
-        }
-        return annotation;
-    }
-
     private List<Parameter> getParameters(Type type, List<Annotation> annotations) {
         final Iterator<SwaggerExtension> chain = SwaggerExtensions.chain();
         if (!chain.hasNext()) {
@@ -871,7 +866,6 @@ public class Reader {
         LOGGER.debug("trying extension " + extension);
 
         final List<Parameter> parameters = extension.extractParameters(annotations, type, typesToSkip, chain);
-
         if (parameters.size() > 0) {
             final List<Parameter> processed = new ArrayList<Parameter>(parameters.size());
             for (Parameter parameter : parameters) {

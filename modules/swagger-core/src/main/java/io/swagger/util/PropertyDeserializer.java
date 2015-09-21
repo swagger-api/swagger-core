@@ -1,11 +1,26 @@
 package io.swagger.util;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.fasterxml.jackson.databind.node.FloatNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.LongNode;
+import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.swagger.models.Xml;
@@ -15,16 +30,6 @@ import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
 import io.swagger.models.properties.RefProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
 
 public class PropertyDeserializer extends JsonDeserializer<Property> {
     Logger LOGGER = LoggerFactory.getLogger(PropertyDeserializer.class);
@@ -55,7 +60,12 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         if (detailNode != null) {
             ArrayNode an = (ArrayNode) detailNode;
             for (JsonNode child : an) {
-                if (child instanceof TextNode) {
+                if (child instanceof TextNode ||
+                    child instanceof NumericNode ||
+                    child instanceof IntNode ||
+                    child instanceof LongNode ||
+                    child instanceof DoubleNode || 
+                    child instanceof FloatNode) {
                     result.add(child.asText());
                 }
             }
@@ -66,8 +76,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
 
     //because of the complexity of deserializing properties we must handle vendor extensions by hand
     private static Map<String, Object> getVendorExtensions(JsonNode node) {
-
-        Map result = new HashMap<String, Object>();
+        Map<String, Object> result = new HashMap<String, Object>();
 
         Iterator<String> fieldNameIter = node.fieldNames();
         while (fieldNameIter.hasNext()) {
@@ -79,9 +88,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                 Object extensionObject = Json.mapper().convertValue(extensionField, Object.class);
                 result.put(fieldName, extensionObject);
             }
-
         }
-
         return result;
     }
 
@@ -146,7 +153,9 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
             if (detailNode != null) {
                 Property items = propertyFromNode(detailNode);
                 if (items != null) {
-                    return new MapProperty(items).description(description);
+                    MapProperty mapProperty = new MapProperty(items).description(description);
+                    mapProperty.setVendorExtensionMap(getVendorExtensions(node));
+                    return mapProperty;
                 }
             } else {
               detailNode = node.get("properties");
@@ -158,14 +167,18 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                       properties.put(field.getKey(), property);
                   }
               }
-              return new ObjectProperty(properties);
+                ObjectProperty objectProperty = new ObjectProperty(properties);
+                objectProperty.setVendorExtensionMap(getVendorExtensions(node));
+                return objectProperty;
             }
         }
         if (ArrayProperty.isType(type)) {
             detailNode = node.get("items");
             if (detailNode != null) {
                 Property subProperty = propertyFromNode(detailNode);
-                return new ArrayProperty().items(subProperty).description(description);
+                ArrayProperty arrayProperty = new ArrayProperty().items(subProperty).description(description);
+                arrayProperty.setVendorExtensionMap(getVendorExtensions(node));
+                return arrayProperty;
             }
         }
 
@@ -192,13 +205,13 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         args.put(PropertyBuilder.PropertyId.UNIQUE_ITEMS, getBoolean(node, PropertyBuilder.PropertyId.UNIQUE_ITEMS));
         args.put(PropertyBuilder.PropertyId.READ_ONLY, getBoolean(node, PropertyBuilder.PropertyId.READ_ONLY));
         args.put(PropertyBuilder.PropertyId.VENDOR_EXTENSIONS, getVendorExtensions(node));
-
         Property output = PropertyBuilder.build(type, format, args);
         if (output == null) {
             LOGGER.warn("no property from " + type + ", " + format + ", " + args);
             return null;
         }
         output.setDescription(description);
+        
         return output;
     }
 }

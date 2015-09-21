@@ -41,7 +41,7 @@
                             io.swagger.core.util,
                             io.swagger.reader,
                             io.swagger.config,
-                            io.swagger.models,
+                            io.swagger.model,
                             io.swagger.util
                         </Export-Package>
                     </instructions>
@@ -65,16 +65,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.10</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -120,27 +110,6 @@
             <groupId>io.swagger</groupId>
             <artifactId>swagger-models</artifactId>
             <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-scala_2.10</artifactId>
-            <version>${jackson-scala-version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-annotations</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -188,12 +157,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${scala-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <version>${validation-api-version}</version>
@@ -207,11 +170,23 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+            <version>1.1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.hk2.external</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>2.2.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <properties>
         <!-- TODO increase coverage -->
         <validation-api-version>1.1.0.Final</validation-api-version>
-        <coverage.complexity.minimum>0.50</coverage.complexity.minimum>
+        <coverage.complexity.minimum>0.80</coverage.complexity.minimum>
         <coverage.line.minimum>0.0</coverage.line.minimum>
         <coverage.missed.classes>3</coverage.missed.classes>
     </properties>

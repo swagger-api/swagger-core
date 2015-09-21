@@ -140,6 +140,10 @@ public class ModelImpl extends AbstractModel {
     }
 
     public void addRequired(String name) {
+        if (required == null) {
+            required = new ArrayList<String>();
+        }
+        required.add(name);
         Property p = properties.get(name);
         if (p != null) {
             p.setRequired(true);
@@ -166,8 +170,8 @@ public class ModelImpl extends AbstractModel {
 
     public void setRequired(List<String> required) {
         this.required = required;
-        for (String s : required) {
-            if (properties != null) {
+        if (properties != null){
+            for (String s : required) {
                 Property p = properties.get(s);
                 if (p != null) {
                     p.setRequired(true);

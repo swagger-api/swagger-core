@@ -33,6 +33,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+                <version>${felix-version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -88,8 +89,7 @@
     <properties>
         <hibernate-validator-version>5.1.3.Final</hibernate-validator-version>
         <!-- TODO increase coverage and remove these overrides-->
-        <coverage.complexity.minimum>0.35</coverage.complexity.minimum>
-        <coverage.line.minimum>0.00</coverage.line.minimum>
-        <coverage.missed.classes>2</coverage.missed.classes>
+        <coverage.complexity.minimum>0.50</coverage.complexity.minimum>
+        <coverage.line.minimum>0.90</coverage.line.minimum>
     </properties>
 </project>

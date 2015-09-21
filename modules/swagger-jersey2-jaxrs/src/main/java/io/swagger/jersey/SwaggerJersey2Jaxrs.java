@@ -1,26 +1,31 @@
 package io.swagger.jersey;
 
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.AnnotatedField;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
-import io.swagger.jaxrs.ParameterProcessor;
+import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.ext.AbstractSwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
 import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.Property;
 import io.swagger.util.Json;
+import io.swagger.util.ParameterProcessor;
+
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import javax.ws.rs.BeanParam;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import javax.ws.rs.BeanParam;
 
 /**
  * Swagger extension for handling JAX-RS 2.0 processing.
@@ -89,6 +94,13 @@ public class SwaggerJersey2Jaxrs extends AbstractSwaggerExtension {
                 if (java.io.InputStream.class.isAssignableFrom(constructType(type).getRawClass())) {
                     final Parameter param = new FormParameter().type("file").name(fd.value());
                     parameters.add(param);
+                } else {
+                    final FormParameter fp = new FormParameter().name(fd.value());
+                    final Property schema = ModelConverters.getInstance().readAsProperty(type);
+                    if (schema != null) {
+                        fp.setProperty(schema);
+                    }
+                    parameters.add(fp);
                 }
             }
         }
@@ -99,5 +111,16 @@ public class SwaggerJersey2Jaxrs extends AbstractSwaggerExtension {
         }
 
         return parameters;
+    }
+
+    @Override
+    protected boolean shouldIgnoreClass(Class<?> cls) {
+        for (Class<?> item : Arrays.asList(org.glassfish.jersey.media.multipart.FormDataContentDisposition.class,
+                org.glassfish.jersey.media.multipart.FormDataBodyPart.class)) {
+            if (item.isAssignableFrom(cls)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

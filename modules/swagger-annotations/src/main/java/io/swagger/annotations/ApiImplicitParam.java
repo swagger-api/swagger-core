@@ -1,12 +1,12 @@
 /**
  * Copyright 2015 SmartBear Software
- * <p/>
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,12 +23,12 @@ import java.lang.annotation.Target;
 
 /**
  * Represents a single parameter in an API Operation.
- * <p/>
+ * <p>
  * While {@link ApiParam} is bound to a JAX-RS parameter,
  * method or field, this allows you to manually define a parameter in a fine-tuned manner.
  * This is the only way to define parameters when using Servlets or other non-JAX-RS
  * environments.
- * <p/>
+ * <p>
  * This annotation must be used as a value of {@link ApiImplicitParams}
  * in order to be parsed.
  *
@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
 public @interface ApiImplicitParam {
     /**
      * Name of the parameter.
-     * <p/>
+     * <p>
      * For proper Swagger functionality, follow these rules when naming your parameters based on {@link #paramType()}:
      * <ol>
      * <li>If {@code paramType} is "path", the name should be the associated section in the path.</li>
@@ -62,7 +62,7 @@ public @interface ApiImplicitParam {
 
     /**
      * Limits the acceptable values for this parameter.
-     * <p/>
+     * <p>
      * There are three ways to describe the allowable values:
      * <ol>
      * <li>To set a list of values, provide a comma-separated list.
@@ -79,14 +79,14 @@ public @interface ApiImplicitParam {
 
     /**
      * Specifies if the parameter is required or not.
-     * <p/>
+     * <p>
      * Path parameters should always be set as required.
      */
     boolean required() default false;
 
     /**
      * Allows for filtering a parameter from the API documentation.
-     * <p/>
+     * <p>
      * See io.swagger.core.filter.SwaggerSpecFilter for further details.
      */
     String access() default "";
@@ -98,14 +98,14 @@ public @interface ApiImplicitParam {
 
     /**
      * The data type of the parameter.
-     * <p/>
+     * <p>
      * This can be the class name or a primitive.
      */
     String dataType() default "";
 
     /**
      * The parameter type of the parameter.
-     * <p/>
+     * <p>
      * Valid values are {@code path}, {@code query}, {@code body}, {@code header} or {@code form}.
      */
     String paramType() default "";

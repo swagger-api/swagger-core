@@ -184,8 +184,10 @@ public class Path {
         if (patch != null) {
             result.put(HttpMethod.PATCH, patch);
         }
+        if (head != null) {
+            result.put(HttpMethod.HEAD, head);
+        }
         if (options != null) {
-            result.put(HttpMethod.OPTIONS, options);
             result.put(HttpMethod.OPTIONS, options);
         }
 

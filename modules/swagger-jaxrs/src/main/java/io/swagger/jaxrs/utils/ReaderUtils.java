@@ -1,10 +1,11 @@
 package io.swagger.jaxrs.utils;
 
-import io.swagger.jaxrs.ParameterProcessor;
+import io.swagger.util.ParameterProcessor;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.util.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -17,6 +18,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.ws.rs.core.Context;
 
 public class ReaderUtils {
 
@@ -48,7 +51,7 @@ public class ReaderUtils {
             final List<Parameter> parameters = new ArrayList<Parameter>();
             for (int i = 0; i < genericParameterTypes.length; i++) {
                 final List<Annotation> tmpAnnotations = Arrays.asList(annotations[i]);
-                if (ReflectionUtils.isContext(tmpAnnotations)) {
+                if (isContext(tmpAnnotations)) {
                     paramsCount++;
                 } else {
                     final Type genericParameterType = genericParameterTypes[i];
@@ -82,7 +85,7 @@ public class ReaderUtils {
      */
     public static List<Parameter> collectFieldParameters(Class<?> cls, Swagger swagger) {
         final List<Parameter> parameters = new ArrayList<Parameter>();
-        for (Field field : cls.getDeclaredFields()) {
+        for (Field field : ReflectionUtils.getDeclaredFields(cls)) {
             final List<Annotation> annotations = Arrays.asList(field.getAnnotations());
             final Type genericType = field.getGenericType();
             for (Parameter parameter : collectParameters(genericType, annotations)) {
@@ -98,5 +101,14 @@ public class ReaderUtils {
         final Iterator<SwaggerExtension> chain = SwaggerExtensions.chain();
         return chain.hasNext() ? chain.next().extractParameters(annotations, type, new HashSet<Type>(), chain) :
                 Collections.<Parameter>emptyList();
+    }
+
+    private static boolean isContext(List<Annotation> annotations) {
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof Context) {
+                return true;
+            }
+        }
+        return false;
     }
 }

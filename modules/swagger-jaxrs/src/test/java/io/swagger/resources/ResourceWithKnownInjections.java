@@ -1,7 +1,9 @@
 package io.swagger.resources;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 
+import javax.servlet.ServletConfig;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -18,9 +20,14 @@ public class ResourceWithKnownInjections {
     private Integer constructorParam;
     @QueryParam("fieldParam")
     private String fieldParam; // injection into a class field
+    @ApiParam(hidden = true)
+    @QueryParam("hiddenParam")
+    private String hiddenParam;
 
     // injection into a constructor parameter
-    public ResourceWithKnownInjections(@PathParam("id") Integer constructorParam) {
+    public ResourceWithKnownInjections(@PathParam("id") Integer constructorParam,
+                                       @ApiParam(hidden = true) @QueryParam("hiddenParam") String hiddenParam,
+                                       @Context ServletConfig context) {
         this.constructorParam = constructorParam;
     }
 

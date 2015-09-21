@@ -2,7 +2,7 @@ package io.swagger.jackson;
 
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.testng.annotations.Test;

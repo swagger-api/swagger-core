@@ -2,12 +2,31 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class IntegerProperty extends BaseIntegerProperty {
     private static final String FORMAT = "int32";
     protected Integer _default;
+    protected List<Integer> _enum;
 
     public IntegerProperty() {
         super(FORMAT);
+    }
+
+    public IntegerProperty _enum(Integer value) {
+        if (this._enum == null) {
+            this._enum = new ArrayList<Integer>();
+        }
+        if (!_enum.contains(value)) {
+            _enum.add(value);
+        }
+        return this;
+    }
+
+    public IntegerProperty _enum(List<Integer> value) {
+        this._enum = value;
+        return this;
     }
 
     public static boolean isType(String type, String format) {
@@ -50,6 +69,14 @@ public class IntegerProperty extends BaseIntegerProperty {
 
     public void setDefault(Integer _default) {
         this._default = _default;
+    }
+
+    public List<Integer> getEnum() {
+        return _enum;
+    }
+
+    public void setEnum(List<Integer> _enum) {
+        this._enum = _enum;
     }
 
     @Override
