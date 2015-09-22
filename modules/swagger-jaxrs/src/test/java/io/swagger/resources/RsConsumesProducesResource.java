@@ -62,4 +62,16 @@ public class RsConsumesProducesResource {
     public Response apiConsumesProduces() {
         return Response.ok().build();
     }
+
+    @PUT
+    @Path("/split")
+    @Produces({"image/jpeg,image/gif", "image/png,"})
+    @Consumes({"image/jpeg,,image/gif", "image/png"})
+    @ApiOperation(value = "Get simple string value",
+            notes = "No details provided",
+            response = String.class)
+    public Response splitRsConsumesProduces() {
+        return Response.ok().build();
+    }
+
 }
