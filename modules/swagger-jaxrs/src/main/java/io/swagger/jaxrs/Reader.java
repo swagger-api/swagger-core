@@ -59,6 +59,7 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
+import io.swagger.util.BaseReaderUtils;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
@@ -264,7 +265,7 @@ public class Reader {
                     String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
                     Operation operation = null;
-                    if(apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) { 
+                    if(apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) {
                         operation = parseMethod(cls, method, globalParameters);
                     }
                     if (operation == null) {
@@ -332,7 +333,7 @@ public class Reader {
                             }
 
                             if (operation != null) {
-                                addExtensionProperties(apiOperation.extensions(), operation.getVendorExtensions());
+                                operation.getVendorExtensions().putAll(BaseReaderUtils.parseExtensions(apiOperation.extensions()));
                             }
                         }
                         if (operation != null) {
@@ -458,7 +459,7 @@ public class Reader {
                             tagConfig.externalDocs().url()));
                 }
 
-                addExtensionProperties(tagConfig.extensions(), tag.getVendorExtensions());
+                tag.getVendorExtensions().putAll(BaseReaderUtils.parseExtensions(tagConfig.extensions()));
 
                 swagger.addTag(tag);
             }
@@ -525,37 +526,7 @@ public class Reader {
             }
         }
 
-        addExtensionProperties(infoConfig.extensions(), info.getVendorExtensions());
-    }
-
-    private void addExtensionProperties(Extension[] extensions, Map<String, Object> map) {
-        for (Extension extension : extensions) {
-            String name = extension.name();
-            if (name.length() > 0) {
-
-                if (!name.startsWith("x-")) {
-                    name = "x-" + name;
-                }
-
-                if (!map.containsKey(name)) {
-                    map.put(name, new HashMap<String, Object>());
-                }
-
-                map = (Map<String, Object>) map.get(name);
-            }
-
-            for (ExtensionProperty property : extension.properties()) {
-                if (!property.name().isEmpty() && !property.value().isEmpty()) {
-
-                    String propertyName = property.name();
-                    if (name.isEmpty() && !propertyName.startsWith("x-")) {
-                        propertyName = "x-" + propertyName;
-                    }
-
-                    map.put(propertyName, property.value());
-                }
-            }
-        }
+        info.getVendorExtensions().putAll(BaseReaderUtils.parseExtensions(infoConfig.extensions()));
     }
 
     protected Class<?> getSubResource(Method method) {
