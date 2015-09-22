@@ -244,7 +244,7 @@ public class Reader {
             globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, swagger));
 
             // parse the method
-            final javax.ws.rs.Path apiPath = cls.getAnnotation(javax.ws.rs.Path.class);
+            final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
             Method methods[] = cls.getMethods();
             for (Method method : methods) {
                 if (ReflectionUtils.isOverriddenMethod(method, cls)) {
