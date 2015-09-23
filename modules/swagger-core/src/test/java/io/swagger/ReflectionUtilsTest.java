@@ -13,6 +13,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 
+import javax.ws.rs.Path;
+
 public class ReflectionUtilsTest {
 
     @Test
@@ -104,5 +106,12 @@ public class ReflectionUtilsTest {
         Assert.assertTrue(ReflectionUtils.isVoid(Void.class));
         Assert.assertTrue(ReflectionUtils.isVoid(Void.TYPE));
         Assert.assertFalse(ReflectionUtils.isVoid(String.class));
+    }
+
+    @Test
+    public void testDerivedAnnotation() {
+        final Path annotation = ReflectionUtils.getAnnotation(Child.class, javax.ws.rs.Path.class);
+        Assert.assertNotNull(annotation);
+        Assert.assertEquals(annotation.value(), "parentInterfacePath");
     }
 }

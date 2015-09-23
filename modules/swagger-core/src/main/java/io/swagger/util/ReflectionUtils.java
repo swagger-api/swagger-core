@@ -64,20 +64,19 @@ public class ReflectionUtils {
     public static Method getOverriddenMethod(Method method) {
         Class<?> declaringClass = method.getDeclaringClass();
         Class<?> superClass = declaringClass.getSuperclass();
+        Method result = null;
         if (superClass != null && !(superClass.equals(Object.class))) {
-            Method result = findMethod(method, superClass);
-            if (result == null) {
-                for (Class<?> anInterface : declaringClass.getInterfaces()) {
-                    result = findMethod(method, anInterface);
-                    if (result != null) {
-                        return result;
-                    }
+            result = findMethod(method, superClass);
+        }
+        if (result == null) {
+            for (Class<?> anInterface : declaringClass.getInterfaces()) {
+                result = findMethod(method, anInterface);
+                if (result != null) {
+                    return result;
                 }
-            } else {
-                return result;
             }
         }
-        return null;
+        return result;
     }
 
     /**
@@ -177,6 +176,25 @@ public class ReflectionUtils {
             Method superclassMethod = getOverriddenMethod(method);
             if (superclassMethod != null) {
                 annotation = getAnnotation(superclassMethod, annotationClass);
+            }
+        }
+        return annotation;
+    }
+
+    public static <A extends Annotation> A getAnnotation(Class<?> cls, Class<A> annotationClass) {
+        A annotation = cls.getAnnotation(annotationClass);
+        if (annotation == null) {
+            Class<?> superClass = cls.getSuperclass();
+            if (superClass != null && !(superClass.equals(Object.class))) {
+                annotation = getAnnotation(superClass, annotationClass);
+            }
+        }
+        if (annotation == null) {
+            for (Class<?> anInterface : cls.getInterfaces()) {
+                annotation = getAnnotation(anInterface, annotationClass);
+                if (annotation != null) {
+                    return annotation;
+                }
             }
         }
         return annotation;

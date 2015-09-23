@@ -9,6 +9,7 @@ import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
+import io.swagger.resources.AnnotatedInterfaceImpl;
 import io.swagger.resources.ApiConsumesProducesResource;
 import io.swagger.resources.BookResource;
 import io.swagger.resources.BothConsumesProducesResource;
@@ -20,6 +21,7 @@ import io.swagger.resources.ResourceWithImplicitParams;
 import io.swagger.resources.ResourceWithKnownInjections;
 import io.swagger.resources.RsConsumesProducesResource;
 import io.swagger.resources.SimpleMethods;
+
 import org.testng.annotations.Test;
 
 import javax.ws.rs.DELETE;
@@ -161,6 +163,13 @@ public class ReaderTest {
 
         Operation methodFromInterface = getGet(swagger, "/pet/{petId5}");
         assertNotNull(methodFromInterface);
+    }
+
+    @Test(description = "scan annotation from interface, issue#1427")
+    public void scanInterfaceTest() {
+        final Swagger swagger = new Reader(new Swagger()).read(AnnotatedInterfaceImpl.class);
+        assertNotNull(swagger);
+        assertNotNull(swagger.getPath("/v1/users/{id}").getGet());
     }
 
     @Test(description = "scan implicit params")
