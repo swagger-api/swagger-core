@@ -80,6 +80,8 @@ public class ReaderTest {
         assertEquals(getPut(swagger, "/{id}").getProduces().get(0), TEXT_PLAIN);
         assertEquals(getPut(swagger, "/{id}/value").getConsumes().get(0), APPLICATION_XML);
         assertEquals(getPut(swagger, "/{id}/value").getProduces().get(0), TEXT_PLAIN);
+        assertEquals(getPut(swagger, "/split").getProduces(), Arrays.asList("image/jpeg",  "image/gif", "image/png"));
+        assertEquals(getPut(swagger, "/split").getConsumes(), Arrays.asList("image/jpeg",  "image/gif", "image/png"));
     }
 
     @Test(description = "scan consumes and produces values with both class level annotations")
