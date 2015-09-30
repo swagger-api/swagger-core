@@ -167,7 +167,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                       properties.put(field.getKey(), property);
                   }
               }
-                ObjectProperty objectProperty = new ObjectProperty(properties);
+                ObjectProperty objectProperty = new ObjectProperty(properties).description(description);
                 objectProperty.setVendorExtensionMap(getVendorExtensions(node));
                 return objectProperty;
             }

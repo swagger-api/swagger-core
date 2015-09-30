@@ -31,6 +31,11 @@ public class ObjectProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public ObjectProperty description(String description) {
+        this.setDescription(description);
+        return this;
+    }
+
     public Map<String, Property> getProperties(){
       return this.properties;
     }
