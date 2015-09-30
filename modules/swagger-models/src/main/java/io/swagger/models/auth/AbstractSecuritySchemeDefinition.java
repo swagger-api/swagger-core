@@ -11,6 +11,8 @@ public abstract class AbstractSecuritySchemeDefinition implements SecurityScheme
 
     private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
+    private String description;
+
     @JsonAnyGetter
     public Map<String, Object> getVendorExtensions() {
         return vendorExtensions;
@@ -23,19 +25,49 @@ public abstract class AbstractSecuritySchemeDefinition implements SecurityScheme
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public String getDescription() {
+        return description;
+    }
 
-        AbstractSecuritySchemeDefinition that = (AbstractSecuritySchemeDefinition) o;
-
-        return !(vendorExtensions != null ? !vendorExtensions.equals(that.vendorExtensions) : that.vendorExtensions != null);
-
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
     public int hashCode() {
-        return vendorExtensions != null ? vendorExtensions.hashCode() : 0;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        AbstractSecuritySchemeDefinition other = (AbstractSecuritySchemeDefinition) obj;
+        if (description == null) {
+            if (other.description != null) {
+                return false;
+            }
+        } else if (!description.equals(other.description)) {
+            return false;
+        }
+        if (vendorExtensions == null) {
+            if (other.vendorExtensions != null) {
+                return false;
+            }
+        } else if (!vendorExtensions.equals(other.vendorExtensions)) {
+            return false;
+        }
+        return true;
     }
 }
