@@ -202,12 +202,12 @@ public class Reader {
             if (!api.produces().isEmpty()) {
                 produces = new String[]{api.produces()};
             } else if (cls.getAnnotation(Produces.class) != null) {
-                produces = ((Produces) cls.getAnnotation(Produces.class)).value();
+                produces = ReaderUtils.splitContentValues(cls.getAnnotation(Produces.class).value());
             }
             if (!api.consumes().isEmpty()) {
                 consumes = new String[]{api.consumes()};
             } else if (cls.getAnnotation(Consumes.class) != null) {
-                consumes = ((Consumes) cls.getAnnotation(Consumes.class)).value();
+                consumes = ReaderUtils.splitContentValues(cls.getAnnotation(Consumes.class).value());
             }
             globalSchemes.addAll(parseSchemes(api.protocols()));
             Authorization[] authorizations = api.authorizations();
@@ -244,7 +244,7 @@ public class Reader {
             globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, swagger));
 
             // parse the method
-            final javax.ws.rs.Path apiPath = cls.getAnnotation(javax.ws.rs.Path.class);
+            final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
             Method methods[] = cls.getMethods();
             for (Method method : methods) {
                 if (ReflectionUtils.isOverriddenMethod(method, cls)) {
@@ -264,7 +264,7 @@ public class Reader {
                     String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
                     Operation operation = null;
-                    if(apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) { 
+                    if(apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) {
                         operation = parseMethod(cls, method, globalParameters);
                     }
                     if (operation == null) {
@@ -780,22 +780,19 @@ public class Reader {
 
         operation.operationId(operationId);
 
-        Annotation annotation;
         if (apiOperation != null && apiOperation.consumes() != null && apiOperation.consumes().isEmpty()) {
-            annotation = ReflectionUtils.getAnnotation(method, Consumes.class);
-            if (annotation != null) {
-                String[] apiConsumes = ((Consumes) annotation).value();
-                for (String mediaType : apiConsumes) {
+            final Consumes consumes = ReflectionUtils.getAnnotation(method, Consumes.class);
+            if (consumes != null) {
+                for (String mediaType : ReaderUtils.splitContentValues(consumes.value())) {
                     operation.consumes(mediaType);
                 }
             }
         }
 
         if (apiOperation != null && apiOperation.produces() != null && apiOperation.produces().isEmpty()) {
-            annotation = ReflectionUtils.getAnnotation(method, Produces.class);
-            if (annotation != null) {
-                String[] apiProduces = ((Produces) annotation).value();
-                for (String mediaType : apiProduces) {
+            final Produces produces = ReflectionUtils.getAnnotation(method, Produces.class);
+            if (produces != null) {
+                for (String mediaType : ReaderUtils.splitContentValues(produces.value())) {
                     operation.produces(mediaType);
                 }
             }
