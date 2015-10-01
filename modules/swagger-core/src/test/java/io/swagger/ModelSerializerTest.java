@@ -14,12 +14,7 @@ import io.swagger.models.Manufacturers;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.RefModel;
-import io.swagger.models.properties.DateProperty;
-import io.swagger.models.properties.DateTimeProperty;
-import io.swagger.models.properties.IntegerProperty;
-import io.swagger.models.properties.LongProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
+import io.swagger.models.properties.*;
 import io.swagger.util.Json;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -241,7 +236,7 @@ public class ModelSerializerTest {
 
     @Test(description = "it should generate an integer field with enum")
     public void integerEnumGeneration() throws IOException {
-        final String json = "{\n" +
+            final String json = "{\n" +
                 "   \"properties\":{\n" +
                 "      \"id\":{\n" +
                 "         \"description\":\"fun!\",\n" +
@@ -258,5 +253,27 @@ public class ModelSerializerTest {
         assertNotNull(p.getEnum());
         assertEquals(p.getEnum().get(0), new Integer(0));
         assertEquals(p.getEnum().get(1), new Integer(1));
+    }
+
+    @Test(description = "it retains enums per ")
+    public void testEnumParser() throws IOException {
+        String json = "{\n" +
+                "  \"properties\": {\n" +
+                "    \"AdvStateType\": {\n" +
+                "      \"description\": \"Advertising State\",\n" +
+                "      \"enum\": [\n" +
+                "        \"off\",\n" +
+                "        \"on\"\n" +
+                "      ],\n" +
+                "      \"type\": \"string\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+        final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
+        StringProperty p = (StringProperty)model.getProperties().get("AdvStateType");
+
+        assertNotNull(p.getEnum());
+        assertEquals(p.getEnum().get(0), "off");
+        assertEquals(p.getEnum().get(1), "on");
     }
 }
