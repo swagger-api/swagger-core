@@ -102,7 +102,7 @@ public class Swagger {
         return this;
     }
 
-    public Swagger respnose(String key, Response response) {
+    public Swagger response(String key, Response response) {
         if (this.responses == null) {
             this.responses = new LinkedHashMap<String, Response>();
         }
