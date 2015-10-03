@@ -25,6 +25,7 @@ public class Swagger {
     protected Map<String, SecuritySchemeDefinition> securityDefinitions;
     protected Map<String, Model> definitions;
     protected Map<String, Parameter> parameters;
+    protected Map<String, Response> responses;
     protected ExternalDocs externalDocs;
 
     // builders
@@ -98,6 +99,14 @@ public class Swagger {
             this.paths = new LinkedHashMap<String, Path>();
         }
         this.paths.put(key, path);
+        return this;
+    }
+
+    public Swagger respnose(String key, Response response) {
+        if (this.responses == null) {
+            this.responses = new LinkedHashMap<String, Response>();
+        }
+        this.responses.put(key, response);
         return this;
     }
 
