@@ -1,6 +1,13 @@
 package io.swagger.models;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class License {
+    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
     private String name;
     private String url;
 
@@ -28,6 +35,18 @@ public class License {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getVendorExtensions() {
+        return vendorExtensions;
+    }
+
+    @JsonAnySetter
+    public void setVendorExtension(String name, Object value) {
+        if (name.startsWith("x-")) {
+            vendorExtensions.put(name, value);
+        }
     }
 
     @Override
