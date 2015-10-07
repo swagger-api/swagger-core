@@ -58,12 +58,20 @@ public class RefProperty extends AbstractProperty implements Property {
 
     @JsonIgnore
     public RefFormat getRefFormat() {
-        return this.genericRef.getFormat();
+        if (genericRef != null) {
+            return this.genericRef.getFormat();
+        } else {
+            return null;
+        }
     }
 
     @JsonIgnore
     public String getSimpleRef() {
-        return genericRef.getSimpleRef();
+        if (genericRef != null) {
+            return this.genericRef.getSimpleRef();
+        } else {
+            return null;
+        }
     }
 
     @Override
