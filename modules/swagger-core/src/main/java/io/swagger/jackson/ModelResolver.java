@@ -448,11 +448,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 AbstractNumericProperty ap = (AbstractNumericProperty) property;
                 ap.setMinimum(new Double(size.min()));
                 ap.setMaximum(new Double(size.max()));
-            }
-            if (property instanceof StringProperty) {
+            } else if (property instanceof StringProperty) {
                 StringProperty sp = (StringProperty) property;
                 sp.minLength(new Integer(size.min()));
                 sp.maxLength(new Integer(size.max()));
+            } else if (property instanceof ArrayProperty) {
+                ArrayProperty sp = (ArrayProperty) property;
+                sp.setMinItems(size.min());
+                sp.setMaxItems(size.max());
             }
         }
         if (annos.containsKey("javax.validation.constraints.DecimalMin")) {

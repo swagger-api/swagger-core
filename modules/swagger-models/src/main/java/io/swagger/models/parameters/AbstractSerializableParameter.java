@@ -15,7 +15,8 @@ import io.swagger.models.properties.StringProperty;
 
 import java.util.List;
 
-@JsonPropertyOrder({"name", "in", "description", "required", "type", "items", "collectionFormat", "default", "maximum", "exclusiveMaximum", "minimum", "exclusiveMinimum"})
+@JsonPropertyOrder({"name", "in", "description", "required", "type", "items", "collectionFormat", "default",
+        "maximum", "exclusiveMaximum", "minimum", "exclusiveMinimum", "maxItems", "minItems"})
 public abstract class AbstractSerializableParameter<T extends AbstractSerializableParameter<T>> extends AbstractParameter implements SerializableParameter {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSerializableParameter.class);
     protected String type;
@@ -27,6 +28,8 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     protected Double maximum;
     protected Boolean exclusiveMinimum;
     protected Double minimum;
+    private Integer maxItems;
+    private Integer minItems;
 
     @JsonIgnore
     protected String defaultValue;
@@ -198,6 +201,22 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         this.minimum = minimum;
     }
 
+    public Integer getMaxItems() {
+        return maxItems;
+    }
+
+    public void setMaxItems(Integer maxItems) {
+        this.maxItems = maxItems;
+    }
+
+    public Integer getMinItems() {
+        return minItems;
+    }
+
+    public void setMinItems(Integer minItems) {
+        this.minItems = minItems;
+    }
+
     @JsonIgnore
     private T castThis() {
         @SuppressWarnings("unchecked")
@@ -223,6 +242,8 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         result = prime * result + ((maximum == null) ? 0 : maximum.hashCode());
         result = prime * result + ((minimum == null) ? 0 : minimum.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((maxItems == null) ? 0 : maxItems.hashCode());
+        result = prime * result + ((minItems == null) ? 0 : minItems.hashCode());
         return result;
     }
 
@@ -306,6 +327,20 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
                 return false;
             }
         } else if (!type.equals(other.type)) {
+            return false;
+        }
+        if (maxItems == null) {
+            if (other.maxItems != null) {
+                return false;
+            }
+        } else if (!maxItems.equals(other.maxItems)) {
+            return false;
+        }
+        if (minItems == null) {
+            if (other.minItems != null) {
+                return false;
+            }
+        } else if (!minItems.equals(other.minItems)) {
             return false;
         }
         return true;

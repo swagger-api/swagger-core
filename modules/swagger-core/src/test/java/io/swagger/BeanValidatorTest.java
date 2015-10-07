@@ -3,10 +3,12 @@ package io.swagger;
 import io.swagger.converter.ModelConverters;
 import io.swagger.models.BeanValidationsModel;
 import io.swagger.models.Model;
+import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.DoubleProperty;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -36,5 +38,9 @@ public class BeanValidatorTest {
 
         final DoubleProperty maxBalance = (DoubleProperty) properties.get("maxBalance");
         Assert.assertTrue(maxBalance.getExclusiveMaximum());
+
+        final ArrayProperty items = (ArrayProperty) properties.get("items");
+        Assert.assertEquals((int) items.getMinItems(), 2);
+        Assert.assertEquals((int) items.getMaxItems(), 10);
     }
 }

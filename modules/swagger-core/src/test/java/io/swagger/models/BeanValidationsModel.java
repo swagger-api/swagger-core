@@ -1,5 +1,7 @@
 package io.swagger.models;
 
+import java.util.List;
+
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
@@ -33,6 +35,9 @@ public class BeanValidationsModel {
     protected Double maxBalance;
 
     protected Integer birthYear;
+
+    @Size(min = 2, max = 10)
+    private List<String> items;
 
     public Long getId() {
         return id;
@@ -104,5 +109,13 @@ public class BeanValidationsModel {
 
     public void setBirthYear(Integer birthYear) {
         this.birthYear = birthYear;
+    }
+
+    public List<String> getItems() {
+        return items;
+    }
+
+    public void setItems(List<String> items) {
+        this.items = items;
     }
 }
