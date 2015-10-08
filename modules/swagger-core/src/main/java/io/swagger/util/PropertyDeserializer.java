@@ -145,7 +145,9 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
 
         JsonNode detailNode = node.get("$ref");
         if (detailNode != null) {
-            return new RefProperty(detailNode.asText()).description(description);
+            RefProperty refProperty = new RefProperty(detailNode.asText()).description(description);
+            refProperty.setVendorExtensionMap(getVendorExtensions(node));
+            return refProperty;
         }
 
         if (ObjectProperty.isType(type)) {

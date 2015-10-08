@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
+import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.util.Json;
 
@@ -47,4 +48,27 @@ public class ObjectPropertyTest {
         assertNotNull(op.getVendorExtensions().get("x-foo"));
         assertEquals(op.getVendorExtensions().get("x-foo"), "vendor x");
     }
+
+  @Test (description = "convert a model with ref properties keeps vendor extensions")
+  public void readModelWithRefProperty() throws IOException {
+    String json = "{" +
+        "   \"properties\":{" +
+        "      \"id\":{" +
+        "         \"type\":\"string\"" +
+        "      }," +
+        "      \"someObject\":{" +
+        "         \"$ref\":\"whatever\"," +
+        "        \"x-foo\": \"vendor x\"" +
+        "         }" +
+        "      }" +
+        "   }" +
+        "}";
+
+    ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
+
+    Property p = model.getProperties().get("someObject");
+    assertTrue(p instanceof RefProperty);
+    assertTrue(p.getVendorExtensions() != null);
+    assertTrue(p.getVendorExtensions().containsKey("x-foo"));
+  }
 }
