@@ -714,7 +714,7 @@ public class Reader {
                 return null;
             }
             if (!"".equals(apiOperation.nickname())) {
-                operationId = method.getName();
+                operationId = apiOperation.nickname();
             }
 
             defaultResponseHeaders = parseResponseHeaders(apiOperation.responseHeaders());
