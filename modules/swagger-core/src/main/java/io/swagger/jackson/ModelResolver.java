@@ -139,7 +139,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     private boolean _isOptionalType(JavaType propType) {
-        return "com.google.common.base.Optional".equals(propType.getRawClass().getCanonicalName());
+        return Arrays.asList("com.google.common.base.Optional", "java.util.Optional")
+                .contains(propType.getRawClass().getCanonicalName());
     }
 
     public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
