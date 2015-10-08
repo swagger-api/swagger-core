@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiParam;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.parameters.BodyParameter;
+import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
@@ -21,7 +22,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.validation.constraints.Size;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -61,6 +64,10 @@ public class ParameterProcessorTest {
             @PathParam("maxValue") Integer maxValue,
             @ApiParam(value = "sample array data", allowMultiple = true, allowableValues = "range(0, 5)")
             @PathParam("values") Integer values) {
+
+    }
+
+    private void arrayParametrizedMethod(@HeaderParam("ids") @Size(min = 5, max = 10) List<Long> ids) {
 
     }
 
@@ -175,5 +182,18 @@ public class ParameterProcessorTest {
         Assert.assertEquals(items.getMaximum(), 5.0);
         Assert.assertTrue(items.getExclusiveMinimum());
         Assert.assertTrue(items.getExclusiveMaximum());
+    }
+
+    @Test
+    public void resourceWithArrayParamTest() throws NoSuchMethodException {
+        final Method method = getClass().getDeclaredMethod("arrayParametrizedMethod", List.class);
+        final Type[] genericParameterTypes = method.getGenericParameterTypes();
+        final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+
+        final HeaderParameter param = (HeaderParameter) ParameterProcessor.applyAnnotations(null, new HeaderParameter(),
+                genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
+        Assert.assertNotNull(param);
+        Assert.assertEquals((int) param.getMinItems(), 5);
+        Assert.assertEquals((int) param.getMaxItems(), 10);
     }
 }

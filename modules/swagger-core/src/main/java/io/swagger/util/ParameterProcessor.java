@@ -12,8 +12,6 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +22,8 @@ import java.lang.reflect.Type;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.validation.constraints.Size;
 
 public class ParameterProcessor {
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
@@ -55,6 +55,12 @@ public class ParameterProcessor {
             }
             if (StringUtils.isNotEmpty(param.getDataType())) {
                 p.setType(param.getDataType());
+            }
+            if (helper.getMinItems() != null) {
+                p.setMinItems(helper.getMinItems());
+            }
+            if (helper.getMaxItems() != null) {
+                p.setMaxItems(helper.getMaxItems());
             }
 
             AllowableValues allowableValues = AllowableValuesUtils.create(param.getAllowableValues());
@@ -184,6 +190,8 @@ public class ParameterProcessor {
         private boolean context;
         private ParamWrapper<?> apiParam = new ApiParamWrapper(DEFAULT_API_PARAM);
         private String defaultValue;
+        private Integer minItems;
+        private Integer maxItems;
 
         /**
          * Constructs an instance.
@@ -205,6 +213,10 @@ public class ParameterProcessor {
                     } catch (Exception ex) {
                         LOGGER.error("Invocation of value method failed", ex);
                     }
+                } else if (item instanceof Size) {
+                    final Size size = (Size) item;
+                    minItems = size.min();
+                    maxItems = size.max();
                 }
             }
             defaultValue = StringUtils.isNotEmpty(apiParam.getDefaultValue()) ? apiParam.getDefaultValue() : rsDefault;
@@ -252,6 +264,14 @@ public class ParameterProcessor {
          */
         public String getDefaultValue() {
             return defaultValue;
+        }
+
+        public Integer getMinItems() {
+            return minItems;
+        }
+
+        public Integer getMaxItems() {
+            return maxItems;
         }
     }
 

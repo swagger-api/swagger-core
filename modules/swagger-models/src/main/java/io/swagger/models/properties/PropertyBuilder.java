@@ -538,6 +538,24 @@ public class PropertyBuilder {
                 }
                 return null;
             }
+
+            @Override
+            public Property merge(final Property property, final Map<PropertyId, Object> args) {
+                super.merge(property, args);
+                if (property instanceof ArrayProperty) {
+                    final ArrayProperty resolved = (ArrayProperty) property;
+                    if (args.containsKey(PropertyId.MIN_ITEMS)) {
+                        final Integer value = PropertyId.MIN_ITEMS.findValue(args);
+                        resolved.setMinItems(value);
+                    }
+                    if (args.containsKey(PropertyId.MAX_ITEMS)) {
+                        final Integer value = PropertyId.MAX_ITEMS.findValue(args);
+                        resolved.setMaxItems(value);
+                    }
+                }
+
+                return property;
+            }
         },
         MAP(MapProperty.class) {
             @Override
