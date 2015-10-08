@@ -2,6 +2,7 @@ package io.swagger;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNull;
 
 import io.swagger.models.properties.ArrayProperty;
 
@@ -24,5 +25,13 @@ public class ArrayPropertyTest {
         prop2.setName(PROP_1);
         prop2.setRequired(true);
         assertEquals(prop1, prop2);
+    }
+
+    @Test
+    public void testSetNullUniqueItems() {
+        final ArrayProperty prop = new ArrayProperty();
+        prop.setUniqueItems(null);
+
+        assertNull(prop.getUniqueItems());
     }
 }
