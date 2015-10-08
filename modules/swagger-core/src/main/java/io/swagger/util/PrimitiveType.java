@@ -201,9 +201,9 @@ public enum PrimitiveType {
         BASE_CLASSES = Collections.unmodifiableMap(baseClasses);
 
         final Map<String, PrimitiveType> externalClasses = new HashMap<String, PrimitiveType>();
-        addKeys(externalClasses, DATE, "org.joda.time.LocalDate");
+        addKeys(externalClasses, DATE, "org.joda.time.LocalDate", "java.time.LocalDate");
         addKeys(externalClasses, DATE_TIME, "org.joda.time.DateTime", "org.joda.time.ReadableDateTime",
-                "javax.xml.datatype.XMLGregorianCalendar");
+                "javax.xml.datatype.XMLGregorianCalendar", "java.time.LocalDateTime");
         EXTERNAL_CLASSES = Collections.unmodifiableMap(externalClasses);
 
         final Map<String, PrimitiveType> names = new TreeMap<String, PrimitiveType>(String.CASE_INSENSITIVE_ORDER);
