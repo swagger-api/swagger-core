@@ -55,7 +55,7 @@ public class ArrayProperty extends AbstractProperty implements Property {
     }
 
     public void setUniqueItems(Boolean uniqueItems) {
-        this.uniqueItems = uniqueItems ? true : null;
+        this.uniqueItems = Boolean.TRUE.equals(uniqueItems) ? true : null;
     }
 
     public Integer getMaxItems() {
