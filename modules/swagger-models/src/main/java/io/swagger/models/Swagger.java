@@ -102,6 +102,11 @@ public class Swagger {
         return this;
     }
 
+    public Swagger responses(Map<String, Response> responses) {
+        this.responses = responses;
+        return this;
+    }
+
     public Swagger response(String key, Response response) {
         if (this.responses == null) {
             this.responses = new LinkedHashMap<String, Response>();
@@ -349,6 +354,14 @@ public class Swagger {
             this.parameters = new HashMap<String, Parameter>();
         }
         this.parameters.put(key, parameter);
+    }
+
+    public Map<String, Response> getResponses() {
+        return responses;
+    }
+
+    public void setResponses(Map<String, Response> responses) {
+        this.responses = responses;
     }
 
     public ExternalDocs getExternalDocs() {
