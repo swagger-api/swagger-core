@@ -15,4 +15,8 @@ public interface SecuritySchemeDefinition {
 
     @JsonAnySetter
     void setVendorExtension(String name, Object value);
+
+    String getDescription();
+
+    void setDescription(String description);
 }
