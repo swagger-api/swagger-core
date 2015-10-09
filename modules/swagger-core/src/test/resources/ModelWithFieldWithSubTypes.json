@@ -36,17 +36,9 @@
             {
                 "type": "object",
                 "properties": {
-                    "_type": {
-                        "type": "string",
-                        "description": "This value is used as a discriminator for serialization"
-                    },
                     "a": {
                         "type": "string",
                         "description": "Override the abstract a"
-                    },
-                    "b": {
-                        "type": "string",
-                        "description": "An arbitrary field"
                     },
                     "x": {
                         "type": "integer",
@@ -66,17 +58,9 @@
             {
                 "type": "object",
                 "properties": {
-                    "_type": {
-                        "type": "string",
-                        "description": "This value is used as a discriminator for serialization"
-                    },
                     "a": {
                         "type": "string",
                         "description": "Override the abstract a"
-                    },
-                    "b": {
-                        "type": "string",
-                        "description": "An arbitrary field"
                     },
                     "s": {
                         "type": "string",
