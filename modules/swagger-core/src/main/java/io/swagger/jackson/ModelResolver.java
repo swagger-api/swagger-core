@@ -405,10 +405,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        if (!resolveSubtypes(model, beanDesc, context)) {
-            model.setDiscriminator(null);
-        }
-
         Collections.sort(props, getPropertyComparator());
 
         Map<String, Property> modelProps = new LinkedHashMap<String, Property>();
@@ -416,6 +412,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             modelProps.put(prop.getName(), prop);
         }
         model.setProperties(modelProps);
+
+        if (!resolveSubtypes(model, beanDesc, context)) {
+            model.setDiscriminator(null);
+        }
+
         return model;
     }
 
@@ -524,8 +525,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 final Map<String, Property> baseProps = model.getProperties();
                 final Map<String, Property> subtypeProps = impl.getProperties();
                 if (baseProps != null && subtypeProps != null) {
-                    for (String remove : baseProps.keySet()) {
-                        subtypeProps.remove(remove);
+                    for (Map.Entry<String, Property> entry : baseProps.entrySet()) {
+                        if (entry.getValue().equals(subtypeProps.get(entry.getKey()))) {
+                            subtypeProps.remove(entry.getKey());
+                        }
                     }
                 }
 
