@@ -1,8 +1,12 @@
 package io.swagger.jackson;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerator;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,14 +27,18 @@ import io.swagger.models.RefModel;
 import io.swagger.models.Xml;
 import io.swagger.models.properties.AbstractNumericProperty;
 import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
+import io.swagger.models.properties.UUIDProperty;
 import io.swagger.util.AllowableValues;
 import io.swagger.util.AllowableValuesUtils;
 import io.swagger.util.PrimitiveType;
+
+import com.google.common.collect.Iterables;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -356,7 +364,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (property == null) {
                     if (mp != null && StringUtils.isNotEmpty(mp.reference())) {
                         property = new RefProperty(mp.reference());
-                    } else {
+                    } else if (member.getAnnotation(JsonIdentityInfo.class) != null) {
+                        property = GeneratorWrapper.processJsonIdentity(propType, context, _mapper,
+                                member.getAnnotation(JsonIdentityInfo.class),
+                                member.getAnnotation(JsonIdentityReference.class));
+                    }
+                    if (property == null) {
                         property = context.resolveProperty(propType, annotations);
                     }
                 }
@@ -418,6 +431,131 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         return model;
+    }
+
+    private enum GeneratorWrapper {
+        PROPERTY(ObjectIdGenerators.PropertyGenerator.class) {
+            @Override
+            protected Property processAsProperty(String propertyName, JavaType type,
+                                                 ModelConverterContext context, ObjectMapper mapper) {
+                /*
+                 * When generator = ObjectIdGenerators.PropertyGenerator.class and
+                 * @JsonIdentityReference(alwaysAsId = false) then property is serialized
+                 * in the same way it is done without @JsonIdentityInfo annotation.
+                 */
+                return null;
+            }
+
+            @Override
+            protected Property processAsId(String propertyName, JavaType type,
+                                           ModelConverterContext context, ObjectMapper mapper) {
+                final BeanDescription beanDesc = mapper.getSerializationConfig().introspect(type);
+                for (BeanPropertyDefinition def : beanDesc.findProperties()) {
+                    final String name = def.getName();
+                    if (name != null && name.equals(propertyName)) {
+                        final AnnotatedMember propMember = def.getPrimaryMember();
+                        final JavaType propType = propMember.getType(beanDesc.bindingsForBeanType());
+                        if (PrimitiveType.fromType(propType) != null) {
+                            return PrimitiveType.createProperty(propType);
+                        } else {
+                            return context.resolveProperty(propType,
+                                    Iterables.toArray(propMember.annotations(), Annotation.class));
+                        }
+                    }
+                }
+                return null;
+            }
+        },
+        INT(ObjectIdGenerators.IntSequenceGenerator.class) {
+            @Override
+            protected Property processAsProperty(String propertyName, JavaType type,
+                                                 ModelConverterContext context, ObjectMapper mapper) {
+                Property id = new IntegerProperty();
+                return process(id, propertyName, type, context);
+            }
+
+            @Override
+            protected Property processAsId(String propertyName, JavaType type,
+                                           ModelConverterContext context, ObjectMapper mapper) {
+                return new IntegerProperty();
+            }
+        },
+        UUID(ObjectIdGenerators.UUIDGenerator.class) {
+            @Override
+            protected Property processAsProperty(String propertyName, JavaType type,
+                                                 ModelConverterContext context, ObjectMapper mapper) {
+                Property id = new UUIDProperty();
+                return process(id, propertyName, type, context);
+            }
+
+            @Override
+            protected Property processAsId(String propertyName, JavaType type,
+                                           ModelConverterContext context, ObjectMapper mapper) {
+                return new UUIDProperty();
+            }
+        },
+        NONE(ObjectIdGenerators.None.class) {
+            // When generator = ObjectIdGenerators.None.class property should be processed as normal property.
+            @Override
+            protected Property processAsProperty(String propertyName, JavaType type,
+                                                 ModelConverterContext context, ObjectMapper mapper) {
+                return null;
+            }
+
+            @Override
+            protected Property processAsId(String propertyName, JavaType type,
+                                           ModelConverterContext context, ObjectMapper mapper) {
+                return null;
+            }
+        };
+
+        private final Class<? extends ObjectIdGenerator> generator;
+
+        GeneratorWrapper(Class<? extends ObjectIdGenerator> generator) {
+            this.generator = generator;
+        }
+
+        protected abstract Property processAsProperty(String propertyName, JavaType type,
+                                                      ModelConverterContext context, ObjectMapper mapper);
+
+        protected abstract Property processAsId(String propertyName, JavaType type,
+                                                ModelConverterContext context, ObjectMapper mapper);
+
+        public static Property processJsonIdentity(JavaType type, ModelConverterContext context,
+                                                   ObjectMapper mapper, JsonIdentityInfo identityInfo,
+                                                   JsonIdentityReference identityReference) {
+            final GeneratorWrapper wrapper = identityInfo != null ? getWrapper(identityInfo.generator()) : null;
+            if (wrapper == null) {
+                return null;
+            }
+            if (identityReference != null && identityReference.alwaysAsId()) {
+                return wrapper.processAsId(identityInfo.property(), type, context, mapper);
+            } else {
+                return wrapper.processAsProperty(identityInfo.property(), type, context, mapper);
+            }
+        }
+
+        private static GeneratorWrapper getWrapper(Class<?> generator) {
+            for (GeneratorWrapper value : GeneratorWrapper.values()) {
+                if (value.generator.isAssignableFrom(generator)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+
+        private static Property process(Property id, String propertyName, JavaType type,
+                                        ModelConverterContext context) {
+            id.setName(propertyName);
+            final Model model = context.resolve(type);
+            if (model instanceof ModelImpl) {
+                ModelImpl mi = (ModelImpl) model;
+                mi.getProperties().put(propertyName, id);
+                return new RefProperty(StringUtils.isNotEmpty(mi.getReference())
+                        ? mi.getReference() : mi.getName());
+            }
+            return null;
+        }
     }
 
     protected void applyBeanValidatorAnnotations(Property property, Annotation[] annotations) {
