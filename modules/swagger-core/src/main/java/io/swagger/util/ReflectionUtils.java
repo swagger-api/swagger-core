@@ -145,7 +145,7 @@ public class ReflectionUtils {
      * @return list of Fields
      */
     public static List<Field> getDeclaredFields(Class<?> cls) {
-        if (cls.equals(Object.class)) {
+        if (cls == null || Object.class.equals(cls)) {
             return Collections.emptyList();
         }
         final List<Field> fields = new ArrayList<Field>();
