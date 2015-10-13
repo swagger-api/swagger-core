@@ -160,17 +160,38 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                     return mapProperty;
                 }
             } else {
-              detailNode = node.get("properties");
-              Map<String, Property> properties = new HashMap<String, Property>();
-              if(detailNode != null){
-                  for(Iterator<Map.Entry<String,JsonNode>> iter = detailNode.fields(); iter.hasNext();){
-                      Map.Entry<String,JsonNode> field = iter.next();
-                      Property property = propertyFromNode(field.getValue());
-                      properties.put(field.getKey(), property);
-                  }
-              }
+                detailNode = node.get("properties");
+                String detailNodeType = null;
+                Map<String, Property> properties = new HashMap<String, Property>();
+                if(detailNode != null){
+                    for(Iterator<Map.Entry<String,JsonNode>> iter = detailNode.fields(); iter.hasNext();){
+                        Map.Entry<String,JsonNode> field = iter.next();
+                        Property property = propertyFromNode(field.getValue());
+                        if(property != null) {
+                            properties.put(field.getKey(), property);
+                        }
+                        else {
+                            if("type".equals(field.getKey()) && field.getValue() != null && "array".equals(field.getValue().asText())) {
+                                detailNodeType = "array";
+                            }
+                        }
+                    }
+                }
+
+                if("array".equals(detailNodeType)) {
+                    ArrayProperty ap = new ArrayProperty();
+                    ap.setDescription(description);
+
+                    if(properties.keySet().size() == 1) {
+                        String key = properties.keySet().iterator().next();
+                        ap.setItems(properties.get(key));
+                    }
+                    ap.setVendorExtensionMap(getVendorExtensions(node));
+                    return ap.description(description);
+                }
                 ObjectProperty objectProperty = new ObjectProperty(properties).description(description);
                 objectProperty.setVendorExtensionMap(getVendorExtensions(node));
+
                 return objectProperty;
             }
         }

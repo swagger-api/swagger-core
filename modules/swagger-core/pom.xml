@@ -186,7 +186,7 @@
     <properties>
         <!-- TODO increase coverage -->
         <validation-api-version>1.1.0.Final</validation-api-version>
-        <coverage.complexity.minimum>0.80</coverage.complexity.minimum>
+        <coverage.complexity.minimum>0.60</coverage.complexity.minimum>
         <coverage.line.minimum>0.0</coverage.line.minimum>
         <coverage.missed.classes>3</coverage.missed.classes>
     </properties>
