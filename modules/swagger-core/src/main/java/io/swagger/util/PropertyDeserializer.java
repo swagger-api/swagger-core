@@ -101,7 +101,9 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
             throws IOException, JsonProcessingException {
         JsonNode node = jp.getCodec().readTree(jp);
         Property property = propertyFromNode(node);
-        property.setXml(getXml(node));
+        if(property != null) {
+            property.setXml(getXml(node));
+        }
         return property;
     }
 
@@ -148,7 +150,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
             return new RefProperty(detailNode.asText()).description(description);
         }
 
-        if (ObjectProperty.isType(type)) {
+        if (ObjectProperty.isType(type) || node.get("properties") != null) {
             detailNode = node.get("additionalProperties");
             if (detailNode != null) {
                 Property items = propertyFromNode(detailNode);
