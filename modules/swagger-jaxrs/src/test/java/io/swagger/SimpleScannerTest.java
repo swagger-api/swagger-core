@@ -52,6 +52,7 @@ import io.swagger.resources.SimpleResource;
 import io.swagger.resources.SimpleResourceWithoutAnnotations;
 import io.swagger.resources.SimpleSelfReferencingSubResource;
 import io.swagger.resources.TaggedResource;
+import io.swagger.resources.NicknamedOperation;
 
 import org.testng.annotations.Test;
 
@@ -337,7 +338,7 @@ public class SimpleScannerTest {
         retrieve = getGet(swagger, "/sub/recurse2");
         assertNotNull(retrieve);
         assertEquals(retrieve.getParameters().size(), 0);
-}
+    }
 
     @Test(description = "scan resource with ApiOperation.code() value")
     public void scanResourceWithApiOperationCodeValue() {
@@ -526,5 +527,18 @@ public class SimpleScannerTest {
                 }
             }
         }
+    }
+
+    @Test(description = "scan a resource with custom operation nickname")
+    public void scanResourceWithApiOperationNickname() {
+        Swagger swagger = getSwagger(NicknamedOperation.class);
+        assertEquals(swagger.getPaths().size(), 1);
+
+        assertNotNull(swagger.getPaths().get("/external/info"));
+
+        Operation op = swagger.getPaths().get("/external/info").getGet();
+        assertNotNull(op);
+
+        assertEquals(op.getOperationId(), "getMyNicknameTest");
     }
 }
