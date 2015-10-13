@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.node.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -15,14 +16,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.FloatNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.NumericNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import io.swagger.models.Xml;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
@@ -142,9 +135,9 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
     Property propertyFromNode(JsonNode node) {
         final String type = getString(node, PropertyBuilder.PropertyId.TYPE);
         final String format = getString(node, PropertyBuilder.PropertyId.FORMAT);
-        final String description = getString(node, PropertyBuilder.PropertyId.DESCRIPTION);
         final Xml xml = getXml(node);
 
+        String description = getString(node, PropertyBuilder.PropertyId.DESCRIPTION);
         JsonNode detailNode = node.get("$ref");
         if (detailNode != null) {
             return new RefProperty(detailNode.asText()).description(description);
@@ -174,12 +167,15 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                             if("type".equals(field.getKey()) && field.getValue() != null && "array".equals(field.getValue().asText())) {
                                 detailNodeType = "array";
                             }
+                            if(("description").equals(field.getKey()) && field.getValue().getNodeType().equals(JsonNodeType.STRING)) {
+                                description = field.getValue().asText();
+                            }
                         }
                     }
                 }
 
                 if("array".equals(detailNodeType)) {
-                    ArrayProperty ap = new ArrayProperty();
+                    ArrayProperty ap = new ArrayProperty().description(description);
                     ap.setDescription(description);
 
                     if(properties.keySet().size() == 1) {
@@ -187,7 +183,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                         ap.setItems(properties.get(key));
                     }
                     ap.setVendorExtensionMap(getVendorExtensions(node));
-                    return ap.description(description);
+                    return ap;
                 }
                 ObjectProperty objectProperty = new ObjectProperty(properties).description(description);
                 objectProperty.setVendorExtensionMap(getVendorExtensions(node));
