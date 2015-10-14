@@ -1,5 +1,7 @@
 package io.swagger.models;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.models.auth.SecuritySchemeDefinition;
 import io.swagger.models.parameters.Parameter;
@@ -27,6 +29,7 @@ public class Swagger {
     protected Map<String, Parameter> parameters;
     protected Map<String, Response> responses;
     protected ExternalDocs externalDocs;
+    protected Map<String, Object> vendorExtensions;
 
     // builders
     public Swagger info(Info info) {
@@ -132,6 +135,14 @@ public class Swagger {
 
     public Swagger security(SecurityRequirement securityRequirement) {
         this.addSecurity(securityRequirement);
+        return this;
+    }
+
+    public Swagger vendorExtension(String key, Object extension) {
+        if(this.vendorExtensions == null) {
+            this.vendorExtensions = new HashMap<String, Object>();
+        }
+        this.vendorExtensions.put(key, extension);
         return this;
     }
 
@@ -370,6 +381,18 @@ public class Swagger {
 
     public void setExternalDocs(ExternalDocs value) {
         externalDocs = value;
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getVendorExtensions() {
+        return vendorExtensions;
+    }
+
+    @JsonAnySetter
+    public void setVendorExtension(String name, Object value) {
+        if (name.startsWith("x-")) {
+            vendorExtensions.put(name, value);
+        }
     }
 
     @Override
