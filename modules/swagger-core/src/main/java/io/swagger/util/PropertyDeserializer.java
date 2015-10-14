@@ -145,7 +145,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
 
         if (ObjectProperty.isType(type) || node.get("properties") != null) {
             detailNode = node.get("additionalProperties");
-            if (detailNode != null) {
+            if (detailNode != null && detailNode.getNodeType().equals(JsonNodeType.OBJECT)) {
                 Property items = propertyFromNode(detailNode);
                 if (items != null) {
                     MapProperty mapProperty = new MapProperty(items).description(description);
