@@ -3,6 +3,7 @@ package io.swagger;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.reflection.Child;
+import io.swagger.reflection.IParent;
 import io.swagger.reflection.Parent;
 import io.swagger.util.ReflectionUtils;
 
@@ -12,6 +13,7 @@ import org.testng.annotations.Test;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Collections;
 
 import javax.ws.rs.Path;
 
@@ -113,5 +115,11 @@ public class ReflectionUtilsTest {
         final Path annotation = ReflectionUtils.getAnnotation(Child.class, javax.ws.rs.Path.class);
         Assert.assertNotNull(annotation);
         Assert.assertEquals(annotation.value(), "parentInterfacePath");
+    }
+
+    @Test
+    public void getDeclaredFieldsFromInterfaceTest() throws NoSuchMethodException {
+        final Class cls = IParent.class;
+        Assert.assertEquals(Collections.emptyList(), ReflectionUtils.getDeclaredFields(cls));
     }
 }
