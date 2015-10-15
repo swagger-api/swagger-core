@@ -27,6 +27,8 @@ import io.swagger.models.ModelWithFormattedStrings;
 import io.swagger.models.ModelWithNumbers;
 import io.swagger.models.ModelWithTuple2;
 import io.swagger.models.Person;
+import io.swagger.models.composition.AbstractModelWithApiModel;
+import io.swagger.models.composition.ModelWithUrlProperty;
 import io.swagger.models.composition.Pet;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.BaseIntegerProperty;
@@ -98,6 +100,19 @@ public class ModelConverterTest {
         assertEquals(schemas.size(), 1);
         String model = schemas.keySet().iterator().next();
         assertEquals(model, "MyModel");
+    }
+
+    @Test(description = "it should override an inherited model's name")
+    public void overrideInheritedModelName() {
+        final Map<String, Model> rootSchemas = readAll(AbstractModelWithApiModel.class);
+        assertEquals(rootSchemas.size(), 3);
+        assertTrue(rootSchemas.containsKey("MyProperty"));
+        assertTrue(rootSchemas.containsKey("ModelWithUrlProperty"));
+        assertTrue(rootSchemas.containsKey("ModelWithValueProperty"));
+
+        final Map<String, Model> nestedSchemas = readAll(ModelWithUrlProperty.class);
+        assertEquals(nestedSchemas.size(), 1);
+        assertTrue(nestedSchemas.containsKey("MyProperty"));
     }
 
     @Test(description = "it should maintain property names")

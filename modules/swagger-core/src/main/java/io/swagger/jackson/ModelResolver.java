@@ -303,7 +303,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 annotations = annotationList.toArray(new Annotation[annotationList.size()]);
 
                 ApiModelProperty mp = member.getAnnotation(ApiModelProperty.class);
-                
+
                 if(mp != null && mp.readOnly()) {
                   isReadOnly = mp.readOnly();
                 }
@@ -650,14 +650,21 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         int count = 0;
         final Class<?> beanClass = bean.getClassInfo().getAnnotated();
         for (NamedType subtype : types) {
-            if (!beanClass.isAssignableFrom(subtype.getType())) {
+            final Class<?> subtypeType = subtype.getType();
+            if (!beanClass.isAssignableFrom(subtypeType)) {
                 continue;
             }
 
-            final Model subtypeModel = context.resolve(subtype.getType());
+            final Model subtypeModel = context.resolve(subtypeType);
 
             if (subtypeModel instanceof ModelImpl) {
                 final ModelImpl impl = (ModelImpl) subtypeModel;
+
+                // check if model name was inherited
+                if (impl.getName().equals(model.getName())) {
+                    impl.setName(_typeNameResolver.nameForType(_mapper.constructType(subtypeType),
+                            TypeNameResolver.Options.SKIP_API_MODEL));
+                }
 
                 // remove shared properties defined in the parent
                 final Map<String, Property> baseProps = model.getProperties();
