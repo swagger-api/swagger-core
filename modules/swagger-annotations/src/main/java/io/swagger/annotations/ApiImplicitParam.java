@@ -109,4 +109,22 @@ public @interface ApiImplicitParam {
      * Valid values are {@code path}, {@code query}, {@code body}, {@code header} or {@code form}.
      */
     String paramType() default "";
+
+    /**
+     * a single example for non-body type parameters
+     *
+     * @since 1.5.4
+     *
+     * @return
+     */
+    String example() default "";
+
+    /**
+     * Examples for the parameter.  Applies only to BodyParameters
+     *
+     * @since 1.5.4
+     *
+     * @return
+     */
+    Example examples() default @Example(value = @ExampleProperty(mediaType = "", value = ""));
 }

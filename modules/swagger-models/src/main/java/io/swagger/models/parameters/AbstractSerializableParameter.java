@@ -1,6 +1,7 @@
 package io.swagger.models.parameters;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     protected Double maximum;
     protected Boolean exclusiveMinimum;
     protected Double minimum;
+    protected String example;
     private Integer maxItems;
     private Integer minItems;
 
@@ -66,6 +68,11 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
 
     public T collectionFormat(String collectionFormat) {
         this.setCollectionFormat(collectionFormat);
+        return castThis();
+    }
+
+    public T example(String example) {
+        this.setExample(example);
         return castThis();
     }
 
@@ -215,6 +222,15 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
 
     public void setMinItems(Integer minItems) {
         this.minItems = minItems;
+    }
+
+    @JsonProperty("x-example")
+    public String getExample() {
+        return example;
+    }
+
+    public void setExample(String example) {
+        this.example = example;
     }
 
     @JsonIgnore

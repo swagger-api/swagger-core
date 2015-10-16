@@ -52,11 +52,17 @@ public class ParameterProcessor {
             if (StringUtils.isNotEmpty(param.getDescription())) {
                 p.setDescription(param.getDescription());
             }
+            if (StringUtils.isNotEmpty(param.getExample())) {
+                p.setExample(param.getExample());
+            }
             if (StringUtils.isNotEmpty(param.getAccess())) {
                 p.setAccess(param.getAccess());
             }
             if (StringUtils.isNotEmpty(param.getDataType())) {
                 p.setType(param.getDataType());
+            }
+            if (StringUtils.isNotEmpty(param.getExample())) {
+                p.setType(param.getExample());
             }
             if (helper.getMinItems() != null) {
                 p.setMinItems(helper.getMinItems());
@@ -82,6 +88,7 @@ public class ParameterProcessor {
                     args.put(PropertyBuilder.PropertyId.MAXIMUM, p.getMaximum());
                     p.setMaximum(null);
                     args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM, p.isExclusiveMaximum());
+                    args.put(PropertyBuilder.PropertyId.EXAMPLE, p.getExample());
                     p.setExclusiveMaximum(null);
                     Property items = PropertyBuilder.build(p.getType(), p.getFormat(), args);
                     p.type(ArrayProperty.TYPE).format(null).items(items);
@@ -110,7 +117,20 @@ public class ParameterProcessor {
 
                 if(pw instanceof ApiParamWrapper) {
                     ApiParamWrapper apiParam = (ApiParamWrapper) pw;
-                    Example example = apiParam.getExample();
+                    Example example = apiParam.getExamples();
+                    if(example != null && example.value() != null) {
+                        for (ExampleProperty ex : example.value()) {
+                            String mediaType = ex.mediaType();
+                            String value = ex.value();
+                            if (!mediaType.isEmpty() && !value.isEmpty()) {
+                                bp.example(mediaType.trim(), value.trim());
+                            }
+                        }
+                    }
+                }
+                else if(pw instanceof  ApiImplicitParamWrapper) {
+                    ApiImplicitParamWrapper apiParam = (ApiImplicitParamWrapper) pw;
+                    Example example = apiParam.getExamples();
                     if(example != null && example.value() != null) {
                         for (ExampleProperty ex : example.value()) {
                             String mediaType = ex.mediaType();
@@ -198,6 +218,8 @@ public class ParameterProcessor {
         T getAnnotation();
 
         boolean isHidden();
+
+        String getExample();
     }
 
     /**
@@ -361,7 +383,12 @@ public class ParameterProcessor {
             return apiParam.hidden();
         }
 
-        public Example getExample() { return apiParam.examples();};
+        @Override
+        public String getExample() {
+            return apiParam.example();
+        };
+
+        public Example getExamples() { return apiParam.examples();};
     }
 
     /**
@@ -429,5 +456,12 @@ public class ParameterProcessor {
         public boolean isHidden() {
             return false;
         }
+
+        @Override
+        public String getExample() {
+            return apiParam.example();
+        };
+
+        public Example getExamples() { return apiParam.examples();};
     }
 }

@@ -519,15 +519,45 @@ public class SimpleScannerTest {
         assertEquals(op.getOperationId(), "getMyNicknameTest");
     }
 
-    @Test(description = "scan a resource with custom operation nickname")
+    @Test(description = "scan a resource with operation post example")
     public void scanClassWithExamplePost() {
         Swagger swagger = getSwagger(ClassWithExamplePost.class);
         Parameter param = swagger.getPaths().get("/external/info").getPost().getParameters().get(0);
-        Json.prettyPrint(param);
         BodyParameter bp = (BodyParameter) param;
         assertNotNull(bp.getExamples());
         assertTrue(bp.getExamples().size() == 1);
-        String value = bp.getExamples().get("foo");
-        assertEquals("bar", value);
+        String value = bp.getExamples().get("application/json");
+        assertEquals("[\"a\",\"b\"]", value);
+    }
+
+    @Test(description = "scan a resource with operation implicit post example")
+    public void scanClassWithImplicitExamplePost() {
+        Swagger swagger = getSwagger(ClassWithExamplePost.class);
+        Parameter param = swagger.getPaths().get("/external/info2").getPost().getParameters().get(0);
+        BodyParameter bp = (BodyParameter) param;
+        assertNotNull(bp.getExamples());
+        assertTrue(bp.getExamples().size() == 1);
+        String value = bp.getExamples().get("application/json");
+        assertEquals("[\"a\",\"b\"]", value);
+    }
+
+    @Test(description = "scan a resource with query param example")
+    public void scanClassWithExampleQuery() {
+        Swagger swagger = getSwagger(ClassWithExamplePost.class);
+        Parameter param = swagger.getPaths().get("/external/info").getGet().getParameters().get(0);
+        QueryParameter bp = (QueryParameter) param;
+        assertNotNull(bp.getExample());
+        String value = bp.getExample();
+        assertEquals("a,b,c", value);
+    }
+
+    @Test(description = "scan a resource with implicit operation query example")
+    public void scanClassWithImplicitExampleQuery() {
+        Swagger swagger = getSwagger(ClassWithExamplePost.class);
+        Parameter param = swagger.getPaths().get("/external/info2").getGet().getParameters().get(0);
+        QueryParameter bp = (QueryParameter) param;
+        assertNotNull(bp.getExample());
+        String value = bp.getExample();
+        assertEquals("77", value);
     }
 }
