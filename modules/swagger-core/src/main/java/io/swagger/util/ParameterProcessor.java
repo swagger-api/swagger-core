@@ -2,6 +2,8 @@ package io.swagger.util;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Example;
+import io.swagger.annotations.ExampleProperty;
 import io.swagger.converter.ModelConverters;
 import io.swagger.models.Model;
 import io.swagger.models.Swagger;
@@ -103,6 +105,23 @@ public class ParameterProcessor {
             // must be a body param
             BodyParameter bp = new BodyParameter();
 
+            if(helper.getApiParam() != null) {
+                ParamWrapper<?> pw = helper.getApiParam();
+
+                if(pw instanceof ApiParamWrapper) {
+                    ApiParamWrapper apiParam = (ApiParamWrapper) pw;
+                    Example example = apiParam.getExample();
+                    if(example != null && example.value() != null) {
+                        for (ExampleProperty ex : example.value()) {
+                            String mediaType = ex.mediaType();
+                            String value = ex.value();
+                            if (!mediaType.isEmpty() && !value.isEmpty()) {
+                                bp.example(mediaType.trim(), value.trim());
+                            }
+                        }
+                    }
+                }
+            }
             bp.setRequired(param.isRequired());
             bp.setName(StringUtils.isNotEmpty(param.getName()) ? param.getName() : "body");
 
@@ -341,6 +360,8 @@ public class ParameterProcessor {
         public boolean isHidden() {
             return apiParam.hidden();
         }
+
+        public Example getExample() { return apiParam.examples();};
     }
 
     /**

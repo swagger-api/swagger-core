@@ -28,32 +28,9 @@ import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
-import io.swagger.resources.HiddenResource;
-import io.swagger.resources.Resource1041;
-import io.swagger.resources.Resource1073;
-import io.swagger.resources.Resource1085;
-import io.swagger.resources.Resource653;
-import io.swagger.resources.Resource841;
-import io.swagger.resources.Resource877;
-import io.swagger.resources.Resource937;
-import io.swagger.resources.ResourceWithApiOperationCode;
-import io.swagger.resources.ResourceWithApiResponseResponseContainer;
-import io.swagger.resources.ResourceWithBodyParams;
-import io.swagger.resources.ResourceWithEmptyModel;
-import io.swagger.resources.ResourceWithEnums;
-import io.swagger.resources.ResourceWithInnerClass;
-import io.swagger.resources.ResourceWithMapReturnValue;
-import io.swagger.resources.ResourceWithRanges;
-import io.swagger.resources.ResourceWithResponse;
-import io.swagger.resources.ResourceWithResponseHeaders;
-import io.swagger.resources.ResourceWithTypedResponses;
-import io.swagger.resources.ResourceWithVoidReturns;
-import io.swagger.resources.SimpleResource;
-import io.swagger.resources.SimpleResourceWithoutAnnotations;
-import io.swagger.resources.SimpleSelfReferencingSubResource;
-import io.swagger.resources.TaggedResource;
-import io.swagger.resources.NicknamedOperation;
+import io.swagger.resources.*;
 
+import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -540,5 +517,11 @@ public class SimpleScannerTest {
         assertNotNull(op);
 
         assertEquals(op.getOperationId(), "getMyNicknameTest");
+    }
+
+    @Test(description = "scan a resource with custom operation nickname")
+    public void scanClassWithExamplePost() {
+        Swagger swagger = getSwagger(ClassWithExamplePost.class);
+        Json.prettyPrint(swagger);
     }
 }

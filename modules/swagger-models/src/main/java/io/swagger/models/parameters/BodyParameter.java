@@ -1,9 +1,14 @@
 package io.swagger.models.parameters;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.models.Model;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BodyParameter extends AbstractParameter implements Parameter {
     Model schema;
+    Map<String, String> examples;
 
     public BodyParameter() {
         super.setIn("body");
@@ -11,6 +16,11 @@ public class BodyParameter extends AbstractParameter implements Parameter {
 
     public BodyParameter schema(Model schema) {
         this.setSchema(schema);
+        return this;
+    }
+
+    public BodyParameter example(String mediaType, String value) {
+        this.addExample(mediaType, value);
         return this;
     }
 
@@ -30,6 +40,22 @@ public class BodyParameter extends AbstractParameter implements Parameter {
 
     public void setSchema(Model schema) {
         this.schema = schema;
+    }
+
+    public void addExample(String mediaType, String value) {
+        if(examples == null) {
+            examples = new HashMap<String, String>();
+        }
+        examples.put(mediaType, value);
+    }
+
+    @JsonProperty("x-examples")
+    public Map<String, String> getExamples() {
+        return examples;
+    }
+
+    public void setExamples(Map<String, String> examples) {
+        this.examples = examples;
     }
 
     @Override

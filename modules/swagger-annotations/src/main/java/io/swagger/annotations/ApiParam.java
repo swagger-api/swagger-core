@@ -92,4 +92,17 @@ public @interface ApiParam {
      * Hides the parameter from the list of parameters.
      */
     boolean hidden() default false;
+
+    /**
+     * a single example for non-body type parameters
+     *
+     * @return
+     */
+    String example() default "";
+
+    /**
+     * Examples for the parameter.  Applies only to BodyParameters
+     * @return
+     */
+    Example examples() default @Example(value = @ExampleProperty(mediaType = "", value = ""));
 }
