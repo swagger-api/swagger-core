@@ -12,7 +12,7 @@ public class ClassWithExamplePost {
     @ApiOperation(value = "test.")
     @POST
     public void postTest(@ApiParam(value = "test",
-            examples = @Example(value = {@ExampleProperty(mediaType="fun", value="bar")})) ArrayList<String> tenantId) {
+            examples = @Example(value = {@ExampleProperty(mediaType="foo", value="bar")})) ArrayList<String> tenantId) {
         return;
     }
 }

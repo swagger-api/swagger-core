@@ -522,6 +522,12 @@ public class SimpleScannerTest {
     @Test(description = "scan a resource with custom operation nickname")
     public void scanClassWithExamplePost() {
         Swagger swagger = getSwagger(ClassWithExamplePost.class);
-        Json.prettyPrint(swagger);
+        Parameter param = swagger.getPaths().get("/external/info").getPost().getParameters().get(0);
+        Json.prettyPrint(param);
+        BodyParameter bp = (BodyParameter) param;
+        assertNotNull(bp.getExamples());
+        assertTrue(bp.getExamples().size() == 1);
+        String value = bp.getExamples().get("foo");
+        assertEquals("bar", value);
     }
 }
