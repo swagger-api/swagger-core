@@ -59,6 +59,11 @@ public class DoubleProperty extends DecimalProperty {
         return this;
     }
 
+    public DoubleProperty vendorExtension(String key, Object obj) {
+        this.setVendorExtension(key, obj);
+        return this;
+    }
+
     public Double getDefault() {
         return _default;
     }

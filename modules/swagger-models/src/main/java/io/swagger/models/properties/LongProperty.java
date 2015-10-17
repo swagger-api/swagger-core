@@ -59,6 +59,11 @@ public class LongProperty extends BaseIntegerProperty {
         return this;
     }
 
+    public LongProperty vendorExtension(String key, Object obj) {
+        this.setVendorExtension(key, obj);
+        return this;
+    }
+
     public Long getDefault() {
         return _default;
     }

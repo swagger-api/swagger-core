@@ -34,4 +34,9 @@ public class DecimalProperty extends AbstractNumericProperty {
         this.setExample(example);
         return this;
     }
+
+    public DecimalProperty vendorExtension(String key, Object obj) {
+        this.setVendorExtension(key, obj);
+        return this;
+    }
 }

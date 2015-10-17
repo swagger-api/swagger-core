@@ -42,6 +42,11 @@ public class ArrayProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public ArrayProperty vendorExtension(String key, Object obj) {
+        this.setVendorExtension(key, obj);
+        return this;
+    }
+
     public Property getItems() {
         return items;
     }

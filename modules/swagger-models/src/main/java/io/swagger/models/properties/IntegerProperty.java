@@ -59,6 +59,11 @@ public class IntegerProperty extends BaseIntegerProperty {
         return this;
     }
 
+    public IntegerProperty vendorExtension(String key, Object obj) {
+        this.setVendorExtension(key, obj);
+        return this;
+    }
+
     public Integer getDefault() {
         return _default;
     }

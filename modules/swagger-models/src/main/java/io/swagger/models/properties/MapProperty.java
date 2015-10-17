@@ -36,6 +36,11 @@ public class MapProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public MapProperty vendorExtension(String key, Object obj) {
+        this.setVendorExtension(key, obj);
+        return this;
+    }
+
     public Property getAdditionalProperties() {
         return property;
     }

@@ -46,6 +46,11 @@ public class DateTimeProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public DateTimeProperty vendorExtension(String key, Object obj) {
+        this.setVendorExtension(key, obj);
+        return this;
+    }
+
     public List<String> getEnum() {
         return _enum;
     }

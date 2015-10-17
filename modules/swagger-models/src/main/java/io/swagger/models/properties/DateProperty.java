@@ -46,6 +46,11 @@ public class DateProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public DateProperty vendorExtension(String key, Object obj) {
+        this.setVendorExtension(key, obj);
+        return this;
+    }
+
     public List<String> getEnum() {
         return _enum;
     }

@@ -78,4 +78,9 @@ public class EmailProperty extends StringProperty {
         super.pattern(pattern);
         return this;
     }
+
+    public EmailProperty vendorExtension(String key, Object obj) {
+        this.setVendorExtension(key, obj);
+        return this;
+    }
 }

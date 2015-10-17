@@ -64,6 +64,11 @@ public class UUIDProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public UUIDProperty vendorExtension(String key, Object obj) {
+        this.setVendorExtension(key, obj);
+        return this;
+    }
+
     public Integer getMinLength() {
         return minLength;
     }
