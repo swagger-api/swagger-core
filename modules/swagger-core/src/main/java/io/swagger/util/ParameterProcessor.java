@@ -112,13 +112,13 @@ public class ParameterProcessor {
             // must be a body param
             BodyParameter bp = new BodyParameter();
 
-            if(helper.getApiParam() != null) {
+            if (helper.getApiParam() != null) {
                 ParamWrapper<?> pw = helper.getApiParam();
 
-                if(pw instanceof ApiParamWrapper) {
+                if (pw instanceof ApiParamWrapper) {
                     ApiParamWrapper apiParam = (ApiParamWrapper) pw;
                     Example example = apiParam.getExamples();
-                    if(example != null && example.value() != null) {
+                    if (example != null && example.value() != null) {
                         for (ExampleProperty ex : example.value()) {
                             String mediaType = ex.mediaType();
                             String value = ex.value();
@@ -127,11 +127,10 @@ public class ParameterProcessor {
                             }
                         }
                     }
-                }
-                else if(pw instanceof  ApiImplicitParamWrapper) {
+                } else if (pw instanceof ApiImplicitParamWrapper) {
                     ApiImplicitParamWrapper apiParam = (ApiImplicitParamWrapper) pw;
                     Example example = apiParam.getExamples();
-                    if(example != null && example.value() != null) {
+                    if (example != null && example.value() != null) {
                         for (ExampleProperty ex : example.value()) {
                             String mediaType = ex.mediaType();
                             String value = ex.value();
@@ -386,9 +385,15 @@ public class ParameterProcessor {
         @Override
         public String getExample() {
             return apiParam.example();
-        };
+        }
 
-        public Example getExamples() { return apiParam.examples();};
+        ;
+
+        public Example getExamples() {
+            return apiParam.examples();
+        }
+
+        ;
     }
 
     /**
@@ -460,8 +465,10 @@ public class ParameterProcessor {
         @Override
         public String getExample() {
             return apiParam.example();
-        };
+        }
 
-        public Example getExamples() { return apiParam.examples();};
+        public Example getExamples() {
+            return apiParam.examples();
+        }
     }
 }
