@@ -29,14 +29,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Example {
-
-    /**
-     * An option name for these examples.
-     *
-     * @return an option name for these examples - will be prefixed with "x-"
-     */
-    String name() default "";
-
     /**
      * The examples properties.
      *
