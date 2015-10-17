@@ -43,6 +43,11 @@ public class Response {
         return this;
     }
 
+    public Response vendorExtension(String key, Object obj) {
+        this.setVendorExtension(key, obj);
+        return this;
+    }
+
     public String getDescription() {
         return description;
     }

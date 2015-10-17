@@ -60,6 +60,11 @@ public class FloatProperty extends DecimalProperty {
         return this;
     }
 
+    public FloatProperty vendorExtension(String key, Object obj) {
+        this.setVendorExtension(key, obj);
+        return this;
+    }
+
     public Float getDefault() {
         return _default;
     }

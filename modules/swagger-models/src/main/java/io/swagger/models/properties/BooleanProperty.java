@@ -38,6 +38,11 @@ public class BooleanProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public BooleanProperty vendorExtension(String key, Object obj) {
+        this.setVendorExtension(key, obj);
+        return this;
+    }
+
     public Boolean getDefault() {
         return _default;
     }
