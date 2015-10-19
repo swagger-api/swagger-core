@@ -10,6 +10,7 @@ import java.util.Map;
 public abstract class AbstractModel implements Model {
     private ExternalDocs externalDocs;
     private String reference;
+    private String title;
     private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
     @Override
@@ -19,6 +20,16 @@ public abstract class AbstractModel implements Model {
 
     public void setExternalDocs(ExternalDocs value) {
         externalDocs = value;
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @JsonAnyGetter
