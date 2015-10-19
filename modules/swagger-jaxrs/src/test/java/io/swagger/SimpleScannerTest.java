@@ -547,7 +547,7 @@ public class SimpleScannerTest {
         Parameter param = swagger.getPaths().get("/external/info").getGet().getParameters().get(0);
         QueryParameter bp = (QueryParameter) param;
         assertNotNull(bp.getExample());
-        String value = bp.getExample();
+        Object value = bp.getExample();
         assertEquals("a,b,c", value);
     }
 
@@ -557,7 +557,7 @@ public class SimpleScannerTest {
         Parameter param = swagger.getPaths().get("/external/info2").getGet().getParameters().get(0);
         QueryParameter bp = (QueryParameter) param;
         assertNotNull(bp.getExample());
-        String value = bp.getExample();
+        Object value = bp.getExample();
         assertEquals("77", value);
     }
 }
