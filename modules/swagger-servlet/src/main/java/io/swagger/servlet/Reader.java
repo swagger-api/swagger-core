@@ -1,7 +1,5 @@
 package io.swagger.servlet;
 
-import io.swagger.annotations.Extension;
-import io.swagger.annotations.ExtensionProperty;
 import io.swagger.annotations.Info;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.models.Contact;
@@ -16,6 +14,7 @@ import io.swagger.models.Tag;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.servlet.extensions.ReaderExtension;
 import io.swagger.servlet.extensions.ReaderExtensions;
+import io.swagger.util.BaseReaderUtils;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
 
@@ -166,7 +165,7 @@ public class Reader {
                             tagConfig.externalDocs().url()));
                 }
 
-                addExtensionProperties(tagConfig.extensions(), tag.getVendorExtensions());
+                tag.getVendorExtensions().putAll(BaseReaderUtils.parseExtensions(tagConfig.extensions()));
 
                 swagger.addTag(tag);
             }
@@ -233,37 +232,6 @@ public class Reader {
             }
         }
 
-        addExtensionProperties(infoConfig.extensions(), info.getVendorExtensions());
-    }
-
-    @SuppressWarnings("unchecked")
-    private void addExtensionProperties(Extension[] extensions, Map<String, Object> map) {
-        for (Extension extension : extensions) {
-            String name = extension.name();
-            if (name.length() > 0) {
-
-                if (!name.startsWith("x-")) {
-                    name = "x-" + name;
-                }
-
-                if (!map.containsKey(name)) {
-                    map.put(name, new HashMap<String, Object>());
-                }
-
-                map = (Map<String, Object>) map.get(name);
-            }
-
-            for (ExtensionProperty property : extension.properties()) {
-                if (!property.name().isEmpty() && !property.value().isEmpty()) {
-
-                    String propertyName = property.name();
-                    if (name.isEmpty() && !propertyName.startsWith("x-")) {
-                        propertyName = "x-" + propertyName;
-                    }
-
-                    map.put(propertyName, property.value());
-                }
-            }
-        }
+        info.getVendorExtensions().putAll(BaseReaderUtils.parseExtensions(infoConfig.extensions()));
     }
 }
