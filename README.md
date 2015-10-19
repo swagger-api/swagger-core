@@ -5,7 +5,7 @@
 
 The goal of Swagger™ is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, Swagger removes the guesswork in calling the service.
 
-Swagger-core is the Java implementation of Swagger. Current version supports *JAX-RS*.  Future milestone releases will add support for *plain Servlets* and *Play Framework*.
+Swagger-core is the Java implementation of Swagger. Current version supports *JAX-RS* and plain servlets.  Integration with the **Play!** framework has been moved to [Swagger-Play](https://github.com/swagger-api/swagger-play).
 
 Check out [Swagger-Spec](https://github.com/swagger-api/swagger-spec) for additional information about the Swagger project, including additional libraries with support for SpringMVC, other languages and more. 
 
@@ -48,12 +48,12 @@ If you're interested in the change history of swagger and the swagger-core frame
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
-* Java 6 (http://java.oracle.com)
+* Java 7 (http://java.oracle.com)
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
 * Jackson 2.4.5 or greater
 
 
-### To build from source (currently 1.5.4-SNAPSHOT)
+### To build from source (currently 1.5.5-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
