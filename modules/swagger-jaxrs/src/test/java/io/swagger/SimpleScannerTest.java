@@ -28,32 +28,9 @@ import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
-import io.swagger.resources.HiddenResource;
-import io.swagger.resources.Resource1041;
-import io.swagger.resources.Resource1073;
-import io.swagger.resources.Resource1085;
-import io.swagger.resources.Resource653;
-import io.swagger.resources.Resource841;
-import io.swagger.resources.Resource877;
-import io.swagger.resources.Resource937;
-import io.swagger.resources.ResourceWithApiOperationCode;
-import io.swagger.resources.ResourceWithApiResponseResponseContainer;
-import io.swagger.resources.ResourceWithBodyParams;
-import io.swagger.resources.ResourceWithEmptyModel;
-import io.swagger.resources.ResourceWithEnums;
-import io.swagger.resources.ResourceWithInnerClass;
-import io.swagger.resources.ResourceWithMapReturnValue;
-import io.swagger.resources.ResourceWithRanges;
-import io.swagger.resources.ResourceWithResponse;
-import io.swagger.resources.ResourceWithResponseHeaders;
-import io.swagger.resources.ResourceWithTypedResponses;
-import io.swagger.resources.ResourceWithVoidReturns;
-import io.swagger.resources.SimpleResource;
-import io.swagger.resources.SimpleResourceWithoutAnnotations;
-import io.swagger.resources.SimpleSelfReferencingSubResource;
-import io.swagger.resources.TaggedResource;
-import io.swagger.resources.NicknamedOperation;
+import io.swagger.resources.*;
 
+import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -540,5 +517,47 @@ public class SimpleScannerTest {
         assertNotNull(op);
 
         assertEquals(op.getOperationId(), "getMyNicknameTest");
+    }
+
+    @Test(description = "scan a resource with operation post example")
+    public void scanClassWithExamplePost() {
+        Swagger swagger = getSwagger(ClassWithExamplePost.class);
+        Parameter param = swagger.getPaths().get("/external/info").getPost().getParameters().get(0);
+        BodyParameter bp = (BodyParameter) param;
+        assertNotNull(bp.getExamples());
+        assertTrue(bp.getExamples().size() == 1);
+        String value = bp.getExamples().get("application/json");
+        assertEquals("[\"a\",\"b\"]", value);
+    }
+
+    @Test(description = "scan a resource with operation implicit post example")
+    public void scanClassWithImplicitExamplePost() {
+        Swagger swagger = getSwagger(ClassWithExamplePost.class);
+        Parameter param = swagger.getPaths().get("/external/info2").getPost().getParameters().get(0);
+        BodyParameter bp = (BodyParameter) param;
+        assertNotNull(bp.getExamples());
+        assertTrue(bp.getExamples().size() == 1);
+        String value = bp.getExamples().get("application/json");
+        assertEquals("[\"a\",\"b\"]", value);
+    }
+
+    @Test(description = "scan a resource with query param example")
+    public void scanClassWithExampleQuery() {
+        Swagger swagger = getSwagger(ClassWithExamplePost.class);
+        Parameter param = swagger.getPaths().get("/external/info").getGet().getParameters().get(0);
+        QueryParameter bp = (QueryParameter) param;
+        assertNotNull(bp.getExample());
+        Object value = bp.getExample();
+        assertEquals("a,b,c", value);
+    }
+
+    @Test(description = "scan a resource with implicit operation query example")
+    public void scanClassWithImplicitExampleQuery() {
+        Swagger swagger = getSwagger(ClassWithExamplePost.class);
+        Parameter param = swagger.getPaths().get("/external/info2").getGet().getParameters().get(0);
+        QueryParameter bp = (QueryParameter) param;
+        assertNotNull(bp.getExample());
+        Object value = bp.getExample();
+        assertEquals("77", value);
     }
 }

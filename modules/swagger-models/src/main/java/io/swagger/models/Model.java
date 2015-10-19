@@ -5,6 +5,10 @@ import io.swagger.models.properties.Property;
 import java.util.Map;
 
 public interface Model {
+    String getTitle();
+
+    void setTitle(String title);
+
     String getDescription();
 
     void setDescription(String description);

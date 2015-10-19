@@ -14,6 +14,7 @@ public class RefModel implements Model {
     private ExternalDocs externalDocs;
     private Map<String, Property> properties;
     private Object example;
+    private String title;
 
     public RefModel() {
     }
@@ -25,6 +26,18 @@ public class RefModel implements Model {
     public RefModel asDefault(String ref) {
         this.set$ref(RefType.DEFINITION.getInternalPrefix() + ref);
         return this;
+    }
+
+    // not allowed in a $ref
+    @JsonIgnore
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     // not allowed in a $ref
