@@ -3,16 +3,14 @@ package io.swagger.models.parameters;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.BaseIntegerProperty;
 import io.swagger.models.properties.BooleanProperty;
 import io.swagger.models.properties.DecimalProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -144,8 +142,8 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         }
     }
 
-    public String getDefaultValue() {
-        return defaultValue;
+    public Object getDefaultValue() {
+        return getDefault();
     }
 
     public void setDefaultValue(String defaultValue) {

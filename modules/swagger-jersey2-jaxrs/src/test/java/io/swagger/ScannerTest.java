@@ -50,11 +50,11 @@ public class ScannerTest {
         final List<Parameter> params = getParameters(swagger, "/bean/{id}");
 
         final HeaderParameter headerParam1 = (HeaderParameter) params.get(0);
-        assertEquals(headerParam1.getDefaultValue(), "1");
+        assertEquals(headerParam1.getDefaultValue(), Long.valueOf("1"));
         assertEquals(headerParam1.getName(), "test order annotation 1");
 
         final HeaderParameter headerParam2 = (HeaderParameter) params.get(1);
-        assertEquals(headerParam2.getDefaultValue(), "2");
+        assertEquals(headerParam2.getDefaultValue(), Long.valueOf("2"));
         assertEquals(headerParam2.getName(), "test order annotation 2");
 
         final QueryParameter priority1 = (QueryParameter) params.get(2);
