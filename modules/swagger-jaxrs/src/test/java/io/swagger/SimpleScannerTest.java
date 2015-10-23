@@ -221,7 +221,7 @@ public class SimpleScannerTest {
 
         PathParameter param0 = (PathParameter) params.get(0);
         assertEquals(param0.getName(), "id");
-        assertEquals(param0.getDefaultValue(), "5");
+        assertEquals(param0.getDefaultValue(), 5L);
         assertEquals(param0.getMinimum(), 0.0);
         assertEquals(param0.getMaximum(), 10.0);
 
