@@ -3,43 +3,18 @@ package io.swagger;
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
-import io.swagger.models.parameters.BodyParameter;
-import io.swagger.models.parameters.FormParameter;
-import io.swagger.models.parameters.HeaderParameter;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.PathParameter;
-import io.swagger.models.parameters.QueryParameter;
-import io.swagger.resources.AnnotatedInterfaceImpl;
-import io.swagger.resources.ApiConsumesProducesResource;
-import io.swagger.resources.BookResource;
-import io.swagger.resources.BothConsumesProducesResource;
-import io.swagger.resources.DescendantResource;
-import io.swagger.resources.NoConsumesProducesResource;
-import io.swagger.resources.ResourceWithDeprecatedMethod;
-import io.swagger.resources.ResourceWithEmptyPath;
-import io.swagger.resources.ResourceWithImplicitParams;
-import io.swagger.resources.ResourceWithKnownInjections;
-import io.swagger.resources.RsConsumesProducesResource;
-import io.swagger.resources.SimpleMethods;
-
+import io.swagger.models.parameters.*;
+import io.swagger.resources.*;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 public class ReaderTest {
     private static final String APPLICATION_XML = "application/xml";
@@ -211,6 +186,15 @@ public class ReaderTest {
         assertEquals(bodyParam.getName(), "body");
         assertEquals(bodyParam.getIn(), "body");
         assertTrue(bodyParam.getRequired());
+    }
+
+    @Test(description = "scan implicit params with file objct")
+    public void scanImplicitWithFile() {
+        Swagger swagger = getSwagger(ResourceWithImplicitFileParam.class);
+        Parameter param = swagger.getPath("/testString").getPost().getParameters().get(0);
+        assertTrue(param instanceof FormParameter);
+        FormParameter fp = (FormParameter) param;
+        assertEquals("file", fp.getType());
     }
 
     @Test(description = "scan Deprecated annotation")

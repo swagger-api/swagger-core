@@ -11,6 +11,7 @@ import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.FileProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
 
@@ -59,7 +60,12 @@ public class ParameterProcessor {
                 p.setAccess(param.getAccess());
             }
             if (StringUtils.isNotEmpty(param.getDataType())) {
-                p.setType(param.getDataType());
+                if("java.io.File".equalsIgnoreCase(param.getDataType())) {
+                    p.setProperty(new FileProperty());
+                }
+                else {
+                    p.setType(param.getDataType());
+                }
             }
             if (StringUtils.isNotEmpty(param.getExample())) {
                 p.setType(param.getExample());
