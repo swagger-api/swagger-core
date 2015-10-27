@@ -7,6 +7,7 @@ import io.swagger.models.properties.DateProperty;
 import io.swagger.models.properties.DateTimeProperty;
 import io.swagger.models.properties.DecimalProperty;
 import io.swagger.models.properties.DoubleProperty;
+import io.swagger.models.properties.FileProperty;
 import io.swagger.models.properties.FloatProperty;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.LongProperty;
@@ -15,6 +16,7 @@ import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.models.properties.UUIDProperty;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
@@ -153,6 +155,15 @@ public enum PrimitiveType {
         }
     },
     /**
+     * File.
+     */
+    FILE(java.io.File.class, "file") {
+        @Override
+        public FileProperty createProperty() {
+            return new FileProperty();
+        }
+    },
+    /**
      * Generic object.
      */
     OBJECT(Object.class) {
@@ -193,6 +204,7 @@ public enum PrimitiveType {
         addKeys(keyClasses, DECIMAL, java.math.BigDecimal.class);
         addKeys(keyClasses, DATE, DateStub.class);
         addKeys(keyClasses, DATE_TIME, java.util.Date.class);
+        addKeys(keyClasses, FILE, File.class);
         addKeys(keyClasses, OBJECT, Object.class);
         KEY_CLASSES = Collections.unmodifiableMap(keyClasses);
 
