@@ -4,6 +4,7 @@ import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.jackson.AbstractModelConverter;
 import io.swagger.models.properties.AbstractNumericProperty;
+import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.EmailProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
@@ -13,6 +14,7 @@ import org.hibernate.validator.constraints.Range;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -36,6 +38,14 @@ public class BeanValidator extends AbstractModelConverter implements ModelConver
             property = chain.next().resolveProperty(type, context, annotations, chain);
         }
         if (property != null) {
+            if (annos.containsKey("org.hibernate.validator.constraints.NotEmpty")) {
+                property.setRequired(true);
+                if (property instanceof StringProperty) {
+                    ((StringProperty) property).minLength(1);
+                } else if (property instanceof ArrayProperty){
+                    ((ArrayProperty) property).setMinItems(1);
+                }
+            }
             if (annos.containsKey("org.hibernate.validator.constraints.NotBlank")) {
                 property.setRequired(true);
                 if (property instanceof StringProperty) {

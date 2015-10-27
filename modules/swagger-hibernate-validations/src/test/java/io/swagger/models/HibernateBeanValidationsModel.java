@@ -1,8 +1,11 @@
 package io.swagger.models;
 
+import java.util.List;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.DecimalMax;
@@ -40,6 +43,12 @@ public class HibernateBeanValidationsModel {
 
     @Range(min = 1900L, max = 2015L)
     protected Integer birthYear;
+
+    @NotEmpty
+    protected String notEmptyString;
+
+    @NotEmpty
+    protected List<String> notEmptyArray;
 
     public Long getId() {
         return id;
@@ -111,5 +120,21 @@ public class HibernateBeanValidationsModel {
 
     public void setBirthYear(Integer birthYear) {
         this.birthYear = birthYear;
+    }
+
+    public String getNotEmptyString() {
+        return notEmptyString;
+    }
+
+    public void setNotEmptyString(String notEmptyString) {
+        this.notEmptyString = notEmptyString;
+    }
+
+    public List<String> getNotEmptyArray() {
+        return notEmptyArray;
+    }
+
+    public void setNotEmptyArray(List<String> notEmptyArray) {
+        this.notEmptyArray = notEmptyArray;
     }
 }
