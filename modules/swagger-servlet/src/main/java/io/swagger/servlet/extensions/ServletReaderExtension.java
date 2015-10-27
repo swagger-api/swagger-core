@@ -27,6 +27,7 @@ import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.servlet.ReaderContext;
+import io.swagger.util.BaseReaderUtils;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
@@ -399,6 +400,14 @@ public class ServletReaderExtension implements ReaderExtension {
                     operation.parameter(p);
                 }
             }
+        }
+    }
+
+    @Override
+    public void applyExtensions(ReaderContext context, Operation operation, Method method) {
+        final ApiOperation apiOperation = method.getAnnotation( ApiOperation.class );
+        if( apiOperation != null ) {
+            operation.getVendorExtensions().putAll(BaseReaderUtils.parseExtensions(apiOperation.extensions()));
         }
     }
 

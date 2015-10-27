@@ -93,6 +93,7 @@ public class Reader {
                     extension.applyTags(context, operation, method);
                     extension.applyResponses(context, operation, method);
                     extension.applyImplicitParameters(context, operation, method);
+                    extension.applyExtensions( context, operation, method );
                     for (int i = 0; i < genericParameterTypes.length; i++) {
                         extension.applyParameters(context, operation, genericParameterTypes[i], paramAnnotations[i]);
                     }

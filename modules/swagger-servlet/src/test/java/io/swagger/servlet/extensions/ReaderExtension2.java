@@ -88,4 +88,9 @@ public class ReaderExtension2 implements ReaderExtension {
     public void applyImplicitParameters(ReaderContext context, Operation operation, Method method) {
 
     }
+
+    @Override
+    public void applyExtensions(ReaderContext context, Operation operation, Method method) {
+
+    }
 }

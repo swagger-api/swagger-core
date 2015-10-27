@@ -1,6 +1,8 @@
 package io.swagger.servlet;
 
 import io.swagger.models.Info;
+import io.swagger.models.Operation;
+import io.swagger.models.Path;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
@@ -45,6 +47,12 @@ public class ReaderTest {
         Assert.assertNotNull(swagger.getDefinitions().get("SampleData"));
         Assert.assertEquals(swagger.getExternalDocs().getDescription(), "docs");
         Assert.assertEquals(swagger.getExternalDocs().getUrl(), "url_to_docs");
+
+        Path path = swagger.getPath("/resources/users");
+        Assert.assertNotNull(path);
+        Operation get = path.getGet();
+        Assert.assertNotNull( get );
+        Assert.assertEquals( "value", get.getVendorExtensions().get("x-name"));
     }
 
     @Test
