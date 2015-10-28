@@ -144,7 +144,7 @@ public class Reader {
         }
 
         for (Class<?> cls : classes) {
-            read(cls);
+            read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
         }
 
         for (ReaderListener listener : listeners.values()) {
@@ -167,6 +167,12 @@ public class Reader {
      */
 
     public Swagger read(Class<?> cls) {
+
+        SwaggerDefinition swaggerDefinition = cls.getAnnotation(SwaggerDefinition.class);
+        if (swaggerDefinition != null) {
+            readSwaggerConfig(cls, swaggerDefinition);
+        }
+
         return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
     }
     protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {

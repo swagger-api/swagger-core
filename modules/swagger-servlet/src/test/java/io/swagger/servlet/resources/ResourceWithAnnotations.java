@@ -19,8 +19,6 @@ import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 import io.swagger.servlet.models.SampleData;
 
-import javax.ws.rs.Path;
-
 @SwaggerDefinition(
         info = @Info(
                 description = "Test description",
