@@ -24,4 +24,41 @@ public interface SerializableParameter extends Parameter {
     List<String> getEnum();
 
     void setEnum(List<String> _enum);
+
+	Integer getMaxLength();
+
+	void setMaxLength(Integer maxLength);
+
+	Integer getMinLength();
+
+	void setMinLength(Integer minLength);
+
+	String getPattern();
+
+	void setPattern(String pattern);
+
+	Boolean getUniqueItems();
+
+	void setUniqueItems(Boolean uniqueItems);
+
+	Number getMultipleOf();
+
+	void setMultipleOf(Number multipleOf);
+
+	Boolean getExclusiveMaximum();
+
+	Boolean getExclusiveMinimum();
+
+	void setMaximum(Double maximum);
+
+	void setMinimum(Double minimum);
+	
+	Double getMaximum();
+
+	Double getMinimum();
+
+	Integer getMaxItems();
+
+	Integer getMinItems();
+
 }
