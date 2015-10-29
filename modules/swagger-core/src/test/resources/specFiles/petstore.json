@@ -10,6 +10,10 @@
     "license": {
       "name": "MIT",
       "url": "http://github.com/gruntjs/grunt/blob/master/LICENSE-MIT"
+    },
+    "x-name" : "value",
+    "x-extension" : {
+       "name" : "value"
     }
   },
   "tags": [
@@ -63,6 +67,10 @@
           "400": {
             "description": "Invalid ID supplied"
           }
+        },
+        "x-name" : "value",
+        "x-extension" : {
+          "name" : "value"
         }
       },
       "post": {
