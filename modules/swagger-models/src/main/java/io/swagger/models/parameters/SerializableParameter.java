@@ -47,18 +47,26 @@ public interface SerializableParameter extends Parameter {
 
 	Boolean getExclusiveMaximum();
 
-	Boolean getExclusiveMinimum();
-
-	void setMaximum(Double maximum);
-
-	void setMinimum(Double minimum);
+	void setExclusiveMaximum(Boolean exclusiveMinimum);
 	
-	Double getMaximum();
+	Boolean getExclusiveMinimum();
+	
+	void setExclusiveMinimum(Boolean exclusiveMinimum);
 
+	Double getMaximum();
+	
+	void setMaximum(Double maximum);
+	
 	Double getMinimum();
+	
+	void setMinimum(Double minimum);
 
 	Integer getMaxItems();
 
+	void setMaxItems(Integer maxItems);
+
 	Integer getMinItems();
+
+	void setMinItems(Integer minItems);
 
 }
