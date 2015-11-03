@@ -23,10 +23,12 @@ import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfig {
+public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfig, ReaderConfig {
     Logger LOGGER = LoggerFactory.getLogger(BeanConfig.class);
 
     Reader reader = new Reader(new Swagger());
@@ -45,6 +47,10 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     Info info;
     String host;
     String basePath;
+
+    boolean isScanAllResources;
+
+    Set<String> ignoredRoutes = new LinkedHashSet<String>();
 
     public String getResourcePackage() {
         return this.resourcePackage;
@@ -286,5 +292,37 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         return swagger.info(info)
                 .host(host)
                 .basePath(basePath);
+    }
+
+    @Override
+    public boolean isScanAllResources() {
+        return this.isScanAllResources;
+    }
+
+    @Override
+    public Collection<String> getIgnoredRoutes() {
+        return this.ignoredRoutes;
+    }
+
+    public void setScanAllResources(boolean isScanAllResources) {
+        this.isScanAllResources = isScanAllResources;
+    }
+
+    /**
+     * comma separated string, follow the same format as defined in ServletConfig
+     * see ReaderConfigUtils.initReaderConfig
+     * @param ignoredRoutes
+     */
+    public void setIgnoredRoutes(String ignoredRoutes) {
+        if (ignoredRoutes == null) {
+            return;
+        }
+
+        for (String item : StringUtils.trimToEmpty(ignoredRoutes).split(",")) {
+            final String route = StringUtils.trimToNull(item);
+            if (route != null) {
+                this.ignoredRoutes.add(route);
+            }
+        }
     }
 }
