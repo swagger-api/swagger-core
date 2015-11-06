@@ -17,7 +17,7 @@ import io.swagger.models.properties.StringProperty;
 import java.util.List;
 
 @JsonPropertyOrder({"name", "in", "description", "required", "type", "items", "collectionFormat", "default",
-        "maximum", "exclusiveMaximum", "minimum", "exclusiveMinimum", "maxItems", "minItems", "maxLength","minLength","pattern","uniqueItems","multipleOf"})
+        "maximum", "exclusiveMaximum", "minimum", "exclusiveMinimum", "maxLength", "minLength", "pattern","maxItems","minItems","uniqueItems","multipleOf"})
 public abstract class AbstractSerializableParameter<T extends AbstractSerializableParameter<T>> extends AbstractParameter implements SerializableParameter {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSerializableParameter.class);
     protected String type;
