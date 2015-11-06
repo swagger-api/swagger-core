@@ -25,48 +25,48 @@ public interface SerializableParameter extends Parameter {
 
     void setEnum(List<String> _enum);
 
-	Integer getMaxLength();
+    Integer getMaxLength();
 
-	void setMaxLength(Integer maxLength);
+    void setMaxLength(Integer maxLength);
 
-	Integer getMinLength();
+    Integer getMinLength();
 
-	void setMinLength(Integer minLength);
+    void setMinLength(Integer minLength);
 
-	String getPattern();
+    String getPattern();
 
-	void setPattern(String pattern);
+    void setPattern(String pattern);
 
-	Boolean getUniqueItems();
+    Boolean isUniqueItems();
 
-	void setUniqueItems(Boolean uniqueItems);
+    void setUniqueItems(Boolean uniqueItems);
 
-	Number getMultipleOf();
+    Number getMultipleOf();
 
-	void setMultipleOf(Number multipleOf);
+    void setMultipleOf(Number multipleOf);
 
-	Boolean getExclusiveMaximum();
+    Boolean isExclusiveMaximum();
 
-	void setExclusiveMaximum(Boolean exclusiveMinimum);
-	
-	Boolean getExclusiveMinimum();
-	
-	void setExclusiveMinimum(Boolean exclusiveMinimum);
+    void setExclusiveMaximum(Boolean exclusiveMinimum);
 
-	Double getMaximum();
-	
-	void setMaximum(Double maximum);
-	
-	Double getMinimum();
-	
-	void setMinimum(Double minimum);
+    Boolean isExclusiveMinimum();
 
-	Integer getMaxItems();
+    void setExclusiveMinimum(Boolean exclusiveMinimum);
 
-	void setMaxItems(Integer maxItems);
+    Double getMaximum();
 
-	Integer getMinItems();
+    void setMaximum(Double maximum);
 
-	void setMinItems(Integer minItems);
+    Double getMinimum();
+
+    void setMinimum(Double minimum);
+
+    Integer getMaxItems();
+
+    void setMaxItems(Integer maxItems);
+
+    Integer getMinItems();
+
+    void setMinItems(Integer minItems);
 
 }

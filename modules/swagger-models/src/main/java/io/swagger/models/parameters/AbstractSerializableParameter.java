@@ -222,6 +222,7 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         this.maximum = maximum;
     }
 
+    @Override
     public Boolean isExclusiveMinimum() {
         return exclusiveMinimum;
     }
@@ -312,7 +313,7 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
 	}
 
 	@Override
-	public Boolean getUniqueItems() {
+	public Boolean isUniqueItems() {
 		return uniqueItems;
 	}
 
@@ -332,13 +333,8 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
 	}
 
 	@Override
-	public Boolean getExclusiveMaximum() {
+	public Boolean isExclusiveMaximum() {
 		return exclusiveMaximum;
-	}
-
-	@Override
-	public Boolean getExclusiveMinimum() {
-		return exclusiveMinimum;
 	}
 
 	public void setExample(String example) {
@@ -437,6 +433,6 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
 		result = prime * result + ((pattern == null) ? 0 : pattern.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		result = prime * result + ((uniqueItems == null) ? 0 : uniqueItems.hashCode());
-		return result;
-	}
+	return result;
+    }
 }
