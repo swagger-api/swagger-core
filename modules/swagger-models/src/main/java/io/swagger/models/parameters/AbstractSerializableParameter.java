@@ -112,44 +112,54 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         return castThis();
     }
 
-    public List<String> getEnum() {
+    @Override
+	public List<String> getEnum() {
         return _enum;
     }
 
-    public void setEnum(List<String> _enum) {
+    @Override
+	public void setEnum(List<String> _enum) {
         this._enum = _enum;
     }
 
-    public Property getItems() {
+    @Override
+	public Property getItems() {
         return items;
     }
 
-    public void setItems(Property items) {
+    @Override
+	public void setItems(Property items) {
         this.items = items;
     }
 
-    public String getFormat() {
+    @Override
+	public String getFormat() {
         return format;
     }
 
-    public void setFormat(String format) {
+    @Override
+	public void setFormat(String format) {
         this.format = format;
     }
 
-    public String getType() {
+    @Override
+	public String getType() {
         return type;
     }
 
-    public void setType(String type) {
+    @Override
+	public void setType(String type) {
         this.type = type;
         setCollectionFormat(ArrayProperty.isType(type) ? getDefaultCollectionFormat() : null);
     }
 
-    public String getCollectionFormat() {
+    @Override
+	public String getCollectionFormat() {
         return collectionFormat;
     }
 
-    public void setCollectionFormat(String collectionFormat) {
+    @Override
+	public void setCollectionFormat(String collectionFormat) {
         this.collectionFormat = collectionFormat;
     }
 
@@ -197,19 +207,18 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         this.defaultValue = defaultValue == null ? null : defaultValue.toString();
     }
 
-    public Boolean isExclusiveMaximum() {
-        return exclusiveMaximum;
-    }
-
-    public void setExclusiveMaximum(Boolean exclusiveMaximum) {
+    @Override
+	public void setExclusiveMaximum(Boolean exclusiveMaximum) {
         this.exclusiveMaximum = exclusiveMaximum;
     }
 
-    public Double getMaximum() {
+    @Override
+	public Double getMaximum() {
         return maximum;
     }
 
-    public void setMaximum(Double maximum) {
+    @Override
+	public void setMaximum(Double maximum) {
         this.maximum = maximum;
     }
 
@@ -217,31 +226,38 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         return exclusiveMinimum;
     }
 
-    public void setExclusiveMinimum(Boolean exclusiveMinimum) {
+    @Override
+	public void setExclusiveMinimum(Boolean exclusiveMinimum) {
         this.exclusiveMinimum = exclusiveMinimum;
     }
 
-    public Double getMinimum() {
+    @Override
+	public Double getMinimum() {
         return minimum;
     }
 
-    public void setMinimum(Double minimum) {
+    @Override
+	public void setMinimum(Double minimum) {
         this.minimum = minimum;
     }
 
-    public Integer getMaxItems() {
+    @Override
+	public Integer getMaxItems() {
         return maxItems;
     }
 
-    public void setMaxItems(Integer maxItems) {
+    @Override
+	public void setMaxItems(Integer maxItems) {
         this.maxItems = maxItems;
     }
 
-    public Integer getMinItems() {
+    @Override
+	public Integer getMinItems() {
         return minItems;
     }
 
-    public void setMinItems(Integer minItems) {
+    @Override
+	public void setMinItems(Integer minItems) {
         this.minItems = minItems;
     }
 
@@ -265,50 +281,62 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         }
         return example;
     }
-    public Integer getMaxLength() {
+    @Override
+	public Integer getMaxLength() {
 		return maxLength;
 	}
 
+	@Override
 	public void setMaxLength(Integer maxLength) {
 		this.maxLength = maxLength;
 	}
 
+	@Override
 	public Integer getMinLength() {
 		return minLength;
 	}
 
+	@Override
 	public void setMinLength(Integer minLength) {
 		this.minLength = minLength;
 	}
 
+	@Override
 	public String getPattern() {
 		return pattern;
 	}
 
+	@Override
 	public void setPattern(String pattern) {
 		this.pattern = pattern;
 	}
 
+	@Override
 	public Boolean getUniqueItems() {
 		return uniqueItems;
 	}
 
+	@Override
 	public void setUniqueItems(Boolean uniqueItems) {
 		this.uniqueItems = uniqueItems;
 	}
 
+	@Override
 	public Number getMultipleOf() {
 		return multipleOf;
 	}
 
+	@Override
 	public void setMultipleOf(Number multipleOf) {
 		this.multipleOf = multipleOf;
 	}
 
+	@Override
 	public Boolean getExclusiveMaximum() {
 		return exclusiveMaximum;
 	}
 
+	@Override
 	public Boolean getExclusiveMinimum() {
 		return exclusiveMinimum;
 	}
