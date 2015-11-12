@@ -408,4 +408,9 @@ public class Operation {
         }
         return true;
     }
+
+	@Override
+	public String toString() {
+		return super.toString() + "[" + operationId + "]";
+	}
 }
