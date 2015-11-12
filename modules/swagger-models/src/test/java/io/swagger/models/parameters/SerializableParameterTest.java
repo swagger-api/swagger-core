@@ -16,17 +16,15 @@ public class SerializableParameterTest {
 
     @DataProvider(name = REQUIRED_PARAMETER_METHODS)
     public Iterator<Object[]> createRequiredParameterMethods() {
-	String[] requiredMethods = { "maximum", "exclusiveMaximum", "minimum",
-		"exclusiveMinimum", "maxLength", "minLength", "pattern",
-		"maxItems", "minItems", "uniqueItems", "multipleOf" };
+        String[] requiredMethods = { "maximum", "exclusiveMaximum", "minimum", "exclusiveMinimum", "maxLength",
+                "minLength", "pattern", "maxItems", "minItems", "uniqueItems", "multipleOf" };
 
-	List<Object[]> resultList = new ArrayList<Object[]>(
-		requiredMethods.length);
-	for (String requiredMethod : requiredMethods) {
-	    resultList.add(new Object[] { requiredMethod });
-	}
+        List<Object[]> resultList = new ArrayList<Object[]>(requiredMethods.length);
+        for (String requiredMethod : requiredMethods) {
+            resultList.add(new Object[] { requiredMethod });
+        }
 
-	return resultList.iterator();
+        return resultList.iterator();
     }
 
     /**
@@ -37,18 +35,14 @@ public class SerializableParameterTest {
      */
     @Test(dataProvider = REQUIRED_PARAMETER_METHODS)
     public void testSerializableParameterReadMethod(String requiredParameter) {
-	String errorMsg = "SerializableParameter - missing property: "
-		+ requiredParameter;
-	try {
-	    // Gets the method that should be used to read the property value.
-	    Assert.assertNotNull(
-		    new PropertyDescriptor(requiredParameter,
-			    SerializableParameter.class).getReadMethod(),
-		    errorMsg);
-	}
-	catch (IntrospectionException e) {
-	    Assert.fail(errorMsg + ", " + e.getMessage(), e);
-	}
+        String errorMsg = "SerializableParameter - missing property: " + requiredParameter;
+        try {
+            // Gets the method that should be used to read the property value.
+            Assert.assertNotNull(new PropertyDescriptor(requiredParameter, SerializableParameter.class).getReadMethod(),
+                    errorMsg);
+        } catch (IntrospectionException e) {
+            Assert.fail(errorMsg + ", " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -59,18 +53,14 @@ public class SerializableParameterTest {
      */
     @Test(dataProvider = REQUIRED_PARAMETER_METHODS)
     public void testSerializableParameterWriteMethod(String requiredParameter) {
-	String errorMsg = "SerializableParameter - missing property: "
-		+ requiredParameter;
-	try {
-	    // Gets the method that should be used to write the property value.
-	    Assert.assertNotNull(
-		    new PropertyDescriptor(requiredParameter,
-			    SerializableParameter.class).getWriteMethod(),
-		    errorMsg);
-	}
-	catch (IntrospectionException e) {
-	    Assert.fail(errorMsg + ", " + e.getMessage(), e);
-	}
+        String errorMsg = "SerializableParameter - missing property: " + requiredParameter;
+        try {
+            // Gets the method that should be used to write the property value.
+            Assert.assertNotNull(
+                    new PropertyDescriptor(requiredParameter, SerializableParameter.class).getWriteMethod(), errorMsg);
+        } catch (IntrospectionException e) {
+            Assert.fail(errorMsg + ", " + e.getMessage(), e);
+        }
     }
 
 }

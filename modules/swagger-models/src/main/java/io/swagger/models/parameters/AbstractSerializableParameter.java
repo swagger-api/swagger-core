@@ -16,8 +16,9 @@ import io.swagger.models.properties.StringProperty;
 
 import java.util.List;
 
-@JsonPropertyOrder({"name", "in", "description", "required", "type", "items", "collectionFormat", "default",
-        "maximum", "exclusiveMaximum", "minimum", "exclusiveMinimum", "maxLength", "minLength", "pattern","maxItems","minItems","uniqueItems","multipleOf"})
+@JsonPropertyOrder({ "name", "in", "description", "required", "type", "items", "collectionFormat", "default", "maximum",
+        "exclusiveMaximum", "minimum", "exclusiveMinimum", "maxLength", "minLength", "pattern", "maxItems", "minItems",
+        "uniqueItems", "multipleOf" })
 public abstract class AbstractSerializableParameter<T extends AbstractSerializableParameter<T>> extends AbstractParameter implements SerializableParameter {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSerializableParameter.class);
     protected String type;
@@ -33,27 +34,27 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     private Integer maxItems;
     private Integer minItems;
 
-	/**
-	 * See http://json-schema.org/latest/json-schema-validation.html#anchor26
-	 */
+    /**
+     * See http://json-schema.org/latest/json-schema-validation.html#anchor26
+     */
     public Integer maxLength;
-	/**
-	 * See http://json-schema.org/latest/json-schema-validation.html#anchor29
-	 */
+    /**
+     * See http://json-schema.org/latest/json-schema-validation.html#anchor29
+     */
     public Integer minLength;
-	/**
-	 * See http://json-schema.org/latest/json-schema-validation.html#anchor33
-	 */
+    /**
+     * See http://json-schema.org/latest/json-schema-validation.html#anchor33
+     */
     public String pattern;
-	/**
-	 * See http://json-schema.org/latest/json-schema-validation.html#anchor49
-	 */
+    /**
+     * See http://json-schema.org/latest/json-schema-validation.html#anchor49
+     */
     public Boolean uniqueItems;
-	/**
-	 * See http://json-schema.org/latest/json-schema-validation.html#anchor14
-	 */
+    /**
+     * See http://json-schema.org/latest/json-schema-validation.html#anchor14
+     */
     public Number multipleOf;
-       
+
     @JsonIgnore
     protected String defaultValue;
 
@@ -113,53 +114,53 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     }
 
     @Override
-	public List<String> getEnum() {
+    public List<String> getEnum() {
         return _enum;
     }
 
     @Override
-	public void setEnum(List<String> _enum) {
+    public void setEnum(List<String> _enum) {
         this._enum = _enum;
     }
 
     @Override
-	public Property getItems() {
+    public Property getItems() {
         return items;
     }
 
     @Override
-	public void setItems(Property items) {
+    public void setItems(Property items) {
         this.items = items;
     }
 
     @Override
-	public String getFormat() {
+    public String getFormat() {
         return format;
     }
 
     @Override
-	public void setFormat(String format) {
+    public void setFormat(String format) {
         this.format = format;
     }
 
     @Override
-	public String getType() {
+    public String getType() {
         return type;
     }
 
     @Override
-	public void setType(String type) {
+    public void setType(String type) {
         this.type = type;
         setCollectionFormat(ArrayProperty.isType(type) ? getDefaultCollectionFormat() : null);
     }
 
     @Override
-	public String getCollectionFormat() {
+    public String getCollectionFormat() {
         return collectionFormat;
     }
 
     @Override
-	public void setCollectionFormat(String collectionFormat) {
+    public void setCollectionFormat(String collectionFormat) {
         this.collectionFormat = collectionFormat;
     }
 
@@ -208,17 +209,17 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     }
 
     @Override
-	public void setExclusiveMaximum(Boolean exclusiveMaximum) {
+    public void setExclusiveMaximum(Boolean exclusiveMaximum) {
         this.exclusiveMaximum = exclusiveMaximum;
     }
 
     @Override
-	public Double getMaximum() {
+    public Double getMaximum() {
         return maximum;
     }
 
     @Override
-	public void setMaximum(Double maximum) {
+    public void setMaximum(Double maximum) {
         this.maximum = maximum;
     }
 
@@ -228,37 +229,37 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     }
 
     @Override
-	public void setExclusiveMinimum(Boolean exclusiveMinimum) {
+    public void setExclusiveMinimum(Boolean exclusiveMinimum) {
         this.exclusiveMinimum = exclusiveMinimum;
     }
 
     @Override
-	public Double getMinimum() {
+    public Double getMinimum() {
         return minimum;
     }
 
     @Override
-	public void setMinimum(Double minimum) {
+    public void setMinimum(Double minimum) {
         this.minimum = minimum;
     }
 
     @Override
-	public Integer getMaxItems() {
+    public Integer getMaxItems() {
         return maxItems;
     }
 
     @Override
-	public void setMaxItems(Integer maxItems) {
+    public void setMaxItems(Integer maxItems) {
         this.maxItems = maxItems;
     }
 
     @Override
-	public Integer getMinItems() {
+    public Integer getMinItems() {
         return minItems;
     }
 
     @Override
-	public void setMinItems(Integer minItems) {
+    public void setMinItems(Integer minItems) {
         this.minItems = minItems;
     }
 
@@ -282,62 +283,63 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         }
         return example;
     }
+
     @Override
-	public Integer getMaxLength() {
-		return maxLength;
-	}
+    public Integer getMaxLength() {
+        return maxLength;
+    }
 
-	@Override
-	public void setMaxLength(Integer maxLength) {
-		this.maxLength = maxLength;
-	}
+    @Override
+    public void setMaxLength(Integer maxLength) {
+        this.maxLength = maxLength;
+    }
 
-	@Override
-	public Integer getMinLength() {
-		return minLength;
-	}
+    @Override
+    public Integer getMinLength() {
+        return minLength;
+    }
 
-	@Override
-	public void setMinLength(Integer minLength) {
-		this.minLength = minLength;
-	}
+    @Override
+    public void setMinLength(Integer minLength) {
+        this.minLength = minLength;
+    }
 
-	@Override
-	public String getPattern() {
-		return pattern;
-	}
+    @Override
+    public String getPattern() {
+        return pattern;
+    }
 
-	@Override
-	public void setPattern(String pattern) {
-		this.pattern = pattern;
-	}
+    @Override
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
 
-	@Override
-	public Boolean isUniqueItems() {
-		return uniqueItems;
-	}
+    @Override
+    public Boolean isUniqueItems() {
+        return uniqueItems;
+    }
 
-	@Override
-	public void setUniqueItems(Boolean uniqueItems) {
-		this.uniqueItems = uniqueItems;
-	}
+    @Override
+    public void setUniqueItems(Boolean uniqueItems) {
+        this.uniqueItems = uniqueItems;
+    }
 
-	@Override
-	public Number getMultipleOf() {
-		return multipleOf;
-	}
+    @Override
+    public Number getMultipleOf() {
+        return multipleOf;
+    }
 
-	@Override
-	public void setMultipleOf(Number multipleOf) {
-		this.multipleOf = multipleOf;
-	}
+    @Override
+    public void setMultipleOf(Number multipleOf) {
+        this.multipleOf = multipleOf;
+    }
 
-	@Override
-	public Boolean isExclusiveMaximum() {
-		return exclusiveMaximum;
-	}
+    @Override
+    public Boolean isExclusiveMaximum() {
+        return exclusiveMaximum;
+    }
 
-	public void setExample(String example) {
+    public void setExample(String example) {
         this.example = example;
     }
 
@@ -349,90 +351,90 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     }
 
     @Override
-	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (!super.equals(obj)) return false;
-		if (getClass() != obj.getClass()) return false;
-		AbstractSerializableParameter<?> other = (AbstractSerializableParameter<?>) obj;
-		if (_enum == null) {
-			if (other._enum != null) return false;
-		} else if (!_enum.equals(other._enum)) return false;
-		if (collectionFormat == null) {
-			if (other.collectionFormat != null) return false;
-		} else if (!collectionFormat.equals(other.collectionFormat)) return false;
-		if (defaultValue == null) {
-			if (other.defaultValue != null) return false;
-		} else if (!defaultValue.equals(other.defaultValue)) return false;
-		if (example == null) {
-			if (other.example != null) return false;
-		} else if (!example.equals(other.example)) return false;
-		if (exclusiveMaximum == null) {
-			if (other.exclusiveMaximum != null) return false;
-		} else if (!exclusiveMaximum.equals(other.exclusiveMaximum)) return false;
-		if (exclusiveMinimum == null) {
-			if (other.exclusiveMinimum != null) return false;
-		} else if (!exclusiveMinimum.equals(other.exclusiveMinimum)) return false;
-		if (format == null) {
-			if (other.format != null) return false;
-		} else if (!format.equals(other.format)) return false;
-		if (items == null) {
-			if (other.items != null) return false;
-		} else if (!items.equals(other.items)) return false;
-		if (maxItems == null) {
-			if (other.maxItems != null) return false;
-		} else if (!maxItems.equals(other.maxItems)) return false;
-		if (maxLength == null) {
-			if (other.maxLength != null) return false;
-		} else if (!maxLength.equals(other.maxLength)) return false;
-		if (maximum == null) {
-			if (other.maximum != null) return false;
-		} else if (!maximum.equals(other.maximum)) return false;
-		if (minItems == null) {
-			if (other.minItems != null) return false;
-		} else if (!minItems.equals(other.minItems)) return false;
-		if (minLength == null) {
-			if (other.minLength != null) return false;
-		} else if (!minLength.equals(other.minLength)) return false;
-		if (minimum == null) {
-			if (other.minimum != null) return false;
-		} else if (!minimum.equals(other.minimum)) return false;
-		if (multipleOf == null) {
-			if (other.multipleOf != null) return false;
-		} else if (!multipleOf.equals(other.multipleOf)) return false;
-		if (pattern == null) {
-			if (other.pattern != null) return false;
-		} else if (!pattern.equals(other.pattern)) return false;
-		if (type == null) {
-			if (other.type != null) return false;
-		} else if (!type.equals(other.type)) return false;
-		if (uniqueItems == null) {
-			if (other.uniqueItems != null) return false;
-		} else if (!uniqueItems.equals(other.uniqueItems)) return false;
-		return true;
-	}
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!super.equals(obj)) return false;
+        if (getClass() != obj.getClass()) return false;
+        AbstractSerializableParameter<?> other = (AbstractSerializableParameter<?>) obj;
+        if (_enum == null) {
+            if (other._enum != null) return false;
+        } else if (!_enum.equals(other._enum)) return false;
+        if (collectionFormat == null) {
+            if (other.collectionFormat != null) return false;
+        } else if (!collectionFormat.equals(other.collectionFormat)) return false;
+        if (defaultValue == null) {
+            if (other.defaultValue != null) return false;
+        } else if (!defaultValue.equals(other.defaultValue)) return false;
+        if (example == null) {
+            if (other.example != null) return false;
+        } else if (!example.equals(other.example)) return false;
+        if (exclusiveMaximum == null) {
+            if (other.exclusiveMaximum != null) return false;
+        } else if (!exclusiveMaximum.equals(other.exclusiveMaximum)) return false;
+        if (exclusiveMinimum == null) {
+            if (other.exclusiveMinimum != null) return false;
+        } else if (!exclusiveMinimum.equals(other.exclusiveMinimum)) return false;
+        if (format == null) {
+            if (other.format != null) return false;
+        } else if (!format.equals(other.format)) return false;
+        if (items == null) {
+            if (other.items != null) return false;
+        } else if (!items.equals(other.items)) return false;
+        if (maxItems == null) {
+            if (other.maxItems != null) return false;
+        } else if (!maxItems.equals(other.maxItems)) return false;
+        if (maxLength == null) {
+            if (other.maxLength != null) return false;
+        } else if (!maxLength.equals(other.maxLength)) return false;
+        if (maximum == null) {
+            if (other.maximum != null) return false;
+        } else if (!maximum.equals(other.maximum)) return false;
+        if (minItems == null) {
+            if (other.minItems != null) return false;
+        } else if (!minItems.equals(other.minItems)) return false;
+        if (minLength == null) {
+            if (other.minLength != null) return false;
+        } else if (!minLength.equals(other.minLength)) return false;
+        if (minimum == null) {
+            if (other.minimum != null) return false;
+        } else if (!minimum.equals(other.minimum)) return false;
+        if (multipleOf == null) {
+            if (other.multipleOf != null) return false;
+        } else if (!multipleOf.equals(other.multipleOf)) return false;
+        if (pattern == null) {
+            if (other.pattern != null) return false;
+        } else if (!pattern.equals(other.pattern)) return false;
+        if (type == null) {
+            if (other.type != null) return false;
+        } else if (!type.equals(other.type)) return false;
+        if (uniqueItems == null) {
+            if (other.uniqueItems != null) return false;
+        } else if (!uniqueItems.equals(other.uniqueItems)) return false;
+        return true;
+    }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((_enum == null) ? 0 : _enum.hashCode());
-		result = prime * result + ((collectionFormat == null) ? 0 : collectionFormat.hashCode());
-		result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-		result = prime * result + ((example == null) ? 0 : example.hashCode());
-		result = prime * result + ((exclusiveMaximum == null) ? 0 : exclusiveMaximum.hashCode());
-		result = prime * result + ((exclusiveMinimum == null) ? 0 : exclusiveMinimum.hashCode());
-		result = prime * result + ((format == null) ? 0 : format.hashCode());
-		result = prime * result + ((items == null) ? 0 : items.hashCode());
-		result = prime * result + ((maxItems == null) ? 0 : maxItems.hashCode());
-		result = prime * result + ((maxLength == null) ? 0 : maxLength.hashCode());
-		result = prime * result + ((maximum == null) ? 0 : maximum.hashCode());
-		result = prime * result + ((minItems == null) ? 0 : minItems.hashCode());
-		result = prime * result + ((minLength == null) ? 0 : minLength.hashCode());
-		result = prime * result + ((minimum == null) ? 0 : minimum.hashCode());
-		result = prime * result + ((multipleOf == null) ? 0 : multipleOf.hashCode());
-		result = prime * result + ((pattern == null) ? 0 : pattern.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		result = prime * result + ((uniqueItems == null) ? 0 : uniqueItems.hashCode());
-	return result;
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((_enum == null) ? 0 : _enum.hashCode());
+        result = prime * result + ((collectionFormat == null) ? 0 : collectionFormat.hashCode());
+        result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
+        result = prime * result + ((example == null) ? 0 : example.hashCode());
+        result = prime * result + ((exclusiveMaximum == null) ? 0 : exclusiveMaximum.hashCode());
+        result = prime * result + ((exclusiveMinimum == null) ? 0 : exclusiveMinimum.hashCode());
+        result = prime * result + ((format == null) ? 0 : format.hashCode());
+        result = prime * result + ((items == null) ? 0 : items.hashCode());
+        result = prime * result + ((maxItems == null) ? 0 : maxItems.hashCode());
+        result = prime * result + ((maxLength == null) ? 0 : maxLength.hashCode());
+        result = prime * result + ((maximum == null) ? 0 : maximum.hashCode());
+        result = prime * result + ((minItems == null) ? 0 : minItems.hashCode());
+        result = prime * result + ((minLength == null) ? 0 : minLength.hashCode());
+        result = prime * result + ((minimum == null) ? 0 : minimum.hashCode());
+        result = prime * result + ((multipleOf == null) ? 0 : multipleOf.hashCode());
+        result = prime * result + ((pattern == null) ? 0 : pattern.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((uniqueItems == null) ? 0 : uniqueItems.hashCode());
+        return result;
     }
 }
