@@ -51,12 +51,11 @@
         </configuration>
       </plugin>
     </plugins>
-
   </build>
   <dependencies>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.10</artifactId>
+      <artifactId>scalatest_2.11</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -70,7 +69,7 @@
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-scala_2.10</artifactId>
+      <artifactId>jackson-module-scala_2.11</artifactId>
       <version>${jackson-scala-version}</version>
       <scope>compile</scope>
     </dependency>
@@ -99,19 +98,19 @@
     </dependency>
     <dependency>
       <groupId>org.json4s</groupId>
-      <artifactId>json4s-ext_2.10</artifactId>
+      <artifactId>json4s-ext_2.11</artifactId>
       <version>${json4s-version}</version>
       <scope>compile</scope>
     </dependency> 
     <dependency>
       <groupId>org.json4s</groupId>
-      <artifactId>json4s-native_2.10</artifactId>
+      <artifactId>json4s-native_2.11</artifactId>
       <version>${json4s-version}</version>
       <scope>compile</scope>
     </dependency>    
     <dependency>
       <groupId>org.json4s</groupId>
-      <artifactId>json4s-jackson_2.10</artifactId>
+      <artifactId>json4s-jackson_2.11</artifactId>
       <version>${json4s-version}</version>
       <scope>compile</scope>
     </dependency>

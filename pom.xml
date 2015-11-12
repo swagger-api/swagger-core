@@ -6,17 +6,10 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-<<<<<<< HEAD
   <artifactId>swagger-project_2.11</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
-  <version>1.3.12</version>
-=======
-  <artifactId>swagger-project_2.10</artifactId>
-  <packaging>pom</packaging>
-  <name>wordnik-swagger-project</name>
   <version>1.3.13</version>
->>>>>>> scala-2.10
   <url>https://github.com/swagger-api/swagger-core</url>
   <scm>
     <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
@@ -409,11 +402,7 @@
     <dependencies>
       <dependency>
         <groupId>${project.groupId}</groupId>
-<<<<<<< HEAD
         <artifactId>swagger-jaxrs_2.11</artifactId>
-=======
-        <artifactId>swagger-jaxrs_2.10</artifactId>
->>>>>>> scala-2.10
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -448,11 +437,7 @@
       </dependency>
       <dependency>
         <groupId>org.scalatest</groupId>
-<<<<<<< HEAD
         <artifactId>scalatest_2.11</artifactId>
-=======
-        <artifactId>scalatest_2.10</artifactId>
->>>>>>> scala-2.10
         <version>${scala-test-version}</version>
         <scope>test</scope>
       </dependency>
@@ -464,11 +449,7 @@
       </dependency>
       <dependency>
         <groupId>com.wordnik</groupId>
-<<<<<<< HEAD
         <artifactId>swagger-core_2.11</artifactId>
-=======
-        <artifactId>swagger-core_2.10</artifactId>
->>>>>>> scala-2.10
         <version>${project.version}</version>
         <exclusions>
           <exclusion>
@@ -512,11 +493,7 @@
     </dependencies>
   </dependencyManagement>
   <properties>
-<<<<<<< HEAD
     <scala-version>2.11.1</scala-version>
-=======
-    <scala-version>2.10.4</scala-version>
->>>>>>> scala-2.10
     <felix-version>2.3.4</felix-version>
     <servlet-api-version>2.5</servlet-api-version>
     <jersey-version>1.13</jersey-version>

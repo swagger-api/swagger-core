@@ -8,7 +8,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wordnik</groupId>
-  <artifactId>swagger-servlet_2.10</artifactId>
+  <artifactId>swagger-servlet_2.11</artifactId>
   <packaging>jar</packaging>
   <version>1.3.13</version>
   <name>swagger-servlet</name>
@@ -31,7 +31,7 @@
   <dependencies>
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.10</artifactId>
+      <artifactId>scalatest_2.11</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -47,7 +47,7 @@
     </dependency>
     <dependency>
       <groupId>com.wordnik</groupId>
-      <artifactId>swagger-core_2.10</artifactId>
+      <artifactId>swagger-core_2.11</artifactId>
       <version>${project.parent.version}</version>
       <scope>compile</scope>
     </dependency>
