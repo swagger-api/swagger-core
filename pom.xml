@@ -493,7 +493,7 @@
     </dependencies>
   </dependencyManagement>
   <properties>
-    <scala-version>2.11.1</scala-version>
+    <scala-version>2.11.6</scala-version>
     <felix-version>2.3.4</felix-version>
     <servlet-api-version>2.5</servlet-api-version>
     <jersey-version>1.13</jersey-version>
