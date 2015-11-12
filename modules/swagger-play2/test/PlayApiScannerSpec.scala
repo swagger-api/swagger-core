@@ -1,5 +1,3 @@
-
-
 import play.modules.swagger._
 
 import org.specs2.mutable._
@@ -10,7 +8,6 @@ import com.wordnik.swagger.core.{SwaggerSpec, SwaggerContext}
 import com.wordnik.swagger.config.SwaggerConfig
 
 import org.mockito.Mockito._
-
 
 class PlayApiScannerSpec extends Specification with Mockito {
 

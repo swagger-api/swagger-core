@@ -1,5 +1,3 @@
-
-
 import com.wordnik.swagger.config.{ScannerFactory, SwaggerConfig, ConfigFactory}
 import com.wordnik.swagger.model.ApiListing
 import com.wordnik.swagger.reader.ClassReaders

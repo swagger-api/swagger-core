@@ -87,11 +87,12 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
   def extractGetterProperty(methodFieldName: String): (String, Boolean) = {
     if (methodFieldName != null &&
       (methodFieldName.startsWith("get")) &&
-      methodFieldName.length > 3) {
+      methodFieldName.length > 3 && Character.isUpperCase(methodFieldName.charAt(3))) {
       (methodFieldName.substring(3, 4).toLowerCase() + methodFieldName.substring(4, methodFieldName.length()), true)
     } else if (methodFieldName != null &&
       (methodFieldName.startsWith("is")) &&
-      methodFieldName.length > 2) {
+      methodFieldName.length > 2 &&
+      Character.isUpperCase(methodFieldName.charAt(2))) {
       (methodFieldName.substring(2, 3).toLowerCase() + methodFieldName.substring(3, methodFieldName.length()), true)
     } else {
       (methodFieldName, false)
@@ -164,9 +165,9 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       if(propPosition != 0) position = propAnnoOutput("position").asInstanceOf[Int]
       if(required == false) required = propAnnoOutput("required").asInstanceOf[Boolean]
       isFieldExists = true
+
       if (!isTransient) isTransient = propAnnoOutput("isTransient").asInstanceOf[Boolean]
       if (!isXmlElement) isXmlElement = propAnnoOutput("isXmlElement").asInstanceOf[Boolean]
-
       if (name == null) name = originalName
       isJsonProperty = propAnnoOutput("isJsonProperty").asInstanceOf[Boolean]
     } catch {
@@ -199,16 +200,30 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       var paramType = getDataType(genericReturnType, returnType, false)
       LOGGER.debug("inspecting " + paramType)
       var simpleName = Option(overrideDataType) match {
-        case Some(e) => e
+        case Some(e) => {
+          // split out the base part
+          val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9_]*)\\].*".r
+          val out = e match {
+            case ComplexTypeMatcher(t, e) => e.substring(e.lastIndexOf(".") + 1)
+            case _ => e
+          }
+          out
+        }
         case _ => getDataType(genericReturnType, returnType, true)
       }
       if (!"void".equals(paramType) && null != paramType && !processedFields.contains(name)) {
         if(!excludedFieldTypes.contains(paramType)) {
           val items = {
             val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9_]*)\\].*".r
-            paramType match {
+            val nameToUse = {
+              if(overrideDataType != null) 
+                overrideDataType
+              else 
+                paramType
+            }
+
+            nameToUse match {
               case ComplexTypeMatcher(containerType, basePart) => {
-                LOGGER.debug("containerType: " + containerType + ", basePart: " + basePart + ", simpleName: " + simpleName)
                 paramType = containerType
                 val typeRef = simpleName match {
                   case ComplexTypeMatcher(t, simpleTypeRef) => {
@@ -223,9 +238,13 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
                 if(isComplex(typeRef)) {
                   Some(ModelRef(null, Some(typeRef), Some(basePart)))
                 }
-                else Some(ModelRef(typeRef, None, Some(basePart)))
+                else {
+                  Some(ModelRef(typeRef, None, Some(basePart)))
+                }
               }
-              case _ => None
+              case _ => {
+                None
+              }
             }
           }
 
@@ -247,6 +266,9 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       else {
         LOGGER.debug("skipping " + name)
       }
+      processedFields += name
+    }
+    else {
       processedFields += name
     }
   }
@@ -307,7 +329,6 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     var paramAccess: String = null
     var wrapperName: String = null
     var position = 0
-
     for (ma <- annotations) {
       ma match {
         case e: XmlTransient => isTransient = true
@@ -315,6 +336,9 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
           description = readString(e.value)
           notes = readString(e.notes)
           paramType = readString(e.dataType)
+
+          LOGGER.debug("using override param type " + paramType)
+
           if(e.required)
             required = true
           if(e.position != 0) position = e.position

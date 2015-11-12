@@ -19,10 +19,11 @@ import org.scalatest.Matchers
 @RunWith(classOf[JUnitRunner])
 class ByteConverterTest extends FlatSpec with Matchers {
   val models = ModelConverters.read(classOf[ByteConverterModel])
+  println(JsonSerializer.asJson(models))
   JsonSerializer.asJson(models) should be ("""{"id":"ByteConverterModel","properties":{"myBytes":{"type":"array","items":{"type":"string"}}}}""")
 }
 
 class ByteConverterModel {
-  @ApiModelProperty(dataType="string")
+  @ApiModelProperty(dataType="List[string]")
   @BeanProperty var myBytes:Array[Byte] = _
 }

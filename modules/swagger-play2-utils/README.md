@@ -17,8 +17,7 @@ That will put the swagger-play2-utils module in your local ivy repository for us
 include it in your application like this:
 
 ````
-val appDependencies: Seq[sbt.ModuleID] = Seq("swagger-play2-utils" %% "swagger-play2-utils" % "1.3.12")
-
+val appDependencies: Seq[sbt.ModuleID] = Seq("swagger-play2-utils" %% "swagger-play2-utils" % "1.3.13")
 ````
 
 You can then add support to your app.

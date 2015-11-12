@@ -10,27 +10,30 @@ import com.wordnik.swagger.config.*;
 import com.wordnik.swagger.reader.*;
 import com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader;
 
-import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.config.Bootstrap;
-import com.yammer.dropwizard.config.Environment;
+import io.dropwizard.Application;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 
-public class SwaggerSampleService extends Service<SwaggerSampleConfiguration> {
+public class SwaggerSampleApplication extends Application <SwaggerSampleConfiguration> {
   public static void main(String[] args) throws Exception {
-    new SwaggerSampleService().run(args);
+    new SwaggerSampleApplication().run(args);
   }
 
   @Override
-  public void initialize(Bootstrap<SwaggerSampleConfiguration> bootstrap) {
-    bootstrap.setName("swagger-sample");
+  public void initialize(Bootstrap<SwaggerSampleConfiguration> bootstrap) { }
+
+  @Override   
+  public String getName() {
+      return "swagger-sample";
   }
 
   @Override
   public void run(SwaggerSampleConfiguration configuration, Environment environment) {
-    environment.addResource(new ApiListingResourceJSON());
-    environment.addResource(new PetResource());
+    environment.jersey().register(new ApiListingResourceJSON());
+    environment.jersey().register(new PetResource());
 
-    environment.addProvider(new ResourceListingProvider());
-    environment.addProvider(new ApiDeclarationProvider());
+    environment.jersey().register(new ResourceListingProvider());
+    environment.jersey().register(new ApiDeclarationProvider());
     ScannerFactory.setScanner(new DefaultJaxrsScanner());
     ClassReaders.setReader(new DefaultJaxrsApiReader());
 

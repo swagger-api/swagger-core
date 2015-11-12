@@ -69,6 +69,15 @@ class ModelPropertyTest extends FlatSpec with Matchers {
   }
 }
 
+@RunWith(classOf[JUnitRunner])
+class ModelPropertyOverrideTest extends FlatSpec with Matchers {
+  it should "read a model with property dataTypes configured #679" in {
+    val models = ModelConverters.readAll(classOf[ModelWithModelPropertyOverrides])
+
+    JsonSerializer.asJson(models) should be ("""[{"id":"Children","properties":{"name":{"type":"string"}}},{"id":"ModelWithModelPropertyOverrides","properties":{"children":{"type":"array","items":{"$ref":"Children"}}}}]""")
+  }
+}
+
 case class Family (membersSince: Date, members: List[Person])
 
 class Pet {
