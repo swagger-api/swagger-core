@@ -1,5 +1,3 @@
-
-
 import play.modules.swagger._
 
 import org.specs2.mutable._
@@ -9,13 +7,11 @@ import test.testdata.DogController
 
 import com.wordnik.swagger.core.SwaggerSpec
 import com.wordnik.swagger.config.SwaggerConfig
-import com.wordnik.swagger.model.{Parameter, Operation}
+import com.wordnik.swagger.model._
 
 import org.mockito.Mockito._
 
-
 class PlayApiReaderSpec extends Specification with Mockito {
-
   "PlayApiReader.SwaggerUtils" should {
     "convert a simple play route comment" in {
       val path = "/pet.json/$id<[^/]+>/test/$nothing<[^/]+>"
@@ -82,6 +78,11 @@ class PlayApiReaderSpec extends Specification with Mockito {
     }
   }
 
+  def readDogMethod(name: String) = {
+    val method = dogMethod(name).get
+    val fullMethodName = reader.getFullMethodName(dogControllerClass, method)
+    reader.readMethod(method, fullMethodName)
+  }
 
   "with Object as Controller" should {
 
@@ -159,193 +160,198 @@ class PlayApiReaderSpec extends Specification with Mockito {
   "readMethod with Object as controller" should {
 
     "create Operation for annotated method" in {
-      val maybeOperation: Option[Operation] = reader.readMethod(dogMethod("list").get)
+      val maybeOperation: Option[Operation] = readDogMethod("list")
       maybeOperation.nonEmpty must beTrue
     }
 
     "does not creates Operation when no annotation" in {
-      val maybeOperation: Option[Operation] = reader.readMethod(dogMethod("no_annotations").get)
+      val maybeOperation: Option[Operation] = readDogMethod("no_annotations")
       "an operation should not have been returned" ! maybeOperation.isEmpty
     }
 
     "adds empty 'consumes' when not defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add1").get).get
+      val operation: Operation = readDogMethod("add1").get
       operation.consumes must beEqualTo(List.empty)
     }
 
     "adds 'consumes' when defined and trims" in {
-      val operation: Operation = reader.readMethod(dogMethod("add2").get).get
+      val operation: Operation = readDogMethod("add2").get
       operation.consumes.length must beEqualTo(1)
       operation.consumes.head must beEqualTo("application/json")
     }
 
-    "adds mulitple 'consumes' when defined and trims" in {
-      val operation: Operation = reader.readMethod(dogMethod("add3").get).get
+    "adds multiple 'consumes' when defined and trims" in {
+      val operation: Operation = readDogMethod("add3").get
       operation.consumes.length must beEqualTo(2)
       operation.consumes.contains("application/json") must beTrue
       operation.consumes.contains("text/yaml") must beTrue
     }
 
     "adds empty 'authorizations' when not defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add1").get).get
-      operation.authorizations must beEqualTo(List.empty)
+      val operation: Operation = readDogMethod("add1").get
+      operation.authorizations must beEqualTo(Nil)
     }
 
     "adds 'authorizations' when defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add2").get).get
+      val operation: Operation = readDogMethod("add2").get
       operation.authorizations.length must beEqualTo(1)
-      operation.authorizations.head must beEqualTo("vet")
+      operation.authorizations.head.`type` must beEqualTo("oauth2")
     }
 
-    "adds mulitple 'authorizations' when defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add3").get).get
+    "adds multiple 'authorizations' when defined" in {
+      val operation: Operation = readDogMethod("add3").get
       operation.authorizations.length must beEqualTo(2)
-      operation.authorizations.contains("vet") must beTrue
-      operation.authorizations.contains("owner") must beTrue
+      operation.authorizations.map(_.`type`).contains("oauth2") must beTrue
     }
 
     "adds empty 'produces' when not defined" in {
-      val operation: Operation = reader.readMethod(get1Method).get
+      val fullMethodName = reader.getFullMethodName(dogControllerClass, get1Method)
+      val operation: Operation = reader.readMethod(get1Method, fullMethodName).get
       operation.produces must beEqualTo(List.empty)
     }
 
     "adds 'produces' when defined and trims" in {
-      val operation: Operation = reader.readMethod(get2Method).get
+      val fullMethodName = reader.getFullMethodName(dogControllerClass, get2Method)
+      val operation: Operation = reader.readMethod(get2Method, fullMethodName).get
       operation.produces.length must beEqualTo(1)
       operation.produces.head must beEqualTo("application/json")
     }
 
-    "adds mulitple 'produces' when defined and trims" in {
-      val operation: Operation = reader.readMethod(get3Method).get
+    "adds multiple 'produces' when defined and trims" in {
+      val fullMethodName = reader.getFullMethodName(dogControllerClass, get3Method)
+      val operation: Operation = reader.readMethod(get3Method, fullMethodName).get
       operation.produces.length must beEqualTo(2)
       operation.produces.contains("application/json") must beTrue
       operation.produces.contains("application/xml") must beTrue
     }
 
     "adds 'protocols' when defined and trims" in {
-      val operation: Operation = reader.readMethod(dogMethod("add2").get).get
+      val operation: Operation = readDogMethod("add2").get
       operation.protocols.length must beEqualTo(1)
       operation.protocols.head must beEqualTo("http")
     }
 
-    "adds mulitple 'protocols' when defined and trims" in {
-      val operation: Operation = reader.readMethod(dogMethod("add3").get).get
+    "adds multiple 'protocols' when defined and trims" in {
+      val operation: Operation = readDogMethod("add3").get
       operation.protocols.length must beEqualTo(2)
       operation.protocols.contains("http") must beTrue
       operation.protocols.contains("https") must beTrue
     }
 
     "adds empty 'protocols' when not defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add1").get).get
+      val operation: Operation = readDogMethod("add1").get
       operation.protocols must beEqualTo(List.empty)
     }
 
     "adds 'deprecated' when defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("deprecated").get).get
+      val operation: Operation = readDogMethod("deprecated").get
       operation.deprecated must beEqualTo(Some("true"))
     }
 
     "does not add 'deprecated' when not defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add1").get).get
+      val operation: Operation = readDogMethod("add1").get
       operation.deprecated must beEqualTo(None)
     }
 
     "adds 'method' when defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add1").get).get
+      val operation: Operation = readDogMethod("add1").get
       operation.method must beEqualTo("PUT")
     }
 
     "adds any-string for 'method' when defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("unknown_method").get).get
+      val operation: Operation = readDogMethod("unknown_method").get
       operation.method must beEqualTo("UNKNOWN")
     }
 
     "results in empty String for 'method' when not defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("undefined_method").get).get
+      val operation: Operation = readDogMethod("undefined_method").get
       operation.method must beEqualTo("")
     }
 
-    "results in empty String for 'nickname' when not defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add1").get).get
-      operation.nickname must beEqualTo("")
+    "results in httpMethod + fullMethodName for 'nickname' when not defined" in {
+      val operation: Operation = readDogMethod("add1").get
+      val fullMethodName = reader.getFullMethodName(dogControllerClass, dogMethod("add1").get)
+      operation.nickname.toLowerCase must beEqualTo(reader.genNickname(fullMethodName, Some("PUT")).toLowerCase)
     }
 
     "adds 'nickname' when defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add2").get).get
+      val operation: Operation = readDogMethod("add2").get
       operation.nickname must beEqualTo("addDog2_nickname")
     }
 
     "results in empty String for 'notes' when not defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add1").get).get
+      val operation: Operation = readDogMethod("add1").get
       operation.notes must beEqualTo("")
     }
 
     "adds 'notes' when defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add2").get).get
+      val operation: Operation = readDogMethod("add2").get
       operation.notes must beEqualTo("Adds a dogs better")
     }
 
 
     "adds 'summary' when defined in 'value'" in {
-      val operation: Operation = reader.readMethod(dogMethod("add2").get).get
+      val operation: Operation = readDogMethod("add2").get
       operation.summary must beEqualTo("addDog2")
     }
 
     "defaults to 0 for 'position' when not defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add1").get).get
+      val operation: Operation = readDogMethod("add1").get
       operation.position must beEqualTo(0)
     }
 
     "adds 'position' when defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add2").get).get
+      val operation: Operation = readDogMethod("add2").get
       operation.position must beEqualTo(2)
     }
 
     "results in 0 'responseMessages' when not defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add1").get).get
+      val operation: Operation = readDogMethod("add1").get
       operation.responseMessages.length must beEqualTo(0)
     }
 
     "results in 0 'responseMessages' when defined as empty array" in {
-      val operation: Operation = reader.readMethod(dogMethod("add2").get).get
+      val operation: Operation = readDogMethod("add2").get
       operation.responseMessages.length must beEqualTo(0)
     }
 
     "adds multiple 'responseMessages' when defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add3").get).get
+      val operation: Operation = readDogMethod("add3").get
       operation.responseMessages.length must beEqualTo(2)
       operation.responseMessages.filter(responseMessage => responseMessage.code == 405).head.message must beEqualTo("Invalid input")
       operation.responseMessages.filter(responseMessage => responseMessage.code == 666).head.message must beEqualTo("Big Problem")
     }
 
     "returns 'void' for 'responseClass' when not defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("add1").get).get
+      val operation: Operation = readDogMethod("add1").get
       operation.responseClass must beEqualTo("java.lang.Void")
     }
 
     "adds 'responseClass' when defined" in {
-      val operation: Operation = reader.readMethod(get1Method).get
+      val fullMethodName = reader.getFullMethodName(dogControllerClass, get1Method)
+      val operation: Operation = reader.readMethod(get1Method, fullMethodName).get
       operation.responseClass must beEqualTo("test.testdata.Dog")
     }
 
     "adds 'responseClass' correctly when defined as list" in {
-      val operation = reader.readMethod(dogMethod("list").get).get
+      val operation = readDogMethod("list").get
       operation.responseClass must beEqualTo("List[test.testdata.Dog]")
     }
 
     "results in 0 'parameters' when not defined" in {
-      val operation: Operation = reader.readMethod(dogMethod("list").get).get
+      val operation: Operation = readDogMethod("list").get
       operation.parameters must beEqualTo(List.empty)
     }
 
     "adds 'parameters' when defined by @ApiParam" in {
-      val operation: Operation = reader.readMethod(get1Method).get
+      val fullMethodName = reader.getFullMethodName(dogControllerClass, get1Method)
+      val operation: Operation = reader.readMethod(get1Method, fullMethodName).get
       operation.parameters.length must beEqualTo(1)
-      operation.parameters.head must beEqualTo(Parameter("dogId", Some("ID of dog to fetch"), None, true, false, "long", null, "path", None))
+      operation.parameters.head must beEqualTo(Parameter("dogId", Some("ID of dog to fetch"), None, true, false, "long", AnyAllowableValues, "path", None))
     }
 
     "adds 'parameters' when defined by @ApiImplicitParams" in {
-      val operation: Operation = reader.readMethod(dogMethod("add1").get).get
+      val operation: Operation = readDogMethod("add1").get
       operation.parameters.length must beEqualTo(1)
       operation.parameters.head must beEqualTo(Parameter("dog", Some("Dog object to add"), None, true, false, "Dog", null, "body", None))
     }
@@ -355,7 +361,9 @@ class PlayApiReaderSpec extends Specification with Mockito {
   "readMethod with Class as controller" should {
 
     "create Operation for annotated method" in {
-      val maybeOperation: Option[Operation] = reader.readMethod(catMethod("list").get)
+      val listMethod = catMethod("list").get
+      val fullMethodName = reader.getFullMethodName(catControllerClass, listMethod)
+      val maybeOperation: Option[Operation] = reader.readMethod(listMethod, fullMethodName)
       maybeOperation.nonEmpty must beTrue
     }
   }

@@ -178,24 +178,25 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         case e: String if e != "" => Some(e)
         case _ => None
       }
+
       // define a Map to hold Operations keyed by resourcepath
       var operationsMap: Map[String, List[Operation]] = Map.empty
       for (method <- cls.getMethods) {
         // only process methods with @ApiOperation annotations
         if (method.getAnnotation(classOf[ApiOperation]) != null) {
           Logger("swagger").debug("ApiOperation: found on method: %s".format(method.getName))
-          val operation = readMethod(method).get
-          val fullOperationResourcePath = getPath(cls, method)
-
-          fullOperationResourcePath match {
-            case Some(path) =>
-              // got to remove any path element specified in basepath
+          val fullMethodName = getFullMethodName(cls, method)
+          routesCache.get(fullMethodName) match {
+            case Some(RouteEntry(httpMethod, path)) => {
+               // got to remove any path element specified in basepath
+              val operation = readMethod(method, fullMethodName).get
               val basepathUrl = new java.net.URL(config.getBasePath)
               val basepath = basepathUrl.getPath
               val resourcePath = path.stripPrefix(basepath)
               Logger("swagger").debug("method: %s, fullOperationResourcePath: %s, basepath: %s, resourcePath: %s".format(method.getName, path, basepath, resourcePath))
               // store operations in our Map keyed by resourcepath
               operationsMap = appendOperation(resourcePath, operation, operationsMap)
+            }
             case _ =>
               Logger("swagger").debug("Method: %s has no web route defined".format(method.getName))
           }
@@ -218,7 +219,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
           produces,
           consumes,
           protocols,
-          List(), // authorizations
+          List(),
           ModelUtil.stripPackages(apiDescriptions), //  List[com.wordnik.swagger.model.ApiDescription]
           models,
           description
@@ -232,12 +233,19 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
     }
   }
 
-
-  def readMethod(method: Method): Option[Operation] = {
+  def readMethod(method: Method, fullMethodName: String): Option[Operation] = {
     val apiOperation = method.getAnnotation(classOf[ApiOperation])
+    val routeEntry = routesCache.get(fullMethodName)
 
     if (method.getAnnotation(classOf[ApiOperation]) != null) {
       Logger("swagger").debug("annotation: ApiOperation: %s,".format(apiOperation.toString))
+
+      val httpMethod = routeEntry.map(_.httpMethod).getOrElse(apiOperation.httpMethod)
+
+      val nickname = apiOperation.nickname match {
+        case e: String if e.trim != "" => e
+        case _ => genNickname(fullMethodName, routeEntry.map(_.httpMethod))
+      }
 
       val produces = apiOperation.produces match {
         case e: String if e.trim != "" => e.split(",").map(_.trim).toList
@@ -252,11 +260,14 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
         case e: String if e.trim != "" => e.split(",").map(_.trim).toList
         case _ => List()
       }
-      val authorizations:List[com.wordnik.swagger.model.Authorization] = Option(apiOperation.authorizations) match {
+      val authorizations: List[com.wordnik.swagger.model.Authorization] = Option(apiOperation.authorizations) match {
         case Some(e) => (for(a <- e) yield {
           val scopes = (for(s <- a.scopes) yield com.wordnik.swagger.model.AuthorizationScope(s.scope, s.description)).toArray
-          new com.wordnik.swagger.model.Authorization(a.value, scopes)
-        }).toList
+          if(a.value != null && !"".equals(a.value))
+            Some(new com.wordnik.swagger.model.Authorization(a.value, scopes))
+          else
+            None
+        }).flatten.toList
         case _ => List()
       }
       val responseClass = apiOperation.responseContainer match {
@@ -275,11 +286,11 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
       val params = processParams(method)
 
       Some(Operation(
-        apiOperation.httpMethod,
+        httpMethod,
         apiOperation.value,
         apiOperation.notes,
         responseClass,
-        apiOperation.nickname,
+        nickname,
         apiOperation.position,
         produces,
         consumes,
@@ -299,6 +310,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
       case Some(e) =>
         (for (param <- e.value) yield {
           Logger("swagger").debug("processing " + param)
+          val dataType = if (param.dataType.isEmpty) "String" else param.dataType
           val allowableValues = toAllowableValues(param.allowableValues)
           Parameter(
             param.name,
@@ -306,7 +318,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
             Option(param.defaultValue).filter(_.trim.nonEmpty),
             param.required,
             param.allowMultiple,
-            param.dataType,
+            dataType,
             allowableValues,
             param.paramType,
             Option(param.access).filter(_.trim.nonEmpty))
@@ -326,6 +338,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
       if (annotations.length > 0) {
         val param = new MutableParameter
         param.dataType = processDataType(paramType, genericParamType)
+        param.allowableValues = processAllowableValues(paramType, genericParamType)
         paramList ++= processParamAnnotations(param, annotations)
       }
     }
@@ -394,7 +407,7 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
     }
   }
 
-  def routesCache = {
+  def routesCache = synchronized {
     if (_routesCache == null) _routesCache = populateRoutesCache
     _routesCache
   }
@@ -419,6 +432,10 @@ class PlayApiReader(val routes: Option[Routes]) extends JaxrsApiReader {
       case -1 => clazz.getCanonicalName + "$." + method.getName
       case _ => clazz.getCanonicalName + "." + method.getName
     }
+  }
+
+  def genNickname(fullMethodName: String, httpMethod: Option[String] = None): String = {
+    httpMethod.getOrElse("") + "_" + fullMethodName.replace(".", "_")
   }
 
   private def populateRoutesCache: Map[String, RouteEntry] = {

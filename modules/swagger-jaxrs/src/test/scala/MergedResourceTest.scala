@@ -14,12 +14,12 @@ import java.util.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.mutable.ListBuffer
 
 @RunWith(classOf[JUnitRunner])
-class MergedResourceTest extends FlatSpec with ShouldMatchers {
+class MergedResourceTest extends FlatSpec with Matchers {
   it should "read an api and extract an error model" in {
     val reader = new DefaultJaxrsApiReader
     val config = new SwaggerConfig()
@@ -29,8 +29,7 @@ class MergedResourceTest extends FlatSpec with ShouldMatchers {
     val merged = new TestReader().groupByResourcePath(List(r1, r2))
     merged.size should be (1)
     val listing = merged.head
-    println(listing.models.get.keys)
-    // (listing.models.get.keys.toSet & Set("NotFoundModel", "Sample1", "Sample2")).size should be (3)
+    (listing.models.get.keys.toSet & Set("NotFoundModel", "Sample1", "Sample2")).size should be (3)
   }
 }
 

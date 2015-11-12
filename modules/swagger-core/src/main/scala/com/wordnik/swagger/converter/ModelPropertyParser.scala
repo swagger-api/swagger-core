@@ -16,6 +16,7 @@ import java.lang.annotation.Annotation
 import javax.xml.bind.annotation._
 
 import scala.collection.mutable.{ LinkedHashMap, ListBuffer, HashSet, HashMap }
+import scala.reflect.api.JavaUniverse
 
 class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (implicit properties: LinkedHashMap[String, ModelProperty]) {
   private val LOGGER = LoggerFactory.getLogger(classOf[ModelPropertyParser])
@@ -27,8 +28,8 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
   }
   val processedFields = new ListBuffer[String]
   val excludedFieldTypes = new HashSet[String]
-  final val positiveInfinity = "Infinity"
-  final val negativeInfinity = "-Infinity"
+  final val positiveInfinity = "infinity"
+  final val negativeInfinity = "-infinity"
 
   def parse = Option(cls).map(parseRecursive(_))
 
@@ -86,11 +87,12 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
   def extractGetterProperty(methodFieldName: String): (String, Boolean) = {
     if (methodFieldName != null &&
       (methodFieldName.startsWith("get")) &&
-      methodFieldName.length > 3) {
+      methodFieldName.length > 3 && Character.isUpperCase(methodFieldName.charAt(3))) {
       (methodFieldName.substring(3, 4).toLowerCase() + methodFieldName.substring(4, methodFieldName.length()), true)
     } else if (methodFieldName != null &&
       (methodFieldName.startsWith("is")) &&
-      methodFieldName.length > 2) {
+      methodFieldName.length > 2 &&
+      Character.isUpperCase(methodFieldName.charAt(2))) {
       (methodFieldName.substring(2, 3).toLowerCase() + methodFieldName.substring(3, methodFieldName.length()), true)
     } else {
       (methodFieldName, false)
@@ -141,12 +143,8 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     var isTransient = processedAnnotations("isTransient").asInstanceOf[Boolean]
     var isXmlElement = processedAnnotations("isXmlElement").asInstanceOf[Boolean]
     val isDocumented = processedAnnotations("isDocumented").asInstanceOf[Boolean]
-    var allowableValues = {
-      if(returnClass.isEnum)
-        Some(AllowableListValues((for(v <- returnClass.getEnumConstants) yield v.toString).toList))
-      else
-        processedAnnotations("allowableValues").asInstanceOf[Option[AllowableValues]]
-    }
+
+    var allowableValues = processedAnnotations("allowableValues").asInstanceOf[Option[AllowableValues]]
 
     try {
       val fieldAnnotations = getDeclaredField(this.cls, originalName).getAnnotations()
@@ -160,16 +158,16 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       if(propAnnoOutput.contains("paramType") && propAnnoOutput("paramType") != null)
         overrideDataType = propAnnoOutput("paramType").toString
 
-      if(allowableValues == None)
+      if(allowableValues == None || allowableValues == AnyAllowableValues)
         allowableValues = propAnnoOutput("allowableValues").asInstanceOf[Option[AllowableValues]]
       if(description == None && propAnnoOutput.contains("description") && propAnnoOutput("description") != null)
         description = Some(propAnnoOutput("description").asInstanceOf[String])
       if(propPosition != 0) position = propAnnoOutput("position").asInstanceOf[Int]
       if(required == false) required = propAnnoOutput("required").asInstanceOf[Boolean]
       isFieldExists = true
+
       if (!isTransient) isTransient = propAnnoOutput("isTransient").asInstanceOf[Boolean]
       if (!isXmlElement) isXmlElement = propAnnoOutput("isXmlElement").asInstanceOf[Boolean]
-
       if (name == null) name = originalName
       isJsonProperty = propAnnoOutput("isJsonProperty").asInstanceOf[Boolean]
     } catch {
@@ -178,6 +176,20 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         // isTransient = false
       }
     }
+
+    allowableValues = if (allowableValues.isEmpty || allowableValues == Some(AnyAllowableValues)) {
+      if(returnClass.isEnum) {
+        Some(AllowableListValues((for (v <- returnClass.getEnumConstants) yield v.toString).toList))
+      }
+      else if (isScalaEnumValue(returnClass)) {
+        // For Scala enumerations, set the dataType annotation to be the
+        // fully qualified class name of the enumeration object (e.g., com.wordnik.MyEnum$)
+        val enumValuesOpt = if (overrideDataType != null) getScalaEnumAllowableValues(overrideDataType) else None
+        // All enums should have the data type set to strings for the Swagger spec
+        overrideDataType = "string"
+        enumValuesOpt.fold(allowableValues)(enumVals => Some(enumVals))
+      } else allowableValues
+    } else allowableValues
 
     //if class has accessor none annotation, the method/field should have explicit xml element annotations, if not
     // consider it as transient
@@ -188,30 +200,51 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       var paramType = getDataType(genericReturnType, returnType, false)
       LOGGER.debug("inspecting " + paramType)
       var simpleName = Option(overrideDataType) match {
-        case Some(e) => e
+        case Some(e) => {
+          // split out the base part
+          val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9_]*)\\].*".r
+          val out = e match {
+            case ComplexTypeMatcher(t, e) => e.substring(e.lastIndexOf(".") + 1)
+            case _ => e
+          }
+          out
+        }
         case _ => getDataType(genericReturnType, returnType, true)
       }
       if (!"void".equals(paramType) && null != paramType && !processedFields.contains(name)) {
         if(!excludedFieldTypes.contains(paramType)) {
           val items = {
             val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9_]*)\\].*".r
-            paramType match {
+            val nameToUse = {
+              if(overrideDataType != null) 
+                overrideDataType
+              else 
+                paramType
+            }
+
+            nameToUse match {
               case ComplexTypeMatcher(containerType, basePart) => {
-                LOGGER.debug("containerType: " + containerType + ", basePart: " + basePart + ", simpleName: " + simpleName)
                 paramType = containerType
-                val ComplexTypeMatcher(t, simpleTypeRef) = simpleName
-                val typeRef = {
-                  if(simpleTypeRef.indexOf(",") > 0) // it's a map, use the value only
-                    simpleTypeRef.split(",").last
-                  else simpleTypeRef
+                val typeRef = simpleName match {
+                  case ComplexTypeMatcher(t, simpleTypeRef) => {
+                    if(simpleTypeRef.indexOf(",") > 0) // it's a map, use the value only
+                      simpleTypeRef.split(",").last
+                    else simpleTypeRef
+                  }
+                  case _ => simpleName
                 }
+
                 simpleName = containerType
-                if(isComplex(simpleTypeRef)) {
-                  Some(ModelRef(null, Some(simpleTypeRef), Some(basePart)))
+                if(isComplex(typeRef)) {
+                  Some(ModelRef(null, Some(typeRef), Some(basePart)))
                 }
-                else Some(ModelRef(simpleTypeRef, None, Some(basePart)))
+                else {
+                  Some(ModelRef(typeRef, None, Some(basePart)))
+                }
               }
-              case _ => None
+              case _ => {
+                None
+              }
             }
           }
 
@@ -235,12 +268,44 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       }
       processedFields += name
     }
+    else {
+      processedFields += name
+    }
   }
 
   def validateDatatype(dataType: String): String = {
     val o = typeMap.getOrElse(dataType.toLowerCase, dataType)
     LOGGER.debug("validating datatype " + dataType + " against " + typeMap.size + " keys, got " + o)
     o
+  }
+
+  /**
+   * @param cls
+   * @return - true if the class represents a value in an Enumeration
+   *         false otherwise
+   */
+  def isScalaEnumValue(cls: Class[_]): Boolean ={
+    cls.getName().compareTo("scala.Enumeration$Value") == 0
+  }
+
+  /**
+   * Obtain the list of values part of a given Scala enumeration object.
+   * @param enumObjectName - Fully qualified class name for the enumeration object (e.g., com.wordnik.MyEnum$)
+   * @return Some(AllowableListValues(valid enum values)) if successful
+   *         None if unable to obtain a list of enum values for the given enumObjectName
+   */
+  def getScalaEnumAllowableValues(enumObjectName: String): Option[AllowableListValues] ={
+    try {
+      val ru: JavaUniverse = scala.reflect.runtime.universe
+      val m: ru.Mirror = ru.runtimeMirror(getClass.getClassLoader())
+      val moduleSymbol = m.staticModule(enumObjectName)
+      val moduleMirror = m.reflectModule(moduleSymbol)
+      val enumObj = moduleMirror.instance.asInstanceOf[Enumeration]
+      val enumVals = enumObj.values
+      Some(AllowableListValues((for (v <- enumVals) yield v.toString).toList))
+    } catch {
+      case e: Throwable => None
+    }
   }
 
   def isComplex(typeName: String): Boolean = {
@@ -264,7 +329,6 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     var paramAccess: String = null
     var wrapperName: String = null
     var position = 0
-
     for (ma <- annotations) {
       ma match {
         case e: XmlTransient => isTransient = true
@@ -272,7 +336,11 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
           description = readString(e.value)
           notes = readString(e.notes)
           paramType = readString(e.dataType)
-          if(e.required) required = true
+
+          LOGGER.debug("using override param type " + paramType)
+
+          if(e.required)
+            required = true
           if(e.position != 0) position = e.position
           isDocumented = true
           allowableValues = Some(toAllowableValues(e.allowableValues))
@@ -281,15 +349,18 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         }
         case e: XmlAttribute => {
           updatedName = readString(e.name, name, "##default")
-          updatedName = readString(name, name)
-          if(e.required) required = true
+          updatedName = readString(e.name, name)
+          if(e.required)
+            required = true
           isXmlElement = true
         }
         case e: XmlElement => {
           updatedName = readString(e.name, name, "##default")
           defaultValue = readString(e.defaultValue, defaultValue, "\u0000")
 
-          required = e.required
+          // per #788 only override the required property if it's true
+          if(e.required)
+            required = e.required
           val xmlElementTypeMethod = classOf[XmlElement].getDeclaredMethod("type")
           val typeValueObj = xmlElementTypeMethod.invoke(e)
           val typeValue = {
@@ -378,13 +449,13 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     }
     else {
       val min = ranges(0) match {
-        case e: String if(e == positiveInfinity) => Float.PositiveInfinity
-        case e: String if(e == negativeInfinity) => Float.NegativeInfinity
+        case e: String if(e.toLowerCase() == positiveInfinity) => Float.PositiveInfinity
+        case e: String if(e.toLowerCase() == negativeInfinity) => Float.NegativeInfinity
         case e: String => e.toFloat
       }
       val max = ranges(1) match {
-        case e: String if(e == positiveInfinity) => Float.PositiveInfinity
-        case e: String if(e == negativeInfinity) => Float.NegativeInfinity
+        case e: String if(e.toLowerCase() == positiveInfinity) => Float.PositiveInfinity
+        case e: String if(e.toLowerCase() == negativeInfinity) => Float.NegativeInfinity
         case e: String => e.toFloat
       }
       AllowableRangeValues(min.toString, max.toString)
@@ -392,7 +463,11 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
   }
 
   def getDataType(genericReturnType: Type, returnType: Type, isSimple: Boolean = false): String = {
-    if (TypeUtil.isParameterizedList(genericReturnType)) {
+    if (TypeUtil.isOptionalType(genericReturnType)) {
+      val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
+      val valueType = parameterizedType.getActualTypeArguments.head
+      getDataType(valueType, valueType, isSimple)
+    } else if (TypeUtil.isParameterizedList(genericReturnType)) {
       val parameterizedType = genericReturnType.asInstanceOf[java.lang.reflect.ParameterizedType]
       val valueType = parameterizedType.getActualTypeArguments.head
       "List[" + getDataType(valueType, valueType, isSimple) + "]"

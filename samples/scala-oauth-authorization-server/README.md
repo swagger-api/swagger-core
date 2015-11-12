@@ -6,10 +6,10 @@ from apache, OLTU.  It contains both a sample authorization server, as well as a
 by tokens provided by the authorization service.
 
 The authorization service supports both `authorization_code` and `implicit` grant types.  You can view the endpoints
-in a [swagger-ui](https://github.com/wordnik/swagger-ui) browser by entering the address `http://localhost:8002/api-docs`.
+in a [swagger-ui](https://github.com/swagger-api/swagger-ui) browser by entering the address `http://localhost:8002/api-docs`.
 
 ### To build from source
-Please follow instructions to build the top-level [swagger-core project](https://github.com/wordnik/swagger-core)
+Please follow instructions to build the top-level [swagger-core project](https://github.com/swagger-api/swagger-core)
 
 
 ### To run (with Maven)
@@ -27,7 +27,7 @@ http://localhost:8002/oauth/dialog?redirect_uri=http://localhost:8002/index.html
 Which will call index.html with an access_token, which can be used to make service calls.
 
 ### Extending this sample
-While a full support for oAuth 2.0 will become first-class in the [Swagger](http://swagger.wordnik.com) project, you can use
+While a full support for oAuth 2.0 will become first-class in the [Swagger](http://swagger.io) project, you can use
 this project as a guideline to start your own.
 
 #### Where to start

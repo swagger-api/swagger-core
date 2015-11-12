@@ -1,5 +1,5 @@
 /**
- *  Copyright 2013 Wordnik, Inc.
+ *  Copyright 2014 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,10 +59,21 @@ object TypeUtil {
     }).asScala.toSet
   }
 
+  def isOptionalType(gt: Type): Boolean = {
+    if (classOf[ParameterizedType].isAssignableFrom(gt.getClass)) {
+      val tp = gt.asInstanceOf[ParameterizedType].getRawType
+      (tp == classOf[Option[_]] || tp.asInstanceOf[Class[_]].getSimpleName.equals("Optional"))
+    }
+    else false
+  }
+
   def isParameterizedList(gt: Type): Boolean = {
     if (classOf[ParameterizedType].isAssignableFrom(gt.getClass)) {
       val tp = gt.asInstanceOf[ParameterizedType].getRawType
-      (tp == classOf[java.util.List[_]] || tp == classOf[scala.List[_]] || tp == classOf[Seq[_]])
+      (tp == classOf[java.util.List[_]] ||
+        tp == classOf[scala.List[_]] ||
+        tp == classOf[java.util.Collection[_]] ||
+        tp == classOf[Seq[_]])
     }
     else false
   }

@@ -55,7 +55,7 @@ object ModelConverters {
     val output = new HashMap[String, Model]
     var model = read(cls, typeMap)
     val propertyNames = new HashSet[String]
-
+    LOGGER.debug("loading class " + cls)
     // add subTypes
     model.map(_.subTypes.map(typeRef => {
       try{
@@ -77,13 +77,17 @@ object ModelConverters {
       val checkedNames = new HashSet[String]
       addRecursive(m, checkedNames, output)
     })
-    output.values.toList
+
+    // sort by name
+    val keys = output.keys.toList.sortWith(_ < _)
+    (for(key <- keys) yield output(key)).toList
   }
 
   def addRecursive(model: Model, checkedNames: HashSet[String], output: HashMap[String, Model]): Unit = {
     if(!checkedNames.contains(model.name)) {
       val propertyNames = new HashSet[String]
-      for((name, property) <- model.properties) {
+      val propertiesToRemove = new HashSet[String]
+      for((nm, property) <- model.properties) {
         val propertyName = property.items match {
           case Some(item) => item.qualifiedType.getOrElse(item.`type`)
           case None => property.qualifiedType
@@ -92,7 +96,18 @@ object ModelConverters {
           case ComplexTypeMatcher(containerType, basePart) => basePart
           case e: String => e
         }
+        val qualifiedType = property.qualifiedType
+        for(t <- propertyPackagesToSkip) {
+          if(qualifiedType.startsWith(t)) {
+            propertiesToRemove += nm
+          }
+        }
         propertyNames += name
+      }
+      for(r <- propertiesToRemove) {
+        model.properties.remove(r)
+        propertyNames -= r
+        LOGGER.debug("removing " + r)
       }
       for(typeRef <- propertyNames) {
         if(ignoredPackages.contains(getPackage(typeRef))) None
@@ -147,6 +162,10 @@ object ModelConverters {
   def skippedClasses: Set[String] = {
     (for(converter <- converters) yield converter.skippedClasses).flatten.toSet
   }
+
+  def propertyPackagesToSkip: Set[String] = {
+    (for(converter <- converters) yield converter.propertyPackagesToSkip).flatten.toSet
+  }
 }
 
 trait ModelConverter {
@@ -154,7 +173,8 @@ trait ModelConverter {
   def toName(cls: Class[_]): String
   def toDescriptionOpt(cls: Class[_]): Option[String]
 
-  def ignoredPackages: Set[String] = Set("java.lang")
+  def propertyPackagesToSkip: Set[String] = Set("com.avaje.ebean.bean")
+  def ignoredPackages: Set[String] = Set("java.lang") ++ propertyPackagesToSkip
   def ignoredClasses: Set[String] = Set("java.util.Date", "java.math.BigDecimal")
 
   def typeMap = Map[String, String]()

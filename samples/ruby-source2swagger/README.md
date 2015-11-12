@@ -25,7 +25,7 @@ This will start a server listening on http://localhost:4567.
 
 #### Browsing the docs
 
-With [swagger-ui](https://github.com/wordnik/swagger-ui) by entering http://localhost:4567/api-docs in
+With [swagger-ui](https://github.com/swagger-api/swagger-ui) by entering http://localhost:4567/api-docs in
 the URL.
 
 #### How it works

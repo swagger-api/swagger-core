@@ -22,15 +22,16 @@ import scala.concurrent.Future
   produces = "application/json, application/xml",
   consumes = "application/json, application/xml",
   protocols = "http, https",
-  authorizations = "vet, owner"
+  authorizations = Array(new Authorization(value="oauth2",
+    scopes = Array(
+      new AuthorizationScope(scope = "vet", description = "vet access"),
+      new AuthorizationScope(scope = "owner", description = "owner access")
+    ))
+  )
 )
 object DogController extends Controller {
-
   @ApiOperation(value = "addDog1",
-    httpMethod = "PUT",
-    authorizations = "",
-    consumes = "",
-    protocols = "")
+    httpMethod = "PUT")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "dog", value = "Dog object to add", required = true, dataType = "Dog", paramType = "body")))
   def add1 = Action {
@@ -41,7 +42,12 @@ object DogController extends Controller {
     notes = "Adds a dogs better",
     httpMethod = "PUT",
     nickname = "addDog2_nickname",
-    authorizations = "vet",
+    authorizations = Array(new Authorization(value="oauth2",
+      scopes = Array(
+        new AuthorizationScope(scope = "vet", description = "vet access"),
+        new AuthorizationScope(scope = "owner", description = "owner access")
+      ))
+    ),
     consumes = " application/json ",
     protocols = "http",
     position = 2)
@@ -55,7 +61,13 @@ object DogController extends Controller {
   @ApiOperation(value = "Add a new Dog",
     notes = "Adds a dogs nicely",
     httpMethod = "PUT",
-    authorizations = "vet, owner",
+    authorizations = Array(new Authorization(value="oauth2",
+      scopes = Array(
+        new AuthorizationScope(scope = "vet", description = "vet access"),
+        new AuthorizationScope(scope = "owner", description = "owner access")
+      )),
+      new Authorization(value="api_key")
+    ),
     consumes = " application/json, text/yaml ",
     protocols = "http, https"
   )
@@ -177,7 +189,6 @@ object DogController extends Controller {
   def undefined_method() = Action {
     request => Ok("test case")
   }
-
 }
 
 case class Dog(id: Long, name: String)

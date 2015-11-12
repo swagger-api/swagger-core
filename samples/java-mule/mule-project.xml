@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mule-project runtimeId="org.mule.tooling.server.3.4.1.ee" xmlns="http://www.mulesoft.com/tooling/project">
+  <name>mule-swagger-integration</name>
+  <description/>
+</mule-project>

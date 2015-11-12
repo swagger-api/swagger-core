@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2014 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class UserResource extends RestResourceUtil {
   @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.",
     authorizations = Array(new Authorization(value="oauth2",
     scopes = Array(
-      new AuthorizationScope(scope = "test:anything", description = "anything")
+      new AuthorizationScope(scope = "write:users", description = "modify users")
     ))))
   def createUser(
     @ApiParam(value = "Created user object", required = true) user: User) = {
@@ -51,7 +51,7 @@ class UserResource extends RestResourceUtil {
   @ApiOperation(value = "Creates list of users with given input array",
     authorizations = Array(new Authorization(value="oauth2",
     scopes = Array(
-      new AuthorizationScope(scope = "test:anything", description = "anything")
+      new AuthorizationScope(scope = "write:users", description = "modify users")
     ))))
   def createUsersWithArrayInput(@ApiParam(value = "List of user object", required = true) users: Array[User]): Response = {
     for (user <- users) {
@@ -65,7 +65,7 @@ class UserResource extends RestResourceUtil {
   @ApiOperation(value = "Creates list of users with given list input",
     authorizations = Array(new Authorization(value="oauth2",
     scopes = Array(
-      new AuthorizationScope(scope = "test:anything", description = "anything")
+      new AuthorizationScope(scope = "write:users", description = "modify users")
     ))))
   def createUsersWithListInput(@ApiParam(value = "List of user object", required = true) users: java.util.List[User]): Response = {
     for (user <- users.asScala) {
@@ -79,7 +79,7 @@ class UserResource extends RestResourceUtil {
   @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.",
     authorizations = Array(new Authorization(value="oauth2",
     scopes = Array(
-      new AuthorizationScope(scope = "test:anything", description = "anything")
+      new AuthorizationScope(scope = "write:users", description = "modify users")
     ))))
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid username supplied"),
@@ -96,7 +96,7 @@ class UserResource extends RestResourceUtil {
   @ApiOperation(value = "Delete user", notes = "This can only be done by the logged in user.",
     authorizations = Array(new Authorization(value="oauth2",
     scopes = Array(
-      new AuthorizationScope(scope = "test:anything", description = "anything")
+      new AuthorizationScope(scope = "write:users", description = "modify users")
     ))))
   @ApiResponses(Array(
     new ApiResponse(code = 400, message = "Invalid username supplied"),

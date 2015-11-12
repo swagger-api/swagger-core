@@ -1,5 +1,5 @@
 /**
- *  Copyright 2013 Wordnik, Inc.
+ *  Copyright 2014 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@
 
 package com.wordnik.swagger.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 
 /**
@@ -34,6 +31,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 public @interface Api {
     /**
      * The 'path' that is going to be used to host the API Declaration of the
@@ -61,6 +59,8 @@ public @interface Api {
      * <p/>
      * The `basePath` is derived automatically by Swagger. This property allows
      * overriding the default value if needed.
+     *
+     * @since 1.3.7
      */
     String basePath() default "";
 
@@ -112,6 +112,8 @@ public @interface Api {
 
     /**
      * Hides the api.
+     *
+     * @since 1.3.8
      */
     boolean hidden() default false;
 }

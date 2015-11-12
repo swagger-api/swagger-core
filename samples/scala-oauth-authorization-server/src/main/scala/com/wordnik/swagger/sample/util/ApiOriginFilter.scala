@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2014 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ class ApiOriginFilter extends javax.servlet.Filter {
   @throws(classOf[ServletException])
   override def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) = {
     val res = response.asInstanceOf[HttpServletResponse]
-    res.addHeader("Access-Control-Allow-Origin:", "*")
+    res.addHeader("Access-Control-Allow-Origin", "*")
     res.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH, OPTIONS");
     res.addHeader("Access-Control-Allow-Headers", "Content-Type, api_key, Authorization");
     chain.doFilter(request, response)

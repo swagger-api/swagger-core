@@ -6,21 +6,22 @@ import PlayKeys._
 
 object ApplicationBuild extends Build {
   val appName = "swagger-play2"
-  val appVersion = "1.3.9-SNAPSHOT"
+  val appVersion = "1.3.13"
 
   checksums in update := Nil
 
-  scalaVersion:= "2.11.1"
+  scalaVersion:= "2.10.4"
 
   val appDependencies = Seq(
-    "org.slf4j" % "slf4j-api" % "1.6.4",
-    "com.wordnik" %% "swagger-jaxrs" % "1.3.9-SNAPSHOT",
-    "javax.ws.rs" % "jsr311-api" % "1.1.1",
-    "org.mockito" % "mockito-core" % "1.9.5" % "test")
+    "org.slf4j"          % "slf4j-api"       % "1.6.4",
+    "com.wordnik"       %% "swagger-jaxrs"   % "1.3.13",
+    "javax.ws.rs"        % "jsr311-api"      % "1.1.1",
+    "org.mockito"        % "mockito-core"    % "1.9.5"            % "test",
+    "com.typesafe.play" %% "play-java-ebean" % "2.3.0"            % "test")
 
   val main = Project(appName, file(".")).enablePlugins(PlayScala).settings(
     crossScalaVersions := Seq("2.10.4", "2.11.1"),
-    scalaVersion := "2.11.1",
+    scalaVersion := "2.10.4",
     version := appVersion,
     libraryDependencies ++= appDependencies,
     publishTo <<= version { (v: String) =>
@@ -36,7 +37,7 @@ object ApplicationBuild extends Build {
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     organization := "com.wordnik",
     pomExtra :=
-      <url>http://swagger.wordnik.com</url>
+      <url>http://swagger.io</url>
       <licenses>
         <license>
           <name>Apache License 2.0</name>
@@ -46,7 +47,7 @@ object ApplicationBuild extends Build {
       </licenses>
       <scm>
         <url>git@github.com:wordnik/swagger-core.git</url>
-        <connection>scm:git:git@github.com:wordnik/swagger-core.git</connection>
+        <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
       </scm>
       <developers>
         <developer>

@@ -2,10 +2,10 @@
 
 ## Overview
 This is a scala project to build a stand-alone server which implements the Swagger spec.  It also demonstrates
-a utility from [wordnik-oss](https://github.com/wordnik/wordnik-oss) which allows easy monitoring of performance metrics on your API.  The
+a utility from [wordnik-oss](https://github.com/swagger-api/wordnik-oss) which allows easy monitoring of performance metrics on your API.  The
 metrics are exposed via swagger (of course!).
 
-The profiling itself is based on a [com.wordnik.util.perf.Profile](https://github.com/wordnik/wordnik-oss/blob/master/modules/common-utils/src/main/scala/com/wordnik/util/perf/Profile.scala) class
+The profiling itself is based on a [com.wordnik.util.perf.Profile](https://github.com/swagger-api/wordnik-oss/blob/master/modules/common-utils/src/main/scala/com/wordnik/util/perf/Profile.scala) class
 which wraps function calls into a counter.  In addition to keeping track of counts and timing, you can add 
 triggers to perform certain actions based on the measurement.  An example would be sending an alert if a particular
 operation takes too long, or an error condition is met.  Or even sending an email if you have a new client sign up!  That's
@@ -23,7 +23,7 @@ which has a profile operation:
 http://localhost:8002/api/health.json/profile
 </pre>
 
-You can see how the various API calls are calling the Profile utility and wrapping the response.  See [here](https://github.com/wordnik/swagger-core/blob/master/samples/scala-jaxrs-apm/src/main/scala/com/wordnik/swagger/sample/resource/PetResource.scala#L50) for an example.
+You can see how the various API calls are calling the Profile utility and wrapping the response.  See [here](https://github.com/swagger-api/swagger-core/blob/master/samples/scala-jaxrs-apm/src/main/scala/com/wordnik/swagger/sample/resource/PetResource.scala#L50) for an example.
 
 Sample output:
 <pre>
@@ -54,7 +54,7 @@ This tells you that the server is up and ready to demonstrate Swagger.
 
 ### Using the UI
 There is an HTML5-based API tool available in a separate project.  This lets you inspect the API using an 
-intuitive UI.  You can pull this code from here:  https://github.com/wordnik/swagger-ui
+intuitive UI.  You can pull this code from here:  https://github.com/swagger-api/swagger-ui
 
 You can then open the dist/index.html file in any HTML5-enabled browser.  Open opening, enter the
 URL of your server in the top-centered input box (default is http://localhost:8002/api/api-docs).  Click the "Explore"

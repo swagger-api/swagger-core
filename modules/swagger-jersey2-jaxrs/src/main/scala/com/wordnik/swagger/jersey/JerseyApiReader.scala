@@ -1,5 +1,5 @@
 /**
- *  Copyright 2012 Wordnik, Inc.
+ *  Copyright 2014 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -191,6 +191,9 @@ class JerseyApiReader extends JaxrsApiReader {
         case e: BeanParam => {
           val cls = SwaggerContext.loadClass(mutable.dataType)
           return getAllParamsFromFields(cls)
+        }
+        case e: DefaultValue => {
+          mutable.defaultValue = Option(readString(e.value))
         }
         case e: Context => shouldIgnore = true
         case _ =>

@@ -1,5 +1,5 @@
 /**
- *  Copyright 2013 Wordnik, Inc.
+ *  Copyright 2014 Reverb Technologies, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,12 +21,13 @@ import com.wordnik.swagger.sample.data.PetData;
 import com.wordnik.swagger.sample.model.Pet;
 import com.wordnik.swagger.sample.exception.NotFoundException;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.*;
 
 @Path("/pet")
 @Api(value = "/pet", description = "Operations about pets")
-@Produces({"application/json"})
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class PetResource {
   static PetData petData = new PetData();
   static JavaRestResourceUtil ru = new JavaRestResourceUtil();

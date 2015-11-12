@@ -70,7 +70,17 @@ class BasicJaxrsReader extends JaxrsApiReader {
             case _ => None
           }
         )}
-        else ((List(), List(), List(), None))
+        else ((
+          cls.getAnnotation(classOf[Consumes]) match {
+            case e: Consumes => e.value.toList
+            case _ => List()
+          },
+          cls.getAnnotation(classOf[Produces]) match {
+            case e: Produces => e.value.toList
+            case _ => List()
+          },
+          List(),
+          None))
       }
       // look for method-level annotated properties
       val parentParams: List[Parameter] = getAllParamsFromFields(cls)
