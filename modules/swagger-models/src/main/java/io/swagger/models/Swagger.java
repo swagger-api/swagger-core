@@ -391,7 +391,7 @@ public class Swagger {
     @JsonAnySetter
     public void setVendorExtension(String name, Object value) {
         if (name.startsWith("x-")) {
-            vendorExtensions.put(name, value);
+            vendorExtension(name, value);
         }
     }
 
