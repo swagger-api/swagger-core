@@ -9,7 +9,7 @@
   <artifactId>swagger-project_2.10</artifactId>
   <packaging>pom</packaging>
   <name>wordnik-swagger-project</name>
-  <version>1.3.13-SNAPSHOT</version>
+  <version>1.3.13</version>
   <url>https://github.com/swagger-api/swagger-core</url>
   <scm>
     <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
