@@ -31,7 +31,12 @@ import javax.ws.rs.BeanParam;
  * Swagger extension for handling JAX-RS 2.0 processing.
  */
 public class SwaggerJersey2Jaxrs extends AbstractSwaggerExtension {
-    final ObjectMapper mapper = Json.mapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
+    static {
+      mapper.setVisibility(PropertyAccessor.ALL, Visibility.NONE);
+      mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+      mapper.setVisibility(PropertyAccessor.SETTER, Visibility.ANY);
+    }
 
     @Override
     public List<Parameter> extractParameters(final List<Annotation> annotations, final Type type, final Set<Type> typesToSkip, final Iterator<SwaggerExtension> chain) {
