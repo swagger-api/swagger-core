@@ -34,7 +34,7 @@ public class ApiListingJSON {
     }
 
     protected synchronized void scan(Application app) {
-        Scanner scanner = ScannerFactory.getScanner();
+        Scanner scanner = ScannerFactory.getScanner(swagger.getHost(), swagger.getBasePath());
         LOGGER.debug("using scanner " + scanner);
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());

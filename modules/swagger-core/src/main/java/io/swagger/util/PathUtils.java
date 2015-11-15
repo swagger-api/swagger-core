@@ -108,4 +108,73 @@ public class PathUtils {
         pathBuffer.append(CLOSE);
         return pathBuffer.toString();
     }
+
+    public static HostAndPath parseSwaggerPath(String absolutePath) {
+
+        final HostAndPath result = new HostAndPath();
+
+        if (absolutePath != null) {
+            String[] parts = absolutePath.split("://");
+            if (parts.length > 1) {
+                final String scheme = parts[0];
+                final String path = parts[1];
+                int firstPos = path.indexOf("/");
+                int lastPos = path.length();
+                if (path.endsWith("/swagger") || path.endsWith("/swagger.json") ||
+                        path.endsWith("/swagger.yaml")) {
+                    lastPos = path.lastIndexOf("/");
+                }
+                if (firstPos < 0) {
+                    lastPos = firstPos = path.length();
+                }
+                if (firstPos == lastPos) {
+                    ++lastPos;
+                }
+                result.setScheme(scheme.toLowerCase());
+                result.setBasePath(path.substring(firstPos, lastPos));
+                result.setHost(path.substring(0, firstPos));
+            }
+        }
+
+        return result;
+    }
+
+    public static class HostAndPath {
+        private String scheme;
+        private String host;
+        private String basePath;
+
+        public HostAndPath(String scheme, String basePath, String host) {
+            this.scheme = scheme;
+            this.basePath = basePath;
+            this.host = host;
+        }
+
+        public HostAndPath() {
+        }
+
+        public String getScheme() {
+            return scheme;
+        }
+
+        public void setScheme(String scheme) {
+            this.scheme = scheme;
+        }
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public String getBasePath() {
+            return basePath;
+        }
+
+        public void setBasePath(String basePath) {
+            this.basePath = basePath;
+        }
+    }
 }

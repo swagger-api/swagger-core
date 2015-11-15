@@ -6,6 +6,7 @@ import io.swagger.util.PathUtils;
 
 import org.testng.annotations.Test;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -120,5 +121,40 @@ public class PathUtilsTest {
     public void testEmptyCollectedPath() {
         final String path = PathUtils.collectPath("");
         assertEquals(path, "/");
+    }
+
+    @Test(description = "parse uri with swagger")
+    public void testSwaggerUri() throws URISyntaxException {
+        final PathUtils.HostAndPath hp = PathUtils.parseSwaggerPath("http://localhost/path/swagger");
+        assertEquals("localhost", hp.getHost());
+        assertEquals("/path", hp.getBasePath());
+    }
+
+    @Test(description = "parse uri with json swagger")
+    public void testJsonSwaggerUri() throws URISyntaxException {
+        final PathUtils.HostAndPath hp = PathUtils.parseSwaggerPath("http://localhost:80/path/swagger.json");
+        assertEquals("localhost:80", hp.getHost());
+        assertEquals("/path", hp.getBasePath());
+    }
+
+    @Test(description = "parse uri with yaml swagger")
+    public void testYamlSwaggerUri() throws URISyntaxException {
+        final PathUtils.HostAndPath hp = PathUtils.parseSwaggerPath("http://localhost:443/path/swagger.yaml");
+        assertEquals("localhost:443", hp.getHost());
+        assertEquals("/path", hp.getBasePath());
+    }
+
+    @Test(description = "parse swagger uri without path")
+    public void testEmptySwaggerUri() throws URISyntaxException {
+        final PathUtils.HostAndPath hp = PathUtils.parseSwaggerPath("http://localhost/swagger");
+        assertEquals("localhost", hp.getHost());
+        assertEquals("/", hp.getBasePath());
+    }
+
+    @Test(description = "parse uri without swagger")
+    public void testWithoutSwaggerUri() throws URISyntaxException {
+        final PathUtils.HostAndPath hp = PathUtils.parseSwaggerPath("http://localhost/api");
+        assertEquals("localhost", hp.getHost());
+        assertEquals("/api", hp.getBasePath());
     }
 }

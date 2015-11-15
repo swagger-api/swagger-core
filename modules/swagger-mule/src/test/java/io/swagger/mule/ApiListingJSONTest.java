@@ -17,7 +17,9 @@ public class ApiListingJSONTest {
 
         final ApiListingJSON listing = new ApiListingJSON();
         // Initializing by Swagger object
-        ApiListingJSON.init(new Swagger());
+        final Swagger swagger = new Swagger();
+        bc.configure(swagger);
+        ApiListingJSON.init(swagger);
         // Reading configuration and scanning resources
         listing.scan(null);
 

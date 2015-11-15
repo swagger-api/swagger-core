@@ -48,7 +48,7 @@ public class WebXMLReader implements SwaggerConfig {
             try {
                 SwaggerSpecFilter filter = (SwaggerSpecFilter) Class.forName(filterClass).newInstance();
                 if (filter != null) {
-                    FilterFactory.setFilter(filter);
+                    FilterFactory.setFilter(host, basePath, filter);
                 }
             } catch (Exception e) {
                 LOGGER.error("failed to load filter", e);

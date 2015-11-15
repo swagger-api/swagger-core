@@ -180,7 +180,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
 
             updateInfoFromConfig();
         }
-        ScannerFactory.setScanner(this);
+        ScannerFactory.setScanner(this, host, basePath);
     }
 
     public Set<Class<?>> classes() {
@@ -277,7 +277,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
             try {
                 SwaggerSpecFilter filter = (SwaggerSpecFilter) Class.forName(filterClass).newInstance();
                 if (filter != null) {
-                    FilterFactory.setFilter(filter);
+                    FilterFactory.setFilter(host, basePath, filter);
                 }
             } catch (Exception e) {
                 LOGGER.error("failed to load filter", e);
