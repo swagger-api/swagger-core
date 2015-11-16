@@ -1,10 +1,5 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>5</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.swagger</groupId>
     <artifactId>swagger-project</artifactId>
@@ -12,10 +7,22 @@
     <name>swagger-project</name>
     <version>1.5.5-SNAPSHOT</version>
     <url>https://github.com/swagger-api/swagger-core</url>
+    <distributionManagement>
+      <repository>
+        <id>artifactory</id>
+        <name>artifactory-releases</name>
+        <url>https://artifactory.castlighthealth.com/artifactory/libs-release-local</url>
+      </repository>
+      <snapshotRepository>
+        <id>artifactory</id>
+        <name>artifactory-snapshots</name>
+        <url>https://artifactory.castlighthealth.com/artifactory/libs-snapshot-local</url>
+      </snapshotRepository>
+    </distributionManagement>
     <scm>
         <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
-        <developerConnection>scm:git:git@github.com:swagger-api/swagger-core.git</developerConnection>
-        <url>https://github.com/swagger-api/swagger-core</url>
+        <developerConnection>scm:git:git@github.com:castlight/swagger-core.git</developerConnection>
+        <url>https://github.com/castlight/swagger-core</url>
     </scm>
     <prerequisites>
         <maven>2.2.0</maven>
@@ -79,6 +86,11 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>${enforcer-plugin-version}</version>
                 <executions>
@@ -119,30 +131,6 @@
                         <phase>verify</phase>
                         <goals>
                             <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.7</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <source>1.6</source>
-                    <encoding>UTF-8</encoding>
-                    <maxmemory>1g</maxmemory>
-                    <links>
-                        <link>http://java.sun.com/javase/6/docs/api/</link>
-                    </links>
-                    <excludePackageNames>${javadoc.package.exclude}</excludePackageNames>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -296,6 +284,31 @@
         </pluginManagement>
     </build>
     <profiles>
+        <!--
+        <profile>
+            <repositories>
+              <repository>
+                <snapshots>
+                  <enabled>false</enabled>
+                </snapshots>
+                <id>central</id>
+                <name>libs-release</name>
+                <url>https://repo1.maven.org/maven2/libs-release</url>
+              </repository>
+              <repository>
+                <id>central-snapshots</id>
+                <name>libs-snapshot</name>
+                <url>https://repo1.maven.org/maven2/libs-snapshot</url>
+              </repository>
+              <repository>
+                <snapshots />
+                <id>snapshots</id>
+                <name>libs-snapshot</name>
+                <url>https://artifactory.castlighthealthcom/artifactory/libs-snapshot</url>
+              </repository>
+            </repositories>
+        </profile>
+        -->
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
