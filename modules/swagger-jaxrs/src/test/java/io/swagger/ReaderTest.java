@@ -239,6 +239,31 @@ public class ReaderTest {
         assertEquals(name.getDescription(), "The books name");
     }
 
+    @Test(description = "scan resource with annotated exception")
+    public void scanDeclaredExceptions() {
+        Swagger swagger = getSwagger(ResourceWithCustomException.class);
+        assertNotNull(swagger);
+
+        Operation operation = getGet(swagger, "/{id}");
+        assertEquals(operation.getResponses().size(), 3);
+        assertTrue(operation.getResponses().containsKey("200"));
+        assertTrue(operation.getResponses().containsKey("400"));
+        assertTrue(operation.getResponses().containsKey("404"));
+    }
+
+    @Test(description = "scan resource with annotated exception")
+    public void scanDeclaredExceptionsAndCombineWithMethodResponses() {
+        Swagger swagger = getSwagger(ResourceWithCustomException.class);
+        assertNotNull(swagger);
+
+        Operation operation = getPut(swagger, "/{id}");
+        assertEquals(operation.getResponses().size(), 4);
+        assertTrue(operation.getResponses().containsKey("200"));
+        assertTrue(operation.getResponses().containsKey("400"));
+        assertTrue(operation.getResponses().containsKey("404"));
+        assertTrue(operation.getResponses().containsKey("409"));
+    }
+
     private Swagger getSwagger(Class<?> cls) {
         return new Reader(new Swagger()).read(cls);
     }
