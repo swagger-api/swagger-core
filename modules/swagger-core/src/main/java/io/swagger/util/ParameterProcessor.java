@@ -67,9 +67,6 @@ public class ParameterProcessor {
                     p.setType(param.getDataType());
                 }
             }
-            if (StringUtils.isNotEmpty(param.getDataType())) {
-                p.setType(param.getDataType());
-            }
             if (helper.getMinItems() != null) {
                 p.setMinItems(helper.getMinItems());
             }
