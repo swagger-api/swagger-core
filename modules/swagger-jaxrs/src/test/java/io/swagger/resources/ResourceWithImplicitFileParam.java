@@ -13,7 +13,7 @@ public class ResourceWithImplicitFileParam {
     @POST
     @Path("/testString")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sort", paramType = "form", dataType = "java.io.File", required = false, value = "file to upload")
+      @ApiImplicitParam(name = "sort", paramType = "form", dataType = "java.io.File", required = false, value = "file to upload")
     })
     @ApiOperation("Test operation with implicit parameters")
     public void testImplicitFileParam() {
