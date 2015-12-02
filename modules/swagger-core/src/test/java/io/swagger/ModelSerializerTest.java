@@ -1,31 +1,20 @@
 package io.swagger;
 
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
-import io.swagger.converter.ModelConverters;
-import io.swagger.matchers.SerializationMatchers;
-import io.swagger.models.ArrayModel;
-import io.swagger.models.Car;
-import io.swagger.models.ExternalDocs;
-import io.swagger.models.Manufacturers;
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.RefModel;
-import io.swagger.models.properties.*;
-import io.swagger.util.Json;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import io.swagger.converter.ModelConverters;
+import io.swagger.matchers.SerializationMatchers;
+import io.swagger.models.*;
+import io.swagger.models.properties.*;
+import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.testng.Assert.*;
 
 public class ModelSerializerTest {
     private final ObjectMapper m = Json.mapper();
@@ -275,5 +264,22 @@ public class ModelSerializerTest {
         assertNotNull(p.getEnum());
         assertEquals(p.getEnum().get(0), "off");
         assertEquals(p.getEnum().get(1), "on");
+    }
+
+    @Test
+    public void testPrimitiveModel() throws Exception {
+        String json = "{\n" +
+                "  \"type\": \"string\",\n" +
+                "  \"enum\": [\n" +
+                "    \"a\",\n" +
+                "    \"b\",\n" +
+                "    \"c\"\n" +
+                "  ]\n" +
+                "}";
+
+        final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
+
+        assertNotNull(model.getEnum());
+        assertTrue(model.getEnum().size() == 2);
     }
 }

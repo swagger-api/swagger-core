@@ -29,6 +29,29 @@ public class ModelImpl extends AbstractModel {
     private Xml xml;
     @JsonProperty("default")
     private String defaultValue;
+    private List<String> _enum;
+
+    public ModelImpl _enum(List<String> value) {
+        this._enum = value;
+        return this;
+    }
+
+    public ModelImpl _enum(String value) {
+        if(this._enum == null) {
+            this._enum = new ArrayList<String>();
+        }
+        this._enum.add(value);
+        return this;
+    }
+
+    public List<String> getEnum() {
+        return _enum;
+    }
+
+    public void setEnum(List<String> _enum) {
+        this._enum = _enum;
+    }
+
 
     public ModelImpl discriminator(String discriminator) {
         this.setDiscriminator(discriminator);
