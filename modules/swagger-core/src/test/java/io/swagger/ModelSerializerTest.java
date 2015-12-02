@@ -280,6 +280,6 @@ public class ModelSerializerTest {
         final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
 
         assertNotNull(model.getEnum());
-        assertTrue(model.getEnum().size() == 2);
+        assertTrue(model.getEnum().size() == 3);
     }
 }
