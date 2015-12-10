@@ -771,28 +771,38 @@ public class Reader {
 
         List<ApiResponse> apiResponses = new ArrayList<ApiResponse>();
         if (responseAnnotation != null) {
-            for (ApiResponse apiResponse : responseAnnotation.value()) {
-                Map<String, Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders());
+            apiResponses.addAll(Arrays.asList(responseAnnotation.value()));
+        }
 
-                Response response = new Response()
-                        .description(apiResponse.message())
-                        .headers(responseHeaders);
+        Class<?>[] exceptionTypes = method.getExceptionTypes();
+        for (Class<?> exceptionType : exceptionTypes) {
+            ApiResponses exceptionResponses = ReflectionUtils.getAnnotation(exceptionType, ApiResponses.class);
+            if (exceptionResponses != null) {
+                apiResponses.addAll(Arrays.asList(exceptionResponses.value()));
+            }
+        }
 
-                if (apiResponse.code() == 0) {
-                    operation.defaultResponse(response);
-                } else {
-                    operation.response(apiResponse.code(), response);
-                }
+        for (ApiResponse apiResponse : apiResponses) {
+            Map<String, Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders());
 
-                if (StringUtils.isNotEmpty(apiResponse.reference())) {
-                    response.schema(new RefProperty(apiResponse.reference()));
-                } else if (!isVoid(apiResponse.response())) {
-                    responseType = apiResponse.response();
-                    final Property property = ModelConverters.getInstance().readAsProperty(responseType);
-                    if (property != null) {
-                        response.schema(ContainerWrapper.wrapContainer(apiResponse.responseContainer(), property));
-                        appendModels(responseType);
-                    }
+            Response response = new Response()
+                    .description(apiResponse.message())
+                    .headers(responseHeaders);
+
+            if (apiResponse.code() == 0) {
+                operation.defaultResponse(response);
+            } else {
+                operation.response(apiResponse.code(), response);
+            }
+
+            if (StringUtils.isNotEmpty(apiResponse.reference())) {
+                response.schema(new RefProperty(apiResponse.reference()));
+            } else if (!isVoid(apiResponse.response())) {
+                responseType = apiResponse.response();
+                final Property property = ModelConverters.getInstance().readAsProperty(responseType);
+                if (property != null) {
+                    response.schema(ContainerWrapper.wrapContainer(apiResponse.responseContainer(), property));
+                    appendModels(responseType);
                 }
             }
         }
