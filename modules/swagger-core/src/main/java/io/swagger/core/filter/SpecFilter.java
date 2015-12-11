@@ -28,7 +28,8 @@ public class SpecFilter {
                 .schemes(swagger.getSchemes())
                 .consumes(swagger.getConsumes())
                 .produces(swagger.getProduces())
-                .externalDocs(swagger.getExternalDocs());
+                .externalDocs(swagger.getExternalDocs())
+                .vendorExtensions(swagger.getVendorExtensions());
 
         final Set<String> filteredTags = new HashSet<String>();
         final Set<String> allowedTags = new HashSet<String>();
@@ -106,6 +107,10 @@ public class SpecFilter {
             if (clonedModel.getProperties() != null) {
                 clonedModel.getProperties().clear();
             }
+            if( definition.getVendorExtensions() != null && clonedModel.getVendorExtensions() != null ){
+                clonedModel.getVendorExtensions().putAll( definition.getVendorExtensions());
+            }
+
             clonedModel.setProperties(clonedProperties);
             clonedDefinitions.put(key, clonedModel);
         }
@@ -121,7 +126,8 @@ public class SpecFilter {
                 .consumes(op.getConsumes())
                 .produces(op.getProduces())
                 .tags(op.getTags())
-                .externalDocs(op.getExternalDocs());
+                .externalDocs(op.getExternalDocs())
+                .vendorExtensions(op.getVendorExtensions());
 
         List<Parameter> clonedParams = new ArrayList<Parameter>();
         if (op.getParameters() != null) {

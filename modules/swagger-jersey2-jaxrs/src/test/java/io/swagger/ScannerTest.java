@@ -1,5 +1,6 @@
 package io.swagger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
@@ -8,11 +9,14 @@ import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
+import io.swagger.resources.ResourceWithExtensions;
 import io.swagger.resources.ResourceWithBeanParams;
 import io.swagger.resources.ResourceWithComplexBodyInputType;
+import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -42,6 +46,17 @@ public class ScannerTest {
 
         assertNotNull(swagger.getDefinitions());
         assertNotNull(swagger.getDefinitions().get("ClassWithString"));
+    }
+
+    @Test( description = "scan resource with extensions")
+    public void scanResourceWithExtensions() throws JsonProcessingException {
+        final Swagger swagger = getSwagger(ResourceWithExtensions.class);
+        assertNotNull( swagger );
+
+        Map<String, Object> infoExtensions = swagger.getInfo().getVendorExtensions();
+        assertEquals("private", infoExtensions.get("x-accessLevel"));
+        Map<String, Object> operationExtensions = swagger.getPath("/rest/test").getGet().getVendorExtensions();
+        assertEquals("/hello-world/v1/", operationExtensions.get("x-externalPath"));
     }
 
     @Test(description = "scan a bean param resource")

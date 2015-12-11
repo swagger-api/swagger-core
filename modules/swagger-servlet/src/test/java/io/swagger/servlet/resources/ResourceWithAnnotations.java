@@ -108,8 +108,12 @@ public class ResourceWithAnnotations {
                             name = "operation_response_header3",
                             description = "operation_response_header_description3",
                             response = Class.class)},
-            responseReference = "#test"
-    )
+            responseReference = "#test",
+            extensions = {
+                    @Extension(properties = {
+                            @ExtensionProperty(name = "name", value = "value")
+                    })}
+        )
     @ApiResponses({
             @ApiResponse(
                     message = "response_annotation1",

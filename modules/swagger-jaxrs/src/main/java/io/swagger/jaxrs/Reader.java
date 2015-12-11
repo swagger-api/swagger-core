@@ -144,7 +144,7 @@ public class Reader {
         }
 
         for (Class<?> cls : classes) {
-            read(cls);
+            read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
         }
 
         for (ReaderListener listener : listeners.values()) {
@@ -167,6 +167,12 @@ public class Reader {
      */
 
     public Swagger read(Class<?> cls) {
+
+        SwaggerDefinition swaggerDefinition = cls.getAnnotation(SwaggerDefinition.class);
+        if (swaggerDefinition != null) {
+            readSwaggerConfig(cls, swaggerDefinition);
+        }
+
         return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
     }
     protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
@@ -332,43 +338,40 @@ public class Reader {
                                 }
                             }
 
-                            if (operation != null) {
-                                operation.getVendorExtensions().putAll(BaseReaderUtils.parseExtensions(apiOperation.extensions()));
+                            operation.getVendorExtensions().putAll(BaseReaderUtils.parseExtensions(apiOperation.extensions()));
+                        }
+
+                        if (operation.getConsumes() == null) {
+                            for (String mediaType : apiConsumes) {
+                                operation.consumes(mediaType);
                             }
                         }
-                        if (operation != null) {
-                            if (operation.getConsumes() == null) {
-                                for (String mediaType : apiConsumes) {
-                                    operation.consumes(mediaType);
-                                }
+                        if (operation.getProduces() == null) {
+                            for (String mediaType : apiProduces) {
+                                operation.produces(mediaType);
                             }
-                            if (operation.getProduces() == null) {
-                                for (String mediaType : apiProduces) {
-                                    operation.produces(mediaType);
-                                }
-                            }
-
-                            if (operation.getTags() == null) {
-                                for (String tagString : tags.keySet()) {
-                                    operation.tag(tagString);
-                                }
-                            }
-                            // Only add global @Api securities if operation doesn't already have more specific securities
-                            if (operation.getSecurity() == null) {
-                                for (SecurityRequirement security : securities) {
-                                    operation.security(security);
-                                }
-                            }
-
-                            Path path = swagger.getPath(operationPath);
-                            if (path == null) {
-                                path = new Path();
-                                swagger.path(operationPath, path);
-                            }
-                            path.set(httpMethod, operation);
-
-                            readImplicitParameters(method, operation);
                         }
+
+                        if (operation.getTags() == null) {
+                            for (String tagString : tags.keySet()) {
+                                operation.tag(tagString);
+                            }
+                        }
+                        // Only add global @Api securities if operation doesn't already have more specific securities
+                        if (operation.getSecurity() == null) {
+                            for (SecurityRequirement security : securities) {
+                                operation.security(security);
+                            }
+                        }
+
+                        Path path = swagger.getPath(operationPath);
+                        if (path == null) {
+                            path = new Path();
+                            swagger.path(operationPath, path);
+                        }
+                        path.set(httpMethod, operation);
+
+                        readImplicitParameters(method, operation);
                     }
                 }
             }

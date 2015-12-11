@@ -408,4 +408,9 @@ public class Operation {
         }
         return true;
     }
+
+    public Operation vendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions.putAll( vendorExtensions );
+        return this;
+    }
 }

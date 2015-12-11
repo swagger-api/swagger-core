@@ -537,4 +537,17 @@ public class Swagger {
         }
         return true;
     }
+
+    public Swagger vendorExtensions(Map<String, Object> vendorExtensions) {
+        if( vendorExtensions == null ){
+            return this;
+        }
+
+        if( this.vendorExtensions == null ){
+            this.vendorExtensions = new HashMap<String, Object>();
+        }
+
+        this.vendorExtensions.putAll( vendorExtensions );
+        return this;
+    }
 }

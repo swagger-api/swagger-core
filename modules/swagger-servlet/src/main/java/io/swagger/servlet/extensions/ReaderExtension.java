@@ -150,4 +150,13 @@ public interface ReaderExtension {
      * @param method    is the method for reading annotations
      */
     void applyImplicitParameters(ReaderContext context, Operation operation, Method method);
+
+    /**
+     * Reads the extensions from the method's annotations and applies these to the operation.
+     *
+     * @param context   is the resource context
+     * @param operation is the container for the operation data
+     * @param method    is the method for reading annotations
+     */
+    void applyExtensions(ReaderContext context, Operation operation, Method method);
 }
