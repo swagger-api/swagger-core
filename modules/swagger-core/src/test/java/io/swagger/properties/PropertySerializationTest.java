@@ -14,6 +14,7 @@ import io.swagger.models.properties.FloatProperty;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.LongProperty;
 import io.swagger.models.properties.MapProperty;
+import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
@@ -293,4 +294,21 @@ public class PropertySerializationTest {
         assertEquals(m.writeValueAsString(p), json);
     }
 
+    @Test(description = "it should serialize an object property with required set")
+    public void serializeObjectPropertyWithRequiredProperties() throws IOException {
+        final ObjectProperty p = new ObjectProperty()
+                .property("stringProperty", new StringProperty()
+                        .required(true));
+        final String json = "{\"type\":\"object\",\"properties\":{\"stringProperty\":{\"type\":\"string\"}},\"required\":[\"stringProperty\"]}";
+        assertEquals(m.writeValueAsString(p), json);
+    }
+
+    @Test(description = "it should deserialize an object property with required set")
+    public void deserializeObjectPropertyWithRequiredProperties() throws IOException {
+        final ObjectProperty p = new ObjectProperty()
+                .property("stringProperty", new StringProperty()
+                        .required(true));
+        final String json = "{\"type\":\"object\",\"properties\":{\"stringProperty\":{\"type\":\"string\"}},\"required\":[\"stringProperty\"]}";
+        assertEquals(p, m.readValue(json, ObjectProperty.class));
+    }
 }

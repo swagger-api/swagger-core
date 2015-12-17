@@ -1,8 +1,15 @@
 package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 public class ObjectProperty extends AbstractProperty implements Property {
     public static final String TYPE = "object";
@@ -82,6 +89,37 @@ public class ObjectProperty extends AbstractProperty implements Property {
 
     public Map<String, Property> getProperties(){
       return this.properties;
+    }
+
+    @JsonGetter("required")
+    public List<String> getRequiredProperties() {
+        List<String> output = new ArrayList<String>();
+        if (properties != null) {
+            for (String key : properties.keySet()) {
+                Property prop = properties.get(key);
+                if (prop != null && prop.getRequired()) {
+                    output.add(key);
+                }
+            }
+        }
+        Collections.sort(output);
+        if (output.size() > 0) {
+            return output;
+        } else {
+            return null;
+        }
+    }
+
+    @JsonSetter("required")
+    public void setRequiredProperties(List<String> required) {
+        if (properties != null) {
+            for (String s : required) {
+                Property p = properties.get(s);
+                if (p != null) {
+                    p.setRequired(true);
+                }
+            }
+        }
     }
 
     public void setProperties(Map<String, Property> properties){

@@ -1,5 +1,13 @@
 package io.swagger.util;
 
+import io.swagger.models.Xml;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.MapProperty;
+import io.swagger.models.properties.ObjectProperty;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.PropertyBuilder;
+import io.swagger.models.properties.RefProperty;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -8,21 +16,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.node.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.swagger.models.Xml;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.MapProperty;
-import io.swagger.models.properties.ObjectProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.PropertyBuilder;
-import io.swagger.models.properties.RefProperty;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.fasterxml.jackson.databind.node.FloatNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.LongNode;
+import com.fasterxml.jackson.databind.node.NumericNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 public class PropertyDeserializer extends JsonDeserializer<Property> {
     Logger LOGGER = LoggerFactory.getLogger(PropertyDeserializer.class);
@@ -83,6 +93,30 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
             }
         }
         return result;
+    }
+
+    private static List<String> getRequired(JsonNode node, PropertyBuilder.PropertyId type) {
+        List<String> result = new ArrayList<String>();
+
+        final JsonNode detailNode = getDetailNode(node, type);
+
+        if (detailNode == null) {
+            return result;
+        }
+
+        if (detailNode.isArray()) {
+            ArrayNode arrayNode = (ArrayNode) detailNode;
+            Iterator<JsonNode> fieldNameIter = arrayNode.iterator();
+
+            while (fieldNameIter.hasNext()) {
+                JsonNode item = fieldNameIter.next();
+                result.add(item.asText());
+            }
+            return result;
+        } else {
+            throw new RuntimeException("Required property should be a list");
+        }
+        
     }
 
     private static JsonNode getDetailNode(JsonNode node, PropertyBuilder.PropertyId type) {
@@ -187,6 +221,9 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                 }
                 ObjectProperty objectProperty = new ObjectProperty(properties).description(description);
                 objectProperty.setVendorExtensionMap(getVendorExtensions(node));
+
+                List<String> required = getRequired(node, PropertyBuilder.PropertyId.REQUIRED);
+                objectProperty.setRequiredProperties(required);
 
                 return objectProperty;
             }
