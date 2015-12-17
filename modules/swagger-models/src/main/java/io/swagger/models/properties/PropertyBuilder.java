@@ -95,6 +95,7 @@ public class PropertyBuilder {
         TYPE("type"),
         FORMAT("format"),
         READ_ONLY("readOnly"),
+        REQUIRED("required"),
         VENDOR_EXTENSIONS("vendorExtensions");
 
         private String propertyName;
