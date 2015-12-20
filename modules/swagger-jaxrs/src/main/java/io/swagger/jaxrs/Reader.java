@@ -271,7 +271,7 @@ public class Reader {
                     String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
                     Operation operation = null;
-                    if(apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) {
+                    if(apiOperation != null) {
                         operation = parseMethod(cls, method, globalParameters);
                     }
                     if (operation == null) {

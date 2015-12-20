@@ -26,7 +26,7 @@ public class ReaderTest {
         Method[] methods = SimpleMethods.class.getMethods();
         Reader reader = new Reader(new Swagger());
         for (Method method : methods) {
-            if (isValidRestPath(method)) {
+            if (isValidRestPath(method) and hasSwaggerAnnotation(method)) {
                 Operation operation = reader.parseMethod(method);
                 assertNotNull(operation);
             }
@@ -119,7 +119,11 @@ public class ReaderTest {
         }
         return false;
     }
-
+    
+    private Boolean hasSwaggerAnnotation(Method method) {
+        ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
+    	return (apiOperation != null) ? true : false;
+    }
     @Test(description = "scan overridden method in descendantResource")
     public void scanOverriddenMethod() {
         Swagger swagger = getSwagger(DescendantResource.class);
