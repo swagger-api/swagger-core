@@ -15,4 +15,9 @@ public class SchemeTest {
   public void testToValue() {
 	  Assert.assertEquals(Scheme.HTTP.toValue(),"http");
   }
+  
+  @Test
+  public void testValueOf(){
+	  Assert.assertEquals(Scheme.valueOf("HTTP"), Scheme.HTTP);
+  }
 }

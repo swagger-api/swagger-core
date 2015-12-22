@@ -115,7 +115,7 @@ public class TestUtils {
 				continue;
 			}
 			for (Method method : methods) {
-				if (method.getDeclaringClass() == instance.getClass()) {
+				//if (method.getDeclaringClass() == instance.getClass()) {
 					if (method.getParameterTypes().length == 1) {
 						Object value = propertiesAndNonDefaultValues.get(field);
 						if (value != null && method.getParameterTypes()[0].isAssignableFrom(value.getClass())) {
@@ -123,7 +123,7 @@ public class TestUtils {
 							assertEquals(Whitebox.getInternalState(res, field.getName()), value);
 						}
 					}
-				}
+				//}
 			}
 
 		}

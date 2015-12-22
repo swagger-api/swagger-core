@@ -7,7 +7,6 @@ import static org.testng.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -15,15 +14,10 @@ import org.testng.annotations.Test;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.Property;
 
-@PrepareForTest({ ArrayModel.class, AbstractModel.class })
+
 public class ArrayModelTest extends PowerMockTestCase {
 
 	private ArrayModel instance;
-
-	// @ObjectFactory
-	// public IObjectFactory getObjectFactory() {
-	// return new org.powermock.modules.testng.PowerMockObjectFactory();
-	// }
 
 	@BeforeMethod
 	public void setUp() throws Exception {
