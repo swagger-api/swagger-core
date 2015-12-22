@@ -2,7 +2,7 @@ package io.swagger.mule;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.config.Scanner;
-import io.swagger.config.ScannerFactory;
+import io.swagger.config.ScannerSingleton;
 import io.swagger.config.SwaggerConfig;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
@@ -34,7 +34,7 @@ public class ApiListingJSON {
     }
 
     protected synchronized void scan(Application app) {
-        Scanner scanner = ScannerFactory.getScanner();
+        Scanner scanner = ScannerSingleton.getScanner();
         LOGGER.debug("using scanner " + scanner);
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());

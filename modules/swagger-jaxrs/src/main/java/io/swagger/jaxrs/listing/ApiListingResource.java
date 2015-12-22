@@ -3,8 +3,9 @@ package io.swagger.jaxrs.listing;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.config.FilterFactory;
 import io.swagger.config.Scanner;
-import io.swagger.config.ScannerFactory;
+import io.swagger.config.ScannerSingleton;
 import io.swagger.config.SwaggerConfig;
+import io.swagger.config.SwaggerConfigMap;
 import io.swagger.core.filter.SpecFilter;
 import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs.Reader;
@@ -38,19 +39,33 @@ import java.util.Set;
 
 @Path("/")
 public class ApiListingResource {
-    boolean initialized = false;
     Logger LOGGER = LoggerFactory.getLogger(ApiListingResource.class);
     @Context
     ServletContext context;
 
+    private String getSwaggerId(ServletConfig sc) {
+        String swaggerId = sc.getInitParameter("swagger.id");
+        if (swaggerId == null) {
+            swaggerId = "default";
+        }
+        return swaggerId;
+    }
+
+    private String getSwaggerContextId(String swaggerId) {
+        return "swagger-" + swaggerId;
+    }
+
     protected synchronized Swagger scan(Application app, ServletConfig sc) {
         Swagger swagger = null;
-        Scanner scanner = ScannerFactory.getScanner();
+        Scanner scanner = ScannerSingleton.getScanner();
         LOGGER.debug("using scanner " + scanner);
 
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
-            swagger = (Swagger) context.getAttribute("swagger");
+
+            String swaggerId = getSwaggerId(sc);
+            String swaggerContextId = getSwaggerContextId(swaggerId);
+            swagger = (Swagger) context.getAttribute(swaggerContextId);
 
             Set<Class<?>> classes = new HashSet<Class<?>>();
             if (scanner instanceof JaxrsScanner) {
@@ -65,7 +80,7 @@ public class ApiListingResource {
                 if (scanner instanceof SwaggerConfig) {
                     swagger = ((SwaggerConfig) scanner).configure(swagger);
                 } else {
-                    SwaggerConfig configurator = (SwaggerConfig) context.getAttribute("reader");
+                    SwaggerConfig configurator = SwaggerConfigMap.getConfig(swaggerId);
                     if (configurator != null) {
                         LOGGER.debug("configuring swagger with " + configurator);
                         configurator.configure(swagger);
@@ -73,10 +88,9 @@ public class ApiListingResource {
                         LOGGER.debug("no configurator");
                     }
                 }
-                context.setAttribute("swagger", swagger);
+                context.setAttribute(swaggerContextId, swagger);
             }
         }
-        initialized = true;
         return swagger;
     }
 
@@ -85,15 +99,18 @@ public class ApiListingResource {
             ServletConfig sc,
             HttpHeaders headers,
             UriInfo uriInfo) {
-        Swagger swagger = (Swagger) context.getAttribute("swagger");
-        if (!initialized) {
+        String swaggerContextId = getSwaggerContextId(getSwaggerId(sc));
+        Swagger swagger = (Swagger) context.getAttribute(swaggerContextId);
+        if (swagger == null) {
             swagger = scan(app, sc);
         }
+
         if (swagger != null) {
             SwaggerSpecFilter filterImpl = FilterFactory.getFilter();
             if (filterImpl != null) {
                 SpecFilter f = new SpecFilter();
-                swagger = f.filter(swagger, filterImpl, getQueryParams(uriInfo.getQueryParameters()), getCookies(headers),
+                swagger = f.filter(swagger, filterImpl, getQueryParams(uriInfo.getQueryParameters()),
+                        getCookies(headers),
                         getHeaders(headers));
             }
         }

@@ -4,7 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.config.FilterFactory;
 import io.swagger.config.Scanner;
-import io.swagger.config.ScannerFactory;
+import io.swagger.config.ScannerSingleton;
 import io.swagger.config.SwaggerConfig;
 import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs.Reader;
@@ -180,7 +180,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
 
             updateInfoFromConfig();
         }
-        ScannerFactory.setScanner(this);
+        ScannerSingleton.setScanner(this);
     }
 
     public Set<Class<?>> classes() {
