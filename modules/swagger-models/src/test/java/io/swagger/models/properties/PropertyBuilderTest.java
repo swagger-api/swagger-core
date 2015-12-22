@@ -1,15 +1,22 @@
 package io.swagger.models.properties;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.testng.Assert;
-
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import io.swagger.models.ArrayModel;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.PropertyBuilder.PropertyId;
 import io.swagger.models.properties.StringProperty.Format;
 
@@ -134,5 +141,190 @@ public class PropertyBuilderTest {
         Property built = PropertyBuilder.build(type, format, args);
         Assert.assertNotNull(built);
         Assert.assertEquals(built.getClass(), expectedClass);
+    }
+    
+    @Test
+    public void testMerge(){    	
+    	Map<PropertyId, Object> args=new HashMap<PropertyBuilder.PropertyId, Object>();
+    	args.put(PropertyId.READ_ONLY, true);
+    	String title="title";
+    	args.put(PropertyId.TITLE, title);
+    	String description="description";
+    	args.put(PropertyId.DESCRIPTION, description);
+    	String example="example";
+    	args.put(PropertyId.EXAMPLE, example);
+    	Map<String, Object> vendorExtensions=new HashMap<String, Object>();
+    	args.put(PropertyId.VENDOR_EXTENSIONS, vendorExtensions);
+    	
+    	List<String>_enum=Arrays.asList("4","hello");
+    	args.put(PropertyId.ENUM, _enum);
+    	args.put(PropertyId.DEFAULT, "4");
+    	IntegerProperty  integerProperty=new IntegerProperty();
+    	PropertyBuilder.merge(integerProperty, args);
+    	Assert.assertTrue(integerProperty.getEnum().contains(4));
+    	Assert.assertEquals(integerProperty.getDefault(),(Integer) 4);
+    	args.put(PropertyId.DEFAULT, null);
+    	PropertyBuilder.merge(integerProperty, args);
+    	Assert.assertNull(integerProperty.getDefault());
+    	
+    	args.put(PropertyId.DEFAULT, "true");
+    	BooleanProperty  booleanProperty=new BooleanProperty();
+    	PropertyBuilder.merge(booleanProperty, args);
+    	Assert.assertEquals(booleanProperty.getDefault(),Boolean.TRUE);
+    	args.put(PropertyId.DEFAULT, null);
+    	PropertyBuilder.merge(booleanProperty, args);
+    	Assert.assertNull(booleanProperty.getDefault());
+    	
+    	args.put(PropertyId.DEFAULT, "4");
+    	LongProperty  longProperty=new LongProperty();
+    	PropertyBuilder.merge(longProperty, args);
+    	Assert.assertTrue(longProperty.getEnum().contains(4L));
+    	Assert.assertEquals(longProperty.getDefault(),(Object)4L);
+    	args.put(PropertyId.DEFAULT, null);
+    	PropertyBuilder.merge(longProperty, args);
+    	Assert.assertNull(longProperty.getDefault());
+    	
+    	args.put(PropertyId.DEFAULT, "4");
+    	FloatProperty  floatProperty=new FloatProperty();
+    	PropertyBuilder.merge(floatProperty, args);
+    	Assert.assertTrue(floatProperty.getEnum().contains(4F));
+    	Assert.assertEquals(floatProperty.getDefault(),(Float) 4F);
+    	args.put(PropertyId.DEFAULT, null);
+    	PropertyBuilder.merge(floatProperty, args);
+    	Assert.assertNull(floatProperty.getDefault());
+    	
+    	
+    	
+    	UUIDProperty uuidProperty=new UUIDProperty();
+    	args.put(PropertyId.DEFAULT, "default");
+    	args.put(PropertyId.MIN_LENGTH, 2);
+    	args.put(PropertyId.MAX_LENGTH, 11);
+    	args.put(PropertyId.PATTERN, "pattern");
+    	PropertyBuilder.merge(uuidProperty, args);
+    	Assert.assertEquals(uuidProperty.getDefault(), "default");
+    	Assert.assertEquals(uuidProperty.getMinLength(), (Object)2);
+    	Assert.assertEquals(uuidProperty.getMaxLength(), (Object)11);
+    	Assert.assertEquals(uuidProperty.getPattern(), "pattern");
+    	
+    	uuidProperty=Mockito.spy(uuidProperty);
+    	Mockito.doThrow(new RuntimeException()).when(uuidProperty)._enum(Matchers.anyString()); 
+    	PropertyBuilder.merge(uuidProperty, args);
+    	Assert.assertEquals(uuidProperty.getEnum(), _enum);
+    	
+    	ArrayProperty arrayProperty=new ArrayProperty();
+    	args.put(PropertyId.MIN_ITEMS, 2);
+    	args.put(PropertyId.MAX_ITEMS, 11);
+    	PropertyBuilder.merge(arrayProperty, args);
+    	Assert.assertEquals(arrayProperty.getMinItems(), (Object)2);
+    	Assert.assertEquals(arrayProperty.getMaxItems(), (Object)11);
+    	
+    	DateProperty dateProperty=new DateProperty();
+    	PropertyBuilder.merge(dateProperty, args);
+    	Assert.assertEquals(dateProperty.getEnum(), _enum);
+    	
+    	dateProperty=Mockito.spy(dateProperty);
+    	Mockito.doThrow(new RuntimeException()).when(dateProperty)._enum(Matchers.anyString()); 
+    	PropertyBuilder.merge(dateProperty, args);
+    	Assert.assertEquals(dateProperty.getEnum(), _enum);
+    	
+    	
+    	DateTimeProperty dateTimeProperty=new DateTimeProperty();
+    	PropertyBuilder.merge(dateTimeProperty, args);
+    	Assert.assertEquals(dateTimeProperty.getEnum(), _enum);
+    	
+    	dateTimeProperty=Mockito.spy(dateTimeProperty);
+    	Mockito.doThrow(new RuntimeException()).when(dateTimeProperty)._enum(Matchers.anyString()); 
+    	PropertyBuilder.merge(dateTimeProperty, args);
+    	Assert.assertEquals(dateTimeProperty.getEnum(), _enum);
+    	
+    	StringProperty stringProperty=new StringProperty();
+    	PropertyBuilder.merge(stringProperty, args);
+    	Assert.assertEquals(stringProperty.getEnum(), _enum);
+    	
+    	args.put(PropertyId.MINIMUM, 2.0);
+    	args.put(PropertyId.MAXIMUM, 112.0);
+    	args.put(PropertyId.EXCLUSIVE_MINIMUM, true);
+    	args.put(PropertyId.EXCLUSIVE_MAXIMUM, true);
+    	args.put(PropertyId.DEFAULT, "4");
+    	DoubleProperty  doubleProperty=new DoubleProperty();
+    	PropertyBuilder.merge(doubleProperty, args);
+    	Assert.assertTrue(doubleProperty.getEnum().contains(4.0));
+    	Assert.assertEquals(doubleProperty.getDefault(),(Double) 4.0);
+    	Assert.assertEquals(doubleProperty.getMinimum(), 2.0);
+    	Assert.assertEquals(doubleProperty.getMaximum(), 112.0);
+    	Assert.assertTrue(doubleProperty.exclusiveMaximum);
+    	Assert.assertTrue(doubleProperty.exclusiveMinimum);
+    	args.put(PropertyId.DEFAULT, null);
+    	PropertyBuilder.merge(doubleProperty, args);
+    	Assert.assertNull(doubleProperty.getDefault());
+    	
+    }
+    
+    @Test
+    public void testToModel(){
+    	Assert.assertNull(PropertyBuilder.toModel(Mockito.mock(Property.class)));
+    	
+    	BooleanProperty booleanProperty=new BooleanProperty();
+    	booleanProperty.setDescription("description");
+    	Model model=PropertyBuilder.toModel(booleanProperty);
+    	Assert.assertEquals(model.getDescription(), booleanProperty.getDescription());
+    	
+    	IntegerProperty integerProperty=new IntegerProperty();
+    	integerProperty.setDefault(4);
+    	model=PropertyBuilder.toModel(integerProperty);
+    	Assert.assertEquals(((ModelImpl)model).getDefaultValue(), "4");
+    	
+    	LongProperty longProperty=new LongProperty();
+    	longProperty.setDefault(4L);
+    	model=PropertyBuilder.toModel(longProperty);
+    	Assert.assertEquals(((ModelImpl)model).getDefaultValue(), "4");
+    	
+    	FloatProperty floatProperty=new FloatProperty();
+    	floatProperty.setDefault(4F);
+    	model=PropertyBuilder.toModel(floatProperty);
+    	Assert.assertEquals(((ModelImpl)model).getDefaultValue(), "4.0");
+    	
+    	DoubleProperty doubleProperty=new DoubleProperty();
+    	doubleProperty.setDefault(4D);
+    	model=PropertyBuilder.toModel(doubleProperty);
+    	Assert.assertEquals(((ModelImpl)model).getDefaultValue(), "4.0");
+    	
+    	RefProperty refProperty=new RefProperty("ref");
+    	refProperty.setDescription("ref description");
+    	Assert.assertEquals(PropertyBuilder.toModel(refProperty).getDescription(), refProperty.getDescription());
+    	
+    	EmailProperty emailProperty=new EmailProperty();
+    	emailProperty.setDefault("default");
+    	model=PropertyBuilder.toModel(emailProperty);
+    	Assert.assertEquals(((ModelImpl)model).getDefaultValue(), "default");
+    	
+    	ArrayProperty arrayProperty=new ArrayProperty();
+    	arrayProperty.setItems(emailProperty);
+    	model=PropertyBuilder.toModel(arrayProperty);
+    	Assert.assertEquals(((ArrayModel)model).getItems(), emailProperty);
+    	
+    	MapProperty mapProperty=new MapProperty();
+    	mapProperty.setAdditionalProperties(emailProperty);
+    	model=PropertyBuilder.toModel(mapProperty);
+    	Assert.assertEquals(((ModelImpl)model).getAdditionalProperties(), emailProperty);
+    	
+    	StringProperty stingProperty=new StringProperty();
+    	stingProperty.setDefault("default");
+    	model=PropertyBuilder.toModel(stingProperty);
+    	Assert.assertEquals(((ModelImpl)model).getDefaultValue(), "default");
+    	
+    	UUIDProperty uuidProperty=new UUIDProperty();
+    	uuidProperty.setDefault("default");
+    	model=PropertyBuilder.toModel(uuidProperty);
+    	Assert.assertEquals(((ModelImpl)model).getDefaultValue(), "default");
+    	
+    	
+    	
+    }
+    
+    @Test
+    public void testGetPropertyName(){
+    	Assert.assertEquals(PropertyId.DEFAULT.getPropertyName(), "default");
+    	Assert.assertEquals(PropertyId.valueOf("DEFAULT"), PropertyId.DEFAULT);
     }
 }
