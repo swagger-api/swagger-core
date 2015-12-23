@@ -1,17 +1,15 @@
 package io.swagger.models.properties;
 
+import io.swagger.models.properties.PropertyBuilder.PropertyId;
+import io.swagger.models.properties.StringProperty.Format;
+import org.testng.Assert;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
-
-import org.testng.Assert;
-
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
-import io.swagger.models.properties.PropertyBuilder.PropertyId;
-import io.swagger.models.properties.StringProperty.Format;
 
 public class PropertyBuilderTest {
 
@@ -57,8 +55,8 @@ public class PropertyBuilderTest {
                 {"number", "float", FloatProperty.class},
                 {"number", "double", DoubleProperty.class},
                 {"string", null, StringProperty.class},
-                {"string", "byte", StringProperty.class}, // are this and the next one correct?
-                {"string", "binary", ByteArrayProperty.class},
+                {"string", "byte", ByteArrayProperty.class},
+                {"string", "binary", BinaryProperty.class},
                 {"boolean", null, BooleanProperty.class},
                 {"string", "date", DateProperty.class},
                 {"string", "date-time", DateTimeProperty.class},

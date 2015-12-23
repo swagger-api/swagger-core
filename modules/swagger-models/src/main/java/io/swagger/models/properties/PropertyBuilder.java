@@ -156,6 +156,17 @@ public class PropertyBuilder {
                 return new ByteArrayProperty();
             }
         },
+        BINARY(BinaryProperty.class) {
+            @Override
+            protected boolean isType(String type, String format) {
+                return BinaryProperty.isType(type, format);
+            }
+
+            @Override
+            protected BinaryProperty create() {
+                return new BinaryProperty();
+            }
+        },
         DATE(DateProperty.class) {
             @Override
             protected boolean isType(String type, String format) {
