@@ -2,73 +2,52 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ByteProperty extends AbstractProperty implements Property {
+public class BinaryProperty extends AbstractProperty implements Property {
     private static final String TYPE = "string";
-
-    private static final String FORMAT = "byte";
-
     protected List<String> _enum;
     protected Integer minLength = null, maxLength = null;
     protected String pattern = null;
     protected String _default;
 
-    public ByteProperty() {
-        super.type = TYPE;
-        super.format = FORMAT;
-    }
-
-    public ByteProperty _enum(String value) {
-        if (this._enum == null) {
-            this._enum = new ArrayList<String>();
-        }
-        if (!_enum.contains(value)) {
-            _enum.add(value);
-        }
-        return this;
-    }
-
-    public ByteProperty _enum(List<String> value) {
-        this._enum = value;
-        return this;
+    public BinaryProperty() {
+        super.type = "string";
+        super.format = "binary";
     }
 
     public static boolean isType(String type, String format) {
-        if (TYPE.equals(type) && FORMAT.equals(format)) {
+        if ("string".equals(type) && "binary".equals(format))
             return true;
-        } else {
-            return false;
-        }
+        else return false;
     }
 
-    public ByteProperty xml(Xml xml) {
+    public BinaryProperty xml(Xml xml) {
         this.setXml(xml);
         return this;
     }
 
-    public ByteProperty minLength(Integer minLength) {
+    public BinaryProperty minLength(Integer minLength) {
         this.setMinLength(minLength);
         return this;
     }
 
-    public ByteProperty maxLength(Integer maxLength) {
+    public BinaryProperty maxLength(Integer maxLength) {
         this.setMaxLength(maxLength);
         return this;
     }
 
-    public ByteProperty pattern(String pattern) {
+    public BinaryProperty pattern(String pattern) {
         this.setPattern(pattern);
         return this;
     }
 
-    public ByteProperty _default(String _default) {
+    public BinaryProperty _default(String _default) {
         this._default = _default;
         return this;
     }
 
-    public ByteProperty vendorExtension(String key, Object obj) {
+    public BinaryProperty vendorExtension(String key, Object obj) {
         this.setVendorExtension(key, obj);
         return this;
     }
@@ -130,10 +109,10 @@ public class ByteProperty extends AbstractProperty implements Property {
         if (!super.equals(obj)) {
             return false;
         }
-        if (!(obj instanceof ByteProperty)) {
+        if (!(obj instanceof BinaryProperty)) {
             return false;
         }
-        ByteProperty other = (ByteProperty) obj;
+        BinaryProperty other = (BinaryProperty) obj;
         if (_default == null) {
             if (other._default != null) {
                 return false;

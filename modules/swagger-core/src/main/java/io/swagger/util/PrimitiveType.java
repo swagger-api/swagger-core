@@ -1,19 +1,7 @@
 package io.swagger.util;
 
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import io.swagger.models.properties.BaseIntegerProperty;
-import io.swagger.models.properties.BooleanProperty;
-import io.swagger.models.properties.DateProperty;
-import io.swagger.models.properties.DateTimeProperty;
-import io.swagger.models.properties.DecimalProperty;
-import io.swagger.models.properties.DoubleProperty;
-import io.swagger.models.properties.FloatProperty;
-import io.swagger.models.properties.IntegerProperty;
-import io.swagger.models.properties.LongProperty;
-import io.swagger.models.properties.ObjectProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.StringProperty;
-import io.swagger.models.properties.UUIDProperty;
+import io.swagger.models.properties.*;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -49,8 +37,17 @@ public enum PrimitiveType {
      */
     BYTE(Byte.class, "byte") {
         @Override
-        public StringProperty createProperty() {
-            return new StringProperty(StringProperty.Format.BYTE);
+        public ByteArrayProperty createProperty() {
+            return new ByteArrayProperty();
+        }
+    },
+    /**
+     * Binary
+     */
+    BINARY(Byte.class, "binary") {
+        @Override
+        public BinaryProperty createProperty() {
+            return new BinaryProperty();
         }
     },
     /**

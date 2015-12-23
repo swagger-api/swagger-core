@@ -17,7 +17,6 @@ public class StringProperty extends AbstractProperty implements Property {
     protected String _default;
 
     public enum Format {
-        BYTE("byte"),
         URI("uri"),
         URL("url");
 
