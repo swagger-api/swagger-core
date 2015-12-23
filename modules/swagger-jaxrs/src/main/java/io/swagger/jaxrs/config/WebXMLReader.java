@@ -8,6 +8,7 @@ import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.models.Info;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
+import io.swagger.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,8 +19,20 @@ public class WebXMLReader implements SwaggerConfig {
     private Logger LOGGER = LoggerFactory.getLogger(WebXMLReader.class);
 
     public WebXMLReader(ServletConfig servletConfig) {
+        basePath = servletConfig.getInitParameter("swagger.api.basepath");
+        title = servletConfig.getInitParameter("swagger.api.title");
+        if (title == null) {
+            title = "";
+        }
+
+        final PathUtils.HostAndPath hostAndPath = PathUtils.parseSwaggerPath(basePath);
+
+        scheme = hostAndPath.getScheme();
+        host = hostAndPath.getHost();
+        basePath = hostAndPath.getBasePath();
+
         Scanner scanner = new DefaultJaxrsScanner();
-        ScannerFactory.setScanner(scanner);
+        ScannerFactory.setScanner(scanner, host, basePath);
         apiVersion = servletConfig.getInitParameter("api.version");
         if (apiVersion == null) {
             apiVersion = "Swagger Server";
@@ -29,34 +42,13 @@ public class WebXMLReader implements SwaggerConfig {
         if (shouldPrettyPrint != null) {
             scanner.setPrettyPrint(Boolean.parseBoolean(shouldPrettyPrint));
         }
-        basePath = servletConfig.getInitParameter("swagger.api.basepath");
-        title = servletConfig.getInitParameter("swagger.api.title");
-        if (title == null) {
-            title = "";
-        }
-
-        if (basePath != null) {
-            String[] parts = basePath.split("://");
-            if (parts.length > 1) {
-                int pos = parts[1].indexOf("/");
-                if (pos >= 0) {
-                    scheme = parts[0];
-                    basePath = parts[1].substring(pos);
-                    host = parts[1].substring(0, pos);
-                } else {
-                    scheme = parts[0];
-                    basePath = null;
-                    host = parts[1];
-                }
-            }
-        }
 
         filterClass = servletConfig.getInitParameter("swagger.filter");
         if (filterClass != null) {
             try {
                 SwaggerSpecFilter filter = (SwaggerSpecFilter) Class.forName(filterClass).newInstance();
                 if (filter != null) {
-                    FilterFactory.setFilter(filter);
+                    FilterFactory.setFilter(host, basePath, filter);
                 }
             } catch (Exception e) {
                 LOGGER.error("failed to load filter", e);

@@ -64,7 +64,7 @@ public class ReflectiveJaxrsScanner implements SwaggerConfig, Scanner {
             try {
                 SwaggerSpecFilter filter = (SwaggerSpecFilter) Class.forName(filterClass).newInstance();
                 if (filter != null) {
-                    FilterFactory.setFilter(filter);
+                    FilterFactory.setFilter(swagger.getHost(), swagger.getBasePath(), filter);
                 }
             } catch (Exception e) {
                 LOGGER.error("failed to load filter", e);

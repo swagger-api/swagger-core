@@ -11,6 +11,7 @@ import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.JaxrsScanner;
 import io.swagger.jaxrs.config.ReaderConfigUtils;
 import io.swagger.models.Swagger;
+import io.swagger.util.PathUtils;
 import io.swagger.util.Yaml;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,22 +36,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Path("/")
 public class ApiListingResource {
-    boolean initialized = false;
+    static final Map<String, Boolean> INITIALIZED_MAP = new ConcurrentHashMap<String, Boolean>();
     Logger LOGGER = LoggerFactory.getLogger(ApiListingResource.class);
     @Context
     ServletContext context;
 
-    protected synchronized Swagger scan(Application app, ServletConfig sc) {
+    protected synchronized Swagger scan(Application app, ServletConfig sc, PathUtils.HostAndPath hostAndPath) {
         Swagger swagger = null;
-        Scanner scanner = ScannerFactory.getScanner();
+        Scanner scanner = ScannerFactory.getScanner(hostAndPath.getHost(), hostAndPath.getBasePath());
         LOGGER.debug("using scanner " + scanner);
 
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
-            swagger = (Swagger) context.getAttribute("swagger");
+            swagger = getSwagger(hostAndPath);
 
             Set<Class<?>> classes = new HashSet<Class<?>>();
             if (scanner instanceof JaxrsScanner) {
@@ -65,7 +67,7 @@ public class ApiListingResource {
                 if (scanner instanceof SwaggerConfig) {
                     swagger = ((SwaggerConfig) scanner).configure(swagger);
                 } else {
-                    SwaggerConfig configurator = (SwaggerConfig) context.getAttribute("reader");
+                    SwaggerConfig configurator = getReader(hostAndPath);
                     if (configurator != null) {
                         LOGGER.debug("configuring swagger with " + configurator);
                         configurator.configure(swagger);
@@ -73,11 +75,59 @@ public class ApiListingResource {
                         LOGGER.debug("no configurator");
                     }
                 }
-                context.setAttribute("swagger", swagger);
+                updateSwagger(hostAndPath, swagger);
             }
+            setInitialized(hostAndPath.getHost(), hostAndPath.getBasePath(), true);
         }
-        initialized = true;
+
         return swagger;
+    }
+
+    private synchronized void setInitialized(String host, String basePath, boolean initialized) {
+        INITIALIZED_MAP.put(host + basePath, initialized);
+    }
+
+    private Boolean isInitialized(String host, String basePath) {
+        final Boolean result = INITIALIZED_MAP.get(host + basePath);
+        return result != null? result: false;
+    }
+
+    private SwaggerConfig getReader(PathUtils.HostAndPath hostAndPath) {
+        @SuppressWarnings("unchecked")
+        Map<String, SwaggerConfig> readers = (Map<String, SwaggerConfig>) context.getAttribute("readers");
+        if (readers != null) {
+            SwaggerConfig reader = readers.get(hostAndPath.getHost() + hostAndPath.getBasePath());
+            if (reader != null) {
+                return reader;
+            }
+            throw new IllegalStateException("Can't find reader object with host:" + hostAndPath.getHost() + " and path:"
+                    + hostAndPath.getBasePath());
+        }
+        return (SwaggerConfig) context.getAttribute("reader");
+    }
+
+    private Swagger getSwagger(PathUtils.HostAndPath hostAndPath) {
+        @SuppressWarnings("unchecked")
+        Map<String, Swagger> swaggers = (Map<String, Swagger>) context.getAttribute("swaggers");
+        if (swaggers != null) {
+            Swagger swagger = swaggers.get(hostAndPath.getHost() + hostAndPath.getBasePath());
+            if (swagger != null) {
+                return swagger;
+            }
+            throw new IllegalStateException("Can't find swagger object with host:" + hostAndPath.getHost() + " and path:"
+                    + hostAndPath.getBasePath());
+        }
+        return (Swagger) context.getAttribute("swagger");
+    }
+
+    private synchronized void updateSwagger(PathUtils.HostAndPath hostAndPath, Swagger swagger) {
+        @SuppressWarnings("unchecked")
+        Map<String, Swagger> swaggers = (Map<String, Swagger>) context.getAttribute("swaggers");
+        if (swaggers == null) {
+            swaggers = new HashMap<String, Swagger>();
+            context.setAttribute("swaggers", swaggers);
+        }
+        swaggers.put(hostAndPath.getHost() + hostAndPath.getBasePath(), swagger);
     }
 
     private Swagger process(
@@ -85,12 +135,13 @@ public class ApiListingResource {
             ServletConfig sc,
             HttpHeaders headers,
             UriInfo uriInfo) {
-        Swagger swagger = (Swagger) context.getAttribute("swagger");
-        if (!initialized) {
-            swagger = scan(app, sc);
+        PathUtils.HostAndPath hostAndPath = PathUtils.parseSwaggerPath(uriInfo.getAbsolutePath().toString());
+        Swagger swagger = getSwagger(hostAndPath);
+        if (!isInitialized(hostAndPath.getHost(), hostAndPath.getBasePath())) {
+            swagger = scan(app, sc, hostAndPath);
         }
         if (swagger != null) {
-            SwaggerSpecFilter filterImpl = FilterFactory.getFilter();
+            SwaggerSpecFilter filterImpl = FilterFactory.getFilter(swagger.getHost(), swagger.getBasePath());
             if (filterImpl != null) {
                 SpecFilter f = new SpecFilter();
                 swagger = f.filter(swagger, filterImpl, getQueryParams(uriInfo.getQueryParameters()), getCookies(headers),
