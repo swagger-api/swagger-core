@@ -418,6 +418,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
+
         Collections.sort(props, getPropertyComparator());
 
         Map<String, Property> modelProps = new LinkedHashMap<String, Property>();
@@ -426,6 +427,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         model.setProperties(modelProps);
 
+        /**
+         * This must be done after model.setProperties so that the model's set
+         * of properties is available to filter from any subtypes
+         **/
         if (!resolveSubtypes(model, beanDesc, context)) {
             model.setDiscriminator(null);
         }
