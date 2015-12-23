@@ -305,14 +305,22 @@ public class SimpleScannerTest {
         config.setScanAllResources(true);
         Swagger swagger = new Reader(new Swagger(), config).read(SimpleSelfReferencingSubResource.class);
 
-        assertEquals(swagger.getPaths().size(), 2);
+        assertEquals(swagger.getPaths().size(), 4);
 
         // these two paths are directly reachable without passing thru a recursive reference
         Operation retrieve = getGet(swagger, "/sub");
         assertNotNull(retrieve);
         assertEquals(retrieve.getParameters().size(), 0);
 
+        retrieve = getGet(swagger, "/sub/leaf");
+        assertNotNull(retrieve);
+        assertEquals(retrieve.getParameters().size(), 0);
+
         retrieve = getGet(swagger, "/sub/recurse2");
+        assertNotNull(retrieve);
+        assertEquals(retrieve.getParameters().size(), 0);
+
+        retrieve = getGet(swagger, "/sub/recurse2/leaf");
         assertNotNull(retrieve);
         assertEquals(retrieve.getParameters().size(), 0);
     }
