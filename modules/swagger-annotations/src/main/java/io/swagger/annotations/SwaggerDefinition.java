@@ -54,7 +54,7 @@ public @interface SwaggerDefinition {
      * Global level consumes for this swagger definition.
      * <p>
      * These will be added to all api definitions that don't have local overrides - see
-     * https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#swagger-object
+     * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#swagger-object
      *
      * @return a list of global level consumes.
      */
@@ -64,7 +64,7 @@ public @interface SwaggerDefinition {
      * Global level produces for this swagger definition.
      * <p>
      * These will be added to all api definitions that don't have local overrides - see
-     * https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#swagger-object
+     * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#swagger-object
      *
      * @return a list of global level consumes
      */
@@ -82,7 +82,7 @@ public @interface SwaggerDefinition {
     /**
      * Global tags that can be used to tag individual Apis and ApiOperations.
      * <p>
-     * See https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#tagObject
+     * See https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#tagObject
      *
      * @return list of globally defined tags
      */
@@ -93,7 +93,7 @@ public @interface SwaggerDefinition {
     /**
      * General metadata for this Swagger definition.
      * <p>
-     * See https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#infoObject
+     * See https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#infoObject
      *
      * @return general metadata for this Swagger definition
      */

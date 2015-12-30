@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * High-level metadata for a Swagger definition - see
- * https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#infoObject
+ * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#infoObject
  *
  * @since 1.5.0
  */
