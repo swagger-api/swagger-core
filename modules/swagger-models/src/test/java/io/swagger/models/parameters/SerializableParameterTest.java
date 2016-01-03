@@ -1,14 +1,14 @@
 package io.swagger.models.parameters;
 
+import org.testng.Assert;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.testng.Assert;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
 
 public class SerializableParameterTest {
 
@@ -16,12 +16,12 @@ public class SerializableParameterTest {
 
     @DataProvider(name = REQUIRED_PARAMETER_METHODS)
     public Iterator<Object[]> createRequiredParameterMethods() {
-        String[] requiredMethods = { "maximum", "exclusiveMaximum", "minimum", "exclusiveMinimum", "maxLength",
-                "minLength", "pattern", "maxItems", "minItems", "uniqueItems", "multipleOf" };
+        String[] requiredMethods = {"maximum", "exclusiveMaximum", "minimum", "exclusiveMinimum", "maxLength",
+                "minLength", "pattern", "maxItems", "minItems", "uniqueItems", "multipleOf"};
 
         List<Object[]> resultList = new ArrayList<Object[]>(requiredMethods.length);
         for (String requiredMethod : requiredMethods) {
-            resultList.add(new Object[] { requiredMethod });
+            resultList.add(new Object[]{requiredMethod});
         }
 
         return resultList.iterator();
@@ -29,7 +29,7 @@ public class SerializableParameterTest {
 
     /**
      * Tests if SerializableParameter.class has requiredParameter read method
-     * 
+     *
      * @param requiredParameter
      * @throws IntrospectionException
      */
@@ -47,7 +47,7 @@ public class SerializableParameterTest {
 
     /**
      * Tests if SerializableParameter.class has requiredParameter write method
-     * 
+     *
      * @param requiredParameter
      * @throws IntrospectionException
      */

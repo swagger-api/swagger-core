@@ -1,5 +1,16 @@
 package io.swagger.models.properties;
 
+import io.swagger.models.ArrayModel;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.properties.PropertyBuilder.PropertyId;
+import io.swagger.models.properties.StringProperty.Format;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -8,252 +19,240 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.mockito.Matchers;
-import org.mockito.Mockito;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
-
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
-import io.swagger.models.ArrayModel;
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.properties.PropertyBuilder.PropertyId;
-import io.swagger.models.properties.StringProperty.Format;
 
 public class PropertyBuilderTest {
 
-	private static final String STRING_FORMATS = "stringFormats";
-	private static final String FROM_SPEC = "fromSpec";
-	private static final String BY_IMPLEMENTATION = "predefined";
-	private static final String CUSTOM_OR_PLAIN = "customOrPlain";
-	private HashMap<PropertyId, Object> args;
-	private List<String> _enum;
+    private static final String STRING_FORMATS = "stringFormats";
+    private static final String FROM_SPEC = "fromSpec";
+    private static final String BY_IMPLEMENTATION = "predefined";
+    private static final String CUSTOM_OR_PLAIN = "customOrPlain";
+    private HashMap<PropertyId, Object> args;
+    private List<String> _enum;
 
-	@DataProvider(name = BY_IMPLEMENTATION)
-	public Iterator<Object[]> createPredefinedProperties() {
-		Property[] properties = { new DecimalProperty(), new FloatProperty(), new DoubleProperty(),
-				new BaseIntegerProperty(), new IntegerProperty(), new LongProperty(), new StringProperty(),
-				new UUIDProperty(), new BooleanProperty(), new ByteArrayProperty(), new ArrayProperty(),
-				new ObjectProperty(), new DateTimeProperty(), new DateProperty(), new RefProperty(),
-				new EmailProperty(),
-				// new MapProperty() // MapProperty can't be distinguished from
-				// ObjectProperty
-		};
-		List<Object[]> resultList = new ArrayList<Object[]>(properties.length);
-		for (Property property : properties) {
-			resultList.add(new Object[] { property.getType(), property.getFormat(), property.getClass() });
-		}
+    @DataProvider(name = BY_IMPLEMENTATION)
+    public Iterator<Object[]> createPredefinedProperties() {
+        Property[] properties = {new DecimalProperty(), new FloatProperty(), new DoubleProperty(),
+                new BaseIntegerProperty(), new IntegerProperty(), new LongProperty(), new StringProperty(),
+                new UUIDProperty(), new BooleanProperty(), new ByteArrayProperty(), new ArrayProperty(),
+                new ObjectProperty(), new DateTimeProperty(), new DateProperty(), new RefProperty(),
+                new EmailProperty(),
+                // new MapProperty() // MapProperty can't be distinguished from
+                // ObjectProperty
+        };
+        List<Object[]> resultList = new ArrayList<Object[]>(properties.length);
+        for (Property property : properties) {
+            resultList.add(new Object[]{property.getType(), property.getFormat(), property.getClass()});
+        }
 
-		return resultList.iterator();
-	}
+        return resultList.iterator();
+    }
 
-	@DataProvider(name = STRING_FORMATS)
-	public Iterator<Object[]> createPredefinedStringFormats() {
-		List<Object[]> resultList = new ArrayList<Object[]>();
-		for (Format format : StringProperty.Format.values()) {
-			resultList.add(new Object[] { StringProperty.TYPE, format.getName(), StringProperty.class });
-		}
+    @DataProvider(name = STRING_FORMATS)
+    public Iterator<Object[]> createPredefinedStringFormats() {
+        List<Object[]> resultList = new ArrayList<Object[]>();
+        for (Format format : StringProperty.Format.values()) {
+            resultList.add(new Object[]{StringProperty.TYPE, format.getName(), StringProperty.class});
+        }
 
-		return resultList.iterator();
-	}
+        return resultList.iterator();
+    }
 
-	@DataProvider(name = FROM_SPEC)
-	public Object[][] createDataFromSpec() {
+    @DataProvider(name = FROM_SPEC)
+    public Object[][] createDataFromSpec() {
 
-		// from the table in http://swagger.io/specification/#dataTypeType
-		return new Object[][] {
-				{"integer", "int32", IntegerProperty.class},
-				{"integer", "int64", LongProperty.class},
-				{"number", "float", FloatProperty.class},
-				{"number", "double", DoubleProperty.class},
-				{"string", null, StringProperty.class},
-				{"string", "byte", ByteArrayProperty.class},
-				{"string", "binary", BinaryProperty.class},
-				{"boolean", null, BooleanProperty.class},
-				{"string", "date", DateProperty.class},
-				{"string", "date-time", DateTimeProperty.class},
-				{"string", "password", StringProperty.class},
-		};
-	}
+        // from the table in http://swagger.io/specification/#dataTypeType
+        return new Object[][] {
+                {"integer", "int32", IntegerProperty.class},
+                {"integer", "int64", LongProperty.class},
+                {"number", "float", FloatProperty.class},
+                {"number", "double", DoubleProperty.class},
+                {"string", null, StringProperty.class},
+                {"string", "byte", ByteArrayProperty.class},
+                {"string", "binary", BinaryProperty.class},
+                {"boolean", null, BooleanProperty.class},
+                {"string", "date", DateProperty.class},
+                {"string", "date-time", DateTimeProperty.class},
+                {"string", "password", StringProperty.class},
+        };
+    }
 
-	@DataProvider(name = CUSTOM_OR_PLAIN)
-	public Object[][] createCustomAndPlainData() {
+    @DataProvider(name = CUSTOM_OR_PLAIN)
+    public Object[][] createCustomAndPlainData() {
 
-		// these are the types without formats (as long as not already in the
-		// table in the spec), and a "custom" format for each of the types.
-		// we expect to get the same Property class back in both cases.
-		return new Object[][] { { "integer", null, BaseIntegerProperty.class },
-				{ "integer", "custom", BaseIntegerProperty.class }, { "number", null, DecimalProperty.class },
-				{ "number", "custom", DecimalProperty.class }, { "string", "custom", StringProperty.class },
-				{ "boolean", "custom", BooleanProperty.class }, { "object", null, ObjectProperty.class },
-				{ "object", "custom", ObjectProperty.class }, { "array", null, ArrayProperty.class },
-				{ "array", "custom", ArrayProperty.class } };
-	}
+        // these are the types without formats (as long as not already in the
+        // table in the spec), and a "custom" format for each of the types.
+        // we expect to get the same Property class back in both cases.
+        return new Object[][]{{"integer", null, BaseIntegerProperty.class},
+                {"integer", "custom", BaseIntegerProperty.class}, {"number", null, DecimalProperty.class},
+                {"number", "custom", DecimalProperty.class}, {"string", "custom", StringProperty.class},
+                {"boolean", "custom", BooleanProperty.class}, {"object", null, ObjectProperty.class},
+                {"object", "custom", ObjectProperty.class}, {"array", null, ArrayProperty.class},
+                {"array", "custom", ArrayProperty.class}};
+    }
 
-	@Test(dataProvider = BY_IMPLEMENTATION)
-	public void testPredefinedProperty(final String type, final String format,
-			final Class<? extends Property> expectedClass) {
-		buildAndAssertProperty(type, format, expectedClass);
-	}
+    @Test(dataProvider = BY_IMPLEMENTATION)
+    public void testPredefinedProperty(final String type, final String format,
+                                       final Class<? extends Property> expectedClass) {
+        buildAndAssertProperty(type, format, expectedClass);
+    }
 
-	@Test(dataProvider = FROM_SPEC)
-	public void testSpecificationProperty(final String type, final String format,
-			final Class<? extends Property> expectedClass) {
-		buildAndAssertProperty(type, format, expectedClass);
-	}
+    @Test(dataProvider = FROM_SPEC)
+    public void testSpecificationProperty(final String type, final String format,
+                                          final Class<? extends Property> expectedClass) {
+        buildAndAssertProperty(type, format, expectedClass);
+    }
 
-	@Test(dataProvider = CUSTOM_OR_PLAIN)
-	public void testCustomOrPlainProperty(final String type, final String format,
-			final Class<? extends Property> expectedClass) {
-		buildAndAssertProperty(type, format, expectedClass);
-	}
+    @Test(dataProvider = CUSTOM_OR_PLAIN)
+    public void testCustomOrPlainProperty(final String type, final String format,
+                                          final Class<? extends Property> expectedClass) {
+        buildAndAssertProperty(type, format, expectedClass);
+    }
 
-	@Test(dataProvider = STRING_FORMATS)
-	public void testStringPredefinedFormats(final String type, final String format,
-			final Class<? extends Property> expectedClass) {
-		buildAndAssertProperty(type, format, expectedClass);
-	}
+    @Test(dataProvider = STRING_FORMATS)
+    public void testStringPredefinedFormats(final String type, final String format,
+                                            final Class<? extends Property> expectedClass) {
+        buildAndAssertProperty(type, format, expectedClass);
+    }
 
-	private void buildAndAssertProperty(final String type, final String format,
-			final Class<? extends Property> expectedClass) {
-		Property built = PropertyBuilder.build(type, format, null);
-		assertNotNull(built,
-				"Could not build for type: " + type + ", format: " + format + ", expected class: " + expectedClass);
-		assertEquals(built.getClass(), expectedClass);
-		assertEquals(built.getType(), type);
-		assertEquals(built.getFormat(), format);
-	}
+    private void buildAndAssertProperty(final String type, final String format,
+                                        final Class<? extends Property> expectedClass) {
+        Property built = PropertyBuilder.build(type, format, null);
+        assertNotNull(built,
+                "Could not build for type: " + type + ", format: " + format + ", expected class: " + expectedClass);
+        assertEquals(built.getClass(), expectedClass);
+        assertEquals(built.getType(), type);
+        assertEquals(built.getFormat(), format);
+    }
 
-	@Test
-	public void testUnknownType() {
-		assertNull(PropertyBuilder.build("unknownType", "custom", null));
-	}
+    @Test
+    public void testUnknownType() {
+        assertNull(PropertyBuilder.build("unknownType", "custom", null));
+    }
 
-	@Test(dataProvider = FROM_SPEC)
-	public void testBuildWithArgs(final String type, final String format,
-			final Class<? extends Property> expectedClass) {
-		EnumMap<PropertyId, Object> args = new EnumMap<PropertyId, Object>(PropertyId.class);
-		args.put(PropertyId.DESCRIPTION, "Example description");
-		args.put(PropertyId.MIN_LENGTH, 2);
-		args.put(PropertyId.MAX_LENGTH, 11);
-		args.put(PropertyId.PATTERN, "pattern");
-		Property built = PropertyBuilder.build(type, format, args);
-		assertNotNull(built);
-		assertEquals(built.getClass(), expectedClass);
-	}
+    @Test(dataProvider = FROM_SPEC)
+    public void testBuildWithArgs(final String type, final String format,
+                                  final Class<? extends Property> expectedClass) {
+        EnumMap<PropertyId, Object> args = new EnumMap<PropertyId, Object>(PropertyId.class);
+        args.put(PropertyId.DESCRIPTION, "Example description");
+        args.put(PropertyId.MIN_LENGTH, 2);
+        args.put(PropertyId.MAX_LENGTH, 11);
+        args.put(PropertyId.PATTERN, "pattern");
+        Property built = PropertyBuilder.build(type, format, args);
+        assertNotNull(built);
+        assertEquals(built.getClass(), expectedClass);
+    }
 
-	@BeforeMethod
-	public void setup() {
-		args = new HashMap<PropertyBuilder.PropertyId, Object>();
-		args.put(PropertyId.READ_ONLY, true);
-		String title = "title";
-		args.put(PropertyId.TITLE, title);
-		String description = "description";
-		args.put(PropertyId.DESCRIPTION, description);
-		String example = "example";
-		args.put(PropertyId.EXAMPLE, example);
-		Map<String, Object> vendorExtensions = new HashMap<String, Object>();
-		args.put(PropertyId.VENDOR_EXTENSIONS, vendorExtensions);
-		_enum = Arrays.asList("4", "hello");
-		args.put(PropertyId.ENUM, _enum);
-		args.put(PropertyId.DEFAULT, "4");
+    @BeforeMethod
+    public void setup() {
+        args = new HashMap<PropertyBuilder.PropertyId, Object>();
+        args.put(PropertyId.READ_ONLY, true);
+        String title = "title";
+        args.put(PropertyId.TITLE, title);
+        String description = "description";
+        args.put(PropertyId.DESCRIPTION, description);
+        String example = "example";
+        args.put(PropertyId.EXAMPLE, example);
+        Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+        args.put(PropertyId.VENDOR_EXTENSIONS, vendorExtensions);
+        _enum = Arrays.asList("4", "hello");
+        args.put(PropertyId.ENUM, _enum);
+        args.put(PropertyId.DEFAULT, "4");
 
-	}
+    }
 
-	@Test
-	public void testMergeWithIntegerProperty() {
-		// given
-		IntegerProperty integerProperty = new IntegerProperty();
+    @Test
+    public void testMergeWithIntegerProperty() {
+        // given
+        IntegerProperty integerProperty = new IntegerProperty();
 
-		// when
-		PropertyBuilder.merge(integerProperty, args);
+        // when
+        PropertyBuilder.merge(integerProperty, args);
 
-		// then
-		assertTrue(integerProperty.getEnum().contains(4), "Must contain the enum value passed into args");
-		assertEquals(integerProperty.getDefault(), (Integer) 4, "Must contain the default value passed into args");
+        // then
+        assertTrue(integerProperty.getEnum().contains(4), "Must contain the enum value passed into args");
+        assertEquals(integerProperty.getDefault(), (Integer) 4, "Must contain the default value passed into args");
 
-		// given
-		args.put(PropertyId.DEFAULT, null);
+        // given
+        args.put(PropertyId.DEFAULT, null);
 
-		// when
-		PropertyBuilder.merge(integerProperty, args);
+        // when
+        PropertyBuilder.merge(integerProperty, args);
 
-		// then
-		assertNull(integerProperty.getDefault(), "Must contain the default value passed into args");
-	}
+        // then
+        assertNull(integerProperty.getDefault(), "Must contain the default value passed into args");
+    }
 
-	@Test
-	public void testMergeWithBooleanProperty() {
-		// given
-		args.put(PropertyId.DEFAULT, "true");
-		BooleanProperty booleanProperty = new BooleanProperty();
+    @Test
+    public void testMergeWithBooleanProperty() {
+        // given
+        args.put(PropertyId.DEFAULT, "true");
+        BooleanProperty booleanProperty = new BooleanProperty();
 
-		// when
-		PropertyBuilder.merge(booleanProperty, args);
+        // when
+        PropertyBuilder.merge(booleanProperty, args);
 
-		// then
-		assertEquals(booleanProperty.getDefault(), Boolean.TRUE, "Must contain the default value passed into args");
+        // then
+        assertEquals(booleanProperty.getDefault(), Boolean.TRUE, "Must contain the default value passed into args");
 
-		// given
-		args.put(PropertyId.DEFAULT, null);
+        // given
+        args.put(PropertyId.DEFAULT, null);
 
-		// when
-		PropertyBuilder.merge(booleanProperty, args);
+        // when
+        PropertyBuilder.merge(booleanProperty, args);
 
-		// then
-		assertNull(booleanProperty.getDefault(), "Must contain the default value passed into args");
-	}
+        // then
+        assertNull(booleanProperty.getDefault(), "Must contain the default value passed into args");
+    }
 
-	@Test
-	public void testMergeWithLongProperty() {
-		// given
-		args.put(PropertyId.DEFAULT, "4");
-		LongProperty longProperty = new LongProperty();
+    @Test
+    public void testMergeWithLongProperty() {
+        // given
+        args.put(PropertyId.DEFAULT, "4");
+        LongProperty longProperty = new LongProperty();
 
-		// when
-		PropertyBuilder.merge(longProperty, args);
+        // when
+        PropertyBuilder.merge(longProperty, args);
 
-		// then
-		assertTrue(longProperty.getEnum().contains(4L), "Must contain the enum value passed into args");
-		assertEquals(longProperty.getDefault(), (Object) 4L, "Must contain the default value passed into args");
+        // then
+        assertTrue(longProperty.getEnum().contains(4L), "Must contain the enum value passed into args");
+        assertEquals(longProperty.getDefault(), (Object) 4L, "Must contain the default value passed into args");
 
-		// given
-		args.put(PropertyId.DEFAULT, null);
+        // given
+        args.put(PropertyId.DEFAULT, null);
 
-		// when
-		PropertyBuilder.merge(longProperty, args);
+        // when
+        PropertyBuilder.merge(longProperty, args);
 
-		// then
-		assertNull(longProperty.getDefault(), "Must contain the default value passed into args");
-	}
+        // then
+        assertNull(longProperty.getDefault(), "Must contain the default value passed into args");
+    }
 
-	@Test
-	public void testMergeWithFloatProperty() {
-		// given
-		args.put(PropertyId.DEFAULT, "4");
-		FloatProperty floatProperty = new FloatProperty();
+    @Test
+    public void testMergeWithFloatProperty() {
+        // given
+        args.put(PropertyId.DEFAULT, "4");
+        FloatProperty floatProperty = new FloatProperty();
 
-		// when
-		PropertyBuilder.merge(floatProperty, args);
+        // when
+        PropertyBuilder.merge(floatProperty, args);
 
-		// then
-		assertTrue(floatProperty.getEnum().contains(4F), "Must contain the enum value passed into args");
-		assertEquals(floatProperty.getDefault(), (Float) 4F, "Must contain the default value passed into args");
+        // then
+        assertTrue(floatProperty.getEnum().contains(4F), "Must contain the enum value passed into args");
+        assertEquals(floatProperty.getDefault(), (Float) 4F, "Must contain the default value passed into args");
 
-		// given
-		args.put(PropertyId.DEFAULT, null);
+        // given
+        args.put(PropertyId.DEFAULT, null);
 
-		// when
-		PropertyBuilder.merge(floatProperty, args);
+        // when
+        PropertyBuilder.merge(floatProperty, args);
 
-		// then
-		assertNull(floatProperty.getDefault(), "Must contain the default value passed into args");
-	}
+        // then
+        assertNull(floatProperty.getDefault(), "Must contain the default value passed into args");
+    }
 
     @Test
     public void testMergeWithUUIDProperty() {

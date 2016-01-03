@@ -1,79 +1,79 @@
 package io.swagger.models.parameters;
 
+import org.testng.annotations.Test;
+
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import org.testng.annotations.Test;
-
 
 public class AbstractParameterTest {
-	
-	/*
-	 * Tests getters and setters methods on {@link AbstractParameter}
-	 * It was not possible to cove it with {@link io.swagger.PojosTest} so a manual implementation is provided for now
-	 * TODO improve PojosTest to test getters and setters for abstracts classes
-	 */
-	@Test
-	public void testGettersAndSetters() {
-		// given
-		AbstractParameter abstractParameter = new BodyParameter();
-		String in = "in";
-		String name = "name";
 
-		// when
-		abstractParameter.setIn(in);
-		abstractParameter.setName(name);
+    /*
+     * Tests getters and setters methods on {@link AbstractParameter}
+     * It was not possible to cove it with {@link io.swagger.PojosTest} so a manual implementation is provided for now
+     * TODO improve PojosTest to test getters and setters for abstracts classes
+     */
+    @Test
+    public void testGettersAndSetters() {
+        // given
+        AbstractParameter abstractParameter = new BodyParameter();
+        String in = "in";
+        String name = "name";
 
-		// then
-		assertEquals(abstractParameter.getIn(), in, "The get in must be the same as the set one");
-		assertEquals(abstractParameter.getName(), name, "The get in must be the same as the set one");
+        // when
+        abstractParameter.setIn(in);
+        abstractParameter.setName(name);
 
-		// given
-		String description = "description";
+        // then
+        assertEquals(abstractParameter.getIn(), in, "The get in must be the same as the set one");
+        assertEquals(abstractParameter.getName(), name, "The get in must be the same as the set one");
 
-		// when
-		abstractParameter.setDescription(description);
+        // given
+        String description = "description";
 
-		// then
-		assertEquals(abstractParameter.getDescription(), description,
-				"The get description must be the same as the set one");
+        // when
+        abstractParameter.setDescription(description);
 
-		// given
-		Boolean required = true;
+        // then
+        assertEquals(abstractParameter.getDescription(), description,
+                "The get description must be the same as the set one");
 
-		// when
-		abstractParameter.setRequired(required);
+        // given
+        Boolean required = true;
 
-		// then
-		assertTrue(abstractParameter.getRequired(), "The get required must be the same as the set one");
+        // when
+        abstractParameter.setRequired(required);
 
-		// given
-		String access = "access";
+        // then
+        assertTrue(abstractParameter.getRequired(), "The get required must be the same as the set one");
 
-		// when
-		abstractParameter.setAccess(access);
+        // given
+        String access = "access";
 
-		// then
-		assertEquals(abstractParameter.getAccess(), access, "The get access must be the same as the set one");
+        // when
+        abstractParameter.setAccess(access);
 
-		// given
-		String pattern = "pattern";
+        // then
+        assertEquals(abstractParameter.getAccess(), access, "The get access must be the same as the set one");
 
-		// when
-		abstractParameter.setPattern(pattern);
+        // given
+        String pattern = "pattern";
 
-		// then
-		assertEquals(abstractParameter.getPattern(), pattern, "The get pattern must be the same as the set one");
+        // when
+        abstractParameter.setPattern(pattern);
 
-		// given
-		String vendorName = "x-vendor";
-		String value = "value";
+        // then
+        assertEquals(abstractParameter.getPattern(), pattern, "The get pattern must be the same as the set one");
 
-		// when
-		abstractParameter.setVendorExtension(vendorName, value);
+        // given
+        String vendorName = "x-vendor";
+        String value = "value";
 
-		// then
-		assertEquals(abstractParameter.getVendorExtensions().get(vendorName), value,
-				"The get value must be the same as the set one");
-	}
+        // when
+        abstractParameter.setVendorExtension(vendorName, value);
+
+        // then
+        assertEquals(abstractParameter.getVendorExtensions().get(vendorName), value,
+                "The get value must be the same as the set one");
+    }
 }

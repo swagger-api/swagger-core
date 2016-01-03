@@ -1,46 +1,46 @@
 package io.swagger.models;
 
-import static org.testng.Assert.assertEquals;
-
 import org.powermock.reflect.Whitebox;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertEquals;
+
 public class InfoTest {
 
-	private Info instance;
+    private Info instance;
 
-	@BeforeMethod
-	public void setUp() throws Exception {
-		instance = new Info();
-	}
+    @BeforeMethod
+    public void setUp() throws Exception {
+        instance = new Info();
+    }
 
-	@Test
-	public void testSetVendorExtension() {
-		// given
-		String name = "x-vendor";
-		String value = "value";
+    @Test
+    public void testSetVendorExtension() {
+        // given
+        String name = "x-vendor";
+        String value = "value";
 
-		// when
-		instance.setVendorExtension(name, value);
+        // when
+        instance.setVendorExtension(name, value);
 
-		// then
-		assertEquals(instance.getVendorExtensions().get(name), value,
-				"Must be able to retrieve the same value from the map");
-	}
+        // then
+        assertEquals(instance.getVendorExtensions().get(name), value,
+                "Must be able to retrieve the same value from the map");
+    }
 
-	@Test
-	public void testMergeWith() {
-		// given
-		Info info = new Info();
-		info.setDescription("description");
-		Whitebox.setInternalState(instance, "vendorExtensions", (Object) null);
+    @Test
+    public void testMergeWith() {
+        // given
+        Info info = new Info();
+        info.setDescription("description");
+        Whitebox.setInternalState(instance, "vendorExtensions", (Object) null);
 
-		// when
-		instance.mergeWith(info);
+        // when
+        instance.mergeWith(info);
 
-		// then
-		assertEquals(info.getDescription(), instance.getDescription(),
-				"Merged instances must have the same description");
-	}
+        // then
+        assertEquals(info.getDescription(), instance.getDescription(),
+                "Merged instances must have the same description");
+    }
 }
