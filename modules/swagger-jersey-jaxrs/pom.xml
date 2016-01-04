@@ -11,7 +11,6 @@
     <groupId>io.swagger</groupId>
     <artifactId>swagger-jersey-jaxrs</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.5-SNAPSHOT</version>
     <name>swagger-jersey-jaxrs</name>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>

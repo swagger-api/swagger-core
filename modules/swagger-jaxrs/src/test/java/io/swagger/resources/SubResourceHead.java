@@ -1,6 +1,7 @@
 package io.swagger.resources;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.jaxrs.Reader;
 
 import javax.ws.rs.Path;
@@ -16,6 +17,7 @@ public class SubResourceHead {
      * @return class instance of sub-resource
      */
     @Path("tail")
+    @ApiOperation(value = "getTail")
     public Class<SubResourceTail> getTail() {
         return SubResourceTail.class;
     }
@@ -27,6 +29,7 @@ public class SubResourceHead {
      * @return class instance of sub-resource
      */
     @Path("noPath")
+    @ApiOperation(value = "getNoPath")
     public Class<NoPathSubResource> getNoPath() {
         return NoPathSubResource.class;
     }
@@ -39,6 +42,7 @@ public class SubResourceHead {
      * @return string class
      */
     @Path("stringClass")
+    @ApiOperation(value = "getStringClass")
     public Class<String> getStringClass() {
         return String.class;
     }
@@ -50,6 +54,7 @@ public class SubResourceHead {
      * @return <code>null</code>
      */
     @Path("anyClass")
+    @ApiOperation(value = "getAnyClass")
     public <T> Class<T> getAnyClass() {
         return null;
     }
@@ -61,6 +66,7 @@ public class SubResourceHead {
      * @return <code>null</code>
      */
     @Path("wildcardClass")
+    @ApiOperation(value = "getWildcardClass")
     public Class<?> getWildcardClass() {
         return null;
     }
@@ -72,6 +78,7 @@ public class SubResourceHead {
      * @return <code>null</code>
      */
     @Path("classes")
+    @ApiOperation(value = "getClasses")
     public Class<?>[] getClasses() {
         return null;
     }

@@ -209,6 +209,8 @@
                     </execution>
                 </executions>
                 <configuration>
+	                <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+					<dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
                     <excludes>
                         <!-- TODO remove these excludes and add tests -->
                         <exclude>**/io/swagger/config/FilterFactory.*</exclude>
