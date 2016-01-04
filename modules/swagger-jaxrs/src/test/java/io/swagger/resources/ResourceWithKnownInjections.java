@@ -1,6 +1,7 @@
 package io.swagger.resources;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 import javax.servlet.ServletConfig;
@@ -37,6 +38,7 @@ public class ResourceWithKnownInjections {
     }
 
     @GET
+    @ApiOperation(value = "Get simple string value", notes = "No details provided", response = String.class)
     public String get(@QueryParam("methodParam") String methodParam) {
         // injection into a resource method parameter
         final StringBuilder sb = new StringBuilder();
@@ -47,12 +49,14 @@ public class ResourceWithKnownInjections {
     }
 
     @Path("/subresource1")
+    @ApiOperation(value = "get subresource1 operation")
     public SubResource1 subResourceLocator1(@QueryParam("subResourceParam") String subResourceParam) {
         // injection into a sub resource locator parameter
         return new SubResource1(subResourceParam);
     }
 
     @Path("/subresource2")
+    @ApiOperation(value = "get subresource2 operation")
     public Class<SubResource2> subResourceLocator2(@QueryParam("subResourceParam") String subResourceParam) {
         // injection into a sub resource locator parameter
         return SubResource2.class;
@@ -79,6 +83,7 @@ public class ResourceWithKnownInjections {
         }
 
         @GET
+        @ApiOperation(value = "get")
         public String get() {
             final StringBuilder sb = new StringBuilder();
             sb.append("Sub Resource: ").append(subResourceParam);
@@ -96,6 +101,7 @@ public class ResourceWithKnownInjections {
         }
 
         @GET
+        @ApiOperation(value = "get")
         public String get() {
             final StringBuilder sb = new StringBuilder();
             sb.append("Sub Resource: ").append(subResourceParam);
@@ -113,6 +119,7 @@ public class ResourceWithKnownInjections {
         }
 
         @GET
+        @ApiOperation(value = "get")
         public String get() {
             final StringBuilder sb = new StringBuilder();
             sb.append("Sub Resource: ").append(subResourceParam);

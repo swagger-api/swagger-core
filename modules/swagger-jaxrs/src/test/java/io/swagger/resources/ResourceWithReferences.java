@@ -17,6 +17,7 @@ public class ResourceWithReferences {
 
     @GET
     @Path("/test")
+    @ApiOperation(value = "getTest")
     @ApiResponses({
             @ApiResponse(code = 500, message = "Error", reference = "http://swagger.io/schemas.json#/Models/ErrorResponse")
     })

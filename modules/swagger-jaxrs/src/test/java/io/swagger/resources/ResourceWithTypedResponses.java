@@ -1,6 +1,7 @@
 package io.swagger.resources;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.models.duplicated.Tag;
@@ -8,6 +9,7 @@ import io.swagger.models.duplicated.Tag;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
+
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
@@ -19,6 +21,7 @@ public class ResourceWithTypedResponses {
 
     @GET
     @Path("testPrimitiveResponses")
+    @ApiOperation(value = "testPrimitiveResponses")
     @ApiResponses({@ApiResponse(code = 400, message = "Message for URI", response = URI.class),
             @ApiResponse(code = 401, message = "Message for URL", response = URL.class),
             @ApiResponse(code = 402, message = "Message for UUID", response = UUID.class),
@@ -30,12 +33,14 @@ public class ResourceWithTypedResponses {
 
     @GET
     @Path("testObjectResponse")
+    @ApiOperation(value = "testObjectResponse")
     public Tag testObjectResponse(Tag body) {
         return body;
     }
 
     @GET
     @Path("testObjectsResponse")
+    @ApiOperation(value = "test objects response")
     public List<Tag> testObjectsResponse(List<Tag> body) {
         return body;
     }

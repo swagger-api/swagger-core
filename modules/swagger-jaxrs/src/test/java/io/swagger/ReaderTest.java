@@ -1,18 +1,24 @@
 package io.swagger;
 
+import io.swagger.annotations.ApiOperation;
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.*;
 import io.swagger.resources.*;
+import io.swagger.util.ReflectionUtils;
+
 import org.testng.annotations.Test;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.testng.Assert.*;
 
@@ -26,9 +32,13 @@ public class ReaderTest {
         Method[] methods = SimpleMethods.class.getMethods();
         Reader reader = new Reader(new Swagger());
         for (Method method : methods) {
-            if (isValidRestPath(method)) {
+            if (isValidRestPath(method) && isSwaggerOperation(method)) {
                 Operation operation = reader.parseMethod(method);
                 assertNotNull(operation);
+            }
+            else if (!isSwaggerOperation(method)) {
+            	Operation operation = reader.parseMethod(method);
+            	assertNull(operation);
             }
         }
     }
@@ -119,7 +129,15 @@ public class ReaderTest {
         }
         return false;
     }
-
+    
+    private Boolean isSwaggerOperation(Method method) {
+        ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
+        Boolean isSwaggerOperation = true;
+        if (apiOperation == null) {
+        	isSwaggerOperation = false; 
+        }
+    	return isSwaggerOperation;
+    }
     @Test(description = "scan overridden method in descendantResource")
     public void scanOverriddenMethod() {
         Swagger swagger = getSwagger(DescendantResource.class);
@@ -264,10 +282,22 @@ public class ReaderTest {
         assertTrue(operation.getResponses().containsKey("409"));
     }
 
+    @Test(description = "scan multiple resources with annotations")
+    public void scanMultipleResourcesWithAnnotations() {
+    	Set<Class<?>> classes = new HashSet<Class<?>>();
+    	classes.add(SimpleMethods.class);
+    	classes.add(ApiConsumesProducesResource.class);
+    	Swagger swagger = getSwaggerForClasses(classes);
+    	assertNotNull(swagger); 	
+    }
     private Swagger getSwagger(Class<?> cls) {
         return new Reader(new Swagger()).read(cls);
     }
 
+    private Swagger getSwaggerForClasses(Set<Class<?>> classes) {
+		return new Reader(new Swagger()).read(classes);
+    	
+    }
     private Operation getGet(Swagger swagger, String path) {
         return swagger.getPath(path).getGet();
     }
