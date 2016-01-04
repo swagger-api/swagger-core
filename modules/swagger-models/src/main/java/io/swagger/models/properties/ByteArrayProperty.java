@@ -2,18 +2,16 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
-import java.util.*;
-
 public class ByteArrayProperty extends AbstractProperty implements Property {
 
 
     public ByteArrayProperty() {
         super.type = "string";
-        super.format = "binary";
+        super.format = "byte";
     }
 
     public static boolean isType(String type, String format) {
-        if ("string".equals(type) && "binary".equals(format))
+        if ("string".equals(type) && "byte".equals(format))
             return true;
         else return false;
     }

@@ -5,84 +5,22 @@ import io.swagger.models.Xml;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The StringProperty class defines properties for strings without a specific format, for standard formats which don't
- * need specific handling, or for custom formats.
- */
-public class StringProperty extends AbstractProperty implements Property {
-    public static final String TYPE = "string";
+public class PasswordProperty extends AbstractProperty implements Property {
+    private static final String TYPE = "string";
+
+    private static final String FORMAT = "password";
+
     protected List<String> _enum;
     protected Integer minLength = null, maxLength = null;
     protected String pattern = null;
     protected String _default;
 
-    public enum Format {
-        URI("uri"),
-        URL("url");
-
-        private final String name;
-
-        private Format(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public static Format fromName(String name) {
-            for (Format item : values()) {
-                if (item.getName().equals(name)) {
-                    return item;
-                }
-            }
-            return null;
-        }
-    }
-
-    public StringProperty() {
-        this((String) null);
-    }
-
-    public StringProperty(Format format) {
-        this(format.getName());
-    }
-
-    public StringProperty(String format) {
+    public PasswordProperty() {
         super.type = TYPE;
-        super.format = format;
+        super.format = FORMAT;
     }
 
-    public static boolean isType(String type, String format) {
-        return TYPE.equals(type);
-    }
-
-    public StringProperty xml(Xml xml) {
-        this.setXml(xml);
-        return this;
-    }
-
-    public StringProperty example(String example) {
-        this.setExample(example);
-        return this;
-    }
-
-    public StringProperty minLength(Integer minLength) {
-        this.setMinLength(minLength);
-        return this;
-    }
-
-    public StringProperty maxLength(Integer maxLength) {
-        this.setMaxLength(maxLength);
-        return this;
-    }
-
-    public StringProperty pattern(String pattern) {
-        this.setPattern(pattern);
-        return this;
-    }
-
-    public StringProperty _enum(String value) {
+    public PasswordProperty _enum(String value) {
         if (this._enum == null) {
             this._enum = new ArrayList<String>();
         }
@@ -92,32 +30,47 @@ public class StringProperty extends AbstractProperty implements Property {
         return this;
     }
 
-    public StringProperty _enum(List<String> value) {
+    public PasswordProperty _enum(List<String> value) {
         this._enum = value;
         return this;
     }
 
-    public StringProperty _default(String _default) {
+    public static boolean isType(String type, String format) {
+        if (TYPE.equals(type) && FORMAT.equals(format)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public PasswordProperty xml(Xml xml) {
+        this.setXml(xml);
+        return this;
+    }
+
+    public PasswordProperty minLength(Integer minLength) {
+        this.setMinLength(minLength);
+        return this;
+    }
+
+    public PasswordProperty maxLength(Integer maxLength) {
+        this.setMaxLength(maxLength);
+        return this;
+    }
+
+    public PasswordProperty pattern(String pattern) {
+        this.setPattern(pattern);
+        return this;
+    }
+
+    public PasswordProperty _default(String _default) {
         this._default = _default;
         return this;
     }
 
-    public StringProperty vendorExtension(String key, Object obj) {
+    public PasswordProperty vendorExtension(String key, Object obj) {
         this.setVendorExtension(key, obj);
         return this;
-    }
-
-    public StringProperty required(boolean required) {
-        this.setRequired(required);
-        return this;
-    }
-
-    public List<String> getEnum() {
-        return _enum;
-    }
-
-    public void setEnum(List<String> _enum) {
-        this._enum = _enum;
     }
 
     public Integer getMinLength() {
@@ -152,6 +105,14 @@ public class StringProperty extends AbstractProperty implements Property {
         this._default = _default;
     }
 
+    public List<String> getEnum() {
+        return _enum;
+    }
+
+    public void setEnum(List<String> _enum) {
+        this._enum = _enum;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -169,10 +130,10 @@ public class StringProperty extends AbstractProperty implements Property {
         if (!super.equals(obj)) {
             return false;
         }
-        if (!(obj instanceof StringProperty)) {
+        if (!(obj instanceof PasswordProperty)) {
             return false;
         }
-        StringProperty other = (StringProperty) obj;
+        PasswordProperty other = (PasswordProperty) obj;
         if (_default == null) {
             if (other._default != null) {
                 return false;

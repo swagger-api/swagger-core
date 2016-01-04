@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * License metadata available within the info section of a Swagger definition, see
- * https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#licenseObject
+ * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#licenseObject
  *
  * @since 1.5.0
  */

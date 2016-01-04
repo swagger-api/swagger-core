@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A definition level Tag object see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#tag-object
+ * A definition level Tag object see https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#tag-object
  *
  * @since 1.5.0
  */

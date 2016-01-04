@@ -324,6 +324,11 @@ public class Reader {
                     if (subResource != null && !scannedResources.contains(subResource)) {
                         scannedResources.add(subResource);
                         read(subResource, operationPath, httpMethod, true, apiConsumes, apiProduces, tags, operation.getParameters(), scannedResources);
+                        // remove the sub resource so that it can visit it later in another path
+                        // but we have a room for optimization in the future to reuse the scanned result
+                        // by caching the scanned resources in the reader instance to avoid actual scanning
+                        // the the resources again
+                        scannedResources.remove(subResource);
                     }
 
                     // can't continue without a valid http method

@@ -2,122 +2,54 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The StringProperty class defines properties for strings without a specific format, for standard formats which don't
- * need specific handling, or for custom formats.
- */
-public class StringProperty extends AbstractProperty implements Property {
-    public static final String TYPE = "string";
+public class BinaryProperty extends AbstractProperty implements Property {
+    private static final String TYPE = "string";
     protected List<String> _enum;
     protected Integer minLength = null, maxLength = null;
     protected String pattern = null;
     protected String _default;
 
-    public enum Format {
-        URI("uri"),
-        URL("url");
-
-        private final String name;
-
-        private Format(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public static Format fromName(String name) {
-            for (Format item : values()) {
-                if (item.getName().equals(name)) {
-                    return item;
-                }
-            }
-            return null;
-        }
-    }
-
-    public StringProperty() {
-        this((String) null);
-    }
-
-    public StringProperty(Format format) {
-        this(format.getName());
-    }
-
-    public StringProperty(String format) {
-        super.type = TYPE;
-        super.format = format;
+    public BinaryProperty() {
+        super.type = "string";
+        super.format = "binary";
     }
 
     public static boolean isType(String type, String format) {
-        return TYPE.equals(type);
+        if ("string".equals(type) && "binary".equals(format))
+            return true;
+        else return false;
     }
 
-    public StringProperty xml(Xml xml) {
+    public BinaryProperty xml(Xml xml) {
         this.setXml(xml);
         return this;
     }
 
-    public StringProperty example(String example) {
-        this.setExample(example);
-        return this;
-    }
-
-    public StringProperty minLength(Integer minLength) {
+    public BinaryProperty minLength(Integer minLength) {
         this.setMinLength(minLength);
         return this;
     }
 
-    public StringProperty maxLength(Integer maxLength) {
+    public BinaryProperty maxLength(Integer maxLength) {
         this.setMaxLength(maxLength);
         return this;
     }
 
-    public StringProperty pattern(String pattern) {
+    public BinaryProperty pattern(String pattern) {
         this.setPattern(pattern);
         return this;
     }
 
-    public StringProperty _enum(String value) {
-        if (this._enum == null) {
-            this._enum = new ArrayList<String>();
-        }
-        if (!_enum.contains(value)) {
-            _enum.add(value);
-        }
-        return this;
-    }
-
-    public StringProperty _enum(List<String> value) {
-        this._enum = value;
-        return this;
-    }
-
-    public StringProperty _default(String _default) {
+    public BinaryProperty _default(String _default) {
         this._default = _default;
         return this;
     }
 
-    public StringProperty vendorExtension(String key, Object obj) {
+    public BinaryProperty vendorExtension(String key, Object obj) {
         this.setVendorExtension(key, obj);
         return this;
-    }
-
-    public StringProperty required(boolean required) {
-        this.setRequired(required);
-        return this;
-    }
-
-    public List<String> getEnum() {
-        return _enum;
-    }
-
-    public void setEnum(List<String> _enum) {
-        this._enum = _enum;
     }
 
     public Integer getMinLength() {
@@ -152,6 +84,14 @@ public class StringProperty extends AbstractProperty implements Property {
         this._default = _default;
     }
 
+    public List<String> getEnum() {
+        return _enum;
+    }
+
+    public void setEnum(List<String> _enum) {
+        this._enum = _enum;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -169,10 +109,10 @@ public class StringProperty extends AbstractProperty implements Property {
         if (!super.equals(obj)) {
             return false;
         }
-        if (!(obj instanceof StringProperty)) {
+        if (!(obj instanceof BinaryProperty)) {
             return false;
         }
-        StringProperty other = (StringProperty) obj;
+        BinaryProperty other = (BinaryProperty) obj;
         if (_default == null) {
             if (other._default != null) {
                 return false;

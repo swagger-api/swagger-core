@@ -38,7 +38,7 @@ import java.util.Set;
 
 @Path("/")
 public class ApiListingResource {
-    boolean initialized = false;
+    private static volatile boolean initialized = false;
     Logger LOGGER = LoggerFactory.getLogger(ApiListingResource.class);
     @Context
     ServletContext context;
@@ -52,7 +52,7 @@ public class ApiListingResource {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
             swagger = (Swagger) context.getAttribute("swagger");
 
-            Set<Class<?>> classes = new HashSet<Class<?>>();
+            Set<Class<?>> classes;
             if (scanner instanceof JaxrsScanner) {
                 JaxrsScanner jaxrsScanner = (JaxrsScanner) scanner;
                 classes = jaxrsScanner.classesFromContext(app, sc);
@@ -86,8 +86,10 @@ public class ApiListingResource {
             HttpHeaders headers,
             UriInfo uriInfo) {
         Swagger swagger = (Swagger) context.getAttribute("swagger");
-        if (!initialized) {
-            swagger = scan(app, sc);
+        synchronized (ApiListingResource.class) {
+            if (!initialized) {
+                swagger = scan(app, sc);
+            }
         }
         if (swagger != null) {
             SwaggerSpecFilter filterImpl = FilterFactory.getFilter();

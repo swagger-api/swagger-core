@@ -413,4 +413,9 @@ public class Operation {
         this.vendorExtensions.putAll( vendorExtensions );
         return this;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "[" + operationId + "]";
+    }
 }
