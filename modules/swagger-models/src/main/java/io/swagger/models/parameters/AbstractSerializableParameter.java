@@ -185,7 +185,7 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     }
 
     public Object getDefault() {
-        if (defaultValue == null || "".equals(defaultValue)) {
+        if (defaultValue == null || defaultValue.isEmpty()) {
             return null;
         }
         try {
