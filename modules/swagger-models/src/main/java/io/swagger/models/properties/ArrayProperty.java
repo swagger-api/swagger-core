@@ -37,6 +37,11 @@ public class ArrayProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public ArrayProperty title(String title) {
+        this.setTitle(title);
+        return this;
+    }
+
     public ArrayProperty items(Property items) {
         setItems(items);
         return this;
