@@ -21,7 +21,7 @@ public class WebXMLReader implements SwaggerConfig {
             filterClass,
             apiVersion,
             title;
-    protected String[] schemes = new String[]{"http"};
+    protected String[] schemes = new String[]{};
     private Logger LOGGER = LoggerFactory.getLogger(WebXMLReader.class);
 
     public WebXMLReader(ServletConfig servletConfig) {
@@ -103,16 +103,14 @@ public class WebXMLReader implements SwaggerConfig {
                 swagger.info(new Info());
             }
 
-            List<Scheme> schemes = new ArrayList<Scheme>();
-            for(String scheme : this.schemes) {
-                schemes.add(Scheme.forValue(scheme));
-            }
             swagger.basePath(basePath)
                     .host(host)
-                    .schemes(schemes)
                     .getInfo()
                     .title(title)
                     .version(apiVersion);
+            for(String scheme : this.schemes) {
+                swagger.scheme(Scheme.forValue(scheme));
+            }
         }
         return swagger;
     }
