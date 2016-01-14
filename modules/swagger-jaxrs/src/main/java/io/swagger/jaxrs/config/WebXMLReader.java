@@ -20,6 +20,7 @@ public class WebXMLReader implements SwaggerConfig {
     public WebXMLReader(ServletConfig servletConfig) {
         Scanner scanner = new DefaultJaxrsScanner();
         ScannerFactory.setScanner(scanner);
+        servletConfig.getServletContext().setAttribute(AbstractScanner.ATTR_SCANNER_INSTANCE, scanner);
         apiVersion = servletConfig.getInitParameter("api.version");
         if (apiVersion == null) {
             apiVersion = "Swagger Server";

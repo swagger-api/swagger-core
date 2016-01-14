@@ -8,6 +8,7 @@ import io.swagger.config.SwaggerConfig;
 import io.swagger.core.filter.SpecFilter;
 import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs.Reader;
+import io.swagger.jaxrs.config.AbstractScanner;
 import io.swagger.jaxrs.config.JaxrsScanner;
 import io.swagger.jaxrs.config.ReaderConfigUtils;
 import io.swagger.models.Swagger;
@@ -35,18 +36,32 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Path("/")
 public class ApiListingResource {
     private static volatile boolean initialized = false;
+
+    private static volatile ConcurrentMap<String, Boolean> initializedScanner = new ConcurrentHashMap<String, Boolean>();
+
     Logger LOGGER = LoggerFactory.getLogger(ApiListingResource.class);
+
     @Context
     ServletContext context;
 
     protected synchronized Swagger scan(Application app, ServletConfig sc) {
         Swagger swagger = null;
-        Scanner scanner = ScannerFactory.getScanner();
-        LOGGER.debug("using scanner " + scanner);
+        String scannerId = sc.getInitParameter(AbstractScanner.ATTR_SCANNER_ID);
+        Scanner scanner;
+        if (scannerId != null) {
+            scanner = (Scanner) context.getAttribute(scannerId);
+        } else {
+            scanner = (Scanner) context.getAttribute(AbstractScanner.ATTR_SCANNER_INSTANCE);
+        }
+        if (scanner == null) {
+            scanner = ScannerFactory.getScanner();
+        }
 
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
@@ -76,7 +91,12 @@ public class ApiListingResource {
                 context.setAttribute("swagger", swagger);
             }
         }
-        initialized = true;
+        if (scannerId != null) {
+            initializedScanner.putIfAbsent(scannerId, true);
+        } else {
+            initialized = true;
+        }
+
         return swagger;
     }
 
@@ -87,8 +107,15 @@ public class ApiListingResource {
             UriInfo uriInfo) {
         Swagger swagger = (Swagger) context.getAttribute("swagger");
         synchronized (ApiListingResource.class) {
-            if (!initialized) {
-                swagger = scan(app, sc);
+            String scannerId = sc.getInitParameter(AbstractScanner.ATTR_SCANNER_ID);
+            if (scannerId != null) {
+                if (!initializedScanner.getOrDefault(scannerId, false)) {
+                    swagger = scan(app, sc);
+                }
+            } else {
+                if (!initialized) {
+                    swagger = scan(app, sc);
+                }
             }
         }
         if (swagger != null) {
