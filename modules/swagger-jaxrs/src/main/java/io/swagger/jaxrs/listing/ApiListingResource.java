@@ -3,14 +3,13 @@ package io.swagger.jaxrs.listing;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.config.FilterFactory;
 import io.swagger.config.Scanner;
-import io.swagger.config.ScannerFactory;
 import io.swagger.config.SwaggerConfig;
 import io.swagger.core.filter.SpecFilter;
 import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs.Reader;
-import io.swagger.jaxrs.config.AbstractScanner;
 import io.swagger.jaxrs.config.JaxrsScanner;
 import io.swagger.jaxrs.config.ReaderConfigUtils;
+import io.swagger.jaxrs.config.SwaggerContextService;
 import io.swagger.models.Swagger;
 import io.swagger.util.Yaml;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +31,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,17 +50,8 @@ public class ApiListingResource {
 
     protected synchronized Swagger scan(Application app, ServletConfig sc) {
         Swagger swagger = null;
-        String scannerId = sc.getInitParameter(AbstractScanner.ATTR_SCANNER_ID);
-        Scanner scanner;
-        if (scannerId != null) {
-            scanner = (Scanner) context.getAttribute(scannerId);
-        } else {
-            scanner = (Scanner) context.getAttribute(AbstractScanner.ATTR_SCANNER_INSTANCE);
-        }
-        if (scanner == null) {
-            scanner = ScannerFactory.getScanner();
-        }
-
+        SwaggerContextService ctxService = new SwaggerContextService().withServletConfig(sc);
+        Scanner scanner = ctxService.getScanner();
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
             swagger = (Swagger) context.getAttribute("swagger");
@@ -77,13 +66,14 @@ public class ApiListingResource {
             if (classes != null) {
                 Reader reader = new Reader(swagger, ReaderConfigUtils.getReaderConfig(context));
                 swagger = reader.read(classes);
+                // leave for compatibility? only ReflectiveJaxrsScanner implements this, but client could call
                 if (scanner instanceof SwaggerConfig) {
                     swagger = ((SwaggerConfig) scanner).configure(swagger);
                 } else {
-                    SwaggerConfig configurator = (SwaggerConfig) context.getAttribute("reader");
-                    if (configurator != null) {
-                        LOGGER.debug("configuring swagger with " + configurator);
-                        configurator.configure(swagger);
+                    SwaggerConfig swaggerConfig = ctxService.getConfig();
+                    if (swaggerConfig != null) {
+                        LOGGER.debug("configuring swagger with " + swaggerConfig);
+                        swaggerConfig.configure(swagger);
                     } else {
                         LOGGER.debug("no configurator");
                     }
@@ -91,8 +81,8 @@ public class ApiListingResource {
                 context.setAttribute("swagger", swagger);
             }
         }
-        if (scannerId != null) {
-            initializedScanner.putIfAbsent(scannerId, true);
+        if (SwaggerContextService.isScannerIdInitParamDefined(sc)) {
+            initializedScanner.putIfAbsent(SwaggerContextService.getScannerIdFromInitParam(sc), true);
         } else {
             initialized = true;
         }
@@ -107,9 +97,8 @@ public class ApiListingResource {
             UriInfo uriInfo) {
         Swagger swagger = (Swagger) context.getAttribute("swagger");
         synchronized (ApiListingResource.class) {
-            String scannerId = sc.getInitParameter(AbstractScanner.ATTR_SCANNER_ID);
-            if (scannerId != null) {
-                if (!initializedScanner.getOrDefault(scannerId, false)) {
+            if (SwaggerContextService.isScannerIdInitParamDefined(sc)) {
+                if (!initializedScanner.getOrDefault(SwaggerContextService.getScannerIdFromInitParam(sc), false)) {
                     swagger = scan(app, sc);
                 }
             } else {

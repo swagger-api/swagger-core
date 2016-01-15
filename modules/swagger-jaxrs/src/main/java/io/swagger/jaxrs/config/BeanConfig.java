@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.config.FilterFactory;
 import io.swagger.config.Scanner;
-import io.swagger.config.ScannerFactory;
 import io.swagger.config.SwaggerConfig;
 import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs.Reader;
@@ -23,6 +22,7 @@ import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletConfig;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,6 +30,8 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     Logger LOGGER = LoggerFactory.getLogger(BeanConfig.class);
 
     Reader reader = new Reader(new Swagger());
+
+    ServletConfig servletConfig;
 
     String resourcePackage;
     String[] schemes;
@@ -45,6 +47,9 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     Info info;
     String host;
     String basePath;
+
+    String scannerId;
+    String configId;
 
     public String getResourcePackage() {
         return this.resourcePackage;
@@ -142,6 +147,26 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         this.filterClass = filterClass;
     }
 
+    public String getScannerId() {
+        return scannerId;
+    }
+
+    public void setScannerId(String scannerId) {
+        this.scannerId = scannerId;
+    }
+
+    public String getConfigId() {
+        return configId;
+    }
+
+    public void setServletConfig(ServletConfig servletConfig) {
+        this.servletConfig = servletConfig;
+    }
+
+    public void setConfigId(String configId) {
+        this.configId = configId;
+    }
+
     public String getBasePath() {
         return basePath;
     }
@@ -168,7 +193,14 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
 
     public void setScan(boolean shouldScan) {
         scanAndRead();
-        ScannerFactory.setScanner(this);
+        new SwaggerContextService()
+                .withConfigId(configId)
+                .withScannerId(scannerId)
+                .withServletConfig(servletConfig)
+                .withSwaggerConfig(this)
+                .withScanner(this)
+                .initConfig()
+                .initScanner();
     }
 
     public void setScan() {
