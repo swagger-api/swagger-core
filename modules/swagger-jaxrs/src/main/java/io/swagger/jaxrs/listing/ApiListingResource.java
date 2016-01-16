@@ -37,12 +37,15 @@ public class ApiListingResource {
     ServletContext context;
 
     protected synchronized Swagger scan(Application app, ServletConfig sc) {
-        Swagger swagger = new Swagger();
+        Swagger swagger = null;
         Scanner scanner = ScannerFactory.getScanner();
         LOGGER.debug("using scanner " + scanner);
 
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
+            if (context != null)
+                swagger = (Swagger) context.getAttribute("swagger");
+
             Set<Class<?>> classes;
             if (scanner instanceof JaxrsScanner) {
                 JaxrsScanner jaxrsScanner = (JaxrsScanner) scanner;
@@ -69,6 +72,8 @@ public class ApiListingResource {
                         LOGGER.debug("no configurator");
                     }
                 }
+                if (context != null)
+                    context.setAttribute("swagger", swagger);
             }
         }
         return swagger;
