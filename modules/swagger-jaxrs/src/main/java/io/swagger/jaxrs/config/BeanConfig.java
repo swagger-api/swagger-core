@@ -8,11 +8,7 @@ import io.swagger.config.ScannerFactory;
 import io.swagger.config.SwaggerConfig;
 import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs.Reader;
-import io.swagger.models.Contact;
-import io.swagger.models.Info;
-import io.swagger.models.License;
-import io.swagger.models.Scheme;
-import io.swagger.models.Swagger;
+import io.swagger.models.*;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -23,10 +19,9 @@ import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfig {
+public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfig, ReaderConfig {
     Logger LOGGER = LoggerFactory.getLogger(BeanConfig.class);
 
     Reader reader = new Reader(new Swagger());
@@ -45,6 +40,9 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     Info info;
     String host;
     String basePath;
+
+    boolean scanAllResources;
+    Set<String> ignoredRoutes = new HashSet<String>();
 
     public String getResourcePackage() {
         return this.resourcePackage;
@@ -286,5 +284,23 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         return swagger.info(info)
                 .host(host)
                 .basePath(basePath);
+    }
+
+    @Override
+    public boolean isScanAllResources() {
+        return scanAllResources;
+    }
+
+    public void setScanAllResources(boolean scanAllResources) {
+        this.scanAllResources = scanAllResources;
+    }
+
+    @Override
+    public Collection<String> getIgnoredRoutes() {
+        return Collections.unmodifiableSet(ignoredRoutes);
+    }
+
+    public void addIgnoredRoutes(String... ignoredRoutes) {
+        this.ignoredRoutes.addAll(Arrays.asList(ignoredRoutes));
     }
 }

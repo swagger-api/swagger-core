@@ -9,7 +9,9 @@ import io.swagger.core.filter.SpecFilter;
 import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.JaxrsScanner;
+import io.swagger.jaxrs.config.ReaderConfig;
 import io.swagger.jaxrs.config.ReaderConfigUtils;
+import io.swagger.jaxrs.utils.SwaggerUtils;
 import io.swagger.models.Swagger;
 import io.swagger.util.Yaml;
 import org.apache.commons.lang3.StringUtils;
@@ -22,23 +24,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 @Path("/")
 public class ApiListingResource {
-    private static volatile boolean initialized = false;
     Logger LOGGER = LoggerFactory.getLogger(ApiListingResource.class);
     @Context
     ServletContext context;
@@ -50,7 +43,8 @@ public class ApiListingResource {
 
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
-            swagger = (Swagger) context.getAttribute("swagger");
+            if (context != null)
+                swagger = (Swagger) context.getAttribute("swagger");
 
             Set<Class<?>> classes;
             if (scanner instanceof JaxrsScanner) {
@@ -60,7 +54,12 @@ public class ApiListingResource {
                 classes = scanner.classes();
             }
             if (classes != null) {
-                Reader reader = new Reader(swagger, ReaderConfigUtils.getReaderConfig(context));
+                final ReaderConfig readerConfig;
+                if (scanner instanceof ReaderConfig)
+                    readerConfig = (ReaderConfig) scanner;
+                else
+                    readerConfig = ReaderConfigUtils.getReaderConfig(context);
+                Reader reader = new Reader(swagger, readerConfig);
                 swagger = reader.read(classes);
                 if (scanner instanceof SwaggerConfig) {
                     swagger = ((SwaggerConfig) scanner).configure(swagger);
@@ -73,10 +72,10 @@ public class ApiListingResource {
                         LOGGER.debug("no configurator");
                     }
                 }
-                context.setAttribute("swagger", swagger);
+                if (context != null)
+                    context.setAttribute("swagger", swagger);
             }
         }
-        initialized = true;
         return swagger;
     }
 
@@ -85,10 +84,13 @@ public class ApiListingResource {
             ServletConfig sc,
             HttpHeaders headers,
             UriInfo uriInfo) {
-        Swagger swagger = (Swagger) context.getAttribute("swagger");
+        final SwaggerUtils.Host host = SwaggerUtils.Host.from(uriInfo.getBaseUri());
+        Swagger swagger = SwaggerUtils.getSwagger(host);
         synchronized (ApiListingResource.class) {
-            if (!initialized) {
+            if (swagger == null) {
                 swagger = scan(app, sc);
+                if (swagger != null)
+                    SwaggerUtils.putSwagger(host, swagger);
             }
         }
         if (swagger != null) {
@@ -196,4 +198,5 @@ public class ApiListingResource {
         }
         return output;
     }
+
 }
