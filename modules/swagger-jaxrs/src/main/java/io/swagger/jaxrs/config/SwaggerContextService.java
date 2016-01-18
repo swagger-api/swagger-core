@@ -3,14 +3,10 @@ package io.swagger.jaxrs.config;
 import io.swagger.config.Scanner;
 import io.swagger.config.ScannerFactory;
 import io.swagger.config.SwaggerConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 
 public class SwaggerContextService {
-
-    Logger LOGGER = LoggerFactory.getLogger(SwaggerContextService.class);
 
     private ServletConfig sc;
     private String configId;
@@ -93,7 +89,7 @@ public class SwaggerContextService {
             configIdKey = SwaggerConfig.CONFIG_ID_PREFIX + configId;
         } else {
             if (sc != null) {
-                configIdKey = (sc.getInitParameter(SwaggerConfig.CONFIG_ID_KEY) != null) ? SwaggerConfig.CONFIG_ID_PREFIX + configId : SwaggerConfig.CONFIG_ID_DEFAULT;
+                configIdKey = (sc.getInitParameter(SwaggerConfig.CONFIG_ID_KEY) != null) ? SwaggerConfig.CONFIG_ID_PREFIX + sc.getInitParameter(SwaggerConfig.CONFIG_ID_KEY) : SwaggerConfig.CONFIG_ID_DEFAULT;
             } else {
                 configIdKey = SwaggerConfig.CONFIG_ID_DEFAULT;
             }
@@ -119,7 +115,6 @@ public class SwaggerContextService {
             }
 
         }
-
         return this;
     }
 
