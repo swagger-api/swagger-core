@@ -8,6 +8,7 @@ import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.config.DefaultJaxrsScanner;
 import io.swagger.jaxrs.config.SwaggerConfigLocator;
 import io.swagger.jaxrs.config.SwaggerContextService;
+import io.swagger.jaxrs.config.SwaggerScannerLocator;
 import io.swagger.jaxrs.config.WebXMLReader;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -157,7 +158,7 @@ public class SwaggerContextServiceTest {
         verify(servletContext1, never()).setAttribute(eq(AbstractScanner.SCANNER_ID_PREFIX + "test.1"), any(Scanner.class));
 
         assertNotNull(ScannerFactory.getScanner());
-        assertEquals(new SwaggerContextService().getScanner(), ScannerFactory.getScanner());
+        assertEquals(new SwaggerContextService().getScanner(), SwaggerScannerLocator.getInstance().getScanner(AbstractScanner.SCANNER_ID_DEFAULT));
 
     }
 

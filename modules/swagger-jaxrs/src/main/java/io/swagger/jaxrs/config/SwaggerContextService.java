@@ -100,36 +100,50 @@ public class SwaggerContextService {
 
     public SwaggerContextService initScanner() {
         String scannerIdKey;
+        if (scannerId != null) {
+            scannerIdKey = AbstractScanner.SCANNER_ID_PREFIX + scannerId;
+        } else {
+            if (sc != null) {
+                scannerIdKey = (sc.getInitParameter(AbstractScanner.SCANNER_ID_KEY) != null) ? AbstractScanner.SCANNER_ID_PREFIX + sc.getInitParameter(AbstractScanner.SCANNER_ID_KEY) : AbstractScanner.SCANNER_ID_DEFAULT;
+            } else {
+                scannerIdKey = AbstractScanner.SCANNER_ID_DEFAULT;
+            }
+        }
         Scanner value = (scanner != null) ? scanner : new DefaultJaxrsScanner();
         ScannerFactory.setScanner(value);
         if (sc != null) {
-            if (scannerId != null) {
-                scannerIdKey = AbstractScanner.SCANNER_ID_PREFIX + scannerId;
-            } else {
-                scannerIdKey = (sc.getInitParameter(AbstractScanner.SCANNER_ID_KEY) != null) ? AbstractScanner.SCANNER_ID_PREFIX + sc.getInitParameter(AbstractScanner.SCANNER_ID_KEY) : AbstractScanner.SCANNER_ID_DEFAULT;
-            }
             sc.getServletContext().setAttribute(scannerIdKey, value);
             String shouldPrettyPrint = sc.getInitParameter("swagger.pretty.print");
             if (shouldPrettyPrint != null) {
                 value.setPrettyPrint(Boolean.parseBoolean(shouldPrettyPrint));
             }
-
         }
+
+        SwaggerScannerLocator.getInstance().putScanner(scannerIdKey, value);
         return this;
     }
 
     public Scanner getScanner() {
-        if (sc != null) {
-            String scannerIdKey;
-            if (scannerId != null) {
-                scannerIdKey = AbstractScanner.SCANNER_ID_PREFIX + scannerId;
-            } else {
-                scannerIdKey = (sc.getInitParameter(AbstractScanner.SCANNER_ID_KEY) != null) ? AbstractScanner.SCANNER_ID_PREFIX + sc.getInitParameter(AbstractScanner.SCANNER_ID_KEY) : AbstractScanner.SCANNER_ID_DEFAULT;
-            }
-            return (Scanner) sc.getServletContext().getAttribute(scannerIdKey);
+        String scannerIdKey;
+        Scanner value = null;
+        if (scannerId != null) {
+            scannerIdKey = AbstractScanner.SCANNER_ID_PREFIX + scannerId;
         } else {
-            return ScannerFactory.getScanner();
+            if (sc != null) {
+                scannerIdKey = (sc.getInitParameter(AbstractScanner.SCANNER_ID_KEY) != null) ? AbstractScanner.SCANNER_ID_PREFIX + sc.getInitParameter(AbstractScanner.SCANNER_ID_KEY) : AbstractScanner.SCANNER_ID_DEFAULT;
+                value = (Scanner) sc.getServletContext().getAttribute(scannerIdKey);
+            } else {
+                scannerIdKey = AbstractScanner.SCANNER_ID_DEFAULT;
+            }
         }
+        if (value != null) {
+            return value;
+        }
+        value = SwaggerScannerLocator.getInstance().getScanner(scannerIdKey);
+        if (value != null) {
+            return value;
+        }
+        return ScannerFactory.getScanner();
     }
 
     public static boolean isScannerIdInitParamDefined(ServletConfig sc) {
