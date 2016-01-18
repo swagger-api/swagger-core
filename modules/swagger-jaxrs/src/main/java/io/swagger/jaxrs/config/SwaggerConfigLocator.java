@@ -6,20 +6,20 @@ import io.swagger.models.Swagger;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class SwaggerConfigMap {
+public class SwaggerConfigLocator {
 
-    private static SwaggerConfigMap instance;
+    private static SwaggerConfigLocator instance;
 
     private ConcurrentMap<String, SwaggerConfig> map = new ConcurrentHashMap<String, SwaggerConfig>();
 
-    public static SwaggerConfigMap getInstance() {
+    public static SwaggerConfigLocator getInstance() {
         if (instance == null) {
-            instance = new SwaggerConfigMap();
+            instance = new SwaggerConfigLocator();
         }
         return instance;
     }
 
-    private SwaggerConfigMap() {
+    private SwaggerConfigLocator() {
     }
 
     public SwaggerConfig getConfig(String id) {
