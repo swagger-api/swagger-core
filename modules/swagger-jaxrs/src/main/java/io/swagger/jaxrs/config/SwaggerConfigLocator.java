@@ -10,7 +10,8 @@ public class SwaggerConfigLocator {
 
     private static SwaggerConfigLocator instance;
 
-    private ConcurrentMap<String, SwaggerConfig> map = new ConcurrentHashMap<String, SwaggerConfig>();
+    private ConcurrentMap<String, SwaggerConfig> configMap = new ConcurrentHashMap<String, SwaggerConfig>();
+    private ConcurrentMap<String, Swagger> swaggerMap = new ConcurrentHashMap<String, Swagger>();
 
     public static SwaggerConfigLocator getInstance() {
         if (instance == null) {
@@ -23,7 +24,7 @@ public class SwaggerConfigLocator {
     }
 
     public SwaggerConfig getConfig(String id) {
-        return map.getOrDefault(id, new SwaggerConfig() {
+        return configMap.getOrDefault(id, new SwaggerConfig() {
             @Override
             public Swagger configure(Swagger swagger) {
                 return swagger;
@@ -37,6 +38,15 @@ public class SwaggerConfigLocator {
     }
 
     public void putConfig(String id, SwaggerConfig config) {
-        map.putIfAbsent(id, config);
+        configMap.putIfAbsent(id, config);
     }
+
+    public Swagger getSwagger(String id) {
+        return swaggerMap.getOrDefault(id, new Swagger());
+    }
+
+    public void putSwagger(String id, Swagger swagger) {
+        swaggerMap.putIfAbsent(id, swagger);
+    }
+
 }

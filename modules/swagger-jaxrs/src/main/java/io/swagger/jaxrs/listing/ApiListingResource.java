@@ -42,6 +42,7 @@ public class ApiListingResource {
     private static volatile boolean initialized = false;
 
     private static volatile ConcurrentMap<String, Boolean> initializedScanner = new ConcurrentHashMap<String, Boolean>();
+    private static volatile ConcurrentMap<String, Boolean> initializedConfig = new ConcurrentHashMap<String, Boolean>();
 
     Logger LOGGER = LoggerFactory.getLogger(ApiListingResource.class);
 
@@ -54,8 +55,8 @@ public class ApiListingResource {
         Scanner scanner = ctxService.getScanner();
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
-            swagger = (Swagger) context.getAttribute("swagger");
-
+            //swagger = (Swagger) context.getAttribute("swagger");
+            swagger = new SwaggerContextService().withServletConfig(sc).getSwagger();
             Set<Class<?>> classes;
             if (scanner instanceof JaxrsScanner) {
                 JaxrsScanner jaxrsScanner = (JaxrsScanner) scanner;
@@ -66,7 +67,6 @@ public class ApiListingResource {
             if (classes != null) {
                 Reader reader = new Reader(swagger, ReaderConfigUtils.getReaderConfig(context));
                 swagger = reader.read(classes);
-                // leave for compatibility? only ReflectiveJaxrsScanner implements this, but client could call
                 if (scanner instanceof SwaggerConfig) {
                     swagger = ((SwaggerConfig) scanner).configure(swagger);
                 } else {
@@ -78,11 +78,16 @@ public class ApiListingResource {
                         LOGGER.debug("no configurator");
                     }
                 }
-                context.setAttribute("swagger", swagger);
+                //context.setAttribute("swagger", swagger);
+                new SwaggerContextService().withServletConfig(sc).updateSwagger(swagger);
             }
         }
         if (SwaggerContextService.isScannerIdInitParamDefined(sc)) {
-            initializedScanner.putIfAbsent(SwaggerContextService.getScannerIdFromInitParam(sc), true);
+            LOGGER.error("scan isScannerIdInitParamDefined " + sc.getServletName() + "_" + SwaggerContextService.getScannerIdFromInitParam(sc));
+            initializedScanner.putIfAbsent(sc.getServletName() + "_" + SwaggerContextService.getScannerIdFromInitParam(sc), true);
+        } else if (SwaggerContextService.isConfigIdInitParamDefined(sc)) {
+            LOGGER.error("scan isConfigIdInitParamDefined " + sc.getServletName() + "_" + SwaggerContextService.getConfigIdFromInitParam(sc));
+            initializedConfig.putIfAbsent(sc.getServletName() + "_" + SwaggerContextService.getConfigIdFromInitParam(sc), true);
         } else {
             initialized = true;
         }
@@ -95,15 +100,24 @@ public class ApiListingResource {
             ServletConfig sc,
             HttpHeaders headers,
             UriInfo uriInfo) {
-        Swagger swagger = (Swagger) context.getAttribute("swagger");
+        Swagger swagger = new SwaggerContextService().withServletConfig(sc).getSwagger();
+        //Swagger swagger = (Swagger) context.getAttribute("swagger");
         synchronized (ApiListingResource.class) {
             if (SwaggerContextService.isScannerIdInitParamDefined(sc)) {
-                if (!initializedScanner.getOrDefault(SwaggerContextService.getScannerIdFromInitParam(sc), false)) {
+                LOGGER.error("process isScannerIdInitParamDefined " + sc.getServletName() + "_" + SwaggerContextService.getScannerIdFromInitParam(sc));
+                if (!initializedScanner.getOrDefault(sc.getServletName() + "_" + SwaggerContextService.getScannerIdFromInitParam(sc), false)) {
                     swagger = scan(app, sc);
                 }
             } else {
-                if (!initialized) {
-                    swagger = scan(app, sc);
+                LOGGER.error("process isConfigIdInitParamDefined " + sc.getServletName() + "_" + SwaggerContextService.getConfigIdFromInitParam(sc));
+                if (SwaggerContextService.isConfigIdInitParamDefined(sc)) {
+                    if (!initializedConfig.getOrDefault(sc.getServletName() + "_" + SwaggerContextService.getConfigIdFromInitParam(sc), false)) {
+                        swagger = scan(app, sc);
+                    }
+                } else {
+                    if (!initialized) {
+                        swagger = scan(app, sc);
+                    }
                 }
             }
         }

@@ -50,6 +50,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
 
     String scannerId;
     String configId;
+    String contextId;
 
     public String getResourcePackage() {
         return this.resourcePackage;
@@ -147,6 +148,14 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         this.filterClass = filterClass;
     }
 
+    public String getContextId() {
+        return contextId;
+    }
+
+    public void setContextId(String contextId) {
+        this.contextId = contextId;
+    }
+
     public String getScannerId() {
         return scannerId;
     }
@@ -196,6 +205,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         new SwaggerContextService()
                 .withConfigId(configId)
                 .withScannerId(scannerId)
+                .withContextId(contextId)
                 .withServletConfig(servletConfig)
                 .withSwaggerConfig(this)
                 .withScanner(this)
