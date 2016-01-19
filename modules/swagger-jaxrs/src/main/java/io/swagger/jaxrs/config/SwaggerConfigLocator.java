@@ -24,7 +24,11 @@ public class SwaggerConfigLocator {
     }
 
     public SwaggerConfig getConfig(String id) {
-        return configMap.getOrDefault(id, new SwaggerConfig() {
+        SwaggerConfig value = configMap.get(id);
+        if (value != null) {
+            return value;
+        }
+        return new SwaggerConfig() {
             @Override
             public Swagger configure(Swagger swagger) {
                 return swagger;
@@ -34,19 +38,23 @@ public class SwaggerConfigLocator {
             public String getFilterClass() {
                 return null;
             }
-        });
+        };
     }
 
     public void putConfig(String id, SwaggerConfig config) {
-        configMap.putIfAbsent(id, config);
+        if (! configMap.containsKey(id)) configMap.put(id, config);
     }
 
     public Swagger getSwagger(String id) {
-        return swaggerMap.getOrDefault(id, new Swagger());
+        Swagger value = swaggerMap.get(id);
+        if (value != null) {
+            return value;
+        }
+        return new Swagger();
     }
 
     public void putSwagger(String id, Swagger swagger) {
-        swaggerMap.putIfAbsent(id, swagger);
+        if (! swaggerMap.containsKey(id)) swaggerMap.put(id, swagger);
     }
 
 }

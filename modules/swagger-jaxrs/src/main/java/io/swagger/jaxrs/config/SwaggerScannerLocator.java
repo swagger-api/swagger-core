@@ -22,10 +22,14 @@ public class SwaggerScannerLocator {
     }
 
     public Scanner getScanner(String id) {
-        return map.getOrDefault(id, new DefaultJaxrsScanner());
+        Scanner value = map.get(id);
+        if (value != null) {
+            return value;
+        }
+        return new DefaultJaxrsScanner();
     }
 
     public void putScanner(String id, Scanner scanner) {
-        map.putIfAbsent(id, scanner);
+        if (!map.containsKey(id)) map.put(id, scanner);
     }
 }
