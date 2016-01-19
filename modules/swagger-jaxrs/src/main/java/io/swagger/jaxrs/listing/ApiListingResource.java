@@ -55,7 +55,6 @@ public class ApiListingResource {
         Scanner scanner = ctxService.getScanner();
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
-            //swagger = (Swagger) context.getAttribute("swagger");
             swagger = new SwaggerContextService().withServletConfig(sc).getSwagger();
             Set<Class<?>> classes;
             if (scanner instanceof JaxrsScanner) {
@@ -78,7 +77,6 @@ public class ApiListingResource {
                         LOGGER.debug("no configurator");
                     }
                 }
-                //context.setAttribute("swagger", swagger);
                 new SwaggerContextService().withServletConfig(sc).updateSwagger(swagger);
             }
         }
@@ -101,7 +99,6 @@ public class ApiListingResource {
             HttpHeaders headers,
             UriInfo uriInfo) {
         Swagger swagger = new SwaggerContextService().withServletConfig(sc).getSwagger();
-        //Swagger swagger = (Swagger) context.getAttribute("swagger");
         synchronized (ApiListingResource.class) {
             if (SwaggerContextService.isScannerIdInitParamDefined(sc)) {
                 LOGGER.error("process isScannerIdInitParamDefined " + sc.getServletName() + "_" + SwaggerContextService.getScannerIdFromInitParam(sc));
