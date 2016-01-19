@@ -265,8 +265,7 @@ public class SwaggerContextServiceTest {
         new SwaggerContextService().withServletConfig(servletConfig1).initConfig();
         new SwaggerContextService().withServletConfig(servletConfig2).initConfig();
 
-        assertTrue(SwaggerConfigLocator.getInstance().getConfig(CONFIG_ID_DEFAULT) instanceof WebXMLReader);
-        assertTrue(SwaggerConfigLocator.getInstance().getConfig(CONFIG_ID_DEFAULT) instanceof WebXMLReader);
+        assertTrue(WebXMLReader.class.getName().equals(SwaggerConfigLocator.getInstance().getConfig(CONFIG_ID_DEFAULT).getClass().getName()));
 
         verify(servletConfig1, times(1)).getInitParameter(eq(CONFIG_ID_KEY));
         verify(servletConfig2, times(1)).getInitParameter(eq(CONFIG_ID_KEY));
@@ -279,8 +278,7 @@ public class SwaggerContextServiceTest {
         new SwaggerContextService().initConfig();
         new SwaggerContextService().initConfig();
 
-        assertTrue(SwaggerConfigLocator.getInstance().getConfig(CONFIG_ID_DEFAULT) instanceof WebXMLReader);
-        assertTrue(SwaggerConfigLocator.getInstance().getConfig(CONFIG_ID_DEFAULT) instanceof WebXMLReader);
+        assertTrue(WebXMLReader.class.getName().equals(SwaggerConfigLocator.getInstance().getConfig(CONFIG_ID_DEFAULT).getClass().getName()));
 
         verify(servletConfig1, never()).getInitParameter(eq(CONFIG_ID_KEY));
         verify(servletConfig2, never()).getInitParameter(eq(CONFIG_ID_KEY));
