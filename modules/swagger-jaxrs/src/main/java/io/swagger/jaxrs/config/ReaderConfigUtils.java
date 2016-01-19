@@ -33,6 +33,7 @@ public class ReaderConfigUtils {
     }
 
     public static ReaderConfig getReaderConfig(ServletContext context) {
+        if (context == null) return null;
         final Object attr = context.getAttribute(getAttributeName());
         if (attr instanceof ReaderConfig) {
             return (ReaderConfig) attr;
