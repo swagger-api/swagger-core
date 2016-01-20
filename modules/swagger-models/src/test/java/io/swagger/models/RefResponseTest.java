@@ -16,4 +16,11 @@ public class RefResponseTest {
         assertEquals(RefResponse.get$ref(), "#/responses/ref", "The ref value must respect the format");
         assertEquals(RefResponse.getRefFormat(), RefFormat.INTERNAL, "The format must be INTERNAL");
     }
+
+    @Test
+    public void exposeSimpleRef() throws Exception {
+        RefResponse RefResponse = new RefResponse("any-reference");
+
+        assertEquals(RefResponse.getSimpleRef(), "any-reference");
+    }
 }
