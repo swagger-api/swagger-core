@@ -1,5 +1,6 @@
 package io.swagger;
 
+import com.my.project.subresourcesTest.RootResource;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 public class BeanConfigTest {
     private final Set expectedKeys = new HashSet<String>(Arrays.asList("/packageA", "/packageB"));
@@ -47,5 +49,16 @@ public class BeanConfigTest {
         assertNotNull(swagger);
         assertEquals(swagger.getPaths().keySet(), expectedKeys);
         assertEquals(swagger.getSchemes(), expectedSchemas);
+    }
+
+    @Test
+    public void testBeanConfigOnlyScansResourcesAnnoatedWithPaths() throws Exception {
+        BeanConfig bc = new BeanConfig();
+        bc.setResourcePackage("com.my.project.subresourcesTest");
+
+        Set<Class<?>> classes = bc.classes();
+
+        assertEquals(classes.size(), 1, "BeanConfig should only pick up the root resource because it has a @Path annotation at the class level");
+        assertTrue(classes.contains(RootResource.class));
     }
 }
