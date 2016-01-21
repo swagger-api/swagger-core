@@ -1,4 +1,4 @@
-package com.my.project.subresourcesTest;
+package com.subresourcesTest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

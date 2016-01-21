@@ -1,6 +1,6 @@
 package io.swagger;
 
-import com.my.project.subresourcesTest.RootResource;
+import com.subresourcesTest.RootResource;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
@@ -54,7 +54,7 @@ public class BeanConfigTest {
     @Test
     public void testBeanConfigOnlyScansResourcesAnnoatedWithPaths() throws Exception {
         BeanConfig bc = new BeanConfig();
-        bc.setResourcePackage("com.my.project.subresourcesTest");
+        bc.setResourcePackage("com.subresourcesTest");
 
         Set<Class<?>> classes = bc.classes();
 
