@@ -1,12 +1,9 @@
 package io.swagger.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.models.properties.Property;
 import io.swagger.models.refs.GenericRef;
 import io.swagger.models.refs.RefFormat;
 import io.swagger.models.refs.RefType;
-
-import java.util.Map;
 
 /**
  * Created by Helmsdown on 7/8/15.
@@ -32,6 +29,11 @@ public class RefResponse extends Response {
 
     public String get$ref() {
         return genericRef.getRef();
+    }
+
+    @JsonIgnore
+    public String getSimpleRef() {
+        return genericRef.getSimpleRef();
     }
 
     @Override
