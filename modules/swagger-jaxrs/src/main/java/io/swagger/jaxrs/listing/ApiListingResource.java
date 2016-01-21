@@ -3,13 +3,13 @@ package io.swagger.jaxrs.listing;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.config.FilterFactory;
 import io.swagger.config.Scanner;
-import io.swagger.config.ScannerFactory;
 import io.swagger.config.SwaggerConfig;
 import io.swagger.core.filter.SpecFilter;
 import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.JaxrsScanner;
 import io.swagger.jaxrs.config.ReaderConfigUtils;
+import io.swagger.jaxrs.config.SwaggerContextService;
 import io.swagger.models.Swagger;
 import io.swagger.util.Yaml;
 import org.apache.commons.lang3.StringUtils;
@@ -31,27 +31,31 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Path("/")
 public class ApiListingResource {
     private static volatile boolean initialized = false;
+
+    private static volatile ConcurrentMap<String, Boolean> initializedScanner = new ConcurrentHashMap<String, Boolean>();
+    private static volatile ConcurrentMap<String, Boolean> initializedConfig = new ConcurrentHashMap<String, Boolean>();
+
     Logger LOGGER = LoggerFactory.getLogger(ApiListingResource.class);
+
     @Context
     ServletContext context;
 
     protected synchronized Swagger scan(Application app, ServletConfig sc) {
         Swagger swagger = null;
-        Scanner scanner = ScannerFactory.getScanner();
-        LOGGER.debug("using scanner " + scanner);
-
+        SwaggerContextService ctxService = new SwaggerContextService().withServletConfig(sc);
+        Scanner scanner = ctxService.getScanner();
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
-            swagger = (Swagger) context.getAttribute("swagger");
-
+            swagger = new SwaggerContextService().withServletConfig(sc).getSwagger();
             Set<Class<?>> classes;
             if (scanner instanceof JaxrsScanner) {
                 JaxrsScanner jaxrsScanner = (JaxrsScanner) scanner;
@@ -65,18 +69,27 @@ public class ApiListingResource {
                 if (scanner instanceof SwaggerConfig) {
                     swagger = ((SwaggerConfig) scanner).configure(swagger);
                 } else {
-                    SwaggerConfig configurator = (SwaggerConfig) context.getAttribute("reader");
-                    if (configurator != null) {
-                        LOGGER.debug("configuring swagger with " + configurator);
-                        configurator.configure(swagger);
+                    SwaggerConfig swaggerConfig = ctxService.getConfig();
+                    if (swaggerConfig != null) {
+                        LOGGER.debug("configuring swagger with " + swaggerConfig);
+                        swaggerConfig.configure(swagger);
                     } else {
                         LOGGER.debug("no configurator");
                     }
                 }
-                context.setAttribute("swagger", swagger);
+                new SwaggerContextService().withServletConfig(sc).updateSwagger(swagger);
             }
         }
-        initialized = true;
+        if (SwaggerContextService.isScannerIdInitParamDefined(sc)) {
+            LOGGER.error("scan isScannerIdInitParamDefined " + sc.getServletName() + "_" + SwaggerContextService.getScannerIdFromInitParam(sc));
+            initializedScanner.put(sc.getServletName() + "_" + SwaggerContextService.getScannerIdFromInitParam(sc), true);
+        } else if (SwaggerContextService.isConfigIdInitParamDefined(sc)) {
+            LOGGER.error("scan isConfigIdInitParamDefined " + sc.getServletName() + "_" + SwaggerContextService.getConfigIdFromInitParam(sc));
+            initializedConfig.put(sc.getServletName() + "_" + SwaggerContextService.getConfigIdFromInitParam(sc), true);
+        } else {
+            initialized = true;
+        }
+
         return swagger;
     }
 
@@ -85,10 +98,24 @@ public class ApiListingResource {
             ServletConfig sc,
             HttpHeaders headers,
             UriInfo uriInfo) {
-        Swagger swagger = (Swagger) context.getAttribute("swagger");
+        Swagger swagger = new SwaggerContextService().withServletConfig(sc).getSwagger();
         synchronized (ApiListingResource.class) {
-            if (!initialized) {
-                swagger = scan(app, sc);
+            if (SwaggerContextService.isScannerIdInitParamDefined(sc)) {
+                LOGGER.error("process isScannerIdInitParamDefined " + sc.getServletName() + "_" + SwaggerContextService.getScannerIdFromInitParam(sc));
+                if (!initializedScanner.containsKey(sc.getServletName() + "_" + SwaggerContextService.getScannerIdFromInitParam(sc))) {
+                    swagger = scan(app, sc);
+                }
+            } else {
+                LOGGER.error("process isConfigIdInitParamDefined " + sc.getServletName() + "_" + SwaggerContextService.getConfigIdFromInitParam(sc));
+                if (SwaggerContextService.isConfigIdInitParamDefined(sc)) {
+                    if (!initializedConfig.containsKey(sc.getServletName() + "_" + SwaggerContextService.getConfigIdFromInitParam(sc))) {
+                        swagger = scan(app, sc);
+                    }
+                } else {
+                    if (!initialized) {
+                        swagger = scan(app, sc);
+                    }
+                }
             }
         }
         if (swagger != null) {

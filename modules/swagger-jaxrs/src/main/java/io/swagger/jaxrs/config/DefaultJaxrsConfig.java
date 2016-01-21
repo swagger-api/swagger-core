@@ -8,8 +8,9 @@ public class DefaultJaxrsConfig extends HttpServlet {
     public void init(ServletConfig servletConfig) throws javax.servlet.ServletException {
         super.init(servletConfig);
 
-        servletConfig.getServletContext().setAttribute("reader", new WebXMLReader(servletConfig));
-        servletConfig.getServletContext().setAttribute("scanner", new DefaultJaxrsScanner());
+        new SwaggerContextService().withServletConfig(servletConfig).initConfig().initScanner();
+
         ReaderConfigUtils.initReaderConfig(servletConfig);
     }
+
 }

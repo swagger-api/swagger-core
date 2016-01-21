@@ -1,8 +1,6 @@
 package io.swagger.jaxrs.config;
 
 import io.swagger.config.FilterFactory;
-import io.swagger.config.Scanner;
-import io.swagger.config.ScannerFactory;
 import io.swagger.config.SwaggerConfig;
 import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.models.Info;
@@ -25,16 +23,9 @@ public class WebXMLReader implements SwaggerConfig {
     private Logger LOGGER = LoggerFactory.getLogger(WebXMLReader.class);
 
     public WebXMLReader(ServletConfig servletConfig) {
-        Scanner scanner = new DefaultJaxrsScanner();
-        ScannerFactory.setScanner(scanner);
         apiVersion = servletConfig.getInitParameter("api.version");
         if (apiVersion == null) {
             apiVersion = "Swagger Server";
-        }
-
-        String shouldPrettyPrint = servletConfig.getInitParameter("swagger.pretty.print");
-        if (shouldPrettyPrint != null) {
-            scanner.setPrettyPrint(Boolean.parseBoolean(shouldPrettyPrint));
         }
 
         // we support full base path (i.e full URL to the server) or just base path
