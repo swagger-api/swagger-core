@@ -26,6 +26,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class ParameterProcessor {
@@ -73,6 +76,9 @@ public class ParameterProcessor {
             if (helper.getMaxItems() != null) {
                 p.setMaxItems(helper.getMaxItems());
             }
+            if (helper.isRequired() != null) {
+                p.setRequired(true);
+            }
 
             AllowableValues allowableValues = AllowableValuesUtils.create(param.getAllowableValues());
 
@@ -103,13 +109,24 @@ public class ParameterProcessor {
                 }
                 if (allowableValues != null) {
                     args.putAll(allowableValues.asPropertyArguments());
+                } else { // use jsr-303 annotations if present
+                    if (helper.getMin() != null) {
+                        args.put(PropertyBuilder.PropertyId.MINIMUM, helper.getMin());
+                    }
+                    if (helper.getMax() != null) {
+                        args.put(PropertyBuilder.PropertyId.MAXIMUM, helper.getMax());
+                    }
                 }
                 PropertyBuilder.merge(p.getItems(), args);
             } else {
                 if (StringUtils.isNotEmpty(defaultValue)) {
                     p.setDefaultValue(defaultValue);
                 }
-                processAllowedValues(allowableValues, p);
+                if (allowableValues != null) {
+                    processAllowedValues(allowableValues, p);
+                } else {
+                    processJsr303Annotations (helper, p);
+                }
             }
         } else {
             // must be a body param
@@ -194,6 +211,18 @@ public class ParameterProcessor {
         }
     }
 
+    private static void processJsr303Annotations(AnnotationsHelper helper, AbstractSerializableParameter<?> p) {
+        if (helper == null) {
+            return;
+        }
+        if (helper.getMin() != null) {
+            p.setMinimum((Double) helper.getMin().doubleValue());
+        }
+        if (helper.getMax() != null) {
+            p.setMaximum((Double) helper.getMax().doubleValue());
+        }
+    }
+
     /**
      * Wraps either an @ApiParam or and @ApiImplicitParam
      */
@@ -235,6 +264,9 @@ public class ParameterProcessor {
         private String defaultValue;
         private Integer minItems;
         private Integer maxItems;
+        private  Boolean required;
+        private  Long min;
+        private  Long max;
 
         /**
          * Constructs an instance.
@@ -260,6 +292,12 @@ public class ParameterProcessor {
                     final Size size = (Size) item;
                     minItems = size.min();
                     maxItems = size.max();
+                } else if (item instanceof NotNull) {
+                    required = true;
+                } else if (item instanceof Min) {
+                    min = ((Min)item).value();
+                } else if (item instanceof Max) {
+                    max = ((Max)item).value();
                 }
             }
             defaultValue = StringUtils.isNotEmpty(apiParam.getDefaultValue()) ? apiParam.getDefaultValue() : rsDefault;
@@ -315,6 +353,18 @@ public class ParameterProcessor {
 
         public Integer getMaxItems() {
             return maxItems;
+        }
+
+        public Boolean isRequired() {
+            return required;
+        }
+
+        public Long getMax() {
+            return max;
+        }
+
+        public Long getMin() {
+            return min;
         }
     }
 

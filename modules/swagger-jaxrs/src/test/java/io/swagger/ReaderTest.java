@@ -239,6 +239,25 @@ public class ReaderTest {
         assertEquals(name.getDescription(), "The books name");
     }
 
+    @Test(description = "it should scan parameters with Swagger and JSR-303 bean validation annotations")
+    public void scanBeanValidation(){
+
+        Swagger swagger = getSwagger(ResourceWithValidation.class);
+        assertNotNull(swagger);
+
+        QueryParameter par = (QueryParameter) swagger.getPaths().get("/303").getOperations().get(0).getParameters().get(0);
+        assertTrue(par.getRequired());
+        assertEquals(par.getMinimum(), 10D);
+
+        par = (QueryParameter) swagger.getPaths().get("/swagger-and-303").getOperations().get(0).getParameters().get(0);
+        assertTrue(par.getRequired());
+        assertEquals(par.getMinimum(), 7D);
+
+        par = (QueryParameter) swagger.getPaths().get("/swagger").getOperations().get(0).getParameters().get(0);
+        assertTrue(par.getRequired());
+        assertEquals(par.getMinimum(), 7D);
+    }
+
     @Test(description = "scan resource with annotated exception")
     public void scanDeclaredExceptions() {
         Swagger swagger = getSwagger(ResourceWithCustomException.class);
