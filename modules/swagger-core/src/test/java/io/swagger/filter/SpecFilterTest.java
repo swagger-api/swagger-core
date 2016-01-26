@@ -114,6 +114,25 @@ public class SpecFilterTest {
         }
     }
 
+
+    @Test(description = "it should filter away broken reference model properties")
+    public void filterAwayBrokenReferenceModelProperties() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/paramAndResponseRef.json");
+
+        assertNotNull(swagger.getDefinitions().get("Order"));
+
+        final NoOpOperationsFilter noOpfilter = new NoOpOperationsFilter();
+        Swagger filtered = new SpecFilter().filter(swagger, noOpfilter, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("Order"));
+
+        final RemoveUnreferencedDefinitionsFilter refFilter = new RemoveUnreferencedDefinitionsFilter();
+        filtered = new SpecFilter().filter(swagger, refFilter, null, null, null);
+
+        assertNull(filtered.getDefinitions().get("Order"));
+
+    }
+
     @Test(description = "it should filter models where some fields have no properties")
     public void filterNoPropertiesModels() throws IOException {
         final String modelName = "Array";

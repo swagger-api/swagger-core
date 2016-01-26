@@ -4,10 +4,15 @@ import io.swagger.model.ApiDescription;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
+import io.swagger.models.RefModel;
+import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
+import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.Property;
+import io.swagger.models.properties.RefProperty;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class SpecFilter {
     public Swagger filter(Swagger swagger, SwaggerSpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
@@ -80,7 +86,105 @@ public class SpecFilter {
         Map<String, Model> definitions = filterDefinitions(filter, swagger.getDefinitions(), params, cookies, headers);
         clone.setSecurityDefinitions(swagger.getSecurityDefinitions());
         clone.setDefinitions(definitions);
+
+        // isRemovingUnreferencedDefinitions is not defined in SwaggerSpecFilter to avoid breaking compatibility with
+        // existing client filters directly implementing SwaggerSpecFilter.
+        if (filter instanceof AbstractSpecFilter) {
+            if (((AbstractSpecFilter)filter).isRemovingUnreferencedDefinitions()) {
+                clone = removeBrokenReferenceDefinitions (clone);
+            }
+        }
+
         return clone;
+    }
+
+    private Swagger removeBrokenReferenceDefinitions (Swagger swagger) {
+
+        if (swagger.getDefinitions() == null || swagger.getDefinitions().isEmpty()) return swagger;
+
+        Set<String> referencedDefinitions =  new TreeSet<String>();
+
+        if (swagger.getResponses() != null) {
+            for (Response response: swagger.getResponses().values()) {
+                if (response.getSchema() != null && response.getSchema() instanceof RefProperty) {
+                    referencedDefinitions.add(((RefProperty) response.getSchema()).getSimpleRef());
+                }
+            }
+        }
+        if (swagger.getParameters() != null) {
+            for (Parameter p: swagger.getParameters().values()) {
+                if (p instanceof BodyParameter) {
+                    BodyParameter bp = (BodyParameter) p;
+                    if (bp.getSchema() != null && bp.getSchema() instanceof RefModel) {
+                        referencedDefinitions.add(((RefModel) bp.getSchema()).getSimpleRef());
+                    }
+                }
+            }
+        }
+        if (swagger.getPaths() != null) {
+            for (Path path : swagger.getPaths().values()) {
+                if (path.getParameters() != null) {
+                    for (Parameter p: path.getParameters()) {
+                        if (p instanceof BodyParameter) {
+                            BodyParameter bp = (BodyParameter) p;
+                            if (bp.getSchema() != null && bp.getSchema() instanceof RefModel) {
+                                referencedDefinitions.add(((RefModel) bp.getSchema()).getSimpleRef());
+                            }
+                        }
+                    }
+                }
+                if (path.getOperations() != null) {
+                    for (Operation op: path.getOperations()) {
+                        if (op.getResponses() != null) {
+                            for (Response response: op.getResponses().values()) {
+                                if (response.getSchema() != null && response.getSchema() instanceof RefProperty) {
+                                    referencedDefinitions.add(((RefProperty) response.getSchema()).getSimpleRef());
+                                }
+                            }
+                        }
+                        if (op.getParameters() != null) {
+                            for (Parameter p: op.getParameters()) {
+                                if (p instanceof BodyParameter) {
+                                    BodyParameter bp = (BodyParameter) p;
+                                    if (bp.getSchema() != null && bp.getSchema() instanceof RefModel) {
+                                        referencedDefinitions.add(((RefModel) bp.getSchema()).getSimpleRef());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (swagger.getDefinitions() != null) {
+            for (String k: swagger.getDefinitions().keySet()) {
+                Model m = swagger.getDefinitions().get(k);
+                locateNestedReferencedDefinitions (m, referencedDefinitions);
+            }
+            swagger.getDefinitions().keySet().retainAll(referencedDefinitions);
+        }
+        
+        return swagger;
+    }
+
+    private void locateNestedReferencedDefinitions (Model m, Set<String> referencedDefinitions) {
+
+        for (String keyProp: m.getProperties().keySet()) {
+            Property p = m.getProperties().get(keyProp);
+            if (p instanceof ArrayProperty) {
+                ArrayProperty ap = (ArrayProperty) p;
+                if (ap.getItems() instanceof RefProperty) {
+                    RefProperty rp = (RefProperty) ap.getItems();
+                    String simpleRef = rp.getSimpleRef();
+                    referencedDefinitions.add(simpleRef);
+                }
+            } else if (p instanceof RefProperty) {
+                RefProperty rp = (RefProperty) p;
+                String simpleRef = rp.getSimpleRef();
+                referencedDefinitions.add(simpleRef);
+            }
+        }
     }
 
     public Map<String, Model> filterDefinitions(SwaggerSpecFilter filter, Map<String, Model> definitions, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {

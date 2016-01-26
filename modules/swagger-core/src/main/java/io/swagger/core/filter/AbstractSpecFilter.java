@@ -38,4 +38,8 @@ public abstract class AbstractSpecFilter implements SwaggerSpecFilter {
             Map<String, List<String>> headers) {
         return true;
     }
+
+    public boolean isRemovingUnreferencedDefinitions() {
+        return false;
+    }
 }
