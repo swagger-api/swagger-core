@@ -5,17 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.*;
+import java.util.*;
 
 public class ReflectionUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtils.class);
@@ -26,11 +17,30 @@ public class ReflectionUtils {
             return primitive.getKeyClass();
         }
         try {
-            return Class.forName(type);
+            return loadClassByName(type);
         } catch (Exception e) {
             LOGGER.error(String.format("Failed to resolve '%s' into class", type), e);
         }
         return null;
+    }
+
+    /**
+     * Load Class by class name. If class not found in it's Class loader or one of the parent class loaders - delegate to the Thread's ContextClassLoader
+     *
+     * @param className Canonical class name
+     * @return Class definition of className
+     * @throws ClassNotFoundException
+     */
+    public static Class<?> loadClassByName(String className) throws ClassNotFoundException
+    {
+        try
+        {
+            return Class.forName(className);
+        }
+        catch (ClassNotFoundException e)
+        {
+            return Thread.currentThread().getContextClassLoader().loadClass(className);
+        }
     }
 
     /**
