@@ -190,17 +190,13 @@ public class Reader {
         String[] produces = new String[0];
         final Set<Scheme> globalSchemes = EnumSet.noneOf(Scheme.class);
 
-        // only read if allowing hidden apis OR api is not marked as hidden
-        final boolean readable = (api != null && readHidden) || (api != null && !api.hidden());
-        if (readable) {
+        // only generate tag if not a child resource, @Api exists & @Api is not hidden; otherwise use parentTags
+        if (!readHidden && api != null && !api.hidden()) {
             // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
             Set<String> tagStrings = extractTags(api);
             for (String tagString : tagStrings) {
                 Tag tag = new Tag().name(tagString);
                 tags.put(tagString, tag);
-            }
-            if (parentTags != null) {
-                tags.putAll(parentTags);
             }
             for (String tagName : tags.keySet()) {
                 swagger.tag(tags.get(tagName));
@@ -232,10 +228,13 @@ public class Reader {
                     securities.add(security);
                 }
             }
+        } else if (parentTags != null) {
+            tags.putAll(parentTags);
         }
 
-        // allow reading the JAX-RS APIs without @Api annotation
-        if (readable || (api == null && config.isScanAllResources())) {
+        // allow reading the JAX-RS APIs without @Api annotation if scanAllResources is enabled or
+        // readHidden is set by parent resource.
+        if (readHidden || (api != null && !api.hidden()) || (api == null && config.isScanAllResources())) {
             // merge consumes, produces
 
             // look for method-level annotated properties
@@ -553,12 +552,10 @@ public class Reader {
             return type;
         }
 
-        if (config.isScanAllResources()) {
-            // For sub-resources that are not annotated with  @Api, look for any HttpMethods.
-            for (Method m : type.getMethods()) {
-                if (extractOperationMethod(null, m, null) != null) {
-                    return type;
-                }
+        // For sub-resources that are not annotated with  @Api, look for any HttpMethods.
+        for (Method m : type.getMethods()) {
+            if (extractOperationMethod(null, m, null) != null) {
+                return type;
             }
         }
 
