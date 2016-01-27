@@ -16,10 +16,10 @@ import java.util.Arrays;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-public class SubResourceScannerTest {
+public class SubResourceReaderTest {
 
     @Test(description = "scan a resource with subresources")
-    public void scanResourceWithSubresources() {
+    public void readResourceWithSubresources() {
         final Swagger swagger = getSwagger(ResourceWithSubResources.class);
         assertEquals(getOperationId(swagger, "/employees"), "getTest");
         assertEquals(getOperationId(swagger, "/employees/{id}"), "getSubresourceOperation");
@@ -27,7 +27,7 @@ public class SubResourceScannerTest {
     }
 
     @Test(description = "scan another resource with subresources")
-    public void scanAnotherResourceWithSubresources() {
+    public void readAnotherResourceWithSubresources() {
         final Swagger swagger = getSwagger(TestResource.class);
         final Operation get = getGet(swagger, "/test/more/otherStatus");
         assertEquals(get.getOperationId(), "otherStatus");
@@ -42,7 +42,7 @@ public class SubResourceScannerTest {
     }
 
     @Test(description = "scan resource with class-based sub-resources")
-    public void scanResourceWithClassBasedSubresources() {
+    public void readResourceWithClassBasedSubresources() {
         final Swagger swagger = getSwagger(SubResourceHead.class);
         assertEquals(swagger.getPaths().size(), 3);
         assertEquals(getOperationId(swagger, "/head/noPath"), "getGreeting");

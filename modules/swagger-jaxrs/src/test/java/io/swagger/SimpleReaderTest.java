@@ -46,7 +46,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
-public class SimpleScannerTest {
+public class SimpleReaderTest {
 
     private Swagger getSwagger(Class<?> cls) {
         return new Reader(new Swagger()).read(cls);
