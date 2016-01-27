@@ -2,6 +2,7 @@ package io.swagger;
 
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.Reader;
+import io.swagger.jaxrs.config.DefaultReaderConfig;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.Pet;
 import io.swagger.models.Swagger;
@@ -37,7 +38,9 @@ public class ReferenceTest {
 
     @Test(description = "Scan API with operation and response references")
     public void scanAPI() throws IOException {
-        final Swagger swagger = new Reader(new Swagger()).read(ResourceWithReferences.class);
+        DefaultReaderConfig config = new DefaultReaderConfig();
+        config.setScanAllResources(true);
+        final Swagger swagger = new Reader(new Swagger(), config).read(ResourceWithReferences.class);
         final String json = ResourceUtils.loadClassResource(getClass(), "ResourceWithReferences.json");
         SerializationMatchers.assertEqualsToJson(swagger, json);
     }

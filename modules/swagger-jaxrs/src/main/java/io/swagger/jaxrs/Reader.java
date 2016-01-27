@@ -175,12 +175,13 @@ public class Reader {
 
         return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
     }
-    protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
-        return read(cls, parentPath, parentMethod, readHidden, parentConsumes, parentProduces, parentTags, parentParameters, new HashSet<Class<?>>());
+    protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean isSubresource, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
+        return read(cls, parentPath, parentMethod, isSubresource, parentConsumes, parentProduces, parentTags, parentParameters, new HashSet<Class<?>>());
     }
 
-    private Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean readHidden, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters, Set<Class<?>> scannedResources) {
+    private Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean isSubresource, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters, Set<Class<?>> scannedResources) {
         Api api = (Api) cls.getAnnotation(Api.class);
+        boolean hasPathAnnotation = (cls.getAnnotation(javax.ws.rs.Path.class) != null);
         Map<String, SecurityScope> globalScopes = new HashMap<String, SecurityScope>();
 
         Map<String, Tag> tags = new HashMap<String, Tag>();
@@ -190,8 +191,26 @@ public class Reader {
         String[] produces = new String[0];
         final Set<Scheme> globalSchemes = EnumSet.noneOf(Scheme.class);
 
-        // only generate tag if not a child resource, @Api exists & @Api is not hidden; otherwise use parentTags
-        if (!readHidden && api != null && !api.hidden()) {
+        /*
+         *   Only read @Api configuration if:
+         *
+         *   @Api annotated AND
+         *   @Path annotated AND
+         *   @Api (hidden) false
+         *   isSubresource false
+         *
+         *   OR
+         *
+         *   @Api annotated AND
+         *   isSubresource true
+         *   @Api (hidden) false
+         *
+         */
+        final boolean readable = ((api != null && hasPathAnnotation && !api.hidden() && !isSubresource) ||
+                (api != null && !api.hidden() && isSubresource) ||
+                (api != null && !api.hidden() && config.isScanAllResources()));
+
+        if (readable) {
             // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
             Set<String> tagStrings = extractTags(api);
             for (String tagString : tagStrings) {
@@ -228,13 +247,15 @@ public class Reader {
                     securities.add(security);
                 }
             }
-        } else if (parentTags != null) {
-            tags.putAll(parentTags);
         }
 
-        // allow reading the JAX-RS APIs without @Api annotation if scanAllResources is enabled or
-        // readHidden is set by parent resource.
-        if (readHidden || (api != null && !api.hidden()) || (api == null && config.isScanAllResources())) {
+        if (isSubresource) {
+            if (parentTags != null) {
+                tags.putAll(parentTags);
+            }
+        }
+
+        if (readable || (api == null && config.isScanAllResources())) {
             // merge consumes, produces
 
             // look for method-level annotated properties
@@ -319,7 +340,7 @@ public class Reader {
                         }
                         apiProduces = both.toArray(new String[both.size()]);
                     }
-                    final Class<?> subResource = getSubResource(method);
+                    final Class<?> subResource = getSubResourceWithJaxRsSubresourceLocatorSpecs(method);
                     if (subResource != null && !scannedResources.contains(subResource)) {
                         scannedResources.add(subResource);
                         read(subResource, operationPath, httpMethod, true, apiConsumes, apiProduces, tags, operation.getParameters(), scannedResources);
@@ -559,6 +580,26 @@ public class Reader {
             }
         }
 
+        return null;
+    }
+
+    protected Class<?> getSubResourceWithJaxRsSubresourceLocatorSpecs(Method method) {
+        final Class<?> rawType = method.getReturnType();
+        final Class<?> type;
+        if (Class.class.equals(rawType)) {
+            type = getClassArgument(method.getGenericReturnType());
+            if (type == null) {
+                return null;
+            }
+        } else {
+            type = rawType;
+        }
+
+        if (method.getAnnotation(javax.ws.rs.Path.class) != null) {
+            if (extractOperationMethod(null, method, null) == null) {
+                return type;
+            }
+        }
         return null;
     }
 

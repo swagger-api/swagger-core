@@ -2,6 +2,7 @@ package io.swagger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.jaxrs.Reader;
+import io.swagger.jaxrs.config.DefaultReaderConfig;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
@@ -89,6 +90,9 @@ public class ScannerTest {
     }
 
     private Swagger getSwagger(Class<?> clas) {
-        return new Reader(new Swagger()).read(clas);
+        DefaultReaderConfig config = new DefaultReaderConfig();
+        config.setScanAllResources(true);
+        return new Reader(new Swagger(), config).read(clas);
+
     }
 }

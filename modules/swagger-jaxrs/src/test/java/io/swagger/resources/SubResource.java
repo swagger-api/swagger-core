@@ -9,7 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-@Api(hidden = true)
+@Api
 public class SubResource {
     @ApiOperation(value = "gets an object by ID", tags = "Employees", response = Employee.class, responseContainer = "list")
     @GET

@@ -21,8 +21,8 @@ public class SubResourceReaderTest {
     @Test(description = "scan a resource with subresources")
     public void readResourceWithSubresources() {
         final Swagger swagger = getSwagger(ResourceWithSubResources.class);
-        assertEquals(getOperationId(swagger, "/employees"), "getTest");
-        assertEquals(getOperationId(swagger, "/employees/{id}"), "getSubresourceOperation");
+        assertEquals(getOperationId(swagger, "/employees/{id}"), "getAllEmployees");
+        assertEquals(getOperationId(swagger, "/employees/{id}/{id}"), "getSubresourceOperation");
         assertEquals(getOperationId(swagger, "/employees/noPath"), "getGreeting");
     }
 
