@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Api(value = "/basic", description = "Basic resource")
+@Path("/")
 public class NoConsumesProducesResource {
 
     @GET

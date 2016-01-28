@@ -1,7 +1,6 @@
 package io.swagger;
 
 import io.swagger.jaxrs.Reader;
-import io.swagger.jaxrs.config.DefaultReaderConfig;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.Parameter;
@@ -14,14 +13,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 public class HiddenParametersScannerTest {
-    private Swagger swagger;
-
-    public HiddenParametersScannerTest() {
-        DefaultReaderConfig config = new DefaultReaderConfig();
-        config.setScanAllResources(true);
-        swagger = new Reader(new Swagger(), config).read(HiddenParametersResource.class);
-
-    }
+    private final Swagger swagger = new Reader(new Swagger()).read(HiddenParametersResource.class);
 
     @Test
     public void shouldScanMethodWithAllParamsHidden() throws Exception {

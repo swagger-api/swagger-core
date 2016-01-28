@@ -9,6 +9,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 @Api
+@Path("/")
 public class ResourceWithImplicitParams {
 
     @POST
