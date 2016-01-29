@@ -1,11 +1,11 @@
 package io.swagger.servlet.extensions;
 
-import com.google.common.collect.Ordering;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -19,14 +19,17 @@ public class ReaderExtensions {
     }
 
     static {
-        final Ordering<ReaderExtension> ordering = new Ordering<ReaderExtension>() {
-            @Override
-            public int compare(ReaderExtension left, ReaderExtension right) {
-                return Integer.compare(left.getPriority(), right.getPriority());
-            }
-        };
         final List<ReaderExtension> loadedExtensions = new ArrayList<ReaderExtension>();
-        for (ReaderExtension readerExtension : ordering.sortedCopy(ServiceLoader.load(ReaderExtension.class))) {
+        for (ReaderExtension re : ServiceLoader.load(ReaderExtension.class)) {
+            loadedExtensions.add(re);
+        }
+        Collections.sort(loadedExtensions, new Comparator<ReaderExtension>() {
+            @Override
+            public int compare(ReaderExtension o1, ReaderExtension o2) {
+                return o1.getPriority() - o2.getPriority();
+            }
+        });
+        for (ReaderExtension readerExtension : loadedExtensions) {
             LOGGER.debug("adding extension " + readerExtension);
             loadedExtensions.add(readerExtension);
         }

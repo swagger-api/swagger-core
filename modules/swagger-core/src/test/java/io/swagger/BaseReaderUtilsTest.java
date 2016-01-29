@@ -5,14 +5,15 @@ import io.swagger.annotations.Extension;
 import io.swagger.annotations.ExtensionProperty;
 import io.swagger.util.BaseReaderUtils;
 
-import com.google.common.collect.ImmutableMap;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+
 
 public class BaseReaderUtilsTest {
 
@@ -21,18 +22,18 @@ public class BaseReaderUtilsTest {
         return new Object[][]{
                 {"methodOne", Collections.emptyMap()},
                 {"methodTwo", Collections.emptyMap()},
-                {"methodThree", ImmutableMap.of(
-                        "x-test1", "value1",
-                        "x-test2", "value2",
-                        "x-test", ImmutableMap.of("test1", "value1", "test2", "value2"))},
-                {"methodFour", ImmutableMap.of(
-                        "x-test", ImmutableMap.of("test1", "value1", "test2", "value2"),
-                        "x-test1", "value1",
-                        "x-test2", "value2")},
-                {"methodFive", ImmutableMap.of(
-                        "x-test1", ImmutableMap.of("test1", "value1", "test2", "value2"),
-                        "x-test2", "value2")},
-                {"methodSix", ImmutableMap.of("x-test1", "value1", "x-test2", "value2")}
+                {"methodThree", new HashMap<String, Object>() {{
+                        put("x-test1", "value1");
+                        put("x-test2", "value2");
+                        put("x-test", new HashMap<String, String>() {{ put("test1", "value1"); put("test2", "value2");}});}}},
+                {"methodFour", new HashMap<String, Object>() {{
+                        put("x-test", new HashMap<String, String>() {{ put("test1", "value1"); put("test2", "value2");}});
+                        put("x-test1", "value1");
+                        put("x-test2", "value2");}}},
+                {"methodFive", new HashMap<String, Object>() {{
+                        put("x-test1", new HashMap<String, Object>() {{ put("test1", "value1"); put("test2", "value2");}});
+                        put("x-test2", "value2");}}},
+                {"methodSix",  new HashMap<String, Object>() {{put("x-test1", "value1");put("x-test2", "value2");}}}
         };
     }
 

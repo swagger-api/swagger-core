@@ -34,10 +34,6 @@ import io.swagger.util.ReflectionUtils;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Collections2;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,21 +55,19 @@ public class ServletReaderExtension implements ReaderExtension {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServletReaderExtension.class);
     private static final String SUCCESSFUL_OPERATION = "successful operation";
 
-    private static <T> List<T> parseAnnotationValues(String str, Function<String, T> processor) {
-        final List<T> result = new ArrayList<T>();
-        for (String item : Splitter.on(",").trimResults().omitEmptyStrings().split(str)) {
-            result.add(processor.apply(item));
+    private static List<String> parseAnnotationValues(String str) {
+        final List<String> result = new ArrayList<String>();
+        for (String item : str.split(" *, *")) {
+            if (item.isEmpty()) {
+                continue;
+            }
+            result.add(item);
         }
         return result;
     }
 
     private static List<String> parseStringValues(String str) {
-        return parseAnnotationValues(str, new Function<String, String>() {
-            @Override
-            public String apply(String value) {
-                return value;
-            }
-        });
+        return parseAnnotationValues(str);
     }
 
     private static List<Scheme> parseSchemes(String schemes) {
@@ -300,23 +294,21 @@ public class ServletReaderExtension implements ReaderExtension {
 
         final Api apiAnnotation = context.getCls().getAnnotation(Api.class);
         if (apiAnnotation != null) {
-            tags.addAll(Collections2.filter(Arrays.asList(apiAnnotation.tags()), new Predicate<String>() {
-                @Override
-                public boolean apply(String input) {
-                    return StringUtils.isNotBlank(input);
+            for (final String tag : apiAnnotation.tags()) {
+                if (!StringUtils.isNotBlank(tag)) {
+                    tags.add(tag);
                 }
-            }));
+            }
         }
         tags.addAll(context.getParentTags());
 
         final ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
         if (apiOperation != null) {
-            tags.addAll(Collections2.filter(Arrays.asList(apiOperation.tags()), new Predicate<String>() {
-                @Override
-                public boolean apply(String input) {
-                    return StringUtils.isNotBlank(input);
+            for (final String tag : apiOperation.tags()) {
+                if (!StringUtils.isNotBlank(tag)) {
+                    tags.add(tag);
                 }
-            }));
+            }
         }
 
         for (String tag : tags) {

@@ -5,8 +5,6 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import com.google.common.base.Functions;
-import com.google.common.collect.Collections2;
 import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.models.Model;
 import io.swagger.models.properties.Property;
@@ -33,8 +31,10 @@ public class EnumTest extends SwaggerTestBase {
         assertTrue(property instanceof StringProperty);
         final StringProperty strProperty = (StringProperty) property;
         assertNotNull(strProperty.getEnum());
-        final Collection<String> values =
-                new ArrayList<String>(Collections2.transform(Arrays.asList(Currency.values()), Functions.toStringFunction()));
+        final Collection<String> values = new ArrayList<String>();
+        for (final Currency c : Currency.values()) {
+            values.add(c.toString());
+        }
         assertEquals(strProperty.getEnum(), values);
     }
 

@@ -1,9 +1,6 @@
 package io.swagger;
 
 import com.beust.jcommander.internal.Lists;
-import com.google.common.base.Functions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableMap;
 
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.DefaultReaderConfig;
@@ -30,11 +27,11 @@ import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.resources.*;
 
-import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -205,7 +202,11 @@ public class SimpleReaderTest {
         assertEquals(_enum, Arrays.asList("a", "b", "c", "d", "e"));
 
         List<Parameter> checkEnumHandling = getGetParameters(swagger, "/checkEnumHandling/{v0}");
-        List<String> allEnumValues = Lists.newArrayList(Collections2.transform(Arrays.asList(TestEnum.values()), Functions.toStringFunction()));
+        List<String> allEnumValues = new ArrayList<String>() {{
+            for (final TestEnum e : TestEnum.values()) {
+                add(e.toString());
+            }
+        }};
         SerializableParameter v0 = (SerializableParameter) checkEnumHandling.get(0);
         assertEquals(v0.getEnum(), allEnumValues);
         SerializableParameter v1 = (SerializableParameter) checkEnumHandling.get(1);
@@ -475,11 +476,13 @@ public class SimpleReaderTest {
         for (Map.Entry<String, Path> entry : swagger.getPaths().entrySet()) {
             String name = entry.getKey().substring(entry.getKey().lastIndexOf("/") + 1);
             if ("testPrimitiveResponses".equals(name)) {
-                Map<String, String[]> expected = ImmutableMap.of("400", new String[]{"string", "uri"},
-                        "401", new String[]{"string", "url"},
-                        "402", new String[]{"string", "uuid"},
-                        "403", new String[]{"integer", "int64"},
-                        "404", new String[]{"string", null});
+                Map<String, String[]> expected = new HashMap<String, String[]>() {{
+                    put("400", new String[]{"string", "uri"});
+                    put("401", new String[]{"string", "url"});
+                    put("402", new String[]{"string", "uuid"});
+                    put("403", new String[]{"integer", "int64"});
+                    put("404", new String[]{"string", null});
+                }};
                 assertEquals(entry.getValue().getGet().getResponses().size(), expected.size());
                 for (Map.Entry<String, Response> responseEntry : entry.getValue().getGet().getResponses().entrySet()) {
                     String[] expectedProp = expected.get(responseEntry.getKey());

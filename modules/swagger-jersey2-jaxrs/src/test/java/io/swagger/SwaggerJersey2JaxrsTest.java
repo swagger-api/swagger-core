@@ -1,8 +1,5 @@
 package io.swagger;
 
-import com.google.common.base.Functions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
 import io.swagger.jersey.SwaggerJersey2Jaxrs;
@@ -78,7 +75,7 @@ public class SwaggerJersey2JaxrsTest {
                 assertEquals(swaggerParams.size(), 1);
                 HeaderParameter enumParam = (HeaderParameter) swaggerParams.get(0);
                 assertEquals(enumParam.getType(), "string");
-                final Set<String> enumValues = Sets.newHashSet(Collections2.transform(Arrays.asList(TestEnum.values()), Functions.toStringFunction()));
+                final Set<String> enumValues = new HashSet<String>(Collections2.transform(Arrays.asList(TestEnum.values()), Functions.toStringFunction()));
                 assertEquals(enumParam.getEnum(), enumValues);
             } else if (parameterType.equals(Integer.class)) {
                 assertEquals(swaggerParams.size(), 0);

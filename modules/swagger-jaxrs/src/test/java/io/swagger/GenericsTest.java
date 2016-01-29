@@ -1,8 +1,5 @@
 package io.swagger;
 
-import com.google.common.base.Functions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
@@ -34,7 +31,11 @@ import static org.testng.Assert.assertTrue;
 
 public class GenericsTest {
     private final Swagger swagger = new Reader(new Swagger()).read(ResourceWithGenerics.class);
-    private final Set<String> enumValues = Sets.newHashSet(Collections2.transform(Arrays.asList(TestEnum.values()), Functions.toStringFunction()));
+    private final Set<String> enumValues = new HashSet<String>() {{
+        for (final TestEnum e : TestEnum.values()) {
+            add(e.toString());
+        }
+    }};
 
     private void testEnumCollection(QueryParameter p, String name) {
         testCollection(p, name, "string", null);
