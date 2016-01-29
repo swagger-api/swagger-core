@@ -19,4 +19,17 @@ public class BaseIntegerProperty extends AbstractNumericProperty {
     public static boolean isType(String type, String format) {
         return TYPE.equals(type);
     }
+
+    @Override
+    public void setExample(Object example) {
+        if (example instanceof String) {
+            try {
+                this.example = Long.parseLong((String)example);
+            } catch (NumberFormatException e) {
+                this.example = example;
+            }
+        } else {
+            this.example = example;
+        }
+    }
 }

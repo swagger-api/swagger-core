@@ -20,15 +20,24 @@ public class BooleanProperty extends AbstractProperty implements Property {
     }
 
     public BooleanProperty example(Boolean example) {
-        this.setExample(String.valueOf(example));
+        this.example = example;
         return this;
+    }
+
+    @Override
+    public void setExample(Object example) {
+        if (example instanceof String) {
+            this.example = Boolean.parseBoolean((String)example);
+        } else {
+            this.example = example;
+        }
     }
 
     public BooleanProperty _default(String _default) {
         try {
             this.setDefault(Boolean.parseBoolean(_default));
         } catch (Exception e) {
-            //cotinue
+            //continue
         }
         return this;
     }

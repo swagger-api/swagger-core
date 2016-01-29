@@ -11,7 +11,7 @@ public abstract class AbstractProperty implements Property {
     String name;
     String type;
     String format;
-    String example;
+    Object example;
     Xml xml;
     boolean required;
     Integer position;
@@ -44,11 +44,11 @@ public abstract class AbstractProperty implements Property {
         this.name = name;
     }
 
-    public String getExample() {
+    public Object getExample() {
         return example;
     }
 
-    public void setExample(String example) {
+    public void setExample(Object example) {
         this.example = example;
     }
 
