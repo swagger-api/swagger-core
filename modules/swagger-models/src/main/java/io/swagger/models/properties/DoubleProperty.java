@@ -39,7 +39,7 @@ public class DoubleProperty extends DecimalProperty {
     }
 
     public DoubleProperty example(Double example) {
-        this.setExample(String.valueOf(example));
+        this.example = example;
         return this;
     }
 

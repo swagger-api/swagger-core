@@ -39,8 +39,21 @@ public class IntegerProperty extends BaseIntegerProperty {
     }
 
     public IntegerProperty example(Integer example) {
-        this.setExample(String.valueOf(example));
+        this.example = example;
         return this;
+    }
+
+    @Override
+    public void setExample(Object example) {
+        if (example instanceof String) {
+            try {
+                this.example = Integer.parseInt((String)example);
+            } catch (NumberFormatException e) {
+                this.example = example;
+            }
+        } else {
+            this.example = example;
+        }
     }
 
     public IntegerProperty _default(String _default) {

@@ -39,7 +39,7 @@ public class LongProperty extends BaseIntegerProperty {
     }
 
     public LongProperty example(Long example) {
-        this.setExample(String.valueOf(example));
+        this.example = example;
         return this;
     }
 

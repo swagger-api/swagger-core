@@ -40,8 +40,21 @@ public class FloatProperty extends DecimalProperty {
     }
 
     public FloatProperty example(Float example) {
-        this.setExample(String.valueOf(example));
+        this.example = example;
         return this;
+    }
+
+    @Override
+    public void setExample(Object example) {
+        if (example instanceof String) {
+            try {
+                this.example = Float.parseFloat((String)example);
+            } catch (NumberFormatException e) {
+                this.example = example;
+            }
+        } else {
+            this.example = example;
+        }
     }
 
     public FloatProperty _default(String _default) {
