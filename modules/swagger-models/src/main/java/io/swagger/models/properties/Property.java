@@ -32,9 +32,9 @@ public interface Property {
 
     void setRequired(boolean required);
 
-    String getExample();
+    Object getExample();
 
-    void setExample(String example);
+    void setExample(Object example);
 
     Boolean getReadOnly();
 
