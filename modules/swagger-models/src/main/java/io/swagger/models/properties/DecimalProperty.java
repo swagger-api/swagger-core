@@ -39,4 +39,17 @@ public class DecimalProperty extends AbstractNumericProperty {
         this.setVendorExtension(key, obj);
         return this;
     }
+
+    @Override
+    public void setExample(Object example) {
+        if (example instanceof String) {
+            try {
+                this.example = Double.parseDouble((String)example);
+            } catch (NumberFormatException e) {
+                this.example = example;
+            }
+        } else {
+            this.example = example;
+        }
+    }
 }
