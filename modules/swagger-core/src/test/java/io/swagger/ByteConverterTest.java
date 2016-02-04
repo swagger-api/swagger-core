@@ -42,14 +42,14 @@ public class ByteConverterTest {
         Model model = new ModelImpl()
                 .property("byteProperty", new ByteArrayProperty());
 
-        assertEquals(Json.pretty(model), "{\n" +
+        assertEquals(Json.pretty(model), ("{\n" +
                 "  \"properties\" : {\n" +
                 "    \"byteProperty\" : {\n" +
                 "      \"type\" : \"string\",\n" +
                 "      \"format\" : \"byte\"\n" +
                 "    }\n" +
                 "  }\n" +
-                "}");
+                "}").replace("\n", System.getProperty("line.separator")));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class ByteConverterTest {
         Model model = new ModelImpl()
                 .property("byteArray", new ArrayProperty(new BinaryProperty()));
 
-        assertEquals(Json.pretty(model), "{\n" +
+        assertEquals(Json.pretty(model), ("{\n" +
                 "  \"properties\" : {\n" +
                 "    \"byteArray\" : {\n" +
                 "      \"type\" : \"array\",\n" +
@@ -82,7 +82,7 @@ public class ByteConverterTest {
                 "      }\n" +
                 "    }\n" +
                 "  }\n" +
-                "}");
+                "}").replace("\n", System.getProperty("line.separator")));
     }
 
     class ByteConverterModel {

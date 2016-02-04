@@ -38,7 +38,6 @@ import io.swagger.util.AllowableValues;
 import io.swagger.util.AllowableValuesUtils;
 import io.swagger.util.PrimitiveType;
 
-import com.google.common.collect.Iterables;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +53,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -463,8 +463,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         if (PrimitiveType.fromType(propType) != null) {
                             return PrimitiveType.createProperty(propType);
                         } else {
-                            return context.resolveProperty(propType,
-                                    Iterables.toArray(propMember.annotations(), Annotation.class));
+                            final Collection<Annotation> annotations = new ArrayList<Annotation>();
+                            for (final Annotation c : propMember.annotations()) {
+                                annotations.add(c);
+                            }
+                            return context.resolveProperty(propType, annotations.toArray(new Annotation[annotations.size()]));
                         }
                     }
                 }

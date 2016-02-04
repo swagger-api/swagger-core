@@ -1,6 +1,5 @@
 package io.swagger.resources;
 
-import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -25,8 +24,7 @@ public class ResourceWithComplexBodyInputType {
     public String testPostWithBody(@ApiParam(name = "body", value = "input parameters in json form")
                                    List<ClassWithString> items) {
 
-        List<String> result = Lists.newArrayList();
-        return String.format("Given parameters are %s", Arrays.toString(result.toArray(new String[result.size()])));
+        return String.format("Given parameters are %s", Arrays.toString(new String[0]));
     }
 
 }
