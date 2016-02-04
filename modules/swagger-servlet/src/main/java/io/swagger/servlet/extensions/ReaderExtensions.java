@@ -21,6 +21,7 @@ public class ReaderExtensions {
     static {
         final List<ReaderExtension> loadedExtensions = new ArrayList<ReaderExtension>();
         for (ReaderExtension re : ServiceLoader.load(ReaderExtension.class)) {
+            LOGGER.debug("adding extension " + re);
             loadedExtensions.add(re);
         }
         Collections.sort(loadedExtensions, new Comparator<ReaderExtension>() {
@@ -29,10 +30,6 @@ public class ReaderExtensions {
                 return o1.getPriority() - o2.getPriority();
             }
         });
-        for (ReaderExtension readerExtension : loadedExtensions) {
-            LOGGER.debug("adding extension " + readerExtension);
-            loadedExtensions.add(readerExtension);
-        }
         extensions = Collections.unmodifiableList(loadedExtensions);
     }
 }

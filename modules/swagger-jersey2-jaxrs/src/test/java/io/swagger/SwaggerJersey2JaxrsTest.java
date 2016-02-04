@@ -75,7 +75,11 @@ public class SwaggerJersey2JaxrsTest {
                 assertEquals(swaggerParams.size(), 1);
                 HeaderParameter enumParam = (HeaderParameter) swaggerParams.get(0);
                 assertEquals(enumParam.getType(), "string");
-                final Set<String> enumValues = new HashSet<String>(Collections2.transform(Arrays.asList(TestEnum.values()), Functions.toStringFunction()));
+                final Set<String> enumValues = new HashSet<String>() {{
+                    for (final TestEnum e : TestEnum.values()) {
+                        add(e.toString());
+                    }
+                }};
                 assertEquals(enumParam.getEnum(), enumValues);
             } else if (parameterType.equals(Integer.class)) {
                 assertEquals(swaggerParams.size(), 0);

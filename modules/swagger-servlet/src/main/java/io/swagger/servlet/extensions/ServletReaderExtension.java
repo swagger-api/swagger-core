@@ -295,7 +295,7 @@ public class ServletReaderExtension implements ReaderExtension {
         final Api apiAnnotation = context.getCls().getAnnotation(Api.class);
         if (apiAnnotation != null) {
             for (final String tag : apiAnnotation.tags()) {
-                if (!StringUtils.isNotBlank(tag)) {
+                if (StringUtils.isNotBlank(tag)) {
                     tags.add(tag);
                 }
             }
@@ -305,7 +305,7 @@ public class ServletReaderExtension implements ReaderExtension {
         final ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
         if (apiOperation != null) {
             for (final String tag : apiOperation.tags()) {
-                if (!StringUtils.isNotBlank(tag)) {
+                if (StringUtils.isNotBlank(tag)) {
                     tags.add(tag);
                 }
             }
