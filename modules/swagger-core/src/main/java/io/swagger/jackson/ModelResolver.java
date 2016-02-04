@@ -12,10 +12,12 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.google.common.collect.Iterables;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverter;
@@ -37,19 +39,6 @@ import io.swagger.models.properties.UUIDProperty;
 import io.swagger.util.AllowableValues;
 import io.swagger.util.AllowableValuesUtils;
 import io.swagger.util.PrimitiveType;
-
-import com.google.common.collect.Iterables;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -62,6 +51,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
@@ -219,6 +221,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
             model.xml(xml);
         }
+        final XmlAccessorType xmlAccessorTypeAnnotation = beanDesc.getClassAnnotations().get(XmlAccessorType.class);
 
         // see if @JsonIgnoreProperties exist
         Set<String> propertiesToIgnore = new HashSet<String>();
@@ -294,7 +297,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             final AnnotatedMember member = propDef.getPrimaryMember();
 
-            if (member != null && !propertiesToIgnore.contains(propName)) {
+            if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore)) {
                 List<Annotation> annotationList = new ArrayList<Annotation>();
                 for (Annotation a : member.annotations()) {
                     annotationList.add(a);
@@ -436,6 +439,21 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         return model;
+    }
+    
+    protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore) {
+        if (propertiesToIgnore.contains(propName)) {
+            return true;
+        }
+        if (xmlAccessorTypeAnnotation == null) {
+            return false;
+        }
+        if (xmlAccessorTypeAnnotation.value().equals(XmlAccessType.NONE)) {
+            if (!member.hasAnnotation(XmlElement.class)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private enum GeneratorWrapper {
