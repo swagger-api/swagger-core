@@ -51,6 +51,16 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     String configId;
     String contextId;
 
+    private boolean usePathBasedConfig = false;
+
+    public boolean isUsePathBasedConfig() {
+        return usePathBasedConfig;
+    }
+
+    public void setUsePathBasedConfig(boolean usePathBasedConfig) {
+        this.usePathBasedConfig = usePathBasedConfig;
+    }
+
     public String getResourcePackage() {
         return this.resourcePackage;
     }
@@ -209,6 +219,8 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
                 .withServletConfig(servletConfig)
                 .withSwaggerConfig(this)
                 .withScanner(this)
+                .withBasePath(getBasePath())
+                .withPathBasedConfig(isUsePathBasedConfig())
                 .initConfig()
                 .initScanner();
     }
