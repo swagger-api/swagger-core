@@ -14,7 +14,6 @@ import org.testng.annotations.Test;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
-import static io.swagger.jaxrs.config.SwaggerContextService.CONFIG_ID_DEFAULT;
 import static io.swagger.jaxrs.config.SwaggerContextService.CONFIG_ID_KEY;
 import static io.swagger.jaxrs.config.SwaggerContextService.CONFIG_ID_PREFIX;
 import static io.swagger.jaxrs.config.SwaggerContextService.CONTEXT_ID_KEY;
@@ -73,7 +72,6 @@ public class SwaggerContextServiceTest {
 
         when(servletConfig1.getInitParameter(CONFIG_ID_KEY)).thenReturn("test.1");
         when(servletConfig2.getInitParameter(CONFIG_ID_KEY)).thenReturn("test.2");
-
     }
 
     void stubWithContextInitParam() {

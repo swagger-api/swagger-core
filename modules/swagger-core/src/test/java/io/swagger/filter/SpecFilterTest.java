@@ -1,5 +1,6 @@
 package io.swagger.filter;
 
+import static java.util.Arrays.asList;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
@@ -18,8 +19,6 @@ import io.swagger.models.Tag;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.util.Json;
 import io.swagger.util.ResourceUtils;
-
-import com.google.common.collect.Sets;
 
 import org.testng.annotations.Test;
 
@@ -154,7 +153,7 @@ public class SpecFilterTest {
         final Swagger swagger = getSwagger("specFiles/petstore.json");
         final NoOpOperationsFilter filter = new NoOpOperationsFilter();
         final Swagger filtered = new SpecFilter().filter(swagger, filter, null, null, null);
-        assertEquals(getTagNames(filtered), Sets.newHashSet("pet", "user", "store"));
+        assertEquals(getTagNames(filtered), new HashSet<String>(asList("pet", "user", "store")));
     }
 
     @Test(description = "it should not contain user tags in the top level Swagger object")
@@ -162,7 +161,7 @@ public class SpecFilterTest {
         final Swagger swagger = getSwagger("specFiles/petstore.json");
         final NoUserOperationsFilter filter = new NoUserOperationsFilter();
         final Swagger filtered = new SpecFilter().filter(swagger, filter, null, null, null);
-        assertEquals(getTagNames(filtered), Sets.newHashSet("pet", "store"));
+        assertEquals(getTagNames(filtered), new HashSet<String>(asList("pet", "store")));
     }
 
     @Test(description = "it should filter with null definitions")
