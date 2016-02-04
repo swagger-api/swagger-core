@@ -1,5 +1,6 @@
 package io.swagger;
 
+import static java.util.Arrays.asList;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -44,8 +45,6 @@ import io.swagger.models.properties.StringProperty;
 import io.swagger.util.Json;
 import io.swagger.util.ResourceUtils;
 
-import com.google.common.collect.ImmutableSet;
-
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -54,6 +53,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
@@ -280,8 +280,8 @@ public class ModelConverterTest {
     @Test(description = "it should scan a model per #1155")
     public void scanModel() {
         final Map<String, Model> model = read(Model1155.class);
-        assertEquals(model.get("Model1155").getProperties().keySet(), ImmutableSet.of("valid", "value", "is", "get",
-                "isA", "getA", "is_persistent", "gettersAndHaters"));
+        assertEquals(model.get("Model1155").getProperties().keySet(), new HashSet<String>(asList("valid", "value", "is", "get",
+                "isA", "getA", "is_persistent", "gettersAndHaters")));
     }
 
     @Test(description = "it should scan a model with numbers")

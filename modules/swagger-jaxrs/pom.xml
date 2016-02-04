@@ -100,10 +100,6 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.jaxrs</groupId>

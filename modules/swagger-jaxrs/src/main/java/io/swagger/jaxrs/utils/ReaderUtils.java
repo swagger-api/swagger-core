@@ -7,9 +7,6 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.ReflectionUtils;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -113,7 +110,12 @@ public class ReaderUtils {
         final Set<String> result = new LinkedHashSet<String>();
 
         for (String string : strings) {
-            Iterables.addAll(result, Splitter.on(",").trimResults().omitEmptyStrings().split(string));
+            for (String split : string.split(" *, *")) {
+                if (split.isEmpty()) {
+                    continue;
+                }
+                result.add(split);
+            }
         }
 
         return result.toArray(new String[result.size()]);

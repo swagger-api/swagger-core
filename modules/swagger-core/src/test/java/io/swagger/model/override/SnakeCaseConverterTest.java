@@ -9,18 +9,19 @@ import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 
-import com.google.common.collect.Sets;
-
 import org.testng.annotations.Test;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import static java.util.Arrays.asList;
 
 public class SnakeCaseConverterTest {
 
@@ -70,7 +71,7 @@ public class SnakeCaseConverterTest {
      * simple converter to rename models and field names into snake_case
      */
     class SnakeCaseConverter implements ModelConverter {
-        final Set<String> primitives = Sets.newHashSet("string", "integer", "number", "boolean", "long");
+        final Set<String> primitives = new HashSet<String>(asList("string", "integer", "number", "boolean", "long"));
 
         @Override
         public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {
