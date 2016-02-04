@@ -90,7 +90,7 @@ public class WebXMLReader implements SwaggerConfig {
         }
 
         final Enumeration initParameterNames = servletConfig.getInitParameterNames();
-        while (initParameterNames.hasMoreElements()) {
+        while (initParameterNames != null && initParameterNames.hasMoreElements()) {
             final String name = String.valueOf(initParameterNames.nextElement());
             // skip already handled params
             if ("api.version".equals(name) || "swagger.api.host".equals(name) || "swagger.api.schemes".equals(name)
