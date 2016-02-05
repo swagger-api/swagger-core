@@ -4,20 +4,46 @@ import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.DefaultReaderConfig;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
-import io.swagger.models.parameters.*;
-import io.swagger.resources.*;
-import org.testng.annotations.Test;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import io.swagger.models.parameters.BodyParameter;
+import io.swagger.models.parameters.FormParameter;
+import io.swagger.models.parameters.HeaderParameter;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.PathParameter;
+import io.swagger.models.parameters.QueryParameter;
+import io.swagger.resources.AnnotatedInterfaceImpl;
+import io.swagger.resources.ApiConsumesProducesResource;
+import io.swagger.resources.BookResource;
+import io.swagger.resources.BothConsumesProducesResource;
+import io.swagger.resources.DescendantResource;
+import io.swagger.resources.NoConsumesProducesResource;
+import io.swagger.resources.ResourceWithCustomException;
+import io.swagger.resources.ResourceWithDeprecatedMethod;
+import io.swagger.resources.ResourceWithEmptyPath;
+import io.swagger.resources.ResourceWithImplicitFileParam;
+import io.swagger.resources.ResourceWithImplicitParams;
+import io.swagger.resources.ResourceWithKnownInjections;
+import io.swagger.resources.ResourceWithValidation;
+import io.swagger.resources.RsConsumesProducesResource;
+import io.swagger.resources.SimpleMethods;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.testng.Assert.*;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.core.MediaType;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import org.testng.annotations.Test;
 
 public class ReaderTest {
+
     private static final String APPLICATION_XML = "application/xml";
     private static final String TEXT_PLAIN = "text/plain";
     private static final String TEXT_HTML = "text/html";
@@ -41,10 +67,14 @@ public class ReaderTest {
         assertEquals(getGet(swagger, "/{id}").getProduces().get(0), MediaType.APPLICATION_ATOM_XML);
         assertEquals(getGet(swagger, "/{id}/value").getConsumes().get(0), APPLICATION_XML);
         assertEquals(getGet(swagger, "/{id}/value").getProduces().get(0), TEXT_PLAIN);
+        
         assertEquals(getPut(swagger, "/{id}").getConsumes().get(0), MediaType.APPLICATION_JSON);
         assertEquals(getPut(swagger, "/{id}").getProduces().get(0), TEXT_PLAIN);
         assertEquals(getPut(swagger, "/{id}/value").getConsumes().get(0), APPLICATION_XML);
         assertEquals(getPut(swagger, "/{id}/value").getProduces().get(0), TEXT_PLAIN);
+        
+        assertEquals(getPost(swagger, "/{id}").getConsumes().get(0), MediaType.APPLICATION_JSON);
+        assertEquals(getPost(swagger, "/{id}").getProduces().get(0), TEXT_PLAIN);
     }
 
     @Test(description = "scan consumes and produces values with rs class level annotations")
@@ -58,8 +88,8 @@ public class ReaderTest {
         assertEquals(getPut(swagger, "/{id}").getProduces().get(0), TEXT_PLAIN);
         assertEquals(getPut(swagger, "/{id}/value").getConsumes().get(0), APPLICATION_XML);
         assertEquals(getPut(swagger, "/{id}/value").getProduces().get(0), TEXT_PLAIN);
-        assertEquals(getPut(swagger, "/split").getProduces(), Arrays.asList("image/jpeg",  "image/gif", "image/png"));
-        assertEquals(getPut(swagger, "/split").getConsumes(), Arrays.asList("image/jpeg",  "image/gif", "image/png"));
+        assertEquals(getPut(swagger, "/split").getProduces(), Arrays.asList("image/jpeg", "image/gif", "image/png"));
+        assertEquals(getPut(swagger, "/split").getConsumes(), Arrays.asList("image/jpeg", "image/gif", "image/png"));
     }
 
     @Test(description = "scan consumes and produces values with both class level annotations")
@@ -212,11 +242,11 @@ public class ReaderTest {
     }
 
     @Test(description = "it should scan parameters from base resource class")
-    public void scanParametersFromBaseResource(){
+    public void scanParametersFromBaseResource() {
         Swagger swagger = getSwagger(BookResource.class);
         assertNotNull(swagger);
 
-        List<Parameter> parameters =  getGet(swagger, "/{id}/v1/books/{name}").getParameters();
+        List<Parameter> parameters = getGet(swagger, "/{id}/v1/books/{name}").getParameters();
         assertEquals(parameters.size(), 4);
 
         Parameter description = parameters.get(0);
@@ -241,7 +271,7 @@ public class ReaderTest {
     }
 
     @Test(description = "it should scan parameters with Swagger and JSR-303 bean validation annotations")
-    public void scanBeanValidation(){
+    public void scanBeanValidation() {
 
         Swagger swagger = getSwagger(ResourceWithValidation.class);
         assertNotNull(swagger);
@@ -296,5 +326,9 @@ public class ReaderTest {
 
     private Operation getPut(Swagger swagger, String path) {
         return swagger.getPath(path).getPut();
+    }
+
+    private Operation getPost(Swagger swagger, String path) {
+        return swagger.getPath(path).getPost();
     }
 }
