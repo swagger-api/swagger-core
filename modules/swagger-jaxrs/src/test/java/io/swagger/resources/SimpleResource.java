@@ -20,6 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+@Path("/")
 @Api(value = "/basic", description = "Basic resource")
 @Produces({"application/xml"})
 public class SimpleResource {

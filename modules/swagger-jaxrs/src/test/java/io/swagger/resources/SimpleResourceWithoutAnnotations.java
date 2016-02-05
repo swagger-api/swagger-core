@@ -16,6 +16,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 @Produces({"application/xml"})
+@Path("/")
 public class SimpleResourceWithoutAnnotations {
     @GET
     @Path("/{id}")

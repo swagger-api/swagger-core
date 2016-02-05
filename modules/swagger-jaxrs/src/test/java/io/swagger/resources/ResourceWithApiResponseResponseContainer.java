@@ -16,6 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 @Api
+@Path("/")
 public class ResourceWithApiResponseResponseContainer {
     @GET
     @Path("/{id}")
