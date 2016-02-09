@@ -9,6 +9,7 @@ import javax.ws.rs.QueryParam;
 import java.util.ArrayList;
 
 @Api("/external/info/")
+@Path("/")
 public class ClassWithExamplePost {
     @ApiOperation(value = "test")
     @POST

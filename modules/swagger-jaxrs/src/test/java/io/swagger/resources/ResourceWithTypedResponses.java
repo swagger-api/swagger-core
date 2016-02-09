@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Api(value = "/root")
+@Path("/")
 public class ResourceWithTypedResponses {
 
     @GET

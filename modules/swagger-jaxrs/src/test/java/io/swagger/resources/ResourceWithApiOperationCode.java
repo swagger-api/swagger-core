@@ -14,6 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 @Api
+@Path("/")
 public class ResourceWithApiOperationCode {
     @GET
     @Path("/{id}")

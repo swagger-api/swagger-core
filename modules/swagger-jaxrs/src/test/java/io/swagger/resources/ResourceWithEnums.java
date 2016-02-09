@@ -22,6 +22,7 @@ import java.util.Collection;
 
 @Api(value = "/basic", description = "Basic resource")
 @Produces({"application/xml"})
+@Path("/")
 public class ResourceWithEnums {
     @GET
     @Path("/{id}")

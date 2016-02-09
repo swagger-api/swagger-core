@@ -10,6 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 @Api(value = "/external/info/")
+@Path("/")
 public class RegexPathParamResource {
     @GET
     @ApiOperation(value = "this", tags = "tag1")

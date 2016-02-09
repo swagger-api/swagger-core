@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 
 @Api(value = "/basic", description = "Basic resource")
 @Produces({"application/xml"})
+@Path("/")
 public class ResourceWithRanges {
     @GET
     @Path("/{id}")

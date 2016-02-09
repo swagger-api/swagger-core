@@ -16,6 +16,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 @Api(value = "/basic", description = "Basic resource")
+@Path("/")
 public class ResourceWithVoidReturns {
     @GET
     @Path("/{id}")

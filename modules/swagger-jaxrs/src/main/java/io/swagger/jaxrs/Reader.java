@@ -176,8 +176,6 @@ public class Reader {
     }
 
     private Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean isSubresource, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters, Set<Class<?>> scannedResources) {
-        Api api = (Api) cls.getAnnotation(Api.class);
-        boolean hasPathAnnotation = (cls.getAnnotation(javax.ws.rs.Path.class) != null);
         Map<String, SecurityScope> globalScopes = new HashMap<String, SecurityScope>();
 
         Map<String, Tag> tags = new HashMap<String, Tag>();
@@ -187,26 +185,26 @@ public class Reader {
         String[] produces = new String[0];
         final Set<Scheme> globalSchemes = EnumSet.noneOf(Scheme.class);
 
-        /*
-         *   Only read @Api configuration if:
-         *
-         *   @Api annotated AND
-         *   @Path annotated AND
-         *   @Api (hidden) false
-         *   isSubresource false
-         *
-         *   OR
-         *
-         *   @Api annotated AND
-         *   isSubresource true
-         *   @Api (hidden) false
-         *
-         */
-        final boolean readable = ((api != null && hasPathAnnotation && !api.hidden() && !isSubresource) ||
-                (api != null && !api.hidden() && isSubresource) ||
-                (api != null && !api.hidden() && config.isScanAllResources()));
+        Api api = (Api) cls.getAnnotation(Api.class);
 
-        if (readable) {
+        boolean hasPathAnnotation = (ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class) != null);
+        boolean hasApiAnnotation = (api != null);
+        boolean isApiHidden = hasApiAnnotation && api.hidden();
+
+        // class readable only if annotated with @Path or isSubresource, or and @Api not hidden
+        boolean classReadable = (hasPathAnnotation || isSubresource) && !isApiHidden ;
+
+        // readable if classReadable or (scanAllResources true in config and @Api not hidden)
+        boolean readable = classReadable || (!isApiHidden && config.isScanAllResources());
+
+        if (!readable) {
+            return swagger;
+        }
+
+        // api readable only if @Api present; cannot be hidden because checked in classReadable.
+        boolean apiReadable =  hasApiAnnotation;
+
+        if (apiReadable) {
             // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
             Set<String> tagStrings = extractTags(api);
             for (String tagString : tagStrings) {
@@ -245,13 +243,13 @@ public class Reader {
             }
         }
 
-        if (isSubresource) {
-            if (parentTags != null) {
-                tags.putAll(parentTags);
-            }
-        }
+        if (readable) {
 
-        if (readable || (api == null && config.isScanAllResources())) {
+            if (isSubresource) {
+                if (parentTags != null) {
+                    tags.putAll(parentTags);
+                }
+            }
             // merge consumes, produces
 
             // look for method-level annotated properties

@@ -13,6 +13,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 @Api(value = "/basic")
+@Path("/")
 public class ResourceWithReferences {
 
     @GET

@@ -17,6 +17,7 @@ import io.swagger.models.Sample;
 
 @Api(value = "/basicWithException", description = "Basic resource")
 @Produces({"application/xml"})
+@Path("/")
 public class ResourceWithCustomException {
 
     @GET
