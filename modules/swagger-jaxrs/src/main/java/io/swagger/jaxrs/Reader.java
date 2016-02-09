@@ -1,19 +1,15 @@
 /**
  * Copyright 2016 SmartBear Software
  * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations
+ * under the License.
  */
-
 package io.swagger.jaxrs;
 
 import com.fasterxml.jackson.databind.JavaType;
@@ -84,6 +80,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Reader {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
     private static final String SUCCESSFUL_OPERATION = "successful operation";
     private static final String PATH_DELIMITER = "/";
@@ -101,14 +98,12 @@ public class Reader {
     }
 
     /**
-     * Scans a set of classes for both ReaderListeners and Swagger annotations. All found listeners will
-     * be instantiated before any of the classes are scanned for Swagger annotations - so they can be invoked
-     * accordingly.
+     * Scans a set of classes for both ReaderListeners and Swagger annotations. All found listeners will be instantiated before any of the classes are
+     * scanned for Swagger annotations - so they can be invoked accordingly.
      *
      * @param classes a set of classes to scan
      * @return the generated Swagger definition
      */
-
     public Swagger read(Set<Class<?>> classes) {
 
         Map<Class<?>, ReaderListener> listeners = new HashMap<Class<?>, ReaderListener>();
@@ -161,7 +156,6 @@ public class Reader {
     /**
      * Scans a single class for Swagger annotations - does not invoke ReaderListeners
      */
-
     public Swagger read(Class<?> cls) {
 
         SwaggerDefinition swaggerDefinition = cls.getAnnotation(SwaggerDefinition.class);
@@ -171,6 +165,7 @@ public class Reader {
 
         return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
     }
+
     protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean isSubresource, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
         return read(cls, parentPath, parentMethod, isSubresource, parentConsumes, parentProduces, parentTags, parentParameters, new HashSet<Class<?>>());
     }
@@ -192,7 +187,7 @@ public class Reader {
         boolean isApiHidden = hasApiAnnotation && api.hidden();
 
         // class readable only if annotated with @Path or isSubresource, or and @Api not hidden
-        boolean classReadable = (hasPathAnnotation || isSubresource) && !isApiHidden ;
+        boolean classReadable = (hasPathAnnotation || isSubresource) && !isApiHidden;
 
         // readable if classReadable or (scanAllResources true in config and @Api not hidden)
         boolean readable = classReadable || (!isApiHidden && config.isScanAllResources());
@@ -202,7 +197,7 @@ public class Reader {
         }
 
         // api readable only if @Api present; cannot be hidden because checked in classReadable.
-        boolean apiReadable =  hasApiAnnotation;
+        boolean apiReadable = hasApiAnnotation;
 
         if (apiReadable) {
             // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
@@ -217,13 +212,9 @@ public class Reader {
 
             if (!api.produces().isEmpty()) {
                 produces = new String[]{api.produces()};
-            } else if (cls.getAnnotation(Produces.class) != null) {
-                produces = ReaderUtils.splitContentValues(cls.getAnnotation(Produces.class).value());
             }
             if (!api.consumes().isEmpty()) {
                 consumes = new String[]{api.consumes()};
-            } else if (cls.getAnnotation(Consumes.class) != null) {
-                consumes = ReaderUtils.splitContentValues(cls.getAnnotation(Consumes.class).value());
             }
             globalSchemes.addAll(parseSchemes(api.protocols()));
             Authorization[] authorizations = api.authorizations();
@@ -253,9 +244,7 @@ public class Reader {
             // merge consumes, produces
 
             // look for method-level annotated properties
-
             // handle sub-resources by looking at return type
-
             final List<Parameter> globalParameters = new ArrayList<Parameter>();
 
             // look for constructor-level annotated properties
@@ -285,7 +274,7 @@ public class Reader {
                     String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
                     Operation operation = null;
-                    if(apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) {
+                    if (apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) {
                         operation = parseMethod(cls, method, globalParameters);
                     }
                     if (operation == null) {
@@ -315,6 +304,10 @@ public class Reader {
                         }
                     }
 
+                    if (consumes.length == 0 && cls.getAnnotation(Consumes.class) != null) {
+                        consumes = ReaderUtils.splitContentValues(cls.getAnnotation(Consumes.class).value());
+                    }
+
                     String[] apiConsumes = consumes;
                     if (parentConsumes != null) {
                         Set<String> both = new HashSet<String>(Arrays.asList(apiConsumes));
@@ -323,6 +316,10 @@ public class Reader {
                             both.addAll(new HashSet<String>(operation.getConsumes()));
                         }
                         apiConsumes = both.toArray(new String[both.size()]);
+                    }
+
+                    if (produces.length == 0 && cls.getAnnotation(Produces.class) != null) {
+                        produces = ReaderUtils.splitContentValues(cls.getAnnotation(Produces.class).value());
                     }
 
                     String[] apiProduces = produces;
@@ -988,32 +985,33 @@ public class Reader {
     }
 
     enum ContainerWrapper {
+
         LIST("list") {
-            @Override
-            protected Property doWrap(Property property) {
-                return new ArrayProperty(property);
-            }
-        },
+                    @Override
+                    protected Property doWrap(Property property) {
+                        return new ArrayProperty(property);
+                    }
+                },
         ARRAY("array") {
-            @Override
-            protected Property doWrap(Property property) {
-                return new ArrayProperty(property);
-            }
-        },
+                    @Override
+                    protected Property doWrap(Property property) {
+                        return new ArrayProperty(property);
+                    }
+                },
         MAP("map") {
-            @Override
-            protected Property doWrap(Property property) {
-                return new MapProperty(property);
-            }
-        },
+                    @Override
+                    protected Property doWrap(Property property) {
+                        return new MapProperty(property);
+                    }
+                },
         SET("set") {
-            @Override
-            protected Property doWrap(Property property) {
-                ArrayProperty arrayProperty = new ArrayProperty(property);
-                arrayProperty.setUniqueItems(true);
-                return arrayProperty;
-            }
-        };
+                    @Override
+                    protected Property doWrap(Property property) {
+                        ArrayProperty arrayProperty = new ArrayProperty(property);
+                        arrayProperty.setUniqueItems(true);
+                        return arrayProperty;
+                    }
+                };
 
         private final String container;
 

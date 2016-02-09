@@ -14,6 +14,7 @@ import io.swagger.resources.ApiConsumesProducesResource;
 import io.swagger.resources.BookResource;
 import io.swagger.resources.BothConsumesProducesResource;
 import io.swagger.resources.DescendantResource;
+import io.swagger.resources.NoApiConsumesProducesClassLevelAnnotations;
 import io.swagger.resources.NoConsumesProducesResource;
 import io.swagger.resources.ResourceWithCustomException;
 import io.swagger.resources.ResourceWithDeprecatedMethod;
@@ -66,14 +67,21 @@ public class ReaderTest {
         assertEquals(getGet(swagger, "/{id}").getProduces().get(0), MediaType.APPLICATION_ATOM_XML);
         assertEquals(getGet(swagger, "/{id}/value").getConsumes().get(0), APPLICATION_XML);
         assertEquals(getGet(swagger, "/{id}/value").getProduces().get(0), TEXT_PLAIN);
-        
+
         assertEquals(getPut(swagger, "/{id}").getConsumes().get(0), MediaType.APPLICATION_JSON);
         assertEquals(getPut(swagger, "/{id}").getProduces().get(0), TEXT_PLAIN);
         assertEquals(getPut(swagger, "/{id}/value").getConsumes().get(0), APPLICATION_XML);
         assertEquals(getPut(swagger, "/{id}/value").getProduces().get(0), TEXT_PLAIN);
-        
+
         assertEquals(getPost(swagger, "/{id}").getConsumes().get(0), MediaType.APPLICATION_JSON);
         assertEquals(getPost(swagger, "/{id}").getProduces().get(0), TEXT_PLAIN);
+    }
+
+    @Test(description = "scan consumes and produces class level annotations without api class level annotation")
+    public void scanNoApiConsumesProducesClassLevelAnnotations() {
+        Swagger swagger = getSwagger(NoApiConsumesProducesClassLevelAnnotations.class);
+        assertEquals(getGet(swagger, "/{id}").getConsumes().get(0), "application/yaml");
+        assertEquals(getGet(swagger, "/{id}").getProduces().get(0), MediaType.APPLICATION_XML);
     }
 
     @Test(description = "scan consumes and produces values with rs class level annotations")
