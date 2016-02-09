@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 @Api
+@Path("/")
 public class ResourceWithDeprecatedMethod {
 
     @Deprecated

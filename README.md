@@ -32,14 +32,14 @@ The OpenAPI Specification has undergone 3 revisions since initial creation in 20
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-1.5.7-SNAPSHOT            |              | 2.0           | [master](https://github.com/swagger-api/swagger-core) | Under Development
-1.5.6 (**current stable**)| 2016-01-06   | 2.0           | [tag v1.5.6](https://github.com/swagger-api/swagger-core/tree/v1.5.6) | Supported
+1.5.8-SNAPSHOT            |              | 2.0           | [master](https://github.com/swagger-api/swagger-core) | Under Development
+1.5.7 (**current stable**)| 2016-02-04   | 2.0           | [tag v1.5.7](https://github.com/swagger-api/swagger-core/tree/v1.5.7) | Supported
 1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Supported
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4) | Deprecated
 1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0) | Deprecated
 
 ## Where is Scala support?
-To allow independent development, scala support has been moved into a separate project.  See the [swagger-scala-module](https://github.com/swagger-api/swagger-scala-module) for details.  Play! framework support is moving outside the swagger-core project as well.
+To allow independent development, scala support has been moved into a separate project.  See the [swagger-scala-module](https://github.com/swagger-api/swagger-scala-module) for details.  Play! framework support has moved to [swagger-play](https://github.com/swagger-api/swagger-play).
 
 ## Overview
 This is a project to build the swagger-core library, which is required for the Swagger implementation of the OpenAPI Spec. 

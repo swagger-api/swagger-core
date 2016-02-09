@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Api(value = "/basic", description = "Basic resource")
+@Path("/")
 public class ResourceWithMapReturnValue {
     @GET
     @Path("/{id}")

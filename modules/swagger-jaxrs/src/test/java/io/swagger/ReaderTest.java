@@ -1,7 +1,6 @@
 package io.swagger;
 
 import io.swagger.jaxrs.Reader;
-import io.swagger.jaxrs.config.DefaultReaderConfig;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.*;
@@ -143,7 +142,7 @@ public class ReaderTest {
 
     @Test(description = "scan annotation from interface, issue#1427")
     public void scanInterfaceTest() {
-        final Swagger swagger = getSwagger(AnnotatedInterfaceImpl.class);
+        final Swagger swagger = new Reader(new Swagger()).read(AnnotatedInterfaceImpl.class);
         assertNotNull(swagger);
         assertNotNull(swagger.getPath("/v1/users/{id}").getGet());
     }
@@ -285,9 +284,7 @@ public class ReaderTest {
     }
 
     private Swagger getSwagger(Class<?> cls) {
-        DefaultReaderConfig config = new DefaultReaderConfig();
-        config.setScanAllResources(true);
-        return new Reader(new Swagger(), config).read(cls);
+        return new Reader(new Swagger()).read(cls);
     }
 
     private Operation getGet(Swagger swagger, String path) {

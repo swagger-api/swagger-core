@@ -9,6 +9,7 @@ import javax.ws.rs.Path;
 import java.util.List;
 
 @Api("/basic")
+@Path("/")
 public class ResourceWithInnerClass {
 
     @GET
