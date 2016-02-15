@@ -37,7 +37,7 @@ public abstract class BaseApiListingResource {
     private static Logger LOGGER = LoggerFactory.getLogger(BaseApiListingResource.class);
 
 
-    protected static synchronized Swagger scan(Application app, ServletContext context, ServletConfig sc) {
+    private static synchronized Swagger scan(Application app, ServletContext context, ServletConfig sc) {
         Swagger swagger = null;
         SwaggerContextService ctxService = new SwaggerContextService().withServletConfig(sc);
         Scanner scanner = ctxService.getScanner();
@@ -153,7 +153,7 @@ public abstract class BaseApiListingResource {
         }
     }
 
-    protected static Map<String, List<String>> getQueryParams(MultivaluedMap<String, String> params) {
+    private static Map<String, List<String>> getQueryParams(MultivaluedMap<String, String> params) {
         Map<String, List<String>> output = new HashMap<String, List<String>>();
         if (params != null) {
             for (String key : params.keySet()) {
@@ -164,7 +164,7 @@ public abstract class BaseApiListingResource {
         return output;
     }
 
-    protected static Map<String, String> getCookies(HttpHeaders headers) {
+    private static Map<String, String> getCookies(HttpHeaders headers) {
         Map<String, String> output = new HashMap<String, String>();
         if (headers != null) {
             for (String key : headers.getCookies().keySet()) {
@@ -175,7 +175,7 @@ public abstract class BaseApiListingResource {
         return output;
     }
 
-    protected static Map<String, List<String>> getHeaders(HttpHeaders headers) {
+    private static Map<String, List<String>> getHeaders(HttpHeaders headers) {
         Map<String, List<String>> output = new HashMap<String, List<String>>();
         if (headers != null) {
             for (String key : headers.getRequestHeaders().keySet()) {
