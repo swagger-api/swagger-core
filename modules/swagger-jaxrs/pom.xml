@@ -139,6 +139,6 @@
     <properties>
         <coverage.complexity.minimum>0.50</coverage.complexity.minimum>
         <coverage.line.minimum>0.00</coverage.line.minimum>
-        <coverage.missed.classes>3</coverage.missed.classes>
+        <coverage.missed.classes>4</coverage.missed.classes>
     </properties>
 </project>
