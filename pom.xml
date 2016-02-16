@@ -272,7 +272,7 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.mortbay.jetty</groupId>
+                    <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
                     <version>${jetty-version}</version>
                     <dependencies>
@@ -422,6 +422,12 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>com.jayway.restassured</groupId>
+                <artifactId>rest-assured</artifactId>
+                <version>${rest-assured-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>${mockito-version}</version>
@@ -493,16 +499,18 @@
 
         <testng-version>6.9.4</testng-version>
         <mockito-version>1.9.5</mockito-version>
+        <rest-assured-version>2.8.0</rest-assured-version>
         <surefire-version>2.18.1</surefire-version>
         <maven-plugin-version>1.0.0</maven-plugin-version>
         <commons-lang-version>3.2.1</commons-lang-version>
         <slf4j-version>1.6.3</slf4j-version>
-        <jetty-version>8.1.11.v20130520</jetty-version>
+        <jetty-version>9.3.7.v20160115</jetty-version>
         <servlet-api-version>2.5</servlet-api-version>
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
         <commons-io-version>2.4</commons-io-version>
         <enforcer-plugin-version>1.4</enforcer-plugin-version>
+        <failsafe-plugin-version>2.19.1</failsafe-plugin-version>
     </properties>
 </project>

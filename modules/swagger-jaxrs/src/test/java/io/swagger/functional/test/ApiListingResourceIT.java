@@ -1,0 +1,120 @@
+package io.swagger.functional.test;
+
+import com.jayway.restassured.http.ContentType;
+import org.testng.annotations.Test;
+
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.equalTo;
+
+/**
+ * Created by rbolles on 2/16/16.
+ *
+ * An functional integration test that runs during maven's integration-test phase,
+ * uses RestAssured to define REST API tests, and Jetty's Maven plugin to serve a simple
+ * sample app just prior to the integration-test phase starting.
+ */
+public class ApiListingResourceIT {
+
+    @Test
+    public void testSwaggerJson() throws Exception {
+        given()
+            .log().all()
+            .when()
+            .get("/swagger.json")
+            .then()
+            .log().all()
+            .assertThat()
+                .statusCode(200)
+                .contentType(ContentType.JSON)
+                .body(equalTo(
+                        EXPECTED_JSON));
+    }
+
+    @Test
+    public void testSwaggerJsonUsingAcceptHeader() throws Exception {
+        given()
+                .log().all()
+                .accept(ContentType.JSON)
+                .when()
+                .get("/swagger")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(200)
+                .contentType(ContentType.JSON)
+                .body(equalTo(
+                        EXPECTED_JSON));
+    }
+
+    @Test
+    public void testSwaggerYaml() throws Exception {
+        given()
+                .log().all()
+                .when()
+                .get("/swagger.yaml")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(200)
+                .contentType("application/yaml")
+                .body(equalTo(
+                        EXPECTED_YAML));
+    }
+
+    @Test
+    public void testSwaggerYamlUsingAcceptHeader() throws Exception {
+        given()
+                .log().all()
+                .accept("application/yaml")
+                .when()
+                .get("/swagger")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(200)
+                .contentType("application/yaml")
+                .body(equalTo(
+                        EXPECTED_YAML));
+    }
+
+
+
+    public static final String EXPECTED_JSON = "{\"swagger\":\"2.0\",\"tags\":[{\"name\":\"widgets\"}],\"paths\":{\"/widgets/{widgetId}\":{\"get\":{\"tags\":[\"widgets\"],\"summary\":\"Find pet by ID\",\"description\":\"Returns a pet when ID <= 10.  ID > 10 or nonintegers will simulate API error conditions\",\"operationId\":\"getWidget\",\"consumes\":[\"application/json\"],\"produces\":[\"application/json\"],\"parameters\":[{\"name\":\"widgetId\",\"in\":\"path\",\"required\":true,\"type\":\"string\"}],\"responses\":{\"200\":{\"description\":\"Returns widget with matching id\"},\"404\":{\"description\":\"Widget not found\"}}}}},\"definitions\":{\"Widget\":{\"type\":\"object\",\"properties\":{\"a\":{\"type\":\"string\"},\"b\":{\"type\":\"string\"},\"id\":{\"type\":\"string\"}}}}}";
+    public static final String EXPECTED_YAML = "---\n" +
+            "swagger: \"2.0\"\n" +
+            "tags:\n" +
+            "- name: \"widgets\"\n" +
+            "paths:\n" +
+            "  /widgets/{widgetId}:\n" +
+            "    get:\n" +
+            "      tags:\n" +
+            "      - \"widgets\"\n" +
+            "      summary: \"Find pet by ID\"\n" +
+            "      description: \"Returns a pet when ID <= 10.  ID > 10 or nonintegers will simulate\\\n" +
+            "        \\ API error conditions\"\n" +
+            "      operationId: \"getWidget\"\n" +
+            "      consumes:\n" +
+            "      - \"application/json\"\n" +
+            "      produces:\n" +
+            "      - \"application/json\"\n" +
+            "      parameters:\n" +
+            "      - name: \"widgetId\"\n" +
+            "        in: \"path\"\n" +
+            "        required: true\n" +
+            "        type: \"string\"\n" +
+            "      responses:\n" +
+            "        200:\n" +
+            "          description: \"Returns widget with matching id\"\n" +
+            "        404:\n" +
+            "          description: \"Widget not found\"\n" +
+            "definitions:\n" +
+            "  Widget:\n" +
+            "    type: \"object\"\n" +
+            "    properties:\n" +
+            "      a:\n" +
+            "        type: \"string\"\n" +
+            "      b:\n" +
+            "        type: \"string\"\n" +
+            "      id:\n" +
+            "        type: \"string\"\n";
+}
