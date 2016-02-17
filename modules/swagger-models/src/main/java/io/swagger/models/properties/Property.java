@@ -36,6 +36,10 @@ public interface Property {
 
     void setExample(Object example);
 
+    @Deprecated
+    @JsonIgnore
+    void setExample(String example);
+
     Boolean getReadOnly();
 
     void setReadOnly(Boolean readOnly);
