@@ -87,7 +87,7 @@ public class ApiListingResourceIT {
 
 
 
-    public static final String EXPECTED_JSON = "{\"swagger\":\"2.0\",\"tags\":[{\"name\":\"widgets\"}],\"paths\":{\"/widgets/{widgetId}\":{\"get\":{\"tags\":[\"widgets\"],\"summary\":\"Find pet by ID\",\"description\":\"Returns a pet when ID <= 10.  ID > 10 or nonintegers will simulate API error conditions\",\"operationId\":\"getWidget\",\"consumes\":[\"application/json\"],\"produces\":[\"application/json\"],\"parameters\":[{\"name\":\"widgetId\",\"in\":\"path\",\"required\":true,\"type\":\"string\"}],\"responses\":{\"200\":{\"description\":\"Returns widget with matching id\"},\"404\":{\"description\":\"Widget not found\"}}}}},\"definitions\":{\"Widget\":{\"type\":\"object\",\"properties\":{\"a\":{\"type\":\"string\"},\"b\":{\"type\":\"string\"},\"id\":{\"type\":\"string\"}}}}}";
+    public static final String EXPECTED_JSON = "{\"swagger\":\"2.0\",\"tags\":[{\"name\":\"widgets\"}],\"paths\":{\"/widgets/{widgetId}\":{\"get\":{\"tags\":[\"widgets\"],\"summary\":\"Find pet by ID\",\"description\":\"Returns a pet when ID <= 10.  ID > 10 or nonintegers will simulate API error conditions\",\"operationId\":\"getWidget\",\"consumes\":[\"application/json\"],\"produces\":[\"application/json\"],\"parameters\":[{\"name\":\"widgetId\",\"in\":\"path\",\"required\":true,\"type\":\"string\"}],\"responses\":{\"200\":{\"description\":\"Returns widget with matching id\"}}}}},\"definitions\":{\"Widget\":{\"type\":\"object\",\"properties\":{\"a\":{\"type\":\"string\"},\"b\":{\"type\":\"string\"},\"id\":{\"type\":\"string\"}}}}}";
     public static final String EXPECTED_YAML = "---\n" +
             "swagger: \"2.0\"\n" +
             "tags:\n" +
@@ -113,8 +113,6 @@ public class ApiListingResourceIT {
             "      responses:\n" +
             "        200:\n" +
             "          description: \"Returns widget with matching id\"\n" +
-            "        404:\n" +
-            "          description: \"Widget not found\"\n" +
             "definitions:\n" +
             "  Widget:\n" +
             "    type: \"object\"\n" +

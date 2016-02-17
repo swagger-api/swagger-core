@@ -26,8 +26,7 @@ public class WidgetResource {
 
     )
     @ApiResponses(value = {
-            @ApiResponse(code=200, message="Returns widget with matching id"),
-            @ApiResponse(code=404, message="Widget not found")
+            @ApiResponse(code=200, message="Returns widget with matching id")
     })
     public Response getWidget(@PathParam("widgetId") String widgetId) {
         return Response.ok(new Widget().setA("foo").setB("bar")).build();
