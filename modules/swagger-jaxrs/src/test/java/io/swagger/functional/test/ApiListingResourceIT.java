@@ -1,10 +1,12 @@
 package io.swagger.functional.test;
 
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.response.ValidatableResponse;
 import org.testng.annotations.Test;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Created by rbolles on 2/16/16.
@@ -17,22 +19,24 @@ public class ApiListingResourceIT {
 
     @Test
     public void testSwaggerJson() throws Exception {
-        given()
-            .log().all()
-            .when()
-            .get("/swagger.json")
-            .then()
-            .log().all()
-            .assertThat()
+        String actualBody = given()
+                .log().all()
+                .when()
+                .get("/swagger.json")
+                .then()
+                .log().all()
+                .assertThat()
                 .statusCode(200)
                 .contentType(ContentType.JSON)
-                .body(equalTo(
-                        EXPECTED_JSON));
+                .extract()
+                .response().body().asString();
+
+        assertEquals(actualBody, EXPECTED_JSON);
     }
 
     @Test
     public void testSwaggerJsonUsingAcceptHeader() throws Exception {
-        given()
+        String actualBody = given()
                 .log().all()
                 .accept(ContentType.JSON)
                 .when()
@@ -42,13 +46,14 @@ public class ApiListingResourceIT {
                 .assertThat()
                 .statusCode(200)
                 .contentType(ContentType.JSON)
-                .body(equalTo(
-                        EXPECTED_JSON));
+                .extract().response().body().asString();
+
+        assertEquals(actualBody, EXPECTED_JSON);
     }
 
     @Test
     public void testSwaggerYaml() throws Exception {
-        given()
+        String actualBody = given()
                 .log().all()
                 .when()
                 .get("/swagger.yaml")
@@ -57,13 +62,15 @@ public class ApiListingResourceIT {
                 .assertThat()
                 .statusCode(200)
                 .contentType("application/yaml")
-                .body(equalTo(
-                        EXPECTED_YAML));
+                .extract().response().body().asString();
+
+        assertEquals(actualBody, EXPECTED_YAML);
+
     }
 
     @Test
     public void testSwaggerYamlUsingAcceptHeader() throws Exception {
-        given()
+        String actualBody = given()
                 .log().all()
                 .accept("application/yaml")
                 .when()
@@ -73,8 +80,9 @@ public class ApiListingResourceIT {
                 .assertThat()
                 .statusCode(200)
                 .contentType("application/yaml")
-                .body(equalTo(
-                        EXPECTED_YAML));
+                .extract().response().body().asString();
+
+        assertEquals(actualBody, EXPECTED_YAML);
     }
 
 
