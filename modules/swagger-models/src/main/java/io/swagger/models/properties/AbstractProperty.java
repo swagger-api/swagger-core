@@ -52,6 +52,11 @@ public abstract class AbstractProperty implements Property {
         this.example = example;
     }
 
+    @Override
+    public void setExample(String example) {
+        this.setExample((Object) example);
+    }
+
     public Integer getPosition() {
         return position;
     }
