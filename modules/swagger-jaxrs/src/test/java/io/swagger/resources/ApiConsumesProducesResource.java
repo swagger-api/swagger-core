@@ -28,22 +28,22 @@ public class ApiConsumesProducesResource {
 
     @GET
     @Path("/{id}/value")
-    @Produces("text/html")
+    @Produces("text/html;charset=UTF-8,text/json")
     @Consumes(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Get simple string value",
             notes = "No details provided",
             response = String.class,
             position = 0,
-            produces = "text/plain",
-            consumes = "application/xml")
+            produces = "text/plain,text/xml;charset=UTF-8",
+            consumes = "application/xml,text/html;charset=UTF-8")
     public Response bothConsumesProduces() {
         return Response.ok().entity("ok").build();
     }
 
     @PUT
     @Path("/{id}")
-    @Produces({"text/plain"})
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({"text/plain,text/xml;charset=UTF-8"})
+    @Consumes(MediaType.APPLICATION_JSON + ",text/html;charset=UTF-8")
     @ApiOperation(value = "Update by ID",
             notes = "No details provided",
             position = 1)

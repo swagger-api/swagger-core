@@ -218,14 +218,10 @@ public class Reader {
             }
 
             if (!api.produces().isEmpty()) {
-                produces = new String[]{api.produces()};
-            } else if (cls.getAnnotation(Produces.class) != null) {
-                produces = ReaderUtils.splitContentValues(cls.getAnnotation(Produces.class).value());
+                produces = ReaderUtils.splitContentValues(new String[] {api.produces()});
             }
             if (!api.consumes().isEmpty()) {
-                consumes = new String[]{api.consumes()};
-            } else if (cls.getAnnotation(Consumes.class) != null) {
-                consumes = ReaderUtils.splitContentValues(cls.getAnnotation(Consumes.class).value());
+                consumes = ReaderUtils.splitContentValues(new String[] {api.consumes()});
             }
             globalSchemes.addAll(parseSchemes(api.protocols()));
             Authorization[] authorizations = api.authorizations();
@@ -253,7 +249,12 @@ public class Reader {
                 }
             }
             // merge consumes, produces
-
+            if (consumes.length == 0 && cls.getAnnotation(Consumes.class) != null) {
+                consumes = ReaderUtils.splitContentValues(cls.getAnnotation(Consumes.class).value());
+            }
+            if (produces.length == 0 && cls.getAnnotation(Produces.class) != null) {
+                produces = ReaderUtils.splitContentValues(cls.getAnnotation(Produces.class).value());
+            }
             // look for method-level annotated properties
 
             // handle sub-resources by looking at return type
@@ -764,10 +765,16 @@ public class Reader {
                 }
             }
             if (apiOperation.consumes() != null && !apiOperation.consumes().isEmpty()) {
-                operation.consumes(apiOperation.consumes());
+                String[] consumesAr = ReaderUtils.splitContentValues(new String[] {apiOperation.consumes()});
+                for (String consume: consumesAr) {
+                    operation.consumes(consume);
+                }
             }
             if (apiOperation.produces() != null && !apiOperation.produces().isEmpty()) {
-                operation.produces(apiOperation.produces());
+                String[] producesAr = ReaderUtils.splitContentValues(new String[] {apiOperation.produces()});
+                for (String produce: producesAr) {
+                    operation.produces(produce);
+                }
             }
         }
 
@@ -793,7 +800,7 @@ public class Reader {
 
         operation.operationId(operationId);
 
-        if (apiOperation != null && apiOperation.consumes() != null && apiOperation.consumes().isEmpty()) {
+        if (operation.getConsumes() == null || operation.getConsumes().isEmpty()) {
             final Consumes consumes = ReflectionUtils.getAnnotation(method, Consumes.class);
             if (consumes != null) {
                 for (String mediaType : ReaderUtils.splitContentValues(consumes.value())) {
@@ -802,7 +809,7 @@ public class Reader {
             }
         }
 
-        if (apiOperation != null && apiOperation.produces() != null && apiOperation.produces().isEmpty()) {
+        if (operation.getProduces() == null || operation.getProduces().isEmpty()) {
             final Produces produces = ReflectionUtils.getAnnotation(method, Produces.class);
             if (produces != null) {
                 for (String mediaType : ReaderUtils.splitContentValues(produces.value())) {
