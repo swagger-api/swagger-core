@@ -84,6 +84,14 @@ public class SimpleReaderTest {
         return swagger.getPaths().get(path).getPut();
     }
 
+    private Operation getPatch(Swagger swagger, String path) {
+        return swagger.getPaths().get(path).getPatch();
+    }
+
+    private Operation getDelete(Swagger swagger, String path) {
+        return swagger.getPaths().get(path).getDelete();
+    }
+
     @Test(description = "scan a simple resource")
     public void scanSimpleResource() {
         Swagger swagger = getSwagger(SimpleResource.class);
@@ -116,6 +124,26 @@ public class SimpleReaderTest {
         assertEquals(bodyParam2.getIn(), "body");
         assertEquals(bodyParam2.getName(), "body");
         assertFalse(bodyParam2.getRequired());
+    }
+
+    @Test(description = "scan a resource with custom http method annotations")
+    public void scanResourceWithCustomHttpMethodAnnotations() {
+        Swagger swagger = getSwagger(ResourceWithCustomHTTPMethodAnnotations.class);
+
+        Operation get = getGet(swagger, "/");
+        assertNotNull(get);
+
+        Operation post = getPost(swagger, "/");
+        assertNotNull(post);
+
+        Operation patch = getPatch(swagger, "/");
+        assertNotNull(patch);
+
+        Operation put = getPut(swagger, "/");
+        assertNotNull(post);
+
+        Operation delete = getDelete(swagger, "/");
+        assertNotNull(delete);
     }
 
     @Test(description = "scan a resource with void return type")
