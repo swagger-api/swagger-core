@@ -218,7 +218,6 @@
                         <exclude>**/io/swagger/converter/ModelConverters.*</exclude>
 
                         <!-- JAXRS -->
-                        <exclude>**/io/swagger/jaxrs/DefaultParameterExtension.*</exclude>
                         <exclude>**/io/swagger/jaxrs/json/JacksonJsonProvider.*</exclude>
                         <exclude>**/io/swagger/jaxrs/listing/ApiListingResource.*</exclude>
                         <exclude>**/io/swagger/jaxrs/listing/SwaggerSerializers.*</exclude>

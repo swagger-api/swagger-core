@@ -162,6 +162,10 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension {
                     }
                 }
 
+                if (paramType == null) {
+                    continue;
+                }
+
                 // Re-process all Bean fields and let the default swagger-jaxrs/swagger-jersey-jaxrs processors do their thing
                 List<Parameter> extracted =
                         extensions.next().extractParameters(paramAnnotations, paramType, typesToSkip, extensions);
