@@ -1,6 +1,8 @@
 package io.swagger.models.properties;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import io.swagger.models.Xml;
 
 import java.util.Map;
@@ -32,8 +34,10 @@ public interface Property {
 
     void setRequired(boolean required);
 
+    @JsonGetter
     Object getExample();
 
+    @JsonSetter
     void setExample(Object example);
 
     @Deprecated
