@@ -8,6 +8,8 @@ import io.swagger.jaxrs.config.SwaggerConfigLocator;
 import io.swagger.jaxrs.config.SwaggerContextService;
 import io.swagger.jaxrs.config.SwaggerScannerLocator;
 import io.swagger.jaxrs.config.WebXMLReader;
+import io.swagger.models.Info;
+import io.swagger.models.Swagger;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -280,4 +282,32 @@ public class SwaggerContextServiceTest {
         verify(servletConfig2, never()).getInitParameter(eq(CONFIG_ID_KEY));
 
     }
+
+    void stubWithContextSwaggerAttribute() {
+
+        Swagger swagger = new Swagger();
+        Info info = new Info().title("Test Title");
+        swagger.setInfo(info);
+        when(servletContext1.getAttribute("swagger")).thenReturn(swagger);
+
+        when(servletConfig1.getServletContext()).thenReturn(servletContext1);
+        when(servletConfig2.getServletContext()).thenReturn(servletContext2);
+
+        when(servletConfig1.getInitParameter(CONTEXT_ID_KEY)).thenReturn("test.1");
+        when(servletConfig2.getInitParameter(CONTEXT_ID_KEY)).thenReturn("test.2");
+
+    }
+
+    @Test(description = "should get correct swagger context set via context param \"swagger\"")
+    public void initConfigViaContextParamSwagger() {
+
+        stubWithContextSwaggerAttribute();
+
+        Swagger swagger = new SwaggerContextService().withServletConfig(servletConfig1).getSwagger();
+        assertEquals("Test Title",swagger.getInfo().getTitle());
+        //verify(servletConfig1, times(2)).getInitParameter(eq(CONTEXT_ID_KEY));
+
+
+    }
+
 }

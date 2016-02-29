@@ -147,6 +147,7 @@ public class SwaggerContextService {
         if (value == null && sc != null) {
             value = (Swagger) sc.getServletContext().getAttribute("swagger");
         }
+        if (value == null) value = new Swagger();
         return value;
     }
 

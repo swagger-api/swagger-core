@@ -50,7 +50,7 @@ public class SwaggerConfigLocator {
         if (value != null) {
             return value;
         }
-        return new Swagger();
+        return null;
     }
 
     public void putSwagger(String id, Swagger swagger) {
