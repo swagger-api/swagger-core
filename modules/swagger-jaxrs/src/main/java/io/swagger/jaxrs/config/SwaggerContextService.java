@@ -234,6 +234,7 @@ public class SwaggerContextService {
     }
 
     public static boolean isScannerIdInitParamDefined(ServletConfig sc) {
+        if (sc == null) return false;
         String key = sc.getInitParameter(SCANNER_ID_KEY);
         if (key != null){
             return true;
@@ -243,6 +244,7 @@ public class SwaggerContextService {
     }
 
     public static String getScannerIdFromInitParam(ServletConfig sc) {
+        if (sc == null) return null;
         String key = sc.getInitParameter(SCANNER_ID_KEY);
         if (key != null){
             return key;
@@ -252,6 +254,7 @@ public class SwaggerContextService {
     }
 
     public static boolean isConfigIdInitParamDefined(ServletConfig sc) {
+        if (sc == null) return false;
         String key = sc.getInitParameter(CONFIG_ID_KEY);
         if (key != null){
             return true;
@@ -261,6 +264,7 @@ public class SwaggerContextService {
     }
 
     public static String getConfigIdFromInitParam(ServletConfig sc) {
+        if (sc == null) return null;
         String key = sc.getInitParameter(CONFIG_ID_KEY);
         if (key != null){
             return key;
