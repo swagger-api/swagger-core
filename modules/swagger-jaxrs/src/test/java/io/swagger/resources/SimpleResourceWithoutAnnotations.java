@@ -1,5 +1,6 @@
 package io.swagger.resources;
 
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.models.Sample;
 
@@ -20,6 +21,7 @@ import javax.ws.rs.core.Response;
 public class SimpleResourceWithoutAnnotations {
     @GET
     @Path("/{id}")
+    @ApiOperation(value = "get test")
     public Sample getTest(
             @DefaultValue("5")
             @PathParam("id") String id,
@@ -34,12 +36,14 @@ public class SimpleResourceWithoutAnnotations {
     @GET
     @Path("/{id}/value")
     @Produces({"text/plain"})
+    @ApiOperation(value = "get string value")
     public Response getStringValue() throws WebApplicationException {
         return Response.ok().entity("ok").build();
     }
 
     @PUT
     @Path("/{id}")
+    @ApiOperation(value = "update test")
     public Response updateTest(
             @ApiParam(value = "sample param data", required = true) Sample sample,
             @HeaderParam(value = "Authorization") String authorization,

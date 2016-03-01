@@ -287,7 +287,7 @@ public class Reader {
                     String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
                     Operation operation = null;
-                    if(apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) {
+                    if(apiOperation != null) {
                         operation = parseMethod(cls, method, globalParameters);
                     }
                     if (operation == null) {
@@ -770,8 +770,12 @@ public class Reader {
                 operation.produces(apiOperation.produces());
             }
         }
+        
+        else {
+        	return null;
+        }
 
-        if (apiOperation != null && StringUtils.isNotEmpty(apiOperation.responseReference())) {
+        if (StringUtils.isNotEmpty(apiOperation.responseReference())) {
             Response response = new Response().description(SUCCESSFUL_OPERATION);
             response.schema(new RefProperty(apiOperation.responseReference()));
             operation.addResponse(String.valueOf(apiOperation.code()), response);
@@ -802,7 +806,7 @@ public class Reader {
             }
         }
 
-        if (apiOperation != null && apiOperation.produces() != null && apiOperation.produces().isEmpty()) {
+        if (apiOperation.produces() != null && apiOperation.produces().isEmpty()) {
             final Produces produces = ReflectionUtils.getAnnotation(method, Produces.class);
             if (produces != null) {
                 for (String mediaType : ReaderUtils.splitContentValues(produces.value())) {

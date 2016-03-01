@@ -1,6 +1,7 @@
 package io.swagger.resources;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 import javax.ws.rs.CookieParam;
@@ -19,6 +20,7 @@ import javax.ws.rs.core.Response;
 public class HiddenParametersResource {
     @GET
     @Path("/all-hidden/{id}")
+    @ApiOperation(value = "allHiddenParamsMethod")
     public Response allHiddenParamsMethod(
             @ApiParam(hidden = true) String body,
             @ApiParam(hidden = true) @CookieParam("X-your-cookie") String cookieId,
@@ -31,6 +33,7 @@ public class HiddenParametersResource {
 
     @GET
     @Path("/some-hidden/{id}")
+    @ApiOperation(value = "someHiddenParamsMethod")
     public Response someHiddenParamsMethod(
             @ApiParam(hidden = true) String body,
             @ApiParam(hidden = false) @CookieParam("X-your-cookie") String cookieId,
@@ -43,6 +46,7 @@ public class HiddenParametersResource {
 
     @GET
     @Path("/others-hidden/{id}")
+    @ApiOperation(value = "othersHiddenParamsMethod")
     public Response othersHiddenParamsMethod(
             @ApiParam(hidden = false) String body,
             @ApiParam(hidden = true) @CookieParam("X-your-cookie") String cookieId,

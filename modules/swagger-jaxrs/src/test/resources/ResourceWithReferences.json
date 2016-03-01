@@ -68,6 +68,8 @@
                 "tags": [
                     "basic"
                 ],
+                "summary": "getTest",
+                "description": "",
                 "operationId": "getTest",
                 "parameters": [],
                 "responses": {

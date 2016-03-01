@@ -1,6 +1,7 @@
 package io.swagger.resources;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.models.Pagination;
 
 import javax.inject.Inject;
@@ -28,6 +29,7 @@ public class ResourceWithKnownInjections {
     }
 
     @GET
+    @ApiOperation(value = "simple get")
     public String get(@QueryParam("methodParam") String methodParam) {
         // injection into a resource method parameter
         final StringBuilder sb = new StringBuilder();
