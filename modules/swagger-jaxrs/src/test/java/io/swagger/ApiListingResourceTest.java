@@ -18,4 +18,19 @@ public class ApiListingResourceTest {
     public void shouldCheckModelsSet() {
         assertNull(swagger.getDefinitions());
     }
+
+    @Test
+    public void shouldHandleNullServletConfig_issue1689() {
+        ApiListingResource a = new ApiListingResource();
+        try {
+            a.getListing(null, null, null, null, "json");
+        } catch (RuntimeException e) {
+            // test will fail before, no need to mock Response
+            if(e.getCause() instanceof ClassNotFoundException) {
+                return;
+            }
+            throw e;
+        }
+
+    }
 }
