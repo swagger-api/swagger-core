@@ -266,6 +266,13 @@ public class Reader {
             // look for field-level annotated properties
             globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, swagger));
 
+            // build class/interface level @ApiResponse list
+            ApiResponses classResponseAnnotation = ReflectionUtils.getAnnotation(cls, ApiResponses.class);
+            List<ApiResponse> classApiResponses = new ArrayList<ApiResponse>();
+            if (classResponseAnnotation != null) {
+                classApiResponses.addAll(Arrays.asList(classResponseAnnotation.value()));
+            }
+
             // parse the method
             final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
             Method methods[] = cls.getMethods();
@@ -288,7 +295,7 @@ public class Reader {
 
                     Operation operation = null;
                     if(apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) {
-                        operation = parseMethod(cls, method, globalParameters);
+                        operation = parseMethod(cls, method, globalParameters, classApiResponses);
                     }
                     if (operation == null) {
                         continue;
@@ -707,10 +714,10 @@ public class Reader {
     }
 
     public Operation parseMethod(Method method) {
-        return parseMethod(method.getDeclaringClass(), method, Collections.<Parameter>emptyList());
+        return parseMethod(method.getDeclaringClass(), method, Collections.<Parameter>emptyList(), Collections.<ApiResponse>emptyList());
     }
 
-    private Operation parseMethod(Class<?> cls, Method method, List<Parameter> globalParameters) {
+    private Operation parseMethod(Class<?> cls, Method method, List<Parameter> globalParameters, List<ApiResponse> classApiResponses) {
         Operation operation = new Operation();
 
         ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
@@ -825,29 +832,15 @@ public class Reader {
         }
 
         for (ApiResponse apiResponse : apiResponses) {
-            Map<String, Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders());
-
-            Response response = new Response()
-                    .description(apiResponse.message())
-                    .headers(responseHeaders);
-
-            if (apiResponse.code() == 0) {
-                operation.defaultResponse(response);
-            } else {
-                operation.response(apiResponse.code(), response);
-            }
-
-            if (StringUtils.isNotEmpty(apiResponse.reference())) {
-                response.schema(new RefProperty(apiResponse.reference()));
-            } else if (!isVoid(apiResponse.response())) {
-                responseType = apiResponse.response();
-                final Property property = ModelConverters.getInstance().readAsProperty(responseType);
-                if (property != null) {
-                    response.schema(ContainerWrapper.wrapContainer(apiResponse.responseContainer(), property));
-                    appendModels(responseType);
-                }
-            }
+            addResponse(operation, apiResponse);
         }
+        // merge class level @ApiResponse
+        for (ApiResponse apiResponse : classApiResponses) {
+            String key = apiResponse.code() == 0 ? "default":String.valueOf(apiResponse.code());
+            if (operation.getResponses().containsKey(key)) continue;
+            addResponse(operation, apiResponse);
+        }
+
         if (ReflectionUtils.getAnnotation(method, Deprecated.class) != null) {
             operation.setDeprecated(true);
         }
@@ -873,6 +866,31 @@ public class Reader {
             operation.defaultResponse(response);
         }
         return operation;
+    }
+
+    private void addResponse (Operation operation, ApiResponse apiResponse) {
+        Map<String, Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders());
+
+        Response response = new Response()
+                .description(apiResponse.message())
+                .headers(responseHeaders);
+
+        if (apiResponse.code() == 0) {
+            operation.defaultResponse(response);
+        } else {
+            operation.response(apiResponse.code(), response);
+        }
+
+        if (StringUtils.isNotEmpty(apiResponse.reference())) {
+            response.schema(new RefProperty(apiResponse.reference()));
+        } else if (!isVoid(apiResponse.response())) {
+            Type responseType = apiResponse.response();
+            final Property property = ModelConverters.getInstance().readAsProperty(responseType);
+            if (property != null) {
+                response.schema(ContainerWrapper.wrapContainer(apiResponse.responseContainer(), property));
+                appendModels(responseType);
+            }
+        }
     }
 
     private List<Parameter> getParameters(Type type, List<Annotation> annotations) {

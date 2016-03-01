@@ -29,6 +29,10 @@ import java.lang.annotation.Target;
  * successful code), but the successful response should be described as well using the
  * {@link ApiOperation}.
  * <p>
+ * This annotation can be applied at method or class level; class level annotations will
+ * be parsed only if an @ApiResponse annotation with the same code is not defined at method
+ * level or in thrown Exception
+ * <p>
  * If your API has uses a different response class for these responses, you can describe them
  * here by associating a response class with a response code.
  * Note, Swagger does not allow multiple response types for a single response code.
