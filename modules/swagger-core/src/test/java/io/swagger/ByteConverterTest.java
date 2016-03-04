@@ -42,7 +42,7 @@ public class ByteConverterTest {
         Model model = new ModelImpl()
                 .property("byteProperty", new ByteArrayProperty());
 
-        assertEquals(Json.pretty(model), "{\n" +
+        assertEquals(Json.pretty(model).replace("\r", ""), "{\n" +
                 "  \"properties\" : {\n" +
                 "    \"byteProperty\" : {\n" +
                 "      \"type\" : \"string\",\n" +
@@ -72,7 +72,7 @@ public class ByteConverterTest {
         Model model = new ModelImpl()
                 .property("byteArray", new ArrayProperty(new BinaryProperty()));
 
-        assertEquals(Json.pretty(model), "{\n" +
+        assertEquals(Json.pretty(model).replace("\r", ""), "{\n" +
                 "  \"properties\" : {\n" +
                 "    \"byteArray\" : {\n" +
                 "      \"type\" : \"array\",\n" +
