@@ -168,13 +168,15 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
 
     Property propertyFromNode(JsonNode node) {
         final String type = getString(node, PropertyBuilder.PropertyId.TYPE);
+        final String title = getString(node, PropertyBuilder.PropertyId.TITLE);
         final String format = getString(node, PropertyBuilder.PropertyId.FORMAT);
-        final Xml xml = getXml(node);
 
         String description = getString(node, PropertyBuilder.PropertyId.DESCRIPTION);
         JsonNode detailNode = node.get("$ref");
         if (detailNode != null) {
-            return new RefProperty(detailNode.asText()).description(description);
+            return new RefProperty(detailNode.asText())
+                    .description(description)
+                    .title(title);
         }
 
         if (ObjectProperty.isType(type) || node.get("properties") != null) {
@@ -182,7 +184,9 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
             if (detailNode != null && detailNode.getNodeType().equals(JsonNodeType.OBJECT)) {
                 Property items = propertyFromNode(detailNode);
                 if (items != null) {
-                    MapProperty mapProperty = new MapProperty(items).description(description);
+                    MapProperty mapProperty = new MapProperty(items)
+                            .description(description)
+                            .title(title);
                     mapProperty.setVendorExtensionMap(getVendorExtensions(node));
                     return mapProperty;
                 }
@@ -209,7 +213,9 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                 }
 
                 if("array".equals(detailNodeType)) {
-                    ArrayProperty ap = new ArrayProperty().description(description);
+                    ArrayProperty ap = new ArrayProperty()
+                            .description(description)
+                            .title(title);
                     ap.setDescription(description);
 
                     if(properties.keySet().size() == 1) {
@@ -219,7 +225,9 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                     ap.setVendorExtensionMap(getVendorExtensions(node));
                     return ap;
                 }
-                ObjectProperty objectProperty = new ObjectProperty(properties).description(description);
+                ObjectProperty objectProperty = new ObjectProperty(properties)
+                        .description(description)
+                        .title(title);
                 objectProperty.setVendorExtensionMap(getVendorExtensions(node));
 
                 List<String> required = getRequired(node, PropertyBuilder.PropertyId.REQUIRED);
@@ -232,7 +240,10 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
             detailNode = node.get("items");
             if (detailNode != null) {
                 Property subProperty = propertyFromNode(detailNode);
-                ArrayProperty arrayProperty = new ArrayProperty().items(subProperty).description(description);
+                ArrayProperty arrayProperty = new ArrayProperty()
+                        .items(subProperty)
+                        .description(description)
+                        .title(title);
                 arrayProperty.setVendorExtensionMap(getVendorExtensions(node));
                 return arrayProperty;
             }

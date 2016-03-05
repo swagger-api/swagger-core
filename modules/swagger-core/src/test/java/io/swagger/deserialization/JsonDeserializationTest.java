@@ -36,6 +36,7 @@ public class JsonDeserializationTest {
     public void testObjectProperty() throws IOException {
         final String json = "{\n" +
                 "   \"type\":\"object\",\n" +
+                "   \"title\":\"objectProperty\",\n" +
                 "   \"description\":\"top level object\",\n" +
                 "   \"properties\":{\n" +
                 "      \"property1\":{\n" +
@@ -54,7 +55,8 @@ public class JsonDeserializationTest {
                 "}";
         final Property result = m.readValue(json, Property.class);
         assertTrue(result instanceof ObjectProperty);
-        assertEquals(((ObjectProperty) result).getProperties().size(), 3);
+        assertEquals(3, ((ObjectProperty) result).getProperties().size());
+        assertEquals("objectProperty", ((ObjectProperty) result).getTitle());
 
     }
 
