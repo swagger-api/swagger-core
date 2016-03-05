@@ -66,7 +66,7 @@ public class SwaggerContextService {
         try {
             sc.getInitParameter("test");
         } catch (Exception e) {
-            LOGGER.warn("Exception caught testing servletConfig. see https://github.com/swagger-api/swagger-core/issues/1691 ", e.getMessage());
+            LOGGER.info("Exception caught testing servletConfig. see https://github.com/swagger-api/swagger-core/issues/1691 ", e.getMessage());
             return false;
         }
         return true;
