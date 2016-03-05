@@ -4,10 +4,14 @@ import io.swagger.config.Scanner;
 import io.swagger.config.ScannerFactory;
 import io.swagger.config.SwaggerConfig;
 import io.swagger.models.Swagger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 
 public class SwaggerContextService {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(SwaggerContextService.class);
 
     public static final String CONFIG_ID_KEY = "swagger.config.id";
     public static final String CONFIG_ID_PREFIX = CONFIG_ID_KEY + ".";
@@ -51,8 +55,21 @@ public class SwaggerContextService {
     }
 
     public SwaggerContextService withServletConfig(ServletConfig sc) {
-        this.sc = sc;
+        if (isServletConfigAvailable(sc)) this.sc = sc;
         return this;
+    }
+
+    private static boolean isServletConfigAvailable (ServletConfig sc) {
+        if (sc == null) return false;
+        // hack for quick fix for https://github.com/swagger-api/swagger-core/issues/1691
+        // in v1.5.7, targeting v1.5.8; overall improved/refactored "swagger context" to be applied in later major versions
+        try {
+            sc.getInitParameter("test");
+        } catch (Exception e) {
+            LOGGER.info("Exception caught testing servletConfig. see https://github.com/swagger-api/swagger-core/issues/1691 ", e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     public SwaggerContextService withConfigId(String configId) {
@@ -92,7 +109,7 @@ public class SwaggerContextService {
         } else if (contextId != null) {
             configIdKey = CONFIG_ID_PREFIX + contextId;
         } else {
-            if (sc != null) {
+            if (isServletConfigAvailable(sc)) {
                 configIdKey = (sc.getInitParameter(CONFIG_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONFIG_ID_KEY) : null;
                 if (configIdKey == null) {
                     configIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : CONFIG_ID_DEFAULT;
@@ -102,7 +119,7 @@ public class SwaggerContextService {
             }
         }
         SwaggerConfig value = (swaggerConfig != null) ? swaggerConfig : null;
-        if (value == null && sc != null) {
+        if (value == null && isServletConfigAvailable(sc)) {
             value = new WebXMLReader(sc);
         }
         if (value != null) {
@@ -122,7 +139,7 @@ public class SwaggerContextService {
         } else if (contextId != null) {
             configIdKey = CONFIG_ID_PREFIX + contextId;
         } else {
-            if (sc != null) {
+            if (isServletConfigAvailable(sc)) {
                 configIdKey = (sc.getInitParameter(CONFIG_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONFIG_ID_KEY) : null;
                 if (configIdKey == null) {
                     configIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : CONFIG_ID_DEFAULT;
@@ -144,7 +161,7 @@ public class SwaggerContextService {
 
     public Swagger getSwagger() {
         Swagger value = (Swagger) getConfigOrSwagger(true);
-        if (value == null && sc != null) {
+        if (value == null && isServletConfigAvailable(sc)) {
             value = (Swagger) sc.getServletContext().getAttribute("swagger");
         }
         if (value == null) value = new Swagger();
@@ -159,7 +176,7 @@ public class SwaggerContextService {
         } else if (contextId != null) {
             configIdKey = CONFIG_ID_PREFIX + contextId;
         } else {
-            if (sc != null) {
+            if (isServletConfigAvailable(sc)) {
                 configIdKey = (sc.getInitParameter(CONFIG_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONFIG_ID_KEY) : null;
                 if (configIdKey == null) {
                     configIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : CONFIG_ID_DEFAULT;
@@ -182,7 +199,7 @@ public class SwaggerContextService {
         } else if (contextId != null) {
             scannerIdKey = SCANNER_ID_PREFIX + contextId;
         } else {
-            if (sc != null) {
+            if (isServletConfigAvailable(sc)) {
                 scannerIdKey = (sc.getInitParameter(SCANNER_ID_KEY) != null) ? SCANNER_ID_PREFIX + sc.getInitParameter(SCANNER_ID_KEY) : null;
                 if (scannerIdKey == null) {
                     scannerIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? SCANNER_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : SCANNER_ID_DEFAULT;
@@ -193,7 +210,7 @@ public class SwaggerContextService {
         }
         Scanner value = (scanner != null) ? scanner : new DefaultJaxrsScanner();
         ScannerFactory.setScanner(value);
-        if (sc != null) {
+        if (isServletConfigAvailable(sc)) {
             sc.getServletContext().setAttribute(scannerIdKey, value);
             String shouldPrettyPrint = sc.getInitParameter("swagger.pretty.print");
             if (shouldPrettyPrint != null) {
@@ -213,7 +230,7 @@ public class SwaggerContextService {
         } else if (contextId != null) {
             scannerIdKey = SCANNER_ID_PREFIX + contextId;
         } else {
-            if (sc != null) {
+            if (isServletConfigAvailable(sc)) {
                 scannerIdKey = (sc.getInitParameter(SCANNER_ID_KEY) != null) ? SCANNER_ID_PREFIX + sc.getInitParameter(SCANNER_ID_KEY) : null;
                 if (scannerIdKey == null) {
                     scannerIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? SCANNER_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : SCANNER_ID_DEFAULT;
@@ -234,7 +251,7 @@ public class SwaggerContextService {
     }
 
     public static boolean isScannerIdInitParamDefined(ServletConfig sc) {
-        if (sc == null) return false;
+        if (!isServletConfigAvailable(sc)) return false;
         String key = sc.getInitParameter(SCANNER_ID_KEY);
         if (key != null){
             return true;
@@ -244,7 +261,7 @@ public class SwaggerContextService {
     }
 
     public static String getScannerIdFromInitParam(ServletConfig sc) {
-        if (sc == null) return null;
+        if (!isServletConfigAvailable(sc)) return null;
         String key = sc.getInitParameter(SCANNER_ID_KEY);
         if (key != null){
             return key;
@@ -254,7 +271,7 @@ public class SwaggerContextService {
     }
 
     public static boolean isConfigIdInitParamDefined(ServletConfig sc) {
-        if (sc == null) return false;
+        if (!isServletConfigAvailable(sc)) return false;
         String key = sc.getInitParameter(CONFIG_ID_KEY);
         if (key != null){
             return true;
@@ -264,7 +281,7 @@ public class SwaggerContextService {
     }
 
     public static String getConfigIdFromInitParam(ServletConfig sc) {
-        if (sc == null) return null;
+        if (!isServletConfigAvailable(sc)) return null;
         String key = sc.getInitParameter(CONFIG_ID_KEY);
         if (key != null){
             return key;
