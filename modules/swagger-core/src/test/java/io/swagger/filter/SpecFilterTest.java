@@ -120,16 +120,19 @@ public class SpecFilterTest {
         final Swagger swagger = getSwagger("specFiles/paramAndResponseRef.json");
 
         assertNotNull(swagger.getDefinitions().get("Order"));
+        assertNotNull(swagger.getDefinitions().get("NoPropertiesModel"));
 
         final NoOpOperationsFilter noOpfilter = new NoOpOperationsFilter();
         Swagger filtered = new SpecFilter().filter(swagger, noOpfilter, null, null, null);
 
         assertNotNull(filtered.getDefinitions().get("Order"));
+        assertNotNull(swagger.getDefinitions().get("NoPropertiesModel"));
 
         final RemoveUnreferencedDefinitionsFilter refFilter = new RemoveUnreferencedDefinitionsFilter();
         filtered = new SpecFilter().filter(swagger, refFilter, null, null, null);
 
         assertNull(filtered.getDefinitions().get("Order"));
+        assertNull(filtered.getDefinitions().get("NoPropertiesModel"));
 
     }
 

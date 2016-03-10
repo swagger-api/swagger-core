@@ -213,6 +213,8 @@
           "format": "date-time"
         }
       }
+    },
+    "NoPropertiesModel": {
     }
   }
 }
