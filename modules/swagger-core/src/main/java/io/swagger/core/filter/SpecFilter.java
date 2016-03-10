@@ -170,11 +170,12 @@ public class SpecFilter {
 
     private void locateNestedReferencedDefinitions (Model m, Set<String> referencedDefinitions) {
 
+        if (m.getProperties() == null) return;
         for (String keyProp: m.getProperties().keySet()) {
             Property p = m.getProperties().get(keyProp);
             if (p instanceof ArrayProperty) {
                 ArrayProperty ap = (ArrayProperty) p;
-                if (ap.getItems() instanceof RefProperty) {
+                if (ap.getItems() != null && ap.getItems() instanceof RefProperty) {
                     RefProperty rp = (RefProperty) ap.getItems();
                     String simpleRef = rp.getSimpleRef();
                     referencedDefinitions.add(simpleRef);
