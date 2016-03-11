@@ -194,6 +194,12 @@
           "type": "integer",
           "format": "int32"
         },
+        "orderTag": {
+          "$ref": "#/definitions/OrderTag"
+        },
+        "tag": {
+          "$ref": "#/definitions/Tag"
+        },
         "petId": {
           "type": "integer",
           "format": "int32"
@@ -215,6 +221,17 @@
       }
     },
     "NoPropertiesModel": {
+    },
+    "OrderTag": {
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
     }
   }
 }
