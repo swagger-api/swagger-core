@@ -158,32 +158,37 @@ public class SpecFilter {
         }
 
         if (swagger.getDefinitions() != null) {
-            for (String k: swagger.getDefinitions().keySet()) {
-                Model m = swagger.getDefinitions().get(k);
-                locateNestedReferencedDefinitions (m, referencedDefinitions);
+            Set<String> nestedReferencedDefinitions =  new TreeSet<String>();
+            for (String ref : referencedDefinitions){
+                Model m = swagger.getDefinitions().get(ref);
+                locateNestedReferencedDefinitions (m.getProperties(), nestedReferencedDefinitions, swagger);
             }
+            referencedDefinitions.addAll(nestedReferencedDefinitions);
             swagger.getDefinitions().keySet().retainAll(referencedDefinitions);
         }
         
         return swagger;
     }
 
-    private void locateNestedReferencedDefinitions (Model m, Set<String> referencedDefinitions) {
-
-        if (m.getProperties() == null) return;
-        for (String keyProp: m.getProperties().keySet()) {
-            Property p = m.getProperties().get(keyProp);
+    private void locateNestedReferencedDefinitions (Map<String, Property> props, Set<String> nestedReferencedDefinitions, Swagger swagger) {
+        if (props == null) return;
+        for (String keyProp: props.keySet()) {
+            Property p = props.get(keyProp);
             if (p instanceof ArrayProperty) {
                 ArrayProperty ap = (ArrayProperty) p;
                 if (ap.getItems() != null && ap.getItems() instanceof RefProperty) {
                     RefProperty rp = (RefProperty) ap.getItems();
                     String simpleRef = rp.getSimpleRef();
-                    referencedDefinitions.add(simpleRef);
+                    nestedReferencedDefinitions.add(simpleRef);
+                    Model m = swagger.getDefinitions().get(simpleRef);
+                    locateNestedReferencedDefinitions (m.getProperties(), nestedReferencedDefinitions, swagger);
                 }
             } else if (p instanceof RefProperty) {
                 RefProperty rp = (RefProperty) p;
                 String simpleRef = rp.getSimpleRef();
-                referencedDefinitions.add(simpleRef);
+                nestedReferencedDefinitions.add(simpleRef);
+                Model m = swagger.getDefinitions().get(simpleRef);
+                locateNestedReferencedDefinitions (m.getProperties(), nestedReferencedDefinitions, swagger);
             }
         }
     }
