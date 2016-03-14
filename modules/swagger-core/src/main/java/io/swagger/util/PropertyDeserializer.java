@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -193,7 +194,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
             } else {
                 detailNode = node.get("properties");
                 String detailNodeType = null;
-                Map<String, Property> properties = new HashMap<String, Property>();
+                Map<String, Property> properties = new LinkedHashMap<String, Property>();
                 if(detailNode != null){
                     for(Iterator<Map.Entry<String,JsonNode>> iter = detailNode.fields(); iter.hasNext();){
                         Map.Entry<String,JsonNode> field = iter.next();
