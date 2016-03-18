@@ -305,6 +305,15 @@ public class ReaderTest {
         assertTrue(operation.getResponses().containsKey("403"));
         assertTrue(operation.getResponses().containsKey("409"));
         assertEquals(operation.getResponses().get("409").getDescription(), "Conflict");
+
+        swagger = getSwagger(ResourceWithClassLevelApiResourceNoMethodLevelApiResources.class);
+        assertNotNull(swagger);
+        operation = getPut(swagger, "/{id}");
+        assertEquals(operation.getResponses().size(), 2);
+        assertTrue(operation.getResponses().containsKey("403"));
+        assertTrue(operation.getResponses().containsKey("409"));
+
+
     }
 
     private Swagger getSwagger(Class<?> cls) {

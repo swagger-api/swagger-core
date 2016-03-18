@@ -844,7 +844,7 @@ public class Reader {
         // merge class level @ApiResponse
         for (ApiResponse apiResponse : classApiResponses) {
             String key = apiResponse.code() == 0 ? "default":String.valueOf(apiResponse.code());
-            if (operation.getResponses().containsKey(key)) continue;
+            if (operation.getResponses() != null && operation.getResponses().containsKey(key)) continue;
             addResponse(operation, apiResponse);
         }
 
