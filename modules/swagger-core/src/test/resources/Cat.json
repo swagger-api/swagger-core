@@ -1,31 +1,44 @@
 {
-    "Cat": {
+  "Cat": {
+    "allOf": [
+      {
+        "$ref": "#/definitions/Pet"
+      },
+      {
         "type": "object",
-        "required": [
-            "isDomestic",
-            "name",
-            "type"
-        ],
         "properties": {
-            "clawCount": {
-                "type": "integer",
-                "format": "int32"
-            },
-            "type": {
-                "type": "string",
-                "position": 1,
-                "description": "The pet type"
-            },
-            "name": {
-                "type": "string",
-                "position": 2,
-                "description": "The name of the pet"
-            },
-            "isDomestic": {
-                "type": "boolean",
-                "position": 3,
-                "default": false
-            }
-        }
+          "clawCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "parent": "io.swagger.models.composition.Pet"
+      }
+    ]
+  },
+  "Pet": {
+    "type": "object",
+    "required": [
+      "isDomestic",
+      "name",
+      "type"
+    ],
+    "properties": {
+      "type": {
+        "type": "string",
+        "position": 1,
+        "description": "The pet type"
+      },
+      "name": {
+        "type": "string",
+        "position": 2,
+        "description": "The name of the pet"
+      },
+      "isDomestic": {
+        "type": "boolean",
+        "position": 3,
+        "default": false
+      }
     }
+  }
 }
