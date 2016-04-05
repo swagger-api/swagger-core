@@ -396,6 +396,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         model.setProperties(modelProps);
 
+        Class<?> parentClass = null;
+        final ApiModel api = beanDesc.getClassInfo().getAnnotation(ApiModel.class);
+        if (api != null) {
+            parentClass = api.parent();
+        }
+        if(parentClass != null && parentClass != Void.class){
+            model.getVendorExtensions().put("parent", parentClass);
+        }
+
         /**
          * This must be done after model.setProperties so that the model's set
          * of properties is available to filter from any subtypes
@@ -406,7 +415,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         return model;
     }
-    
+
     protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore) {
         if (propertiesToIgnore.contains(propName)) {
             return true;
