@@ -858,7 +858,7 @@ public class Reader {
         }
 
         Type[] genericParameterTypes = method.getGenericParameterTypes();
-        Annotation[][] paramAnnotations = method.getParameterAnnotations();
+        Annotation[][] paramAnnotations = ReflectionUtils.getParameterAnnotations(method);
         for (int i = 0; i < genericParameterTypes.length; i++) {
             final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
             List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
