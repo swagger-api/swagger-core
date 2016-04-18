@@ -209,7 +209,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
                 .withServletConfig(servletConfig)
                 .withSwaggerConfig(this)
                 .withScanner(this)
-                .initConfig()
+                .initConfig(this.getSwagger())
                 .initScanner();
     }
 
