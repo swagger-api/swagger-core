@@ -297,6 +297,9 @@ public class Reader {
                     Operation operation = null;
                     if(apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) {
                         operation = parseMethod(cls, method, globalParameters, classApiResponses);
+                        if (operation != null) {
+                            operation = methodParsed(apiOperation, operationPath, method, operation, SwaggerExtensions.chain());
+                        }
                     }
                     if (operation == null) {
                         continue;
@@ -971,6 +974,14 @@ public class Reader {
             }
         }
         return null;
+    }
+
+    public Operation methodParsed(ApiOperation apiOperation, String operationPath, Method method, Operation operation, Iterator<SwaggerExtension> chain) {
+        if (chain.hasNext()) {
+            return chain.next().methodParsed(apiOperation, operationPath, method, operation, chain);
+        } else {
+            return operation;
+        }
     }
 
     private static Set<Scheme> parseSchemes(String schemes) {
