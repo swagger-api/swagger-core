@@ -1,6 +1,7 @@
 package io.swagger.jaxrs.ext;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.Operation;
 import io.swagger.models.parameters.Parameter;
 
 import java.lang.annotation.Annotation;
@@ -14,4 +15,6 @@ public interface SwaggerExtension {
     String extractOperationMethod(ApiOperation apiOperation, Method method, Iterator<SwaggerExtension> chain);
 
     List<Parameter> extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip, Iterator<SwaggerExtension> chain);
+
+    Operation methodParsed(ApiOperation apiOperation, String operationPath, Method method, Operation operation, Iterator<SwaggerExtension> chain);
 }

@@ -3,6 +3,7 @@ package io.swagger.jaxrs.ext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.Operation;
 import io.swagger.models.parameters.Parameter;
 
 import java.lang.annotation.Annotation;
@@ -31,6 +32,15 @@ public abstract class AbstractSwaggerExtension implements SwaggerExtension {
             return chain.next().extractParameters(annotations, type, typesToSkip, chain);
         } else {
             return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public Operation methodParsed(ApiOperation apiOperation, String operationPath, Method method, Operation operation, Iterator<SwaggerExtension> chain) {
+        if (chain.hasNext()) {
+            return chain.next().methodParsed(apiOperation, operationPath, method, operation, chain);
+        } else {
+            return operation;
         }
     }
 
