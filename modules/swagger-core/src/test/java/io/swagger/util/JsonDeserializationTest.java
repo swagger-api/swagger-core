@@ -2,6 +2,9 @@ package io.swagger.util;
 
 import io.swagger.TestUtils;
 import io.swagger.models.*;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.StringProperty;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -83,6 +86,50 @@ public class JsonDeserializationTest {
             assertEquals(oauth2.get(0), "hello");
             assertEquals(oauth2.get(1), "world");
         }
+    }
+
+    @Test (description = "should deserialize a string property with constraints")
+    public void testDeserializeConstrainedStringProperty() throws Exception {
+
+        Swagger swagger = TestUtils.deserializeJsonFileFromClasspath("specFiles/propertiesWithConstraints.json", Swagger.class);
+
+        StringProperty property = (StringProperty) swagger.getDefinitions().get("Health").getProperties().get("string_with_constraints");
+
+        assertEquals(property.getMinLength(), Integer.valueOf(10));
+        assertEquals(property.getMaxLength(), Integer.valueOf(100));
+        assertEquals(property.getPattern(), "apattern");
+    }
+
+    @Test (description = "should deserialize an array property with constraints")
+    public void testDeserializeConstrainedArrayProperties() throws Exception {
+
+        Swagger swagger = TestUtils.deserializeJsonFileFromClasspath("specFiles/propertiesWithConstraints.json", Swagger.class);
+
+        Map<String, Property> properties = swagger.getDefinitions().get("Health").getProperties();
+
+        ArrayProperty withMin = (ArrayProperty) properties.get("array_with_min");
+
+        assertEquals(withMin.getMinItems(), Integer.valueOf(5));
+        assertNull(withMin.getMaxItems());
+        assertNull(withMin.getUniqueItems());
+
+        ArrayProperty withMax = (ArrayProperty) properties.get("array_with_max");
+
+        assertNull(withMax.getMinItems());
+        assertEquals(withMax.getMaxItems(), Integer.valueOf(10));
+        assertNull(withMax.getUniqueItems());
+
+        ArrayProperty withUnique = (ArrayProperty) properties.get("array_with_unique");
+
+        assertNull(withUnique.getMinItems());
+        assertNull(withUnique.getMaxItems());
+        assertEquals(withUnique.getUniqueItems(), Boolean.TRUE);
+
+        ArrayProperty withAll = (ArrayProperty) properties.get("array_with_all");
+
+        assertEquals(withAll.getMinItems(), Integer.valueOf(1));
+        assertEquals(withAll.getMaxItems(), Integer.valueOf(10));
+        assertEquals(withAll.getUniqueItems(), Boolean.TRUE);
     }
 
     @Test (description = "should deserialize a property with vendor extensions of different types")
