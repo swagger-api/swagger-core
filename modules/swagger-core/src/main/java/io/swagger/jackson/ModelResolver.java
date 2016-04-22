@@ -243,10 +243,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             PropertyMetadata md = propDef.getMetadata();
 
             boolean hasSetter = false, hasGetter = false;
-            if (propDef.getSetter() == null) {
-                hasSetter = false;
-            } else {
-                hasSetter = true;
+            try{
+                if (propDef.getSetter() == null) {
+                    hasSetter = false;
+                } else {
+                    hasSetter = true;
+                }
+            }catch(IllegalArgumentException e){
+                //com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder would throw IllegalArgumentException
+                // if there are overloaded setters. If we only want to know whether a set method exists, suppress the exception
+                // is reasonable.
+                // More logs might be added here
+            	hasSetter = true;
             }
             if (propDef.getGetter() != null) {
                 JsonProperty pd = propDef.getGetter().getAnnotation(JsonProperty.class);
