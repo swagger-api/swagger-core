@@ -187,7 +187,7 @@ public class Reader {
         String[] produces = new String[0];
         final Set<Scheme> globalSchemes = EnumSet.noneOf(Scheme.class);
 
-        Api api = (Api) cls.getAnnotation(Api.class);
+        Api api = ReflectionUtils.getAnnotation(cls, Api.class);
 
         boolean hasPathAnnotation = (ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class) != null);
         boolean hasApiAnnotation = (api != null);
@@ -410,7 +410,7 @@ public class Reader {
     }
 
     private void readImplicitParameters(Method method, Operation operation) {
-        ApiImplicitParams implicitParams = method.getAnnotation(ApiImplicitParams.class);
+        ApiImplicitParams implicitParams = ReflectionUtils.getAnnotation(method, ApiImplicitParams.class);
         if (implicitParams != null && implicitParams.value().length > 0) {
             for (ApiImplicitParam param : implicitParams.value()) {
                 Parameter p = readImplicitParam(param);
@@ -858,7 +858,7 @@ public class Reader {
         }
 
         Type[] genericParameterTypes = method.getGenericParameterTypes();
-        Annotation[][] paramAnnotations = method.getParameterAnnotations();
+        Annotation[][] paramAnnotations = ReflectionUtils.getParameterAnnotations(method);
         for (int i = 0; i < genericParameterTypes.length; i++) {
             final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
             List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
