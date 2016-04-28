@@ -256,7 +256,7 @@ public class SwaggerContextService {
         if (key != null){
             return true;
         } else {
-            return (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? true : false;
+            return (sc.getInitParameter(CONTEXT_ID_KEY) != null);
         }
     }
 
@@ -276,7 +276,7 @@ public class SwaggerContextService {
         if (key != null){
             return true;
         } else {
-            return (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? true : false;
+            return (sc.getInitParameter(CONTEXT_ID_KEY) != null);
         }
     }
 

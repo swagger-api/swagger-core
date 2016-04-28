@@ -59,6 +59,7 @@ public class ReflectiveJaxrsScanner implements SwaggerConfig, Scanner {
         this.resourcePackage = resourcePackage;
     }
 
+    @Override
     public Swagger configure(Swagger swagger) {
         if (filterClass != null) {
             try {
@@ -74,6 +75,7 @@ public class ReflectiveJaxrsScanner implements SwaggerConfig, Scanner {
         return swagger;
     }
 
+    @Override
     public Set<Class<?>> classes() {
         Set<Class<?>> classes = getReflections().getTypesAnnotatedWith(Api.class);
         Set<Class<?>> output = new HashSet<Class<?>>();
@@ -85,6 +87,7 @@ public class ReflectiveJaxrsScanner implements SwaggerConfig, Scanner {
         return output;
     }
 
+    @Override
     public String getFilterClass() {
         return filterClass;
     }
@@ -93,10 +96,12 @@ public class ReflectiveJaxrsScanner implements SwaggerConfig, Scanner {
         this.filterClass = filterClass;
     }
 
+    @Override
     public boolean getPrettyPrint() {
         return true;
     }
 
+    @Override
     public void setPrettyPrint(boolean shouldPrettyPrint) {
         prettyPrint = shouldPrettyPrint;
     }

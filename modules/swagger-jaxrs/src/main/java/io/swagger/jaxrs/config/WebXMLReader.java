@@ -14,13 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WebXMLReader implements SwaggerConfig {
-    protected String basePath,
-            host,
-            filterClass,
-            apiVersion,
-            title;
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebXMLReader.class);
+
+    protected String basePath;
+    protected String host;
+    protected String filterClass;
+    protected String apiVersion;
+    protected String title;
     protected String[] schemes = new String[]{};
-    private Logger LOGGER = LoggerFactory.getLogger(WebXMLReader.class);
 
     public WebXMLReader(ServletConfig servletConfig) {
         apiVersion = servletConfig.getInitParameter("api.version");
@@ -83,10 +84,12 @@ public class WebXMLReader implements SwaggerConfig {
         }
     }
 
+    @Override
     public String getFilterClass() {
         return filterClass;
     }
 
+    @Override
     public Swagger configure(Swagger swagger) {
         if (swagger != null) {
             Info info = swagger.getInfo();
