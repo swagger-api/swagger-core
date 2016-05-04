@@ -245,6 +245,9 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                         .items(subProperty)
                         .description(description)
                         .title(title);
+                arrayProperty.setMinItems(getInteger(node, PropertyBuilder.PropertyId.MIN_ITEMS));
+                arrayProperty.setMaxItems(getInteger(node, PropertyBuilder.PropertyId.MAX_ITEMS));
+                arrayProperty.setUniqueItems(getBoolean(node, PropertyBuilder.PropertyId.UNIQUE_ITEMS));
                 arrayProperty.setVendorExtensionMap(getVendorExtensions(node));
                 return arrayProperty;
             }
