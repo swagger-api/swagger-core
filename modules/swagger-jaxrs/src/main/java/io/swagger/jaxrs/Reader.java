@@ -137,7 +137,7 @@ public class Reader {
         for (Class<?> cls : classes) {
             SwaggerDefinition swaggerDefinition = cls.getAnnotation(SwaggerDefinition.class);
             if (swaggerDefinition != null) {
-                readSwaggerConfig(swaggerDefinition);
+                readSwaggerConfig(cls, swaggerDefinition);
             }
         }
 
@@ -162,7 +162,7 @@ public class Reader {
     public Swagger read(Class<?> cls) {
         SwaggerDefinition swaggerDefinition = cls.getAnnotation(SwaggerDefinition.class);
         if (swaggerDefinition != null) {
-            readSwaggerConfig(swaggerDefinition);
+            readSwaggerConfig(cls, swaggerDefinition);
         }
 
         return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
@@ -431,7 +431,7 @@ public class Reader {
                 Arrays.<Annotation>asList(param));
     }
 
-    protected void readSwaggerConfig(SwaggerDefinition config) {
+    protected void readSwaggerConfig(Class<?> cls, SwaggerDefinition config) {
         if (!config.basePath().isEmpty()) {
             swagger.setBasePath(config.basePath());
         }
