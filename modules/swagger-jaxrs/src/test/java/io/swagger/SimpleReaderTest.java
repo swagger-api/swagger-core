@@ -4,7 +4,6 @@ import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
-
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.DefaultReaderConfig;
 import io.swagger.models.ArrayModel;
@@ -28,9 +27,33 @@ import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
-import io.swagger.resources.*;
-
-import io.swagger.util.Json;
+import io.swagger.resources.ClassWithExamplePost;
+import io.swagger.resources.HiddenResource;
+import io.swagger.resources.NicknamedOperation;
+import io.swagger.resources.Resource1041;
+import io.swagger.resources.Resource1073;
+import io.swagger.resources.Resource1085;
+import io.swagger.resources.Resource653;
+import io.swagger.resources.Resource841;
+import io.swagger.resources.Resource877;
+import io.swagger.resources.Resource937;
+import io.swagger.resources.ResourceWithApiOperationCode;
+import io.swagger.resources.ResourceWithApiResponseResponseContainer;
+import io.swagger.resources.ResourceWithBodyParams;
+import io.swagger.resources.ResourceWithCustomHTTPMethodAnnotations;
+import io.swagger.resources.ResourceWithEmptyModel;
+import io.swagger.resources.ResourceWithEnums;
+import io.swagger.resources.ResourceWithInnerClass;
+import io.swagger.resources.ResourceWithMapReturnValue;
+import io.swagger.resources.ResourceWithRanges;
+import io.swagger.resources.ResourceWithResponse;
+import io.swagger.resources.ResourceWithResponseHeaders;
+import io.swagger.resources.ResourceWithTypedResponses;
+import io.swagger.resources.ResourceWithVoidReturns;
+import io.swagger.resources.SimpleResource;
+import io.swagger.resources.SimpleResourceWithoutAnnotations;
+import io.swagger.resources.SimpleSelfReferencingSubResource;
+import io.swagger.resources.TaggedResource;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -38,13 +61,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 public class SimpleReaderTest {
 
@@ -140,7 +157,7 @@ public class SimpleReaderTest {
         assertNotNull(patch);
 
         Operation put = getPut(swagger, "/");
-        assertNotNull(post);
+        assertNotNull(put);
 
         Operation delete = getDelete(swagger, "/");
         assertNotNull(delete);

@@ -9,17 +9,12 @@ import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.resources.ResourceWithReferences;
 import io.swagger.util.ResourceUtils;
-
-import org.apache.commons.io.IOUtils;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 public class ReferenceTest {
 

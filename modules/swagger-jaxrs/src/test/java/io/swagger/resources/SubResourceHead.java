@@ -47,7 +47,7 @@ public class SubResourceHead {
      * This path is expected to be skipped by
      * {@link Reader} as resource class is unknown here.
      *
-     * @return <code>null</code>
+     * @return {@code null}
      */
     @Path("anyClass")
     public <T> Class<T> getAnyClass() {
@@ -58,7 +58,7 @@ public class SubResourceHead {
      * This path is expected to be skipped by
      * {@link Reader} as resource class is unknown here.
      *
-     * @return <code>null</code>
+     * @return {@code null}
      */
     @Path("wildcardClass")
     public Class<?> getWildcardClass() {
@@ -69,7 +69,7 @@ public class SubResourceHead {
      * This path is expected to be skipped by
      * {@link Reader} as method result is an array.
      *
-     * @return <code>null</code>
+     * @return {@code null}
      */
     @Path("classes")
     public Class<?>[] getClasses() {

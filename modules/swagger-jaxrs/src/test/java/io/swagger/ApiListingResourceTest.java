@@ -7,13 +7,12 @@ import org.testng.annotations.Test;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
-
 import java.util.Enumeration;
 
 import static org.testng.Assert.assertNull;
 
 /**
- * The <code>ApiListingResourceTest</code> test should confirm that scanning of
+ * The {@code ApiListingResourceTest} test should confirm that scanning of
  * the {@link ApiListingResource} class doesn't affect Swagger output.
  */
 public class ApiListingResourceTest {
