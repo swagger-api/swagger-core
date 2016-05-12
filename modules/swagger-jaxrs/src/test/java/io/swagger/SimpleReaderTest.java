@@ -30,6 +30,7 @@ import io.swagger.models.properties.StringProperty;
 import io.swagger.resources.ClassWithExamplePost;
 import io.swagger.resources.HiddenResource;
 import io.swagger.resources.NicknamedOperation;
+import io.swagger.resources.NotValidRootResource;
 import io.swagger.resources.Resource1041;
 import io.swagger.resources.Resource1073;
 import io.swagger.resources.Resource1085;
@@ -307,6 +308,11 @@ public class SimpleReaderTest {
     @Test(description = "not scan a hidden resource")
     public void notScanHiddenResource() {
         assertNull(getSwagger(HiddenResource.class).getPaths());
+    }
+
+    @Test(description = "not scan a resource without @Api annotation")
+    public void notScanNotValidRootResourcee() {
+        assertNull(getSwagger(NotValidRootResource.class).getPaths());
     }
 
     @Test(description = "correctly model an empty model per 499")

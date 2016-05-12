@@ -186,11 +186,15 @@ public class Reader {
         boolean hasApiAnnotation = (api != null);
         boolean isApiHidden = hasApiAnnotation && api.hidden();
 
-        // class readable only if annotated with @Path or isSubresource, or and @Api not hidden
-        boolean classReadable = (hasPathAnnotation || isSubresource) && !isApiHidden;
+        // class readable only if annotated with ((@Path and @Api) or isSubresource ) - and @Api not hidden
+        boolean classReadable = ((hasPathAnnotation && hasApiAnnotation)|| isSubresource) && !isApiHidden;
 
-        // readable if classReadable or (scanAllResources true in config and @Api not hidden)
-        boolean readable = classReadable || (!isApiHidden && config.isScanAllResources());
+        // with scanAllResources true in config and @Api not hidden scan only if it has also @Path annotation or is subresource
+        boolean scanAll = !isApiHidden && config.isScanAllResources() && (hasPathAnnotation || isSubresource);
+
+        // readable if classReadable or scanAll
+        boolean readable = classReadable || scanAll;
+
 
         if (!readable) {
             return swagger;
