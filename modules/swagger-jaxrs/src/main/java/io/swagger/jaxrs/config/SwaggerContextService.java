@@ -80,7 +80,7 @@ public class SwaggerContextService {
         return this;
     }
 
-    private static boolean isServletConfigAvailable (ServletConfig sc) {
+    public static boolean isServletConfigAvailable (ServletConfig sc) {
         if (sc == null) return false;
         // hack for quick fix for https://github.com/swagger-api/swagger-core/issues/1691
         // in v1.5.7, targeting v1.5.8; overall improved/refactored "swagger context" to be applied in later major versions
