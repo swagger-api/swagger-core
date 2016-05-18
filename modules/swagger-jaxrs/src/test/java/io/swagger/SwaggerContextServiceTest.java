@@ -50,6 +50,18 @@ public class SwaggerContextServiceTest {
         bc.setDescription("Bean Config test 2");
         beanConfigScanner2 = bc;
     }
+    
+    void stubWithPathBasedConfigInitParam() {
+
+        when(servletContext1.getAttribute(SCANNER_ID_PREFIX + "/url1")).thenReturn(beanConfigScanner1);
+        when(servletContext2.getAttribute(SCANNER_ID_PREFIX + "/url2")).thenReturn(beanConfigScanner2);
+
+        when(servletConfig1.getServletContext()).thenReturn(servletContext1);
+        when(servletConfig2.getServletContext()).thenReturn(servletContext2);
+
+        when(servletConfig1.getInitParameter(USE_PATH_BASED_CONFIG)).thenReturn("true");
+        when(servletConfig2.getInitParameter(USE_PATH_BASED_CONFIG)).thenReturn("true");
+    }
 
     private void stubWithInitParam() {
         when(servletContext1.getAttribute(SCANNER_ID_PREFIX + "test.1")).thenReturn(beanConfigScanner1);
@@ -281,4 +293,24 @@ public class SwaggerContextServiceTest {
 
     }
 
+    @Test(description = "should add SwaggerConfig to SwaggerConfigLocator map with keys path-based keys")
+    public void initializeAndGetConfigBasedOnPath() {
+        stubWithPathBasedConfigInitParam();
+
+        new SwaggerContextService()
+            .withServletConfig(servletConfig1)
+            .withBasePath("/url1")
+            .initConfig();
+        
+        new SwaggerContextService()
+            .withServletConfig(servletConfig2)
+            .withBasePath("url2")
+            .initConfig();
+
+        assertTrue(SwaggerConfigLocator.getInstance().getConfig(CONFIG_ID_PREFIX + "/url1/") instanceof WebXMLReader);
+        assertTrue(SwaggerConfigLocator.getInstance().getConfig(CONFIG_ID_PREFIX + "/url2/") instanceof WebXMLReader);
+
+        verify(servletConfig1, times(1)).getInitParameter(eq(USE_PATH_BASED_CONFIG));
+        verify(servletConfig2, times(1)).getInitParameter(eq(USE_PATH_BASED_CONFIG));
+    }
 }

@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class SwaggerContextService {
 
     private static Logger LOGGER = LoggerFactory.getLogger(SwaggerContextService.class);
@@ -22,6 +24,7 @@ public class SwaggerContextService {
     public static final String SCANNER_ID_DEFAULT = SCANNER_ID_PREFIX + "default";
 
     public static final String CONTEXT_ID_KEY = "swagger.context.id";
+    public static final String USE_PATH_BASED_CONFIG = "swagger.use.path.based.config";
 
     private ServletConfig sc;
     private String configId;
@@ -29,6 +32,24 @@ public class SwaggerContextService {
     private String scannerId;
     private Scanner scanner;
     private String contextId;
+    private String basePath;
+    private boolean usePathBasedConfig = false;
+    
+    public boolean isUsePathBasedConfig() {
+        return usePathBasedConfig;
+    }
+    
+    public void setUsePathBasedConfig(boolean usePathBasedConfig) {
+        this.usePathBasedConfig = usePathBasedConfig;
+    }
+    
+    public void setBasePath(String basePath) {
+        this.basePath = normalizeBasePath(basePath);
+    }
+    
+    public String getBasePath() {
+        return basePath;
+    }
 
     public void setScannerId(String scannerId) {
         this.scannerId = scannerId;
@@ -59,7 +80,7 @@ public class SwaggerContextService {
         return this;
     }
 
-    private static boolean isServletConfigAvailable (ServletConfig sc) {
+    public static boolean isServletConfigAvailable (ServletConfig sc) {
         if (sc == null) return false;
         // hack for quick fix for https://github.com/swagger-api/swagger-core/issues/1691
         // in v1.5.7, targeting v1.5.8; overall improved/refactored "swagger context" to be applied in later major versions
@@ -70,6 +91,16 @@ public class SwaggerContextService {
             return false;
         }
         return true;
+    }
+
+    public SwaggerContextService withBasePath(String basePath) {
+        this.basePath = normalizeBasePath(basePath);
+        return this;
+    }
+    
+    public SwaggerContextService withPathBasedConfig(boolean usePathBasedConfig) {
+        this.usePathBasedConfig = usePathBasedConfig;
+        return this;
     }
 
     public SwaggerContextService withConfigId(String configId) {
@@ -112,10 +143,19 @@ public class SwaggerContextService {
             if (isServletConfigAvailable(sc)) {
                 configIdKey = (sc.getInitParameter(CONFIG_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONFIG_ID_KEY) : null;
                 if (configIdKey == null) {
-                    configIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : CONFIG_ID_DEFAULT;
+                    boolean usePathBasedConfig = Boolean.valueOf(sc.getInitParameter(USE_PATH_BASED_CONFIG));
+                    if (usePathBasedConfig && StringUtils.isNotBlank(basePath)) {
+                        configIdKey = CONFIG_ID_PREFIX + basePath;
+                    } else {
+                        configIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : CONFIG_ID_DEFAULT;
+                    }
                 }
             } else {
-                configIdKey = CONFIG_ID_DEFAULT;
+                if (isUsePathBasedConfig() && StringUtils.isNotBlank(basePath)) {
+                    configIdKey = CONFIG_ID_PREFIX + basePath;
+                } else {
+                    configIdKey = CONFIG_ID_DEFAULT;
+                }
             }
         }
         SwaggerConfig value = (swaggerConfig != null) ? swaggerConfig : null;
@@ -142,7 +182,12 @@ public class SwaggerContextService {
             if (isServletConfigAvailable(sc)) {
                 configIdKey = (sc.getInitParameter(CONFIG_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONFIG_ID_KEY) : null;
                 if (configIdKey == null) {
-                    configIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : CONFIG_ID_DEFAULT;
+                    boolean usePathBasedConfig = Boolean.valueOf(sc.getInitParameter(USE_PATH_BASED_CONFIG));
+                    if (usePathBasedConfig && StringUtils.isNotBlank(basePath)) {
+                        configIdKey = CONFIG_ID_PREFIX + basePath;
+                    } else {
+                        configIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : CONFIG_ID_DEFAULT;
+                    }
                 }
             } else {
                 configIdKey = CONFIG_ID_DEFAULT;
@@ -179,10 +224,19 @@ public class SwaggerContextService {
             if (isServletConfigAvailable(sc)) {
                 configIdKey = (sc.getInitParameter(CONFIG_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONFIG_ID_KEY) : null;
                 if (configIdKey == null) {
-                    configIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : CONFIG_ID_DEFAULT;
+                    boolean usePathBasedConfig = Boolean.valueOf(sc.getInitParameter(USE_PATH_BASED_CONFIG));
+                    if (usePathBasedConfig && StringUtils.isNotBlank(basePath)) {
+                        configIdKey = CONFIG_ID_PREFIX + basePath;
+                    } else {
+                        configIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? CONFIG_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : CONFIG_ID_DEFAULT;
+                    }
                 }
             } else {
-                configIdKey = CONFIG_ID_DEFAULT;
+                if (isUsePathBasedConfig() && StringUtils.isNotBlank(basePath)) {
+                    configIdKey = CONFIG_ID_PREFIX + basePath;
+                } else {
+                    configIdKey = CONFIG_ID_DEFAULT;
+                }
             }
         }
         if (swagger != null) {
@@ -202,10 +256,19 @@ public class SwaggerContextService {
             if (isServletConfigAvailable(sc)) {
                 scannerIdKey = (sc.getInitParameter(SCANNER_ID_KEY) != null) ? SCANNER_ID_PREFIX + sc.getInitParameter(SCANNER_ID_KEY) : null;
                 if (scannerIdKey == null) {
-                    scannerIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? SCANNER_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : SCANNER_ID_DEFAULT;
+                    boolean usePathBasedConfig = Boolean.valueOf(sc.getInitParameter(USE_PATH_BASED_CONFIG));
+                    if (usePathBasedConfig && StringUtils.isNotBlank(basePath)) {
+                        scannerIdKey = SCANNER_ID_PREFIX + basePath;
+                    } else {    
+                        scannerIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? SCANNER_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : SCANNER_ID_DEFAULT;
+                    }
                 }
             } else {
-                scannerIdKey = SCANNER_ID_DEFAULT;
+                if (isUsePathBasedConfig() && StringUtils.isNotBlank(basePath)) {
+                    scannerIdKey = SCANNER_ID_PREFIX + basePath;
+                } else {
+                    scannerIdKey = SCANNER_ID_DEFAULT;
+                }
             }
         }
         Scanner value = (scanner != null) ? scanner : new DefaultJaxrsScanner();
@@ -233,7 +296,12 @@ public class SwaggerContextService {
             if (isServletConfigAvailable(sc)) {
                 scannerIdKey = (sc.getInitParameter(SCANNER_ID_KEY) != null) ? SCANNER_ID_PREFIX + sc.getInitParameter(SCANNER_ID_KEY) : null;
                 if (scannerIdKey == null) {
-                    scannerIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? SCANNER_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : SCANNER_ID_DEFAULT;
+                    boolean usePathBasedConfig = Boolean.valueOf(sc.getInitParameter(USE_PATH_BASED_CONFIG));
+                    if (usePathBasedConfig && StringUtils.isNotBlank(basePath)) {
+                        scannerIdKey = SCANNER_ID_PREFIX + basePath;
+                    } else {
+                        scannerIdKey = (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? SCANNER_ID_PREFIX + sc.getInitParameter(CONTEXT_ID_KEY) : SCANNER_ID_DEFAULT;
+                    }
                 }
                 value = (Scanner) sc.getServletContext().getAttribute(scannerIdKey);
             } else {
@@ -248,6 +316,16 @@ public class SwaggerContextService {
             return value;
         }
         return ScannerFactory.getScanner();
+    }
+
+    public static boolean isUsePathBasedConfigInitParamDefined(ServletConfig sc) {
+        if (!isServletConfigAvailable(sc)) return false;
+        String key = sc.getInitParameter(USE_PATH_BASED_CONFIG);
+        if (key != null){
+            return true;
+        } else {
+            return (sc.getInitParameter(CONTEXT_ID_KEY) != null) ? true : false;
+        }
     }
 
     public static boolean isScannerIdInitParamDefined(ServletConfig sc) {
@@ -288,5 +366,27 @@ public class SwaggerContextService {
         } else {
             return sc.getInitParameter(CONTEXT_ID_KEY);
         }
+    }
+    
+    /**
+     * Normalize base path to the canonical form by adding trailing and leading slashes
+     * @param basePath base path to normalize
+     * @return normalized base path
+     */
+    private static String normalizeBasePath(final String basePath) {
+        if (basePath == null) {
+            return basePath;
+        }
+        
+        String normalizedBasePath = basePath.trim();
+        if (!normalizedBasePath.startsWith("/")) {
+            normalizedBasePath = "/" + normalizedBasePath;
+        }
+        
+        if (!normalizedBasePath.endsWith("/")) {
+            normalizedBasePath = normalizedBasePath + "/";
+        }
+        
+        return normalizedBasePath;
     }
 }
