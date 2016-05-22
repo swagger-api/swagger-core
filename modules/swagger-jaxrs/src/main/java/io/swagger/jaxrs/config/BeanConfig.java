@@ -1,5 +1,6 @@
 package io.swagger.jaxrs.config;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.config.FilterFactory;
 import io.swagger.config.Scanner;
@@ -269,6 +270,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         final Reflections reflections = new Reflections(config);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(javax.ws.rs.Path.class);
         classes.addAll(reflections.getTypesAnnotatedWith(SwaggerDefinition.class));
+        classes.addAll(reflections.getTypesAnnotatedWith(Api.class));
 
         Set<Class<?>> output = new HashSet<Class<?>>();
         for (Class<?> cls : classes) {
