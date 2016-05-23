@@ -307,19 +307,6 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         }
         return output;
     }
-
-    private boolean hasAnnotatedGraph(Class<?> cls, Class<?> annotation) {
-    	boolean result = false;
-    	Class<?>[] interfaces = cls.getInterfaces();
-			for (Class<?> class1 : interfaces) {
-				if (interfaces != null && interfaces.length > 0) {
-					result = true;
-				} else {
-					result = hasAnnotatedGraph(class1, annotation);
-				}
-			}
-    	return result;
-    }
        
     private void updateInfoFromConfig() {
         info = getSwagger().getInfo();
