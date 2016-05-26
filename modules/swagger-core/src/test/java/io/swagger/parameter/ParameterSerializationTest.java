@@ -7,6 +7,7 @@ import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.ArrayModel;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.RefModel;
+import io.swagger.models.Swagger;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
@@ -19,6 +20,7 @@ import io.swagger.models.properties.StringProperty;
 import io.swagger.util.Json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -335,6 +337,48 @@ public class ParameterSerializationTest {
         assertEquals(((PathParameter) p).getEnum(), Arrays.asList("a", "b", "c"));
     }
 
+    @Test(description = "it should deserialize a number path parameter with enum")
+    public void deserializeNumberEnumPathParameter() throws IOException {
+        final String json = "{" +
+                "   \"in\":\"path\"," +
+                "   \"required\":true," +
+                "   \"items\":{" +
+                "      \"type\":\"integer\"" +
+                "   }," +
+                "   \"enum\":[1,2,3]" +
+                "}";
+        final Parameter p = m.readValue(json, Parameter.class);
+        SerializationMatchers.assertEqualsToJson(p, json);
+
+        assertEquals(((PathParameter) p).getEnumValue(), Arrays.asList(1,2,3));
+    }
+
+    @Test(description = "should serialize correctly typed numeric enums")
+    public void testIssue1765() throws Exception {
+        String yaml =
+                "swagger: '2.0'\n" +
+                        "paths:\n" +
+                        "  /test:\n" +
+                        "    get:\n" +
+                        "      parameters:\n" +
+                        "      - name: \"days\"\n" +
+                        "        in: \"path\"\n" +
+                        "        required: true\n" +
+                        "        type: \"integer\"\n" +
+                        "        format: \"int32\"\n" +
+                        "        enum:\n" +
+                        "        - 1\n" +
+                        "        - 2\n" +
+                        "        - 3\n" +
+                        "        - 4\n" +
+                        "        - 5\n" +
+                        "      responses:\n" +
+                        "        default:\n" +
+                        "          description: great";
+
+        Swagger swagger = Yaml.mapper().readValue(yaml, Swagger.class);
+        SerializationMatchers.assertEqualsToYaml(swagger, yaml);
+    }
     @Test(description = "should serialize string value")
     public void testStringValue() {
         final QueryParameter param = new QueryParameter();
