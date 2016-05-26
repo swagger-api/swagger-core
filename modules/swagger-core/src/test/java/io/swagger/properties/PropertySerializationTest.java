@@ -254,6 +254,18 @@ public class PropertySerializationTest {
         assertEquals(m.writeValueAsString(p), json);
     }
 
+    @Test(description = "it should deserialize an IntegerProperty with enums")
+    public void deserializeEnumIntegerProperty() throws IOException {
+        final String json = "{\"type\":\"integer\",\"format\":\"int32\",\"enum\":[1,2]}";
+        final Property p = m.readValue(json, Property.class);
+        assertEquals(p.getType(), "integer");
+        List<Integer> _enum = ((IntegerProperty) p).getEnum();
+        assertNotNull(_enum);
+        assertEquals(_enum, Arrays.asList(1, 2));
+        assertEquals(p.getClass(), IntegerProperty.class);
+        assertEquals(m.writeValueAsString(p), json);
+    }
+
     @Test(description = "it should serialize a string array property")
     public void serializeArrayStringProperty() throws IOException {
         final ArrayProperty p = new ArrayProperty().items(new StringProperty());

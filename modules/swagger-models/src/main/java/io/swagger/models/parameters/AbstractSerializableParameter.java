@@ -14,6 +14,7 @@ import io.swagger.models.properties.DecimalProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonPropertyOrder({ "name", "in", "description", "required", "type", "items", "collectionFormat", "default", "maximum",
@@ -25,7 +26,7 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     protected String format;
     protected String collectionFormat;
     protected Property items;
-    protected List<String> _enum;
+    protected List<Object> _enum;
     protected Boolean exclusiveMaximum;
     protected Double maximum;
     protected Boolean exclusiveMinimum;
@@ -108,18 +109,18 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         return castThis();
     }
 
-    public T _enum(List<String> value) {
+    public T _enum(List<Object> value) {
         this._enum = value;
         return castThis();
     }
 
     @Override
-    public List<String> getEnum() {
+    public List<Object> getEnum() {
         return _enum;
     }
 
     @Override
-    public void setEnum(List<String> _enum) {
+    public void setEnum(List<Object> _enum) {
         this._enum = _enum;
     }
 
@@ -169,7 +170,7 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         this.format = property.getFormat();
         if (property instanceof StringProperty) {
             final StringProperty string = (StringProperty) property;
-            setEnum(string.getEnum());
+            if (string.getEnum() != null) setEnum(new ArrayList<Object>(string.getEnum()));
         } else if (property instanceof ArrayProperty) {
             final ArrayProperty array = (ArrayProperty) property;
             setItems(array.getItems());

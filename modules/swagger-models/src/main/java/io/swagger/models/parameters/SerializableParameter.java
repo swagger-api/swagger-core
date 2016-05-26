@@ -21,9 +21,9 @@ public interface SerializableParameter extends Parameter {
 
     void setCollectionFormat(String collectionFormat);
 
-    List<String> getEnum();
+    List<Object> getEnum();
 
-    void setEnum(List<String> _enum);
+    void setEnum(List<Object> _enum);
 
     Integer getMaxLength();
 
