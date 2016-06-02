@@ -245,7 +245,10 @@ public class SimpleReaderTest {
     public void scanResourceWithParamEnums() {
         Swagger swagger = getSwagger(ResourceWithEnums.class);
         SerializableParameter param = (SerializableParameter) getGetParameters(swagger, "/{id}").get(2);
-        List<String> _enum = param.getEnum();
+        List<String> _enum = new ArrayList<String>();
+        for (Object object : param.getEnum()) {
+            _enum.add(object != null ? object.toString() : null);
+        }
         assertEquals(_enum, Arrays.asList("a", "b", "c", "d", "e"));
 
         List<Parameter> checkEnumHandling = getGetParameters(swagger, "/checkEnumHandling/{v0}");

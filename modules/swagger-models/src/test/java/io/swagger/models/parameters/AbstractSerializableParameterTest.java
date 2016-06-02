@@ -9,6 +9,7 @@ import io.swagger.models.properties.StringProperty;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -76,7 +77,7 @@ public class AbstractSerializableParameterTest {
         assertEquals(instance.getItems(), items, "The get items must be the same as the set one");
 
         // given
-        List<String> _enum = Arrays.asList("_enum");
+        List<Object> _enum = Arrays.asList((Object)"_enum");
 
         // when
         instance._enum(_enum);
@@ -212,7 +213,11 @@ public class AbstractSerializableParameterTest {
 
         // given
         StringProperty property = new StringProperty();
-        property._enum(_enum);
+        List<String> strings = new ArrayList<String>();
+        for (Object object : _enum) {
+            strings.add(object != null ? object.toString() : null);
+        }
+        property._enum(new ArrayList<String>(strings));
 
         // when
         instance.property(property);

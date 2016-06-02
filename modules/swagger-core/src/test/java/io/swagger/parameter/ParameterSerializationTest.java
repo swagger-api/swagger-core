@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ParameterSerializationTest {
@@ -307,7 +308,7 @@ public class ParameterSerializationTest {
     public void serializeEnumPathParameter() {
         PathParameter p = new PathParameter()
                 .items(new StringProperty())
-                ._enum(Arrays.asList("a", "b", "c"));
+                ._enum(new ArrayList<Object>(Arrays.asList("a", "b", "c")));
         final String json = "{" +
                 "   \"in\":\"path\"," +
                 "   \"required\":true," +
@@ -333,6 +334,22 @@ public class ParameterSerializationTest {
         SerializationMatchers.assertEqualsToJson(p, json);
 
         assertEquals(((PathParameter) p).getEnum(), Arrays.asList("a", "b", "c"));
+    }
+
+    @Test(description = "it should deserialize a number path parameter with enum")
+    public void deserializeNumberEnumPathParameter() throws IOException {
+        final String json = "{" +
+                "   \"in\":\"path\"," +
+                "   \"required\":true," +
+                "   \"items\":{" +
+                "      \"type\":\"integer\"" +
+                "   }," +
+                "   \"enum\":[1,2,3]" +
+                "}";
+        final Parameter p = m.readValue(json, Parameter.class);
+        SerializationMatchers.assertEqualsToJson(p, json);
+
+        assertEquals(((PathParameter) p).getEnum(), Arrays.asList(1,2,3));
     }
 
     @Test(description = "should serialize string value")

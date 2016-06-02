@@ -194,7 +194,7 @@ public class ParameterProcessor {
         }
         Map<PropertyBuilder.PropertyId, Object> args = allowableValues.asPropertyArguments();
         if (args.containsKey(PropertyBuilder.PropertyId.ENUM)) {
-            p.setEnum((List<String>) args.get(PropertyBuilder.PropertyId.ENUM));
+            p.setEnum((List<Object>) args.get(PropertyBuilder.PropertyId.ENUM));
         } else {
             if (args.containsKey(PropertyBuilder.PropertyId.MINIMUM)) {
                 p.setMinimum((Double) args.get(PropertyBuilder.PropertyId.MINIMUM));
