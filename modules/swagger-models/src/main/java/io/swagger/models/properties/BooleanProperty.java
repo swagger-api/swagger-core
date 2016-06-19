@@ -34,10 +34,12 @@ public class BooleanProperty extends AbstractProperty implements Property {
     }
 
     public BooleanProperty _default(String _default) {
-        try {
-            this.setDefault(Boolean.parseBoolean(_default));
-        } catch (Exception e) {
-            //continue
+        if(_default != null) {
+            try {
+                this.setDefault(Boolean.parseBoolean(_default));
+            } catch (Exception e) {
+                //continue
+            }
         }
         return this;
     }
