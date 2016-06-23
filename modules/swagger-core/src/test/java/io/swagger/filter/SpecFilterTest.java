@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SpecFilterTest {
 
@@ -36,6 +37,59 @@ public class SpecFilterTest {
         final Swagger filtered = new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null);
 
         assertEquals(Json.pretty(swagger), Json.pretty(filtered));
+    }
+
+    @Test(description = "it should clone everything concurrently")
+    public void cloneEverythingConcurrent() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/petstore.json");
+
+        ThreadGroup tg = new ThreadGroup("SpecFilterTest" + "|" + System.currentTimeMillis());
+        final Map<String, Swagger> filteredMap = new ConcurrentHashMap<String, Swagger>();
+        for (int i = 0; i < 10; i++) {
+            final int id = i;
+            new Thread(tg, "SpecFilterTest"){
+                public void run(){
+                    try {
+                        filteredMap.put("filtered " + id, new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null));
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+
+        new Thread(new FailureHandler(tg, filteredMap, swagger)).start();
+    }
+
+    class FailureHandler implements Runnable {
+        ThreadGroup tg;
+        Map<String, Swagger> filteredMap;
+        private Swagger swagger;
+
+        public FailureHandler(ThreadGroup tg, Map<String, Swagger> filteredMap, Swagger swagger) {
+            this.tg = tg;
+            this.filteredMap = filteredMap;
+            this.swagger = swagger;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Thread[] thds = new Thread[tg.activeCount()];
+                tg.enumerate(thds);
+                for (Thread t : thds) {
+                    if (t != null) {
+                        t.join(10000);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            for (Swagger filtered: filteredMap.values()) {
+                assertEquals(Json.pretty(swagger), Json.pretty(filtered));
+            }
+        }
     }
 
     @Test(description = "it should clone everything from JSON without models")
