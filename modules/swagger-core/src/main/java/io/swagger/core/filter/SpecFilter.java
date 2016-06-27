@@ -1,6 +1,7 @@
 package io.swagger.core.filter;
 
 import io.swagger.model.ApiDescription;
+import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
@@ -11,6 +12,7 @@ import io.swagger.models.Tag;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 
@@ -106,8 +108,9 @@ public class SpecFilter {
 
         if (swagger.getResponses() != null) {
             for (Response response: swagger.getResponses().values()) {
-                if (response.getSchema() != null && response.getSchema() instanceof RefProperty) {
-                    referencedDefinitions.add(((RefProperty) response.getSchema()).getSimpleRef());
+                String propertyRef = getPropertyRef(response.getSchema());
+                if (propertyRef != null) {
+                    referencedDefinitions.add(propertyRef);
                 }
             }
         }
@@ -115,8 +118,9 @@ public class SpecFilter {
             for (Parameter p: swagger.getParameters().values()) {
                 if (p instanceof BodyParameter) {
                     BodyParameter bp = (BodyParameter) p;
-                    if (bp.getSchema() != null && bp.getSchema() instanceof RefModel) {
-                        referencedDefinitions.add(((RefModel) bp.getSchema()).getSimpleRef());
+                    String modelRef = getModelRef(bp.getSchema());
+                    if (modelRef != null) {
+                        referencedDefinitions.add(modelRef);
                     }
                 }
             }
@@ -127,8 +131,9 @@ public class SpecFilter {
                     for (Parameter p: path.getParameters()) {
                         if (p instanceof BodyParameter) {
                             BodyParameter bp = (BodyParameter) p;
-                            if (bp.getSchema() != null && bp.getSchema() instanceof RefModel) {
-                                referencedDefinitions.add(((RefModel) bp.getSchema()).getSimpleRef());
+                            String modelRef = getModelRef(bp.getSchema());
+                            if (modelRef != null) {
+                                referencedDefinitions.add(modelRef);
                             }
                         }
                     }
@@ -137,8 +142,9 @@ public class SpecFilter {
                     for (Operation op: path.getOperations()) {
                         if (op.getResponses() != null) {
                             for (Response response: op.getResponses().values()) {
-                                if (response.getSchema() != null && response.getSchema() instanceof RefProperty) {
-                                    referencedDefinitions.add(((RefProperty) response.getSchema()).getSimpleRef());
+                                String propertyRef = getPropertyRef(response.getSchema());
+                                if (propertyRef != null) {
+                                    referencedDefinitions.add(propertyRef);
                                 }
                             }
                         }
@@ -146,8 +152,9 @@ public class SpecFilter {
                             for (Parameter p: op.getParameters()) {
                                 if (p instanceof BodyParameter) {
                                     BodyParameter bp = (BodyParameter) p;
-                                    if (bp.getSchema() != null && bp.getSchema() instanceof RefModel) {
-                                        referencedDefinitions.add(((RefModel) bp.getSchema()).getSimpleRef());
+                                    String modelRef = getModelRef(bp.getSchema());
+                                    if (modelRef != null) {
+                                        referencedDefinitions.add(modelRef);
                                     }
                                 }
                             }
@@ -252,5 +259,28 @@ public class SpecFilter {
         clonedOperation.setResponses(op.getResponses());
 
         return clonedOperation;
+    }
+
+    private String getPropertyRef(Property property) {
+        if (property instanceof ArrayProperty &&
+                ((ArrayProperty) property).getItems() != null) {
+            return getPropertyRef(((ArrayProperty) property).getItems());
+        } else if (property instanceof MapProperty &&
+                ((MapProperty) property).getAdditionalProperties() != null) {
+            return getPropertyRef(((MapProperty) property).getAdditionalProperties());
+        } else if (property instanceof RefProperty) {
+            return ((RefProperty) property).getSimpleRef();
+        }
+        return null;
+    }
+
+    private String getModelRef(Model model) {
+        if (model instanceof ArrayModel &&
+                ((ArrayModel) model).getItems() != null) {
+            return getPropertyRef(((ArrayModel) model).getItems());
+        } else if (model instanceof RefModel) {
+            return ((RefModel) model).getSimpleRef();
+        }
+        return null;
     }
 }

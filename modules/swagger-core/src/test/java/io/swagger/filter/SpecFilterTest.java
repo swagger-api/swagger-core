@@ -196,6 +196,25 @@ public class SpecFilterTest {
 
     }
 
+    @Test(description = "it should retain non-broken reference model properties")
+    public void retainNonBroeknReferenceModelProperties() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/paramAndResponseRefArray.json");
+
+        assertNotNull(swagger.getDefinitions().get("User"));
+
+        final NoOpOperationsFilter noOpfilter = new NoOpOperationsFilter();
+        Swagger filtered = new SpecFilter().filter(swagger, noOpfilter, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("User"));
+
+        final RemoveUnreferencedDefinitionsFilter refFilter = new RemoveUnreferencedDefinitionsFilter();
+        filtered = new SpecFilter().filter(swagger, refFilter, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("User")); // ArrayProperty
+        assertNotNull(filtered.getDefinitions().get("Pet")); // ArrayModel
+
+    }
+
     @Test(description = "it should filter models where some fields have no properties")
     public void filterNoPropertiesModels() throws IOException {
         final String modelName = "Array";
