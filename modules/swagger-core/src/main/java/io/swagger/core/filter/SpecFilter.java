@@ -2,6 +2,7 @@ package io.swagger.core.filter;
 
 import io.swagger.model.ApiDescription;
 import io.swagger.models.ArrayModel;
+import io.swagger.models.ComposedModel;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
@@ -17,10 +18,12 @@ import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -118,9 +121,9 @@ public class SpecFilter {
             for (Parameter p: swagger.getParameters().values()) {
                 if (p instanceof BodyParameter) {
                     BodyParameter bp = (BodyParameter) p;
-                    String modelRef = getModelRef(bp.getSchema());
+                    Set<String>  modelRef = getModelRef(bp.getSchema());
                     if (modelRef != null) {
-                        referencedDefinitions.add(modelRef);
+                        referencedDefinitions.addAll(modelRef);
                     }
                 }
             }
@@ -131,9 +134,9 @@ public class SpecFilter {
                     for (Parameter p: path.getParameters()) {
                         if (p instanceof BodyParameter) {
                             BodyParameter bp = (BodyParameter) p;
-                            String modelRef = getModelRef(bp.getSchema());
+                            Set<String>  modelRef = getModelRef(bp.getSchema());
                             if (modelRef != null) {
-                                referencedDefinitions.add(modelRef);
+                                referencedDefinitions.addAll(modelRef);
                             }
                         }
                     }
@@ -152,9 +155,9 @@ public class SpecFilter {
                             for (Parameter p: op.getParameters()) {
                                 if (p instanceof BodyParameter) {
                                     BodyParameter bp = (BodyParameter) p;
-                                    String modelRef = getModelRef(bp.getSchema());
+                                    Set<String> modelRef = getModelRef(bp.getSchema());
                                     if (modelRef != null) {
-                                        referencedDefinitions.add(modelRef);
+                                        referencedDefinitions.addAll(modelRef);
                                     }
                                 }
                             }
@@ -274,12 +277,22 @@ public class SpecFilter {
         return null;
     }
 
-    private String getModelRef(Model model) {
+    private Set<String> getModelRef(Model model) {
         if (model instanceof ArrayModel &&
                 ((ArrayModel) model).getItems() != null) {
-            return getPropertyRef(((ArrayModel) model).getItems());
+            return new HashSet<String>(Arrays.asList(getPropertyRef(((ArrayModel) model).getItems())));
+        } else if (model instanceof ComposedModel &&
+                ((ComposedModel) model).getAllOf() != null) {
+            Set<String> refs = new LinkedHashSet<String>();
+            ComposedModel cModel = (ComposedModel) model;
+            for (Model ref: cModel.getAllOf()) {
+                if (ref instanceof RefModel) {
+                    refs.add(((RefModel)ref).getSimpleRef());
+                }
+            }
+            return refs;
         } else if (model instanceof RefModel) {
-            return ((RefModel) model).getSimpleRef();
+            return new HashSet<String>(Arrays.asList(((RefModel) model).getSimpleRef()));
         }
         return null;
     }
