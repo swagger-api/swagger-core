@@ -1,6 +1,6 @@
 {
   "swagger" : "2.0",
-  "securityRequirement" : [ {
+  "security" : [ {
     "basic_auth" : [ ],
     "api_key" : [ ]
   }, {

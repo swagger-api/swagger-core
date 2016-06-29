@@ -51,7 +51,7 @@ public class JsonDeserializationTest {
     }
 
     @Test
-    public void testDeserializeSecurityRequirement() throws Exception {
+    public void testDeserializeSecurity() throws Exception {
         final Swagger swagger = TestUtils.deserializeJsonFileFromClasspath("specFiles/securityDefinitions.json", Swagger.class);
 
         final List<SecurityRequirement> security = swagger.getSecurity();
