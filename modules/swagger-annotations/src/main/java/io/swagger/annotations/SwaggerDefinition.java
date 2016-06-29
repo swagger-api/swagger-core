@@ -24,7 +24,6 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation that configures definition level metadata. Still missing are the following:
- * - Security Definitions
  * - Security Requirements
  * - Parameters
  * - Responses
@@ -88,7 +87,13 @@ public @interface SwaggerDefinition {
      */
     Tag[] tags() default @Tag(name = "");
 
-    ;
+
+    /**
+     * Defintions for security schemes
+     *
+     * @return defintions for security schemes
+     */
+    SecurityDefinition securityDefinition() default @SecurityDefinition();
 
     /**
      * General metadata for this Swagger definition.
