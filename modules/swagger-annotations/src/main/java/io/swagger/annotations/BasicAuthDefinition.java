@@ -1,7 +1,7 @@
 package io.swagger.annotations;
 
 /**
- * Annotation used to construct OAuth security definition.
+ * Annotation used to construct Basic Auth security definition.
  */
 public @interface BasicAuthDefinition {
 
