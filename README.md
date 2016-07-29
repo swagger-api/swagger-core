@@ -46,7 +46,7 @@ To allow independent development, scala support has been moved into a separate p
 This is a project to build the swagger-core library, which is required for the Swagger implementation of the OpenAPI Spec. 
 
 ### Change History
-If you're interested in the change history of swagger and the swagger-core framework, see [here](https://github.com/swagger-api/swagger-core/wiki/Changelog).
+If you're interested in the change history of swagger and the swagger-core framework, see [here](https://github.com/swagger-api/swagger-core/releases).
 
 ### Prerequisites
 You need the following installed and available in your $PATH:
