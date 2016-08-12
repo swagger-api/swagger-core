@@ -905,7 +905,19 @@ public class Reader {
             Response response = new Response().description(SUCCESSFUL_OPERATION);
             operation.defaultResponse(response);
         }
+        
+        processOperationDecorator(operation, method);
+        
         return operation;
+    }
+
+    private void processOperationDecorator(Operation operation, Method method) {
+        final Iterator<SwaggerExtension> chain = SwaggerExtensions.chain();
+        if (chain.hasNext()) {
+            SwaggerExtension extension = chain.next();
+            LOGGER.debug("trying to decorate operation: " + extension);
+            extension.decorateOperation(operation, method, chain);
+        }
     }
 
     private void addResponse(Operation operation, ApiResponse apiResponse) {
