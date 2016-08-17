@@ -91,7 +91,7 @@ public abstract class BaseApiListingResource {
         return swagger;
     }
 
-    private Swagger process(
+    protected Swagger process(
             Application app,
             ServletContext servletContext,
             ServletConfig sc,
