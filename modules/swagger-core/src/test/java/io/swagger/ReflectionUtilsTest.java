@@ -6,16 +6,14 @@ import io.swagger.reflection.Child;
 import io.swagger.reflection.IParent;
 import io.swagger.reflection.Parent;
 import io.swagger.util.ReflectionUtils;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import javax.ws.rs.Path;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collections;
-
-import javax.ws.rs.Path;
 
 public class ReflectionUtilsTest {
 
@@ -46,6 +44,16 @@ public class ReflectionUtilsTest {
         for (Method method : Object.class.getMethods()) {
             if ("equals".equals(method.getName())) {
                 Assert.assertFalse(ReflectionUtils.isOverriddenMethod(method, Object.class));
+            }
+        }
+
+        for (Method method: IParent.class.getMethods()){
+            if("parametrizedMethod5".equals(method.getName())){
+                Assert.assertTrue(ReflectionUtils.isOverriddenMethod(method, IParent.class));
+            }else if("parametrizedMethod2".equals(method.getName())){
+                Assert.assertFalse(ReflectionUtils.isOverriddenMethod(method, IParent.class));
+            }else{
+                Assert.fail("Method not expected");
             }
         }
     }
