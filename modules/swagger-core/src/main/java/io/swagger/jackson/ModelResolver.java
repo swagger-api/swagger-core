@@ -1,7 +1,17 @@
 package io.swagger.jackson;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerator;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyMetadata;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
@@ -12,8 +22,20 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
-import io.swagger.models.*;
-import io.swagger.models.properties.*;
+import io.swagger.models.ComposedModel;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.RefModel;
+import io.swagger.models.Xml;
+import io.swagger.models.properties.AbstractNumericProperty;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.IntegerProperty;
+import io.swagger.models.properties.MapProperty;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.PropertyBuilder;
+import io.swagger.models.properties.RefProperty;
+import io.swagger.models.properties.StringProperty;
+import io.swagger.models.properties.UUIDProperty;
 import io.swagger.util.AllowableValues;
 import io.swagger.util.AllowableValuesUtils;
 import io.swagger.util.PrimitiveType;
@@ -22,14 +44,28 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
@@ -163,6 +199,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return new ModelImpl();
         }
 
+        /**
+         * --Preventing parent/child hierarchy creation loops - Comment 1--
+         * Creating a parent model will result in the creation of child models. Creating a child model will result in
+         * the creation of a parent model, as per the second If statement following this comment.
+         *
+         * By checking whether a model has already been resolved (as implemented below), loops of parents creating
+         * children and children creating parents can be short-circuited. This works because currently the
+         * ModelConverterContextImpl will return null for a class that already been processed, but has not yet been
+         * defined. This logic works in conjunction with the early immediate definition of model in the context
+         * implemented later in this method (See "Preventing parent/child hierarchy creation loops - Comment 2") to
+         * prevent such
+         */
+        Model resolvedModel = context.resolve(type.getRawClass());
+        if (resolvedModel != null &&
+                (!(resolvedModel instanceof ModelImpl)
+                        || ((ModelImpl) resolvedModel).getName().equals(name))) {
+            return resolvedModel;
+        }
+
         final ModelImpl model = new ModelImpl().type(ModelImpl.OBJECT).name(name)
                 .description(_description(beanDesc.getClassInfo()));
 
@@ -273,8 +328,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 ApiModelProperty mp = member.getAnnotation(ApiModelProperty.class);
 
-                if(mp != null && mp.readOnly()) {
-                  isReadOnly = mp.readOnly();
+                if (mp != null && mp.readOnly()) {
+                    isReadOnly = mp.readOnly();
                 }
 
                 JavaType propType = member.getType(beanDesc.bindingsForBeanType());
@@ -387,7 +442,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-
         Collections.sort(props, getPropertyComparator());
 
         Map<String, Property> modelProps = new LinkedHashMap<String, Property>();
@@ -397,6 +451,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         model.setProperties(modelProps);
 
         /**
+         * --Preventing parent/child hierarchy creation loops - Comment 2--
+         * Creating a parent model will result in the creation of child models, as per the first If statement following
+         * this comment. Creating a child model will result in the creation of a parent model, as per the second If
+         * statement following this comment.
+         *
+         * The current model must be defined in the context immediately. This done to help prevent repeated
+         * loops where  parents create children and children create parents when a hierarchy is present. This logic
+         * works in conjunction with the "early checking" performed earlier in this method
+         * (See "Preventing parent/child hierarchy creation loops - Comment 1"), to prevent repeated creation loops.
+         *
+         *
+         * As an aside, defining the current model in the context immediately also ensures that child models are
+         * available for modification by resolveSubtypes, when their parents are created.
+         */
+        Class<?> currentType = type.getRawClass();
+        context.defineModel(name, model, currentType, null);
+
+        /**
          * This must be done after model.setProperties so that the model's set
          * of properties is available to filter from any subtypes
          **/
@@ -404,9 +476,64 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             model.setDiscriminator(null);
         }
 
+        if (apiModel != null) {
+            /**
+             * Check if the @ApiModel annotation has a parent property containing a value that should not be ignored
+             */
+            Class<?> parentClass = apiModel.parent();
+            if (parentClass != null && !parentClass.equals(Void.class) && !this.shouldIgnoreClass(parentClass)) {
+                JavaType parentType = _mapper.constructType(parentClass);
+                final BeanDescription parentBeanDesc = _mapper.getSerializationConfig().introspect(parentType);
+
+                /**
+                 * Retrieve all the sub-types of the parent class and ensure that the current type is one of those types
+                 */
+                boolean currentTypeIsParentSubType = false;
+                List<NamedType> subTypes = _intr.findSubtypes(parentBeanDesc.getClassInfo());
+                for (NamedType subType : subTypes) {
+                    if (subType.getType().equals(currentType)) {
+                        currentTypeIsParentSubType = true;
+                        break;
+                    }
+                }
+
+                /**
+                 Retrieve the subTypes from the parent class @ApiModel annotation and ensure that the current type
+                 is one of those types.
+                 */
+                boolean currentTypeIsParentApiModelSubType = false;
+                final ApiModel parentApiModel = parentBeanDesc.getClassAnnotations().get(ApiModel.class);
+                if (parentApiModel != null) {
+                    Class<?>[] apiModelSubTypes = parentApiModel.subTypes();
+                    for (Class<?> subType : apiModelSubTypes) {
+                        if (subType.equals(currentType)) {
+                            currentTypeIsParentApiModelSubType = true;
+                            break;
+                        }
+                    }
+                }
+
+                /**
+                 If the current type is a sub-type of the parent class and is listed in the subTypes property of the
+                 parent class @ApiModel annotation, then do the following:
+                 1. Resolve the model for the parent class. This will result in the parent model being created, and the
+                 current child model being updated to be a ComposedModel referencing the parent.
+                 2. Resolve and return the current child type again. This will return the new ComposedModel from the
+                 context, which was created in step 1 above. Admittedly, there is a small chance that this may result
+                 in a stack overflow, if the context does not correctly cache the model for the current type. However,
+                 as context caching is assumed elsewhere to avoid cyclical model creation, this was deemed to be
+                 sufficient.
+                 */
+                if (currentTypeIsParentSubType && currentTypeIsParentApiModelSubType) {
+                    context.resolve(parentClass);
+                    return context.resolve(currentType);
+                }
+            }
+        }
+
         return model;
     }
-    
+
     protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore) {
         if (propertiesToIgnore.contains(propName)) {
             return true;
@@ -633,9 +760,19 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private boolean resolveSubtypes(ModelImpl model, BeanDescription bean, ModelConverterContext context) {
         final List<NamedType> types = _intr.findSubtypes(bean.getClassInfo());
+
         if (types == null) {
             return false;
         }
+
+        /**
+         * As the introspector will find @JsonSubTypes for a child class that are present on its super classes, the
+         * code segment below will also run the introspector on the parent class, and then remove any sub-types that are
+         * found for the parent from the sub-types found for the child. The same logic all applies to implemented
+         * interfaces, and is accounted for below.
+         */
+        removeSuperClassAndInterfaceSubTypes(types, bean);
+
         int count = 0;
         final Class<?> beanClass = bean.getClassInfo().getAnnotated();
         for (NamedType subtype : types) {
@@ -668,10 +805,36 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 impl.setDiscriminator(null);
                 ComposedModel child = new ComposedModel().parent(new RefModel(model.getName())).child(impl);
-                context.defineModel(impl.getName(), child);
+                context.defineModel(impl.getName(), child, subtypeType, null);
                 ++count;
             }
         }
         return count != 0;
+    }
+
+    private void removeSuperClassAndInterfaceSubTypes(List<NamedType> types, BeanDescription bean) {
+        Class<?> beanClass = bean.getType().getRawClass();
+        Class<?> superClass = beanClass.getSuperclass();
+        if (superClass != null && !superClass.equals(Object.class)) {
+            removeSuperSubTypes(types, superClass);
+        }
+        if (!types.isEmpty()) {
+            Class<?>[] superInterfaces = beanClass.getInterfaces();
+            for (Class<?> superInterface : superInterfaces) {
+                removeSuperSubTypes(types, superInterface);
+                if (types.isEmpty()) {
+                    break;
+                }
+            }
+        }
+    }
+
+    private void removeSuperSubTypes(List<NamedType> resultTypes, Class<?> superClass) {
+        JavaType superType = _mapper.constructType(superClass);
+        BeanDescription superBean = _mapper.getSerializationConfig().introspect(superType);
+        final List<NamedType> superTypes = _intr.findSubtypes(superBean.getClassInfo());
+        if (superTypes != null) {
+            resultTypes.removeAll(superTypes);
+        }
     }
 }
