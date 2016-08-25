@@ -140,6 +140,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             } else {
                 // complex type
                 Model innerModel = context.resolve(propType);
+                if (innerModel instanceof ComposedModel) {
+                    innerModel = ((ComposedModel) innerModel).getChild();
+                }
                 if (innerModel instanceof ModelImpl) {
                     ModelImpl mi = (ModelImpl) innerModel;
                     property = new RefProperty(StringUtils.isNotEmpty(mi.getReference()) ? mi.getReference() : mi.getName());
@@ -212,10 +215,17 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          * prevent such
          */
         Model resolvedModel = context.resolve(type.getRawClass());
-        if (resolvedModel != null &&
-                (!(resolvedModel instanceof ModelImpl)
-                        || ((ModelImpl) resolvedModel).getName().equals(name))) {
-            return resolvedModel;
+        if (resolvedModel != null) {
+            if (!(resolvedModel instanceof ModelImpl || resolvedModel instanceof ComposedModel)
+                    || (resolvedModel instanceof ModelImpl && ((ModelImpl) resolvedModel).getName().equals(name))) {
+                return resolvedModel;
+            } else if (resolvedModel instanceof ComposedModel) {
+                Model childModel = ((ComposedModel) resolvedModel).getChild();
+                if (childModel != null && (!(childModel instanceof ModelImpl)
+                        || ((ModelImpl) childModel).getName().equals(name))) {
+                    return resolvedModel;
+                }
+            }
         }
 
         final ModelImpl model = new ModelImpl().type(ModelImpl.OBJECT).name(name)
@@ -663,7 +673,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         private static Property process(Property id, String propertyName, JavaType type,
                                         ModelConverterContext context) {
             id.setName(propertyName);
-            final Model model = context.resolve(type);
+            Model model = context.resolve(type);
+            if (model instanceof ComposedModel) {
+                model = ((ComposedModel) model).getChild();
+            }
             if (model instanceof ModelImpl) {
                 ModelImpl mi = (ModelImpl) model;
                 mi.getProperties().put(propertyName, id);
