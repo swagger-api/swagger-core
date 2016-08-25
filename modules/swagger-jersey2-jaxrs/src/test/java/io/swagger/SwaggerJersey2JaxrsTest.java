@@ -7,6 +7,7 @@ import io.swagger.jaxrs.DefaultParameterExtension;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
 import io.swagger.jersey.SwaggerJersey2Jaxrs;
+import io.swagger.models.Model;
 import io.swagger.models.Swagger;
 import io.swagger.models.TestEnum;
 import io.swagger.models.parameters.FormParameter;
@@ -17,6 +18,7 @@ import io.swagger.params.ChildBean;
 import io.swagger.params.EnumBean;
 import io.swagger.params.RefBean;
 import io.swagger.resources.ResourceWithFormData;
+import io.swagger.resources.ResourceWithJacksonBean;
 import io.swagger.resources.ResourceWithKnownInjections;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -178,6 +180,15 @@ public class SwaggerJersey2JaxrsTest {
         assertEquals(parameters.get(0).getName(), "documentName");
         assertEquals(parameters.get(1).getName(), "input");
         assertEquals(parameters.get(2).getName(), "id");
+    }
+
+    @Test(description = "JsonUnwrapped, JsonIgnore, JsonValue should be honoured")
+    public void testJacksonFeatures() {
+        final Swagger swagger = new Reader(new Swagger()).read(ResourceWithJacksonBean.class);
+        Model o = swagger.getDefinitions().get("JacksonBean");
+
+        assertEquals(o.getProperties().keySet(), Sets.newHashSet("identity", "bean", "code", "message",
+                "precodesuf", "premessagesuf"));
     }
 
     private String getName(List<Parameter> resourceParameters, int i) {
