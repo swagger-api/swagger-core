@@ -7,7 +7,7 @@ import io.swagger.models.Xml;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractProperty implements Property {
+public abstract class AbstractProperty implements Property, Cloneable {
     String name;
     String type;
     String format;
@@ -20,6 +20,17 @@ public abstract class AbstractProperty implements Property {
     Boolean readOnly;
     private String access;
     private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+
+    @Override
+    public Property rename(String newName) {
+        try {
+            Property newProperty = (Property) clone();
+            newProperty.setName(newName);
+            return newProperty;
+        } catch (CloneNotSupportedException ex) {
+            throw new InternalError("Clone is not supported!?");
+        }
+    }
 
     public Property title(String title) {
         this.setTitle(title);
