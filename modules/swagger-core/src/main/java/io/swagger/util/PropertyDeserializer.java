@@ -188,6 +188,8 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                     MapProperty mapProperty = new MapProperty(items)
                             .description(description)
                             .title(title);
+                    mapProperty.setMinProperties(getInteger(node, PropertyBuilder.PropertyId.MIN_PROPERTIES));
+                    mapProperty.setMaxProperties(getInteger(node, PropertyBuilder.PropertyId.MAX_PROPERTIES));
                     mapProperty.setVendorExtensionMap(getVendorExtensions(node));
                     return mapProperty;
                 }
@@ -245,6 +247,9 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                         .items(subProperty)
                         .description(description)
                         .title(title);
+                arrayProperty.setMinItems(getInteger(node, PropertyBuilder.PropertyId.MIN_ITEMS));
+                arrayProperty.setMaxItems(getInteger(node, PropertyBuilder.PropertyId.MAX_ITEMS));
+                arrayProperty.setUniqueItems(getBoolean(node, PropertyBuilder.PropertyId.UNIQUE_ITEMS));
                 arrayProperty.setVendorExtensionMap(getVendorExtensions(node));
                 return arrayProperty;
             }
