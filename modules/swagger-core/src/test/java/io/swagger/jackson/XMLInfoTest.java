@@ -39,7 +39,7 @@ public class XMLInfoTest extends SwaggerTestBase {
         final Xml propertyXml = property.getXml();
 
         assertNotNull(propertyXml);
-        assertEquals(propertyXml.getName(), "item");
+        assertEquals(propertyXml.getName(), "items");
         assertTrue(propertyXml.getWrapped());
 
         assertNotNull(impl.getProperties().get("elementC"));
@@ -92,7 +92,7 @@ public class XMLInfoTest extends SwaggerTestBase {
 
         final Property propertyA = impl.getProperties().get("a");
         assertNotNull(propertyA);
-        
+
         Property propertyB = impl.getProperties().get("b");
         assertNotNull(propertyB);
     }

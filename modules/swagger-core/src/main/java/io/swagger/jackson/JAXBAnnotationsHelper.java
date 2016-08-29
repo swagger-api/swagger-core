@@ -44,6 +44,10 @@ class JAXBAnnotationsHelper {
      * @param property property instance to be updated
      */
     private static void applyElement(AnnotatedMember member, Property property) {
+        final XmlElement element = member.getAnnotation(XmlElement.class);
+        if (element != null) {
+            setName(element.namespace(), element.name(), property);
+        }
         final XmlElementWrapper wrapper = member.getAnnotation(XmlElementWrapper.class);
         if (wrapper != null) {
             final Xml xml = getXml(property);
@@ -51,10 +55,6 @@ class JAXBAnnotationsHelper {
             if (!"##default".equals(wrapper.name()) && !wrapper.name().isEmpty()) {
                 xml.setName(wrapper.name());
             }
-        }
-        final XmlElement element = member.getAnnotation(XmlElement.class);
-        if (element != null) {
-            setName(element.namespace(), element.name(), property);
         }
     }
 
