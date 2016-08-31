@@ -3,7 +3,7 @@
     <parent>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.5.8</version>
+        <version>1.5.8-psuol</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -109,7 +109,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-models</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.5.8</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>

@@ -1,5 +1,7 @@
 # Swagger Core library
 
+** PS: This version is a fork from https://github.com/swagger-api/swagger-core and fixes the JAXB XmlElementWrapper annotation issue. **
+
 [![Build Status](https://travis-ci.org/swagger-api/swagger-core.svg?branch=master)](https://travis-ci.org/swagger-api/swagger-core)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project)
 [![PR Stats](http://issuestats.com/github/swagger-api/swagger-core/badge/pr)](http://issuestats.com/github/swagger-api/swagger-core) [![Issue Stats](http://issuestats.com/github/swagger-api/swagger-core/badge/issue)](http://issuestats.com/github/swagger-api/swagger-core)
