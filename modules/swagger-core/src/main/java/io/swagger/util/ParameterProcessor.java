@@ -14,11 +14,17 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.FileProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -26,16 +32,11 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 public class ParameterProcessor {
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
     public static Parameter applyAnnotations(Swagger swagger, Parameter parameter, Type type, List<Annotation> annotations) {
-        final AnnotationsHelper helper = new AnnotationsHelper(annotations);
+        final AnnotationsHelper helper = new AnnotationsHelper(annotations, type);
         if (helper.isContext()) {
             return null;
         }
@@ -63,19 +64,44 @@ public class ParameterProcessor {
                 p.setAccess(param.getAccess());
             }
             if (StringUtils.isNotEmpty(param.getDataType())) {
-                if("java.io.File".equalsIgnoreCase(param.getDataType())) {
+                if ("java.io.File".equalsIgnoreCase(param.getDataType())) {
                     p.setProperty(new FileProperty());
-                }
-                else {
+                } else {
                     p.setType(param.getDataType());
                 }
             }
+            if (helper.getMin() != null || helper.getDecimalMin() != null) {
+                p.setMinimum(helper.getMin() != null ? new Double(helper.getMin()) : helper.getDecimalMin());
+                if (helper.isMinExclusive()) {
+                    p.setExclusiveMinimum(true);
+                }
+            }
+
+            if (helper.getMax() != null || helper.getDecimalMax() != null) {
+                p.setMaximum(helper.getMax() != null ? new Double(helper.getMax()) : helper.getDecimalMax());
+                if (helper.isMaxExclusive()) {
+                    p.setExclusiveMaximum(true);
+                }
+            }
+
             if (helper.getMinItems() != null) {
                 p.setMinItems(helper.getMinItems());
             }
             if (helper.getMaxItems() != null) {
                 p.setMaxItems(helper.getMaxItems());
             }
+
+            if (helper.getMinLength() != null) {
+                p.setMinLength(helper.getMinLength());
+            }
+            if (helper.getMaxLength() != null) {
+                p.setMaxLength(helper.getMaxLength());
+            }
+
+            if (helper.getPattern() != null) {
+                p.setPattern(helper.getPattern());
+            }
+
             if (helper.isRequired() != null) {
                 p.setRequired(true);
             }
@@ -97,6 +123,12 @@ public class ParameterProcessor {
                     args.put(PropertyBuilder.PropertyId.MAXIMUM, p.getMaximum());
                     p.setMaximum(null);
                     args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM, p.isExclusiveMaximum());
+                    args.put(PropertyBuilder.PropertyId.MIN_LENGTH, p.getMinLength());
+                    p.setMinLength(null);
+                    args.put(PropertyBuilder.PropertyId.MAX_LENGTH, p.getMaxLength());
+                    p.setMaxLength(null);
+                    args.put(PropertyBuilder.PropertyId.PATTERN, p.getPattern());
+                    p.setPattern(null);
                     args.put(PropertyBuilder.PropertyId.EXAMPLE, p.getExample());
                     p.setExclusiveMaximum(null);
                     Property items = PropertyBuilder.build(p.getType(), p.getFormat(), args);
@@ -107,26 +139,61 @@ public class ParameterProcessor {
                 if (StringUtils.isNotEmpty(defaultValue)) {
                     args.put(PropertyBuilder.PropertyId.DEFAULT, defaultValue);
                 }
+
+                /**
+                 * Use jsr-303 annotations (and other bean validation annotations) if present. This essentially implies
+                 * that the bean validation constraints now apply to the items and not to the parent collection/array.
+                 * Although this  will work for swagger definition purposes, there is no default validator for many of
+                 * the validator annotations when applied to a collection/array. For example, a @Min annotation applied
+                 * to a List&gt;Long&lt; will result in a swagger definition which contains an array property with items
+                 * of type number and having a 'minimum' validation constraint. However, there is no default bean
+                 * validator for @Min when applied to a List&gt;Long&lt;, and the developer would need to implement such
+                 * a validator themselves.
+                 */
+
+                if (helper.getMin() != null || helper.getDecimalMin() != null) {
+                    args.put(PropertyBuilder.PropertyId.MINIMUM,
+                            helper.getMin() != null ? new Double(helper.getMin()) : helper.getDecimalMin());
+                    if (helper.isMinExclusive()) {
+                        args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM, true);
+                    }
+                }
+
+                if (helper.getMax() != null || helper.getDecimalMax() != null) {
+                    args.put(PropertyBuilder.PropertyId.MAXIMUM,
+                            helper.getMax() != null ? new Double(helper.getMax()) : helper.getDecimalMax());
+                    if (helper.isMaxExclusive()) {
+                        args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM, true);
+                    }
+                }
+
+                if (helper.getMinLength() != null) {
+                    args.put(PropertyBuilder.PropertyId.MIN_LENGTH, helper.getMinLength());
+                }
+                if (helper.getMaxLength() != null) {
+                    args.put(PropertyBuilder.PropertyId.MAX_LENGTH, helper.getMaxLength());
+                }
+                if (helper.getPattern() != null) {
+                    args.put(PropertyBuilder.PropertyId.PATTERN, helper.getPattern());
+                }
+
+                //Overwrite Bean validation values with allowable values if present
                 if (allowableValues != null) {
                     args.putAll(allowableValues.asPropertyArguments());
-                } else { // use jsr-303 annotations if present
-                    if (helper.getMin() != null) {
-                        args.put(PropertyBuilder.PropertyId.MINIMUM, helper.getMin());
-                    }
-                    if (helper.getMax() != null) {
-                        args.put(PropertyBuilder.PropertyId.MAXIMUM, helper.getMax());
-                    }
                 }
                 PropertyBuilder.merge(p.getItems(), args);
             } else {
                 if (StringUtils.isNotEmpty(defaultValue)) {
                     p.setDefaultValue(defaultValue);
                 }
+
+                //Overwrite Bean validation values with allowable values if present
                 if (allowableValues != null) {
                     processAllowedValues(allowableValues, p);
-                } else {
-                    processJsr303Annotations (helper, p);
                 }
+//                else {
+//                    processJsr303Annotations(helper, p);
+//                }
             }
         } else {
             // must be a body param
@@ -264,17 +331,26 @@ public class ParameterProcessor {
         private String defaultValue;
         private Integer minItems;
         private Integer maxItems;
-        private  Boolean required;
-        private  Long min;
-        private  Long max;
+        private Boolean required;
+        private Long min;
+        private Double decimalMin;
+        private boolean minExclusive = false;
+        private Long max;
+        private Double decimalMax;
+        private boolean maxExclusive = false;
+        private Integer minLength;
+        private Integer maxLength;
+        private String pattern;
 
         /**
          * Constructs an instance.
          *
          * @param annotations array or parameter annotations
          */
-        public AnnotationsHelper(List<Annotation> annotations) {
+        public AnnotationsHelper(List<Annotation> annotations, Type type) {
+            Class<?> clazz = type instanceof Class ? (Class<?>) type : null;
             String rsDefault = null;
+            Size size = null;
             for (Annotation item : annotations) {
                 if ("javax.ws.rs.core.Context".equals(item.annotationType().getName())) {
                     context = true;
@@ -289,18 +365,53 @@ public class ParameterProcessor {
                         LOGGER.error("Invocation of value method failed", ex);
                     }
                 } else if (item instanceof Size) {
-                    final Size size = (Size) item;
-                    minItems = size.min();
-                    maxItems = size.max();
+                    size = (Size) item;
+                    /**
+                     * This annotation is handled after the loop, as the allow multiple field of the
+                     * ApiParam annotation can affect how the Size annotation is translated
+                     * Swagger property constraints
+                     */
                 } else if (item instanceof NotNull) {
                     required = true;
                 } else if (item instanceof Min) {
-                    min = ((Min)item).value();
+                    min = ((Min) item).value();
                 } else if (item instanceof Max) {
-                    max = ((Max)item).value();
+                    max = ((Max) item).value();
+                } else if (item instanceof DecimalMin) {
+                    DecimalMin decimalMinAnnotation = (DecimalMin) item;
+                    decimalMin = new Double(decimalMinAnnotation.value());
+                    minExclusive = !decimalMinAnnotation.inclusive();
+                } else if (item instanceof DecimalMax) {
+                    DecimalMax decimalMaxAnnotation = (DecimalMax) item;
+                    decimalMax = new Double(decimalMaxAnnotation.value());
+                    maxExclusive = !decimalMaxAnnotation.inclusive();
+                } else if (item instanceof Pattern) {
+                    pattern = ((Pattern) item).regexp();
+                }
+            }
+            if (size != null) {
+                boolean defaultToArray = clazz == null || (apiParam != null && apiParam.isAllowMultiple());
+                if (!defaultToArray && isAssignableToNumber(clazz)) {
+                    min = (long) size.min();
+                    max = (long) size.max();
+                } else if (!defaultToArray && String.class.isAssignableFrom(clazz)) {
+                    minLength = size.min();
+                    maxLength = size.max();
+                } else {
+                    minItems = size.min();
+                    maxItems = size.max();
                 }
             }
             defaultValue = StringUtils.isNotEmpty(apiParam.getDefaultValue()) ? apiParam.getDefaultValue() : rsDefault;
+        }
+
+        private boolean isAssignableToNumber(Class<?> clazz) {
+            return Number.class.isAssignableFrom(clazz)
+                    || int.class.isAssignableFrom(clazz)
+                    || short.class.isAssignableFrom(clazz)
+                    || long.class.isAssignableFrom(clazz)
+                    || float.class.isAssignableFrom(clazz)
+                    || double.class.isAssignableFrom(clazz);
         }
 
         /**
@@ -363,8 +474,36 @@ public class ParameterProcessor {
             return max;
         }
 
+        public Double getDecimalMax() {
+            return decimalMax;
+        }
+
+        public boolean isMaxExclusive() {
+            return maxExclusive;
+        }
+
         public Long getMin() {
             return min;
+        }
+
+        public Double getDecimalMin() {
+            return decimalMin;
+        }
+
+        public boolean isMinExclusive() {
+            return minExclusive;
+        }
+
+        public Integer getMinLength() {
+            return minLength;
+        }
+
+        public Integer getMaxLength() {
+            return maxLength;
+        }
+
+        public String getPattern() {
+            return pattern;
         }
     }
 
