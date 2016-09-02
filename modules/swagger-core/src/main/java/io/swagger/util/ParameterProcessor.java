@@ -10,10 +10,12 @@ import io.swagger.models.Swagger;
 import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.AbstractNumericProperty;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.FileProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
+import io.swagger.models.properties.StringProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -348,7 +350,6 @@ public class ParameterProcessor {
          * @param annotations array or parameter annotations
          */
         public AnnotationsHelper(List<Annotation> annotations, Type type) {
-            Class<?> clazz = type instanceof Class ? (Class<?>) type : null;
             String rsDefault = null;
             Size size = null;
             for (Annotation item : annotations) {
@@ -390,11 +391,12 @@ public class ParameterProcessor {
                 }
             }
             if (size != null) {
-                boolean defaultToArray = clazz == null || (apiParam != null && apiParam.isAllowMultiple());
-                if (!defaultToArray && isAssignableToNumber(clazz)) {
+                Property property = ModelConverters.getInstance().readAsProperty(type);
+                boolean defaultToArray = apiParam != null && apiParam.isAllowMultiple();
+                if (!defaultToArray && property instanceof AbstractNumericProperty) {
                     min = (long) size.min();
                     max = (long) size.max();
-                } else if (!defaultToArray && String.class.isAssignableFrom(clazz)) {
+                } else if (!defaultToArray && property instanceof StringProperty) {
                     minLength = size.min();
                     maxLength = size.max();
                 } else {
