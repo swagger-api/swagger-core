@@ -231,7 +231,7 @@ public class ReaderTest {
         Parameter description = parameters.get(0);
         assertTrue(description instanceof PathParameter);
         assertEquals(description.getName(), "description");
-        assertEquals(description.getDescription(), "Overriden description");
+        assertEquals(description.getDescription(), "Overridden description");
 
         Parameter id = parameters.get(1);
         assertTrue(id instanceof PathParameter);
