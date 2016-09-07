@@ -489,7 +489,7 @@ public class Reader {
             io.swagger.models.auth.ApiKeyAuthDefinition apiKeyAuthDefinition = new io.swagger.models.auth.ApiKeyAuthDefinition();
 
             apiKeyAuthDefinition.setName(apiKeyAuthConfig.name());
-            apiKeyAuthDefinition.setIn(In.valueOf(apiKeyAuthConfig.in().toValue()));
+            apiKeyAuthDefinition.setIn(In.forValue(apiKeyAuthConfig.in().toValue()));
             apiKeyAuthDefinition.setDescription(apiKeyAuthConfig.description());
 
             swagger.addSecurityDefinition(apiKeyAuthConfig.key(), apiKeyAuthDefinition);
