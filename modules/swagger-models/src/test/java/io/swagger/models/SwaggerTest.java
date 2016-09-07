@@ -235,7 +235,7 @@ public class SwaggerTest {
 
         // then
         assertEquals(swagger.getSecurityDefinitions().get(name), securityDefinition,
-                "Must be able to retrieve the added security definiton");
+                "Must be able to retrieve the added security definition");
     }
 
     @Test

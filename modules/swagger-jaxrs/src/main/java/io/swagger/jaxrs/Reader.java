@@ -432,7 +432,7 @@ public class Reader {
         } else if (param.paramType().equalsIgnoreCase("header")) {
             p = new HeaderParameter();
         } else {
-            LOGGER.warn("Unkown implicit parameter type: [" + param.paramType() + "]");
+            LOGGER.warn("Unknown implicit parameter type: [" + param.paramType() + "]");
             return null;
         }
         final Type type = ReflectionUtils.typeFromString(param.dataType());
