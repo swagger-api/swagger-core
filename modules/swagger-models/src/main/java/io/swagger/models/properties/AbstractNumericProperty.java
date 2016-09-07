@@ -1,7 +1,7 @@
 package io.swagger.models.properties;
 
 public abstract class AbstractNumericProperty extends AbstractProperty implements Property {
-    protected Double minimum, maximum;
+    protected Double minimum, maximum, multipleOf;
     protected Boolean exclusiveMinimum, exclusiveMaximum;
 
     public AbstractNumericProperty minimum(Double minimum) {
@@ -21,6 +21,11 @@ public abstract class AbstractNumericProperty extends AbstractProperty implement
 
     public AbstractNumericProperty exclusiveMaximum(Boolean exclusiveMaximum) {
         this.setExclusiveMaximum(exclusiveMaximum);
+        return this;
+    }
+
+    public AbstractNumericProperty multipleOf(Double multipleOf) {
+        this.setMultipleOf(multipleOf);
         return this;
     }
 
@@ -56,6 +61,14 @@ public abstract class AbstractNumericProperty extends AbstractProperty implement
         this.exclusiveMaximum = exclusiveMaximum;
     }
 
+    public Double getMultipleOf() {
+        return multipleOf;
+    }
+
+    public void setMultipleOf(Double multipleOf) {
+        this.multipleOf = multipleOf;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -66,6 +79,7 @@ public abstract class AbstractNumericProperty extends AbstractProperty implement
                 + ((exclusiveMinimum == null) ? 0 : exclusiveMinimum.hashCode());
         result = prime * result + ((maximum == null) ? 0 : maximum.hashCode());
         result = prime * result + ((minimum == null) ? 0 : minimum.hashCode());
+        result = prime * result + ((multipleOf == null) ? 0 : multipleOf.hashCode());
         return result;
     }
 
@@ -107,6 +121,13 @@ public abstract class AbstractNumericProperty extends AbstractProperty implement
                 return false;
             }
         } else if (!minimum.equals(other.minimum)) {
+            return false;
+        }
+        if (multipleOf == null) {
+            if (other.multipleOf != null) {
+                return false;
+            }
+        } else if (!multipleOf.equals(other.multipleOf)) {
             return false;
         }
         return true;
