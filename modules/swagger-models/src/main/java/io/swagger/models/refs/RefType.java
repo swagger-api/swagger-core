@@ -11,7 +11,7 @@ public enum RefType {
 
     private final String internalPrefix;
 
-    private RefType(final String prefix) {
+    RefType(final String prefix) {
         this.internalPrefix = prefix;
     }
 

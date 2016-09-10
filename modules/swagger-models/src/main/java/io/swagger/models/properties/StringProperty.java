@@ -22,7 +22,7 @@ public class StringProperty extends AbstractProperty implements Property {
 
         private final String name;
 
-        private Format(String name) {
+        Format(String name) {
             this.name = name;
         }
 

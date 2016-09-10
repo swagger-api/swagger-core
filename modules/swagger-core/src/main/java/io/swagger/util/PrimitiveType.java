@@ -216,11 +216,11 @@ public enum PrimitiveType {
         NAMES = Collections.unmodifiableMap(names);
     }
 
-    private PrimitiveType(Class<?> keyClass) {
+    PrimitiveType(Class<?> keyClass) {
         this(keyClass, null);
     }
 
-    private PrimitiveType(Class<?> keyClass, String commonName) {
+    PrimitiveType(Class<?> keyClass, String commonName) {
         this.keyClass = keyClass;
         this.commonName = commonName;
     }

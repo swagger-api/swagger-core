@@ -56,7 +56,7 @@ public class SimpleResourceWithVendorAnnotation {
      */
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
-    public static @interface VendorFunnyAnnotation {
+    public @interface VendorFunnyAnnotation {
 
     }
 }

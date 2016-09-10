@@ -10,6 +10,6 @@ public class ModelWithEnumArray {
     }
 
     public enum Action {
-        CREATE, UPDATE, DELETE, COPY;
+        CREATE, UPDATE, DELETE, COPY
     }
 }

@@ -17,8 +17,6 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import static io.swagger.jaxrs.config.SwaggerContextService.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;

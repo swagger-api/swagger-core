@@ -13,7 +13,6 @@ import io.swagger.models.parameters.QueryParameter;
 import io.swagger.resources.ResourceWithExtensions;
 import io.swagger.resources.ResourceWithBeanParams;
 import io.swagger.resources.ResourceWithComplexBodyInputType;
-import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
 import java.util.List;

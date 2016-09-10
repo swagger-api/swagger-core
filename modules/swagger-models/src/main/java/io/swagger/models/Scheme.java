@@ -11,7 +11,7 @@ public enum Scheme {
 
     private final String value;
 
-    private Scheme(String value) {
+    Scheme(String value) {
         this.value = value;
     }
 

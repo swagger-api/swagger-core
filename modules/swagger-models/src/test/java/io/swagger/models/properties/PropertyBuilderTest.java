@@ -242,7 +242,7 @@ public class PropertyBuilderTest {
 
         // then
         assertTrue(floatProperty.getEnum().contains(4F), "Must contain the enum value passed into args");
-        assertEquals(floatProperty.getDefault(), (Float) 4F, "Must contain the default value passed into args");
+        assertEquals(floatProperty.getDefault(), 4F, "Must contain the default value passed into args");
 
         // given
         args.put(PropertyId.DEFAULT, null);
@@ -371,7 +371,7 @@ public class PropertyBuilderTest {
 
         // then
         assertTrue(doubleProperty.getEnum().contains(4.0), "Must contain the enum value passed into args");
-        assertEquals(doubleProperty.getDefault(), (Double) 4.0, "Must contain the default value passed into args");
+        assertEquals(doubleProperty.getDefault(), 4.0, "Must contain the default value passed into args");
         assertEquals(doubleProperty.getMinimum(), 2.0, "Must contain the minimum value passed into args");
         assertEquals(doubleProperty.getMaximum(), 112.0, "Must contain the maximum value passed into args");
         assertTrue(doubleProperty.exclusiveMaximum, "Must contain the exclusive minimum value passed into args");

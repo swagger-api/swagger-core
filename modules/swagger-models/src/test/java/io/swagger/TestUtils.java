@@ -295,7 +295,7 @@ public class TestUtils {
                 "if two instances are equals, then they must have the same hashcode");
     }
 
-    public static final Object getTypeDefaultValue(Class<?> clazz) {
+    public static Object getTypeDefaultValue(Class<?> clazz) {
         if (clazz == byte.class)
             return 0;
         if (clazz == short.class)
@@ -315,7 +315,7 @@ public class TestUtils {
         return null;
     }
 
-    public static final <T> Object getTypeNonDefaultValue(Class<T> clazz) {
+    public static <T> Object getTypeNonDefaultValue(Class<T> clazz) {
         if (clazz == byte.class)
             return 1;
         if (clazz == short.class)

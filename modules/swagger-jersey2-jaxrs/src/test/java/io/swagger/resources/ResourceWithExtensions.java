@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
         version = "v1",
         extensions = {
                 @Extension(properties = {
-                        @ExtensionProperty(name = "accessLevel", value = "private"),
+                        @ExtensionProperty(name = "accessLevel", value = "private")
                 })}))
 public class ResourceWithExtensions {
 

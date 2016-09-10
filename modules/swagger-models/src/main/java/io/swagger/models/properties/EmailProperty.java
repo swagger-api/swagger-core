@@ -2,8 +2,6 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
-import java.util.List;
-
 import java.util.ArrayList;
 import java.util.List;
 

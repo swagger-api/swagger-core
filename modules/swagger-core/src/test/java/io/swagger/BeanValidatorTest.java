@@ -31,7 +31,7 @@ public class BeanValidatorTest {
         Assert.assertEquals((int) password.getMaxLength(), 20);
 
         final StringProperty email= (StringProperty) properties.get("email");
-        Assert.assertEquals((String) email.getPattern(), "(.+?)@(.+?)");
+        Assert.assertEquals(email.getPattern(), "(.+?)@(.+?)");
 
         final DoubleProperty minBalance = (DoubleProperty) properties.get("minBalance");
         Assert.assertTrue(minBalance.getExclusiveMinimum());
