@@ -40,4 +40,10 @@ public class Child extends Parent<Integer> implements IParent<Long> {
     public void injectableMethod() {
 
     }
+
+    @IndirectAnnotation
+    public void indirectAnnotationMethod() {
+
+    }
+
 }
