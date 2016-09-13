@@ -129,4 +129,14 @@ public class ReflectionUtilsTest {
         final Method method = Child.class.getMethod("indirectAnnotationMethod");
         Assert.assertNotNull(ReflectionUtils.getAnnotation(method, ApiImplicitParams.class));
     }
+
+    @Test
+    public void getIndirectAnnotationFromClass() throws NoSuchMethodException {
+        Assert.assertNotNull(ReflectionUtils.getAnnotation(Parent.class, ApiImplicitParams.class));
+    }
+
+    @Test
+    public void getIndirectAnnotationFromInterface() throws NoSuchMethodException {
+        Assert.assertNotNull(ReflectionUtils.getAnnotation(Child.class, ApiImplicitParams.class));
+    }
 }

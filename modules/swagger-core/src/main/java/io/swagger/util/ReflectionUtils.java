@@ -202,6 +202,12 @@ public class ReflectionUtils {
     public static <A extends Annotation> A getAnnotation(Class<?> cls, Class<A> annotationClass) {
         A annotation = cls.getAnnotation(annotationClass);
         if (annotation == null) {
+            for (Annotation metaAnnotation : cls.getAnnotations()) {
+                annotation = metaAnnotation.annotationType().getAnnotation(annotationClass);
+                if (annotation != null) {
+                    return annotation;
+                };
+            }
             Class<?> superClass = cls.getSuperclass();
             if (superClass != null && !(superClass.equals(Object.class))) {
                 annotation = getAnnotation(superClass, annotationClass);
@@ -209,6 +215,12 @@ public class ReflectionUtils {
         }
         if (annotation == null) {
             for (Class<?> anInterface : cls.getInterfaces()) {
+                for (Annotation metaAnnotation : anInterface.getAnnotations()) {
+                    annotation = metaAnnotation.annotationType().getAnnotation(annotationClass);
+                    if (annotation != null) {
+                        return annotation;
+                    };
+                }
                 annotation = getAnnotation(anInterface, annotationClass);
                 if (annotation != null) {
                     return annotation;

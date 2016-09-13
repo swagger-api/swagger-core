@@ -408,7 +408,11 @@ public class Reader {
     }
 
     private void readImplicitParameters(Method method, Operation operation) {
-        ApiImplicitParams implicitParams = ReflectionUtils.getAnnotation(method, ApiImplicitParams.class);
+        processImplicitParams(ReflectionUtils.getAnnotation(method, ApiImplicitParams.class), operation);
+        processImplicitParams(ReflectionUtils.getAnnotation(method.getDeclaringClass(), ApiImplicitParams.class), operation);
+    }
+
+    private void processImplicitParams(ApiImplicitParams implicitParams, Operation operation) {
         if (implicitParams != null) {
             for (ApiImplicitParam param : implicitParams.value()) {
                 Parameter p = readImplicitParam(param);
