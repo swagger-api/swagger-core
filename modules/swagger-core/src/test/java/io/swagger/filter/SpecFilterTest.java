@@ -275,6 +275,12 @@ public class SpecFilterTest {
         final Swagger filtered = new SpecFilter().filter(swagger, filter, null, null, null);
         assertNotNull(filtered);
     }
+    @Test(description = "it should not through NPE exception if there is no value to resolve")
+    public void shouldNotThroughNPEIfThereIsNoValueToResolve() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/noValueForGetRequest.json");
+        final Swagger filtered = new SpecFilter().filter(swagger,new NoValueResolveFilter(), null, null, null);
+        assertNotNull(filtered);
+    }
 
     private Set getTagNames(Swagger swagger) {
         Set<String> result = new HashSet<String>();
