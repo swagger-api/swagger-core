@@ -12,6 +12,7 @@ import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.FileProperty;
+import io.swagger.models.properties.LongProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
 
@@ -65,8 +66,9 @@ public class ParameterProcessor {
             if (StringUtils.isNotEmpty(param.getDataType())) {
                 if("java.io.File".equalsIgnoreCase(param.getDataType())) {
                     p.setProperty(new FileProperty());
-                }
-                else {
+                } else if("long".equalsIgnoreCase(param.getDataType())) {
+                    p.setProperty(new LongProperty());
+                } else {
                     p.setType(param.getDataType());
                 }
             }

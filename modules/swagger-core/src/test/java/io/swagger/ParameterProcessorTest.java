@@ -210,4 +210,25 @@ public class ParameterProcessorTest {
         assertEquals((int) param.getMinItems(), 5);
         assertEquals((int) param.getMaxItems(), 10);
     }
+
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "id", dataType = "long", paramType = "path", required = true)
+    })
+    private void implicitParametrizedMethodLongType() {
+    }
+
+    @Test(description = "test for issue #1873 fixing.")
+    public void implicitParameterLongTypeProcessorTest() throws NoSuchMethodException {
+        final ApiImplicitParams params = getClass().getDeclaredMethod("implicitParametrizedMethodLongType")
+                .getAnnotation(ApiImplicitParams.class);
+        final PathParameter param0 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter(),
+                String.class, Collections.<Annotation>singletonList(params.value()[0]));
+
+        assertEquals(param0.getName(), "id");
+        assertEquals(param0.getIn(), "path");
+        assertEquals(param0.getRequired(), true);
+        assertEquals(param0.getType(), "integer");
+        assertEquals(param0.getFormat(), "int64");
+
+    }
 }
