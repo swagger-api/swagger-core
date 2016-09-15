@@ -171,7 +171,8 @@ public class SpecFilter {
             Set<String> nestedReferencedDefinitions =  new TreeSet<String>();
             for (String ref : referencedDefinitions){
                 Model m = swagger.getDefinitions().get(ref);
-                locateNestedReferencedDefinitions (m.getProperties(), nestedReferencedDefinitions, swagger);
+                if(m != null)
+                    locateNestedReferencedDefinitions (m.getProperties(), nestedReferencedDefinitions, swagger);
             }
             referencedDefinitions.addAll(nestedReferencedDefinitions);
             swagger.getDefinitions().keySet().retainAll(referencedDefinitions);
