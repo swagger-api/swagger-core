@@ -5,6 +5,7 @@ import io.swagger.models.parameters.Parameter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -167,7 +168,7 @@ public class Path {
 
     @JsonIgnore
     public Map<HttpMethod, Operation> getOperationMap() {
-        Map<HttpMethod, Operation> result = new HashMap<HttpMethod, Operation>();
+        Map<HttpMethod, Operation> result = new LinkedHashMap<HttpMethod, Operation>();
 
         if (get != null) {
             result.put(HttpMethod.GET, get);
