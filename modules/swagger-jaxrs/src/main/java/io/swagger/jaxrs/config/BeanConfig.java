@@ -1,6 +1,5 @@
 package io.swagger.jaxrs.config;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.config.FilterFactory;
 import io.swagger.config.Scanner;
@@ -27,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfig {
-    Logger LOGGER = LoggerFactory.getLogger(BeanConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BeanConfig.class);
 
     Reader reader = new Reader(new Swagger());
 
@@ -51,6 +50,16 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     String scannerId;
     String configId;
     String contextId;
+
+    private boolean usePathBasedConfig = false;
+
+    public boolean isUsePathBasedConfig() {
+        return usePathBasedConfig;
+    }
+
+    public void setUsePathBasedConfig(boolean usePathBasedConfig) {
+        this.usePathBasedConfig = usePathBasedConfig;
+    }
 
     public String getResourcePackage() {
         return this.resourcePackage;
@@ -140,6 +149,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         this.host = host;
     }
 
+    @Override
     public String getFilterClass() {
         return filterClass;
     }
@@ -209,6 +219,8 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
                 .withServletConfig(servletConfig)
                 .withSwaggerConfig(this)
                 .withScanner(this)
+                .withBasePath(getBasePath())
+                .withPathBasedConfig(isUsePathBasedConfig())
                 .initConfig()
                 .initScanner();
     }
@@ -233,6 +245,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         }
     }
 
+    @Override
     public Set<Class<?>> classes() {
         ConfigurationBuilder config = new ConfigurationBuilder();
         Set<String> acceptablePackages = new HashSet<String>();
@@ -316,6 +329,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         return reader.getSwagger();
     }
 
+    @Override
     public Swagger configure(Swagger swagger) {
         if (schemes != null) {
             for (String scheme : schemes) {

@@ -266,7 +266,7 @@ public class ModelImpl extends AbstractModel {
         cloned.type = this.type;
         cloned.name = this.name;
         cloned.required = this.required;
-        cloned.properties = this.properties;
+        if (this.properties != null) cloned.properties =  new LinkedHashMap<String, Property>(this.properties);
         cloned.isSimple = this.isSimple;
         cloned.description = this.description;
         cloned.example = this.example;

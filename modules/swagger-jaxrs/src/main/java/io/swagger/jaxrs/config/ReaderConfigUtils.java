@@ -8,7 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * The <code>ReaderConfigUtils</code> class defines helper methods for handling
+ * The {@code ReaderConfigUtils} class defines helper methods for handling
  * configuration settings for JAX-RS annotations reader.
  */
 public class ReaderConfigUtils {

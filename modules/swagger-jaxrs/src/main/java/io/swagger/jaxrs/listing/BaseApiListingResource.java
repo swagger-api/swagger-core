@@ -37,13 +37,20 @@ public abstract class BaseApiListingResource {
     private static Logger LOGGER = LoggerFactory.getLogger(BaseApiListingResource.class);
 
 
-    private static synchronized Swagger scan(Application app, ServletContext context, ServletConfig sc) {
+    private static synchronized Swagger scan(Application app, ServletContext context, ServletConfig sc, UriInfo uriInfo) {
         Swagger swagger = null;
-        SwaggerContextService ctxService = new SwaggerContextService().withServletConfig(sc);
+
+        SwaggerContextService ctxService = new SwaggerContextService()
+            .withServletConfig(sc)
+            .withBasePath(getBasePath(uriInfo));
+
         Scanner scanner = ctxService.getScanner();
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
-            swagger = new SwaggerContextService().withServletConfig(sc).getSwagger();
+            swagger = new SwaggerContextService()
+                .withServletConfig(sc)
+                .withBasePath(getBasePath(uriInfo))
+                .getSwagger();
             Set<Class<?>> classes;
             if (scanner instanceof JaxrsScanner) {
                 JaxrsScanner jaxrsScanner = (JaxrsScanner) scanner;
@@ -65,13 +72,18 @@ public abstract class BaseApiListingResource {
                         LOGGER.debug("no configurator");
                     }
                 }
-                new SwaggerContextService().withServletConfig(sc).updateSwagger(swagger);
+                new SwaggerContextService()
+                    .withServletConfig(sc)
+                    .withBasePath(getBasePath(uriInfo))
+                    .updateSwagger(swagger);
             }
         }
         if (SwaggerContextService.isScannerIdInitParamDefined(sc)) {
             initializedScanner.put(sc.getServletName() + "_" + SwaggerContextService.getScannerIdFromInitParam(sc), true);
         } else if (SwaggerContextService.isConfigIdInitParamDefined(sc)) {
             initializedConfig.put(sc.getServletName() + "_" + SwaggerContextService.getConfigIdFromInitParam(sc), true);
+        } else if (SwaggerContextService.isUsePathBasedConfigInitParamDefined(sc)) {
+            initializedConfig.put(sc.getServletName() + "_" + ctxService.getBasePath(), true);
         } else {
             initialized = true;
         }
@@ -85,21 +97,27 @@ public abstract class BaseApiListingResource {
             ServletConfig sc,
             HttpHeaders headers,
             UriInfo uriInfo) {
-        Swagger swagger = new SwaggerContextService().withServletConfig(sc).getSwagger();
+        SwaggerContextService ctxService = new SwaggerContextService()
+            .withServletConfig(sc)
+            .withBasePath(getBasePath(uriInfo));
+        
+        Swagger swagger = ctxService.getSwagger();
         synchronized (ApiListingResource.class) {
             if (SwaggerContextService.isScannerIdInitParamDefined(sc)) {
                 if (!initializedScanner.containsKey(sc.getServletName() + "_" + SwaggerContextService.getScannerIdFromInitParam(sc))) {
-                    swagger = scan(app, servletContext, sc);
+                    swagger = scan(app, servletContext, sc, uriInfo);
                 }
             } else {
                 if (SwaggerContextService.isConfigIdInitParamDefined(sc)) {
                     if (!initializedConfig.containsKey(sc.getServletName() + "_" + SwaggerContextService.getConfigIdFromInitParam(sc))) {
-                        swagger = scan(app, servletContext, sc);
+                        swagger = scan(app, servletContext, sc, uriInfo);
                     }
-                } else {
-                    if (!initialized) {
-                        swagger = scan(app, servletContext, sc);
+                } else if (SwaggerContextService.isUsePathBasedConfigInitParamDefined(sc)) {
+                    if (!initializedConfig.containsKey(sc.getServletName() + "_" + ctxService.getBasePath())) {
+                        swagger = scan(app, servletContext, sc, uriInfo);
                     }
+                } else if (!initialized) {
+                    swagger = scan(app, servletContext, sc, uriInfo);
                 }
             }
         }
@@ -186,5 +204,12 @@ public abstract class BaseApiListingResource {
         return output;
     }
 
+    private static String getBasePath(UriInfo uriInfo) {
+        if (uriInfo != null) {
+            return uriInfo.getBaseUri().getPath();
+        } else {
+            return "/";
+        }
+    }
 
 }

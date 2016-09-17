@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 
 /**
- * The <code>ReaderConfig</code> interface defines configuration settings for
+ * The {@code ReaderConfig} interface defines configuration settings for
  * JAX-RS annotations reader.
  */
 public class DefaultReaderConfig implements ReaderConfig {

@@ -16,7 +16,7 @@ public class AbstractNumericPropertyTest {
     @Test
     public void testGettersAndSetters() {
         //given
-        Double minimum = 2.2, maximum = 6.4;
+        Double minimum = 2.2, maximum = 6.4, multipleOf = 1.1;
         Boolean exclusiveMinimum = true, exclusiveMaximum = true;
         AbstractNumericProperty abstractNumericProperty = new BaseIntegerProperty();
 
@@ -43,5 +43,11 @@ public class AbstractNumericPropertyTest {
 
         //then
         assertEquals(abstractNumericProperty.getExclusiveMinimum(), exclusiveMinimum, "The get exclusiveMinimum must return the same as the set one");
+
+        //when
+        abstractNumericProperty.setMultipleOf(multipleOf);
+
+        //then
+        assertEquals(abstractNumericProperty.getMultipleOf(), multipleOf, "The get multipleOf must return the same as the set one");
     }
 }

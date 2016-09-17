@@ -303,27 +303,37 @@ public class Swagger {
         this.securityDefinitions.put(name, securityDefinition);
     }
 
+    /**
+     * @deprecated Use {@link #getSecurity()}.
+     */
+    @JsonIgnore
     @Deprecated
     public List<SecurityRequirement> getSecurityRequirement() {
         return security;
     }
 
+    /**
+     * @deprecated Use {@link #setSecurity(List)}.
+     */
+    @JsonIgnore
     @Deprecated
     public void setSecurityRequirement(List<SecurityRequirement> securityRequirements) {
         this.security = securityRequirements;
     }
 
+    /**
+     * @deprecated Use {@link #addSecurity(SecurityRequirement)}.
+     */
+    @JsonIgnore
     @Deprecated
     public void addSecurityDefinition(SecurityRequirement securityRequirement) {
         this.addSecurity(securityRequirement);
     }
 
-    @JsonIgnore //remove JsonIgnore when getSecurityRequirement() method is deleted in next major version
     public List<SecurityRequirement> getSecurity() {
         return security;
     }
 
-    @JsonIgnore  //remove JsonIgnore when setSecurityRequirement() method is deleted in next major version
     public void setSecurity(List<SecurityRequirement> securityRequirements) {
         this.security = securityRequirements;
     }

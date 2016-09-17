@@ -4,14 +4,12 @@
     <parent>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.5.9-SNAPSHOT</version>
+        <version>1.5.11-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.swagger</groupId>
     <artifactId>swagger-jersey2-jaxrs</artifactId>
-    <packaging>jar</packaging>
-    <version>1.5.9-SNAPSHOT</version>
+    <packaging>bundle</packaging>
     <name>swagger-jersey2-jaxrs (Jersey 2.x support)</name>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -31,6 +29,12 @@
         </testResources>
         <plugins>
             <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${felix-version}</version>
+                <extensions>true</extensions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.0</version>
                 <configuration>
@@ -41,17 +45,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <mode>development</mode>
-                            <url>${project.url}</url>
-                            <implementation-version>${project.version}</implementation-version>
-                            <package>io.swagger</package>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
