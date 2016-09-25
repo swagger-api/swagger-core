@@ -272,11 +272,6 @@ public class Swagger {
         return sorted;
     }
 
-    @JsonIgnore
-    public Map<String, Path> getPathsMap() {
-        return paths;
-    }
-
     public void setPaths(Map<String, Path> paths) {
         this.paths = paths;
     }
