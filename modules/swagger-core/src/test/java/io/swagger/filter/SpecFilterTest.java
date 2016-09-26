@@ -234,6 +234,26 @@ public class SpecFilterTest {
 
     }
 
+    @Test(description = "recursive models, e.g. A-> A or A-> B and B -> A should not result in stack overflow")
+    public void removeUnreferencedDefinitionsOfRecuriveModels() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/recursivemodels.json");
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final Swagger filtered = new SpecFilter().filter(swagger, remover, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("SelfReferencingModel"));
+        assertNotNull(filtered.getDefinitions().get("IndirectRecursiveModelA"));
+        assertNotNull(filtered.getDefinitions().get("IndirectRecursiveModelB"));
+    }
+
+    @Test(description = "broken references should not result in NPE")
+    public void removeUnreferencedModelOverride() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/brokenrefmodel.json");
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final Swagger filtered = new SpecFilter().filter(swagger, remover, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("RootModel"));
+    }
+
     @Test(description = "it should filter models where some fields have no properties")
     public void filterNoPropertiesModels() throws IOException {
         final String modelName = "Array";
