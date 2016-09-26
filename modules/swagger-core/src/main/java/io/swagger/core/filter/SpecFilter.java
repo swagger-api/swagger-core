@@ -183,22 +183,11 @@ public class SpecFilter {
         if (props == null) return;
         for (String keyProp: props.keySet()) {
             Property p = props.get(keyProp);
-            if (p instanceof ArrayProperty) {
-                ArrayProperty ap = (ArrayProperty) p;
-                if (ap.getItems() != null && ap.getItems() instanceof RefProperty) {
-                    RefProperty rp = (RefProperty) ap.getItems();
-                    locateReferencedDefinitions(rp, nestedReferencedDefinitions, swagger);
-                }
-            } else if (p instanceof RefProperty) {
-                RefProperty rp = (RefProperty) p;
-                locateReferencedDefinitions(rp, nestedReferencedDefinitions, swagger);
+            String ref = getPropertyRef(p);
+            if (ref != null) {
+                locateReferencedDefinitions(ref, nestedReferencedDefinitions, swagger);
             }
         }
-    }
-
-    private void locateReferencedDefinitions(RefProperty rp, Set<String> nestedReferencedDefinitions, Swagger swagger) {
-        String simpleRef = rp.getSimpleRef();
-        locateReferencedDefinitions(simpleRef, nestedReferencedDefinitions, swagger);
     }
 
     private void locateReferencedDefinitions(String ref, Set<String> nestedReferencedDefinitions, Swagger swagger) {
