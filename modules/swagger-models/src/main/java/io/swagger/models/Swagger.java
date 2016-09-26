@@ -7,7 +7,6 @@ import io.swagger.models.auth.SecuritySchemeDefinition;
 import io.swagger.models.parameters.Parameter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -258,18 +257,7 @@ public class Swagger {
     }
 
     public Map<String, Path> getPaths() {
-        if (paths == null) {
-            return null;
-        }
-        Map<String, Path> sorted = new LinkedHashMap<String, Path>();
-        List<String> keys = new ArrayList<String>();
-        keys.addAll(paths.keySet());
-        Collections.sort(keys);
-
-        for (String key : keys) {
-            sorted.put(key, paths.get(key));
-        }
-        return sorted;
+        return paths;
     }
 
     public void setPaths(Map<String, Path> paths) {
