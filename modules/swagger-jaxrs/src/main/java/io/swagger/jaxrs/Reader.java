@@ -18,21 +18,8 @@ package io.swagger.jaxrs;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiKeyAuthDefinition;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
-import io.swagger.annotations.BasicAuthDefinition;
+import io.swagger.annotations.*;
 import io.swagger.annotations.Info;
-import io.swagger.annotations.OAuth2Definition;
-import io.swagger.annotations.ResponseHeader;
-import io.swagger.annotations.Scope;
-import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.config.DefaultReaderConfig;
 import io.swagger.jaxrs.config.ReaderConfig;
@@ -43,20 +30,10 @@ import io.swagger.jaxrs.utils.ReaderUtils;
 import io.swagger.models.Contact;
 import io.swagger.models.ExternalDocs;
 import io.swagger.models.License;
-import io.swagger.models.Model;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.Response;
-import io.swagger.models.Scheme;
-import io.swagger.models.SecurityRequirement;
-import io.swagger.models.Swagger;
+import io.swagger.models.*;
 import io.swagger.models.Tag;
 import io.swagger.models.auth.In;
-import io.swagger.models.parameters.FormParameter;
-import io.swagger.models.parameters.HeaderParameter;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.PathParameter;
-import io.swagger.models.parameters.QueryParameter;
+import io.swagger.models.parameters.*;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
@@ -76,17 +53,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Reader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
@@ -823,7 +790,37 @@ public class Reader {
         } else if (responseType == null) {
             // pick out response from method declaration
             LOGGER.debug("picking up response class from method " + method);
-            responseType = method.getGenericReturnType();
+            // If return type is a generic parameter (which cannot contain "."),
+            // the exact runtime type should be extracted from the returnType.
+            if (!method.getGenericReturnType().getTypeName().contains(".")) {
+                responseType = method.getReturnType();
+                LOGGER.debug("return type '" + method.getGenericReturnType().getTypeName() + "' of method '" + method.getName() + "' is assumed generic ");
+                // Get the indexOfTypeParameterInDeclaringClass
+                int indexOfTypeParameterInDeclaringClass = -1;
+                for (int i = 0; i < method.getDeclaringClass().getTypeParameters().length; i++) {
+                    if (method.getDeclaringClass().getTypeParameters()[i].getTypeName().equals(method.getGenericReturnType().getTypeName())) {
+                        indexOfTypeParameterInDeclaringClass = i;
+                        LOGGER.debug("index of generic return type '" + method.getGenericReturnType().getTypeName() + "' in declaring class '" + method.getDeclaringClass().getName() + "' generic parameter list is " + indexOfTypeParameterInDeclaringClass);
+
+                        Class<?> currentClass = cls;
+                        while (currentClass != null && currentClass.getGenericSuperclass() != null) {
+                            // Find the method declaring class as genericSuperclass,
+                            // then get actualTypeArgument value based on the indexOfTypeParameterInDeclaringClass,
+                            // then set it as responseType
+                            if (currentClass.getGenericSuperclass().getTypeName().contains(method.getDeclaringClass().getTypeName())) {
+                                responseType = ((ParameterizedType) currentClass.getGenericSuperclass()).getActualTypeArguments()[indexOfTypeParameterInDeclaringClass];
+                                LOGGER.debug("actual type of generic return type '" + method.getGenericReturnType().getTypeName() + "' in declaring class '" + method.getDeclaringClass().getName() + "' generic parameter list is " + responseType);
+
+                                break;
+                            }
+                            currentClass = currentClass.getSuperclass();
+                        }
+                        break;
+                    }
+                }
+            } else {
+                responseType = method.getGenericReturnType();
+            }
         }
         if (isValidResponse(responseType)) {
             final Property property = ModelConverters.getInstance().readAsProperty(responseType);
