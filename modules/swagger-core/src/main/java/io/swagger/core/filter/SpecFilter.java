@@ -245,7 +245,8 @@ public class SpecFilter {
                 .produces(op.getProduces())
                 .tags(op.getTags())
                 .externalDocs(op.getExternalDocs())
-                .vendorExtensions(op.getVendorExtensions());
+                .vendorExtensions(op.getVendorExtensions())
+                .deprecated(op.isDeprecated());
 
         List<Parameter> clonedParams = new ArrayList<Parameter>();
         if (op.getParameters() != null) {
