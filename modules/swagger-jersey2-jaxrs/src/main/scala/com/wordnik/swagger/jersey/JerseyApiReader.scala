@@ -177,7 +177,7 @@ class JerseyApiReader extends JaxrsApiReader {
           mutable.dataType match {
             case "java.io.InputStream" => {
               mutable.name = readString(e.value, mutable.name)
-              mutable.paramType = "body"
+              mutable.paramType = TYPE_FORM
               mutable.dataType = "File"
             }
             case "file" => 
