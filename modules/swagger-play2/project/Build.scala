@@ -63,7 +63,7 @@ object ApplicationBuild extends Build {
       </developers>,
     resolvers := Seq(
       "maven-central" at "https://repo1.maven.org/maven2",
-      "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
+      Resolver.mavenLocal,
       "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
       "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases",
       "java-net" at "http://download.java.net/maven/2",

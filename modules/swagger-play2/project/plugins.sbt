@@ -2,7 +2,7 @@
 // logLevel := Level.Warn
 
 resolvers ++= Seq(
-    "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository",
+    Resolver.mavenLocal,
     DefaultMavenRepository,
     "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
     "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/",
