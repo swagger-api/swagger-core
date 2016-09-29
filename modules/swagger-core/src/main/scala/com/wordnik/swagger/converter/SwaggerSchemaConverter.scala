@@ -58,8 +58,8 @@ class SwaggerSchemaConverter
             (for(subType <- cls.getAnnotation(classOf[JsonSubTypes]).value) yield (subType.value.getName)).toList
           else List()
         }
-        sortedProperties.size match {
-          case 0 => None
+        (sortedProperties.size, subTypes.size) match {
+          case (0, 0) => None
           case _ => Some(Model(
             toName(cls),
             toName(cls),
