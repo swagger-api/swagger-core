@@ -1,5 +1,22 @@
 package io.swagger.jersey;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.*;
+
+import javax.ws.rs.BeanParam;
+
+import org.glassfish.jersey.media.multipart.FormDataParam;
+
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+
+
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.ext.AbstractSwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtension;
@@ -7,31 +24,18 @@ import io.swagger.jaxrs.ext.SwaggerExtensions;
 import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
-import io.swagger.util.Json;
 import io.swagger.util.ParameterProcessor;
-
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.AnnotatedField;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.ws.rs.BeanParam;
 
 /**
  * Swagger extension for handling JAX-RS 2.0 processing.
  */
 public class SwaggerJersey2Jaxrs extends AbstractSwaggerExtension {
-    final ObjectMapper mapper = Json.mapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
+    static {
+      mapper.setVisibility(PropertyAccessor.ALL, Visibility.NONE);
+      mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+      mapper.setVisibility(PropertyAccessor.SETTER, Visibility.ANY);
+    }
 
     @Override
     public List<Parameter> extractParameters(final List<Annotation> annotations, final Type type, final Set<Type> typesToSkip, final Iterator<SwaggerExtension> chain) {
