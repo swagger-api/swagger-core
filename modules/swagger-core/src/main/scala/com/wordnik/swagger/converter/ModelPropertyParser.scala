@@ -199,10 +199,10 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     if (!(isTransient && !isXmlElement && !isJsonProperty) && name != null && (isFieldExists || isGetter || isDocumented)) {
       var paramType = getDataType(genericReturnType, returnType, false)
       LOGGER.debug("inspecting " + paramType)
+      val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9$_]*)\\].*".r
       var simpleName = Option(overrideDataType) match {
         case Some(e) => {
           // split out the base part
-          val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9_]*)\\].*".r
           val out = e match {
             case ComplexTypeMatcher(t, e) => e.substring(e.lastIndexOf(".") + 1)
             case _ => e
@@ -214,7 +214,6 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       if (!"void".equals(paramType) && null != paramType && !processedFields.contains(name)) {
         if(!excludedFieldTypes.contains(paramType)) {
           val items = {
-            val ComplexTypeMatcher = "([a-zA-Z]*)\\[([a-zA-Z\\.\\-0-9_]*)\\].*".r
             val nameToUse = {
               if(overrideDataType != null) 
                 overrideDataType
@@ -522,7 +521,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
         else hostClass.getName
       } else if (xmlRootElement != null) {
         if ("##default".equals(xmlRootElement.name())) {
-          if (isSimple) hostClass.getSimpleName
+          if (isSimple) TypeUtil.getClassSimpleName(hostClass)
           else hostClass.getName
         } else {
           if (isSimple) readString(xmlRootElement.name())
@@ -531,7 +530,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       } else if (hostClass.getName.startsWith("java.lang.") && isSimple) {
         hostClass.getName.substring("java.lang.".length)
       } else {
-        if (isSimple) hostClass.getSimpleName
+        if (isSimple) TypeUtil.getClassSimpleName(hostClass)
         else hostClass.getName
       }
     }

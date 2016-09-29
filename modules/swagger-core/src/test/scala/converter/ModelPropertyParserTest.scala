@@ -20,6 +20,14 @@ import scala.beans.BeanProperty
 @RunWith(classOf[JUnitRunner])
 class ModelPropertyParserTest extends FlatSpec with Matchers {
 
+  it should "extract generic list from property where generic parameter is embedded class" in {
+    val cls = classOf[ModelWithEmbeddedClassAsGenericParameter]
+    implicit val properties = new scala.collection.mutable.LinkedHashMap[String, ModelProperty]
+    val parser = new ModelPropertyParser(cls)
+    parser.parse
+    assert(properties("items").items != None)
+  }
+
   it should "extract a string list" in {
     val cls = classOf[List[String]]
     implicit val properties = new scala.collection.mutable.LinkedHashMap[String, ModelProperty]
