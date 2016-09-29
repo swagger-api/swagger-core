@@ -40,6 +40,7 @@ public class StoreApiController extends BaseApiController {
     @ApiOperation(value = "Place an order for a pet",
             response = Order.class, httpMethod = "POST")
     @ApiResponses({@ApiResponse(code = 400, message = "Invalid Order")})
+    @ApiImplicitParams({@ApiImplicitParam(value = "Store object that needs to be updated", required = true, dataType = "Order", paramType = "body")})
     public static Result placeOrder() {
         Object o = request().body().asJson();
         try {
