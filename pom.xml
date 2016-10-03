@@ -151,8 +151,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.0</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -512,5 +512,7 @@
         <commons-io-version>2.4</commons-io-version>
         <enforcer-plugin-version>1.4</enforcer-plugin-version>
         <failsafe-plugin-version>2.19.1</failsafe-plugin-version>
+
+        <java.version>1.8</java.version>
     </properties>
 </project>
