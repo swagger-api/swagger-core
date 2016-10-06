@@ -310,7 +310,7 @@ public class SimpleReaderTest {
         DefaultReaderConfig config = new DefaultReaderConfig();
         config.setScanAllResources(true);
         Swagger swagger = new Reader(new Swagger(), config).read(SimpleResourceInheritanceSubWithoutAnnotations.class);
-        assertEquals(swagger.getPaths().size(), 2);
+        assertEquals(swagger.getPaths().size(), 3);
 
         Operation get = getGet(swagger, "/{id}");
         assertNotNull(get);
@@ -331,6 +331,12 @@ public class SimpleReaderTest {
 
         assertEquals(get.getResponses().size(), 1);
         assertEquals(get.getResponses().get("200").getSchema().getType(), "ref");
+
+        Operation getArray = getGet(swagger, "/");
+        assertNotNull(getArray);
+
+        assertEquals(getArray.getResponses().size(), 1);
+        assertEquals(getArray.getResponses().get("200").getSchema().getType(), "array");
     }
 
     @Test(description = "scan a simple resource inheritance without annotations")
@@ -338,7 +344,7 @@ public class SimpleReaderTest {
         DefaultReaderConfig config = new DefaultReaderConfig();
         config.setScanAllResources(true);
         Swagger swagger = new Reader(new Swagger(), config).read(SimpleResourceInheritanceSubSubWithoutAnnotations.class);
-        assertEquals(swagger.getPaths().size(), 2);
+        assertEquals(swagger.getPaths().size(), 3);
 
         Operation get = getGet(swagger, "/{id}");
         assertNotNull(get);
@@ -359,6 +365,12 @@ public class SimpleReaderTest {
 
         assertEquals(get.getResponses().size(), 1);
         assertEquals(get.getResponses().get("200").getSchema().getType(), "ref");
+
+        Operation getArray = getGet(swagger, "/");
+        assertNotNull(getArray);
+
+        assertEquals(getArray.getResponses().size(), 1);
+        assertEquals(getArray.getResponses().get("200").getSchema().getType(), "array");
     }
 
     @Test(description = "scan a simple self-referencing subresource")

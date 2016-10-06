@@ -16,6 +16,13 @@
 
 package io.swagger.jaxrs;
 
+import com.fasterxml.classmate.MemberResolver;
+import com.fasterxml.classmate.ResolvedType;
+import com.fasterxml.classmate.ResolvedTypeWithMembers;
+import com.fasterxml.classmate.TypeResolver;
+import com.fasterxml.classmate.members.ResolvedMethod;
+import com.fasterxml.classmate.types.ResolvedArrayType;
+import com.fasterxml.classmate.types.ResolvedObjectType;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.annotations.*;
@@ -53,6 +60,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.GenericArrayType;
 import java.util.*;
 
 public class Reader {
@@ -243,6 +252,10 @@ public class Reader {
             // parse the method
             final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
             Method methods[] = cls.getMethods();
+
+            // Create resolved methods
+            Map<Method, ResolvedMethod> resolvedMethods = getResolvedMethods(cls);
+
             for (Method method : methods) {
                 if (ReflectionUtils.isOverriddenMethod(method, cls)) {
                     continue;
@@ -262,7 +275,7 @@ public class Reader {
 
                     Operation operation = null;
                     if (apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) {
-                        operation = parseMethod(cls, method, globalParameters, classApiResponses);
+                        operation = parseMethod(cls, method, globalParameters, classApiResponses, resolvedMethods.get(method));
                     }
                     if (operation == null) {
                         continue;
@@ -372,6 +385,19 @@ public class Reader {
         }
 
         return swagger;
+    }
+
+    private Map<Method, ResolvedMethod> getResolvedMethods(Class<?> cls) {
+        TypeResolver typeResolver = new TypeResolver();
+        ResolvedType classType = typeResolver.resolve(cls);
+        MemberResolver memberResolver = new MemberResolver(typeResolver);
+        ResolvedTypeWithMembers classTypeWithMembers = memberResolver.resolve(classType, null, null);
+        ResolvedMethod[] classTypeMethodsArray = classTypeWithMembers.getMemberMethods();
+        Map<Method, ResolvedMethod> resolvedMethods = new HashMap<Method, ResolvedMethod>();
+        for (ResolvedMethod classTypeMethod : classTypeMethodsArray) {
+            resolvedMethods.put(classTypeMethod.getRawMember(), classTypeMethod);
+        }
+        return resolvedMethods;
     }
 
     private void readImplicitParameters(Method method, Operation operation) {
@@ -719,10 +745,11 @@ public class Reader {
     }
 
     public Operation parseMethod(Method method) {
-        return parseMethod(method.getDeclaringClass(), method, Collections.<Parameter>emptyList(), Collections.<ApiResponse>emptyList());
+        Map<Method, ResolvedMethod> resolvedMethods = getResolvedMethods(method.getDeclaringClass());
+        return parseMethod(method.getDeclaringClass(), method, Collections.<Parameter>emptyList(), Collections.<ApiResponse>emptyList(), resolvedMethods.get(method));
     }
 
-    private Operation parseMethod(Class<?> cls, Method method, List<Parameter> globalParameters, List<ApiResponse> classApiResponses) {
+    private Operation parseMethod(Class<?> cls, Method method, List<Parameter> globalParameters, List<ApiResponse> classApiResponses, ResolvedMethod resolvedMethod) {
         Operation operation = new Operation();
 
         ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
@@ -790,37 +817,22 @@ public class Reader {
         } else if (responseType == null) {
             // pick out response from method declaration
             LOGGER.debug("picking up response class from method " + method);
-            // If return type is a generic parameter (which cannot contain "."),
-            // the exact runtime type should be extracted from the returnType.
-            if (!method.getGenericReturnType().getTypeName().contains(".")) {
-                responseType = method.getReturnType();
-                LOGGER.debug("return type '" + method.getGenericReturnType().getTypeName() + "' of method '" + method.getName() + "' is assumed generic ");
-                // Get the indexOfTypeParameterInDeclaringClass
-                int indexOfTypeParameterInDeclaringClass = -1;
-                for (int i = 0; i < method.getDeclaringClass().getTypeParameters().length; i++) {
-                    if (method.getDeclaringClass().getTypeParameters()[i].getTypeName().equals(method.getGenericReturnType().getTypeName())) {
-                        indexOfTypeParameterInDeclaringClass = i;
-                        LOGGER.debug("index of generic return type '" + method.getGenericReturnType().getTypeName() + "' in declaring class '" + method.getDeclaringClass().getName() + "' generic parameter list is " + indexOfTypeParameterInDeclaringClass);
 
-                        Class<?> currentClass = cls;
-                        while (currentClass != null && currentClass.getGenericSuperclass() != null) {
-                            // Find the method declaring class as genericSuperclass,
-                            // then get actualTypeArgument value based on the indexOfTypeParameterInDeclaringClass,
-                            // then set it as responseType
-                            if (currentClass.getGenericSuperclass().getTypeName().contains(method.getDeclaringClass().getTypeName())) {
-                                responseType = ((ParameterizedType) currentClass.getGenericSuperclass()).getActualTypeArguments()[indexOfTypeParameterInDeclaringClass];
-                                LOGGER.debug("actual type of generic return type '" + method.getGenericReturnType().getTypeName() + "' in declaring class '" + method.getDeclaringClass().getName() + "' generic parameter list is " + responseType);
+            responseType = method.getGenericReturnType();
 
-                                break;
-                            }
-                            currentClass = currentClass.getSuperclass();
-                        }
-                        break;
-                    }
-                }
-            } else {
-                responseType = method.getGenericReturnType();
+            // Use classmate's resolvedMethod if available for finding out return type
+            // (this way generic return parameter's actual type will be picked up as well)
+            if (method.getGenericReturnType() != null && method.getGenericReturnType() instanceof TypeVariable
+                    && resolvedMethod != null && resolvedMethod.getReturnType() != null
+                    && resolvedMethod.getReturnType() instanceof ResolvedObjectType) {
+                responseType = ((ResolvedObjectType) resolvedMethod.getReturnType()).getErasedType();
+            } else if (method.getGenericReturnType() != null && method.getGenericReturnType() instanceof GenericArrayType
+                    && resolvedMethod != null && resolvedMethod.getReturnType() != null
+                    && resolvedMethod.getReturnType() instanceof ResolvedArrayType) {
+                responseType = ((ResolvedArrayType) resolvedMethod.getReturnType()).getErasedType();
             }
+
+            LOGGER.debug("response class of method " + method + " is " + responseType);
         }
         if (isValidResponse(responseType)) {
             final Property property = ModelConverters.getInstance().readAsProperty(responseType);

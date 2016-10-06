@@ -18,4 +18,15 @@ public abstract class SimpleResourceInheritanceBaseWithoutAnnotations<R> {
         return (R)out;
     }
 
+    @GET
+    public R[] getArrayTest(
+            @QueryParam("limit") Integer limit
+    ) throws WebApplicationException {
+        Sample out = new Sample();
+        out.setName("foo");
+        out.setValue("bar");
+        R[] ret = (R[]) new Sample[] {out};
+        return ret;
+    }
+
 }
