@@ -4,6 +4,8 @@ import io.swagger.models.Xml;
 
 public class MapProperty extends AbstractProperty implements Property {
     Property property;
+    private Integer minProperties;
+    private Integer maxProperties;
 
     public MapProperty() {
         super.type = "object";
@@ -54,30 +56,43 @@ public class MapProperty extends AbstractProperty implements Property {
         this.property = property;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((property == null) ? 0 : property.hashCode());
-        return result;
+    public Integer getMinProperties() {
+        return minProperties;
+    }
+
+    public void setMinProperties(Integer minProperties) {
+        this.minProperties = minProperties;
+    }
+
+    public Integer getMaxProperties() {
+        return maxProperties;
+    }
+
+    public void setMaxProperties(Integer maxProperties) {
+        this.maxProperties = maxProperties;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        MapProperty that = (MapProperty) o;
+
+        if (property != null ? !property.equals(that.property) : that.property != null) return false;
+        if (minProperties != null ? !minProperties.equals(that.minProperties) : that.minProperties != null)
             return false;
-        }
-        if (!(obj instanceof MapProperty)) {
-            return false;
-        }
-        MapProperty other = (MapProperty) obj;
-        if (property == null) {
-            if (other.property != null) {
-                return false;
-            }
-        } else if (!property.equals(other.property)) {
-            return false;
-        }
-        return true;
+        return maxProperties != null ? maxProperties.equals(that.maxProperties) : that.maxProperties == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (property != null ? property.hashCode() : 0);
+        result = 31 * result + (minProperties != null ? minProperties.hashCode() : 0);
+        result = 31 * result + (maxProperties != null ? maxProperties.hashCode() : 0);
+        return result;
     }
 }

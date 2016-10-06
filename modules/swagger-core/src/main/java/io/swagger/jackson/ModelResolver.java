@@ -273,8 +273,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 ApiModelProperty mp = member.getAnnotation(ApiModelProperty.class);
 
-                if(mp != null && mp.readOnly()) {
-                  isReadOnly = mp.readOnly();
+                if (mp != null && mp.readOnly()) {
+                    isReadOnly = mp.readOnly();
                 }
 
                 JavaType propType = member.getType(beanDesc.bindingsForBeanType());
@@ -339,7 +339,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                 member.getAnnotation(JsonIdentityReference.class));
                     }
                     if (property == null) {
-                        property = context.resolveProperty(propType, annotations);
+                        JsonUnwrapped uw = member.getAnnotation(JsonUnwrapped.class);
+                        if (uw != null && uw.enabled()) {
+                            handleUnwrapped(props, context.resolve(propType), uw.prefix(), uw.suffix());
+                        } else {
+                            property = context.resolveProperty(propType, annotations);
+                        }
                     }
                 }
 
@@ -387,7 +392,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-
         Collections.sort(props, getPropertyComparator());
 
         Map<String, Property> modelProps = new LinkedHashMap<String, Property>();
@@ -429,6 +433,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return false;
+    }
+
+    private void handleUnwrapped(List<Property> props, Model innerModel, String prefix, String suffix) {
+        if (StringUtils.isBlank(suffix) && StringUtils.isBlank(prefix)) {
+            props.addAll(innerModel.getProperties().values());
+        } else {
+            if (prefix == null) {
+                prefix = "";
+            }
+            if (suffix == null) {
+                suffix = "";
+            }
+            for (Property prop : innerModel.getProperties().values()) {
+                props.add(prop.rename(prefix + prop.getName() + suffix));
+            }
+        }
     }
 
     private enum GeneratorWrapper {

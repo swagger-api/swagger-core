@@ -2,6 +2,9 @@ package io.swagger.util;
 
 import io.swagger.TestUtils;
 import io.swagger.models.*;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.MapProperty;
+import io.swagger.models.properties.Property;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -51,7 +54,7 @@ public class JsonDeserializationTest {
     }
 
     @Test
-    public void testDeserializeSecurityRequirement() throws Exception {
+    public void testDeserializeSecurity() throws Exception {
         final Swagger swagger = TestUtils.deserializeJsonFileFromClasspath("specFiles/securityDefinitions.json", Swagger.class);
 
         final List<SecurityRequirement> security = swagger.getSecurity();
@@ -128,5 +131,50 @@ public class JsonDeserializationTest {
         xStringValue = (String) vendorExtensions.get("x-string-value");
         assertNotNull(xStringValue);
         assertEquals(xStringValue, "string_value");
+    }
+
+    @Test
+    public void shouldDeserializeArrayPropertyMinItems() throws Exception {
+        String path = "json-schema-validation/array.json";
+        ArrayProperty property = (ArrayProperty)TestUtils.deserializeJsonFileFromClasspath(path, Property.class);
+
+        assertNotNull(property.getMinItems());
+        assertEquals(property.getMinItems().intValue(), 1);
+    }
+
+    @Test
+    public void shouldDeserializeArrayPropertyMaxItems() throws Exception {
+        String path = "json-schema-validation/array.json";
+        ArrayProperty property = (ArrayProperty)TestUtils.deserializeJsonFileFromClasspath(path, Property.class);
+
+        assertNotNull(property.getMaxItems());
+        assertEquals(property.getMaxItems().intValue(), 10);
+    }
+
+    @Test
+    public void shouldDeserializeArrayPropertyUniqueItems() throws Exception {
+        String path = "json-schema-validation/array.json";
+        ArrayProperty property = (ArrayProperty)TestUtils.deserializeJsonFileFromClasspath(path, Property.class);
+
+        assertNotNull(property.getUniqueItems());
+        assertTrue(property.getUniqueItems());
+    }
+
+    @Test
+    public void givenMapProperty_shouldDeserializeMinProperties() {
+        String path = "json-schema-validation/map.json";
+        MapProperty property = (MapProperty)TestUtils.deserializeJsonFileFromClasspath(path, Property.class);
+
+        assertNotNull(property.getMinProperties());
+        assertEquals(property.getMinProperties().intValue(), 1);
+    }
+
+    @Test
+    public void givenMapProperty_shouldDeserializeMaxProperties() {
+        String path = "json-schema-validation/map.json";
+        MapProperty property = (MapProperty)TestUtils.deserializeJsonFileFromClasspath(path, Property.class);
+
+        assertNotNull(property.getMaxProperties());
+        assertEquals(property.getMaxProperties().intValue(), 10);
     }
 }

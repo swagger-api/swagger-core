@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SpecFilterTest {
 
@@ -36,6 +37,59 @@ public class SpecFilterTest {
         final Swagger filtered = new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null);
 
         assertEquals(Json.pretty(swagger), Json.pretty(filtered));
+    }
+
+    @Test(description = "it should clone everything concurrently")
+    public void cloneEverythingConcurrent() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/petstore.json");
+
+        ThreadGroup tg = new ThreadGroup("SpecFilterTest" + "|" + System.currentTimeMillis());
+        final Map<String, Swagger> filteredMap = new ConcurrentHashMap<String, Swagger>();
+        for (int i = 0; i < 10; i++) {
+            final int id = i;
+            new Thread(tg, "SpecFilterTest"){
+                public void run(){
+                    try {
+                        filteredMap.put("filtered " + id, new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null));
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+
+        new Thread(new FailureHandler(tg, filteredMap, swagger)).start();
+    }
+
+    class FailureHandler implements Runnable {
+        ThreadGroup tg;
+        Map<String, Swagger> filteredMap;
+        private Swagger swagger;
+
+        public FailureHandler(ThreadGroup tg, Map<String, Swagger> filteredMap, Swagger swagger) {
+            this.tg = tg;
+            this.filteredMap = filteredMap;
+            this.swagger = swagger;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Thread[] thds = new Thread[tg.activeCount()];
+                tg.enumerate(thds);
+                for (Thread t : thds) {
+                    if (t != null) {
+                        t.join(10000);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            for (Swagger filtered: filteredMap.values()) {
+                assertEquals(Json.pretty(swagger), Json.pretty(filtered));
+            }
+        }
     }
 
     @Test(description = "it should clone everything from JSON without models")
@@ -140,6 +194,87 @@ public class SpecFilterTest {
         assertNull(filtered.getDefinitions().get("OrderTag"));
         assertNotNull(filtered.getDefinitions().get("Tag"));
 
+    }
+
+    @Test(description = "it should retain non-broken reference model properties")
+    public void retainNonBrokenReferenceModelProperties() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/paramAndResponseRefArray.json");
+
+        assertNotNull(swagger.getDefinitions().get("User"));
+
+        final NoOpOperationsFilter noOpfilter = new NoOpOperationsFilter();
+        Swagger filtered = new SpecFilter().filter(swagger, noOpfilter, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("User"));
+
+        final RemoveUnreferencedDefinitionsFilter refFilter = new RemoveUnreferencedDefinitionsFilter();
+        filtered = new SpecFilter().filter(swagger, refFilter, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("User")); // ArrayProperty
+        assertNotNull(filtered.getDefinitions().get("Pet")); // ArrayModel
+
+    }
+
+    @Test(description = "it should retain non-broken reference model composed properties")
+    public void retainNonBrokenReferenceModelComposedProperties() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/paramAndResponseRefComposed.json");
+
+        assertNotNull(swagger.getDefinitions().get("User"));
+
+        final NoOpOperationsFilter noOpfilter = new NoOpOperationsFilter();
+        Swagger filtered = new SpecFilter().filter(swagger, noOpfilter, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("User"));
+
+        final RemoveUnreferencedDefinitionsFilter refFilter = new RemoveUnreferencedDefinitionsFilter();
+        filtered = new SpecFilter().filter(swagger, refFilter, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("User"));
+        assertNotNull(filtered.getDefinitions().get("Pet"));
+
+    }
+
+    @Test(description = "recursive models, e.g. A-> A or A-> B and B -> A should not result in stack overflow")
+    public void removeUnreferencedDefinitionsOfRecuriveModels() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/recursivemodels.json");
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final Swagger filtered = new SpecFilter().filter(swagger, remover, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("SelfReferencingModel"));
+        assertNotNull(filtered.getDefinitions().get("IndirectRecursiveModelA"));
+        assertNotNull(filtered.getDefinitions().get("IndirectRecursiveModelB"));
+    }
+
+    @Test(description = "broken references should not result in NPE")
+    public void removeUnreferencedModelOverride() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/brokenrefmodel.json");
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final Swagger filtered = new SpecFilter().filter(swagger, remover, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("RootModel"));
+    }
+
+    @Test(description = "Retain models referenced from additonalProperties")
+    public void retainModelsReferencesFromAdditionalProperties() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/additionalpropsmodel.json");
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final Swagger filtered = new SpecFilter().filter(swagger, remover, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("A"));
+        assertNotNull(filtered.getDefinitions().get("B"));
+    }
+
+    @Test(description = "Clone should retain any 'deperecated' flags present on operations")
+    public void cloneRetainDeperecatedFlags() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/deprecatedoperationmodel.json");
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final Swagger filtered = new SpecFilter().filter(swagger, remover, null, null, null);
+
+        Operation operation = filtered.getPath("/test").getOperations().get(0);
+
+        Boolean deprectedFlag = operation.isDeprecated();
+        assertNotNull(deprectedFlag);
+        assertEquals(deprectedFlag, Boolean.TRUE);
     }
 
     @Test(description = "it should filter models where some fields have no properties")

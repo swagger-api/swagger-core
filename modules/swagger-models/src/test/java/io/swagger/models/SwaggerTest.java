@@ -82,7 +82,7 @@ public class SwaggerTest {
         swagger.setSecurityRequirement(new ArrayList<SecurityRequirement>(Arrays.asList(requirement)));
 
         // then
-        assertTrue(swagger.getSecurityRequirement().contains(requirement),
+        assertTrue(swagger.getSecurity().contains(requirement),
                 "The newly added requiement must be contained in the requiement list");
     }
 
@@ -92,7 +92,7 @@ public class SwaggerTest {
         swagger.addSecurityDefinition(requirement);
 
         // then
-        assertTrue(swagger.getSecurityRequirement().contains(requirement),
+        assertTrue(swagger.getSecurity().contains(requirement),
                 "The newly added requiement must be contained in the requiement list");
     }
 
@@ -235,7 +235,7 @@ public class SwaggerTest {
 
         // then
         assertEquals(swagger.getSecurityDefinitions().get(name), securityDefinition,
-                "Must be able to retrieve the added security definiton");
+                "Must be able to retrieve the added security definition");
     }
 
     @Test

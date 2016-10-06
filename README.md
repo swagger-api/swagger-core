@@ -4,6 +4,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project)
 [![PR Stats](http://issuestats.com/github/swagger-api/swagger-core/badge/pr)](http://issuestats.com/github/swagger-api/swagger-core) [![Issue Stats](http://issuestats.com/github/swagger-api/swagger-core/badge/issue)](http://issuestats.com/github/swagger-api/swagger-core)
 
+Javadocs for annotations with the current release are [available online](http://docs.swagger.io/swagger-core/current/apidocs/index.html).
 
 The goal of Swagger™ is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, Swagger removes the guesswork in calling the service.
 
@@ -32,8 +33,8 @@ The OpenAPI Specification has undergone 3 revisions since initial creation in 20
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-1.5.9-SNAPSHOT            |              | 2.0           | [master](https://github.com/swagger-api/swagger-core) | Under Development
-1.5.8 (**current stable**)| 2016-03-11   | 2.0           | [tag v1.5.8](https://github.com/swagger-api/swagger-core/tree/v1.5.8) | Supported
+1.5.11-SNAPSHOT            |              | 2.0           | [master](https://github.com/swagger-api/swagger-core) | Under Development
+1.5.10 (**current stable**)| 2016-08-19   | 2.0           | [tag v1.5.10](https://github.com/swagger-api/swagger-core/tree/v1.5.10) | Supported
 1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Supported
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4) | Deprecated
 1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0) | Deprecated
@@ -45,7 +46,7 @@ To allow independent development, scala support has been moved into a separate p
 This is a project to build the swagger-core library, which is required for the Swagger implementation of the OpenAPI Spec. 
 
 ### Change History
-If you're interested in the change history of swagger and the swagger-core framework, see [here](https://github.com/swagger-api/swagger-core/wiki/Changelog).
+If you're interested in the change history of swagger and the swagger-core framework, see [here](https://github.com/swagger-api/swagger-core/releases).
 
 ### Prerequisites
 You need the following installed and available in your $PATH:
@@ -55,7 +56,7 @@ You need the following installed and available in your $PATH:
 * Jackson 2.4.5 or greater
 
 
-### To build from source (currently 1.5.8)
+### To build from source (currently 1.5.11-SNAPSHOT)
 ```
 # first time building locally
 mvn -N

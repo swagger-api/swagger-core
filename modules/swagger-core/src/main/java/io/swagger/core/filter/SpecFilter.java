@@ -1,6 +1,8 @@
 package io.swagger.core.filter;
 
 import io.swagger.model.ApiDescription;
+import io.swagger.models.ArrayModel;
+import io.swagger.models.ComposedModel;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
@@ -11,14 +13,17 @@ import io.swagger.models.Tag;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -106,8 +111,9 @@ public class SpecFilter {
 
         if (swagger.getResponses() != null) {
             for (Response response: swagger.getResponses().values()) {
-                if (response.getSchema() != null && response.getSchema() instanceof RefProperty) {
-                    referencedDefinitions.add(((RefProperty) response.getSchema()).getSimpleRef());
+                String propertyRef = getPropertyRef(response.getSchema());
+                if (propertyRef != null) {
+                    referencedDefinitions.add(propertyRef);
                 }
             }
         }
@@ -115,8 +121,9 @@ public class SpecFilter {
             for (Parameter p: swagger.getParameters().values()) {
                 if (p instanceof BodyParameter) {
                     BodyParameter bp = (BodyParameter) p;
-                    if (bp.getSchema() != null && bp.getSchema() instanceof RefModel) {
-                        referencedDefinitions.add(((RefModel) bp.getSchema()).getSimpleRef());
+                    Set<String>  modelRef = getModelRef(bp.getSchema());
+                    if (modelRef != null) {
+                        referencedDefinitions.addAll(modelRef);
                     }
                 }
             }
@@ -127,8 +134,9 @@ public class SpecFilter {
                     for (Parameter p: path.getParameters()) {
                         if (p instanceof BodyParameter) {
                             BodyParameter bp = (BodyParameter) p;
-                            if (bp.getSchema() != null && bp.getSchema() instanceof RefModel) {
-                                referencedDefinitions.add(((RefModel) bp.getSchema()).getSimpleRef());
+                            Set<String>  modelRef = getModelRef(bp.getSchema());
+                            if (modelRef != null) {
+                                referencedDefinitions.addAll(modelRef);
                             }
                         }
                     }
@@ -137,8 +145,9 @@ public class SpecFilter {
                     for (Operation op: path.getOperations()) {
                         if (op.getResponses() != null) {
                             for (Response response: op.getResponses().values()) {
-                                if (response.getSchema() != null && response.getSchema() instanceof RefProperty) {
-                                    referencedDefinitions.add(((RefProperty) response.getSchema()).getSimpleRef());
+                                String propertyRef = getPropertyRef(response.getSchema());
+                                if (propertyRef != null) {
+                                    referencedDefinitions.add(propertyRef);
                                 }
                             }
                         }
@@ -146,8 +155,9 @@ public class SpecFilter {
                             for (Parameter p: op.getParameters()) {
                                 if (p instanceof BodyParameter) {
                                     BodyParameter bp = (BodyParameter) p;
-                                    if (bp.getSchema() != null && bp.getSchema() instanceof RefModel) {
-                                        referencedDefinitions.add(((RefModel) bp.getSchema()).getSimpleRef());
+                                    Set<String> modelRef = getModelRef(bp.getSchema());
+                                    if (modelRef != null) {
+                                        referencedDefinitions.addAll(modelRef);
                                     }
                                 }
                             }
@@ -160,8 +170,7 @@ public class SpecFilter {
         if (swagger.getDefinitions() != null) {
             Set<String> nestedReferencedDefinitions =  new TreeSet<String>();
             for (String ref : referencedDefinitions){
-                Model m = swagger.getDefinitions().get(ref);
-                locateNestedReferencedDefinitions (m.getProperties(), nestedReferencedDefinitions, swagger);
+                locateReferencedDefinitions(ref, nestedReferencedDefinitions, swagger);
             }
             referencedDefinitions.addAll(nestedReferencedDefinitions);
             swagger.getDefinitions().keySet().retainAll(referencedDefinitions);
@@ -170,25 +179,24 @@ public class SpecFilter {
         return swagger;
     }
 
-    private void locateNestedReferencedDefinitions (Map<String, Property> props, Set<String> nestedReferencedDefinitions, Swagger swagger) {
+    private void locateReferencedDefinitions (Map<String, Property> props, Set<String> nestedReferencedDefinitions, Swagger swagger) {
         if (props == null) return;
         for (String keyProp: props.keySet()) {
             Property p = props.get(keyProp);
-            if (p instanceof ArrayProperty) {
-                ArrayProperty ap = (ArrayProperty) p;
-                if (ap.getItems() != null && ap.getItems() instanceof RefProperty) {
-                    RefProperty rp = (RefProperty) ap.getItems();
-                    String simpleRef = rp.getSimpleRef();
-                    nestedReferencedDefinitions.add(simpleRef);
-                    Model m = swagger.getDefinitions().get(simpleRef);
-                    locateNestedReferencedDefinitions (m.getProperties(), nestedReferencedDefinitions, swagger);
-                }
-            } else if (p instanceof RefProperty) {
-                RefProperty rp = (RefProperty) p;
-                String simpleRef = rp.getSimpleRef();
-                nestedReferencedDefinitions.add(simpleRef);
-                Model m = swagger.getDefinitions().get(simpleRef);
-                locateNestedReferencedDefinitions (m.getProperties(), nestedReferencedDefinitions, swagger);
+            String ref = getPropertyRef(p);
+            if (ref != null) {
+                locateReferencedDefinitions(ref, nestedReferencedDefinitions, swagger);
+            }
+        }
+    }
+
+    private void locateReferencedDefinitions(String ref, Set<String> nestedReferencedDefinitions, Swagger swagger) {
+        // if not already processed so as to avoid infinite loops
+        if (!nestedReferencedDefinitions.contains(ref)) {
+            nestedReferencedDefinitions.add(ref);
+            Model model = swagger.getDefinitions().get(ref);
+            if (model != null) {
+                locateReferencedDefinitions(model.getProperties(), nestedReferencedDefinitions, swagger);
             }
         }
     }
@@ -237,7 +245,8 @@ public class SpecFilter {
                 .produces(op.getProduces())
                 .tags(op.getTags())
                 .externalDocs(op.getExternalDocs())
-                .vendorExtensions(op.getVendorExtensions());
+                .vendorExtensions(op.getVendorExtensions())
+                .deprecated(op.isDeprecated());
 
         List<Parameter> clonedParams = new ArrayList<Parameter>();
         if (op.getParameters() != null) {
@@ -252,5 +261,38 @@ public class SpecFilter {
         clonedOperation.setResponses(op.getResponses());
 
         return clonedOperation;
+    }
+
+    private String getPropertyRef(Property property) {
+        if (property instanceof ArrayProperty &&
+                ((ArrayProperty) property).getItems() != null) {
+            return getPropertyRef(((ArrayProperty) property).getItems());
+        } else if (property instanceof MapProperty &&
+                ((MapProperty) property).getAdditionalProperties() != null) {
+            return getPropertyRef(((MapProperty) property).getAdditionalProperties());
+        } else if (property instanceof RefProperty) {
+            return ((RefProperty) property).getSimpleRef();
+        }
+        return null;
+    }
+
+    private Set<String> getModelRef(Model model) {
+        if (model instanceof ArrayModel &&
+                ((ArrayModel) model).getItems() != null) {
+            return new HashSet<String>(Arrays.asList(getPropertyRef(((ArrayModel) model).getItems())));
+        } else if (model instanceof ComposedModel &&
+                ((ComposedModel) model).getAllOf() != null) {
+            Set<String> refs = new LinkedHashSet<String>();
+            ComposedModel cModel = (ComposedModel) model;
+            for (Model ref: cModel.getAllOf()) {
+                if (ref instanceof RefModel) {
+                    refs.add(((RefModel)ref).getSimpleRef());
+                }
+            }
+            return refs;
+        } else if (model instanceof RefModel) {
+            return new HashSet<String>(Arrays.asList(((RefModel) model).getSimpleRef()));
+        }
+        return null;
     }
 }

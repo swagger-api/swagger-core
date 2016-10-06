@@ -25,6 +25,10 @@ public interface SerializableParameter extends Parameter {
 
     void setEnum(List<String> _enum);
 
+    List<Object> getEnumValue();
+
+    void setEnumValue(List<?> enumValue);
+
     Integer getMaxLength();
 
     void setMaxLength(Integer maxLength);

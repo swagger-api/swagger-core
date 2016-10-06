@@ -3,6 +3,7 @@ package io.swagger;
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
+import io.swagger.models.Tag;
 import io.swagger.models.parameters.*;
 import io.swagger.resources.*;
 import org.testng.annotations.Test;
@@ -230,7 +231,7 @@ public class ReaderTest {
         Parameter description = parameters.get(0);
         assertTrue(description instanceof PathParameter);
         assertEquals(description.getName(), "description");
-        assertEquals(description.getDescription(), "Overriden description");
+        assertEquals(description.getDescription(), "Overridden description");
 
         Parameter id = parameters.get(1);
         assertTrue(id instanceof PathParameter);
@@ -314,6 +315,27 @@ public class ReaderTest {
         assertTrue(operation.getResponses().containsKey("409"));
 
 
+    }
+
+    @Test(description = "scan resource (impl) which has the Api annotations only declared in its interface")
+    public void scanApiAnnotationWhichAreOnlyPresentInInterfaceAndNotInImplementation() {
+        Swagger swagger = getSwagger(ResourceWithAnnotationsOnlyInInterfaceImpl.class);
+        assertNotNull(swagger);
+
+        final List<Tag> tags = swagger.getTags();
+        assertEquals(tags.size(), 1);
+        assertEquals(tags.get(0).getName(), "someTag");
+    }
+
+    @Test(description = "scan resource (impl) which has the ApiParam annotations only declared in its interface")
+    public void scanApiImplicitParamAnnotationWhichAreOnlyPresentInInterfaceAndNotInImplementation() {
+        Swagger swagger = getSwagger(ResourceWithAnnotationsOnlyInInterfaceImpl.class);
+        assertNotNull(swagger);
+
+        List<Parameter> parameters = getGet(swagger, "/pet/randomPet").getParameters();
+        assertNotNull(parameters);
+        assertEquals(parameters.size(), 1);
+        assertEquals(parameters.get(0).getName(), "petImplicitIdParam");
     }
 
     private Swagger getSwagger(Class<?> cls) {

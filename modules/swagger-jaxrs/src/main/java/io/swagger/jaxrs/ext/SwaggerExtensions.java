@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 public class SwaggerExtensions {
-    static Logger LOGGER = LoggerFactory.getLogger(SwaggerExtensions.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(SwaggerExtensions.class);
 
     private static List<SwaggerExtension> extensions = null;
 
@@ -29,9 +29,7 @@ public class SwaggerExtensions {
     static {
         extensions = new ArrayList<SwaggerExtension>();
         ServiceLoader<SwaggerExtension> loader = ServiceLoader.load(SwaggerExtension.class);
-        Iterator<SwaggerExtension> itr = loader.iterator();
-        while (itr.hasNext()) {
-            SwaggerExtension ext = itr.next();
+        for (SwaggerExtension ext : loader) {
             LOGGER.debug("adding extension " + ext);
             extensions.add(ext);
         }

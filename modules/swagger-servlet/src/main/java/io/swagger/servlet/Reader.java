@@ -1,6 +1,10 @@
 package io.swagger.servlet;
 
+import io.swagger.annotations.ApiKeyAuthDefinition;
+import io.swagger.annotations.BasicAuthDefinition;
 import io.swagger.annotations.Info;
+import io.swagger.annotations.OAuth2Definition;
+import io.swagger.annotations.Scope;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.models.Contact;
 import io.swagger.models.ExternalDocs;
@@ -11,6 +15,7 @@ import io.swagger.models.Response;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
+import io.swagger.models.auth.In;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.servlet.extensions.ReaderExtension;
 import io.swagger.servlet.extensions.ReaderExtensions;
@@ -153,6 +158,45 @@ public class Reader {
             if (StringUtils.isNotBlank(config.externalDocs().url())) {
                 externalDocs.setUrl(config.externalDocs().url());
             }
+        }
+        for (OAuth2Definition oAuth2Config : config.securityDefinition().oAuth2Definitions()) {
+            io.swagger.models.auth.OAuth2Definition oAuth2Definition = new io.swagger.models.auth.OAuth2Definition();
+            OAuth2Definition.Flow flow = oAuth2Config.flow();
+
+            if (flow.equals(OAuth2Definition.Flow.ACCESS_CODE)) {
+                oAuth2Definition = oAuth2Definition.accessCode(oAuth2Config.authorizationUrl(), oAuth2Config.tokenUrl());
+            } else if (flow.equals(OAuth2Definition.Flow.APPLICATION)) {
+                oAuth2Definition = oAuth2Definition.application(oAuth2Config.tokenUrl());
+            } else if (flow.equals(OAuth2Definition.Flow.IMPLICIT)) {
+                oAuth2Definition = oAuth2Definition.implicit(oAuth2Config.authorizationUrl());
+            } else {
+                oAuth2Definition = oAuth2Definition.password(oAuth2Config.tokenUrl());
+            }
+
+            for (Scope scope : oAuth2Config.scopes()) {
+                oAuth2Definition.addScope(scope.name(), scope.description());
+            }
+
+            oAuth2Definition.setDescription(oAuth2Config.description());
+            swagger.addSecurityDefinition(oAuth2Config.key(), oAuth2Definition);
+        }
+
+        for (ApiKeyAuthDefinition apiKeyAuthConfig : config.securityDefinition().apiKeyAuthDefintions()) {
+            io.swagger.models.auth.ApiKeyAuthDefinition apiKeyAuthDefinition = new io.swagger.models.auth.ApiKeyAuthDefinition();
+
+            apiKeyAuthDefinition.setName(apiKeyAuthConfig.name());
+            apiKeyAuthDefinition.setIn(In.forValue(apiKeyAuthConfig.in().toValue()));
+            apiKeyAuthDefinition.setDescription(apiKeyAuthConfig.description());
+
+            swagger.addSecurityDefinition(apiKeyAuthConfig.key(), apiKeyAuthDefinition);
+        }
+
+        for (BasicAuthDefinition basicAuthConfig : config.securityDefinition().basicAuthDefinions()) {
+            io.swagger.models.auth.BasicAuthDefinition basicAuthDefinition = new io.swagger.models.auth.BasicAuthDefinition();
+
+            basicAuthDefinition.setDescription(basicAuthConfig.description());
+
+            swagger.addSecurityDefinition(basicAuthConfig.key(), basicAuthDefinition);
         }
 
         for (io.swagger.annotations.Tag tagConfig : config.tags()) {

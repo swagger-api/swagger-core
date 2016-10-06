@@ -21,13 +21,17 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiKeyAuthDefinition;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
+import io.swagger.annotations.BasicAuthDefinition;
 import io.swagger.annotations.Info;
+import io.swagger.annotations.OAuth2Definition;
 import io.swagger.annotations.ResponseHeader;
+import io.swagger.annotations.Scope;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.config.DefaultReaderConfig;
@@ -45,9 +49,9 @@ import io.swagger.models.Path;
 import io.swagger.models.Response;
 import io.swagger.models.Scheme;
 import io.swagger.models.SecurityRequirement;
-import io.swagger.models.SecurityScope;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
+import io.swagger.models.auth.In;
 import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
@@ -61,7 +65,6 @@ import io.swagger.util.BaseReaderUtils;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,8 +101,12 @@ public class Reader {
     }
 
     public Reader(Swagger swagger, ReaderConfig config) {
-        this.swagger = swagger == null ? new Swagger() : swagger;
+        this.swagger = (swagger == null) ? new Swagger() : swagger;
         this.config = new DefaultReaderConfig(config);
+    }
+
+    public Swagger getSwagger() {
+        return swagger;
     }
 
     /**
@@ -110,9 +117,7 @@ public class Reader {
      * @param classes a set of classes to scan
      * @return the generated Swagger definition
      */
-
     public Swagger read(Set<Class<?>> classes) {
-
         Map<Class<?>, ReaderListener> listeners = new HashMap<Class<?>, ReaderListener>();
 
         for (Class<?> cls : classes) {
@@ -156,16 +161,10 @@ public class Reader {
         return swagger;
     }
 
-    public Swagger getSwagger() {
-        return this.swagger;
-    }
-
     /**
      * Scans a single class for Swagger annotations - does not invoke ReaderListeners
      */
-
     public Swagger read(Class<?> cls) {
-
         SwaggerDefinition swaggerDefinition = cls.getAnnotation(SwaggerDefinition.class);
         if (swaggerDefinition != null) {
             readSwaggerConfig(cls, swaggerDefinition);
@@ -173,13 +172,12 @@ public class Reader {
 
         return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
     }
+
     protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean isSubresource, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
         return read(cls, parentPath, parentMethod, isSubresource, parentConsumes, parentProduces, parentTags, parentParameters, new HashSet<Class<?>>());
     }
 
     private Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean isSubresource, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters, Set<Class<?>> scannedResources) {
-        Map<String, SecurityScope> globalScopes = new HashMap<String, SecurityScope>();
-
         Map<String, Tag> tags = new HashMap<String, Tag>();
         List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
 
@@ -187,24 +185,28 @@ public class Reader {
         String[] produces = new String[0];
         final Set<Scheme> globalSchemes = EnumSet.noneOf(Scheme.class);
 
-        Api api = (Api) cls.getAnnotation(Api.class);
+        Api api = ReflectionUtils.getAnnotation(cls, Api.class);
 
         boolean hasPathAnnotation = (ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class) != null);
         boolean hasApiAnnotation = (api != null);
         boolean isApiHidden = hasApiAnnotation && api.hidden();
 
-        // class readable only if annotated with @Path or isSubresource, or and @Api not hidden
-        boolean classReadable = (hasPathAnnotation || isSubresource) && !isApiHidden ;
+        // class readable only if annotated with ((@Path and @Api) or isSubresource ) - and @Api not hidden
+        boolean classReadable = ((hasPathAnnotation && hasApiAnnotation)|| isSubresource) && !isApiHidden;
 
-        // readable if classReadable or (scanAllResources true in config and @Api not hidden)
-        boolean readable = classReadable || (!isApiHidden && config.isScanAllResources());
+        // with scanAllResources true in config and @Api not hidden scan only if it has also @Path annotation or is subresource
+        boolean scanAll = !isApiHidden && config.isScanAllResources() && (hasPathAnnotation || isSubresource);
+
+        // readable if classReadable or scanAll
+        boolean readable = classReadable || scanAll;
+
 
         if (!readable) {
             return swagger;
         }
 
         // api readable only if @Api present; cannot be hidden because checked in classReadable.
-        boolean apiReadable =  hasApiAnnotation;
+        boolean apiReadable = hasApiAnnotation;
 
         if (apiReadable) {
             // the value will be used as a tag for 2.0 UNLESS a Tags annotation is present
@@ -218,21 +220,19 @@ public class Reader {
             }
 
             if (!api.produces().isEmpty()) {
-                produces = ReaderUtils.splitContentValues(new String[] {api.produces()});
+                produces = ReaderUtils.splitContentValues(new String[]{api.produces()});
             }
             if (!api.consumes().isEmpty()) {
-                consumes = ReaderUtils.splitContentValues(new String[] {api.consumes()});
+                consumes = ReaderUtils.splitContentValues(new String[]{api.consumes()});
             }
             globalSchemes.addAll(parseSchemes(api.protocols()));
-            Authorization[] authorizations = api.authorizations();
 
-            for (Authorization auth : authorizations) {
-                if (auth.value() != null && !"".equals(auth.value())) {
+            for (Authorization auth : api.authorizations()) {
+                if (auth.value() != null && !auth.value().isEmpty()) {
                     SecurityRequirement security = new SecurityRequirement();
                     security.setName(auth.value());
-                    AuthorizationScope[] scopes = auth.scopes();
-                    for (AuthorizationScope scope : scopes) {
-                        if (scope.scope() != null && !"".equals(scope.scope())) {
+                    for (AuthorizationScope scope : auth.scopes()) {
+                        if (scope.scope() != null && !scope.scope().isEmpty()) {
                             security.addScope(scope.scope());
                         }
                     }
@@ -242,7 +242,6 @@ public class Reader {
         }
 
         if (readable) {
-
             if (isSubresource) {
                 if (parentTags != null) {
                     tags.putAll(parentTags);
@@ -295,7 +294,7 @@ public class Reader {
                     String httpMethod = extractOperationMethod(apiOperation, method, SwaggerExtensions.chain());
 
                     Operation operation = null;
-                    if(apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) {
+                    if (apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) {
                         operation = parseMethod(cls, method, globalParameters, classApiResponses);
                     }
                     if (operation == null) {
@@ -356,10 +355,9 @@ public class Reader {
                     }
 
                     // can't continue without a valid http method
-                    httpMethod = httpMethod == null ? parentMethod : httpMethod;
+                    httpMethod = (httpMethod == null) ? parentMethod : httpMethod;
                     if (httpMethod != null) {
                         if (apiOperation != null) {
-                            boolean hasExplicitTag = false;
                             for (String tag : apiOperation.tags()) {
                                 if (!"".equals(tag)) {
                                     operation.tag(tag);
@@ -410,8 +408,8 @@ public class Reader {
     }
 
     private void readImplicitParameters(Method method, Operation operation) {
-        ApiImplicitParams implicitParams = method.getAnnotation(ApiImplicitParams.class);
-        if (implicitParams != null && implicitParams.value().length > 0) {
+        ApiImplicitParams implicitParams = ReflectionUtils.getAnnotation(method, ApiImplicitParams.class);
+        if (implicitParams != null) {
             for (ApiImplicitParam param : implicitParams.value()) {
                 Parameter p = readImplicitParam(param);
                 if (p != null) {
@@ -434,16 +432,15 @@ public class Reader {
         } else if (param.paramType().equalsIgnoreCase("header")) {
             p = new HeaderParameter();
         } else {
-            LOGGER.warn("Unkown implicit parameter type: [" + param.paramType() + "]");
+            LOGGER.warn("Unknown implicit parameter type: [" + param.paramType() + "]");
             return null;
         }
         final Type type = ReflectionUtils.typeFromString(param.dataType());
-        return ParameterProcessor.applyAnnotations(swagger, p, type == null ? String.class : type,
+        return ParameterProcessor.applyAnnotations(swagger, p, (type == null) ? String.class : type,
                 Arrays.<Annotation>asList(param));
     }
 
     protected void readSwaggerConfig(Class<?> cls, SwaggerDefinition config) {
-
         if (!config.basePath().isEmpty()) {
             swagger.setBasePath(config.basePath());
         }
@@ -464,6 +461,46 @@ public class Reader {
             if (StringUtils.isNotEmpty(produce)) {
                 swagger.addProduces(produce);
             }
+        }
+
+        for (OAuth2Definition oAuth2Config : config.securityDefinition().oAuth2Definitions()) {
+            io.swagger.models.auth.OAuth2Definition oAuth2Definition = new io.swagger.models.auth.OAuth2Definition();
+            OAuth2Definition.Flow flow = oAuth2Config.flow();
+
+            if (flow.equals(OAuth2Definition.Flow.ACCESS_CODE)) {
+                oAuth2Definition = oAuth2Definition.accessCode(oAuth2Config.authorizationUrl(), oAuth2Config.tokenUrl());
+            } else if (flow.equals(OAuth2Definition.Flow.APPLICATION)) {
+                oAuth2Definition = oAuth2Definition.application(oAuth2Config.tokenUrl());
+            } else if (flow.equals(OAuth2Definition.Flow.IMPLICIT)) {
+                oAuth2Definition = oAuth2Definition.implicit(oAuth2Config.authorizationUrl());
+            } else {
+                oAuth2Definition = oAuth2Definition.password(oAuth2Config.tokenUrl());
+            }
+
+            for (Scope scope : oAuth2Config.scopes()) {
+                oAuth2Definition.addScope(scope.name(), scope.description());
+            }
+
+            oAuth2Definition.setDescription(oAuth2Config.description());
+            swagger.addSecurityDefinition(oAuth2Config.key(), oAuth2Definition);
+        }
+
+        for (ApiKeyAuthDefinition apiKeyAuthConfig : config.securityDefinition().apiKeyAuthDefintions()) {
+            io.swagger.models.auth.ApiKeyAuthDefinition apiKeyAuthDefinition = new io.swagger.models.auth.ApiKeyAuthDefinition();
+
+            apiKeyAuthDefinition.setName(apiKeyAuthConfig.name());
+            apiKeyAuthDefinition.setIn(In.forValue(apiKeyAuthConfig.in().toValue()));
+            apiKeyAuthDefinition.setDescription(apiKeyAuthConfig.description());
+
+            swagger.addSecurityDefinition(apiKeyAuthConfig.key(), apiKeyAuthDefinition);
+        }
+
+        for (BasicAuthDefinition basicAuthConfig : config.securityDefinition().basicAuthDefinions()) {
+            io.swagger.models.auth.BasicAuthDefinition basicAuthDefinition = new io.swagger.models.auth.BasicAuthDefinition();
+
+            basicAuthDefinition.setDescription(basicAuthConfig.description());
+
+            swagger.addSecurityDefinition(basicAuthConfig.key(), basicAuthDefinition);
         }
 
         if (!config.externalDocs().value().isEmpty()) {
@@ -688,7 +725,7 @@ public class Reader {
 
     private Map<String, Property> parseResponseHeaders(ResponseHeader[] headers) {
         Map<String, Property> responseHeaders = null;
-        if (headers != null && headers.length > 0) {
+        if (headers != null) {
             for (ResponseHeader header : headers) {
                 String name = header.name();
                 if (!"".equals(name)) {
@@ -734,52 +771,46 @@ public class Reader {
             if (apiOperation.hidden()) {
                 return null;
             }
-            if (!"".equals(apiOperation.nickname())) {
+            if (!apiOperation.nickname().isEmpty()) {
                 operationId = apiOperation.nickname();
             }
 
             defaultResponseHeaders = parseResponseHeaders(apiOperation.responseHeaders());
 
-            operation
-                    .summary(apiOperation.value())
+            operation.summary(apiOperation.value())
                     .description(apiOperation.notes());
 
-            if (apiOperation.response() != null && !isVoid(apiOperation.response())) {
+            if (!isVoid(apiOperation.response())) {
                 responseType = apiOperation.response();
             }
-            if (!"".equals(apiOperation.responseContainer())) {
+            if (!apiOperation.responseContainer().isEmpty()) {
                 responseContainer = apiOperation.responseContainer();
             }
-            if (apiOperation.authorizations() != null) {
-                List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
-                for (Authorization auth : apiOperation.authorizations()) {
-                    if (auth.value() != null && !"".equals(auth.value())) {
-                        SecurityRequirement security = new SecurityRequirement();
-                        security.setName(auth.value());
-                        AuthorizationScope[] scopes = auth.scopes();
-                        for (AuthorizationScope scope : scopes) {
-                            if (scope.scope() != null && !"".equals(scope.scope())) {
-                                security.addScope(scope.scope());
-                            }
+            List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
+            for (Authorization auth : apiOperation.authorizations()) {
+                if (!auth.value().isEmpty()) {
+                    SecurityRequirement security = new SecurityRequirement();
+                    security.setName(auth.value());
+                    for (AuthorizationScope scope : auth.scopes()) {
+                        if (!scope.scope().isEmpty()) {
+                            security.addScope(scope.scope());
                         }
-                        securities.add(security);
                     }
-                }
-                if (securities.size() > 0) {
-                    for (SecurityRequirement sec : securities) {
-                        operation.security(sec);
-                    }
+                    securities.add(security);
                 }
             }
-            if (apiOperation.consumes() != null && !apiOperation.consumes().isEmpty()) {
-                String[] consumesAr = ReaderUtils.splitContentValues(new String[] {apiOperation.consumes()});
-                for (String consume: consumesAr) {
+            for (SecurityRequirement sec : securities) {
+                operation.security(sec);
+            }
+            if (!apiOperation.consumes().isEmpty()) {
+                String[] consumesAr = ReaderUtils.splitContentValues(new String[]{apiOperation.consumes()});
+                for (String consume : consumesAr) {
                     operation.consumes(consume);
                 }
             }
-            if (apiOperation.produces() != null && !apiOperation.produces().isEmpty()) {
-                String[] producesAr = ReaderUtils.splitContentValues(new String[] {apiOperation.produces()});
-                for (String produce: producesAr) {
+            if (!apiOperation.produces().isEmpty()) {
+                String[] producesAr = ReaderUtils.splitContentValues(new String[]{apiOperation.produces()});
+                for (String produce : producesAr) {
                     operation.produces(produce);
                 }
             }
@@ -798,7 +829,7 @@ public class Reader {
             final Property property = ModelConverters.getInstance().readAsProperty(responseType);
             if (property != null) {
                 final Property responseProperty = ContainerWrapper.wrapContainer(responseContainer, property);
-                final int responseCode = apiOperation == null ? 200 : apiOperation.code();
+                final int responseCode = (apiOperation == null) ? 200 : apiOperation.code();
                 operation.response(responseCode, new Response().description(SUCCESSFUL_OPERATION).schema(responseProperty)
                         .headers(defaultResponseHeaders));
                 appendModels(responseType);
@@ -843,8 +874,10 @@ public class Reader {
         }
         // merge class level @ApiResponse
         for (ApiResponse apiResponse : classApiResponses) {
-            String key = apiResponse.code() == 0 ? "default":String.valueOf(apiResponse.code());
-            if (operation.getResponses() != null && operation.getResponses().containsKey(key)) continue;
+            String key = (apiResponse.code() == 0) ? "default" : String.valueOf(apiResponse.code());
+            if (operation.getResponses() != null && operation.getResponses().containsKey(key)) {
+                continue;
+            }
             addResponse(operation, apiResponse);
         }
 
@@ -858,7 +891,7 @@ public class Reader {
         }
 
         Type[] genericParameterTypes = method.getGenericParameterTypes();
-        Annotation[][] paramAnnotations = method.getParameterAnnotations();
+        Annotation[][] paramAnnotations = ReflectionUtils.getParameterAnnotations(method);
         for (int i = 0; i < genericParameterTypes.length; i++) {
             final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
             List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
@@ -872,10 +905,22 @@ public class Reader {
             Response response = new Response().description(SUCCESSFUL_OPERATION);
             operation.defaultResponse(response);
         }
+        
+        processOperationDecorator(operation, method);
+        
         return operation;
     }
 
-    private void addResponse (Operation operation, ApiResponse apiResponse) {
+    private void processOperationDecorator(Operation operation, Method method) {
+        final Iterator<SwaggerExtension> chain = SwaggerExtensions.chain();
+        if (chain.hasNext()) {
+            SwaggerExtension extension = chain.next();
+            LOGGER.debug("trying to decorate operation: " + extension);
+            extension.decorateOperation(operation, method, chain);
+        }
+    }
+
+    private void addResponse(Operation operation, ApiResponse apiResponse) {
         Map<String, Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders());
 
         Response response = new Response()
@@ -911,7 +956,7 @@ public class Reader {
         LOGGER.debug("trying extension " + extension);
 
         final List<Parameter> parameters = extension.extractParameters(annotations, type, typesToSkip, chain);
-        if (parameters.size() > 0) {
+        if (!parameters.isEmpty()) {
             final List<Parameter> processed = new ArrayList<Parameter>(parameters.size());
             for (Parameter parameter : parameters) {
                 if (ParameterProcessor.applyAnnotations(swagger, parameter, type, annotations) != null) {
@@ -933,7 +978,7 @@ public class Reader {
     }
 
     public String extractOperationMethod(ApiOperation apiOperation, Method method, Iterator<SwaggerExtension> chain) {
-        if (apiOperation != null && apiOperation.httpMethod() != null && !"".equals(apiOperation.httpMethod())) {
+        if (apiOperation != null && !"".equals(apiOperation.httpMethod())) {
             return apiOperation.httpMethod().toLowerCase();
         } else if (method.getAnnotation(javax.ws.rs.GET.class) != null) {
             return "get";
@@ -952,7 +997,7 @@ public class Reader {
         } else if (method.getAnnotation(HttpMethod.class) != null) {
             HttpMethod httpMethod = method.getAnnotation(HttpMethod.class);
             return httpMethod.value().toLowerCase();
-        } else if(!StringUtils.isEmpty(getHttpMethodFromCustomAnnotations(method))) {
+        } else if (!StringUtils.isEmpty(getHttpMethodFromCustomAnnotations(method))) {
             return getHttpMethodFromCustomAnnotations(method);
         } else if ((ReflectionUtils.getOverriddenMethod(method)) != null) {
             return extractOperationMethod(apiOperation, ReflectionUtils.getOverriddenMethod(method), chain);
@@ -964,9 +1009,9 @@ public class Reader {
     }
 
     private String getHttpMethodFromCustomAnnotations(Method method) {
-        for(Annotation methodAnnotation : method.getAnnotations()){
+        for (Annotation methodAnnotation : method.getAnnotations()) {
             HttpMethod httpMethod = methodAnnotation.annotationType().getAnnotation(HttpMethod.class);
-            if(httpMethod != null) {
+            if (httpMethod != null) {
                 return httpMethod.value().toLowerCase();
             }
         }
@@ -1061,7 +1106,8 @@ public class Reader {
         }
 
         public static Property wrapContainer(String container, Property property, ContainerWrapper... allowed) {
-            final Set<ContainerWrapper> tmp = allowed.length > 0 ? EnumSet.copyOf(Arrays.asList(allowed)) : EnumSet.allOf(ContainerWrapper.class);
+            final Set<ContainerWrapper> tmp = (allowed.length > 0) ? EnumSet.copyOf(Arrays.asList(allowed))
+                    : EnumSet.allOf(ContainerWrapper.class);
             for (ContainerWrapper wrapper : tmp) {
                 final Property prop = wrapper.wrap(container, property);
                 if (prop != null) {

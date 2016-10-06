@@ -7,7 +7,6 @@ import io.swagger.models.auth.SecuritySchemeDefinition;
 import io.swagger.models.parameters.Parameter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -258,18 +257,7 @@ public class Swagger {
     }
 
     public Map<String, Path> getPaths() {
-        if (paths == null) {
-            return null;
-        }
-        Map<String, Path> sorted = new LinkedHashMap<String, Path>();
-        List<String> keys = new ArrayList<String>();
-        keys.addAll(paths.keySet());
-        Collections.sort(keys);
-
-        for (String key : keys) {
-            sorted.put(key, paths.get(key));
-        }
-        return sorted;
+        return paths;
     }
 
     public void setPaths(Map<String, Path> paths) {
@@ -298,27 +286,37 @@ public class Swagger {
         this.securityDefinitions.put(name, securityDefinition);
     }
 
+    /**
+     * @deprecated Use {@link #getSecurity()}.
+     */
+    @JsonIgnore
     @Deprecated
     public List<SecurityRequirement> getSecurityRequirement() {
         return security;
     }
 
+    /**
+     * @deprecated Use {@link #setSecurity(List)}.
+     */
+    @JsonIgnore
     @Deprecated
     public void setSecurityRequirement(List<SecurityRequirement> securityRequirements) {
         this.security = securityRequirements;
     }
 
+    /**
+     * @deprecated Use {@link #addSecurity(SecurityRequirement)}.
+     */
+    @JsonIgnore
     @Deprecated
     public void addSecurityDefinition(SecurityRequirement securityRequirement) {
         this.addSecurity(securityRequirement);
     }
 
-    @JsonIgnore //remove JsonIgnore when getSecurityRequirement() method is deleted in next major version
     public List<SecurityRequirement> getSecurity() {
         return security;
     }
 
-    @JsonIgnore  //remove JsonIgnore when setSecurityRequirement() method is deleted in next major version
     public void setSecurity(List<SecurityRequirement> securityRequirements) {
         this.security = securityRequirements;
     }

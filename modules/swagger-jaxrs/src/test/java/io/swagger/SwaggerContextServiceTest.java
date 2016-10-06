@@ -16,33 +16,22 @@ import org.testng.annotations.Test;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
-import static io.swagger.jaxrs.config.SwaggerContextService.CONFIG_ID_DEFAULT;
-import static io.swagger.jaxrs.config.SwaggerContextService.CONFIG_ID_KEY;
-import static io.swagger.jaxrs.config.SwaggerContextService.CONFIG_ID_PREFIX;
-import static io.swagger.jaxrs.config.SwaggerContextService.CONTEXT_ID_KEY;
-import static io.swagger.jaxrs.config.SwaggerContextService.SCANNER_ID_DEFAULT;
-import static io.swagger.jaxrs.config.SwaggerContextService.SCANNER_ID_KEY;
-import static io.swagger.jaxrs.config.SwaggerContextService.SCANNER_ID_PREFIX;
+import static io.swagger.jaxrs.config.SwaggerContextService.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 public class SwaggerContextServiceTest {
-
-    ServletContext servletContext1;
-    ServletConfig servletConfig1;
-    ServletContext servletContext2;
-    ServletConfig servletConfig2;
-    Scanner beanConfigScanner1;
-    Scanner beanConfigScanner2;
-    Scanner jaxrsScanner;
+    private ServletContext servletContext1;
+    private ServletConfig servletConfig1;
+    private ServletContext servletContext2;
+    private ServletConfig servletConfig2;
+    private Scanner beanConfigScanner1;
+    private Scanner beanConfigScanner2;
+    private Scanner jaxrsScanner;
 
     @BeforeMethod
     void initMock() {
@@ -55,15 +44,26 @@ public class SwaggerContextServiceTest {
 
         BeanConfig bc = new BeanConfig();
         bc.setDescription("Bean Config test 1");
-        beanConfigScanner1 = (Scanner) bc;
+        beanConfigScanner1 = bc;
 
         bc = new BeanConfig();
         bc.setDescription("Bean Config test 2");
-        beanConfigScanner2 = (Scanner) bc;
+        beanConfigScanner2 = bc;
+    }
+    
+    void stubWithPathBasedConfigInitParam() {
+
+        when(servletContext1.getAttribute(SCANNER_ID_PREFIX + "/url1")).thenReturn(beanConfigScanner1);
+        when(servletContext2.getAttribute(SCANNER_ID_PREFIX + "/url2")).thenReturn(beanConfigScanner2);
+
+        when(servletConfig1.getServletContext()).thenReturn(servletContext1);
+        when(servletConfig2.getServletContext()).thenReturn(servletContext2);
+
+        when(servletConfig1.getInitParameter(USE_PATH_BASED_CONFIG)).thenReturn("true");
+        when(servletConfig2.getInitParameter(USE_PATH_BASED_CONFIG)).thenReturn("true");
     }
 
-    void stubWithInitParam() {
-
+    private void stubWithInitParam() {
         when(servletContext1.getAttribute(SCANNER_ID_PREFIX + "test.1")).thenReturn(beanConfigScanner1);
         when(servletContext2.getAttribute(SCANNER_ID_PREFIX + "test.2")).thenReturn(beanConfigScanner2);
 
@@ -78,8 +78,7 @@ public class SwaggerContextServiceTest {
 
     }
 
-    void stubWithContextInitParam() {
-
+    private void stubWithContextInitParam() {
         when(servletContext1.getAttribute(SCANNER_ID_PREFIX + "test.1")).thenReturn(beanConfigScanner1);
         when(servletContext2.getAttribute(SCANNER_ID_PREFIX + "test.2")).thenReturn(beanConfigScanner2);
 
@@ -91,8 +90,7 @@ public class SwaggerContextServiceTest {
 
     }
 
-    void stubWithoutInitParam() {
-
+    private void stubWithoutInitParam() {
         when(servletContext1.getAttribute(SCANNER_ID_DEFAULT)).thenReturn(jaxrsScanner);
         when(servletContext2.getAttribute(SCANNER_ID_DEFAULT)).thenReturn(jaxrsScanner);
 
@@ -103,7 +101,6 @@ public class SwaggerContextServiceTest {
 
     @Test(description = "should add servletContext attributes SCANNER_ID_PREFIX + \"test.1/2")
     public void initializeScannerWithInitParam() {
-
         stubWithInitParam();
 
         new SwaggerContextService().withServletConfig(servletConfig1).initScanner();
@@ -121,7 +118,6 @@ public class SwaggerContextServiceTest {
 
     @Test(description = "should call servletContext getAttribute with param SCANNER_ID_PREFIX + \"test.1/2\"")
     public void getScannerWithInitParam() {
-
         stubWithInitParam();
 
         Scanner scanner1 = new SwaggerContextService().withServletConfig(servletConfig1).getScanner();
@@ -129,7 +125,6 @@ public class SwaggerContextServiceTest {
 
         assertEquals(beanConfigScanner1, scanner1);
         assertEquals(beanConfigScanner2, scanner2);
-        ;
 
         verify(servletConfig1, times(2)).getInitParameter(eq(SCANNER_ID_KEY));
         verify(servletContext1, times(1)).getAttribute(eq(SCANNER_ID_PREFIX + "test.1"));
@@ -143,7 +138,6 @@ public class SwaggerContextServiceTest {
 
     @Test(description = "should add servletContext attributes SCANNER_ID_PREFIX + \"test.1/2")
     public void initializeScannerWithContextInitParam() {
-
         stubWithContextInitParam();
 
         new SwaggerContextService().withServletConfig(servletConfig1).initScanner();
@@ -163,7 +157,6 @@ public class SwaggerContextServiceTest {
 
     @Test(description = "should call servletContext getAttribute with param SCANNER_ID_PREFIX + \"test.1/2\"")
     public void getScannerWithContextInitParam() {
-
         stubWithContextInitParam();
 
         Scanner scanner1 = new SwaggerContextService().withServletConfig(servletConfig1).getScanner();
@@ -171,7 +164,6 @@ public class SwaggerContextServiceTest {
 
         assertEquals(beanConfigScanner1, scanner1);
         assertEquals(beanConfigScanner2, scanner2);
-        ;
 
         verify(servletConfig1, times(1)).getInitParameter(eq(SCANNER_ID_KEY));
         verify(servletConfig1, times(2)).getInitParameter(eq(CONTEXT_ID_KEY));
@@ -187,7 +179,6 @@ public class SwaggerContextServiceTest {
 
     @Test(description = "should add servletContext attributes SCANNER_ID_DEFAULT")
     public void initializeAndGetScannerWithoutInitParam() {
-
         stubWithoutInitParam();
         new SwaggerContextService().withServletConfig(servletConfig1).initScanner();
         new SwaggerContextService().withServletConfig(servletConfig2).initScanner();
@@ -206,7 +197,6 @@ public class SwaggerContextServiceTest {
 
     @Test(description = "should add scanner to ScannerFactory")
     public void initializeAndGetScannerWithoutServletConfig() {
-
         new SwaggerContextService().initScanner();
         new SwaggerContextService().initScanner();
 
@@ -227,7 +217,6 @@ public class SwaggerContextServiceTest {
 
     @Test(description = "should add SwaggerConfig to SwaggerConfigLocator map with key CONFIG_ID_PREFIX + \"test.1/2\"")
     public void initializeAndGetConfigWithInitParam() {
-
         stubWithInitParam();
 
         new SwaggerContextService().withServletConfig(servletConfig1).initConfig();
@@ -243,7 +232,6 @@ public class SwaggerContextServiceTest {
 
     @Test(description = "should add SwaggerConfig to SwaggerConfigLocator map with key CONFIG_ID_PREFIX + \"test.1/2\"")
     public void initializeAndGetConfigWithContextInitParam() {
-
         stubWithContextInitParam();
 
         new SwaggerContextService().withServletConfig(servletConfig1).initConfig();
@@ -261,7 +249,6 @@ public class SwaggerContextServiceTest {
 
     @Test(description = "should add SwaggerConfig to SwaggerConfigLocator map with key CONFIG_ID_DEFAULT")
     public void initializeAndGetConfigWithoutInitParam() {
-
         stubWithoutInitParam();
 
         new SwaggerContextService().withServletConfig(servletConfig1).initConfig();
@@ -274,7 +261,6 @@ public class SwaggerContextServiceTest {
 
     @Test(description = "should add SwaggerConfig to SwaggerConfigLocator map with key CONFIG_ID_DEFAULT")
     public void initializeAndGetConfigWithoutServletConfig() {
-
         new SwaggerContextService().initConfig();
         new SwaggerContextService().initConfig();
 
@@ -283,8 +269,7 @@ public class SwaggerContextServiceTest {
 
     }
 
-    void stubWithContextSwaggerAttribute() {
-
+    private void stubWithContextSwaggerAttribute() {
         Swagger swagger = new Swagger();
         Info info = new Info().title("Test Title");
         swagger.setInfo(info);
@@ -295,12 +280,10 @@ public class SwaggerContextServiceTest {
 
         when(servletConfig1.getInitParameter(CONTEXT_ID_KEY)).thenReturn("test.1");
         when(servletConfig2.getInitParameter(CONTEXT_ID_KEY)).thenReturn("test.2");
-
     }
 
     @Test(description = "should get correct swagger context set via context param \"swagger\"")
     public void initConfigViaContextParamSwagger() {
-
         stubWithContextSwaggerAttribute();
 
         Swagger swagger = new SwaggerContextService().withServletConfig(servletConfig1).getSwagger();
@@ -310,4 +293,24 @@ public class SwaggerContextServiceTest {
 
     }
 
+    @Test(description = "should add SwaggerConfig to SwaggerConfigLocator map with keys path-based keys")
+    public void initializeAndGetConfigBasedOnPath() {
+        stubWithPathBasedConfigInitParam();
+
+        new SwaggerContextService()
+            .withServletConfig(servletConfig1)
+            .withBasePath("/url1")
+            .initConfig();
+        
+        new SwaggerContextService()
+            .withServletConfig(servletConfig2)
+            .withBasePath("url2")
+            .initConfig();
+
+        assertTrue(SwaggerConfigLocator.getInstance().getConfig(CONFIG_ID_PREFIX + "/url1/") instanceof WebXMLReader);
+        assertTrue(SwaggerConfigLocator.getInstance().getConfig(CONFIG_ID_PREFIX + "/url2/") instanceof WebXMLReader);
+
+        verify(servletConfig1, times(1)).getInitParameter(eq(USE_PATH_BASED_CONFIG));
+        verify(servletConfig2, times(1)).getInitParameter(eq(USE_PATH_BASED_CONFIG));
+    }
 }

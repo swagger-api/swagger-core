@@ -249,7 +249,7 @@ public class TestUtils {
                     Object actual = Whitebox.invokeMethod(instance, getterMethodName);
                     Whitebox.invokeMethod(instance, method.getName(), parametersArray);
                     res = Whitebox.invokeMethod(instance, getterMethodName);
-                    assertEquals(actual, res, "the value must not change when passing an unkown value to " + method);
+                    assertEquals(actual, res, "the value must not change when passing an unknown value to " + method);
                 }
             }
         }

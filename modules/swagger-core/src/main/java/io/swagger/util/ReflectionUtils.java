@@ -1,6 +1,8 @@
 package io.swagger.util;
 
 import com.fasterxml.jackson.databind.type.TypeFactory;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -209,7 +211,34 @@ public class ReflectionUtils {
         }
         return annotation;
     }
+    
+    public static Annotation[][] getParameterAnnotations(Method method) {
+	Annotation[][] methodAnnotations = method.getParameterAnnotations();
+	Method overriddenmethod = getOverriddenMethod(method);
 
+	if (overriddenmethod != null) {
+	    Annotation[][] overriddenAnnotations = overriddenmethod
+		    .getParameterAnnotations();
+
+	    for (int i = 0; i < methodAnnotations.length; i++) {
+		List<Type> types = new ArrayList<Type>();
+		for (int j = 0; j < methodAnnotations[i].length; j++) {
+		    types.add(methodAnnotations[i][j].annotationType());
+		}
+		for (int j = 0; j < overriddenAnnotations[i].length; j++) {
+		    if (!types.contains(overriddenAnnotations[i][j]
+			    .annotationType())) {
+			methodAnnotations[i] = ArrayUtils.add(
+				methodAnnotations[i],
+				overriddenAnnotations[i][j]);
+		    }
+		}
+
+	    }
+	}
+	return methodAnnotations;
+    }
+    
     /**
      * Checks if the type is void.
      *

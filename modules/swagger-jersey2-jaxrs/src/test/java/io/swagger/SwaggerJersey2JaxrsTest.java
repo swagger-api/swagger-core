@@ -3,9 +3,11 @@ package io.swagger;
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
+import io.swagger.jaxrs.DefaultParameterExtension;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
 import io.swagger.jersey.SwaggerJersey2Jaxrs;
+import io.swagger.models.Model;
 import io.swagger.models.Swagger;
 import io.swagger.models.TestEnum;
 import io.swagger.models.parameters.FormParameter;
@@ -16,6 +18,7 @@ import io.swagger.params.ChildBean;
 import io.swagger.params.EnumBean;
 import io.swagger.params.RefBean;
 import io.swagger.resources.ResourceWithFormData;
+import io.swagger.resources.ResourceWithJacksonBean;
 import io.swagger.resources.ResourceWithKnownInjections;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -93,6 +96,42 @@ public class SwaggerJersey2JaxrsTest {
         }
     }
 
+    @Test(description = "return the proper @BeanParam Parameters based on the call to DefaultParameterExtension.extractParameters")
+    public void returnProperBeanParamWithDefaultParameterExtension() throws NoSuchMethodException {
+        final Method method = getClass().getDeclaredMethod("testRoute", BaseBean.class, ChildBean.class, RefBean.class, EnumBean.class, Integer.class);
+        final List<Pair<Type, Annotation[]>> parameters = getParameters(method.getGenericParameterTypes(), method.getParameterAnnotations());
+
+        for (Pair<Type, Annotation[]> parameter : parameters) {
+            Type parameterType = parameter.first();
+            List<Parameter> swaggerParams = new DefaultParameterExtension().extractParameters(Arrays.asList(parameter.second()),
+                    parameterType, new HashSet<Type>(), SwaggerExtensions.chain());
+            // Ensure proper number of parameters returned
+            if (parameterType.equals(BaseBean.class)) {
+                assertEquals(swaggerParams.size(), 2);
+            } else if (parameterType.equals(ChildBean.class)) {
+                assertEquals(swaggerParams.size(), 5);
+            } else if (parameterType.equals(RefBean.class)) {
+                assertEquals(swaggerParams.size(), 5);
+            } else if (parameterType.equals(EnumBean.class)) {
+                assertEquals(swaggerParams.size(), 1);
+                HeaderParameter enumParam = (HeaderParameter) swaggerParams.get(0);
+                assertEquals(enumParam.getType(), "string");
+                final Set<String> enumValues = Sets.newHashSet(Collections2.transform(Arrays.asList(TestEnum.values()), Functions.toStringFunction()));
+                assertEquals(enumParam.getEnum(), enumValues);
+            } else if (parameterType.equals(Integer.class)) {
+                assertEquals(swaggerParams.size(), 0);
+            } else {
+                fail(String.format("Parameter of type %s was not expected", parameterType));
+            }
+
+            // Ensure the proper parameter type and name is returned (The rest is handled by pre-existing logic)
+            for (Parameter param : swaggerParams) {
+                assertEquals(param.getName(), param.getClass().getSimpleName().replace("eter", ""));
+            }
+        }
+    }
+
+
     @Test(description = "return the proper @FormDataParam Parameters based on the call to extractParameters")
     public void returnProperFormDataParam() throws NoSuchMethodException {
         final Method method = getClass().getDeclaredMethod("testFormDataParamRoute", InputStream.class, FormDataContentDisposition.class);
@@ -141,6 +180,15 @@ public class SwaggerJersey2JaxrsTest {
         assertEquals(parameters.get(0).getName(), "documentName");
         assertEquals(parameters.get(1).getName(), "input");
         assertEquals(parameters.get(2).getName(), "id");
+    }
+
+    @Test(description = "JsonUnwrapped, JsonIgnore, JsonValue should be honoured")
+    public void testJacksonFeatures() {
+        final Swagger swagger = new Reader(new Swagger()).read(ResourceWithJacksonBean.class);
+        Model o = swagger.getDefinitions().get("JacksonBean");
+
+        assertEquals(o.getProperties().keySet(), Sets.newHashSet("identity", "bean", "code", "message",
+                "precodesuf", "premessagesuf"));
     }
 
     private String getName(List<Parameter> resourceParameters, int i) {

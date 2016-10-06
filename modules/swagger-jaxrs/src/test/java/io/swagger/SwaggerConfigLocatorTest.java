@@ -3,7 +3,6 @@ package io.swagger;
 import io.swagger.config.SwaggerConfig;
 import io.swagger.jaxrs.config.SwaggerConfigLocator;
 import io.swagger.models.Swagger;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

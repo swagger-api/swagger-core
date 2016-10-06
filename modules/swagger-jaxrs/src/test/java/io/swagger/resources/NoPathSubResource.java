@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import javax.ws.rs.GET;
 
 /**
- * The <code>NoPathSubResource</code> class defines test sub-resource without
+ * The {@code NoPathSubResource} class defines test sub-resource without
  * {@link javax.ws.rs.Path} annotations.
  */
 @Api()

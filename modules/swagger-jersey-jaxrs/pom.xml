@@ -4,14 +4,14 @@
     <parent>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.5.9-SNAPSHOT</version>
+        <version>1.5.11-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.swagger</groupId>
     <artifactId>swagger-jersey-jaxrs</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.9-SNAPSHOT</version>
+    <version>1.5.11-SNAPSHOT</version>
     <name>swagger-jersey-jaxrs</name>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -69,25 +69,7 @@
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-servlet</artifactId>
-            <version>${jersey-version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version>${jersey-version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
-            <version>${jersey-version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-server</artifactId>
             <version>${jersey-version}</version>
             <scope>compile</scope>
         </dependency>

@@ -16,7 +16,8 @@ import java.util.Map;
 import static org.testng.Assert.assertEquals;
 
 public class ByteConverterTest {
-
+    private static final String NEWLINE = System.getProperty("line.separator");
+    
     @Test
     public void testByte() {
         final Map<String, Model> models = ModelConverters.getInstance().read(ByteConverterModel.class);
@@ -42,13 +43,13 @@ public class ByteConverterTest {
         Model model = new ModelImpl()
                 .property("byteProperty", new ByteArrayProperty());
 
-        assertEquals(Json.pretty(model), "{\n" +
-                "  \"properties\" : {\n" +
-                "    \"byteProperty\" : {\n" +
-                "      \"type\" : \"string\",\n" +
-                "      \"format\" : \"byte\"\n" +
-                "    }\n" +
-                "  }\n" +
+        assertEquals(Json.pretty(model), "{" + NEWLINE +
+                "  \"properties\" : {" + NEWLINE +
+                "    \"byteProperty\" : {" + NEWLINE +
+                "      \"type\" : \"string\"," + NEWLINE +
+                "      \"format\" : \"byte\"" + NEWLINE +
+                "    }" + NEWLINE +
+                "  }" + NEWLINE +
                 "}");
     }
 
@@ -72,17 +73,17 @@ public class ByteConverterTest {
         Model model = new ModelImpl()
                 .property("byteArray", new ArrayProperty(new BinaryProperty()));
 
-        assertEquals(Json.pretty(model), "{\n" +
-                "  \"properties\" : {\n" +
-                "    \"byteArray\" : {\n" +
-                "      \"type\" : \"array\",\n" +
-                "      \"items\" : {\n" +
-                "        \"type\" : \"string\",\n" +
-                "        \"format\" : \"binary\"\n" +
-                "      }\n" +
-                "    }\n" +
-                "  }\n" +
-                "}");
+        assertEquals(Json.pretty(model), "{" + NEWLINE +
+                "  \"properties\" : {" + NEWLINE +
+                "    \"byteArray\" : {" + NEWLINE +
+                "      \"type\" : \"array\"," + NEWLINE +
+                "      \"items\" : {" + NEWLINE +
+                "        \"type\" : \"string\"," + NEWLINE +
+                "        \"format\" : \"binary\"" + NEWLINE +
+                "      }" + NEWLINE +
+                "    }" + NEWLINE +
+                "  }" + NEWLINE +
+                     "}");
     }
 
     class ByteConverterModel {
