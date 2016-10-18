@@ -79,6 +79,13 @@ public class ReaderTest {
         assertEquals(getPut(swagger, "/split").getConsumes(), Arrays.asList("image/jpeg",  "image/gif", "image/png"));
     }
 
+    @Test(description = "scan multiple consumes and produces values with rs class level annotations")
+    public void scanMultipleConsumesProducesValuesWithRsClassLevelAnnotations() {
+        Swagger swagger = getSwagger(RsMultipleConsumesProducesResource.class);
+        assertEquals(getGet(swagger, "/{id}").getConsumes(), Arrays.asList(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML));
+        assertEquals(getGet(swagger, "/{id}").getProduces(), Arrays.asList(MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON));
+    }
+
     @Test(description = "scan consumes and produces values with both class level annotations")
     public void scanConsumesProducesValuesWithBothClassLevelAnnotations() {
         Swagger swagger = getSwagger(BothConsumesProducesResource.class);
