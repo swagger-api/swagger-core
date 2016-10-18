@@ -326,20 +326,20 @@ public class Reader {
 
                     String[] apiConsumes = consumes;
                     if (parentConsumes != null) {
-                        Set<String> both = new HashSet<String>(Arrays.asList(apiConsumes));
-                        both.addAll(new HashSet<String>(Arrays.asList(parentConsumes)));
+                        Set<String> both = new LinkedHashSet<String>(Arrays.asList(apiConsumes));
+                        both.addAll(new LinkedHashSet<String>(Arrays.asList(parentConsumes)));
                         if (operation.getConsumes() != null) {
-                            both.addAll(new HashSet<String>(operation.getConsumes()));
+                            both.addAll(new LinkedHashSet<String>(operation.getConsumes()));
                         }
                         apiConsumes = both.toArray(new String[both.size()]);
                     }
 
                     String[] apiProduces = produces;
                     if (parentProduces != null) {
-                        Set<String> both = new HashSet<String>(Arrays.asList(apiProduces));
-                        both.addAll(new HashSet<String>(Arrays.asList(parentProduces)));
+                        Set<String> both = new LinkedHashSet<String>(Arrays.asList(apiProduces));
+                        both.addAll(new LinkedHashSet<String>(Arrays.asList(parentProduces)));
                         if (operation.getProduces() != null) {
-                            both.addAll(new HashSet<String>(operation.getProduces()));
+                            both.addAll(new LinkedHashSet<String>(operation.getProduces()));
                         }
                         apiProduces = both.toArray(new String[both.size()]);
                     }
@@ -905,9 +905,9 @@ public class Reader {
             Response response = new Response().description(SUCCESSFUL_OPERATION);
             operation.defaultResponse(response);
         }
-        
+
         processOperationDecorator(operation, method);
-        
+
         return operation;
     }
 
