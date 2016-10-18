@@ -56,6 +56,14 @@ public class ReaderTest {
         assertEquals(getPut(swagger, "/{id}/value").getProduces().get(0), TEXT_PLAIN);
     }
 
+    @Test(description = "scan consumes and produces values with api class level annotations")
+    public void scanMultipleConsumesProducesValuesWithApiClassLevelAnnotations() {
+        Swagger swagger = getSwagger(ApiMultipleConsumesProducesResource.class);
+        assertEquals(getGet(swagger, "/{id}").getConsumes(), Arrays.asList(MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON));
+        assertEquals(getGet(swagger, "/{id}").getProduces(), Arrays.asList(MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML));
+
+    }
+
     @Test(description = "scan consumes and produces values with rs class level annotations")
     public void scanConsumesProducesValuesWithRsClassLevelAnnotations() {
         Swagger swagger = getSwagger(RsConsumesProducesResource.class);
