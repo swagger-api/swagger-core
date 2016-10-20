@@ -12,9 +12,9 @@ import javax.ws.rs.Path;
 @Api(value = "root")
 public class Resource1970 {
     @GET
-    @Path("/{dbkey}")
+    @Path("/{param1}")
     @ApiOperation(value = "Retrieve a database resource")
-    @ApiImplicitParams({@ApiImplicitParam(name = "param1", dataType = "java.math.BigDecimal", paramType = "path", required = true)})
+    @ApiImplicitParams({@ApiImplicitParam(name = "param1", dataType = "number", paramType = "path", required = true)})
     public void numberInput() throws Exception {
         return;
     }

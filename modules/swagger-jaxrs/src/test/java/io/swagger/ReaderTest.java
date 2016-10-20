@@ -6,7 +6,6 @@ import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 import io.swagger.models.parameters.*;
 import io.swagger.resources.*;
-import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.*;
@@ -359,7 +358,8 @@ public class ReaderTest {
         Swagger swagger = getSwagger(Resource1970.class);
         assertNotNull(swagger);
 
-        Json.prettyPrint(swagger);
+        PathParameter parameter = (PathParameter)swagger.getPath("/v1/{param1}").getGet().getParameters().get(0);
+        assertEquals(parameter.getType(), "number");
     }
 
     private Swagger getSwagger(Class<?> cls) {

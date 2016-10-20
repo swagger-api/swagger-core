@@ -125,7 +125,7 @@ public enum PrimitiveType {
     /**
      * Generic decimal number without specific format.
      */
-    DECIMAL(java.math.BigDecimal.class) {
+    DECIMAL(java.math.BigDecimal.class, "number") {
         @Override
         public DecimalProperty createProperty() {
             return new DecimalProperty();
