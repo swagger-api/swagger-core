@@ -6,6 +6,7 @@ import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 import io.swagger.models.parameters.*;
 import io.swagger.resources.*;
+import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.*;
@@ -336,6 +337,14 @@ public class ReaderTest {
         assertNotNull(parameters);
         assertEquals(parameters.size(), 1);
         assertEquals(parameters.get(0).getName(), "petImplicitIdParam");
+    }
+
+    @Test(description = "scan resource per #1970")
+    public void scanBigDecimal() {
+        Swagger swagger = getSwagger(Resource1970.class);
+        assertNotNull(swagger);
+
+        Json.prettyPrint(swagger);
     }
 
     private Swagger getSwagger(Class<?> cls) {
