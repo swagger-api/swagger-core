@@ -761,7 +761,13 @@ public class Reader {
         ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
         ApiResponses responseAnnotation = ReflectionUtils.getAnnotation(method, ApiResponses.class);
 
-        String operationId = method.getName();
+        String operationId = null;
+        // check if it's an inherited method.
+        if(ReflectionUtils.findMethod(method, cls.getSuperclass()) == null) {
+            operationId = method.getName();
+        } else {
+            operationId = this.getOperationId(method.getName());
+        }
         String responseContainer = null;
 
         Type responseType = null;
@@ -1125,5 +1131,36 @@ public class Reader {
         }
 
         protected abstract Property doWrap(Property property);
+    }
+
+    protected String getOperationId(String operationId) {
+        boolean operationIdUsed = existOperationId(operationId);
+        String operationIdToFind = null;
+        int counter = 0;
+        while(operationIdUsed) {
+            operationIdToFind = String.format("%s_%d", operationId, ++counter);
+            operationIdUsed = existOperationId(operationIdToFind);
+        }
+        if(operationIdToFind != null) {
+            operationId = operationIdToFind;
+        }
+        return operationId;
+    }
+
+    private boolean existOperationId(String operationId) {
+        if(swagger == null) {
+            return false;
+        }
+        if(swagger.getPaths() == null || swagger.getPaths().isEmpty()) {
+            return false;
+        }
+        for (Path path: swagger.getPaths().values()) {
+            for (Operation op: path.getOperations()) {
+                if(operationId.equalsIgnoreCase(op.getOperationId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
