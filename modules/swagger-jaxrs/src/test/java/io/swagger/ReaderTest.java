@@ -353,6 +353,15 @@ public class ReaderTest {
         assertEquals(parameters.get(0).getName(), "petImplicitIdParam");
     }
 
+    @Test(description = "scan resource per #1970")
+    public void scanBigDecimal() {
+        Swagger swagger = getSwagger(Resource1970.class);
+        assertNotNull(swagger);
+
+        PathParameter parameter = (PathParameter)swagger.getPath("/v1/{param1}").getGet().getParameters().get(0);
+        assertEquals(parameter.getType(), "number");
+    }
+
     private Swagger getSwagger(Class<?> cls) {
         return new Reader(new Swagger()).read(cls);
     }
