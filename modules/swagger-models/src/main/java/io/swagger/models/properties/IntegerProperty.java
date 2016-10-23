@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IntegerProperty extends BaseIntegerProperty {
-    private static final String FORMAT = "int32";
+    public static final String FORMAT = "int32";
     protected Integer _default;
     protected List<Integer> _enum;
 
