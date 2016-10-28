@@ -23,7 +23,7 @@ public final class BaseReaderUtils {
      * @param extensions is an array of extensions
      * @return the map with extensions
      */
-    public static Map<String, Object> parseExtensions(Extension[] extensions) {
+    public static Map<String, Object> parseExtensions(Extension... extensions) {
         final Map<String, Object> map = new HashMap<String, Object>();
         for (Extension extension : extensions) {
             final String name = extension.name();
