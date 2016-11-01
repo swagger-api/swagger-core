@@ -1,6 +1,5 @@
 package io.swagger.models.parameters;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.models.Model;
 
 import java.util.HashMap;
@@ -8,7 +7,6 @@ import java.util.Map;
 
 public class BodyParameter extends AbstractParameter implements Parameter {
     Model schema;
-    Map<String, String> examples;
 
     public BodyParameter() {
         super.setIn("body");
@@ -43,19 +41,23 @@ public class BodyParameter extends AbstractParameter implements Parameter {
     }
 
     public void addExample(String mediaType, String value) {
-        if(examples == null) {
-            examples = new HashMap<String, String>();
+        Object examples = getVendorExtensions().get("x-examples");
+        if (examples == null) {
+            examples = new HashMap<String,String>();
+            setVendorExtension("x-examples", examples);
         }
-        examples.put(mediaType, value);
+        if (!(examples instanceof Map)) {
+           throw new InternalError("Cannot call addExamples if x-examples is not an object"); 
+        }
+        ((Map)examples).put(mediaType, value);
     }
 
-    @JsonProperty("x-examples")
     public Map<String, String> getExamples() {
-        return examples;
+        return (Map<String, String>) getVendorExtensions().get("x-examples");
     }
 
     public void setExamples(Map<String, String> examples) {
-        this.examples = examples;
+        setVendorExtension("x-examples", examples);
     }
 
     @Override
