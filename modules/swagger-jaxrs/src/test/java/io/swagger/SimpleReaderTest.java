@@ -598,7 +598,7 @@ public class SimpleReaderTest {
         BodyParameter bp = (BodyParameter) param;
         assertNotNull(bp.getExamples());
         assertTrue(bp.getExamples().size() == 1);
-        String value = bp.getExamples().get("application/json");
+        String value = (String) bp.getExamples().get("application/json");
         assertEquals("[\"a\",\"b\"]", value);
     }
 
@@ -609,7 +609,7 @@ public class SimpleReaderTest {
         BodyParameter bp = (BodyParameter) param;
         assertNotNull(bp.getExamples());
         assertTrue(bp.getExamples().size() == 1);
-        String value = bp.getExamples().get("application/json");
+        String value = (String) bp.getExamples().get("application/json");
         assertEquals("[\"a\",\"b\"]", value);
     }
 
