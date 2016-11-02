@@ -20,7 +20,7 @@ public class Path {
     private Operation delete;
     private Operation patch;
     private Operation options;
-    private List<Parameter> parameters;
+    private List<Parameter> parameters = new ArrayList<Parameter>();
 
     public Path set(String method, Operation op) {
         if ("get".equals(method)) {
