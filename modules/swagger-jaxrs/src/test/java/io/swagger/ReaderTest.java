@@ -56,6 +56,14 @@ public class ReaderTest {
         assertEquals(getPut(swagger, "/{id}/value").getProduces().get(0), TEXT_PLAIN);
     }
 
+    @Test(description = "scan consumes and produces values with api class level annotations")
+    public void scanMultipleConsumesProducesValuesWithApiClassLevelAnnotations() {
+        Swagger swagger = getSwagger(ApiMultipleConsumesProducesResource.class);
+        assertEquals(getGet(swagger, "/{id}").getConsumes(), Arrays.asList(MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON));
+        assertEquals(getGet(swagger, "/{id}").getProduces(), Arrays.asList(MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML));
+
+    }
+
     @Test(description = "scan consumes and produces values with rs class level annotations")
     public void scanConsumesProducesValuesWithRsClassLevelAnnotations() {
         Swagger swagger = getSwagger(RsConsumesProducesResource.class);
@@ -69,6 +77,13 @@ public class ReaderTest {
         assertEquals(getPut(swagger, "/{id}/value").getProduces().get(0), TEXT_PLAIN);
         assertEquals(getPut(swagger, "/split").getProduces(), Arrays.asList("image/jpeg",  "image/gif", "image/png"));
         assertEquals(getPut(swagger, "/split").getConsumes(), Arrays.asList("image/jpeg",  "image/gif", "image/png"));
+    }
+
+    @Test(description = "scan multiple consumes and produces values with rs class level annotations")
+    public void scanMultipleConsumesProducesValuesWithRsClassLevelAnnotations() {
+        Swagger swagger = getSwagger(RsMultipleConsumesProducesResource.class);
+        assertEquals(getGet(swagger, "/{id}").getConsumes(), Arrays.asList(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML));
+        assertEquals(getGet(swagger, "/{id}").getProduces(), Arrays.asList(MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON));
     }
 
     @Test(description = "scan consumes and produces values with both class level annotations")
@@ -231,7 +246,7 @@ public class ReaderTest {
         Parameter description = parameters.get(0);
         assertTrue(description instanceof PathParameter);
         assertEquals(description.getName(), "description");
-        assertEquals(description.getDescription(), "Overriden description");
+        assertEquals(description.getDescription(), "Overridden description");
 
         Parameter id = parameters.get(1);
         assertTrue(id instanceof PathParameter);
@@ -336,6 +351,15 @@ public class ReaderTest {
         assertNotNull(parameters);
         assertEquals(parameters.size(), 1);
         assertEquals(parameters.get(0).getName(), "petImplicitIdParam");
+    }
+
+    @Test(description = "scan resource per #1970")
+    public void scanBigDecimal() {
+        Swagger swagger = getSwagger(Resource1970.class);
+        assertNotNull(swagger);
+
+        PathParameter parameter = (PathParameter)swagger.getPath("/v1/{param1}").getGet().getParameters().get(0);
+        assertEquals(parameter.getType(), "number");
     }
 
     private Swagger getSwagger(Class<?> cls) {

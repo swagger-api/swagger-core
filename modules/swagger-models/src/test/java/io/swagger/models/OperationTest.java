@@ -180,7 +180,7 @@ public class OperationTest {
         operation.setSummary("summary");
 
         // then
-        assertEquals(operation.getSummary(), "summary", "The get sumary must equals the set one");
+        assertEquals(operation.getSummary(), "summary", "The get summary must equal the set one");
     }
 
     @Test

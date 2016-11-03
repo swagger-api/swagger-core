@@ -326,20 +326,20 @@ public class Reader {
 
                     String[] apiConsumes = consumes;
                     if (parentConsumes != null) {
-                        Set<String> both = new HashSet<String>(Arrays.asList(apiConsumes));
-                        both.addAll(new HashSet<String>(Arrays.asList(parentConsumes)));
+                        Set<String> both = new LinkedHashSet<String>(Arrays.asList(apiConsumes));
+                        both.addAll(new LinkedHashSet<String>(Arrays.asList(parentConsumes)));
                         if (operation.getConsumes() != null) {
-                            both.addAll(new HashSet<String>(operation.getConsumes()));
+                            both.addAll(new LinkedHashSet<String>(operation.getConsumes()));
                         }
                         apiConsumes = both.toArray(new String[both.size()]);
                     }
 
                     String[] apiProduces = produces;
                     if (parentProduces != null) {
-                        Set<String> both = new HashSet<String>(Arrays.asList(apiProduces));
-                        both.addAll(new HashSet<String>(Arrays.asList(parentProduces)));
+                        Set<String> both = new LinkedHashSet<String>(Arrays.asList(apiProduces));
+                        both.addAll(new LinkedHashSet<String>(Arrays.asList(parentProduces)));
                         if (operation.getProduces() != null) {
-                            both.addAll(new HashSet<String>(operation.getProduces()));
+                            both.addAll(new LinkedHashSet<String>(operation.getProduces()));
                         }
                         apiProduces = both.toArray(new String[both.size()]);
                     }
@@ -432,7 +432,7 @@ public class Reader {
         } else if (param.paramType().equalsIgnoreCase("header")) {
             p = new HeaderParameter();
         } else {
-            LOGGER.warn("Unkown implicit parameter type: [" + param.paramType() + "]");
+            LOGGER.warn("Unknown implicit parameter type: [" + param.paramType() + "]");
             return null;
         }
         final Type type = ReflectionUtils.typeFromString(param.dataType());
@@ -489,7 +489,7 @@ public class Reader {
             io.swagger.models.auth.ApiKeyAuthDefinition apiKeyAuthDefinition = new io.swagger.models.auth.ApiKeyAuthDefinition();
 
             apiKeyAuthDefinition.setName(apiKeyAuthConfig.name());
-            apiKeyAuthDefinition.setIn(In.valueOf(apiKeyAuthConfig.in().toValue()));
+            apiKeyAuthDefinition.setIn(In.forValue(apiKeyAuthConfig.in().toValue()));
             apiKeyAuthDefinition.setDescription(apiKeyAuthConfig.description());
 
             swagger.addSecurityDefinition(apiKeyAuthConfig.key(), apiKeyAuthDefinition);
@@ -761,7 +761,13 @@ public class Reader {
         ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
         ApiResponses responseAnnotation = ReflectionUtils.getAnnotation(method, ApiResponses.class);
 
-        String operationId = method.getName();
+        String operationId = null;
+        // check if it's an inherited method.
+        if(ReflectionUtils.findMethod(method, cls.getSuperclass()) == null) {
+            operationId = method.getName();
+        } else {
+            operationId = this.getOperationId(method.getName());
+        }
         String responseContainer = null;
 
         Type responseType = null;
@@ -905,9 +911,9 @@ public class Reader {
             Response response = new Response().description(SUCCESSFUL_OPERATION);
             operation.defaultResponse(response);
         }
-        
+
         processOperationDecorator(operation, method);
-        
+
         return operation;
     }
 
@@ -1125,5 +1131,36 @@ public class Reader {
         }
 
         protected abstract Property doWrap(Property property);
+    }
+
+    protected String getOperationId(String operationId) {
+        boolean operationIdUsed = existOperationId(operationId);
+        String operationIdToFind = null;
+        int counter = 0;
+        while(operationIdUsed) {
+            operationIdToFind = String.format("%s_%d", operationId, ++counter);
+            operationIdUsed = existOperationId(operationIdToFind);
+        }
+        if(operationIdToFind != null) {
+            operationId = operationIdToFind;
+        }
+        return operationId;
+    }
+
+    private boolean existOperationId(String operationId) {
+        if(swagger == null) {
+            return false;
+        }
+        if(swagger.getPaths() == null || swagger.getPaths().isEmpty()) {
+            return false;
+        }
+        for (Path path: swagger.getPaths().values()) {
+            for (Operation op: path.getOperations()) {
+                if(operationId.equalsIgnoreCase(op.getOperationId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

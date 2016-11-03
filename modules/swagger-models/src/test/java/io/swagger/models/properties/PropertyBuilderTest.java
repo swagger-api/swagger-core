@@ -362,6 +362,7 @@ public class PropertyBuilderTest {
         args.put(PropertyId.MAXIMUM, 112.0);
         args.put(PropertyId.EXCLUSIVE_MINIMUM, true);
         args.put(PropertyId.EXCLUSIVE_MAXIMUM, true);
+        args.put(PropertyId.MULTIPLE_OF, 2.0);
         args.put(PropertyId.DEFAULT, "4");
         DoubleProperty doubleProperty = new DoubleProperty();
 
@@ -375,6 +376,7 @@ public class PropertyBuilderTest {
         assertEquals(doubleProperty.getMaximum(), 112.0, "Must contain the maximum value passed into args");
         assertTrue(doubleProperty.exclusiveMaximum, "Must contain the exclusive minimum value passed into args");
         assertTrue(doubleProperty.exclusiveMinimum, "Must contain the exclusive maximum value passed into args");
+        assertEquals(doubleProperty.getMultipleOf(), 2.0, "Must contain the multiple of value passed into args");
 
         // given
         args.put(PropertyId.DEFAULT, null);
