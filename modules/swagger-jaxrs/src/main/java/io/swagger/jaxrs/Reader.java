@@ -79,6 +79,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -87,6 +88,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class Reader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
@@ -118,9 +120,24 @@ public class Reader {
      * @return the generated Swagger definition
      */
     public Swagger read(Set<Class<?>> classes) {
+        Set<Class<?>> sortedClasses = new TreeSet<Class<?>>(new Comparator<Class<?>>() {
+            @Override
+            public int compare(Class<?> class1, Class<?> class2) {
+                if (class1.equals(class2)) {
+                    return 0;
+                } else if (class1.isAssignableFrom(class2)) {
+                    return -1;
+                } else if (class2.isAssignableFrom(class1)) {
+                    return 1;
+                }
+                return class1.getName().compareTo(class2.getName());
+            }
+        });
+        sortedClasses.addAll(classes);
+
         Map<Class<?>, ReaderListener> listeners = new HashMap<Class<?>, ReaderListener>();
 
-        for (Class<?> cls : classes) {
+        for (Class<?> cls : sortedClasses) {
             if (ReaderListener.class.isAssignableFrom(cls) && !listeners.containsKey(cls)) {
                 try {
                     listeners.put(cls, (ReaderListener) cls.newInstance());
@@ -139,14 +156,14 @@ public class Reader {
         }
 
         // process SwaggerDefinitions first - so we get tags in desired order
-        for (Class<?> cls : classes) {
+        for (Class<?> cls : sortedClasses) {
             SwaggerDefinition swaggerDefinition = cls.getAnnotation(SwaggerDefinition.class);
             if (swaggerDefinition != null) {
                 readSwaggerConfig(cls, swaggerDefinition);
             }
         }
 
-        for (Class<?> cls : classes) {
+        for (Class<?> cls : sortedClasses) {
             read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
         }
 
@@ -761,8 +778,20 @@ public class Reader {
         ApiResponses responseAnnotation = ReflectionUtils.getAnnotation(method, ApiResponses.class);
 
         String operationId = null;
-        // check if it's an inherited method, only if it is not an interface.
-        if (cls.isInterface() || ReflectionUtils.findMethod(method, cls.getSuperclass()) == null) {
+        // check if it's an inherited or implemented method.
+        boolean methodInSuperType = false;
+        if (!cls.isInterface()) {
+            methodInSuperType = ReflectionUtils.findMethod(method, cls.getSuperclass()) != null;
+        }
+        if (!methodInSuperType) {
+            for (Class<?> implementedInterface : cls.getInterfaces()) {
+                methodInSuperType = ReflectionUtils.findMethod(method, implementedInterface) != null;
+                if (methodInSuperType) {
+                    break;
+                }
+            }
+        }
+        if (!methodInSuperType) {
             operationId = method.getName();
         } else {
             operationId = this.getOperationId(method.getName());
