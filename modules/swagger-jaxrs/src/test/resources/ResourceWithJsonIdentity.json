@@ -15,8 +15,8 @@
                 "description":"",
                 "operationId":"test",
                 "produces":[
-                    "application/xml",
-                    "application/json"
+                    "application/json",
+                    "application/xml"
                 ],
                 "parameters":[
                     {

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FloatProperty extends DecimalProperty {
-    private static final String FORMAT = "float";
+    public static final String FORMAT = "float";
     protected List<Float> _enum;
 
     protected Float _default;

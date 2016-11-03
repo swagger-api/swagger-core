@@ -96,7 +96,8 @@ public class PropertyBuilder {
         FORMAT("format"),
         READ_ONLY("readOnly"),
         REQUIRED("required"),
-        VENDOR_EXTENSIONS("vendorExtensions");
+        VENDOR_EXTENSIONS("vendorExtensions"),
+        MULTIPLE_OF("multipleOf");
 
         private String propertyName;
 
@@ -677,6 +678,10 @@ public class PropertyBuilder {
             if (args.containsKey(PropertyId.EXCLUSIVE_MAXIMUM)) {
                 final Boolean value = PropertyId.EXCLUSIVE_MAXIMUM.findValue(args);
                 property.setExclusiveMaximum(value);
+            }
+            if (args.containsKey(PropertyId.MULTIPLE_OF)) {
+                final Double value = PropertyId.MULTIPLE_OF.findValue(args);
+                property.setMultipleOf(value);
             }
             return property;
         }

@@ -43,7 +43,7 @@ public class Pet {
     }
 
     public void setCategoryWithApiModel(CategoryWithApiModel category) {
-        this.categoryWithApiModel = categoryWithApiModel;
+        this.categoryWithApiModel = category;
     }
 
     @XmlElement(name = "name")

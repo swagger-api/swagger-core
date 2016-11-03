@@ -1,0 +1,50 @@
+{
+  "swagger" : "2.0",
+  "tags" : [ {
+    "name" : "Test Api"
+  } ],
+  "paths" : {
+    "/test" : {
+      "get" : {
+        "tags" : [ "Test Api" ],
+        "operationId" : "getA",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/A"
+            },
+            "headers" : { }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "A" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "aggregates" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "$ref" : "#/definitions/B"
+          }
+        }
+      }
+    },
+    "B" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int32"
+        }
+      }
+    }
+  }
+}

@@ -16,7 +16,6 @@ import io.swagger.models.properties.LongProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.util.ParameterProcessor;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.validation.constraints.DecimalMax;
@@ -38,6 +37,12 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 public class ParameterProcessorTest {
 
@@ -156,41 +161,60 @@ public class ParameterProcessorTest {
         final PathParameter p1 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter(),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
 
-        Assert.assertNotNull(p1);
-        Assert.assertEquals(p1.getIn(), "path");
-        Assert.assertEquals(p1.getName(), "paramName1");
-        Assert.assertEquals(p1.getDescription(), "paramValue1");
-        Assert.assertEquals(p1.getDefaultValue(), "value1");
-        Assert.assertTrue(p1.getRequired());
-        Assert.assertEquals(p1.getEnum(), Arrays.asList("one", "two", "three"));
-        Assert.assertNull(p1.getAccess());
+        assertNotNull(p1);
+        assertEquals(p1.getIn(), "path");
+        assertEquals(p1.getName(), "paramName1");
+        assertEquals(p1.getDescription(), "paramValue1");
+        assertEquals(p1.getDefaultValue(), "value1");
+        assertTrue(p1.getRequired());
+        assertEquals(p1.getEnum(), Arrays.asList("one", "two", "three"));
+        assertNull(p1.getAccess());
 
         final QueryParameter p2 = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter()
                 .items(new IntegerProperty()), genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
-        Assert.assertNotNull(p2);
+        assertNotNull(p2);
 
         final IntegerProperty items = (IntegerProperty) p2.getItems();
 
-        Assert.assertNotNull(items);
-        Assert.assertEquals(p2.getIn(), "query");
-        Assert.assertEquals(p2.getName(), "paramName2");
-        Assert.assertNull(p2.getDescription());
-        Assert.assertEquals((int) items.getDefault(), 10);
-        Assert.assertFalse(p2.getRequired());
-        Assert.assertEquals(p2.getAccess(), "test");
+        assertNotNull(items);
+        assertEquals(p2.getIn(), "query");
+        assertEquals(p2.getName(), "paramName2");
+        assertNull(p2.getDescription());
+        assertEquals((int) items.getDefault(), 10);
+        assertFalse(p2.getRequired());
+        assertEquals(p2.getAccess(), "test");
 
         final Parameter p3 = ParameterProcessor.applyAnnotations(null, null,
                 genericParameterTypes[2], Arrays.asList(paramAnnotations[2]));
-        Assert.assertNull(p3);
+        assertNull(p3);
 
         final Parameter p4 = ParameterProcessor.applyAnnotations(null, null,
                 genericParameterTypes[3], Arrays.asList(paramAnnotations[3]));
-        Assert.assertNull(p4);
+        assertNull(p4);
 
         final BodyParameter p5 = (BodyParameter) ParameterProcessor.applyAnnotations(null, null,
                 genericParameterTypes[4], Arrays.asList(paramAnnotations[4]));
-        Assert.assertNotNull(p5);
-        Assert.assertEquals(p5.getIn(), "body");
+        assertNotNull(p5);
+        assertEquals(p5.getIn(), "body");
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "arrayParam", value = "paramValue1", dataType = "string", paramType = "path",
+                    allowMultiple = true)
+    })
+    private void implicitArrayParametrizedMethod() {
+    }
+
+    @Test(description = "parse implicit parameters from method")
+    public void implicitArrayParameterProcessorTest() throws NoSuchMethodException {
+        final ApiImplicitParams params = getClass().getDeclaredMethod("implicitArrayParametrizedMethod")
+                .getAnnotation(ApiImplicitParams.class);
+
+        final PathParameter param0 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter(),
+                String.class, Collections.<Annotation>singletonList(params.value()[0]));
+
+        assertEquals(param0.getType(), "array");
+        assertEquals(param0.getItems().getType(), "string");
     }
 
     @Test(description = "parse implicit parameters from method")
@@ -200,24 +224,24 @@ public class ParameterProcessorTest {
         final PathParameter param0 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter(),
                 String.class, Collections.<Annotation>singletonList(params.value()[0]));
 
-        Assert.assertNotNull(param0);
-        Assert.assertEquals(param0.getIn(), "path");
-        Assert.assertEquals(param0.getName(), "paramName1");
-        Assert.assertEquals(param0.getDescription(), "paramValue1");
-        Assert.assertNull(param0.getEnum());
-        Assert.assertNotNull(param0.getItems());
+        assertNotNull(param0);
+        assertEquals(param0.getIn(), "path");
+        assertEquals(param0.getName(), "paramName1");
+        assertEquals(param0.getDescription(), "paramValue1");
+        assertNull(param0.getEnum());
+        assertNotNull(param0.getItems());
 
         final BodyParameter param1 = (BodyParameter) ParameterProcessor.applyAnnotations(null, new BodyParameter(),
                 String.class, Collections.<Annotation>singletonList(params.value()[1]));
-        Assert.assertNotNull(param1);
-        Assert.assertEquals(param1.getIn(), "body");
-        Assert.assertEquals(param1.getName(), "body");
-        Assert.assertEquals(param1.getDescription(), "paramValue2");
-        Assert.assertEquals(param1.getAccess(), "test");
+        assertNotNull(param1);
+        assertEquals(param1.getIn(), "body");
+        assertEquals(param1.getName(), "body");
+        assertEquals(param1.getDescription(), "paramValue2");
+        assertEquals(param1.getAccess(), "test");
 
         final ModelImpl model = (ModelImpl) param1.getSchema();
-        Assert.assertNotNull(model);
-        Assert.assertEquals(model.getDefaultValue(), "10");
+        assertNotNull(model);
+        assertEquals(model.getDefaultValue(), "10");
     }
 
     @Test
@@ -229,34 +253,34 @@ public class ParameterProcessorTest {
 
         final PathParameter param0 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter(),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        Assert.assertNotNull(param0);
-        Assert.assertEquals(param0.getDefaultValue(), "5");
-        Assert.assertEquals(param0.getMinimum(), 0.0);
-        Assert.assertEquals(param0.getMaximum(), 10.0);
+        assertNotNull(param0);
+        assertEquals(param0.getDefaultValue(), "5");
+        assertEquals(param0.getMinimum(), 0.0);
+        assertEquals(param0.getMaximum(), 10.0);
 
         final PathParameter param1 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter(),
                 genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
-        Assert.assertNotNull(param1);
-        Assert.assertEquals(param1.getMinimum(), 0.0);
-        Assert.assertNull(param1.getMaximum(), null);
-        Assert.assertTrue(param1.isExclusiveMinimum());
-        Assert.assertTrue(param1.isExclusiveMaximum());
+        assertNotNull(param1);
+        assertEquals(param1.getMinimum(), 0.0);
+        assertNull(param1.getMaximum(), null);
+        assertTrue(param1.isExclusiveMinimum());
+        assertTrue(param1.isExclusiveMaximum());
 
         final PathParameter param2 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter(),
                 genericParameterTypes[2], Arrays.asList(paramAnnotations[2]));
-        Assert.assertNotNull(param2);
-        Assert.assertNull(param2.getMinimum());
-        Assert.assertEquals(param2.getMaximum(), 100.0);
+        assertNotNull(param2);
+        assertNull(param2.getMinimum());
+        assertEquals(param2.getMaximum(), 100.0);
 
         final PathParameter param3 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter()
                 .items(new IntegerProperty()), genericParameterTypes[3], Arrays.asList(paramAnnotations[3]));
-        Assert.assertNotNull(param3);
+        assertNotNull(param3);
         final IntegerProperty items = (IntegerProperty) param3.getItems();
-        Assert.assertNotNull(items);
-        Assert.assertEquals(items.getMinimum(), 0.0);
-        Assert.assertEquals(items.getMaximum(), 5.0);
-        Assert.assertTrue(items.getExclusiveMinimum());
-        Assert.assertTrue(items.getExclusiveMaximum());
+        assertNotNull(items);
+        assertEquals(items.getMinimum(), 0.0);
+        assertEquals(items.getMaximum(), 5.0);
+        assertTrue(items.getExclusiveMinimum());
+        assertTrue(items.getExclusiveMaximum());
     }
 
     @Test
@@ -267,9 +291,9 @@ public class ParameterProcessorTest {
 
         final HeaderParameter param = (HeaderParameter) ParameterProcessor.applyAnnotations(null, new HeaderParameter(),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        Assert.assertNotNull(param);
-        Assert.assertEquals((int) param.getMinItems(), 5);
-        Assert.assertEquals((int) param.getMaxItems(), 10);
+        assertNotNull(param);
+        assertEquals((int) param.getMinItems(), 5);
+        assertEquals((int) param.getMaxItems(), 10);
     }
 
     @Test
@@ -293,9 +317,9 @@ public class ParameterProcessorTest {
         for (int i = 0; i < 12; i++) {
             final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                     genericParameterTypes[i], Arrays.asList(paramAnnotations[i]));
-            Assert.assertNotNull(param);
-            Assert.assertEquals(param.getMinimum(), 5d);
-            Assert.assertEquals(param.getMaximum(), 10d);
+            assertNotNull(param);
+            assertEquals(param.getMinimum(), 5d);
+            assertEquals(param.getMaximum(), 10d);
         }
     }
 
@@ -308,9 +332,9 @@ public class ParameterProcessorTest {
 
         final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        Assert.assertNotNull(param);
-        Assert.assertEquals(param.getMinLength(), new Integer(5));
-        Assert.assertEquals(param.getMaxLength(), new Integer(10));
+        assertNotNull(param);
+        assertEquals(param.getMinLength(), new Integer(5));
+        assertEquals(param.getMaxLength(), new Integer(10));
     }
 
     @Test
@@ -322,8 +346,8 @@ public class ParameterProcessorTest {
 
         final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        Assert.assertNotNull(param);
-        Assert.assertEquals(param.getMinimum(), 5d);
+        assertNotNull(param);
+        assertEquals(param.getMinimum(), 5d);
     }
 
     @Test
@@ -335,8 +359,8 @@ public class ParameterProcessorTest {
 
         final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        Assert.assertNotNull(param);
-        Assert.assertEquals(param.getMaximum(), 10d);
+        assertNotNull(param);
+        assertEquals(param.getMaximum(), 10d);
     }
 
     @Test
@@ -348,15 +372,15 @@ public class ParameterProcessorTest {
 
         final QueryParameter inclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        Assert.assertNotNull(inclusiveParam);
-        Assert.assertEquals(inclusiveParam.getMinimum(), 5.5d);
-        Assert.assertNull(inclusiveParam.isExclusiveMinimum());
+        assertNotNull(inclusiveParam);
+        assertEquals(inclusiveParam.getMinimum(), 5.5d);
+        assertNull(inclusiveParam.isExclusiveMinimum());
 
         final QueryParameter exclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                 genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
-        Assert.assertNotNull(exclusiveParam);
-        Assert.assertEquals(exclusiveParam.getMinimum(), 5.5d);
-        Assert.assertTrue(exclusiveParam.isExclusiveMinimum());
+        assertNotNull(exclusiveParam);
+        assertEquals(exclusiveParam.getMinimum(), 5.5d);
+        assertTrue(exclusiveParam.isExclusiveMinimum());
     }
 
     @Test
@@ -368,15 +392,15 @@ public class ParameterProcessorTest {
 
         final QueryParameter inclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        Assert.assertNotNull(inclusiveParam);
-        Assert.assertEquals(inclusiveParam.getMaximum(), 10.5d);
-        Assert.assertNull(inclusiveParam.isExclusiveMaximum());
+        assertNotNull(inclusiveParam);
+        assertEquals(inclusiveParam.getMaximum(), 10.5d);
+        assertNull(inclusiveParam.isExclusiveMaximum());
 
         final QueryParameter exclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                 genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
-        Assert.assertNotNull(exclusiveParam);
-        Assert.assertEquals(exclusiveParam.getMaximum(), 10.5d);
-        Assert.assertTrue(exclusiveParam.isExclusiveMaximum());
+        assertNotNull(exclusiveParam);
+        assertEquals(exclusiveParam.getMaximum(), 10.5d);
+        assertTrue(exclusiveParam.isExclusiveMaximum());
     }
 
     @Test
@@ -388,8 +412,8 @@ public class ParameterProcessorTest {
 
         final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        Assert.assertNotNull(param);
-        Assert.assertEquals(param.getPattern(), TEST_PATTERN_REGXP);
+        assertNotNull(param);
+        assertEquals(param.getPattern(), TEST_PATTERN_REGXP);
     }
 
     @Test
@@ -403,54 +427,54 @@ public class ParameterProcessorTest {
         HeaderParameter headerParam1 = new HeaderParameter().type(ArrayProperty.TYPE).items(new LongProperty());
         HeaderParameter param1 = (HeaderParameter) ParameterProcessor.applyAnnotations(null, headerParam1,
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        Assert.assertNotNull(param1);
-        Assert.assertEquals((int) param1.getMinItems(), 5);
-        Assert.assertEquals((int) param1.getMaxItems(), 10);
+        assertNotNull(param1);
+        assertEquals((int) param1.getMinItems(), 5);
+        assertEquals((int) param1.getMaxItems(), 10);
         Property items1 = param1.getItems();
-        Assert.assertTrue(items1 instanceof LongProperty);
+        assertTrue(items1 instanceof LongProperty);
         LongProperty longItems = (LongProperty) items1;
-        Assert.assertEquals(longItems.getMinimum(), 5d);
-        Assert.assertNull(longItems.getExclusiveMinimum());
-        Assert.assertEquals(longItems.getMaximum(), 10d);
-        Assert.assertNull(longItems.getExclusiveMaximum());
+        assertEquals(longItems.getMinimum(), 5d);
+        assertNull(longItems.getExclusiveMinimum());
+        assertEquals(longItems.getMaximum(), 10d);
+        assertNull(longItems.getExclusiveMaximum());
 
         //Second param - items specified
         HeaderParameter headerParam2 = new HeaderParameter().type(ArrayProperty.TYPE).items(new DoubleProperty());
         HeaderParameter param2 = (HeaderParameter) ParameterProcessor.applyAnnotations(null, headerParam2,
                 genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
-        Assert.assertNotNull(param2);
-        Assert.assertEquals((int) param2.getMinItems(), 5);
-        Assert.assertEquals((int) param2.getMaxItems(), 10);
+        assertNotNull(param2);
+        assertEquals((int) param2.getMinItems(), 5);
+        assertEquals((int) param2.getMaxItems(), 10);
         Property items2 = param2.getItems();
-        Assert.assertTrue(items2 instanceof DoubleProperty);
+        assertTrue(items2 instanceof DoubleProperty);
         DoubleProperty doubleItems = (DoubleProperty) items2;
-        Assert.assertEquals(doubleItems.getMinimum(), 5.5d);
-        Assert.assertTrue(doubleItems.getExclusiveMinimum());
-        Assert.assertEquals(doubleItems.getMaximum(), 10.5d);
-        Assert.assertTrue(doubleItems.getExclusiveMaximum());
+        assertEquals(doubleItems.getMinimum(), 5.5d);
+        assertTrue(doubleItems.getExclusiveMinimum());
+        assertEquals(doubleItems.getMaximum(), 10.5d);
+        assertTrue(doubleItems.getExclusiveMaximum());
 
         //Third param - items specified
         HeaderParameter headerParam3 = new HeaderParameter().type(ArrayProperty.TYPE).items(new StringProperty());
         HeaderParameter param3 = (HeaderParameter) ParameterProcessor.applyAnnotations(null, headerParam3,
                 genericParameterTypes[2], Arrays.asList(paramAnnotations[2]));
-        Assert.assertNotNull(param3);
-        Assert.assertEquals((int) param3.getMinItems(), 5);
-        Assert.assertEquals((int) param3.getMaxItems(), 10);
+        assertNotNull(param3);
+        assertEquals((int) param3.getMinItems(), 5);
+        assertEquals((int) param3.getMaxItems(), 10);
         Property items3 = param3.getItems();
-        Assert.assertTrue(items3 instanceof StringProperty);
+        assertTrue(items3 instanceof StringProperty);
         StringProperty stringItems = (StringProperty) items3;
-        Assert.assertEquals(stringItems.getPattern(), TEST_PATTERN_REGXP);
+        assertEquals(stringItems.getPattern(), TEST_PATTERN_REGXP);
 
         //Fourth param - items specified
         HeaderParameter headerParam4 = new HeaderParameter().type(StringProperty.TYPE);
         HeaderParameter param4 = (HeaderParameter) ParameterProcessor.applyAnnotations(null, headerParam4,
                 genericParameterTypes[3], Arrays.asList(paramAnnotations[3]));
-        Assert.assertNotNull(param4);
-        Assert.assertEquals(param4.getType(), ArrayProperty.TYPE);
-        Assert.assertEquals((int) param4.getMinItems(), 5);
-        Assert.assertEquals((int) param4.getMaxItems(), 10);
+        assertNotNull(param4);
+        assertEquals(param4.getType(), ArrayProperty.TYPE);
+        assertEquals((int) param4.getMinItems(), 5);
+        assertEquals((int) param4.getMaxItems(), 10);
         Property items4 = param4.getItems();
-        Assert.assertTrue(items4 instanceof StringProperty);
+        assertTrue(items4 instanceof StringProperty);
     }
 
 }

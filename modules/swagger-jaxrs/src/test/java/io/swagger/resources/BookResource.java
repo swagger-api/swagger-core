@@ -15,9 +15,9 @@ import javax.ws.rs.Produces;
 @Path("/{id}/v1/books/")
 public class BookResource extends BaseResource {
 
-    @ApiParam("Overriden description")
+    @ApiParam("Overridden description")
     @PathParam("description")
-    private String description = "Overriden";
+    private String description = "Overridden";
 
     @Override
     public String getDescription() {

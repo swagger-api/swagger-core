@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PasswordProperty extends AbstractProperty implements Property {
-    private static final String TYPE = "string";
+    public static final String TYPE = "string";
 
     private static final String FORMAT = "password";
 

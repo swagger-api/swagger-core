@@ -234,6 +234,49 @@ public class SpecFilterTest {
 
     }
 
+    @Test(description = "recursive models, e.g. A-> A or A-> B and B -> A should not result in stack overflow")
+    public void removeUnreferencedDefinitionsOfRecuriveModels() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/recursivemodels.json");
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final Swagger filtered = new SpecFilter().filter(swagger, remover, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("SelfReferencingModel"));
+        assertNotNull(filtered.getDefinitions().get("IndirectRecursiveModelA"));
+        assertNotNull(filtered.getDefinitions().get("IndirectRecursiveModelB"));
+    }
+
+    @Test(description = "broken references should not result in NPE")
+    public void removeUnreferencedModelOverride() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/brokenrefmodel.json");
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final Swagger filtered = new SpecFilter().filter(swagger, remover, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("RootModel"));
+    }
+
+    @Test(description = "Retain models referenced from additonalProperties")
+    public void retainModelsReferencesFromAdditionalProperties() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/additionalpropsmodel.json");
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final Swagger filtered = new SpecFilter().filter(swagger, remover, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("A"));
+        assertNotNull(filtered.getDefinitions().get("B"));
+    }
+
+    @Test(description = "Clone should retain any 'deperecated' flags present on operations")
+    public void cloneRetainDeperecatedFlags() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/deprecatedoperationmodel.json");
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final Swagger filtered = new SpecFilter().filter(swagger, remover, null, null, null);
+
+        Operation operation = filtered.getPath("/test").getOperations().get(0);
+
+        Boolean deprectedFlag = operation.isDeprecated();
+        assertNotNull(deprectedFlag);
+        assertEquals(deprectedFlag, Boolean.TRUE);
+    }
+
     @Test(description = "it should filter models where some fields have no properties")
     public void filterNoPropertiesModels() throws IOException {
         final String modelName = "Array";

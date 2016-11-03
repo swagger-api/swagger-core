@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DoubleProperty extends DecimalProperty {
-    private static final String FORMAT = "double";
+    public static final String FORMAT = "double";
     protected Double _default;
     protected List<Double> _enum;
 
