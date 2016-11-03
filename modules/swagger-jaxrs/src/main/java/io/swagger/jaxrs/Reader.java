@@ -192,14 +192,13 @@ public class Reader {
         boolean isApiHidden = hasApiAnnotation && api.hidden();
 
         // class readable only if annotated with ((@Path and @Api) or isSubresource ) - and @Api not hidden
-        boolean classReadable = ((hasPathAnnotation && hasApiAnnotation)|| isSubresource) && !isApiHidden;
+        boolean classReadable = ((hasPathAnnotation && hasApiAnnotation) || isSubresource) && !isApiHidden;
 
         // with scanAllResources true in config and @Api not hidden scan only if it has also @Path annotation or is subresource
         boolean scanAll = !isApiHidden && config.isScanAllResources() && (hasPathAnnotation || isSubresource);
 
         // readable if classReadable or scanAll
         boolean readable = classReadable || scanAll;
-
 
         if (!readable) {
             return swagger;
@@ -762,8 +761,8 @@ public class Reader {
         ApiResponses responseAnnotation = ReflectionUtils.getAnnotation(method, ApiResponses.class);
 
         String operationId = null;
-        // check if it's an inherited method.
-        if(ReflectionUtils.findMethod(method, cls.getSuperclass()) == null) {
+        // check if it's an inherited method, only if it is not an interface.
+        if (cls.isInterface() || ReflectionUtils.findMethod(method, cls.getSuperclass()) == null) {
             operationId = method.getName();
         } else {
             operationId = this.getOperationId(method.getName());
@@ -1137,26 +1136,26 @@ public class Reader {
         boolean operationIdUsed = existOperationId(operationId);
         String operationIdToFind = null;
         int counter = 0;
-        while(operationIdUsed) {
+        while (operationIdUsed) {
             operationIdToFind = String.format("%s_%d", operationId, ++counter);
             operationIdUsed = existOperationId(operationIdToFind);
         }
-        if(operationIdToFind != null) {
+        if (operationIdToFind != null) {
             operationId = operationIdToFind;
         }
         return operationId;
     }
 
     private boolean existOperationId(String operationId) {
-        if(swagger == null) {
+        if (swagger == null) {
             return false;
         }
-        if(swagger.getPaths() == null || swagger.getPaths().isEmpty()) {
+        if (swagger.getPaths() == null || swagger.getPaths().isEmpty()) {
             return false;
         }
-        for (Path path: swagger.getPaths().values()) {
-            for (Operation op: path.getOperations()) {
-                if(operationId.equalsIgnoreCase(op.getOperationId())) {
+        for (Path path : swagger.getPaths().values()) {
+            for (Operation op : path.getOperations()) {
+                if (operationId.equalsIgnoreCase(op.getOperationId())) {
                     return true;
                 }
             }
