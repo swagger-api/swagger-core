@@ -79,6 +79,9 @@ public class ParameterProcessor {
             if (helper.isRequired() != null) {
                 p.setRequired(true);
             }
+            if (StringUtils.isNotEmpty(param.getReplace())) {
+                p.setReplace(param.getReplace());
+            }
 
             AllowableValues allowableValues = AllowableValuesUtils.create(param.getAllowableValues());
 
@@ -249,6 +252,8 @@ public class ParameterProcessor {
         T getAnnotation();
 
         boolean isHidden();
+
+        String getReplace();
 
         String getExample();
     }
@@ -440,7 +445,10 @@ public class ParameterProcessor {
             return apiParam.example();
         }
 
-        ;
+        @Override
+        public String getReplace() {
+            return apiParam.replace();
+        }
 
         public Example getExamples() {
             return apiParam.examples();
@@ -514,6 +522,9 @@ public class ParameterProcessor {
         public boolean isHidden() {
             return false;
         }
+
+        @Override
+        public String getReplace() { return apiParam.replace(); }
 
         @Override
         public String getExample() {

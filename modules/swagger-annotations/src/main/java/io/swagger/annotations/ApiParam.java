@@ -94,6 +94,11 @@ public @interface ApiParam {
     boolean hidden() default false;
 
     /**
+     * The name of another parameter to replace, such as a parameter specified with JAX-RX annotation @QueryParam.
+     */
+    String replace() default "";
+
+    /**
      * a single example for non-body type parameters
      *
      * @since 1.5.4

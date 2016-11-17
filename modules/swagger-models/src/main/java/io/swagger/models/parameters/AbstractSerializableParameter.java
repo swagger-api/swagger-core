@@ -101,6 +101,11 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         return castThis();
     }
 
+    public T replace(String replace) {
+        this.setReplace(replace);
+        return castThis();
+    }
+
     public T example(String example) {
         this.setExample(example);
         return castThis();
@@ -461,6 +466,9 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         if (defaultValue == null) {
             if (other.defaultValue != null) return false;
         } else if (!defaultValue.equals(other.defaultValue)) return false;
+        if (replace == null) {
+            if (other.replace != null) return false;
+        } else if (!replace.equals(other.replace)) return false;
         if (example == null) {
             if (other.example != null) return false;
         } else if (!example.equals(other.example)) return false;
@@ -516,6 +524,7 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         result = prime * result + ((_enum == null) ? 0 : _enum.hashCode());
         result = prime * result + ((collectionFormat == null) ? 0 : collectionFormat.hashCode());
         result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
+        result = prime * result + ((replace == null) ? 0 : replace.hashCode());
         result = prime * result + ((example == null) ? 0 : example.hashCode());
         result = prime * result + ((exclusiveMaximum == null) ? 0 : exclusiveMaximum.hashCode());
         result = prime * result + ((exclusiveMinimum == null) ? 0 : exclusiveMinimum.hashCode());

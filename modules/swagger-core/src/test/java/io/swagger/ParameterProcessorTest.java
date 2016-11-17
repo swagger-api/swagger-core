@@ -43,7 +43,7 @@ public class ParameterProcessorTest {
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "paramName1", value = "paramValue1", dataType = "string", paramType = "path",
-                    allowMultiple = true, allowableValues = ",,,"),
+                    allowMultiple = true, allowableValues = ",,,", replace="paramName3"),
             @ApiImplicitParam(value = "paramValue2", dataType = "string", paramType = "body", access = "test",
                     defaultValue = "10")
     })
@@ -145,6 +145,7 @@ public class ParameterProcessorTest {
         assertEquals(param0.getDescription(), "paramValue1");
         Assert.assertNull(param0.getEnum());
         Assert.assertNotNull(param0.getItems());
+        assertEquals(param0.getReplace(), "paramName3");
 
         final BodyParameter param1 = (BodyParameter) ParameterProcessor.applyAnnotations(null, new BodyParameter(),
                 String.class, Collections.<Annotation>singletonList(params.value()[1]));
@@ -153,6 +154,7 @@ public class ParameterProcessorTest {
         assertEquals(param1.getName(), "body");
         assertEquals(param1.getDescription(), "paramValue2");
         assertEquals(param1.getAccess(), "test");
+        assertEquals(param1.getReplace(), null);
 
         final ModelImpl model = (ModelImpl) param1.getSchema();
         Assert.assertNotNull(model);
