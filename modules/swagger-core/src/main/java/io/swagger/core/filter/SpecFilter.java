@@ -279,7 +279,10 @@ public class SpecFilter {
     private Set<String> getModelRef(Model model) {
         if (model instanceof ArrayModel &&
                 ((ArrayModel) model).getItems() != null) {
-            return new HashSet<String>(Arrays.asList(getPropertyRef(((ArrayModel) model).getItems())));
+            String propertyRef = getPropertyRef(((ArrayModel) model).getItems());
+            if (propertyRef != null) {
+                return new HashSet<String>(Arrays.asList(propertyRef));
+            }
         } else if (model instanceof ComposedModel &&
                 ((ComposedModel) model).getAllOf() != null) {
             Set<String> refs = new LinkedHashSet<String>();
