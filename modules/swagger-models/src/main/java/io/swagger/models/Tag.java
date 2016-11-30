@@ -3,11 +3,11 @@ package io.swagger.models;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Tag {
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private final Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
     private String name;
     private String description;
     private ExternalDocs externalDocs;

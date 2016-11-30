@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.*;
 import io.swagger.models.parameters.Parameter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,7 @@ import java.util.Map;
 @JsonPropertyOrder({"get", "head", "post", "put", "delete", "options", "patch"})
 public class Path {
 
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private final Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
     private Operation get;
     private Operation put;
     private Operation post;

@@ -3,11 +3,11 @@ package io.swagger.models.parameters;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class AbstractParameter {
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private final Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
     protected String in;
     protected String name;
     protected String description;
