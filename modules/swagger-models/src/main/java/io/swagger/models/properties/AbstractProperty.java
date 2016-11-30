@@ -19,7 +19,7 @@ public abstract class AbstractProperty implements Property, Cloneable {
     String title;
     Boolean readOnly;
     private String access;
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
     @Override
     public Property rename(String newName) {
@@ -160,6 +160,10 @@ public abstract class AbstractProperty implements Property, Cloneable {
         if (name.startsWith("x-")) {
             vendorExtensions.put(name, value);
         }
+    }
+
+    public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
     }
 
     public void setVendorExtensionMap(Map<String, Object> vendorExtensionMap) {

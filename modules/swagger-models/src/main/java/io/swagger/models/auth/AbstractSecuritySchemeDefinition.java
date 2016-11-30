@@ -9,7 +9,7 @@ import java.util.Map;
 
 public abstract class AbstractSecuritySchemeDefinition implements SecuritySchemeDefinition {
 
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
     private String description;
 
@@ -23,6 +23,10 @@ public abstract class AbstractSecuritySchemeDefinition implements SecurityScheme
         if (name.startsWith("x-")) {
             vendorExtensions.put(name, value);
         }
+    }
+
+    public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
     }
 
     public String getDescription() {

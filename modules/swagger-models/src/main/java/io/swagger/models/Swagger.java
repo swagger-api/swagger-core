@@ -548,4 +548,8 @@ public class Swagger {
         this.vendorExtensions.putAll( vendorExtensions );
         return this;
     }
+
+    public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
+    }
 }
