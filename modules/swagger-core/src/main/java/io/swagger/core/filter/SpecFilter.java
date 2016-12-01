@@ -90,6 +90,7 @@ public class SpecFilter {
 
         Map<String, Model> definitions = filterDefinitions(filter, swagger.getDefinitions(), params, cookies, headers);
         clone.setSecurityDefinitions(swagger.getSecurityDefinitions());
+        clone.setSecurity(swagger.getSecurity());
         clone.setDefinitions(definitions);
 
         // isRemovingUnreferencedDefinitions is not defined in SwaggerSpecFilter to avoid breaking compatibility with
