@@ -14,6 +14,7 @@ public abstract class AbstractParameter {
     protected boolean required = false;
     protected String access;
     protected String pattern;
+    protected String replace;
 
     public String getIn() {
         return in;
@@ -75,6 +76,14 @@ public abstract class AbstractParameter {
         }
     }
 
+    public String getReplace() {
+        return replace;
+    }
+
+    public void setReplace(final String replace) {
+        this.replace = replace;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -88,6 +97,7 @@ public abstract class AbstractParameter {
         result = prime * result + (required ? 1231 : 1237);
         result = prime * result
                 + ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
+        result = prime * result + ((replace == null) ? 0 : replace.hashCode());
         return result;
     }
 
@@ -146,6 +156,13 @@ public abstract class AbstractParameter {
                 return false;
             }
         } else if (!vendorExtensions.equals(other.vendorExtensions)) {
+            return false;
+        }
+        if (replace == null) {
+            if (other.replace != null) {
+                return false;
+            }
+        } else if (!replace.equals(other.replace)) {
             return false;
         }
         return true;

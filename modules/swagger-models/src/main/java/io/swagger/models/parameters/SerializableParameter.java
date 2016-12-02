@@ -73,4 +73,8 @@ public interface SerializableParameter extends Parameter {
 
     void setMinItems(Integer minItems);
 
+    String getReplace();
+
+    void setReplace(String replace);
+
 }

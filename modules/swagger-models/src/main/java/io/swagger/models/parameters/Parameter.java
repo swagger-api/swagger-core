@@ -31,5 +31,9 @@ public interface Parameter {
 
     void setPattern(String pattern);
 
+    String getReplace();
+
+    void setReplace(String replace);
+
     Map<String, Object> getVendorExtensions();
 }
