@@ -23,6 +23,7 @@ import io.swagger.resources.generics.UserApiRoute;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.testng.annotations.Test;
@@ -169,7 +170,8 @@ public class GenericsTest {
 
     @Test(description = "check parameters of generic types")
     public void checkParametersOfGenericTypes() {
-        Set<String> genericTypes = new HashSet(Arrays.asList("GenericTypeString", "GenericTypeUUID", "GenericTypeGenericTypeString",
+        Set<String> genericTypes = new HashSet<String>(Arrays.asList("GenericTypeString", "GenericTypeUUID",
+                "GenericTypeGenericTypeString",
                 "RenamedGenericTypeString", "RenamedGenericTypeRenamedGenericTypeString"));
         assertTrue(swagger.getDefinitions().keySet().containsAll(genericTypes));
 
@@ -221,10 +223,10 @@ public class GenericsTest {
         final Swagger swagger = new Reader(new Swagger()).read(UserApiRoute.class);
         assertNotNull(swagger);
         final Model userEntity = swagger.getDefinitions().get("UserEntity");
-        // assertNotNull(userEntity);
-        // final Map<String, Property> properties = userEntity.getProperties();
-        // assertEquals(properties.size(), 2);
-        // assertNotNull(properties.get("id"));
-        // assertNotNull(properties.get("name"));
+        assertNotNull(userEntity);
+        final Map<String, Property> properties = userEntity.getProperties();
+        assertEquals(properties.size(), 2);
+        assertNotNull(properties.get("id"));
+        assertNotNull(properties.get("name"));
     }
 }

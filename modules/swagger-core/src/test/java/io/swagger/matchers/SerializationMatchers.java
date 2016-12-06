@@ -50,7 +50,11 @@ public class SerializationMatchers {
                 double d2 = ((NumericNode) o2).asDouble();
                 return Double.compare(d1, d2);
             }
-            return 1;
+            int comp = o1.asText().compareTo(o2.asText());
+            if (comp == 0) {
+                return Integer.compare(o1.hashCode(), o2.hashCode());
+            }
+            return comp;
         }
     };
 }
