@@ -24,4 +24,12 @@ public interface ReaderConfig {
      * @return collection of paths
      */
     Collection<String> getIgnoredRoutes();
+
+    /**
+     * The 'path' will be scanned from @API declaration instead of @Path
+     * {@link Api} value will be used
+     * @return <code>true</code> use 'path' that is to host the API Declaration of the
+     * resource
+     */
+    boolean isPathFromDeclaration();
 }
