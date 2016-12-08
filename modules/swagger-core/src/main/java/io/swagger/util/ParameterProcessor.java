@@ -216,10 +216,10 @@ public class ParameterProcessor {
             return;
         }
         if (helper.getMin() != null) {
-            p.setMinimum((Double) helper.getMin().doubleValue());
+            p.setMinimum(helper.getMin().doubleValue());
         }
         if (helper.getMax() != null) {
-            p.setMaximum((Double) helper.getMax().doubleValue());
+            p.setMaximum(helper.getMax().doubleValue());
         }
     }
 
@@ -440,13 +440,10 @@ public class ParameterProcessor {
             return apiParam.example();
         }
 
-        ;
-
         public Example getExamples() {
             return apiParam.examples();
         }
 
-        ;
     }
 
     /**

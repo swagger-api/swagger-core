@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import io.swagger.models.ArrayModel;
 import io.swagger.models.ComposedModel;
 import io.swagger.models.Model;
@@ -52,7 +51,7 @@ public class ModelDeserializer extends JsonDeserializer<Model> {
         } else {
             sub = node.get("type");
             Model model = null;
-            if (sub != null && "array".equals(((TextNode) sub).textValue())) {
+            if (sub != null && "array".equals(sub.textValue())) {
                 model = Json.mapper().convertValue(node, ArrayModel.class);
             } else {
                 model = Json.mapper().convertValue(node, ModelImpl.class);

@@ -2,9 +2,6 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * The DecimalProperty class defines properties for (decimal) numbers without a specific format, or with a custom
  * format. The two standard formats are defined in {@link DoubleProperty} and {@link FloatProperty}.

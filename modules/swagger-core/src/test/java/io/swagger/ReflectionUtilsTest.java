@@ -11,7 +11,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -21,8 +20,8 @@ public class ReflectionUtilsTest {
 
     @Test
     public void typeFromStringTest() {
-        Assert.assertEquals(ReflectionUtils.typeFromString("int"), (Type) Integer.class);
-        Assert.assertEquals(ReflectionUtils.typeFromString("java.lang.String"), (Type) String.class);
+        Assert.assertEquals(ReflectionUtils.typeFromString("int"), Integer.class);
+        Assert.assertEquals(ReflectionUtils.typeFromString("java.lang.String"), String.class);
         Assert.assertNull(ReflectionUtils.typeFromString("FakeType"));
         Assert.assertNull(ReflectionUtils.typeFromString(null));
     }

@@ -12,10 +12,6 @@ public class OAuth2DefinitionTest {
 
     private String authorizationUrl = "authorizationUrl";
 
-    private String name = "name";
-
-    private String description = "description";
-
     @Test
     public void testImplicit() {
         //when
@@ -60,6 +56,8 @@ public class OAuth2DefinitionTest {
     @Test
     public void testScope() {
         //when
+        String description = "description";
+        String name = "name";
         auth2Definition.scope(name, description);
 
         //then

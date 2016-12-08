@@ -1,7 +1,6 @@
 package io.swagger.reflection;
 
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponses;
 
 public class Parent<T extends Number> {
 

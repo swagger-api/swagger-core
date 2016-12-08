@@ -16,10 +16,10 @@ public interface ModelConverter {
      * @param chain       the chain of model converters to try if this implementation cannot process
      * @return null if this ModelConverter cannot convert the given Type
      */
-    public Property resolveProperty(Type type,
-                                    ModelConverterContext context,
-                                    Annotation[] annotations,
-                                    Iterator<ModelConverter> chain);
+    Property resolveProperty(Type type,
+                             ModelConverterContext context,
+                             Annotation[] annotations,
+                             Iterator<ModelConverter> chain);
 
     /**
      * @param type
@@ -27,5 +27,5 @@ public interface ModelConverter {
      * @param chain   the chain of model converters to try if this implementation cannot process
      * @return null if this ModelConverter cannot convert the given Type
      */
-    public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain);
+    Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain);
 }

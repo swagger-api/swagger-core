@@ -56,7 +56,7 @@ public class JsonDeserializationTest {
         final Property result = m.readValue(json, Property.class);
         assertTrue(result instanceof ObjectProperty);
         assertEquals(3, ((ObjectProperty) result).getProperties().size());
-        assertEquals("objectProperty", ((ObjectProperty) result).getTitle());
+        assertEquals("objectProperty", result.getTitle());
 
     }
 

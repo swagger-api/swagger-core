@@ -139,7 +139,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         Xml xml = null;
 
         if (node instanceof ObjectNode) {
-            ObjectNode obj = (ObjectNode) ((ObjectNode) node).get("xml");
+            ObjectNode obj = (ObjectNode) node.get("xml");
             if (obj != null) {
                 xml = new Xml();
                 JsonNode n = obj.get("name");

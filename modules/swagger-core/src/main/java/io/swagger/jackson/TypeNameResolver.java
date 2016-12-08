@@ -65,6 +65,6 @@ public class TypeNameResolver {
     }
 
     public enum Options {
-        SKIP_API_MODEL;
+        SKIP_API_MODEL
     }
 }

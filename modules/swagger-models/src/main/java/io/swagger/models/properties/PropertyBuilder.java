@@ -101,7 +101,7 @@ public class PropertyBuilder {
 
         private String propertyName;
 
-        private PropertyId(String propertyName) {
+        PropertyId(String propertyName) {
             this.propertyName = propertyName;
         }
 
