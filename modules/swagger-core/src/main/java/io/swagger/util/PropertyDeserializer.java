@@ -1,25 +1,5 @@
 package io.swagger.util;
 
-import io.swagger.models.Xml;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.MapProperty;
-import io.swagger.models.properties.ObjectProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.PropertyBuilder;
-import io.swagger.models.properties.RefProperty;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -34,6 +14,24 @@ import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import io.swagger.models.Xml;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.MapProperty;
+import io.swagger.models.properties.ObjectProperty;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.PropertyBuilder;
+import io.swagger.models.properties.RefProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PropertyDeserializer extends JsonDeserializer<Property> {
     Logger LOGGER = LoggerFactory.getLogger(PropertyDeserializer.class);
@@ -250,6 +248,11 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                 arrayProperty.setMinItems(getInteger(node, PropertyBuilder.PropertyId.MIN_ITEMS));
                 arrayProperty.setMaxItems(getInteger(node, PropertyBuilder.PropertyId.MAX_ITEMS));
                 arrayProperty.setUniqueItems(getBoolean(node, PropertyBuilder.PropertyId.UNIQUE_ITEMS));
+                JsonNode example = getDetailNode( node, PropertyBuilder.PropertyId.EXAMPLE);
+                if( example != null ) {
+                    arrayProperty.setExample( Json.mapper().convertValue(example, Object.class));
+                }
+
                 arrayProperty.setVendorExtensionMap(getVendorExtensions(node));
                 return arrayProperty;
             }
