@@ -1,14 +1,23 @@
 package io.swagger.util;
 
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.util.*;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class ReflectionUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtils.class);
@@ -99,6 +108,9 @@ public class ReflectionUtils {
      * @return method if it is found
      */
     public static Method findMethod(Method methodToFind, Class<?> cls) {
+        if (cls == null) {
+            return null;
+        }
         String methodToSearch = methodToFind.getName();
         Class<?>[] soughtForParameterType = methodToFind.getParameterTypes();
         Type[] soughtForGenericParameterType = methodToFind.getGenericParameterTypes();
@@ -211,34 +223,34 @@ public class ReflectionUtils {
         }
         return annotation;
     }
-    
+
     public static Annotation[][] getParameterAnnotations(Method method) {
-	Annotation[][] methodAnnotations = method.getParameterAnnotations();
-	Method overriddenmethod = getOverriddenMethod(method);
+        Annotation[][] methodAnnotations = method.getParameterAnnotations();
+        Method overriddenmethod = getOverriddenMethod(method);
 
-	if (overriddenmethod != null) {
-	    Annotation[][] overriddenAnnotations = overriddenmethod
-		    .getParameterAnnotations();
+        if (overriddenmethod != null) {
+            Annotation[][] overriddenAnnotations = overriddenmethod
+                    .getParameterAnnotations();
 
-	    for (int i = 0; i < methodAnnotations.length; i++) {
-		List<Type> types = new ArrayList<Type>();
-		for (int j = 0; j < methodAnnotations[i].length; j++) {
-		    types.add(methodAnnotations[i][j].annotationType());
-		}
-		for (int j = 0; j < overriddenAnnotations[i].length; j++) {
-		    if (!types.contains(overriddenAnnotations[i][j]
-			    .annotationType())) {
-			methodAnnotations[i] = ArrayUtils.add(
-				methodAnnotations[i],
-				overriddenAnnotations[i][j]);
-		    }
-		}
+            for (int i = 0; i < methodAnnotations.length; i++) {
+                List<Type> types = new ArrayList<Type>();
+                for (int j = 0; j < methodAnnotations[i].length; j++) {
+                    types.add(methodAnnotations[i][j].annotationType());
+                }
+                for (int j = 0; j < overriddenAnnotations[i].length; j++) {
+                    if (!types.contains(overriddenAnnotations[i][j]
+                            .annotationType())) {
+                        methodAnnotations[i] = ArrayUtils.add(
+                                methodAnnotations[i],
+                                overriddenAnnotations[i][j]);
+                    }
+                }
 
-	    }
-	}
-	return methodAnnotations;
+            }
+        }
+        return methodAnnotations;
     }
-    
+
     /**
      * Checks if the type is void.
      *
