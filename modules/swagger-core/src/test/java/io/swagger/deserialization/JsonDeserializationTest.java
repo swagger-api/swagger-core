@@ -1,9 +1,11 @@
 package io.swagger.deserialization;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import io.swagger.models.Swagger;
+import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.util.Json;
@@ -97,5 +99,32 @@ public class JsonDeserializationTest {
 
         final Map<String, Property> secondLevelProperties = ((ObjectProperty) property3).getProperties();
         assertEquals(secondLevelProperties.size(), 1);
+    }
+
+    @Test
+    public void shouldDeserializeArrayPropertyMinItems() throws Exception {
+        String content = ResourceUtils.loadClassResource(getClass(), "schema-validation/array.json");
+        ArrayProperty property = (ArrayProperty) m.readValue(content, Property.class);
+
+        assertNotNull(property.getMinItems());
+        assertEquals(property.getMinItems().intValue(), 1);
+    }
+
+    @Test
+    public void shouldDeserializeArrayPropertyMaxItems() throws Exception {
+        String content = ResourceUtils.loadClassResource(getClass(), "schema-validation/array.json");
+        ArrayProperty property = (ArrayProperty) m.readValue(content, Property.class);
+
+        assertNotNull(property.getMaxItems());
+        assertEquals(property.getMaxItems().intValue(), 10);
+    }
+
+    @Test
+    public void shouldDeserializeArrayPropertyUniqueItems() throws Exception {
+        String content = ResourceUtils.loadClassResource(getClass(), "schema-validation/array.json");
+        ArrayProperty property = (ArrayProperty) m.readValue(content, Property.class);
+
+        assertNotNull(property.getUniqueItems());
+        assertTrue(property.getUniqueItems());
     }
 }
