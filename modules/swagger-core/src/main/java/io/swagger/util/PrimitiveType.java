@@ -245,7 +245,14 @@ public enum PrimitiveType {
     }
 
     public static PrimitiveType fromName(String name) {
-        return name == null ? null : NAMES.get(name);
+        if(name == null) {
+            return null;
+        }
+        PrimitiveType fromName = NAMES.get(name);
+        if(fromName == null) {
+            fromName = EXTERNAL_CLASSES.get(name);
+        }
+        return fromName;
     }
 
     public static Property createProperty(Type type) {
