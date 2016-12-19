@@ -1,4 +1,4 @@
-package io.swagger.reflection;
+package io.swagger.resources;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,7 +9,11 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 
 @ApiImplicitParams(value = {
-        @ApiImplicitParam
+        @ApiImplicitParam(
+                paramType = "header",
+                name = "myHeader",
+                dataType = "java.lang.String;"
+        )
 })
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
