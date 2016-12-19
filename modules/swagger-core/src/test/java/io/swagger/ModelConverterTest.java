@@ -301,6 +301,9 @@ public class ModelConverterTest {
         assertEquals(models.size(), 1);
 
         final Model model = models.get("ModelWithOffset");
+        Property property = model.getProperties().get("offset");
+        assertEquals(property.getType(), "string");
+        assertEquals(property.getFormat(), "date-time");
     }
 
     private void checkType(Property property, Class<?> cls, String type, String format) {
