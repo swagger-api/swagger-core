@@ -16,23 +16,17 @@
 
 package io.swagger.jaxrs;
 
+import com.fasterxml.classmate.MemberResolver;
+import com.fasterxml.classmate.ResolvedType;
+import com.fasterxml.classmate.ResolvedTypeWithMembers;
+import com.fasterxml.classmate.TypeResolver;
+import com.fasterxml.classmate.members.ResolvedMethod;
+import com.fasterxml.classmate.types.ResolvedArrayType;
+import com.fasterxml.classmate.types.ResolvedObjectType;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiKeyAuthDefinition;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
-import io.swagger.annotations.BasicAuthDefinition;
+import io.swagger.annotations.*;
 import io.swagger.annotations.Info;
-import io.swagger.annotations.OAuth2Definition;
-import io.swagger.annotations.ResponseHeader;
-import io.swagger.annotations.Scope;
-import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.config.DefaultReaderConfig;
 import io.swagger.jaxrs.config.ReaderConfig;
@@ -43,20 +37,10 @@ import io.swagger.jaxrs.utils.ReaderUtils;
 import io.swagger.models.Contact;
 import io.swagger.models.ExternalDocs;
 import io.swagger.models.License;
-import io.swagger.models.Model;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.Response;
-import io.swagger.models.Scheme;
-import io.swagger.models.SecurityRequirement;
-import io.swagger.models.Swagger;
+import io.swagger.models.*;
 import io.swagger.models.Tag;
 import io.swagger.models.auth.In;
-import io.swagger.models.parameters.FormParameter;
-import io.swagger.models.parameters.HeaderParameter;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.PathParameter;
-import io.swagger.models.parameters.QueryParameter;
+import io.swagger.models.parameters.*;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
@@ -76,17 +60,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.GenericArrayType;
+import java.util.*;
 
 public class Reader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
@@ -276,6 +252,10 @@ public class Reader {
             // parse the method
             final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
             Method methods[] = cls.getMethods();
+
+            // Create resolved methods
+            Map<Method, ResolvedMethod> resolvedMethods = getResolvedMethods(cls);
+
             for (Method method : methods) {
                 if (ReflectionUtils.isOverriddenMethod(method, cls)) {
                     continue;
@@ -295,7 +275,7 @@ public class Reader {
 
                     Operation operation = null;
                     if (apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) {
-                        operation = parseMethod(cls, method, globalParameters, classApiResponses);
+                        operation = parseMethod(cls, method, globalParameters, classApiResponses, resolvedMethods.get(method));
                     }
                     if (operation == null) {
                         continue;
@@ -405,6 +385,19 @@ public class Reader {
         }
 
         return swagger;
+    }
+
+    private Map<Method, ResolvedMethod> getResolvedMethods(Class<?> cls) {
+        TypeResolver typeResolver = new TypeResolver();
+        ResolvedType classType = typeResolver.resolve(cls);
+        MemberResolver memberResolver = new MemberResolver(typeResolver);
+        ResolvedTypeWithMembers classTypeWithMembers = memberResolver.resolve(classType, null, null);
+        ResolvedMethod[] classTypeMethodsArray = classTypeWithMembers.getMemberMethods();
+        Map<Method, ResolvedMethod> resolvedMethods = new HashMap<Method, ResolvedMethod>();
+        for (ResolvedMethod classTypeMethod : classTypeMethodsArray) {
+            resolvedMethods.put(classTypeMethod.getRawMember(), classTypeMethod);
+        }
+        return resolvedMethods;
     }
 
     private void readImplicitParameters(Method method, Operation operation) {
@@ -752,10 +745,11 @@ public class Reader {
     }
 
     public Operation parseMethod(Method method) {
-        return parseMethod(method.getDeclaringClass(), method, Collections.<Parameter>emptyList(), Collections.<ApiResponse>emptyList());
+        Map<Method, ResolvedMethod> resolvedMethods = getResolvedMethods(method.getDeclaringClass());
+        return parseMethod(method.getDeclaringClass(), method, Collections.<Parameter>emptyList(), Collections.<ApiResponse>emptyList(), resolvedMethods.get(method));
     }
 
-    private Operation parseMethod(Class<?> cls, Method method, List<Parameter> globalParameters, List<ApiResponse> classApiResponses) {
+    private Operation parseMethod(Class<?> cls, Method method, List<Parameter> globalParameters, List<ApiResponse> classApiResponses, ResolvedMethod resolvedMethod) {
         Operation operation = new Operation();
 
         ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
@@ -829,7 +823,22 @@ public class Reader {
         } else if (responseType == null) {
             // pick out response from method declaration
             LOGGER.debug("picking up response class from method " + method);
+
             responseType = method.getGenericReturnType();
+
+            // Use classmate's resolvedMethod if available for finding out return type
+            // (this way generic return parameter's actual type will be picked up as well)
+            if (method.getGenericReturnType() != null && method.getGenericReturnType() instanceof TypeVariable
+                    && resolvedMethod != null && resolvedMethod.getReturnType() != null
+                    && resolvedMethod.getReturnType() instanceof ResolvedObjectType) {
+                responseType = ((ResolvedObjectType) resolvedMethod.getReturnType()).getErasedType();
+            } else if (method.getGenericReturnType() != null && method.getGenericReturnType() instanceof GenericArrayType
+                    && resolvedMethod != null && resolvedMethod.getReturnType() != null
+                    && resolvedMethod.getReturnType() instanceof ResolvedArrayType) {
+                responseType = ((ResolvedArrayType) resolvedMethod.getReturnType()).getErasedType();
+            }
+
+            LOGGER.debug("response class of method " + method + " is " + responseType);
         }
         if (isValidResponse(responseType)) {
             final Property property = ModelConverters.getInstance().readAsProperty(responseType);

@@ -6,55 +6,10 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.DefaultReaderConfig;
-import io.swagger.models.ArrayModel;
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.RefModel;
-import io.swagger.models.Response;
-import io.swagger.models.Swagger;
-import io.swagger.models.Tag;
-import io.swagger.models.TestEnum;
-import io.swagger.models.parameters.BodyParameter;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.PathParameter;
-import io.swagger.models.parameters.QueryParameter;
-import io.swagger.models.parameters.SerializableParameter;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.IntegerProperty;
-import io.swagger.models.properties.MapProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
-import io.swagger.models.properties.StringProperty;
-import io.swagger.resources.ClassWithExamplePost;
-import io.swagger.resources.HiddenResource;
-import io.swagger.resources.NicknamedOperation;
-import io.swagger.resources.NotValidRootResource;
-import io.swagger.resources.Resource1041;
-import io.swagger.resources.Resource1073;
-import io.swagger.resources.Resource1085;
-import io.swagger.resources.Resource653;
-import io.swagger.resources.Resource841;
-import io.swagger.resources.Resource877;
-import io.swagger.resources.Resource937;
-import io.swagger.resources.ResourceWithApiOperationCode;
-import io.swagger.resources.ResourceWithApiResponseResponseContainer;
-import io.swagger.resources.ResourceWithBodyParams;
-import io.swagger.resources.ResourceWithCustomHTTPMethodAnnotations;
-import io.swagger.resources.ResourceWithEmptyModel;
-import io.swagger.resources.ResourceWithEnums;
-import io.swagger.resources.ResourceWithInnerClass;
-import io.swagger.resources.ResourceWithMapReturnValue;
-import io.swagger.resources.ResourceWithRanges;
-import io.swagger.resources.ResourceWithResponse;
-import io.swagger.resources.ResourceWithResponseHeaders;
-import io.swagger.resources.ResourceWithTypedResponses;
-import io.swagger.resources.ResourceWithVoidReturns;
-import io.swagger.resources.SimpleResource;
-import io.swagger.resources.SimpleResourceWithoutAnnotations;
-import io.swagger.resources.SimpleSelfReferencingSubResource;
-import io.swagger.resources.TaggedResource;
+import io.swagger.models.*;
+import io.swagger.models.parameters.*;
+import io.swagger.models.properties.*;
+import io.swagger.resources.*;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -348,6 +303,74 @@ public class SimpleReaderTest {
         assertEquals(param2.getName(), "limit");
         assertFalse(param2.getRequired());
         assertNull(param2.getDescription());
+    }
+
+    @Test(description = "scan a simple resource inheritance without annotations")
+    public void scanSimpleResourceInheritanceWithoutAnnotations() {
+        DefaultReaderConfig config = new DefaultReaderConfig();
+        config.setScanAllResources(true);
+        Swagger swagger = new Reader(new Swagger(), config).read(SimpleResourceInheritanceSubWithoutAnnotations.class);
+        assertEquals(swagger.getPaths().size(), 3);
+
+        Operation get = getGet(swagger, "/{id}");
+        assertNotNull(get);
+        assertEquals(get.getParameters().size(), 2);
+
+        PathParameter param1 = (PathParameter) get.getParameters().get(0);
+        assertEquals(param1.getIn(), "path");
+        assertEquals(param1.getName(), "id");
+        assertTrue(param1.getRequired());
+        assertNull(param1.getDescription());
+        assertEquals(param1.getDefaultValue(), "5");
+
+        Parameter param2 = get.getParameters().get(1);
+        assertEquals(param2.getIn(), "query");
+        assertEquals(param2.getName(), "limit");
+        assertFalse(param2.getRequired());
+        assertNull(param2.getDescription());
+
+        assertEquals(get.getResponses().size(), 1);
+        assertEquals(get.getResponses().get("200").getSchema().getType(), "ref");
+
+        Operation getArray = getGet(swagger, "/");
+        assertNotNull(getArray);
+
+        assertEquals(getArray.getResponses().size(), 1);
+        assertEquals(getArray.getResponses().get("200").getSchema().getType(), "array");
+    }
+
+    @Test(description = "scan a simple resource inheritance without annotations")
+    public void scanSimpleResourceDeeperInheritanceWithoutAnnotations() {
+        DefaultReaderConfig config = new DefaultReaderConfig();
+        config.setScanAllResources(true);
+        Swagger swagger = new Reader(new Swagger(), config).read(SimpleResourceInheritanceSubSubWithoutAnnotations.class);
+        assertEquals(swagger.getPaths().size(), 3);
+
+        Operation get = getGet(swagger, "/{id}");
+        assertNotNull(get);
+        assertEquals(get.getParameters().size(), 2);
+
+        PathParameter param1 = (PathParameter) get.getParameters().get(0);
+        assertEquals(param1.getIn(), "path");
+        assertEquals(param1.getName(), "id");
+        assertTrue(param1.getRequired());
+        assertNull(param1.getDescription());
+        assertEquals(param1.getDefaultValue(), "5");
+
+        Parameter param2 = get.getParameters().get(1);
+        assertEquals(param2.getIn(), "query");
+        assertEquals(param2.getName(), "limit");
+        assertFalse(param2.getRequired());
+        assertNull(param2.getDescription());
+
+        assertEquals(get.getResponses().size(), 1);
+        assertEquals(get.getResponses().get("200").getSchema().getType(), "ref");
+
+        Operation getArray = getGet(swagger, "/");
+        assertNotNull(getArray);
+
+        assertEquals(getArray.getResponses().size(), 1);
+        assertEquals(getArray.getResponses().get("200").getSchema().getType(), "array");
     }
 
     @Test(description = "scan a simple self-referencing subresource")
