@@ -79,6 +79,9 @@ public class ParameterProcessor {
             if (helper.isRequired() != null) {
                 p.setRequired(true);
             }
+            if(helper.getFormat() != null) {
+                p.setFormat(helper.getFormat());
+            }
 
             AllowableValues allowableValues = AllowableValuesUtils.create(param.getAllowableValues());
 
@@ -251,6 +254,8 @@ public class ParameterProcessor {
         boolean isHidden();
 
         String getExample();
+
+        String getFormat();
     }
 
     /**
@@ -261,6 +266,7 @@ public class ParameterProcessor {
         private static final ApiParam DEFAULT_API_PARAM = getDefaultApiParam(null);
         private boolean context;
         private ParamWrapper<?> apiParam = new ApiParamWrapper(DEFAULT_API_PARAM);
+        private String format;
         private String defaultValue;
         private Integer minItems;
         private Integer maxItems;
@@ -301,6 +307,7 @@ public class ParameterProcessor {
                 }
             }
             defaultValue = StringUtils.isNotEmpty(apiParam.getDefaultValue()) ? apiParam.getDefaultValue() : rsDefault;
+            format = StringUtils.isNotEmpty(apiParam.getFormat()) ? apiParam.getFormat() : null;
         }
 
         /**
@@ -365,6 +372,10 @@ public class ParameterProcessor {
 
         public Long getMin() {
             return min;
+        }
+
+        public String getFormat() {
+            return format;
         }
     }
 
@@ -440,13 +451,13 @@ public class ParameterProcessor {
             return apiParam.example();
         }
 
-        ;
-
         public Example getExamples() {
             return apiParam.examples();
         }
 
-        ;
+        public String getFormat() {
+            return apiParam.format();
+        }
     }
 
     /**
@@ -522,6 +533,10 @@ public class ParameterProcessor {
 
         public Example getExamples() {
             return apiParam.examples();
+        }
+
+        public String getFormat() {
+            return null;
         }
     }
 }

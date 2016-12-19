@@ -110,4 +110,13 @@ public @interface ApiParam {
      * @return
      */
     Example examples() default @Example(value = @ExampleProperty(mediaType = "", value = ""));
+
+    /**
+     * Adds the ability to provide a custom format
+     *
+     * @since 1.5.11
+     *
+     * @return
+     */
+    String format() default "";
 }
