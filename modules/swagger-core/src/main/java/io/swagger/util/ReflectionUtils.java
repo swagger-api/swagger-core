@@ -185,6 +185,12 @@ public class ReflectionUtils {
     public static <A extends Annotation> A getAnnotation(Method method, Class<A> annotationClass) {
         A annotation = method.getAnnotation(annotationClass);
         if (annotation == null) {
+            for (Annotation metaAnnotation : method.getAnnotations()) {
+                annotation = metaAnnotation.annotationType().getAnnotation(annotationClass);
+                if (annotation != null) {
+                    return annotation;
+                }
+            }
             Method superclassMethod = getOverriddenMethod(method);
             if (superclassMethod != null) {
                 annotation = getAnnotation(superclassMethod, annotationClass);
