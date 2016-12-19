@@ -79,6 +79,9 @@ public class ParameterProcessor {
             if (helper.isRequired() != null) {
                 p.setRequired(true);
             }
+            if(helper.getType() != null) {
+                p.setType(helper.getType());
+            }
             if(helper.getFormat() != null) {
                 p.setFormat(helper.getFormat());
             }
@@ -255,6 +258,8 @@ public class ParameterProcessor {
 
         String getExample();
 
+        String getType();
+
         String getFormat();
     }
 
@@ -266,6 +271,7 @@ public class ParameterProcessor {
         private static final ApiParam DEFAULT_API_PARAM = getDefaultApiParam(null);
         private boolean context;
         private ParamWrapper<?> apiParam = new ApiParamWrapper(DEFAULT_API_PARAM);
+        private String type;
         private String format;
         private String defaultValue;
         private Integer minItems;
@@ -307,6 +313,7 @@ public class ParameterProcessor {
                 }
             }
             defaultValue = StringUtils.isNotEmpty(apiParam.getDefaultValue()) ? apiParam.getDefaultValue() : rsDefault;
+            type = StringUtils.isNotEmpty(apiParam.getType()) ? apiParam.getType() : null;
             format = StringUtils.isNotEmpty(apiParam.getFormat()) ? apiParam.getFormat() : null;
         }
 
@@ -372,6 +379,10 @@ public class ParameterProcessor {
 
         public Long getMin() {
             return min;
+        }
+
+        public String getType() {
+            return type;
         }
 
         public String getFormat() {
@@ -455,6 +466,10 @@ public class ParameterProcessor {
             return apiParam.examples();
         }
 
+        public String getType() {
+            return apiParam.type();
+        }
+
         public String getFormat() {
             return apiParam.format();
         }
@@ -535,8 +550,12 @@ public class ParameterProcessor {
             return apiParam.examples();
         }
 
+        public String getType() {
+            return apiParam.type();
+        }
+
         public String getFormat() {
-            return null;
+            return apiParam.format();
         }
     }
 }

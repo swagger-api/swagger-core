@@ -127,4 +127,23 @@ public @interface ApiImplicitParam {
      * @return
      */
     Example examples() default @Example(value = @ExampleProperty(mediaType = "", value = ""));
+
+    /**
+     * Adds the ability to override the detected type
+     *
+     * @since 1.5.11
+     *
+     * @return
+     */
+    String type() default "";
+
+    /**
+     * Adds the ability to provide a custom format
+     *
+     * @since 1.5.11
+     *
+     * @return
+     */
+    String format() default "";
+
 }
