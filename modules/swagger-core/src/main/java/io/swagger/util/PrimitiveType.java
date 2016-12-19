@@ -200,7 +200,8 @@ public enum PrimitiveType {
         final Map<String, PrimitiveType> externalClasses = new HashMap<String, PrimitiveType>();
         addKeys(externalClasses, DATE, "org.joda.time.LocalDate", "java.time.LocalDate");
         addKeys(externalClasses, DATE_TIME, "org.joda.time.DateTime", "org.joda.time.ReadableDateTime",
-                "javax.xml.datatype.XMLGregorianCalendar", "java.time.LocalDateTime", "java.time.ZonedDateTime");
+                "javax.xml.datatype.XMLGregorianCalendar", "java.time.LocalDateTime", "java.time.ZonedDateTime",
+                "java.time.OffsetDateTime");
         addKeys(externalClasses, LONG, "java.time.Instant");                
         EXTERNAL_CLASSES = Collections.unmodifiableMap(externalClasses);
 
@@ -244,7 +245,14 @@ public enum PrimitiveType {
     }
 
     public static PrimitiveType fromName(String name) {
-        return name == null ? null : NAMES.get(name);
+        if(name == null) {
+            return null;
+        }
+        PrimitiveType fromName = NAMES.get(name);
+        if(fromName == null) {
+            fromName = EXTERNAL_CLASSES.get(name);
+        }
+        return fromName;
     }
 
     public static Property createProperty(Type type) {
