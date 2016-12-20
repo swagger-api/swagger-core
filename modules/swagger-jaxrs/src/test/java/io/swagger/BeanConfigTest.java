@@ -1,5 +1,6 @@
 package io.swagger;
 
+import com.splitresourcesTestImpl.SplitResourceImpl;
 import com.subresourcesTest.RootResource;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Scheme;
@@ -16,7 +17,8 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 public class BeanConfigTest {
-    private final Set expectedKeys = new HashSet<String>(Arrays.asList("/packageA", "/packageB"));
+	
+    private final Set<?> expectedKeys = new HashSet<String>(Arrays.asList("/packageA", "/packageB"));
     private final Set<Scheme> expectedSchemas = EnumSet.of(Scheme.HTTP, Scheme.HTTPS);
 
     private BeanConfig createBeanConfig(String rp) {
@@ -60,5 +62,16 @@ public class BeanConfigTest {
 
         assertEquals(classes.size(), 1, "BeanConfig should only pick up the root resource because it has a @Path annotation at the class level");
         assertTrue(classes.contains(RootResource.class));
+    }
+
+    @Test
+    public void testBeanConfigScansSplitResourcesAnnoatedWithPathAndApi() throws Exception {
+        BeanConfig bc = new BeanConfig();
+        bc.setResourcePackage("com.splitresourcesTestImpl");
+
+        Set<Class<?>> classes = bc.classes();
+
+        assertEquals(classes.size(), 1, "BeanConfig should pick up implementations annotated with @Api that have a superinterface with @Path");
+        assertTrue(classes.contains(SplitResourceImpl.class));
     }
 }

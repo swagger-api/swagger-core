@@ -1,16 +1,16 @@
 package io.swagger;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-
-import org.testng.annotations.Test;
 import io.swagger.models.Operation;
 import io.swagger.models.Response;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.util.Json;
+import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 public class MapPropertyDeserializerTest {
   private static final String json = "{" +
@@ -39,7 +39,7 @@ public class MapPropertyDeserializerTest {
       "}";
 
   @Test(description = "it should deserialize a response per #1349")
-  public void testMapDerserilization () throws Exception {
+  public void testMapDeserialization () throws Exception {
 
       Operation operation = Json.mapper().readValue(json, Operation.class);
       Response response = operation.getResponses().get("200");
@@ -54,7 +54,7 @@ public class MapPropertyDeserializerTest {
   }
 
   @Test(description = "vendor extensions should be included with object type")
-  public void testMapDeserilizationVendorExtensions () throws Exception {
+  public void testMapDeserializationVendorExtensions () throws Exception {
     Operation operation = Json.mapper().readValue(json, Operation.class);
     Response response = operation.getResponses().get("200");
     assertNotNull(response);

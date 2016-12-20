@@ -1,12 +1,6 @@
 package io.swagger;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
-
+import com.google.common.collect.ImmutableSet;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
@@ -17,14 +11,15 @@ import io.swagger.models.EmptyModel;
 import io.swagger.models.JacksonReadonlyModel;
 import io.swagger.models.JodaDateTimeModel;
 import io.swagger.models.Model;
+import io.swagger.models.Model1155;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.ModelPropertyName;
-import io.swagger.models.Model1155;
 import io.swagger.models.ModelWithAltPropertyName;
 import io.swagger.models.ModelWithApiModel;
 import io.swagger.models.ModelWithEnumArray;
 import io.swagger.models.ModelWithFormattedStrings;
 import io.swagger.models.ModelWithNumbers;
+import io.swagger.models.ModelWithOffset;
 import io.swagger.models.ModelWithTuple2;
 import io.swagger.models.Person;
 import io.swagger.models.composition.AbstractModelWithApiModel;
@@ -43,9 +38,6 @@ import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.util.Json;
 import io.swagger.util.ResourceUtils;
-
-import com.google.common.collect.ImmutableSet;
-
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -58,6 +50,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.UUID;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 public class ModelConverterTest {
 
@@ -296,6 +295,17 @@ public class ModelConverterTest {
         checkModel(Json.mapper().readValue(Json.pretty(model), Model.class));
     }
 
+    @Test(description = "it tests a model with java offset")
+    public void scanModelWithOffset() throws IOException {
+        final Map<String, Model> models = readAll(ModelWithOffset.class);
+        assertEquals(models.size(), 1);
+
+        final Model model = models.get("ModelWithOffset");
+        Property property = model.getProperties().get("offset");
+        assertEquals(property.getType(), "string");
+        assertEquals(property.getFormat(), "date-time");
+    }
+
     private void checkType(Property property, Class<?> cls, String type, String format) {
         assertTrue(cls.isInstance(property));
         assertEquals(property.getType(), type);
@@ -362,16 +372,16 @@ public class ModelConverterTest {
         SerializationMatchers.assertEqualsToJson(model, json);
     }
 
-class DateModel {
-    @ApiModelProperty(position = 1)
-    public Date date;
-    @ApiModelProperty(position=2)
-    public int intValue;
-    @ApiModelProperty(position=3)
-    public Long longValue;
-    @ApiModelProperty(position=4)
-    public Float floatValue;
-    @ApiModelProperty(position=5)
-    public Double doubleValue;
-}
+    class DateModel {
+        @ApiModelProperty(position = 1)
+        public Date date;
+        @ApiModelProperty(position=2)
+        public int intValue;
+        @ApiModelProperty(position=3)
+        public Long longValue;
+        @ApiModelProperty(position=4)
+        public Float floatValue;
+        @ApiModelProperty(position=5)
+        public Double doubleValue;
+    }
 }

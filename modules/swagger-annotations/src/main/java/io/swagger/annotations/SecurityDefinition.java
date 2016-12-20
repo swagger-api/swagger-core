@@ -20,16 +20,28 @@ public @interface SecurityDefinition {
     OAuth2Definition[] oAuth2Definitions() default {};
 
     /**
+     * @deprecated Use {@link #apiKeyAuthDefinitions()} instead
+     */
+    @Deprecated
+    ApiKeyAuthDefinition[] apiKeyAuthDefintions() default {};
+
+    /**
      * API Key security definition objects
      *
      * @return API Key security definition objects
      */
-    ApiKeyAuthDefinition[] apiKeyAuthDefintions() default {};
+    ApiKeyAuthDefinition[] apiKeyAuthDefinitions() default {};
+
+    /**
+     * @deprecated Use {@link #basicAuthDefinitions()} instead
+     */
+    @Deprecated
+    BasicAuthDefinition[] basicAuthDefinions() default {};
 
     /**
      * Basic auth security definition objects
      *
      * @return basic auth security definition objects
      */
-    BasicAuthDefinition[] basicAuthDefinions() default {};
+    BasicAuthDefinition[] basicAuthDefinitions() default {};
 }

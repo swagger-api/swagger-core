@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +13,7 @@ public class SecurityRequirement {
     private String name;
     private List<String> scopes;
 //    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
-    private Map<String, List<String>> requirements = new HashMap<String, List<String>>();
+    private Map<String, List<String>> requirements = new LinkedHashMap<String, List<String>>();
 
     public SecurityRequirement() {
     }
@@ -30,7 +30,7 @@ public class SecurityRequirement {
 
     public SecurityRequirement requirement(String name, List<String> scopes) {
         if(requirements == null) {
-            requirements = new HashMap<String, List<String>>();
+            requirements = new LinkedHashMap<String, List<String>>();
         }
 
         if(scopes == null) {

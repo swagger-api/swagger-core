@@ -3,7 +3,7 @@ package io.swagger.models;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -20,7 +20,7 @@ public class ExternalDocs {
      */
     private String url;
 
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
 
     public ExternalDocs() {
     }
@@ -66,6 +66,10 @@ public class ExternalDocs {
         if (name.startsWith("x-")) {
             vendorExtensions.put(name, value);
         }
+    }
+
+    public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
     }
 
     @Override

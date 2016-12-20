@@ -565,6 +565,10 @@ public class PropertyBuilder {
                         final Integer value = PropertyId.MAX_ITEMS.findValue(args);
                         resolved.setMaxItems(value);
                     }
+                    if (args.containsKey(PropertyId.UNIQUE_ITEMS)) {
+                        final Boolean value = PropertyId.UNIQUE_ITEMS.findValue(args);
+                        resolved.setUniqueItems(value);
+                    }
                 }
 
                 return property;
@@ -776,7 +780,7 @@ public class PropertyBuilder {
                               catch(Exception e) {
                                 // continue
                               }
-                            }                            
+                            }
                         }
                         if(property instanceof LongProperty) {
                           LongProperty p = (LongProperty) property;
@@ -787,7 +791,7 @@ public class PropertyBuilder {
                             catch(Exception e) {
                               // continue
                             }
-                          }                            
+                          }
                         }
                         if(property instanceof DoubleProperty) {
                             DoubleProperty p = (DoubleProperty) property;
@@ -798,7 +802,7 @@ public class PropertyBuilder {
                               catch(Exception e) {
                                 // continue
                               }
-                            }                            
+                            }
                         }
                         if(property instanceof FloatProperty) {
                           FloatProperty p = (FloatProperty) property;
@@ -809,7 +813,7 @@ public class PropertyBuilder {
                             catch(Exception e) {
                               // continue
                             }
-                          }                            
+                          }
                        }
                        if(property instanceof DateProperty) {
                           DateProperty p = (DateProperty) property;
@@ -820,7 +824,7 @@ public class PropertyBuilder {
                             catch(Exception e) {
                               // continue
                             }
-                          }                            
+                          }
                        }
                        if(property instanceof DateTimeProperty) {
                          DateTimeProperty p = (DateTimeProperty) property;
@@ -831,7 +835,7 @@ public class PropertyBuilder {
                            catch(Exception e) {
                              // continue
                            }
-                         }                            
+                         }
                        }
                        if(property instanceof UUIDProperty) {
                          UUIDProperty p = (UUIDProperty) property;
@@ -842,7 +846,7 @@ public class PropertyBuilder {
                            catch(Exception e) {
                              // continue
                            }
-                         }                            
+                         }
                        }
                     }
                 }
