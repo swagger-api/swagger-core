@@ -5,12 +5,12 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import io.swagger.models.parameters.Parameter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Operation {
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
     private List<String> tags;
     private String summary;
     private String description;
@@ -220,7 +220,7 @@ public class Operation {
 
     public void addResponse(String key, Response response) {
         if (this.responses == null) {
-            this.responses = new HashMap<String, Response>();
+            this.responses = new LinkedHashMap<String, Response>();
         }
         this.responses.put(key, response);
     }
@@ -237,7 +237,7 @@ public class Operation {
         if (this.security == null) {
             this.security = new ArrayList<Map<String, List<String>>>();
         }
-        Map<String, List<String>> req = new HashMap<String, List<String>>();
+        Map<String, List<String>> req = new LinkedHashMap<String, List<String>>();
         if (scopes == null) {
             scopes = new ArrayList<String>();
         }
@@ -275,6 +275,10 @@ public class Operation {
         if (name.startsWith("x-")) {
             vendorExtensions.put(name, value);
         }
+    }
+
+    public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
     }
 
     @Override

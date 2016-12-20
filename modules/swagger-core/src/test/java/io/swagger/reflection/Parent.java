@@ -3,6 +3,7 @@ package io.swagger.reflection;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponses;
 
+@IndirectAnnotation
 public class Parent<T extends Number> {
 
     public T parametrizedMethod1(T arg) {

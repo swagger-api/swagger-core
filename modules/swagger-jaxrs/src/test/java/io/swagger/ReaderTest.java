@@ -1,6 +1,7 @@
 package io.swagger;
 
 import io.swagger.jaxrs.Reader;
+import io.swagger.models.ExternalDocs;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
@@ -170,6 +171,20 @@ public class ReaderTest {
         final Swagger swagger = new Reader(new Swagger()).read(AnnotatedInterfaceImpl.class);
         assertNotNull(swagger);
         assertNotNull(swagger.getPath("/v1/users/{id}").getGet());
+    }
+
+    @Test(description = "scan indirect implicit params from interface")
+    public void scanImplicitParamInterfaceTest() {
+        final Swagger swagger = new Reader(new Swagger()).read(IndirectImplicitParamsImpl.class);
+        assertNotNull(swagger);
+        assertEquals(swagger.getPath("/v1/users/{id}").getGet().getParameters().size(), 2);
+    }
+
+    @Test(description = "scan indirect implicit params from overridden method")
+    public void scanImplicitParamOverriddenMethodTest() {
+        final Swagger swagger = new Reader(new Swagger()).read(IndirectImplicitParamsImpl.class);
+        assertNotNull(swagger);
+        assertEquals(swagger.getPath("/v1/users").getPost().getParameters().size(), 2);
     }
 
     @Test(description = "scan implicit params")
@@ -360,6 +375,19 @@ public class ReaderTest {
 
         PathParameter parameter = (PathParameter)swagger.getPath("/v1/{param1}").getGet().getParameters().get(0);
         assertEquals(parameter.getType(), "number");
+    }
+
+    @Test(description = "scan external docs on method")
+    public void scanExternalDocsOnMethod() {
+        Swagger swagger = getSwagger(ResourceWithExternalDocs.class);
+
+        ExternalDocs externalDocsForGet = swagger.getPath("/testString").getGet().getExternalDocs();
+        assertNull(externalDocsForGet);
+
+        ExternalDocs externalDocsForPost = swagger.getPath("/testString").getPost().getExternalDocs();
+        assertNotNull(externalDocsForPost);
+        assertEquals("Test Description", externalDocsForPost.getDescription());
+        assertEquals("https://swagger.io/", externalDocsForPost.getUrl());
     }
 
     private Swagger getSwagger(Class<?> cls) {

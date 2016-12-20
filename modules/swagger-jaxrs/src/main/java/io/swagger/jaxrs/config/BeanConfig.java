@@ -1,5 +1,25 @@
 package io.swagger.jaxrs.config;
 
+import java.lang.annotation.Annotation;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.servlet.ServletConfig;
+import javax.ws.rs.Path;
+
+import org.apache.commons.lang3.StringUtils;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.reflect.TypeToken;
+
+import io.swagger.annotations.Api;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.config.FilterFactory;
 import io.swagger.config.Scanner;
@@ -11,19 +31,6 @@ import io.swagger.models.Info;
 import io.swagger.models.License;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
-import org.apache.commons.lang3.StringUtils;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletConfig;
-import java.util.HashSet;
-import java.util.Set;
 
 public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(BeanConfig.class);
@@ -268,8 +275,24 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
 
         final Reflections reflections = new Reflections(config);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(javax.ws.rs.Path.class);
-        classes.addAll(reflections.getTypesAnnotatedWith(SwaggerDefinition.class));
-
+        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(SwaggerDefinition.class);
+				classes.addAll(typesAnnotatedWith);
+        
+        /*
+         * Find concrete types annotated with @Api, but with a supertype annotated with @Path.
+         * This would handle split resources where the interface has jax-rs annotations
+         * and the implementing class has Swagger annotations 
+         */
+        for (Class<?> cls : reflections.getTypesAnnotatedWith(Api.class)) {
+        	for (Class<?> intfc : TypeToken.of(cls).getTypes().interfaces().rawTypes()) {
+        		Annotation ann = intfc.getAnnotation(javax.ws.rs.Path.class);
+        		if (ann != null) {
+        			classes.add(cls);
+        			break;
+        		}
+					}
+				}
+        
         Set<Class<?>> output = new HashSet<Class<?>>();
         for (Class<?> cls : classes) {
             if (allowAllPackages) {
@@ -284,7 +307,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         }
         return output;
     }
-
+       
     private void updateInfoFromConfig() {
         info = getSwagger().getInfo();
         if (info == null) {

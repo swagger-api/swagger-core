@@ -7,7 +7,6 @@ import io.swagger.models.auth.SecuritySchemeDefinition;
 import io.swagger.models.parameters.Parameter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,7 +138,7 @@ public class Swagger {
 
     public Swagger vendorExtension(String key, Object extension) {
         if(this.vendorExtensions == null) {
-            this.vendorExtensions = new HashMap<String, Object>();
+            this.vendorExtensions = new LinkedHashMap<String, Object>();
         }
         this.vendorExtensions.put(key, extension);
         return this;
@@ -281,7 +280,7 @@ public class Swagger {
 
     public void addSecurityDefinition(String name, SecuritySchemeDefinition securityDefinition) {
         if (this.securityDefinitions == null) {
-            this.securityDefinitions = new HashMap<String, SecuritySchemeDefinition>();
+            this.securityDefinitions = new LinkedHashMap<String, SecuritySchemeDefinition>();
         }
         this.securityDefinitions.put(name, securityDefinition);
     }
@@ -338,7 +337,7 @@ public class Swagger {
 
     public void addDefinition(String key, Model model) {
         if (this.definitions == null) {
-            this.definitions = new HashMap<String, Model>();
+            this.definitions = new LinkedHashMap<String, Model>();
         }
         this.definitions.put(key, model);
     }
@@ -360,7 +359,7 @@ public class Swagger {
 
     public void addParameter(String key, Parameter parameter) {
         if (this.parameters == null) {
-            this.parameters = new HashMap<String, Parameter>();
+            this.parameters = new LinkedHashMap<String, Parameter>();
         }
         this.parameters.put(key, parameter);
     }
@@ -542,10 +541,14 @@ public class Swagger {
         }
 
         if( this.vendorExtensions == null ){
-            this.vendorExtensions = new HashMap<String, Object>();
+            this.vendorExtensions = new LinkedHashMap<String, Object>();
         }
 
         this.vendorExtensions.putAll( vendorExtensions );
         return this;
+    }
+
+    public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
     }
 }

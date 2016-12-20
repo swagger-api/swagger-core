@@ -133,6 +133,7 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension {
             for (final BeanPropertyDefinition propDef : properties) {
                 final AnnotatedField field = propDef.getField();
                 final AnnotatedMethod setter = propDef.getSetter();
+                final AnnotatedMethod getter = propDef.getGetter();
                 final List<Annotation> paramAnnotations = new ArrayList<Annotation>();
                 final Iterator<SwaggerExtension> extensions = SwaggerExtensions.chain();
                 Type paramType = null;
@@ -156,6 +157,20 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension {
                     }
 
                     for (final Annotation fieldAnnotation : setter.annotations()) {
+                        if (!paramAnnotations.contains(fieldAnnotation)) {
+                            paramAnnotations.add(fieldAnnotation);
+                        }
+                    }
+                }
+                
+                // Gather the getter's details but only the ones we need
+                if (getter != null) {
+                    // Do not set the param class/type from the getter if the values are already identified
+                    if (paramType == null) {
+                        paramType = getter.getGenericReturnType();
+                    }
+
+                    for (final Annotation fieldAnnotation : getter.annotations()) {
                         if (!paramAnnotations.contains(fieldAnnotation)) {
                             paramAnnotations.add(fieldAnnotation);
                         }
