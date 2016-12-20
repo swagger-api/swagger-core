@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import io.swagger.models.Xml;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class AbstractProperty implements Property, Cloneable {
@@ -19,7 +19,7 @@ public abstract class AbstractProperty implements Property, Cloneable {
     String title;
     Boolean readOnly;
     private String access;
-    private Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
 
     @Override
     public Property rename(String newName) {

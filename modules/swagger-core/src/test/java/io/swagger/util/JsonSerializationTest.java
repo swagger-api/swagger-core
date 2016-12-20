@@ -64,6 +64,6 @@ public class JsonSerializationTest {
                 .security(new SecurityRequirement().requirement("api_key").requirement("basic_auth"))
                 .security(new SecurityRequirement().requirement("oauth2", Arrays.asList("hello", "world")));
         json = Json.mapper().writeValueAsString(swagger);
-        assertEquals(json, "{\"swagger\":\"2.0\",\"security\":[{\"basic_auth\":[],\"api_key\":[]},{\"oauth2\":[\"hello\",\"world\"]}]}");
+        assertEquals(json, "{\"swagger\":\"2.0\",\"security\":[{\"api_key\":[],\"basic_auth\":[]},{\"oauth2\":[\"hello\",\"world\"]}]}");
     }
 }
