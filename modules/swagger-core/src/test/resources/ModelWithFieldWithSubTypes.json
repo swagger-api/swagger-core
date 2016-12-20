@@ -46,8 +46,7 @@
             "description": "Thing1 has an additional field"
           }
         },
-        "description": "Shake hands with Thing1",
-        "parent": "io.swagger.models.composition.AbstractBaseModelWithSubTypes"
+        "description": "Shake hands with Thing1"
       }
     ]
   },
@@ -68,8 +67,7 @@
             "description": "Thing2 has an additional field"
           }
         },
-        "description": "and Thing2",
-        "parent": "io.swagger.models.composition.AbstractBaseModelWithSubTypes"
+        "description": "and Thing2"
       }
     ]
   }

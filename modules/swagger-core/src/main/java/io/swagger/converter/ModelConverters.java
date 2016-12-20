@@ -19,7 +19,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ModelConverters {
     private static final ModelConverters SINGLETON = new ModelConverters();
-    public static final String PARENT_VENDOR_EXTENSION = "parent";
     static Logger LOGGER = LoggerFactory.getLogger(ModelConverters.class);
     private final List<ModelConverter> converters;
     private final Set<String> skippedPackages = new HashSet<String>();
@@ -94,18 +93,17 @@ public class ModelConverters {
     private void defineInheritance(ModelConverterContextImpl context, Map<String, Model> definedModels) {
         for (String key : definedModels.keySet()) {
             Model childModel = definedModels.get(key);
-            Class parent = (Class) childModel.getVendorExtensions().get(PARENT_VENDOR_EXTENSION);
-            if(parent != null) {
-                String parentName = parent.getSimpleName();
-                Model parentModel = definedModels.get(parentName);
 
-                if(childModel instanceof ModelImpl){
+            if (childModel instanceof ModelImpl) {
+                final ModelImpl impl = (ModelImpl) childModel;
+                Class parent = impl.getParent();
 
-                    final ModelImpl impl = (ModelImpl) childModel;
-                    final Model model = parentModel;
+                if (parent != null) {
+                    String parentName = parent.getSimpleName();
+                    Model parentModel = definedModels.get(parentName);
 
                     // remove shared properties defined in the parent
-                    removeParentPropertiesFromChild(impl, model, definedModels);
+                    removeParentPropertiesFromChild(childModel, parentModel, definedModels);
 
                     impl.setDiscriminator(null);
                     ComposedModel child = new ComposedModel().parent(new RefModel(parentName)).child(impl);
@@ -121,14 +119,16 @@ public class ModelConverters {
             unresolvedParents = Sets.newHashSet();
             for (String key : definedModels.keySet()) {
                 Model childModel = definedModels.get(key);
-                Class parent = (Class) childModel.getVendorExtensions().get(PARENT_VENDOR_EXTENSION);
-                if (parent != null) {
-                    String parentName = parent.getSimpleName();
-                    Model parentModel = definedModels.get(parentName);
+                if(childModel instanceof ModelImpl) {
+                    Class parent = ((ModelImpl)childModel).getParent();
+                    if (parent != null) {
+                        String parentName = parent.getSimpleName();
+                        Model parentModel = definedModels.get(parentName);
 
-                    if (parentModel == null) {
-                        // Parent was not defined as a model
-                        unresolvedParents.add(parent);
+                        if (parentModel == null) {
+                            // Parent was not defined as a model
+                            unresolvedParents.add(parent);
+                        }
                     }
                 }
             }
@@ -154,12 +154,16 @@ public class ModelConverters {
                 }
             }
 
-            if (parent.getVendorExtensions().containsKey(PARENT_VENDOR_EXTENSION)) {
-                Class nextParentClass = (Class) parent.getVendorExtensions().get(PARENT_VENDOR_EXTENSION);
-                String nextParentName = nextParentClass.getSimpleName();
-                Model nextParent = definedModels.get(nextParentName);
+            if (parent instanceof ModelImpl) {
+                ModelImpl parentImpl = (ModelImpl) parent;
+                if (parentImpl.getParent() != null) {
+                    Class nextParentClass = parentImpl.getParent();
+                    String nextParentName = nextParentClass.getSimpleName();
+                    Model nextParent = definedModels.get(nextParentName);
 
-                removeParentPropertiesFromChild(child, nextParent, definedModels);
+                    removeParentPropertiesFromChild(child, nextParent, definedModels);
+                }
+
             }
         }
     }

@@ -30,6 +30,8 @@ public class ModelImpl extends AbstractModel {
     @JsonProperty("default")
     private String defaultValue;
     private List<String> _enum;
+    @JsonIgnore
+    private Class parent;
 
     public ModelImpl _enum(List<String> value) {
         this._enum = value;
@@ -396,5 +398,13 @@ public class ModelImpl extends AbstractModel {
             return false;
         }
         return true;
+    }
+
+    public Class getParent() {
+        return parent;
+    }
+
+    public void setParent(Class parent) {
+        this.parent = parent;
     }
 }

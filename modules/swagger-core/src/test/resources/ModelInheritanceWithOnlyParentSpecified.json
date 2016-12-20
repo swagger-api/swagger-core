@@ -21,8 +21,7 @@
             "format": "int32"
           }
         },
-        "description": "Class that has subtypes extending it and referencing it as parent = , without specifying subtypes =",
-        "parent": "io.swagger.models.composition.AbstractModelInheritanceOnRoot"
+        "description": "Class that has subtypes extending it and referencing it as parent = , without specifying subtypes ="
       }
     ]
   },
@@ -38,8 +37,7 @@
             "type": "string"
           }
         },
-        "description": "Class that has a field that is the AbstractBaseModelWithSubTypes",
-        "parent": "io.swagger.models.composition.BaseModelWithNoSubTypesSpecified"
+        "description": "Class that has a field that is the AbstractBaseModelWithSubTypes"
       }
     ]
   }

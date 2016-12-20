@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
+import io.swagger.converter.ModelConverters;
 import io.swagger.models.*;
 import io.swagger.models.properties.*;
 import io.swagger.util.AllowableValues;
@@ -406,7 +407,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             parentClass = api.parent();
         }
         if(parentClass != null && parentClass != Void.class){
-            model.getVendorExtensions().put("parent", parentClass);
+            model.setParent(parentClass);
         }
 
         /**

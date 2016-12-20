@@ -11,8 +11,7 @@
             "type": "integer",
             "format": "int32"
           }
-        },
-        "parent": "io.swagger.models.composition.Pet"
+        }
       }
     ]
   },
