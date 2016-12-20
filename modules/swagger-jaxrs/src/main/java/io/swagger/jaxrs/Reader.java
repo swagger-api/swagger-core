@@ -415,6 +415,8 @@ public class Reader {
                         path.set(httpMethod, operation);
 
                         readImplicitParameters(method, operation);
+
+                        readExternalDocs(method, operation);
                     }
                 }
             }
@@ -436,6 +438,13 @@ public class Reader {
                     operation.addParameter(p);
                 }
             }
+        }
+    }
+
+    private void readExternalDocs(Method method, Operation operation) {
+        io.swagger.annotations.ExternalDocs externalDocs = ReflectionUtils.getAnnotation(method, io.swagger.annotations.ExternalDocs.class);
+        if(externalDocs != null) {
+            operation.setExternalDocs(new ExternalDocs(externalDocs.value(), externalDocs.url()));
         }
     }
 
