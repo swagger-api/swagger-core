@@ -1,7 +1,18 @@
 package io.swagger.jackson;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.ObjectIdGenerator;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyMetadata;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
@@ -12,9 +23,20 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
-import io.swagger.converter.ModelConverters;
-import io.swagger.models.*;
-import io.swagger.models.properties.*;
+import io.swagger.models.ComposedModel;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.RefModel;
+import io.swagger.models.Xml;
+import io.swagger.models.properties.AbstractNumericProperty;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.IntegerProperty;
+import io.swagger.models.properties.MapProperty;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.PropertyBuilder;
+import io.swagger.models.properties.RefProperty;
+import io.swagger.models.properties.StringProperty;
+import io.swagger.models.properties.UUIDProperty;
 import io.swagger.util.AllowableValues;
 import io.swagger.util.AllowableValuesUtils;
 import io.swagger.util.PrimitiveType;
@@ -23,14 +45,28 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
@@ -244,10 +280,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             PropertyMetadata md = propDef.getMetadata();
 
             boolean hasSetter = false, hasGetter = false;
-            if (propDef.getSetter() == null) {
-                hasSetter = false;
-            } else {
-                hasSetter = true;
+            try{
+                if (propDef.getSetter() == null) {
+                    hasSetter = false;
+                } else {
+                    hasSetter = true;
+                }
+            }catch(IllegalArgumentException e){
+                //com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder would throw IllegalArgumentException
+                // if there are overloaded setters. If we only want to know whether a set method exists, suppress the exception
+                // is reasonable.
+                // More logs might be added here
+            	hasSetter = true;
             }
             if (propDef.getGetter() != null) {
                 JsonProperty pd = propDef.getGetter().getAnnotation(JsonProperty.class);
@@ -621,22 +665,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             DecimalMin min = (DecimalMin) annos.get("javax.validation.constraints.DecimalMin");
             if (property instanceof AbstractNumericProperty) {
                 AbstractNumericProperty ap = (AbstractNumericProperty) property;
-                if (min.inclusive()) {
-                    ap.setMinimum(new Double(min.value()));
-                } else {
-                    ap.setExclusiveMinimum(!min.inclusive());
-                }
+                ap.setMinimum(new Double(min.value()));
+                ap.setExclusiveMinimum(!min.inclusive());
             }
         }
         if (annos.containsKey("javax.validation.constraints.DecimalMax")) {
             DecimalMax max = (DecimalMax) annos.get("javax.validation.constraints.DecimalMax");
             if (property instanceof AbstractNumericProperty) {
                 AbstractNumericProperty ap = (AbstractNumericProperty) property;
-                if (max.inclusive()) {
-                    ap.setMaximum(new Double(max.value()));
-                } else {
-                    ap.setExclusiveMaximum(!max.inclusive());
-                }
+                ap.setMaximum(new Double(max.value()));
+                ap.setExclusiveMaximum(!max.inclusive());
             }
         }
         if (annos.containsKey("javax.validation.constraints.Pattern")) {

@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  *
  * @see ApiImplicitParam
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiImplicitParams {
     /**
