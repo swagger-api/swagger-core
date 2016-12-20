@@ -172,6 +172,20 @@ public class ReaderTest {
         assertNotNull(swagger.getPath("/v1/users/{id}").getGet());
     }
 
+    @Test(description = "scan indirect implicit params from interface")
+    public void scanImplicitParamInterfaceTest() {
+        final Swagger swagger = new Reader(new Swagger()).read(IndirectImplicitParamsImpl.class);
+        assertNotNull(swagger);
+        assertEquals(swagger.getPath("/v1/users/{id}").getGet().getParameters().size(), 2);
+    }
+
+    @Test(description = "scan indirect implicit params from overridden method")
+    public void scanImplicitParamOverriddenMethodTest() {
+        final Swagger swagger = new Reader(new Swagger()).read(IndirectImplicitParamsImpl.class);
+        assertNotNull(swagger);
+        assertEquals(swagger.getPath("/v1/users").getPost().getParameters().size(), 2);
+    }
+
     @Test(description = "scan implicit params")
     public void scanImplicitParam() {
         Swagger swagger = getSwagger(ResourceWithImplicitParams.class);

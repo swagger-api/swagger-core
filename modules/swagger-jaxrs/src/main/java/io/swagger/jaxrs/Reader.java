@@ -408,7 +408,11 @@ public class Reader {
     }
 
     private void readImplicitParameters(Method method, Operation operation) {
-        ApiImplicitParams implicitParams = ReflectionUtils.getAnnotation(method, ApiImplicitParams.class);
+        processImplicitParams(ReflectionUtils.getAnnotation(method, ApiImplicitParams.class), operation);
+        processImplicitParams(ReflectionUtils.getAnnotation(method.getDeclaringClass(), ApiImplicitParams.class), operation);
+    }
+
+    private void processImplicitParams(ApiImplicitParams implicitParams, Operation operation) {
         if (implicitParams != null) {
             for (ApiImplicitParam param : implicitParams.value()) {
                 Parameter p = readImplicitParam(param);
@@ -485,22 +489,28 @@ public class Reader {
             swagger.addSecurityDefinition(oAuth2Config.key(), oAuth2Definition);
         }
 
-        for (ApiKeyAuthDefinition apiKeyAuthConfig : config.securityDefinition().apiKeyAuthDefintions()) {
-            io.swagger.models.auth.ApiKeyAuthDefinition apiKeyAuthDefinition = new io.swagger.models.auth.ApiKeyAuthDefinition();
+        for (ApiKeyAuthDefinition[] apiKeyAuthConfigs : new ApiKeyAuthDefinition[][] {
+             config.securityDefinition().apiKeyAuthDefintions(), config.securityDefinition().apiKeyAuthDefinitions() }) {
+            for (ApiKeyAuthDefinition apiKeyAuthConfig : apiKeyAuthConfigs) {
+                io.swagger.models.auth.ApiKeyAuthDefinition apiKeyAuthDefinition = new io.swagger.models.auth.ApiKeyAuthDefinition();
 
-            apiKeyAuthDefinition.setName(apiKeyAuthConfig.name());
-            apiKeyAuthDefinition.setIn(In.forValue(apiKeyAuthConfig.in().toValue()));
-            apiKeyAuthDefinition.setDescription(apiKeyAuthConfig.description());
+                apiKeyAuthDefinition.setName(apiKeyAuthConfig.name());
+                apiKeyAuthDefinition.setIn(In.forValue(apiKeyAuthConfig.in().toValue()));
+                apiKeyAuthDefinition.setDescription(apiKeyAuthConfig.description());
 
-            swagger.addSecurityDefinition(apiKeyAuthConfig.key(), apiKeyAuthDefinition);
+                swagger.addSecurityDefinition(apiKeyAuthConfig.key(), apiKeyAuthDefinition);
+            }
         }
 
-        for (BasicAuthDefinition basicAuthConfig : config.securityDefinition().basicAuthDefinions()) {
-            io.swagger.models.auth.BasicAuthDefinition basicAuthDefinition = new io.swagger.models.auth.BasicAuthDefinition();
+        for (BasicAuthDefinition[] basicAuthConfigs : new BasicAuthDefinition[][] {
+             config.securityDefinition().basicAuthDefinions(), config.securityDefinition().basicAuthDefinitions() }) {
+            for (BasicAuthDefinition basicAuthConfig : basicAuthConfigs) {
+                io.swagger.models.auth.BasicAuthDefinition basicAuthDefinition = new io.swagger.models.auth.BasicAuthDefinition();
 
-            basicAuthDefinition.setDescription(basicAuthConfig.description());
+                basicAuthDefinition.setDescription(basicAuthConfig.description());
 
-            swagger.addSecurityDefinition(basicAuthConfig.key(), basicAuthDefinition);
+                swagger.addSecurityDefinition(basicAuthConfig.key(), basicAuthDefinition);
+            }
         }
 
         if (!config.externalDocs().value().isEmpty()) {

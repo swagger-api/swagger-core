@@ -3,13 +3,13 @@ package io.swagger.models.auth;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
 public abstract class AbstractSecuritySchemeDefinition implements SecuritySchemeDefinition {
 
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
 
     private String description;
 
@@ -23,6 +23,10 @@ public abstract class AbstractSecuritySchemeDefinition implements SecurityScheme
         if (name.startsWith("x-")) {
             vendorExtensions.put(name, value);
         }
+    }
+
+    public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
     }
 
     public String getDescription() {

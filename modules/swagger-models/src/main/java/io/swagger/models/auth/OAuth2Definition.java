@@ -1,6 +1,6 @@
 package io.swagger.models.auth;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class OAuth2Definition extends AbstractSecuritySchemeDefinition {
@@ -77,7 +77,7 @@ public class OAuth2Definition extends AbstractSecuritySchemeDefinition {
 
     public void addScope(String name, String description) {
         if (this.scopes == null) {
-            this.scopes = new HashMap<String, String>();
+            this.scopes = new LinkedHashMap<String, String>();
         }
         this.scopes.put(name, description);
     }
