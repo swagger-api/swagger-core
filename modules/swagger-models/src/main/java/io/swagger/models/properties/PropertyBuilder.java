@@ -96,7 +96,8 @@ public class PropertyBuilder {
         FORMAT("format"),
         READ_ONLY("readOnly"),
         REQUIRED("required"),
-        VENDOR_EXTENSIONS("vendorExtensions");
+        VENDOR_EXTENSIONS("vendorExtensions"),
+        MULTIPLE_OF("multipleOf");
 
         private String propertyName;
 
@@ -564,6 +565,10 @@ public class PropertyBuilder {
                         final Integer value = PropertyId.MAX_ITEMS.findValue(args);
                         resolved.setMaxItems(value);
                     }
+                    if (args.containsKey(PropertyId.UNIQUE_ITEMS)) {
+                        final Boolean value = PropertyId.UNIQUE_ITEMS.findValue(args);
+                        resolved.setUniqueItems(value);
+                    }
                 }
 
                 return property;
@@ -678,6 +683,10 @@ public class PropertyBuilder {
                 final Boolean value = PropertyId.EXCLUSIVE_MAXIMUM.findValue(args);
                 property.setExclusiveMaximum(value);
             }
+            if (args.containsKey(PropertyId.MULTIPLE_OF)) {
+                final Double value = PropertyId.MULTIPLE_OF.findValue(args);
+                property.setMultipleOf(value);
+            }
             return property;
         }
 
@@ -771,7 +780,7 @@ public class PropertyBuilder {
                               catch(Exception e) {
                                 // continue
                               }
-                            }                            
+                            }
                         }
                         if(property instanceof LongProperty) {
                           LongProperty p = (LongProperty) property;
@@ -782,7 +791,7 @@ public class PropertyBuilder {
                             catch(Exception e) {
                               // continue
                             }
-                          }                            
+                          }
                         }
                         if(property instanceof DoubleProperty) {
                             DoubleProperty p = (DoubleProperty) property;
@@ -793,7 +802,7 @@ public class PropertyBuilder {
                               catch(Exception e) {
                                 // continue
                               }
-                            }                            
+                            }
                         }
                         if(property instanceof FloatProperty) {
                           FloatProperty p = (FloatProperty) property;
@@ -804,7 +813,7 @@ public class PropertyBuilder {
                             catch(Exception e) {
                               // continue
                             }
-                          }                            
+                          }
                        }
                        if(property instanceof DateProperty) {
                           DateProperty p = (DateProperty) property;
@@ -815,7 +824,7 @@ public class PropertyBuilder {
                             catch(Exception e) {
                               // continue
                             }
-                          }                            
+                          }
                        }
                        if(property instanceof DateTimeProperty) {
                          DateTimeProperty p = (DateTimeProperty) property;
@@ -826,7 +835,7 @@ public class PropertyBuilder {
                            catch(Exception e) {
                              // continue
                            }
-                         }                            
+                         }
                        }
                        if(property instanceof UUIDProperty) {
                          UUIDProperty p = (UUIDProperty) property;
@@ -837,7 +846,7 @@ public class PropertyBuilder {
                            catch(Exception e) {
                              // continue
                            }
-                         }                            
+                         }
                        }
                     }
                 }

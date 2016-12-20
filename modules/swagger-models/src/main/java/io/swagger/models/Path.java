@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.*;
 import io.swagger.models.parameters.Parameter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 @JsonPropertyOrder({"get", "head", "post", "put", "delete", "options", "patch"})
 public class Path {
 
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
     private Operation get;
     private Operation put;
     private Operation post;
@@ -167,7 +167,7 @@ public class Path {
 
     @JsonIgnore
     public Map<HttpMethod, Operation> getOperationMap() {
-        Map<HttpMethod, Operation> result = new HashMap<HttpMethod, Operation>();
+        Map<HttpMethod, Operation> result = new LinkedHashMap<HttpMethod, Operation>();
 
         if (get != null) {
             result.put(HttpMethod.GET, get);
@@ -230,6 +230,9 @@ public class Path {
         }
     }
 
+    public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
+    }
 
     public int hashCode() {
         final int prime = 31;

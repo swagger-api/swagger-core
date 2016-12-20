@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LongProperty extends BaseIntegerProperty {
-    private static final String FORMAT = "int64";
+    public static final String FORMAT = "int64";
     protected Long _default;
     protected List<Long> _enum;
 

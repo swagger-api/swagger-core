@@ -3,7 +3,7 @@ package io.swagger.models.parameters;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.models.Model;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class BodyParameter extends AbstractParameter implements Parameter {
@@ -44,7 +44,7 @@ public class BodyParameter extends AbstractParameter implements Parameter {
 
     public void addExample(String mediaType, String value) {
         if(examples == null) {
-            examples = new HashMap<String, String>();
+            examples = new LinkedHashMap<String, String>();
         }
         examples.put(mediaType, value);
     }

@@ -6,7 +6,7 @@ import io.swagger.models.refs.RefFormat;
 import io.swagger.models.refs.RefType;
 
 public class RefProperty extends AbstractProperty implements Property {
-    private static final String TYPE = "ref";
+    public static final String TYPE = "ref";
     private GenericRef genericRef;
 
     public RefProperty() {

@@ -13,23 +13,35 @@ import java.lang.annotation.Target;
 public @interface SecurityDefinition {
 
     /**
-     * OAuth security defintion objects
+     * OAuth security definition objects
      *
-     * @return OAuth security defintion objects
+     * @return OAuth security definition objects
      */
     OAuth2Definition[] oAuth2Definitions() default {};
 
     /**
-     * API Key security defintion objects
-     *
-     * @return API Key security defintion objects
+     * @deprecated Use {@link #apiKeyAuthDefinitions()} instead
      */
+    @Deprecated
     ApiKeyAuthDefinition[] apiKeyAuthDefintions() default {};
+
+    /**
+     * API Key security definition objects
+     *
+     * @return API Key security definition objects
+     */
+    ApiKeyAuthDefinition[] apiKeyAuthDefinitions() default {};
+
+    /**
+     * @deprecated Use {@link #basicAuthDefinitions()} instead
+     */
+    @Deprecated
+    BasicAuthDefinition[] basicAuthDefinions() default {};
 
     /**
      * Basic auth security definition objects
      *
      * @return basic auth security definition objects
      */
-    BasicAuthDefinition[] basicAuthDefinions() default {};
+    BasicAuthDefinition[] basicAuthDefinitions() default {};
 }

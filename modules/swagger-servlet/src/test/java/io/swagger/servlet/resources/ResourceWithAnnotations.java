@@ -49,9 +49,9 @@ import io.swagger.servlet.models.SampleData;
         produces = {"application/json", "application/xml", ""},
         schemes = {SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS, SwaggerDefinition.Scheme.DEFAULT},
         securityDefinition = @SecurityDefinition(
-                basicAuthDefinions = {
+                basicAuthDefinitions = {
                         @BasicAuthDefinition(key = "basicAuth")},
-                apiKeyAuthDefintions = {
+                apiKeyAuthDefinitions = {
                         @ApiKeyAuthDefinition(key = "apiKeyAuth", name = "apiKey", in = ApiKeyAuthDefinition.ApiKeyLocation.HEADER)},
                 oAuth2Definitions = {
                         @OAuth2Definition(key = "oAuth2AccessCode", flow = OAuth2Definition.Flow.ACCESS_CODE),

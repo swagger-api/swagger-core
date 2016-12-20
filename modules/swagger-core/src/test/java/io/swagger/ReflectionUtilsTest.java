@@ -1,5 +1,6 @@
 package io.swagger;
 
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.reflection.Child;
@@ -129,5 +130,21 @@ public class ReflectionUtilsTest {
     public void getDeclaredFieldsFromInterfaceTest() throws NoSuchMethodException {
         final Class cls = IParent.class;
         Assert.assertEquals(Collections.emptyList(), ReflectionUtils.getDeclaredFields(cls));
+    }
+
+    @Test
+    public void getIndirectAnnotation() throws NoSuchMethodException {
+        final Method method = Child.class.getMethod("indirectAnnotationMethod");
+        Assert.assertNotNull(ReflectionUtils.getAnnotation(method, ApiImplicitParams.class));
+    }
+
+    @Test
+    public void getIndirectAnnotationFromClass() throws NoSuchMethodException {
+        Assert.assertNotNull(ReflectionUtils.getAnnotation(Parent.class, ApiImplicitParams.class));
+    }
+
+    @Test
+    public void getIndirectAnnotationFromInterface() throws NoSuchMethodException {
+        Assert.assertNotNull(ReflectionUtils.getAnnotation(Child.class, ApiImplicitParams.class));
     }
 }

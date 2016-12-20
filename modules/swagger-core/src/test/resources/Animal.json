@@ -54,8 +54,7 @@
                     },
                     "isDomestic": {
                         "type": "boolean",
-                        "position": 3,
-                        "default": false
+                        "position": 3
                     }
                 }
             }

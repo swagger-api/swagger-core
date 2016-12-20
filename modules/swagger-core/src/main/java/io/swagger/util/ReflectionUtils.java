@@ -1,11 +1,5 @@
 package io.swagger.util;
 
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.google.common.collect.Sets;
-import org.apache.commons.lang3.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -18,6 +12,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Sets;
+import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class ReflectionUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtils.class);
@@ -113,6 +113,9 @@ public class ReflectionUtils {
      * @return method if it is found
      */
     public static Method findMethod(Method methodToFind, Class<?> cls) {
+        if (cls == null) {
+            return null;
+        }
         String methodToSearch = methodToFind.getName();
         Class<?>[] soughtForParameterType = methodToFind.getParameterTypes();
         Type[] soughtForGenericParameterType = methodToFind.getGenericParameterTypes();
@@ -199,6 +202,12 @@ public class ReflectionUtils {
     public static <A extends Annotation> A getAnnotation(Method method, Class<A> annotationClass) {
         A annotation = method.getAnnotation(annotationClass);
         if (annotation == null) {
+            for (Annotation metaAnnotation : method.getAnnotations()) {
+                annotation = metaAnnotation.annotationType().getAnnotation(annotationClass);
+                if (annotation != null) {
+                    return annotation;
+                }
+            }
             Method superclassMethod = getOverriddenMethod(method);
             if (superclassMethod != null) {
                 annotation = getAnnotation(superclassMethod, annotationClass);
@@ -210,6 +219,13 @@ public class ReflectionUtils {
     public static <A extends Annotation> A getAnnotation(Class<?> cls, Class<A> annotationClass) {
         A annotation = cls.getAnnotation(annotationClass);
         if (annotation == null) {
+            for (Annotation metaAnnotation : cls.getAnnotations()) {
+                annotation = metaAnnotation.annotationType().getAnnotation(annotationClass);
+                if (annotation != null) {
+                    return annotation;
+                }
+                ;
+            }
             Class<?> superClass = cls.getSuperclass();
             if (superClass != null && !(superClass.equals(Object.class))) {
                 annotation = getAnnotation(superClass, annotationClass);
@@ -217,6 +233,13 @@ public class ReflectionUtils {
         }
         if (annotation == null) {
             for (Class<?> anInterface : cls.getInterfaces()) {
+                for (Annotation metaAnnotation : anInterface.getAnnotations()) {
+                    annotation = metaAnnotation.annotationType().getAnnotation(annotationClass);
+                    if (annotation != null) {
+                        return annotation;
+                    }
+                    ;
+                }
                 annotation = getAnnotation(anInterface, annotationClass);
                 if (annotation != null) {
                     return annotation;
