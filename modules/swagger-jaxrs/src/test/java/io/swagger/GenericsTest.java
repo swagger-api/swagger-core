@@ -1,8 +1,9 @@
 package io.swagger;
 
-import com.google.common.base.Functions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
@@ -20,17 +21,16 @@ import io.swagger.models.properties.UUIDProperty;
 import io.swagger.resources.ResourceWithGenerics;
 import io.swagger.resources.generics.UserApiRoute;
 
-import org.testng.annotations.Test;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import org.testng.annotations.Test;
+
+import com.google.common.base.Functions;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
 
 public class GenericsTest {
     private final Swagger swagger = new Reader(new Swagger()).read(ResourceWithGenerics.class);
@@ -170,7 +170,8 @@ public class GenericsTest {
 
     @Test(description = "check parameters of generic types")
     public void checkParametersOfGenericTypes() {
-        Set<String> genericTypes = new HashSet(Arrays.asList("GenericTypeString", "GenericTypeUUID", "GenericTypeGenericTypeString",
+        Set<String> genericTypes = new HashSet<String>(Arrays.asList("GenericTypeString", "GenericTypeUUID",
+                "GenericTypeGenericTypeString",
                 "RenamedGenericTypeString", "RenamedGenericTypeRenamedGenericTypeString"));
         assertTrue(swagger.getDefinitions().keySet().containsAll(genericTypes));
 
