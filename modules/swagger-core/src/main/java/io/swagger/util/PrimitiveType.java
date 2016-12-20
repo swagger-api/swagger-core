@@ -150,6 +150,15 @@ public enum PrimitiveType {
         }
     },
     /**
+     * Native Java file.
+     */
+    FILE(java.io.File.class, "file") {
+        @Override
+        public FileProperty createProperty() {
+            return new FileProperty();
+        }
+    },
+    /**
      * Generic object.
      */
     OBJECT(Object.class) {
@@ -190,6 +199,7 @@ public enum PrimitiveType {
         addKeys(keyClasses, DECIMAL, java.math.BigDecimal.class);
         addKeys(keyClasses, DATE, DateStub.class);
         addKeys(keyClasses, DATE_TIME, java.util.Date.class);
+        addKeys(keyClasses, FILE, java.io.File.class);
         addKeys(keyClasses, OBJECT, Object.class);
         KEY_CLASSES = Collections.unmodifiableMap(keyClasses);
 
