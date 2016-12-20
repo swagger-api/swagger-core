@@ -31,6 +31,11 @@ public class Child extends Parent<Integer> implements IParent<Long> {
     }
 
     @Override
+    public String parametrizedMethod5(Long arg) {
+        return null;
+    }
+
+    @Override
     public void annotationHolder() {
 
     }
