@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Tag {
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private Map<String, Object> vendorExtensions = new HashMap<String, Object>();
     private String name;
     private String description;
     private ExternalDocs externalDocs;
@@ -61,6 +61,10 @@ public class Tag {
         if (name.startsWith("x-")) {
             vendorExtensions.put(name, value);
         }
+    }
+
+    public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
     }
 
     @Override

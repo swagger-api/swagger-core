@@ -13,7 +13,7 @@ public class Response {
     private Property schema;
     private Map<String, Object> examples;
     private Map<String, Property> headers;
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
     public Response schema(Property property) {
         this.setSchema(property);
@@ -97,6 +97,10 @@ public class Response {
         if (name.startsWith("x-")) {
             vendorExtensions.put(name, value);
         }
+    }
+
+    public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
     }
 
     @Override

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Operation {
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private Map<String, Object> vendorExtensions = new HashMap<String, Object>();
     private List<String> tags;
     private String summary;
     private String description;
@@ -275,6 +275,10 @@ public class Operation {
         if (name.startsWith("x-")) {
             vendorExtensions.put(name, value);
         }
+    }
+
+    public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
     }
 
     @Override

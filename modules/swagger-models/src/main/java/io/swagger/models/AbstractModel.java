@@ -11,7 +11,7 @@ public abstract class AbstractModel implements Model {
     private ExternalDocs externalDocs;
     private String reference;
     private String title;
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private Map<String, Object> vendorExtensions = new HashMap<String, Object>();
 
     @Override
     public ExternalDocs getExternalDocs() {
@@ -42,6 +42,10 @@ public abstract class AbstractModel implements Model {
         if (name.startsWith("x-")) {
             vendorExtensions.put(name, value);
         }
+    }
+
+    public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
     }
 
     public void cloneTo(Object clone) {

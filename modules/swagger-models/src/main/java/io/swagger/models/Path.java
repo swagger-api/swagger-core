@@ -12,7 +12,7 @@ import java.util.Map;
 @JsonPropertyOrder({"get", "head", "post", "put", "delete", "options", "patch"})
 public class Path {
 
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private Map<String, Object> vendorExtensions = new HashMap<String, Object>();
     private Operation get;
     private Operation put;
     private Operation post;
@@ -231,6 +231,9 @@ public class Path {
         }
     }
 
+    public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
+    }
 
     public int hashCode() {
         final int prime = 31;

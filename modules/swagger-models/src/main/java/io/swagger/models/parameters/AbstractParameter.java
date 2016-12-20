@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractParameter {
-    private final Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+    private Map<String, Object> vendorExtensions = new HashMap<String, Object>();
     protected String in;
     protected String name;
     protected String description;
@@ -73,6 +73,10 @@ public abstract class AbstractParameter {
         if (name.startsWith("x-")) {
             vendorExtensions.put(name, value);
         }
+    }
+
+    public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
     }
 
     @Override
