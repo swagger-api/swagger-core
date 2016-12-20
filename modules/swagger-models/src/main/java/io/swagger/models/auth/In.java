@@ -3,13 +3,13 @@ package io.swagger.models.auth;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public enum In {
     HEADER, QUERY;
 
-    private static Map<String, In> names = new HashMap<String, In>();
+    private static Map<String, In> names = new LinkedHashMap<String, In>();
 
     @JsonCreator
     public static In forValue(String value) {
