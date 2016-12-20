@@ -7,11 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class AbstractParameter {
-<<<<<<< HEAD
-    private Map<String, Object> vendorExtensions = new HashMap<String, Object>();
-=======
-    private final Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
->>>>>>> 5437741bdc24601c50dcd6b732c2fb6aa632bda0
+    private Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
     protected String in;
     protected String name;
     protected String description;
