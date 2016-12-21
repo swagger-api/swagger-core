@@ -16,8 +16,6 @@
 
 package io.swagger.jaxrs;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -65,13 +63,7 @@ import io.swagger.util.BaseReaderUtils;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.Produces;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -89,6 +81,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.Produces;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class Reader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
@@ -291,8 +298,11 @@ public class Reader {
 
             // parse the method
             final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
+            JavaType classType = TypeFactory.defaultInstance().constructType(cls);
+            BeanDescription bd = new ObjectMapper().getSerializationConfig().introspect(classType);
             Method methods[] = cls.getMethods();
             for (Method method : methods) {
+                AnnotatedMethod annotatedMethod = bd.findMethod(method.getName(), method.getParameterTypes());
                 if (ReflectionUtils.isOverriddenMethod(method, cls)) {
                     continue;
                 }
@@ -311,7 +321,7 @@ public class Reader {
 
                     Operation operation = null;
                     if (apiOperation != null || config.isScanAllResources() || httpMethod != null || methodPath != null) {
-                        operation = parseMethod(cls, method, globalParameters, classApiResponses);
+                        operation = parseMethod(cls, method, annotatedMethod, globalParameters, classApiResponses);
                     }
                     if (operation == null) {
                         continue;
@@ -461,7 +471,7 @@ public class Reader {
         } else if (param.paramType().equalsIgnoreCase("header")) {
             p = new HeaderParameter();
         } else {
-            LOGGER.warn("Unknown implicit parameter type: [" + param.paramType() + "]");
+            LOGGER.warn("Unknown implicit parameter type: [{}]", param.paramType());
             return null;
         }
         final Type type = ReflectionUtils.typeFromString(param.dataType());
@@ -515,7 +525,7 @@ public class Reader {
         }
 
         for (ApiKeyAuthDefinition[] apiKeyAuthConfigs : new ApiKeyAuthDefinition[][] {
-             config.securityDefinition().apiKeyAuthDefintions(), config.securityDefinition().apiKeyAuthDefinitions() }) {
+                config.securityDefinition().apiKeyAuthDefintions(), config.securityDefinition().apiKeyAuthDefinitions() }) {
             for (ApiKeyAuthDefinition apiKeyAuthConfig : apiKeyAuthConfigs) {
                 io.swagger.models.auth.ApiKeyAuthDefinition apiKeyAuthDefinition = new io.swagger.models.auth.ApiKeyAuthDefinition();
 
@@ -528,7 +538,7 @@ public class Reader {
         }
 
         for (BasicAuthDefinition[] basicAuthConfigs : new BasicAuthDefinition[][] {
-             config.securityDefinition().basicAuthDefinions(), config.securityDefinition().basicAuthDefinitions() }) {
+                config.securityDefinition().basicAuthDefinions(), config.securityDefinition().basicAuthDefinitions() }) {
             for (BasicAuthDefinition basicAuthConfig : basicAuthConfigs) {
                 io.swagger.models.auth.BasicAuthDefinition basicAuthDefinition = new io.swagger.models.auth.BasicAuthDefinition();
 
@@ -684,7 +694,7 @@ public class Reader {
             final ParameterizedType parameterized = (ParameterizedType) cls;
             final Type[] args = parameterized.getActualTypeArguments();
             if (args.length != 1) {
-                LOGGER.error(String.format("Unexpected class definition: %s", cls));
+                LOGGER.error("Unexpected class definition: {}", cls);
                 return null;
             }
             final Type first = args[0];
@@ -694,7 +704,7 @@ public class Reader {
                 return null;
             }
         } else {
-            LOGGER.error(String.format("Unknown class definition: %s", cls));
+            LOGGER.error("Unknown class definition: {}", cls);
             return null;
         }
     }
@@ -787,12 +797,18 @@ public class Reader {
     }
 
     public Operation parseMethod(Method method) {
-        return parseMethod(method.getDeclaringClass(), method, Collections.<Parameter>emptyList(), Collections.<ApiResponse>emptyList());
+        JavaType classType = TypeFactory.defaultInstance().constructType(method.getDeclaringClass());
+        BeanDescription bd = new ObjectMapper().getSerializationConfig().introspect(classType);
+        return parseMethod(classType.getClass(), method, bd.findMethod(method.getName(), method.getParameterTypes()),
+                Collections.<Parameter> emptyList(), Collections.<ApiResponse> emptyList());
     }
 
-    private Operation parseMethod(Class<?> cls, Method method, List<Parameter> globalParameters, List<ApiResponse> classApiResponses) {
+    private Operation parseMethod(Class<?> cls, Method method, AnnotatedMethod annotatedMethod,
+            List<Parameter> globalParameters, List<ApiResponse> classApiResponses) {
         Operation operation = new Operation();
-
+        if (annotatedMethod != null) {
+            method = annotatedMethod.getAnnotated();
+        }
         ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
         ApiResponses responseAnnotation = ReflectionUtils.getAnnotation(method, ApiResponses.class);
 
@@ -830,8 +846,7 @@ public class Reader {
 
             defaultResponseHeaders = parseResponseHeaders(apiOperation.responseHeaders());
 
-            operation.summary(apiOperation.value())
-                    .description(apiOperation.notes());
+            operation.summary(apiOperation.value()).description(apiOperation.notes());
 
             if (!isVoid(apiOperation.response())) {
                 responseType = apiOperation.response();
@@ -875,7 +890,7 @@ public class Reader {
             operation.addResponse(String.valueOf(apiOperation.code()), response);
         } else if (responseType == null) {
             // pick out response from method declaration
-            LOGGER.debug("picking up response class from method " + method);
+            LOGGER.debug("picking up response class from method {}", method);
             responseType = method.getGenericReturnType();
         }
         if (isValidResponse(responseType)) {
@@ -943,14 +958,26 @@ public class Reader {
             operation.parameter(globalParameter);
         }
 
-        Type[] genericParameterTypes = method.getGenericParameterTypes();
         Annotation[][] paramAnnotations = ReflectionUtils.getParameterAnnotations(method);
-        for (int i = 0; i < genericParameterTypes.length; i++) {
-            final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
-            List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
+        if (annotatedMethod == null) {
+            Type[] genericParameterTypes = method.getGenericParameterTypes();
+            for (int i = 0; i < genericParameterTypes.length; i++) {
+                final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
+                List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
 
-            for (Parameter parameter : parameters) {
-                operation.parameter(parameter);
+                for (Parameter parameter : parameters) {
+                    operation.parameter(parameter);
+                }
+            }
+        } else {
+            for (int i = 0; i < annotatedMethod.getParameterCount(); i++) {
+                AnnotatedParameter param = annotatedMethod.getParameter(i);
+                final Type type = TypeFactory.defaultInstance().constructType(param.getParameterType(), cls);
+                List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
+
+                for (Parameter parameter : parameters) {
+                    operation.parameter(parameter);
+                }
             }
         }
 
@@ -968,7 +995,7 @@ public class Reader {
         final Iterator<SwaggerExtension> chain = SwaggerExtensions.chain();
         if (chain.hasNext()) {
             SwaggerExtension extension = chain.next();
-            LOGGER.debug("trying to decorate operation: " + extension);
+            LOGGER.debug("trying to decorate operation: {}", extension);
             extension.decorateOperation(operation, method, chain);
         }
     }
@@ -977,8 +1004,7 @@ public class Reader {
         Map<String, Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders());
 
         Response response = new Response()
-                .description(apiResponse.message())
-                .headers(responseHeaders);
+.description(apiResponse.message()).headers(responseHeaders);
 
         if (apiResponse.code() == 0) {
             operation.defaultResponse(response);
@@ -1003,10 +1029,10 @@ public class Reader {
         if (!chain.hasNext()) {
             return Collections.emptyList();
         }
-        LOGGER.debug("getParameters for " + type);
+        LOGGER.debug("getParameters for {}", type);
         Set<Type> typesToSkip = new HashSet<Type>();
         final SwaggerExtension extension = chain.next();
-        LOGGER.debug("trying extension " + extension);
+        LOGGER.debug("trying extension {}", extension);
 
         final List<Parameter> parameters = extension.extractParameters(annotations, type, typesToSkip, chain);
         if (!parameters.isEmpty()) {
