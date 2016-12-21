@@ -1,24 +1,5 @@
 package io.swagger.jackson;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.fasterxml.jackson.annotation.ObjectIdGenerator;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyMetadata;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.introspect.Annotated;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.google.common.collect.Iterables;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverter;
@@ -41,20 +22,7 @@ import io.swagger.util.AllowableValues;
 import io.swagger.util.AllowableValuesUtils;
 import io.swagger.util.PrimitiveType;
 import io.swagger.util.ReflectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -67,6 +35,41 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.ObjectIdGenerator;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyMetadata;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.introspect.Annotated;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.google.common.collect.Iterables;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
@@ -88,7 +91,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         } else {
             if (type instanceof com.fasterxml.jackson.core.type.ResolvedType) {
                 com.fasterxml.jackson.core.type.ResolvedType rt = (com.fasterxml.jackson.core.type.ResolvedType) type;
-                LOGGER.debug("Can't check class " + type + ", " + rt.getRawClass().getName());
+                LOGGER.debug("Can't check class {}, {}", type, rt.getRawClass().getName());
                 if (rt.getRawClass().equals(Class.class)) {
                     return true;
                 }
@@ -97,10 +100,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return false;
     }
 
+    @Override
     public Property resolveProperty(Type type,
-                                    ModelConverterContext context,
-                                    Annotation[] annotations,
-                                    Iterator<ModelConverter> next) {
+            ModelConverterContext context,
+            Annotation[] annotations,
+            Iterator<ModelConverter> next) {
         if (this.shouldIgnoreClass(type)) {
             return null;
         }
@@ -109,10 +113,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     public Property resolveProperty(JavaType propType,
-                                    ModelConverterContext context,
-                                    Annotation[] annotations,
-                                    Iterator<ModelConverter> next) {
-        LOGGER.debug("resolveProperty " + propType);
+            ModelConverterContext context,
+            Annotation[] annotations,
+            Iterator<ModelConverter> next) {
+        LOGGER.debug("resolveProperty {}", propType);
 
         Property property = null;
         if (propType.isContainerType()) {
@@ -159,6 +163,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 .contains(propType.getRawClass().getCanonicalName());
     }
 
+    @Override
     public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
         if (this.shouldIgnoreClass(type)) {
             return null;
@@ -245,9 +250,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         // if XmlRootElement annotation, construct an Xml object and attach it to the model
         XmlRootElement rootAnnotation = beanDesc.getClassAnnotations().get(XmlRootElement.class);
         if (rootAnnotation != null && !"".equals(rootAnnotation.name()) && !"##default".equals(rootAnnotation.name())) {
-            LOGGER.debug(rootAnnotation.toString());
-            Xml xml = new Xml()
-                    .name(rootAnnotation.name());
+            LOGGER.debug("{}", rootAnnotation);
+            Xml xml = new Xml().name(rootAnnotation.name());
             if (rootAnnotation.namespace() != null && !"".equals(rootAnnotation.namespace()) && !"##default".equals(rootAnnotation.namespace())) {
                 xml.namespace(rootAnnotation.namespace());
             }
@@ -320,7 +324,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 // if there are overloaded setters. If we only want to know whether a set method exists, suppress the exception
                 // is reasonable.
                 // More logs might be added here
-            	hasSetter = true;
+                hasSetter = true;
             }
             if (propDef.getGetter() != null) {
                 JsonProperty pd = propDef.getGetter().getAnnotation(JsonProperty.class);
@@ -362,7 +366,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     String or = mp.dataType();
 
                     JavaType innerJavaType = null;
-                    LOGGER.debug("overriding datatype from " + propType + " to " + or);
+                    LOGGER.debug("overriding datatype from {} to {}", propType, or);
 
                     if (or.toLowerCase().startsWith("list[")) {
                         String innerType = or.substring(5, or.length() - 1);
@@ -514,10 +518,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                  */
                 boolean currentTypeIsParentSubType = false;
                 List<NamedType> subTypes = _intr.findSubtypes(parentBeanDesc.getClassInfo());
-                for (NamedType subType : subTypes) {
-                    if (subType.getType().equals(currentType)) {
-                        currentTypeIsParentSubType = true;
-                        break;
+                if (subTypes != null) {
+                    for (NamedType subType : subTypes) {
+                        if (subType.getType().equals(currentType)) {
+                            currentTypeIsParentSubType = true;
+                            break;
+                        }
                     }
                 }
 
@@ -529,10 +535,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 final ApiModel parentApiModel = parentBeanDesc.getClassAnnotations().get(ApiModel.class);
                 if (parentApiModel != null) {
                     Class<?>[] apiModelSubTypes = parentApiModel.subTypes();
-                    for (Class<?> subType : apiModelSubTypes) {
-                        if (subType.equals(currentType)) {
-                            currentTypeIsParentApiModelSubType = true;
-                            break;
+                    if (apiModelSubTypes != null) {
+                        for (Class<?> subType : apiModelSubTypes) {
+                            if (subType.equals(currentType)) {
+                                currentTypeIsParentApiModelSubType = true;
+                                break;
+                            }
                         }
                     }
                 }
@@ -593,7 +601,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         PROPERTY(ObjectIdGenerators.PropertyGenerator.class) {
             @Override
             protected Property processAsProperty(String propertyName, JavaType type,
-                                                 ModelConverterContext context, ObjectMapper mapper) {
+                    ModelConverterContext context, ObjectMapper mapper) {
                 /*
                  * When generator = ObjectIdGenerators.PropertyGenerator.class and
                  * @JsonIdentityReference(alwaysAsId = false) then property is serialized
@@ -604,7 +612,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             @Override
             protected Property processAsId(String propertyName, JavaType type,
-                                           ModelConverterContext context, ObjectMapper mapper) {
+                    ModelConverterContext context, ObjectMapper mapper) {
                 final BeanDescription beanDesc = mapper.getSerializationConfig().introspect(type);
                 for (BeanPropertyDefinition def : beanDesc.findProperties()) {
                     final String name = def.getName();
@@ -625,28 +633,28 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         INT(ObjectIdGenerators.IntSequenceGenerator.class) {
             @Override
             protected Property processAsProperty(String propertyName, JavaType type,
-                                                 ModelConverterContext context, ObjectMapper mapper) {
+                    ModelConverterContext context, ObjectMapper mapper) {
                 Property id = new IntegerProperty();
                 return process(id, propertyName, type, context);
             }
 
             @Override
             protected Property processAsId(String propertyName, JavaType type,
-                                           ModelConverterContext context, ObjectMapper mapper) {
+                    ModelConverterContext context, ObjectMapper mapper) {
                 return new IntegerProperty();
             }
         },
         UUID(ObjectIdGenerators.UUIDGenerator.class) {
             @Override
             protected Property processAsProperty(String propertyName, JavaType type,
-                                                 ModelConverterContext context, ObjectMapper mapper) {
+                    ModelConverterContext context, ObjectMapper mapper) {
                 Property id = new UUIDProperty();
                 return process(id, propertyName, type, context);
             }
 
             @Override
             protected Property processAsId(String propertyName, JavaType type,
-                                           ModelConverterContext context, ObjectMapper mapper) {
+                    ModelConverterContext context, ObjectMapper mapper) {
                 return new UUIDProperty();
             }
         },
@@ -654,13 +662,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             // When generator = ObjectIdGenerators.None.class property should be processed as normal property.
             @Override
             protected Property processAsProperty(String propertyName, JavaType type,
-                                                 ModelConverterContext context, ObjectMapper mapper) {
+                    ModelConverterContext context, ObjectMapper mapper) {
                 return null;
             }
 
             @Override
             protected Property processAsId(String propertyName, JavaType type,
-                                           ModelConverterContext context, ObjectMapper mapper) {
+                    ModelConverterContext context, ObjectMapper mapper) {
                 return null;
             }
         };
@@ -672,14 +680,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         protected abstract Property processAsProperty(String propertyName, JavaType type,
-                                                      ModelConverterContext context, ObjectMapper mapper);
+                ModelConverterContext context, ObjectMapper mapper);
 
         protected abstract Property processAsId(String propertyName, JavaType type,
-                                                ModelConverterContext context, ObjectMapper mapper);
+                ModelConverterContext context, ObjectMapper mapper);
 
         public static Property processJsonIdentity(JavaType type, ModelConverterContext context,
-                                                   ObjectMapper mapper, JsonIdentityInfo identityInfo,
-                                                   JsonIdentityReference identityReference) {
+                ObjectMapper mapper, JsonIdentityInfo identityInfo,
+                JsonIdentityReference identityReference) {
             final GeneratorWrapper wrapper = identityInfo != null ? getWrapper(identityInfo.generator()) : null;
             if (wrapper == null) {
                 return null;
@@ -701,7 +709,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         private static Property process(Property id, String propertyName, JavaType type,
-                                        ModelConverterContext context) {
+                ModelConverterContext context) {
             id.setName(propertyName);
             Model model = context.resolve(type);
             if (model instanceof ComposedModel) {
