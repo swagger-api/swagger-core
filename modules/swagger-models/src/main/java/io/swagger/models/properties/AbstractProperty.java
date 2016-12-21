@@ -8,18 +8,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class AbstractProperty implements Property, Cloneable {
-    String name;
-    String type;
-    String format;
-    Object example;
-    Xml xml;
-    boolean required;
-    Integer position;
-    String description;
-    String title;
-    Boolean readOnly;
-    private String access;
-    private Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
+    protected String name;
+    protected String type;
+    protected String format;
+    protected Object example;
+    protected Xml xml;
+    protected boolean required;
+    protected Integer position;
+    protected String description;
+    protected String title;
+    protected Boolean readOnly;
+    protected Boolean allowEmptyValue;
+    protected String access;
+    protected Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
 
     @Override
     public Property rename(String newName) {
@@ -44,6 +45,11 @@ public abstract class AbstractProperty implements Property, Cloneable {
 
     public Property readOnly() {
         this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
+
+    public Property allowEmptyValue(Boolean allowEmptyValue) {
+        this.setAllowEmptyValue(allowEmptyValue);
         return this;
     }
 
@@ -148,6 +154,14 @@ public abstract class AbstractProperty implements Property, Cloneable {
     @Override
     public void setAccess(String access) {
         this.access = access;
+    }
+
+    public Boolean getAllowEmptyValue() {
+        return allowEmptyValue;
+    }
+
+    public void setAllowEmptyValue(Boolean allowEmptyValue) {
+        this.allowEmptyValue = allowEmptyValue;
     }
 
     @JsonAnyGetter

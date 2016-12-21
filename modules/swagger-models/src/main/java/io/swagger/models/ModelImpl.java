@@ -21,6 +21,7 @@ public class ModelImpl extends AbstractModel {
     private String name;
     private List<String> required;
     private Map<String, Property> properties;
+    private Boolean allowEmptyValue;
     private boolean isSimple = false;
     private String description;
     private Object example;
@@ -70,6 +71,11 @@ public class ModelImpl extends AbstractModel {
 
     public ModelImpl name(String name) {
         this.setName(name);
+        return this;
+    }
+
+    public ModelImpl allowEmptyValue(Boolean allowEmptyValue) {
+        this.setAllowEmptyValue(allowEmptyValue);
         return this;
     }
 
@@ -144,6 +150,14 @@ public class ModelImpl extends AbstractModel {
     public void setAdditionalProperties(Property additionalProperties) {
         type(OBJECT);
         this.additionalProperties = additionalProperties;
+    }
+
+    public Boolean getAllowEmptyValue() {
+        return allowEmptyValue;
+    }
+
+    public void setAllowEmptyValue(Boolean allowEmptyValue) {
+        this.allowEmptyValue = allowEmptyValue;
     }
 
     public String getType() {

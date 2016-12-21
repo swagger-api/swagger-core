@@ -286,7 +286,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 } else {
                     hasSetter = true;
                 }
-            }catch(IllegalArgumentException e){
+            } catch (IllegalArgumentException e){
                 //com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder would throw IllegalArgumentException
                 // if there are overloaded setters. If we only want to know whether a set method exists, suppress the exception
                 // is reasonable.
@@ -307,6 +307,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
 
             final AnnotatedMember member = propDef.getPrimaryMember();
+            Boolean allowEmptyValue = null;
 
             if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore)) {
                 List<Annotation> annotationList = new ArrayList<Annotation>();
@@ -320,6 +321,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 if (mp != null && mp.readOnly()) {
                     isReadOnly = mp.readOnly();
+                }
+
+                if (mp != null && mp.allowEmptyValue()) {
+                    allowEmptyValue = mp.allowEmptyValue();
                 }
 
                 JavaType propType = member.getType(beanDesc.bindingsForBeanType());
@@ -417,6 +422,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     property.setDefault(_findDefaultValue(member));
                     property.setExample(_findExampleValue(member));
                     property.setReadOnly(_findReadOnly(member));
+                    if(allowEmptyValue != null) {
+                        property.setAllowEmptyValue(allowEmptyValue);
+                    }
 
                     if (property.getReadOnly() == null) {
                         if (isReadOnly) {

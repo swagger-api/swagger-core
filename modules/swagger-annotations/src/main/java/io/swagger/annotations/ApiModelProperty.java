@@ -104,4 +104,11 @@ public @interface ApiModelProperty {
      */
 
     String reference() default "";
+
+    /**
+     * Allows passing an empty value
+     *
+     * @since 1.5.11
+     */
+    boolean allowEmptyValue() default false;
 }
