@@ -376,7 +376,7 @@ public class ParameterProcessor {
                     apiParam = new ApiImplicitParamWrapper((ApiImplicitParam) item);
                 } else if ("javax.ws.rs.DefaultValue".equals(item.annotationType().getName())) {
                     try {
-                        rsDefault = (String) item.getClass().getMethod("value").invoke(item);
+                        rsDefault = (String) item.annotationType().getMethod("value").invoke(item);
                     } catch (Exception ex) {
                         LOGGER.error("Invocation of value method failed", ex);
                     }
