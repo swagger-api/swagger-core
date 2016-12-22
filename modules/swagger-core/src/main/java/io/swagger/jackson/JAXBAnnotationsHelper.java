@@ -52,9 +52,11 @@ class JAXBAnnotationsHelper {
                 xml.setName(wrapper.name());
             }
         }
-        final XmlElement element = member.getAnnotation(XmlElement.class);
-        if (element != null) {
-            setName(element.namespace(), element.name(), property);
+        else {
+            final XmlElement element = member.getAnnotation(XmlElement.class);
+            if (element != null) {
+                setName(element.namespace(), element.name(), property);
+            }
         }
     }
 

@@ -121,8 +121,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (keyType != null && valueType != null) {
                 property = new MapProperty().additionalProperties(context.resolveProperty(valueType, new Annotation[]{}));
             } else if (valueType != null) {
+                Property items = context.resolveProperty(valueType, new Annotation[]{});
+                // If property is XmlElement annotated, then use the name provided by annotation | https://github.com/swagger-api/swagger-core/issues/2047
+                if(annotations != null && annotations.length > 0) {
+                    for (Annotation annotation : annotations) {
+                        if(annotation instanceof XmlElement) {
+                            XmlElement xmlElement =   (XmlElement)annotation;
+                            if(xmlElement.name() != null && !xmlElement.name().isEmpty()) {
+                            Xml xml = items.getXml() != null ? items.getXml() : new Xml();
+                            xml.setName(xmlElement.name());
+                            items.setXml(xml);
+                            }
+                        }
+                    }
+                }
                 ArrayProperty arrayProperty =
-                        new ArrayProperty().items(context.resolveProperty(valueType, new Annotation[]{}));
+                        new ArrayProperty().items(items);
                 if (_isSetType(propType.getRawClass())) {
                     arrayProperty.setUniqueItems(true);
                 }
@@ -150,7 +164,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
-
         return property;
     }
 
