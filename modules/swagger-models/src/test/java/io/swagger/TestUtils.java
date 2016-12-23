@@ -220,7 +220,7 @@ public class TestUtils {
                 try {
                     Whitebox.setInternalState(instance, "_enum", (Object) null);
                 } catch (FieldNotFoundException ex) {
-                    LOGGER.log(Level.INFO, ex.getMessage(), ex);
+                    LOGGER.log(Level.INFO, ex.getMessage());
                 }
 
                 Whitebox.invokeMethod(instance, method.getName(), parametersArray);

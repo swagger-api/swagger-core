@@ -54,6 +54,12 @@ public class ParameterProcessor {
             if (param.isRequired()) {
                 p.setRequired(true);
             }
+            if(param.getReadOnly()) {
+                p.readOnly(param.getReadOnly());
+            }
+            if(param.getAllowEmptyValue()) {
+                p.allowEmptyValue(param.getAllowEmptyValue());
+            }
             if (StringUtils.isNotEmpty(param.getName())) {
                 p.setName(param.getName());
             }
@@ -333,6 +339,10 @@ public class ParameterProcessor {
         String getType();
 
         String getFormat();
+
+        boolean getReadOnly();
+
+        boolean getAllowEmptyValue();
     }
 
     /**
@@ -624,6 +634,10 @@ public class ParameterProcessor {
             return apiParam.format();
         }
 
+        public boolean getReadOnly() {
+            return apiParam.readOnly();
+        }
+
         public boolean getAllowEmptyValue() {
             return apiParam.allowEmptyValue();
         }
@@ -710,6 +724,10 @@ public class ParameterProcessor {
 
         public String getFormat() {
             return apiParam.format();
+        }
+
+        public boolean getReadOnly() {
+            return apiParam.readOnly();
         }
 
         public boolean getAllowEmptyValue() {

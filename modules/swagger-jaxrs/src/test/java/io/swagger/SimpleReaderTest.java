@@ -29,6 +29,7 @@ import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.resources.ClassWithExamplePost;
 import io.swagger.resources.HiddenResource;
+import io.swagger.resources.Issue1979Resource;
 import io.swagger.resources.NicknamedOperation;
 import io.swagger.resources.NotValidRootResource;
 import io.swagger.resources.Resource1041;
@@ -62,7 +63,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 public class SimpleReaderTest {
 
@@ -618,5 +625,15 @@ public class SimpleReaderTest {
         assertNotNull(bp.getExample());
         Object value = bp.getExample();
         assertEquals("77", value);
+    }
+
+    @Test(description = "scan a resource with read-only and empty value parameters")
+    public void scanClassWithReadOnlyAndEmptyValueParams() {
+        Swagger swagger = getSwagger(Issue1979Resource.class);
+        Parameter readOnlyParam = swagger.getPath("/fun/readOnly").getGet().getParameters().get(0);
+        assertTrue(readOnlyParam.isReadOnly());
+
+        Parameter allowEmptyParam = swagger.getPath("/fun/allowEmpty").getGet().getParameters().get(0);
+        assertTrue(allowEmptyParam.getAllowEmptyValue());
     }
 }
