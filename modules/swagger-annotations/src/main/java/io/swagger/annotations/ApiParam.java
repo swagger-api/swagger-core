@@ -128,4 +128,13 @@ public @interface ApiParam {
      * @return
      */
     String format() default "";
+
+    /**
+     * Adds the ability to set a format as empty
+     *
+     * @since 1.5.11
+     *
+     * @return
+     */
+    boolean allowEmptyValue() default false;
 }

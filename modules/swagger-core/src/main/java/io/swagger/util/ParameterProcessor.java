@@ -358,6 +358,7 @@ public class ParameterProcessor {
         private Integer minLength;
         private Integer maxLength;
         private String pattern;
+        private Boolean allowEmptyValue;
 
         /**
          * Constructs an instance.
@@ -422,6 +423,7 @@ public class ParameterProcessor {
             defaultValue = StringUtils.isNotEmpty(apiParam.getDefaultValue()) ? apiParam.getDefaultValue() : rsDefault;
             type = StringUtils.isNotEmpty(apiParam.getType()) ? apiParam.getType() : null;
             format = StringUtils.isNotEmpty(apiParam.getFormat()) ? apiParam.getFormat() : null;
+            allowEmptyValue = apiParam.isAllowMultiple() ? true : null;
         }
 
         private boolean isAssignableToNumber(Class<?> clazz) {
@@ -532,6 +534,10 @@ public class ParameterProcessor {
         public String getPattern() {
             return pattern;
         }
+
+        public Boolean getAllowEmptyValue() {
+            return allowEmptyValue;
+        }
     }
 
     /**
@@ -617,6 +623,10 @@ public class ParameterProcessor {
         public String getFormat() {
             return apiParam.format();
         }
+
+        public boolean getAllowEmptyValue() {
+            return apiParam.allowEmptyValue();
+        }
     }
 
     /**
@@ -700,6 +710,10 @@ public class ParameterProcessor {
 
         public String getFormat() {
             return apiParam.format();
+        }
+
+        public boolean getAllowEmptyValue() {
+            return apiParam.allowEmptyValue();
         }
     }
 }

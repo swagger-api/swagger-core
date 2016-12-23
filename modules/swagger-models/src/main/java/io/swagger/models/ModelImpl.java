@@ -21,7 +21,7 @@ public class ModelImpl extends AbstractModel {
     private String name;
     private List<String> required;
     private Map<String, Property> properties;
-    private Boolean allowEmptyValue;
+    private boolean allowEmptyValue;
     private boolean isSimple = false;
     private String description;
     private Object example;
@@ -74,7 +74,7 @@ public class ModelImpl extends AbstractModel {
         return this;
     }
 
-    public ModelImpl allowEmptyValue(Boolean allowEmptyValue) {
+    public ModelImpl allowEmptyValue(boolean allowEmptyValue) {
         this.setAllowEmptyValue(allowEmptyValue);
         return this;
     }
@@ -152,11 +152,11 @@ public class ModelImpl extends AbstractModel {
         this.additionalProperties = additionalProperties;
     }
 
-    public Boolean getAllowEmptyValue() {
+    public boolean getAllowEmptyValue() {
         return allowEmptyValue;
     }
 
-    public void setAllowEmptyValue(Boolean allowEmptyValue) {
+    public void setAllowEmptyValue(boolean allowEmptyValue) {
         this.allowEmptyValue = allowEmptyValue;
     }
 
@@ -293,122 +293,79 @@ public class ModelImpl extends AbstractModel {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime
-                * result
-                + ((additionalProperties == null) ? 0 : additionalProperties
-                .hashCode());
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
-        result = prime * result
-                + ((discriminator == null) ? 0 : discriminator.hashCode());
-        result = prime * result + ((example == null) ? 0 : example.hashCode());
-        result = prime * result + ((format == null) ? 0 : format.hashCode());
-        result = prime * result + (isSimple ? 1231 : 1237);
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result
-                + ((properties == null) ? 0 : properties.hashCode());
-        result = prime * result + ((required == null) ? 0 : required.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((xml == null) ? 0 : xml.hashCode());
-        result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ModelImpl)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        ModelImpl model = (ModelImpl) o;
+
+        if (allowEmptyValue != model.allowEmptyValue) {
+            return false;
+        }
+        if (isSimple != model.isSimple) {
+            return false;
+        }
+        if (type != null ? !type.equals(model.type) : model.type != null) {
+            return false;
+        }
+        if (format != null ? !format.equals(model.format) : model.format != null) {
+            return false;
+        }
+        if (name != null ? !name.equals(model.name) : model.name != null) {
+            return false;
+        }
+        if (required != null ? !required.equals(model.required) : model.required != null) {
+            return false;
+        }
+        if (properties != null ? !properties.equals(model.properties) : model.properties != null) {
+            return false;
+        }
+        if (description != null ? !description.equals(model.description) : model.description != null) {
+            return false;
+        }
+        if (example != null ? !example.equals(model.example) : model.example != null) {
+            return false;
+        }
+        if (additionalProperties != null ? !additionalProperties.equals(model.additionalProperties) : model.additionalProperties != null) {
+            return false;
+        }
+        if (discriminator != null ? !discriminator.equals(model.discriminator) : model.discriminator != null) {
+            return false;
+        }
+        if (xml != null ? !xml.equals(model.xml) : model.xml != null) {
+            return false;
+        }
+        if (defaultValue != null ? !defaultValue.equals(model.defaultValue) : model.defaultValue != null) {
+            return false;
+        }
+        return _enum != null ? _enum.equals(model._enum) : model._enum == null;
+
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ModelImpl other = (ModelImpl) obj;
-        if (additionalProperties == null) {
-            if (other.additionalProperties != null) {
-                return false;
-            }
-        } else if (!additionalProperties.equals(other.additionalProperties)) {
-            return false;
-        }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
-            return false;
-        }
-        if (discriminator == null) {
-            if (other.discriminator != null) {
-                return false;
-            }
-        } else if (!discriminator.equals(other.discriminator)) {
-            return false;
-        }
-        if (example == null) {
-            if (other.example != null) {
-                return false;
-            }
-        } else if (!example.equals(other.example)) {
-            return false;
-        }
-        if (format == null) {
-            if (other.format != null) {
-                return false;
-            }
-        } else if (!format.equals(other.format)) {
-            return false;
-        }
-        if (isSimple != other.isSimple) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (properties == null) {
-            if (other.properties != null) {
-                return false;
-            }
-        } else if (!properties.equals(other.properties)) {
-            return false;
-        }
-        if (required == null) {
-            if (other.required != null) {
-                return false;
-            }
-        } else if (!required.equals(other.required)) {
-            return false;
-        }
-        if (type == null) {
-            if (other.type != null) {
-                return false;
-            }
-        } else if (!type.equals(other.type)) {
-            return false;
-        }
-        if (xml == null) {
-            if (other.xml != null) {
-                return false;
-            }
-        } else if (!xml.equals(other.xml)) {
-            return false;
-        }
-        if (defaultValue == null) {
-            if (other.defaultValue != null) {
-                return false;
-            }
-        } else if (!defaultValue.equals(other.defaultValue)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (format != null ? format.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (required != null ? required.hashCode() : 0);
+        result = 31 * result + (properties != null ? properties.hashCode() : 0);
+        result = 31 * result + (allowEmptyValue ? 1 : 0);
+        result = 31 * result + (isSimple ? 1 : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (example != null ? example.hashCode() : 0);
+        result = 31 * result + (additionalProperties != null ? additionalProperties.hashCode() : 0);
+        result = 31 * result + (discriminator != null ? discriminator.hashCode() : 0);
+        result = 31 * result + (xml != null ? xml.hashCode() : 0);
+        result = 31 * result + (defaultValue != null ? defaultValue.hashCode() : 0);
+        result = 31 * result + (_enum != null ? _enum.hashCode() : 0);
+        return result;
     }
 }

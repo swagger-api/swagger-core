@@ -14,6 +14,7 @@ public abstract class AbstractParameter {
     protected boolean required = false;
     protected String access;
     protected String pattern;
+    protected boolean allowEmptyValue = false;
 
     public String getIn() {
         return in;
@@ -51,6 +52,55 @@ public abstract class AbstractParameter {
         return access;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AbstractParameter)) {
+            return false;
+        }
+
+        AbstractParameter that = (AbstractParameter) o;
+
+        if (required != that.required) {
+            return false;
+        }
+        if (allowEmptyValue != that.allowEmptyValue) {
+            return false;
+        }
+        if (vendorExtensions != null ? !vendorExtensions.equals(that.vendorExtensions) : that.vendorExtensions != null) {
+            return false;
+        }
+        if (in != null ? !in.equals(that.in) : that.in != null) {
+            return false;
+        }
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        if (description != null ? !description.equals(that.description) : that.description != null) {
+            return false;
+        }
+        if (access != null ? !access.equals(that.access) : that.access != null) {
+            return false;
+        }
+        return pattern != null ? pattern.equals(that.pattern) : that.pattern == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = vendorExtensions != null ? vendorExtensions.hashCode() : 0;
+        result = 31 * result + (in != null ? in.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (required ? 1 : 0);
+        result = 31 * result + (access != null ? access.hashCode() : 0);
+        result = 31 * result + (pattern != null ? pattern.hashCode() : 0);
+        result = 31 * result + (allowEmptyValue ? 1 : 0);
+        return result;
+    }
+
     public void setAccess(String access) {
         this.access = access;
     }
@@ -61,6 +111,14 @@ public abstract class AbstractParameter {
 
     public void setPattern(String pattern) {
         this.pattern = pattern;
+    }
+
+    public boolean getAllowEmptyValue() {
+        return allowEmptyValue;
+    }
+
+    public void setAllowEmptyValue(boolean allowEmptyValue) {
+        this.allowEmptyValue = allowEmptyValue;
     }
 
     @JsonAnyGetter
@@ -79,79 +137,4 @@ public abstract class AbstractParameter {
         this.vendorExtensions = vendorExtensions;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((access == null) ? 0 : access.hashCode());
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((in == null) ? 0 : in.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((pattern == null) ? 0 : pattern.hashCode());
-        result = prime * result + (required ? 1231 : 1237);
-        result = prime * result
-                + ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AbstractParameter other = (AbstractParameter) obj;
-        if (access == null) {
-            if (other.access != null) {
-                return false;
-            }
-        } else if (!access.equals(other.access)) {
-            return false;
-        }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
-            return false;
-        }
-        if (in == null) {
-            if (other.in != null) {
-                return false;
-            }
-        } else if (!in.equals(other.in)) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (pattern == null) {
-            if (other.pattern != null) {
-                return false;
-            }
-        } else if (!pattern.equals(other.pattern)) {
-            return false;
-        }
-        if (required != other.required) {
-            return false;
-        }
-        if (vendorExtensions == null) {
-            if (other.vendorExtensions != null) {
-                return false;
-            }
-        } else if (!vendorExtensions.equals(other.vendorExtensions)) {
-            return false;
-        }
-        return true;
-    }
 }

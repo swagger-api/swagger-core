@@ -32,4 +32,8 @@ public interface Parameter {
     void setPattern(String pattern);
 
     Map<String, Object> getVendorExtensions();
+
+    boolean getAllowEmptyValue();
+
+    void setAllowEmptyValue(boolean allowEmptyValue);
 }
