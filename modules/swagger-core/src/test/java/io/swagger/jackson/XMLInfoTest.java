@@ -36,18 +36,17 @@ public class XMLInfoTest extends SwaggerTestBase {
         assertEquals(xml.getName(), "xmlDecoratedBean");
 
         // Cast it to an array property
-        final ArrayProperty property = (ArrayProperty)impl.getProperties().get("items");
+        final ArrayProperty property = (ArrayProperty)impl.getProperties().get("elements");
         assertNotNull(property);
         final Xml propertyXml = property.getXml();
         assertNotNull(propertyXml);
-        // Check the name of array property
-        assertEquals(propertyXml.getName(), "items");
+        assertNull(propertyXml.getName());
         assertTrue(propertyXml.getWrapped());
         // Get the xml for items for the array property
         final Xml itemsXml = property.getItems().getXml();
         assertNotNull(itemsXml);
         // Check the name of item name
-        assertEquals(itemsXml.getName(), "item");
+        assertEquals(itemsXml.getName(), "element");
         assertNotNull(impl.getProperties().get("elementC"));
     }
 
@@ -58,9 +57,9 @@ public class XMLInfoTest extends SwaggerTestBase {
         @XmlElement(name = "elementB")
         public int b;
 
-        @XmlElementWrapper(name = "items")
-        @XmlElement(name = "item")
-        public List<String> items;
+        @XmlElementWrapper(name = "elements")
+        @XmlElement(name = "element")
+        public List<String> elements;
 
         @JsonProperty("elementC")
         public String c;
