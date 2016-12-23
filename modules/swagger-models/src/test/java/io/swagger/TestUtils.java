@@ -206,7 +206,7 @@ public class TestUtils {
                     try {
                         getMethod = PowerMockito.method(clazz, getterMethodName);
                     } catch (MethodNotFoundException ex) {
-                        LOGGER.log(Level.INFO, ex.getMessage(), ex);
+                        LOGGER.log(Level.INFO, ex.getMessage());
                         continue;
                     }
                     Class<?> retType = getMethod.getReturnType();

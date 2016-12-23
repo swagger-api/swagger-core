@@ -60,6 +60,7 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -307,9 +308,13 @@ public class SimpleReaderTest {
         assertEquals(headers200.get("foo").getType(), "string");
 
         Map<String, Property> headers400 = responses.get("400").getHeaders();
-        assertEquals(headers400.size(), 1);
+        assertEquals(headers400.size(), 2);
         assertEquals(headers400.get("X-Rack-Cache").getDescription(), "Explains whether or not a cache was used");
         assertEquals(headers400.get("X-Rack-Cache").getType(), "boolean");
+
+        Iterator<String> keyItr = headers400.keySet().iterator();
+        assertEquals(keyItr.next(), "X-Rack-Cache");
+        assertEquals(keyItr.next(), "X-After-Rack-Cache");
     }
 
     @Test(description = "not scan a hidden resource")

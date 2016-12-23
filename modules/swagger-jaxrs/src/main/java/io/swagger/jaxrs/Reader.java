@@ -16,6 +16,12 @@
 
 package io.swagger.jaxrs;
 
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -63,7 +69,13 @@ import io.swagger.util.BaseReaderUtils;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.Produces;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -76,26 +88,12 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.Produces;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class Reader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
@@ -171,7 +169,7 @@ public class Reader {
         }
 
         for (Class<?> cls : sortedClasses) {
-            read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
+            read(cls, "", null, false, new String[0], new String[0], new LinkedHashMap<String, Tag>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
         }
 
         for (ReaderListener listener : listeners.values()) {
@@ -194,7 +192,7 @@ public class Reader {
             readSwaggerConfig(cls, swaggerDefinition);
         }
 
-        return read(cls, "", null, false, new String[0], new String[0], new HashMap<String, Tag>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
+        return read(cls, "", null, false, new String[0], new String[0], new LinkedHashMap<String, Tag>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
     }
 
     protected Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean isSubresource, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters) {
@@ -202,7 +200,7 @@ public class Reader {
     }
 
     private Swagger read(Class<?> cls, String parentPath, String parentMethod, boolean isSubresource, String[] parentConsumes, String[] parentProduces, Map<String, Tag> parentTags, List<Parameter> parentParameters, Set<Class<?>> scannedResources) {
-        Map<String, Tag> tags = new HashMap<String, Tag>();
+        Map<String, Tag> tags = new LinkedHashMap<String, Tag>();
         List<SecurityRequirement> securities = new ArrayList<SecurityRequirement>();
 
         String[] consumes = new String[0];
@@ -309,7 +307,7 @@ public class Reader {
                 javax.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class);
 
                 String operationPath = getPath(apiPath, methodPath, parentPath);
-                Map<String, String> regexMap = new HashMap<String, String>();
+                Map<String, String> regexMap = new LinkedHashMap<String, String>();
                 operationPath = PathUtils.parsePath(operationPath, regexMap);
                 if (operationPath != null) {
                     if (isIgnored(operationPath)) {
@@ -775,7 +773,7 @@ public class Reader {
                 String name = header.name();
                 if (!"".equals(name)) {
                     if (responseHeaders == null) {
-                        responseHeaders = new HashMap<String, Property>();
+                        responseHeaders = new LinkedHashMap<String, Property>();
                     }
                     String description = header.description();
                     Class<?> cls = header.response();
@@ -834,7 +832,7 @@ public class Reader {
         String responseContainer = null;
 
         Type responseType = null;
-        Map<String, Property> defaultResponseHeaders = new HashMap<String, Property>();
+        Map<String, Property> defaultResponseHeaders = new LinkedHashMap<String, Property>();
 
         if (apiOperation != null) {
             if (apiOperation.hidden()) {

@@ -33,8 +33,12 @@ public class ResourceWithResponseHeaders {
             })
     @ApiResponses({
             @ApiResponse(code = 400, message = "Invalid ID",
-                    response = NotFoundModel.class,
-                    responseHeaders = @ResponseHeader(name = "X-Rack-Cache", description = "Explains whether or not a cache was used", response = Boolean.class)),
+                response = NotFoundModel.class,
+                responseHeaders =
+                    {
+                        @ResponseHeader(name = "X-Rack-Cache", description = "Explains whether or not a cache was used", response = Boolean.class),
+                        @ResponseHeader(name = "X-After-Rack-Cache", description = "verify order", response = String.class)
+                    }),
             @ApiResponse(code = 404, message = "object not found")})
     public Response getTest(
             @ApiParam(value = "sample param data", required = true, allowableValues = "range[0,10]")

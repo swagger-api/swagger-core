@@ -7,6 +7,7 @@ import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 import io.swagger.models.parameters.*;
 import io.swagger.resources.*;
+import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.*;
@@ -190,10 +191,11 @@ public class ReaderTest {
     @Test(description = "scan implicit params")
     public void scanImplicitParam() {
         Swagger swagger = getSwagger(ResourceWithImplicitParams.class);
-
+        Json.prettyPrint(swagger);
         List<Parameter> params = swagger.getPath("/testString").getPost().getParameters();
         assertNotNull(params);
         assertEquals(params.size(), 7);
+
         assertEquals(params.get(0).getName(), "sort");
         assertEquals(params.get(0).getIn(), "query");
 
