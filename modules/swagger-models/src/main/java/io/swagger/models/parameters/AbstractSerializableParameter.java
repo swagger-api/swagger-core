@@ -106,6 +106,16 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         return castThis();
     }
 
+    public T allowEmptyValue(Boolean allowEmpty) {
+        this.setAllowEmptyValue(allowEmpty);
+        return castThis();
+    }
+
+    public T readOnly(Boolean readOnly) {
+        this.setReadOnly(readOnly);
+        return castThis();
+    }
+
     @JsonIgnore
     protected String getDefaultCollectionFormat() {
         return "csv";

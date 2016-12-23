@@ -86,6 +86,28 @@ public class ByteConverterTest {
                      "}");
     }
 
+
+    @Test
+    public void testReadOnlyByteArray() {
+        Model model = new ModelImpl()
+                .property("byteArray",
+                        new ArrayProperty(new BinaryProperty())
+                        .readOnly());
+
+        assertEquals(Json.pretty(model), "{" + NEWLINE +
+                "  \"properties\" : {" + NEWLINE +
+                "    \"byteArray\" : {" + NEWLINE +
+                "      \"type\" : \"array\"," + NEWLINE +
+                "      \"readOnly\" : true," + NEWLINE +
+                "      \"items\" : {" + NEWLINE +
+                "        \"type\" : \"string\"," + NEWLINE +
+                "        \"format\" : \"binary\"" + NEWLINE +
+                "      }" + NEWLINE +
+                "    }" + NEWLINE +
+                "  }" + NEWLINE +
+                "}");
+    }
+
     class ByteConverterModel {
         public Byte[] myBytes = new Byte[0];
     }

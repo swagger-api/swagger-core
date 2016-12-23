@@ -7,6 +7,7 @@ import io.swagger.models.Model1979;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.ModelWithModelPropertyOverrides;
 import io.swagger.models.ModelWithPrimitiveArray;
+import io.swagger.models.ReadOnlyFields;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.LongProperty;
@@ -90,6 +91,13 @@ public class ModelPropertyTest {
                 "   }" +
                 "}";
         SerializationMatchers.assertEqualsToJson(models, json);
+    }
+
+    @Test
+    public void testReadOnlyProperty() {
+        final Map<String, Model> models = ModelConverters.getInstance().readAll(ReadOnlyFields.class);
+        ModelImpl model = (ModelImpl) models.get("ReadOnlyFields");
+        assertTrue(model.getProperties().get("id").getReadOnly());
     }
 
     @Test

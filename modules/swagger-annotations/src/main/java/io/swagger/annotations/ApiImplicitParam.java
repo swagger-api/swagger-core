@@ -154,4 +154,12 @@ public @interface ApiImplicitParam {
      * @return
      */
     boolean allowEmptyValue() default false;
+
+    /**
+     * adds ability to be designated as read only.
+     *
+     * @since 1.5.11
+     *
+     */
+    boolean readOnly() default false;
 }

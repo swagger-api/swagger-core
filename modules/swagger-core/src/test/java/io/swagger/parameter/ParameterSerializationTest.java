@@ -1,8 +1,6 @@
 package io.swagger.parameter;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.ArrayModel;
 import io.swagger.models.ModelImpl;
@@ -18,13 +16,14 @@ import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.util.Json;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class ParameterSerializationTest {
     private final ObjectMapper m = Json.mapper();
@@ -454,5 +453,19 @@ public class ParameterSerializationTest {
         param.setFormat("double");
         final String json = "{\"in\":\"query\",\"required\":false,\"type\":\"number\",\"default\":\"test\",\"format\":\"double\"}";
         SerializationMatchers.assertEqualsToJson(param, json);
+    }
+
+    @Test(description = "should mark a parameter as readOnly")
+    public void testReadOnlyParameter() throws Exception {
+        final QueryParameter qp = new QueryParameter().readOnly(true);
+        final String json = "{\"in\":\"query\",\"required\":false,\"readOnly\":true}";
+        SerializationMatchers.assertEqualsToJson(qp, json);
+    }
+
+    @Test(description = "should mark a parameter as to allow empty value")
+    public void testAllowEmptyValueParameter() throws Exception {
+        final QueryParameter qp = new QueryParameter().allowEmptyValue(true);
+        final String json = "{\"in\":\"query\",\"required\":false,\"allowEmptyValue\":true}";
+        SerializationMatchers.assertEqualsToJson(qp, json);
     }
 }
