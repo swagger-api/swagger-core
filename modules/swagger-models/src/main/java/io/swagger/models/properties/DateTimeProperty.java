@@ -59,4 +59,8 @@ public class DateTimeProperty extends AbstractProperty implements Property {
         this._enum = _enum;
     }
 
+    public DateTimeProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
 }

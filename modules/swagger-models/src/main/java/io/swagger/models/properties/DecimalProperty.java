@@ -2,9 +2,6 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * The DecimalProperty class defines properties for (decimal) numbers without a specific format, or with a custom
  * format. The two standard formats are defined in {@link DoubleProperty} and {@link FloatProperty}.
@@ -37,6 +34,11 @@ public class DecimalProperty extends AbstractNumericProperty {
 
     public DecimalProperty vendorExtension(String key, Object obj) {
         this.setVendorExtension(key, obj);
+        return this;
+    }
+
+    public DecimalProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
         return this;
     }
 

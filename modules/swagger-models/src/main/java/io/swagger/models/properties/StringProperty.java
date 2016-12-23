@@ -112,6 +112,11 @@ public class StringProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public StringProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
+
     public List<String> getEnum() {
         return _enum;
     }

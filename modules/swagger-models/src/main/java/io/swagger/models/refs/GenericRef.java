@@ -49,7 +49,7 @@ public class GenericRef {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof GenericRef)) {
             return false;
         }
 
@@ -64,7 +64,7 @@ public class GenericRef {
         if (ref != null ? !ref.equals(that.ref) : that.ref != null) {
             return false;
         }
-        return !(simpleRef != null ? !simpleRef.equals(that.simpleRef) : that.simpleRef != null);
+        return simpleRef != null ? simpleRef.equals(that.simpleRef) : that.simpleRef == null;
 
     }
 

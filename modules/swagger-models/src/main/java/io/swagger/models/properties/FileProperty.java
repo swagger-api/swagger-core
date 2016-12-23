@@ -19,4 +19,9 @@ public class FileProperty extends AbstractProperty implements Property {
         this.setXml(xml);
         return this;
     }
+
+    public FileProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
 }

@@ -57,6 +57,11 @@ public class ArrayProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public ArrayProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
+
     public Property getItems() {
         return items;
     }

@@ -30,4 +30,9 @@ public class ByteArrayProperty extends AbstractProperty implements Property {
         this.setVendorExtension(key, obj);
         return this;
     }
+
+    public ByteArrayProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
 }

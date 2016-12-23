@@ -43,6 +43,11 @@ public class IntegerProperty extends BaseIntegerProperty {
         return this;
     }
 
+    public IntegerProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
+
     @Override
     public void setExample(Object example) {
         if (example instanceof String) {

@@ -52,6 +52,11 @@ public class BinaryProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public BinaryProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
+
     public Integer getMinLength() {
         return minLength;
     }

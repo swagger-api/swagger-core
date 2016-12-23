@@ -18,7 +18,7 @@ public abstract class AbstractProperty implements Property, Cloneable {
     protected String description;
     protected String title;
     protected Boolean readOnly;
-    protected boolean allowEmptyValue = false;
+    protected Boolean allowEmptyValue;
     protected String access;
     protected Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
 
@@ -48,7 +48,76 @@ public abstract class AbstractProperty implements Property, Cloneable {
         return this;
     }
 
-    public Property allowEmptyValue(boolean allowEmptyValue) {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AbstractProperty)) {
+            return false;
+        }
+
+        AbstractProperty that = (AbstractProperty) o;
+
+        if (required != that.required) {
+            return false;
+        }
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        if (type != null ? !type.equals(that.type) : that.type != null) {
+            return false;
+        }
+        if (format != null ? !format.equals(that.format) : that.format != null) {
+            return false;
+        }
+        if (example != null ? !example.equals(that.example) : that.example != null) {
+            return false;
+        }
+        if (xml != null ? !xml.equals(that.xml) : that.xml != null) {
+            return false;
+        }
+        if (position != null ? !position.equals(that.position) : that.position != null) {
+            return false;
+        }
+        if (description != null ? !description.equals(that.description) : that.description != null) {
+            return false;
+        }
+        if (title != null ? !title.equals(that.title) : that.title != null) {
+            return false;
+        }
+        if (readOnly != null ? !readOnly.equals(that.readOnly) : that.readOnly != null) {
+            return false;
+        }
+        if (allowEmptyValue != null ? !allowEmptyValue.equals(that.allowEmptyValue) : that.allowEmptyValue != null) {
+            return false;
+        }
+        if (access != null ? !access.equals(that.access) : that.access != null) {
+            return false;
+        }
+        return vendorExtensions != null ? vendorExtensions.equals(that.vendorExtensions) : that.vendorExtensions == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (format != null ? format.hashCode() : 0);
+        result = 31 * result + (example != null ? example.hashCode() : 0);
+        result = 31 * result + (xml != null ? xml.hashCode() : 0);
+        result = 31 * result + (required ? 1 : 0);
+        result = 31 * result + (position != null ? position.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (readOnly != null ? readOnly.hashCode() : 0);
+        result = 31 * result + (allowEmptyValue != null ? allowEmptyValue.hashCode() : 0);
+        result = 31 * result + (access != null ? access.hashCode() : 0);
+        result = 31 * result + (vendorExtensions != null ? vendorExtensions.hashCode() : 0);
+        return result;
+    }
+
+    public Property allowEmptyValue(Boolean allowEmptyValue) {
         this.setAllowEmptyValue(allowEmptyValue);
         return this;
     }
@@ -156,15 +225,18 @@ public abstract class AbstractProperty implements Property, Cloneable {
         this.access = access;
     }
 
-    public boolean getAllowEmptyValue() {
+    public Boolean getAllowEmptyValue() {
         return allowEmptyValue;
     }
 
-    public void setAllowEmptyValue(boolean allowEmptyValue) {
-        this.allowEmptyValue = allowEmptyValue;
+    public void setAllowEmptyValue(Boolean allowEmptyValue) {
+        if(allowEmptyValue != null) {
+            this.allowEmptyValue = allowEmptyValue;
+        }
     }
 
     @JsonAnyGetter
+
     public Map<String, Object> getVendorExtensions() {
         return vendorExtensions;
     }
@@ -184,72 +256,4 @@ public abstract class AbstractProperty implements Property, Cloneable {
         this.vendorExtensions.putAll(vendorExtensionMap);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AbstractProperty)) {
-            return false;
-        }
-
-        AbstractProperty that = (AbstractProperty) o;
-
-        if (required != that.required) {
-            return false;
-        }
-        if (allowEmptyValue != that.allowEmptyValue) {
-            return false;
-        }
-        if (name != null ? !name.equals(that.name) : that.name != null) {
-            return false;
-        }
-        if (type != null ? !type.equals(that.type) : that.type != null) {
-            return false;
-        }
-        if (format != null ? !format.equals(that.format) : that.format != null) {
-            return false;
-        }
-        if (example != null ? !example.equals(that.example) : that.example != null) {
-            return false;
-        }
-        if (xml != null ? !xml.equals(that.xml) : that.xml != null) {
-            return false;
-        }
-        if (position != null ? !position.equals(that.position) : that.position != null) {
-            return false;
-        }
-        if (description != null ? !description.equals(that.description) : that.description != null) {
-            return false;
-        }
-        if (title != null ? !title.equals(that.title) : that.title != null) {
-            return false;
-        }
-        if (readOnly != null ? !readOnly.equals(that.readOnly) : that.readOnly != null) {
-            return false;
-        }
-        if (access != null ? !access.equals(that.access) : that.access != null) {
-            return false;
-        }
-        return vendorExtensions != null ? vendorExtensions.equals(that.vendorExtensions) : that.vendorExtensions == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (format != null ? format.hashCode() : 0);
-        result = 31 * result + (example != null ? example.hashCode() : 0);
-        result = 31 * result + (xml != null ? xml.hashCode() : 0);
-        result = 31 * result + (required ? 1 : 0);
-        result = 31 * result + (position != null ? position.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (readOnly != null ? readOnly.hashCode() : 0);
-        result = 31 * result + (allowEmptyValue ? 1 : 0);
-        result = 31 * result + (access != null ? access.hashCode() : 0);
-        result = 31 * result + (vendorExtensions != null ? vendorExtensions.hashCode() : 0);
-        return result;
-    }
 }

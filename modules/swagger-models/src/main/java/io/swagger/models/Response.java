@@ -103,66 +103,39 @@ public class Response {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((examples == null) ? 0 : examples.hashCode());
-        result = prime * result + ((headers == null) ? 0 : headers.hashCode());
-        result = prime * result + ((schema == null) ? 0 : schema.hashCode());
-        result = prime * result
-                + ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Response)) {
+            return false;
+        }
+
+        Response response = (Response) o;
+
+        if (description != null ? !description.equals(response.description) : response.description != null) {
+            return false;
+        }
+        if (schema != null ? !schema.equals(response.schema) : response.schema != null) {
+            return false;
+        }
+        if (examples != null ? !examples.equals(response.examples) : response.examples != null) {
+            return false;
+        }
+        if (headers != null ? !headers.equals(response.headers) : response.headers != null) {
+            return false;
+        }
+        return vendorExtensions != null ? vendorExtensions.equals(response.vendorExtensions) : response.vendorExtensions == null;
+
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Response other = (Response) obj;
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
-            return false;
-        }
-        if (examples == null) {
-            if (other.examples != null) {
-                return false;
-            }
-        } else if (!examples.equals(other.examples)) {
-            return false;
-        }
-        if (headers == null) {
-            if (other.headers != null) {
-                return false;
-            }
-        } else if (!headers.equals(other.headers)) {
-            return false;
-        }
-        if (schema == null) {
-            if (other.schema != null) {
-                return false;
-            }
-        } else if (!schema.equals(other.schema)) {
-            return false;
-        }
-        if (vendorExtensions == null) {
-            if (other.vendorExtensions != null) {
-                return false;
-            }
-        } else if (!vendorExtensions.equals(other.vendorExtensions)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        int result = description != null ? description.hashCode() : 0;
+        result = 31 * result + (schema != null ? schema.hashCode() : 0);
+        result = 31 * result + (examples != null ? examples.hashCode() : 0);
+        result = 31 * result + (headers != null ? headers.hashCode() : 0);
+        result = 31 * result + (vendorExtensions != null ? vendorExtensions.hashCode() : 0);
+        return result;
     }
 }

@@ -355,6 +355,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (mp != null && mp.allowEmptyValue()) {
                     allowEmptyValue = mp.allowEmptyValue();
                 }
+                else {
+                    allowEmptyValue = null;
+                }
 
                 JavaType propType = member.getType(beanDesc.bindingsForBeanType());
 

@@ -24,9 +24,9 @@ public interface Property {
 
     void setDescription(String title);
 
-    boolean getAllowEmptyValue();
+    Boolean getAllowEmptyValue();
 
-    void setAllowEmptyValue(boolean v);
+    void setAllowEmptyValue(Boolean value);
 
     @JsonIgnore
     String getName();

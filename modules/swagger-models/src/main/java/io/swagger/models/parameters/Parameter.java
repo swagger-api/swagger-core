@@ -33,7 +33,7 @@ public interface Parameter {
 
     Map<String, Object> getVendorExtensions();
 
-    boolean getAllowEmptyValue();
+    Boolean getAllowEmptyValue();
 
-    void setAllowEmptyValue(boolean allowEmptyValue);
+    void setAllowEmptyValue(Boolean allowEmptyValue);
 }

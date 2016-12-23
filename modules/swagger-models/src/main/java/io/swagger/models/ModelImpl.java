@@ -21,7 +21,7 @@ public class ModelImpl extends AbstractModel {
     private String name;
     private List<String> required;
     private Map<String, Property> properties;
-    private boolean allowEmptyValue;
+    private Boolean allowEmptyValue;
     private boolean isSimple = false;
     private String description;
     private Object example;
@@ -74,7 +74,7 @@ public class ModelImpl extends AbstractModel {
         return this;
     }
 
-    public ModelImpl allowEmptyValue(boolean allowEmptyValue) {
+    public ModelImpl allowEmptyValue(Boolean allowEmptyValue) {
         this.setAllowEmptyValue(allowEmptyValue);
         return this;
     }
@@ -152,16 +152,95 @@ public class ModelImpl extends AbstractModel {
         this.additionalProperties = additionalProperties;
     }
 
-    public boolean getAllowEmptyValue() {
+    public Boolean getAllowEmptyValue() {
         return allowEmptyValue;
     }
 
-    public void setAllowEmptyValue(boolean allowEmptyValue) {
-        this.allowEmptyValue = allowEmptyValue;
+    public void setAllowEmptyValue(Boolean allowEmptyValue) {
+        if(allowEmptyValue != null) {
+            this.allowEmptyValue = allowEmptyValue;
+        }
     }
 
     public String getType() {
         return type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ModelImpl)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        ModelImpl model = (ModelImpl) o;
+
+        if (isSimple != model.isSimple) {
+            return false;
+        }
+        if (type != null ? !type.equals(model.type) : model.type != null) {
+            return false;
+        }
+        if (format != null ? !format.equals(model.format) : model.format != null) {
+            return false;
+        }
+        if (name != null ? !name.equals(model.name) : model.name != null) {
+            return false;
+        }
+        if (required != null ? !required.equals(model.required) : model.required != null) {
+            return false;
+        }
+        if (properties != null ? !properties.equals(model.properties) : model.properties != null) {
+            return false;
+        }
+        if (allowEmptyValue != null ? !allowEmptyValue.equals(model.allowEmptyValue) : model.allowEmptyValue != null) {
+            return false;
+        }
+        if (description != null ? !description.equals(model.description) : model.description != null) {
+            return false;
+        }
+        if (example != null ? !example.equals(model.example) : model.example != null) {
+            return false;
+        }
+        if (additionalProperties != null ? !additionalProperties.equals(model.additionalProperties) : model.additionalProperties != null) {
+            return false;
+        }
+        if (discriminator != null ? !discriminator.equals(model.discriminator) : model.discriminator != null) {
+            return false;
+        }
+        if (xml != null ? !xml.equals(model.xml) : model.xml != null) {
+            return false;
+        }
+        if (defaultValue != null ? !defaultValue.equals(model.defaultValue) : model.defaultValue != null) {
+            return false;
+        }
+        return _enum != null ? _enum.equals(model._enum) : model._enum == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (format != null ? format.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (required != null ? required.hashCode() : 0);
+        result = 31 * result + (properties != null ? properties.hashCode() : 0);
+        result = 31 * result + (allowEmptyValue != null ? allowEmptyValue.hashCode() : 0);
+        result = 31 * result + (isSimple ? 1 : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (example != null ? example.hashCode() : 0);
+        result = 31 * result + (additionalProperties != null ? additionalProperties.hashCode() : 0);
+        result = 31 * result + (discriminator != null ? discriminator.hashCode() : 0);
+        result = 31 * result + (xml != null ? xml.hashCode() : 0);
+        result = 31 * result + (defaultValue != null ? defaultValue.hashCode() : 0);
+        result = 31 * result + (_enum != null ? _enum.hashCode() : 0);
+        return result;
     }
 
     public void setType(String type) {
@@ -292,80 +371,4 @@ public class ModelImpl extends AbstractModel {
         return cloned;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ModelImpl)) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-
-        ModelImpl model = (ModelImpl) o;
-
-        if (allowEmptyValue != model.allowEmptyValue) {
-            return false;
-        }
-        if (isSimple != model.isSimple) {
-            return false;
-        }
-        if (type != null ? !type.equals(model.type) : model.type != null) {
-            return false;
-        }
-        if (format != null ? !format.equals(model.format) : model.format != null) {
-            return false;
-        }
-        if (name != null ? !name.equals(model.name) : model.name != null) {
-            return false;
-        }
-        if (required != null ? !required.equals(model.required) : model.required != null) {
-            return false;
-        }
-        if (properties != null ? !properties.equals(model.properties) : model.properties != null) {
-            return false;
-        }
-        if (description != null ? !description.equals(model.description) : model.description != null) {
-            return false;
-        }
-        if (example != null ? !example.equals(model.example) : model.example != null) {
-            return false;
-        }
-        if (additionalProperties != null ? !additionalProperties.equals(model.additionalProperties) : model.additionalProperties != null) {
-            return false;
-        }
-        if (discriminator != null ? !discriminator.equals(model.discriminator) : model.discriminator != null) {
-            return false;
-        }
-        if (xml != null ? !xml.equals(model.xml) : model.xml != null) {
-            return false;
-        }
-        if (defaultValue != null ? !defaultValue.equals(model.defaultValue) : model.defaultValue != null) {
-            return false;
-        }
-        return _enum != null ? _enum.equals(model._enum) : model._enum == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (format != null ? format.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (required != null ? required.hashCode() : 0);
-        result = 31 * result + (properties != null ? properties.hashCode() : 0);
-        result = 31 * result + (allowEmptyValue ? 1 : 0);
-        result = 31 * result + (isSimple ? 1 : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (example != null ? example.hashCode() : 0);
-        result = 31 * result + (additionalProperties != null ? additionalProperties.hashCode() : 0);
-        result = 31 * result + (discriminator != null ? discriminator.hashCode() : 0);
-        result = 31 * result + (xml != null ? xml.hashCode() : 0);
-        result = 31 * result + (defaultValue != null ? defaultValue.hashCode() : 0);
-        result = 31 * result + (_enum != null ? _enum.hashCode() : 0);
-        return result;
-    }
 }
