@@ -1,11 +1,15 @@
 package io.swagger;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.models.Operation;
+import io.swagger.models.Path;
 import io.swagger.models.Response;
+import io.swagger.models.Swagger;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.util.Json;
+import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -67,4 +71,35 @@ public class MapPropertyDeserializerTest {
     assertNotNull(mp.getVendorExtensions().get("x-foo"));
     assertEquals(mp.getVendorExtensions().get("x-foo"), "vendor x");
   }
+
+    @Test(description = "it should read an example within an inlined schema")
+    public void testIssue1261InlineSchemaExample() throws Exception {
+        Operation operation = Yaml.mapper().readValue("      produces:\n" +
+                "        - application/json\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: OK\n" +
+                "          schema:\n" +
+                "            type: object\n" +
+                "            properties:\n" +
+                "              id:\n" +
+                "                type: integer\n" +
+                "                format: int32\n" +
+                "              name:\n" +
+                "                type: string\n" +
+                "            required: [id, name]\n" +
+                "            example:\n" +
+                "              id: 42\n" +
+                "              name: Arthur Dent\n", Operation.class);
+
+        Response response = operation.getResponses().get("200");
+        assertNotNull(response);
+        Property schema = response.getSchema();
+        Object example = schema.getExample();
+        assertNotNull(example);
+        assertTrue(example instanceof ObjectNode);
+        ObjectNode objectNode = (ObjectNode) example;
+        assertEquals(objectNode.get("id").intValue(), 42);
+        assertEquals(objectNode.get("name").textValue(), "Arthur Dent");
+    }
 }

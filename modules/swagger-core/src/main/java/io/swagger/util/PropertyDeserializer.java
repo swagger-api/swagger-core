@@ -210,6 +210,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         }
 
         if (ObjectProperty.isType(type) || node.get("properties") != null) {
+            JsonNode example = getDetailNode(node, PropertyBuilder.PropertyId.EXAMPLE);
             detailNode = node.get("additionalProperties");
             if (detailNode != null && detailNode.getNodeType().equals(JsonNodeType.OBJECT)) {
                 Property items = propertyFromNode(detailNode);
@@ -217,6 +218,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                     MapProperty mapProperty = new MapProperty(items)
                             .description(description)
                             .title(title);
+                    mapProperty.setExample(example);
                     mapProperty.setMinProperties(getInteger(node, PropertyBuilder.PropertyId.MIN_PROPERTIES));
                     mapProperty.setMaxProperties(getInteger(node, PropertyBuilder.PropertyId.MAX_PROPERTIES));
                     mapProperty.setVendorExtensionMap(getVendorExtensions(node));
@@ -248,6 +250,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                     ArrayProperty ap = new ArrayProperty()
                             .description(description)
                             .title(title);
+                    ap.setExample(example);
                     PropertyBuilder.merge(ap, argsFromNode(detailNode));
                     ap.setDescription(description);
 
@@ -261,6 +264,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                 ObjectProperty objectProperty = new ObjectProperty(properties)
                         .description(description)
                         .title(title);
+                objectProperty.setExample(example);
                 objectProperty.setVendorExtensionMap(getVendorExtensions(node));
 
                 List<String> required = getRequired(node, PropertyBuilder.PropertyId.REQUIRED);
@@ -282,9 +286,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                 arrayProperty.setUniqueItems(getBoolean(node, PropertyBuilder.PropertyId.UNIQUE_ITEMS));
 
                 JsonNode example = getDetailNode( node, PropertyBuilder.PropertyId.EXAMPLE);
-                if( example != null ) {
-                    arrayProperty.setExample( Json.mapper().convertValue(example, Object.class));
-                }
+                arrayProperty.setExample(example);
 
                 arrayProperty.setVendorExtensionMap(getVendorExtensions(node));
                 return arrayProperty;
