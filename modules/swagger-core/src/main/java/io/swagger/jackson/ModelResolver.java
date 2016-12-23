@@ -127,10 +127,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     for (Annotation annotation : annotations) {
                         if(annotation instanceof XmlElement) {
                             XmlElement xmlElement =   (XmlElement)annotation;
-                            if(xmlElement.name() != null && !xmlElement.name().isEmpty()) {
-                            Xml xml = items.getXml() != null ? items.getXml() : new Xml();
-                            xml.setName(xmlElement.name());
-                            items.setXml(xml);
+                            if(xmlElement != null && xmlElement.name() != null && !"".equals(xmlElement.name()) && !"##default".equals(xmlElement.name())) {
+                                Xml xml = items.getXml() != null ? items.getXml() : new Xml();
+                                xml.setName(xmlElement.name());
+                                items.setXml(xml);
                             }
                         }
                     }
