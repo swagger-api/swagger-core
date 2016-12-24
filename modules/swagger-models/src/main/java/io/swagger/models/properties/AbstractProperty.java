@@ -8,18 +8,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class AbstractProperty implements Property, Cloneable {
-    String name;
-    String type;
-    String format;
-    Object example;
-    Xml xml;
-    boolean required;
-    Integer position;
-    String description;
-    String title;
-    Boolean readOnly;
-    private String access;
-    private Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
+    protected String name;
+    protected String type;
+    protected String format;
+    protected Object example;
+    protected Xml xml;
+    protected boolean required;
+    protected Integer position;
+    protected String description;
+    protected String title;
+    protected Boolean readOnly;
+    protected Boolean allowEmptyValue;
+    protected String access;
+    protected Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
 
     @Override
     public Property rename(String newName) {
@@ -44,6 +45,80 @@ public abstract class AbstractProperty implements Property, Cloneable {
 
     public Property readOnly() {
         this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AbstractProperty)) {
+            return false;
+        }
+
+        AbstractProperty that = (AbstractProperty) o;
+
+        if (required != that.required) {
+            return false;
+        }
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        if (type != null ? !type.equals(that.type) : that.type != null) {
+            return false;
+        }
+        if (format != null ? !format.equals(that.format) : that.format != null) {
+            return false;
+        }
+        if (example != null ? !example.equals(that.example) : that.example != null) {
+            return false;
+        }
+        if (xml != null ? !xml.equals(that.xml) : that.xml != null) {
+            return false;
+        }
+        if (position != null ? !position.equals(that.position) : that.position != null) {
+            return false;
+        }
+        if (description != null ? !description.equals(that.description) : that.description != null) {
+            return false;
+        }
+        if (title != null ? !title.equals(that.title) : that.title != null) {
+            return false;
+        }
+        if (readOnly != null ? !readOnly.equals(that.readOnly) : that.readOnly != null) {
+            return false;
+        }
+        if (allowEmptyValue != null ? !allowEmptyValue.equals(that.allowEmptyValue) : that.allowEmptyValue != null) {
+            return false;
+        }
+        if (access != null ? !access.equals(that.access) : that.access != null) {
+            return false;
+        }
+        return vendorExtensions != null ? vendorExtensions.equals(that.vendorExtensions) : that.vendorExtensions == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (format != null ? format.hashCode() : 0);
+        result = 31 * result + (example != null ? example.hashCode() : 0);
+        result = 31 * result + (xml != null ? xml.hashCode() : 0);
+        result = 31 * result + (required ? 1 : 0);
+        result = 31 * result + (position != null ? position.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (readOnly != null ? readOnly.hashCode() : 0);
+        result = 31 * result + (allowEmptyValue != null ? allowEmptyValue.hashCode() : 0);
+        result = 31 * result + (access != null ? access.hashCode() : 0);
+        result = 31 * result + (vendorExtensions != null ? vendorExtensions.hashCode() : 0);
+        return result;
+    }
+
+    public Property allowEmptyValue(Boolean allowEmptyValue) {
+        this.setAllowEmptyValue(allowEmptyValue);
         return this;
     }
 
@@ -150,7 +225,18 @@ public abstract class AbstractProperty implements Property, Cloneable {
         this.access = access;
     }
 
+    public Boolean getAllowEmptyValue() {
+        return allowEmptyValue;
+    }
+
+    public void setAllowEmptyValue(Boolean allowEmptyValue) {
+        if(allowEmptyValue != null) {
+            this.allowEmptyValue = allowEmptyValue;
+        }
+    }
+
     @JsonAnyGetter
+
     public Map<String, Object> getVendorExtensions() {
         return vendorExtensions;
     }
@@ -170,118 +256,4 @@ public abstract class AbstractProperty implements Property, Cloneable {
         this.vendorExtensions.putAll(vendorExtensionMap);
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((access == null) ? 0 : access.hashCode());
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((example == null) ? 0 : example.hashCode());
-        result = prime * result + ((format == null) ? 0 : format.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((position == null) ? 0 : position.hashCode());
-        result = prime * result + ((readOnly == null) ? 0 : readOnly.hashCode());
-        result = prime * result + (required ? 1231 : 1237);
-        result = prime * result + ((title == null) ? 0 : title.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((xml == null) ? 0 : xml.hashCode());
-        result = prime * result + ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AbstractProperty other = (AbstractProperty) obj;
-        if (access == null) {
-            if (other.access != null) {
-                return false;
-            }
-        } else if (!access.equals(other.access)) {
-            return false;
-        }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
-            return false;
-        }
-        if (example == null) {
-            if (other.example != null) {
-                return false;
-            }
-        } else if (!example.equals(other.example)) {
-            return false;
-        }
-        if (format == null) {
-            if (other.format != null) {
-                return false;
-            }
-        } else if (!format.equals(other.format)) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (position == null) {
-            if (other.position != null) {
-                return false;
-            }
-        } else if (!position.equals(other.position)) {
-            return false;
-        }
-        if (readOnly == null) {
-            if (other.readOnly != null) {
-                return false;
-            }
-        } else if (!readOnly.equals(other.readOnly)) {
-            return false;
-        }
-        if (required != other.required) {
-            return false;
-        }
-        if (title == null) {
-            if (other.title != null) {
-                return false;
-            }
-        } else if (!title.equals(other.title)) {
-            return false;
-        }
-        if (type == null) {
-            if (other.type != null) {
-                return false;
-            }
-        } else if (!type.equals(other.type)) {
-            return false;
-        }
-        if (xml == null) {
-            if (other.xml != null) {
-                return false;
-            }
-        } else if (!xml.equals(other.xml)) {
-            return false;
-        }
-        if (vendorExtensions == null) {
-            if (other.vendorExtensions != null) {
-                return false;
-            }
-        } else if (!vendorExtensions.equals(other.vendorExtensions)) {
-            return false;
-        }
-        return true;
-    }
 }

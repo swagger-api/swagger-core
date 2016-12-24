@@ -54,6 +54,11 @@ public class BooleanProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public BooleanProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
+
     public Boolean getDefault() {
         return _default;
     }

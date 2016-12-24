@@ -69,6 +69,11 @@ public class UUIDProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public UUIDProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
+
     public Integer getMinLength() {
         return minLength;
     }

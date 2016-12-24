@@ -2,8 +2,6 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
-import java.util.List;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +79,11 @@ public class EmailProperty extends StringProperty {
 
     public EmailProperty vendorExtension(String key, Object obj) {
         this.setVendorExtension(key, obj);
+        return this;
+    }
+
+    public EmailProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
         return this;
     }
 }

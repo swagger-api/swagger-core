@@ -64,6 +64,11 @@ public class DoubleProperty extends DecimalProperty {
         return this;
     }
 
+    public DoubleProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
+
     public Double getDefault() {
         return _default;
     }

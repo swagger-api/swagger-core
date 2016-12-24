@@ -1,5 +1,8 @@
 package io.swagger.resources;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -12,9 +15,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/v1/users")
@@ -25,7 +25,7 @@ public interface IndirectImplicitParams {
             @ApiImplicitParam(
                     paramType = "query",
                     name = "myQuery",
-                    dataType = "java.lang.String;"
+                    dataType = "java.lang.String"
             )
     })
     @Target({ElementType.METHOD, ElementType.TYPE})

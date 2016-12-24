@@ -98,6 +98,11 @@ public class FloatProperty extends DecimalProperty {
         this._enum = _enum;
     }
 
+    public FloatProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

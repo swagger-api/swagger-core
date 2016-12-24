@@ -29,6 +29,7 @@ import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.resources.ClassWithExamplePost;
 import io.swagger.resources.HiddenResource;
+import io.swagger.resources.Issue1979Resource;
 import io.swagger.resources.NicknamedOperation;
 import io.swagger.resources.NotValidRootResource;
 import io.swagger.resources.Resource1041;
@@ -59,10 +60,17 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 public class SimpleReaderTest {
 
@@ -300,9 +308,13 @@ public class SimpleReaderTest {
         assertEquals(headers200.get("foo").getType(), "string");
 
         Map<String, Property> headers400 = responses.get("400").getHeaders();
-        assertEquals(headers400.size(), 1);
+        assertEquals(headers400.size(), 2);
         assertEquals(headers400.get("X-Rack-Cache").getDescription(), "Explains whether or not a cache was used");
         assertEquals(headers400.get("X-Rack-Cache").getType(), "boolean");
+
+        Iterator<String> keyItr = headers400.keySet().iterator();
+        assertEquals(keyItr.next(), "X-Rack-Cache");
+        assertEquals(keyItr.next(), "X-After-Rack-Cache");
     }
 
     @Test(description = "not scan a hidden resource")
@@ -618,5 +630,15 @@ public class SimpleReaderTest {
         assertNotNull(bp.getExample());
         Object value = bp.getExample();
         assertEquals("77", value);
+    }
+
+    @Test(description = "scan a resource with read-only and empty value parameters")
+    public void scanClassWithReadOnlyAndEmptyValueParams() {
+        Swagger swagger = getSwagger(Issue1979Resource.class);
+        Parameter readOnlyParam = swagger.getPath("/fun/readOnly").getGet().getParameters().get(0);
+        assertTrue(readOnlyParam.isReadOnly());
+
+        Parameter allowEmptyParam = swagger.getPath("/fun/allowEmpty").getGet().getParameters().get(0);
+        assertTrue(allowEmptyParam.getAllowEmptyValue());
     }
 }

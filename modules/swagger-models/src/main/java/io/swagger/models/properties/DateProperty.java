@@ -58,4 +58,9 @@ public class DateProperty extends AbstractProperty implements Property {
     public void setEnum(List<String> _enum) {
         this._enum = _enum;
     }
+
+    public DateProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
 }
