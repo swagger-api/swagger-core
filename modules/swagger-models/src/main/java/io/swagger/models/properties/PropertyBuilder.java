@@ -97,6 +97,7 @@ public class PropertyBuilder {
         READ_ONLY("readOnly"),
         REQUIRED("required"),
         VENDOR_EXTENSIONS("vendorExtensions"),
+        ALLOW_EMPTY_VALUE("allowEmptyValue"),
         MULTIPLE_OF("multipleOf");
 
         private String propertyName;
@@ -751,6 +752,10 @@ public class PropertyBuilder {
                 final AbstractProperty resolved = (AbstractProperty) property;
                 if (resolved.getFormat() == null) {
                     resolved.setFormat(PropertyId.FORMAT.<String>findValue(args));
+                }
+                if(args.containsKey(PropertyId.ALLOW_EMPTY_VALUE)) {
+                    final Boolean value = PropertyId.ALLOW_EMPTY_VALUE.findValue(args);
+                    resolved.setAllowEmptyValue(value);
                 }
                 if (args.containsKey(PropertyId.TITLE)) {
                     final String value = PropertyId.TITLE.findValue(args);

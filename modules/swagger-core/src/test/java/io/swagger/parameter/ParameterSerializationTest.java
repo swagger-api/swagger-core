@@ -256,6 +256,19 @@ public class ParameterSerializationTest {
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
+    @Test(description = "it should deserialize a read only parameter")
+    public void deserializeReadOnlyParameter() throws IOException {
+        final String json =
+                "{" +
+                "   \"in\":\"path\"," +
+                "   \"required\":false," +
+                "   \"type\":\"string\"," +
+                "   \"readOnly\":\"true\"" +
+                "}";
+        final Parameter p = m.readValue(json, Parameter.class);
+        assertTrue(p.isReadOnly());
+    }
+
     @Test(description = "it should serialize a ref BodyParameter")
     public void serializeRefBodyParameter() {
         final RefModel model = new RefModel("Cat");
