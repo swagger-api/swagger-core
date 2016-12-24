@@ -7,6 +7,7 @@ import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.Xml;
+import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.Property;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,14 +35,18 @@ public class XMLInfoTest extends SwaggerTestBase {
         assertNotNull(xml);
         assertEquals(xml.getName(), "xmlDecoratedBean");
 
-        final Property property = impl.getProperties().get("items");
+        // Cast it to an array property
+        final ArrayProperty property = (ArrayProperty)impl.getProperties().get("elements");
         assertNotNull(property);
         final Xml propertyXml = property.getXml();
-
         assertNotNull(propertyXml);
-        assertEquals(propertyXml.getName(), "item");
+        assertNull(propertyXml.getName());
         assertTrue(propertyXml.getWrapped());
-
+        // Get the xml for items for the array property
+        final Xml itemsXml = property.getItems().getXml();
+        assertNotNull(itemsXml);
+        // Check the name of item name
+        assertEquals(itemsXml.getName(), "element");
         assertNotNull(impl.getProperties().get("elementC"));
     }
 
@@ -52,9 +57,9 @@ public class XMLInfoTest extends SwaggerTestBase {
         @XmlElement(name = "elementB")
         public int b;
 
-        @XmlElementWrapper(name = "items")
-        @XmlElement(name = "item")
-        public List<String> items;
+        @XmlElementWrapper(name = "elements")
+        @XmlElement(name = "element")
+        public List<String> elements;
 
         @JsonProperty("elementC")
         public String c;
@@ -92,7 +97,7 @@ public class XMLInfoTest extends SwaggerTestBase {
 
         final Property propertyA = impl.getProperties().get("a");
         assertNotNull(propertyA);
-        
+
         Property propertyB = impl.getProperties().get("b");
         assertNotNull(propertyB);
     }
