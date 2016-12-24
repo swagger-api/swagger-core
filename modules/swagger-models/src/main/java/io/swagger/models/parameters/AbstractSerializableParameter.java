@@ -3,21 +3,20 @@ package io.swagger.models.parameters;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-import io.swagger.models.properties.DoubleProperty;
-import io.swagger.models.properties.FloatProperty;
-import io.swagger.models.properties.IntegerProperty;
-import io.swagger.models.properties.LongProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.BaseIntegerProperty;
 import io.swagger.models.properties.BooleanProperty;
 import io.swagger.models.properties.DecimalProperty;
+import io.swagger.models.properties.DoubleProperty;
+import io.swagger.models.properties.FloatProperty;
+import io.swagger.models.properties.IntegerProperty;
+import io.swagger.models.properties.LongProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,9 +31,9 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     protected String collectionFormat;
     protected Property items;
     protected Boolean exclusiveMaximum;
-    protected Double maximum;
+    protected BigDecimal maximum;
     protected Boolean exclusiveMinimum;
-    protected Double minimum;
+    protected BigDecimal minimum;
     protected String example;
     private Integer maxItems;
     private Integer minItems;
@@ -282,7 +281,24 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         }
     }
 
-    public String getDefaultValue() {
+    public Object getDefaultValue() {
+        if(defaultValue == null) {
+            return null;
+        }
+
+        // don't return a default value if types fail to convert
+        try {
+            if ("integer".equals(this.type)) {
+                return new Integer(defaultValue);
+            }
+            if ("number".equals(this.type)) {
+                return new BigDecimal(defaultValue);
+            }
+        }
+        catch (Exception e) {
+            return null;
+        }
+
         return defaultValue;
     }
 
@@ -320,12 +336,12 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     }
 
     @Override
-    public Double getMaximum() {
+    public BigDecimal getMaximum() {
         return maximum;
     }
 
     @Override
-    public void setMaximum(Double maximum) {
+    public void setMaximum(BigDecimal maximum) {
         this.maximum = maximum;
     }
 
@@ -340,12 +356,12 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     }
 
     @Override
-    public Double getMinimum() {
+    public BigDecimal getMinimum() {
         return minimum;
     }
 
     @Override
-    public void setMinimum(Double minimum) {
+    public void setMinimum(BigDecimal minimum) {
         this.minimum = minimum;
     }
 

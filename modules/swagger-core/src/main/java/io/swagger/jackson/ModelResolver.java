@@ -1,5 +1,24 @@
 package io.swagger.jackson;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.ObjectIdGenerator;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyMetadata;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.introspect.Annotated;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.google.common.collect.Iterables;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverter;
@@ -22,19 +41,9 @@ import io.swagger.util.AllowableValues;
 import io.swagger.util.AllowableValuesUtils;
 import io.swagger.util.PrimitiveType;
 import io.swagger.util.ReflectionUtils;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
@@ -46,30 +55,19 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.fasterxml.jackson.annotation.ObjectIdGenerator;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyMetadata;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.introspect.Annotated;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.google.common.collect.Iterables;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
@@ -763,22 +761,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (property instanceof AbstractNumericProperty) {
                 Min min = (Min) annos.get("javax.validation.constraints.Min");
                 AbstractNumericProperty ap = (AbstractNumericProperty) property;
-                ap.setMinimum(new Double(min.value()));
+                ap.setMinimum(new BigDecimal(min.value()));
             }
         }
         if (annos.containsKey("javax.validation.constraints.Max")) {
             if (property instanceof AbstractNumericProperty) {
                 Max max = (Max) annos.get("javax.validation.constraints.Max");
                 AbstractNumericProperty ap = (AbstractNumericProperty) property;
-                ap.setMaximum(new Double(max.value()));
+                ap.setMaximum(new BigDecimal(max.value()));
             }
         }
         if (annos.containsKey("javax.validation.constraints.Size")) {
             Size size = (Size) annos.get("javax.validation.constraints.Size");
             if (property instanceof AbstractNumericProperty) {
                 AbstractNumericProperty ap = (AbstractNumericProperty) property;
-                ap.setMinimum(new Double(size.min()));
-                ap.setMaximum(new Double(size.max()));
+                ap.setMinimum(new BigDecimal(size.min()));
+                ap.setMaximum(new BigDecimal(size.max()));
             } else if (property instanceof StringProperty) {
                 StringProperty sp = (StringProperty) property;
                 sp.minLength(new Integer(size.min()));
@@ -793,7 +791,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             DecimalMin min = (DecimalMin) annos.get("javax.validation.constraints.DecimalMin");
             if (property instanceof AbstractNumericProperty) {
                 AbstractNumericProperty ap = (AbstractNumericProperty) property;
-                ap.setMinimum(new Double(min.value()));
+                ap.setMinimum(new BigDecimal(min.value()));
                 ap.setExclusiveMinimum(!min.inclusive());
             }
         }
@@ -801,7 +799,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             DecimalMax max = (DecimalMax) annos.get("javax.validation.constraints.DecimalMax");
             if (property instanceof AbstractNumericProperty) {
                 AbstractNumericProperty ap = (AbstractNumericProperty) property;
-                ap.setMaximum(new Double(max.value()));
+                ap.setMaximum(new BigDecimal(max.value()));
                 ap.setExclusiveMaximum(!max.inclusive());
             }
         }

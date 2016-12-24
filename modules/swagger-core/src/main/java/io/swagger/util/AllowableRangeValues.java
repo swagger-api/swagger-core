@@ -2,6 +2,7 @@ package io.swagger.util;
 
 import io.swagger.models.properties.PropertyBuilder;
 
+import java.math.BigDecimal;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -15,12 +16,12 @@ public class AllowableRangeValues implements AllowableValues {
     private static final String OPEN_EXCLUSIVE_RANGE_KEY = "(";
     private static final String CLOSE_EXCLUSIVE_RANGE_KEY = ")";
 
-    private final Double minimum;
-    private final Double maximum;
+    private final BigDecimal minimum;
+    private final BigDecimal maximum;
     private final boolean exclusiveMinimum;
     private final boolean exclusiveMaximum;
 
-    private AllowableRangeValues(Double minimum, boolean exclusiveMinimum, Double maximum, boolean exclusiveMaximum) {
+    private AllowableRangeValues(BigDecimal minimum, boolean exclusiveMinimum, BigDecimal maximum, boolean exclusiveMaximum) {
         this.minimum = minimum;
         this.exclusiveMinimum = exclusiveMinimum;
         this.maximum = maximum;
@@ -30,15 +31,15 @@ public class AllowableRangeValues implements AllowableValues {
     public static AllowableRangeValues create(String allowableValues) {
         final Matcher matcher = RANGE_PATTERN.matcher(allowableValues);
         return matcher.find() ?
-                new AllowableRangeValues(findRangeValue(matcher.group(2)), isExclusiveRange(matcher.group(1)), findRangeValue(matcher.group(3)), isExclusiveRange(matcher.group(4))) :
-                null;
+            new AllowableRangeValues(findRangeValue(matcher.group(2)), isExclusiveRange(matcher.group(1)), findRangeValue(matcher.group(3)), isExclusiveRange(matcher.group(4))) :
+            null;
     }
 
-    private static Double findRangeValue(String value) {
+    private static BigDecimal findRangeValue(String value) {
         if (POSITIVE_INFINITY_KEY.equalsIgnoreCase(value) || NEGATIVE_INFINITY_KEY.equalsIgnoreCase(value)) {
             return null;
         } else {
-            return Double.parseDouble(value);
+            return new BigDecimal(value);
         }
     }
 
@@ -46,11 +47,11 @@ public class AllowableRangeValues implements AllowableValues {
         return OPEN_EXCLUSIVE_RANGE_KEY.equals(value) || CLOSE_EXCLUSIVE_RANGE_KEY.equals(value);
     }
 
-    public Double getMinimum() {
+    public BigDecimal getMinimum() {
         return minimum;
     }
 
-    public Double getMaximum() {
+    public BigDecimal getMaximum() {
         return maximum;
     }
 

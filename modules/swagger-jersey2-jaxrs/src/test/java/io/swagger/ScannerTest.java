@@ -10,10 +10,9 @@ import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
-import io.swagger.resources.ResourceWithExtensions;
 import io.swagger.resources.ResourceWithBeanParams;
 import io.swagger.resources.ResourceWithComplexBodyInputType;
-import io.swagger.util.Json;
+import io.swagger.resources.ResourceWithExtensions;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -21,6 +20,7 @@ import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 public class ScannerTest {
 
@@ -66,19 +66,19 @@ public class ScannerTest {
         final List<Parameter> params = getParameters(swagger, "/bean/{id}");
 
         final HeaderParameter headerParam1 = (HeaderParameter) params.get(0);
-        assertEquals(headerParam1.getDefaultValue(), "1");
+        assertEquals(headerParam1.getDefaultValue(), 1);
         assertEquals(headerParam1.getName(), "test order annotation 1");
 
         final HeaderParameter headerParam2 = (HeaderParameter) params.get(1);
-        assertEquals(headerParam2.getDefaultValue(), "2");
+        assertEquals(headerParam2.getDefaultValue(), 2);
         assertEquals(headerParam2.getName(), "test order annotation 2");
 
         final QueryParameter priority1 = (QueryParameter) params.get(2);
-        assertEquals(priority1.getDefaultValue(), "overridden");
+        assertNull(priority1.getDefaultValue());
         assertEquals(priority1.getName(), "test priority 1");
 
         final QueryParameter priority2 = (QueryParameter) params.get(3);
-        assertEquals(priority2.getDefaultValue(), "overridden");
+        assertEquals(priority2.getDefaultValue(), 4);
         assertEquals(priority2.getName(), "test priority 2");
 
         final ModelImpl bodyParam1 = (ModelImpl) ((BodyParameter) params.get(4)).getSchema();

@@ -11,6 +11,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -358,8 +359,8 @@ public class PropertyBuilderTest {
     public void testMergeWithDoubleProperty() {
 
         // given
-        args.put(PropertyId.MINIMUM, 2.0);
-        args.put(PropertyId.MAXIMUM, 112.0);
+        args.put(PropertyId.MINIMUM, new BigDecimal(2.0));
+        args.put(PropertyId.MAXIMUM, new BigDecimal(112.0));
         args.put(PropertyId.EXCLUSIVE_MINIMUM, true);
         args.put(PropertyId.EXCLUSIVE_MAXIMUM, true);
         args.put(PropertyId.MULTIPLE_OF, 2.0);
@@ -372,11 +373,11 @@ public class PropertyBuilderTest {
         // then
         assertTrue(doubleProperty.getEnum().contains(4.0), "Must contain the enum value passed into args");
         assertEquals(doubleProperty.getDefault(), (Double) 4.0, "Must contain the default value passed into args");
-        assertEquals(doubleProperty.getMinimum(), 2.0, "Must contain the minimum value passed into args");
-        assertEquals(doubleProperty.getMaximum(), 112.0, "Must contain the maximum value passed into args");
+        assertEquals(doubleProperty.getMinimum(), new BigDecimal(2.0), "Must contain the minimum value passed into args");
+        assertEquals(doubleProperty.getMaximum(), new BigDecimal(112.0), "Must contain the maximum value passed into args");
         assertTrue(doubleProperty.exclusiveMaximum, "Must contain the exclusive minimum value passed into args");
         assertTrue(doubleProperty.exclusiveMinimum, "Must contain the exclusive maximum value passed into args");
-        assertEquals(doubleProperty.getMultipleOf(), 2.0, "Must contain the multiple of value passed into args");
+        assertEquals(doubleProperty.getMultipleOf(), new BigDecimal(2.0), "Must contain the multiple of value passed into args");
 
         // given
         args.put(PropertyId.DEFAULT, null);

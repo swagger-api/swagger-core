@@ -8,6 +8,7 @@ import io.swagger.models.RefModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
@@ -669,12 +670,16 @@ public class PropertyBuilder {
 
         protected <N extends AbstractNumericProperty> N mergeNumeric(N property, Map<PropertyId, Object> args) {
             if (args.containsKey(PropertyId.MINIMUM)) {
-                final Double value = PropertyId.MINIMUM.findValue(args);
-                property.setMinimum(value);
+                final BigDecimal value = PropertyId.MINIMUM.findValue(args);
+                if(value != null) {
+                    property.setMinimum(value);
+                }
             }
             if (args.containsKey(PropertyId.MAXIMUM)) {
-                final Double value = PropertyId.MAXIMUM.findValue(args);
-                property.setMaximum(value);
+                final BigDecimal value = PropertyId.MAXIMUM.findValue(args);
+                if(value != null) {
+                    property.setMaximum(value);
+                }
             }
             if (args.containsKey(PropertyId.EXCLUSIVE_MINIMUM)) {
                 final Boolean value = PropertyId.EXCLUSIVE_MINIMUM.findValue(args);
@@ -686,7 +691,9 @@ public class PropertyBuilder {
             }
             if (args.containsKey(PropertyId.MULTIPLE_OF)) {
                 final Double value = PropertyId.MULTIPLE_OF.findValue(args);
-                property.setMultipleOf(value);
+                if(value != null) {
+                    property.setMultipleOf(new BigDecimal(value));
+                }
             }
             return property;
         }

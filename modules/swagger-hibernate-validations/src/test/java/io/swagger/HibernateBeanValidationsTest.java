@@ -1,8 +1,5 @@
 package io.swagger;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
 import io.swagger.converter.ModelConverters;
 import io.swagger.models.HibernateBeanValidationsModel;
 import io.swagger.models.Model;
@@ -11,10 +8,12 @@ import io.swagger.models.properties.DoubleProperty;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
-
 import org.testng.annotations.Test;
 
 import java.util.Map;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class HibernateBeanValidationsTest {
 
@@ -24,8 +23,8 @@ public class HibernateBeanValidationsTest {
         final Map<String, Property> properties = schemas.get("HibernateBeanValidationsModel").getProperties();
 
         final IntegerProperty age = (IntegerProperty) properties.get("age");
-        assertEquals(age.getMinimum(), 13.0, 0.01);
-        assertEquals(age.getMaximum(), 99.0, 0.01);
+        assertEquals(age.getMinimum().doubleValue(), 13.0, 0.01);
+        assertEquals(age.getMaximum().doubleValue(), 99.0, 0.01);
 
         final StringProperty password = (StringProperty) properties.get("password");
         assertEquals((int) password.getMinLength(), 6);
