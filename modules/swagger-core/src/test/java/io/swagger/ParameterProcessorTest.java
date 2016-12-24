@@ -73,7 +73,7 @@ public class ParameterProcessorTest {
     }
 
     private void rangedParametrizedMethod(
-            @ApiParam(value = "sample param data", defaultValue = "5", allowableValues = "range[0,10]")
+            @ApiParam(value = "sample param data", defaultValue = "5", allowableValues = "range[0,10]", collectionFormat = "multi")
             @PathParam("id") Integer id,
             @ApiParam(value = "sample positive infinity data", allowableValues = "range(0, infinity)")
             @PathParam("minValue") Double minValue,
@@ -257,6 +257,7 @@ public class ParameterProcessorTest {
         assertEquals(param0.getDefaultValue(), "5");
         assertEquals(param0.getMinimum(), 0.0);
         assertEquals(param0.getMaximum(), 10.0);
+        assertEquals(param0.getCollectionFormat(), "multi");
 
         final PathParameter param1 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter(),
                 genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
