@@ -4,11 +4,12 @@ package io.swagger.models.refs;
  * A class the encapsulates logic that is common to RefModel, RefParameter, and RefProperty.
  */
 public class GenericRef {
+    private RefFormat format;
+    private RefType type;
+    private String ref;
+    private String simpleRef;
 
-    private final RefFormat format;
-    private final RefType type;
-    private final String ref;
-    private final String simpleRef;
+    public GenericRef(){}
 
     public GenericRef(RefType type, String ref) {
         this.format = computeRefFormat(ref);
