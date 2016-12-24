@@ -72,6 +72,9 @@ public class ParameterProcessor {
             if (StringUtils.isNotEmpty(param.getAccess())) {
                 p.setAccess(param.getAccess());
             }
+            if(StringUtils.isNoneEmpty(param.getCollectionFormat())) {
+                p.setCollectionFormat(param.getCollectionFormat());
+            }
             if (StringUtils.isNotEmpty(param.getDataType())) {
                 if ("java.io.File".equalsIgnoreCase(param.getDataType())) {
                     p.setProperty(new FileProperty());
@@ -343,6 +346,8 @@ public class ParameterProcessor {
         boolean getReadOnly();
 
         boolean getAllowEmptyValue();
+
+        String getCollectionFormat();
     }
 
     /**
@@ -369,6 +374,7 @@ public class ParameterProcessor {
         private Integer maxLength;
         private String pattern;
         private Boolean allowEmptyValue;
+        private String collectionFormat;
 
         /**
          * Constructs an instance.
@@ -434,6 +440,7 @@ public class ParameterProcessor {
             type = StringUtils.isNotEmpty(apiParam.getType()) ? apiParam.getType() : null;
             format = StringUtils.isNotEmpty(apiParam.getFormat()) ? apiParam.getFormat() : null;
             allowEmptyValue = apiParam.isAllowMultiple() ? true : null;
+            collectionFormat = StringUtils.isNoneEmpty(apiParam.getCollectionFormat()) ? apiParam.getCollectionFormat() : null;
         }
 
         private boolean isAssignableToNumber(Class<?> clazz) {
@@ -548,6 +555,10 @@ public class ParameterProcessor {
         public Boolean getAllowEmptyValue() {
             return allowEmptyValue;
         }
+
+        public String getCollectionFormat() {
+            return collectionFormat;
+        }
     }
 
     /**
@@ -641,6 +652,10 @@ public class ParameterProcessor {
         public boolean getAllowEmptyValue() {
             return apiParam.allowEmptyValue();
         }
+
+        public String getCollectionFormat() {
+            return apiParam.collectionFormat();
+        }
     }
 
     /**
@@ -732,6 +747,10 @@ public class ParameterProcessor {
 
         public boolean getAllowEmptyValue() {
             return apiParam.allowEmptyValue();
+        }
+
+        public String getCollectionFormat() {
+            return apiParam.collectionFormat();
         }
     }
 }
