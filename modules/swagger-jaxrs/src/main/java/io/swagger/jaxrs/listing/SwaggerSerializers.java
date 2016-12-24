@@ -28,7 +28,7 @@ public class SwaggerSerializers implements MessageBodyWriter<Swagger> {
 
     @Override
     public boolean isWriteable(Class type, Type genericType, Annotation[] annotations,
-                               MediaType mediaType) {
+            MediaType mediaType) {
         return Swagger.class.isAssignableFrom(type);
     }
 
@@ -39,26 +39,34 @@ public class SwaggerSerializers implements MessageBodyWriter<Swagger> {
 
     @Override
     public void writeTo(Swagger data,
-                        Class<?> type,
-                        Type genericType,
-                        Annotation[] annotations,
-                        MediaType mediaType,
-                        MultivaluedMap<String, Object> headers,
-                        OutputStream out) throws IOException {
+            Class<?> type,
+            Type genericType,
+            Annotation[] annotations,
+            MediaType mediaType,
+            MultivaluedMap<String, Object> headers,
+            OutputStream out) throws IOException {
         if (mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
             if (prettyPrint) {
-                out.write(Json.pretty().writeValueAsString(data).getBytes("utf-8"));
+                out.write(Json.pretty().writeValueAsBytes(data));
             } else {
-                out.write(Json.mapper().writeValueAsString(data).getBytes("utf-8"));
+                out.write(Json.mapper().writeValueAsBytes(data));
             }
         } else if (mediaType.toString().startsWith("application/yaml")) {
             headers.remove("Content-Type");
             headers.add("Content-Type", "application/yaml");
-            out.write(Yaml.mapper().writeValueAsString(data).getBytes("utf-8"));
+            if (prettyPrint) {
+                out.write(Yaml.pretty().writeValueAsBytes(data));
+            } else {
+                out.write(Yaml.mapper().writeValueAsBytes(data));
+            }
         } else if (mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE)) {
             headers.remove("Content-Type");
             headers.add("Content-Type", "application/json");
-            out.write(Json.mapper().writeValueAsString(data).getBytes("utf-8"));
+            if (prettyPrint) {
+                out.write(Json.pretty().writeValueAsBytes(data));
+            } else {
+                out.write(Json.mapper().writeValueAsBytes(data));
+            }
         }
     }
 }
