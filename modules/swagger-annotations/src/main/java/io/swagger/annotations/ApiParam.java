@@ -145,4 +145,12 @@ public @interface ApiParam {
      *
      */
     boolean readOnly() default false;
+
+    /**
+     * adds ability to override collectionFormat with `array` types
+     *
+     * @since 1.5.11
+     *
+     */
+    String collectionFormat() default "";
 }
