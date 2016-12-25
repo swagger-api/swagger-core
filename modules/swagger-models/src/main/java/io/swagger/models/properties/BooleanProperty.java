@@ -2,9 +2,13 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BooleanProperty extends AbstractProperty implements Property {
     public static final String TYPE = "boolean";
     protected Boolean _default;
+    protected List<Boolean> _enum;
 
     public BooleanProperty() {
         super.type = TYPE;
@@ -12,6 +16,16 @@ public class BooleanProperty extends AbstractProperty implements Property {
 
     public static boolean isType(String type, String format) {
         return TYPE.equals(type);
+    }
+
+    public BooleanProperty _enum(Boolean value) {
+        if (this._enum == null) {
+            this._enum = new ArrayList<Boolean>();
+        }
+        if (!_enum.contains(value)) {
+            _enum.add(value);
+        }
+        return this;
     }
 
     public BooleanProperty xml(Xml xml) {
@@ -69,6 +83,14 @@ public class BooleanProperty extends AbstractProperty implements Property {
 
     public void setDefault(Boolean _default) {
         this._default = _default;
+    }
+
+    public List<Boolean> getEnum() {
+        return _enum;
+    }
+
+    public void setEnum(List<Boolean> _enum) {
+        this._enum = _enum;
     }
 
     @Override

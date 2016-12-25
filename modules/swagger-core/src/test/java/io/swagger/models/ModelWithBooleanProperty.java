@@ -1,7 +1,11 @@
 package io.swagger.models;
 
-/**
- * Created by tony on 12/24/16.
- */
+import io.swagger.annotations.ApiModelProperty;
+
 public class ModelWithBooleanProperty {
+    @ApiModelProperty(allowableValues = "true")
+    public Boolean isGreat;
+
+    @ApiModelProperty(allowableValues = "1,2")
+    public Integer intValue;
 }

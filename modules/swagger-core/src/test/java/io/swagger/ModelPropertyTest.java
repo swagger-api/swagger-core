@@ -5,10 +5,12 @@ import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.Model;
 import io.swagger.models.Model1979;
 import io.swagger.models.ModelImpl;
+import io.swagger.models.ModelWithBooleanProperty;
 import io.swagger.models.ModelWithModelPropertyOverrides;
 import io.swagger.models.ModelWithPrimitiveArray;
 import io.swagger.models.ReadOnlyFields;
 import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.BooleanProperty;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.LongProperty;
 import io.swagger.models.properties.Property;
@@ -105,6 +107,18 @@ public class ModelPropertyTest {
         final Map<String, Model> models = ModelConverters.getInstance().readAll(Model1979.class);
         ModelImpl model = (ModelImpl) models.get("Model1979");
         assertTrue(model.getProperties().get("id").getAllowEmptyValue());
+    }
+
+
+    @Test
+    public void testIssue1743() {
+        final Map<String, Model> models = ModelConverters.getInstance().readAll(ModelWithBooleanProperty.class);
+        final Model model = models.get("ModelWithBooleanProperty");
+        assertNotNull(model);
+
+        BooleanProperty bp = (BooleanProperty) model.getProperties().get("isGreat");
+        assertTrue(bp.getEnum().size() == 1);
+        assertEquals(bp.getEnum().get(0), Boolean.TRUE);
     }
 
     class Family {
