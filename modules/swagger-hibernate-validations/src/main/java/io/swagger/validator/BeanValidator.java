@@ -14,7 +14,7 @@ import org.hibernate.validator.constraints.Range;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Collection;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -56,8 +56,8 @@ public class BeanValidator extends AbstractModelConverter implements ModelConver
                 if (property instanceof AbstractNumericProperty) {
                     Range range = (Range) annos.get("org.hibernate.validator.constraints.Range");
                     AbstractNumericProperty ap = (AbstractNumericProperty) property;
-                    ap.setMinimum(new Double(range.min()));
-                    ap.setMaximum(new Double(range.max()));
+                    ap.setMinimum(new BigDecimal(range.min()));
+                    ap.setMaximum(new BigDecimal(range.max()));
                 }
             }
             if (annos.containsKey("org.hibernate.validator.constraints.Length")) {

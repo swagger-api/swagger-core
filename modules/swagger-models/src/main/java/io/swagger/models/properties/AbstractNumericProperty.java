@@ -1,15 +1,17 @@
 package io.swagger.models.properties;
 
+import java.math.BigDecimal;
+
 public abstract class AbstractNumericProperty extends AbstractProperty implements Property {
-    protected Double minimum, maximum, multipleOf;
+    protected BigDecimal minimum, maximum, multipleOf;
     protected Boolean exclusiveMinimum, exclusiveMaximum;
 
-    public AbstractNumericProperty minimum(Double minimum) {
+    public AbstractNumericProperty minimum(BigDecimal minimum) {
         this.setMinimum(minimum);
         return this;
     }
 
-    public AbstractNumericProperty maximum(Double maximum) {
+    public AbstractNumericProperty maximum(BigDecimal maximum) {
         this.setMaximum(maximum);
         return this;
     }
@@ -24,24 +26,24 @@ public abstract class AbstractNumericProperty extends AbstractProperty implement
         return this;
     }
 
-    public AbstractNumericProperty multipleOf(Double multipleOf) {
+    public AbstractNumericProperty multipleOf(BigDecimal multipleOf) {
         this.setMultipleOf(multipleOf);
         return this;
     }
 
-    public Double getMinimum() {
+    public BigDecimal getMinimum() {
         return minimum;
     }
 
-    public void setMinimum(Double minimum) {
+    public void setMinimum(BigDecimal minimum) {
         this.minimum = minimum;
     }
 
-    public Double getMaximum() {
+    public BigDecimal getMaximum() {
         return maximum;
     }
 
-    public void setMaximum(Double maximum) {
+    public void setMaximum(BigDecimal maximum) {
         this.maximum = maximum;
     }
 
@@ -61,75 +63,52 @@ public abstract class AbstractNumericProperty extends AbstractProperty implement
         this.exclusiveMaximum = exclusiveMaximum;
     }
 
-    public Double getMultipleOf() {
+    public BigDecimal getMultipleOf() {
         return multipleOf;
     }
 
-    public void setMultipleOf(Double multipleOf) {
+    public void setMultipleOf(BigDecimal multipleOf) {
         this.multipleOf = multipleOf;
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((exclusiveMaximum == null) ? 0 : exclusiveMaximum.hashCode());
-        result = prime * result
-                + ((exclusiveMinimum == null) ? 0 : exclusiveMinimum.hashCode());
-        result = prime * result + ((maximum == null) ? 0 : maximum.hashCode());
-        result = prime * result + ((minimum == null) ? 0 : minimum.hashCode());
-        result = prime * result + ((multipleOf == null) ? 0 : multipleOf.hashCode());
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AbstractNumericProperty)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        AbstractNumericProperty that = (AbstractNumericProperty) o;
+
+        if (minimum != null ? !minimum.equals(that.minimum) : that.minimum != null) {
+            return false;
+        }
+        if (maximum != null ? !maximum.equals(that.maximum) : that.maximum != null) {
+            return false;
+        }
+        if (multipleOf != null ? !multipleOf.equals(that.multipleOf) : that.multipleOf != null) {
+            return false;
+        }
+        if (exclusiveMinimum != null ? !exclusiveMinimum.equals(that.exclusiveMinimum) : that.exclusiveMinimum != null) {
+            return false;
+        }
+        return exclusiveMaximum != null ? exclusiveMaximum.equals(that.exclusiveMaximum) : that.exclusiveMaximum == null;
+
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AbstractNumericProperty other = (AbstractNumericProperty) obj;
-        if (exclusiveMaximum == null) {
-            if (other.exclusiveMaximum != null) {
-                return false;
-            }
-        } else if (!exclusiveMaximum.equals(other.exclusiveMaximum)) {
-            return false;
-        }
-        if (exclusiveMinimum == null) {
-            if (other.exclusiveMinimum != null) {
-                return false;
-            }
-        } else if (!exclusiveMinimum.equals(other.exclusiveMinimum)) {
-            return false;
-        }
-        if (maximum == null) {
-            if (other.maximum != null) {
-                return false;
-            }
-        } else if (!maximum.equals(other.maximum)) {
-            return false;
-        }
-        if (minimum == null) {
-            if (other.minimum != null) {
-                return false;
-            }
-        } else if (!minimum.equals(other.minimum)) {
-            return false;
-        }
-        if (multipleOf == null) {
-            if (other.multipleOf != null) {
-                return false;
-            }
-        } else if (!multipleOf.equals(other.multipleOf)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (minimum != null ? minimum.hashCode() : 0);
+        result = 31 * result + (maximum != null ? maximum.hashCode() : 0);
+        result = 31 * result + (multipleOf != null ? multipleOf.hashCode() : 0);
+        result = 31 * result + (exclusiveMinimum != null ? exclusiveMinimum.hashCode() : 0);
+        result = 31 * result + (exclusiveMaximum != null ? exclusiveMaximum.hashCode() : 0);
+        return result;
     }
 }

@@ -255,14 +255,14 @@ public class ParameterProcessorTest {
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
         assertNotNull(param0);
         assertEquals(param0.getDefaultValue(), "5");
-        assertEquals(param0.getMinimum(), 0.0);
-        assertEquals(param0.getMaximum(), 10.0);
+        assertEquals(param0.getMinimum(), new BigDecimal(0.0));
+        assertEquals(param0.getMaximum(), new BigDecimal(10.0));
         assertEquals(param0.getCollectionFormat(), "multi");
 
         final PathParameter param1 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter(),
                 genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
         assertNotNull(param1);
-        assertEquals(param1.getMinimum(), 0.0);
+        assertEquals(param1.getMinimum(), new BigDecimal(0.0));
         assertNull(param1.getMaximum(), null);
         assertTrue(param1.isExclusiveMinimum());
         assertTrue(param1.isExclusiveMaximum());
@@ -271,15 +271,15 @@ public class ParameterProcessorTest {
                 genericParameterTypes[2], Arrays.asList(paramAnnotations[2]));
         assertNotNull(param2);
         assertNull(param2.getMinimum());
-        assertEquals(param2.getMaximum(), 100.0);
+        assertEquals(param2.getMaximum(), new BigDecimal(100.0));
 
         final PathParameter param3 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter()
                 .items(new IntegerProperty()), genericParameterTypes[3], Arrays.asList(paramAnnotations[3]));
         assertNotNull(param3);
         final IntegerProperty items = (IntegerProperty) param3.getItems();
         assertNotNull(items);
-        assertEquals(items.getMinimum(), 0.0);
-        assertEquals(items.getMaximum(), 5.0);
+        assertEquals(items.getMinimum(), new BigDecimal(0.0));
+        assertEquals(items.getMaximum(), new BigDecimal(5.0));
         assertTrue(items.getExclusiveMinimum());
         assertTrue(items.getExclusiveMaximum());
     }
@@ -319,8 +319,8 @@ public class ParameterProcessorTest {
             final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                     genericParameterTypes[i], Arrays.asList(paramAnnotations[i]));
             assertNotNull(param);
-            assertEquals(param.getMinimum(), 5d);
-            assertEquals(param.getMaximum(), 10d);
+            assertEquals(param.getMinimum(), new BigDecimal(5));
+            assertEquals(param.getMaximum(), new BigDecimal(10));
         }
     }
 
@@ -348,7 +348,7 @@ public class ParameterProcessorTest {
         final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
         assertNotNull(param);
-        assertEquals(param.getMinimum(), 5d);
+        assertEquals(param.getMinimum(), new BigDecimal(5));
     }
 
     @Test
@@ -361,7 +361,7 @@ public class ParameterProcessorTest {
         final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
         assertNotNull(param);
-        assertEquals(param.getMaximum(), 10d);
+        assertEquals(param.getMaximum(), new BigDecimal(10));
     }
 
     @Test
@@ -374,13 +374,13 @@ public class ParameterProcessorTest {
         final QueryParameter inclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
         assertNotNull(inclusiveParam);
-        assertEquals(inclusiveParam.getMinimum(), 5.5d);
+        assertEquals(inclusiveParam.getMinimum(), new BigDecimal(5.5));
         assertNull(inclusiveParam.isExclusiveMinimum());
 
         final QueryParameter exclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                 genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
         assertNotNull(exclusiveParam);
-        assertEquals(exclusiveParam.getMinimum(), 5.5d);
+        assertEquals(exclusiveParam.getMinimum(), new BigDecimal(5.5));
         assertTrue(exclusiveParam.isExclusiveMinimum());
     }
 
@@ -394,13 +394,13 @@ public class ParameterProcessorTest {
         final QueryParameter inclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
         assertNotNull(inclusiveParam);
-        assertEquals(inclusiveParam.getMaximum(), 10.5d);
+        assertEquals(inclusiveParam.getMaximum(), new BigDecimal(10.5));
         assertNull(inclusiveParam.isExclusiveMaximum());
 
         final QueryParameter exclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
                 genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
         assertNotNull(exclusiveParam);
-        assertEquals(exclusiveParam.getMaximum(), 10.5d);
+        assertEquals(exclusiveParam.getMaximum(), new BigDecimal(10.5));
         assertTrue(exclusiveParam.isExclusiveMaximum());
     }
 
@@ -434,9 +434,9 @@ public class ParameterProcessorTest {
         Property items1 = param1.getItems();
         assertTrue(items1 instanceof LongProperty);
         LongProperty longItems = (LongProperty) items1;
-        assertEquals(longItems.getMinimum(), 5d);
+        assertEquals(longItems.getMinimum(), new BigDecimal(5));
         assertNull(longItems.getExclusiveMinimum());
-        assertEquals(longItems.getMaximum(), 10d);
+        assertEquals(longItems.getMaximum(), new BigDecimal(10));
         assertNull(longItems.getExclusiveMaximum());
 
         //Second param - items specified
@@ -449,9 +449,9 @@ public class ParameterProcessorTest {
         Property items2 = param2.getItems();
         assertTrue(items2 instanceof DoubleProperty);
         DoubleProperty doubleItems = (DoubleProperty) items2;
-        assertEquals(doubleItems.getMinimum(), 5.5d);
+        assertEquals(doubleItems.getMinimum(), new BigDecimal(5.5));
         assertTrue(doubleItems.getExclusiveMinimum());
-        assertEquals(doubleItems.getMaximum(), 10.5d);
+        assertEquals(doubleItems.getMaximum(), new BigDecimal(10.5));
         assertTrue(doubleItems.getExclusiveMaximum());
 
         //Third param - items specified

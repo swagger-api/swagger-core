@@ -14,6 +14,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -208,12 +209,12 @@ public class ReaderTest {
         HeaderParameter headerParam = (HeaderParameter) params.get(2);
         assertEquals(headerParam.getName(), "size");
         assertEquals(headerParam.getIn(), "header");
-        assertEquals(headerParam.getMinimum(), 1.0);
+        assertEquals(headerParam.getMinimum(), new BigDecimal(1.0));
 
         FormParameter formParam = (FormParameter) params.get(3);
         assertEquals(formParam.getName(), "width");
         assertEquals(formParam.getIn(), "formData");
-        assertEquals(formParam.getMaximum(), 1.0);
+        assertEquals(formParam.getMaximum(), new BigDecimal(1.0));
 
         assertEquals(params.get(4).getName(), "width");
         assertEquals(params.get(4).getIn(), "formData");
@@ -221,8 +222,8 @@ public class ReaderTest {
         QueryParameter queryParam = (QueryParameter) params.get(5);
         assertEquals(queryParam.getName(), "height");
         assertEquals(queryParam.getIn(), "query");
-        assertEquals(queryParam.getMinimum(), 3.0);
-        assertEquals(queryParam.getMaximum(), 4.0);
+        assertEquals(queryParam.getMinimum(), new BigDecimal(3.0));
+        assertEquals(queryParam.getMaximum(), new BigDecimal(4.0));
 
         BodyParameter bodyParam = (BodyParameter) params.get(6);
         assertEquals(bodyParam.getName(), "body");
@@ -289,15 +290,15 @@ public class ReaderTest {
 
         QueryParameter par = (QueryParameter) swagger.getPaths().get("/303").getOperations().get(0).getParameters().get(0);
         assertTrue(par.getRequired());
-        assertEquals(par.getMinimum(), 10D);
+        assertEquals(par.getMinimum(), new BigDecimal(10));
 
         par = (QueryParameter) swagger.getPaths().get("/swagger-and-303").getOperations().get(0).getParameters().get(0);
         assertTrue(par.getRequired());
-        assertEquals(par.getMinimum(), 7D);
+        assertEquals(par.getMinimum(), new BigDecimal(7));
 
         par = (QueryParameter) swagger.getPaths().get("/swagger").getOperations().get(0).getParameters().get(0);
         assertTrue(par.getRequired());
-        assertEquals(par.getMinimum(), 7D);
+        assertEquals(par.getMinimum(), new BigDecimal(7));
     }
 
     @Test(description = "scan resource with annotated exception")

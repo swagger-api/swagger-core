@@ -9,6 +9,7 @@ import io.swagger.models.properties.StringProperty;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -99,10 +100,10 @@ public class AbstractSerializableParameterTest {
         Double maximum = 1.0;
 
         // when
-        instance.setMaximum(maximum);
+        instance.setMaximum(new BigDecimal(maximum));
 
         // then
-        assertEquals(instance.getMaximum(), maximum, "The get maximum must be the same as the set one");
+        assertEquals(instance.getMaximum(), new BigDecimal(maximum), "The get maximum must be the same as the set one");
 
         // given
         Boolean exclusiveMinimum = true;
@@ -118,10 +119,10 @@ public class AbstractSerializableParameterTest {
         Double minimum = 0.1;
 
         // when
-        instance.setMinimum(minimum);
+        instance.setMinimum(new BigDecimal(minimum));
 
         // then
-        assertEquals(instance.getMinimum(), minimum, "The get minimum must be the same as the set one");
+        assertEquals(instance.getMinimum(), new BigDecimal(minimum), "The get minimum must be the same as the set one");
 
         // given
         String example = "example";

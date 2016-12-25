@@ -4,8 +4,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
-import io.swagger.models.*;
-import io.swagger.models.properties.*;
+import io.swagger.models.ArrayModel;
+import io.swagger.models.Car;
+import io.swagger.models.ExternalDocs;
+import io.swagger.models.Manufacturers;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.RefModel;
+import io.swagger.models.properties.DateProperty;
+import io.swagger.models.properties.DateTimeProperty;
+import io.swagger.models.properties.IntegerProperty;
+import io.swagger.models.properties.LongProperty;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.RefProperty;
+import io.swagger.models.properties.StringProperty;
 import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
@@ -14,7 +26,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 public class ModelSerializerTest {
     private final ObjectMapper m = Json.mapper();
@@ -281,5 +296,21 @@ public class ModelSerializerTest {
 
         assertNotNull(model.getEnum());
         assertTrue(model.getEnum().size() == 3);
+    }
+
+    @Test
+    public void testIssue1852() throws Exception {
+        String json = "{\n" +
+            "  \"type\": \"integer\",\n" +
+            "  \"minimum\": 10,\n" +
+            "  \"maximum\": 20,\n" +
+            "  \"default\": 15\n" +
+            "}";
+
+        final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
+
+        assertEquals(model.getMinimum().intValue(), 10);
+        assertEquals(model.getMaximum().intValue(), 20);
+        assertEquals(model.getDefaultValue(), 15);
     }
 }

@@ -58,6 +58,7 @@ import io.swagger.resources.SimpleSelfReferencingSubResource;
 import io.swagger.resources.TaggedResource;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -275,25 +276,25 @@ public class SimpleReaderTest {
 
         PathParameter param0 = (PathParameter) params.get(0);
         assertEquals(param0.getName(), "id");
-        assertEquals(param0.getDefaultValue(), "5");
-        assertEquals(param0.getMinimum(), 0.0);
-        assertEquals(param0.getMaximum(), 10.0);
+        assertEquals(param0.getDefaultValue(), 5);
+        assertEquals(param0.getMinimum(), new BigDecimal(0.0));
+        assertEquals(param0.getMaximum(), new BigDecimal(10.0));
 
         PathParameter param1 = (PathParameter) params.get(1);
         assertEquals(param1.getName(), "minValue");
-        assertEquals(param1.getMinimum(), 0.0);
+        assertEquals(param1.getMinimum(), new BigDecimal(0.0));
         assertNull(param1.getMaximum(), null);
 
         PathParameter param2 = (PathParameter) params.get(2);
         assertEquals(param2.getName(), "maxValue");
         assertNull(param2.getMinimum());
-        assertEquals(param2.getMaximum(), 100.0);
+        assertEquals(param2.getMaximum(), new BigDecimal(100.0));
 
         PathParameter param3 = (PathParameter) params.get(3);
         assertEquals(param3.getName(), "values");
         IntegerProperty items = (IntegerProperty) param3.getItems();
-        assertEquals(items.getMinimum(), 0.0);
-        assertEquals(items.getMaximum(), 5.0);
+        assertEquals(items.getMinimum(), new BigDecimal(0.0));
+        assertEquals(items.getMaximum(), new BigDecimal(5.0));
         assertEquals(items.getExclusiveMinimum(), Boolean.TRUE);
         assertEquals(items.getExclusiveMaximum(), Boolean.TRUE);
     }
