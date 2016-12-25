@@ -783,6 +783,17 @@ public class PropertyBuilder {
                 if(args.containsKey(PropertyId.ENUM)) {
                     final List<String> values = PropertyId.ENUM.findValue(args);
                     if(values != null) {
+                        if(property instanceof BooleanProperty) {
+                            BooleanProperty p = (BooleanProperty) property;
+                            for(String value : values) {
+                                try {
+                                    p._enum(Boolean.parseBoolean(value));
+                                }
+                                catch(Exception e) {
+                                    // continue
+                                }
+                            }
+                        }
                         if(property instanceof IntegerProperty) {
                             IntegerProperty p = (IntegerProperty) property;
                             for(String value : values) {
