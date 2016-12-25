@@ -68,9 +68,39 @@ public class BooleanProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof BooleanProperty)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        BooleanProperty that = (BooleanProperty) o;
+
+        if (_default != null ? !_default.equals(that._default) : that._default != null) {
+            return false;
+        }
+        return _enum != null ? _enum.equals(that._enum) : that._enum == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (_default != null ? _default.hashCode() : 0);
+        result = 31 * result + (_enum != null ? _enum.hashCode() : 0);
+        return result;
+    }
+
     public BooleanProperty readOnly() {
         this.setReadOnly(Boolean.TRUE);
         return this;
+
     }
 
     public Boolean getDefault() {
@@ -93,30 +123,4 @@ public class BooleanProperty extends AbstractProperty implements Property {
         this._enum = _enum;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((_default == null) ? 0 : _default.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (!(obj instanceof BooleanProperty)) {
-            return false;
-        }
-        BooleanProperty other = (BooleanProperty) obj;
-        if (_default == null) {
-            if (other._default != null) {
-                return false;
-            }
-        } else if (!_default.equals(other._default)) {
-            return false;
-        }
-        return true;
-    }
 }
