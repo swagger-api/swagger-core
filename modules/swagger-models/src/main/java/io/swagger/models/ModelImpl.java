@@ -366,7 +366,24 @@ public class ModelImpl extends AbstractModel {
         this.xml = xml;
     }
 
-    public String getDefaultValue() {
+    public Object getDefaultValue() {
+        if(defaultValue == null) {
+            return null;
+        }
+
+        // don't return a default value if types fail to convert
+        try {
+            if ("integer".equals(this.type)) {
+                return new Integer(defaultValue);
+            }
+            if ("number".equals(this.type)) {
+                return new BigDecimal(defaultValue);
+            }
+        }
+        catch (Exception e) {
+            return null;
+        }
+
         return defaultValue;
     }
 

@@ -243,7 +243,7 @@ public class PropertyBuilderTest {
 
         // then
         assertTrue(floatProperty.getEnum().contains(4F), "Must contain the enum value passed into args");
-        assertEquals(floatProperty.getDefault(), (Float) 4F, "Must contain the default value passed into args");
+        assertEquals(floatProperty.getDefault(), new BigDecimal(4).floatValue(), "Must contain the default value passed into args");
 
         // given
         args.put(PropertyId.DEFAULT, null);
@@ -411,7 +411,7 @@ public class PropertyBuilderTest {
         Model model = PropertyBuilder.toModel(integerProperty);
 
         // then
-        assertEquals(((ModelImpl) model).getDefaultValue(), "4",
+        assertEquals(((ModelImpl) model).getDefaultValue(), 4,
                 "Must contain the default value passed into the property");
     }
 
@@ -425,7 +425,7 @@ public class PropertyBuilderTest {
         Model model = PropertyBuilder.toModel(longProperty);
 
         // then
-        assertEquals(((ModelImpl) model).getDefaultValue(), "4",
+        assertEquals(((ModelImpl) model).getDefaultValue(), 4,
                 "Must contain the default value passed into the property");
     }
 
@@ -439,7 +439,7 @@ public class PropertyBuilderTest {
         Model model = PropertyBuilder.toModel(floatProperty);
 
         // then
-        assertEquals(((ModelImpl) model).getDefaultValue(), "4.0",
+        assertEquals(((ModelImpl) model).getDefaultValue(), new BigDecimal("4.0"),
                 "Must contain the default value passed into the property");
     }
 
@@ -453,7 +453,7 @@ public class PropertyBuilderTest {
         Model model = PropertyBuilder.toModel(doubleProperty);
 
         // then
-        assertEquals(((ModelImpl) model).getDefaultValue(), "4.0",
+        assertEquals(((ModelImpl) model).getDefaultValue(), new BigDecimal("4.0"),
                 "Must contain the default value passed into the property");
     }
 

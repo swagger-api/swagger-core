@@ -311,6 +311,6 @@ public class ModelSerializerTest {
 
         assertEquals(model.getMinimum().intValue(), 10);
         assertEquals(model.getMaximum().intValue(), 20);
-        assertEquals(model.getDefaultValue(), "15");
+        assertEquals(model.getDefaultValue(), 15);
     }
 }
