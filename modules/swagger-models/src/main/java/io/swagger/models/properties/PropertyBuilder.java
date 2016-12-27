@@ -690,9 +690,9 @@ public class PropertyBuilder {
                 property.setExclusiveMaximum(value);
             }
             if (args.containsKey(PropertyId.MULTIPLE_OF)) {
-                final Double value = PropertyId.MULTIPLE_OF.findValue(args);
+                final BigDecimal value = PropertyId.MULTIPLE_OF.findValue(args);
                 if(value != null) {
-                    property.setMultipleOf(new BigDecimal(value));
+                    property.setMultipleOf(value);
                 }
             }
             return property;

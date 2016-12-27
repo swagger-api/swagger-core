@@ -21,7 +21,6 @@ import io.swagger.resources.Resource2031;
 import io.swagger.resources.ResourceWithFormData;
 import io.swagger.resources.ResourceWithJacksonBean;
 import io.swagger.resources.ResourceWithKnownInjections;
-import io.swagger.util.Json;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.testng.annotations.Test;
@@ -196,7 +195,7 @@ public class SwaggerJersey2JaxrsTest {
     @Test(description = "Tests issue 2031")
     public void testIssue2031() {
         final Swagger swagger = new Reader(new Swagger()).read(Resource2031.class);
-        Json.prettyPrint(swagger);
+        assertNotNull(swagger);
 
     }
 

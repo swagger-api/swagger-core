@@ -22,6 +22,7 @@ import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -337,5 +338,26 @@ public class ModelSerializerTest {
         final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
 
         assertTrue(model.getUniqueItems());
+    }
+
+    @Test
+    public void testIssue2064Ip() throws Exception {
+        String json =
+            "{\n" +
+            "  \"type\": \"object\",\n" +
+            "  \"properties\": {\n" +
+            "    \"id\": {\n" +
+            "      \"type\": \"integer\",\n" +
+            "      \"format\": \"int32\",\n" +
+            "      \"multipleOf\": 3.0\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+
+        final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
+
+        IntegerProperty ip = (IntegerProperty) model.getProperties().get("id");
+        assertEquals(ip.getMultipleOf(), new BigDecimal("3.0"));
+
     }
 }

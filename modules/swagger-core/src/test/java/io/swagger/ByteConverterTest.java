@@ -14,6 +14,7 @@ import org.testng.annotations.Test;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 public class ByteConverterTest {
     private static final String NEWLINE = System.getProperty("line.separator");
@@ -65,7 +66,7 @@ public class ByteConverterTest {
                 "}";
 
         Model model = Json.mapper().readValue(json, Model.class);
-        Json.prettyPrint(model);
+        assertNotNull(model);
     }
 
     @Test
