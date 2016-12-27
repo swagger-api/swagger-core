@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -51,6 +52,11 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
     private static Double getDouble(JsonNode node, PropertyBuilder.PropertyId type) {
         final JsonNode detailNode = getDetailNode(node, type);
         return detailNode == null ? null : detailNode.doubleValue();
+    }
+
+    private static BigDecimal getBigDecimal(JsonNode node, PropertyBuilder.PropertyId type) {
+        final JsonNode detailNode = getDetailNode(node, type);
+        return detailNode == null ? null : new BigDecimal(detailNode.toString());
     }
 
     private static Boolean getBoolean(JsonNode node, PropertyBuilder.PropertyId type) {
@@ -185,8 +191,8 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         args.put(PropertyBuilder.PropertyId.MAX_PROPERTIES, getInteger(node, PropertyBuilder.PropertyId.MAX_PROPERTIES));
         args.put(PropertyBuilder.PropertyId.MIN_LENGTH, getInteger(node, PropertyBuilder.PropertyId.MIN_LENGTH));
         args.put(PropertyBuilder.PropertyId.MAX_LENGTH, getInteger(node, PropertyBuilder.PropertyId.MAX_LENGTH));
-        args.put(PropertyBuilder.PropertyId.MINIMUM, getDouble(node, PropertyBuilder.PropertyId.MINIMUM));
-        args.put(PropertyBuilder.PropertyId.MAXIMUM, getDouble(node, PropertyBuilder.PropertyId.MAXIMUM));
+        args.put(PropertyBuilder.PropertyId.MINIMUM, getBigDecimal(node, PropertyBuilder.PropertyId.MINIMUM));
+        args.put(PropertyBuilder.PropertyId.MAXIMUM, getBigDecimal(node, PropertyBuilder.PropertyId.MAXIMUM));
         args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM, getBoolean(node, PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM));
         args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM, getBoolean(node, PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM));
         args.put(PropertyBuilder.PropertyId.UNIQUE_ITEMS, getBoolean(node, PropertyBuilder.PropertyId.UNIQUE_ITEMS));
