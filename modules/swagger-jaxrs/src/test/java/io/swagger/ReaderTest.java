@@ -5,12 +5,43 @@ import io.swagger.models.ExternalDocs;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
-import io.swagger.models.parameters.*;
-import io.swagger.resources.*;
-import io.swagger.util.Json;
+import io.swagger.models.parameters.BodyParameter;
+import io.swagger.models.parameters.FormParameter;
+import io.swagger.models.parameters.HeaderParameter;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.PathParameter;
+import io.swagger.models.parameters.QueryParameter;
+import io.swagger.resources.AnnotatedInterfaceImpl;
+import io.swagger.resources.ApiConsumesProducesResource;
+import io.swagger.resources.ApiMultipleConsumesProducesResource;
+import io.swagger.resources.BookResource;
+import io.swagger.resources.BothConsumesProducesResource;
+import io.swagger.resources.DescendantResource;
+import io.swagger.resources.IndirectImplicitParamsImpl;
+import io.swagger.resources.NoConsumesProducesResource;
+import io.swagger.resources.Resource1970;
+import io.swagger.resources.ResourceWithAnnotationsOnlyInInterfaceImpl;
+import io.swagger.resources.ResourceWithClassLevelApiResourceNoMethodLevelApiResources;
+import io.swagger.resources.ResourceWithCustomException;
+import io.swagger.resources.ResourceWithCustomExceptionAndClassLevelApiResource;
+import io.swagger.resources.ResourceWithDeprecatedMethod;
+import io.swagger.resources.ResourceWithEmptyPath;
+import io.swagger.resources.ResourceWithExternalDocs;
+import io.swagger.resources.ResourceWithImplicitFileParam;
+import io.swagger.resources.ResourceWithImplicitParams;
+import io.swagger.resources.ResourceWithKnownInjections;
+import io.swagger.resources.ResourceWithValidation;
+import io.swagger.resources.RsConsumesProducesResource;
+import io.swagger.resources.RsMultipleConsumesProducesResource;
+import io.swagger.resources.SimpleMethods;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.*;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -18,7 +49,10 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 public class ReaderTest {
     private static final String APPLICATION_XML = "application/xml";
@@ -192,7 +226,6 @@ public class ReaderTest {
     @Test(description = "scan implicit params")
     public void scanImplicitParam() {
         Swagger swagger = getSwagger(ResourceWithImplicitParams.class);
-        Json.prettyPrint(swagger);
         List<Parameter> params = swagger.getPath("/testString").getPost().getParameters();
         assertNotNull(params);
         assertEquals(params.size(), 7);

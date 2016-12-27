@@ -363,7 +363,7 @@ public class PropertyBuilderTest {
         args.put(PropertyId.MAXIMUM, new BigDecimal(112.0));
         args.put(PropertyId.EXCLUSIVE_MINIMUM, true);
         args.put(PropertyId.EXCLUSIVE_MAXIMUM, true);
-        args.put(PropertyId.MULTIPLE_OF, 2.0);
+        args.put(PropertyId.MULTIPLE_OF, new BigDecimal(2.0));
         args.put(PropertyId.DEFAULT, "4");
         DoubleProperty doubleProperty = new DoubleProperty();
 

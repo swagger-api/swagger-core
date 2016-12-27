@@ -23,6 +23,7 @@ public class ModelImpl extends AbstractModel {
     private List<String> required;
     private Map<String, Property> properties;
     private Boolean allowEmptyValue;
+    private Boolean uniqueItems;
     private boolean isSimple = false;
     private String description;
     private Object example;
@@ -74,6 +75,12 @@ public class ModelImpl extends AbstractModel {
 
     public ModelImpl name(String name) {
         this.setName(name);
+        return this;
+    }
+
+
+    public ModelImpl uniqueItems(Boolean uniqueItems) {
+        this.setUniqueItems(uniqueItems);
         return this;
     }
 
@@ -261,91 +268,6 @@ public class ModelImpl extends AbstractModel {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ModelImpl)) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-
-        ModelImpl model = (ModelImpl) o;
-
-        if (isSimple != model.isSimple) {
-            return false;
-        }
-        if (type != null ? !type.equals(model.type) : model.type != null) {
-            return false;
-        }
-        if (format != null ? !format.equals(model.format) : model.format != null) {
-            return false;
-        }
-        if (name != null ? !name.equals(model.name) : model.name != null) {
-            return false;
-        }
-        if (required != null ? !required.equals(model.required) : model.required != null) {
-            return false;
-        }
-        if (properties != null ? !properties.equals(model.properties) : model.properties != null) {
-            return false;
-        }
-        if (allowEmptyValue != null ? !allowEmptyValue.equals(model.allowEmptyValue) : model.allowEmptyValue != null) {
-            return false;
-        }
-        if (description != null ? !description.equals(model.description) : model.description != null) {
-            return false;
-        }
-        if (example != null ? !example.equals(model.example) : model.example != null) {
-            return false;
-        }
-        if (additionalProperties != null ? !additionalProperties.equals(model.additionalProperties) : model.additionalProperties != null) {
-            return false;
-        }
-        if (discriminator != null ? !discriminator.equals(model.discriminator) : model.discriminator != null) {
-            return false;
-        }
-        if (xml != null ? !xml.equals(model.xml) : model.xml != null) {
-            return false;
-        }
-        if (defaultValue != null ? !defaultValue.equals(model.defaultValue) : model.defaultValue != null) {
-            return false;
-        }
-        if (_enum != null ? !_enum.equals(model._enum) : model._enum != null) {
-            return false;
-        }
-        if (minimum != null ? !minimum.equals(model.minimum) : model.minimum != null) {
-            return false;
-        }
-        return maximum != null ? maximum.equals(model.maximum) : model.maximum == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (format != null ? format.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (required != null ? required.hashCode() : 0);
-        result = 31 * result + (properties != null ? properties.hashCode() : 0);
-        result = 31 * result + (allowEmptyValue != null ? allowEmptyValue.hashCode() : 0);
-        result = 31 * result + (isSimple ? 1 : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (example != null ? example.hashCode() : 0);
-        result = 31 * result + (additionalProperties != null ? additionalProperties.hashCode() : 0);
-        result = 31 * result + (discriminator != null ? discriminator.hashCode() : 0);
-        result = 31 * result + (xml != null ? xml.hashCode() : 0);
-        result = 31 * result + (defaultValue != null ? defaultValue.hashCode() : 0);
-        result = 31 * result + (_enum != null ? _enum.hashCode() : 0);
-        result = 31 * result + (minimum != null ? minimum.hashCode() : 0);
-        result = 31 * result + (maximum != null ? maximum.hashCode() : 0);
-        return result;
-    }
-
     public Object getExample() {
         if (example == null) {
             // TODO: will add logic to construct examples based on payload here
@@ -405,6 +327,104 @@ public class ModelImpl extends AbstractModel {
 
     public void setMaximum(BigDecimal maximum) {
         this.maximum = maximum;
+    }
+
+    public Boolean getUniqueItems() {
+        return uniqueItems;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ModelImpl)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        ModelImpl model = (ModelImpl) o;
+
+        if (isSimple != model.isSimple) {
+            return false;
+        }
+        if (type != null ? !type.equals(model.type) : model.type != null) {
+            return false;
+        }
+        if (format != null ? !format.equals(model.format) : model.format != null) {
+            return false;
+        }
+        if (name != null ? !name.equals(model.name) : model.name != null) {
+            return false;
+        }
+        if (required != null ? !required.equals(model.required) : model.required != null) {
+            return false;
+        }
+        if (properties != null ? !properties.equals(model.properties) : model.properties != null) {
+            return false;
+        }
+        if (allowEmptyValue != null ? !allowEmptyValue.equals(model.allowEmptyValue) : model.allowEmptyValue != null) {
+            return false;
+        }
+        if (uniqueItems != null ? !uniqueItems.equals(model.uniqueItems) : model.uniqueItems != null) {
+            return false;
+        }
+        if (description != null ? !description.equals(model.description) : model.description != null) {
+            return false;
+        }
+        if (example != null ? !example.equals(model.example) : model.example != null) {
+            return false;
+        }
+        if (additionalProperties != null ? !additionalProperties.equals(model.additionalProperties) : model.additionalProperties != null) {
+            return false;
+        }
+        if (discriminator != null ? !discriminator.equals(model.discriminator) : model.discriminator != null) {
+            return false;
+        }
+        if (xml != null ? !xml.equals(model.xml) : model.xml != null) {
+            return false;
+        }
+        if (defaultValue != null ? !defaultValue.equals(model.defaultValue) : model.defaultValue != null) {
+            return false;
+        }
+        if (_enum != null ? !_enum.equals(model._enum) : model._enum != null) {
+            return false;
+        }
+        if (minimum != null ? !minimum.equals(model.minimum) : model.minimum != null) {
+            return false;
+        }
+        return maximum != null ? maximum.equals(model.maximum) : model.maximum == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (format != null ? format.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (required != null ? required.hashCode() : 0);
+        result = 31 * result + (properties != null ? properties.hashCode() : 0);
+        result = 31 * result + (allowEmptyValue != null ? allowEmptyValue.hashCode() : 0);
+        result = 31 * result + (uniqueItems != null ? uniqueItems.hashCode() : 0);
+        result = 31 * result + (isSimple ? 1 : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (example != null ? example.hashCode() : 0);
+        result = 31 * result + (additionalProperties != null ? additionalProperties.hashCode() : 0);
+        result = 31 * result + (discriminator != null ? discriminator.hashCode() : 0);
+        result = 31 * result + (xml != null ? xml.hashCode() : 0);
+        result = 31 * result + (defaultValue != null ? defaultValue.hashCode() : 0);
+        result = 31 * result + (_enum != null ? _enum.hashCode() : 0);
+        result = 31 * result + (minimum != null ? minimum.hashCode() : 0);
+        result = 31 * result + (maximum != null ? maximum.hashCode() : 0);
+        return result;
+    }
+
+    public void setUniqueItems(Boolean uniqueItems) {
+        this.uniqueItems = uniqueItems;
+
     }
 
     public Object clone() {
