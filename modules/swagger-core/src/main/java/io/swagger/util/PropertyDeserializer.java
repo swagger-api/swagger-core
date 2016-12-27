@@ -193,6 +193,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         args.put(PropertyBuilder.PropertyId.MAX_LENGTH, getInteger(node, PropertyBuilder.PropertyId.MAX_LENGTH));
         args.put(PropertyBuilder.PropertyId.MINIMUM, getBigDecimal(node, PropertyBuilder.PropertyId.MINIMUM));
         args.put(PropertyBuilder.PropertyId.MAXIMUM, getBigDecimal(node, PropertyBuilder.PropertyId.MAXIMUM));
+        args.put(PropertyBuilder.PropertyId.MULTIPLE_OF, getBigDecimal(node, PropertyBuilder.PropertyId.MULTIPLE_OF));
         args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM, getBoolean(node, PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM));
         args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM, getBoolean(node, PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM));
         args.put(PropertyBuilder.PropertyId.UNIQUE_ITEMS, getBoolean(node, PropertyBuilder.PropertyId.UNIQUE_ITEMS));
