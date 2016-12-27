@@ -324,7 +324,7 @@ public class ModelSerializerTest {
 
         final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
 
-        assertTrue(model.getUniqueItems());
+        assertFalse(model.getUniqueItems());
     }
 
     @Test
@@ -336,6 +336,6 @@ public class ModelSerializerTest {
 
         final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
 
-        assertFalse(model.getUniqueItems());
+        assertTrue(model.getUniqueItems());
     }
 }
