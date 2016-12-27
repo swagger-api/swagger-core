@@ -1,4 +1,4 @@
-package io.swagger;
+package io.swagger.properties;
 
 import io.swagger.models.Operation;
 import io.swagger.models.Response;
