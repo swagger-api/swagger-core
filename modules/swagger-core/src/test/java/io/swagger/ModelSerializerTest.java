@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
@@ -312,5 +313,29 @@ public class ModelSerializerTest {
         assertEquals(model.getMinimum().intValue(), 10);
         assertEquals(model.getMaximum().intValue(), 20);
         assertEquals(model.getDefaultValue(), 15);
+    }
+
+    @Test
+    public void testIssue2064Neg() throws Exception {
+        String json = "{\n" +
+            "  \"type\": \"string\",\n" +
+            "  \"uniqueItems\": false\n" +
+            "}";
+
+        final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
+
+        assertTrue(model.getUniqueItems());
+    }
+
+    @Test
+    public void testIssue2064() throws Exception {
+        String json = "{\n" +
+            "  \"type\": \"string\",\n" +
+            "  \"uniqueItems\": true\n" +
+            "}";
+
+        final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
+
+        assertFalse(model.getUniqueItems());
     }
 }
