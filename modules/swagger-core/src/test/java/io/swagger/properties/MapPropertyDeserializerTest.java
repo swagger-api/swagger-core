@@ -1,10 +1,8 @@
-package io.swagger;
+package io.swagger.properties;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.models.Operation;
-import io.swagger.models.Path;
 import io.swagger.models.Response;
-import io.swagger.models.Swagger;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
