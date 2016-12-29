@@ -472,7 +472,8 @@ public class Reader {
             LOGGER.warn("Unknown implicit parameter type: [{}]", param.paramType());
             return null;
         }
-        final Type type = ReflectionUtils.typeFromString(param.dataType());
+        final Type type = param.dataTypeClass() == Void.class ? ReflectionUtils.typeFromString(param.dataType())
+                : param.dataTypeClass();
         return ParameterProcessor.applyAnnotations(swagger, p, (type == null) ? String.class : type,
                 Arrays.<Annotation>asList(param));
     }
@@ -1002,7 +1003,7 @@ public class Reader {
         Map<String, Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders());
 
         Response response = new Response()
-.description(apiResponse.message()).headers(responseHeaders);
+        .description(apiResponse.message()).headers(responseHeaders);
 
         if (apiResponse.code() == 0) {
             operation.defaultResponse(response);
