@@ -502,7 +502,7 @@
         <surefire-version>2.18.1</surefire-version>
         <maven-plugin-version>1.0.0</maven-plugin-version>
         <commons-lang-version>3.2.1</commons-lang-version>
-        <slf4j-version>1.6.3</slf4j-version>
+        <slf4j-version>1.7.22</slf4j-version>
         <jetty-version>9.2.14.v20151106</jetty-version>
         <servlet-api-version>2.5</servlet-api-version>
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
