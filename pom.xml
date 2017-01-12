@@ -494,7 +494,7 @@
         <jackson-version>2.8.5</jackson-version>
         <logback-version>1.0.1</logback-version>
         <reflections-version>0.9.10</reflections-version>
-        <guava-version>18.0</guava-version>
+        <guava-version>20.0</guava-version>
 
         <testng-version>6.9.4</testng-version>
         <mockito-version>1.9.5</mockito-version>
