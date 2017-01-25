@@ -28,6 +28,7 @@ import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.resources.ClassWithExamplePost;
+import io.swagger.resources.ClassWithExamplePostClass;
 import io.swagger.resources.HiddenResource;
 import io.swagger.resources.Issue1979Resource;
 import io.swagger.resources.NicknamedOperation;
@@ -626,6 +627,48 @@ public class SimpleReaderTest {
     @Test(description = "scan a resource with implicit operation query example")
     public void scanClassWithImplicitExampleQuery() {
         Swagger swagger = getSwagger(ClassWithExamplePost.class);
+        Parameter param = swagger.getPaths().get("/external/info2").getGet().getParameters().get(0);
+        QueryParameter bp = (QueryParameter) param;
+        assertNotNull(bp.getExample());
+        Object value = bp.getExample();
+        assertEquals("77", value);
+    }
+
+    @Test(description = "scan a resource with operation post example (dataTypeClass)")
+    public void scanClassWithExamplePostClass() {
+        Swagger swagger = getSwagger(ClassWithExamplePostClass.class);
+        Parameter param = swagger.getPaths().get("/external/info").getPost().getParameters().get(0);
+        BodyParameter bp = (BodyParameter) param;
+        assertNotNull(bp.getExamples());
+        assertTrue(bp.getExamples().size() == 1);
+        String value = bp.getExamples().get("application/json");
+        assertEquals("[\"a\",\"b\"]", value);
+    }
+
+    @Test(description = "scan a resource with operation implicit post example (dataTypeClass)")
+    public void scanClassWithImplicitExamplePostClass() {
+        Swagger swagger = getSwagger(ClassWithExamplePostClass.class);
+        Parameter param = swagger.getPaths().get("/external/info2").getPost().getParameters().get(0);
+        BodyParameter bp = (BodyParameter) param;
+        assertNotNull(bp.getExamples());
+        assertTrue(bp.getExamples().size() == 1);
+        String value = bp.getExamples().get("application/json");
+        assertEquals("[\"a\",\"b\"]", value);
+    }
+
+    @Test(description = "scan a resource with query param example (dataTypeClass)")
+    public void scanClassWithExampleClassQuery() {
+        Swagger swagger = getSwagger(ClassWithExamplePostClass.class);
+        Parameter param = swagger.getPaths().get("/external/info").getGet().getParameters().get(0);
+        QueryParameter bp = (QueryParameter) param;
+        assertNotNull(bp.getExample());
+        Object value = bp.getExample();
+        assertEquals("a,b,c", value);
+    }
+
+    @Test(description = "scan a resource with implicit operation query example (dataTypeClass)")
+    public void scanClassWithImplicitExampleClassQuery() {
+        Swagger swagger = getSwagger(ClassWithExamplePostClass.class);
         Parameter param = swagger.getPaths().get("/external/info2").getGet().getParameters().get(0);
         QueryParameter bp = (QueryParameter) param;
         assertNotNull(bp.getExample());

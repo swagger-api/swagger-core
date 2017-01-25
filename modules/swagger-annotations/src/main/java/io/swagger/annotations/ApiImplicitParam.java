@@ -104,9 +104,17 @@ public @interface ApiImplicitParam {
     String dataType() default "";
 
     /**
+     * The class of the parameter.
+     * <p>
+     * Overrides {@code dataType} if provided.
+     */
+    Class<?> dataTypeClass() default Void.class;
+
+    /**
      * The parameter type of the parameter.
      * <p>
-     * Valid values are {@code path}, {@code query}, {@code body}, {@code header} or {@code form}.
+     * Valid values are {@code path}, {@code query}, {@code body},
+     * {@code header} or {@code form}.
      */
     String paramType() default "";
 
