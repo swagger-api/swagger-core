@@ -202,19 +202,26 @@ public class Swagger {
         this.tags = tags;
     }
 
+    public Tag getTag(String tagName) {
+	Tag tag = null;
+	if (this.tags != null && tagName != null) {
+	    for (Tag existing : this.tags) {
+		if (existing.getName().equals(tagName)) {
+		    tag = existing;
+		    break;
+		}
+	    }
+	}
+	return tag;
+    }
+    
     public void addTag(Tag tag) {
         if (this.tags == null) {
             this.tags = new ArrayList<Tag>();
         }
         if (tag != null && tag.getName() != null) {
-            boolean found = false;
-            for (Tag existing : this.tags) {
-                if (existing.getName().equals(tag.getName())) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                this.tags.add(tag);
+            if (getTag(tag.getName()) == null) {
+        	this.tags.add(tag);
             }
         }
     }
