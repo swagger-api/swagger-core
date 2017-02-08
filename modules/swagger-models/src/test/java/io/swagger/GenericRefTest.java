@@ -18,12 +18,20 @@ public class GenericRefTest {
     public void identifyURLRefs() {
         assertRefFormat(new GenericRef(RefType.DEFINITION, "http://my.company.com/models/model.json"), RefFormat.URL);
         assertRefFormat(new GenericRef(RefType.DEFINITION, "http://my.company.com/models/model.json#/thing"), RefFormat.URL);
+        assertRefFormat(new GenericRef(RefType.DEFINITION, "https://my.company.com/models/model.json"), RefFormat.URL);
+        assertRefFormat(new GenericRef(RefType.DEFINITION, "https://my.company.com/models/model.json#/thing"), RefFormat.URL);
         assertRefFormat(new GenericRef(RefType.PARAMETER, "http://my.company.com/models/model.json"), RefFormat.URL);
         assertRefFormat(new GenericRef(RefType.PARAMETER, "http://my.company.com/models/model.json#/thing"), RefFormat.URL);
+        assertRefFormat(new GenericRef(RefType.PARAMETER, "https://my.company.com/models/model.json"), RefFormat.URL);
+        assertRefFormat(new GenericRef(RefType.PARAMETER, "https://my.company.com/models/model.json#/thing"), RefFormat.URL);
         assertRefFormat(new GenericRef(RefType.RESPONSE, "http://my.company.com/models/model.json"), RefFormat.URL);
         assertRefFormat(new GenericRef(RefType.RESPONSE, "http://my.company.com/models/model.json#/thing"), RefFormat.URL);
+        assertRefFormat(new GenericRef(RefType.RESPONSE, "https://my.company.com/models/model.json"), RefFormat.URL);
+        assertRefFormat(new GenericRef(RefType.RESPONSE, "https://my.company.com/models/model.json#/thing"), RefFormat.URL);
         assertRefFormat(new GenericRef(RefType.PATH, "http://my.company.com/models/model.json"), RefFormat.URL);
         assertRefFormat(new GenericRef(RefType.PATH, "http://my.company.com/models/model.json#/thing"), RefFormat.URL);
+        assertRefFormat(new GenericRef(RefType.PATH, "https://my.company.com/models/model.json"), RefFormat.URL);
+        assertRefFormat(new GenericRef(RefType.PATH, "https://my.company.com/models/model.json#/thing"), RefFormat.URL);
     }
 
     @Test(description = "it should correctly identify internal refs")
@@ -37,6 +45,11 @@ public class GenericRefTest {
         assertRefFormat(new GenericRef(RefType.DEFINITION, "Foo"), RefFormat.INTERNAL);
         assertRefFormat(new GenericRef(RefType.RESPONSE, "Foo"), RefFormat.INTERNAL);
         assertRefFormat(new GenericRef(RefType.PATH, "Foo"), RefFormat.INTERNAL);
+
+        assertRefFormat(new GenericRef(RefType.PARAMETER, "httpNotUrl"), RefFormat.INTERNAL);
+        assertRefFormat(new GenericRef(RefType.DEFINITION, "httpNotUrl"), RefFormat.INTERNAL);
+        assertRefFormat(new GenericRef(RefType.RESPONSE, "httpNotUrl"), RefFormat.INTERNAL);
+        assertRefFormat(new GenericRef(RefType.PATH, "httpNotUrl"), RefFormat.INTERNAL);
     }
 
     @Test(description = "it should correctly identify relative refs")
@@ -106,6 +119,11 @@ public class GenericRefTest {
         assertRefString(RefType.PARAMETER, "foo", "#/parameters/foo");
         assertRefString(RefType.RESPONSE, "foo", "#/responses/foo");
         assertRefString(RefType.PATH, "foo", "#/paths/foo");
+
+        assertRefString(RefType.DEFINITION, "httpNotUrl", "#/definitions/httpNotUrl");
+        assertRefString(RefType.PARAMETER, "httpNotUrl", "#/parameters/httpNotUrl");
+        assertRefString(RefType.RESPONSE, "httpNotUrl", "#/responses/httpNotUrl");
+        assertRefString(RefType.PATH, "httpNotUrl", "#/paths/httpNotUrl");
     }
 
     @Test(description = "it should give back the right simple ref")
@@ -137,5 +155,10 @@ public class GenericRefTest {
         assertSimpleRef(RefType.PARAMETER, "foo", "foo");
         assertSimpleRef(RefType.RESPONSE, "foo", "foo");
         assertSimpleRef(RefType.PATH, "foo", "foo");
+
+        assertSimpleRef(RefType.DEFINITION, "httpNotUrl", "httpNotUrl");
+        assertSimpleRef(RefType.PARAMETER, "httpNotUrl", "httpNotUrl");
+        assertSimpleRef(RefType.RESPONSE, "httpNotUrl", "httpNotUrl");
+        assertSimpleRef(RefType.PATH, "httpNotUrl", "httpNotUrl");
     }
 }
