@@ -91,7 +91,7 @@ public class GenericRef {
 
     private static RefFormat computeRefFormat(String ref) {
         RefFormat result = RefFormat.INTERNAL;
-        if (ref.startsWith("http")) {
+        if (ref.startsWith("http:") || ref.startsWith("https:")) {
             result = RefFormat.URL;
         } else if (ref.startsWith("#/")) {
             result = RefFormat.INTERNAL;
