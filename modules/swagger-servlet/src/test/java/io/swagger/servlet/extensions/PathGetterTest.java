@@ -13,7 +13,7 @@ public class PathGetterTest extends BaseServletReaderExtensionTest {
         return new Object[][]{
                 {"testMethod1", "/tests/resources/testMethod1"},
                 {"testMethod2", "/tests/resources/testMethod2"},
-                {"testMethod3", "/tests/resources/testMethod3"},
+                {"testMethod3", "/tests/resources/users"},
                 {"testMethod4", "/tests/resources/testMethod4"},
         };
     }
@@ -23,7 +23,7 @@ public class PathGetterTest extends BaseServletReaderExtensionTest {
         return new Object[][]{
                 {"testMethod1", "/tests/testMethod1"},
                 {"testMethod2", "/tests/testMethod2"},
-                {"testMethod3", "/tests/testMethod3"},
+                {"testMethod3", "/tests/users"},
                 {"testMethod4", "/tests/testMethod4"},
         };
     }
