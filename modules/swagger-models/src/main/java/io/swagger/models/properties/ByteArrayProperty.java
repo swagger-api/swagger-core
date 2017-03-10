@@ -2,7 +2,7 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
-public class ByteArrayProperty extends AbstractProperty implements Property {
+public class ByteArrayProperty extends StringProperty implements Property {
 
 
     public ByteArrayProperty() {

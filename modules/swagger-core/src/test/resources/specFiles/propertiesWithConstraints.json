@@ -52,6 +52,17 @@
                   "minLength": 10,
                   "maxLength": 100,
                   "pattern": "apattern"
+                },
+                "string_base64_encoded": {
+                    "type": "string",
+                    "format": "byte",
+                    "minLength": 5,
+                    "maxLength": 50,
+                    "pattern": "ignored_pattern",
+                    "enum": [
+                        "IGNORED",
+                        "ENUM"
+                    ]
                 }
             }
         }

@@ -158,6 +158,30 @@ public class PropertyBuilder {
             protected ByteArrayProperty create() {
                 return new ByteArrayProperty();
             }
+
+            @Override
+            public Property merge(final Property property, final Map<PropertyId, Object> args) {
+                super.merge(property, args);
+                if (property instanceof ByteArrayProperty) {
+                    final ByteArrayProperty resolved = (ByteArrayProperty) property;
+                    mergeString(resolved, args);
+                    // the string properties for pattern and enum will be ignored, they doesn't make sense for
+                    // base64 encoded strings - instead an appropriate base64 pattern is set
+                    resolved.setEnum(null);
+                    resolved.setPattern("^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$");
+                }
+
+                return property;
+            }
+
+            @Override
+            public Model toModel(final Property property) {
+                if (isType(property)) {
+                    return createStringModel((StringProperty) property);
+                }
+
+                return null;
+            }
         },
         BINARY(BinaryProperty.class) {
             @Override
