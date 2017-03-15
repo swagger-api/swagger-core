@@ -1,92 +1,120 @@
 package io.swagger.models;
 
+import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
+
+/**
+ * Contact
+ */
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-15T10:33:02.362-07:00")
 public class Contact {
-    private String name;
-    private String url;
-    private String email;
+  @JsonProperty("name")
+  private String name = null;
 
-    public Contact name(String name) {
-        this.setName(name);
-        return this;
-    }
+  @JsonProperty("url")
+  private String url = null;
 
-    public Contact url(String url) {
-        this.setUrl(url);
-        return this;
-    }
+  @JsonProperty("email")
+  private String email = null;
 
-    public Contact email(String email) {
-        this.setEmail(email);
-        return this;
-    }
+  public Contact name(String name) {
+    this.name = name;
+    return this;
+  }
 
-    public String getName() {
-        return name;
-    }
+   /**
+   * Get name
+   * @return name
+  **/
+  @ApiModelProperty(value = "")
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getUrl() {
-        return url;
-    }
+  public Contact url(String url) {
+    this.url = url;
+    return this;
+  }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+   /**
+   * Get url
+   * @return url
+  **/
+  @ApiModelProperty(value = "")
+  public String getUrl() {
+    return url;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  public void setUrl(String url) {
+    this.url = url;
+  }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  public Contact email(String email) {
+    this.email = email;
+    return this;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((email == null) ? 0 : email.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((url == null) ? 0 : url.hashCode());
-        return result;
-    }
+   /**
+   * Get email
+   * @return email
+  **/
+  @ApiModelProperty(value = "")
+  public String getEmail() {
+    return email;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Contact other = (Contact) obj;
-        if (email == null) {
-            if (other.email != null) {
-                return false;
-            }
-        } else if (!email.equals(other.email)) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (url == null) {
-            if (other.url != null) {
-                return false;
-            }
-        } else if (!url.equals(other.url)) {
-            return false;
-        }
-        return true;
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+
+  @Override
+  public boolean equals(java.lang.Object o) {
+    if (this == o) {
+      return true;
     }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Contact contact = (Contact) o;
+    return Objects.equals(this.name, contact.name) &&
+        Objects.equals(this.url, contact.url) &&
+        Objects.equals(this.email, contact.email);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, url, email);
+  }
+
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("class Contact {\n");
+    
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    url: ").append(toIndentedString(url)).append("\n");
+    sb.append("    email: ").append(toIndentedString(email)).append("\n");
+    sb.append("}");
+    return sb.toString();
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
+   */
+  private String toIndentedString(java.lang.Object o) {
+    if (o == null) {
+      return "null";
+    }
+    return o.toString().replace("\n", "\n    ");
+  }
+  
 }
+

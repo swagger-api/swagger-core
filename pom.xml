@@ -10,7 +10,7 @@
     <artifactId>swagger-project</artifactId>
     <packaging>pom</packaging>
     <name>swagger-project</name>
-    <version>1.5.13-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
@@ -25,6 +25,11 @@
             <id>fehguy</id>
             <name>Tony Tam</name>
             <email>fehguy@gmail.com</email>
+        </developer>
+        <developer>
+            <id>webron</id>
+            <name>Ron Ratovsky</name>
+            <email>webron@gmail.com</email>
         </developer>
     </developers>
     <issueManagement>
@@ -334,15 +339,15 @@
         </profile>
     </profiles>
     <modules>
-        <module>modules/swagger-annotations</module>
+        <!-- <module>modules/swagger-annotations</module> -->
         <module>modules/swagger-models</module>
-        <module>modules/swagger-mule</module>
-        <module>modules/swagger-core</module>
-        <module>modules/swagger-jaxrs</module>
-        <module>modules/swagger-jersey2-jaxrs</module>
-        <module>modules/swagger-jersey-jaxrs</module>
-        <module>modules/swagger-hibernate-validations</module>
-        <module>modules/swagger-servlet</module>
+        <!-- <module>modules/swagger-mule</module> -->
+        <!-- <module>modules/swagger-core</module> -->
+        <!-- <module>modules/swagger-jaxrs</module> -->
+        <!-- <module>modules/swagger-jersey2-jaxrs</module> -->
+        <!-- <module>modules/swagger-jersey-jaxrs</module> -->
+        <!-- <module>modules/swagger-hibernate-validations</module> -->
+        <!-- <module>modules/swagger-servlet</module> -->
         <!--module>modules/swagger-utils</module-->
         <!--module>modules/swagger-oauth2-auth-server</module-->
     </modules>

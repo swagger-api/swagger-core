@@ -5,38 +5,38 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * Tag
+ * Server
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-15T10:33:02.362-07:00")
-public class Tag {
-  @JsonProperty("name")
-  private String name = null;
+public class Server {
+  @JsonProperty("url")
+  private String url = null;
 
   @JsonProperty("description")
   private String description = null;
 
-  @JsonProperty("externalDocs")
-  private ExternalDocumentation externalDocs = null;
+  @JsonProperty("variables")
+  private ServerVariables variables = null;
 
-  public Tag name(String name) {
-    this.name = name;
+  public Server url(String url) {
+    this.url = url;
     return this;
   }
 
    /**
-   * Get name
-   * @return name
+   * Get url
+   * @return url
   **/
-  @ApiModelProperty(required = true, value = "")
-  public String getName() {
-    return name;
+  @ApiModelProperty(value = "")
+  public String getUrl() {
+    return url;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setUrl(String url) {
+    this.url = url;
   }
 
-  public Tag description(String description) {
+  public Server description(String description) {
     this.description = description;
     return this;
   }
@@ -54,22 +54,22 @@ public class Tag {
     this.description = description;
   }
 
-  public Tag externalDocs(ExternalDocumentation externalDocs) {
-    this.externalDocs = externalDocs;
+  public Server variables(ServerVariables variables) {
+    this.variables = variables;
     return this;
   }
 
    /**
-   * Get externalDocs
-   * @return externalDocs
+   * Get variables
+   * @return variables
   **/
   @ApiModelProperty(value = "")
-  public ExternalDocumentation getExternalDocs() {
-    return externalDocs;
+  public ServerVariables getVariables() {
+    return variables;
   }
 
-  public void setExternalDocs(ExternalDocumentation externalDocs) {
-    this.externalDocs = externalDocs;
+  public void setVariables(ServerVariables variables) {
+    this.variables = variables;
   }
 
 
@@ -81,26 +81,26 @@ public class Tag {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Tag tag = (Tag) o;
-    return Objects.equals(this.name, tag.name) &&
-        Objects.equals(this.description, tag.description) &&
-        Objects.equals(this.externalDocs, tag.externalDocs);
+    Server server = (Server) o;
+    return Objects.equals(this.url, server.url) &&
+        Objects.equals(this.description, server.description) &&
+        Objects.equals(this.variables, server.variables);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, description, externalDocs);
+    return Objects.hash(url, description, variables);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Tag {\n");
+    sb.append("class Server {\n");
     
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    url: ").append(toIndentedString(url)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
-    sb.append("    externalDocs: ").append(toIndentedString(externalDocs)).append("\n");
+    sb.append("    variables: ").append(toIndentedString(variables)).append("\n");
     sb.append("}");
     return sb.toString();
   }

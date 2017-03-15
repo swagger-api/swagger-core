@@ -1,60 +1,18 @@
-package io.swagger.models.parameters;
+package io.swagger.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.Content;
-import io.swagger.models.Example;
-import io.swagger.models.Schema;
-
-import java.util.List;
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModelProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Parameter
+ * Header
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-15T10:33:02.362-07:00")
-public class Parameter {
-  @JsonProperty("name")
-  private String name = null;
-
-  /**
-   * Gets or Sets in
-   */
-  public enum InEnum {
-    PATH("path"),
-    
-    QUERY("query"),
-    
-    HEADER("header"),
-    
-    COOKIE("cookie");
-
-    private String value;
-
-    InEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static InEnum fromValue(String text) {
-      for (InEnum b : InEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
-
-  @JsonProperty("in")
-  private InEnum in = null;
-
+public class Header {
   @JsonProperty("description")
   private String description = null;
 
@@ -71,19 +29,7 @@ public class Parameter {
    * Gets or Sets style
    */
   public enum StyleEnum {
-    MATRIX("matrix"),
-    
-    LABEL("label"),
-    
-    FORM("form"),
-    
-    SIMPLE("simple"),
-    
-    SPACEDELIMITED("spaceDelimited"),
-    
-    PIPEDELIMITED("pipeDelimited"),
-    
-    DEEPOBJECT("deepObject");
+    SIMPLE("simple");
 
     private String value;
 
@@ -113,14 +59,11 @@ public class Parameter {
   @JsonProperty("explode")
   private Boolean explode = null;
 
-  @JsonProperty("allowReserved")
-  private Boolean allowReserved = null;
-
   @JsonProperty("schema")
   private Schema schema = null;
 
   @JsonProperty("examples")
-  private List<Example> examples = null;
+  private List<Example> examples = new ArrayList<Example>();
 
   @JsonProperty("example")
   private Example example = null;
@@ -128,43 +71,7 @@ public class Parameter {
   @JsonProperty("content")
   private Content content = null;
 
-  public Parameter name(String name) {
-    this.name = name;
-    return this;
-  }
-
-   /**
-   * Get name
-   * @return name
-  **/
-  @ApiModelProperty(required = true, value = "")
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Parameter in(InEnum in) {
-    this.in = in;
-    return this;
-  }
-
-   /**
-   * Get in
-   * @return in
-  **/
-  @ApiModelProperty(required = true, value = "")
-  public InEnum getIn() {
-    return in;
-  }
-
-  public void setIn(InEnum in) {
-    this.in = in;
-  }
-
-  public Parameter description(String description) {
+  public Header description(String description) {
     this.description = description;
     return this;
   }
@@ -182,7 +89,7 @@ public class Parameter {
     this.description = description;
   }
 
-  public Parameter required(Boolean required) {
+  public Header required(Boolean required) {
     this.required = required;
     return this;
   }
@@ -200,7 +107,7 @@ public class Parameter {
     this.required = required;
   }
 
-  public Parameter deprecated(Boolean deprecated) {
+  public Header deprecated(Boolean deprecated) {
     this.deprecated = deprecated;
     return this;
   }
@@ -218,7 +125,7 @@ public class Parameter {
     this.deprecated = deprecated;
   }
 
-  public Parameter allowEmptyValue(Boolean allowEmptyValue) {
+  public Header allowEmptyValue(Boolean allowEmptyValue) {
     this.allowEmptyValue = allowEmptyValue;
     return this;
   }
@@ -236,7 +143,7 @@ public class Parameter {
     this.allowEmptyValue = allowEmptyValue;
   }
 
-  public Parameter style(StyleEnum style) {
+  public Header style(StyleEnum style) {
     this.style = style;
     return this;
   }
@@ -254,7 +161,7 @@ public class Parameter {
     this.style = style;
   }
 
-  public Parameter explode(Boolean explode) {
+  public Header explode(Boolean explode) {
     this.explode = explode;
     return this;
   }
@@ -272,25 +179,7 @@ public class Parameter {
     this.explode = explode;
   }
 
-  public Parameter allowReserved(Boolean allowReserved) {
-    this.allowReserved = allowReserved;
-    return this;
-  }
-
-   /**
-   * Get allowReserved
-   * @return allowReserved
-  **/
-  @ApiModelProperty(value = "")
-  public Boolean getAllowReserved() {
-    return allowReserved;
-  }
-
-  public void setAllowReserved(Boolean allowReserved) {
-    this.allowReserved = allowReserved;
-  }
-
-  public Parameter schema(Schema schema) {
+  public Header schema(Schema schema) {
     this.schema = schema;
     return this;
   }
@@ -308,12 +197,12 @@ public class Parameter {
     this.schema = schema;
   }
 
-  public Parameter examples(List<Example> examples) {
+  public Header examples(List<Example> examples) {
     this.examples = examples;
     return this;
   }
 
-  public Parameter addExamplesItem(Example examplesItem) {
+  public Header addExamplesItem(Example examplesItem) {
     this.examples.add(examplesItem);
     return this;
   }
@@ -331,7 +220,7 @@ public class Parameter {
     this.examples = examples;
   }
 
-  public Parameter example(Example example) {
+  public Header example(Example example) {
     this.example = example;
     return this;
   }
@@ -349,7 +238,7 @@ public class Parameter {
     this.example = example;
   }
 
-  public Parameter content(Content content) {
+  public Header content(Content content) {
     this.content = content;
     return this;
   }
@@ -376,42 +265,36 @@ public class Parameter {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Parameter parameter = (Parameter) o;
-    return Objects.equals(this.name, parameter.name) &&
-        Objects.equals(this.in, parameter.in) &&
-        Objects.equals(this.description, parameter.description) &&
-        Objects.equals(this.required, parameter.required) &&
-        Objects.equals(this.deprecated, parameter.deprecated) &&
-        Objects.equals(this.allowEmptyValue, parameter.allowEmptyValue) &&
-        Objects.equals(this.style, parameter.style) &&
-        Objects.equals(this.explode, parameter.explode) &&
-        Objects.equals(this.allowReserved, parameter.allowReserved) &&
-        Objects.equals(this.schema, parameter.schema) &&
-        Objects.equals(this.examples, parameter.examples) &&
-        Objects.equals(this.example, parameter.example) &&
-        Objects.equals(this.content, parameter.content);
+    Header header = (Header) o;
+    return Objects.equals(this.description, header.description) &&
+        Objects.equals(this.required, header.required) &&
+        Objects.equals(this.deprecated, header.deprecated) &&
+        Objects.equals(this.allowEmptyValue, header.allowEmptyValue) &&
+        Objects.equals(this.style, header.style) &&
+        Objects.equals(this.explode, header.explode) &&
+        Objects.equals(this.schema, header.schema) &&
+        Objects.equals(this.examples, header.examples) &&
+        Objects.equals(this.example, header.example) &&
+        Objects.equals(this.content, header.content);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, in, description, required, deprecated, allowEmptyValue, style, explode, allowReserved, schema, examples, example, content);
+    return Objects.hash(description, required, deprecated, allowEmptyValue, style, explode, schema, examples, example, content);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Parameter {\n");
+    sb.append("class Header {\n");
     
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
-    sb.append("    in: ").append(toIndentedString(in)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    required: ").append(toIndentedString(required)).append("\n");
     sb.append("    deprecated: ").append(toIndentedString(deprecated)).append("\n");
     sb.append("    allowEmptyValue: ").append(toIndentedString(allowEmptyValue)).append("\n");
     sb.append("    style: ").append(toIndentedString(style)).append("\n");
     sb.append("    explode: ").append(toIndentedString(explode)).append("\n");
-    sb.append("    allowReserved: ").append(toIndentedString(allowReserved)).append("\n");
     sb.append("    schema: ").append(toIndentedString(schema)).append("\n");
     sb.append("    examples: ").append(toIndentedString(examples)).append("\n");
     sb.append("    example: ").append(toIndentedString(example)).append("\n");

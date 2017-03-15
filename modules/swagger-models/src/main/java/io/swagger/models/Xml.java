@@ -1,143 +1,166 @@
 package io.swagger.models;
 
-public class Xml {
-    /*
-      "name": { "type": "string"},
-      "namespace": { "type": "string" },
-      "prefix": { "type": "string" },
-      "attribute": { "type": "boolean" },
-      "wrapped": { "type": "boolean" }
-    */
-    private String name;
-    private String namespace;
-    private String prefix;
-    private Boolean attribute;
-    private Boolean wrapped;
+import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 
-    public Xml name(String name) {
-        this.setName(name);
-        return this;
-    }
+/**
+ * XML
+ */
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-15T10:33:02.362-07:00")
+public class XML {
+  @JsonProperty("name")
+  private String name = null;
 
-    public Xml namespace(String namespace) {
-        this.setNamespace(namespace);
-        return this;
-    }
+  @JsonProperty("namespace")
+  private String namespace = null;
 
-    public Xml prefix(String prefix) {
-        this.setPrefix(prefix);
-        return this;
-    }
+  @JsonProperty("prefix")
+  private String prefix = null;
 
-    public Xml attribute(Boolean attribute) {
-        this.setAttribute(attribute);
-        return this;
-    }
+  @JsonProperty("attribute")
+  private Boolean attribute = false;
 
-    public Xml wrapped(Boolean wrapped) {
-        this.setWrapped(wrapped);
-        return this;
-    }
+  @JsonProperty("wrapperd")
+  private Boolean wrapperd = false;
 
-    public String getName() {
-        return this.name;
-    }
+  public XML name(String name) {
+    this.name = name;
+    return this;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+   /**
+   * Get name
+   * @return name
+  **/
+  @ApiModelProperty(value = "")
+  public String getName() {
+    return name;
+  }
 
-    public String getNamespace() {
-        return this.namespace;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
-    }
+  public XML namespace(String namespace) {
+    this.namespace = namespace;
+    return this;
+  }
 
-    public String getPrefix() {
-        return this.prefix;
-    }
+   /**
+   * Get namespace
+   * @return namespace
+  **/
+  @ApiModelProperty(value = "")
+  public String getNamespace() {
+    return namespace;
+  }
 
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
+  public void setNamespace(String namespace) {
+    this.namespace = namespace;
+  }
 
-    public Boolean getAttribute() {
-        return this.attribute;
-    }
+  public XML prefix(String prefix) {
+    this.prefix = prefix;
+    return this;
+  }
 
-    public void setAttribute(Boolean attribute) {
-        this.attribute = attribute;
-    }
+   /**
+   * Get prefix
+   * @return prefix
+  **/
+  @ApiModelProperty(value = "")
+  public String getPrefix() {
+    return prefix;
+  }
 
-    public Boolean getWrapped() {
-        return this.wrapped;
-    }
+  public void setPrefix(String prefix) {
+    this.prefix = prefix;
+  }
 
-    public void setWrapped(Boolean wrapped) {
-        this.wrapped = wrapped;
-    }
+  public XML attribute(Boolean attribute) {
+    this.attribute = attribute;
+    return this;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((attribute == null) ? 0 : attribute.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
-        result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
-        result = prime * result + ((wrapped == null) ? 0 : wrapped.hashCode());
-        return result;
-    }
+   /**
+   * Get attribute
+   * @return attribute
+  **/
+  @ApiModelProperty(value = "")
+  public Boolean getAttribute() {
+    return attribute;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Xml other = (Xml) obj;
-        if (attribute == null) {
-            if (other.attribute != null) {
-                return false;
-            }
-        } else if (!attribute.equals(other.attribute)) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (namespace == null) {
-            if (other.namespace != null) {
-                return false;
-            }
-        } else if (!namespace.equals(other.namespace)) {
-            return false;
-        }
-        if (prefix == null) {
-            if (other.prefix != null) {
-                return false;
-            }
-        } else if (!prefix.equals(other.prefix)) {
-            return false;
-        }
-        if (wrapped == null) {
-            if (other.wrapped != null) {
-                return false;
-            }
-        } else if (!wrapped.equals(other.wrapped)) {
-            return false;
-        }
-        return true;
+  public void setAttribute(Boolean attribute) {
+    this.attribute = attribute;
+  }
+
+  public XML wrapperd(Boolean wrapperd) {
+    this.wrapperd = wrapperd;
+    return this;
+  }
+
+   /**
+   * Get wrapperd
+   * @return wrapperd
+  **/
+  @ApiModelProperty(value = "")
+  public Boolean getWrapperd() {
+    return wrapperd;
+  }
+
+  public void setWrapperd(Boolean wrapperd) {
+    this.wrapperd = wrapperd;
+  }
+
+
+  @Override
+  public boolean equals(java.lang.Object o) {
+    if (this == o) {
+      return true;
     }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    XML XML = (XML) o;
+    return Objects.equals(this.name, XML.name) &&
+        Objects.equals(this.namespace, XML.namespace) &&
+        Objects.equals(this.prefix, XML.prefix) &&
+        Objects.equals(this.attribute, XML.attribute) &&
+        Objects.equals(this.wrapperd, XML.wrapperd);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, namespace, prefix, attribute, wrapperd);
+  }
+
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("class XML {\n");
+    
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    namespace: ").append(toIndentedString(namespace)).append("\n");
+    sb.append("    prefix: ").append(toIndentedString(prefix)).append("\n");
+    sb.append("    attribute: ").append(toIndentedString(attribute)).append("\n");
+    sb.append("    wrapperd: ").append(toIndentedString(wrapperd)).append("\n");
+    sb.append("}");
+    return sb.toString();
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
+   */
+  private String toIndentedString(java.lang.Object o) {
+    if (o == null) {
+      return "null";
+    }
+    return o.toString().replace("\n", "\n    ");
+  }
+  
 }
+

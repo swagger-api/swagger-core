@@ -5,35 +5,35 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * License
+ * ExternalDocumentation
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-15T10:33:02.362-07:00")
-public class License {
-  @JsonProperty("name")
-  private String name = null;
+public class ExternalDocumentation {
+  @JsonProperty("description")
+  private String description = null;
 
   @JsonProperty("url")
   private String url = null;
 
-  public License name(String name) {
-    this.name = name;
+  public ExternalDocumentation description(String description) {
+    this.description = description;
     return this;
   }
 
    /**
-   * Get name
-   * @return name
+   * Get description
+   * @return description
   **/
-  @ApiModelProperty(required = true, value = "")
-  public String getName() {
-    return name;
+  @ApiModelProperty(value = "")
+  public String getDescription() {
+    return description;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setDescription(String description) {
+    this.description = description;
   }
 
-  public License url(String url) {
+  public ExternalDocumentation url(String url) {
     this.url = url;
     return this;
   }
@@ -42,7 +42,7 @@ public class License {
    * Get url
    * @return url
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(required = true, value = "")
   public String getUrl() {
     return url;
   }
@@ -60,23 +60,23 @@ public class License {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    License license = (License) o;
-    return Objects.equals(this.name, license.name) &&
-        Objects.equals(this.url, license.url);
+    ExternalDocumentation externalDocumentation = (ExternalDocumentation) o;
+    return Objects.equals(this.description, externalDocumentation.description) &&
+        Objects.equals(this.url, externalDocumentation.url);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, url);
+    return Objects.hash(description, url);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class License {\n");
+    sb.append("class ExternalDocumentation {\n");
     
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    url: ").append(toIndentedString(url)).append("\n");
     sb.append("}");
     return sb.toString();

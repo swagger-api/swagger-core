@@ -3,26 +3,22 @@ package io.swagger.models;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.links.Link;
 
 /**
- * Response
+ * RequestBody
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-15T10:33:02.362-07:00")
-public class Response {
+public class RequestBody {
   @JsonProperty("description")
   private String description = null;
-
-  @JsonProperty("headers")
-  private Headers headers = null;
 
   @JsonProperty("content")
   private Content content = null;
 
-  @JsonProperty("links")
-  private Link links = null;
+  @JsonProperty("required")
+  private Boolean required = null;
 
-  public Response description(String description) {
+  public RequestBody description(String description) {
     this.description = description;
     return this;
   }
@@ -31,7 +27,7 @@ public class Response {
    * Get description
    * @return description
   **/
-  @ApiModelProperty(required = true, value = "")
+  @ApiModelProperty(value = "")
   public String getDescription() {
     return description;
   }
@@ -40,25 +36,7 @@ public class Response {
     this.description = description;
   }
 
-  public Response headers(Headers headers) {
-    this.headers = headers;
-    return this;
-  }
-
-   /**
-   * Get headers
-   * @return headers
-  **/
-  @ApiModelProperty(value = "")
-  public Headers getHeaders() {
-    return headers;
-  }
-
-  public void setHeaders(Headers headers) {
-    this.headers = headers;
-  }
-
-  public Response content(Content content) {
+  public RequestBody content(Content content) {
     this.content = content;
     return this;
   }
@@ -76,22 +54,22 @@ public class Response {
     this.content = content;
   }
 
-  public Response links(Link links) {
-    this.links = links;
+  public RequestBody required(Boolean required) {
+    this.required = required;
     return this;
   }
 
    /**
-   * Get links
-   * @return links
+   * Get required
+   * @return required
   **/
   @ApiModelProperty(value = "")
-  public Link getLinks() {
-    return links;
+  public Boolean getRequired() {
+    return required;
   }
 
-  public void setLinks(Link links) {
-    this.links = links;
+  public void setRequired(Boolean required) {
+    this.required = required;
   }
 
 
@@ -103,28 +81,26 @@ public class Response {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Response response = (Response) o;
-    return Objects.equals(this.description, response.description) &&
-        Objects.equals(this.headers, response.headers) &&
-        Objects.equals(this.content, response.content) &&
-        Objects.equals(this.links, response.links);
+    RequestBody requestBody = (RequestBody) o;
+    return Objects.equals(this.description, requestBody.description) &&
+        Objects.equals(this.content, requestBody.content) &&
+        Objects.equals(this.required, requestBody.required);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(description, headers, content, links);
+    return Objects.hash(description, content, required);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Response {\n");
+    sb.append("class RequestBody {\n");
     
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
-    sb.append("    headers: ").append(toIndentedString(headers)).append("\n");
     sb.append("    content: ").append(toIndentedString(content)).append("\n");
-    sb.append("    links: ").append(toIndentedString(links)).append("\n");
+    sb.append("    required: ").append(toIndentedString(required)).append("\n");
     sb.append("}");
     return sb.toString();
   }
