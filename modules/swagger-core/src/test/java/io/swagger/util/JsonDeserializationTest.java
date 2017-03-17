@@ -3,7 +3,7 @@ package io.swagger.util;
 import io.swagger.TestUtils;
 import io.swagger.models.*;
 import io.swagger.models.properties.ArrayProperty;
-
+import io.swagger.models.properties.ByteArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
@@ -101,6 +101,19 @@ public class JsonDeserializationTest {
         assertEquals(property.getMinLength(), Integer.valueOf(10));
         assertEquals(property.getMaxLength(), Integer.valueOf(100));
         assertEquals(property.getPattern(), "apattern");
+    }
+
+    @Test(description = "should deserialize a base64 encoded string property with constraints")
+    public void testDeserializeConstrainedBase64StringProperty() throws Exception {
+
+        Swagger swagger = TestUtils.deserializeJsonFileFromClasspath("specFiles/propertiesWithConstraints.json", Swagger.class);
+
+        ByteArrayProperty property = (ByteArrayProperty) swagger.getDefinitions().get("Health").getProperties().get("string_base64_encoded");
+
+        assertEquals(property.getMinLength(), Integer.valueOf(5));
+        assertEquals(property.getMaxLength(), Integer.valueOf(50));
+        assertEquals(property.getPattern(), "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$");
+        assertNull(property.getEnum());
     }
 
     @Test (description = "should deserialize an array property with constraints")
