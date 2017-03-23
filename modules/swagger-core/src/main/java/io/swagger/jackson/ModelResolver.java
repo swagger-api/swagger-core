@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
@@ -205,13 +206,26 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
+    private BeanDescription fecthAppropriateBeanDescForType(JavaType type) {
+        BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
+        JsonSerialize jasonSerialize = beanDesc.getClassAnnotations().get(JsonSerialize.class);
+        if (jasonSerialize != null) {
+            if (jasonSerialize.as() != null) {
+                JavaType asType = _mapper.constructType(jasonSerialize.as());
+                beanDesc = _mapper.getSerializationConfig().introspect(asType);
+            }
+        }
+
+        return beanDesc;
+    }
+
     public Model resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
         if (type.isEnumType() || PrimitiveType.fromType(type) != null) {
             // We don't build models for primitive types
             return null;
         }
 
-        final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
+        final BeanDescription beanDesc = fecthAppropriateBeanDescForType(type);
         // Couple of possibilities for defining
         String name = _typeName(type, beanDesc);
 
