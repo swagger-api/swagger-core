@@ -206,26 +206,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    private BeanDescription fecthAppropriateBeanDescForType(JavaType type) {
-        BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
-        JsonSerialize jasonSerialize = beanDesc.getClassAnnotations().get(JsonSerialize.class);
-        if (jasonSerialize != null) {
-            if (jasonSerialize.as() != null) {
-                JavaType asType = _mapper.constructType(jasonSerialize.as());
-                beanDesc = _mapper.getSerializationConfig().introspect(asType);
-            }
-        }
-
-        return beanDesc;
-    }
-
     public Model resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
         if (type.isEnumType() || PrimitiveType.fromType(type) != null) {
             // We don't build models for primitive types
             return null;
         }
 
-        final BeanDescription beanDesc = fecthAppropriateBeanDescForType(type);
+        BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
         // Couple of possibilities for defining
         String name = _typeName(type, beanDesc);
 
@@ -272,6 +259,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             context.resolve(type.getContentType());
             return null;
         }
+
+        final ApiModel apiModel = beanDesc.getClassAnnotations().get(ApiModel.class);
+        if (apiModel != null && StringUtils.isNotEmpty(apiModel.reference())) {
+            model.setReference(apiModel.reference());
+        }
+
         // if XmlRootElement annotation, construct an Xml object and attach it to the model
         XmlRootElement rootAnnotation = beanDesc.getClassAnnotations().get(XmlRootElement.class);
         if (rootAnnotation != null && !"".equals(rootAnnotation.name()) && !"##default".equals(rootAnnotation.name())) {
@@ -284,6 +277,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         final XmlAccessorType xmlAccessorTypeAnnotation = beanDesc.getClassAnnotations().get(XmlAccessorType.class);
 
+        //If JsonSerialize(as=...) is specified then use that bean to figure out all the json-like bits
+        JsonSerialize jasonSerialize = beanDesc.getClassAnnotations().get(JsonSerialize.class);
+        if (jasonSerialize != null) {
+            if (jasonSerialize.as() != null) {
+                JavaType asType = _mapper.constructType(jasonSerialize.as());
+                beanDesc = _mapper.getSerializationConfig().introspect(asType);
+            }
+        }
+
         // see if @JsonIgnoreProperties exist
         Set<String> propertiesToIgnore = new HashSet<String>();
         JsonIgnoreProperties ignoreProperties = beanDesc.getClassAnnotations().get(JsonIgnoreProperties.class);
@@ -291,13 +293,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
         }
 
-        final ApiModel apiModel = beanDesc.getClassAnnotations().get(ApiModel.class);
         String disc = (apiModel == null) ? "" : apiModel.discriminator();
-
-        if (apiModel != null && StringUtils.isNotEmpty(apiModel.reference())) {
-            model.setReference(apiModel.reference());
-        }
-
         if (disc.isEmpty()) {
             // longer method would involve AnnotationIntrospector.findTypeResolver(...) but:
             JsonTypeInfo typeInfo = beanDesc.getClassAnnotations().get(JsonTypeInfo.class);
