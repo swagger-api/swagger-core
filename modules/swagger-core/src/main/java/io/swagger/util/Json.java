@@ -14,7 +14,7 @@ public class Json {
         }
         return mapper;
     }
-    private static ObjectWriter pretty() {
+    public static ObjectWriter pretty() {
         return mapper().writer(new DefaultPrettyPrinter());
     }
 
@@ -50,7 +50,7 @@ public class Json {
     private static ObjectMapper responseMapper;
 
 
-    static ObjectMapper pathMapper() {
+    protected static ObjectMapper pathMapper() {
         if (pathMapper == null) {
             pathMapper = ObjectMapperFactory.createJson(false, true);
         }
@@ -58,7 +58,7 @@ public class Json {
         return pathMapper;
     }
 
-    static ObjectMapper responseMapper() {
+    protected static ObjectMapper responseMapper() {
         if (responseMapper == null) {
             responseMapper = ObjectMapperFactory.createJson(false, false);
         }
