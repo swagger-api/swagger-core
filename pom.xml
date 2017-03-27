@@ -481,6 +481,12 @@
                 <artifactId>guava</artifactId>
                 <version>${guava-version}</version>
             </dependency>
+            <dependency>
+                <!-- resolve reflections 0.9.11 vs jersey-common 2.2.25 conflict -->
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist-version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
@@ -495,6 +501,7 @@
         <logback-version>1.0.1</logback-version>
         <reflections-version>0.9.11</reflections-version>
         <guava-version>20.0</guava-version>
+        <javassist-version>3.21.0-GA</javassist-version>
 
         <testng-version>6.10</testng-version>
         <mockito-version>1.9.5</mockito-version>
