@@ -482,7 +482,7 @@
                 <version>${guava-version}</version>
             </dependency>
             <dependency>
-                <!-- resolve reflections 0.9.11 vs jersey-common 2.2.25 conflict -->
+                <!-- resolve reflections 0.9.11 vs jersey-common 2.25.1 conflict -->
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>${javassist-version}</version>
