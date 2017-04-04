@@ -6,22 +6,22 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.models.Components;
-import io.swagger.models.Contact;
-import io.swagger.models.Content;
-import io.swagger.models.Example;
 import io.swagger.models.ExternalDocumentation;
-import io.swagger.models.Info;
-import io.swagger.models.MediaType;
 import io.swagger.models.OpenAPI;
 import io.swagger.models.Operation;
 import io.swagger.models.PathItem;
 import io.swagger.models.Paths;
-import io.swagger.models.Response;
-import io.swagger.models.Responses;
-import io.swagger.models.Schema;
-import io.swagger.models.Tag;
+import io.swagger.models.examples.Example;
+import io.swagger.models.info.Contact;
+import io.swagger.models.info.Info;
 import io.swagger.models.links.Link;
+import io.swagger.models.media.Content;
+import io.swagger.models.media.MediaType;
+import io.swagger.models.media.Schema;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.responses.Response;
+import io.swagger.models.responses.Responses;
+import io.swagger.models.tags.Tag;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
@@ -47,14 +47,6 @@ public class SimpleBuilderTest {
                                 .name("funky dunky")
                                 .description("all about neat things"));
 
-
-        // definitions in components section
-
-        // example is a mess
-        // components is a mess
-        // don't create default values for Boolean, array, map
-        // use linked hash maps inside schema
-
         Map<String, Schema> schemas = new HashMap<>();
 
         schemas.put("StringSchema", new Schema()
@@ -66,10 +58,10 @@ public class SimpleBuilderTest {
         );
 
         schemas.put("IntegerSchema", new Schema()
+                .type(Schema.TypeEnum.INTEGER)
                 .description("simple integer schema")
                 .multipleOf(new BigDecimal(3))
                 .minimum(new BigDecimal(6))
-
         );
 
         oai.components(new Components()
@@ -77,6 +69,7 @@ public class SimpleBuilderTest {
 
         schemas.put("Address", new Schema()
                 .description("address object")
+
                 .addProperties("street", new Schema()
                         .description("the street number")
                         .type(Schema.TypeEnum.STRING))
@@ -106,7 +99,7 @@ public class SimpleBuilderTest {
 
 
         oai.paths(new Paths()
-                .addPath("/foo", new PathItem()
+                .addPathItem("/foo", new PathItem()
                         .description("the foo path")
                         .get(new Operation()
                                 .parameters(new ArrayList<Parameter>() {{
@@ -123,7 +116,7 @@ public class SimpleBuilderTest {
                                         .addResponse("200", new Response()
                                                 .description("it worked")
                                                 .content(new Content()
-                                                        .addContent("application/json",
+                                                        .addMediaType("application/json",
                                                                 new MediaType().schema(new Schema()
                                                                         .ref("#/components/schemas/Address")))
                                                 )
