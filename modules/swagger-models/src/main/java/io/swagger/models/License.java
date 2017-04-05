@@ -59,6 +59,7 @@ public class License {
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
+        result = prime * result + ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
         return result;
     }
 
@@ -86,6 +87,13 @@ public class License {
                 return false;
             }
         } else if (!url.equals(other.url)) {
+            return false;
+        }
+        if (vendorExtensions == null) {
+            if (other.vendorExtensions != null) {
+                return false;
+            }
+        } else if (!vendorExtensions.equals(other.vendorExtensions)) {
             return false;
         }
         return true;
