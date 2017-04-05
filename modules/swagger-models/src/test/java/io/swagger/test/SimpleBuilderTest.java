@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import io.swagger.QueryParameter;
+import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.Components;
 import io.swagger.models.ExternalDocumentation;
 import io.swagger.models.OpenAPI;
