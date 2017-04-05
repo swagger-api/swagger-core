@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 
 public class PathItem {
-  @JsonProperty("_$ref")
+  @JsonProperty("$ref")
   private String ref = null;
   @JsonProperty("summary")
   private String summary = null;

@@ -14,6 +14,8 @@
 package io.swagger.models.media;
 
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.models.ExternalDocumentation;
@@ -66,57 +68,10 @@ public class Schema {
   private List<String> required = null;
   @JsonProperty("enum")
   private List<Object> _enum = null;
-  /**
-   * Gets or Sets type
-   */
-  public enum TypeEnum {
-    ARRAY("array"),
-    
-    BOOLEAN("boolean"),
-    
-    INTEGER("integer"),
-    
-    NUMBER("number"),
-    
-    OBJECT("object"),
-    
-    STRING("string");
-
-    private String value;
-
-    TypeEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static TypeEnum fromValue(String text) {
-      for (TypeEnum b : TypeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
-
   @JsonProperty("type")
-  private TypeEnum type = null;
-  @JsonProperty("_allOf")
-  private List<Schema> allOf = null;
-  @JsonProperty("oneOf")
-  private List<Schema> oneOf = null;
-  @JsonProperty("anyOf")
-  private List<Schema> anyOf = null;
+  private String type = null;
   @JsonProperty("not")
   private Schema not = null;
-  @JsonProperty("items")
-  private Schema items = null;
   @JsonProperty("properties")
   private Map<String, Schema> properties = null;
   @JsonProperty("additionalProperties")
@@ -129,8 +84,6 @@ public class Schema {
   private String ref = null;
   @JsonProperty("nulable")
   private Boolean nulable = null;
-  @JsonProperty("discriminator")
-  private String discriminator = null;
   @JsonProperty("readOnly")
   private Boolean readOnly = null;
   @JsonProperty("writeOnly")
@@ -448,11 +401,11 @@ public class Schema {
   }
 
   /**
-   * testing
+   * returns the _enum property from a Schema instance.
    *
    * @return List<Object> _enum
    **/
-  @ApiModelProperty(value = "testing")
+  @ApiModelProperty(value = "")
   public List<Object> getEnum() {
     return _enum;
   }
@@ -477,100 +430,19 @@ public class Schema {
   /**
    * returns the type property from a Schema instance.
    *
-   * @return TypeEnum type
+   * @return String type
    **/
   @ApiModelProperty(value = "")
-  public TypeEnum getType() {
+  public String getType() {
     return type;
   }
 
-  public void setType(TypeEnum type) {
+  public void setType(String type) {
     this.type = type;
   }
 
-  public Schema type(TypeEnum type) {
+  public Schema type(String type) {
     this.type = type;
-    return this;
-  }
-
-  /**
-   * returns the allOf property from a Schema instance.
-   *
-   * @return List<Schema> allOf
-   **/
-  @ApiModelProperty(value = "")
-  public List<Schema> getAllOf() {
-    return allOf;
-  }
-
-  public void setAllOf(List<Schema> allOf) {
-    this.allOf = allOf;
-  }
-
-  public Schema allOf(List<Schema> allOf) {
-    this.allOf = allOf;
-    return this;
-  }
-
-  public Schema addAllOfItem(Schema allOfItem) {
-    if(this.allOf == null) {
-      this.allOf = new ArrayList<Schema>();
-    }
-    this.allOf.add(allOfItem);
-    return this;
-  }
-
-  /**
-   * returns the oneOf property from a Schema instance.
-   *
-   * @return List<Schema> oneOf
-   **/
-  @ApiModelProperty(value = "")
-  public List<Schema> getOneOf() {
-    return oneOf;
-  }
-
-  public void setOneOf(List<Schema> oneOf) {
-    this.oneOf = oneOf;
-  }
-
-  public Schema oneOf(List<Schema> oneOf) {
-    this.oneOf = oneOf;
-    return this;
-  }
-
-  public Schema addOneOfItem(Schema oneOfItem) {
-    if(this.oneOf == null) {
-      this.oneOf = new ArrayList<Schema>();
-    }
-    this.oneOf.add(oneOfItem);
-    return this;
-  }
-
-  /**
-   * returns the anyOf property from a Schema instance.
-   *
-   * @return List<Schema> anyOf
-   **/
-  @ApiModelProperty(value = "")
-  public List<Schema> getAnyOf() {
-    return anyOf;
-  }
-
-  public void setAnyOf(List<Schema> anyOf) {
-    this.anyOf = anyOf;
-  }
-
-  public Schema anyOf(List<Schema> anyOf) {
-    this.anyOf = anyOf;
-    return this;
-  }
-
-  public Schema addAnyOfItem(Schema anyOfItem) {
-    if(this.anyOf == null) {
-      this.anyOf = new ArrayList<Schema>();
-    }
-    this.anyOf.add(anyOfItem);
     return this;
   }
 
@@ -590,25 +462,6 @@ public class Schema {
 
   public Schema not(Schema not) {
     this.not = not;
-    return this;
-  }
-
-  /**
-   * returns the items property from a Schema instance.
-   *
-   * @return Schema items
-   **/
-  @ApiModelProperty(value = "")
-  public Schema getItems() {
-    return items;
-  }
-
-  public void setItems(Schema items) {
-    this.items = items;
-  }
-
-  public Schema items(Schema items) {
-    this.items = items;
     return this;
   }
 
@@ -731,25 +584,6 @@ public class Schema {
 
   public Schema nulable(Boolean nulable) {
     this.nulable = nulable;
-    return this;
-  }
-
-  /**
-   * returns the discriminator property from a Schema instance.
-   *
-   * @return String discriminator
-   **/
-  @ApiModelProperty(value = "")
-  public String getDiscriminator() {
-    return discriminator;
-  }
-
-  public void setDiscriminator(String discriminator) {
-    this.discriminator = discriminator;
-  }
-
-  public Schema discriminator(String discriminator) {
-    this.discriminator = discriminator;
     return this;
   }
 
@@ -921,18 +755,13 @@ public class Schema {
         Objects.equals(this.required, schema.required) &&
         Objects.equals(this._enum, schema._enum) &&
         Objects.equals(this.type, schema.type) &&
-        Objects.equals(this.allOf, schema.allOf) &&
-        Objects.equals(this.oneOf, schema.oneOf) &&
-        Objects.equals(this.anyOf, schema.anyOf) &&
         Objects.equals(this.not, schema.not) &&
-        Objects.equals(this.items, schema.items) &&
         Objects.equals(this.properties, schema.properties) &&
         Objects.equals(this.additionalProperties, schema.additionalProperties) &&
         Objects.equals(this.description, schema.description) &&
         Objects.equals(this.format, schema.format) &&
         Objects.equals(this.ref, schema.ref) &&
         Objects.equals(this.nulable, schema.nulable) &&
-        Objects.equals(this.discriminator, schema.discriminator) &&
         Objects.equals(this.readOnly, schema.readOnly) &&
         Objects.equals(this.writeOnly, schema.writeOnly) &&
         Objects.equals(this.examples, schema.examples) &&
@@ -944,7 +773,7 @@ public class Schema {
 
   @Override
   public int hashCode() {
-    return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern, maxItems, minItems, uniqueItems, maxProperties, minProperties, required, _enum, type, allOf, oneOf, anyOf, not, items, properties, additionalProperties, description, format, ref, nulable, discriminator, readOnly, writeOnly, examples, example, externalDocs, deprecated, xml);
+    return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern, maxItems, minItems, uniqueItems, maxProperties, minProperties, required, _enum, type, not, properties, additionalProperties, description, format, ref, nulable, readOnly, writeOnly, examples, example, externalDocs, deprecated, xml);
   }
 
 
@@ -985,18 +814,13 @@ public class Schema {
     sb.append("    required: ").append(toIndentedString(required)).append("\n");
     sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    allOf: ").append(toIndentedString(allOf)).append("\n");
-    sb.append("    oneOf: ").append(toIndentedString(oneOf)).append("\n");
-    sb.append("    anyOf: ").append(toIndentedString(anyOf)).append("\n");
     sb.append("    not: ").append(toIndentedString(not)).append("\n");
-    sb.append("    items: ").append(toIndentedString(items)).append("\n");
     sb.append("    properties: ").append(toIndentedString(properties)).append("\n");
     sb.append("    additionalProperties: ").append(toIndentedString(additionalProperties)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    format: ").append(toIndentedString(format)).append("\n");
     sb.append("    ref: ").append(toIndentedString(ref)).append("\n");
     sb.append("    nulable: ").append(toIndentedString(nulable)).append("\n");
-    sb.append("    discriminator: ").append(toIndentedString(discriminator)).append("\n");
     sb.append("    readOnly: ").append(toIndentedString(readOnly)).append("\n");
     sb.append("    writeOnly: ").append(toIndentedString(writeOnly)).append("\n");
     sb.append("    examples: ").append(toIndentedString(examples)).append("\n");

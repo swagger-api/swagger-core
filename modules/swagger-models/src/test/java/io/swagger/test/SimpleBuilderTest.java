@@ -16,8 +16,10 @@ import io.swagger.models.info.Contact;
 import io.swagger.models.info.Info;
 import io.swagger.models.links.Link;
 import io.swagger.models.media.Content;
+import io.swagger.models.media.IntegerSchema;
 import io.swagger.models.media.MediaType;
 import io.swagger.models.media.Schema;
+import io.swagger.models.media.StringSchema;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.responses.Response;
 import io.swagger.models.responses.Responses;
@@ -49,16 +51,14 @@ public class SimpleBuilderTest {
 
         Map<String, Schema> schemas = new HashMap<>();
 
-        schemas.put("StringSchema", new Schema()
+        schemas.put("StringSchema", new StringSchema()
                 .description("simple string schema")
                 .minLength(3)
                 .maxLength(100)
-                .type(Schema.TypeEnum.STRING)
                 .example(new Example())
         );
 
-        schemas.put("IntegerSchema", new Schema()
-                .type(Schema.TypeEnum.INTEGER)
+        schemas.put("IntegerSchema", new IntegerSchema()
                 .description("simple integer schema")
                 .multipleOf(new BigDecimal(3))
                 .minimum(new BigDecimal(6))
@@ -69,27 +69,21 @@ public class SimpleBuilderTest {
 
         schemas.put("Address", new Schema()
                 .description("address object")
-
-                .addProperties("street", new Schema()
-                        .description("the street number")
-                        .type(Schema.TypeEnum.STRING))
-                .addProperties("city", new Schema()
-                        .description("city")
-                        .type(Schema.TypeEnum.STRING))
-                .addProperties("state", new Schema()
+                .addProperties("street", new StringSchema()
+                        .description("the street number"))
+                .addProperties("city", new StringSchema()
+                        .description("city"))
+                .addProperties("state", new StringSchema()
                         .description("state")
-                        .type(Schema.TypeEnum.STRING)
                         .minLength(2)
                         .maxLength(2))
-                .addProperties("zip", new Schema()
+                .addProperties("zip", new StringSchema()
                         .description("zip code")
-                        .type(Schema.TypeEnum.STRING)
                         .pattern("^\\d{5}(?:[-\\s]\\d{4})?$")
                         .minLength(2)
                         .maxLength(2))
-                .addProperties("country", new Schema()
+                .addProperties("country", new StringSchema()
                         .description("2-digit country code")
-                        .type(Schema.TypeEnum.STRING)
                         .minLength(2)
                         .maxLength(2)
                         ._enum(new ArrayList<Object>(){{
@@ -106,9 +100,7 @@ public class SimpleBuilderTest {
                                     this.add(new Parameter()
                                             .description("Records to skip")
                                             .required(false)
-                                            .schema(new Schema()
-                                                    .type(Schema.TypeEnum.INTEGER)
-                                                    .format("int32")
+                                            .schema(new IntegerSchema()
                                             )
                                     );
                                 }})
