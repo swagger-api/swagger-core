@@ -229,7 +229,7 @@ public class ModelImpl extends AbstractModel {
 
     public void setRequired(List<String> required) {
         this.required = required;
-        if (properties != null){
+        if (required != null && properties != null){
             for (String s : required) {
                 Property p = properties.get(s);
                 if (p != null) {
