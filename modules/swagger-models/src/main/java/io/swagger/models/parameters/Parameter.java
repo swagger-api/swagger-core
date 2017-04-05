@@ -14,6 +14,8 @@
 package io.swagger.models.parameters;
 
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.models.examples.Example;
@@ -34,43 +36,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public class Parameter {
   @JsonProperty("name")
   private String name = null;
-  /**
-   * Gets or Sets in
-   */
-  public enum InEnum {
-    PATH("path"),
-    
-    QUERY("query"),
-    
-    HEADER("header"),
-    
-    COOKIE("cookie");
-
-    private String value;
-
-    InEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static InEnum fromValue(String text) {
-      for (InEnum b : InEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
-
   @JsonProperty("in")
-  private InEnum in = null;
+  private String in = null;
   @JsonProperty("description")
   private String description = null;
   @JsonProperty("required")
@@ -158,18 +125,18 @@ public class Parameter {
   /**
    * returns the in property from a Parameter instance.
    *
-   * @return InEnum in
+   * @return String in
    **/
   @ApiModelProperty(required = true, value = "")
-  public InEnum getIn() {
+  public String getIn() {
     return in;
   }
 
-  public void setIn(InEnum in) {
+  public void setIn(String in) {
     this.in = in;
   }
 
-  public Parameter in(InEnum in) {
+  public Parameter in(String in) {
     this.in = in;
     return this;
   }

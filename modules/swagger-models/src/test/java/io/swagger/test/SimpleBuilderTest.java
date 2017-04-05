@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import io.swagger.QueryParameter;
 import io.swagger.models.Components;
 import io.swagger.models.ExternalDocumentation;
 import io.swagger.models.OpenAPI;
@@ -20,7 +21,6 @@ import io.swagger.models.media.IntegerSchema;
 import io.swagger.models.media.MediaType;
 import io.swagger.models.media.Schema;
 import io.swagger.models.media.StringSchema;
-import io.swagger.models.parameters.Parameter;
 import io.swagger.models.responses.Response;
 import io.swagger.models.responses.Responses;
 import io.swagger.models.tags.Tag;
@@ -96,14 +96,11 @@ public class SimpleBuilderTest {
                 .addPathItem("/foo", new PathItem()
                         .description("the foo path")
                         .get(new Operation()
-                                .parameters(new ArrayList<Parameter>() {{
-                                    this.add(new Parameter()
-                                            .description("Records to skip")
-                                            .required(false)
-                                            .schema(new IntegerSchema()
-                                            )
-                                    );
-                                }})
+                                .addParametersItem(new QueryParameter()
+                                        .description("Records to skip")
+                                        .required(false)
+                                        .schema(new IntegerSchema()
+                                ))
                                 .responses(new Responses()
                                         .addResponse("200", new Response()
                                                 .description("it worked")
