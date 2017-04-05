@@ -189,7 +189,7 @@
                 <version>2.1</version>
             </plugin>
 
-            <plugin>
+            <!--plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <executions>
@@ -215,14 +215,12 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <!-- TODO remove these excludes and add tests -->
                         <exclude>**/io/swagger/config/FilterFactory.*</exclude>
                         <exclude>**/io/swagger/model/ApiInfo.*</exclude>
                         <exclude>**/io/swagger/util/Yaml.*</exclude>
                         <exclude>**/io/swagger/jackson/*</exclude>
                         <exclude>**/io/swagger/converter/ModelConverters.*</exclude>
 
-                        <!-- JAXRS -->
                         <exclude>**/io/swagger/jaxrs/json/JacksonJsonProvider.*</exclude>
                         <exclude>**/io/swagger/jaxrs/listing/ApiListingResource.*</exclude>
                         <exclude>**/io/swagger/jaxrs/listing/SwaggerSerializers.*</exclude>
@@ -230,7 +228,6 @@
                         <exclude>**/io/swagger/jaxrs/config/DefaultJaxrsScanner.*</exclude>
                         <exclude>**/io/swagger/jaxrs/config/DefaultJaxrsConfig.*</exclude>
 
-                        <!-- Servlet -->
                         <exclude>**/io/swagger/servlet/config/WebXMLReader.*</exclude>
                         <exclude>**/io/swagger/servlet/config/ServletScanner.*</exclude>
                         <exclude>**/io/swagger/servlet/config/DefaultServletConfig.*</exclude>
@@ -264,7 +261,7 @@
                         </rule>
                     </rules>
                 </configuration>
-            </plugin>
+            </plugin-->
         </plugins>
         <pluginManagement>
             <plugins>
