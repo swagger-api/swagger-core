@@ -27,37 +27,37 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * OneOfSchema
+ * AnyOfSchema
  */
 
-public class OneOfSchema extends Schema {
-  @JsonProperty("oneOf")
-  private List<Schema> oneOf = null;
+public class AnyOfSchema extends Schema {
+  @JsonProperty("anyOf")
+  private List<Schema> anyOf = null;
 
   /**
-   * returns the oneOf property from a OneOfSchema instance.
+   * returns the anyOf property from a AnyOfSchema instance.
    *
-   * @return List<Schema> oneOf
+   * @return List<Schema> anyOf
    **/
   @ApiModelProperty(value = "")
-  public List<Schema> getOneOf() {
-    return oneOf;
+  public List<Schema> getAnyOf() {
+    return anyOf;
   }
 
-  public void setOneOf(List<Schema> oneOf) {
-    this.oneOf = oneOf;
+  public void setAnyOf(List<Schema> anyOf) {
+    this.anyOf = anyOf;
   }
 
-  public OneOfSchema oneOf(List<Schema> oneOf) {
-    this.oneOf = oneOf;
+  public AnyOfSchema anyOf(List<Schema> anyOf) {
+    this.anyOf = anyOf;
     return this;
   }
 
-  public OneOfSchema addOneOfItem(Schema oneOfItem) {
-    if(this.oneOf == null) {
-      this.oneOf = new ArrayList<Schema>();
+  public AnyOfSchema addAnyOfItem(Schema anyOfItem) {
+    if(this.anyOf == null) {
+      this.anyOf = new ArrayList<Schema>();
     }
-    this.oneOf.add(oneOfItem);
+    this.anyOf.add(anyOfItem);
     return this;
   }
 
@@ -70,14 +70,14 @@ public class OneOfSchema extends Schema {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    OneOfSchema oneOfSchema = (OneOfSchema) o;
-    return Objects.equals(this.oneOf, oneOfSchema.oneOf) &&
+    AnyOfSchema anyOfSchema = (AnyOfSchema) o;
+    return Objects.equals(this.anyOf, anyOfSchema.anyOf) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(oneOf, super.hashCode());
+    return Objects.hash(anyOf, super.hashCode());
   }
 
 
@@ -85,9 +85,9 @@ public class OneOfSchema extends Schema {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class OneOfSchema {\n");
+    sb.append("class AnyOfSchema {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    oneOf: ").append(toIndentedString(oneOf)).append("\n");
+    sb.append("    anyOf: ").append(toIndentedString(anyOf)).append("\n");
     sb.append("}");
     return sb.toString();
   }
