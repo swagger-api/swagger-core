@@ -13,18 +13,16 @@
 
 package io.swagger.models;
 
-import java.util.Objects;
-import io.swagger.annotations.ApiModel;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.models.info.Info;
 import io.swagger.models.security.SecurityRequirement;
 import io.swagger.models.servers.Server;
 import io.swagger.models.tags.Tag;
+
 import java.util.ArrayList;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.Objects;
 
 /**
  * OpenAPI
@@ -34,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public class OpenAPI {
   @JsonProperty("openapi")
-  private String openapi = null;
+  private String openapi = "3.0.0-rc0";
   @JsonProperty("info")
   private Info info = null;
   @JsonProperty("externalDocs")

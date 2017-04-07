@@ -14,16 +14,13 @@
 package io.swagger.models.examples;
 
 import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Example
  */
 
 public class Example {
-
+  public Example() {}
 
   @Override
   public boolean equals(java.lang.Object o) {
