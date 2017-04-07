@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 
 public class Headers extends LinkedHashMap<String, Header> {
+  public Headers() { }
   private java.util.Map<String, Object> extensions = null;
 
   public Headers addHeader(String name, Header item) {

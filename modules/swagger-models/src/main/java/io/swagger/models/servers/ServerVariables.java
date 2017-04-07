@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 
 public class ServerVariables extends LinkedHashMap<String, ServerVariable> {
+  public ServerVariables() { }
   private java.util.Map<String, Object> extensions = null;
 
   public ServerVariables addServerVariable(String name, ServerVariable item) {

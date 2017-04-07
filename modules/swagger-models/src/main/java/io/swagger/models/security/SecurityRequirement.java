@@ -28,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 
 public class SecurityRequirement extends LinkedHashMap<String, List> {
+  public SecurityRequirement() { }
 
   public SecurityRequirement addList(String name, List item) {
     this.put(name, item);

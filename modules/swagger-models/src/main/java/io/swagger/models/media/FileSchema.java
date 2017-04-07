@@ -13,23 +13,30 @@
 
 package io.swagger.models.media;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
-
 import java.util.Objects;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.ExternalDocumentation;
+import io.swagger.models.examples.Example;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * ArraySchema
+ * FileSchema
  */
 
-public class ArraySchema extends Schema {
+public class FileSchema extends Schema {
   @JsonProperty("type")
-  private String type = "array";
-  @JsonProperty("items")
-  private Schema items = null;
+  private String type = "string";
+  @JsonProperty("format")
+  private String format = "binary";
 
   /**
-   * returns the type property from a ArraySchema instance.
+   * returns the type property from a FileSchema instance.
    *
    * @return String type
    **/
@@ -42,27 +49,27 @@ public class ArraySchema extends Schema {
     this.type = type;
   }
 
-  public ArraySchema type(String type) {
+  public FileSchema type(String type) {
     this.type = type;
     return this;
   }
 
   /**
-   * returns the items property from a ArraySchema instance.
+   * returns the format property from a FileSchema instance.
    *
-   * @return Schema items
+   * @return String format
    **/
   @ApiModelProperty(value = "")
-  public Schema getItems() {
-    return items;
+  public String getFormat() {
+    return format;
   }
 
-  public void setItems(Schema items) {
-    this.items = items;
+  public void setFormat(String format) {
+    this.format = format;
   }
 
-  public ArraySchema items(Schema items) {
-    this.items = items;
+  public FileSchema format(String format) {
+    this.format = format;
     return this;
   }
 
@@ -75,15 +82,15 @@ public class ArraySchema extends Schema {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ArraySchema arraySchema = (ArraySchema) o;
-    return Objects.equals(this.type, arraySchema.type) &&
-        Objects.equals(this.items, arraySchema.items) &&
+    FileSchema fileSchema = (FileSchema) o;
+    return Objects.equals(this.type, fileSchema.type) &&
+        Objects.equals(this.format, fileSchema.format) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, items, super.hashCode());
+    return Objects.hash(type, format, super.hashCode());
   }
 
 
@@ -91,10 +98,10 @@ public class ArraySchema extends Schema {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ArraySchema {\n");
+    sb.append("class FileSchema {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    items: ").append(toIndentedString(items)).append("\n");
+    sb.append("    format: ").append(toIndentedString(format)).append("\n");
     sb.append("}");
     return sb.toString();
   }

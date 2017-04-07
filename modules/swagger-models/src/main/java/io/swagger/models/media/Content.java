@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 
 public class Content extends LinkedHashMap<String, MediaType> {
+  public Content() { }
 
   public Content addMediaType(String name, MediaType item) {
     this.put(name, item);

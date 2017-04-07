@@ -13,16 +13,18 @@
 
 package io.swagger.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Objects;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.models.info.Info;
 import io.swagger.models.security.SecurityRequirement;
 import io.swagger.models.servers.Server;
 import io.swagger.models.tags.Tag;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * OpenAPI

@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 
 public class Callbacks extends LinkedHashMap<String, Callback> {
+  public Callbacks() { }
   private java.util.Map<String, Object> extensions = null;
 
   public Callbacks addCallback(String name, Callback item) {

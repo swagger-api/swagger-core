@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 
 public class Encoding extends LinkedHashMap<String, EncodingProperty> {
+  public Encoding() { }
 
   public Encoding addEncodingProperty(String name, EncodingProperty item) {
     this.put(name, item);

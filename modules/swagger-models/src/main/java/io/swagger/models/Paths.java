@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 
 public class Paths extends LinkedHashMap<String, PathItem> {
+  public Paths() { }
   private java.util.Map<String, Object> extensions = null;
 
   public Paths addPathItem(String name, PathItem item) {

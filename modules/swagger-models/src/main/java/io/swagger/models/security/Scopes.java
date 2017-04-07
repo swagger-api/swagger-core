@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 
 public class Scopes extends LinkedHashMap<String, String> {
+  public Scopes() { }
   private java.util.Map<String, Object> extensions = null;
 
   public Scopes addString(String name, String item) {

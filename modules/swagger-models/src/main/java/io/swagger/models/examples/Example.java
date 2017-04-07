@@ -20,7 +20,8 @@ import java.util.Objects;
  */
 
 public class Example {
-  public Example() {}
+  public Example() { }
+
 
   @Override
   public boolean equals(java.lang.Object o) {

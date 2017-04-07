@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 
 public class LinkParameters {
+  public LinkParameters() { }
   private java.util.Map<String, Object> extensions = null;
 
 
