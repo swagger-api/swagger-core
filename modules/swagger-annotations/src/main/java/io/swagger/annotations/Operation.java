@@ -16,13 +16,16 @@
 
 package io.swagger.annotations;
 
-import io.swagger.annotations.servers.Server;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import io.swagger.SecurityRequirement;
+import io.swagger.annotations.parameters.RequestBody;
+import io.swagger.annotations.servers.Server;
+import java.util.List;
 
 /**
  * Operation Annotation
@@ -64,6 +67,11 @@ public @interface Operation {
    * An optional array of parameters which will be added to any automatically detected parameters in the method itself
    **/
   Parameter[] parameters() default @Parameter();
+
+  /**
+   * 
+   **/
+  RequestBody requestBody() default @RequestBody();
 
   /**
    * allows an operation to be marked as deprecated.  Alternatively use the @Deprecated annotation

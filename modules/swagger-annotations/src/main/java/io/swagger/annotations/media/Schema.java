@@ -16,15 +16,13 @@
 
 package io.swagger.annotations.media;
 
+import io.swagger.annotations.ExternalDocumentation;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.util.List;
 
 /**
  * 
@@ -37,6 +35,26 @@ import java.util.List;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Schema {
+  /**
+   * 
+   **/
+  Class<?> implementation() default Void.class;
+
+  /**
+   * 
+   **/
+  Class<?> not() default Void.class;
+
+  /**
+   * 
+   **/
+  Class<?>[] oneOf() default Void.class;
+
+  /**
+   * 
+   **/
+  Class<?>[] anyOf() default Void.class;
+
   /**
    * 
    **/
@@ -115,11 +133,46 @@ public @interface Schema {
   /**
    * 
    **/
-  String type() default "";
+  String description() default "";
 
   /**
    * 
    **/
   String format() default "";
+
+  /**
+   * 
+   **/
+  String ref() default "";
+
+  /**
+   * 
+   **/
+  boolean nulable() default false;
+
+  /**
+   * 
+   **/
+  boolean readOnly() default false;
+
+  /**
+   * 
+   **/
+  boolean writeOnly() default false;
+
+  /**
+   * 
+   **/
+  ExternalDocumentation externalDocs() default @ExternalDocumentation();
+
+  /**
+   * 
+   **/
+  boolean deprecated() default false;
+
+  /**
+   * 
+   **/
+  String type() default "";
 
 }

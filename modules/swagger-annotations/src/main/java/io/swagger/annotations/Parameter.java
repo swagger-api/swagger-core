@@ -22,6 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import io.swagger.annotations.media.Content;
 import io.swagger.annotations.media.Schema;
 import java.util.List;
 
@@ -86,5 +87,10 @@ public @interface Parameter {
    * 
    **/
   Schema schema() default @Schema();
+
+  /**
+   * 
+   **/
+  Content[] content() default @Content();
 
 }
