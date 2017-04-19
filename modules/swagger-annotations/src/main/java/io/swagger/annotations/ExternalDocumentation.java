@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 SmartBear Software
+ * Copyright 2017 SmartBear Software
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,31 @@
 package io.swagger.annotations;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
- * A wrapper to allow a list of multiple {@link ApiResponse} objects.
- * <p>
- * If you need to describe a single {@link ApiResponse}, you still
- * must use this annotation and wrap the {@code @ApiResponse} in an array.
+ * 
  *
- * @see ApiResponse
- */
-@Target({ElementType.METHOD, ElementType.TYPE})
+ * 
+ **/
+
+
+@Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ApiResponses {
-    /**
-     * A list of {@link ApiResponse}s provided by the API operation.
-     */
-    ApiResponse[] value();
+@Inherited
+public @interface ExternalDocumentation {
+  /**
+   * 
+   **/
+  String description() default "";
+
+  /**
+   * 
+   **/
+  String url() default "";
+
 }

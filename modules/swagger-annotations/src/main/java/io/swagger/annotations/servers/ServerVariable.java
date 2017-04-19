@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 SmartBear Software
+ * Copyright 2017 SmartBear Software
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,45 @@
  * limitations under the License.
  */
 
-package io.swagger.annotations;
+package io.swagger.annotations.servers;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import java.util.List;
+
 /**
- * A wrapper to allow a list of multiple {@link ApiImplicitParam} objects.
+ * 
  *
- * @see ApiImplicitParam
- */
-@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE, ElementType.TYPE})
+ * 
+ **/
+
+
+@Target({  })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ApiImplicitParams {
-    /**
-     * A list of {@link ApiImplicitParam}s available to the API operation.
-     */
-    ApiImplicitParam[] value();
+@Inherited
+public @interface ServerVariable {
+  /**
+   * 
+   **/
+  String name() default "";
+
+  /**
+   * the allowableValues maps to the enum property in the OAS schema
+   **/
+  String[] allowableValues() default "";
+
+  /**
+   * the value attribute maps to the default property in the OAS schema
+   **/
+  String value() default "";
+
+  /**
+   * 
+   **/
+  String description() default "";
+
 }

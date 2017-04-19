@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 SmartBear Software
+ * Copyright 2017 SmartBear Software
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,35 +14,40 @@
  * limitations under the License.
  */
 
-package io.swagger.annotations;
+package io.swagger.annotations.servers;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import java.util.List;
+
 /**
- * License metadata available within the info section of a Swagger definition, see
- * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#licenseObject
+ * 
  *
- * @since 1.5.0
- */
+ * 
+ **/
 
-@Target(ElementType.ANNOTATION_TYPE)
+
+@Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface License {
+@Inherited
+public @interface Server {
+  /**
+   * 
+   **/
+  String url() default "";
 
-    /**
-     * The name of the license.
-     *
-     * @return the name of the license
-     */
-    String name();
+  /**
+   * 
+   **/
+  String description() default "";
 
-    /**
-     * An optional URL for the license.
-     *
-     * @return an optional URL for the license.
-     */
-    String url() default "";
+  /**
+   * 
+   **/
+  ServerVariable[] variables() default @ServerVariable();
+
 }
