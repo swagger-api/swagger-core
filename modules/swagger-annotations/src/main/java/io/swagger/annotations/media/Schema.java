@@ -16,13 +16,15 @@
 
 package io.swagger.annotations.media;
 
-import io.swagger.annotations.ExternalDocumentation;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import io.swagger.annotations.ExternalDocumentation;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -31,7 +33,9 @@ import java.lang.annotation.Target;
  **/
 
 
-@Target({ ElementType.FIELD })
+@Target({ ElementType.FIELD,
+          ElementType.TYPE,
+          ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Schema {
@@ -126,9 +130,14 @@ public @interface Schema {
   int minProperties() default 0;
 
   /**
-   * 
+   * Allows multiple properties in an object to be marked as required
    **/
-  String[] required() default "";
+  String[] requiredProperties() default "";
+
+  /**
+   * Mandates that the annotated item is required or not
+   **/
+  boolean required() default false;
 
   /**
    * 
