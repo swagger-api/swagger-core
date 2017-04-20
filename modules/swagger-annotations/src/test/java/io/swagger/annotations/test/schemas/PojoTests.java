@@ -262,4 +262,20 @@ public class PojoTests {
 
     @Schema(ref = "http://petstore.swagger.io/v2/swagger.json#/definitions/Tag")
     static class NotAPet {}
+
+    @Test(enabled = false, description = "Shows how to add a reference on a property")
+    public void testPropertySchemaReference () {
+        String yaml = readClassIntoYaml(ModelWithSchemaPropertyReference.class);
+
+        assertEquals(yaml,
+            "type: object\n" +
+            "properties:\n" +
+            "  notATag:\n" +
+            "    $ref: 'http://petstore.swagger.io/v2/swagger.json#/definitions/Tag'");
+    }
+
+    static class ModelWithSchemaPropertyReference {
+        @Schema(ref = "http://petstore.swagger.io/v2/swagger.json#/definitions/Tag")
+        private String notATag;
+    }
 }
