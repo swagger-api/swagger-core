@@ -252,4 +252,14 @@ public class PojoTests {
 
     @Schema(not = classWithIdConstraints.class, description = "We don't store social security numbers here!")
     static class ArbitraryDataReceiver extends HashMap<String, Object> {}
+
+    @Test(enabled = false, description = "Shows how to override a definition with a schema reference")
+    public void testSchemaReference () {
+        String yaml = readClassIntoYaml(NotAPet.class);
+
+        assertEquals(yaml, "$ref: http://petstore.swagger.io/v2/swagger.json#/definitions/Tag");
+    }
+
+    @Schema(ref = "http://petstore.swagger.io/v2/swagger.json#/definitions/Tag")
+    static class NotAPet {}
 }
