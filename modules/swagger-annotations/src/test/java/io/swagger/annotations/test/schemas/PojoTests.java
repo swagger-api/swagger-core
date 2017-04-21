@@ -346,4 +346,23 @@ public class PojoTests {
         @Schema(examples = {"abc-123", "zz-aa-bb"})
         private String id;
     }
+
+    @Test(enabled = false, description = "Show how to completely override an object example")
+    public void testModelExampleOverride() {
+        String yaml = readClassIntoYaml(modelWithExampleOverride.class);
+
+        assertEquals(yaml,
+            "type: object\n" +
+            "example: \n" +
+            "  foo: bar\n" +
+            "  baz: true\n" +
+            "properties:\n" +
+            "  id:\n" +
+            "    type: string");
+    }
+
+    @Schema(example = "{\"foo\": \"bar\",\"baz\": true}")
+    static class modelWithExampleOverride {
+        private String id;
+    }
 }
