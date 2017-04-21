@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.swagger.annotations.media;
+package io.swagger.annotations.responses;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import java.util.List;
+import io.swagger.annotations.media.Content;
 
 /**
  * 
@@ -31,23 +31,23 @@ import java.util.List;
  **/
 
 
-@Target({ ElementType.FIELD })
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface Content {
+public @interface Response {
   /**
-   * the media type that this content object applies to
+   * 
    **/
-  String mediaType() default "";
+  String description() default "";
 
   /**
-   * an array of examples used to show the use of the associated schema
+   * the HTTP response code, or default, for the supplied response
    **/
-  ExampleObject[] examples() default @ExampleObject();
+  String responseCode() default "";
 
   /**
    * 
    **/
-  Schema schema() default @Schema();
+  Content content() default @Content();
 
 }

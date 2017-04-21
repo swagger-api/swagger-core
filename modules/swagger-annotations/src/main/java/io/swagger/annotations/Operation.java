@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 
 import io.swagger.SecurityRequirement;
 import io.swagger.annotations.parameters.RequestBody;
+import io.swagger.annotations.responses.Response;
 import io.swagger.annotations.servers.Server;
 import java.util.List;
 
@@ -72,6 +73,11 @@ public @interface Operation {
    * 
    **/
   RequestBody requestBody() default @RequestBody();
+
+  /**
+   * 
+   **/
+  Response[] responses() default new ArrayList<Response>();
 
   /**
    * allows an operation to be marked as deprecated.  Alternatively use the @Deprecated annotation
