@@ -60,7 +60,12 @@ public @interface Schema {
   Class<?>[] anyOf() default Void.class;
 
   /**
-   * 
+   * the name of the schema or property
+   **/
+  String name() default "";
+
+  /**
+   * a title to explain the purpose of the schema
    **/
   String title() default "";
 
@@ -75,12 +80,12 @@ public @interface Schema {
   String maximum() default "";
 
   /**
-   * 
+   * if true, makes the maximum value exclusive, or a less-than criteria
    **/
   boolean exclusiveMaximum() default false;
 
   /**
-   * sets the minimum numeric value for a property.  Ignored if the value is an empty string.
+   * if true, makes the maximum value exclusive, or a greater-than criteria
    **/
   String minimum() default "";
 
@@ -100,7 +105,7 @@ public @interface Schema {
   int minLength() default Integer.MAX_VALUE;
 
   /**
-   * 
+   * a pattern that the value must satisfy
    **/
   String pattern() default "";
 
@@ -140,7 +145,7 @@ public @interface Schema {
   boolean required() default false;
 
   /**
-   * 
+   * a description of the schema
    **/
   String description() default "";
 
@@ -155,19 +160,29 @@ public @interface Schema {
   String ref() default "";
 
   /**
-   * 
+   * if true, designates a value as possibly null
    **/
   boolean nulable() default false;
 
   /**
-   * 
+   * sets whether the value can be modified by a consumer
    **/
   boolean readOnly() default false;
 
   /**
-   * 
+   * sets whether a value can only be written to by a consumer
    **/
   boolean writeOnly() default false;
+
+  /**
+   * 
+   **/
+  String[] examples() default "";
+
+  /**
+   * 
+   **/
+  String example() default "";
 
   /**
    * 

@@ -278,4 +278,36 @@ public class PojoTests {
         @Schema(ref = "http://petstore.swagger.io/v2/swagger.json#/definitions/Tag")
         private String notATag;
     }
+
+    @Test(enabled = false, description = "Shows how to override a property name")
+    public void testPropertyNameOverride () {
+        String yaml = readClassIntoYaml(ModelWithPropertyNameOverride.class);
+
+        assertEquals(yaml,
+            "type: object\n" +
+            "properties:\n" +
+            "  username:\n" +
+            "    type: string");
+    }
+
+    static class ModelWithPropertyNameOverride {
+        @Schema(name = "username")
+        private String definitelyNotCalledUsername;
+    }
+
+    @Test(enabled = false, description = "Shows how to override a model name")
+    public void testModelNameOverride () {
+        String yaml = readClassIntoYaml(ModelWithNameOverride.class);
+
+        assertEquals(yaml,
+            "type: object\n" +
+            "properties:\n" +
+            "  id:\n" +
+            "    type: string");
+    }
+
+    @Schema(name = "Employee")
+    static class ModelWithNameOverride {
+        private String id;
+    }
 }
