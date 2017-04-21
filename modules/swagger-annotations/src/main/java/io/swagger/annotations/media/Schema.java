@@ -16,20 +16,18 @@
 
 package io.swagger.annotations.media;
 
+import io.swagger.annotations.ExternalDocumentation;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import io.swagger.annotations.ExternalDocumentation;
-import java.util.List;
-import java.util.Map;
-
 /**
  * 
  *
- * 
+ * The Schema Object allows the definition of input and output data types. These types can be objects, but also primitives and arrays. This object is an extended subset of the JSON Schema Specification Wright Draft 00.
  **/
 
 
@@ -40,22 +38,22 @@ import java.util.Map;
 @Inherited
 public @interface Schema {
   /**
-   * 
+   * provides a java class as implementation for this schema.  When provided, additional information in the Schema annotation will augment the java class after introspection
    **/
   Class<?> implementation() default Void.class;
 
   /**
-   * 
+   * provides a java class to be used to disallow matching properties.
    **/
   Class<?> not() default Void.class;
 
   /**
-   * 
+   * provides an array of java class implementations which can be used to describe multiple acceptable schemas.  If more than one match the derived schemas, a validation error will occur
    **/
   Class<?>[] oneOf() default Void.class;
 
   /**
-   * 
+   * provides an array of java class implementations which can be used to describe multiple acceptable schemas.  If any match, the schema will be considered valid
    **/
   Class<?>[] anyOf() default Void.class;
 
@@ -150,7 +148,7 @@ public @interface Schema {
   String description() default "";
 
   /**
-   * 
+   * provides an optional override for the format.  If a consumer is unaware of the meaning of the format, they shall fall back to using the basic type without format.  For example, if \&quot;type: integer, format: int128\&quot; were used to designate a very large integer, most consumers will not understand how to handle it, and fall back to simply \&quot;type: integer\&quot;
    **/
   String format() default "";
 
@@ -175,12 +173,12 @@ public @interface Schema {
   boolean writeOnly() default false;
 
   /**
-   * 
+   * provides an array examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
    **/
   String[] examples() default "";
 
   /**
-   * 
+   * provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
    **/
   String example() default "";
 
@@ -195,7 +193,7 @@ public @interface Schema {
   boolean deprecated() default false;
 
   /**
-   * 
+   * provides an override for the basic type of the schema.  Must be a valid type per the OpenAPI Specification
    **/
   String type() default "";
 

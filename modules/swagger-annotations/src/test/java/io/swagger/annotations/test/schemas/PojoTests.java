@@ -310,4 +310,40 @@ public class PojoTests {
     static class ModelWithNameOverride {
         private String id;
     }
+
+    @Test(enabled = false, description = "Shows how to provide model examples")
+    public void testModelPropertyExampleOverride () {
+        String yaml = readClassIntoYaml(modelWithPropertyExampleOverride.class);
+
+        assertEquals(yaml,
+            "type: object\n" +
+            "properties:\n" +
+            "  id:\n" +
+            "    type: string\n" +
+            "    example: abc-123");
+    }
+
+    static class modelWithPropertyExampleOverride {
+        @Schema(example = "abc-123")
+        private String id;
+    }
+
+    @Test(enabled = false, description = "Shows how to provide multiple property examples")
+    public void testMultipleModelPropertyExampleOverrides() {
+        String yaml = readClassIntoYaml(modelWithMultiplePropertyExamples.class);
+
+        assertEquals(yaml,
+            "type: object\n" +
+            "properties:\n" +
+            "  id:\n" +
+            "    type: string\n" +
+            "    examples:\n" +
+            "      - abc-123\n" +
+            "      - zz-aa-bb\n");
+    }
+
+    static class modelWithMultiplePropertyExamples {
+        @Schema(examples = {"abc-123", "zz-aa-bb"})
+        private String id;
+    }
 }
