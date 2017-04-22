@@ -1,6 +1,7 @@
 package io.swagger.annotations.test.schemas;
 
 import io.swagger.annotations.media.Schema;
+import io.swagger.annotations.test.AbstractAnnotationTest;
 import org.testng.annotations.Test;
 
 import java.util.Date;
@@ -8,16 +9,10 @@ import java.util.HashMap;
 
 import static org.testng.Assert.assertEquals;
 
-public class PojoTests {
-    public String readClassIntoYaml(Class<?> cls) {
-        // TODO: we will scan the ClassWithTitle and write as YAML but for now, stubbing it out to show the
-        // expected test behavior
-        return "nope!";
-    }
-
+public class PojoTests extends AbstractAnnotationTest {
     @Test(enabled = false)
     public void testModelWithTitle() {
-        String yaml = readClassIntoYaml(ClassWithTitle.class);
+        String yaml = readIntoYaml(ClassWithTitle.class);
 
         assertEquals(yaml,
             "type: object\n" +
@@ -42,7 +37,7 @@ public class PojoTests {
 
     @Test(enabled = false, description = "The @Schema annotation will only be adding additional sugar on the property")
     public void testModelWithAnnotatedPrivateMember() {
-        String yaml = readClassIntoYaml(ClassWithAnnotatedProperty.class);
+        String yaml = readIntoYaml(ClassWithAnnotatedProperty.class);
 
         assertEquals(yaml,
             "type: object\n" +
@@ -67,7 +62,7 @@ public class PojoTests {
 
     @Test(enabled = false, description = "The @Schema annotation will only be adding additional sugar on the property")
     public void testModelWithAnnotatedPublicMethod() {
-        String yaml = readClassIntoYaml(ClassWithAnnotatedMethod.class);
+        String yaml = readIntoYaml(ClassWithAnnotatedMethod.class);
 
         assertEquals(yaml,
             "type: object\n" +
@@ -92,7 +87,7 @@ public class PojoTests {
 
     @Test(enabled = false, description = "The @Schema annotation will override the type of the actual parameter")
     public void testModelWithOverriddenMemberType() {
-        String yaml = readClassIntoYaml(ClassWithOverriddenMemberType.class);
+        String yaml = readIntoYaml(ClassWithOverriddenMemberType.class);
 
         assertEquals(yaml,
             "type: object\n" +
@@ -120,7 +115,7 @@ public class PojoTests {
 
     @Test(enabled = false, description = "@Schema is completely overriding the type for this model")
     public void testModelWithAlternateRepresentation () {
-        String yaml = readClassIntoYaml(ClassWithAlternateRepresentation.class);
+        String yaml = readIntoYaml(ClassWithAlternateRepresentation.class);
 
         assertEquals(yaml,
             "type: object\n" +
@@ -145,7 +140,7 @@ public class PojoTests {
 
     @Test(enabled = false, description = "@Schema is allowing multiple definition interfaces to represent this model")
     public void testModelWithMultipleRepresentations () {
-        String yaml = readClassIntoYaml(UberObject.class);
+        String yaml = readIntoYaml(UberObject.class);
 
         assertEquals(yaml,
             "anyOf:\n" +
@@ -207,7 +202,7 @@ public class PojoTests {
 
     @Test(enabled = false, description = "Shows how @Schema can be used to allow only certain data formats")
     public void testModelWithSpecificFormat () {
-        String yaml = readClassIntoYaml(classWithIdConstraints.class);
+        String yaml = readIntoYaml(classWithIdConstraints.class);
 
         assertEquals(yaml,
             "type: object\n" +
@@ -235,7 +230,7 @@ public class PojoTests {
 
     @Test(enabled = false, description = "Shows how to restrict a particular schema")
     public void testExcludeSchema () {
-        String yaml = readClassIntoYaml(ArbitraryDataReceiver.class);
+        String yaml = readIntoYaml(ArbitraryDataReceiver.class);
 
         assertEquals(yaml,
             "type: object\n" +
@@ -255,7 +250,7 @@ public class PojoTests {
 
     @Test(enabled = false, description = "Shows how to override a definition with a schema reference")
     public void testSchemaReference () {
-        String yaml = readClassIntoYaml(NotAPet.class);
+        String yaml = readIntoYaml(NotAPet.class);
 
         assertEquals(yaml, "$ref: http://petstore.swagger.io/v2/swagger.json#/definitions/Tag");
     }
@@ -265,7 +260,7 @@ public class PojoTests {
 
     @Test(enabled = false, description = "Shows how to add a reference on a property")
     public void testPropertySchemaReference () {
-        String yaml = readClassIntoYaml(ModelWithSchemaPropertyReference.class);
+        String yaml = readIntoYaml(ModelWithSchemaPropertyReference.class);
 
         assertEquals(yaml,
             "type: object\n" +
@@ -281,7 +276,7 @@ public class PojoTests {
 
     @Test(enabled = false, description = "Shows how to override a property name")
     public void testPropertyNameOverride () {
-        String yaml = readClassIntoYaml(ModelWithPropertyNameOverride.class);
+        String yaml = readIntoYaml(ModelWithPropertyNameOverride.class);
 
         assertEquals(yaml,
             "type: object\n" +
@@ -297,7 +292,7 @@ public class PojoTests {
 
     @Test(enabled = false, description = "Shows how to override a model name")
     public void testModelNameOverride () {
-        String yaml = readClassIntoYaml(ModelWithNameOverride.class);
+        String yaml = readIntoYaml(ModelWithNameOverride.class);
 
         assertEquals(yaml,
             "type: object\n" +
@@ -313,7 +308,7 @@ public class PojoTests {
 
     @Test(enabled = false, description = "Shows how to provide model examples")
     public void testModelPropertyExampleOverride () {
-        String yaml = readClassIntoYaml(modelWithPropertyExampleOverride.class);
+        String yaml = readIntoYaml(modelWithPropertyExampleOverride.class);
 
         assertEquals(yaml,
             "type: object\n" +
@@ -330,7 +325,7 @@ public class PojoTests {
 
     @Test(enabled = false, description = "Shows how to provide multiple property examples")
     public void testMultipleModelPropertyExampleOverrides() {
-        String yaml = readClassIntoYaml(modelWithMultiplePropertyExamples.class);
+        String yaml = readIntoYaml(modelWithMultiplePropertyExamples.class);
 
         assertEquals(yaml,
             "type: object\n" +
@@ -349,7 +344,7 @@ public class PojoTests {
 
     @Test(enabled = false, description = "Show how to completely override an object example")
     public void testModelExampleOverride() {
-        String yaml = readClassIntoYaml(modelWithExampleOverride.class);
+        String yaml = readIntoYaml(modelWithExampleOverride.class);
 
         assertEquals(yaml,
             "type: object\n" +

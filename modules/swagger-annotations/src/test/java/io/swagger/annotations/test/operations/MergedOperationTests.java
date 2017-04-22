@@ -3,6 +3,7 @@ package io.swagger.annotations.test.operations;
 import io.swagger.annotations.Operation;
 import io.swagger.annotations.media.Schema;
 import io.swagger.annotations.responses.Response;
+import io.swagger.annotations.test.AbstractAnnotationTest;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.GET;
@@ -12,13 +13,7 @@ import javax.ws.rs.QueryParam;
 
 import static org.testng.Assert.assertEquals;
 
-public class MergedOperationTests {
-    public String readIntoYaml(Class<?> cls) {
-        // TODO: we will scan the ClassWithTitle and write as YAML but for now, stubbing it out to show the
-        // expected test behavior
-        return "nope!";
-    }
-
+public class MergedOperationTests extends AbstractAnnotationTest {
     @Test(enabled = false, description = "shows a response when no annotation is present")
     public void testUnannotatedMethod() {
         String yaml = readIntoYaml(UnannotatedMethodClass.class);

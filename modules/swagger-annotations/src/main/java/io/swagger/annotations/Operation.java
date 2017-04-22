@@ -23,6 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import io.swagger.SecurityRequirement;
+import io.swagger.annotations.links.Link;
 import io.swagger.annotations.parameters.RequestBody;
 import io.swagger.annotations.responses.Response;
 import io.swagger.annotations.servers.Server;
@@ -39,6 +40,11 @@ import java.util.List;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Operation {
+  /**
+   * the HTTP method for this operation
+   **/
+  String method() default "";
+
   /**
    * Tags can be used for logical grouping of operations by resources or any other qualifier.
    **/
@@ -77,7 +83,12 @@ public @interface Operation {
   /**
    * 
    **/
-  Response[] responses() default new ArrayList<Response>();
+  Response[] responses() default @Response();
+
+  /**
+   * 
+   **/
+  Link[] links() default @Link();
 
   /**
    * allows an operation to be marked as deprecated.  Alternatively use the @Deprecated annotation

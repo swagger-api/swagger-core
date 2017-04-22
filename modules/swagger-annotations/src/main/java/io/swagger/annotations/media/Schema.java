@@ -16,13 +16,16 @@
 
 package io.swagger.annotations.media;
 
-import io.swagger.annotations.ExternalDocumentation;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ExternalDocumentation;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -32,9 +35,9 @@ import java.lang.annotation.Target;
 
 
 @Target({ ElementType.FIELD,
-          ElementType.TYPE,
+          ElementType.METHOD,
           ElementType.PARAMETER,
-          ElementType.METHOD })
+          ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Schema {

@@ -5,17 +5,12 @@ import io.swagger.annotations.media.Content;
 import io.swagger.annotations.media.ExampleObject;
 import io.swagger.annotations.media.Schema;
 import io.swagger.annotations.responses.Response;
+import io.swagger.annotations.test.AbstractAnnotationTest;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 
-public class AnnotatedOperationMethodTests {
-    public String readIntoYaml(Class<?> cls) {
-        // TODO: we will scan the ClassWithTitle and write as YAML but for now, stubbing it out to show the
-        // expected test behavior
-        return "nope!";
-    }
-
+public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     @Test
     public void testSimpleGetOperation() {
         String yaml = readIntoYaml(SimpleGetOperationTest.class);
