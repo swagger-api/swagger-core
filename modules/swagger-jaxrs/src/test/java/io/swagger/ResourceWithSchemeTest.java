@@ -5,6 +5,7 @@ import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
 import io.swagger.resources.ResourceWithScheme;
 import io.swagger.resources.ResourceWithoutScheme;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -14,7 +15,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 public class ResourceWithSchemeTest {
-    private final Reader reader = new Reader(new Swagger());
+    private Reader reader;
 
     private Swagger getSwagger(Class<?> resource) {
         return reader.read(resource);
@@ -22,6 +23,11 @@ public class ResourceWithSchemeTest {
 
     private List<Scheme> loadSchemes(Swagger swagger, String path) {
         return swagger.getPaths().get(path).getGet().getSchemes();
+    }
+
+    @BeforeMethod
+    private void resetReader() {
+        reader = new Reader(new Swagger());
     }
 
     @Test(description = "scan another resource with subresources")
