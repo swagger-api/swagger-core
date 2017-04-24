@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.swagger.annotations.media;
+package io.swagger.annotations.parameters;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -22,6 +22,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import io.swagger.annotations.media.OASContent;
+import java.util.List;
 
 /**
  * 
@@ -30,28 +32,23 @@ import java.lang.annotation.Target;
  **/
 
 
-@Target({ ElementType.METHOD })
+@Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface ExampleObject {
+public @interface OASRequestBody {
   /**
-   * a unique name to identify this particular example
+   * 
    **/
-  String name() default "";
+  String description() default "";
 
   /**
-   * a brief summary of the purpose or context of the example
+   * 
    **/
-  String summary() default "";
+  OASContent[] content() default @OASContent();
 
   /**
-   * a string representation of the example.  If the media type associated with the example allows parsing into an object, it may be converted from a string
+   * 
    **/
-  String value() default "";
-
-  /**
-   * a URL to point to an external document to be used as an example.  This is mutually exclusive with the value property
-   **/
-  String externalValue() default "";
+  boolean required() default false;
 
 }

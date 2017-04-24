@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.swagger.annotations.parameters;
+package io.swagger.annotations.links;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -22,8 +22,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import io.swagger.annotations.media.Content;
-import java.util.List;
 
 /**
  * 
@@ -32,23 +30,21 @@ import java.util.List;
  **/
 
 
-@Target({ ElementType.PARAMETER })
+@Target({ ElementType.FIELD,
+          ElementType.METHOD,
+          ElementType.PARAMETER,
+          ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface RequestBody {
+public @interface OASLinkParameters {
   /**
    * 
    **/
-  String description() default "";
+  String name() default "";
 
   /**
    * 
    **/
-  Content[] content() default @Content();
-
-  /**
-   * 
-   **/
-  boolean required() default false;
+  String expression() default "";
 
 }

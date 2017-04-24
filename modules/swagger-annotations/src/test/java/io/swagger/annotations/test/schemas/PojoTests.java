@@ -1,6 +1,6 @@
 package io.swagger.annotations.test.schemas;
 
-import io.swagger.annotations.media.Schema;
+import io.swagger.annotations.media.OASSchema;
 import io.swagger.annotations.test.AbstractAnnotationTest;
 import org.testng.annotations.Test;
 
@@ -22,7 +22,7 @@ public class PojoTests extends AbstractAnnotationTest {
             "    type: string");
     }
 
-    @Schema(title = "My Pojo")
+    @OASSchema(title = "My Pojo")
     static class ClassWithTitle {
         private String id;
 
@@ -35,7 +35,7 @@ public class PojoTests extends AbstractAnnotationTest {
         }
     }
 
-    @Test(enabled = false, description = "The @Schema annotation will only be adding additional sugar on the property")
+    @Test(enabled = false, description = "The @OASSchema annotation will only be adding additional sugar on the property")
     public void testModelWithAnnotatedPrivateMember() {
         String yaml = readIntoYaml(ClassWithAnnotatedProperty.class);
 
@@ -48,7 +48,7 @@ public class PojoTests extends AbstractAnnotationTest {
     }
 
     static class ClassWithAnnotatedProperty {
-        @Schema(description = "a long description for this property")
+        @OASSchema(description = "a long description for this property")
         private String id;
 
         public String getId() {
@@ -60,7 +60,7 @@ public class PojoTests extends AbstractAnnotationTest {
         }
     }
 
-    @Test(enabled = false, description = "The @Schema annotation will only be adding additional sugar on the property")
+    @Test(enabled = false, description = "The @OASSchema annotation will only be adding additional sugar on the property")
     public void testModelWithAnnotatedPublicMethod() {
         String yaml = readIntoYaml(ClassWithAnnotatedMethod.class);
 
@@ -75,7 +75,7 @@ public class PojoTests extends AbstractAnnotationTest {
     static class ClassWithAnnotatedMethod {
         private String id;
 
-        @Schema(description = "a long description for this property")
+        @OASSchema(description = "a long description for this property")
         public String getId() {
             return id;
         }
@@ -85,7 +85,7 @@ public class PojoTests extends AbstractAnnotationTest {
         }
     }
 
-    @Test(enabled = false, description = "The @Schema annotation will override the type of the actual parameter")
+    @Test(enabled = false, description = "The @OASSchema annotation will override the type of the actual parameter")
     public void testModelWithOverriddenMemberType() {
         String yaml = readIntoYaml(ClassWithOverriddenMemberType.class);
 
@@ -102,7 +102,7 @@ public class PojoTests extends AbstractAnnotationTest {
     static class ClassWithOverriddenMemberType {
         private String id;
 
-        @Schema(type = "integer", format = "int64", description = "we are declaring a string implementation must be " +
+        @OASSchema(type = "integer", format = "int64", description = "we are declaring a string implementation must be " +
                 "a valid long integer, even though the model backs it with a String implementation")
         public String getId() {
             return id;
@@ -113,7 +113,7 @@ public class PojoTests extends AbstractAnnotationTest {
         }
     }
 
-    @Test(enabled = false, description = "@Schema is completely overriding the type for this model")
+    @Test(enabled = false, description = "@OASSchema is completely overriding the type for this model")
     public void testModelWithAlternateRepresentation () {
         String yaml = readIntoYaml(ClassWithAlternateRepresentation.class);
 
@@ -125,7 +125,7 @@ public class PojoTests extends AbstractAnnotationTest {
             "    type: string");
     }
 
-    @Schema(implementation = ClassWithAnnotatedMethod.class)
+    @OASSchema(implementation = ClassWithAnnotatedMethod.class)
     static class ClassWithAlternateRepresentation {
         private Date dateField;
 
@@ -138,7 +138,7 @@ public class PojoTests extends AbstractAnnotationTest {
         }
     }
 
-    @Test(enabled = false, description = "@Schema is allowing multiple definition interfaces to represent this model")
+    @Test(enabled = false, description = "@OASSchema is allowing multiple definition interfaces to represent this model")
     public void testModelWithMultipleRepresentations () {
         String yaml = readIntoYaml(UberObject.class);
 
@@ -166,7 +166,7 @@ public class PojoTests extends AbstractAnnotationTest {
             "        type: string");
     }
 
-    @Schema(anyOf = {UserObject.class, EmployeeObject.class})
+    @OASSchema(anyOf = {UserObject.class, EmployeeObject.class})
     static class UberObject implements UserObject, EmployeeObject {
         private String id;
         private String name;
@@ -186,21 +186,21 @@ public class PojoTests extends AbstractAnnotationTest {
         }
     }
 
-    @Schema(description = "A User Object")
+    @OASSchema(description = "A User Object")
     interface UserObject {
-        @Schema(format = "uuid", required = true)
+        @OASSchema(format = "uuid", required = true)
         String getId();
         String getName();
     }
 
-    @Schema(description = "An Employee Object", requiredProperties = {"department"})
+    @OASSchema(description = "An Employee Object", requiredProperties = {"department"})
     interface EmployeeObject {
-        @Schema(format = "email")
+        @OASSchema(format = "email")
         String getId();
         String getDepartment();
     }
 
-    @Test(enabled = false, description = "Shows how @Schema can be used to allow only certain data formats")
+    @Test(enabled = false, description = "Shows how @OASSchema can be used to allow only certain data formats")
     public void testModelWithSpecificFormat () {
         String yaml = readIntoYaml(classWithIdConstraints.class);
 
@@ -214,9 +214,9 @@ public class PojoTests extends AbstractAnnotationTest {
             "    pattern: '^\\d{3}-?\\d{2}-?\\d{4}$'");
     }
 
-    @Schema(title = "AuthorizedUser")
+    @OASSchema(title = "AuthorizedUser")
     static class classWithIdConstraints {
-        @Schema(pattern = "^\\d{3}-?\\d{2}-?\\d{4}$", description = "A valid user social security")
+        @OASSchema(pattern = "^\\d{3}-?\\d{2}-?\\d{4}$", description = "A valid user social security")
         private String id;
 
         public String getId() {
@@ -245,7 +245,7 @@ public class PojoTests extends AbstractAnnotationTest {
             "        pattern: '^\\d{3}-?\\d{2}-?\\d{4}$'");
     }
 
-    @Schema(not = classWithIdConstraints.class, description = "We don't store social security numbers here!")
+    @OASSchema(not = classWithIdConstraints.class, description = "We don't store social security numbers here!")
     static class ArbitraryDataReceiver extends HashMap<String, Object> {}
 
     @Test(enabled = false, description = "Shows how to override a definition with a schema reference")
@@ -255,7 +255,7 @@ public class PojoTests extends AbstractAnnotationTest {
         assertEquals(yaml, "$ref: http://petstore.swagger.io/v2/swagger.json#/definitions/Tag");
     }
 
-    @Schema(ref = "http://petstore.swagger.io/v2/swagger.json#/definitions/Tag")
+    @OASSchema(ref = "http://petstore.swagger.io/v2/swagger.json#/definitions/Tag")
     static class NotAPet {}
 
     @Test(enabled = false, description = "Shows how to add a reference on a property")
@@ -270,7 +270,7 @@ public class PojoTests extends AbstractAnnotationTest {
     }
 
     static class ModelWithSchemaPropertyReference {
-        @Schema(ref = "http://petstore.swagger.io/v2/swagger.json#/definitions/Tag")
+        @OASSchema(ref = "http://petstore.swagger.io/v2/swagger.json#/definitions/Tag")
         private String notATag;
     }
 
@@ -286,7 +286,7 @@ public class PojoTests extends AbstractAnnotationTest {
     }
 
     static class ModelWithPropertyNameOverride {
-        @Schema(name = "username")
+        @OASSchema(name = "username")
         private String definitelyNotCalledUsername;
     }
 
@@ -301,7 +301,7 @@ public class PojoTests extends AbstractAnnotationTest {
             "    type: string");
     }
 
-    @Schema(name = "Employee")
+    @OASSchema(name = "Employee")
     static class ModelWithNameOverride {
         private String id;
     }
@@ -319,7 +319,7 @@ public class PojoTests extends AbstractAnnotationTest {
     }
 
     static class modelWithPropertyExampleOverride {
-        @Schema(example = "abc-123")
+        @OASSchema(example = "abc-123")
         private String id;
     }
 
@@ -338,7 +338,7 @@ public class PojoTests extends AbstractAnnotationTest {
     }
 
     static class modelWithMultiplePropertyExamples {
-        @Schema(examples = {"abc-123", "zz-aa-bb"})
+        @OASSchema(examples = {"abc-123", "zz-aa-bb"})
         private String id;
     }
 
@@ -356,7 +356,7 @@ public class PojoTests extends AbstractAnnotationTest {
             "    type: string");
     }
 
-    @Schema(example = "{\"foo\": \"bar\",\"baz\": true}")
+    @OASSchema(example = "{\"foo\": \"bar\",\"baz\": true}")
     static class modelWithExampleOverride {
         private String id;
     }

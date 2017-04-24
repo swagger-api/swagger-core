@@ -23,7 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ExternalDocumentation;
+import io.swagger.annotations.OASExternalDocumentation;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +40,7 @@ import java.util.Map;
           ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface Schema {
+public @interface OASSchema {
   /**
    * provides a java class as implementation for this schema.  When provided, additional information in the Schema annotation will augment the java class after introspection
    **/
@@ -189,7 +189,7 @@ public @interface Schema {
   /**
    * 
    **/
-  ExternalDocumentation externalDocs() default @ExternalDocumentation();
+  OASExternalDocumentation externalDocs() default @OASExternalDocumentation();
 
   /**
    * 

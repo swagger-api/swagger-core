@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.swagger.annotations;
+package io.swagger.annotations.servers;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -22,6 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import java.util.List;
 
 /**
  * 
@@ -30,18 +31,28 @@ import java.lang.annotation.Target;
  **/
 
 
-@Target({ ElementType.FIELD })
+@Target({  })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface ExternalDocumentation {
+public @interface OASServerVariable {
   /**
    * 
    **/
-  String description() default "";
+  String name() default "";
+
+  /**
+   * the allowableValues maps to the enum property in the OAS schema
+   **/
+  String[] allowableValues() default "";
+
+  /**
+   * the value attribute maps to the default property in the OAS schema
+   **/
+  String value() default "";
 
   /**
    * 
    **/
-  String url() default "";
+  String description() default "";
 
 }

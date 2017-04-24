@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.swagger.annotations.responses;
+package io.swagger.annotations.media;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -22,7 +22,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import io.swagger.annotations.media.Content;
 
 /**
  * 
@@ -34,20 +33,25 @@ import io.swagger.annotations.media.Content;
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface Response {
+public @interface OASExampleObject {
   /**
-   * 
+   * a unique name to identify this particular example
    **/
-  String description() default "";
+  String name() default "";
 
   /**
-   * the HTTP response code, or default, for the supplied response
+   * a brief summary of the purpose or context of the example
    **/
-  String responseCode() default "";
+  String summary() default "";
 
   /**
-   * 
+   * a string representation of the example.  If the media type associated with the example allows parsing into an object, it may be converted from a string
    **/
-  Content content() default @Content();
+  String value() default "";
+
+  /**
+   * a URL to point to an external document to be used as an example.  This is mutually exclusive with the value property
+   **/
+  String externalValue() default "";
 
 }

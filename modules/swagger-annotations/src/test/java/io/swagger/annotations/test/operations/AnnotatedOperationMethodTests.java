@@ -1,10 +1,10 @@
 package io.swagger.annotations.test.operations;
 
-import io.swagger.annotations.Operation;
-import io.swagger.annotations.media.Content;
-import io.swagger.annotations.media.ExampleObject;
-import io.swagger.annotations.media.Schema;
-import io.swagger.annotations.responses.Response;
+import io.swagger.annotations.OASOperation;
+import io.swagger.annotations.media.OASContent;
+import io.swagger.annotations.media.OASExampleObject;
+import io.swagger.annotations.media.OASSchema;
+import io.swagger.annotations.responses.OASResponse;
 import io.swagger.annotations.test.AbstractAnnotationTest;
 import org.testng.annotations.Test;
 
@@ -28,13 +28,13 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     }
 
     static class SimpleGetOperationTest {
-        @Operation(
+        @OASOperation(
             summary = "Simple get operation",
             description = "Defines a simple get operation with no inputs and a complex output object",
             operationId = "getWithNoParameters",
             deprecated = true,
             responses = {
-                @Response(
+                @OASResponse(
                     responseCode = "200",
                     description = "voila!")
             }
@@ -72,26 +72,26 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     }
 
     static class GetOperationWithResponsePayloadAndAlternateCodes {
-        @Operation(
+        @OASOperation(
             summary = "Simple get operation",
             description = "Defines a simple get operation with no inputs and a complex output object",
             operationId = "getWithPayloadResponse",
             deprecated = true,
             responses = {
-                @Response(
+                @OASResponse(
                     responseCode = "200",
                     description = "voila!",
-                    content = @Content(
+                    content = @OASContent(
                         mediaType = "application/json",
-                        schema = @Schema(implementation = SampleResponseSchema.class)
+                        schema = @OASSchema(implementation = SampleResponseSchema.class)
                     )
                 ),
-                @Response(
+                @OASResponse(
                     responseCode = "default",
                     description = "boo",
-                    content = @Content(
+                    content = @OASContent(
                         mediaType = "*/*",
-                        schema = @Schema(implementation = GenericError.class)
+                        schema = @OASSchema(implementation = GenericError.class)
                     )
                 )
             }
@@ -100,7 +100,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     }
 
     static class SampleResponseSchema {
-        @Schema(description = "the user id")
+        @OASSchema(description = "the user id")
         private String id;
     }
 
@@ -137,20 +137,20 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     }
 
     static class GetOperationWithResponseExamples {
-        @Operation(
+        @OASOperation(
             summary = "Simple get operation",
             description = "Defines a simple get operation with no inputs and a complex output object",
             operationId = "getWithPayloadResponse",
             deprecated = true,
             responses = {
-                @Response(
+                @OASResponse(
                     responseCode = "200",
                     description = "voila!",
-                    content = @Content(
+                    content = @OASContent(
                         mediaType = "application/json",
-                        schema = @Schema(implementation = SampleResponseSchema.class),
+                        schema = @OASSchema(implementation = SampleResponseSchema.class),
                         examples = {
-                            @ExampleObject(
+                            @OASExampleObject(
                                 name = "basic",
                                 summary = "shows a basic example",
                                 value = "{\"id\": 19877734}")

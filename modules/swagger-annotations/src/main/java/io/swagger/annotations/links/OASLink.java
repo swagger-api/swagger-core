@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
           ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface Link {
+public @interface OASLink {
   /**
    * 
    **/
@@ -55,7 +55,7 @@ public @interface Link {
   /**
    * 
    **/
-  LinkParameters parameters() default @LinkParameters();
+  OASLinkParameters parameters() default @OASLinkParameters();
 
   /**
    * 

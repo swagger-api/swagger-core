@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.swagger.annotations.media;
+package io.swagger.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -22,7 +22,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import java.util.List;
 
 /**
  * 
@@ -34,20 +33,15 @@ import java.util.List;
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface Content {
+public @interface OASExternalDocumentation {
   /**
-   * the media type that this content object applies to
+   * 
    **/
-  String mediaType() default "";
-
-  /**
-   * an array of examples used to show the use of the associated schema
-   **/
-  ExampleObject[] examples() default @ExampleObject();
+  String description() default "";
 
   /**
    * 
    **/
-  Schema schema() default @Schema();
+  String url() default "";
 
 }

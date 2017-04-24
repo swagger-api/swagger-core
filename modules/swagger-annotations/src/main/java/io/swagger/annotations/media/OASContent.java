@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.swagger.annotations.servers;
+package io.swagger.annotations.media;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -34,20 +34,20 @@ import java.util.List;
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface Server {
+public @interface OASContent {
   /**
-   * 
+   * the media type that this content object applies to
    **/
-  String url() default "";
+  String mediaType() default "";
+
+  /**
+   * an array of examples used to show the use of the associated schema
+   **/
+  OASExampleObject[] examples() default @OASExampleObject();
 
   /**
    * 
    **/
-  String description() default "";
-
-  /**
-   * 
-   **/
-  ServerVariable[] variables() default @ServerVariable();
+  OASSchema schema() default @OASSchema();
 
 }

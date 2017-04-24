@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.swagger.annotations.links;
+package io.swagger.annotations.servers;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -22,6 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import java.util.List;
 
 /**
  * 
@@ -30,21 +31,23 @@ import java.lang.annotation.Target;
  **/
 
 
-@Target({ ElementType.FIELD,
-          ElementType.METHOD,
-          ElementType.PARAMETER,
-          ElementType.TYPE })
+@Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface LinkParameters {
+public @interface OASServer {
   /**
    * 
    **/
-  String name() default "";
+  String url() default "";
 
   /**
    * 
    **/
-  String expression() default "";
+  String description() default "";
+
+  /**
+   * 
+   **/
+  OASServerVariable[] variables() default @OASServerVariable();
 
 }

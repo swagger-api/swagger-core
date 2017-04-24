@@ -22,11 +22,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import io.swagger.SecurityRequirement;
-import io.swagger.annotations.links.Link;
-import io.swagger.annotations.parameters.RequestBody;
-import io.swagger.annotations.responses.Response;
-import io.swagger.annotations.servers.Server;
+import io.swagger.OASSecurityRequirement;
+import io.swagger.annotations.links.OASLink;
+import io.swagger.annotations.parameters.OASRequestBody;
+import io.swagger.annotations.responses.OASResponse;
+import io.swagger.annotations.servers.OASServer;
 import java.util.List;
 
 /**
@@ -39,7 +39,7 @@ import java.util.List;
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface Operation {
+public @interface OASOperation {
   /**
    * the HTTP method for this operation
    **/
@@ -63,7 +63,7 @@ public @interface Operation {
   /**
    * 
    **/
-  ExternalDocumentation externalDocs() default @ExternalDocumentation();
+  OASExternalDocumentation externalDocs() default @OASExternalDocumentation();
 
   /**
    * The operationId is used by third-party tools to uniquely identify this operation.
@@ -73,22 +73,22 @@ public @interface Operation {
   /**
    * An optional array of parameters which will be added to any automatically detected parameters in the method itself
    **/
-  Parameter[] parameters() default @Parameter();
+  OASParameter[] parameters() default @OASParameter();
 
   /**
    * 
    **/
-  RequestBody requestBody() default @RequestBody();
+  OASRequestBody requestBody() default @OASRequestBody();
 
   /**
    * 
    **/
-  Response[] responses() default @Response();
+  OASResponse[] responses() default @OASResponse();
 
   /**
    * 
    **/
-  Link[] links() default @Link();
+  OASLink[] links() default @OASLink();
 
   /**
    * allows an operation to be marked as deprecated.  Alternatively use the @Deprecated annotation
@@ -98,6 +98,6 @@ public @interface Operation {
   /**
    * 
    **/
-  Server[] servers() default @Server();
+  OASServer[] servers() default @OASServer();
 
 }

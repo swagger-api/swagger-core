@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.swagger.annotations.servers;
+package io.swagger.annotations.responses;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import java.util.List;
+import io.swagger.annotations.media.OASContent;
 
 /**
  * 
@@ -31,28 +31,23 @@ import java.util.List;
  **/
 
 
-@Target({  })
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface ServerVariable {
-  /**
-   * 
-   **/
-  String name() default "";
-
-  /**
-   * the allowableValues maps to the enum property in the OAS schema
-   **/
-  String[] allowableValues() default "";
-
-  /**
-   * the value attribute maps to the default property in the OAS schema
-   **/
-  String value() default "";
-
+public @interface OASResponse {
   /**
    * 
    **/
   String description() default "";
+
+  /**
+   * the HTTP response code, or default, for the supplied response
+   **/
+  String responseCode() default "";
+
+  /**
+   * 
+   **/
+  OASContent content() default @OASContent();
 
 }
