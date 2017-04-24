@@ -94,6 +94,7 @@ public class MergedOperationTests extends AbstractAnnotationTest {
             "    - in: query\n" +
             "      name: id\n" +
             "      description: a GUID for th user in uuid-v4 format\n" +
+            "      required: true\n" +
             "      schema:\n" +
             "        type: string\n" +
             "        format: uuid\n" +
