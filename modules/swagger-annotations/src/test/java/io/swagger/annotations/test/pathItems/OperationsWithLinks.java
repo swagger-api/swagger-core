@@ -81,7 +81,7 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
 
     @Test(enabled = false, description = "Shows creating simple links")
     public void createOperationWithLinkReferences() {
-        String yaml = readIntoYaml(ClassWithOperationAndLinks.class);
+        String yaml = readIntoYaml(ClassWithOperationAndLinkReferences.class);
 
         assertEquals(yaml,
             "/users:\n" +

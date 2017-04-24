@@ -16,14 +16,15 @@
 
 package io.swagger.annotations;
 
-import io.swagger.annotations.media.OASContent;
-import io.swagger.annotations.media.OASSchema;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import io.swagger.annotations.media.OASContent;
+import io.swagger.annotations.media.OASSchema;
+import java.util.List;
 
 /**
  * 
