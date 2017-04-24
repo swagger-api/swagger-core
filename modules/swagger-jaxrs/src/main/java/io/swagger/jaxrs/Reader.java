@@ -52,15 +52,12 @@ import io.swagger.models.SecurityRequirement;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 import io.swagger.models.auth.In;
-import io.swagger.models.parameters.FormParameter;
-import io.swagger.models.parameters.HeaderParameter;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.PathParameter;
-import io.swagger.models.parameters.QueryParameter;
+import io.swagger.models.parameters.*;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
+import io.swagger.models.refs.RefType;
 import io.swagger.util.BaseReaderUtils;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
@@ -192,7 +189,7 @@ public class Reader {
         boolean isApiHidden = hasApiAnnotation && api.hidden();
 
         // class readable only if annotated with ((@Path and @Api) or isSubresource ) - and @Api not hidden
-        boolean classReadable = ((hasPathAnnotation && hasApiAnnotation)|| isSubresource) && !isApiHidden;
+        boolean classReadable = ((hasPathAnnotation && hasApiAnnotation) || isSubresource) && !isApiHidden;
 
         // with scanAllResources true in config and @Api not hidden scan only if it has also @Path annotation or is subresource
         boolean scanAll = !isApiHidden && config.isScanAllResources() && (hasPathAnnotation || isSubresource);
@@ -396,8 +393,59 @@ public class Reader {
                             path = new Path();
                             swagger.path(operationPath, path);
                         }
-                        path.set(httpMethod, operation);
 
+                        io.swagger.models.HttpMethod swaggerHttpMethod = io.swagger.models.HttpMethod.valueOf(httpMethod.toUpperCase());
+                        if (!path.getOperationMap().containsKey(swaggerHttpMethod)) {
+                            path.set(httpMethod, operation);
+                        } else {
+                            Operation currentOperation = path.getOperationMap().get(swaggerHttpMethod);
+                            // there's already an operation for this path. see which is more specific
+                            List<Parameter> currentParameters = currentOperation.getParameters();
+                            List<Parameter> potentialNewParameters = operation.getParameters();
+
+                            // we expect the number of parameters to be the same, but if not, more is always better
+                            if (potentialNewParameters.size() > currentParameters.size()) {
+                                path.set(httpMethod, operation);
+                            } else if (potentialNewParameters.size() == currentParameters.size()) {
+                                int newVsOldScore = 0;
+                                for (int i = 0; i < potentialNewParameters.size(); i++) {
+                                    Parameter newParameter = potentialNewParameters.get(i);
+                                    Parameter currentParameter = currentParameters.get(i);
+
+                                    // pick the parameter that has the most properties defined on it
+                                    // it is unlikely that this applies to any other parameter types besides body
+                                    if ((newParameter instanceof BodyParameter) && (currentParameter instanceof BodyParameter)) {
+                                        BodyParameter newBodyParameter = (BodyParameter) newParameter;
+                                        BodyParameter currentBodyParameter = (BodyParameter) currentParameter;
+
+                                        int newBodyParamsDefined = 0;
+                                        if (newBodyParameter.getSchema().getReference().startsWith(RefType.DEFINITION.getInternalPrefix())) {
+                                            String newBodyParameterDefinitionName = newBodyParameter.getSchema().getReference().replaceFirst(RefType.DEFINITION.getInternalPrefix(), "");
+                                            if (swagger.getDefinitions().containsKey(newBodyParameterDefinitionName)) {
+                                                Map properties = swagger.getDefinitions().get(newBodyParameterDefinitionName).getProperties();
+                                                newBodyParamsDefined = (properties == null) ? 0 : properties.size();
+                                            }
+                                        }
+
+                                        int currentBodyParamsDefined = 0;
+                                        if (currentBodyParameter.getSchema().getReference().startsWith(RefType.DEFINITION.getInternalPrefix())) {
+                                            String currentBodyParameterDefinitionName = currentBodyParameter.getSchema().getReference().replaceFirst(RefType.DEFINITION.getInternalPrefix(), "");
+                                            if (swagger.getDefinitions().containsKey(currentBodyParameterDefinitionName)) {
+                                                Map properties = swagger.getDefinitions().get(currentBodyParameterDefinitionName).getProperties();
+                                                currentBodyParamsDefined = (properties == null) ? 0 : properties.size();
+                                            }
+                                        }
+
+                                        // keep track of the aggregate of property definition differences
+                                        newVsOldScore = newVsOldScore + (newBodyParamsDefined - currentBodyParamsDefined);
+                                    }
+                                }
+
+                                if (newVsOldScore > 0) {
+                                    path.set(httpMethod, operation);
+                                }
+                            } // else, keep the current parameters already in there
+                        }
                         readImplicitParameters(method, operation);
                     }
                 }
