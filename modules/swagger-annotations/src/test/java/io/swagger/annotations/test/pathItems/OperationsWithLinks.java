@@ -78,4 +78,37 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
         private String street;
         private String zip;
     }
+
+    @Test(enabled = false, description = "Shows creating simple links")
+    public void createOperationWithLinkReferences() {
+        String yaml = readIntoYaml(ClassWithOperationAndLinks.class);
+
+        assertEquals(yaml,
+            "/users:\n" +
+            "  get:\n" +
+            "    operationId: getUser\n" +
+            "    parameters:\n" +
+            "      - in: query\n" +
+            "        name: userId\n" +
+            "        schema:\n" +
+            "          type: string\n" +
+            "    responses:\n" +
+            "      default:\n" +
+            "        description: no description\n" +
+            "        schema:\n" +
+            "          $ref: '#/components/schemas/User'\n" +
+            "        links:\n" +
+            "          $ref: '#/components/links/MyLink'");
+    }
+
+    static class ClassWithOperationAndLinkReferences {
+        @Path("/users")
+        @OASOperation(links = {
+            @OASLink(
+                operationRef = "#/components/links/MyLink")
+        })
+        public User getUser(@QueryParam("userId") String userId) {
+            return null;
+        }
+    }
 }
