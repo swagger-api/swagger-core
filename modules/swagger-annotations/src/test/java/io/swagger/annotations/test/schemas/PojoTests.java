@@ -228,6 +228,7 @@ public class PojoTests extends AbstractAnnotationTest {
         }
     }
 
+    // TODO verify that _not_ is an array or `not`
     @Test(enabled = false, description = "Shows how to restrict a particular schema")
     public void testExcludeSchema () {
         String yaml = readIntoYaml(ArbitraryDataReceiver.class);

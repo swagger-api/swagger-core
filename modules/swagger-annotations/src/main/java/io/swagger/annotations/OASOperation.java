@@ -16,18 +16,16 @@
 
 package io.swagger.annotations;
 
+import io.swagger.annotations.links.OASLink;
+import io.swagger.annotations.parameters.OASRequestBody;
+import io.swagger.annotations.responses.OASResponse;
+import io.swagger.annotations.servers.OASServer;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import io.swagger.OASSecurityRequirement;
-import io.swagger.annotations.links.OASLink;
-import io.swagger.annotations.parameters.OASRequestBody;
-import io.swagger.annotations.responses.OASResponse;
-import io.swagger.annotations.servers.OASServer;
-import java.util.List;
 
 /**
  * Operation Annotation
