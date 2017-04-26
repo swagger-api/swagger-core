@@ -10,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverterContextImpl;
@@ -116,6 +118,38 @@ public class SimpleGenerationTest extends SwaggerTestBase {
         final Map<String, Property> props = model.getProperties();
         assertEquals(props.size(), 6);
     }
+
+    @Test
+    public void testNotBeanlike() throws Exception {
+        final Model model = context.resolve(NotBeanlike.class);
+        final Map<String, Property> props = model.getProperties();
+        assertEquals(props.size(), 1);
+
+        final Property prop = props.values().iterator().next();
+        assertEquals(prop.getName(), "notGetter");
+    }
+
+    static class NotBeanlike {
+        @JsonProperty("notGetter")
+        public String notGetter() {return "Not a getter";}
+    }
+
+    @Test
+    public void testEvenLessBeanlike() throws Exception {
+        final Model model = context.resolve(EvenLessBeanlike.class);
+        final Map<String, Property> props = model.getProperties();
+        assertEquals(props.size(), 1);
+
+        final Property prop = props.values().iterator().next();
+        assertEquals(prop.getName(), "notGetter");
+    }
+
+    @JsonSerialize(as = NotBeanlike.class)
+    @JsonDeserialize(as = NotBeanlike.class)
+    static interface EvenLessBeanlike {
+        public String notGetter();
+    }
+
 
   /*
   /**********************************************************
