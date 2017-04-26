@@ -85,11 +85,19 @@
             <artifactId>testng</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <properties>
         <!-- TODO increase coverage and remove these overrides-->
         <coverage.complexity.minimum>0.50</coverage.complexity.minimum>
         <coverage.line.minimum>0.00</coverage.line.minimum>
         <coverage.missed.classes>2</coverage.missed.classes>
+        <lombok.version>1.16.16</lombok.version>
+
     </properties>
 </project>
