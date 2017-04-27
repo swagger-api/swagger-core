@@ -59,7 +59,7 @@ class SwaggerSchemaConverter
           else List()
         }
         sortedProperties.size match {
-          case 0 => None
+          case 0 if(ConverterUtil.isEnum(cls)) => None
           case _ => Some(Model(
             toName(cls),
             toName(cls),

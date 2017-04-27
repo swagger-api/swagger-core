@@ -181,7 +181,7 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
       if(returnClass.isEnum) {
         Some(AllowableListValues((for (v <- returnClass.getEnumConstants) yield v.toString).toList))
       }
-      else if (isScalaEnumValue(returnClass)) {
+      else if (ConverterUtil.isScalaEnumValue(returnClass)) {
         // For Scala enumerations, set the dataType annotation to be the
         // fully qualified class name of the enumeration object (e.g., com.wordnik.MyEnum$)
         val enumValuesOpt = if (overrideDataType != null) getScalaEnumAllowableValues(overrideDataType) else None
@@ -277,15 +277,6 @@ class ModelPropertyParser(cls: Class[_], t: Map[String, String] = Map.empty) (im
     val o = typeMap.getOrElse(dataType.toLowerCase, dataType)
     LOGGER.debug("validating datatype " + dataType + " against " + typeMap.size + " keys, got " + o)
     o
-  }
-
-  /**
-   * @param cls
-   * @return - true if the class represents a value in an Enumeration
-   *         false otherwise
-   */
-  def isScalaEnumValue(cls: Class[_]): Boolean ={
-    cls.getName().compareTo("scala.Enumeration$Value") == 0
   }
 
   /**
