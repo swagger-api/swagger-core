@@ -1,0 +1,46 @@
+{
+  "AbstractModelInheritanceOnRoot": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      }
+    },
+    "description": "Abstract class to be position at the root, should be added to definitions"
+  },
+  "BaseModelWithNoSubTypesSpecified": {
+    "allOf": [
+      {
+        "$ref": "#/definitions/AbstractModelInheritanceOnRoot"
+      },
+      {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "Class that has subtypes extending it and referencing it as parent = , without specifying subtypes =",
+        "parent": "io.swagger.models.composition.AbstractModelInheritanceOnRoot"
+      }
+    ]
+  },
+  "ModelWithParentOnly": {
+    "allOf": [
+      {
+        "$ref": "#/definitions/BaseModelWithNoSubTypesSpecified"
+      },
+      {
+        "type": "object",
+        "properties": {
+          "childProperty": {
+            "type": "string"
+          }
+        },
+        "description": "Class that has a field that is the AbstractBaseModelWithSubTypes",
+        "parent": "io.swagger.models.composition.BaseModelWithNoSubTypesSpecified"
+      }
+    ]
+  }
+}

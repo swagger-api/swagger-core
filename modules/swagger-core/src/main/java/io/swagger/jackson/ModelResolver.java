@@ -510,6 +510,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         model.setProperties(modelProps);
 
+        Class<?> parentClass = null;
+        final ApiModel api = beanDesc.getClassInfo().getAnnotation(ApiModel.class);
+        if (api != null) {
+            parentClass = api.parent();
+        }
+        if(parentClass != null && parentClass != Void.class){
+            model.getVendorExtensions().put("parent", parentClass);
+        }
+
         /**
          * --Preventing parent/child hierarchy creation loops - Comment 2--
          * Creating a parent model will result in the creation of child models, as per the first If statement following

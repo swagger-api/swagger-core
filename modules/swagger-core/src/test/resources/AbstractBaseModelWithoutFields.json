@@ -21,7 +21,8 @@
                         "description": "Additional field a"
                     }
                 },
-                "description": "Thing3"
+                "description": "Thing3",
+                "parent":"io.swagger.models.composition.AbstractBaseModelWithoutFields"
             }
         ]
     }
