@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <parent>
+      <groupId>com.wordnik</groupId>
+      <artifactId>jboss7-empty-web-xml_2.10</artifactId>
+      <version>1.3.1</version>
+   </parent>
+   <modelVersion>4.0.0</modelVersion>
+
+   <artifactId>jboss7-empty-web-xml_2.10-ear</artifactId>
+   <packaging>ear</packaging>
+
+   <build>
+      <plugins>
+         <plugin>
+            <artifactId>maven-ear-plugin</artifactId>
+            <configuration>
+               <displayName>Sample no-webxml JBoss7 test</displayName>
+               <filtering>true</filtering>
+               <workDirectory>${project.build.directory}/exploded/${project.artifactId}.ear</workDirectory>
+               <version>6</version>
+               <defaultLibBundleDir>lib</defaultLibBundleDir>
+               <generateApplicationXml>true</generateApplicationXml>
+               <modules>
+                  <webModule>
+                     <groupId>com.wordnik</groupId>
+                     <artifactId>jboss7-empty-web-xml_2.10-war</artifactId>
+                     <contextRoot>sample</contextRoot>
+                     <bundleFileName>sample-no-webxml-rest.war</bundleFileName>
+                  </webModule>
+               </modules>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+
+   <dependencies>
+      <dependency>
+         <groupId>com.wordnik</groupId>
+         <artifactId>jboss7-empty-web-xml_2.10-war</artifactId>
+         <version>${project.version}</version>
+         <type>war</type>
+      </dependency>
+   </dependencies>
+</project>
