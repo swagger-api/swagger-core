@@ -30,4 +30,7 @@ public interface Model {
     Object clone();
 
     Map<String, Object> getVendorExtensions();
+
+    String getDiscriminator();
+
 }
