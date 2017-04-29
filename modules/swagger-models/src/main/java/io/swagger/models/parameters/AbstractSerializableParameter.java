@@ -312,7 +312,7 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         }
         try {
             if (BaseIntegerProperty.TYPE.equals(type)) {
-                return Long.valueOf(defaultValue);
+                return new Long(Double.valueOf(defaultValue).longValue());
             } else if (DecimalProperty.TYPE.equals(type)) {
                 return Double.valueOf(defaultValue);
             } else if (BooleanProperty.TYPE.equals(type)) {
