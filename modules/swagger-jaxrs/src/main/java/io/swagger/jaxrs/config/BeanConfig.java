@@ -80,7 +80,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         return schemes;
     }
 
-    public void setSchemes(String[] schemes) {
+    public void setSchemes(String... schemes) {
         this.schemes = schemes;
     }
 

@@ -109,7 +109,7 @@ public class ReaderUtils {
      * @param strings is the provided array of strings
      * @return the resulted array of strings
      */
-    public static String[] splitContentValues(String[] strings) {
+    public static String[] splitContentValues(String... strings) {
         final Set<String> result = new LinkedHashSet<String>();
 
         for (String string : strings) {
