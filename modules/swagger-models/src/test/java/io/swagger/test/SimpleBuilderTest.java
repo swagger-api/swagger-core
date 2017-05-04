@@ -5,14 +5,12 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.Components;
 import io.swagger.models.ExternalDocumentation;
 import io.swagger.models.OpenAPI;
 import io.swagger.models.Operation;
 import io.swagger.models.PathItem;
 import io.swagger.models.Paths;
-import io.swagger.models.examples.Example;
 import io.swagger.models.info.Contact;
 import io.swagger.models.info.Info;
 import io.swagger.models.links.Link;
@@ -21,6 +19,7 @@ import io.swagger.models.media.IntegerSchema;
 import io.swagger.models.media.MediaType;
 import io.swagger.models.media.Schema;
 import io.swagger.models.media.StringSchema;
+import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.responses.Response;
 import io.swagger.models.responses.Responses;
 import io.swagger.models.tags.Tag;
@@ -51,11 +50,13 @@ public class SimpleBuilderTest {
 
         Map<String, Schema> schemas = new HashMap<>();
 
-        schemas.put("StringSchema", new StringSchema()
+        schemas
+            .put("StringSchema", new StringSchema()
                 .description("simple string schema")
                 .minLength(3)
                 .maxLength(100)
-                .example(new Example())
+
+//                .example(new Example())
         );
 
         schemas.put("IntegerSchema", new IntegerSchema()
