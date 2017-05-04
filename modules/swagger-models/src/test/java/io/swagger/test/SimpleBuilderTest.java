@@ -11,6 +11,7 @@ import io.swagger.models.OpenAPI;
 import io.swagger.models.Operation;
 import io.swagger.models.PathItem;
 import io.swagger.models.Paths;
+import io.swagger.models.examples.Example;
 import io.swagger.models.info.Contact;
 import io.swagger.models.info.Info;
 import io.swagger.models.links.Link;
@@ -55,8 +56,7 @@ public class SimpleBuilderTest {
                 .description("simple string schema")
                 .minLength(3)
                 .maxLength(100)
-
-//                .example(new Example())
+                .example(new Example())
         );
 
         schemas.put("IntegerSchema", new IntegerSchema()

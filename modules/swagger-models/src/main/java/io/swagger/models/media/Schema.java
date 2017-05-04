@@ -58,6 +58,7 @@ public class Schema {
   private Boolean nulable = null;
   private Boolean readOnly = null;
   private Boolean writeOnly = null;
+  private Object example = null;
   private ExternalDocumentation externalDocs = null;
   private Boolean deprecated = null;
   private XML xml = null;
@@ -589,6 +590,25 @@ public class Schema {
   }
 
   /**
+   * returns the example property from a Schema instance.
+   *
+   * @return Object example
+   **/
+
+  public Object getExample() {
+    return example;
+  }
+
+  public void setExample(Object example) {
+    this.example = example;
+  }
+
+  public Schema example(Object example) {
+    this.example = example;
+    return this;
+  }
+
+  /**
    * returns the externalDocs property from a Schema instance.
    *
    * @return ExternalDocumentation externalDocs
@@ -681,6 +701,7 @@ public class Schema {
         Objects.equals(this.nulable, schema.nulable) &&
         Objects.equals(this.readOnly, schema.readOnly) &&
         Objects.equals(this.writeOnly, schema.writeOnly) &&
+        Objects.equals(this.example, schema.example) &&
         Objects.equals(this.externalDocs, schema.externalDocs) &&
         Objects.equals(this.deprecated, schema.deprecated) &&
         Objects.equals(this.xml, schema.xml);
@@ -688,7 +709,7 @@ public class Schema {
 
   @Override
   public int hashCode() {
-    return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern, maxItems, minItems, uniqueItems, maxProperties, minProperties, required, _enum, type, not, properties, additionalProperties, description, format, ref, nulable, readOnly, writeOnly, externalDocs, deprecated, xml);
+    return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern, maxItems, minItems, uniqueItems, maxProperties, minProperties, required, _enum, type, not, properties, additionalProperties, description, format, ref, nulable, readOnly, writeOnly, example, externalDocs, deprecated, xml);
   }
 
 
@@ -738,6 +759,7 @@ public class Schema {
     sb.append("    nulable: ").append(toIndentedString(nulable)).append("\n");
     sb.append("    readOnly: ").append(toIndentedString(readOnly)).append("\n");
     sb.append("    writeOnly: ").append(toIndentedString(writeOnly)).append("\n");
+    sb.append("    example: ").append(toIndentedString(example)).append("\n");
     sb.append("    externalDocs: ").append(toIndentedString(externalDocs)).append("\n");
     sb.append("    deprecated: ").append(toIndentedString(deprecated)).append("\n");
     sb.append("    xml: ").append(toIndentedString(xml)).append("\n");
