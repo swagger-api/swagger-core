@@ -16,11 +16,11 @@
 
 package io.swagger.models.media;
 
-import java.util.Objects;
 import io.swagger.models.examples.Example;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * MediaType
@@ -32,6 +32,7 @@ import java.util.Map;
 public class MediaType {
   private Schema schema = null;
   private Map<String, Example> examples = null;
+  private String example = null;
   private Encoding encoding = null;
   private java.util.Map<String, Object> extensions = null;
 
@@ -82,6 +83,25 @@ public class MediaType {
   }
 
   /**
+   * returns the example property from a MediaType instance.
+   *
+   * @return String example
+   **/
+
+  public String getExample() {
+    return example;
+  }
+
+  public void setExample(String example) {
+    this.example = example;
+  }
+
+  public MediaType example(String example) {
+    this.example = example;
+    return this;
+  }
+
+  /**
    * returns the encoding property from a MediaType instance.
    *
    * @return Encoding encoding
@@ -112,12 +132,13 @@ public class MediaType {
     MediaType mediaType = (MediaType) o;
     return Objects.equals(this.schema, mediaType.schema) &&
         Objects.equals(this.examples, mediaType.examples) &&
+        Objects.equals(this.example, mediaType.example) &&
         Objects.equals(this.encoding, mediaType.encoding);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(schema, examples, encoding);
+    return Objects.hash(schema, examples, example, encoding);
   }
 
 
@@ -143,6 +164,7 @@ public class MediaType {
     
     sb.append("    schema: ").append(toIndentedString(schema)).append("\n");
     sb.append("    examples: ").append(toIndentedString(examples)).append("\n");
+    sb.append("    example: ").append(toIndentedString(example)).append("\n");
     sb.append("    encoding: ").append(toIndentedString(encoding)).append("\n");
     sb.append("}");
     return sb.toString();

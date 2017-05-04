@@ -32,7 +32,7 @@ import java.util.List;
 
 
 public class OpenAPI {
-  private String openapi = "3.0.0-rc0";
+  private String openapi = "3.0.0-rc1";
   private Info info = null;
   private ExternalDocumentation externalDocs = null;
   private List<Server> servers = null;

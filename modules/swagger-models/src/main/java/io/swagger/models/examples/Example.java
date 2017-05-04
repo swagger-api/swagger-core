@@ -26,6 +26,7 @@ import java.util.Objects;
 public class Example {
   private String summary = null;
   private String description = null;
+  private String value = null;
   private String externalValue = null;
   private java.util.Map<String, Object> extensions = null;
 
@@ -68,6 +69,25 @@ public class Example {
   }
 
   /**
+   * returns the value property from a Example instance.
+   *
+   * @return String value
+   **/
+
+  public String getValue() {
+    return value;
+  }
+
+  public void setValue(String value) {
+    this.value = value;
+  }
+
+  public Example value(String value) {
+    this.value = value;
+    return this;
+  }
+
+  /**
    * returns the externalValue property from a Example instance.
    *
    * @return String externalValue
@@ -98,12 +118,13 @@ public class Example {
     Example example = (Example) o;
     return Objects.equals(this.summary, example.summary) &&
         Objects.equals(this.description, example.description) &&
+        Objects.equals(this.value, example.value) &&
         Objects.equals(this.externalValue, example.externalValue);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(summary, description, externalValue);
+    return Objects.hash(summary, description, value, externalValue);
   }
 
 
@@ -129,6 +150,7 @@ public class Example {
     
     sb.append("    summary: ").append(toIndentedString(summary)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
+    sb.append("    value: ").append(toIndentedString(value)).append("\n");
     sb.append("    externalValue: ").append(toIndentedString(externalValue)).append("\n");
     sb.append("}");
     return sb.toString();

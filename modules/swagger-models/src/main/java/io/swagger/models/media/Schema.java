@@ -58,7 +58,7 @@ public class Schema {
   private Boolean nulable = null;
   private Boolean readOnly = null;
   private Boolean writeOnly = null;
-  private Object example = null;
+  private String example = null;
   private ExternalDocumentation externalDocs = null;
   private Boolean deprecated = null;
   private XML xml = null;
@@ -592,18 +592,18 @@ public class Schema {
   /**
    * returns the example property from a Schema instance.
    *
-   * @return Object example
+   * @return String example
    **/
 
-  public Object getExample() {
+  public String getExample() {
     return example;
   }
 
-  public void setExample(Object example) {
+  public void setExample(String example) {
     this.example = example;
   }
 
-  public Schema example(Object example) {
+  public Schema example(String example) {
     this.example = example;
     return this;
   }

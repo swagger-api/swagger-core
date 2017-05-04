@@ -73,6 +73,7 @@ public class Parameter {
   private Boolean allowReserved = null;
   private Schema schema = null;
   private Map<String, Example> examples = null;
+  private String example = null;
   private Content content = null;
   private java.util.Map<String, Object> extensions = null;
 
@@ -294,6 +295,25 @@ public class Parameter {
   }
 
   /**
+   * returns the example property from a Parameter instance.
+   *
+   * @return String example
+   **/
+
+  public String getExample() {
+    return example;
+  }
+
+  public void setExample(String example) {
+    this.example = example;
+  }
+
+  public Parameter example(String example) {
+    this.example = example;
+    return this;
+  }
+
+  /**
    * returns the content property from a Parameter instance.
    *
    * @return Content content
@@ -333,12 +353,13 @@ public class Parameter {
         Objects.equals(this.allowReserved, parameter.allowReserved) &&
         Objects.equals(this.schema, parameter.schema) &&
         Objects.equals(this.examples, parameter.examples) &&
+        Objects.equals(this.example, parameter.example) &&
         Objects.equals(this.content, parameter.content);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, in, description, required, deprecated, allowEmptyValue, style, explode, allowReserved, schema, examples, content);
+    return Objects.hash(name, in, description, required, deprecated, allowEmptyValue, style, explode, allowReserved, schema, examples, example, content);
   }
 
 
@@ -373,6 +394,7 @@ public class Parameter {
     sb.append("    allowReserved: ").append(toIndentedString(allowReserved)).append("\n");
     sb.append("    schema: ").append(toIndentedString(schema)).append("\n");
     sb.append("    examples: ").append(toIndentedString(examples)).append("\n");
+    sb.append("    example: ").append(toIndentedString(example)).append("\n");
     sb.append("    content: ").append(toIndentedString(content)).append("\n");
     sb.append("}");
     return sb.toString();
