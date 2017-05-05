@@ -1,8 +1,8 @@
 package io.swagger.annotations.test.operations;
 
-import io.swagger.annotations.OASOperation;
-import io.swagger.annotations.media.OASSchema;
-import io.swagger.annotations.responses.OASResponse;
+import io.swagger.annotations.Operation;
+import io.swagger.annotations.media.Schema;
+import io.swagger.annotations.responses.ModelApiResponse;
 import io.swagger.annotations.test.AbstractAnnotationTest;
 import org.testng.annotations.Test;
 
@@ -119,13 +119,14 @@ public class MergedOperationTests extends AbstractAnnotationTest {
 
     static class MethodWithPartialAnnotation {
         @GET
-        @OASOperation(description = "returns a value")
-        public SimpleResponse getSimpleResponseWithParameters(
-                @OASSchema(
+        @Operation(description = "returns a value")
+        public SimpleResponse getSimpleResponseWithParameters (
+            @Schema(
                     description = "a GUID for the user in uuid-v4 format",
                     required = true,
                     format = "uuid",
                     pattern = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+
                 @QueryParam("id") String id,
                 @HeaderParam("x-authorized-by") String[] auth) {
             return null;
@@ -158,12 +159,11 @@ public class MergedOperationTests extends AbstractAnnotationTest {
 
     static class MethodWithRequestBody {
         @POST
-        @OASOperation(description = "receives a body",
-        responses = {
-            @OASResponse(
+        @Operation(description = "receives a body",
+        responses = @ModelApiResponse(
                 responseCode = "201",
                 description = "value successfully processed")
-        })
+        )
         public void addValue (InputValue input) {}
     }
 

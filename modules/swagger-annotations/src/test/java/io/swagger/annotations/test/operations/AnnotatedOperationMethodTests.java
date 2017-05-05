@@ -1,10 +1,10 @@
 package io.swagger.annotations.test.operations;
 
-import io.swagger.annotations.OASOperation;
-import io.swagger.annotations.media.OASContent;
-import io.swagger.annotations.media.OASExampleObject;
-import io.swagger.annotations.media.OASSchema;
-import io.swagger.annotations.responses.OASResponse;
+import io.swagger.annotations.Operation;
+import io.swagger.annotations.media.Content;
+import io.swagger.annotations.media.ExampleObject;
+import io.swagger.annotations.media.Schema;
+import io.swagger.annotations.responses.ModelApiResponse;
 import io.swagger.annotations.test.AbstractAnnotationTest;
 import org.testng.annotations.Test;
 
@@ -28,13 +28,13 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     }
 
     static class SimpleGetOperationTest {
-        @OASOperation(
+        @Operation(
             summary = "Simple get operation",
             description = "Defines a simple get operation with no inputs and a complex output object",
             operationId = "getWithNoParameters",
             deprecated = true,
             responses = {
-                @OASResponse(
+                @ModelApiResponse(
                     responseCode = "200",
                     description = "voila!")
             }
@@ -72,26 +72,26 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     }
 
     static class GetOperationWithResponsePayloadAndAlternateCodes {
-        @OASOperation(
+        @Operation(
             summary = "Simple get operation",
             description = "Defines a simple get operation with no inputs and a complex output object",
             operationId = "getWithPayloadResponse",
             deprecated = true,
             responses = {
-                @OASResponse(
+                @ModelApiResponse (
                     responseCode = "200",
                     description = "voila!",
-                    content = @OASContent(
+                    content = @Content(
                         mediaType = "application/json",
-                        schema = @OASSchema(implementation = SampleResponseSchema.class)
+                        schema = @Schema(implementation = SampleResponseSchema.class)
                     )
                 ),
-                @OASResponse(
+                @ModelApiResponse(
                     responseCode = "default",
                     description = "boo",
-                    content = @OASContent(
+                    content = @Content(
                         mediaType = "*/*",
-                        schema = @OASSchema(implementation = GenericError.class)
+                        schema = @Schema(implementation = GenericError.class)
                     )
                 )
             }
@@ -100,7 +100,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     }
 
     static class SampleResponseSchema {
-        @OASSchema(description = "the user id")
+        @Schema(description = "the user id")
         private String id;
     }
 
@@ -137,20 +137,20 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     }
 
     static class GetOperationWithResponseExamples {
-        @OASOperation(
+        @Operation(
             summary = "Simple get operation",
             description = "Defines a simple get operation with no inputs and a complex output object",
             operationId = "getWithPayloadResponse",
             deprecated = true,
             responses = {
-                @OASResponse(
+                @ModelApiResponse (
                     responseCode = "200",
                     description = "voila!",
-                    content = @OASContent(
+                    content = @Content(
                         mediaType = "application/json",
-                        schema = @OASSchema(implementation = SampleResponseSchema.class),
+                        schema = @Schema(implementation = SampleResponseSchema.class),
                         examples = {
-                            @OASExampleObject(
+                            @ExampleObject(
                                 name = "basic",
                                 summary = "shows a basic example",
                                 value = "{\"id\": 19877734}")

@@ -1,10 +1,10 @@
 package io.swagger.annotations.test.callbacks;
 
-import io.swagger.annotations.OASOperation;
-import io.swagger.annotations.OASParameter;
-import io.swagger.annotations.callbacks.OASCallback;
-import io.swagger.annotations.media.OASSchema;
-import io.swagger.annotations.responses.OASResponse;
+import io.swagger.annotations.Operation;
+import io.swagger.annotations.Parameter;
+import io.swagger.annotations.callbacks.Callback;
+import io.swagger.annotations.media.Schema;
+import io.swagger.annotations.responses.ModelApiResponse;
 import io.swagger.annotations.test.AbstractAnnotationTest;
 import org.testng.annotations.Test;
 
@@ -74,15 +74,15 @@ public class CallbackTest extends AbstractAnnotationTest {
     static class SimpleCallback {
         @Path("/test")
         @POST
-        @OASCallback(
+        @Callback(
             callbackUrlExpression = "http://$request.query.url",
             name = "subscription",
             operation =
-                @OASOperation(
+                @Operation(
                     method = "post",
                     description = "payload data will be sent ",
                     parameters = {
-                        @OASParameter(in = "path", name = "subscriptionId", required = true, schema = @OASSchema(
+                        @Parameter(in = "path", name = "subscriptionId", required = true, schema = @Schema(
                             type = "string",
                             format = "uuid",
                             description = "the generated UUID",
@@ -90,24 +90,24 @@ public class CallbackTest extends AbstractAnnotationTest {
                         ))
                     },
                     responses = {
-                        @OASResponse(
+                        @ModelApiResponse(
                             responseCode = "200",
                             description = "Return this code if the callback was received and processed successfully"
                         ),
-                        @OASResponse(
+                        @ModelApiResponse(
                             responseCode = "205",
                             description = "Return this code to unsubscribe from future data updates"
                         ),
-                        @OASResponse(
+                        @ModelApiResponse(
                             responseCode = "default",
                             description = "All other response codes will disable this callback subscription"
                         )
                     }))
-        @OASOperation(description = "subscribes a client to updates relevant to the requestor's account, as " +
+        @Operation(description = "subscribes a client to updates relevant to the requestor's account, as " +
                 "identified by the input token.  The supplied url will be used as the delivery address for response payloads")
-        public SubscriptionResponse subscribe (@OASSchema(required = true, description = "the authentication token " +
+        public SubscriptionResponse subscribe (@Schema(required = true, description = "the authentication token " +
                 "provided after initially authenticating to the application") @HeaderParam("x-auth-token") String token,
-                                               @OASSchema(required = true, description = "the URL to call with response " +
+                                               @Schema(required = true, description = "the URL to call with response " +
                                                        "data") @QueryParam("url") String url) {
             return null;
         }

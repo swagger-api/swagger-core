@@ -1,8 +1,8 @@
 package io.swagger.annotations.test.pathItems;
 
-import io.swagger.annotations.OASOperation;
-import io.swagger.annotations.links.OASLink;
-import io.swagger.annotations.links.OASLinkParameters;
+import io.swagger.annotations.Operation;
+import io.swagger.annotations.links.Link;
+import io.swagger.annotations.links.LinkParameters;
 import io.swagger.annotations.test.AbstractAnnotationTest;
 import org.testng.annotations.Test;
 
@@ -52,11 +52,11 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
 
     static class ClassWithOperationAndLinks {
         @Path("/users")
-        @OASOperation(links = {
-            @OASLink(
+        @Operation(links = {
+            @Link(
                 name = "address",
                 operationId = "getAddress",
-                parameters = @OASLinkParameters(
+                parameters = @LinkParameters(
                         name = "userId",
                         expression = "$request.query.userId"))
         })
@@ -103,8 +103,8 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
 
     static class ClassWithOperationAndLinkReferences {
         @Path("/users")
-        @OASOperation(links = {
-            @OASLink(
+        @Operation(links = {
+            @Link(
                 operationRef = "#/components/links/MyLink")
         })
         public User getUser(@QueryParam("userId") String userId) {
