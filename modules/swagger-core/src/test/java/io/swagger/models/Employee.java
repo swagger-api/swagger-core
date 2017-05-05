@@ -8,9 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,7 +22,7 @@ import java.util.Set;
 @JsonTypeName("employee")
 @JsonInclude(Include.NON_EMPTY)
 @JsonTypeInfo(include = As.WRAPPER_OBJECT, use = Id.NAME)
-@ApiModel(description = "Represents an Employee in the system", value = "employee")
+@OASSchema(description = "Represents an Employee in the system", title = "employee")
 public class Employee {
     private int id;
     private String firstName;
@@ -39,7 +37,9 @@ public class Employee {
 
     @XmlElement
     @JsonProperty
-    @ApiModelProperty(access = "public", notes = "Note, this is server generated.", value = "Read-only")
+    @OASSchema(
+//            access = "public",
+            description = "Note, this is server generated.", title = "Read-only")
     public int getId() {
         return id;
     }
@@ -50,7 +50,9 @@ public class Employee {
 
     @XmlElement
     @JsonProperty
-    @ApiModelProperty(access = "public", required = true)
+    @OASSchema(
+//            access = "public",
+            required = true)
     public String getFirstName() {
         return firstName;
     }
@@ -61,7 +63,7 @@ public class Employee {
 
     @XmlElement
     @JsonProperty
-    @ApiModelProperty(required = true)
+    @OASSchema(required = true)
     public String getLastName() {
         return lastName;
     }
@@ -72,7 +74,7 @@ public class Employee {
 
     @JsonProperty("department")
     @XmlElement(name = "department")
-    @ApiModelProperty(dataType = "io.swagger.models.Link", required = true, value = "The department this employee belongs to.")
+    @OASSchema(type = "io.swagger.models.Link", required = true, description = "The department this employee belongs to.")
     public Link<Department> getDept() {
         return dept;
     }
@@ -83,7 +85,7 @@ public class Employee {
 
     @JsonProperty("manager")
     @XmlElement(name = "manager")
-    @ApiModelProperty(dataType = "io.swagger.models.Link", required = true, value = "The employee this employee reports to.")
+    @OASSchema(type = "io.swagger.models.Link", required = true, description = "The employee this employee reports to.")
     public Link<Employee> getManager() {
         return manager;
     }
@@ -94,7 +96,7 @@ public class Employee {
 
     @JsonProperty("team")
     @XmlElement(name = "team")
-    @ApiModelProperty(required = true, value = "List of employees that report to this employee.")
+    @OASSchema(required = true, description = "List of employees that report to this employee.")
     public Set<Link<Employee>> getSubordinates() {
         return subordinates;
     }

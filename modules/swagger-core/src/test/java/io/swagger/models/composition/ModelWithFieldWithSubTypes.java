@@ -1,12 +1,11 @@
 package io.swagger.models.composition;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
-@ApiModel(description = "Class that has a field that is the AbstractBaseModelWithSubTypes")
+@OASSchema(description = "Class that has a field that is the AbstractBaseModelWithSubTypes")
 public class ModelWithFieldWithSubTypes {
 
-    @ApiModelProperty(value = "Contained field with sub-types")
+    @OASSchema(description = "Contained field with sub-types")
     AbstractBaseModelWithSubTypes z;
 
     public AbstractBaseModelWithSubTypes getZ() {

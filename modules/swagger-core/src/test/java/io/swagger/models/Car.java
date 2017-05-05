@@ -1,9 +1,9 @@
 package io.swagger.models;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
 public class Car {
-    @ApiModelProperty(readOnly = true)
+    @OASSchema(readOnly = true)
     public Integer getWheelCount() {
         return new Integer(4);
     }

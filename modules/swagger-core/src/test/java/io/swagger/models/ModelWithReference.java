@@ -1,12 +1,11 @@
 package io.swagger.models;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
-@ApiModel(reference = "http://swagger.io/schemas.json#/Models")
+@OASSchema(description = "http://swagger.io/schemas.json#/Models")
 public class ModelWithReference {
 
-    @ApiModelProperty(reference = "http://swagger.io/schemas.json#/Models/Description")
+    @OASSchema(description = "http://swagger.io/schemas.json#/Models/Description")
     public String getDescription() {
         return "Swagger";
     }

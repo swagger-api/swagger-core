@@ -1,14 +1,15 @@
 package io.swagger.models.composition;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
-@ApiModel(description = "Thing3", parent = AbstractBaseModelWithoutFields.class)
+@OASSchema(description = "Thing3"
+//        , parent = AbstractBaseModelWithoutFields.class
+)
 public class Thing3 extends AbstractBaseModelWithoutFields {
 
-    @ApiModelProperty(value = "Additional field a")
+    @OASSchema(description = "Additional field a")
     String a;
-    @ApiModelProperty(value = "Additional field a")
+    @OASSchema(description = "Additional field a")
     int x;
 
     public String getA() {

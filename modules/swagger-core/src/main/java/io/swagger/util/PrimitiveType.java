@@ -1,7 +1,16 @@
 package io.swagger.util;
 
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import io.swagger.models.properties.*;
+import io.swagger.models.media.BinarySchema;
+import io.swagger.models.media.ByteArraySchema;
+import io.swagger.models.media.DateSchema;
+import io.swagger.models.media.DateTimeSchema;
+import io.swagger.models.media.FileSchema;
+import io.swagger.models.media.IntegerSchema;
+import io.swagger.models.media.NumberSchema;
+import io.swagger.models.media.Schema;
+import io.swagger.models.media.StringSchema;
+import io.swagger.models.media.UUIDSchema;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -14,157 +23,105 @@ import java.util.TreeMap;
  * of classes into Swagger primitive types.
  */
 public enum PrimitiveType {
-    /**
-     * Boolean.
-     */
-    BOOLEAN(Boolean.class, BooleanProperty.TYPE) {
-        @Override
-        public BooleanProperty createProperty() {
-            return new BooleanProperty();
+    STRING(String.class, "string") {
+        public Schema createProperty() {
+            return new StringSchema();
         }
     },
-    /**
-     * String.
-     */
-    STRING(String.class, StringProperty.TYPE) {
+    BOOLEAN(Boolean.class, "boolean") {
         @Override
-        public StringProperty createProperty() {
-            return new StringProperty();
+        public Schema createProperty() {
+            return new Schema().type("boolean");
         }
     },
-    /**
-     * Byte.
-     */
     BYTE(Byte.class, "byte") {
         @Override
-        public ByteArrayProperty createProperty() {
-            return new ByteArrayProperty();
+        public ByteArraySchema createProperty() {
+            return new ByteArraySchema();
         }
     },
-    /**
-     * Binary
-     */
     BINARY(Byte.class, "binary") {
         @Override
-        public BinaryProperty createProperty() {
-            return new BinaryProperty();
+        public BinarySchema createProperty() {
+            return new BinarySchema();
         }
     },
-    /**
-     * URI string.
-     */
     URI(java.net.URI.class) {
         @Override
-        public StringProperty createProperty() {
-            return new StringProperty(StringProperty.Format.URI);
+        public Schema createProperty() {
+            return new StringSchema().format("uri");
         }
     },
-    /**
-     * URL string.
-     */
     URL(java.net.URL.class) {
         @Override
-        public StringProperty createProperty() {
-            return new StringProperty(StringProperty.Format.URL);
+        public Schema createProperty() {
+            return new StringSchema().format("url");
         }
     },
-    /**
-     * UUID string.
-     */
     UUID(java.util.UUID.class) {
         @Override
-        public UUIDProperty createProperty() {
-            return new UUIDProperty();
+        public UUIDSchema createProperty() {
+            return new UUIDSchema();
         }
     },
-    /**
-     * 32-bit integer.
-     */
-    INT(Integer.class, IntegerProperty.TYPE) {
+    INT(Integer.class, "integer") {
         @Override
-        public IntegerProperty createProperty() {
-            return new IntegerProperty();
+        public IntegerSchema createProperty() {
+            return new IntegerSchema();
         }
     },
-    /**
-     * 64-bit integer.
-     */
     LONG(Long.class, "long") {
         @Override
-        public LongProperty createProperty() {
-            return new LongProperty();
+        public Schema createProperty() {
+            return new IntegerSchema().format("int64");
         }
     },
-    /**
-     * 32-bit decimal.
-     */
     FLOAT(Float.class, "float") {
         @Override
-        public FloatProperty createProperty() {
-            return new FloatProperty();
+        public Schema createProperty() {
+            return new NumberSchema().format("float");
         }
     },
-    /**
-     * 64-bit decimal.
-     */
     DOUBLE(Double.class, "double") {
         @Override
-        public DoubleProperty createProperty() {
-            return new DoubleProperty();
+        public Schema createProperty() {
+            return new NumberSchema().format("double");
         }
     },
-    /**
-     * Generic integer number without specific format.
-     */
     INTEGER(java.math.BigInteger.class) {
         @Override
-        public BaseIntegerProperty createProperty() {
-            return new BaseIntegerProperty();
+        public Schema createProperty() {
+            return new NumberSchema();
         }
     },
-    /**
-     * Generic decimal number without specific format.
-     */
     DECIMAL(java.math.BigDecimal.class, "number") {
         @Override
-        public DecimalProperty createProperty() {
-            return new DecimalProperty();
+        public Schema createProperty() {
+            return new NumberSchema();
         }
     },
-    /**
-     * Date.
-     */
     DATE(DateStub.class, "date") {
         @Override
-        public DateProperty createProperty() {
-            return new DateProperty();
+        public DateSchema createProperty() {
+            return new DateSchema();
         }
     },
-    /**
-     * Date and time.
-     */
-    DATE_TIME(java.util.Date.class, "dateTime") {
+    DATE_TIME(java.util.Date.class, "date-time") {
         @Override
-        public DateTimeProperty createProperty() {
-            return new DateTimeProperty();
+        public DateTimeSchema createProperty() {
+            return new DateTimeSchema();
         }
     },
-    /**
-     * Native Java file.
-     */
     FILE(java.io.File.class, "file") {
         @Override
-        public FileProperty createProperty() {
-            return new FileProperty();
+        public FileSchema createProperty() {
+            return new FileSchema();
         }
     },
-    /**
-     * Generic object.
-     */
     OBJECT(Object.class) {
         @Override
-        public ObjectProperty createProperty() {
-            return new ObjectProperty();
+        public Schema createProperty() {
+            return new Schema();
         }
     };
 
@@ -185,7 +142,7 @@ public enum PrimitiveType {
 
     static {
         final Map<Class<?>, PrimitiveType> keyClasses = new HashMap<Class<?>, PrimitiveType>();
-        addKeys(keyClasses, BOOLEAN, Boolean.class, Boolean.TYPE);
+//        addKeys(keyClasses, BOOLEAN, Boolean.class, Boolean.TYPE);
         addKeys(keyClasses, STRING, String.class, Character.class, Character.TYPE);
         addKeys(keyClasses, BYTE, Byte.class, Byte.TYPE);
         addKeys(keyClasses, URL, java.net.URL.class);
@@ -212,7 +169,7 @@ public enum PrimitiveType {
         addKeys(externalClasses, DATE_TIME, "org.joda.time.DateTime", "org.joda.time.ReadableDateTime",
                 "javax.xml.datatype.XMLGregorianCalendar", "java.time.LocalDateTime", "java.time.ZonedDateTime",
                 "java.time.OffsetDateTime");
-        addKeys(externalClasses, LONG, "java.time.Instant");                
+        addKeys(externalClasses, LONG, "java.time.Instant");
         EXTERNAL_CLASSES = Collections.unmodifiableMap(externalClasses);
 
         final Map<String, PrimitiveType> names = new TreeMap<String, PrimitiveType>(String.CASE_INSENSITIVE_ORDER);
@@ -223,7 +180,7 @@ public enum PrimitiveType {
             }
         }
         addKeys(names, INT, "int");
-        addKeys(names, OBJECT, ObjectProperty.TYPE);
+        addKeys(names, OBJECT, "object");
         NAMES = Collections.unmodifiableMap(names);
     }
 
@@ -265,12 +222,12 @@ public enum PrimitiveType {
         return fromName;
     }
 
-    public static Property createProperty(Type type) {
+    public static Schema createProperty(Type type) {
         final PrimitiveType item = fromType(type);
         return item == null ? null : item.createProperty();
     }
 
-    public static Property createProperty(String name) {
+    public static Schema createProperty(String name) {
         final PrimitiveType item = fromName(name);
         return item == null ? null : item.createProperty();
     }
@@ -288,7 +245,7 @@ public enum PrimitiveType {
         return commonName;
     }
 
-    public abstract Property createProperty();
+    public abstract Schema createProperty();
 
     private static <K> void addKeys(Map<K, PrimitiveType> map, PrimitiveType type, K... keys) {
         for (K key : keys) {

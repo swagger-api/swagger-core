@@ -1,7 +1,6 @@
 package io.swagger.converter;
 
-import io.swagger.models.Model;
-import io.swagger.models.properties.Property;
+import io.swagger.models.media.Schema;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -16,10 +15,10 @@ public interface ModelConverterContext {
      * @param name  the name of the model
      * @param model the Model
      */
-    public void defineModel(String name, Model model);
+    public void defineModel(String name, Schema model);
 
     /**
-     * needs to be called whenever a Model is defined which can be referenced from another
+     * needs to be called whenever a Schema is defined which can be referenced from another
      * Model or Property
      *
      * @param name     the name of the model
@@ -27,19 +26,15 @@ public interface ModelConverterContext {
      * @param type     the Type
      * @param prevName the (optional) previous name
      */
-    public void defineModel(String name, Model model, Type type, String prevName);
+    public void defineModel(String name, Schema model, Type type, String prevName);
 
     /**
-     * @param type the property Class
-     * @return a property representation of the Class. Any referenced models will be defined already.
-     */
-    public Property resolveProperty(Type type, Annotation[] annotations);
-
-    /**
-     * @param type The Model Class
+     * @param type The Schema
      * @return a Model representation of the Class. Any referenced models will be defined already.
      */
-    public Model resolve(Type type);
+    public Schema resolve(Type type);
+
+    public Schema resolve(Type type, Annotation[] annotations);
 
     /**
      * @return an Iterator of ModelConverters.  This iterator is not reused

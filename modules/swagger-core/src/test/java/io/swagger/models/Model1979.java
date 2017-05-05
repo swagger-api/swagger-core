@@ -1,8 +1,9 @@
 package io.swagger.models;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
 public class Model1979 {
-    @ApiModelProperty(allowEmptyValue = true)
+    // TODO
+    @OASSchema//(allowEmptyValue = true)
     public String id;
 }

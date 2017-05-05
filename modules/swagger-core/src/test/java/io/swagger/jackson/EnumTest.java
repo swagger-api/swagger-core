@@ -1,22 +1,21 @@
 package io.swagger.jackson;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 import io.swagger.converter.ModelConverterContextImpl;
-import io.swagger.models.Model;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.StringProperty;
+import io.swagger.models.media.Schema;
+import io.swagger.models.media.StringSchema;
 import org.testng.annotations.Test;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 public class EnumTest extends SwaggerTestBase {
 
@@ -25,13 +24,13 @@ public class EnumTest extends SwaggerTestBase {
         final ModelResolver modelResolver = new ModelResolver(mapper());
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
-        final Model model = context.resolve(Currency.class);
+        final Schema model = context.resolve(Currency.class);
         assertNull(model);
 
-        final Property property = context.resolveProperty(Currency.class, new Annotation[]{});
+        final Schema property = context.resolve(Currency.class, new Annotation[]{});
         assertNotNull(property);
-        assertTrue(property instanceof StringProperty);
-        final StringProperty strProperty = (StringProperty) property;
+        assertTrue(property instanceof StringSchema);
+        final StringSchema strProperty = (StringSchema) property;
         assertNotNull(strProperty.getEnum());
         final Collection<String> values =
                 new ArrayList<String>(Collections2.transform(Arrays.asList(Currency.values()), Functions.toStringFunction()));

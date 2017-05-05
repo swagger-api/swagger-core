@@ -1,12 +1,12 @@
 package io.swagger.models;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
 public class ReadOnlyModel {
   private Integer id;
   private Integer readWriteId;
 
-  @ApiModelProperty(readOnly = true)
+  @OASSchema(readOnly = true)
   public Integer getId() {
     return id;
   }
@@ -14,7 +14,7 @@ public class ReadOnlyModel {
     this.id = id;
   }
 
-  @ApiModelProperty(readOnly = false)
+  @OASSchema(readOnly = false)
   public Integer getReadWriteId() {
     return readWriteId;
   }

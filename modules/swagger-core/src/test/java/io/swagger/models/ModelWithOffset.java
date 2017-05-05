@@ -1,10 +1,10 @@
 package io.swagger.models;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
 public class ModelWithOffset {
     public String id;
 
-    @ApiModelProperty(dataType = "java.time.OffsetDateTime")
+    @OASSchema(type = "java.time.OffsetDateTime")
     public String offset;
 }

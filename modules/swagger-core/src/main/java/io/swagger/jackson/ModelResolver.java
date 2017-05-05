@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -19,26 +18,15 @@ import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.collect.Iterables;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
-import io.swagger.models.ComposedModel;
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.RefModel;
-import io.swagger.models.Xml;
-import io.swagger.models.properties.AbstractNumericProperty;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.IntegerProperty;
-import io.swagger.models.properties.MapProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.PropertyBuilder;
-import io.swagger.models.properties.RefProperty;
-import io.swagger.models.properties.StringProperty;
-import io.swagger.models.properties.UUIDProperty;
-import io.swagger.util.AllowableValues;
-import io.swagger.util.AllowableValuesUtils;
+import io.swagger.models.media.ArraySchema;
+import io.swagger.models.media.IntegerSchema;
+import io.swagger.models.media.NumberSchema;
+import io.swagger.models.media.Schema;
+import io.swagger.models.media.StringSchema;
+import io.swagger.models.media.UUIDSchema;
 import io.swagger.util.PrimitiveType;
 import io.swagger.util.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +48,6 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -99,7 +86,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     @Override
-    public Property resolveProperty(Type type,
+    public Schema resolve(Type type,
             ModelConverterContext context,
             Annotation[] annotations,
             Iterator<ModelConverter> next) {
@@ -110,35 +97,35 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return resolveProperty(_mapper.constructType(type), context, annotations, next);
     }
 
-    public Property resolveProperty(JavaType propType,
+    public Schema resolveProperty(JavaType propType,
             ModelConverterContext context,
             Annotation[] annotations,
             Iterator<ModelConverter> next) {
         LOGGER.debug("resolveProperty {}", propType);
 
-        Property property = null;
+        Schema property = null;
         if (propType.isContainerType()) {
             JavaType keyType = propType.getKeyType();
             JavaType valueType = propType.getContentType();
             if (keyType != null && valueType != null) {
-                property = new MapProperty().additionalProperties(context.resolveProperty(valueType, new Annotation[]{}));
+                property = new Schema().additionalProperties(context.resolve(valueType, new Annotation[]{}));
             } else if (valueType != null) {
-                Property items = context.resolveProperty(valueType, new Annotation[]{});
+                Schema items = context.resolve(valueType, new Annotation[]{});
                 // If property is XmlElement annotated, then use the name provided by annotation | https://github.com/swagger-api/swagger-core/issues/2047
                 if(annotations != null && annotations.length > 0) {
                     for (Annotation annotation : annotations) {
                         if(annotation instanceof XmlElement) {
                             XmlElement xmlElement =   (XmlElement)annotation;
                             if(xmlElement != null && xmlElement.name() != null && !"".equals(xmlElement.name()) && !"##default".equals(xmlElement.name())) {
-                                Xml xml = items.getXml() != null ? items.getXml() : new Xml();
-                                xml.setName(xmlElement.name());
-                                items.setXml(xml);
+//                                Xml xml = items.getXml() != null ? items.getXml() : new Xml();
+//                                xml.setName(xmlElement.name());
+//                                items.setXml(xml);
                             }
                         }
                     }
                 }
-                ArrayProperty arrayProperty =
-                        new ArrayProperty().items(items);
+                Schema arrayProperty =
+                        new ArraySchema().items(items);
                 if (_isSetType(propType.getRawClass())) {
                     arrayProperty.setUniqueItems(true);
                 }
@@ -150,19 +137,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         if (property == null) {
             if (propType.isEnumType()) {
-                property = new StringProperty();
+                property = new StringSchema();
                 _addEnumProps(propType.getRawClass(), property);
             } else if (_isOptionalType(propType)) {
-                property = context.resolveProperty(propType.containedType(0), null);
+                property = context.resolve(propType.containedType(0), null);
             } else {
                 // complex type
-                Model innerModel = context.resolve(propType);
-                if (innerModel instanceof ComposedModel) {
-                    innerModel = ((ComposedModel) innerModel).getChild();
-                }
-                if (innerModel instanceof ModelImpl) {
-                    ModelImpl mi = (ModelImpl) innerModel;
-                    property = new RefProperty(StringUtils.isNotEmpty(mi.getReference()) ? mi.getReference() : mi.getName());
+                Schema innerModel = context.resolve(propType);
+                // TODO
+//                if (innerModel instanceof ComposedModel) {
+//                    innerModel = ((ComposedModel) innerModel).getChild();
+//                }
+                if (innerModel instanceof Schema) {
+                    Schema mi = (Schema) innerModel;
+                    property = new Schema().ref(StringUtils.isNotEmpty(mi.getRef()) ? mi.getRef() : mi.getTitle());
                 }
             }
         }
@@ -175,7 +163,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     @Override
-    public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
+    public Schema resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
         if (this.shouldIgnoreClass(type)) {
             return null;
         }
@@ -183,7 +171,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return resolve(_mapper.constructType(type), context, next);
     }
 
-    protected void _addEnumProps(Class<?> propClass, Property property) {
+    protected void _addEnumProps(Class<?> propClass, Schema property) {
         final boolean useIndex = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
         final boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
 
@@ -198,14 +186,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             } else {
                 n = _intr.findEnumValue(en);
             }
-            if (property instanceof StringProperty) {
-                StringProperty sp = (StringProperty) property;
-                sp._enum(n);
+            if (property instanceof StringSchema) {
+                StringSchema sp = (StringSchema) property;
+                sp.addEnumItem(n);
             }
         }
     }
 
-    public Model resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
+    public Schema resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
         if (type.isEnumType() || PrimitiveType.fromType(type) != null) {
             // We don't build models for primitive types
             return null;
@@ -216,7 +204,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         String name = _typeName(type, beanDesc);
 
         if ("Object".equals(name)) {
-            return new ModelImpl();
+            return new Schema();
         }
 
         /**
@@ -231,8 +219,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          * implemented later in this method (See "Preventing parent/child hierarchy creation loops - Comment 2") to
          * prevent such
          */
-        Model resolvedModel = context.resolve(type.getRawClass());
+        Schema resolvedModel = context.resolve(type.getRawClass());
         if (resolvedModel != null) {
+            // TODO
+            /*
             if (!(resolvedModel instanceof ModelImpl || resolvedModel instanceof ComposedModel)
                     || (resolvedModel instanceof ModelImpl && ((ModelImpl) resolvedModel).getName().equals(name))) {
                 return resolvedModel;
@@ -243,9 +233,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     return resolvedModel;
                 }
             }
+            */
+            return resolvedModel;
         }
 
-        final ModelImpl model = new ModelImpl().type(ModelImpl.OBJECT).name(name)
+        final Schema model = new Schema()
+                .type("object")
+                .title(name)
                 .description(_description(beanDesc.getClassInfo()));
 
         if (!type.isContainerType()) {
@@ -262,11 +256,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         XmlRootElement rootAnnotation = beanDesc.getClassAnnotations().get(XmlRootElement.class);
         if (rootAnnotation != null && !"".equals(rootAnnotation.name()) && !"##default".equals(rootAnnotation.name())) {
             LOGGER.debug("{}", rootAnnotation);
+            /*
             Xml xml = new Xml().name(rootAnnotation.name());
             if (rootAnnotation.namespace() != null && !"".equals(rootAnnotation.namespace()) && !"##default".equals(rootAnnotation.namespace())) {
                 xml.namespace(rootAnnotation.namespace());
             }
             model.xml(xml);
+            */
         }
         final XmlAccessorType xmlAccessorTypeAnnotation = beanDesc.getClassAnnotations().get(XmlAccessorType.class);
 
@@ -276,7 +272,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (ignoreProperties != null) {
             propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
         }
-
+/*
         final ApiModel apiModel = beanDesc.getClassAnnotations().get(ApiModel.class);
         String disc = (apiModel == null) ? "" : apiModel.discriminator();
 
@@ -294,10 +290,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (!disc.isEmpty()) {
             model.setDiscriminator(disc);
         }
-
-        List<Property> props = new ArrayList<Property>();
+*/
+        List<Schema> props = new ArrayList<Schema>();
         for (BeanPropertyDefinition propDef : beanDesc.findProperties()) {
-            Property property = null;
+            Schema property = null;
             String propName = propDef.getName();
             Annotation[] annotations = null;
 
@@ -361,18 +357,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 annotations = annotationList.toArray(new Annotation[annotationList.size()]);
 
-                ApiModelProperty mp = member.getAnnotation(ApiModelProperty.class);
+                OASSchema mp = member.getAnnotation(OASSchema.class);
 
                 if (mp != null && mp.readOnly()) {
                     isReadOnly = mp.readOnly();
                 }
 
-                if (mp != null && mp.allowEmptyValue()) {
-                    allowEmptyValue = mp.allowEmptyValue();
-                }
-                else {
-                    allowEmptyValue = null;
-                }
+//                if (mp != null && mp.allowEmptyValue()) {
+//                    allowEmptyValue = mp.allowEmptyValue();
+//                }
+//                else {
+//                    allowEmptyValue = null;
+//                }
 
                 JavaType propType = member.getType(beanDesc.bindingsForBeanType());
 
@@ -381,44 +377,47 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     propName = mp.name();
                 }
 
-                if (mp != null && !mp.dataType().isEmpty()) {
-                    String or = mp.dataType();
+                if (mp != null && !mp.type().isEmpty()) {
+                    String or = mp.type();
 
                     JavaType innerJavaType = null;
                     LOGGER.debug("overriding datatype from {} to {}", propType, or);
 
                     if (or.toLowerCase().startsWith("list[")) {
                         String innerType = or.substring(5, or.length() - 1);
-                        ArrayProperty p = new ArrayProperty();
-                        Property primitiveProperty = PrimitiveType.createProperty(innerType);
-                        if (primitiveProperty != null) {
-                            p.setItems(primitiveProperty);
-                        } else {
-                            innerJavaType = getInnerType(innerType);
-                            p.setItems(context.resolveProperty(innerJavaType, annotations));
-                        }
-                        property = p;
+                        // TODO
+
+//                        ArrayProperty p = new ArrayProperty();
+//                        Property primitiveProperty = PrimitiveType.createProperty(innerType);
+//                        if (primitiveProperty != null) {
+//                            p.setItems(primitiveProperty);
+//                        } else {
+//                            innerJavaType = getInnerType(innerType);
+//                            p.setItems(context.resolveProperty(innerJavaType, annotations));
+//                        }
+//                        property = p;
                     } else if (or.toLowerCase().startsWith("map[")) {
-                        int pos = or.indexOf(",");
-                        if (pos > 0) {
-                            String innerType = or.substring(pos + 1, or.length() - 1);
-                            MapProperty p = new MapProperty();
-                            Property primitiveProperty = PrimitiveType.createProperty(innerType);
-                            if (primitiveProperty != null) {
-                                p.setAdditionalProperties(primitiveProperty);
-                            } else {
-                                innerJavaType = getInnerType(innerType);
-                                p.setAdditionalProperties(context.resolveProperty(innerJavaType, annotations));
-                            }
-                            property = p;
-                        }
+                        // TODO
+//                        int pos = or.indexOf(",");
+//                        if (pos > 0) {
+//                            String innerType = or.substring(pos + 1, or.length() - 1);
+//                            MapProperty p = new MapProperty();
+//                            Property primitiveProperty = PrimitiveType.createProperty(innerType);
+//                            if (primitiveProperty != null) {
+//                                p.setAdditionalProperties(primitiveProperty);
+//                            } else {
+//                                innerJavaType = getInnerType(innerType);
+//                                p.setAdditionalProperties(context.resolveProperty(innerJavaType, annotations));
+//                            }
+//                            property = p;
+//                        }
                     } else {
-                        Property primitiveProperty = PrimitiveType.createProperty(or);
+                        Schema primitiveProperty = PrimitiveType.createProperty(or);
                         if (primitiveProperty != null) {
                             property = primitiveProperty;
                         } else {
                             innerJavaType = getInnerType(or);
-                            property = context.resolveProperty(innerJavaType, annotations);
+                            property = context.resolve(innerJavaType, annotations);
                         }
                     }
                     if (innerJavaType != null) {
@@ -428,33 +427,34 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 // no property from override, construct from propType
                 if (property == null) {
-                    if (mp != null && StringUtils.isNotEmpty(mp.reference())) {
-                        property = new RefProperty(mp.reference());
+                    if (mp != null && StringUtils.isNotEmpty(mp.ref())) {
+                        property = new Schema().ref(mp.ref());
                     } else if (member.getAnnotation(JsonIdentityInfo.class) != null) {
-                        property = GeneratorWrapper.processJsonIdentity(propType, context, _mapper,
-                                member.getAnnotation(JsonIdentityInfo.class),
-                                member.getAnnotation(JsonIdentityReference.class));
+                        // TODO
+//                        property = GeneratorWrapper.processJsonIdentity(propType, context, _mapper,
+//                                member.getAnnotation(JsonIdentityInfo.class),
+//                                member.getAnnotation(JsonIdentityReference.class));
                     }
                     if (property == null) {
                         JsonUnwrapped uw = member.getAnnotation(JsonUnwrapped.class);
                         if (uw != null && uw.enabled()) {
                             handleUnwrapped(props, context.resolve(propType), uw.prefix(), uw.suffix());
                         } else {
-                            property = context.resolveProperty(propType, annotations);
+                            property = context.resolve(propType, annotations);
                         }
                     }
                 }
 
                 if (property != null) {
-                    property.setName(propName);
+                    property.setTitle(propName);
 
-                    if (mp != null && !mp.access().isEmpty()) {
-                        property.setAccess(mp.access());
-                    }
+//                    if (mp != null && !mp.access().isEmpty()) {
+//                        property.setAccess(mp.access());
+//                    }
 
                     Boolean required = md.getRequired();
                     if (required != null) {
-                        property.setRequired(required);
+//                        property.setRequired(required);
                     }
 
                     String description = _intr.findPropertyDescription(member);
@@ -464,13 +464,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                     Integer index = _intr.findPropertyIndex(member);
                     if (index != null) {
-                        property.setPosition(index);
+//                        property.setPosition(index);
                     }
-                    property.setDefault(_findDefaultValue(member));
+//                    property.setDefault(_findDefaultValue(member));
                     property.setExample(_findExampleValue(member));
                     property.setReadOnly(_findReadOnly(member));
                     if(allowEmptyValue != null) {
-                        property.setAllowEmptyValue(allowEmptyValue);
+//                        property.setAllowEmptyValue(allowEmptyValue);
                     }
 
                     if (property.getReadOnly() == null) {
@@ -479,11 +479,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         }
                     }
                     if (mp != null) {
-                        final AllowableValues allowableValues = AllowableValuesUtils.create(mp.allowableValues());
-                        if (allowableValues != null) {
-                            final Map<PropertyBuilder.PropertyId, Object> args = allowableValues.asPropertyArguments();
-                            PropertyBuilder.merge(property, args);
-                        }
+//                        final AllowableValues allowableValues = AllowableValuesUtils.create(mp.allowableValues());
+//                        if (allowableValues != null) {
+//                            final Map<PropertyBuilder.PropertyId, Object> args = allowableValues.asPropertyArguments();
+//                            PropertyBuilder.merge(property, args);
+//                        }
                     }
                     JAXBAnnotationsHelper.apply(member, property);
                     applyBeanValidatorAnnotations(property, annotations);
@@ -492,11 +492,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        Collections.sort(props, getPropertyComparator());
+//        Collections.sort(props, getPropertyComparator());
 
-        Map<String, Property> modelProps = new LinkedHashMap<String, Property>();
-        for (Property prop : props) {
-            modelProps.put(prop.getName(), prop);
+        Map<String, Schema> modelProps = new LinkedHashMap<String, Schema>();
+        for (Schema prop : props) {
+            modelProps.put(prop.getTitle(), prop);
         }
         model.setProperties(modelProps);
 
@@ -523,21 +523,17 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          * of properties is available to filter from any subtypes
          **/
         if (!resolveSubtypes(model, beanDesc, context)) {
-            model.setDiscriminator(null);
+//            model.setDiscriminator(null);
         }
-
+/*
         if (apiModel != null) {
-            /**
              * Check if the @ApiModel annotation has a parent property containing a value that should not be ignored
-             */
             Class<?> parentClass = apiModel.parent();
             if (parentClass != null && !parentClass.equals(Void.class) && !this.shouldIgnoreClass(parentClass)) {
                 JavaType parentType = _mapper.constructType(parentClass);
                 final BeanDescription parentBeanDesc = _mapper.getSerializationConfig().introspect(parentType);
 
-                /**
-                 * Retrieve all the sub-types of the parent class and ensure that the current type is one of those types
-                 */
+//                 * Retrieve all the sub-types of the parent class and ensure that the current type is one of those types
                 boolean currentTypeIsParentSubType = false;
                 List<NamedType> subTypes = _intr.findSubtypes(parentBeanDesc.getClassInfo());
                 if (subTypes != null) {
@@ -549,10 +545,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     }
                 }
 
-                /**
-                 Retrieve the subTypes from the parent class @ApiModel annotation and ensure that the current type
-                 is one of those types.
-                 */
+//                 Retrieve the subTypes from the parent class @ApiModel annotation and ensure that the current type
+//                 is one of those types.
                 boolean currentTypeIsParentApiModelSubType = false;
                 final ApiModel parentApiModel = parentBeanDesc.getClassAnnotations().get(ApiModel.class);
                 if (parentApiModel != null) {
@@ -567,24 +561,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     }
                 }
 
-                /**
-                 If the current type is a sub-type of the parent class and is listed in the subTypes property of the
-                 parent class @ApiModel annotation, then do the following:
-                 1. Resolve the model for the parent class. This will result in the parent model being created, and the
-                 current child model being updated to be a ComposedModel referencing the parent.
-                 2. Resolve and return the current child type again. This will return the new ComposedModel from the
-                 context, which was created in step 1 above. Admittedly, there is a small chance that this may result
-                 in a stack overflow, if the context does not correctly cache the model for the current type. However,
-                 as context caching is assumed elsewhere to avoid cyclical model creation, this was deemed to be
-                 sufficient.
-                 */
+
+//                 If the current type is a sub-type of the parent class and is listed in the subTypes property of the
+//                 parent class @ApiModel annotation, then do the following:
+//                 1. Resolve the model for the parent class. This will result in the parent model being created, and the
+//                 current child model being updated to be a ComposedModel referencing the parent.
+//                 2. Resolve and return the current child type again. This will return the new ComposedModel from the
+//                 context, which was created in step 1 above. Admittedly, there is a small chance that this may result
+//                 in a stack overflow, if the context does not correctly cache the model for the current type. However,
+//                 as context caching is assumed elsewhere to avoid cyclical model creation, this was deemed to be
+//                 sufficient.
+
                 if (currentTypeIsParentSubType && currentTypeIsParentApiModelSubType) {
                     context.resolve(parentClass);
                     return context.resolve(currentType);
                 }
             }
         }
-
+        */
         return model;
     }
 
@@ -603,7 +597,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return false;
     }
 
-    private void handleUnwrapped(List<Property> props, Model innerModel, String prefix, String suffix) {
+    private void handleUnwrapped(List<Schema> props, Schema innerModel, String prefix, String suffix) {
         if (StringUtils.isBlank(suffix) && StringUtils.isBlank(prefix)) {
             props.addAll(innerModel.getProperties().values());
         } else {
@@ -613,8 +607,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (suffix == null) {
                 suffix = "";
             }
-            for (Property prop : innerModel.getProperties().values()) {
-                props.add(prop.rename(prefix + prop.getName() + suffix));
+            for (Schema prop : innerModel.getProperties().values()) {
+                // TODO
+//                props.add(prop.rename(prefix + prop.getName() + suffix));
             }
         }
     }
@@ -622,7 +617,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     private enum GeneratorWrapper {
         PROPERTY(ObjectIdGenerators.PropertyGenerator.class) {
             @Override
-            protected Property processAsProperty(String propertyName, JavaType type,
+            protected Schema processAsProperty(String propertyName, JavaType type,
                     ModelConverterContext context, ObjectMapper mapper) {
                 /*
                  * When generator = ObjectIdGenerators.PropertyGenerator.class and
@@ -633,7 +628,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
 
             @Override
-            protected Property processAsId(String propertyName, JavaType type,
+            protected Schema processAsId(String propertyName, JavaType type,
                     ModelConverterContext context, ObjectMapper mapper) {
                 final BeanDescription beanDesc = mapper.getSerializationConfig().introspect(type);
                 for (BeanPropertyDefinition def : beanDesc.findProperties()) {
@@ -644,7 +639,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         if (PrimitiveType.fromType(propType) != null) {
                             return PrimitiveType.createProperty(propType);
                         } else {
-                            return context.resolveProperty(propType,
+                            return context.resolve(propType,
                                     Iterables.toArray(propMember.annotations(), Annotation.class));
                         }
                     }
@@ -654,42 +649,42 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         },
         INT(ObjectIdGenerators.IntSequenceGenerator.class) {
             @Override
-            protected Property processAsProperty(String propertyName, JavaType type,
+            protected Schema processAsProperty(String propertyName, JavaType type,
                     ModelConverterContext context, ObjectMapper mapper) {
-                Property id = new IntegerProperty();
+                Schema id = new IntegerSchema();
                 return process(id, propertyName, type, context);
             }
 
             @Override
-            protected Property processAsId(String propertyName, JavaType type,
+            protected Schema processAsId(String propertyName, JavaType type,
                     ModelConverterContext context, ObjectMapper mapper) {
-                return new IntegerProperty();
+                return new IntegerSchema();
             }
         },
         UUID(ObjectIdGenerators.UUIDGenerator.class) {
             @Override
-            protected Property processAsProperty(String propertyName, JavaType type,
+            protected Schema processAsProperty(String propertyName, JavaType type,
                     ModelConverterContext context, ObjectMapper mapper) {
-                Property id = new UUIDProperty();
+                Schema id = new UUIDSchema();
                 return process(id, propertyName, type, context);
             }
 
             @Override
-            protected Property processAsId(String propertyName, JavaType type,
+            protected Schema processAsId(String propertyName, JavaType type,
                     ModelConverterContext context, ObjectMapper mapper) {
-                return new UUIDProperty();
+                return new UUIDSchema();
             }
         },
         NONE(ObjectIdGenerators.None.class) {
             // When generator = ObjectIdGenerators.None.class property should be processed as normal property.
             @Override
-            protected Property processAsProperty(String propertyName, JavaType type,
+            protected Schema processAsProperty(String propertyName, JavaType type,
                     ModelConverterContext context, ObjectMapper mapper) {
                 return null;
             }
 
             @Override
-            protected Property processAsId(String propertyName, JavaType type,
+            protected Schema processAsId(String propertyName, JavaType type,
                     ModelConverterContext context, ObjectMapper mapper) {
                 return null;
             }
@@ -701,13 +696,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             this.generator = generator;
         }
 
-        protected abstract Property processAsProperty(String propertyName, JavaType type,
+        protected abstract Schema processAsProperty(String propertyName, JavaType type,
                 ModelConverterContext context, ObjectMapper mapper);
 
-        protected abstract Property processAsId(String propertyName, JavaType type,
+        protected abstract Schema processAsId(String propertyName, JavaType type,
                 ModelConverterContext context, ObjectMapper mapper);
 
-        public static Property processJsonIdentity(JavaType type, ModelConverterContext context,
+        public static Schema processJsonIdentity(JavaType type, ModelConverterContext context,
                 ObjectMapper mapper, JsonIdentityInfo identityInfo,
                 JsonIdentityReference identityReference) {
             final GeneratorWrapper wrapper = identityInfo != null ? getWrapper(identityInfo.generator()) : null;
@@ -730,24 +725,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return null;
         }
 
-        private static Property process(Property id, String propertyName, JavaType type,
+        private static Schema process(Schema id, String propertyName, JavaType type,
                 ModelConverterContext context) {
-            id.setName(propertyName);
-            Model model = context.resolve(type);
-            if (model instanceof ComposedModel) {
-                model = ((ComposedModel) model).getChild();
-            }
-            if (model instanceof ModelImpl) {
-                ModelImpl mi = (ModelImpl) model;
+            id.setTitle(propertyName);
+            Schema model = context.resolve(type);
+            // TODO
+//            if (model instanceof ComposedModel) {
+//                model = ((ComposedModel) model).getChild();
+//            }
+//            if (model instanceof ModelImpl) {
+                Schema mi = (Schema) model;
                 mi.getProperties().put(propertyName, id);
-                return new RefProperty(StringUtils.isNotEmpty(mi.getReference())
-                        ? mi.getReference() : mi.getName());
-            }
-            return null;
+                return new Schema().ref(StringUtils.isNotEmpty(mi.getRef())
+                        ? mi.getRef() : mi.getTitle());
+//            }
+//            return null;
         }
     }
 
-    protected void applyBeanValidatorAnnotations(Property property, Annotation[] annotations) {
+    protected void applyBeanValidatorAnnotations(Schema property, Annotation[] annotations) {
         Map<String, Annotation> annos = new HashMap<String, Annotation>();
         if (annotations != null) {
             for (Annotation anno : annotations) {
@@ -755,59 +751,56 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         if (annos.containsKey("javax.validation.constraints.NotNull")) {
-            property.setRequired(true);
+//            property.setRequired(true);
         }
         if (annos.containsKey("javax.validation.constraints.Min")) {
-            if (property instanceof AbstractNumericProperty) {
+            if ("integer".equals(property.getType()) || "number". equals(property.getType())) {
                 Min min = (Min) annos.get("javax.validation.constraints.Min");
-                AbstractNumericProperty ap = (AbstractNumericProperty) property;
-                ap.setMinimum(new BigDecimal(min.value()));
+//                AbstractNumericProperty ap = (AbstractNumericProperty) property;
+                property.setMinimum(new BigDecimal(min.value()));
             }
         }
         if (annos.containsKey("javax.validation.constraints.Max")) {
-            if (property instanceof AbstractNumericProperty) {
+            if ("integer".equals(property.getType()) || "number". equals(property.getType())) {
                 Max max = (Max) annos.get("javax.validation.constraints.Max");
-                AbstractNumericProperty ap = (AbstractNumericProperty) property;
-                ap.setMaximum(new BigDecimal(max.value()));
+                property.setMaximum(new BigDecimal(max.value()));
             }
         }
         if (annos.containsKey("javax.validation.constraints.Size")) {
             Size size = (Size) annos.get("javax.validation.constraints.Size");
-            if (property instanceof AbstractNumericProperty) {
-                AbstractNumericProperty ap = (AbstractNumericProperty) property;
-                ap.setMinimum(new BigDecimal(size.min()));
-                ap.setMaximum(new BigDecimal(size.max()));
-            } else if (property instanceof StringProperty) {
-                StringProperty sp = (StringProperty) property;
+            if ("integer".equals(property.getType()) || "number". equals(property.getType())) {
+                property.setMinimum(new BigDecimal(size.min()));
+                property.setMaximum(new BigDecimal(size.max()));
+            } else if (property instanceof StringSchema) {
+                StringSchema sp = (StringSchema) property;
                 sp.minLength(new Integer(size.min()));
                 sp.maxLength(new Integer(size.max()));
-            } else if (property instanceof ArrayProperty) {
+            } /*else if (property instanceof ArrayProperty) {
                 ArrayProperty sp = (ArrayProperty) property;
                 sp.setMinItems(size.min());
                 sp.setMaxItems(size.max());
-            }
+            }*/
         }
         if (annos.containsKey("javax.validation.constraints.DecimalMin")) {
             DecimalMin min = (DecimalMin) annos.get("javax.validation.constraints.DecimalMin");
-            if (property instanceof AbstractNumericProperty) {
-                AbstractNumericProperty ap = (AbstractNumericProperty) property;
+            if (property instanceof NumberSchema) {
+                NumberSchema ap = (NumberSchema) property;
                 ap.setMinimum(new BigDecimal(min.value()));
                 ap.setExclusiveMinimum(!min.inclusive());
             }
         }
         if (annos.containsKey("javax.validation.constraints.DecimalMax")) {
             DecimalMax max = (DecimalMax) annos.get("javax.validation.constraints.DecimalMax");
-            if (property instanceof AbstractNumericProperty) {
-                AbstractNumericProperty ap = (AbstractNumericProperty) property;
+            if (property instanceof NumberSchema) {
+                NumberSchema ap = (NumberSchema) property;
                 ap.setMaximum(new BigDecimal(max.value()));
                 ap.setExclusiveMaximum(!max.inclusive());
             }
         }
         if (annos.containsKey("javax.validation.constraints.Pattern")) {
             Pattern pattern = (Pattern) annos.get("javax.validation.constraints.Pattern");
-            if (property instanceof StringProperty) {
-                StringProperty ap = (StringProperty) property;
-                ap.setPattern(pattern.regexp());
+            if (property instanceof StringSchema) {
+                property.setPattern(pattern.regexp());
             }
         }
     }
@@ -825,7 +818,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return null;
     }
 
-    private boolean resolveSubtypes(ModelImpl model, BeanDescription bean, ModelConverterContext context) {
+    private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context) {
         final List<NamedType> types = _intr.findSubtypes(bean.getClassInfo());
 
         if (types == null) {
@@ -848,8 +841,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 continue;
             }
 
-            final Model subtypeModel = context.resolve(subtypeType);
+            final Schema subtypeModel = context.resolve(subtypeType);
 
+            // TODO
+            /*
             if (subtypeModel instanceof ModelImpl) {
                 final ModelImpl impl = (ModelImpl) subtypeModel;
 
@@ -875,6 +870,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 context.defineModel(impl.getName(), child, subtypeType, null);
                 ++count;
             }
+            */
         }
         return count != 0;
     }

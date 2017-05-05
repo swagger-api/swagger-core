@@ -1,17 +1,14 @@
 package io.swagger.jackson;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-
 import io.swagger.converter.ModelConverterContextImpl;
-import io.swagger.models.Model;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.MapProperty;
-import io.swagger.models.properties.Property;
-
+import io.swagger.models.media.ArraySchema;
+import io.swagger.models.media.Schema;
 import org.testng.annotations.Test;
 
 import java.util.Map;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 public class ContainerTest extends SwaggerTestBase {
 
@@ -21,16 +18,16 @@ public class ContainerTest extends SwaggerTestBase {
 
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
-        final Model model = context
+        final Schema model = context
                 .resolve(ArrayBean.class);
 
-        final Map<String, Property> props = model.getProperties();
+        final Map<String, Schema> props = model.getProperties();
         assertEquals(1, props.size());
-        final Property prop = props.get("a");
+        final Schema prop = props.get("a");
         assertNotNull(prop);
         assertEquals(prop.getType(), "array");
 
-        final Property items = ((ArrayProperty) prop).getItems();
+        final Schema items = ((ArraySchema) prop).getItems();
         assertNotNull(items);
         assertEquals(items.getType(), "integer");
     }
@@ -40,16 +37,16 @@ public class ContainerTest extends SwaggerTestBase {
         final ModelResolver modelResolver = new ModelResolver(mapper());
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
-        final Model model = context
+        final Schema model = context
                 .resolve(MapBean.class);
 
-        final Map<String, Property> props = model.getProperties();
+        final Map<String, Schema> props = model.getProperties();
         assertEquals(1, props.size());
-        final Property prop = props.get("stuff");
+        final Schema prop = props.get("stuff");
         assertNotNull(prop);
         assertEquals(prop.getType(), "object");
 
-        final Property items = ((MapProperty) prop).getAdditionalProperties();
+        final Schema items = ((Schema) prop).getAdditionalProperties();
         assertNotNull(items);
         assertEquals(items.getType(), "string");
         assertEquals(items.getFormat(), "date-time");
@@ -62,18 +59,18 @@ public class ContainerTest extends SwaggerTestBase {
         final ModelConverterContextImpl context = new ModelConverterContextImpl(resolver);
         context.resolve(WrapperType.class);
 
-        final Map<String, Model> models = context.getDefinedModels();
-        final Model innerType = models.get("InnerType");
+        final Map<String, Schema> models = context.getDefinedModels();
+        final Schema innerType = models.get("InnerType");
         assertNotNull(innerType);
-        final Map<String, Property> innerProps = innerType.getProperties();
+        final Map<String, Schema> innerProps = innerType.getProperties();
         assertEquals(innerProps.size(), 2);
-        final Property foo = innerProps.get("foo");
+        final Schema foo = innerProps.get("foo");
         assertEquals(foo.getType(), "integer");
         assertEquals(foo.getFormat(), "int32");
-        final Property name = innerProps.get("name");
+        final Schema name = innerProps.get("name");
         assertEquals(name.getType(), "string");
 
-        final Model wrapperType = models.get("WrapperType");
+        final Schema wrapperType = models.get("WrapperType");
         assertNotNull(wrapperType);
         assertEquals(wrapperType.getProperties().get("innerType").getType(), "object");
     }

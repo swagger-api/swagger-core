@@ -5,25 +5,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import io.swagger.models.ArrayModel;
-import io.swagger.models.ComposedModel;
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.RefModel;
+import io.swagger.models.media.Schema;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class ModelDeserializer extends JsonDeserializer<Model> {
+public class ModelDeserializer extends JsonDeserializer<Schema> {
     @Override
-    public Model deserialize(JsonParser jp, DeserializationContext ctxt)
+    public Schema deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
         JsonNode node = jp.getCodec().readTree(jp);
         JsonNode sub = node.get("$ref");
         JsonNode allOf = node.get("allOf");
 
+        // TODO
+
+        /*
         if (sub != null) {
             return Json.mapper().convertValue(sub, RefModel.class);
         } else if (allOf != null) {
@@ -49,15 +45,17 @@ public class ModelDeserializer extends JsonDeserializer<Model> {
                 }
             }
             return model;
-        } else {
-            sub = node.get("type");
-            Model model = null;
+        } else
+        {
+            sub = node.get("type");*/
+            Schema model = null;
+            /*
             if (sub != null && "array".equals(((TextNode) sub).textValue())) {
                 model = Json.mapper().convertValue(node, ArrayModel.class);
-            } else {
-                model = Json.mapper().convertValue(node, ModelImpl.class);
+            } else*/ {
+                model = Json.mapper().convertValue(node, Schema.class);
             }
             return model;
-        }
+//        }
     }
 }

@@ -1,12 +1,12 @@
 package io.swagger.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
 public class ClientOptInput {
     private String opts;
     private JsonNode model;
-    private Swagger swagger;
+    private OpenAPI swagger;
 
     public String getOpts() {
         return opts;
@@ -16,7 +16,7 @@ public class ClientOptInput {
         this.opts = opts;
     }
 
-    @ApiModelProperty(hidden = true)
+    @OASSchema//(hidden = true)
     public JsonNode getModel() {
         return model;
     }
@@ -25,12 +25,12 @@ public class ClientOptInput {
         this.model = model;
     }
 
-    @ApiModelProperty(dataType = "Object")
-    public Swagger getSwagger() {
+    @OASSchema(type = "Object")
+    public OpenAPI getSwagger() {
         return swagger;
     }
 
-    public void setSwagger(Swagger swagger) {
+    public void setSwagger(OpenAPI swagger) {
         this.swagger = swagger;
     }
 }

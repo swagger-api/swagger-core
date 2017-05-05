@@ -1,26 +1,21 @@
 package io.swagger.model.override;
 
+import com.google.common.collect.Sets;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
-
-import com.google.common.collect.Sets;
-
+import io.swagger.models.media.Schema;
+import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlRootElement;
 
 public class SnakeCaseConverterTest {
 
@@ -32,7 +27,7 @@ public class SnakeCaseConverterTest {
 
         converters.addConverter(snakeCaseConverter);
 
-        final Map<String, Model> models = converters.readAll(SnakeCaseModel.class);
+        final Map<String, Schema> models = converters.readAll(SnakeCaseModel.class);
         final String json = "{" +
                 "   \"bar\":{" +
                 "      \"type\":\"object\"," +
@@ -57,7 +52,8 @@ public class SnakeCaseConverterTest {
                 "      }" +
                 "   }" +
                 "}";
-        SerializationMatchers.assertEqualsToJson(models, json);
+        Json.prettyPrint(models);
+        SerializationMatchers.assertEqualsToJson(models.get("snake_case_model"), json);
     }
 
     @XmlRootElement(name = "snakeCaseModel")
@@ -73,38 +69,38 @@ public class SnakeCaseConverterTest {
         final Set<String> primitives = Sets.newHashSet("string", "integer", "number", "boolean", "long");
 
         @Override
-        public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {
+        public Schema resolve(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {
             if (chain.hasNext()) {
                 final ModelConverter converter = chain.next();
-                return converter.resolveProperty(type, context, annotations, chain);
+                return converter.resolve(type, context, annotations, chain);
             }
             return null;
         }
 
         @Override
-        public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+        public Schema resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
             if (chain.hasNext()) {
                 final ModelConverter converter = chain.next();
-                final Model model = converter.resolve(type, context, chain);
+                final Schema model = converter.resolve(type, context, chain);
                 if (model != null) {
-                    final Map<String, Property> properties = model.getProperties();
-                    final Map<String, Property> updatedProperties = new LinkedHashMap<String, Property>();
+                    final Map<String, Schema> properties = model.getProperties();
+                    final Map<String, Schema> updatedProperties = new LinkedHashMap<String, Schema>();
                     for (String key : properties.keySet()) {
                         String convertedKey = toSnakeCase(key);
-                        Property prop = properties.get(key);
-                        if (prop instanceof RefProperty) {
-                            RefProperty ref = (RefProperty) prop;
-                            ref.set$ref(toSnakeCase(ref.getSimpleRef()));
+                        Schema prop = properties.get(key);
+                        if (prop.getRef() != null) {
+                            // TODO
+//                            prop.setRef(toSnakeCase(ref.getSimpleRef()));
                         }
                         updatedProperties.put(convertedKey, prop);
                     }
                     model.getProperties().clear();
                     model.setProperties(updatedProperties);
-                    if (model instanceof ModelImpl) {
-                        ModelImpl impl = (ModelImpl) model;
-                        String prevName = impl.getName();
-                        impl.setName(toSnakeCase(impl.getName()));
-                        context.defineModel(impl.getName(), impl, type, prevName);
+                    if (model instanceof Schema) {
+                        Schema impl = (Schema) model;
+                        String prevName = impl.getTitle();
+                        impl.setTitle(toSnakeCase(impl.getTitle()));
+                        context.defineModel(impl.getTitle(), impl, type, prevName);
                     }
                     return model;
                 }

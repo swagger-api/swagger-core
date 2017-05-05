@@ -1,10 +1,9 @@
 package io.swagger.model.override;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
-import io.swagger.models.Model;
-
+import io.swagger.models.media.Schema;
 import org.testng.annotations.Test;
 
 import java.util.Map;
@@ -13,15 +12,18 @@ public class ModelPropertyOverrideTest {
     @Test
     public void overrideTest() throws Exception {
         ModelConverters.getInstance().addConverter(new SamplePropertyConverter());
-        final Map<String, Model> model = ModelConverters.getInstance().read(MyPojo.class);
+        final Map<String, Schema> model = ModelConverters.getInstance().read(MyPojo.class);
         final String expected = "{" +
                 "  \"MyPojo\" : {" +
+                "    \"title\" : \"MyPojo\"," +
                 "    \"type\" : \"object\"," +
                 "    \"properties\" : {" +
                 "      \"id\" : {" +
+                "        \"title\" : \"id\"" +
                 "        \"type\" : \"string\"" +
                 "      }," +
                 "      \"myCustomClass\" : {" +
+                "        \"title\" : \"myCustomClass\"," +
                 "        \"type\" : \"string\"," +
                 "        \"format\" : \"date-time\"," +
                 "        \"description\" : \"instead of modeling this class in the documentation, we will model a string\"" +
@@ -40,7 +42,7 @@ public class ModelPropertyOverrideTest {
         public void setId(String id) {
         }
 
-        @ApiModelProperty(value = "instead of modeling this class in the documentation, we will model a string")
+        @OASSchema(description = "instead of modeling this class in the documentation, we will model a string")
         public MyCustomClass getMyCustomClass() {
             return null;
         }

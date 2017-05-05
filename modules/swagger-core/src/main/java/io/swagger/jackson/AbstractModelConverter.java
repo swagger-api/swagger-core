@@ -9,16 +9,12 @@ import com.fasterxml.jackson.databind.PropertyName;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
-import io.swagger.models.Model;
-import io.swagger.models.properties.Property;
+import io.swagger.models.media.Schema;
 
 import javax.xml.bind.annotation.XmlElement;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -46,7 +42,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
         _intr = mapper.getSerializationConfig().getAnnotationIntrospector();
 
     }
-
+/*
     protected static Comparator<Property> getPropertyComparator() {
         return new Comparator<Property>() {
             @Override
@@ -64,9 +60,10 @@ public abstract class AbstractModelConverter implements ModelConverter {
             }
         };
     }
-
+    */
+/*
     @Override
-    public Property resolveProperty(Type type,
+    public Property resolve(Type type,
                                     ModelConverterContext context,
                                     Annotation[] annotations,
                                     Iterator<ModelConverter> chain) {
@@ -76,7 +73,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
             return null;
         }
     }
-
+*/
     protected String _description(Annotated ann) {
         // while name suggests it's only for properties, should work for any Annotated thing.
         // also; with Swagger introspector's help, should get it from ApiModel/ApiModelProperty
@@ -144,20 +141,23 @@ public abstract class AbstractModelConverter implements ModelConverter {
     }
 
     protected String _findExampleValue(Annotated a) {
+        /*
         ApiModelProperty prop = a.getAnnotation(ApiModelProperty.class);
         if (prop != null) {
             if (!prop.example().isEmpty()) {
                 return prop.example();
             }
-        }
+        }*/
         return null;
     }
 
     protected Boolean _findReadOnly(Annotated a) {
+        /*
         ApiModelProperty prop = a.getAnnotation(ApiModelProperty.class);
         if (prop != null) {
             return prop.readOnly();
         }
+        */
         return null;
     }
 
@@ -179,7 +179,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
     }
 
     @Override
-    public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+    public Schema resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
         if (chain.hasNext()) {
             return chain.next().resolve(type, context, chain);
         } else {

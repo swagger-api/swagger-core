@@ -1,13 +1,5 @@
 package io.swagger.util;
 
-import io.swagger.annotations.Extension;
-import io.swagger.annotations.ExtensionProperty;
-
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * The <code>BaseReaderUtils</code> class is utility class which helps read annotations to the Swagger.
  */
@@ -22,7 +14,7 @@ public final class BaseReaderUtils {
      *
      * @param extensions is an array of extensions
      * @return the map with extensions
-     */
+
     public static Map<String, Object> parseExtensions(Extension[] extensions) {
         final Map<String, Object> map = new HashMap<String, Object>();
         for (Extension extension : extensions) {
@@ -51,4 +43,5 @@ public final class BaseReaderUtils {
 
         return map;
     }
+     */
 }

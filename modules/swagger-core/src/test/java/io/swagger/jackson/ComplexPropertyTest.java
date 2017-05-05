@@ -1,11 +1,10 @@
 package io.swagger.jackson;
 
-import static org.testng.Assert.assertNotNull;
-
 import io.swagger.converter.ModelConverterContextImpl;
-import io.swagger.models.Model;
-
+import io.swagger.models.media.Schema;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertNotNull;
 
 public class ComplexPropertyTest extends SwaggerTestBase {
 
@@ -13,7 +12,7 @@ public class ComplexPropertyTest extends SwaggerTestBase {
     public void testOuterBean() throws Exception {
         final ModelResolver modelResolver = modelResolver();
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
-        final Model model = context
+        final Schema model = context
                 .resolve(OuterBean.class);
         assertNotNull(model);
     }

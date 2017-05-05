@@ -4,27 +4,25 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import io.swagger.models.*;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import io.swagger.models.PathItem;
 
 import java.io.IOException;
 
-public class PathDeserializer extends JsonDeserializer<Path> {
+public class PathDeserializer extends JsonDeserializer<PathItem> {
     @Override
-    public Path deserialize(JsonParser jp, DeserializationContext ctxt)
+    public PathItem deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException {
 
         JsonNode node = jp.getCodec().readTree(jp);
         JsonNode sub = node.get("$ref");
 
-        Path result;
+        PathItem result;
 
+        /*
         if(sub != null) {
             result = Json.mapper().convertValue(node, RefPath.class);
-        } else {
-            result = Json.pathMapper().convertValue(node, Path.class);
+        } else*/ {
+            result = Json.pathMapper().convertValue(node, PathItem.class);
         }
 
         return result;

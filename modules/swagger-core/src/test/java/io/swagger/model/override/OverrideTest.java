@@ -1,14 +1,13 @@
 package io.swagger.model.override;
 
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertEquals;
-
 import io.swagger.converter.ModelConverters;
-import io.swagger.models.Model;
-
+import io.swagger.models.media.Schema;
 import org.testng.annotations.Test;
 
 import java.util.Map;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class OverrideTest {
     private static final String NAME = "name";
@@ -22,10 +21,10 @@ public class OverrideTest {
         // create new instead of use singleton
         final ModelConverters converters = new ModelConverters();
         converters.addConverter(new GericModelConverter());
-        final Map<String, Model> read = converters.read(GenericModel.class);
+        final Map<String, Schema> read = converters.read(GenericModel.class);
         assertTrue(read.containsKey(GenericModel.class.getSimpleName()));
 
-        final Model model = read.get(GenericModel.class.getSimpleName());
+        final Schema model = read.get(GenericModel.class.getSimpleName());
         assertTrue(model.getProperties().containsKey(NAME));
         assertEquals(model.getProperties().get(NAME).getType(), "string");
         assertTrue(model.getProperties().containsKey(COUNT));

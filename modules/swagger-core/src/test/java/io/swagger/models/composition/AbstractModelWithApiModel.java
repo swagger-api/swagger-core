@@ -1,10 +1,9 @@
 package io.swagger.models.composition;
 
-import io.swagger.annotations.ApiModel;
-
 import com.fasterxml.jackson.annotation.JsonSubTypes;
+import io.swagger.annotations.media.OASSchema;
 
-@ApiModel("MyProperty")
+@OASSchema(title = "MyProperty")
 @JsonSubTypes({@JsonSubTypes.Type(value = ModelWithUrlProperty.class), @JsonSubTypes.Type(value = ModelWithValueProperty.class)})
 public abstract class AbstractModelWithApiModel {
 

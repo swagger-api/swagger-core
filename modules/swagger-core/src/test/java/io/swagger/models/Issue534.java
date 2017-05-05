@@ -1,6 +1,6 @@
 package io.swagger.models;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -11,7 +11,7 @@ public class Issue534 {
 
     @XmlElementWrapper(name = "order_specials")
     @XmlElement(name = "order_special")
-    @ApiModelProperty(hidden = true)
+    @OASSchema//(hidden = true)
     public List<SpecialOrderItem> getOrder_specials() {
         return null;
     }

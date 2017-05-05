@@ -9,6 +9,7 @@ import io.swagger.models.ModelWithBooleanProperty;
 import io.swagger.models.ModelWithModelPropertyOverrides;
 import io.swagger.models.ModelWithPrimitiveArray;
 import io.swagger.models.ReadOnlyFields;
+import io.swagger.models.media.Schema;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.BooleanProperty;
 import io.swagger.models.properties.IntegerProperty;
@@ -29,7 +30,7 @@ import static org.testng.Assert.assertTrue;
 public class ModelPropertyTest {
     @Test
     public void extractProperties() {
-        final Map<String, Model> models = ModelConverters.getInstance().readAll(Family.class);
+        final Map<String, Schema> models = ModelConverters.getInstance().readAll(Family.class);
         assertEquals(models.size(), 3);
 
         final Model person = models.get("Person");

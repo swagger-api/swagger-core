@@ -1,11 +1,10 @@
 package io.swagger.jackson;
 
-import static org.testng.Assert.assertNotNull;
-
 import io.swagger.converter.ModelConverterContextImpl;
-import io.swagger.models.Model;
-
+import io.swagger.models.media.Schema;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertNotNull;
 
 public class ATMTest extends SwaggerTestBase {
 
@@ -14,7 +13,7 @@ public class ATMTest extends SwaggerTestBase {
         final ModelResolver modelResolver = new ModelResolver(mapper());
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
-        final Model model = context
+        final Schema model = context
                 .resolve(ATM.class);
         assertNotNull(model);
     }

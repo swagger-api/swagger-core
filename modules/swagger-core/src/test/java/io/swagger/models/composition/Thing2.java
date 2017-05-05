@@ -1,13 +1,14 @@
 package io.swagger.models.composition;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
-@ApiModel(description = "and Thing2", parent = AbstractBaseModelWithSubTypes.class)
+@OASSchema(description = "and Thing2"
+//        , parent = AbstractBaseModelWithSubTypes.class
+)
 public class Thing2 extends AbstractBaseModelWithSubTypes {
 
-    @ApiModelProperty(value = "Override the abstract a")
+    @OASSchema(description = "Override the abstract a")
     public String a;
-    @ApiModelProperty(value = "Thing2 has an additional field")
+    @OASSchema(description = "Thing2 has an additional field")
     public String s;
 }

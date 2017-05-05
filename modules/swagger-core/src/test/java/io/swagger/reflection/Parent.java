@@ -1,7 +1,6 @@
 package io.swagger.reflection;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.media.OASSchema;
 
 @IndirectAnnotation
 public class Parent<T extends Number> {
@@ -22,7 +21,7 @@ public class Parent<T extends Number> {
         return null;
     }
 
-    @ApiOperation(value = "test")
+    @OASSchema(title = "test")
     public void annotationHolder() {
 
     }

@@ -8,9 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonTypeName("department")
 @JsonInclude(Include.NON_EMPTY)
 @JsonTypeInfo(include = As.WRAPPER_OBJECT, use = Id.NAME)
-@ApiModel(description = "Represents a Department in the system", value = "department")
+@OASSchema(description = "Represents a Department in the system", title = "department")
 public class Department {
     private String name;
     private String deptCode;
@@ -34,7 +32,11 @@ public class Department {
 
     @XmlElement
     @JsonProperty
-    @ApiModelProperty(access = "public", required = true, position = 1)
+    @OASSchema(
+//            access = "public",
+            required = true
+//            , position = 1
+    )
     public String getName() {
         return name;
     }
@@ -45,7 +47,11 @@ public class Department {
 
     @XmlElement
     @JsonProperty
-    @ApiModelProperty(access = "public", required = true, position = 2)
+    @OASSchema(
+//            access = "public",
+            required = true
+//            , position = 2
+    )
     public String getDeptCode() {
         return deptCode;
     }
@@ -56,9 +62,10 @@ public class Department {
 
     @JsonProperty("parentDepartment")
     @XmlElement(name = "parentDepartment")
-    @ApiModelProperty(dataType = "Link",
+    @OASSchema(
+            type = "Link",
             required = true,
-            value = "This department's parent. If this is a top-level department, the parent would be the enterprise.")
+            description = "This department's parent. If this is a top-level department, the parent would be the enterprise.")
     public Link<Department> getParent() {
         return parent;
     }

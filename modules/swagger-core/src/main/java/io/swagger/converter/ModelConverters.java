@@ -2,8 +2,7 @@ package io.swagger.converter;
 
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.jackson.ModelResolver;
-import io.swagger.models.Model;
-import io.swagger.models.properties.Property;
+import io.swagger.models.media.Schema;
 import io.swagger.util.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,19 +51,13 @@ public class ModelConverters {
         this.skippedClasses.add(cls);
     }
 
-    public Property readAsProperty(Type type) {
-        ModelConverterContextImpl context = new ModelConverterContextImpl(
-                converters);
-        return context.resolveProperty(type, null);
-    }
-
-    public Map<String, Model> read(Type type) {
-        Map<String, Model> modelMap = new HashMap<String, Model>();
+    public Map<String, Schema> read(Type type) {
+        Map<String, Schema> modelMap = new HashMap<String, Schema>();
         if (shouldProcess(type)) {
             ModelConverterContextImpl context = new ModelConverterContextImpl(
                     converters);
-            Model resolve = context.resolve(type);
-            for (Entry<String, Model> entry : context.getDefinedModels()
+            Schema resolve = context.resolve(type);
+            for (Entry<String, Schema> entry : context.getDefinedModels()
                     .entrySet()) {
                 if (entry.getValue().equals(resolve)) {
                     modelMap.put(entry.getKey(), entry.getValue());
@@ -74,7 +67,7 @@ public class ModelConverters {
         return modelMap;
     }
 
-    public Map<String, Model> readAll(Type type) {
+    public Map<String, Schema> readAll(Type type) {
         if (shouldProcess(type)) {
             ModelConverterContextImpl context = new ModelConverterContextImpl(
                     converters);
@@ -83,7 +76,7 @@ public class ModelConverters {
             context.resolve(type);
             return context.getDefinedModels();
         }
-        return new HashMap<String, Model>();
+        return new HashMap<String, Schema>();
     }
 
     private boolean shouldProcess(Type type) {

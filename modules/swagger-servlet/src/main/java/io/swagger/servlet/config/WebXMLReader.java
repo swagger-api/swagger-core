@@ -24,7 +24,7 @@ public class WebXMLReader implements SwaggerConfig {
     private Scheme scheme = Scheme.HTTP;
 
     public WebXMLReader(ServletConfig servletConfig) {
-        apiVersion = getInitParameter(servletConfig, "api.version", "Swagger Server");
+        apiVersion = getInitParameter(servletConfig, "api.version", "Swagger OASServer");
         basePath = getInitParameter(servletConfig, "swagger.api.basepath", null);
         title = getInitParameter(servletConfig, "swagger.api.title", "");
         filterClass = getInitParameter(servletConfig, "swagger.filter", null);

@@ -1,12 +1,7 @@
 package io.swagger.jackson;
 
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import io.swagger.models.Xml;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.MapProperty;
-import io.swagger.models.properties.ObjectProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
+import io.swagger.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,7 +24,7 @@ class JAXBAnnotationsHelper {
      * @param member   annotations provider
      * @param property property instance to be updated
      */
-    public static void apply(AnnotatedMember member, Property property) {
+    public static void apply(AnnotatedMember member, Schema property) {
         if (member.hasAnnotation(XmlElementWrapper.class) || member.hasAnnotation(XmlElement.class)) {
             applyElement(member, property);
         } else if (member.hasAnnotation(XmlAttribute.class) && isAttributeAllowed(property)) {
@@ -43,15 +38,18 @@ class JAXBAnnotationsHelper {
      * @param member   annotations provider
      * @param property property instance to be updated
      */
-    private static void applyElement(AnnotatedMember member, Property property) {
+    private static void applyElement(AnnotatedMember member, Schema property) {
         final XmlElementWrapper wrapper = member.getAnnotation(XmlElementWrapper.class);
         if (wrapper != null) {
+            // TODO
+            /*
             final Xml xml = getXml(property);
             xml.setWrapped(true);
             // No need to set the xml name if the name provided by xmlelementwrapper annotation is ##default or equal to the property name | https://github.com/swagger-api/swagger-core/pull/2050
             if (!"##default".equals(wrapper.name()) && !wrapper.name().isEmpty() && !wrapper.name().equals(property.getName())) {
                 xml.setName(wrapper.name());
             }
+            */
         }
         else {
             final XmlElement element = member.getAnnotation(XmlElement.class);
@@ -67,15 +65,18 @@ class JAXBAnnotationsHelper {
      * @param member   annotations provider
      * @param property property instance to be updated
      */
-    private static void applyAttribute(AnnotatedMember member, Property property) {
+    private static void applyAttribute(AnnotatedMember member, Schema property) {
         final XmlAttribute attribute = member.getAnnotation(XmlAttribute.class);
         if (attribute != null) {
+            // TODO
+            /*
             final Xml xml = getXml(property);
             xml.setAttribute(true);
             setName(attribute.namespace(), attribute.name(), property);
+            */
         }
     }
-
+/*
     private static Xml getXml(Property property) {
         final Xml existing = property.getXml();
         if (existing != null) {
@@ -85,7 +86,7 @@ class JAXBAnnotationsHelper {
         property.setXml(created);
         return created;
     }
-
+*/
     /**
      * Puts name space and name for XML node or attribute.
      *
@@ -94,16 +95,19 @@ class JAXBAnnotationsHelper {
      * @param property property instance to be updated
      * @return <code>true</code> if name space and name have been set
      */
-    private static boolean setName(String ns, String name, Property property) {
+    private static boolean setName(String ns, String name, Schema property) {
         boolean apply = false;
         final String cleanName = StringUtils.trimToNull(name);
         final String useName;
+        // TODO
+        /*
         if (!isEmpty(cleanName) && !cleanName.equals(property.getName())) {
             useName = cleanName;
             apply = true;
         } else {
             useName = null;
         }
+        */
         final String cleanNS = StringUtils.trimToNull(ns);
         final String useNS;
         if (!isEmpty(cleanNS)) {
@@ -113,9 +117,12 @@ class JAXBAnnotationsHelper {
             useNS = null;
         }
         // Set everything or nothing
+        // TODO
+        /*
         if (apply) {
             getXml(property).name(useName).namespace(useNS);
         }
+        */
         return apply;
     }
 
@@ -126,13 +133,16 @@ class JAXBAnnotationsHelper {
      * @return <code>true</code> if the passed property can be represented as
      * node attribute
      */
-    private static boolean isAttributeAllowed(Property property) {
+    private static boolean isAttributeAllowed(Schema property) {
+        // TODO
+        /*
         for (Class<?> item : new Class<?>[]{ArrayProperty.class, MapProperty.class, ObjectProperty.class,
                 RefProperty.class}) {
             if (item.isInstance(property)) {
                 return false;
             }
         }
+        */
         return true;
     }
 

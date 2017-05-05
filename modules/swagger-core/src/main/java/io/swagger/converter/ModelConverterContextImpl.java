@@ -1,9 +1,6 @@
 package io.swagger.converter;
 
-import io.swagger.models.ComposedModel;
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.properties.Property;
+import io.swagger.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,18 +17,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+
 public class ModelConverterContextImpl implements ModelConverterContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(ModelConverterContextImpl.class);
 
     private final List<ModelConverter> converters;
-    private final Map<String, Model> modelByName;
-    private final HashMap<Type, Model> modelByType;
+    private final Map<String, Schema> modelByName;
+    private final HashMap<Type, Schema> modelByType;
     private final Set<Type> processedTypes;
 
     public ModelConverterContextImpl(List<ModelConverter> converters) {
         this.converters = converters;
-        modelByName = new TreeMap<String, Model>();
-        modelByType = new HashMap<Type, Model>();
+        modelByName = new TreeMap<String, Schema>();
+        modelByType = new HashMap<Type, Schema>();
         processedTypes = new HashSet<Type>();
     }
 
@@ -45,12 +43,12 @@ public class ModelConverterContextImpl implements ModelConverterContext {
     }
 
     @Override
-    public void defineModel(String name, Model model) {
+    public void defineModel(String name, Schema model) {
         defineModel(name, model, null, null);
     }
 
     @Override
-    public void defineModel(String name, Model model, Type type, String prevName) {
+    public void defineModel(String name, Schema model, Type type, String prevName) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(String.format("defineModel %s %s", name, model));
         }
@@ -65,25 +63,12 @@ public class ModelConverterContextImpl implements ModelConverterContext {
         }
     }
 
-    public Map<String, Model> getDefinedModels() {
+    public Map<String, Schema> getDefinedModels() {
         return Collections.unmodifiableMap(modelByName);
     }
 
     @Override
-    public Property resolveProperty(Type type, Annotation[] annotations) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("resolveProperty %s", type));
-        }
-        Iterator<ModelConverter> converters = this.getConverters();
-        if (converters.hasNext()) {
-            ModelConverter converter = converters.next();
-            return converter.resolveProperty(type, this, annotations, converters);
-        }
-        return null;
-    }
-
-    @Override
-    public Model resolve(Type type) {
+    public Schema resolve(Type type) {
         if (processedTypes.contains(type)) {
             return modelByType.get(type);
         } else {
@@ -93,7 +78,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
             LOGGER.debug(String.format("resolve %s", type));
         }
         Iterator<ModelConverter> converters = this.getConverters();
-        Model resolved = null;
+        Schema resolved = null;
         if (converters.hasNext()) {
             ModelConverter converter = converters.next();
             LOGGER.debug("trying extension " + converter);
@@ -102,18 +87,32 @@ public class ModelConverterContextImpl implements ModelConverterContext {
         if (resolved != null) {
             modelByType.put(type, resolved);
 
-            Model resolvedImpl = resolved;
-            if (resolvedImpl instanceof ComposedModel) {
-                resolvedImpl = ((ComposedModel) resolved).getChild();
-            }
-            if (resolvedImpl instanceof ModelImpl) {
-                ModelImpl impl = (ModelImpl) resolvedImpl;
-                if (impl.getName() != null) {
-                    modelByName.put(impl.getName(), resolved);
-                }
-            }
+            Schema resolvedImpl = resolved;
+            // TODO look at composed models
+//            if (resolvedImpl instanceof ComposedModel) {
+//                resolvedImpl = ((ComposedModel) resolved).getChild();
+//            }
+//            if (resolvedImpl instanceof ModelImpl) {
+//                ModelImpl impl = (ModelImpl) resolvedIm
+
+//                if (impl.getName() != null) {
+//                    modelByName.put(impl.getName(), resolved);
+//                }
+//            }
         }
 
         return resolved;
+    }
+    @Override
+    public Schema resolve(Type type, Annotation[] annotations) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("resolveProperty %s", type));
+        }
+        Iterator<ModelConverter> converters = this.getConverters();
+        if (converters.hasNext()) {
+            ModelConverter converter = converters.next();
+            return converter.resolve(type, this, annotations, converters);
+        }
+        return null;
     }
 }

@@ -1,11 +1,12 @@
 package io.swagger.models;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
 public class ModelWithBooleanProperty {
-    @ApiModelProperty(allowableValues = "true")
+    // TODO
+    @OASSchema//(allowableValues = "true")
     public Boolean isGreat;
 
-    @ApiModelProperty(allowableValues = "1,2")
+    @OASSchema//(allowableValues = "1,2")
     public Integer intValue;
 }

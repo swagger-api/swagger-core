@@ -1,9 +1,10 @@
 package io.swagger.jackson;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.util.PrimitiveType;
+//import io.swagger.annotations.ApiModel;
 
 import com.fasterxml.jackson.databind.JavaType;
+import io.swagger.annotations.media.OASSchema;
+import io.swagger.util.PrimitiveType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -43,8 +44,9 @@ public class TypeNameResolver {
         if (options.contains(Options.SKIP_API_MODEL)) {
             return cls.getSimpleName();
         }
-        final ApiModel model = cls.getAnnotation(ApiModel.class);
-        final String modelName = model == null ? null : StringUtils.trimToNull(model.value());
+
+        final OASSchema model = cls.getAnnotation(OASSchema.class);
+        final String modelName = model == null ? null : StringUtils.trimToNull(model.title());
         return modelName == null ? cls.getSimpleName() : modelName;
     }
 

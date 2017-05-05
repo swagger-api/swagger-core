@@ -1,14 +1,14 @@
 package io.swagger.models;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
 public abstract class JCovariantGetter {
-    @ApiModelProperty(position = 1)
+    @OASSchema//(position = 1)
     public Object getMyProperty() {
         return "42";
     }
 
-    @ApiModelProperty(position = 2)
+    @OASSchema//(position = 2)
     public Object getMyOtherProperty() {
         return "42";
     }

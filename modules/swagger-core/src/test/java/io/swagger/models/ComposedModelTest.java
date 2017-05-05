@@ -1,5 +1,7 @@
 package io.swagger.models;
 
+import io.swagger.models.media.AllOfSchema;
+import io.swagger.models.media.Schema;
 import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
@@ -37,9 +39,9 @@ public class ComposedModelTest {
                 "  ]\n" +
                 "}";
 
-        Model model = Json.mapper().readValue(json, Model.class);
-        assertTrue(model instanceof ComposedModel);
-        ComposedModel cm = (ComposedModel) model;
+        Schema model = Json.mapper().readValue(json, Schema.class);
+        assertTrue(model instanceof AllOfSchema);
+        AllOfSchema cm = (AllOfSchema) model;
 
         assertTrue(cm.getAllOf().size() == 4);
         assertTrue(cm.getAllOf().get(2).getProperties().containsKey("propInt"));

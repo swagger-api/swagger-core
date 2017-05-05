@@ -1,7 +1,6 @@
 package io.swagger.converter;
 
-import io.swagger.models.Model;
-import io.swagger.models.properties.Property;
+import io.swagger.models.media.Schema;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -16,7 +15,7 @@ public interface ModelConverter {
      * @param chain       the chain of model converters to try if this implementation cannot process
      * @return null if this ModelConverter cannot convert the given Type
      */
-    public Property resolveProperty(Type type,
+    public Schema resolve(Type type,
                                     ModelConverterContext context,
                                     Annotation[] annotations,
                                     Iterator<ModelConverter> chain);
@@ -27,5 +26,5 @@ public interface ModelConverter {
      * @param chain   the chain of model converters to try if this implementation cannot process
      * @return null if this ModelConverter cannot convert the given Type
      */
-    public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain);
+    public Schema resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain);
 }

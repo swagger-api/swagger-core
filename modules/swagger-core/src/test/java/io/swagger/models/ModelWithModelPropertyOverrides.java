@@ -1,9 +1,9 @@
 package io.swagger.models;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
 public class ModelWithModelPropertyOverrides {
-    @ApiModelProperty(dataType = "List[io.swagger.models.Children]")
+    @OASSchema(type = "List[io.swagger.models.Children]")
     private String children;
 
     public String getChildren() {

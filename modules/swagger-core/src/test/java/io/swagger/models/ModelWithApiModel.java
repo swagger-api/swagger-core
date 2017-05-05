@@ -1,8 +1,8 @@
 package io.swagger.models;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.media.OASSchema;
 
-@ApiModel("MyModel")
+@OASSchema(title = "MyModel")
 public class ModelWithApiModel {
     public String name;
 }

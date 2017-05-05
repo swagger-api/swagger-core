@@ -1,17 +1,16 @@
 package io.swagger.models;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
-@ApiModel("sample_model")
+@OASSchema(title = "sample_model")
 public class ModelWithAltPropertyName {
     protected int id;
 
-    @ApiModelProperty(
-            access = "public",
+    @OASSchema(
+//            access = "public",
             name = "the_id",
-            notes = "Note, this is server generated.",
-            value = "Read-only")
+            description = "Note, this is server generated.",
+            title = "Read-only")
     public int getId() {
         return id;
     }

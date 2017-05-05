@@ -5,7 +5,7 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
 import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.BooleanProperty;
+import io.swagger.models.properties.BooleanSchema;
 import io.swagger.models.properties.DateProperty;
 import io.swagger.models.properties.DateTimeProperty;
 import io.swagger.models.properties.DoubleProperty;
@@ -30,22 +30,22 @@ import java.util.List;
 public class PropertySerializationTest {
     private final ObjectMapper m = Json.mapper();
 
-    @Test(description = "it should serialize a BooleanProperty")
-    public void serializeBooleanProperty() throws IOException {
-        final BooleanProperty p = new BooleanProperty()
+    @Test(description = "it should serialize a BooleanSchema")
+    public void serializeBooleanSchema() throws IOException {
+        final BooleanSchema p = new BooleanSchema()
                 ._default(true);
         final String json = "{\"type\":\"boolean\",\"default\":true}";
         assertEquals(m.writeValueAsString(p), json);
     }
 
-    @Test(description = "it should deserialize a BooleanProperty")
-    public void deserializeBooleanProperty() throws IOException {
+    @Test(description = "it should deserialize a BooleanSchema")
+    public void deserializeBooleanSchema() throws IOException {
         final String json = "{\"type\":\"boolean\",\"default\":false}";
         final Property p = m.readValue(json, Property.class);
         assertEquals(p.getType(), "boolean");
         assertNull(p.getFormat());
-        assertEquals(p.getClass(), BooleanProperty.class);
-        assertEquals(((BooleanProperty) p).getDefault(), Boolean.FALSE);
+        assertEquals(p.getClass(), BooleanSchema.class);
+        assertEquals(((BooleanSchema) p).getDefault(), Boolean.FALSE);
         assertEquals(m.writeValueAsString(p), json);
     }
 

@@ -1,7 +1,6 @@
 package io.swagger.models;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,9 +9,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@ApiModel(value = "aaa")
+@OASSchema(title = "aaa")
 public class ApiFirstRequiredFieldModel {
-    @ApiModelProperty(value = "bla", required = true)
+    @OASSchema(title = "bla", required = true)
     @XmlElement(name = "a")
     public String getA() {
         return "aaa";

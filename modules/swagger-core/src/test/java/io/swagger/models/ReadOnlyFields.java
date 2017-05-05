@@ -1,8 +1,8 @@
 package io.swagger.models;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.media.OASSchema;
 
 public class ReadOnlyFields {
-    @ApiModelProperty(readOnly = true)
+    @OASSchema(readOnly = true)
     public Long id;
 }
