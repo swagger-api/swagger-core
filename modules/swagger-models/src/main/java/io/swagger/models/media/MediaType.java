@@ -16,11 +16,11 @@
 
 package io.swagger.models.media;
 
-import io.swagger.models.examples.Example;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
+import io.swagger.models.examples.Example;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * MediaType

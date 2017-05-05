@@ -17,6 +17,8 @@
 package io.swagger.models.servers;
 
 import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ServerVariable
@@ -26,7 +28,7 @@ import java.util.Objects;
 
 
 public class ServerVariable {
-  private String _enum = null;
+  private List<String> _enum = null;
   private String _default = null;
   private String description = null;
   private java.util.Map<String, Object> extensions = null;
@@ -34,19 +36,27 @@ public class ServerVariable {
   /**
    * returns the _enum property from a ServerVariable instance.
    *
-   * @return String _enum
+   * @return List<String> _enum
    **/
 
-  public String getEnum() {
+  public List<String> getEnum() {
     return _enum;
   }
 
-  public void setEnum(String _enum) {
+  public void setEnum(List<String> _enum) {
     this._enum = _enum;
   }
 
-  public ServerVariable _enum(String _enum) {
+  public ServerVariable _enum(List<String> _enum) {
     this._enum = _enum;
+    return this;
+  }
+
+  public ServerVariable addEnumItem(String _enumItem) {
+    if(this._enum == null) {
+      this._enum = new ArrayList<String>();
+    }
+    this._enum.add(_enumItem);
     return this;
   }
 

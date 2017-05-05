@@ -30,6 +30,7 @@ import java.util.Map;
 public class IntegerSchema extends Schema {
   private String type = "integer";
   private String format = "int32";
+  private Integer _default = null;
 
   /**
    * returns the type property from a IntegerSchema instance.
@@ -69,6 +70,25 @@ public class IntegerSchema extends Schema {
     return this;
   }
 
+  /**
+   * returns the _default property from a IntegerSchema instance.
+   *
+   * @return Integer _default
+   **/
+
+  public Integer getDefault() {
+    return _default;
+  }
+
+  public void setDefault(Integer _default) {
+    this._default = _default;
+  }
+
+  public IntegerSchema _default(Integer _default) {
+    this._default = _default;
+    return this;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -81,12 +101,13 @@ public class IntegerSchema extends Schema {
     IntegerSchema integerSchema = (IntegerSchema) o;
     return Objects.equals(this.type, integerSchema.type) &&
         Objects.equals(this.format, integerSchema.format) &&
+        Objects.equals(this._default, integerSchema._default) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, format, super.hashCode());
+    return Objects.hash(type, format, _default, super.hashCode());
   }
 
 
@@ -98,6 +119,7 @@ public class IntegerSchema extends Schema {
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    format: ").append(toIndentedString(format)).append("\n");
+    sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
     sb.append("}");
     return sb.toString();
   }

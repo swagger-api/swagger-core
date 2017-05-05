@@ -17,11 +17,6 @@
 package io.swagger.models.parameters;
 
 import java.util.Objects;
-import io.swagger.models.examples.Example;
-import io.swagger.models.media.Content;
-import io.swagger.models.media.Schema;
-import java.util.List;
-import java.util.Map;
 
 /**
  * PathParameter
@@ -30,6 +25,7 @@ import java.util.Map;
 
 public class PathParameter extends Parameter {
   private String in = "path";
+  private Boolean required = null;
 
   /**
    * returns the in property from a PathParameter instance.
@@ -50,6 +46,25 @@ public class PathParameter extends Parameter {
     return this;
   }
 
+  /**
+   * returns the required property from a PathParameter instance.
+   *
+   * @return Boolean required
+   **/
+
+  public Boolean getRequired() {
+    return required;
+  }
+
+  public void setRequired(Boolean required) {
+    this.required = required;
+  }
+
+  public PathParameter required(Boolean required) {
+    this.required = required;
+    return this;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -61,12 +76,13 @@ public class PathParameter extends Parameter {
     }
     PathParameter pathParameter = (PathParameter) o;
     return Objects.equals(this.in, pathParameter.in) &&
+        Objects.equals(this.required, pathParameter.required) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(in, super.hashCode());
+    return Objects.hash(in, required, super.hashCode());
   }
 
 
@@ -77,6 +93,7 @@ public class PathParameter extends Parameter {
     sb.append("class PathParameter {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    in: ").append(toIndentedString(in)).append("\n");
+    sb.append("    required: ").append(toIndentedString(required)).append("\n");
     sb.append("}");
     return sb.toString();
   }

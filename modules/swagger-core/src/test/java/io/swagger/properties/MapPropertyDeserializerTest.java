@@ -2,10 +2,10 @@ package io.swagger.properties;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.models.Operation;
-import io.swagger.models.Response;
-import io.swagger.models.properties.IntegerProperty;
-import io.swagger.models.properties.MapProperty;
-import io.swagger.models.properties.Property;
+import io.swagger.models.media.IntegerSchema;
+import io.swagger.models.media.MapSchema;
+import io.swagger.models.media.Schema;
+import io.swagger.models.responses.Response;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
@@ -47,12 +47,12 @@ public class MapPropertyDeserializerTest {
       Response response = operation.getResponses().get("200");
       assertNotNull(response);
       
-      Property responseSchema = response.getSchema();
+      Schema responseSchema = response.getContent().get("*/*").getSchema();
       assertNotNull(responseSchema);
-      assertTrue(responseSchema instanceof MapProperty);
+      assertTrue(responseSchema instanceof MapSchema);
       
-      MapProperty mp = (MapProperty) responseSchema;
-      assertTrue(mp.getAdditionalProperties() instanceof IntegerProperty);
+      MapSchema mp = (MapSchema) responseSchema;
+      assertTrue(mp.getAdditionalProperties() instanceof IntegerSchema);
   }
 
   @Test(description = "vendor extensions should be included with object type")
@@ -61,13 +61,13 @@ public class MapPropertyDeserializerTest {
     Response response = operation.getResponses().get("200");
     assertNotNull(response);
 
-    Property responseSchema = response.getSchema();
+    Schema responseSchema = response.getContent().get("*/*").getSchema();
     assertNotNull(responseSchema);
 
-    MapProperty mp = (MapProperty) responseSchema;
-    assertTrue(mp.getVendorExtensions().size() > 0);
-    assertNotNull(mp.getVendorExtensions().get("x-foo"));
-    assertEquals(mp.getVendorExtensions().get("x-foo"), "vendor x");
+    MapSchema mp = (MapSchema) responseSchema;
+    assertTrue(mp.getExtensions().size() > 0);
+    assertNotNull(mp.getExtensions().get("x-foo"));
+    assertEquals(mp.getExtensions().get("x-foo"), "vendor x");
   }
 
     @Test(description = "it should read an example within an inlined schema")
@@ -92,7 +92,7 @@ public class MapPropertyDeserializerTest {
 
         Response response = operation.getResponses().get("200");
         assertNotNull(response);
-        Property schema = response.getSchema();
+        Schema schema = response.getContent().get("*/*").getSchema();
         Object example = schema.getExample();
         assertNotNull(example);
         assertTrue(example instanceof ObjectNode);

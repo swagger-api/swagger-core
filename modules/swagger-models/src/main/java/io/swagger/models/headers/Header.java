@@ -57,7 +57,7 @@ public class Header {
   private Boolean explode = null;
   private Schema schema = null;
   private List<Example> examples = null;
-  private Example example = null;
+  private String example = null;
   private Content content = null;
   private java.util.Map<String, Object> extensions = null;
 
@@ -224,18 +224,18 @@ public class Header {
   /**
    * returns the example property from a Header instance.
    *
-   * @return Example example
+   * @return String example
    **/
 
-  public Example getExample() {
+  public String getExample() {
     return example;
   }
 
-  public void setExample(Example example) {
+  public void setExample(String example) {
     this.example = example;
   }
 
-  public Header example(Example example) {
+  public Header example(String example) {
     this.example = example;
     return this;
   }

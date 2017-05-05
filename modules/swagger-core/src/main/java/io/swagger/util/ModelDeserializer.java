@@ -5,7 +5,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.swagger.models.media.DateSchema;
+import io.swagger.models.media.DateTimeSchema;
+import io.swagger.models.media.EmailSchema;
+import io.swagger.models.media.IntegerSchema;
+import io.swagger.models.media.NumberSchema;
+import io.swagger.models.media.PasswordSchema;
 import io.swagger.models.media.Schema;
+import io.swagger.models.media.UUIDSchema;
 
 import java.io.IOException;
 
@@ -46,16 +53,44 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
             }
             return model;
         } else
-        {
-            sub = node.get("type");*/
+        {*/
+            sub = node.get("type");
+            String format = node.get("format") == null ? "" : node.get("format").textValue();
+
             Schema model = null;
             /*
             if (sub != null && "array".equals(((TextNode) sub).textValue())) {
                 model = Json.mapper().convertValue(node, ArrayModel.class);
             } else*/ {
-                model = Json.mapper().convertValue(node, Schema.class);
+
+            if(sub != null) {
+                if (sub.textValue().equals("integer")) {
+                    model = Json.mapper().convertValue(node, IntegerSchema.class);
+                }
+                else if (sub.textValue().equals("number")) {
+                    model = Json.mapper().convertValue(node, NumberSchema.class);
+                }
+                else if (sub.textValue().equals("string")) {
+                    if("date".equals(format)) {
+                        model = Json.mapper().convertValue(node, DateSchema.class);
+                    }
+                    if("date-time".equals(format)) {
+                        model = Json.mapper().convertValue(node, DateTimeSchema.class);
+                    }
+                    if("email".equals(format)) {
+                        model = Json.mapper().convertValue(node, EmailSchema.class);
+                    }
+                    if("password".equals(format)) {
+                        model = Json.mapper().convertValue(node, PasswordSchema.class);
+                    }
+                    if("uuid".equals(format)) {
+                        model = Json.mapper().convertValue(node, UUIDSchema.class);
+                    }
+                }
+
             }
-            return model;
+        }
+        return model;
 //        }
     }
 }

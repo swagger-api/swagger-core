@@ -1,9 +1,9 @@
 package io.swagger.properties;
 
 import io.swagger.models.Operation;
-import io.swagger.models.Response;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.Property;
+import io.swagger.models.media.ArraySchema;
+import io.swagger.models.media.Schema;
+import io.swagger.models.responses.Response;
 import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
 
@@ -34,11 +34,11 @@ public class ArrayPropertyDeserializerTest {
       Response response = operation.getResponses().get("200");
       assertNotNull(response);
       
-      Property responseSchema = response.getSchema();
+      Schema responseSchema = response.getContent().get("*/*").getSchema();
       assertNotNull(responseSchema);
-      assertTrue(responseSchema instanceof ArrayProperty);
+      assertTrue(responseSchema instanceof ArraySchema);
       
-      ArrayProperty mp = (ArrayProperty) responseSchema;
+      ArraySchema mp = (ArraySchema) responseSchema;
       assertNotNull( mp.getExample() );
       assertEquals(mp.getMinItems(), new Integer(3));
       assertEquals(mp.getMaxItems(), new Integer(100));

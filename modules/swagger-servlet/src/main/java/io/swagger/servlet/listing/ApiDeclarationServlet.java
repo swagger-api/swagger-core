@@ -1,11 +1,7 @@
 package io.swagger.servlet.listing;
 
-import io.swagger.config.Scanner;
-import io.swagger.config.SwaggerConfig;
 import io.swagger.models.Swagger;
 import io.swagger.servlet.Reader;
-import io.swagger.util.Json;
-import io.swagger.util.Yaml;
 
 import java.io.IOException;
 import java.util.Set;

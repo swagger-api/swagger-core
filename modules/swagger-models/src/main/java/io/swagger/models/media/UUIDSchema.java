@@ -30,6 +30,7 @@ import java.util.Map;
 public class UUIDSchema extends Schema {
   private String type = "string";
   private String format = "uuid";
+  private String _default = null;
 
   /**
    * returns the type property from a UUIDSchema instance.
@@ -69,6 +70,25 @@ public class UUIDSchema extends Schema {
     return this;
   }
 
+  /**
+   * returns the _default property from a UUIDSchema instance.
+   *
+   * @return String _default
+   **/
+
+  public String getDefault() {
+    return _default;
+  }
+
+  public void setDefault(String _default) {
+    this._default = _default;
+  }
+
+  public UUIDSchema _default(String _default) {
+    this._default = _default;
+    return this;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -81,12 +101,13 @@ public class UUIDSchema extends Schema {
     UUIDSchema uuIDSchema = (UUIDSchema) o;
     return Objects.equals(this.type, uuIDSchema.type) &&
         Objects.equals(this.format, uuIDSchema.format) &&
+        Objects.equals(this._default, uuIDSchema._default) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, format, super.hashCode());
+    return Objects.hash(type, format, _default, super.hashCode());
   }
 
 
@@ -98,6 +119,7 @@ public class UUIDSchema extends Schema {
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    format: ").append(toIndentedString(format)).append("\n");
+    sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
     sb.append("}");
     return sb.toString();
   }

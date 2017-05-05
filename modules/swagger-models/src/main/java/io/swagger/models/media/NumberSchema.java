@@ -29,6 +29,7 @@ import java.util.Map;
 
 public class NumberSchema extends Schema {
   private String type = "number";
+  private BigDecimal _default = null;
 
   /**
    * returns the type property from a NumberSchema instance.
@@ -49,6 +50,25 @@ public class NumberSchema extends Schema {
     return this;
   }
 
+  /**
+   * returns the _default property from a NumberSchema instance.
+   *
+   * @return BigDecimal _default
+   **/
+
+  public BigDecimal getDefault() {
+    return _default;
+  }
+
+  public void setDefault(BigDecimal _default) {
+    this._default = _default;
+  }
+
+  public NumberSchema _default(BigDecimal _default) {
+    this._default = _default;
+    return this;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -60,12 +80,13 @@ public class NumberSchema extends Schema {
     }
     NumberSchema numberSchema = (NumberSchema) o;
     return Objects.equals(this.type, numberSchema.type) &&
+        Objects.equals(this._default, numberSchema._default) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, super.hashCode());
+    return Objects.hash(type, _default, super.hashCode());
   }
 
 
@@ -76,6 +97,7 @@ public class NumberSchema extends Schema {
     sb.append("class NumberSchema {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
+    sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
     sb.append("}");
     return sb.toString();
   }

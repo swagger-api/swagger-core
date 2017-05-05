@@ -20,6 +20,7 @@ import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +35,7 @@ public class ParameterSerializationTest {
     public void serializeQueryParameter() {
         final Parameter p = new QueryParameter()
                 .schema(new StringSchema());
-        final String json = "{\"in\":\"query\",\"required\":false,\"type\":\"string\"}";
+        final String json = "{\"in\":\"query\",\"schema\":{\"type\":\"string\"}}";
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
@@ -80,7 +81,7 @@ public class ParameterSerializationTest {
     @Test(description = "it should serialize a PathParameter")
     public void serializePathParameter() {
         final Parameter p = new PathParameter().schema(new StringSchema());
-        final String json = "{\"in\":\"path\",\"required\":true,\"type\":\"string\"}";
+        final String json = "{\"in\":\"path\",\"schema\":{\"type\":\"string\"}}";
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
@@ -97,38 +98,21 @@ public class ParameterSerializationTest {
         Parameter p = new PathParameter()
                 .schema(new ArraySchema()
                     .items(new StringSchema()));
-        final String json = "{" +
-                "   \"in\":\"path\"," +
-                "   \"required\":true," +
-                "   \"type\":\"array\"," +
-                "   \"items\":{" +
-                "      \"type\":\"string\"" +
-                "   }," +
-                "   \"collectionFormat\":\"multi\"" +
-                "}";
+        final String json = "{\"in\":\"path\",\"schema\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}";
         SerializationMatchers.assertEqualsToJson(p, json);
 
         final String yaml = "---\n" +
                 "in: \"path\"\n" +
-                "required: true\n" +
-                "type: \"array\"\n" +
-                "items:\n" +
-                "  type: \"string\"\n" +
-                "collectionFormat: \"multi\"";
+                "schema:\n" +
+                "  type: \"array\"\n" +
+                "  items:\n" +
+                "    type: \"string\"";
         SerializationMatchers.assertEqualsToYaml(p, yaml);
     }
 
     @Test(description = "it should deserialize a PathParameter with string array")
     public void deserializeStringArrayPathParameter() throws IOException {
-        final String json = "{" +
-                "   \"in\":\"path\"," +
-                "   \"required\":true," +
-                "   \"type\":\"array\"," +
-                "   \"items\":{" +
-                "      \"type\":\"string\"" +
-                "   }," +
-                "   \"collectionFormat\":\"multi\"" +
-                "}";
+        final String json = "{\"in\":\"path\",\"schema\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}";
         final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
     }
@@ -191,7 +175,7 @@ public class ParameterSerializationTest {
         final Parameter p = new HeaderParameter()
                 .schema(new ArraySchema()
                         .items(new StringSchema()));
-        final String json = "{\"in\":\"header\",\"required\":false,\"type\":\"string\",\"collectionFormat\":\"multi\"}";
+        final String json = "{\"in\":\"header\",\"schema\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}";
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
@@ -280,7 +264,7 @@ public class ParameterSerializationTest {
                 .content(new Content().addMediaType("*/*",
                         new MediaType().schema(model)));
 
-        final String json = "{\"in\":\"body\",\"required\":false,\"schema\":{\"$ref\":\"#/definitions/Cat\"}}";
+        final String json = "{\"content\":{\"*/*\":{\"schema\":{\"ref\":\"#/definitions/Cat\"}}}}";
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
@@ -380,25 +364,26 @@ public class ParameterSerializationTest {
     @Test(description = "should serialize correctly typed numeric enums")
     public void testIssue1765() throws Exception {
         String yaml =
-                "swagger: '2.0'\n" +
-                        "paths:\n" +
-                        "  /test:\n" +
-                        "    get:\n" +
-                        "      parameters:\n" +
-                        "      - name: \"days\"\n" +
-                        "        in: \"path\"\n" +
-                        "        required: true\n" +
-                        "        type: \"integer\"\n" +
-                        "        format: \"int32\"\n" +
-                        "        enum:\n" +
-                        "        - 1\n" +
-                        "        - 2\n" +
-                        "        - 3\n" +
-                        "        - 4\n" +
-                        "        - 5\n" +
-                        "      responses:\n" +
-                        "        default:\n" +
-                        "          description: great";
+                "openapi: '3.0.0-rc1'\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      parameters:\n" +
+                "      - name: \"days\"\n" +
+                "        in: \"path\"\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: \"integer\"\n" +
+                "          format: \"int32\"\n" +
+                "          enum:\n" +
+                "          - 1\n" +
+                "          - 2\n" +
+                "          - 3\n" +
+                "          - 4\n" +
+                "          - 5\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: great";
 
         OpenAPI swagger = Yaml.mapper().readValue(yaml, OpenAPI.class);
         SerializationMatchers.assertEqualsToYaml(swagger, yaml);
@@ -436,10 +421,9 @@ public class ParameterSerializationTest {
     @Test(description = "should serialize double value")
     public void testDoubleValue() {
         final QueryParameter param = new QueryParameter();
-        param.setSchema(new NumberSchema().format("double"));
-//        param.setDefaultValue("12.34");
+        param.setSchema(new NumberSchema()._default(new BigDecimal("12.34")).format("double"));
 
-        final String json = "{\"in\":\"query\",\"required\":false,\"type\":\"number\",\"default\":12.34,\"format\":\"double\"}";
+        final String json = "{\"in\":\"query\",\"schema\":{\"type\":\"number\",\"format\":\"double\",\"default\":12.34}}";
         SerializationMatchers.assertEqualsToJson(param, json);
     }
 
@@ -491,7 +475,7 @@ public class ParameterSerializationTest {
     @Test(description = "should mark a parameter as to allow empty value")
     public void testAllowEmptyValueParameter() throws Exception {
         final Parameter qp = new QueryParameter().allowEmptyValue(true);
-        final String json = "{\"in\":\"query\",\"required\":false,\"allowEmptyValue\":true}";
+        final String json = "{\"in\":\"query\",\"allowEmptyValue\":true}";
         SerializationMatchers.assertEqualsToJson(qp, json);
     }
 }

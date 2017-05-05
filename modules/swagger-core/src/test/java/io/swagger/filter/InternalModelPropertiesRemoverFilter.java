@@ -1,8 +1,7 @@
 package io.swagger.filter;
 
 import io.swagger.core.filter.AbstractSpecFilter;
-import io.swagger.models.Model;
-import io.swagger.models.properties.Property;
+import io.swagger.models.media.Schema;
 
 import java.util.List;
 import java.util.Map;
@@ -14,8 +13,8 @@ import java.util.Map;
 public class InternalModelPropertiesRemoverFilter extends AbstractSpecFilter {
     @Override
     public boolean isPropertyAllowed(
-            Model model,
-            Property property,
+            Schema model,
+            Schema property,
             String propertyName,
             Map<String, List<String>> params,
             Map<String, String> cookies,

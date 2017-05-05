@@ -1,57 +1,54 @@
 package io.swagger.jackson;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.media.OASSchema;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContextImpl;
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.Xml;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.Property;
-import java.util.List;
+import io.swagger.models.media.ArraySchema;
+import io.swagger.models.media.Schema;
+import io.swagger.models.media.XML;
+import org.testng.annotations.Test;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
+
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
-import org.testng.annotations.Test;
 
 public class XMLInfoTest extends SwaggerTestBase {
 
     @Test
     public void testSimple() throws Exception {
         final ModelConverter mr = modelResolver();
-        final Model model = mr.resolve(XmlDecoratedBean.class, new ModelConverterContextImpl(mr), null);
-        assertTrue(model instanceof ModelImpl);
+        final Schema model = mr.resolve(XmlDecoratedBean.class, new ModelConverterContextImpl(mr), null);
 
-        final ModelImpl impl = (ModelImpl) model;
-
-        final Xml xml = impl.getXml();
+        final XML xml = model.getXml();
         assertNotNull(xml);
         assertEquals(xml.getName(), "xmlDecoratedBean");
 
         // Cast it to an array property
-        final ArrayProperty property = (ArrayProperty)impl.getProperties().get("elements");
+        final ArraySchema property = (ArraySchema)model.getProperties().get("elements");
         assertNotNull(property);
-        final Xml propertyXml = property.getXml();
+        final XML propertyXml = property.getXml();
         assertNotNull(propertyXml);
         assertNull(propertyXml.getName());
         assertTrue(propertyXml.getWrapped());
         // Get the xml for items for the array property
-        final Xml itemsXml = property.getItems().getXml();
+        final XML itemsXml = property.getItems().getXml();
         assertNotNull(itemsXml);
         // Check the name of item name
         assertEquals(itemsXml.getName(), "element");
-        assertNotNull(impl.getProperties().get("elementC"));
+        assertNotNull(model.getProperties().get("elementC"));
     }
 
     @XmlRootElement(name = "xmlDecoratedBean")
-    @ApiModel(description = "DESC")
+    @OASSchema(description = "DESC")
     static class XmlDecoratedBean {
 
         @XmlElement(name = "elementB")
@@ -68,43 +65,37 @@ public class XMLInfoTest extends SwaggerTestBase {
     @Test
     public void testReadingXmlAccessorTypeNone() throws Exception {
         final ModelConverter mr = modelResolver();
-        final Model model = mr.resolve(XmlDecoratedBeanXmlAccessorNone.class, new ModelConverterContextImpl(mr), null);
-        assertTrue(model instanceof ModelImpl);
+        final Schema model = mr.resolve(XmlDecoratedBeanXmlAccessorNone.class, new ModelConverterContextImpl(mr), null);
 
-        final ModelImpl impl = (ModelImpl) model;
-
-        final Xml xml = impl.getXml();
+        final XML xml = model.getXml();
         assertNotNull(xml);
         assertEquals(xml.getName(), "xmlDecoratedBean");
 
-        final Property property = impl.getProperties().get("a");
+        final Schema property = model.getProperties().get("a");
         assertNotNull(property);
 
-        assertNull(impl.getProperties().get("b"));
+        assertNull(model.getProperties().get("b"));
     }
 
     @Test
     public void testReadingXmlAccessorTypePublic() throws Exception {
         final ModelConverter mr = modelResolver();
-        final Model model = mr.resolve(XmlDecoratedBeanXmlAccessorPublic.class, new ModelConverterContextImpl(mr), null);
-        assertTrue(model instanceof ModelImpl);
+        final Schema model = mr.resolve(XmlDecoratedBeanXmlAccessorPublic.class, new ModelConverterContextImpl(mr), null);
 
-        final ModelImpl impl = (ModelImpl) model;
-
-        final Xml xml = impl.getXml();
+        final XML xml = model.getXml();
         assertNotNull(xml);
         assertEquals(xml.getName(), "xmlDecoratedBean");
 
-        final Property propertyA = impl.getProperties().get("a");
+        final Schema propertyA = model.getProperties().get("a");
         assertNotNull(propertyA);
 
-        Property propertyB = impl.getProperties().get("b");
+        Schema propertyB = model.getProperties().get("b");
         assertNotNull(propertyB);
     }
 
     @XmlRootElement(name = "xmlDecoratedBean")
     @XmlAccessorType(XmlAccessType.NONE)
-    @ApiModel
+    @OASSchema
     static class XmlDecoratedBeanXmlAccessorNone {
 
         @XmlElement
@@ -114,7 +105,7 @@ public class XMLInfoTest extends SwaggerTestBase {
     }
 
     @XmlRootElement(name = "xmlDecoratedBean")
-    @ApiModel
+    @OASSchema
     static class XmlDecoratedBeanXmlAccessorPublic {
 
         @XmlElement

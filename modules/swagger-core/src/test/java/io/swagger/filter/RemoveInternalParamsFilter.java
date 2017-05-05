@@ -1,7 +1,7 @@
 package io.swagger.filter;
 
 import io.swagger.core.filter.AbstractSpecFilter;
-//import io.swagger.model.ApiDescription;
+import io.swagger.model.ApiDescription;
 import io.swagger.models.Operation;
 import io.swagger.models.parameters.Parameter;
 
@@ -17,7 +17,7 @@ public class RemoveInternalParamsFilter extends AbstractSpecFilter {
     public boolean isParamAllowed(
             Parameter parameter,
             Operation operation,
-//            ApiDescription api,
+            ApiDescription api,
             Map<String, List<String>> params,
             Map<String, String> cookies,
             Map<String, List<String>> headers) {

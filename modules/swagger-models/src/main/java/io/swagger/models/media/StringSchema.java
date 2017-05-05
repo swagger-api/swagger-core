@@ -29,6 +29,7 @@ import java.util.Map;
 
 public class StringSchema extends Schema {
   private String type = "string";
+  private String _default = null;
 
   /**
    * returns the type property from a StringSchema instance.
@@ -49,6 +50,25 @@ public class StringSchema extends Schema {
     return this;
   }
 
+  /**
+   * returns the _default property from a StringSchema instance.
+   *
+   * @return String _default
+   **/
+
+  public String getDefault() {
+    return _default;
+  }
+
+  public void setDefault(String _default) {
+    this._default = _default;
+  }
+
+  public StringSchema _default(String _default) {
+    this._default = _default;
+    return this;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -60,12 +80,13 @@ public class StringSchema extends Schema {
     }
     StringSchema stringSchema = (StringSchema) o;
     return Objects.equals(this.type, stringSchema.type) &&
+        Objects.equals(this._default, stringSchema._default) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, super.hashCode());
+    return Objects.hash(type, _default, super.hashCode());
   }
 
 
@@ -76,6 +97,7 @@ public class StringSchema extends Schema {
     sb.append("class StringSchema {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
+    sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -30,7 +30,7 @@ public class XML {
   private String namespace = null;
   private String prefix = null;
   private Boolean attribute = null;
-  private Boolean wrapperd = null;
+  private Boolean wrapped = null;
   private java.util.Map<String, Object> extensions = null;
 
   /**
@@ -110,21 +110,21 @@ public class XML {
   }
 
   /**
-   * returns the wrapperd property from a XML instance.
+   * returns the wrapped property from a XML instance.
    *
-   * @return Boolean wrapperd
+   * @return Boolean wrapped
    **/
 
-  public Boolean getWrapperd() {
-    return wrapperd;
+  public Boolean getWrapped() {
+    return wrapped;
   }
 
-  public void setWrapperd(Boolean wrapperd) {
-    this.wrapperd = wrapperd;
+  public void setWrapped(Boolean wrapped) {
+    this.wrapped = wrapped;
   }
 
-  public XML wrapperd(Boolean wrapperd) {
-    this.wrapperd = wrapperd;
+  public XML wrapped(Boolean wrapped) {
+    this.wrapped = wrapped;
     return this;
   }
 
@@ -142,12 +142,12 @@ public class XML {
         Objects.equals(this.namespace, XML.namespace) &&
         Objects.equals(this.prefix, XML.prefix) &&
         Objects.equals(this.attribute, XML.attribute) &&
-        Objects.equals(this.wrapperd, XML.wrapperd);
+        Objects.equals(this.wrapped, XML.wrapped);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, namespace, prefix, attribute, wrapperd);
+    return Objects.hash(name, namespace, prefix, attribute, wrapped);
   }
 
 
@@ -175,7 +175,7 @@ public class XML {
     sb.append("    namespace: ").append(toIndentedString(namespace)).append("\n");
     sb.append("    prefix: ").append(toIndentedString(prefix)).append("\n");
     sb.append("    attribute: ").append(toIndentedString(attribute)).append("\n");
-    sb.append("    wrapperd: ").append(toIndentedString(wrapperd)).append("\n");
+    sb.append("    wrapped: ").append(toIndentedString(wrapped)).append("\n");
     sb.append("}");
     return sb.toString();
   }

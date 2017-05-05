@@ -29,6 +29,7 @@ import java.util.Map;
 
 public class BooleanSchema extends Schema {
   private String type = "boolean";
+  private Boolean _default = null;
 
   /**
    * returns the type property from a BooleanSchema instance.
@@ -49,6 +50,25 @@ public class BooleanSchema extends Schema {
     return this;
   }
 
+  /**
+   * returns the _default property from a BooleanSchema instance.
+   *
+   * @return Boolean _default
+   **/
+
+  public Boolean getDefault() {
+    return _default;
+  }
+
+  public void setDefault(Boolean _default) {
+    this._default = _default;
+  }
+
+  public BooleanSchema _default(Boolean _default) {
+    this._default = _default;
+    return this;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -60,12 +80,13 @@ public class BooleanSchema extends Schema {
     }
     BooleanSchema booleanSchema = (BooleanSchema) o;
     return Objects.equals(this.type, booleanSchema.type) &&
+        Objects.equals(this._default, booleanSchema._default) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, super.hashCode());
+    return Objects.hash(type, _default, super.hashCode());
   }
 
 
@@ -76,6 +97,7 @@ public class BooleanSchema extends Schema {
     sb.append("class BooleanSchema {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
+    sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -30,6 +30,7 @@ import java.util.Map;
 public class BinarySchema extends Schema {
   private String type = "string";
   private String format = "binary";
+  private String _default = null;
 
   /**
    * returns the type property from a BinarySchema instance.
@@ -69,6 +70,25 @@ public class BinarySchema extends Schema {
     return this;
   }
 
+  /**
+   * returns the _default property from a BinarySchema instance.
+   *
+   * @return String _default
+   **/
+
+  public String getDefault() {
+    return _default;
+  }
+
+  public void setDefault(String _default) {
+    this._default = _default;
+  }
+
+  public BinarySchema _default(String _default) {
+    this._default = _default;
+    return this;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -81,12 +101,13 @@ public class BinarySchema extends Schema {
     BinarySchema binarySchema = (BinarySchema) o;
     return Objects.equals(this.type, binarySchema.type) &&
         Objects.equals(this.format, binarySchema.format) &&
+        Objects.equals(this._default, binarySchema._default) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, format, super.hashCode());
+    return Objects.hash(type, format, _default, super.hashCode());
   }
 
 
@@ -98,6 +119,7 @@ public class BinarySchema extends Schema {
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    format: ").append(toIndentedString(format)).append("\n");
+    sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
     sb.append("}");
     return sb.toString();
   }

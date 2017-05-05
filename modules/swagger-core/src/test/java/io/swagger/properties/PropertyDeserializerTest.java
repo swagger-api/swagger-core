@@ -1,7 +1,7 @@
 package io.swagger.properties;
 
-import io.swagger.models.properties.IntegerProperty;
-import io.swagger.models.properties.Property;
+import io.swagger.models.media.IntegerSchema;
+import io.swagger.models.media.Schema;
 import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
@@ -22,10 +22,10 @@ public class PropertyDeserializerTest {
             "  \"maximum\": 100\n" +
             "}";
 
-        Property property = Json.mapper().readValue(json, Property.class);
+        Schema property = Json.mapper().readValue(json, Schema.class);
 
-        assertTrue(property instanceof IntegerProperty);
-        IntegerProperty ip = (IntegerProperty) property;
+        assertTrue(property instanceof IntegerSchema);
+        IntegerSchema ip = (IntegerSchema) property;
         assertEquals(ip.getMinimum(), new BigDecimal("32"));
         assertEquals(ip.getMaximum(), new BigDecimal("100"));
     }
@@ -40,8 +40,8 @@ public class PropertyDeserializerTest {
             "  \"maximum\": 100\n" +
             "}";
 
-        Property param = Json.mapper().readValue(json, Property.class);
-        IntegerProperty ip = (IntegerProperty) param;
+        Schema param = Json.mapper().readValue(json, Schema.class);
+        IntegerSchema ip = (IntegerSchema) param;
         assertEquals(ip.getMinimum(), new BigDecimal("32"));
         assertEquals(ip.getMaximum(), new BigDecimal("100"));
 

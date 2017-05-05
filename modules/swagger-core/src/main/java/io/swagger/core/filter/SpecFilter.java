@@ -1,5 +1,6 @@
 package io.swagger.core.filter;
 
+import io.swagger.model.ApiDescription;
 import io.swagger.models.OpenAPI;
 import io.swagger.models.Operation;
 import io.swagger.models.PathItem;
@@ -51,7 +52,8 @@ public class SpecFilter {
                 Operation op = ops.get(key);
                 if (op != null) {
                     final Set<String> tags;
-                    if (filter.isOperationAllowed(op, params, cookies, headers)) {
+                    ApiDescription description = new ApiDescription(resourcePath, key);
+                    if (filter.isOperationAllowed(op, description, params, cookies, headers)) {
                         // TODO
 //                        clonedPath.set(key, filterOperation(filter, op, params, cookies, headers));
                         tags = allowedTags;
@@ -240,7 +242,7 @@ public class SpecFilter {
         return clonedDefinitions;
     }
 
-    public Operation filterOperation(SwaggerSpecFilter filter, Operation op, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    public Operation filterOperation(SwaggerSpecFilter filter, Operation op, ApiDescription description, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         Operation clonedOperation = new Operation()
                 .summary(op.getSummary())
                 .description(op.getDescription())
@@ -257,7 +259,7 @@ public class SpecFilter {
         List<Parameter> clonedParams = new ArrayList<Parameter>();
         if (op.getParameters() != null) {
             for (Parameter param : op.getParameters()) {
-                if (filter.isParamAllowed(param, op, params, cookies, headers)) {
+                if (filter.isParamAllowed(param, op, description, params, cookies, headers)) {
                     clonedParams.add(param);
                 }
             }
