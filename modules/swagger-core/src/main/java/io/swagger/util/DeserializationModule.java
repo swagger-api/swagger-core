@@ -21,6 +21,9 @@ public class DeserializationModule extends SimpleModule {
 
         this.addDeserializer(Schema.class, new ModelDeserializer());
         this.addDeserializer(Parameter.class, new ParameterDeserializer());
+//        this.addDeserializer(RequestBody.class, new RequestBodyDeserializer());
+
+        // TODO
 //        this.addDeserializer(SecurityDefinition.class, new SecurityDefinitionDeserializer());
     }
 

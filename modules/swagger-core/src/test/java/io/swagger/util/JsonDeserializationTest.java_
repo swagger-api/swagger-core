@@ -34,7 +34,7 @@ public class JsonDeserializationTest {
 
         final Path petPath = swagger.getPath("/pet");
         assertTrue(petPath instanceof RefPath);
-        assertEquals(((RefPath) petPath).get$ref(), "http://my.company.com/paths/health.json");
+        assertEquals(((RefPath) petPath).get$$ref(), "http://my.company.com/paths/health.json");
         assertTrue(swagger.getPath("/user") instanceof Path);
     }
 
@@ -53,7 +53,7 @@ public class JsonDeserializationTest {
         assertTrue(response instanceof RefResponse);
 
         RefResponse refResponse = (RefResponse) response;
-        assertEquals(refResponse.get$ref(), expectedRef);
+        assertEquals(refResponse.get$$ref(), expectedRef);
     }
 
     @Test

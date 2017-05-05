@@ -17,6 +17,11 @@
 package io.swagger.models.parameters;
 
 import java.util.Objects;
+import io.swagger.models.examples.Example;
+import io.swagger.models.media.Content;
+import io.swagger.models.media.Schema;
+import java.util.List;
+import java.util.Map;
 
 /**
  * PathParameter
@@ -25,7 +30,7 @@ import java.util.Objects;
 
 public class PathParameter extends Parameter {
   private String in = "path";
-  private Boolean required = null;
+  private Boolean required = true;
 
   /**
    * returns the in property from a PathParameter instance.

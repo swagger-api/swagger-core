@@ -88,9 +88,9 @@ public class SnakeCaseConverterTest {
                     for (String key : properties.keySet()) {
                         String convertedKey = toSnakeCase(key);
                         Schema prop = properties.get(key);
-                        if (prop.getRef() != null) {
+                        if (prop.get$ref() != null) {
                             // TODO
-//                            prop.setRef(toSnakeCase(ref.getSimpleRef()));
+//                            prop.set$ref(toSnakeCase(ref.getSimpleRef()));
                         }
                         updatedProperties.put(convertedKey, prop);
                     }

@@ -41,7 +41,7 @@ public class ParameterSerializationTest {
 
     @Test(description = "it should deserialize a QueryParameter")
     public void deserializeQueryParameter() throws IOException {
-        final String json = "{\"in\":\"query\",\"required\":false,\"type\":\"string\"}";
+        final String json = "{\"in\":\"query\",\"required\":false,\"schema\":{\"type\":\"string\"}}";
         final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
     }
@@ -53,12 +53,11 @@ public class ParameterSerializationTest {
                     .items(new StringSchema()));
         final String json = "{" +
                 "   \"in\":\"query\"," +
-                "   \"required\":false," +
-                "   \"type\":\"array\"," +
-                "   \"items\":{" +
-                "      \"type\":\"string\"" +
-                "   }," +
-                "   \"collectionFormat\":\"multi\"" +
+                "   \"schema\":{" +
+                "     \"type\":\"array\"," +
+                "     \"items\":{" +
+                "       \"type\":\"string\"" +
+                "   }}" +
                 "}";
         SerializationMatchers.assertEqualsToJson(p, json);
     }
@@ -68,11 +67,12 @@ public class ParameterSerializationTest {
         final String json = "{" +
                 "   \"in\":\"query\"," +
                 "   \"required\":false," +
-                "   \"type\":\"array\"," +
-                "   \"items\":{" +
-                "      \"type\":\"string\"" +
-                "   }," +
-                "   \"collectionFormat\":\"multi\"" +
+                "   \"schema\":{" +
+                "     \"type\":\"array\"," +
+                "     \"items\":{" +
+                "        \"type\":\"string\"" +
+                "     }" +
+                "   }" +
                 "}";
         final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
@@ -81,13 +81,13 @@ public class ParameterSerializationTest {
     @Test(description = "it should serialize a PathParameter")
     public void serializePathParameter() {
         final Parameter p = new PathParameter().schema(new StringSchema());
-        final String json = "{\"in\":\"path\",\"schema\":{\"type\":\"string\"}}";
+        final String json = "{\"in\":\"path\",\"required\":true,\"schema\":{\"type\":\"string\"}}";
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
     @Test(description = "it should deserialize a PathParameter")
     public void deserializePathParameter() throws IOException {
-        final String json = "{\"in\":\"query\",\"required\":true,\"type\":\"string\"}";
+        final String json = "{\"in\":\"query\",\"required\":true,\"schema\":{\"type\":\"string\"}}";
         final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
         assertTrue(p.getRequired());
@@ -98,11 +98,12 @@ public class ParameterSerializationTest {
         Parameter p = new PathParameter()
                 .schema(new ArraySchema()
                     .items(new StringSchema()));
-        final String json = "{\"in\":\"path\",\"schema\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}";
+        final String json = "{\"in\":\"path\",\"required\":true,\"schema\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}";
         SerializationMatchers.assertEqualsToJson(p, json);
 
         final String yaml = "---\n" +
                 "in: \"path\"\n" +
+                "required: true\n" +
                 "schema:\n" +
                 "  type: \"array\"\n" +
                 "  items:\n" +
@@ -112,7 +113,7 @@ public class ParameterSerializationTest {
 
     @Test(description = "it should deserialize a PathParameter with string array")
     public void deserializeStringArrayPathParameter() throws IOException {
-        final String json = "{\"in\":\"path\",\"schema\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}";
+        final String json = "{\"in\":\"path\",\"required\":true,\"schema\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}";
         final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
     }
@@ -121,16 +122,7 @@ public class ParameterSerializationTest {
     public void serializeIntegerArrayPathParameter() {
         final Parameter p = new PathParameter()
                 .schema(new ArraySchema().items(new IntegerSchema()));
-        final String json = "{" +
-                "   \"in\":\"path\"," +
-                "   \"required\":true," +
-                "   \"type\":\"array\"," +
-                "   \"items\":{" +
-                "      \"type\":\"integer\"," +
-                "      \"format\":\"int32\"" +
-                "   }," +
-                "   \"collectionFormat\":\"multi\"" +
-                "}";
+        final String json = "{\"in\":\"path\",\"required\":true,\"schema\":{\"type\":\"array\",\"items\":{\"type\":\"integer\",\"format\":\"int32\"}}}\n";
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
@@ -139,12 +131,12 @@ public class ParameterSerializationTest {
         final String json = "{" +
                 "   \"in\":\"path\"," +
                 "   \"required\":true," +
+                "   \"schema\":{" +
                 "   \"type\":\"array\"," +
                 "   \"items\":{" +
                 "      \"type\":\"integer\"," +
                 "      \"format\":\"int32\"" +
-                "   }," +
-                "   \"collectionFormat\":\"multi\"" +
+                "   }}" +
                 "}";
         final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
@@ -154,18 +146,18 @@ public class ParameterSerializationTest {
     public void serializeHeaderParameter() {
         final Parameter p = new HeaderParameter()
                 .schema(new StringSchema());
-        final String json = "{\"in\":\"header\",\"required\":false,\"type\":\"string\"}";
+        final String json = "{\"in\":\"header\",\"schema\":{\"type\":\"string\"}}";
         SerializationMatchers.assertEqualsToJson(p, json);
         final String yaml = "---\n" +
                 "in: \"header\"\n" +
-                "required: false\n" +
-                "type: \"string\"";
+                "schema:\n" +
+                "  type: \"string\"";
         SerializationMatchers.assertEqualsToYaml(p, yaml);
     }
 
     @Test(description = "it should deserialize a HeaderParameter")
     public void deserializeHeaderParameter() throws IOException {
-        final String json = "{\"in\":\"header\",\"required\":true,\"type\":\"string\"}";
+        final String json = "{\"in\":\"header\",\"required\":true,\"schema\":{\"type\":\"string\"}}";
         final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
     }
@@ -181,7 +173,7 @@ public class ParameterSerializationTest {
 
     @Test(description = "it should deserialize a string array HeaderParameter")
     public void deserializeStringArrayHeaderParameter() throws IOException {
-        final String json = "{\"in\":\"header\",\"required\":true,\"type\":\"string\",\"collectionFormat\":\"multi\"}";
+        final String json = "{\"in\":\"header\",\"required\":true,\"schema\":{\"type\":\"string\"}}";
         final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
     }
@@ -229,18 +221,13 @@ public class ParameterSerializationTest {
 
     @Test(description = "it should deserialize a BodyParameter")
     public void deserializeBodyParameter() throws IOException {
-        final String json = "{" +
-                "   \"in\":\"body\"," +
-                "   \"required\":false," +
-                "   \"schema\":{" +
-                "      \"properties\":{" +
-                "         \"name\":{" +
-                "            \"type\":\"string\"" +
-                "         }" +
-                "      }" +
-                "   }" +
-                "}";
-        final Parameter p = m.readValue(json, Parameter.class);
+
+        final String json =
+                "{\"content\":{" +
+                "  \"*/*\":{" +
+                "    \"schema\":{" +
+                "      \"type\":\"string\"}}}}";
+        final RequestBody p = m.readValue(json, RequestBody.class);
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
@@ -264,55 +251,30 @@ public class ParameterSerializationTest {
                 .content(new Content().addMediaType("*/*",
                         new MediaType().schema(model)));
 
-        final String json = "{\"content\":{\"*/*\":{\"schema\":{\"ref\":\"#/definitions/Cat\"}}}}";
+        final String json = "{\"content\":{\"*/*\":{\"schema\":{\"$ref\":\"#/definitions/Cat\"}}}}";
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
-    @Test(description = "it should deserialize a ref BodyParameter")
-    public void deserializeRefBodyParameter() throws IOException {
-        final String json = "{\"in\":\"body\",\"required\":false,\"schema\":{\"$ref\":\"#/definitions/Cat\"}}";
-        final Parameter p = m.readValue(json, Parameter.class);
-        SerializationMatchers.assertEqualsToJson(p, json);
-    }
-
-    @Test(enabled = false, description = "it should serialize an array BodyParameter")
+    @Test(description = "it should serialize an array BodyParameter")
     public void serializeArrayBodyParameter() {
         final Schema model = new ArraySchema().items(new Schema().ref("#/definitions/Cat"));
         final RequestBody p = new RequestBody()
                 .content(new Content().addMediaType("*/*",
                         new MediaType().schema(model)));
-        final String json = "{" +
-                "   \"in\":\"body\"," +
-                "   \"required\":false," +
-                "   \"schema\":{" +
-                "      \"type\":\"array\"," +
-                "      \"items\":{" +
-                "         \"$ref\":\"#/definitions/Cat\"" +
-                "      }" +
-                "   }" +
-                "}";
+        final String json = "{\"content\":{\"*/*\":{\"schema\":{\"type\":\"array\",\"items\":{\"$ref\":\"#/definitions/Cat\"}}}}}";
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
     @Test(description = "it should deserialize an array BodyParameter")
     public void deserializeArrayBodyParameter() throws IOException {
-        final String json = "{" +
-                "   \"in\":\"body\"," +
-                "   \"required\":false," +
-                "   \"schema\":{" +
-                "      \"type\":\"array\"," +
-                "      \"items\":{" +
-                "         \"$ref\":\"#/definitions/Cat\"" +
-                "      }" +
-                "   }" +
-                "}";
-        final Parameter p = m.readValue(json, Parameter.class);
+        final String json = "{\"content\":{\"*/*\":{\"schema\":{\"type\":\"array\",\"items\":{\"$ref\":\"#/definitions/Cat\"}}}}}";
+        final RequestBody p = m.readValue(json, RequestBody.class);
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
     @Test(enabled = false, description = "it should serialize a path parameter with enum")
     public void serializeEnumPathParameter() {
-        List<Object> values = new ArrayList<>();
+        List<String> values = new ArrayList<>();
         values.add("a");
         values.add("b");
         values.add("c");
@@ -334,15 +296,18 @@ public class ParameterSerializationTest {
         final String json = "{" +
                 "   \"in\":\"path\"," +
                 "   \"required\":true," +
-                "   \"items\":{" +
-                "      \"type\":\"string\"" +
-                "   }," +
-                "   \"enum\":[\"a\",\"b\",\"c\"]" +
-                "}";
+                "   \"schema\":{" +
+                "     \"type\":\"array\"," +
+                "     \"items\":{" +
+                "        \"type\":\"string\"," +
+                "        \"enum\":[\"a\",\"b\",\"c\"]" +
+                "     }" +
+                "}}";
         final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
 
-        assertEquals(((PathParameter) p).getSchema().getEnum(), Arrays.asList("a", "b", "c"));
+        ArraySchema as = (ArraySchema)p.getSchema();
+        assertEquals(((StringSchema)as.getItems()).getEnum(), Arrays.asList("a", "b", "c"));
     }
 
     @Test(description = "it should deserialize a number path parameter with enum")
@@ -350,15 +315,19 @@ public class ParameterSerializationTest {
         final String json = "{" +
                 "   \"in\":\"path\"," +
                 "   \"required\":true," +
-                "   \"items\":{" +
-                "      \"type\":\"integer\"" +
-                "   }," +
-                "   \"enum\":[1,2,3]" +
+                "   \"schema\":{" +
+                "     \"type\":\"array\"," +
+                "     \"items\":{" +
+                "        \"type\":\"integer\"," +
+                "        \"format\":\"int32\"," +
+                "        \"enum\":[1,2,3]" +
+                "     }" +
+                "   }" +
                 "}";
         final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
 
-        assertEquals(((PathParameter) p).getSchema().getEnum(), Arrays.asList(1,2,3));
+        assertEquals(((IntegerSchema)((ArraySchema) p.getSchema()).getItems()).getEnum(), Arrays.asList(1,2,3));
     }
 
     @Test(description = "should serialize correctly typed numeric enums")

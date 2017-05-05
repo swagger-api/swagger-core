@@ -282,8 +282,8 @@ public class SpecFilter {
         } else if (property instanceof RefProperty) {
             return ((RefProperty) property).getSimpleRef();
         }*/
-        if(property.getRef() != null) {
-            return property.getRef();
+        if(property.get$ref() != null) {
+            return property.get$ref();
         }
         return null;
     }
@@ -310,8 +310,8 @@ public class SpecFilter {
             return new HashSet<String>(Arrays.asList(((RefModel) model).getSimpleRef()));
         }
         */
-        if(model.getRef() != null) {
-            return new HashSet<String>(Arrays.asList((model.getRef())));
+        if(model.get$ref() != null) {
+            return new HashSet<String>(Arrays.asList((model.get$ref())));
         }
         return null;
     }

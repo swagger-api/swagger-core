@@ -150,7 +150,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 //                }
                 if (innerModel instanceof Schema) {
                     Schema mi = (Schema) innerModel;
-                    property = new Schema().ref(StringUtils.isNotEmpty(mi.getRef()) ? mi.getRef() : mi.getTitle());
+                    property = new Schema().ref(StringUtils.isNotEmpty(mi.get$ref()) ? mi.get$ref() : mi.getTitle());
                 }
             }
         }
@@ -736,8 +736,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 //            if (model instanceof ModelImpl) {
                 Schema mi = (Schema) model;
                 mi.getProperties().put(propertyName, id);
-                return new Schema().ref(StringUtils.isNotEmpty(mi.getRef())
-                        ? mi.getRef() : mi.getTitle());
+                return new Schema().ref(StringUtils.isNotEmpty(mi.get$ref())
+                        ? mi.get$ref() : mi.getTitle());
 //            }
 //            return null;
         }

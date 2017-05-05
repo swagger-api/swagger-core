@@ -21,7 +21,7 @@ public class ModelWithReferenceTest {
                 "      \"type\":\"object\",\n" +
                 "      \"properties\":{\n" +
                 "         \"description\":{\n" +
-                "            \"$ref\":\"http://swagger.io/schemas.json#/Models/Description\"\n" +
+                "            \"$$ref\":\"http://swagger.io/schemas.json#/Models/Description\"\n" +
                 "         }\n" +
                 "      }\n" +
                 "   }\n" +
@@ -37,10 +37,10 @@ public class ModelWithReferenceTest {
                 "      \"type\":\"object\",\n" +
                 "      \"properties\":{\n" +
                 "         \"model\":{\n" +
-                "            \"$ref\":\"http://swagger.io/schemas.json#/Models\"\n" +
+                "            \"$$ref\":\"http://swagger.io/schemas.json#/Models\"\n" +
                 "         },\n" +
                 "         \"anotherModel\":{\n" +
-                "            \"$ref\":\"http://swagger.io/schemas.json#/Models/AnotherModel\"\n" +
+                "            \"$$ref\":\"http://swagger.io/schemas.json#/Models/AnotherModel\"\n" +
                 "         }\n" +
                 "      }\n" +
                 "   }\n" +

@@ -83,12 +83,14 @@ public class SimpleBuilderTest {
                         .minLength(2)
                         .maxLength(2))
                 .addProperties("country", new StringSchema()
+                        ._enum(new ArrayList<String>(){{
+                            this.add("US");
+                        }}))
                         .description("2-digit country code")
                         .minLength(2)
                         .maxLength(2)
-                        ._enum(new ArrayList<Object>(){{
-                            this.add("US");
-                        }}))
+
+
         );
 
 

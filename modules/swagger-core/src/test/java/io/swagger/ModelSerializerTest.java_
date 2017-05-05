@@ -111,23 +111,23 @@ public class ModelSerializerTest {
     public void serializeArrayModel() throws IOException {
         final ArrayModel model = new ArrayModel();
         model.setItems(new RefProperty("Pet"));
-        assertEquals(m.writeValueAsString(model), "{\"type\":\"array\",\"items\":{\"$ref\":\"#/definitions/Pet\"}}");
+        assertEquals(m.writeValueAsString(model), "{\"type\":\"array\",\"items\":{\"$$ref\":\"#/definitions/Pet\"}}");
     }
 
     @Test(description = "it should deserialize an array model")
     public void deserializeArrayModel() throws IOException {
-        final String json = "{\"type\":\"array\",\"items\":{\"$ref\":\"#/definitions/Pet\"}}";
+        final String json = "{\"type\":\"array\",\"items\":{\"$$ref\":\"#/definitions/Pet\"}}";
         final Model p = m.readValue(json, Model.class);
         assertTrue(p instanceof ArrayModel);
         assertEquals(m.writeValueAsString(p), json);
     }
 
-    @Test(description = "it should not create an xml object for ref")
+    @Test(description = "it should not create an xml object for $ref")
     public void shouldNotCreateXmlObjectForRef() throws IOException {
         final RefModel model = new RefModel("Monster");
         model.setDescription("oops");
         model.setExternalDocs(new ExternalDocs("external docs", "http://swagger.io"));
-        assertEquals(Json.mapper().writeValueAsString(model), "{\"$ref\":\"#/definitions/Monster\"}");
+        assertEquals(Json.mapper().writeValueAsString(model), "{\"$$ref\":\"#/definitions/Monster\"}");
     }
 
     @Test(description = "it should make a field readOnly by annotation")

@@ -87,7 +87,7 @@ public class ModelPropertyTest {
                 "         \"children\":{" +
                 "            \"type\":\"array\"," +
                 "            \"items\":{" +
-                "               \"$ref\":\"#/definitions/Children\"" +
+                "               \"$$ref\":\"#/definitions/Children\"" +
                 "            }" +
                 "         }" +
                 "      }" +

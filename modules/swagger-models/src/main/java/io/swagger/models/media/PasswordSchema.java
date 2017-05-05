@@ -19,6 +19,7 @@ package io.swagger.models.media;
 import java.util.Objects;
 import io.swagger.models.ExternalDocumentation;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ public class PasswordSchema extends Schema {
   private String type = "string";
   private String format = "password";
   private String _default = null;
+  private List<String> _enum = null;
 
   /**
    * returns the type property from a PasswordSchema instance.
@@ -89,6 +91,33 @@ public class PasswordSchema extends Schema {
     return this;
   }
 
+  /**
+   * returns the _enum property from a PasswordSchema instance.
+   *
+   * @return List<String> _enum
+   **/
+
+  public List<String> getEnum() {
+    return _enum;
+  }
+
+  public void setEnum(List<String> _enum) {
+    this._enum = _enum;
+  }
+
+  public PasswordSchema _enum(List<String> _enum) {
+    this._enum = _enum;
+    return this;
+  }
+
+  public PasswordSchema addEnumItem(String _enumItem) {
+    if(this._enum == null) {
+      this._enum = new ArrayList<String>();
+    }
+    this._enum.add(_enumItem);
+    return this;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -102,12 +131,13 @@ public class PasswordSchema extends Schema {
     return Objects.equals(this.type, passwordSchema.type) &&
         Objects.equals(this.format, passwordSchema.format) &&
         Objects.equals(this._default, passwordSchema._default) &&
+        Objects.equals(this._enum, passwordSchema._enum) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, format, _default, super.hashCode());
+    return Objects.hash(type, format, _default, _enum, super.hashCode());
   }
 
 
@@ -120,6 +150,7 @@ public class PasswordSchema extends Schema {
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    format: ").append(toIndentedString(format)).append("\n");
     sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
+    sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
     sb.append("}");
     return sb.toString();
   }
