@@ -20,8 +20,8 @@ import io.swagger.oas.models.media.MediaType;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.media.StringSchema;
 import io.swagger.oas.models.parameters.QueryParameter;
-import io.swagger.oas.models.responses.Response;
-import io.swagger.oas.models.responses.Responses;
+import io.swagger.oas.models.responses.ApiResponse;
+import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.tags.Tag;
 import org.testng.annotations.Test;
 
@@ -103,8 +103,8 @@ public class SimpleBuilderTest {
                                         .required(false)
                                         .schema(new IntegerSchema()
                                 ))
-                                .responses(new Responses()
-                                        .addResponse("200", new Response()
+                                .responses(new ApiResponses()
+                                        .addResponse("200", new ApiResponse()
                                                 .description("it worked")
                                                 .content(new Content()
                                                         .addMediaType("application/json",

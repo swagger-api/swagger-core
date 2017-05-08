@@ -22,13 +22,13 @@ import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.media.Content;
 
 /**
- * Response
+ * ApiResponse
  *
  * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#responseObject
  */
 
 
-public class Response {
+public class ApiResponse {
   private String description = null;
   private Headers headers = null;
   private Content content = null;
@@ -36,7 +36,7 @@ public class Response {
   private java.util.Map<String, Object> extensions = null;
 
   /**
-   * returns the description property from a Response instance.
+   * returns the description property from a ApiResponse instance.
    *
    * @return String description
    **/
@@ -49,13 +49,13 @@ public class Response {
     this.description = description;
   }
 
-  public Response description(String description) {
+  public ApiResponse description(String description) {
     this.description = description;
     return this;
   }
 
   /**
-   * returns the headers property from a Response instance.
+   * returns the headers property from a ApiResponse instance.
    *
    * @return Headers headers
    **/
@@ -68,13 +68,13 @@ public class Response {
     this.headers = headers;
   }
 
-  public Response headers(Headers headers) {
+  public ApiResponse headers(Headers headers) {
     this.headers = headers;
     return this;
   }
 
   /**
-   * returns the content property from a Response instance.
+   * returns the content property from a ApiResponse instance.
    *
    * @return Content content
    **/
@@ -87,13 +87,13 @@ public class Response {
     this.content = content;
   }
 
-  public Response content(Content content) {
+  public ApiResponse content(Content content) {
     this.content = content;
     return this;
   }
 
   /**
-   * returns the links property from a Response instance.
+   * returns the links property from a ApiResponse instance.
    *
    * @return Link links
    **/
@@ -106,7 +106,7 @@ public class Response {
     this.links = links;
   }
 
-  public Response links(Link links) {
+  public ApiResponse links(Link links) {
     this.links = links;
     return this;
   }
@@ -120,7 +120,7 @@ public class Response {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Response response = (Response) o;
+    ApiResponse response = (ApiResponse) o;
     return Objects.equals(this.description, response.description) &&
         Objects.equals(this.headers, response.headers) &&
         Objects.equals(this.content, response.content) &&
@@ -151,7 +151,7 @@ public class Response {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Response {\n");
+    sb.append("class ApiResponse {\n");
     
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    headers: ").append(toIndentedString(headers)).append("\n");

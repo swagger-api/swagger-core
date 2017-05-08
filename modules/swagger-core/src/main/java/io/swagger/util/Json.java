@@ -36,14 +36,14 @@ public class Json {
     }
 
     /*
-        TODO the following code is a hack to get past the fact that Path and Response are not interfaces, it can be deleted as part of the refactor to make Path and Response interfaces
+        TODO the following code is a hack to get past the fact that Path and ApiResponse are not interfaces, it can be deleted as part of the refactor to make Path and ApiResponse interfaces
 
-        pathMapper and responseMapper are ObjectMappers that are only going to be used during deserialization of Paths and Responses.
+        pathMapper and responseMapper are ObjectMappers that are only going to be used during deserialization of Paths and ApiResponses.
         We need them because:
          1) RefPath extends Path
-         2) RefResponse extends Response
+         2) RefResponse extends ApiResponse
 
-         And when we detect we are deserializing a "normal" Path or Response (e.g. its not a ref) we need skip
+         And when we detect we are deserializing a "normal" Path or ApiResponse (e.g. its not a ref) we need skip
          the PathDeserializer and ResponseDeserializer logic, lest we get into a stack overflow problem
      */
     private static ObjectMapper pathMapper;

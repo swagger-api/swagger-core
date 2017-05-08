@@ -6,7 +6,7 @@ import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
-import io.swagger.oas.models.responses.Response;
+import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.tags.Tag;
 
 import java.util.ArrayList;
@@ -108,7 +108,7 @@ public class SpecFilter {
         Set<String> referencedDefinitions =  new TreeSet<String>();
 
         if (swagger.getComponents().getResponses() != null) {
-            for (Response response: swagger.getComponents().getResponses().values()) {
+            for (ApiResponse response: swagger.getComponents().getResponses().values()) {
                 // TODO
 //                String propertyRef = getPropertyRef(response.getSchema());
 //                if (propertyRef != null) {
@@ -146,7 +146,7 @@ public class SpecFilter {
                 if (path.getOperations() != null) {
                     for (Operation op: path.getOperations()) {
                         if (op.getResponses() != null) {
-                            for (Response response: op.getResponses().values()) {
+                            for (ApiResponse response: op.getResponses().values()) {
                                 String propertyRef = getPropertyRef(response.getSchema());
                                 if (propertyRef != null) {
                                     referencedDefinitions.add(propertyRef);

@@ -24,7 +24,7 @@ import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
-import io.swagger.oas.models.responses.Response;
+import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.security.SecurityScheme;
 
 import java.util.HashMap;
@@ -39,7 +39,7 @@ import java.util.Map;
 
 public class Components {
   private Map<String, Schema> schemas = null;
-  private Map<String, Response> responses = null;
+  private Map<String, ApiResponse> responses = null;
   private Map<String, Parameter> parameters = null;
   private Map<String, Example> examples = null;
   private Map<String, RequestBody> requestBodies = null;
@@ -79,25 +79,25 @@ public class Components {
   /**
    * returns the responses property from a Components instance.
    *
-   * @return Map<String, Response> responses
+   * @return Map<String, ApiResponse> responses
    **/
 
-  public Map<String, Response> getResponses() {
+  public Map<String, ApiResponse> getResponses() {
     return responses;
   }
 
-  public void setResponses(Map<String, Response> responses) {
+  public void setResponses(Map<String, ApiResponse> responses) {
     this.responses = responses;
   }
 
-  public Components responses(Map<String, Response> responses) {
+  public Components responses(Map<String, ApiResponse> responses) {
     this.responses = responses;
     return this;
   }
 
-  public Components addResponses(String key, Response responsesItem) {
+  public Components addResponses(String key, ApiResponse responsesItem) {
     if(this.responses == null) {
-      this.responses = new HashMap<String, Response>();
+      this.responses = new HashMap<String, ApiResponse>();
     }
     this.responses.put(key, responsesItem);
     return this;

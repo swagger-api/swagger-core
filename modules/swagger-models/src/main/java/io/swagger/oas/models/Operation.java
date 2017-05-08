@@ -20,7 +20,7 @@ import java.util.Objects;
 import io.swagger.oas.models.callbacks.Callbacks;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
-import io.swagger.oas.models.responses.Responses;
+import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.servers.Server;
 
@@ -42,7 +42,7 @@ public class Operation {
   private String operationId = null;
   private List<Parameter> parameters = null;
   private RequestBody requestBody = null;
-  private Responses responses = null;
+  private ApiResponses responses = null;
   private Callbacks callbacks = null;
   private Boolean deprecated = null;
   private List<SecurityRequirement> security = null;
@@ -201,18 +201,18 @@ public class Operation {
   /**
    * returns the responses property from a Operation instance.
    *
-   * @return Responses responses
+   * @return ApiResponses responses
    **/
 
-  public Responses getResponses() {
+  public ApiResponses getResponses() {
     return responses;
   }
 
-  public void setResponses(Responses responses) {
+  public void setResponses(ApiResponses responses) {
     this.responses = responses;
   }
 
-  public Operation responses(Responses responses) {
+  public Operation responses(ApiResponses responses) {
     this.responses = responses;
     return this;
   }

@@ -70,7 +70,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     protected boolean shouldIgnoreClass(Type type) {
         if (type instanceof Class) {
             Class<?> cls = (Class<?>) type;
-            if (cls.getName().equals("javax.ws.rs.Response")) {
+            if (cls.getName().equals("javax.ws.rs.ApiResponse")) {
                 return true;
             }
         } else {

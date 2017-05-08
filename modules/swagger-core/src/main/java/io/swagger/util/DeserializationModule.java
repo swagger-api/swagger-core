@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
-import io.swagger.oas.models.responses.Response;
+import io.swagger.oas.models.responses.ApiResponse;
 
 
 public class DeserializationModule extends SimpleModule {
@@ -16,7 +16,7 @@ public class DeserializationModule extends SimpleModule {
             this.addDeserializer(PathItem.class, new PathDeserializer());
         }
         if (includeResponseDeserializer) {
-            this.addDeserializer(Response.class, new ResponseDeserializer());
+            this.addDeserializer(ApiResponse.class, new ResponseDeserializer());
         }
 
         this.addDeserializer(Schema.class, new ModelDeserializer());

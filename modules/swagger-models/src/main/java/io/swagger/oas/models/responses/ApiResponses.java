@@ -20,35 +20,35 @@ import java.util.Objects;
 import java.util.LinkedHashMap;
 
 /**
- * Responses
+ * ApiResponses
  *
  * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#responsesObject
  */
 
 
-public class Responses extends LinkedHashMap<String, Response> {
-  private Response _default = null;
+public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
+  private ApiResponse _default = null;
   private java.util.Map<String, Object> extensions = null;
 
-  public Responses addResponse(String name, Response item) {
+  public ApiResponses addResponse(String name, ApiResponse item) {
     this.put(name, item);
     return this;
   }
   /**
-   * returns the _default property from a Responses instance.
+   * returns the _default property from a ApiResponses instance.
    *
-   * @return Response _default
+   * @return ApiResponse _default
    **/
 
-  public Response getDefault() {
+  public ApiResponse getDefault() {
     return _default;
   }
 
-  public void setDefault(Response _default) {
+  public void setDefault(ApiResponse _default) {
     this._default = _default;
   }
 
-  public Responses _default(Response _default) {
+  public ApiResponses _default(ApiResponse _default) {
     this._default = _default;
     return this;
   }
@@ -62,7 +62,7 @@ public class Responses extends LinkedHashMap<String, Response> {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Responses responses = (Responses) o;
+    ApiResponses responses = (ApiResponses) o;
     return Objects.equals(this._default, responses._default) &&
         super.equals(o);
   }
@@ -91,7 +91,7 @@ public class Responses extends LinkedHashMap<String, Response> {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Responses {\n");
+    sb.append("class ApiResponses {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
     sb.append("}");

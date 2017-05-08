@@ -4,7 +4,7 @@ import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.media.IntegerSchema;
 import io.swagger.oas.models.media.MapSchema;
 import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.responses.Response;
+import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
@@ -43,7 +43,7 @@ public class MapPropertyDeserializerTest {
   public void testMapDeserialization () throws Exception {
 
       Operation operation = Json.mapper().readValue(json, Operation.class);
-      Response response = operation.getResponses().get("200");
+      ApiResponse response = operation.getResponses().get("200");
       assertNotNull(response);
       
       Schema responseSchema = response.getContent().get("*/*").getSchema();
@@ -57,7 +57,7 @@ public class MapPropertyDeserializerTest {
   @Test(description = "vendor extensions should be included with object type")
   public void testMapDeserializationVendorExtensions () throws Exception {
     Operation operation = Json.mapper().readValue(json, Operation.class);
-    Response response = operation.getResponses().get("200");
+    ApiResponse response = operation.getResponses().get("200");
     assertNotNull(response);
 
     Schema responseSchema = response.getContent().get("*/*").getSchema();
@@ -88,7 +88,7 @@ public class MapPropertyDeserializerTest {
                 "                required: [id, name]\n" +
                 "                example: ok", Operation.class);
 
-        Response response = operation.getResponses().get("200");
+        ApiResponse response = operation.getResponses().get("200");
         assertNotNull(response);
         Schema schema = response.getContent().get("*/*").getSchema();
         Object example = schema.getExample();
