@@ -6,16 +6,17 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import io.swagger.models.media.ArraySchema;
-import io.swagger.models.media.DateSchema;
-import io.swagger.models.media.DateTimeSchema;
-import io.swagger.models.media.EmailSchema;
-import io.swagger.models.media.IntegerSchema;
-import io.swagger.models.media.NumberSchema;
-import io.swagger.models.media.PasswordSchema;
-import io.swagger.models.media.Schema;
-import io.swagger.models.media.StringSchema;
-import io.swagger.models.media.UUIDSchema;
+import io.swagger.oas.models.media.ArraySchema;
+import io.swagger.oas.models.media.DateSchema;
+import io.swagger.oas.models.media.DateTimeSchema;
+import io.swagger.oas.models.media.EmailSchema;
+import io.swagger.oas.models.media.IntegerSchema;
+import io.swagger.oas.models.media.NumberSchema;
+import io.swagger.oas.models.media.ObjectSchema;
+import io.swagger.oas.models.media.PasswordSchema;
+import io.swagger.oas.models.media.Schema;
+import io.swagger.oas.models.media.StringSchema;
+import io.swagger.oas.models.media.UUIDSchema;
 
 import java.io.IOException;
 
@@ -90,6 +91,9 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
                 else {
                     model = Json.mapper().convertValue(node, StringSchema.class);
                 }
+            }
+            else if (sub.textValue().equals("object")) {
+                model = Json.mapper().convertValue(node, ObjectSchema.class);
             }
         } else if(node.get("$ref") != null) {
             model = new Schema().ref(node.get("$ref").asText());

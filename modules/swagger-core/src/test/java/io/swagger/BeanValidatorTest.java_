@@ -1,7 +1,7 @@
 package io.swagger;
 
 import io.swagger.converter.ModelConverters;
-import io.swagger.models.BeanValidationsModel;
+import BeanValidationsModel;
 import io.swagger.models.Model;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.DoubleProperty;

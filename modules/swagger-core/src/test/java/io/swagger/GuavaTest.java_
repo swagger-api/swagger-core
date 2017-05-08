@@ -2,7 +2,7 @@ package io.swagger;
 
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
-import io.swagger.models.GuavaModel;
+import GuavaModel;
 import io.swagger.models.Model;
 import io.swagger.util.ResourceUtils;
 

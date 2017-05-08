@@ -1,6 +1,6 @@
 package io.swagger.converter;
 
-import io.swagger.models.media.Schema;
+import io.swagger.oas.models.media.Schema;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

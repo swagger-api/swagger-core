@@ -1,11 +1,10 @@
 package io.swagger.properties;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.swagger.models.Operation;
-import io.swagger.models.media.IntegerSchema;
-import io.swagger.models.media.MapSchema;
-import io.swagger.models.media.Schema;
-import io.swagger.models.responses.Response;
+import io.swagger.oas.models.Operation;
+import io.swagger.oas.models.media.IntegerSchema;
+import io.swagger.oas.models.media.MapSchema;
+import io.swagger.oas.models.media.Schema;
+import io.swagger.oas.models.responses.Response;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
@@ -72,32 +71,29 @@ public class MapPropertyDeserializerTest {
 
     @Test(description = "it should read an example within an inlined schema")
     public void testIssue1261InlineSchemaExample() throws Exception {
-        Operation operation = Yaml.mapper().readValue("      produces:\n" +
-                "        - application/json\n" +
+        Operation operation = Yaml.mapper().readValue(
                 "      responses:\n" +
                 "        200:\n" +
-                "          description: OK\n" +
-                "          schema:\n" +
-                "            type: object\n" +
-                "            properties:\n" +
-                "              id:\n" +
-                "                type: integer\n" +
-                "                format: int32\n" +
-                "              name:\n" +
-                "                type: string\n" +
-                "            required: [id, name]\n" +
-                "            example:\n" +
-                "              id: 42\n" +
-                "              name: Arthur Dent\n", Operation.class);
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              description: OK\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                properties:\n" +
+                "                  id:\n" +
+                "                    type: integer\n" +
+                "                    format: int32\n" +
+                "                  name:\n" +
+                "                    type: string\n" +
+                "                required: [id, name]\n" +
+                "                example: ok", Operation.class);
 
         Response response = operation.getResponses().get("200");
         assertNotNull(response);
         Schema schema = response.getContent().get("*/*").getSchema();
         Object example = schema.getExample();
         assertNotNull(example);
-        assertTrue(example instanceof ObjectNode);
-        ObjectNode objectNode = (ObjectNode) example;
-        assertEquals(objectNode.get("id").intValue(), 42);
-        assertEquals(objectNode.get("name").textValue(), "Arthur Dent");
+        assertTrue(example instanceof String);
+        assertEquals(example, "ok");
     }
 }

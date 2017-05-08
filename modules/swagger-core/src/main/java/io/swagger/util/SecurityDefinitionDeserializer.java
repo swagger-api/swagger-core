@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.swagger.models.security.SecurityScheme;
+import io.swagger.oas.models.security.SecurityScheme;
 
 import java.io.IOException;
 

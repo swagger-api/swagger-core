@@ -1,6 +1,6 @@
 package io.swagger.config;
 
-import io.swagger.models.OpenAPI;
+import io.swagger.oas.models.OpenAPI;
 
 public interface SwaggerConfig {
 

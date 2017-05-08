@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.media.OASSchema;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContextImpl;
-import io.swagger.models.media.ArraySchema;
-import io.swagger.models.media.Schema;
-import io.swagger.models.media.XML;
+import io.swagger.oas.models.media.ArraySchema;
+import io.swagger.oas.models.media.Schema;
+import io.swagger.oas.models.media.XML;
 import org.testng.annotations.Test;
 
 import javax.xml.bind.annotation.XmlAccessType;

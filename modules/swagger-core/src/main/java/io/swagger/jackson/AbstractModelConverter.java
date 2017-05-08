@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
-import io.swagger.models.media.Schema;
+import io.swagger.oas.models.media.Schema;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.lang.reflect.Type;

@@ -1,13 +1,13 @@
 package io.swagger.core.filter;
 
 import io.swagger.model.ApiDescription;
-import io.swagger.models.OpenAPI;
-import io.swagger.models.Operation;
-import io.swagger.models.PathItem;
-import io.swagger.models.media.Schema;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.responses.Response;
-import io.swagger.models.tags.Tag;
+import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.Operation;
+import io.swagger.oas.models.PathItem;
+import io.swagger.oas.models.media.Schema;
+import io.swagger.oas.models.parameters.Parameter;
+import io.swagger.oas.models.responses.Response;
+import io.swagger.oas.models.tags.Tag;
 
 import java.util.ArrayList;
 import java.util.Arrays;

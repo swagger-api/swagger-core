@@ -3,8 +3,8 @@ package io.swagger.model.override;
 import com.fasterxml.jackson.databind.JavaType;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
-import io.swagger.models.media.DateTimeSchema;
-import io.swagger.models.media.Schema;
+import io.swagger.oas.models.media.DateTimeSchema;
+import io.swagger.oas.models.media.Schema;
 import io.swagger.util.Json;
 
 import java.lang.annotation.Annotation;

@@ -1,6 +1,6 @@
 package io.swagger.converter;
 
-import io.swagger.models.media.Schema;
+import io.swagger.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

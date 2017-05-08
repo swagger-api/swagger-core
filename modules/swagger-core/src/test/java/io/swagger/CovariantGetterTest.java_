@@ -4,7 +4,7 @@ import static org.testng.Assert.assertEquals;
 
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
-import io.swagger.models.JCovariantGetter;
+import JCovariantGetter;
 import io.swagger.models.Model;
 
 import org.testng.annotations.Test;

@@ -1,16 +1,16 @@
 package io.swagger.properties;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.models.media.ArraySchema;
-import io.swagger.models.media.BooleanSchema;
-import io.swagger.models.media.DateSchema;
-import io.swagger.models.media.DateTimeSchema;
-import io.swagger.models.media.FileSchema;
-import io.swagger.models.media.IntegerSchema;
-import io.swagger.models.media.MapSchema;
-import io.swagger.models.media.NumberSchema;
-import io.swagger.models.media.Schema;
-import io.swagger.models.media.StringSchema;
+import io.swagger.oas.models.media.ArraySchema;
+import io.swagger.oas.models.media.BooleanSchema;
+import io.swagger.oas.models.media.DateSchema;
+import io.swagger.oas.models.media.DateTimeSchema;
+import io.swagger.oas.models.media.FileSchema;
+import io.swagger.oas.models.media.IntegerSchema;
+import io.swagger.oas.models.media.MapSchema;
+import io.swagger.oas.models.media.NumberSchema;
+import io.swagger.oas.models.media.Schema;
+import io.swagger.oas.models.media.StringSchema;
 import io.swagger.util.Json;
 import org.testng.annotations.Test;
 

@@ -5,11 +5,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.swagger.models.parameters.CookieParameter;
-import io.swagger.models.parameters.HeaderParameter;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.PathParameter;
-import io.swagger.models.parameters.QueryParameter;
+import io.swagger.oas.models.parameters.CookieParameter;
+import io.swagger.oas.models.parameters.HeaderParameter;
+import io.swagger.oas.models.parameters.Parameter;
+import io.swagger.oas.models.parameters.PathParameter;
+import io.swagger.oas.models.parameters.QueryParameter;
 
 import java.io.IOException;
 

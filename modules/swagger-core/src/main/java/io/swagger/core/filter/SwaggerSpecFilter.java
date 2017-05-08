@@ -1,9 +1,9 @@
 package io.swagger.core.filter;
 
 import io.swagger.model.ApiDescription;
-import io.swagger.models.Operation;
-import io.swagger.models.media.Schema;
-import io.swagger.models.parameters.Parameter;
+import io.swagger.oas.models.Operation;
+import io.swagger.oas.models.media.Schema;
+import io.swagger.oas.models.parameters.Parameter;
 
 import java.util.List;
 import java.util.Map;

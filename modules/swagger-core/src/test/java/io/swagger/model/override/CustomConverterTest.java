@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.converter.ModelConverters;
-import io.swagger.models.media.Schema;
+import io.swagger.oas.models.media.Schema;
 import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
