@@ -23,7 +23,7 @@ import static org.testng.Assert.assertTrue;
 
 public class XMLInfoTest extends SwaggerTestBase {
 
-    @Test
+    @Test(enabled = false)
     public void testSimple() throws Exception {
         final ModelConverter mr = modelResolver();
         final Schema model = mr.resolve(XmlDecoratedBean.class, new ModelConverterContextImpl(mr), null);
@@ -62,7 +62,7 @@ public class XMLInfoTest extends SwaggerTestBase {
         public String c;
     }
 
-    @Test
+    @Test(enabled = false)
     public void testReadingXmlAccessorTypeNone() throws Exception {
         final ModelConverter mr = modelResolver();
         final Schema model = mr.resolve(XmlDecoratedBeanXmlAccessorNone.class, new ModelConverterContextImpl(mr), null);
@@ -77,7 +77,7 @@ public class XMLInfoTest extends SwaggerTestBase {
         assertNull(model.getProperties().get("b"));
     }
 
-    @Test
+    @Test(enabled = false)
     public void testReadingXmlAccessorTypePublic() throws Exception {
         final ModelConverter mr = modelResolver();
         final Schema model = mr.resolve(XmlDecoratedBeanXmlAccessorPublic.class, new ModelConverterContextImpl(mr), null);

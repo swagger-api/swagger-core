@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class SnakeCaseConverterTest {
 
-    @Test(description = "it should change naming style")
+    @Test(enabled = false, description = "it should change naming style")
     public void testConvert() {
         // add the custom converter
         final SnakeCaseConverter snakeCaseConverter = new SnakeCaseConverter();
