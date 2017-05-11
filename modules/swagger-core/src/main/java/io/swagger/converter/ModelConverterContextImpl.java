@@ -99,6 +99,9 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 //                    modelByName.put(impl.getName(), resolved);
 //                }
 //            }
+            if(resolvedImpl.getTitle() != null) {
+                modelByName.put(resolvedImpl.getTitle(), resolved);
+            }
         }
 
         return resolved;

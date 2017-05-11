@@ -24,7 +24,7 @@ import java.util.Objects;
 
 
 public class MapSchema extends Schema {
-  private String type = "boolean";
+  private String type = "object";
 
   /**
    * returns the type property from a MapSchema instance.
