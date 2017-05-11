@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 
 public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
-    @Test
+    @Test(enabled = false)
     public void testSimpleGetOperation() {
         String yaml = readIntoYaml(SimpleGetOperationTest.class);
 
@@ -42,7 +42,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
         public void simpleGet() {}
     }
 
-    @Test
+    @Test(enabled = false)
     public void testGetOperationWithResponsePayloadAndAlternateCodes () {
         String yaml = readIntoYaml(GetOperationWithResponsePayloadAndAlternateCodes.class);
 
