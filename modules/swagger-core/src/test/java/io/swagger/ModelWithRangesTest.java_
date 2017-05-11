@@ -1,7 +1,7 @@
 package io.swagger;
 
 import io.swagger.converter.ModelConverters;
-import io.swagger.models.ModelWithRanges;
+import ModelWithRanges;
 import io.swagger.models.properties.DoubleProperty;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.Property;

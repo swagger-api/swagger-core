@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.ArrayModel;
-import io.swagger.models.Car;
+import Car;
 import io.swagger.models.ExternalDocs;
-import io.swagger.models.Manufacturers;
+import Manufacturers;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.RefModel;
@@ -229,7 +229,7 @@ public class ModelSerializerTest {
 
     @Test(description = "it should generate a JSON with read-only from pojo, #1161")
     public void readOnlyJsonGeneration() throws IOException {
-        Map<String, Model> models = ModelConverters.getInstance().read(io.swagger.models.ReadOnlyModel.class);
+        Map<String, Model> models = ModelConverters.getInstance().read(ReadOnlyModel.class);
 
         Model model = models.get("ReadOnlyModel");
 

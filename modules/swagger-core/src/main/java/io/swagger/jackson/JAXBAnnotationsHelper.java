@@ -1,7 +1,7 @@
 package io.swagger.jackson;
 
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import io.swagger.models.media.Schema;
+import io.swagger.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.annotation.XmlAttribute;

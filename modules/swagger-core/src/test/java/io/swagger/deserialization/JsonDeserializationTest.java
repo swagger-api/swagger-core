@@ -1,8 +1,8 @@
 package io.swagger.deserialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.models.OpenAPI;
-import io.swagger.models.media.Schema;
+import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.media.Schema;
 import io.swagger.util.Json;
 import io.swagger.util.ResourceUtils;
 import org.testng.annotations.Test;

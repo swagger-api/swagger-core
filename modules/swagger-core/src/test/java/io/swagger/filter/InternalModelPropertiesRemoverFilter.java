@@ -1,7 +1,7 @@
 package io.swagger.filter;
 
 import io.swagger.core.filter.AbstractSpecFilter;
-import io.swagger.models.media.Schema;
+import io.swagger.oas.models.media.Schema;
 
 import java.util.List;
 import java.util.Map;

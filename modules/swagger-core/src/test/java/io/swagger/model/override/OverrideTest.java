@@ -1,7 +1,7 @@
 package io.swagger.model.override;
 
 import io.swagger.converter.ModelConverters;
-import io.swagger.models.media.Schema;
+import io.swagger.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
 import java.util.Map;

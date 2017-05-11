@@ -3,7 +3,7 @@ package io.swagger.jackson;
 import io.swagger.annotations.media.OASSchema;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContextImpl;
-import io.swagger.models.media.Schema;
+import io.swagger.oas.models.media.Schema;
 import org.joda.time.DateTime;
 import org.testng.annotations.Test;
 

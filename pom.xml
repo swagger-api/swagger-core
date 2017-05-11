@@ -336,7 +336,7 @@
         </profile>
     </profiles>
     <modules>
-        <!-- <module>modules/swagger-annotations</module> -->
+        <module>modules/swagger-annotations</module>
         <module>modules/swagger-models</module>
         <!-- <module>modules/swagger-mule</module> -->
         <!-- <module>modules/swagger-core</module> -->

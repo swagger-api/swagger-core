@@ -3,10 +3,10 @@ package io.swagger;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.Model;
-import io.swagger.models.composition.AbstractBaseModelWithoutFields;
-import io.swagger.models.composition.Animal;
-import io.swagger.models.composition.Human;
-import io.swagger.models.composition.ModelWithFieldWithSubTypes;
+import AbstractBaseModelWithoutFields;
+import Animal;
+import Human;
+import ModelWithFieldWithSubTypes;
 import io.swagger.util.ResourceUtils;
 
 import org.testng.annotations.Test;

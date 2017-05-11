@@ -1,16 +1,16 @@
 package io.swagger.util;
 
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import io.swagger.models.media.BinarySchema;
-import io.swagger.models.media.ByteArraySchema;
-import io.swagger.models.media.DateSchema;
-import io.swagger.models.media.DateTimeSchema;
-import io.swagger.models.media.FileSchema;
-import io.swagger.models.media.IntegerSchema;
-import io.swagger.models.media.NumberSchema;
-import io.swagger.models.media.Schema;
-import io.swagger.models.media.StringSchema;
-import io.swagger.models.media.UUIDSchema;
+import io.swagger.oas.models.media.BinarySchema;
+import io.swagger.oas.models.media.ByteArraySchema;
+import io.swagger.oas.models.media.DateSchema;
+import io.swagger.oas.models.media.DateTimeSchema;
+import io.swagger.oas.models.media.FileSchema;
+import io.swagger.oas.models.media.IntegerSchema;
+import io.swagger.oas.models.media.NumberSchema;
+import io.swagger.oas.models.media.Schema;
+import io.swagger.oas.models.media.StringSchema;
+import io.swagger.oas.models.media.UUIDSchema;
 
 import java.lang.reflect.Type;
 import java.util.Collections;

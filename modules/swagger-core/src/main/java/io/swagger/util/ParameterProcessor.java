@@ -1,7 +1,7 @@
 package io.swagger.util;
 
-import io.swagger.models.OpenAPI;
-import io.swagger.models.parameters.Parameter;
+import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.parameters.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

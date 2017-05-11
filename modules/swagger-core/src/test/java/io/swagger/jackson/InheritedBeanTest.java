@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.media.OASSchema;
 import io.swagger.converter.ModelConverterContextImpl;
-import io.swagger.models.media.AllOfSchema;
-import io.swagger.models.media.Schema;
+import io.swagger.oas.models.media.AllOfSchema;
+import io.swagger.oas.models.media.Schema;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

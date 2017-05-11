@@ -4,7 +4,7 @@ import static org.testng.Assert.assertEquals;
 
 import io.swagger.converter.ModelConverters;
 import io.swagger.models.Model;
-import io.swagger.models.ModelWithJaxBDefaultValues;
+import ModelWithJaxBDefaultValues;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;

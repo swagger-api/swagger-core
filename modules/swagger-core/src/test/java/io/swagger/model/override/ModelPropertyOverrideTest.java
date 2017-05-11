@@ -3,7 +3,7 @@ package io.swagger.model.override;
 import io.swagger.annotations.media.OASSchema;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
-import io.swagger.models.media.Schema;
+import io.swagger.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
 import java.util.Map;
@@ -19,7 +19,7 @@ public class ModelPropertyOverrideTest {
                 "    \"type\" : \"object\"," +
                 "    \"properties\" : {" +
                 "      \"id\" : {" +
-                "        \"title\" : \"id\"" +
+                "        \"title\" : \"id\"," +
                 "        \"type\" : \"string\"" +
                 "      }," +
                 "      \"myCustomClass\" : {" +

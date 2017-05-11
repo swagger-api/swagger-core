@@ -21,12 +21,13 @@ import com.google.common.collect.Iterables;
 import io.swagger.annotations.media.OASSchema;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
-import io.swagger.models.media.ArraySchema;
-import io.swagger.models.media.IntegerSchema;
-import io.swagger.models.media.NumberSchema;
-import io.swagger.models.media.Schema;
-import io.swagger.models.media.StringSchema;
-import io.swagger.models.media.UUIDSchema;
+import io.swagger.oas.models.media.ArraySchema;
+import io.swagger.oas.models.media.IntegerSchema;
+import io.swagger.oas.models.media.MapSchema;
+import io.swagger.oas.models.media.NumberSchema;
+import io.swagger.oas.models.media.Schema;
+import io.swagger.oas.models.media.StringSchema;
+import io.swagger.oas.models.media.UUIDSchema;
 import io.swagger.util.PrimitiveType;
 import io.swagger.util.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -108,7 +109,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             JavaType keyType = propType.getKeyType();
             JavaType valueType = propType.getContentType();
             if (keyType != null && valueType != null) {
-                property = new Schema().additionalProperties(context.resolve(valueType, new Annotation[]{}));
+                property = new MapSchema().additionalProperties(context.resolve(valueType, new Annotation[]{}));
             } else if (valueType != null) {
                 Schema items = context.resolve(valueType, new Annotation[]{});
                 // If property is XmlElement annotated, then use the name provided by annotation | https://github.com/swagger-api/swagger-core/issues/2047
@@ -150,7 +151,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 //                }
                 if (innerModel instanceof Schema) {
                     Schema mi = (Schema) innerModel;
-                    property = new Schema().ref(StringUtils.isNotEmpty(mi.get$ref()) ? mi.get$ref() : mi.getTitle());
+                    if(mi.get$ref() != null) {
+                        property = new Schema().ref(StringUtils.isNotEmpty(mi.get$ref()) ? mi.get$ref() : mi.getTitle());
+                    }
+                    else {
+                        property = innerModel;
+                    }
                 }
             }
         }

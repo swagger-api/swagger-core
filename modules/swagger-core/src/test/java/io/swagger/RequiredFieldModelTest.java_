@@ -3,9 +3,9 @@ package io.swagger;
 import static org.testng.Assert.assertTrue;
 
 import io.swagger.converter.ModelConverters;
-import io.swagger.models.ApiFirstRequiredFieldModel;
+import ApiFirstRequiredFieldModel;
 import io.swagger.models.Model;
-import io.swagger.models.XmlFirstRequiredFieldModel;
+import XmlFirstRequiredFieldModel;
 import io.swagger.models.properties.Property;
 
 import org.testng.annotations.Test;

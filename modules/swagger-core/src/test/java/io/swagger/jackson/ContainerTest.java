@@ -1,8 +1,8 @@
 package io.swagger.jackson;
 
 import io.swagger.converter.ModelConverterContextImpl;
-import io.swagger.models.media.ArraySchema;
-import io.swagger.models.media.Schema;
+import io.swagger.oas.models.media.ArraySchema;
+import io.swagger.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
 import java.util.Map;

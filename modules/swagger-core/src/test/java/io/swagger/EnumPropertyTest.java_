@@ -6,8 +6,8 @@ import static org.testng.Assert.assertTrue;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.Model;
-import io.swagger.models.ModelWithEnumField;
-import io.swagger.models.ModelWithEnumProperty;
+import ModelWithEnumField;
+import ModelWithEnumProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
 

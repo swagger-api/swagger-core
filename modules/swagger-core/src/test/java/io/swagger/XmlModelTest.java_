@@ -7,11 +7,11 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import io.swagger.converter.ModelConverters;
-import io.swagger.models.Address;
-import io.swagger.models.Issue534;
+import Address;
+import Issue534;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
-import io.swagger.models.ModelWithJAXBAnnotations;
+import ModelWithJAXBAnnotations;
 import io.swagger.models.Xml;
 import io.swagger.models.properties.Property;
 

@@ -1,7 +1,7 @@
 package io.swagger.properties;
 
-import io.swagger.models.media.IntegerSchema;
-import io.swagger.models.media.Schema;
+import io.swagger.oas.models.media.IntegerSchema;
+import io.swagger.oas.models.media.Schema;
 import io.swagger.util.Json;
 import org.testng.annotations.Test;
 

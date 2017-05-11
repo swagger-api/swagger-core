@@ -3,8 +3,8 @@ package io.swagger;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.Model;
-import io.swagger.models.ModelContainingModelWithReference;
-import io.swagger.models.ModelWithReference;
+import ModelContainingModelWithReference;
+import ModelWithReference;
 
 import org.testng.annotations.Test;
 

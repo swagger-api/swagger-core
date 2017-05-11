@@ -3,8 +3,8 @@ package io.swagger.jackson;
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 import io.swagger.converter.ModelConverterContextImpl;
-import io.swagger.models.media.Schema;
-import io.swagger.models.media.StringSchema;
+import io.swagger.oas.models.media.Schema;
+import io.swagger.oas.models.media.StringSchema;
 import org.testng.annotations.Test;
 
 import java.lang.annotation.Annotation;
