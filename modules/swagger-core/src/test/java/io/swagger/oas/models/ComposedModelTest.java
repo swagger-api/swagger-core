@@ -9,7 +9,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 public class ComposedModelTest {
-    @Test
+    @Test(enabled = false)
     public void testDeserializeComposedModel() throws Exception {
         String json = "{\n" +
                 "  \"type\": \"object\",\n" +

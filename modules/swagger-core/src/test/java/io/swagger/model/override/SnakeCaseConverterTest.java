@@ -30,9 +30,11 @@ public class SnakeCaseConverterTest {
         final Map<String, Schema> models = converters.readAll(SnakeCaseModel.class);
         final String json = "{" +
                 "   \"bar\":{" +
+                "      \"title\" : \"bar\",\n" +
                 "      \"type\":\"object\"," +
                 "      \"properties\":{" +
                 "         \"foo\":{" +
+                "            \"title\" : \"foo\"," +
                 "            \"type\":\"string\"" +
                 "         }" +
                 "      }" +

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.swagger.oas.models.media.ArraySchema;
+import io.swagger.oas.models.media.BooleanSchema;
 import io.swagger.oas.models.media.DateSchema;
 import io.swagger.oas.models.media.DateTimeSchema;
 import io.swagger.oas.models.media.EmailSchema;
@@ -73,6 +74,9 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
             }
             else if (sub.textValue().equals("number")) {
                 model = Json.mapper().convertValue(node, NumberSchema.class);
+            }
+            else if (sub.textValue().equals("boolean")) {
+                model = Json.mapper().convertValue(node, BooleanSchema.class);
             }
             else if (sub.textValue().equals("string")) {
                 if("date".equals(format)) {

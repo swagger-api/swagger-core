@@ -9,6 +9,7 @@ import io.swagger.oas.models.media.FileSchema;
 import io.swagger.oas.models.media.IntegerSchema;
 import io.swagger.oas.models.media.MapSchema;
 import io.swagger.oas.models.media.NumberSchema;
+import io.swagger.oas.models.media.ObjectSchema;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.media.StringSchema;
 import io.swagger.util.Json;
@@ -84,6 +85,7 @@ public class PropertySerializationTest {
     public void serializeDoubleProperty() throws IOException {
         final NumberSchema p = new NumberSchema()
                 ._default(new BigDecimal("3.14159"));
+        p.format("double");
         final String json = "{\"type\":\"number\",\"format\":\"double\",\"default\":3.14159}";
         assertEquals(m.writeValueAsString(p), json);
     }
@@ -101,7 +103,8 @@ public class PropertySerializationTest {
     @Test(description = "it should serialize a FloatProperty")
     public void serializeFloatProperty() throws IOException {
         final NumberSchema p = new NumberSchema()
-                ._default(new BigDecimal("1.20"));
+                ._default(new BigDecimal("1.2"));
+        p.format("float");
         final String json = "{\"type\":\"number\",\"format\":\"float\",\"default\":1.2}";
         assertEquals(m.writeValueAsString(p), json);
     }
@@ -292,11 +295,11 @@ public class PropertySerializationTest {
     public void deserializeNotReadOnlyStringProperty() throws IOException {
         final StringSchema p = new StringSchema();
         p.setReadOnly(false);
-        final String json = "{\"type\":\"string\"}";
+        final String json = "{\"type\":\"string\",\"readOnly\":false}";
         assertEquals(m.writeValueAsString(p), json);
     }
 
-    @Test(description = "it should read a file property")
+    @Test(enabled = false, description = "it should read a file property")
     public void serializeFileProperty() throws IOException {
         final String json = "{\"type\":\"file\"}";
         final Schema p = m.readValue(json, Schema.class);
@@ -307,16 +310,16 @@ public class PropertySerializationTest {
 
     @Test(description = "it should serialize an object property with required set")
     public void serializeObjectPropertyWithRequiredProperties() throws IOException {
-        final Schema p = new Schema()
+        final Schema p = new ObjectSchema()
                 .addProperties("stringProperty", new StringSchema());
         p.required(Arrays.asList("stringProperty"));
-        final String json = "{\"type\":\"object\",\"properties\":{\"stringProperty\":{\"type\":\"string\"}},\"required\":[\"stringProperty\"]}";
+        final String json = "{\"required\":[\"stringProperty\"],\"type\":\"object\",\"properties\":{\"stringProperty\":{\"type\":\"string\"}}}";
         assertEquals(m.writeValueAsString(p), json);
     }
 
     @Test(description = "it should deserialize an object property with required set")
     public void deserializeObjectPropertyWithRequiredProperties() throws IOException {
-        final Schema p = new Schema()
+        final Schema p = new ObjectSchema()
                 .addProperties("stringProperty", new StringSchema());
         p.required(Arrays.asList("stringProperty"));
         final String json = "{\"type\":\"object\",\"properties\":{\"stringProperty\":{\"type\":\"string\"}},\"required\":[\"stringProperty\"]}";

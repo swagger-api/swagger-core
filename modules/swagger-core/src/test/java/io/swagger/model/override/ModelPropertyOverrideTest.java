@@ -19,7 +19,7 @@ public class ModelPropertyOverrideTest {
                 "    \"type\" : \"object\"," +
                 "    \"properties\" : {" +
                 "      \"id\" : {" +
-                "        \"title\" : \"id\"" +
+                "        \"title\" : \"id\"," +
                 "        \"type\" : \"string\"" +
                 "      }," +
                 "      \"myCustomClass\" : {" +
