@@ -11,6 +11,7 @@ import io.swagger.oas.models.media.DateSchema;
 import io.swagger.oas.models.media.DateTimeSchema;
 import io.swagger.oas.models.media.EmailSchema;
 import io.swagger.oas.models.media.IntegerSchema;
+import io.swagger.oas.models.media.MapSchema;
 import io.swagger.oas.models.media.NumberSchema;
 import io.swagger.oas.models.media.ObjectSchema;
 import io.swagger.oas.models.media.PasswordSchema;
@@ -19,6 +20,7 @@ import io.swagger.oas.models.media.StringSchema;
 import io.swagger.oas.models.media.UUIDSchema;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 public class ModelDeserializer extends JsonDeserializer<Schema> {
     @Override
@@ -93,10 +95,35 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
                 }
             }
             else if (sub.textValue().equals("object")) {
-                model = Json.mapper().convertValue(node, ObjectSchema.class);
+                JsonNode additionalProperties = node.get("additionalProperties");
+                if(additionalProperties != null) {
+                    Schema innerSchema = Json.mapper().convertValue(additionalProperties, Schema.class);
+                    MapSchema ms = Json.mapper().convertValue(node, MapSchema.class);
+                    ms.setAdditionalProperties(innerSchema);
+                    model = ms;
+                }
+                else {
+                    model = Json.mapper().convertValue(node, ObjectSchema.class);
+                }
             }
         } else if(node.get("$ref") != null) {
             model = new Schema().ref(node.get("$ref").asText());
+        }
+
+        // check extensions
+
+        Iterator<String> it = node.fieldNames();
+        while(it.hasNext()) {
+            String key = it.next();
+            if(key.startsWith("x-")) {
+                Object value = node.get(key);
+                if(value instanceof TextNode) {
+                    model.addExtension(key, ((TextNode)value).asText());
+                }
+                else {
+                    model.addExtension(key, value);
+                }
+            }
         }
 
         return model;

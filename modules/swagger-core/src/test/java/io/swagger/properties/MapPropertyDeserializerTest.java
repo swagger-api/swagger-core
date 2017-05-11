@@ -14,30 +14,40 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 public class MapPropertyDeserializerTest {
-  private static final String json = "{" +
-      "  \"tags\": [\"store\"]," +
-      "  \"summary\": \"Returns pet inventories by status\"," +
-      "  \"description\": \"Returns a map of status codes to quantities\"," +
-      "  \"operationId\": \"getInventory\"," +
-      "  \"produces\": [\"application/json\"]," +
-      "  \"parameters\": []," +
-      "  \"responses\": {" +
-      "    \"200\": {" +
-      "      \"description\": \"successful operation\"," +
-      "      \"schema\": {" +
-      "        \"type\": \"object\"," +
-      "        \"x-foo\": \"vendor x\"," +
-      "        \"additionalProperties\": {" +
-      "          \"type\": \"integer\"," +
-      "          \"format\": \"int32\"" +
-      "        }" +
-      "      }" +
-      "    }" +
-      "  }," +
-      "  \"security\": [{" +
-      "    \"api_key\": []" +
-      "  }]" +
-      "}";
+  private static final String json = "{\n" +
+          "  \"tags\": [\n" +
+          "    \"store\"\n" +
+          "  ],\n" +
+          "  \"summary\": \"Returns pet inventories by status\",\n" +
+          "  \"description\": \"Returns a map of status codes to quantities\",\n" +
+          "  \"operationId\": \"getInventory\",\n" +
+          "  \"produces\": [\n" +
+          "    \"application/json\"\n" +
+          "  ],\n" +
+          "  \"parameters\": [],\n" +
+          "  \"responses\": {\n" +
+          "    \"200\": {\n" +
+          "      \"description\": \"successful operation\",\n" +
+          "      \"content\": {\n" +
+          "        \"*/*\": {\n" +
+          "          \"schema\": {\n" +
+          "            \"type\": \"object\",\n" +
+          "            \"x-foo\": \"vendor x\",\n" +
+          "            \"additionalProperties\": {\n" +
+          "              \"type\": \"integer\",\n" +
+          "              \"format\": \"int32\"\n" +
+          "            }\n" +
+          "          }\n" +
+          "        }\n" +
+          "      }\n" +
+          "    }\n" +
+          "  },\n" +
+          "  \"security\": [\n" +
+          "    {\n" +
+          "      \"api_key\": []\n" +
+          "    }\n" +
+          "  ]\n" +
+          "}";
 
   @Test(description = "it should deserialize a response per #1349")
   public void testMapDeserialization () throws Exception {

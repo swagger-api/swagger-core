@@ -16,16 +16,13 @@
 
 package io.swagger.oas.annotations.media;
 
+import io.swagger.oas.annotations.ExternalDocumentation;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.oas.annotations.ExternalDocumentation;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 
