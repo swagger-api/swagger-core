@@ -111,4 +111,9 @@ public abstract class AbstractNumericProperty extends AbstractProperty implement
         result = 31 * result + (exclusiveMaximum != null ? exclusiveMaximum.hashCode() : 0);
         return result;
     }
+    
+    public boolean isPrimitiveType() {
+    	return true;
+    }
+
 }

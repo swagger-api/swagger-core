@@ -55,6 +55,10 @@ public class DateTimeProperty extends AbstractProperty implements Property {
         return _enum;
     }
 
+    public boolean isPrimitiveType() {
+    	return true;
+    }
+
     public void setEnum(List<String> _enum) {
         this._enum = _enum;
     }
