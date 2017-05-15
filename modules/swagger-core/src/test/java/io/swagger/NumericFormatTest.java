@@ -27,7 +27,7 @@ public class NumericFormatTest {
         assertEquals(json,
             "{" + NEWLINE  +
             "  \"ModelWithIntegerFields\" : {" + NEWLINE  +
-            "    \"type\" : \"object\"," + NEWLINE  +
+            "    \"type\" : \"object\"," + NEWLINE +
             "    \"properties\" : {" + NEWLINE  +
             "      \"id\" : {" + NEWLINE  +
             "        \"type\" : \"integer\"," + NEWLINE  +
