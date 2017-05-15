@@ -16,15 +16,16 @@
 
 package io.swagger.oas.models.responses;
 
-import java.util.Objects;
 import io.swagger.oas.models.headers.Headers;
 import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.media.Content;
 
+import java.util.Objects;
+
 /**
  * ApiResponse
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#responseObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#responseObject"
  */
 
 
@@ -120,11 +121,11 @@ public class ApiResponse {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ApiResponse response = (ApiResponse) o;
-    return Objects.equals(this.description, response.description) &&
-        Objects.equals(this.headers, response.headers) &&
-        Objects.equals(this.content, response.content) &&
-        Objects.equals(this.links, response.links);
+    ApiResponse _apiResponse = (ApiResponse) o;
+    return Objects.equals(this.description, _apiResponse.description) &&
+            Objects.equals(this.headers, _apiResponse.headers) &&
+            Objects.equals(this.content, _apiResponse.content) &&
+            Objects.equals(this.links, _apiResponse.links);
   }
 
   @Override
@@ -152,7 +153,7 @@ public class ApiResponse {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ApiResponse {\n");
-    
+
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    headers: ").append(toIndentedString(headers)).append("\n");
     sb.append("    content: ").append(toIndentedString(content)).append("\n");
@@ -171,6 +172,6 @@ public class ApiResponse {
     }
     return o.toString().replace("\n", "\n    ");
   }
-  
+
 }
 

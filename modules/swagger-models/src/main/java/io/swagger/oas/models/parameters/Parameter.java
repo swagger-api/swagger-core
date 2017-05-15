@@ -20,14 +20,14 @@ import java.util.Objects;
 import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.Schema;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Parameter
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#parameterObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#parameterObject"
  */
 
 

@@ -17,6 +17,11 @@
 package io.swagger.oas.models.parameters;
 
 import java.util.Objects;
+import io.swagger.oas.models.examples.Example;
+import io.swagger.oas.models.media.Content;
+import io.swagger.oas.models.media.Schema;
+import java.util.List;
+import java.util.Map;
 
 /**
  * PathParameter

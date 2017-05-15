@@ -16,7 +16,6 @@
 
 package io.swagger.oas.models;
 
-import java.util.Objects;
 import io.swagger.oas.models.callbacks.Callbacks;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
@@ -26,11 +25,12 @@ import io.swagger.oas.models.servers.Server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Operation
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#operationObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#operationObject"
  */
 
 

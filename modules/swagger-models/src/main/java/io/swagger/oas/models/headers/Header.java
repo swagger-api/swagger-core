@@ -20,14 +20,13 @@ import java.util.Objects;
 import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.Schema;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Header
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#headerObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#headerObject"
  */
 
 

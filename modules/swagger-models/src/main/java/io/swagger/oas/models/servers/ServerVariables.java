@@ -18,11 +18,12 @@ package io.swagger.oas.models.servers;
 
 import java.util.Objects;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * ServerVariables
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#serverVariablesObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#serverVariablesObject"
  */
 
 

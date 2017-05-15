@@ -21,14 +21,13 @@ import io.swagger.oas.models.info.Info;
 import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.tags.Tag;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * OpenAPI
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#oasObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#oasObject"
  */
 
 

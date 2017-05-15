@@ -22,7 +22,7 @@ import io.swagger.oas.models.media.Content;
 /**
  * RequestBody
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#requestBodyObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#requestBodyObject"
  */
 
 

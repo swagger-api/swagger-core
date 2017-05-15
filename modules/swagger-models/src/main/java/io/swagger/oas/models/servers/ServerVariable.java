@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * ServerVariable
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#serverVariableObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#serverVariableObject"
  */
 
 

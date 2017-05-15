@@ -19,11 +19,12 @@ package io.swagger.oas.models.security;
 import java.util.Objects;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * SecurityRequirement
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#securityRequirementObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#securityRequirementObject"
  */
 
 
