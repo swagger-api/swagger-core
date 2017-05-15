@@ -79,7 +79,7 @@ public class NumericFormatTest {
             "        \"maximum\" : 9999999999999999.99," + NEWLINE  +
             "        \"exclusiveMinimum\" : false," + NEWLINE  +
             "        \"exclusiveMaximum\" : false" + NEWLINE  +
-			"      }" + NEWLINE  +
+            "      }" + NEWLINE  +
             "    }" + NEWLINE  +
             "  }" + NEWLINE  +
             "}");
