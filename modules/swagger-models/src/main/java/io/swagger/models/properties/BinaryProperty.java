@@ -109,10 +109,6 @@ public class BinaryProperty extends AbstractProperty implements Property {
         return result;
     }
 
-    public boolean isPrimitiveType() {
-    	return true;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (!super.equals(obj)) {

@@ -57,8 +57,6 @@ public interface Property {
     void setPosition(Integer position);
 
     Xml getXml();
-    
-    boolean isPrimitiveType();
 
     void setXml(Xml xml);
 

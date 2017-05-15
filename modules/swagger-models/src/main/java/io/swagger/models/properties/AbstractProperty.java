@@ -117,10 +117,6 @@ public abstract class AbstractProperty implements Property, Cloneable {
         return result;
     }
 
-    public boolean isPrimitiveType() {
-    	return false;
-    }
-    
     public Property allowEmptyValue(Boolean allowEmptyValue) {
         this.setAllowEmptyValue(allowEmptyValue);
         return this;

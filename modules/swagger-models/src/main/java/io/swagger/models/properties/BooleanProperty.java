@@ -97,10 +97,6 @@ public class BooleanProperty extends AbstractProperty implements Property {
         return result;
     }
 
-    public boolean isPrimitiveType() {
-    	return true;
-    }
-
     public BooleanProperty readOnly() {
         this.setReadOnly(Boolean.TRUE);
         return this;
