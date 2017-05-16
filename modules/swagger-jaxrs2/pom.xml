@@ -61,13 +61,6 @@
                     <useTestScope>true</useTestScope>
                     <webAppSourceDirectory>${project.basedir}/src/test/webapp</webAppSourceDirectory>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.glassfish.jersey.containers</groupId>
-                        <artifactId>jersey-container-servlet-core</artifactId>
-                        <version>${jersey2-version}</version>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <id>start-jetty</id>
@@ -92,6 +85,11 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey2-version}</version>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -150,9 +148,16 @@
             <artifactId>swagger-models</artifactId>
             <version>${models.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${annotations.version}</version>
+        </dependency>
     </dependencies>
     <properties>
         <models.version>2.0.0-SNAPSHOT</models.version>
+        <annotations.version>2.0.0-SNAPSHOT</annotations.version>
+        <core.version>2.0.0-SNAPSHOT</core.version>
         <coverage.complexity.minimum>0.50</coverage.complexity.minimum>
         <coverage.line.minimum>0.00</coverage.line.minimum>
         <coverage.missed.classes>4</coverage.missed.classes>
