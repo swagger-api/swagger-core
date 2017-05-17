@@ -16,18 +16,18 @@
 
 package io.swagger.oas.models.parameters;
 
-import java.util.Objects;
 import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.Schema;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Parameter
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#parameterObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#parameterObject"
  */
 
 
@@ -270,7 +270,7 @@ public class Parameter {
   /**
    * returns the examples property from a Parameter instance.
    *
-   * @return Map<String, Example> examples
+   * @return Map&lt;String, Example&gt; examples
    **/
 
   public Map<String, Example> getExamples() {

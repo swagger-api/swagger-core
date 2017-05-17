@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.collect.Iterables;
-import io.swagger.annotations.media.OASSchema;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.oas.models.media.ArraySchema;
@@ -88,9 +87,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     @Override
     public Schema resolve(Type type,
-            ModelConverterContext context,
-            Annotation[] annotations,
-            Iterator<ModelConverter> next) {
+                          ModelConverterContext context,
+                          Annotation[] annotations,
+                          Iterator<ModelConverter> next) {
         if (this.shouldIgnoreClass(type)) {
             return null;
         }
@@ -363,7 +362,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 annotations = annotationList.toArray(new Annotation[annotationList.size()]);
 
-                OASSchema mp = member.getAnnotation(OASSchema.class);
+                io.swagger.oas.annotations.media.Schema mp = member.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
 
                 if (mp != null && mp.readOnly()) {
                     isReadOnly = mp.readOnly();

@@ -1,6 +1,6 @@
 package io.swagger.oas.models;
 
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -11,7 +11,7 @@ public class Issue534 {
 
     @XmlElementWrapper(name = "order_specials")
     @XmlElement(name = "order_special")
-    @OASSchema//(hidden = true)
+    @Schema//(hidden = true)
     public List<SpecialOrderItem> getOrder_specials() {
         return null;
     }

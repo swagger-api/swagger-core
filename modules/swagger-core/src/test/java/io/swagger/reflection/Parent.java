@@ -1,6 +1,6 @@
 package io.swagger.reflection;
 
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
 @IndirectAnnotation
 public class Parent<T extends Number> {
@@ -21,7 +21,7 @@ public class Parent<T extends Number> {
         return null;
     }
 
-    @OASSchema(title = "test")
+    @Schema(title = "test")
     public void annotationHolder() {
 
     }

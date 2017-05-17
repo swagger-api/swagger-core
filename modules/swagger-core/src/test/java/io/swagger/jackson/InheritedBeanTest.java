@@ -3,7 +3,6 @@ package io.swagger.jackson;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.media.OASSchema;
 import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.oas.models.media.AllOfSchema;
 import io.swagger.oas.models.media.Schema;
@@ -94,7 +93,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
 
     @JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
     @JsonSubTypes({@JsonSubTypes.Type(value = Sub1Bean.class, name = "sub1")})
-    @OASSchema(description = "BaseBean"
+    @io.swagger.oas.annotations.media.Schema(description = "BaseBean"
 //            , discriminator = "type", subTypes = {Sub1Bean.class}
     )
     static class BaseBean {
@@ -103,7 +102,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
         public String b;
     }
 
-    @OASSchema(description = "Sub1Bean"
+    @io.swagger.oas.annotations.media.Schema(description = "Sub1Bean"
 //            , parent = BaseBean.class
     )
     static class Sub1Bean extends BaseBean {
@@ -202,7 +201,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
             @JsonSubTypes.Type(value = MultipleSub1Bean.class, name = "multipleSub1"),
             @JsonSubTypes.Type(value = MultipleSub2Bean.class, name = "multipleSub2")
     })
-    @OASSchema(description = "MultipleBaseBean"
+    @io.swagger.oas.annotations.media.Schema(description = "MultipleBaseBean"
 //            , discriminator = "type", subTypes = {MultipleSub1Bean.class, MultipleSub2Bean.class}
     )
     static class MultipleBaseBean {
@@ -211,14 +210,14 @@ public class InheritedBeanTest extends SwaggerTestBase {
         public String b;
     }
 
-    @OASSchema(description = "MultipleSub1Bean"
+    @io.swagger.oas.annotations.media.Schema(description = "MultipleSub1Bean"
 //            , parent = MultipleBaseBean.class
     )
     static class MultipleSub1Bean extends MultipleBaseBean {
         public int c;
     }
 
-    @OASSchema(description = "MultipleSub2Bean"
+    @io.swagger.oas.annotations.media.Schema(description = "MultipleSub2Bean"
 //            , parent = MultipleBaseBean.class
     )
     static class MultipleSub2Bean extends MultipleBaseBean {

@@ -26,14 +26,14 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.security.SecurityScheme;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Components
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#componentsObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#componentsObject"
  */
 
 
@@ -52,7 +52,7 @@ public class Components {
   /**
    * returns the schemas property from a Components instance.
    *
-   * @return Map<String, Schema> schemas
+   * @return Map&lt;String, Schema&gt; schemas
    **/
 
   public Map<String, Schema> getSchemas() {
@@ -79,7 +79,7 @@ public class Components {
   /**
    * returns the responses property from a Components instance.
    *
-   * @return Map<String, ApiResponse> responses
+   * @return Map&lt;String, ApiResponse&gt; responses
    **/
 
   public Map<String, ApiResponse> getResponses() {
@@ -106,7 +106,7 @@ public class Components {
   /**
    * returns the parameters property from a Components instance.
    *
-   * @return Map<String, Parameter> parameters
+   * @return Map&lt;String, Parameter&gt; parameters
    **/
 
   public Map<String, Parameter> getParameters() {
@@ -133,7 +133,7 @@ public class Components {
   /**
    * returns the examples property from a Components instance.
    *
-   * @return Map<String, Example> examples
+   * @return Map&lt;String, Example&gt; examples
    **/
 
   public Map<String, Example> getExamples() {
@@ -160,7 +160,7 @@ public class Components {
   /**
    * returns the requestBodies property from a Components instance.
    *
-   * @return Map<String, RequestBody> requestBodies
+   * @return Map&lt;String, RequestBody&gt; requestBodies
    **/
 
   public Map<String, RequestBody> getRequestBodies() {
@@ -187,7 +187,7 @@ public class Components {
   /**
    * returns the headers property from a Components instance.
    *
-   * @return Map<String, Header> headers
+   * @return Map&lt;String, Header&gt; headers
    **/
 
   public Map<String, Header> getHeaders() {
@@ -214,7 +214,7 @@ public class Components {
   /**
    * returns the securitySchemes property from a Components instance.
    *
-   * @return Map<String, SecurityScheme> securitySchemes
+   * @return Map&lt;String, SecurityScheme&gt; securitySchemes
    **/
 
   public Map<String, SecurityScheme> getSecuritySchemes() {
@@ -241,7 +241,7 @@ public class Components {
   /**
    * returns the links property from a Components instance.
    *
-   * @return Map<String, Link> links
+   * @return Map&lt;String, Link&gt; links
    **/
 
   public Map<String, Link> getLinks() {
@@ -268,7 +268,7 @@ public class Components {
   /**
    * returns the callbacks property from a Components instance.
    *
-   * @return Map<String, Callback> callbacks
+   * @return Map&lt;String, Callback&gt; callbacks
    **/
 
   public Map<String, Callback> getCallbacks() {

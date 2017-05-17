@@ -18,11 +18,12 @@ package io.swagger.oas.models.responses;
 
 import java.util.Objects;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * ApiResponses
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#responsesObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#responsesObject"
  */
 
 
@@ -30,7 +31,7 @@ public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
   private ApiResponse _default = null;
   private java.util.Map<String, Object> extensions = null;
 
-  public ApiResponses addResponse(String name, ApiResponse item) {
+  public ApiResponses addApiResponse(String name, ApiResponse item) {
     this.put(name, item);
     return this;
   }
@@ -62,8 +63,8 @@ public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ApiResponses responses = (ApiResponses) o;
-    return Objects.equals(this._default, responses._default) &&
+    ApiResponses apiResponses = (ApiResponses) o;
+    return Objects.equals(this._default, apiResponses._default) &&
         super.equals(o);
   }
 

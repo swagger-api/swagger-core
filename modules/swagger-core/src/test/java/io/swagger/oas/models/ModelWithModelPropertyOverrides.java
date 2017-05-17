@@ -1,9 +1,9 @@
 package io.swagger.oas.models;
 
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
 public class ModelWithModelPropertyOverrides {
-    @OASSchema(type = "List[Children]")
+    @Schema(type = "List[Children]")
     private String children;
 
     public String getChildren() {

@@ -17,8 +17,11 @@
 package io.swagger.oas.models.media;
 
 import java.util.Objects;
+import io.swagger.oas.models.ExternalDocumentation;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * BooleanSchema
@@ -71,7 +74,7 @@ public class BooleanSchema extends Schema {
   /**
    * returns the _enum property from a BooleanSchema instance.
    *
-   * @return List<Boolean> _enum
+   * @return List&lt;Boolean&gt; _enum
    **/
 
   public List<Boolean> getEnum() {

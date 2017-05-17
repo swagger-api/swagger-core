@@ -19,14 +19,13 @@ package io.swagger.oas.models;
 import java.util.Objects;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.servers.Server;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * PathItem
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#pathItemObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#pathItemObject"
  */
 
 
@@ -258,7 +257,7 @@ public class PathItem {
   /**
    * returns the servers property from a PathItem instance.
    *
-   * @return List<Server> servers
+   * @return List&lt;Server&gt; servers
    **/
 
   public List<Server> getServers() {
@@ -285,7 +284,7 @@ public class PathItem {
   /**
    * returns the parameters property from a PathItem instance.
    *
-   * @return List<Parameter> parameters
+   * @return List&lt;Parameter&gt; parameters
    **/
 
   public List<Parameter> getParameters() {

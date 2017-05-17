@@ -17,9 +17,11 @@
 package io.swagger.oas.models.media;
 
 import java.util.Objects;
+import io.swagger.oas.models.ExternalDocumentation;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * NumberSchema
@@ -72,7 +74,7 @@ public class NumberSchema extends Schema {
   /**
    * returns the _enum property from a NumberSchema instance.
    *
-   * @return List<BigDecimal> _enum
+   * @return List&lt;BigDecimal&gt; _enum
    **/
 
   public List<BigDecimal> getEnum() {

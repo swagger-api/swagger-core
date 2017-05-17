@@ -104,7 +104,7 @@ public class SimpleBuilderTest {
                                         .schema(new IntegerSchema()
                                 ))
                                 .responses(new ApiResponses()
-                                        .addResponse("200", new ApiResponse()
+                                        .addApiResponse("200", new ApiResponse()
                                                 .description("it worked")
                                                 .content(new Content()
                                                         .addMediaType("application/json",

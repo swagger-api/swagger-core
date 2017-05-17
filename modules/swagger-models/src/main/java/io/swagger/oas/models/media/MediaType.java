@@ -19,12 +19,13 @@ package io.swagger.oas.models.media;
 import java.util.Objects;
 import io.swagger.oas.models.examples.Example;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * MediaType
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#mediaTypeObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#mediaTypeObject"
  */
 
 
@@ -57,7 +58,7 @@ public class MediaType {
   /**
    * returns the examples property from a MediaType instance.
    *
-   * @return Map<String, Example> examples
+   * @return Map&lt;String, Example&gt; examples
    **/
 
   public Map<String, Example> getExamples() {

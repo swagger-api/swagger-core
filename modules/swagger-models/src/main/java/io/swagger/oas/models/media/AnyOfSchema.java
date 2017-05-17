@@ -17,8 +17,11 @@
 package io.swagger.oas.models.media;
 
 import java.util.Objects;
+import io.swagger.oas.models.ExternalDocumentation;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * AnyOfSchema
@@ -31,7 +34,7 @@ public class AnyOfSchema extends Schema {
   /**
    * returns the anyOf property from a AnyOfSchema instance.
    *
-   * @return List<Schema> anyOf
+   * @return List&lt;Schema&gt; anyOf
    **/
 
   public List<Schema> getAnyOf() {

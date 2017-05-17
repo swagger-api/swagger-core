@@ -17,8 +17,11 @@
 package io.swagger.oas.models.media;
 
 import java.util.Objects;
+import io.swagger.oas.models.ExternalDocumentation;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * EmailSchema
@@ -91,7 +94,7 @@ public class EmailSchema extends Schema {
   /**
    * returns the _enum property from a EmailSchema instance.
    *
-   * @return List<String> _enum
+   * @return List&lt;String&gt; _enum
    **/
 
   public List<String> getEnum() {

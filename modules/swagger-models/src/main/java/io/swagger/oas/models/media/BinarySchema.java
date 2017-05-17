@@ -17,8 +17,11 @@
 package io.swagger.oas.models.media;
 
 import java.util.Objects;
+import io.swagger.oas.models.ExternalDocumentation;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * BinarySchema
@@ -91,7 +94,7 @@ public class BinarySchema extends Schema {
   /**
    * returns the _enum property from a BinarySchema instance.
    *
-   * @return List<byte[]> _enum
+   * @return List&lt;byte[]&gt; _enum
    **/
 
   public List<byte[]> getEnum() {

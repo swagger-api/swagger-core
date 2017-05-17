@@ -17,8 +17,11 @@
 package io.swagger.oas.models.media;
 
 import java.util.Objects;
+import io.swagger.oas.models.ExternalDocumentation;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * OneOfSchema
@@ -31,7 +34,7 @@ public class OneOfSchema extends Schema {
   /**
    * returns the oneOf property from a OneOfSchema instance.
    *
-   * @return List<Schema> oneOf
+   * @return List&lt;Schema&gt; oneOf
    **/
 
   public List<Schema> getOneOf() {

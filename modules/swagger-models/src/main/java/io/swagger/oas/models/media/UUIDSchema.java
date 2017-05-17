@@ -17,8 +17,11 @@
 package io.swagger.oas.models.media;
 
 import java.util.Objects;
+import io.swagger.oas.models.ExternalDocumentation;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -92,7 +95,7 @@ public class UUIDSchema extends Schema {
   /**
    * returns the _enum property from a UUIDSchema instance.
    *
-   * @return List<UUID> _enum
+   * @return List&lt;UUID&gt; _enum
    **/
 
   public List<UUID> getEnum() {

@@ -1,12 +1,12 @@
 package io.swagger.oas.models;
 
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
 public class ModelWithBooleanProperty {
     // TODO
-    @OASSchema//(allowableValues = "true")
+    @Schema//(allowableValues = "true")
     public Boolean isGreat;
 
-    @OASSchema//(allowableValues = "1,2")
+    @Schema//(allowableValues = "1,2")
     public Integer intValue;
 }

@@ -16,10 +16,13 @@
 
 package io.swagger.oas.models.media;
 
+import java.util.Objects;
+import io.swagger.oas.models.ExternalDocumentation;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 /**
  * DateSchema
@@ -92,7 +95,7 @@ public class DateSchema extends Schema {
   /**
    * returns the _enum property from a DateSchema instance.
    *
-   * @return List<Date> _enum
+   * @return List&lt;Date&gt; _enum
    **/
 
   public List<Date> getEnum() {

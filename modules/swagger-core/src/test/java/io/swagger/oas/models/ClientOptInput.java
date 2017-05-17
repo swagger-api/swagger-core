@@ -1,7 +1,7 @@
 package io.swagger.oas.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
 public class ClientOptInput {
     private String opts;
@@ -16,7 +16,7 @@ public class ClientOptInput {
         this.opts = opts;
     }
 
-    @OASSchema//(hidden = true)
+    @Schema//(hidden = true)
     public JsonNode getModel() {
         return model;
     }
@@ -25,7 +25,7 @@ public class ClientOptInput {
         this.model = model;
     }
 
-    @OASSchema(type = "Object")
+    @Schema(type = "Object")
     public OpenAPI getSwagger() {
         return swagger;
     }

@@ -17,6 +17,10 @@
 package io.swagger.oas.models.media;
 
 import java.util.Objects;
+import io.swagger.oas.models.ExternalDocumentation;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 /**
  * MapSchema

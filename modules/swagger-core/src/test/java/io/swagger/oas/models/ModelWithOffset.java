@@ -1,10 +1,10 @@
 package io.swagger.oas.models;
 
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
 public class ModelWithOffset {
     public String id;
 
-    @OASSchema(type = "java.time.OffsetDateTime")
+    @Schema(type = "java.time.OffsetDateTime")
     public String offset;
 }

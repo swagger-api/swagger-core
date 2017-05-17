@@ -24,7 +24,7 @@ import io.swagger.oas.models.media.Content;
 /**
  * ApiResponse
  *
- * @link https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#responseObject
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#responseObject"
  */
 
 
@@ -120,11 +120,11 @@ public class ApiResponse {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ApiResponse response = (ApiResponse) o;
-    return Objects.equals(this.description, response.description) &&
-        Objects.equals(this.headers, response.headers) &&
-        Objects.equals(this.content, response.content) &&
-        Objects.equals(this.links, response.links);
+    ApiResponse apiResponse = (ApiResponse) o;
+    return Objects.equals(this.description, apiResponse.description) &&
+        Objects.equals(this.headers, apiResponse.headers) &&
+        Objects.equals(this.content, apiResponse.content) &&
+        Objects.equals(this.links, apiResponse.links);
   }
 
   @Override

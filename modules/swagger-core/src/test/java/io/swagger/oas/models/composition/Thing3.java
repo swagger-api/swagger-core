@@ -1,15 +1,15 @@
 package io.swagger.oas.models.composition;
 
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
-@OASSchema(description = "Thing3"
+@Schema(description = "Thing3"
 //        , parent = AbstractBaseModelWithoutFields.class
 )
 public class Thing3 extends AbstractBaseModelWithoutFields {
 
-    @OASSchema(description = "Additional field a")
+    @Schema(description = "Additional field a")
     String a;
-    @OASSchema(description = "Additional field a")
+    @Schema(description = "Additional field a")
     int x;
 
     public String getA() {
