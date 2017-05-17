@@ -1,14 +1,14 @@
 package io.swagger.oas.models.composition;
 
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
-@OASSchema(description = "and Thing2"
+@Schema(description = "and Thing2"
 //        , parent = AbstractBaseModelWithSubTypes.class
 )
 public class Thing2 extends AbstractBaseModelWithSubTypes {
 
-    @OASSchema(description = "Override the abstract a")
+    @Schema(description = "Override the abstract a")
     public String a;
-    @OASSchema(description = "Thing2 has an additional field")
+    @Schema(description = "Thing2 has an additional field")
     public String s;
 }

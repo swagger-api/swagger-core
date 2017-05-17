@@ -1,6 +1,5 @@
 package io.swagger.model.override;
 
-import io.swagger.annotations.media.OASSchema;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.oas.models.media.Schema;
@@ -42,7 +41,7 @@ public class ModelPropertyOverrideTest {
         public void setId(String id) {
         }
 
-        @OASSchema(description = "instead of modeling this class in the documentation, we will model a string")
+        @io.swagger.oas.annotations.media.Schema(description = "instead of modeling this class in the documentation, we will model a string")
         public MyCustomClass getMyCustomClass() {
             return null;
         }

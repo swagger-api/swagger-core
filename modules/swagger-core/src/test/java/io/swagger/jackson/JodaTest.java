@@ -1,6 +1,5 @@
 package io.swagger.jackson;
 
-import io.swagger.annotations.media.OASSchema;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.oas.models.media.Schema;
@@ -40,12 +39,12 @@ public class JodaTest extends SwaggerTestBase {
     }
 
     static class ModelWithJodaDateTime {
-        @OASSchema(description = "Name!"
+        @io.swagger.oas.annotations.media.Schema(description = "Name!"
 //                , position = 2
         )
         public String name;
 
-        @OASSchema(description = "creation timestamp", required = true
+        @io.swagger.oas.annotations.media.Schema(description = "creation timestamp", required = true
 //                , position = 1
         )
         public DateTime createdAt;

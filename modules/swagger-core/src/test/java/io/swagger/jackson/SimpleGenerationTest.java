@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.media.OASSchema;
 import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.oas.models.media.Schema;
 import org.testng.annotations.Test;
@@ -121,7 +120,7 @@ public class SimpleGenerationTest extends SwaggerTestBase {
    */
 
     @JsonPropertyOrder({"a", "b"})
-    @OASSchema(description = "DESC")
+    @io.swagger.oas.annotations.media.Schema(description = "DESC")
     static class SimpleBean {
         public int b;
         public long c;
@@ -143,16 +142,16 @@ public class SimpleGenerationTest extends SwaggerTestBase {
     }
 
     static class PositionBean {
-        @OASSchema//(position = 4)
+        @io.swagger.oas.annotations.media.Schema//(position = 4)
         public int d;
 
-        @OASSchema//(position = 1)
+        @io.swagger.oas.annotations.media.Schema//(position = 1)
         public int a;
 
-        @OASSchema//(position = 3)
+        @io.swagger.oas.annotations.media.Schema//(position = 3)
         public int c;
 
-        @OASSchema//(position = 2)
+        @io.swagger.oas.annotations.media.Schema//(position = 2)
         public int b;
     }
 

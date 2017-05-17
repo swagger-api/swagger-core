@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.Collections;
@@ -31,7 +31,7 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
 
     @Override
     public Boolean hasRequiredMarker(AnnotatedMember m) {
-        OASSchema ann = m.getAnnotation(OASSchema.class);
+        Schema ann = m.getAnnotation(Schema.class);
         if (ann != null) {
             return ann.required();
         }
@@ -46,7 +46,7 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
 
     @Override
     public String findPropertyDescription(Annotated a) {
-        OASSchema model = a.getAnnotation(OASSchema.class);
+        Schema model = a.getAnnotation(Schema.class);
         if (model != null && !"".equals(model.description())) {
             return model.description();
         }

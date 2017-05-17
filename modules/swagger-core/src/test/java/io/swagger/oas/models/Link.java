@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonTypeName("link")
 @JsonInclude(Include.NON_EMPTY)
 @JsonTypeInfo(include = As.WRAPPER_OBJECT, use = Id.NAME)
-@OASSchema(description = "Represents an association to another resource in the system", title = "link")
+@Schema(description = "Represents an association to another resource in the system", title = "link")
 public class Link<T> {
     private String href;
     private String rel;
@@ -32,7 +32,7 @@ public class Link<T> {
 
     @XmlElement
     @JsonProperty
-    @OASSchema(
+    @Schema(
 //            access = "public",
             required = true
 //            , position = 1
@@ -47,7 +47,7 @@ public class Link<T> {
 
     @XmlElement
     @JsonProperty
-    @OASSchema(
+    @Schema(
 //            access = "public",
  required = true
 // , position = 2
@@ -62,7 +62,7 @@ public class Link<T> {
 
     @XmlElement
     @JsonProperty
-    @OASSchema(
+    @Schema(
 //            access = "public",
  required = false
 // , position = 3

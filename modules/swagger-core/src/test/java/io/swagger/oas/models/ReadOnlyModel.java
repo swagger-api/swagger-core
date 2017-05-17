@@ -1,12 +1,12 @@
 package io.swagger.oas.models;
 
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
 public class ReadOnlyModel {
   private Integer id;
   private Integer readWriteId;
 
-  @OASSchema(readOnly = true)
+  @Schema(readOnly = true)
   public Integer getId() {
     return id;
   }
@@ -14,7 +14,7 @@ public class ReadOnlyModel {
     this.id = id;
   }
 
-  @OASSchema(readOnly = false)
+  @Schema(readOnly = false)
   public Integer getReadWriteId() {
     return readWriteId;
   }

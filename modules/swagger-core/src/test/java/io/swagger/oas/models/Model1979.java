@@ -1,9 +1,9 @@
 package io.swagger.oas.models;
 
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
 public class Model1979 {
     // TODO
-    @OASSchema//(allowEmptyValue = true)
+    @Schema//(allowEmptyValue = true)
     public String id;
 }

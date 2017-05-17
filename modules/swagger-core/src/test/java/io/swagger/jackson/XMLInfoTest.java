@@ -1,7 +1,6 @@
 package io.swagger.jackson;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.media.OASSchema;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.oas.models.media.ArraySchema;
@@ -48,7 +47,7 @@ public class XMLInfoTest extends SwaggerTestBase {
     }
 
     @XmlRootElement(name = "xmlDecoratedBean")
-    @OASSchema(description = "DESC")
+    @io.swagger.oas.annotations.media.Schema(description = "DESC")
     static class XmlDecoratedBean {
 
         @XmlElement(name = "elementB")
@@ -95,7 +94,7 @@ public class XMLInfoTest extends SwaggerTestBase {
 
     @XmlRootElement(name = "xmlDecoratedBean")
     @XmlAccessorType(XmlAccessType.NONE)
-    @OASSchema
+    @io.swagger.oas.annotations.media.Schema
     static class XmlDecoratedBeanXmlAccessorNone {
 
         @XmlElement
@@ -105,7 +104,7 @@ public class XMLInfoTest extends SwaggerTestBase {
     }
 
     @XmlRootElement(name = "xmlDecoratedBean")
-    @OASSchema
+    @io.swagger.oas.annotations.media.Schema
     static class XmlDecoratedBeanXmlAccessorPublic {
 
         @XmlElement

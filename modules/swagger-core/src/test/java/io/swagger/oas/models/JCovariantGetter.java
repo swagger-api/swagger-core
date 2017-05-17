@@ -1,14 +1,14 @@
 package io.swagger.oas.models;
 
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
 public abstract class JCovariantGetter {
-    @OASSchema//(position = 1)
+    @Schema//(position = 1)
     public Object getMyProperty() {
         return "42";
     }
 
-    @OASSchema//(position = 2)
+    @Schema//(position = 2)
     public Object getMyOtherProperty() {
         return "42";
     }

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -22,7 +22,7 @@ import java.util.Set;
 @JsonTypeName("employee")
 @JsonInclude(Include.NON_EMPTY)
 @JsonTypeInfo(include = As.WRAPPER_OBJECT, use = Id.NAME)
-@OASSchema(description = "Represents an Employee in the system", title = "employee")
+@Schema(description = "Represents an Employee in the system", title = "employee")
 public class Employee {
     private int id;
     private String firstName;
@@ -37,7 +37,7 @@ public class Employee {
 
     @XmlElement
     @JsonProperty
-    @OASSchema(
+    @Schema(
 //            access = "public",
             description = "Note, this is server generated.", title = "Read-only")
     public int getId() {
@@ -50,7 +50,7 @@ public class Employee {
 
     @XmlElement
     @JsonProperty
-    @OASSchema(
+    @Schema(
 //            access = "public",
             required = true)
     public String getFirstName() {
@@ -63,7 +63,7 @@ public class Employee {
 
     @XmlElement
     @JsonProperty
-    @OASSchema(required = true)
+    @Schema(required = true)
     public String getLastName() {
         return lastName;
     }
@@ -74,7 +74,7 @@ public class Employee {
 
     @JsonProperty("department")
     @XmlElement(name = "department")
-    @OASSchema(type = "Link", required = true, description = "The department this employee belongs to.")
+    @Schema(type = "Link", required = true, description = "The department this employee belongs to.")
     public Link<Department> getDept() {
         return dept;
     }
@@ -85,7 +85,7 @@ public class Employee {
 
     @JsonProperty("manager")
     @XmlElement(name = "manager")
-    @OASSchema(type = "Link", required = true, description = "The employee this employee reports to.")
+    @Schema(type = "Link", required = true, description = "The employee this employee reports to.")
     public Link<Employee> getManager() {
         return manager;
     }
@@ -96,7 +96,7 @@ public class Employee {
 
     @JsonProperty("team")
     @XmlElement(name = "team")
-    @OASSchema(required = true, description = "List of employees that report to this employee.")
+    @Schema(required = true, description = "List of employees that report to this employee.")
     public Set<Link<Employee>> getSubordinates() {
         return subordinates;
     }

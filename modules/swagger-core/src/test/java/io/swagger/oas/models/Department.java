@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.swagger.annotations.media.OASSchema;
+import io.swagger.oas.annotations.media.Schema;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonTypeName("department")
 @JsonInclude(Include.NON_EMPTY)
 @JsonTypeInfo(include = As.WRAPPER_OBJECT, use = Id.NAME)
-@OASSchema(description = "Represents a Department in the system", title = "department")
+@Schema(description = "Represents a Department in the system", title = "department")
 public class Department {
     private String name;
     private String deptCode;
@@ -32,7 +32,7 @@ public class Department {
 
     @XmlElement
     @JsonProperty
-    @OASSchema(
+    @Schema(
 //            access = "public",
             required = true
 //            , position = 1
@@ -47,7 +47,7 @@ public class Department {
 
     @XmlElement
     @JsonProperty
-    @OASSchema(
+    @Schema(
 //            access = "public",
             required = true
 //            , position = 2
@@ -62,7 +62,7 @@ public class Department {
 
     @JsonProperty("parentDepartment")
     @XmlElement(name = "parentDepartment")
-    @OASSchema(
+    @Schema(
             type = "Link",
             required = true,
             description = "This department's parent. If this is a top-level department, the parent would be the enterprise.")
