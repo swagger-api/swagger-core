@@ -197,7 +197,7 @@ public class Header {
   /**
    * returns the examples property from a Header instance.
    *
-   * @return List<Example> examples
+   * @return List&lt;Example&gt; examples
    **/
 
   public List<Example> getExamples() {

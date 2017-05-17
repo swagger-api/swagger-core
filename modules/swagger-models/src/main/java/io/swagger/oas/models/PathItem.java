@@ -257,7 +257,7 @@ public class PathItem {
   /**
    * returns the servers property from a PathItem instance.
    *
-   * @return List<Server> servers
+   * @return List&lt;Server&gt; servers
    **/
 
   public List<Server> getServers() {
@@ -284,7 +284,7 @@ public class PathItem {
   /**
    * returns the parameters property from a PathItem instance.
    *
-   * @return List<Parameter> parameters
+   * @return List&lt;Parameter&gt; parameters
    **/
 
   public List<Parameter> getParameters() {

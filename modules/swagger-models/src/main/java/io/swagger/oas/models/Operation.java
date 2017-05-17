@@ -16,16 +16,15 @@
 
 package io.swagger.oas.models;
 
+import java.util.Objects;
 import io.swagger.oas.models.callbacks.Callbacks;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.servers.Server;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Operation
@@ -52,7 +51,7 @@ public class Operation {
   /**
    * returns the tags property from a Operation instance.
    *
-   * @return List<String> tags
+   * @return List&lt;String&gt; tags
    **/
 
   public List<String> getTags() {
@@ -155,7 +154,7 @@ public class Operation {
   /**
    * returns the parameters property from a Operation instance.
    *
-   * @return List<Parameter> parameters
+   * @return List&lt;Parameter&gt; parameters
    **/
 
   public List<Parameter> getParameters() {
@@ -258,7 +257,7 @@ public class Operation {
   /**
    * returns the security property from a Operation instance.
    *
-   * @return List<SecurityRequirement> security
+   * @return List&lt;SecurityRequirement&gt; security
    **/
 
   public List<SecurityRequirement> getSecurity() {
@@ -285,7 +284,7 @@ public class Operation {
   /**
    * returns the servers property from a Operation instance.
    *
-   * @return List<Server> servers
+   * @return List&lt;Server&gt; servers
    **/
 
   public List<Server> getServers() {

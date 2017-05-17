@@ -94,7 +94,7 @@ public class EmailSchema extends Schema {
   /**
    * returns the _enum property from a EmailSchema instance.
    *
-   * @return List<String> _enum
+   * @return List&lt;String&gt; _enum
    **/
 
   public List<String> getEnum() {

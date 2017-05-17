@@ -16,11 +16,10 @@
 
 package io.swagger.oas.models.responses;
 
+import java.util.Objects;
 import io.swagger.oas.models.headers.Headers;
 import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.media.Content;
-
-import java.util.Objects;
 
 /**
  * ApiResponse
@@ -121,11 +120,11 @@ public class ApiResponse {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ApiResponse _apiResponse = (ApiResponse) o;
-    return Objects.equals(this.description, _apiResponse.description) &&
-            Objects.equals(this.headers, _apiResponse.headers) &&
-            Objects.equals(this.content, _apiResponse.content) &&
-            Objects.equals(this.links, _apiResponse.links);
+    ApiResponse apiResponse = (ApiResponse) o;
+    return Objects.equals(this.description, apiResponse.description) &&
+        Objects.equals(this.headers, apiResponse.headers) &&
+        Objects.equals(this.content, apiResponse.content) &&
+        Objects.equals(this.links, apiResponse.links);
   }
 
   @Override
@@ -153,7 +152,7 @@ public class ApiResponse {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ApiResponse {\n");
-
+    
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    headers: ").append(toIndentedString(headers)).append("\n");
     sb.append("    content: ").append(toIndentedString(content)).append("\n");
@@ -172,6 +171,6 @@ public class ApiResponse {
     }
     return o.toString().replace("\n", "\n    ");
   }
-
+  
 }
 

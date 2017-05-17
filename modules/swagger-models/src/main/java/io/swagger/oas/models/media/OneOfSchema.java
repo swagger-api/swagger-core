@@ -34,7 +34,7 @@ public class OneOfSchema extends Schema {
   /**
    * returns the oneOf property from a OneOfSchema instance.
    *
-   * @return List<Schema> oneOf
+   * @return List&lt;Schema&gt; oneOf
    **/
 
   public List<Schema> getOneOf() {

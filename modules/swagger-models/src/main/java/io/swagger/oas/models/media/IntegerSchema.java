@@ -94,7 +94,7 @@ public class IntegerSchema extends Schema {
   /**
    * returns the _enum property from a IntegerSchema instance.
    *
-   * @return List<Integer> _enum
+   * @return List&lt;Integer&gt; _enum
    **/
 
   public List<Integer> getEnum() {

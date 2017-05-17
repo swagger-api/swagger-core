@@ -36,7 +36,7 @@ public class ServerVariable {
   /**
    * returns the _enum property from a ServerVariable instance.
    *
-   * @return List<String> _enum
+   * @return List&lt;String&gt; _enum
    **/
 
   public List<String> getEnum() {

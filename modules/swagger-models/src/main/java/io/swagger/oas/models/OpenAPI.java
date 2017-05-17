@@ -102,7 +102,7 @@ public class OpenAPI {
   /**
    * Servers defined in the API
    *
-   * @return List<Server> servers
+   * @return List&lt;Server&gt; servers
    **/
 
   public List<Server> getServers() {
@@ -129,7 +129,7 @@ public class OpenAPI {
   /**
    * returns the security property from a OpenAPI instance.
    *
-   * @return List<SecurityRequirement> security
+   * @return List&lt;SecurityRequirement&gt; security
    **/
 
   public List<SecurityRequirement> getSecurity() {
@@ -156,7 +156,7 @@ public class OpenAPI {
   /**
    * returns the tags property from a OpenAPI instance.
    *
-   * @return List<Tag> tags
+   * @return List&lt;Tag&gt; tags
    **/
 
   public List<Tag> getTags() {

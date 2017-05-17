@@ -339,7 +339,7 @@ public class Schema {
   /**
    * returns the required property from a Schema instance.
    *
-   * @return List<String> required
+   * @return List&lt;String&gt; required
    **/
 
   public List<String> getRequired() {
@@ -404,7 +404,7 @@ public class Schema {
   /**
    * returns the properties property from a Schema instance.
    *
-   * @return Map<String, Schema> properties
+   * @return Map&lt;String, Schema&gt; properties
    **/
 
   public Map<String, Schema> getProperties() {

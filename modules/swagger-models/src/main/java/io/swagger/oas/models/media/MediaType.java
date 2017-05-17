@@ -58,7 +58,7 @@ public class MediaType {
   /**
    * returns the examples property from a MediaType instance.
    *
-   * @return Map<String, Example> examples
+   * @return Map&lt;String, Example&gt; examples
    **/
 
   public Map<String, Example> getExamples() {

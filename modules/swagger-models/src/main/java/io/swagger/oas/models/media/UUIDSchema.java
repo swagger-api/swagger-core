@@ -95,7 +95,7 @@ public class UUIDSchema extends Schema {
   /**
    * returns the _enum property from a UUIDSchema instance.
    *
-   * @return List<UUID> _enum
+   * @return List&lt;UUID&gt; _enum
    **/
 
   public List<UUID> getEnum() {

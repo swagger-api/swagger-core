@@ -34,7 +34,7 @@ public class AnyOfSchema extends Schema {
   /**
    * returns the anyOf property from a AnyOfSchema instance.
    *
-   * @return List<Schema> anyOf
+   * @return List&lt;Schema&gt; anyOf
    **/
 
   public List<Schema> getAnyOf() {

@@ -16,8 +16,9 @@
 
 package io.swagger.oas.models.responses;
 
-import java.util.LinkedHashMap;
 import java.util.Objects;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * ApiResponses

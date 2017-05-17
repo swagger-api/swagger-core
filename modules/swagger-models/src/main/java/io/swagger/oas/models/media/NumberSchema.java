@@ -74,7 +74,7 @@ public class NumberSchema extends Schema {
   /**
    * returns the _enum property from a NumberSchema instance.
    *
-   * @return List<BigDecimal> _enum
+   * @return List&lt;BigDecimal&gt; _enum
    **/
 
   public List<BigDecimal> getEnum() {

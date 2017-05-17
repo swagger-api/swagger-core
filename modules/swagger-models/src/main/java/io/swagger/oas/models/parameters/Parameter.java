@@ -16,13 +16,13 @@
 
 package io.swagger.oas.models.parameters;
 
-import java.util.Objects;
 import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.Schema;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Parameter
@@ -270,7 +270,7 @@ public class Parameter {
   /**
    * returns the examples property from a Parameter instance.
    *
-   * @return Map<String, Example> examples
+   * @return Map&lt;String, Example&gt; examples
    **/
 
   public Map<String, Example> getExamples() {

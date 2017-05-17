@@ -74,7 +74,7 @@ public class BooleanSchema extends Schema {
   /**
    * returns the _enum property from a BooleanSchema instance.
    *
-   * @return List<Boolean> _enum
+   * @return List&lt;Boolean&gt; _enum
    **/
 
   public List<Boolean> getEnum() {

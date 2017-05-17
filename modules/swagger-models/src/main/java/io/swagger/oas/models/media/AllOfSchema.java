@@ -54,7 +54,7 @@ public class AllOfSchema extends Schema {
   /**
    * returns the allOf property from a AllOfSchema instance.
    *
-   * @return List<Schema> allOf
+   * @return List&lt;Schema&gt; allOf
    **/
 
   public List<Schema> getAllOf() {

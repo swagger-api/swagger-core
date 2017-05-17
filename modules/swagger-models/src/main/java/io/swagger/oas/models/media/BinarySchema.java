@@ -94,7 +94,7 @@ public class BinarySchema extends Schema {
   /**
    * returns the _enum property from a BinarySchema instance.
    *
-   * @return List<byte[]> _enum
+   * @return List&lt;byte[]&gt; _enum
    **/
 
   public List<byte[]> getEnum() {
