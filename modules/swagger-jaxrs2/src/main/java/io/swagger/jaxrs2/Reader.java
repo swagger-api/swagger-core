@@ -5,14 +5,15 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import io.swagger.jaxrs2.util.ReflectionUtils;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.parameters.Parameter;
+import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.responses.ApiResponses;
-import io.swagger.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -25,7 +26,6 @@ public class Reader {
     public Reader(OpenAPI openAPI) {
         this.openAPI = openAPI;
     }
-
 
     public Operation parseMethod(Method method) {
         JavaType classType = TypeFactory.defaultInstance().constructType(method.getDeclaringClass());
@@ -50,10 +50,23 @@ public class Reader {
             operation.setDeprecated(apiOperation.deprecated());
 
             operation.setResponses(getApiResponses(apiOperation.responses()));
+
+            operation.requestBody(getRequestBody(apiOperation));
+
+
         }
 
         return operation;
     }
+
+    private RequestBody getRequestBody(io.swagger.oas.annotations.Operation apiOperation) {
+        io.swagger.oas.annotations.parameters.RequestBody requestBody = apiOperation.requestBody();
+        RequestBody requestBodyObject = new RequestBody();
+        requestBodyObject.setDescription(requestBody.description());
+        requestBodyObject.setRequired(requestBody.required());
+        return requestBodyObject;
+    }
+
 
     public ApiResponses getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses) {
         ApiResponses apiResponses = new ApiResponses();

@@ -153,11 +153,6 @@
             <artifactId>swagger-annotations</artifactId>
             <version>${annotations.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-core</artifactId>
-            <version>${core.version}</version>
-        </dependency>
     </dependencies>
     <properties>
         <models.version>2.0.0-SNAPSHOT</models.version>
