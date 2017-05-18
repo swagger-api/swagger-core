@@ -163,8 +163,5 @@
         <models.version>2.0.0-SNAPSHOT</models.version>
         <annotations.version>2.0.0-SNAPSHOT</annotations.version>
         <core.version>1.5.12</core.version>
-        <coverage.complexity.minimum>0.50</coverage.complexity.minimum>
-        <coverage.line.minimum>0.00</coverage.line.minimum>
-        <coverage.missed.classes>4</coverage.missed.classes>
     </properties>
 </project>

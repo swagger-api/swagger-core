@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import io.swagger.oas.annotations.parameters.RequestBody;
-import io.swagger.oas.annotations.responses.ApiResponse;
+import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
+import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.parameters.Parameter;
+import io.swagger.oas.models.responses.ApiResponse;
+import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -46,12 +48,36 @@ public class Reader {
 
             //Set Deprecated
             operation.setDeprecated(apiOperation.deprecated());
+
+            operation.setResponses(getApiResponses(apiOperation.responses()));
         }
 
         return operation;
     }
 
-    public String getOperationId(Class<?> cls, Method method) {
+    public ApiResponses getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses) {
+        ApiResponses apiResponses = new ApiResponses();
+        for (io.swagger.oas.annotations.responses.ApiResponse response : responses) {
+            ApiResponse apiResponse = new ApiResponse();
+
+            Content content = new Content();
+            io.swagger.oas.annotations.media.Content annotationContent = response.content();
+            if (annotationContent != null) {
+                content.addMediaType(annotationContent.mediaType(), null);
+
+                ExampleObject examples[] = annotationContent.examples();
+                for (ExampleObject example : examples) {
+                    // What happens with the ExampleObject?
+                }
+                apiResponse.content(content);
+            }
+            apiResponse.setDescription(response.description());
+            apiResponses.addApiResponse(response.responseCode(), apiResponse);
+        }
+        return apiResponses;
+    }
+
+    public String getOperationId(final Class<?> cls, final Method method) {
         String operationId = null;
         // check if it's an inherited or implemented method.
         boolean methodInSuperType = false;

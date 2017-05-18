@@ -54,6 +54,17 @@ public class ReaderTest {
         Assert.assertTrue(deprecatedOperation.getDeprecated());
     }
 
+    @Test(description = "Responses")
+    public void responses() {
+        Method[] methods = ApiExampleResource.class.getMethods();
+        Reader reader = new Reader(new OpenAPI());
+
+        Operation responseOperation = reader.parseMethod(methods[2]);
+        Assert.assertNotNull(responseOperation);
+        Assert.assertEquals(2, responseOperation.getResponses().size());
+
+    }
+
     private Boolean isValidRestPath(Method method) {
         for (Class<? extends Annotation> item : Arrays.asList(GET.class, PUT.class, POST.class, DELETE.class,
                 OPTIONS.class, HEAD.class)) {
