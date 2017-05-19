@@ -41,6 +41,7 @@ public class Reader {
                                   List<Parameter> globalParameters, List<ApiResponse> classApiResponses) {
         Operation operation = new Operation();
         io.swagger.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.Operation.class);
+        io.swagger.oas.annotations.callbacks.Callback apiCallback = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.callbacks.Callback.class);
 
         if (apiOperation != null) {
             //Add a Summary and the Description
@@ -63,6 +64,7 @@ public class Reader {
             operation.setTags(getTags(apiOperation));
 
             operation.setParameters(getParameters(apiOperation));
+
         }
 
         return operation;
