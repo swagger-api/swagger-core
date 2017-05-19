@@ -16,12 +16,9 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.Objects;
-import io.swagger.oas.models.ExternalDocumentation;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -29,11 +26,9 @@ import java.util.UUID;
  */
 
 
-public class UUIDSchema extends Schema {
+public class UUIDSchema extends Schema<UUID> {
   private String type = "string";
   private String format = "uuid";
-  private String _default = null;
-  private List<UUID> _enum = null;
 
   /**
    * returns the type property from a UUIDSchema instance.
@@ -73,37 +68,28 @@ public class UUIDSchema extends Schema {
     return this;
   }
 
-  /**
-   * returns the _default property from a UUIDSchema instance.
-   *
-   * @return String _default
-   **/
-
-  public String getDefault() {
-    return _default;
-  }
-
-  public void setDefault(String _default) {
-    this._default = _default;
-  }
-
-  public UUIDSchema _default(String _default) {
-    this._default = _default;
+  public UUIDSchema _default(UUID _default) {
+    super.setDefault(_default);
     return this;
   }
 
-  /**
-   * returns the _enum property from a UUIDSchema instance.
-   *
-   * @return List&lt;UUID&gt; _enum
-   **/
-
-  public List<UUID> getEnum() {
-    return _enum;
+  public UUIDSchema _default(String _default) {
+    if(_default != null) {
+      super.setDefault(UUID.fromString(_default));
+    }
+    return this;
   }
 
-  public void setEnum(List<UUID> _enum) {
-    this._enum = _enum;
+  @Override
+  protected UUID cast(Object value) {
+    if(value != null) {
+      try {
+        return UUID.fromString(value.toString());
+      }
+      catch (Exception e) {
+      }
+    }
+    return null;
   }
 
   public UUIDSchema _enum(List<UUID> _enum) {

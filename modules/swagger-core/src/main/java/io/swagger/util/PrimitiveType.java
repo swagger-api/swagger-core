@@ -142,7 +142,7 @@ public enum PrimitiveType {
 
     static {
         final Map<Class<?>, PrimitiveType> keyClasses = new HashMap<Class<?>, PrimitiveType>();
-//        addKeys(keyClasses, BOOLEAN, Boolean.class, Boolean.TYPE);
+        addKeys(keyClasses, BOOLEAN, Boolean.class, Boolean.TYPE);
         addKeys(keyClasses, STRING, String.class, Character.class, Character.TYPE);
         addKeys(keyClasses, BYTE, Byte.class, Byte.TYPE);
         addKeys(keyClasses, URL, java.net.URL.class);

@@ -1,8 +1,10 @@
 {
     "JodaDateTimeModel": {
+        "title": "JodaDateTimeModel",
         "type": "object",
         "properties": {
             "createdAt": {
+                "title": "createdAt",
                 "type": "string",
                 "format": "date-time"
             }

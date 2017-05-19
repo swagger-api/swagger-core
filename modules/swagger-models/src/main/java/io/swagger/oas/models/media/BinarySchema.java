@@ -16,23 +16,18 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.Objects;
-import io.swagger.oas.models.ExternalDocumentation;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * BinarySchema
  */
 
 
-public class BinarySchema extends Schema {
+public class BinarySchema extends Schema<byte[]> {
   private String type = "string";
   private String format = "binary";
-  private String _default = null;
-  private List<byte[]> _enum = null;
 
   /**
    * returns the type property from a BinarySchema instance.
@@ -72,37 +67,23 @@ public class BinarySchema extends Schema {
     return this;
   }
 
-  /**
-   * returns the _default property from a BinarySchema instance.
-   *
-   * @return String _default
-   **/
-
-  public String getDefault() {
-    return _default;
-  }
-
-  public void setDefault(String _default) {
-    this._default = _default;
-  }
-
-  public BinarySchema _default(String _default) {
-    this._default = _default;
+  public BinarySchema _default(byte[] _default) {
+    super.setDefault(_default);
     return this;
   }
 
-  /**
-   * returns the _enum property from a BinarySchema instance.
-   *
-   * @return List&lt;byte[]&gt; _enum
-   **/
-
-  public List<byte[]> getEnum() {
-    return _enum;
-  }
-
-  public void setEnum(List<byte[]> _enum) {
-    this._enum = _enum;
+  @Override
+  protected byte[] cast(Object value) {
+    if(value != null) {
+      try {
+        if(value instanceof byte[]) {
+          return (byte[]) value;
+        }
+      }
+      catch (Exception e) {
+      }
+    }
+    return null;
   }
 
   public BinarySchema _enum(List<byte[]> _enum) {
@@ -117,7 +98,6 @@ public class BinarySchema extends Schema {
     this._enum.add(_enumItem);
     return this;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {

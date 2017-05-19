@@ -346,7 +346,7 @@
         <module>modules/swagger-annotations</module>
         <module>modules/swagger-models</module>
         <!-- <module>modules/swagger-mule</module> -->
-        <!-- <module>modules/swagger-core</module> -->
+        <module>modules/swagger-core</module>
         <!-- <module>modules/swagger-jaxrs</module> -->
         <!-- <module>modules/swagger-jersey2-jaxrs</module> -->
         <!-- <module>modules/swagger-jersey-jaxrs</module> -->

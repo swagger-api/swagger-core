@@ -17,17 +17,13 @@
 package io.swagger.oas.models.media;
 
 import java.util.Objects;
-import io.swagger.oas.models.ExternalDocumentation;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
 
 /**
  * FileSchema
  */
 
 
-public class FileSchema extends Schema {
+public class FileSchema extends Schema<String> {
   private String type = "string";
   private String format = "binary";
 

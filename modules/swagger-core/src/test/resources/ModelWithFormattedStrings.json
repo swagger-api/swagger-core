@@ -1,27 +1,34 @@
 {
+    "title": "ModelWithFormattedStrings",
     "type": "object",
     "properties": {
         "uuid": {
+            "title": "uuid",
             "type": "string",
             "format": "uuid"
         },
         "uri": {
+            "title": "uri",
             "type": "string",
             "format": "uri"
         },
         "url": {
+            "title": "url",
             "type": "string",
             "format": "url"
         },
         "date": {
+            "title": "date",
             "type": "string",
             "format": "date-time"
         },
         "aByte": {
+            "title": "aByte",
             "type": "string",
             "format": "byte"
         },
         "aByteObject": {
+            "title": "aByteObject",
             "type": "string",
             "format": "byte"
         }

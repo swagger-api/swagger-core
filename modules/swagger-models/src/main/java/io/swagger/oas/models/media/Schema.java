@@ -16,22 +16,25 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.Objects;
 import io.swagger.oas.models.ExternalDocumentation;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Schema
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#schemaObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md#schemaObject"
  */
 
 
-public class Schema {
+public class Schema <T> {
+  protected T _default;
+
   private String title = null;
   private BigDecimal multipleOf = null;
   private BigDecimal maximum = null;
@@ -53,15 +56,16 @@ public class Schema {
   private Schema additionalProperties = null;
   private String description = null;
   private String format = null;
-  private String ref = null;
+  private String $ref = null;
   private Boolean nulable = null;
   private Boolean readOnly = null;
   private Boolean writeOnly = null;
-  private String example = null;
+  protected T example = null;
   private ExternalDocumentation externalDocs = null;
   private Boolean deprecated = null;
   private XML xml = null;
   private java.util.Map<String, Object> extensions = null;
+  protected List<T> _enum = null;
 
   /**
    * returns the title property from a Schema instance.
@@ -80,6 +84,32 @@ public class Schema {
   public Schema title(String title) {
     this.title = title;
     return this;
+  }
+
+  /**
+   * returns the _default property from a StringSchema instance.
+   *
+   * @return String _default
+   **/
+
+  public T getDefault() {
+    return _default;
+  }
+
+  public void setDefault(Object _default) {
+    this._default = cast(_default);
+  }
+
+  protected T cast(Object value) {
+    return null;
+  }
+
+  public List<T> getEnum() {
+    return _enum;
+  }
+
+  public void setEnum(List<T> _enum) {
+    this._enum = _enum;
   }
 
   /**
@@ -486,21 +516,21 @@ public class Schema {
   }
 
   /**
-   * returns the ref property from a Schema instance.
+   * returns the $ref property from a Schema instance.
    *
-   * @return String ref
+   * @return String $ref
    **/
 
-  public String getRef() {
-    return ref;
+  public String get$ref() {
+    return $ref;
   }
 
-  public void setRef(String ref) {
-    this.ref = ref;
+  public void set$ref(String $ref) {
+    this.$ref = $ref;
   }
 
   public Schema ref(String ref) {
-    this.ref = ref;
+    this.$ref = ref;
     return this;
   }
 
@@ -567,16 +597,16 @@ public class Schema {
    * @return String example
    **/
 
-  public String getExample() {
+  public Object getExample() {
     return example;
   }
 
-  public void setExample(String example) {
-    this.example = example;
+  public void setExample(Object example) {
+    this.example = cast(example);
   }
 
-  public Schema example(String example) {
-    this.example = example;
+  public Schema example(Object example) {
+    this.example = cast(example);
     return this;
   }
 
@@ -668,7 +698,7 @@ public class Schema {
         Objects.equals(this.additionalProperties, schema.additionalProperties) &&
         Objects.equals(this.description, schema.description) &&
         Objects.equals(this.format, schema.format) &&
-        Objects.equals(this.ref, schema.ref) &&
+        Objects.equals(this.$ref, schema.$ref) &&
         Objects.equals(this.nulable, schema.nulable) &&
         Objects.equals(this.readOnly, schema.readOnly) &&
         Objects.equals(this.writeOnly, schema.writeOnly) &&
@@ -680,7 +710,7 @@ public class Schema {
 
   @Override
   public int hashCode() {
-    return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern, maxItems, minItems, uniqueItems, maxProperties, minProperties, required, type, not, properties, additionalProperties, description, format, ref, nulable, readOnly, writeOnly, example, externalDocs, deprecated, xml);
+    return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern, maxItems, minItems, uniqueItems, maxProperties, minProperties, required, type, not, properties, additionalProperties, description, format, $ref, nulable, readOnly, writeOnly, example, externalDocs, deprecated, xml);
   }
 
 
@@ -725,7 +755,7 @@ public class Schema {
     sb.append("    additionalProperties: ").append(toIndentedString(additionalProperties)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    format: ").append(toIndentedString(format)).append("\n");
-    sb.append("    ref: ").append(toIndentedString(ref)).append("\n");
+    sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
     sb.append("    nulable: ").append(toIndentedString(nulable)).append("\n");
     sb.append("    readOnly: ").append(toIndentedString(readOnly)).append("\n");
     sb.append("    writeOnly: ").append(toIndentedString(writeOnly)).append("\n");

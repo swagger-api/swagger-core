@@ -215,8 +215,8 @@ public class SpecFilter {
             Schema definition = definitions.get(key);
             Map<String, Schema> clonedProperties = new LinkedHashMap<String, Schema>();
             if (definition.getProperties() != null) {
-                for (String propName : definition.getProperties().keySet()) {
-                    Schema property = definition.getProperties().get(propName);
+                for (String propName : (Set<String>)definition.getProperties().keySet()) {
+                    Schema property = (Schema)definition.getProperties().get(propName);
                     if (property != null) {
                         boolean shouldInclude = filter.isPropertyAllowed(definition, property, propName, params, cookies, headers);
                         if (shouldInclude) {

@@ -23,7 +23,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>io.swagger.annotations</Export-Package>
+                        <Export-Package>io.swagger.oas.annotations</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

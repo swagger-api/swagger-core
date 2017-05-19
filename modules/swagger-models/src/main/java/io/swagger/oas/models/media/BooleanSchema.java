@@ -16,12 +16,9 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.Objects;
-import io.swagger.oas.models.ExternalDocumentation;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * BooleanSchema
@@ -30,8 +27,6 @@ import java.util.Map;
 
 public class BooleanSchema extends Schema {
   private String type = "boolean";
-  private Boolean _default = null;
-  private List<Boolean> _enum = null;
 
   /**
    * returns the type property from a BooleanSchema instance.
@@ -52,37 +47,21 @@ public class BooleanSchema extends Schema {
     return this;
   }
 
-  /**
-   * returns the _default property from a BooleanSchema instance.
-   *
-   * @return Boolean _default
-   **/
-
-  public Boolean getDefault() {
-    return _default;
-  }
-
-  public void setDefault(Boolean _default) {
-    this._default = _default;
-  }
-
   public BooleanSchema _default(Boolean _default) {
-    this._default = _default;
+    super.setDefault(_default);
     return this;
   }
 
-  /**
-   * returns the _enum property from a BooleanSchema instance.
-   *
-   * @return List&lt;Boolean&gt; _enum
-   **/
-
-  public List<Boolean> getEnum() {
-    return _enum;
-  }
-
-  public void setEnum(List<Boolean> _enum) {
-    this._enum = _enum;
+  @Override
+  protected Boolean cast(Object value) {
+    if(value != null) {
+      try {
+        return Boolean.parseBoolean(value.toString());
+      }
+      catch (Exception e) {
+      }
+    }
+    return null;
   }
 
   public BooleanSchema _enum(List<Boolean> _enum) {

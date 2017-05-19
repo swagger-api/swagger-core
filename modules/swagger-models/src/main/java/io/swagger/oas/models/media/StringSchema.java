@@ -16,22 +16,17 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.Objects;
-import io.swagger.oas.models.ExternalDocumentation;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * StringSchema
  */
 
 
-public class StringSchema extends Schema {
+public class StringSchema extends Schema<String> {
   private String type = "string";
-  private String _default = null;
-  private List<String> _enum = null;
 
   /**
    * returns the type property from a StringSchema instance.
@@ -52,41 +47,25 @@ public class StringSchema extends Schema {
     return this;
   }
 
-  /**
-   * returns the _default property from a StringSchema instance.
-   *
-   * @return String _default
-   **/
-
-  public String getDefault() {
-    return _default;
-  }
-
-  public void setDefault(String _default) {
-    this._default = _default;
-  }
-
   public StringSchema _default(String _default) {
-    this._default = _default;
+    super.setDefault(_default);
     return this;
   }
 
-  /**
-   * returns the _enum property from a StringSchema instance.
-   *
-   * @return List&lt;String&gt; _enum
-   **/
-
-  public List<String> getEnum() {
-    return _enum;
-  }
-
-  public void setEnum(List<String> _enum) {
-    this._enum = _enum;
+  @Override
+  protected String cast(Object value) {
+    if(value != null) {
+      try {
+          return value.toString();
+      }
+      catch (Exception e) {
+      }
+    }
+    return null;
   }
 
   public StringSchema _enum(List<String> _enum) {
-    this._enum = _enum;
+    super.setEnum(_enum);
     return this;
   }
 

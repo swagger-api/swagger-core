@@ -13,7 +13,7 @@ import static org.testng.Assert.assertEquals;
 
 public class JaxBDefaultValueTest {
 
-    @Test(enabled = false, description = "convert a model with Guava optionals")
+    @Test(description = "convert a model with Guava optionals")
     public void convertModelWithGuavaOptionals() {
         final Map<String, Schema> schemas = ModelConverters.getInstance().read(ModelWithJaxBDefaultValues.class);
         final Map<String, Schema> properties = schemas.get("ModelWithJaxBDefaultValues").getProperties();

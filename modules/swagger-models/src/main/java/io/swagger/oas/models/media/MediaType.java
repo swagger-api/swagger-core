@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * MediaType
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#mediaTypeObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md#mediaTypeObject"
  */
 
 

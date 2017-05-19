@@ -48,6 +48,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -65,6 +66,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     public ObjectMapper objectMapper() {
         return _mapper;
+    }
+
+    private String constructRef(String simpleRef) {
+        return "#/components/schemas/" + simpleRef;
+    }
+
+    private String extractSimpleName(String ref) {
+        int idx = ref.lastIndexOf("/");
+        if(idx > 0) {
+            return ref.substring(idx);
+        }
+        return ref;
     }
 
     protected boolean shouldIgnoreClass(Type type) {
@@ -150,7 +163,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 //                }
                 if (innerModel instanceof Schema) {
                     Schema mi = (Schema) innerModel;
-                    if(mi.get$ref() != null) {
+
+                    if("object".equals(mi.getType())) {
+                        // create a reference for the property
+                        final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(propType);
+                        String name = _typeName(propType, beanDesc);
+                        property = new Schema().ref(constructRef(name));
+                    }
+                    else if(mi.get$ref() != null) {
                         property = new Schema().ref(StringUtils.isNotEmpty(mi.get$ref()) ? mi.get$ref() : mi.getTitle());
                     }
                     else {
@@ -297,6 +317,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 */
         List<Schema> props = new ArrayList<Schema>();
+        Map<String, Schema> modelProps = new LinkedHashMap<String, Schema>();
+
         for (BeanPropertyDefinition propDef : beanDesc.findProperties()) {
             Schema property = null;
             String propName = propDef.getName();
@@ -451,59 +473,62 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
 
                 if (property != null) {
-                    property.setTitle(propName);
+                    if(property.get$ref() == null) {
+                        property.setTitle(propName);
 
-//                    if (mp != null && !mp.access().isEmpty()) {
+//                      if (mp != null && !mp.access().isEmpty()) {
 //                        property.setAccess(mp.access());
-//                    }
+//                      }
 
-                    Boolean required = md.getRequired();
-                    if (required != null) {
+                        Boolean required = md.getRequired();
+                        if (required != null) {
 //                        property.setRequired(required);
-                    }
-
-                    String description = _intr.findPropertyDescription(member);
-                    if (description != null && !"".equals(description)) {
-                        property.setDescription(description);
-                    }
-
-                    Integer index = _intr.findPropertyIndex(member);
-                    if (index != null) {
-//                        property.setPosition(index);
-                    }
-//                    property.setDefault(_findDefaultValue(member));
-                    property.setExample(_findExampleValue(member));
-                    property.setReadOnly(_findReadOnly(member));
-                    if(allowEmptyValue != null) {
-//                        property.setAllowEmptyValue(allowEmptyValue);
-                    }
-
-                    if (property.getReadOnly() == null) {
-                        if (isReadOnly) {
-                            property.setReadOnly(isReadOnly);
                         }
-                    }
-                    if (mp != null) {
+
+                        String description = _intr.findPropertyDescription(member);
+                        if (description != null && !"".equals(description)) {
+                            property.setDescription(description);
+                        }
+
+                        Integer index = _intr.findPropertyIndex(member);
+                        if (index != null) {
+//                        property.setPosition(index);
+                        }
+                        String _defaultValue = _findDefaultValue(member);
+                        property.setDefault(_defaultValue);
+
+                        property.setExample(_findExampleValue(member));
+                        property.setReadOnly(_findReadOnly(member));
+                        if (allowEmptyValue != null) {
+//                        property.setAllowEmptyValue(allowEmptyValue);
+                        }
+
+                        if (property.getReadOnly() == null) {
+                            if (isReadOnly) {
+                                property.setReadOnly(isReadOnly);
+                            }
+                        }
+                        if (mp != null) {
 //                        final AllowableValues allowableValues = AllowableValuesUtils.create(mp.allowableValues());
 //                        if (allowableValues != null) {
 //                            final Map<PropertyBuilder.PropertyId, Object> args = allowableValues.asPropertyArguments();
 //                            PropertyBuilder.merge(property, args);
 //                        }
+                        }
+                        JAXBAnnotationsHelper.apply(member, property);
+                        applyBeanValidatorAnnotations(property, annotations);
                     }
-                    JAXBAnnotationsHelper.apply(member, property);
-                    applyBeanValidatorAnnotations(property, annotations);
                     props.add(property);
+                    modelProps.put(propName, property);
                 }
             }
         }
 
 //        Collections.sort(props, getPropertyComparator());
 
-        Map<String, Schema> modelProps = new LinkedHashMap<String, Schema>();
-        for (Schema prop : props) {
-            modelProps.put(prop.getTitle(), prop);
+        if(modelProps.size() > 0) {
+            model.setProperties(modelProps);
         }
-        model.setProperties(modelProps);
 
         /**
          * --Preventing parent/child hierarchy creation loops - Comment 2--
@@ -612,7 +637,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (suffix == null) {
                 suffix = "";
             }
-            for (Schema prop : innerModel.getProperties().values()) {
+            for (Schema prop : (Collection<Schema>)innerModel.getProperties().values()) {
                 // TODO
 //                props.add(prop.rename(prefix + prop.getName() + suffix));
             }

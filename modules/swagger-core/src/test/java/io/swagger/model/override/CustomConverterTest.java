@@ -28,10 +28,10 @@ public class CustomConverterTest {
         assertNotNull(model);
         assertEquals(model.getProperties().size(), 1);
 
-        final Schema barProperty = model.getProperties().get("bar");
+        final Schema barProperty = (Schema)model.getProperties().get("bar");
         assertNull(barProperty);
 
-        final Schema titleProperty = model.getProperties().get("title");
+        final Schema titleProperty = (Schema)model.getProperties().get("title");
         assertNotNull(titleProperty);
     }
 
