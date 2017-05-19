@@ -60,15 +60,26 @@ public class Reader {
 
             operation.setServers(getServers(apiOperation));
 
+            operation.setTags(getTags(apiOperation));
         }
 
         return operation;
     }
 
-    private List<Server> getServers(io.swagger.oas.annotations.Operation apiOperation){
+    private List<String> getTags(io.swagger.oas.annotations.Operation apiOperation) {
+        List<String> tagsObject = new ArrayList<>();
+        String[] tags = apiOperation.tags();
+        for (String tag : tags) {
+            tagsObject.add(tag);
+        }
+        return tagsObject;
+    }
+
+    private List<Server> getServers(io.swagger.oas.annotations.Operation apiOperation) {
         io.swagger.oas.annotations.servers.Server[] servers = apiOperation.servers();
         List<Server> serverObjects = new ArrayList<>();
-        for(io.swagger.oas.annotations.servers.Server server : servers){
+
+        for (io.swagger.oas.annotations.servers.Server server : servers) {
             Server serverObject = new Server();
             serverObject.setUrl(server.url());
             serverObject.setDescription(server.description());
