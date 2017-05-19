@@ -61,18 +61,34 @@ public class Reader {
             operation.setServers(getServers(apiOperation));
 
             operation.setTags(getTags(apiOperation));
+
+            operation.setParameters(getParameters(apiOperation));
         }
 
         return operation;
     }
 
+    public List<Parameter> getParameters(io.swagger.oas.annotations.Operation apiOperation) {
+        List<Parameter> openApiParameters = new ArrayList<>();
+        io.swagger.oas.annotations.Parameter[] parameters = apiOperation.parameters();
+        for (io.swagger.oas.annotations.Parameter parameter : parameters) {
+            Parameter openApiParameter = new Parameter();
+            openApiParameter.setDescription(parameter.description());
+            openApiParameter.setDeprecated(parameter.deprecated());
+            openApiParameter.setName(parameter.name());
+            openApiParameter.setRequired(parameter.required());
+            openApiParameters.add(openApiParameter);
+        }
+        return openApiParameters;
+    }
+
     private List<String> getTags(io.swagger.oas.annotations.Operation apiOperation) {
-        List<String> tagsObject = new ArrayList<>();
+        List<String> openApiTags = new ArrayList<>();
         String[] tags = apiOperation.tags();
         for (String tag : tags) {
-            tagsObject.add(tag);
+            openApiTags.add(tag);
         }
-        return tagsObject;
+        return openApiTags;
     }
 
     private List<Server> getServers(io.swagger.oas.annotations.Operation apiOperation) {
