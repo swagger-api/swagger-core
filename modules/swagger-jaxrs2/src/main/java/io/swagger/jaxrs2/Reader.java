@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.jaxrs2.util.ReflectionUtils;
 import io.swagger.oas.annotations.media.ExampleObject;
+import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.media.Content;
@@ -14,8 +15,10 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.responses.ApiResponses;
+import io.swagger.oas.models.servers.Server;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,10 +56,33 @@ public class Reader {
 
             operation.requestBody(getRequestBody(apiOperation));
 
+            operation.setExternalDocs(getExternalDocumentation(apiOperation));
+
+            operation.setServers(getServers(apiOperation));
 
         }
 
         return operation;
+    }
+
+    private List<Server> getServers(io.swagger.oas.annotations.Operation apiOperation){
+        io.swagger.oas.annotations.servers.Server[] servers = apiOperation.servers();
+        List<Server> serverObjects = new ArrayList<>();
+        for(io.swagger.oas.annotations.servers.Server server : servers){
+            Server serverObject = new Server();
+            serverObject.setUrl(server.url());
+            serverObject.setDescription(server.description());
+            serverObjects.add(serverObject);
+        }
+        return serverObjects;
+    }
+
+    private ExternalDocumentation getExternalDocumentation(io.swagger.oas.annotations.Operation apiOperation) {
+        ExternalDocumentation external = new ExternalDocumentation();
+        io.swagger.oas.annotations.ExternalDocumentation externalDocumentation = apiOperation.externalDocs();
+        external.setDescription(externalDocumentation.description());
+        external.setUrl(externalDocumentation.url());
+        return external;
     }
 
     private RequestBody getRequestBody(io.swagger.oas.annotations.Operation apiOperation) {
