@@ -12,7 +12,7 @@ import javax.ws.rs.Path;
 /**
  * Created by RafaelLopez on 5/16/17.
  */
-public class ApiExampleResource {
+public class ResponsesResource {
 
     @GET
     @Path("/")
