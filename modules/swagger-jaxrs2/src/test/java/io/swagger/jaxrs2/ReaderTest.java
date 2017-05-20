@@ -14,8 +14,9 @@ import java.util.Arrays;
 
 public class ReaderTest {
 
-    private final String OPERATION_SUMMARY = "Operation Summary";
-    private final String OPERATION_DESCRIPTION = "Operation Description";
+    public static final String EXAMPLE_TAG = "Example tag";
+    private static final String OPERATION_SUMMARY = "Operation Summary";
+    private static final String OPERATION_DESCRIPTION = "Operation Description";
 
     @Test(description = "scan methods")
     public void scanMethods() {
@@ -56,7 +57,7 @@ public class ReaderTest {
         Operation operation = reader.parseMethod(methods[0]);
         Assert.assertNotNull(operation);
         Assert.assertEquals(1, operation.getTags().size());
-        Assert.assertEquals("Example tag", operation.getTags().get(0));
+        Assert.assertEquals(EXAMPLE_TAG, operation.getTags().get(0));
     }
 
     @Test(description = "Responses")
@@ -67,6 +68,13 @@ public class ReaderTest {
         Operation responseOperation = reader.parseMethod(methods[0]);
         Assert.assertNotNull(responseOperation);
         Assert.assertEquals(2, responseOperation.getResponses().size());
+    }
+
+    @Test(description = "Callbacks")
+    public void callbacks() {
+        Method[] methods = SimpleCallbackResource.class.getMethods();
+        Reader reader = new Reader(new OpenAPI());
+
     }
 
     private Boolean isValidRestPath(Method method) {

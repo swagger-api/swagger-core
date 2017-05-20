@@ -10,6 +10,7 @@ import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
+import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.callbacks.Callbacks;
 import io.swagger.oas.models.examples.Example;
@@ -56,7 +57,7 @@ public class Reader {
             //Add a Summary and the Description
             operation.setDescription(apiOperation.description());
             operation.setSummary(apiOperation.summary());
-            
+
             // Set Operation Id
             operation.setOperationId(apiOperation.operationId());
 
@@ -82,13 +83,18 @@ public class Reader {
 
                 io.swagger.oas.annotations.Operation[] operationCallbacks = apiCallback.operation();
                 for (io.swagger.oas.annotations.Operation callback : operationCallbacks) {
+                    PathItem pathItemObject = new PathItem();
                     Callback callbackObject = new Callback();
+
+                    pathItemObject.setDescription(callback.description());
+                    pathItemObject.setSummary(callback.summary());
+                    callbackObject.addPathItem(callback.description(), pathItemObject);
+
+                    callbacks.addCallback(callback.description(), callbackObject);
                 }
 
                 //TODO Callbacks functionality
-
             }
-
         }
 
         return operation;
