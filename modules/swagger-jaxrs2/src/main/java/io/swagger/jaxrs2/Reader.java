@@ -10,12 +10,15 @@ import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
+import io.swagger.oas.models.callbacks.Callbacks;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.servers.Server;
+import io.swagger.oas.models.servers.ServerVariable;
+import io.swagger.oas.models.servers.ServerVariables;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -65,6 +68,13 @@ public class Reader {
 
             operation.setParameters(getParameters(apiOperation));
 
+
+            if (apiCallback != null) {
+
+                Callbacks callbacks = new Callbacks();
+
+            }
+
         }
 
         return operation;
@@ -79,6 +89,14 @@ public class Reader {
             openApiParameter.setDeprecated(parameter.deprecated());
             openApiParameter.setName(parameter.name());
             openApiParameter.setRequired(parameter.required());
+            //openApiParameter.setStyle(Parameter.StyleEnum.valueOf(parameter.style()));
+            openApiParameter.setAllowEmptyValue(parameter.allowEmptyValue());
+            openApiParameter.setAllowReserved(parameter.allowReserved());
+            openApiParameter.setExplode(parameter.explode());
+            openApiParameter.setIn(parameter.in());
+
+            // getContents(); How does the parameter has an array of contents and the Parameter Object only has one Content
+
             openApiParameters.add(openApiParameter);
 
         }
@@ -102,7 +120,15 @@ public class Reader {
             Server serverObject = new Server();
             serverObject.setUrl(server.url());
             serverObject.setDescription(server.description());
-            serverObjects.add(serverObject);
+            io.swagger.oas.annotations.servers.ServerVariable[] serverVariables = server.variables();
+            ServerVariables serverVariablesObject = new ServerVariables();
+            for (io.swagger.oas.annotations.servers.ServerVariable serverVariable : serverVariables) {
+                ServerVariable serverVariableObject = new ServerVariable();
+                serverVariableObject.setDescription(serverVariable.description());
+                serverVariablesObject.addServerVariable(serverVariableObject.getDescription(), serverVariableObject);
+            }
+
+            serverObject.setVariables(serverVariablesObject);
         }
         return serverObjects;
     }
@@ -129,21 +155,33 @@ public class Reader {
         for (io.swagger.oas.annotations.responses.ApiResponse response : responses) {
             ApiResponse apiResponse = new ApiResponse();
 
-            Content content = new Content();
-            io.swagger.oas.annotations.media.Content annotationContent = response.content();
-            if (annotationContent != null) {
-                content.addMediaType(annotationContent.mediaType(), null);
-
-                ExampleObject examples[] = annotationContent.examples();
-                for (ExampleObject example : examples) {
-                    // What happens with the ExampleObject?
-                }
-                apiResponse.content(content);
-            }
+            Content content = getContent(response.content());
+            apiResponse.content(content);
             apiResponse.setDescription(response.description());
             apiResponses.addApiResponse(response.responseCode(), apiResponse);
         }
         return apiResponses;
+    }
+
+    private List<Content> getContents(io.swagger.oas.annotations.media.Content contents[]) {
+        List<Content> contentsObject = new ArrayList<>();
+        for (io.swagger.oas.annotations.media.Content content : contents) {
+            contentsObject.add(getContent(content));
+        }
+        return contentsObject;
+    }
+
+    private Content getContent(io.swagger.oas.annotations.media.Content annotationContent) {
+        Content content = new Content();
+        if (annotationContent != null) {
+            content.addMediaType(annotationContent.mediaType(), null);
+
+            ExampleObject examples[] = annotationContent.examples();
+            for (ExampleObject example : examples) {
+                // What happens with the ExampleObject?
+            }
+        }
+        return content;
     }
 
     public String getOperationId(final Class<?> cls, final Method method) {
