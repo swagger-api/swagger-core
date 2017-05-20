@@ -73,6 +73,8 @@ public class Reader {
 
                 Callbacks callbacks = new Callbacks();
 
+                //TODO Callbacks functionality
+
             }
 
         }

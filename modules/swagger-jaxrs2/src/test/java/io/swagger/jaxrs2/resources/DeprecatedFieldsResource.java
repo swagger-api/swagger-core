@@ -11,11 +11,4 @@ public class DeprecatedFieldsResource {
     public Response deprecatedMethod() {
         return Response.ok().entity("ok").build();
     }
-
-    @GET
-    @Path("/")
-    @io.swagger.oas.annotations.Operation()
-    public Response nonDeprecatedMethod() {
-        return Response.ok().entity("ok").build();
-    }
 }

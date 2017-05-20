@@ -44,10 +44,6 @@ public class ReaderTest {
         Method[] methods = DeprecatedFieldsResource.class.getMethods();
         Reader reader = new Reader(new OpenAPI());
 
-        Operation defaultNonDeprecatedOperation = reader.parseMethod(methods[1]);
-        Assert.assertNotNull(defaultNonDeprecatedOperation);
-        Assert.assertFalse(defaultNonDeprecatedOperation.getDeprecated());
-
         Operation deprecatedOperation = reader.parseMethod(methods[0]);
         Assert.assertNotNull(deprecatedOperation);
         Assert.assertTrue(deprecatedOperation.getDeprecated());
