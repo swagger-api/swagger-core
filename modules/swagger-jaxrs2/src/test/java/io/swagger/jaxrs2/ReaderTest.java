@@ -110,8 +110,12 @@ public class ReaderTest {
         Operation requestOperation = reader.parseMethod(methods[0]);
         assertNotNull(requestOperation);
         RequestBody requestBody = requestOperation.getRequestBody();
-
         assertEquals(REQUEST_DESCRIPTION, requestBody.getDescription());
+
+        Content content  = requestBody.getContent();
+        assertNotNull(content);
+        assertNotNull(content.get(APPLICATION_JSON));
+
     }
 
     @Test(description = "Callbacks")

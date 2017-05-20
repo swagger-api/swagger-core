@@ -166,8 +166,9 @@ public class Reader {
         RequestBody requestBodyObject = new RequestBody();
         requestBodyObject.setDescription(requestBody.description());
         requestBodyObject.setRequired(requestBody.required());
-        //requestBodyObject.setContent(getContents(requestBody.content()).get(0));
-
+        List<Content> contents = getContents(requestBody.content());
+        // TODO validate why the content annotation may have a lot of contents, but the model only use one.
+        requestBodyObject.setContent(contents.get(0));
         return requestBodyObject;
     }
 
