@@ -10,8 +10,13 @@ import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
+import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.callbacks.Callbacks;
+import io.swagger.oas.models.examples.Example;
+import io.swagger.oas.models.links.Link;
+import io.swagger.oas.models.links.LinkParameters;
 import io.swagger.oas.models.media.Content;
+import io.swagger.oas.models.media.MediaType;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
@@ -19,6 +24,7 @@ import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.servers.ServerVariable;
 import io.swagger.oas.models.servers.ServerVariables;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -48,30 +54,36 @@ public class Reader {
 
         if (apiOperation != null) {
             //Add a Summary and the Description
-            operation.summary(apiOperation.summary()).description(apiOperation.description());
-
+            operation.setDescription(apiOperation.description());
+            operation.setSummary(apiOperation.summary());
+            
             // Set Operation Id
-            operation.setOperationId(getOperationId(cls, method));
+            operation.setOperationId(apiOperation.operationId());
 
             //Set Deprecated
             operation.setDeprecated(apiOperation.deprecated());
 
-            operation.setResponses(getApiResponses(apiOperation.responses()));
+            operation.setResponses(getApiResponsesFromResponseAnnotation(apiOperation.responses()));
 
-            operation.requestBody(getRequestBody(apiOperation));
+            operation.requestBody(getRequestBodyObjectFromAnnotation(apiOperation));
 
-            operation.setExternalDocs(getExternalDocumentation(apiOperation));
+            operation.setExternalDocs(getExternalDocumentationObjectFromAnnotation(apiOperation));
 
-            operation.setServers(getServers(apiOperation));
+            operation.setServers(getServersObjectListFromAnnotation(apiOperation));
 
-            operation.setTags(getTags(apiOperation));
+            operation.setTags(getTagsFromOperation(apiOperation));
 
-            operation.setParameters(getParameters(apiOperation));
+            operation.setParameters(getParametersListFromAnnotation(apiOperation));
 
 
             if (apiCallback != null) {
 
                 Callbacks callbacks = new Callbacks();
+
+                io.swagger.oas.annotations.Operation[] operationCallbacks = apiCallback.operation();
+                for (io.swagger.oas.annotations.Operation callback : operationCallbacks) {
+                    Callback callbackObject = new Callback();
+                }
 
                 //TODO Callbacks functionality
 
@@ -82,30 +94,30 @@ public class Reader {
         return operation;
     }
 
-    public List<Parameter> getParameters(io.swagger.oas.annotations.Operation apiOperation) {
-        List<Parameter> openApiParameters = new ArrayList<>();
+    public List<Parameter> getParametersListFromAnnotation(io.swagger.oas.annotations.Operation apiOperation) {
+        List<Parameter> parametersObject = new ArrayList<>();
         io.swagger.oas.annotations.Parameter[] parameters = apiOperation.parameters();
         for (io.swagger.oas.annotations.Parameter parameter : parameters) {
-            Parameter openApiParameter = new Parameter();
-            openApiParameter.setDescription(parameter.description());
-            openApiParameter.setDeprecated(parameter.deprecated());
-            openApiParameter.setName(parameter.name());
-            openApiParameter.setRequired(parameter.required());
-            //openApiParameter.setStyle(Parameter.StyleEnum.valueOf(parameter.style()));
-            openApiParameter.setAllowEmptyValue(parameter.allowEmptyValue());
-            openApiParameter.setAllowReserved(parameter.allowReserved());
-            openApiParameter.setExplode(parameter.explode());
-            openApiParameter.setIn(parameter.in());
+            Parameter parameterObject = new Parameter();
+            parameterObject.setDescription(parameter.description());
+            parameterObject.setDeprecated(parameter.deprecated());
+            parameterObject.setName(parameter.name());
+            parameterObject.setRequired(parameter.required());
+            parameterObject.setStyle(StringUtils.isNoneBlank(parameter.style()) ? Parameter.StyleEnum.valueOf(parameter.style()) : null);
+            parameterObject.setAllowEmptyValue(parameter.allowEmptyValue());
+            parameterObject.setAllowReserved(parameter.allowReserved());
+            parameterObject.setExplode(parameter.explode());
+            parameterObject.setIn(parameter.in());
 
             // getContents(); How does the parameter has an array of contents and the Parameter Object only has one Content
 
-            openApiParameters.add(openApiParameter);
+            parametersObject.add(parameterObject);
 
         }
-        return openApiParameters;
+        return parametersObject;
     }
 
-    private List<String> getTags(io.swagger.oas.annotations.Operation apiOperation) {
+    private List<String> getTagsFromOperation(io.swagger.oas.annotations.Operation apiOperation) {
         List<String> openApiTags = new ArrayList<>();
         String[] tags = apiOperation.tags();
         for (String tag : tags) {
@@ -114,7 +126,7 @@ public class Reader {
         return openApiTags;
     }
 
-    private List<Server> getServers(io.swagger.oas.annotations.Operation apiOperation) {
+    private List<Server> getServersObjectListFromAnnotation(io.swagger.oas.annotations.Operation apiOperation) {
         io.swagger.oas.annotations.servers.Server[] servers = apiOperation.servers();
         List<Server> serverObjects = new ArrayList<>();
 
@@ -135,7 +147,7 @@ public class Reader {
         return serverObjects;
     }
 
-    private ExternalDocumentation getExternalDocumentation(io.swagger.oas.annotations.Operation apiOperation) {
+    private ExternalDocumentation getExternalDocumentationObjectFromAnnotation(io.swagger.oas.annotations.Operation apiOperation) {
         ExternalDocumentation external = new ExternalDocumentation();
         io.swagger.oas.annotations.ExternalDocumentation externalDocumentation = apiOperation.externalDocs();
         external.setDescription(externalDocumentation.description());
@@ -143,20 +155,20 @@ public class Reader {
         return external;
     }
 
-    private RequestBody getRequestBody(io.swagger.oas.annotations.Operation apiOperation) {
+    private RequestBody getRequestBodyObjectFromAnnotation(io.swagger.oas.annotations.Operation apiOperation) {
         io.swagger.oas.annotations.parameters.RequestBody requestBody = apiOperation.requestBody();
         RequestBody requestBodyObject = new RequestBody();
         requestBodyObject.setDescription(requestBody.description());
         requestBodyObject.setRequired(requestBody.required());
+        //requestBodyObject.setContent(getContents(requestBody.content()).get(0));
+
         return requestBodyObject;
     }
 
-
-    public ApiResponses getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses) {
+    public ApiResponses getApiResponsesFromResponseAnnotation(final io.swagger.oas.annotations.responses.ApiResponse[] responses) {
         ApiResponses apiResponses = new ApiResponses();
         for (io.swagger.oas.annotations.responses.ApiResponse response : responses) {
             ApiResponse apiResponse = new ApiResponse();
-
             Content content = getContent(response.content());
             apiResponse.content(content);
             apiResponse.setDescription(response.description());
@@ -176,37 +188,35 @@ public class Reader {
     private Content getContent(io.swagger.oas.annotations.media.Content annotationContent) {
         Content content = new Content();
         if (annotationContent != null) {
-            content.addMediaType(annotationContent.mediaType(), null);
-
             ExampleObject examples[] = annotationContent.examples();
             for (ExampleObject example : examples) {
-                // What happens with the ExampleObject?
+                MediaType mediaType = new MediaType();
+                Example exampleObject = new Example();
+                exampleObject.setDescription(example.name());
+                exampleObject.setSummary(example.summary());
+                exampleObject.setExternalValue(example.externalValue());
+                exampleObject.setValue(example.value());
+                mediaType.addExamples(example.name(), exampleObject);
+                content.addMediaType(annotationContent.mediaType(), mediaType);
             }
         }
         return content;
     }
 
-    public String getOperationId(final Class<?> cls, final Method method) {
-        String operationId = null;
-        // check if it's an inherited or implemented method.
-        boolean methodInSuperType = false;
-        if (!cls.isInterface()) {
-            methodInSuperType = ReflectionUtils.findMethod(method, cls.getSuperclass()) != null;
+    private Link getLinks(io.swagger.oas.annotations.links.Link[] links) {
+        Link linkObject = new Link();
+        for (io.swagger.oas.annotations.links.Link link : links) {
+            linkObject.setParameters(getLinkParameters(link.parameters()));
+            linkObject.setDescription(link.description());
+            linkObject.setOperationId(link.operationId());
+            linkObject.setOperationRef(link.operationRef());
         }
-        if (!methodInSuperType) {
-            for (Class<?> implementedInterface : cls.getInterfaces()) {
-                methodInSuperType = ReflectionUtils.findMethod(method, implementedInterface) != null;
-                if (methodInSuperType) {
-                    break;
-                }
-            }
-        }
-        if (!methodInSuperType) {
-            operationId = method.getName();
-        } else {
-            // operationId = this.getOperationId(method.getName());
-        }
+        return linkObject;
+    }
 
-        return operationId;
+    private LinkParameters getLinkParameters(io.swagger.oas.annotations.links.LinkParameters linkParameters) {
+        LinkParameters linkParametersObject = new LinkParameters();
+        linkParametersObject.addExtension(linkParameters.name(), linkParameters.expression());
+        return linkParametersObject;
     }
 }
