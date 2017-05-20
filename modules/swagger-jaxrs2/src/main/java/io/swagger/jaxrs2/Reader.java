@@ -80,6 +80,7 @@ public class Reader {
             openApiParameter.setName(parameter.name());
             openApiParameter.setRequired(parameter.required());
             openApiParameters.add(openApiParameter);
+
         }
         return openApiParameters;
     }
