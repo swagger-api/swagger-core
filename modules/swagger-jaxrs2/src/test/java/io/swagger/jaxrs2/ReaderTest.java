@@ -3,7 +3,9 @@ package io.swagger.jaxrs2;
 import io.swagger.jaxrs2.resources.*;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
-import org.testng.Assert;
+import io.swagger.oas.models.media.Content;
+import io.swagger.oas.models.responses.ApiResponse;
+import io.swagger.oas.models.responses.ApiResponses;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.*;
@@ -11,12 +13,17 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import static org.testng.Assert.*;
+
 
 public class ReaderTest {
 
     public static final String EXAMPLE_TAG = "Example tag";
     private static final String OPERATION_SUMMARY = "Operation Summary";
     private static final String OPERATION_DESCRIPTION = "Operation Description";
+    public static final String APPLICATION_JSON = "application/json";
+    public static final String RESPONSE_CODE_200 = "200";
+    public static final String RESPONSE_CODE_DEFAULT = "default";
 
     @Test(description = "scan methods")
     public void scanMethods() {
@@ -25,7 +32,7 @@ public class ReaderTest {
         for (final Method method : methods) {
             if (isValidRestPath(method)) {
                 Operation operation = reader.parseMethod(method);
-                Assert.assertNotNull(operation);
+                assertNotNull(operation);
             }
         }
     }
@@ -35,9 +42,9 @@ public class ReaderTest {
         Method[] methods = BasicFieldsResource.class.getMethods();
         Reader reader = new Reader(new OpenAPI());
         Operation operation = reader.parseMethod(methods[0]);
-        Assert.assertNotNull(operation);
-        Assert.assertEquals(OPERATION_SUMMARY, operation.getSummary());
-        Assert.assertEquals(OPERATION_DESCRIPTION, operation.getDescription());
+        assertNotNull(operation);
+        assertEquals(OPERATION_SUMMARY, operation.getSummary());
+        assertEquals(OPERATION_DESCRIPTION, operation.getDescription());
     }
 
     @Test(description = "Deprecated Method")
@@ -46,8 +53,8 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         Operation deprecatedOperation = reader.parseMethod(methods[0]);
-        Assert.assertNotNull(deprecatedOperation);
-        Assert.assertTrue(deprecatedOperation.getDeprecated());
+        assertNotNull(deprecatedOperation);
+        assertTrue(deprecatedOperation.getDeprecated());
     }
 
     @Test(description = "Get tags")
@@ -55,9 +62,9 @@ public class ReaderTest {
         Method[] methods = TagsResource.class.getMethods();
         Reader reader = new Reader(new OpenAPI());
         Operation operation = reader.parseMethod(methods[0]);
-        Assert.assertNotNull(operation);
-        Assert.assertEquals(1, operation.getTags().size());
-        Assert.assertEquals(EXAMPLE_TAG, operation.getTags().get(0));
+        assertNotNull(operation);
+        assertEquals(1, operation.getTags().size());
+        assertEquals(EXAMPLE_TAG, operation.getTags().get(0));
     }
 
     @Test(description = "Responses")
@@ -66,8 +73,25 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         Operation responseOperation = reader.parseMethod(methods[0]);
-        Assert.assertNotNull(responseOperation);
-        Assert.assertEquals(2, responseOperation.getResponses().size());
+        assertNotNull(responseOperation);
+        ApiResponses responses = responseOperation.getResponses();
+        assertEquals(2, responses.size());
+
+        ApiResponse apiResponse = responses.get(RESPONSE_CODE_200);
+        assertNotNull(apiResponse);
+        assertEquals("voila!", apiResponse.getDescription());
+
+        Content content = apiResponse.getContent();
+        assertNotNull(content);
+        assertNotNull(content.get(APPLICATION_JSON));
+
+        apiResponse = responses.get(RESPONSE_CODE_DEFAULT);
+        assertNotNull(apiResponse);
+        assertEquals("boo", apiResponse.getDescription());
+
+        content = apiResponse.getContent();
+        assertNotNull(content);
+        assertNotNull(content.get("*/*"));
     }
 
     @Test(description = "Callbacks")
