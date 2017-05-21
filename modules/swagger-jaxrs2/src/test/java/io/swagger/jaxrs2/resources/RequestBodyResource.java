@@ -19,7 +19,8 @@ public class RequestBodyResource {
     @RequestBody(description = "Request description", content = @Content(
             mediaType = "application/json",
             schema = @Schema(implementation = ResponsesResource.SampleResponseSchema.class)
-    )))
+    ))
+    )
     public void setRequestBody() {
     }
 }

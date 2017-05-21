@@ -1,6 +1,7 @@
 package io.swagger.jaxrs2;
 
 import io.swagger.jaxrs2.resources.*;
+import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.media.Content;
@@ -29,6 +30,8 @@ public class ReaderTest {
     public static final String RESPONSE_DESCRIPTION = "voila!";
     public static final String RESPONSE_DESCRIPTION_BOO = "boo";
     public static final String REQUEST_DESCRIPTION = "Request description";
+    public static final String EXTERNAL_DOCS_DESCRIPTION = "External documentation description";
+    public static final String EXTERNAL_DOCS_URL = "http://url.com";
     public static final String GENERIC_MEDIA_TYPE = "*/*";
     public static final int RESPONSES_NUMBER = 2;
     public static final int TAG_NUMBER = 1;
@@ -112,9 +115,22 @@ public class ReaderTest {
         RequestBody requestBody = requestOperation.getRequestBody();
         assertEquals(REQUEST_DESCRIPTION, requestBody.getDescription());
 
-        Content content  = requestBody.getContent();
+        Content content = requestBody.getContent();
         assertNotNull(content);
         assertNotNull(content.get(APPLICATION_JSON));
+
+    }
+
+    @Test(description = "External Docs")
+    public void externalDocs() {
+        Method[] methods = ExternalDocsReference.class.getMethods();
+
+        Operation externalDocsOperation = reader.parseMethod(methods[0]);
+        assertNotNull(externalDocsOperation);
+        ExternalDocumentation externalDocs = externalDocsOperation.getExternalDocs();
+        assertEquals(EXTERNAL_DOCS_DESCRIPTION, externalDocs.getDescription());
+        assertEquals(EXTERNAL_DOCS_URL, externalDocs.getUrl());
+
 
     }
 
