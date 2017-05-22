@@ -17,12 +17,4 @@ public class TagsResource {
     public Response getTags() {
         return Response.ok().entity("ok").build();
     }
-
-    /*@GET
-    @Path("/")
-    @Operation()
-    public Response hasNoTags() {
-        return Response.ok().entity("ok").build();
-    }*/
-
 }

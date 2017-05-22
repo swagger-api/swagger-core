@@ -12,6 +12,9 @@ import io.swagger.jaxrs2.resources.SimpleMethods;
 import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
+import io.swagger.oas.models.PathItem;
+import io.swagger.oas.models.callbacks.Callback;
+import io.swagger.oas.models.callbacks.Callbacks;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
@@ -28,10 +31,10 @@ import static org.testng.Assert.*;
 
 
 public class ReaderTest {
-
     public static final String EXAMPLE_TAG = "Example tag";
     public static final String OPERATION_SUMMARY = "Operation Summary";
     public static final String OPERATION_DESCRIPTION = "Operation Description";
+    public static final String CALLBACK_OPERATION_DESCRIPTION = "payload data will be sent";
     public static final String APPLICATION_JSON = "application/json";
     public static final String RESPONSE_CODE_200 = "200";
     public static final String RESPONSE_CODE_DEFAULT = "default";
@@ -138,8 +141,6 @@ public class ReaderTest {
         ExternalDocumentation externalDocs = externalDocsOperation.getExternalDocs();
         assertEquals(EXTERNAL_DOCS_DESCRIPTION, externalDocs.getDescription());
         assertEquals(EXTERNAL_DOCS_URL, externalDocs.getUrl());
-
-
     }
 
     @Test(description = "Callbacks")
@@ -147,8 +148,15 @@ public class ReaderTest {
         Method[] methods = SimpleCallbackResource.class.getMethods();
         Operation callbackOperation = reader.parseMethod(methods[0]);
         assertNotNull(callbackOperation);
-
-
+        Callbacks callbacks = callbackOperation.getCallbacks();
+        assertNotNull(callbacks);
+        Callback callback = callbacks.get("subscription");
+        assertNotNull(callback);
+        PathItem pathItem = callback.get("subscription");
+        assertNotNull(pathItem);
+        Operation postOperation = pathItem.getPost();
+        assertNotNull(postOperation);
+        assertEquals(CALLBACK_OPERATION_DESCRIPTION, postOperation.getDescription());
     }
 
     private Boolean isValidRestPath(Method method) {

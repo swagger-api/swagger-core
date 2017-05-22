@@ -23,7 +23,7 @@ public class SimpleCallbackResource {
             operation =
             @Operation(
                     method = "post",
-                    description = "payload data will be sent ",
+                    description = "payload data will be sent",
                     parameters = {
                             @Parameter(in = "path", name = "subscriptionId", required = true, schema = @Schema(
                                     type = "string",
