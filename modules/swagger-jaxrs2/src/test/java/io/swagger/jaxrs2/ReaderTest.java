@@ -137,6 +137,9 @@ public class ReaderTest {
     @Test(description = "Callbacks")
     public void callbacks() {
         Method[] methods = SimpleCallbackResource.class.getMethods();
+        Operation callbackOperation = reader.parseMethod(methods[0]);
+        assertNotNull(callbackOperation);
+
 
     }
 
