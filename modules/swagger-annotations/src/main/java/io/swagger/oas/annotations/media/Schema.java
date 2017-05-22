@@ -161,7 +161,7 @@ public @interface Schema {
   /**
    * if true, designates a value as possibly null
    **/
-  boolean nulable() default false;
+  boolean nullable() default false;
 
   /**
    * sets whether the value can be modified by a consumer
@@ -198,4 +198,18 @@ public @interface Schema {
    **/
   String type() default "";
 
+  /**
+   * provides a list of allowable values.
+   */
+  String[] _enum() default {""};
+
+  /**
+   * provides a default value.
+   */
+  String _default() default "";
+
+  /**
+   * allows schema to be marked as hidden
+   */
+  boolean hidden() default false;
 }

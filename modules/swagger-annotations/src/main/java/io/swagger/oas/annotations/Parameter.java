@@ -16,15 +16,14 @@
 
 package io.swagger.oas.annotations;
 
+import io.swagger.oas.annotations.media.Content;
+import io.swagger.oas.annotations.media.Schema;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import io.swagger.oas.annotations.media.Content;
-import io.swagger.oas.annotations.media.Schema;
-import java.util.List;
 
 /**
  * 
@@ -93,4 +92,8 @@ public @interface Parameter {
    **/
   Content[] content() default @Content();
 
+  /**
+   * allows parameter to be marked as hidden
+   */
+  boolean hidden() default false;
 }
