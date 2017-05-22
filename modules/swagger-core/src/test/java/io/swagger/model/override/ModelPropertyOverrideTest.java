@@ -14,15 +14,12 @@ public class ModelPropertyOverrideTest {
         final Map<String, Schema> model = ModelConverters.getInstance().read(MyPojo.class);
         final String expected = "{" +
                 "  \"MyPojo\" : {" +
-                "    \"title\" : \"MyPojo\"," +
                 "    \"type\" : \"object\"," +
                 "    \"properties\" : {" +
                 "      \"id\" : {" +
-                "        \"title\" : \"id\"," +
                 "        \"type\" : \"string\"" +
                 "      }," +
                 "      \"myCustomClass\" : {" +
-                "        \"title\" : \"myCustomClass\"," +
                 "        \"type\" : \"string\"," +
                 "        \"format\" : \"date-time\"," +
                 "        \"description\" : \"instead of modeling this class in the documentation, we will model a string\"" +
@@ -41,7 +38,7 @@ public class ModelPropertyOverrideTest {
         public void setId(String id) {
         }
 
-        @io.swagger.oas.annotations.media.Schema(description = "instead of modeling this class in the documentation, we will model a string")
+        @io.swagger.oas.annotations.media.Schema(required= false, description = "instead of modeling this class in the documentation, we will model a string")
         public MyCustomClass getMyCustomClass() {
             return null;
         }

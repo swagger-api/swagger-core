@@ -2,7 +2,6 @@ package io.swagger.oas.models;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-//import io.swagger.oas.annotations.media.Schema;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.jackson.AbstractModelConverter;
@@ -15,6 +14,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.Set;
+
+//import io.swagger.oas.annotations.media.Schema;
 
 public class ModelWithTuple2 {
     @io.swagger.oas.annotations.media.Schema(description = "Possible values for state property of timesheet or timesheet entry", required = true)
@@ -39,7 +40,7 @@ public class ModelWithTuple2 {
 
         @Override
         public Schema resolve(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {
-            return null;
+            return this.resolve(type, context, chain);
         }
 
         @Override
@@ -49,7 +50,7 @@ public class ModelWithTuple2 {
                 final JavaType left = javaType.containedType(0);
                 final String name = "MapOf" + WordUtils.capitalize(_typeName(left));
 
-                return new Schema()
+                return new MapSchema()
                         .title(name)
                         .additionalProperties(context.resolve(left, new Annotation[]{}));
             }

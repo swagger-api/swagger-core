@@ -91,7 +91,7 @@ public enum PrimitiveType {
     INTEGER(java.math.BigInteger.class) {
         @Override
         public Schema createProperty() {
-            return new NumberSchema();
+            return new IntegerSchema().format(null);
         }
     },
     DECIMAL(java.math.BigDecimal.class, "number") {

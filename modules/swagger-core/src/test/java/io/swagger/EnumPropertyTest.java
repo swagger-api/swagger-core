@@ -20,11 +20,9 @@ public class EnumPropertyTest {
         final Map<String, Schema> models = ModelConverters.getInstance().read(ModelWithEnumProperty.class);
         final String json = "{" +
                 "   \"ModelWithEnumProperty\":{" +
-                "   \"title\":\"ModelWithEnumProperty\"," +
                 "      \"type\":\"object\"," +
                 "      \"properties\":{" +
                 "         \"enumValue\":{" +
-                "         \"title\":\"enumValue\"," +
                 "            \"type\":\"string\"," +
                 "            \"enum\":[" +
                 "               \"PRIVATE\"," +

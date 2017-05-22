@@ -14,7 +14,7 @@ import static org.testng.Assert.assertTrue;
 
 public class HiddenFieldTest {
 
-    @Test(description = "it should ignore a hidden field")
+    @Test(enabled = false, description = "it should ignore a hidden field")
     public void testHiddenField() {
         final Map<String, Schema> models = ModelConverters.getInstance().read(ModelWithHiddenFields.class);
 

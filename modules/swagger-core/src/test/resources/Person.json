@@ -1,39 +1,32 @@
 {
     "Person": {
-        "title": "Person",
         "type": "object",
         "properties": {
             "id": {
-                "title": "id",
                 "type": "integer",
                 "format": "int64"
             },
             "firstName": {
-                "title": "firstName",
                 "type": "string"
             },
             "address": {
                 "$ref": "#/components/schemas/Address"
             },
             "properties": {
-                "title": "properties",
                 "type": "object",
                 "additionalProperties": {
                     "type": "string"
                 }
             },
             "birthDate": {
-                "title": "birthDate",
                 "type": "string",
                 "format": "date-time"
             },
             "float": {
-                "title": "float",
                 "type": "number",
                 "format": "float"
             },
             "double": {
-                "title": "double",
                 "type": "number",
                 "format": "double"
             }

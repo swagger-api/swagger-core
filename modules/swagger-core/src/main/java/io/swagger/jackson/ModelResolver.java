@@ -219,9 +219,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     public Schema resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
-        if (type.isEnumType() || PrimitiveType.fromType(type) != null) {
+        if (type.isEnumType()) {
             // We don't build models for primitive types
             return null;
+        }
+        else if(PrimitiveType.fromType(type) != null) {
+            return PrimitiveType.fromType(type).createProperty();
         }
 
         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
@@ -264,7 +267,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         final Schema model = new Schema()
                 .type("object")
-                .title(name)
                 .description(_description(beanDesc.getClassInfo()));
 
         if (!type.isContainerType()) {
@@ -474,15 +476,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 if (property != null) {
                     if(property.get$ref() == null) {
-                        property.setTitle(propName);
+//                        property.setTitle(propName);
 
 //                      if (mp != null && !mp.access().isEmpty()) {
 //                        property.setAccess(mp.access());
 //                      }
 
                         Boolean required = md.getRequired();
-                        if (required != null) {
-//                        property.setRequired(required);
+                        if (required != null && !Boolean.FALSE.equals(required)) {
+                            model.addRequiredItem(propName);
                         }
 
                         String description = _intr.findPropertyDescription(member);
@@ -757,7 +759,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         private static Schema process(Schema id, String propertyName, JavaType type,
                 ModelConverterContext context) {
-            id.setTitle(propertyName);
+//            id.setTitle(propertyName);
             Schema model = context.resolve(type);
             // TODO
 //            if (model instanceof ComposedModel) {
