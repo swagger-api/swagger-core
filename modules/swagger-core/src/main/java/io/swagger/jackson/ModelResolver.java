@@ -615,7 +615,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private void handleUnwrapped(List<Property> props, Model innerModel, String prefix, String suffix) {
         if (StringUtils.isBlank(suffix) && StringUtils.isBlank(prefix)) {
-            props.addAll(innerModel.getProperties().values());
+            Map<String, Property> innerProps = innerModel.getProperties();
+            if (innerProps != null) {
+                props.addAll(innerProps.values());
+            }
         } else {
             if (prefix == null) {
                 prefix = "";
