@@ -2,5 +2,5 @@ sudo: false
 language: java
 script: mvn clean verify
 jdk:
-  - oraclejdk7
+  - oraclejdk8
 
