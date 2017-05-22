@@ -135,20 +135,19 @@ public class Reader {
 
         operation.setResponses(getApiResponsesFromResponseAnnotation(apiOperation.responses()));
 
-        operation.requestBody(getRequestBodyObjectFromAnnotation(apiOperation));
+        operation.requestBody(getRequestBodyObjectFromAnnotation(apiOperation.requestBody()));
 
-        operation.setExternalDocs(getExternalDocumentationObjectFromAnnotation(apiOperation));
+        operation.setExternalDocs(getExternalDocumentationObjectFromAnnotation(apiOperation.externalDocs()));
 
-        operation.setServers(getServersObjectListFromAnnotation(apiOperation));
+        operation.setServers(getServersObjectListFromAnnotation(apiOperation.servers()));
 
-        operation.setTags(getTagsFromOperation(apiOperation));
+        operation.setTags(getTagsFromOperation(apiOperation.tags()));
 
-        operation.setParameters(getParametersListFromAnnotation(apiOperation));
+        operation.setParameters(getParametersListFromAnnotation(apiOperation.parameters()));
     }
 
-    public List<Parameter> getParametersListFromAnnotation(io.swagger.oas.annotations.Operation apiOperation) {
+    public List<Parameter> getParametersListFromAnnotation(io.swagger.oas.annotations.Parameter[] parameters) {
         List<Parameter> parametersObject = new ArrayList<>();
-        io.swagger.oas.annotations.Parameter[] parameters = apiOperation.parameters();
         for (io.swagger.oas.annotations.Parameter parameter : parameters) {
             Parameter parameterObject = new Parameter();
             parameterObject.setDescription(parameter.description());
@@ -169,17 +168,15 @@ public class Reader {
         return parametersObject;
     }
 
-    private List<String> getTagsFromOperation(io.swagger.oas.annotations.Operation apiOperation) {
+    private List<String> getTagsFromOperation(String[] tags) {
         List<String> openApiTags = new ArrayList<>();
-        String[] tags = apiOperation.tags();
         for (String tag : tags) {
             openApiTags.add(tag);
         }
         return openApiTags;
     }
 
-    private List<Server> getServersObjectListFromAnnotation(io.swagger.oas.annotations.Operation apiOperation) {
-        io.swagger.oas.annotations.servers.Server[] servers = apiOperation.servers();
+    private List<Server> getServersObjectListFromAnnotation(io.swagger.oas.annotations.servers.Server[] servers) {
         List<Server> serverObjects = new ArrayList<>();
 
         for (io.swagger.oas.annotations.servers.Server server : servers) {
@@ -199,16 +196,14 @@ public class Reader {
         return serverObjects;
     }
 
-    private ExternalDocumentation getExternalDocumentationObjectFromAnnotation(io.swagger.oas.annotations.Operation apiOperation) {
+    private ExternalDocumentation getExternalDocumentationObjectFromAnnotation(io.swagger.oas.annotations.ExternalDocumentation externalDocumentation) {
         ExternalDocumentation external = new ExternalDocumentation();
-        io.swagger.oas.annotations.ExternalDocumentation externalDocumentation = apiOperation.externalDocs();
         external.setDescription(externalDocumentation.description());
         external.setUrl(externalDocumentation.url());
         return external;
     }
 
-    private RequestBody getRequestBodyObjectFromAnnotation(io.swagger.oas.annotations.Operation apiOperation) {
-        io.swagger.oas.annotations.parameters.RequestBody requestBody = apiOperation.requestBody();
+    private RequestBody getRequestBodyObjectFromAnnotation(io.swagger.oas.annotations.parameters.RequestBody requestBody) {
         RequestBody requestBodyObject = new RequestBody();
         requestBodyObject.setDescription(requestBody.description());
         requestBodyObject.setRequired(requestBody.required());

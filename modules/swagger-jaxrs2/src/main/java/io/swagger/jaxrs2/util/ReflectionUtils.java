@@ -1,45 +1,15 @@
 package io.swagger.jaxrs2.util;
 
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+
 
 public class ReflectionUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtils.class);
-
-    public static Type typeFromString(String type) {
-        final PrimitiveType primitive = PrimitiveType.fromName(type);
-        if (primitive != null) {
-            return primitive.getKeyClass();
-        }
-        try {
-            return loadClassByName(type);
-        } catch (Exception e) {
-            LOGGER.error(String.format("Failed to resolve '%s' into class", type), e);
-        }
-        return null;
-    }
-
-    /**
-     * Load Class by class name. If class not found in it's Class loader or one of the parent class loaders - delegate to the Thread's ContextClassLoader
-     *
-     * @param className Canonical class name
-     * @return Class definition of className
-     * @throws ClassNotFoundException
-     */
-    public static Class<?> loadClassByName(String className) throws ClassNotFoundException {
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            return Thread.currentThread().getContextClassLoader().loadClass(className);
-        }
-    }
-
 
     /**
      * Returns overridden method from superclass if it exists. If method was not found returns null.
@@ -106,51 +76,6 @@ public class ReflectionUtils {
         return true;
     }
 
-    public static boolean isInject(List<Annotation> annotations) {
-        for (Annotation annotation : annotations) {
-            // use string name to avoid additional dependencies
-            if ("javax.inject.Inject".equals(annotation.annotationType().getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isConstructorCompatible(Constructor<?> constructor) {
-        if (!Modifier.isPublic(constructor.getModifiers())) {
-            final int access = Modifier.PUBLIC | Modifier.PROTECTED | Modifier.PRIVATE;
-            return constructor.getParameterTypes().length == 0 &&
-                    (constructor.getDeclaringClass().getModifiers() & access) == constructor.getModifiers();
-        }
-        return true;
-    }
-
-    /**
-     * Returns the list of declared fields from the class <code>cls</code> and its superclasses
-     * excluding <code>Object</code> class. If the field from child class hides the field from superclass,
-     * the field from superclass won't be added to the result list.
-     *
-     * @param cls is the processing class
-     * @return list of Fields
-     */
-    public static List<Field> getDeclaredFields(Class<?> cls) {
-        if (cls == null || Object.class.equals(cls)) {
-            return Collections.emptyList();
-        }
-        final List<Field> fields = new ArrayList<Field>();
-        final Set<String> fieldNames = new HashSet<String>();
-        for (Field field : cls.getDeclaredFields()) {
-            fields.add(field);
-            fieldNames.add(field.getName());
-        }
-        for (Field field : getDeclaredFields(cls.getSuperclass())) {
-            if (!fieldNames.contains(field.getName())) {
-                fields.add(field);
-            }
-        }
-        return fields;
-    }
-
     /**
      * Returns an annotation by type from a method.
      *
@@ -176,74 +101,4 @@ public class ReflectionUtils {
         return annotation;
     }
 
-    public static <A extends Annotation> A getAnnotation(Class<?> cls, Class<A> annotationClass) {
-        A annotation = cls.getAnnotation(annotationClass);
-        if (annotation == null) {
-            for (Annotation metaAnnotation : cls.getAnnotations()) {
-                annotation = metaAnnotation.annotationType().getAnnotation(annotationClass);
-                if (annotation != null) {
-                    return annotation;
-                }
-                ;
-            }
-            Class<?> superClass = cls.getSuperclass();
-            if (superClass != null && !(superClass.equals(Object.class))) {
-                annotation = getAnnotation(superClass, annotationClass);
-            }
-        }
-        if (annotation == null) {
-            for (Class<?> anInterface : cls.getInterfaces()) {
-                for (Annotation metaAnnotation : anInterface.getAnnotations()) {
-                    annotation = metaAnnotation.annotationType().getAnnotation(annotationClass);
-                    if (annotation != null) {
-                        return annotation;
-                    }
-                    ;
-                }
-                annotation = getAnnotation(anInterface, annotationClass);
-                if (annotation != null) {
-                    return annotation;
-                }
-            }
-        }
-        return annotation;
-    }
-
-    public static Annotation[][] getParameterAnnotations(Method method) {
-        Annotation[][] methodAnnotations = method.getParameterAnnotations();
-        Method overriddenmethod = getOverriddenMethod(method);
-
-        if (overriddenmethod != null) {
-            Annotation[][] overriddenAnnotations = overriddenmethod
-                    .getParameterAnnotations();
-
-            for (int i = 0; i < methodAnnotations.length; i++) {
-                List<Type> types = new ArrayList<Type>();
-                for (int j = 0; j < methodAnnotations[i].length; j++) {
-                    types.add(methodAnnotations[i][j].annotationType());
-                }
-                for (int j = 0; j < overriddenAnnotations[i].length; j++) {
-                    if (!types.contains(overriddenAnnotations[i][j]
-                            .annotationType())) {
-                        methodAnnotations[i] = ArrayUtils.add(
-                                methodAnnotations[i],
-                                overriddenAnnotations[i][j]);
-                    }
-                }
-
-            }
-        }
-        return methodAnnotations;
-    }
-
-    /**
-     * Checks if the type is void.
-     *
-     * @param type is the type to check
-     * @return true if the type is void
-     */
-    public static boolean isVoid(Type type) {
-        final Class<?> cls = TypeFactory.defaultInstance().constructType(type).getRawClass();
-        return Void.class.isAssignableFrom(cls) || Void.TYPE.isAssignableFrom(cls);
-    }
 }

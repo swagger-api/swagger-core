@@ -1,6 +1,14 @@
 package io.swagger.jaxrs2;
 
-import io.swagger.jaxrs2.resources.*;
+import io.swagger.jaxrs2.resources.BasicFieldsResource;
+import io.swagger.jaxrs2.resources.ExternalDocsReference;
+import io.swagger.jaxrs2.resources.RequestBodyResource;
+import io.swagger.jaxrs2.resources.ResponsesResource;
+import io.swagger.jaxrs2.resources.SimpleCallbackResource;
+import io.swagger.jaxrs2.resources.TagsResource;
+import io.swagger.jaxrs2.resources.DeprecatedFieldsResource;
+import io.swagger.jaxrs2.resources.SimpleMethods;
+
 import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
