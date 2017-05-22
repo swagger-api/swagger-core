@@ -1,20 +1,7 @@
 package io.swagger;
 
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiParam;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.parameters.BodyParameter;
-import HeaderParameter;
-import Parameter;
-import PathParameter;
-import QueryParameter;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.DoubleProperty;
-import io.swagger.models.properties.IntegerProperty;
-import io.swagger.models.properties.LongProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.StringProperty;
+import io.swagger.oas.annotations.media.Schema;
+import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.util.ParameterProcessor;
 import org.testng.annotations.Test;
 
@@ -49,37 +36,47 @@ public class ParameterProcessorTest {
     private static final String TEST_PATTERN_REGXP = "^[A-Z]+$";
 
     private void parametrizedMethod(
-            @ApiParam(name = "paramName1", value = "paramValue1", defaultValue = "value1", required = true,
-                    allowableValues = "one, two, three, ")
+            @io.swagger.oas.annotations.Parameter(
+                    name = "paramName1",
+                    description = "paramValue1",
+                    required = true,
+                    schema = @Schema(
+                        _default = "value1",
+                        _enum = {"one", "two", "three"}))
             @PathParam("param1") String arg1,
-            @ApiParam(name = "paramName2", access = "test")
+            @io.swagger.oas.annotations.media.Schema(name = "paramName2")
             @DefaultValue("10")
             @QueryParam("param2") List<Integer> arg2,
             @Context String arg3,
-            @ApiParam(name = "paramName4", hidden = true)
+            @io.swagger.oas.annotations.media.Schema(name = "paramName4", hidden = true)
             @QueryParam("hiddenParam") String arg4,
-            @ApiParam(name = "paramName4")
+            @io.swagger.oas.annotations.media.Schema(name = "paramName4")
                     Integer arg5) {
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "paramName1", value = "paramValue1", dataType = "string", paramType = "path",
-                    allowMultiple = true, allowableValues = ",,,"),
-            @ApiImplicitParam(value = "paramValue2", dataType = "string", paramType = "body", access = "test",
-                    defaultValue = "10")
-    })
+    @io.swagger.oas.annotations.Parameter(name = "paramName1", description = "paramValue1", in = "path",
+            schema = @Schema(
+                type = "list[string]",
+                _enum = {"a", "b"}
+            ))
+    @io.swagger.oas.annotations.Parameter(name = "paramValue2", in = "body",
+            schema = @Schema(
+                    type = "string",
+                    _default = "10"
+            ))
     private void implicitParametrizedMethod() {
 
     }
 
     private void rangedParametrizedMethod(
-            @ApiParam(value = "sample param data", defaultValue = "5", allowableValues = "range[0,10]", collectionFormat = "multi")
+            @io.swagger.oas.annotations.Parameter(description = "sample param data",
+                    schema = @Schema( _default = "5", _enum = "range[0,10]", collectionFormat = "multi")
             @PathParam("id") Integer id,
-            @ApiParam(value = "sample positive infinity data", allowableValues = "range(0, infinity)")
+            @io.swagger.oas.annotations.Parameter(description = "sample positive infinity data", allowableValues = "range(0, infinity)")
             @PathParam("minValue") Double minValue,
-            @ApiParam(value = "sample negative infinity data", allowableValues = "range[-infinity, 100]")
+            @io.swagger.oas.annotations.Parameter(description = "sample negative infinity data", allowableValues = "range[-infinity, 100]")
             @PathParam("maxValue") Integer maxValue,
-            @ApiParam(value = "sample array data", allowMultiple = true, allowableValues = "range(0, 5)")
+            @io.swagger.oas.annotations.Parameter(description = "sample array data", allowMultiple = true, allowableValues = "range(0, 5)")
             @PathParam("values") Integer values) {
 
     }
@@ -144,7 +141,7 @@ public class ParameterProcessorTest {
             @Size(min = 5, max = 10)
             @Pattern(regexp = TEST_PATTERN_REGXP) List<String> stringValues,
 
-            @ApiParam(allowMultiple = true)
+            @io.swagger.oas.annotations.media.Schema(allowMultiple = true)
             @HeaderParam("allowMultipleValues")
             @Size(min = 5, max = 10) String allowMultipleValues
     ) {
@@ -158,13 +155,14 @@ public class ParameterProcessorTest {
         final Type[] genericParameterTypes = method.getGenericParameterTypes();
         final Annotation[][] paramAnnotations = method.getParameterAnnotations();
 
-        final PathParameter p1 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter(),
+        final Parameter p1 = (Parameter) ParameterProcessor.applyAnnotations(null, new Parameter(),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
 
         assertNotNull(p1);
         assertEquals(p1.getIn(), "path");
         assertEquals(p1.getName(), "paramName1");
         assertEquals(p1.getDescription(), "paramValue1");
+
         assertEquals(p1.getDefaultValue(), "value1");
         assertTrue(p1.getRequired());
         assertEquals(p1.getEnum(), Arrays.asList("one", "two", "three"));

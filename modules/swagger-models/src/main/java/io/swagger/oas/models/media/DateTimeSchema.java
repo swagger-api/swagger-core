@@ -16,24 +16,19 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.Objects;
-import io.swagger.oas.models.ExternalDocumentation;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * DateTimeSchema
  */
 
 
-public class DateTimeSchema extends Schema {
+public class DateTimeSchema extends Schema<Date> {
   private String type = "string";
   private String format = "date-time";
-  private String _default = null;
-  private List<Date> _enum = null;
 
   /**
    * returns the type property from a DateTimeSchema instance.
@@ -73,37 +68,23 @@ public class DateTimeSchema extends Schema {
     return this;
   }
 
-  /**
-   * returns the _default property from a DateTimeSchema instance.
-   *
-   * @return String _default
-   **/
-
-  public String getDefault() {
-    return _default;
-  }
-
-  public void setDefault(String _default) {
-    this._default = _default;
-  }
-
-  public DateTimeSchema _default(String _default) {
-    this._default = _default;
+  public DateTimeSchema _default(Date _default) {
+    super.setDefault(_default);
     return this;
   }
 
-  /**
-   * returns the _enum property from a DateTimeSchema instance.
-   *
-   * @return List&lt;Date&gt; _enum
-   **/
-
-  public List<Date> getEnum() {
-    return _enum;
-  }
-
-  public void setEnum(List<Date> _enum) {
-    this._enum = _enum;
+  @Override
+  protected Date cast(Object value) {
+    if(value != null) {
+      try {
+        if(value instanceof Date) {
+          return (Date) value;
+        }
+      }
+      catch (Exception e) {
+      }
+    }
+    return null;
   }
 
   public DateTimeSchema _enum(List<Date> _enum) {
@@ -118,7 +99,6 @@ public class DateTimeSchema extends Schema {
     this._enum.add(_enumItem);
     return this;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {

@@ -16,23 +16,18 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.Objects;
-import io.swagger.oas.models.ExternalDocumentation;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * ByteArraySchema
  */
 
 
-public class ByteArraySchema extends Schema {
+public class ByteArraySchema extends Schema<byte[]> {
   private String type = "string";
   private String format = "byte";
-  private String _default = null;
-  private List<byte[]> _enum = null;
 
   /**
    * returns the type property from a ByteArraySchema instance.
@@ -72,37 +67,23 @@ public class ByteArraySchema extends Schema {
     return this;
   }
 
-  /**
-   * returns the _default property from a ByteArraySchema instance.
-   *
-   * @return String _default
-   **/
-
-  public String getDefault() {
-    return _default;
-  }
-
-  public void setDefault(String _default) {
-    this._default = _default;
-  }
-
-  public ByteArraySchema _default(String _default) {
-    this._default = _default;
+  public ByteArraySchema _default(byte[] _default) {
+    super.setDefault(_default);
     return this;
   }
 
-  /**
-   * returns the _enum property from a ByteArraySchema instance.
-   *
-   * @return List&lt;byte[]&gt; _enum
-   **/
-
-  public List<byte[]> getEnum() {
-    return _enum;
-  }
-
-  public void setEnum(List<byte[]> _enum) {
-    this._enum = _enum;
+  @Override
+  protected byte[] cast(Object value) {
+    if(value != null) {
+      try {
+        if(value instanceof byte[]) {
+          return (byte[]) value;
+        }
+      }
+      catch (Exception e) {
+      }
+    }
+    return null;
   }
 
   public ByteArraySchema _enum(List<byte[]> _enum) {

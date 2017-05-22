@@ -16,22 +16,18 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.Objects;
-import io.swagger.oas.models.ExternalDocumentation;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * NumberSchema
  */
 
 
-public class NumberSchema extends Schema {
+public class NumberSchema extends Schema<BigDecimal> {
   private String type = "number";
-  private BigDecimal _default = null;
-  private List<BigDecimal> _enum = null;
 
   /**
    * returns the type property from a NumberSchema instance.
@@ -52,37 +48,21 @@ public class NumberSchema extends Schema {
     return this;
   }
 
-  /**
-   * returns the _default property from a NumberSchema instance.
-   *
-   * @return BigDecimal _default
-   **/
-
-  public BigDecimal getDefault() {
-    return _default;
-  }
-
-  public void setDefault(BigDecimal _default) {
-    this._default = _default;
-  }
-
   public NumberSchema _default(BigDecimal _default) {
-    this._default = _default;
+    super.setDefault(_default);
     return this;
   }
 
-  /**
-   * returns the _enum property from a NumberSchema instance.
-   *
-   * @return List&lt;BigDecimal&gt; _enum
-   **/
-
-  public List<BigDecimal> getEnum() {
-    return _enum;
-  }
-
-  public void setEnum(List<BigDecimal> _enum) {
-    this._enum = _enum;
+  @Override
+  protected BigDecimal cast(Object value) {
+    if(value != null) {
+      try {
+        return new BigDecimal(value.toString());
+      }
+      catch (Exception e) {
+      }
+    }
+    return null;
   }
 
   public NumberSchema _enum(List<BigDecimal> _enum) {
@@ -97,7 +77,6 @@ public class NumberSchema extends Schema {
     this._enum.add(_enumItem);
     return this;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {

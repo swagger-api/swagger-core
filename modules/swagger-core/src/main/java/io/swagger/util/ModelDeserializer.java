@@ -19,6 +19,7 @@ import io.swagger.oas.models.media.PasswordSchema;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.media.StringSchema;
 import io.swagger.oas.models.media.UUIDSchema;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -71,6 +72,9 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
         } else if(sub != null) {
             if (sub.textValue().equals("integer")) {
                 model = Json.mapper().convertValue(node, IntegerSchema.class);
+                if(StringUtils.isBlank(format)) {
+                    model.setFormat(null);
+                }
             }
             else if (sub.textValue().equals("number")) {
                 model = Json.mapper().convertValue(node, NumberSchema.class);

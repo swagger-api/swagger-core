@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Paths
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md#pathsObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md#pathsObject"
  */
 
 

@@ -16,23 +16,18 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.Objects;
-import io.swagger.oas.models.ExternalDocumentation;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * PasswordSchema
  */
 
 
-public class PasswordSchema extends Schema {
+public class PasswordSchema extends Schema<String> {
   private String type = "string";
   private String format = "password";
-  private String _default = null;
-  private List<String> _enum = null;
 
   /**
    * returns the type property from a PasswordSchema instance.
@@ -72,37 +67,21 @@ public class PasswordSchema extends Schema {
     return this;
   }
 
-  /**
-   * returns the _default property from a PasswordSchema instance.
-   *
-   * @return String _default
-   **/
-
-  public String getDefault() {
-    return _default;
-  }
-
-  public void setDefault(String _default) {
-    this._default = _default;
-  }
-
   public PasswordSchema _default(String _default) {
     this._default = _default;
     return this;
   }
 
-  /**
-   * returns the _enum property from a PasswordSchema instance.
-   *
-   * @return List&lt;String&gt; _enum
-   **/
-
-  public List<String> getEnum() {
-    return _enum;
-  }
-
-  public void setEnum(List<String> _enum) {
-    this._enum = _enum;
+  @Override
+  protected String cast(Object value) {
+    if(value != null) {
+      try {
+        return value.toString();
+      }
+      catch (Exception e) {
+      }
+    }
+    return null;
   }
 
   public PasswordSchema _enum(List<String> _enum) {
