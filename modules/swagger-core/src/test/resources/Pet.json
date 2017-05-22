@@ -1,9 +1,9 @@
 {
     "Pet": {
         "required": [
+            "isDomestic",
             "name",
-            "type",
-            "isDomestic"
+            "type"
         ],
         "type": "object",
         "properties": {

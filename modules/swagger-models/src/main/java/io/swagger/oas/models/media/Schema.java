@@ -20,6 +20,7 @@ import io.swagger.oas.models.ExternalDocumentation;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -390,6 +391,7 @@ public class Schema <T> {
       this.required = new ArrayList<String>();
     }
     this.required.add(requiredItem);
+    Collections.sort(required);
     return this;
   }
 
