@@ -16,23 +16,18 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.Objects;
-import io.swagger.oas.models.ExternalDocumentation;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * IntegerSchema
  */
 
 
-public class IntegerSchema extends Schema {
+public class IntegerSchema extends Schema<Integer> {
   private String type = "integer";
   private String format = "int32";
-  private Integer _default = null;
-  private List<Integer> _enum = null;
 
   /**
    * returns the type property from a IntegerSchema instance.
@@ -72,37 +67,21 @@ public class IntegerSchema extends Schema {
     return this;
   }
 
-  /**
-   * returns the _default property from a IntegerSchema instance.
-   *
-   * @return Integer _default
-   **/
-
-  public Integer getDefault() {
-    return _default;
-  }
-
-  public void setDefault(Integer _default) {
-    this._default = _default;
-  }
-
   public IntegerSchema _default(Integer _default) {
-    this._default = _default;
+    super.setDefault(_default);
     return this;
   }
 
-  /**
-   * returns the _enum property from a IntegerSchema instance.
-   *
-   * @return List&lt;Integer&gt; _enum
-   **/
-
-  public List<Integer> getEnum() {
-    return _enum;
-  }
-
-  public void setEnum(List<Integer> _enum) {
-    this._enum = _enum;
+  @Override
+  protected Integer cast(Object value) {
+    if(value != null) {
+      try {
+        return Integer.parseInt(value.toString());
+      }
+      catch (Exception e) {
+      }
+    }
+    return null;
   }
 
   public IntegerSchema _enum(List<Integer> _enum) {

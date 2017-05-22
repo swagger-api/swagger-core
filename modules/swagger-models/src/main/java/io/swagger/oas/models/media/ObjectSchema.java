@@ -17,19 +17,15 @@
 package io.swagger.oas.models.media;
 
 import java.util.Objects;
-import io.swagger.oas.models.ExternalDocumentation;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
 
 /**
  * ObjectSchema
  */
 
 
-public class ObjectSchema extends Schema {
+public class ObjectSchema extends Schema<Object> {
   private String type = "object";
-  private Boolean _default = null;
+  private Object defaultObject = null;
 
   /**
    * returns the type property from a ObjectSchema instance.
@@ -50,23 +46,16 @@ public class ObjectSchema extends Schema {
     return this;
   }
 
-  /**
-   * returns the _default property from a ObjectSchema instance.
-   *
-   * @return Boolean _default
-   **/
-
-  public Boolean getDefault() {
-    return _default;
-  }
-
-  public void setDefault(Boolean _default) {
-    this._default = _default;
-  }
-
-  public ObjectSchema _default(Boolean _default) {
-    this._default = _default;
+  public Schema example(Object example) {
+    if(example != null) {
+      super.example = example.toString();
+    }
     return this;
+  }
+
+  @Override
+  protected Object cast(Object value) {
+    return value;
   }
 
 
@@ -80,13 +69,13 @@ public class ObjectSchema extends Schema {
     }
     ObjectSchema objectSchema = (ObjectSchema) o;
     return Objects.equals(this.type, objectSchema.type) &&
-        Objects.equals(this._default, objectSchema._default) &&
+        Objects.equals(this.defaultObject, objectSchema.defaultObject) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, _default, super.hashCode());
+    return Objects.hash(type, defaultObject, super.hashCode());
   }
 
 
@@ -97,7 +86,7 @@ public class ObjectSchema extends Schema {
     sb.append("class ObjectSchema {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
+    sb.append("    defaultObject: ").append(toIndentedString(defaultObject)).append("\n");
     sb.append("}");
     return sb.toString();
   }

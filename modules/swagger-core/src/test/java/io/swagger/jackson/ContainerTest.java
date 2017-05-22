@@ -72,7 +72,7 @@ public class ContainerTest extends SwaggerTestBase {
 
         final Schema wrapperType = models.get("WrapperType");
         assertNotNull(wrapperType);
-        assertEquals(wrapperType.getProperties().get("innerType").getType(), "object");
+        assertEquals(((Schema)wrapperType.getProperties().get("innerType")).getType(), "object");
     }
 
     static class ArrayBean {

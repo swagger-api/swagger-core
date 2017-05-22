@@ -80,8 +80,10 @@ public class SimpleGenerationTest extends SwaggerTestBase {
         final Map<String, Schema> props = model.getProperties();
         assertEquals(props.size(), 1);
 
-        final Schema prop = props.values().iterator().next();
-        assertEquals(prop.getTitle(), "theCount");
+        String key = props.keySet().iterator().next();
+
+        final Schema prop = props.get(key);
+        assertEquals(key, "theCount");
     }
 
     @Test
@@ -90,8 +92,10 @@ public class SimpleGenerationTest extends SwaggerTestBase {
         final Map<String, Schema> props = model.getProperties();
         assertEquals(props.size(), 1);
 
-        final Schema prop = props.values().iterator().next();
-        assertEquals(prop.getTitle(), "stuff");
+        String key = props.keySet().iterator().next();
+
+        final Schema prop = props.get(key);
+        assertEquals(key, "stuff");
     }
 
     @Test
@@ -100,8 +104,9 @@ public class SimpleGenerationTest extends SwaggerTestBase {
         final Map<String, Schema> props = model.getProperties();
         assertEquals(props.size(), 1);
 
-        final Schema prop = props.values().iterator().next();
-        assertEquals(prop.getTitle(), "b");
+        String key = props.keySet().iterator().next();
+        final Schema prop = props.get(key);
+        assertEquals(key, "b");
         assertEquals(prop.getType(), "array");
     }
 

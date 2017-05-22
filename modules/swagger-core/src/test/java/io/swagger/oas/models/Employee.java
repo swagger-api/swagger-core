@@ -74,7 +74,7 @@ public class Employee {
 
     @JsonProperty("department")
     @XmlElement(name = "department")
-    @Schema(type = "Link", required = true, description = "The department this employee belongs to.")
+    @Schema(type = "io.swagger.oas.models.Link", required = true, description = "The department this employee belongs to.")
     public Link<Department> getDept() {
         return dept;
     }
@@ -85,7 +85,7 @@ public class Employee {
 
     @JsonProperty("manager")
     @XmlElement(name = "manager")
-    @Schema(type = "Link", required = true, description = "The employee this employee reports to.")
+    @Schema(type = "io.swagger.oas.models.Link", required = true, description = "The employee this employee reports to.")
     public Link<Employee> getManager() {
         return manager;
     }

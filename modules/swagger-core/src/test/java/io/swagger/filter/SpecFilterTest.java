@@ -159,7 +159,7 @@ public class SpecFilterTest {
 
         final OpenAPI filtered = new SpecFilter().filter(swagger, filter, null, null, null);
         for (Map.Entry<String, Schema> entry : filtered.getComponents().getSchemas().entrySet()) {
-            for (String propName : entry.getValue().getProperties().keySet()) {
+            for (String propName : (Set<String>)entry.getValue().getProperties().keySet()) {
                 assertFalse(propName.startsWith("_"));
             }
         }
