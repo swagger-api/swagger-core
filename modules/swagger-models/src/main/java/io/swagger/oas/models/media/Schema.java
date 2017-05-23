@@ -21,7 +21,7 @@ import io.swagger.oas.models.ExternalDocumentation;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -385,7 +385,22 @@ public class Schema <T> {
   }
 
   public void setRequired(List<String> required) {
-    this.required = required;
+    List<String> list = new ArrayList<>();
+    if(required != null) {
+      for (String req : required) {
+        if(this.properties == null ) {
+          list.add(req);
+        }
+        else if(this.properties.containsKey(req)) {
+          list.add(req);
+        }
+      }
+    }
+    Collections.sort(list);
+    if(list.size() == 0) {
+      list = null;
+    }
+    this.required = list;
   }
 
   public Schema required(List<String> required) {
@@ -461,7 +476,7 @@ public class Schema <T> {
 
   public Schema addProperties(String key, Schema propertiesItem) {
     if(this.properties == null) {
-      this.properties = new HashMap<String, Schema>();
+      this.properties = new LinkedHashMap<String, Schema>();
     }
     this.properties.put(key, propertiesItem);
     return this;
@@ -539,6 +554,9 @@ public class Schema <T> {
   }
 
   public Schema ref(String ref) {
+    if(ref != null && (ref.indexOf(".") == -1 && ref.indexOf("/") == -1)) {
+      ref = "#/components/schemas/" + ref;
+    }
     this.$ref = ref;
     return this;
   }
