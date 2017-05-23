@@ -117,6 +117,9 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
         } else if(node.get("$ref") != null) {
             model = new Schema().ref(node.get("$ref").asText());
         }
+        else { // assume object
+            model = Json.mapper().convertValue(node, ObjectSchema.class);
+        }
 
         // check extensions
 
