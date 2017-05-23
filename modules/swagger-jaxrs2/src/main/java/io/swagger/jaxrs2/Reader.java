@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import io.swagger.jaxrs2.util.ReflectionUtils;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.OpenAPI;
@@ -18,6 +17,7 @@ import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.links.LinkParameters;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.MediaType;
+import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
@@ -25,6 +25,7 @@ import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.servers.ServerVariable;
 import io.swagger.oas.models.servers.ServerVariables;
+import io.swagger.util.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
@@ -159,13 +160,31 @@ public class Reader {
             parameterObject.setAllowReserved(parameter.allowReserved());
             parameterObject.setExplode(parameter.explode());
             parameterObject.setIn(parameter.in());
+            parameterObject.setContent(getContents(parameter.content()));
 
-            // getContents(); How does the parameter has an array of contents and the Parameter Object only has one Content
-
+            io.swagger.oas.annotations.media.Schema schema = parameter.schema();
+            if (schema != null) {
+                parameterObject.setSchema(getSchemaFromAnnotation(schema));
+            }
             parametersObject.add(parameterObject);
 
         }
         return parametersObject;
+    }
+
+    private Schema getSchemaFromAnnotation(io.swagger.oas.annotations.media.Schema schema) {
+        Schema schemaObject = new Schema();
+        schemaObject.setDescription(schema.description());
+        schemaObject.setType(schema.type());
+        schemaObject.set$ref(schema.ref());
+        schemaObject.setDeprecated(schema.deprecated());
+        schemaObject.setReadOnly(schema.readOnly());
+        schemaObject.setReadOnly(schema.readOnly());
+        schemaObject.setExclusiveMaximum(schema.exclusiveMaximum());
+        schemaObject.setExclusiveMinimum(schema.exclusiveMinimum());
+        schemaObject.setFormat(schema.format());
+        //TODO complete the Schema Object
+        return schemaObject;
     }
 
     private List<String> getTagsFromOperation(String[] tags) {
@@ -207,9 +226,7 @@ public class Reader {
         RequestBody requestBodyObject = new RequestBody();
         requestBodyObject.setDescription(requestBody.description());
         requestBodyObject.setRequired(requestBody.required());
-        List<Content> contents = getContents(requestBody.content());
-        // TODO validate why the content annotation may have a lot of contents, but the model only use one.
-        requestBodyObject.setContent(contents.get(0));
+        requestBodyObject.setContent(getContents(requestBody.content()));
         return requestBodyObject;
     }
 
@@ -220,17 +237,22 @@ public class Reader {
             Content content = getContent(response.content());
             apiResponse.content(content);
             apiResponse.setDescription(response.description());
+
             apiResponses.addApiResponse(response.responseCode(), apiResponse);
         }
         return apiResponses;
     }
 
-    private List<Content> getContents(io.swagger.oas.annotations.media.Content contents[]) {
-        List<Content> contentsObject = new ArrayList<>();
+    private Content getContents(io.swagger.oas.annotations.media.Content contents[]) {
+        Content contentObject = new Content();
         for (io.swagger.oas.annotations.media.Content content : contents) {
-            contentsObject.add(getContent(content));
+            ExampleObject examples[] = content.examples();
+            for (ExampleObject example : examples) {
+                MediaType mediaType = getMediaType(example);
+                contentObject.addMediaType(content.mediaType(), mediaType);
+            }
         }
-        return contentsObject;
+        return contentObject;
     }
 
     private Content getContent(io.swagger.oas.annotations.media.Content annotationContent) {
@@ -238,17 +260,22 @@ public class Reader {
         if (annotationContent != null) {
             ExampleObject examples[] = annotationContent.examples();
             for (ExampleObject example : examples) {
-                MediaType mediaType = new MediaType();
-                Example exampleObject = new Example();
-                exampleObject.setDescription(example.name());
-                exampleObject.setSummary(example.summary());
-                exampleObject.setExternalValue(example.externalValue());
-                exampleObject.setValue(example.value());
-                mediaType.addExamples(example.name(), exampleObject);
+                MediaType mediaType = getMediaType(example);
                 content.addMediaType(annotationContent.mediaType(), mediaType);
             }
         }
         return content;
+    }
+
+    private MediaType getMediaType(ExampleObject example) {
+        MediaType mediaType = new MediaType();
+        Example exampleObject = new Example();
+        exampleObject.setDescription(example.name());
+        exampleObject.setSummary(example.summary());
+        exampleObject.setExternalValue(example.externalValue());
+        exampleObject.setValue(example.value());
+        mediaType.addExamples(example.name(), exampleObject);
+        return mediaType;
     }
 
     private Link getLinks(io.swagger.oas.annotations.links.Link[] links) {
