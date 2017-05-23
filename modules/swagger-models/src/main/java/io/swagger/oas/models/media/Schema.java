@@ -102,7 +102,7 @@ public class Schema <T> {
   }
 
   protected T cast(Object value) {
-    return null;
+    return (T)value;
   }
 
   public List<T> getEnum() {
@@ -111,6 +111,13 @@ public class Schema <T> {
 
   public void setEnum(List<T> _enum) {
     this._enum = _enum;
+  }
+
+  public void addEnumItemObject(T _enumItem) {
+    if(this._enum == null) {
+      this._enum = new ArrayList<>();
+    }
+    this._enum.add(cast(_enumItem));
   }
 
   /**

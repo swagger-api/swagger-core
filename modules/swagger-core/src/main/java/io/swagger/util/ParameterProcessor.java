@@ -1,7 +1,20 @@
 package io.swagger.util;
 
+import io.swagger.converter.ModelConverters;
 import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.media.ArraySchema;
+import io.swagger.oas.models.media.BinarySchema;
+import io.swagger.oas.models.media.ByteArraySchema;
+import io.swagger.oas.models.media.DateSchema;
+import io.swagger.oas.models.media.DateTimeSchema;
+import io.swagger.oas.models.media.EmailSchema;
+import io.swagger.oas.models.media.IntegerSchema;
+import io.swagger.oas.models.media.PasswordSchema;
+import io.swagger.oas.models.media.Schema;
+import io.swagger.oas.models.media.StringSchema;
+import io.swagger.oas.models.media.UUIDSchema;
 import io.swagger.oas.models.parameters.Parameter;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +38,81 @@ public class ParameterProcessor {
         if (helper.isContext()) {
             return null;
         }
+        if(parameter == null) {
+            return null;
+        }
         final ParamWrapper<?> param = null;
+
+        for(Annotation annotation : annotations) {
+            if(annotation instanceof io.swagger.oas.annotations.Parameter) {
+                io.swagger.oas.annotations.Parameter p = (io.swagger.oas.annotations.Parameter) annotation;
+                if(StringUtils.isNotBlank(p.in())) {
+                    parameter.setIn(p.in());
+                }
+                if(StringUtils.isNotBlank(p.name())) {
+                    parameter.setName(p.name());
+                }
+                if(StringUtils.isNotBlank(p.description())) {
+                    parameter.setDescription(p.description());
+                }
+                if(p.required()) {
+                    parameter.setRequired(true);
+                }
+                if(hasSchemaAnnotation(p.schema())) {
+                    Schema schema = processSchema(p.schema());
+
+                    // TODO: merge???
+                    if(schema != null) {
+                        parameter.setSchema(schema);
+                    }
+                }
+                else if(hasArrayAnnotation(p.array())) {
+                    Schema arraySchema = processArraySchema(p.array());
+                    if(arraySchema != null) {
+                        parameter.setSchema(arraySchema);
+                    }
+                }
+            }
+            if(annotation.annotationType().getName().equals("javax.ws.rs.PathParam")) {
+                try {
+                    String name = (String)annotation.annotationType().getMethod("value").invoke(annotation);
+                    parameter.setName(name);
+                }
+                catch (Exception e) {
+
+                }
+            }
+
+            if(type != null && (parameter.getSchema() == null || (parameter.getSchema() != null && StringUtils.isBlank(parameter.getSchema().getType())))) {
+                PrimitiveType pt = PrimitiveType.fromType(type);
+                if(pt != null) {
+                    Schema schema = pt.createProperty();
+                    Schema merged = merge(parameter.getSchema(), schema);
+                    parameter.schema(merged);
+                }
+                else {
+                    Schema model = ModelConverters.getInstance().resolveProperty(type);
+                    parameter.schema(model);
+                }
+            }
+        }
+        final String defaultValue = helper.getDefaultValue();
+
+        Schema paramSchema = parameter.getSchema();
+
+        if(paramSchema != null) {
+            if(paramSchema instanceof ArraySchema) {
+                ArraySchema as = (ArraySchema) paramSchema;
+                if(defaultValue != null) {
+                    as.getItems().setDefault(defaultValue);
+                }
+            }
+            else {
+                if(defaultValue != null) {
+                    paramSchema.setDefault(defaultValue);
+                }
+            }
+        }
         return parameter;
         /// TODO
         /*
@@ -189,6 +276,135 @@ public class ParameterProcessor {
         */
     }
 
+    // TODO!
+    public static Schema merge(Schema from, Schema to) {
+        if(from == null) {
+            return to;
+        }
+        if(to.getDescription() == null) {
+            to.setDescription(from.getDescription());
+        }
+        if(to.getDefault() == null) {
+            to.setDefault(from.getDefault());
+        }
+        if(to.getEnum() == null) {
+            to.setEnum(from.getEnum());
+        }
+        return to;
+    }
+
+    private static boolean hasArrayAnnotation(io.swagger.oas.annotations.media.ArraySchema array) {
+        if(array.uniqueItems() == false
+                && array.maxItems() == Integer.MIN_VALUE
+                && array.minItems() == Integer.MAX_VALUE
+                && !hasSchemaAnnotation(array.schema())
+        ) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean hasSchemaAnnotation(io.swagger.oas.annotations.media.Schema schema) {
+        if(StringUtils.isBlank(schema.type())
+                && StringUtils.isBlank(schema.format())
+                && StringUtils.isBlank(schema.title())
+                && StringUtils.isBlank(schema.description())
+                && StringUtils.isBlank(schema.ref())
+                && StringUtils.isBlank(schema.name())
+                && schema.multipleOf() == 0
+                && StringUtils.isBlank(schema.maximum())
+                && StringUtils.isBlank(schema.minimum())
+                && !schema.exclusiveMinimum()
+                && !schema.exclusiveMaximum()
+                && schema.maxLength() == Integer.MIN_VALUE
+                && schema.minLength() == Integer.MAX_VALUE
+                && schema.minProperties() == 0
+                && schema.maxProperties() == 0
+                && schema.requiredProperties().length == 1 && StringUtils.isBlank(schema.requiredProperties()[0])
+                && schema.required() == false
+                && schema.nullable() == false
+                && schema.readOnly() == false
+                && schema.writeOnly() == false
+                && schema.examples().length == 1 && StringUtils.isBlank(schema.examples()[0])
+                && schema.deprecated() == false
+                && schema._enum().length == 1 && StringUtils.isBlank(schema._enum()[0])
+                && StringUtils.isBlank(schema._default())
+                && StringUtils.isBlank(schema.example())
+                && StringUtils.isBlank(schema.pattern())
+                && schema.not().equals(Void.class)
+                && schema.oneOf().length == 1 && schema.oneOf()[0].equals(Void.class)
+                && schema.anyOf().length == 1 && schema.anyOf()[0].equals(Void.class)
+        ) {
+            return false;
+        }
+        return true;
+    }
+
+    private static Schema processArraySchema(io.swagger.oas.annotations.media.ArraySchema array) {
+        ArraySchema output = new ArraySchema();
+
+        Schema schema = processSchema(array.schema());
+
+        output.setItems(schema);
+
+        return output;
+    }
+
+    private static Schema processSchema(io.swagger.oas.annotations.media.Schema schema) {
+        Schema output = null;
+        if(schema.type() != null) {
+            if("integer".equals(schema.type())) {
+                output = new IntegerSchema();
+                if(StringUtils.isNotBlank(schema.format())) {
+                    output.format(schema.format());
+                }
+            }
+            if("string".equals(schema.type())) {
+                if("password".equals(schema.format())) {
+                    output = new PasswordSchema();
+                }
+                else if("binary".equals(schema.format())) {
+                    output = new BinarySchema();
+                }
+                else if("byte".equals(schema.format())) {
+                    output = new ByteArraySchema();
+                }
+                else if("date".equals(schema.format())) {
+                    output = new DateSchema();
+                }
+                else if("date-time".equals(schema.format())) {
+                    output = new DateTimeSchema();
+                }
+                else if("email".equals(schema.format())) {
+                    output = new EmailSchema();
+                }
+                else if("uuid".equals(schema.format())) {
+                    output = new UUIDSchema();
+                }
+                else {
+                    output = new StringSchema();
+                }
+            }
+            else {
+                output = new Schema();
+            }
+
+            // TODO: other types
+        }
+        if(output != null && StringUtils.isNotBlank(schema._default())) {
+            output.setDefault(schema._default());
+        }
+        if(schema._enum() != null) {
+            for(String v : schema._enum()) {
+                if(StringUtils.isNotBlank(v)) {
+                    output.addEnumItemObject(v);
+                }
+            }
+        }
+
+        return output;
+    }
+
     private static void processJsr303Annotations(AnnotationsHelper helper, Parameter p) {
         if (helper == null) {
             return;
@@ -273,42 +489,44 @@ public class ParameterProcessor {
         public AnnotationsHelper(List<Annotation> annotations, Type _type) {
             String rsDefault = null;
             Size size = null;
-            for (Annotation item : annotations) {
-                if ("javax.ws.rs.core.Context".equals(item.annotationType().getName())) {
-                    context = true;
-//                } else if (item instanceof ApiParam) {
+            if(annotations != null) {
+                for (Annotation item : annotations) {
+                    if ("javax.ws.rs.core.Context".equals(item.annotationType().getName())) {
+                        context = true;
+//                  } else if (item instanceof ApiParam) {
 //                    apiParam = new ApiParamWrapper((ApiParam) item);
-//                } else if (item instanceof ApiImplicitParam) {
+//                  } else if (item instanceof ApiImplicitParam) {
 //                    apiParam = new ApiImplicitParamWrapper((ApiImplicitParam) item);
-                } else if ("javax.ws.rs.DefaultValue".equals(item.annotationType().getName())) {
-                    try {
-                        rsDefault = (String) item.annotationType().getMethod("value").invoke(item);
-                    } catch (Exception ex) {
-                        LOGGER.error("Invocation of value method failed", ex);
+                    } else if ("javax.ws.rs.DefaultValue".equals(item.annotationType().getName())) {
+                        try {
+                            rsDefault = (String) item.annotationType().getMethod("value").invoke(item);
+                        } catch (Exception ex) {
+                            LOGGER.error("Invocation of value method failed", ex);
+                        }
+                    } else if (item instanceof Size) {
+                        size = (Size) item;
+                        /**
+                         * This annotation is handled after the loop, as the allow multiple field of the
+                         * ApiParam annotation can affect how the Size annotation is translated
+                         * Swagger property constraints
+                         */
+                    } else if (item instanceof NotNull) {
+                        required = true;
+                    } else if (item instanceof Min) {
+                        min = new BigDecimal(((Min) item).value());
+                    } else if (item instanceof Max) {
+                        max = new BigDecimal(((Max) item).value());
+                    } else if (item instanceof DecimalMin) {
+                        DecimalMin decimalMinAnnotation = (DecimalMin) item;
+                        min = new BigDecimal(decimalMinAnnotation.value());
+                        minExclusive = !decimalMinAnnotation.inclusive();
+                    } else if (item instanceof DecimalMax) {
+                        DecimalMax decimalMaxAnnotation = (DecimalMax) item;
+                        max = new BigDecimal(decimalMaxAnnotation.value());
+                        maxExclusive = !decimalMaxAnnotation.inclusive();
+                    } else if (item instanceof Pattern) {
+                        pattern = ((Pattern) item).regexp();
                     }
-                } else if (item instanceof Size) {
-                    size = (Size) item;
-                    /**
-                     * This annotation is handled after the loop, as the allow multiple field of the
-                     * ApiParam annotation can affect how the Size annotation is translated
-                     * Swagger property constraints
-                     */
-                } else if (item instanceof NotNull) {
-                    required = true;
-                } else if (item instanceof Min) {
-                    min = new BigDecimal(((Min) item).value());
-                } else if (item instanceof Max) {
-                    max = new BigDecimal(((Max) item).value());
-                } else if (item instanceof DecimalMin) {
-                    DecimalMin decimalMinAnnotation = (DecimalMin) item;
-                    min = new BigDecimal(decimalMinAnnotation.value());
-                    minExclusive = !decimalMinAnnotation.inclusive();
-                } else if (item instanceof DecimalMax) {
-                    DecimalMax decimalMaxAnnotation = (DecimalMax) item;
-                    max = new BigDecimal(decimalMaxAnnotation.value());
-                    maxExclusive = !decimalMaxAnnotation.inclusive();
-                } else if (item instanceof Pattern) {
-                    pattern = ((Pattern) item).regexp();
                 }
             }
             /*
@@ -327,7 +545,7 @@ public class ParameterProcessor {
                 }
             }
             */
-//            defaultValue = StringUtils.isNotEmpty(apiParam.getDefaultValue()) ? apiParam.getDefaultValue() : rsDefault;
+            defaultValue = rsDefault;
 //            type = StringUtils.isNotEmpty(apiParam.getType()) ? apiParam.getType() : null;
 //            format = StringUtils.isNotEmpty(apiParam.getFormat()) ? apiParam.getFormat() : null;
 //            allowEmptyValue = apiParam.isAllowMultiple() ? true : null;
