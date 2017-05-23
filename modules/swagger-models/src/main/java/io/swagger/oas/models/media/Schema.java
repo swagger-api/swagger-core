@@ -58,7 +58,7 @@ public class Schema <T> {
   private String description = null;
   private String format = null;
   private String $ref = null;
-  private Boolean nulable = null;
+  private Boolean nullable = null;
   private Boolean readOnly = null;
   private Boolean writeOnly = null;
   protected T example = null;
@@ -544,21 +544,21 @@ public class Schema <T> {
   }
 
   /**
-   * returns the nulable property from a Schema instance.
+   * returns the nullable property from a Schema instance.
    *
-   * @return Boolean nulable
+   * @return Boolean nullable
    **/
 
-  public Boolean getNulable() {
-    return nulable;
+  public Boolean getNullable() {
+    return nullable;
   }
 
-  public void setNulable(Boolean nulable) {
-    this.nulable = nulable;
+  public void setNullable(Boolean nullable) {
+    this.nullable = nullable;
   }
 
-  public Schema nulable(Boolean nulable) {
-    this.nulable = nulable;
+  public Schema nullable(Boolean nullable) {
+    this.nullable = nullable;
     return this;
   }
 
@@ -708,7 +708,7 @@ public class Schema <T> {
         Objects.equals(this.description, schema.description) &&
         Objects.equals(this.format, schema.format) &&
         Objects.equals(this.$ref, schema.$ref) &&
-        Objects.equals(this.nulable, schema.nulable) &&
+        Objects.equals(this.nullable, schema.nullable) &&
         Objects.equals(this.readOnly, schema.readOnly) &&
         Objects.equals(this.writeOnly, schema.writeOnly) &&
         Objects.equals(this.example, schema.example) &&
@@ -719,7 +719,7 @@ public class Schema <T> {
 
   @Override
   public int hashCode() {
-    return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern, maxItems, minItems, uniqueItems, maxProperties, minProperties, required, type, not, properties, additionalProperties, description, format, $ref, nulable, readOnly, writeOnly, example, externalDocs, deprecated, xml);
+    return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern, maxItems, minItems, uniqueItems, maxProperties, minProperties, required, type, not, properties, additionalProperties, description, format, $ref, nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml);
   }
 
 
@@ -765,7 +765,7 @@ public class Schema <T> {
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    format: ").append(toIndentedString(format)).append("\n");
     sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
-    sb.append("    nulable: ").append(toIndentedString(nulable)).append("\n");
+    sb.append("    nullable: ").append(toIndentedString(nullable)).append("\n");
     sb.append("    readOnly: ").append(toIndentedString(readOnly)).append("\n");
     sb.append("    writeOnly: ").append(toIndentedString(writeOnly)).append("\n");
     sb.append("    example: ").append(toIndentedString(example)).append("\n");
