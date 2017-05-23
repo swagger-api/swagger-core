@@ -82,17 +82,10 @@ public class ParameterProcessor {
 
                 }
             }
-
-            if(type != null && (parameter.getSchema() == null || (parameter.getSchema() != null && StringUtils.isBlank(parameter.getSchema().getType())))) {
-                PrimitiveType pt = PrimitiveType.fromType(type);
-                if(pt != null) {
-                    Schema schema = pt.createProperty();
-                    Schema merged = merge(parameter.getSchema(), schema);
-                    parameter.schema(merged);
-                }
-                else {
-                    Schema model = ModelConverters.getInstance().resolveProperty(type);
-                    parameter.schema(model);
+            if(type != null) {
+                Schema filled = fillSchema(parameter.getSchema(), type);
+                if(filled != null) {
+                    parameter.setSchema(filled);
                 }
             }
         }
@@ -276,6 +269,38 @@ public class ParameterProcessor {
         */
     }
 
+    public static Schema fillSchema(Schema schema, Type type) {
+        if(schema != null) {
+            if(schema != null && StringUtils.isBlank(schema.getType())) {
+                PrimitiveType pt = PrimitiveType.fromType(type);
+                if(pt != null) {
+                    Schema inner = pt.createProperty();
+                    return merge(schema, inner);
+                }
+                else {
+                    return ModelConverters.getInstance().resolveProperty(type);
+                }
+            }
+            else if("array".equals(schema.getType())) {
+                Schema inner = fillSchema(((ArraySchema)schema).getItems(), type);
+                ArraySchema as = (ArraySchema) schema;
+                as.setItems(inner);
+                return as;
+            }
+        }
+        else {
+            PrimitiveType pt = PrimitiveType.fromType(type);
+            if(pt != null) {
+                Schema inner = pt.createProperty();
+                return merge(schema, inner);
+            }
+            else {
+                return ModelConverters.getInstance().resolveProperty(type);
+            }
+        }
+        return schema;
+    }
+
     // TODO!
     public static Schema merge(Schema from, Schema to) {
         if(from == null) {
@@ -289,6 +314,18 @@ public class ParameterProcessor {
         }
         if(to.getEnum() == null) {
             to.setEnum(from.getEnum());
+        }
+        if(to.getExclusiveMinimum() == null) {
+            to.setExclusiveMinimum(from.getExclusiveMinimum());
+        }
+        if(to.getExclusiveMaximum() == null) {
+            to.setExclusiveMaximum(from.getExclusiveMaximum());
+        }
+        if(to.getMinimum() == null) {
+            to.setMinimum(from.getMinimum());
+        }
+        if(to.getMaximum() == null) {
+            to.setMaximum(from.getMaximum());
         }
         return to;
     }
@@ -391,17 +428,30 @@ public class ParameterProcessor {
 
             // TODO: other types
         }
-        if(output != null && StringUtils.isNotBlank(schema._default())) {
-            output.setDefault(schema._default());
-        }
-        if(schema._enum() != null) {
-            for(String v : schema._enum()) {
-                if(StringUtils.isNotBlank(v)) {
-                    output.addEnumItemObject(v);
+        if(output != null) {
+            if(StringUtils.isNotBlank(schema._default())) {
+                output.setDefault(schema._default());
+            }
+            if(schema._enum() != null) {
+                for(String v : schema._enum()) {
+                    if(StringUtils.isNotBlank(v)) {
+                        output.addEnumItemObject(v);
+                    }
                 }
             }
+            if(schema.exclusiveMinimum()) {
+                output.exclusiveMinimum(true);
+            }
+            if(schema.exclusiveMaximum()) {
+                output.exclusiveMaximum(true);
+            }
+            if(StringUtils.isNotBlank(schema.minimum())) {
+                output.minimum(new BigDecimal(schema.minimum()));
+            }
+            if(StringUtils.isNotBlank(schema.maximum())) {
+                output.maximum(new BigDecimal(schema.maximum()));
+            }
         }
-
         return output;
     }
 

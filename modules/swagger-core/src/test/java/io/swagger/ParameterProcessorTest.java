@@ -1,7 +1,8 @@
 package io.swagger;
 
-import io.swagger.oas.annotations.media.ArraySchema;
-import io.swagger.oas.annotations.media.Schema;
+import io.swagger.oas.models.media.ArraySchema;
+import io.swagger.oas.models.media.IntegerSchema;
+import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.media.StringSchema;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.util.ParameterProcessor;
@@ -41,7 +42,7 @@ public class ParameterProcessorTest {
                 description = "paramValue1",
                 required = true,
                 in = "path",
-                schema = @Schema(
+                schema = @io.swagger.oas.annotations.media.Schema(
                     _default = "value1",
                     _enum = {"one", "two", "three"}))
             @PathParam("param1") String arg1,
@@ -62,7 +63,7 @@ public class ParameterProcessorTest {
     }
 
     @io.swagger.oas.annotations.Parameter(name = "paramName1", description = "paramValue1", in = "path",
-            array = @ArraySchema(uniqueItems = true, schema = @Schema(type = "string"))
+            array = @io.swagger.oas.annotations.media.ArraySchema(uniqueItems = true, schema = @io.swagger.oas.annotations.media.Schema(type = "string"))
     )
     private void implicitParametrizedMethod() {
 
@@ -70,16 +71,19 @@ public class ParameterProcessorTest {
 
     private void rangedParametrizedMethod(
             @io.swagger.oas.annotations.Parameter(description = "sample param data", style = "simple",
-                    schema = @Schema( _default = "5", minimum = "0", maximum = "10"))
+                    schema = @io.swagger.oas.annotations.media.Schema( _default = "5", minimum = "0", maximum = "10"))
             @PathParam("id") Integer id,
+
             @io.swagger.oas.annotations.Parameter(description = "sample positive infinity data",
-                    array = @ArraySchema(schema = @Schema(minimum = "0")))
+                    array = @io.swagger.oas.annotations.media.ArraySchema(schema = @io.swagger.oas.annotations.media.Schema(minimum = "0", exclusiveMinimum = true, exclusiveMaximum = true)))
             @PathParam("minValue") Double minValue,
+
             @io.swagger.oas.annotations.Parameter(description = "sample negative infinity data",
-                    schema = @Schema(maximum = "100"))
+                    schema = @io.swagger.oas.annotations.media.Schema(maximum = "100"))
             @PathParam("maxValue") Integer maxValue,
+
             @io.swagger.oas.annotations.Parameter(description = "sample array data",
-                    array = @ArraySchema(schema = @Schema(minimum = "0", maximum = "5")))
+                    array = @io.swagger.oas.annotations.media.ArraySchema(schema = @io.swagger.oas.annotations.media.Schema(minimum = "0", maximum = "5", exclusiveMinimum = true, exclusiveMaximum = true)))
             @PathParam("values") Integer values) {
 
     }
@@ -202,8 +206,8 @@ public class ParameterProcessorTest {
     }
 
     @io.swagger.oas.annotations.Parameter(name = "arrayParam", description = "paramValue1", in = "path",
-            array = @ArraySchema(
-                    schema = @Schema(type = "string"))
+            array = @io.swagger.oas.annotations.media.ArraySchema(
+                    schema = @io.swagger.oas.annotations.media.Schema(type = "string"))
     )
     private void implicitArrayParametrizedMethod() {
     }
@@ -252,7 +256,7 @@ public class ParameterProcessorTest {
         assertNotNull(model);
         assertEquals(model.getDefaultValue(), "10");*/
     }
-/*
+
     @Test
     public void resourceWithParamRangeTest() throws NoSuchMethodException {
         final Method method = getClass().getDeclaredMethod("rangedParametrizedMethod", Integer.class, Double.class,
@@ -260,39 +264,41 @@ public class ParameterProcessorTest {
         final Type[] genericParameterTypes = method.getGenericParameterTypes();
         final Annotation[][] paramAnnotations = method.getParameterAnnotations();
 
-        final PathParameter param0 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter(),
+        final Parameter param0 = (Parameter) ParameterProcessor.applyAnnotations(null, new Parameter().in("path"),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
         assertNotNull(param0);
-        assertEquals(param0.getDefaultValue(), "5");
-        assertEquals(param0.getMinimum(), new BigDecimal(0.0));
-        assertEquals(param0.getMaximum(), new BigDecimal(10.0));
-        assertEquals(param0.getCollectionFormat(), "multi");
+        assertEquals(param0.getSchema().getDefault(), new Integer(5));
+        assertEquals(param0.getSchema().getMinimum(), new BigDecimal(0.0));
+        assertEquals(param0.getSchema().getMaximum(), new BigDecimal(10.0));
+//        assertEquals(param0.getCollectionFormat(), "multi");
 
-        final PathParameter param1 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter(),
+        final Parameter param1 = (Parameter) ParameterProcessor.applyAnnotations(null, new Parameter(),
                 genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
         assertNotNull(param1);
-        assertEquals(param1.getMinimum(), new BigDecimal(0.0));
-        assertNull(param1.getMaximum(), null);
-        assertTrue(param1.isExclusiveMinimum());
-        assertTrue(param1.isExclusiveMaximum());
+        Schema param1InnerSchema = ((ArraySchema)param1.getSchema()).getItems();
+        assertEquals(param1InnerSchema.getMinimum(), new BigDecimal(0.0));
+        assertNull(param1InnerSchema.getMaximum(), null);
+        assertTrue(param1InnerSchema.getExclusiveMinimum());
+        assertTrue(param1InnerSchema.getExclusiveMaximum());
 
-        final PathParameter param2 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter(),
+        final Parameter param2 = (Parameter) ParameterProcessor.applyAnnotations(null, new Parameter(),
                 genericParameterTypes[2], Arrays.asList(paramAnnotations[2]));
         assertNotNull(param2);
-        assertNull(param2.getMinimum());
-        assertEquals(param2.getMaximum(), new BigDecimal(100.0));
+        assertNull(param2.getSchema().getMinimum());
+        assertEquals(param2.getSchema().getMaximum(), new BigDecimal(100.0));
 
-        final PathParameter param3 = (PathParameter) ParameterProcessor.applyAnnotations(null, new PathParameter()
-                .items(new IntegerProperty()), genericParameterTypes[3], Arrays.asList(paramAnnotations[3]));
+        final Parameter param3 = (Parameter) ParameterProcessor.applyAnnotations(null, new Parameter()
+                .schema(new io.swagger.oas.models.media.ArraySchema()
+                    .items(new IntegerSchema())), genericParameterTypes[3], Arrays.asList(paramAnnotations[3]));
         assertNotNull(param3);
-        final IntegerProperty items = (IntegerProperty) param3.getItems();
+        final IntegerSchema items = (IntegerSchema) ((ArraySchema)param3.getSchema()).getItems();
         assertNotNull(items);
         assertEquals(items.getMinimum(), new BigDecimal(0.0));
         assertEquals(items.getMaximum(), new BigDecimal(5.0));
         assertTrue(items.getExclusiveMinimum());
         assertTrue(items.getExclusiveMaximum());
     }
-
+/*
     @Test
     public void resourceWithArrayParamTest() throws NoSuchMethodException {
         final Method method = getClass().getDeclaredMethod("arrayParametrizedMethod", List.class);
@@ -488,7 +494,7 @@ public class ParameterProcessorTest {
     }
 */
     @io.swagger.oas.annotations.Parameter(name = "id", in = "path", required = true,
-        schema = @Schema(type = "integer", format = "int64"))
+        schema = @io.swagger.oas.annotations.media.Schema(type = "integer", format = "int64"))
     private void implicitParametrizedMethodLongType() {
     }
 /*
