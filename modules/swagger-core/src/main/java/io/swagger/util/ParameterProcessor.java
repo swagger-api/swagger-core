@@ -44,49 +44,65 @@ public class ParameterProcessor {
         final ParamWrapper<?> param = null;
 
         for(Annotation annotation : annotations) {
-            if(annotation instanceof io.swagger.oas.annotations.Parameter) {
+            if (annotation instanceof io.swagger.oas.annotations.Parameter) {
                 io.swagger.oas.annotations.Parameter p = (io.swagger.oas.annotations.Parameter) annotation;
-                if(StringUtils.isNotBlank(p.in())) {
+                if (StringUtils.isNotBlank(p.in())) {
                     parameter.setIn(p.in());
                 }
-                if(StringUtils.isNotBlank(p.name())) {
+                if (StringUtils.isNotBlank(p.name())) {
                     parameter.setName(p.name());
                 }
-                if(StringUtils.isNotBlank(p.description())) {
+                if (StringUtils.isNotBlank(p.description())) {
                     parameter.setDescription(p.description());
                 }
-                if(p.required()) {
+                if (p.required()) {
                     parameter.setRequired(true);
                 }
-                if(hasSchemaAnnotation(p.schema())) {
+                if (hasSchemaAnnotation(p.schema())) {
                     Schema schema = processSchema(p.schema());
 
                     // TODO: merge???
-                    if(schema != null) {
+                    if (schema != null) {
                         parameter.setSchema(schema);
                     }
-                }
-                else if(hasArrayAnnotation(p.array())) {
+                } else if (hasArrayAnnotation(p.array())) {
                     Schema arraySchema = processArraySchema(p.array());
-                    if(arraySchema != null) {
+                    if (arraySchema != null) {
                         parameter.setSchema(arraySchema);
                     }
                 }
-            }
-            if(annotation.annotationType().getName().equals("javax.ws.rs.PathParam")) {
+            } else if (annotation.annotationType().getName().equals("javax.ws.rs.PathParam")) {
                 try {
-                    String name = (String)annotation.annotationType().getMethod("value").invoke(annotation);
+                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
                     parameter.setName(name);
+                } catch (Exception e) {
                 }
-                catch (Exception e) {
+            } else if (annotation.annotationType().getName().equals("javax.validation.constraints.Size")) {
+                try {
+                    if(parameter.getSchema() == null) {
+                        parameter.setSchema(new ArraySchema());
+                    }
+                    if(parameter.getSchema() instanceof ArraySchema) {
+                        ArraySchema as = (ArraySchema) parameter.getSchema();
+                        Integer min = (Integer) annotation.annotationType().getMethod("min").invoke(annotation);
+                        if(min != null) {
+                            as.setMinItems(min);
+                        }
+                        Integer max = (Integer) annotation.annotationType().getMethod("max").invoke(annotation);
+                        if(max != null) {
+                            as.setMaxItems(max);
+                        }
+                    }
 
+                } catch (Exception e) {
+                    LOGGER.error("failed on " + annotation.annotationType().getName(), e);
                 }
             }
-            if(type != null) {
-                Schema filled = fillSchema(parameter.getSchema(), type);
-                if(filled != null) {
-                    parameter.setSchema(filled);
-                }
+        }
+        if(type != null) {
+            Schema filled = fillSchema(parameter.getSchema(), type);
+            if(filled != null) {
+                parameter.setSchema(filled);
             }
         }
         final String defaultValue = helper.getDefaultValue();
@@ -285,6 +301,8 @@ public class ParameterProcessor {
                 Schema inner = fillSchema(((ArraySchema)schema).getItems(), type);
                 ArraySchema as = (ArraySchema) schema;
                 as.setItems(inner);
+                as.setMinItems(schema.getMinItems());
+                as.setMaxItems(schema.getMaxItems());
                 return as;
             }
         }
@@ -450,6 +468,12 @@ public class ParameterProcessor {
             }
             if(StringUtils.isNotBlank(schema.maximum())) {
                 output.maximum(new BigDecimal(schema.maximum()));
+            }
+            if(schema.minProperties() > 0) {
+                output.minProperties(schema.minProperties());
+            }
+            if(schema.maxProperties() > 0) {
+                output.maxProperties(schema.maxProperties());
             }
         }
         return output;

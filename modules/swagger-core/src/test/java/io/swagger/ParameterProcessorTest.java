@@ -298,201 +298,206 @@ public class ParameterProcessorTest {
         assertTrue(items.getExclusiveMinimum());
         assertTrue(items.getExclusiveMaximum());
     }
-/*
+
     @Test
     public void resourceWithArrayParamTest() throws NoSuchMethodException {
         final Method method = getClass().getDeclaredMethod("arrayParametrizedMethod", List.class);
         final Type[] genericParameterTypes = method.getGenericParameterTypes();
         final Annotation[][] paramAnnotations = method.getParameterAnnotations();
 
-        final HeaderParameter param = (HeaderParameter) ParameterProcessor.applyAnnotations(null, new HeaderParameter(),
+        final Parameter param = (Parameter) ParameterProcessor.applyAnnotations(null, new Parameter().in("header"),
                 genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
         assertNotNull(param);
-        assertEquals((int) param.getMinItems(), 5);
-        assertEquals((int) param.getMaxItems(), 10);
+        Schema schema = param.getSchema();
+
+        assertTrue(schema instanceof ArraySchema);
+
+        Schema inner = ((ArraySchema) schema).getItems();
+        assertEquals((int) schema.getMinItems(), 5);
+        assertEquals((int) schema.getMaxItems(), 10);
     }
+    /*
+        @Test
+        public void beanValidationSizeOnNumberTest() throws NoSuchMethodException {
+            final Method method = getClass().getDeclaredMethod("beanValidationSizeOnNumber",
+                    int.class,
+                    short.class,
+                    long.class,
+                    float.class,
+                    double.class,
+                    Integer.class,
+                    Short.class,
+                    Long.class,
+                    Float.class,
+                    Double.class,
+                    BigInteger.class,
+                    BigDecimal.class);
+            final Type[] genericParameterTypes = method.getGenericParameterTypes();
+            final Annotation[][] paramAnnotations = method.getParameterAnnotations();
 
-    @Test
-    public void beanValidationSizeOnNumberTest() throws NoSuchMethodException {
-        final Method method = getClass().getDeclaredMethod("beanValidationSizeOnNumber",
-                int.class,
-                short.class,
-                long.class,
-                float.class,
-                double.class,
-                Integer.class,
-                Short.class,
-                Long.class,
-                Float.class,
-                Double.class,
-                BigInteger.class,
-                BigDecimal.class);
-        final Type[] genericParameterTypes = method.getGenericParameterTypes();
-        final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+            for (int i = 0; i < 12; i++) {
+                final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
+                        genericParameterTypes[i], Arrays.asList(paramAnnotations[i]));
+                assertNotNull(param);
+                assertEquals(param.getMinimum(), new BigDecimal(5));
+                assertEquals(param.getMaximum(), new BigDecimal(10));
+            }
+        }
 
-        for (int i = 0; i < 12; i++) {
+        @Test
+        public void beanValidationSizeOnStringTest() throws NoSuchMethodException {
+            final Method method = getClass().getDeclaredMethod("beanValidationSizeOnString",
+                    String.class);
+            final Type[] genericParameterTypes = method.getGenericParameterTypes();
+            final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+
             final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
-                    genericParameterTypes[i], Arrays.asList(paramAnnotations[i]));
+                    genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
+            assertNotNull(param);
+            assertEquals(param.getMinLength(), new Integer(5));
+            assertEquals(param.getMaxLength(), new Integer(10));
+        }
+
+        @Test
+        public void beanValidationMinTest() throws NoSuchMethodException {
+            final Method method = getClass().getDeclaredMethod("beanValidationMin",
+                    int.class);
+            final Type[] genericParameterTypes = method.getGenericParameterTypes();
+            final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+
+            final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
+                    genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
             assertNotNull(param);
             assertEquals(param.getMinimum(), new BigDecimal(5));
+        }
+
+        @Test
+        public void beanValidationMaxTest() throws NoSuchMethodException {
+            final Method method = getClass().getDeclaredMethod("beanValidationMax",
+                    int.class);
+            final Type[] genericParameterTypes = method.getGenericParameterTypes();
+            final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+
+            final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
+                    genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
+            assertNotNull(param);
             assertEquals(param.getMaximum(), new BigDecimal(10));
         }
-    }
 
-    @Test
-    public void beanValidationSizeOnStringTest() throws NoSuchMethodException {
-        final Method method = getClass().getDeclaredMethod("beanValidationSizeOnString",
-                String.class);
-        final Type[] genericParameterTypes = method.getGenericParameterTypes();
-        final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+        @Test
+        public void beanValidationDecimalMinTest() throws NoSuchMethodException {
+            final Method method = getClass().getDeclaredMethod("beanValidationDecimalMin",
+                    double.class, double.class);
+            final Type[] genericParameterTypes = method.getGenericParameterTypes();
+            final Annotation[][] paramAnnotations = method.getParameterAnnotations();
 
-        final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
-                genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        assertNotNull(param);
-        assertEquals(param.getMinLength(), new Integer(5));
-        assertEquals(param.getMaxLength(), new Integer(10));
-    }
+            final QueryParameter inclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
+                    genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
+            assertNotNull(inclusiveParam);
+            assertEquals(inclusiveParam.getMinimum(), new BigDecimal(5.5));
+            assertNull(inclusiveParam.isExclusiveMinimum());
 
-    @Test
-    public void beanValidationMinTest() throws NoSuchMethodException {
-        final Method method = getClass().getDeclaredMethod("beanValidationMin",
-                int.class);
-        final Type[] genericParameterTypes = method.getGenericParameterTypes();
-        final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+            final QueryParameter exclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
+                    genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
+            assertNotNull(exclusiveParam);
+            assertEquals(exclusiveParam.getMinimum(), new BigDecimal(5.5));
+            assertTrue(exclusiveParam.isExclusiveMinimum());
+        }
 
-        final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
-                genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        assertNotNull(param);
-        assertEquals(param.getMinimum(), new BigDecimal(5));
-    }
+        @Test
+        public void beanValidationDecimalMaxTest() throws NoSuchMethodException {
+            final Method method = getClass().getDeclaredMethod("beanValidationDecimalMax",
+                    double.class, double.class);
+            final Type[] genericParameterTypes = method.getGenericParameterTypes();
+            final Annotation[][] paramAnnotations = method.getParameterAnnotations();
 
-    @Test
-    public void beanValidationMaxTest() throws NoSuchMethodException {
-        final Method method = getClass().getDeclaredMethod("beanValidationMax",
-                int.class);
-        final Type[] genericParameterTypes = method.getGenericParameterTypes();
-        final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+            final QueryParameter inclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
+                    genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
+            assertNotNull(inclusiveParam);
+            assertEquals(inclusiveParam.getMaximum(), new BigDecimal(10.5));
+            assertNull(inclusiveParam.isExclusiveMaximum());
 
-        final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
-                genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        assertNotNull(param);
-        assertEquals(param.getMaximum(), new BigDecimal(10));
-    }
+            final QueryParameter exclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
+                    genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
+            assertNotNull(exclusiveParam);
+            assertEquals(exclusiveParam.getMaximum(), new BigDecimal(10.5));
+            assertTrue(exclusiveParam.isExclusiveMaximum());
+        }
 
-    @Test
-    public void beanValidationDecimalMinTest() throws NoSuchMethodException {
-        final Method method = getClass().getDeclaredMethod("beanValidationDecimalMin",
-                double.class, double.class);
-        final Type[] genericParameterTypes = method.getGenericParameterTypes();
-        final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+        @Test
+        public void beanValidationPatternTest() throws NoSuchMethodException {
+            final Method method = getClass().getDeclaredMethod("beanValidationPattern",
+                    String.class);
+            final Type[] genericParameterTypes = method.getGenericParameterTypes();
+            final Annotation[][] paramAnnotations = method.getParameterAnnotations();
 
-        final QueryParameter inclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
-                genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        assertNotNull(inclusiveParam);
-        assertEquals(inclusiveParam.getMinimum(), new BigDecimal(5.5));
-        assertNull(inclusiveParam.isExclusiveMinimum());
+            final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
+                    genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
+            assertNotNull(param);
+            assertEquals(param.getPattern(), TEST_PATTERN_REGXP);
+        }
 
-        final QueryParameter exclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
-                genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
-        assertNotNull(exclusiveParam);
-        assertEquals(exclusiveParam.getMinimum(), new BigDecimal(5.5));
-        assertTrue(exclusiveParam.isExclusiveMinimum());
-    }
+        @Test
+        public void beanValidationArrayParametrizedMethodTest() throws NoSuchMethodException {
+            final Method method = getClass().getDeclaredMethod("beanValidationArrayParametrizedMethod",
+                    List.class, List.class, List.class, String.class);
+            final Type[] genericParameterTypes = method.getGenericParameterTypes();
+            final Annotation[][] paramAnnotations = method.getParameterAnnotations();
 
-    @Test
-    public void beanValidationDecimalMaxTest() throws NoSuchMethodException {
-        final Method method = getClass().getDeclaredMethod("beanValidationDecimalMax",
-                double.class, double.class);
-        final Type[] genericParameterTypes = method.getGenericParameterTypes();
-        final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+            //First param - items specified
+            HeaderParameter headerParam1 = new HeaderParameter().type(ArrayProperty.TYPE).items(new LongProperty());
+            HeaderParameter param1 = (HeaderParameter) ParameterProcessor.applyAnnotations(null, headerParam1,
+                    genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
+            assertNotNull(param1);
+            assertEquals((int) param1.getMinItems(), 5);
+            assertEquals((int) param1.getMaxItems(), 10);
+            Property items1 = param1.getItems();
+            assertTrue(items1 instanceof LongProperty);
+            LongProperty longItems = (LongProperty) items1;
+            assertEquals(longItems.getMinimum(), new BigDecimal(5));
+            assertNull(longItems.getExclusiveMinimum());
+            assertEquals(longItems.getMaximum(), new BigDecimal(10));
+            assertNull(longItems.getExclusiveMaximum());
 
-        final QueryParameter inclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
-                genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        assertNotNull(inclusiveParam);
-        assertEquals(inclusiveParam.getMaximum(), new BigDecimal(10.5));
-        assertNull(inclusiveParam.isExclusiveMaximum());
+            //Second param - items specified
+            HeaderParameter headerParam2 = new HeaderParameter().type(ArrayProperty.TYPE).items(new DoubleProperty());
+            HeaderParameter param2 = (HeaderParameter) ParameterProcessor.applyAnnotations(null, headerParam2,
+                    genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
+            assertNotNull(param2);
+            assertEquals((int) param2.getMinItems(), 5);
+            assertEquals((int) param2.getMaxItems(), 10);
+            Property items2 = param2.getItems();
+            assertTrue(items2 instanceof DoubleProperty);
+            DoubleProperty doubleItems = (DoubleProperty) items2;
+            assertEquals(doubleItems.getMinimum(), new BigDecimal(5.5));
+            assertTrue(doubleItems.getExclusiveMinimum());
+            assertEquals(doubleItems.getMaximum(), new BigDecimal(10.5));
+            assertTrue(doubleItems.getExclusiveMaximum());
 
-        final QueryParameter exclusiveParam = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
-                genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
-        assertNotNull(exclusiveParam);
-        assertEquals(exclusiveParam.getMaximum(), new BigDecimal(10.5));
-        assertTrue(exclusiveParam.isExclusiveMaximum());
-    }
+            //Third param - items specified
+            HeaderParameter headerParam3 = new HeaderParameter().type(ArrayProperty.TYPE).items(new StringProperty());
+            HeaderParameter param3 = (HeaderParameter) ParameterProcessor.applyAnnotations(null, headerParam3,
+                    genericParameterTypes[2], Arrays.asList(paramAnnotations[2]));
+            assertNotNull(param3);
+            assertEquals((int) param3.getMinItems(), 5);
+            assertEquals((int) param3.getMaxItems(), 10);
+            Property items3 = param3.getItems();
+            assertTrue(items3 instanceof StringProperty);
+            StringProperty stringItems = (StringProperty) items3;
+            assertEquals(stringItems.getPattern(), TEST_PATTERN_REGXP);
 
-    @Test
-    public void beanValidationPatternTest() throws NoSuchMethodException {
-        final Method method = getClass().getDeclaredMethod("beanValidationPattern",
-                String.class);
-        final Type[] genericParameterTypes = method.getGenericParameterTypes();
-        final Annotation[][] paramAnnotations = method.getParameterAnnotations();
-
-        final QueryParameter param = (QueryParameter) ParameterProcessor.applyAnnotations(null, new QueryParameter(),
-                genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        assertNotNull(param);
-        assertEquals(param.getPattern(), TEST_PATTERN_REGXP);
-    }
-
-    @Test
-    public void beanValidationArrayParametrizedMethodTest() throws NoSuchMethodException {
-        final Method method = getClass().getDeclaredMethod("beanValidationArrayParametrizedMethod",
-                List.class, List.class, List.class, String.class);
-        final Type[] genericParameterTypes = method.getGenericParameterTypes();
-        final Annotation[][] paramAnnotations = method.getParameterAnnotations();
-
-        //First param - items specified
-        HeaderParameter headerParam1 = new HeaderParameter().type(ArrayProperty.TYPE).items(new LongProperty());
-        HeaderParameter param1 = (HeaderParameter) ParameterProcessor.applyAnnotations(null, headerParam1,
-                genericParameterTypes[0], Arrays.asList(paramAnnotations[0]));
-        assertNotNull(param1);
-        assertEquals((int) param1.getMinItems(), 5);
-        assertEquals((int) param1.getMaxItems(), 10);
-        Property items1 = param1.getItems();
-        assertTrue(items1 instanceof LongProperty);
-        LongProperty longItems = (LongProperty) items1;
-        assertEquals(longItems.getMinimum(), new BigDecimal(5));
-        assertNull(longItems.getExclusiveMinimum());
-        assertEquals(longItems.getMaximum(), new BigDecimal(10));
-        assertNull(longItems.getExclusiveMaximum());
-
-        //Second param - items specified
-        HeaderParameter headerParam2 = new HeaderParameter().type(ArrayProperty.TYPE).items(new DoubleProperty());
-        HeaderParameter param2 = (HeaderParameter) ParameterProcessor.applyAnnotations(null, headerParam2,
-                genericParameterTypes[1], Arrays.asList(paramAnnotations[1]));
-        assertNotNull(param2);
-        assertEquals((int) param2.getMinItems(), 5);
-        assertEquals((int) param2.getMaxItems(), 10);
-        Property items2 = param2.getItems();
-        assertTrue(items2 instanceof DoubleProperty);
-        DoubleProperty doubleItems = (DoubleProperty) items2;
-        assertEquals(doubleItems.getMinimum(), new BigDecimal(5.5));
-        assertTrue(doubleItems.getExclusiveMinimum());
-        assertEquals(doubleItems.getMaximum(), new BigDecimal(10.5));
-        assertTrue(doubleItems.getExclusiveMaximum());
-
-        //Third param - items specified
-        HeaderParameter headerParam3 = new HeaderParameter().type(ArrayProperty.TYPE).items(new StringProperty());
-        HeaderParameter param3 = (HeaderParameter) ParameterProcessor.applyAnnotations(null, headerParam3,
-                genericParameterTypes[2], Arrays.asList(paramAnnotations[2]));
-        assertNotNull(param3);
-        assertEquals((int) param3.getMinItems(), 5);
-        assertEquals((int) param3.getMaxItems(), 10);
-        Property items3 = param3.getItems();
-        assertTrue(items3 instanceof StringProperty);
-        StringProperty stringItems = (StringProperty) items3;
-        assertEquals(stringItems.getPattern(), TEST_PATTERN_REGXP);
-
-        //Fourth param - items specified
-        HeaderParameter headerParam4 = new HeaderParameter().type(StringProperty.TYPE);
-        HeaderParameter param4 = (HeaderParameter) ParameterProcessor.applyAnnotations(null, headerParam4,
-                genericParameterTypes[3], Arrays.asList(paramAnnotations[3]));
-        assertNotNull(param4);
-        assertEquals(param4.getType(), ArrayProperty.TYPE);
-        assertEquals((int) param4.getMinItems(), 5);
-        assertEquals((int) param4.getMaxItems(), 10);
-        Property items4 = param4.getItems();
-        assertTrue(items4 instanceof StringProperty);
-    }
-*/
+            //Fourth param - items specified
+            HeaderParameter headerParam4 = new HeaderParameter().type(StringProperty.TYPE);
+            HeaderParameter param4 = (HeaderParameter) ParameterProcessor.applyAnnotations(null, headerParam4,
+                    genericParameterTypes[3], Arrays.asList(paramAnnotations[3]));
+            assertNotNull(param4);
+            assertEquals(param4.getType(), ArrayProperty.TYPE);
+            assertEquals((int) param4.getMinItems(), 5);
+            assertEquals((int) param4.getMaxItems(), 10);
+            Property items4 = param4.getItems();
+            assertTrue(items4 instanceof StringProperty);
+        }
+    */
     @io.swagger.oas.annotations.Parameter(name = "id", in = "path", required = true,
         schema = @io.swagger.oas.annotations.media.Schema(type = "integer", format = "int64"))
     private void implicitParametrizedMethodLongType() {
