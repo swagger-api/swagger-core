@@ -113,10 +113,8 @@ public class Reader {
 
             }
         }
-
-        pathItemObject.setRef(apiCallback.callbackUrlExpression());
-        // pathItemObject.setDescription(apiCallback.name());
-        // pathItemObject.setSummary(apiCallback.name());
+        pathItemObject.setDescription(apiCallback.name());
+        pathItemObject.setSummary(apiCallback.name());
 
         callbackObject.addPathItem(apiCallback.name(), pathItemObject);
         callbacksObject.addCallback(apiCallback.name(), callbackObject);
@@ -182,16 +180,12 @@ public class Reader {
         schemaObject.setReadOnly(schema.readOnly());
         schemaObject.setFormat(schema.format());
         schemaObject.setDefault(schema._default());
-        schemaObject.setNulable(schema.nullable());
         schemaObject.setWriteOnly(schema.writeOnly());
-        schemaObject.setUniqueItems(schema.uniqueItems());
         schemaObject.setPattern(schema.pattern());
         schemaObject.setExample(schema.example());
-        schemaObject.setMaxItems(schema.maxItems());
         schemaObject.setMaxLength(schema.maxLength());
         schemaObject.setMaxProperties(schema.maxProperties());
         schemaObject.setExclusiveMaximum(schema.exclusiveMaximum());
-        schemaObject.setMinItems(schema.minItems());
         schemaObject.setMinLength(schema.minLength());
         schemaObject.setMinProperties(schema.minProperties());
         schemaObject.setExclusiveMinimum(schema.exclusiveMinimum());
