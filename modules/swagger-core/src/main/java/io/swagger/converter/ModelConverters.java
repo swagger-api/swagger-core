@@ -51,6 +51,16 @@ public class ModelConverters {
         this.skippedClasses.add(cls);
     }
 
+    public Schema resolveProperty(Type type) {
+        if (shouldProcess(type)) {
+            ModelConverterContextImpl context = new ModelConverterContextImpl(
+                    converters);
+            return context.resolve(type, null);
+
+        }
+        return null;
+    }
+
     public Map<String, Schema> read(Type type) {
         Map<String, Schema> modelMap = new HashMap<String, Schema>();
         if (shouldProcess(type)) {

@@ -14,30 +14,33 @@
             }
         }
     },
-    "definitions": {
-        "Health": {
-            "properties": {
-                "status": {
-                    "type": "string",
-                    "x-string-value": "Hello World",
-                    "x-null-value": null,
-                    "x-map-value": {
-                        "hello": "world",
-                        "foo": "bar"
+    "components": {
+        "schemas": {
+            "Health": {
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "x-string-value": "Hello World",
+                        "x-null-value": null,
+                        "x-map-value": {
+                            "hello": "world",
+                            "foo": "bar"
+                        },
+                        "x-list-value": [
+                            "Hello",
+                            "World"
+                        ],
+                        "x-number-value": 123,
+                        "x-boolean-value": true,
+                        "not-an-extension": "foobar"
                     },
-                    "x-list-value": [
-                        "Hello", "World"
-                    ],
-                    "x-number-value": 123,
-                    "x-boolean-value": true,
-                    "not-an-extension": "foobar"
-                },
-                "array": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Health"
-                    },
-                    "x-string-value": "string_value"
+                    "array": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Health"
+                        },
+                        "x-string-value": "string_value"
+                    }
                 }
             }
         }

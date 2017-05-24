@@ -377,6 +377,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             final AnnotatedMember member = propDef.getPrimaryMember();
             Boolean allowEmptyValue = null;
+            String minimum = null, maximum = null;
+            boolean exclusiveMinimum = false, exclusiveMaximum = false;
 
             if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore)) {
                 List<Annotation> annotationList = new ArrayList<Annotation>();
@@ -386,18 +388,38 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 annotations = annotationList.toArray(new Annotation[annotationList.size()]);
 
-                io.swagger.oas.annotations.media.Schema mp = member.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+                io.swagger.oas.annotations.media.Schema mp = null;
 
-                if (mp != null && mp.readOnly()) {
-                    isReadOnly = mp.readOnly();
+                io.swagger.oas.annotations.media.ArraySchema as = null;
+                as = member.getAnnotation(io.swagger.oas.annotations.media.ArraySchema.class);
+                if (as != null) {
+                    mp = as.schema();
+                } else {
+                    mp = member.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
                 }
 
-//                if (mp != null && mp.allowEmptyValue()) {
-//                    allowEmptyValue = mp.allowEmptyValue();
-//                }
-//                else {
-//                    allowEmptyValue = null;
-//                }
+                if(mp != null) {
+                    if (mp.readOnly()) {
+                        isReadOnly = mp.readOnly();
+                    }
+                    if (mp.nullable()) {
+                        allowEmptyValue = mp.nullable();
+                    } else {
+                        allowEmptyValue = null;
+                    }
+                    if (StringUtils.isNotBlank(mp.minimum()) && !String.valueOf(Integer.MAX_VALUE).equals(mp.minimum())) {
+                        minimum = mp.minimum();
+                    }
+                    if (StringUtils.isNotBlank(mp.maximum()) && !String.valueOf(Integer.MIN_VALUE).equals(mp.maximum())) {
+                        maximum = mp.maximum();
+                    }
+                    if(mp.exclusiveMinimum()) {
+                        exclusiveMinimum = true;
+                    }
+                    if(mp.exclusiveMaximum()) {
+                        exclusiveMaximum = true;
+                    }
+                }
 
                 JavaType propType = member.getType(beanDesc.bindingsForBeanType());
 
@@ -406,26 +428,28 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     propName = mp.name();
                 }
 
-                if (mp != null && !mp.type().isEmpty()) {
-                    String or = mp.type();
+                if (mp != null && !Void.class.equals(mp.implementation())) {
+                    Class<?> cls = mp.implementation();
 
-                    JavaType innerJavaType = null;
-                    LOGGER.debug("overriding datatype from {} to {}", propType, or);
+                    LOGGER.debug("overriding datatype from {} to {}", propType, cls.getName());
 
-                    if (or.toLowerCase().startsWith("list[")) {
-                        String innerType = or.substring(5, or.length() - 1);
-                        // TODO
+                    if (as != null) {
+                        ArraySchema propertySchema = new ArraySchema();
+                        Schema innerSchema = null;
 
-//                        ArrayProperty p = new ArrayProperty();
-//                        Property primitiveProperty = PrimitiveType.createProperty(innerType);
-//                        if (primitiveProperty != null) {
-//                            p.setItems(primitiveProperty);
-//                        } else {
-//                            innerJavaType = getInnerType(innerType);
-//                            p.setItems(context.resolveProperty(innerJavaType, annotations));
-//                        }
-//                        property = p;
-                    } else if (or.toLowerCase().startsWith("map[")) {
+                        Schema primitiveProperty = PrimitiveType.createProperty(cls);
+                        if (primitiveProperty != null) {
+                            innerSchema = primitiveProperty;
+                        } else {
+                            innerSchema = context.resolve(cls, annotations);
+                        }
+                        propertySchema.setItems(innerSchema);
+                        property = propertySchema;
+                    }
+                    else {
+                        property = context.resolve(cls, annotations);
+                    }
+                    /*else if (or.toLowerCase().startsWith("map[")) {
                         // TODO
 //                        int pos = or.indexOf(",");
 //                        if (pos > 0) {
@@ -451,7 +475,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     }
                     if (innerJavaType != null) {
                         context.resolve(innerJavaType);
-                    }
+                    }*/
                 }
 
                 // no property from override, construct from propType
@@ -475,13 +499,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
 
                 if (property != null) {
-                    if(property.get$ref() == null) {
-//                        property.setTitle(propName);
-
-//                      if (mp != null && !mp.access().isEmpty()) {
-//                        property.setAccess(mp.access());
-//                      }
-
+                    if (property.get$ref() == null) {
                         Boolean required = md.getRequired();
                         if (required != null && !Boolean.FALSE.equals(required)) {
                             model.addRequiredItem(propName);
@@ -498,11 +516,23 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         }
                         String _defaultValue = _findDefaultValue(member);
                         property.setDefault(_defaultValue);
+                        if(minimum != null) {
+                            property.minimum(new BigDecimal(minimum));
+                        }
+                        if(maximum != null) {
+                            property.maximum(new BigDecimal(maximum));
+                        }
+                        if(exclusiveMaximum) {
+                            property.exclusiveMaximum(true);
+                        }
+                        if(exclusiveMinimum) {
+                            property.exclusiveMinimum(true);
+                        }
 
                         property.setExample(_findExampleValue(member));
                         property.setReadOnly(_findReadOnly(member));
                         if (allowEmptyValue != null) {
-//                        property.setAllowEmptyValue(allowEmptyValue);
+                            property.setNullable(allowEmptyValue);
                         }
 
                         if (property.getReadOnly() == null) {
@@ -511,15 +541,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             }
                         }
                         if (mp != null) {
-//                        final AllowableValues allowableValues = AllowableValuesUtils.create(mp.allowableValues());
-//                        if (allowableValues != null) {
-//                            final Map<PropertyBuilder.PropertyId, Object> args = allowableValues.asPropertyArguments();
-//                            PropertyBuilder.merge(property, args);
-//                        }
+                            if(mp._enum().length > 0) {
+                                for(String _enum : mp._enum()) {
+                                    if(StringUtils.isNotBlank(_enum)) {
+                                        property.addEnumItemObject(_enum);
+                                    }
+                                }
+                            }
                         }
                         JAXBAnnotationsHelper.apply(member, property);
                         applyBeanValidatorAnnotations(property, annotations);
                     }
+                }
+
+                if(property != null) {
                     props.add(property);
                     modelProps.put(propName, property);
                 }

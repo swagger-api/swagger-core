@@ -1,9 +1,10 @@
 package io.swagger.oas.models;
 
+import io.swagger.oas.annotations.media.ArraySchema;
 import io.swagger.oas.annotations.media.Schema;
 
 public class ModelWithModelPropertyOverrides {
-    @Schema(type = "List[Children]")
+    @ArraySchema(schema = @Schema(implementation = Children.class))
     private String children;
 
     public String getChildren() {

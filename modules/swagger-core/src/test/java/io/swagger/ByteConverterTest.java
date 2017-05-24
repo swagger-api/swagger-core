@@ -2,12 +2,10 @@ package io.swagger;
 
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
-import io.swagger.models.Model;
-
-import io.swagger.models.ModelImpl;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.BinaryProperty;
-import io.swagger.models.properties.ByteArrayProperty;
+import io.swagger.oas.models.media.ArraySchema;
+import io.swagger.oas.models.media.BinarySchema;
+import io.swagger.oas.models.media.ByteArraySchema;
+import io.swagger.oas.models.media.Schema;
 import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
@@ -21,7 +19,7 @@ public class ByteConverterTest {
     
     @Test
     public void testByte() {
-        final Map<String, Model> models = ModelConverters.getInstance().read(ByteConverterModel.class);
+        final Map<String, Schema> models = ModelConverters.getInstance().read(ByteConverterModel.class);
         final String json = "{" +
                 "   \"ByteConverterModel\":{" +
                 "      \"type\":\"object\"," +
@@ -41,8 +39,8 @@ public class ByteConverterTest {
 
     @Test
     public void testByteProperty() {
-        Model model = new ModelImpl()
-                .property("byteProperty", new ByteArrayProperty());
+        Schema model = new Schema()
+                .addProperties("byteProperty", new ByteArraySchema());
 
         assertEquals(Json.pretty(model), "{" + NEWLINE +
                 "  \"properties\" : {" + NEWLINE +
@@ -56,7 +54,8 @@ public class ByteConverterTest {
 
     @Test
     public void testDeserializeByteProperty() throws Exception {
-        String json = "{\n" +
+        String json =
+                "{\n" +
                 "  \"properties\" : {\n" +
                 "    \"byteProperty\" : {\n" +
                 "      \"type\" : \"string\",\n" +
@@ -65,14 +64,14 @@ public class ByteConverterTest {
                 "  }\n" +
                 "}";
 
-        Model model = Json.mapper().readValue(json, Model.class);
+        Schema model = Json.mapper().readValue(json, Schema.class);
         assertNotNull(model);
     }
 
     @Test
     public void testByteArray() {
-        Model model = new ModelImpl()
-                .property("byteArray", new ArrayProperty(new BinaryProperty()));
+        Schema model = new Schema()
+                .addProperties("byteArray", new ArraySchema().items(new BinarySchema()));
 
         assertEquals(Json.pretty(model), "{" + NEWLINE +
                 "  \"properties\" : {" + NEWLINE +
@@ -84,16 +83,14 @@ public class ByteConverterTest {
                 "      }" + NEWLINE +
                 "    }" + NEWLINE +
                 "  }" + NEWLINE +
-                     "}");
+                "}");
     }
-
 
     @Test
     public void testReadOnlyByteArray() {
-        Model model = new ModelImpl()
-                .property("byteArray",
-                        new ArrayProperty(new BinaryProperty())
-                        .readOnly());
+        Schema model = new Schema()
+                .addProperties("byteArray",
+                        new ArraySchema().items(new BinarySchema()).readOnly(true));
 
         assertEquals(Json.pretty(model), "{" + NEWLINE +
                 "  \"properties\" : {" + NEWLINE +

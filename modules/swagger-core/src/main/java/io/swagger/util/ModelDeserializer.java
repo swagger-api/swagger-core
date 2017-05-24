@@ -5,6 +5,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.fasterxml.jackson.databind.node.FloatNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.LongNode;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.swagger.oas.models.media.ArraySchema;
 import io.swagger.oas.models.media.BooleanSchema;
@@ -23,6 +31,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class ModelDeserializer extends JsonDeserializer<Schema> {
     @Override
@@ -117,18 +127,45 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
         } else if(node.get("$ref") != null) {
             model = new Schema().ref(node.get("$ref").asText());
         }
+        else { // assume object
+            model = Json.mapper().convertValue(node, ObjectSchema.class);
+        }
 
         // check extensions
 
         Iterator<String> it = node.fieldNames();
         while(it.hasNext()) {
             String key = it.next();
-            if(key.startsWith("x-")) {
-                Object value = node.get(key);
+            Object value = node.get(key);
+            if(key.startsWith("x-") && value != null && StringUtils.isNotBlank(value.toString())) {
+                if(value instanceof NullNode) {
+                    value =  null;
+                }
                 if(value instanceof TextNode) {
                     model.addExtension(key, ((TextNode)value).asText());
                 }
                 else {
+                    if(value instanceof ObjectNode) {
+                        value = Json.mapper().convertValue(value, Map.class);
+                    }
+                    else if (value instanceof ArrayNode) {
+                        value = Json.mapper().convertValue(value, List.class);
+                    }
+                    else if (value instanceof IntNode) {
+                        value = ((IntNode)value).intValue();
+                    }
+                    else if (value instanceof LongNode) {
+                        value = ((LongNode)value).longValue();
+                    }
+                    else if (value instanceof BooleanNode) {
+                        value = ((BooleanNode)value).booleanValue();
+                    }
+                    else if (value instanceof FloatNode) {
+                        value = ((FloatNode)value).floatValue();
+                    }
+                    else if (value instanceof DoubleNode) {
+                        value = ((DoubleNode)value).doubleValue();
+                    }
                     model.addExtension(key, value);
                 }
             }

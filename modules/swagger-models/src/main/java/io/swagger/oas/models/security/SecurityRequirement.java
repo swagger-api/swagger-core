@@ -16,10 +16,11 @@
 
 package io.swagger.oas.models.security;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * SecurityRequirement
@@ -28,11 +29,21 @@ import java.util.Map;
  */
 
 
-public class SecurityRequirement extends LinkedHashMap<String, List> {
+public class SecurityRequirement extends LinkedHashMap<String, List<String>> {
   public SecurityRequirement() { }
 
-  public SecurityRequirement addList(String name, List item) {
+  public SecurityRequirement addList(String name, String item) {
+    this.put(name, Arrays.asList(item));
+    return this;
+  }
+
+  public SecurityRequirement addList(String name, List<String> item) {
     this.put(name, item);
+    return this;
+  }
+
+  public SecurityRequirement addList(String name) {
+    this.put(name, new ArrayList<>());
     return this;
   }
 

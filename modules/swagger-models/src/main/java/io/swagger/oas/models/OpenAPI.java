@@ -16,13 +16,16 @@
 
 package io.swagger.oas.models;
 
-import java.util.Objects;
 import io.swagger.oas.models.info.Info;
+import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.security.SecurityRequirement;
+import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.tags.Tag;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * OpenAPI
@@ -218,6 +221,34 @@ public class OpenAPI {
     return this;
   }
 
+  /*
+   * helpers
+   */
+
+  public OpenAPI path(String name, PathItem path) {
+    if(this.paths == null) {
+      this.paths = new Paths();
+    }
+
+    this.paths.addPathItem(name, path);
+    return this;
+  }
+
+  public OpenAPI schema(String name, Schema schema) {
+    if(components == null) {
+      this.components = new Components();
+    }
+    components.addSchemas(name, schema);
+    return this;
+  }
+
+  public OpenAPI schemaRequirement(String name, SecurityScheme securityScheme) {
+    if(components == null) {
+      this.components = new Components();
+    }
+    components.addSecuritySchemes(name, securityScheme);
+    return this;
+  }
 
   @Override
   public boolean equals(java.lang.Object o) {

@@ -16,11 +16,14 @@
 
 package io.swagger.oas.annotations;
 
+import io.swagger.oas.annotations.media.ArraySchema;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
+import io.swagger.oas.annotations.parameters.Parameters;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -34,6 +37,7 @@ import java.lang.annotation.Target;
 
 @Target({ ElementType.PARAMETER,
           ElementType.METHOD })
+@Repeatable(Parameters.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Parameter {
@@ -86,6 +90,9 @@ public @interface Parameter {
    * 
    **/
   Schema schema() default @Schema();
+
+
+  ArraySchema array() default @ArraySchema();
 
   /**
    * 
