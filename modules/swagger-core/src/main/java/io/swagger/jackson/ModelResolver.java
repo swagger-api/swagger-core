@@ -377,6 +377,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             final AnnotatedMember member = propDef.getPrimaryMember();
             Boolean allowEmptyValue = null;
+            String minimum = null, maximum = null;
+            boolean exclusiveMinimum = false, exclusiveMaximum = false;
 
             if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore)) {
                 List<Annotation> annotationList = new ArrayList<Annotation>();
@@ -390,23 +392,33 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 io.swagger.oas.annotations.media.ArraySchema as = null;
                 as = member.getAnnotation(io.swagger.oas.annotations.media.ArraySchema.class);
-                if(as != null) {
+                if (as != null) {
                     mp = as.schema();
-                }
-                else {
+                } else {
                     mp = member.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
                 }
 
-
-                if (mp != null && mp.readOnly()) {
-                    isReadOnly = mp.readOnly();
-                }
-
-                if (mp != null && mp.nullable()) {
-                    allowEmptyValue = mp.nullable();
-                }
-                else {
-                    allowEmptyValue = null;
+                if(mp != null) {
+                    if (mp.readOnly()) {
+                        isReadOnly = mp.readOnly();
+                    }
+                    if (mp.nullable()) {
+                        allowEmptyValue = mp.nullable();
+                    } else {
+                        allowEmptyValue = null;
+                    }
+                    if (StringUtils.isNotBlank(mp.minimum()) && !String.valueOf(Integer.MAX_VALUE).equals(mp.minimum())) {
+                        minimum = mp.minimum();
+                    }
+                    if (StringUtils.isNotBlank(mp.maximum()) && !String.valueOf(Integer.MIN_VALUE).equals(mp.maximum())) {
+                        maximum = mp.maximum();
+                    }
+                    if(mp.exclusiveMinimum()) {
+                        exclusiveMinimum = true;
+                    }
+                    if(mp.exclusiveMaximum()) {
+                        exclusiveMaximum = true;
+                    }
                 }
 
                 JavaType propType = member.getType(beanDesc.bindingsForBeanType());
@@ -504,6 +516,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         }
                         String _defaultValue = _findDefaultValue(member);
                         property.setDefault(_defaultValue);
+                        if(minimum != null) {
+                            property.minimum(new BigDecimal(minimum));
+                        }
+                        if(maximum != null) {
+                            property.maximum(new BigDecimal(maximum));
+                        }
+                        if(exclusiveMaximum) {
+                            property.exclusiveMaximum(true);
+                        }
+                        if(exclusiveMinimum) {
+                            property.exclusiveMinimum(true);
+                        }
 
                         property.setExample(_findExampleValue(member));
                         property.setReadOnly(_findReadOnly(member));
