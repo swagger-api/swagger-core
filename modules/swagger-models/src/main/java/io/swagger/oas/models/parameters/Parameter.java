@@ -107,11 +107,14 @@ public class Parameter {
   }
 
   public void setIn(String in) {
+    if("path".equals(in)) {
+      this.required = true;
+    }
     this.in = in;
   }
 
   public Parameter in(String in) {
-    this.in = in;
+    setIn(in);
     return this;
   }
 
