@@ -9,6 +9,7 @@ import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.callbacks.Callbacks;
 import io.swagger.oas.models.media.Content;
+import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
@@ -43,8 +44,13 @@ public class ReaderTest {
     public static final String PARAMETER_IN = "path";
     public static final String PARAMETER_NAME = "subscriptionId";
     public static final String PARAMETER_DESCRIPTION = "parameter description";
+    public static final String SCHEMA_TYPE = "string";
+    public static final String SCHEMA_FORMAT = "uuid";
+    public static final String SCHEMA_DESCRIPTION = "the generated UUID";
     public static final int RESPONSES_NUMBER = 2;
     public static final int TAG_NUMBER = 1;
+    public static final int CALLBACK_NUMBER = 1;
+    public static final int PARAMETER_NUMBER = 1;
     public static final String CALLBACK_SUBSCRIPTION_ID = "subscription";
 
     private Reader reader;
@@ -92,7 +98,7 @@ public class ReaderTest {
     }
 
     @Test(description = "Responses")
-    public void testrGetResponses() {
+    public void testGetResponses() {
         Method[] methods = ResponsesResource.class.getMethods();
 
         Operation responseOperation = reader.parseMethod(methods[0]);
@@ -147,12 +153,12 @@ public class ReaderTest {
     public void testGetParameters() {
         Method[] methods = ParametersResource.class.getMethods();
 
-        Operation parametersOperataion = reader.parseMethod(methods[0]);
-        assertNotNull(parametersOperataion);
+        Operation parametersOperation = reader.parseMethod(methods[0]);
+        assertNotNull(parametersOperation);
 
-        List<Parameter> parameters = parametersOperataion.getParameters();
+        List<Parameter> parameters = parametersOperation.getParameters();
         assertNotNull(parameters);
-        assertEquals(1, parameters.size());
+        assertEquals(PARAMETER_NUMBER, parameters.size());
         Parameter parameter = parameters.get(0);
         assertNotNull(parameter);
         assertEquals(PARAMETER_IN, parameter.getIn());
@@ -162,6 +168,12 @@ public class ReaderTest {
         assertEquals(Boolean.TRUE, parameter.getAllowEmptyValue());
         assertEquals(Boolean.TRUE, parameter.getAllowReserved());
         assertEquals(Boolean.FALSE, parameter.getDeprecated());
+        Schema schema = parameter.getSchema();
+        assertNotNull(schema);
+        assertEquals(SCHEMA_TYPE, schema.getType());
+        assertEquals(SCHEMA_FORMAT, schema.getFormat());
+        assertEquals(SCHEMA_DESCRIPTION, schema.getDescription());
+        assertEquals(Boolean.TRUE, schema.getReadOnly());
     }
 
 
@@ -182,7 +194,7 @@ public class ReaderTest {
 
         List<Parameter> parameters = postOperation.getParameters();
         assertNotNull(parameters);
-        assertEquals(1, parameters.size());
+        assertEquals(CALLBACK_NUMBER, parameters.size());
     }
 
     private Boolean isValidRestPath(Method method) {

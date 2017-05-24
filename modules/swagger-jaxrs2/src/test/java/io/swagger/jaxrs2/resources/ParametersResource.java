@@ -2,9 +2,7 @@ package io.swagger.jaxrs2.resources;
 
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
-import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
-import io.swagger.oas.annotations.parameters.RequestBody;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

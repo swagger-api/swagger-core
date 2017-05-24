@@ -134,17 +134,31 @@ public class Reader {
         //Set Deprecated
         operation.setDeprecated(apiOperation.deprecated());
 
-        operation.setResponses(getApiResponsesFromResponseAnnotation(apiOperation.responses()));
+        if (apiOperation.responses() != null) {
+            operation.setResponses(getApiResponsesFromResponseAnnotation(apiOperation.responses()));
+        }
 
-        operation.requestBody(getRequestBodyObjectFromAnnotation(apiOperation.requestBody()));
+        if (apiOperation.requestBody() != null) {
+            operation.requestBody(getRequestBodyObjectFromAnnotation(apiOperation.requestBody()));
+        }
 
-        operation.setExternalDocs(getExternalDocumentationObjectFromAnnotation(apiOperation.externalDocs()));
 
-        operation.setServers(getServersObjectListFromAnnotation(apiOperation.servers()));
+        if (apiOperation.externalDocs() != null) {
+            operation.setExternalDocs(getExternalDocumentationObjectFromAnnotation(apiOperation.externalDocs()));
+        }
 
-        operation.setTags(getTagsFromOperation(apiOperation.tags()));
+        if (apiOperation.servers() != null) {
+            operation.setServers(getServersObjectListFromAnnotation(apiOperation.servers()));
+        }
 
-        operation.setParameters(getParametersListFromAnnotation(apiOperation.parameters()));
+        if (apiOperation.tags() != null) {
+            operation.setTags(getTagsFromOperation(apiOperation.tags()));
+        }
+
+        if (apiOperation.parameters() != null) {
+            operation.setParameters(getParametersListFromAnnotation(apiOperation.parameters()));
+        }
+
     }
 
     public List<Parameter> getParametersListFromAnnotation(io.swagger.oas.annotations.Parameter[] parameters) {
@@ -174,15 +188,29 @@ public class Reader {
 
     private Schema getSchemaFromAnnotation(io.swagger.oas.annotations.media.Schema schema) {
         Schema schemaObject = new Schema();
+
         schemaObject.setDescription(schema.description());
-        schemaObject.setType(schema.type());
         schemaObject.set$ref(schema.ref());
+        schemaObject.setType(schema.type());
+        schemaObject.setTitle(schema.title());
         schemaObject.setDeprecated(schema.deprecated());
         schemaObject.setReadOnly(schema.readOnly());
-        schemaObject.setReadOnly(schema.readOnly());
-        schemaObject.setExclusiveMaximum(schema.exclusiveMaximum());
-        schemaObject.setExclusiveMinimum(schema.exclusiveMinimum());
         schemaObject.setFormat(schema.format());
+        schemaObject.setDefault(schema._default());
+        schemaObject.setNulable(schema.nullable());
+        schemaObject.setWriteOnly(schema.writeOnly());
+        schemaObject.setUniqueItems(schema.uniqueItems());
+        schemaObject.setPattern(schema.pattern());
+        schemaObject.setExample(schema.example());
+        schemaObject.setMaxItems(schema.maxItems());
+        schemaObject.setMaxLength(schema.maxLength());
+        schemaObject.setMaxProperties(schema.maxProperties());
+        schemaObject.setExclusiveMaximum(schema.exclusiveMaximum());
+        schemaObject.setMinItems(schema.minItems());
+        schemaObject.setMinLength(schema.minLength());
+        schemaObject.setMinProperties(schema.minProperties());
+        schemaObject.setExclusiveMinimum(schema.exclusiveMinimum());
+
         //TODO complete the Schema Object
         return schemaObject;
     }
@@ -237,7 +265,6 @@ public class Reader {
             Content content = getContent(response.content());
             apiResponse.content(content);
             apiResponse.setDescription(response.description());
-
             apiResponses.addApiResponse(response.responseCode(), apiResponse);
         }
         return apiResponses;
@@ -268,17 +295,20 @@ public class Reader {
     }
 
     private MediaType getMediaType(ExampleObject example) {
-        MediaType mediaType = new MediaType();
-        Example exampleObject = new Example();
-        exampleObject.setDescription(example.name());
-        exampleObject.setSummary(example.summary());
-        exampleObject.setExternalValue(example.externalValue());
-        exampleObject.setValue(example.value());
-        mediaType.addExamples(example.name(), exampleObject);
-        return mediaType;
+        if (example != null) {
+            MediaType mediaType = new MediaType();
+            Example exampleObject = new Example();
+            exampleObject.setDescription(example.name());
+            exampleObject.setSummary(example.summary());
+            exampleObject.setExternalValue(example.externalValue());
+            exampleObject.setValue(example.value());
+            mediaType.addExamples(example.name(), exampleObject);
+            return mediaType;
+        }
+        return null;
     }
 
-    private Link getLinks(io.swagger.oas.annotations.links.Link[] links) {
+    private Link getLink(io.swagger.oas.annotations.links.Link[] links) {
         Link linkObject = new Link();
         for (io.swagger.oas.annotations.links.Link link : links) {
             linkObject.setParameters(getLinkParameters(link.parameters()));
