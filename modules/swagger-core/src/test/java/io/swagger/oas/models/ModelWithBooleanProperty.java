@@ -3,10 +3,9 @@ package io.swagger.oas.models;
 import io.swagger.oas.annotations.media.Schema;
 
 public class ModelWithBooleanProperty {
-    // TODO
-    @Schema//(allowableValues = "true")
+    @Schema(_enum = "true")
     public Boolean isGreat;
 
-    @Schema//(allowableValues = "1,2")
+    @Schema(_enum = {"1", "2"})
     public Integer intValue;
 }

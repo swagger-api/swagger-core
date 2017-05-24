@@ -16,10 +16,11 @@
 
 package io.swagger.oas.models.responses;
 
-import java.util.Objects;
 import io.swagger.oas.models.headers.Headers;
 import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.media.Content;
+
+import java.util.Objects;
 
 /**
  * ApiResponse
@@ -34,6 +35,7 @@ public class ApiResponse {
   private Content content = null;
   private Link links = null;
   private java.util.Map<String, Object> extensions = null;
+  private String $ref = null;
 
   /**
    * returns the description property from a ApiResponse instance.
@@ -111,6 +113,28 @@ public class ApiResponse {
     return this;
   }
 
+
+  /**
+   * returns the $ref property from a Schema instance.
+   *
+   * @return String $ref
+   **/
+
+  public String get$ref() {
+    return $ref;
+  }
+
+  public void set$ref(String $ref) {
+    this.$ref = $ref;
+  }
+
+  public ApiResponse ref(String $ref) {
+    if($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
+      $ref = "#/components/responses/" + $ref;
+    }
+    this.$ref = $ref;
+    return this;
+  }
 
   @Override
   public boolean equals(java.lang.Object o) {

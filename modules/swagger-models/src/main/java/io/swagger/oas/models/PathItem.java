@@ -16,11 +16,12 @@
 
 package io.swagger.oas.models;
 
-import java.util.Objects;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.servers.Server;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * PathItem
@@ -30,7 +31,7 @@ import java.util.List;
 
 
 public class PathItem {
-  private String ref = null;
+  private String $ref = null;
   private String summary = null;
   private String description = null;
   private Operation get = null;
@@ -51,16 +52,16 @@ public class PathItem {
    * @return String ref
    **/
 
-  public String getRef() {
-    return ref;
+  public String get$ref() {
+    return $ref;
   }
 
-  public void setRef(String ref) {
-    this.ref = ref;
+  public void set$ref(String $ref) {
+    this.$ref = $ref;
   }
 
   public PathItem ref(String ref) {
-    this.ref = ref;
+    this.$ref = ref;
     return this;
   }
 
@@ -318,7 +319,7 @@ public class PathItem {
       return false;
     }
     PathItem pathItem = (PathItem) o;
-    return Objects.equals(this.ref, pathItem.ref) &&
+    return Objects.equals(this.$ref, pathItem.$ref) &&
         Objects.equals(this.summary, pathItem.summary) &&
         Objects.equals(this.description, pathItem.description) &&
         Objects.equals(this.get, pathItem.get) &&
@@ -335,7 +336,7 @@ public class PathItem {
 
   @Override
   public int hashCode() {
-    return Objects.hash(ref, summary, description, get, put, post, delete, options, head, patch, trace, servers, parameters);
+    return Objects.hash($ref, summary, description, get, put, post, delete, options, head, patch, trace, servers, parameters);
   }
 
 
@@ -359,7 +360,7 @@ public class PathItem {
     StringBuilder sb = new StringBuilder();
     sb.append("class PathItem {\n");
     
-    sb.append("    ref: ").append(toIndentedString(ref)).append("\n");
+    sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
     sb.append("    summary: ").append(toIndentedString(summary)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    get: ").append(toIndentedString(get)).append("\n");

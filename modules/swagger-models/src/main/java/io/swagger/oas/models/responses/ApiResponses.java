@@ -16,9 +16,8 @@
 
 package io.swagger.oas.models.responses;
 
-import java.util.Objects;
 import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * ApiResponses
@@ -29,14 +28,13 @@ import java.util.Map;
 
 public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
   private ApiResponse _default = null;
-  private java.util.Map<String, Object> extensions = null;
 
   public ApiResponses addApiResponse(String name, ApiResponse item) {
     this.put(name, item);
     return this;
   }
   /**
-   * returns the _default property from a ApiResponses instance.
+   * returns the default property from a ApiResponses instance.
    *
    * @return ApiResponse _default
    **/
@@ -71,22 +69,6 @@ public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
   @Override
   public int hashCode() {
     return Objects.hash(_default, super.hashCode());
-  }
-
-
-  public java.util.Map<String, Object> getExtensions() {
-    return extensions;
-  }
-
-  public void addExtension(String name, Object value) {
-    if(this.extensions == null) {
-      this.extensions = new java.util.HashMap<>();
-    }
-    this.extensions.put(name, value);
-  }
-
-  public void setExtensions(java.util.Map<String, Object> extensions) {
-    this.extensions = extensions;
   }
 
   @Override

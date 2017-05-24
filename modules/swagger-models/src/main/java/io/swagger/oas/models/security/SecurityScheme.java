@@ -29,7 +29,7 @@ public class SecurityScheme {
   /**
    * Gets or Sets type
    */
-  public enum TypeEnum {
+  public enum Type {
     APIKEY("apiKey"),
     
     HTTP("http"),
@@ -40,7 +40,7 @@ public class SecurityScheme {
 
     private String value;
 
-    TypeEnum(String value) {
+    Type(String value) {
       this.value = value;
     }
 
@@ -50,20 +50,20 @@ public class SecurityScheme {
     }
   }
 
-  private TypeEnum type = null;
+  private Type type = null;
   private String description = null;
   private String name = null;
   /**
    * Gets or Sets in
    */
-  public enum InEnum {
+  public enum In {
     HEADER("header"),
     
     QUERY("query");
 
     private String value;
 
-    InEnum(String value) {
+    In(String value) {
       this.value = value;
     }
 
@@ -73,7 +73,7 @@ public class SecurityScheme {
     }
   }
 
-  private InEnum in = null;
+  private In in = null;
   private String scheme = null;
   private String bearerFormat = null;
   private OAuthFlows flows = null;
@@ -83,18 +83,18 @@ public class SecurityScheme {
   /**
    * returns the type property from a SecurityScheme instance.
    *
-   * @return TypeEnum type
+   * @return Type type
    **/
 
-  public TypeEnum getType() {
+  public Type getType() {
     return type;
   }
 
-  public void setType(TypeEnum type) {
+  public void setType(Type type) {
     this.type = type;
   }
 
-  public SecurityScheme type(TypeEnum type) {
+  public SecurityScheme type(Type type) {
     this.type = type;
     return this;
   }
@@ -140,18 +140,18 @@ public class SecurityScheme {
   /**
    * returns the in property from a SecurityScheme instance.
    *
-   * @return InEnum in
+   * @return In in
    **/
 
-  public InEnum getIn() {
+  public In getIn() {
     return in;
   }
 
-  public void setIn(InEnum in) {
+  public void setIn(In in) {
     this.in = in;
   }
 
-  public SecurityScheme in(InEnum in) {
+  public SecurityScheme in(In in) {
     this.in = in;
     return this;
   }

@@ -2,6 +2,7 @@ package io.swagger.util;
 
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.oas.models.media.BinarySchema;
+import io.swagger.oas.models.media.BooleanSchema;
 import io.swagger.oas.models.media.ByteArraySchema;
 import io.swagger.oas.models.media.DateSchema;
 import io.swagger.oas.models.media.DateTimeSchema;
@@ -31,7 +32,7 @@ public enum PrimitiveType {
     BOOLEAN(Boolean.class, "boolean") {
         @Override
         public Schema createProperty() {
-            return new Schema().type("boolean");
+            return new BooleanSchema();
         }
     },
     BYTE(Byte.class, "byte") {

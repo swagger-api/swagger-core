@@ -108,20 +108,20 @@ public @interface Schema {
    **/
   String pattern() default "";
 
-  /**
-   * sets the maximum number of items in an array.  Ignored if value is Integer.MIN_VALUE.
-   **/
-  int maxItems() default Integer.MIN_VALUE;
-
-  /**
-   * sets the minimum number of items in an array.  Ignored if value is Integer.MAX_VALUE.
-   **/
-  int minItems() default Integer.MAX_VALUE;
-
-  /**
-   * determines whether an array of items will be unique
-   **/
-  boolean uniqueItems() default false;
+//  /**
+//   * sets the maximum number of items in an array.  Ignored if value is Integer.MIN_VALUE.
+//   **/
+//  int maxItems() default Integer.MIN_VALUE;
+//
+//  /**
+//   * sets the minimum number of items in an array.  Ignored if value is Integer.MAX_VALUE.
+//   **/
+//  int minItems() default Integer.MAX_VALUE;
+//
+//  /**
+//   * determines whether an array of items will be unique
+//   **/
+//  boolean uniqueItems() default false;
 
   /**
    * constrains the number of arbitrary properties when additionalProperties is defined.  Ignored if value is 0.

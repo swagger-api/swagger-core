@@ -3,40 +3,32 @@ package io.swagger.oas.models;
 import io.swagger.oas.annotations.media.Schema;
 
 public class ModelWithRanges {
-
-    // TODO
-    @Schema(description = "values with include range"//, allowableValues = "range[1, 5]"
-             )
+    @Schema(description = "values with include range", minimum = "1", maximum = "5")
     public int getInclusiveRange() {
         return 2;
     }
 
-    @Schema(description = "values with include range"//, allowableValues = "range(1, 5)"
-             )
+    @Schema(description = "values with include range", minimum = "1", exclusiveMinimum = true, maximum = "5", exclusiveMaximum = true)
     public int getExclusiveRange() {
         return 2;
     }
 
-    @Schema(description = "values with include range"//, allowableValues = "range[1, infinity]"
-             )
+    @Schema(description = "values with include range", minimum = "1")
     public int getPositiveInfinityRange() {
         return 2;
     }
 
-    @Schema(description = "values with include range"//, allowableValues = "range[-infinity, 5]"
-             )
+    @Schema(description = "values with include range", maximum = "5")
     public int getNegativeInfinityRange() {
         return 2;
     }
 
-    @Schema(description = "some string values"//, allowableValues = "str1, str2"
-             )
+    @Schema(description = "some string values", _enum = {"str1", "str2"})
     public String getStringValues() {
         return "test";
     }
 
-    @Schema(description = "some string values"//, allowableValues = "range[1.0, 8.0)"
-             )
+    @Schema(description = "some string values", minimum = "1.0", maximum = "8.0", exclusiveMaximum = true)
     public Double getDoubleValues() {
         return 1.0;
     }

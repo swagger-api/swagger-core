@@ -1,8 +1,7 @@
 package io.swagger;
 
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverters;
-import io.swagger.models.Model;
+import io.swagger.oas.models.media.Schema;
 import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
@@ -17,7 +16,7 @@ import static org.testng.Assert.assertEquals;
 public class NumericFormatTest {
     @Test
     public void testFormatOfInteger() {
-        final Map<String, Model> models = ModelConverters.getInstance().readAll(ModelWithIntegerFields.class);
+        final Map<String, Schema> models = ModelConverters.getInstance().readAll(ModelWithIntegerFields.class);
         assertEquals(models.size(), 1);
 
         String json = Json.pretty(models);
@@ -27,9 +26,9 @@ public class NumericFormatTest {
             "    \"type\" : \"object\",\n" +
             "    \"properties\" : {\n" +
             "      \"id\" : {\n" +
+            "        \"minimum\" : 3,\n" +
             "        \"type\" : \"integer\",\n" +
-            "        \"format\" : \"int32\",\n" +
-            "        \"minimum\" : 3\n" +
+            "        \"format\" : \"int32\"\n" +
             "      }\n" +
             "    }\n" +
             "  }\n" +
@@ -38,7 +37,7 @@ public class NumericFormatTest {
 
     @Test
     public void testFormatOfDecimal() {
-        final Map<String, Model> models = ModelConverters.getInstance().readAll(ModelWithDecimalFields.class);
+        final Map<String, Schema> models = ModelConverters.getInstance().readAll(ModelWithDecimalFields.class);
         assertEquals(models.size(), 1);
 
         String json = Json.pretty(models);
@@ -48,10 +47,10 @@ public class NumericFormatTest {
             "    \"type\" : \"object\",\n" +
             "    \"properties\" : {\n" +
             "      \"id\" : {\n" +
-            "        \"type\" : \"number\",\n" +
-            "        \"format\" : \"double\",\n" +
             "        \"minimum\" : 3.3,\n" +
-            "        \"exclusiveMinimum\" : false\n" +
+            "        \"exclusiveMinimum\" : false,\n" +
+            "        \"type\" : \"number\",\n" +
+            "        \"format\" : \"double\"\n" +
             "      }\n" +
             "    }\n" +
             "  }\n" +
@@ -60,7 +59,7 @@ public class NumericFormatTest {
 
     @Test
     public void testFormatOfBigDecimal() {
-        final Map<String, Model> models = ModelConverters.getInstance().readAll(ModelWithoutScientificFields.class);
+        final Map<String, Schema> models = ModelConverters.getInstance().readAll(ModelWithoutScientificFields.class);
         assertEquals(models.size(), 1);
 
         String json = Json.pretty(models);
@@ -71,11 +70,11 @@ public class NumericFormatTest {
             "    \"type\" : \"object\",\n" +
             "    \"properties\" : {\n" +
             "      \"id\" : {\n" +
-            "        \"type\" : \"number\",\n" +
-            "        \"minimum\" : -9999999999999999.99,\n" +
             "        \"maximum\" : 9999999999999999.99,\n" +
+            "        \"exclusiveMaximum\" : false,\n" +
+            "        \"minimum\" : -9999999999999999.99,\n" +
             "        \"exclusiveMinimum\" : false,\n" +
-            "        \"exclusiveMaximum\" : false\n" +
+            "        \"type\" : \"number\"\n" +
             "      }\n" +
             "    }\n" +
             "  }\n" +
@@ -83,19 +82,19 @@ public class NumericFormatTest {
 
     }
     static class ModelWithIntegerFields {
-        @ApiModelProperty
+        @io.swagger.oas.annotations.media.Schema
         @Min(value = 3)
         public Integer id;
     }
 
     static class ModelWithDecimalFields {
-        @ApiModelProperty
+        @io.swagger.oas.annotations.media.Schema
         @DecimalMin(value = "3.3")
         public Double id;
     }
 
     static class ModelWithoutScientificFields {
-        @ApiModelProperty
+        @io.swagger.oas.annotations.media.Schema
         @DecimalMin(value = "-9999999999999999.99")
         @DecimalMax(value = "9999999999999999.99")
         public BigDecimal id;
