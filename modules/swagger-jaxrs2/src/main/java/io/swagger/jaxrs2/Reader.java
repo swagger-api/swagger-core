@@ -32,6 +32,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 public class Reader {
@@ -134,34 +135,18 @@ public class Reader {
         //Set Deprecated
         operation.setDeprecated(apiOperation.deprecated());
 
-        if (apiOperation.responses() != null) {
-            operation.setResponses(getApiResponsesFromResponseAnnotation(apiOperation.responses()));
-        }
-
-        if (apiOperation.requestBody() != null) {
-            operation.requestBody(getRequestBodyObjectFromAnnotation(apiOperation.requestBody()));
-        }
-
-
-        if (apiOperation.externalDocs() != null) {
-            operation.setExternalDocs(getExternalDocumentationObjectFromAnnotation(apiOperation.externalDocs()));
-        }
-
-        if (apiOperation.servers() != null) {
-            operation.setServers(getServersObjectListFromAnnotation(apiOperation.servers()));
-        }
-
-        if (apiOperation.tags() != null) {
-            operation.setTags(getTagsFromOperation(apiOperation.tags()));
-        }
-
-        if (apiOperation.parameters() != null) {
-            operation.setParameters(getParametersListFromAnnotation(apiOperation.parameters()));
-        }
-
+        operation.setResponses(getApiResponsesFromResponseAnnotation(apiOperation.responses()).get());
+        operation.requestBody(getRequestBodyObjectFromAnnotation(apiOperation.requestBody()).get());
+        operation.setExternalDocs(getExternalDocumentationObjectFromAnnotation(apiOperation.externalDocs()).get());
+        operation.setServers(getServersObjectListFromAnnotation(apiOperation.servers()).get());
+        operation.setTags(getTagsFromOperation(apiOperation.tags()).get());
+        operation.setParameters(getParametersListFromAnnotation(apiOperation.parameters()).get());
     }
 
-    public List<Parameter> getParametersListFromAnnotation(io.swagger.oas.annotations.Parameter[] parameters) {
+    public Optional<List<Parameter>> getParametersListFromAnnotation(io.swagger.oas.annotations.Parameter[] parameters) {
+        if (parameters == null) {
+            return Optional.empty();
+        }
         List<Parameter> parametersObject = new ArrayList<>();
         for (io.swagger.oas.annotations.Parameter parameter : parameters) {
             Parameter parameterObject = new Parameter();
@@ -174,7 +159,7 @@ public class Reader {
             parameterObject.setAllowReserved(parameter.allowReserved());
             parameterObject.setExplode(parameter.explode());
             parameterObject.setIn(parameter.in());
-            parameterObject.setContent(getContents(parameter.content()));
+            parameterObject.setContent(getContents(parameter.content()).get());
 
             io.swagger.oas.annotations.media.Schema schema = parameter.schema();
             if (schema != null) {
@@ -183,7 +168,7 @@ public class Reader {
             parametersObject.add(parameterObject);
 
         }
-        return parametersObject;
+        return Optional.of(parametersObject);
     }
 
     private Schema getSchemaFromAnnotation(io.swagger.oas.annotations.media.Schema schema) {
@@ -215,15 +200,21 @@ public class Reader {
         return schemaObject;
     }
 
-    private List<String> getTagsFromOperation(String[] tags) {
+    private Optional<List<String>> getTagsFromOperation(String[] tags) {
+        if (tags == null) {
+            Optional.empty();
+        }
         List<String> openApiTags = new ArrayList<>();
         for (String tag : tags) {
             openApiTags.add(tag);
         }
-        return openApiTags;
+        return Optional.of(openApiTags);
     }
 
-    private List<Server> getServersObjectListFromAnnotation(io.swagger.oas.annotations.servers.Server[] servers) {
+    private Optional<List<Server>> getServersObjectListFromAnnotation(io.swagger.oas.annotations.servers.Server[] servers) {
+        if (servers == null) {
+            return Optional.empty();
+        }
         List<Server> serverObjects = new ArrayList<>();
 
         for (io.swagger.oas.annotations.servers.Server server : servers) {
@@ -240,25 +231,34 @@ public class Reader {
 
             serverObject.setVariables(serverVariablesObject);
         }
-        return serverObjects;
+        return Optional.of(serverObjects);
     }
 
-    private ExternalDocumentation getExternalDocumentationObjectFromAnnotation(io.swagger.oas.annotations.ExternalDocumentation externalDocumentation) {
+    private Optional<ExternalDocumentation> getExternalDocumentationObjectFromAnnotation(io.swagger.oas.annotations.ExternalDocumentation externalDocumentation) {
+        if (externalDocumentation == null) {
+            return Optional.empty();
+        }
         ExternalDocumentation external = new ExternalDocumentation();
         external.setDescription(externalDocumentation.description());
         external.setUrl(externalDocumentation.url());
-        return external;
+        return Optional.of(external);
     }
 
-    private RequestBody getRequestBodyObjectFromAnnotation(io.swagger.oas.annotations.parameters.RequestBody requestBody) {
+    private Optional<RequestBody> getRequestBodyObjectFromAnnotation(io.swagger.oas.annotations.parameters.RequestBody requestBody) {
+        if (requestBody == null) {
+            return Optional.empty();
+        }
         RequestBody requestBodyObject = new RequestBody();
         requestBodyObject.setDescription(requestBody.description());
         requestBodyObject.setRequired(requestBody.required());
-        requestBodyObject.setContent(getContents(requestBody.content()));
-        return requestBodyObject;
+        requestBodyObject.setContent(getContents(requestBody.content()).get());
+        return Optional.of(requestBodyObject);
     }
 
-    public ApiResponses getApiResponsesFromResponseAnnotation(final io.swagger.oas.annotations.responses.ApiResponse[] responses) {
+    public Optional<ApiResponses> getApiResponsesFromResponseAnnotation(final io.swagger.oas.annotations.responses.ApiResponse[] responses) {
+        if (responses == null) {
+            return Optional.empty();
+        }
         ApiResponses apiResponses = new ApiResponses();
         for (io.swagger.oas.annotations.responses.ApiResponse response : responses) {
             ApiResponse apiResponse = new ApiResponse();
@@ -267,10 +267,13 @@ public class Reader {
             apiResponse.setDescription(response.description());
             apiResponses.addApiResponse(response.responseCode(), apiResponse);
         }
-        return apiResponses;
+        return Optional.of(apiResponses);
     }
 
-    private Content getContents(io.swagger.oas.annotations.media.Content contents[]) {
+    private Optional<Content> getContents(io.swagger.oas.annotations.media.Content contents[]) {
+        if (contents == null) {
+            return Optional.empty();
+        }
         Content contentObject = new Content();
         for (io.swagger.oas.annotations.media.Content content : contents) {
             ExampleObject examples[] = content.examples();
@@ -279,7 +282,7 @@ public class Reader {
                 contentObject.addMediaType(content.mediaType(), mediaType);
             }
         }
-        return contentObject;
+        return Optional.of(contentObject);
     }
 
     private Content getContent(io.swagger.oas.annotations.media.Content annotationContent) {
@@ -295,17 +298,14 @@ public class Reader {
     }
 
     private MediaType getMediaType(ExampleObject example) {
-        if (example != null) {
-            MediaType mediaType = new MediaType();
-            Example exampleObject = new Example();
-            exampleObject.setDescription(example.name());
-            exampleObject.setSummary(example.summary());
-            exampleObject.setExternalValue(example.externalValue());
-            exampleObject.setValue(example.value());
-            mediaType.addExamples(example.name(), exampleObject);
-            return mediaType;
-        }
-        return null;
+        MediaType mediaType = new MediaType();
+        Example exampleObject = new Example();
+        exampleObject.setDescription(example.name());
+        exampleObject.setSummary(example.summary());
+        exampleObject.setExternalValue(example.externalValue());
+        exampleObject.setValue(example.value());
+        mediaType.addExamples(example.name(), exampleObject);
+        return mediaType;
     }
 
     private Link getLink(io.swagger.oas.annotations.links.Link[] links) {
