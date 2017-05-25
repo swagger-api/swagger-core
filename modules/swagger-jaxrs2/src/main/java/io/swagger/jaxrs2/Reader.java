@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.oas.annotations.media.ExampleObject;
-import io.swagger.oas.models.ExternalDocumentation;
-import io.swagger.oas.models.OpenAPI;
-import io.swagger.oas.models.Operation;
-import io.swagger.oas.models.PathItem;
+import io.swagger.oas.models.*;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.callbacks.Callbacks;
 import io.swagger.oas.models.examples.Example;
@@ -22,6 +19,7 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.responses.ApiResponses;
+import io.swagger.oas.models.security.*;
 import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.servers.ServerVariable;
 import io.swagger.oas.models.servers.ServerVariables;
@@ -29,10 +27,7 @@ import io.swagger.util.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 public class Reader {
@@ -46,6 +41,8 @@ public class Reader {
     public static final String TRACE_METHOD = "trace";
     public static final String HEAD_METHOD = "head";
     public static final String OPTIONS_METHOD = "options";
+    public static final String SCOPE_NAME = "name";
+    public static final String SCOPE_DESCRIPTION = "description";
 
     public Reader(OpenAPI openAPI) {
         this.openAPI = openAPI;
@@ -58,24 +55,110 @@ public class Reader {
                 Collections.<Parameter>emptyList(), Collections.<ApiResponse>emptyList());
     }
 
+    private void read(Class cl) {
+        //TODO Class level Annotations
+        io.swagger.oas.annotations.security.SecurityScheme apiSecurityScheme = ReflectionUtils.getAnnotation(cl, io.swagger.oas.annotations.security.SecurityScheme.class);
+
+        Optional<SecurityScheme> securityScheme = getSecurityScheme(apiSecurityScheme);
+        Components components = new Components();
+        if (securityScheme.isPresent()) {
+            Map<String,SecurityScheme> securitySchemeMap = new HashMap();
+            securitySchemeMap.put(securityScheme.get().getName(), securityScheme.get());
+            components.setSecuritySchemes(securitySchemeMap);
+        }
+        openAPI.setComponents(components);
+
+    }
+
     private Operation parseMethod(Class<?> cls, Method method, AnnotatedMethod annotatedMethod,
                                   List<Parameter> globalParameters, List<ApiResponse> classApiResponses) {
         Operation operation = new Operation();
         io.swagger.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.Operation.class);
         io.swagger.oas.annotations.callbacks.Callback apiCallback = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.callbacks.Callback.class);
+        io.swagger.oas.annotations.security.SecurityRequirement apiSecurity = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.security.SecurityRequirement.class);
 
         if (apiOperation != null) {
-            if (apiCallback != null) {
-                operation.setCallbacks(getCallbacksObjectFromAnnotation(apiCallback));
+            Optional<Callbacks> callbacksObjectFromAnnotation = getCallbacksObjectFromAnnotation(apiCallback);
+            if (callbacksObjectFromAnnotation.isPresent()) {
+                operation.setCallbacks(callbacksObjectFromAnnotation.get());
             }
 
+            Optional<List<SecurityRequirement>> securityRequirementObjectFromAnnotation = getSecurityRequirementObjectFromAnnotation(apiSecurity);
+            if (securityRequirementObjectFromAnnotation.isPresent()) {
+                operation.setSecurity(securityRequirementObjectFromAnnotation.get());
+            }
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
         }
 
         return operation;
     }
 
-    private Callbacks getCallbacksObjectFromAnnotation(io.swagger.oas.annotations.callbacks.Callback apiCallback) {
+    private Optional<List<SecurityRequirement>> getSecurityRequirementObjectFromAnnotation(io.swagger.oas.annotations.security.SecurityRequirement securityRequirement) {
+        if (securityRequirement == null) {
+            return Optional.empty();
+        }
+        List<SecurityRequirement> securityRequirements = new ArrayList<>();
+        SecurityRequirement securityRequirementObject = new SecurityRequirement();
+        StringBuilder scopes = new StringBuilder();
+        for (String scope : securityRequirement.scopes()) {
+            scopes.append(scope);
+        }
+        securityRequirementObject.addList(securityRequirement.name(), scopes.toString());
+        securityRequirements.add(securityRequirementObject);
+
+        return Optional.of(securityRequirements);
+    }
+
+    private Optional<SecurityScheme> getSecurityScheme(io.swagger.oas.annotations.security.SecurityScheme securityScheme) {
+        if (securityScheme == null) {
+            return Optional.empty();
+        }
+        SecurityScheme securitySchemeObject = new SecurityScheme();
+        securitySchemeObject.setBearerFormat(securityScheme.bearerFormat());
+        securitySchemeObject.setDescription(securityScheme.description());
+        securitySchemeObject.setName(securityScheme.name());
+        securitySchemeObject.setFlows(getOAuthFlows(securityScheme.flows()).get());
+        return Optional.of(securitySchemeObject);
+    }
+
+    private Optional<OAuthFlows> getOAuthFlows(io.swagger.oas.annotations.security.OAuthFlows oAuthFlows) {
+        if (oAuthFlows == null) {
+            Optional.empty();
+        }
+        OAuthFlows oAuthFlowsObject = new OAuthFlows();
+        oAuthFlowsObject.setAuthorizationCode(getOAuthFlow(oAuthFlows.authorizationCode()).get());
+        oAuthFlowsObject.setClientCredentials(getOAuthFlow(oAuthFlows.clientCredentials()).get());
+        oAuthFlowsObject.setImplicit(getOAuthFlow(oAuthFlows.implicit()).get());
+        oAuthFlowsObject.setPassword(getOAuthFlow(oAuthFlows.password()).get());
+        return Optional.of(oAuthFlowsObject);
+    }
+
+    private Optional<OAuthFlow> getOAuthFlow(io.swagger.oas.annotations.security.OAuthFlow oAuthFlow) {
+        if (oAuthFlow == null) {
+            return Optional.empty();
+        }
+        OAuthFlow oAuthFlowObject = new OAuthFlow();
+        oAuthFlowObject.setAuthorizationUrl(oAuthFlow.authorizationUrl());
+        oAuthFlowObject.setScopes(getScopes(oAuthFlow.scopes()).get());
+        oAuthFlowObject.setRefreshUrl(oAuthFlow.refreshUrl());
+        oAuthFlowObject.setTokenUrl(oAuthFlow.tokenUrl());
+        return Optional.of(oAuthFlowObject);
+    }
+
+    private Optional<Scopes> getScopes(io.swagger.oas.annotations.security.Scopes scopes) {
+        if (scopes == null) {
+            Optional.empty();
+        }
+        Scopes scopesObject = new Scopes();
+        scopesObject.addString(SCOPE_NAME, scopes.name());
+        scopesObject.addString(SCOPE_DESCRIPTION, scopes.description());
+        return Optional.of(scopesObject);
+    }
+
+    private Optional<Callbacks> getCallbacksObjectFromAnnotation(io.swagger.oas.annotations.callbacks.Callback apiCallback) {
+        if (apiCallback == null) {
+            return Optional.empty();
+        }
         Callbacks callbacksObject = new Callbacks();
         Callback callbackObject = new Callback();
         PathItem pathItemObject = new PathItem();
@@ -119,7 +202,7 @@ public class Reader {
         callbackObject.addPathItem(apiCallback.name(), pathItemObject);
         callbacksObject.addCallback(apiCallback.name(), callbackObject);
 
-        return callbacksObject;
+        return Optional.of(callbacksObject);
     }
 
     private void setOperationObjectFromApiOperationAnnotation(Operation operation, io.swagger.oas.annotations.Operation apiOperation) {
@@ -139,6 +222,7 @@ public class Reader {
         operation.setServers(getServersObjectListFromAnnotation(apiOperation.servers()).get());
         operation.setTags(getTagsFromOperation(apiOperation.tags()).get());
         operation.setParameters(getParametersListFromAnnotation(apiOperation.parameters()).get());
+
     }
 
     public Optional<List<Parameter>> getParametersListFromAnnotation(io.swagger.oas.annotations.Parameter[] parameters) {
@@ -160,16 +244,17 @@ public class Reader {
             parameterObject.setContent(getContents(parameter.content()).get());
 
             io.swagger.oas.annotations.media.Schema schema = parameter.schema();
-            if (schema != null) {
-                parameterObject.setSchema(getSchemaFromAnnotation(schema));
-            }
+            parameterObject.setSchema(getSchemaFromAnnotation(schema).get());
             parametersObject.add(parameterObject);
 
         }
         return Optional.of(parametersObject);
     }
 
-    private Schema getSchemaFromAnnotation(io.swagger.oas.annotations.media.Schema schema) {
+    private Optional<Schema> getSchemaFromAnnotation(io.swagger.oas.annotations.media.Schema schema) {
+        if (schema == null) {
+            Optional.empty();
+        }
         Schema schemaObject = new Schema();
 
         schemaObject.setDescription(schema.description());
@@ -191,7 +276,7 @@ public class Reader {
         schemaObject.setExclusiveMinimum(schema.exclusiveMinimum());
 
         //TODO complete the Schema Object
-        return schemaObject;
+        return Optional.of(schemaObject);
     }
 
     private Optional<List<String>> getTagsFromOperation(String[] tags) {
@@ -256,7 +341,7 @@ public class Reader {
         ApiResponses apiResponses = new ApiResponses();
         for (io.swagger.oas.annotations.responses.ApiResponse response : responses) {
             ApiResponse apiResponse = new ApiResponse();
-            Content content = getContent(response.content());
+            Content content = getContent(response.content()).get();
             apiResponse.content(content);
             apiResponse.setDescription(response.description());
             apiResponses.addApiResponse(response.responseCode(), apiResponse);
@@ -279,7 +364,10 @@ public class Reader {
         return Optional.of(contentObject);
     }
 
-    private Content getContent(io.swagger.oas.annotations.media.Content annotationContent) {
+    private Optional<Content> getContent(io.swagger.oas.annotations.media.Content annotationContent) {
+        if (annotationContent == null) {
+            Optional.empty();
+        }
         Content content = new Content();
         if (annotationContent != null) {
             ExampleObject examples[] = annotationContent.examples();
@@ -288,7 +376,7 @@ public class Reader {
                 content.addMediaType(annotationContent.mediaType(), mediaType);
             }
         }
-        return content;
+        return Optional.of(content);
     }
 
     private MediaType getMediaType(ExampleObject example) {

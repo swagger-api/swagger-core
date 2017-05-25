@@ -14,6 +14,7 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.responses.ApiResponses;
+import io.swagger.oas.models.security.SecurityRequirement;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -31,7 +32,8 @@ public class ReaderTest {
     public static final String EXAMPLE_TAG = "Example tag";
     public static final String OPERATION_SUMMARY = "Operation Summary";
     public static final String OPERATION_DESCRIPTION = "Operation Description";
-    public static final String CALLBACK_OPERATION_DESCRIPTION = "payload data will be sent";
+    public static final String CALLBACK_POST_OPERATION_DESCRIPTION = "payload data will be sent";
+    public static final String CALLBACK_GET_OPERATION_DESCRIPTION = "payload data will be received";
     public static final String APPLICATION_JSON = "application/json";
     public static final String RESPONSE_CODE_200 = "200";
     public static final String RESPONSE_CODE_DEFAULT = "default";
@@ -47,11 +49,16 @@ public class ReaderTest {
     public static final String SCHEMA_TYPE = "string";
     public static final String SCHEMA_FORMAT = "uuid";
     public static final String SCHEMA_DESCRIPTION = "the generated UUID";
+    public static final String CALLBACK_SUBSCRIPTION_ID = "subscription";
+    public static final String SECURITY_KEY = "security_key";
+    public static final String SCOPE_VALUE = "write:petsread:pets";
+
     public static final int RESPONSES_NUMBER = 2;
     public static final int TAG_NUMBER = 1;
     public static final int CALLBACK_NUMBER = 1;
     public static final int PARAMETER_NUMBER = 1;
-    public static final String CALLBACK_SUBSCRIPTION_ID = "subscription";
+    public static final int SECURITY_REQUIREMENT_NUMBER = 1;
+    public static final int SCOPE_NUMBER = 1;
 
     private Reader reader;
 
@@ -141,7 +148,6 @@ public class ReaderTest {
     @Test(description = "External Docs")
     public void testGetExternalDocs() {
         Method[] methods = ExternalDocsReference.class.getMethods();
-
         Operation externalDocsOperation = reader.parseMethod(methods[0]);
         assertNotNull(externalDocsOperation);
         ExternalDocumentation externalDocs = externalDocsOperation.getExternalDocs();
@@ -176,6 +182,21 @@ public class ReaderTest {
         assertEquals(Boolean.TRUE, schema.getReadOnly());
     }
 
+    @Test(description = "Security Requirement")
+    public void testSecurityRequirement() {
+        Method[] methods = SecurityResource.class.getMethods();
+
+        Operation securityOperation = reader.parseMethod(methods[0]);
+        assertNotNull(securityOperation);
+        List<SecurityRequirement> securityRequirements = securityOperation.getSecurity();
+        assertNotNull(securityRequirements);
+        assertEquals(SECURITY_REQUIREMENT_NUMBER, securityRequirements.size());
+        List<String> scopes = securityRequirements.get(0).get(SECURITY_KEY);
+        assertNotNull(scopes);
+        assertEquals(SCOPE_NUMBER, scopes.size());
+        assertEquals(SCOPE_VALUE, scopes.get(0));
+    }
+
 
     @Test(description = "Callbacks")
     public void testGetCallbacks() {
@@ -190,11 +211,16 @@ public class ReaderTest {
         assertNotNull(pathItem);
         Operation postOperation = pathItem.getPost();
         assertNotNull(postOperation);
-        assertEquals(CALLBACK_OPERATION_DESCRIPTION, postOperation.getDescription());
+        assertEquals(CALLBACK_POST_OPERATION_DESCRIPTION, postOperation.getDescription());
 
         List<Parameter> parameters = postOperation.getParameters();
         assertNotNull(parameters);
         assertEquals(CALLBACK_NUMBER, parameters.size());
+
+        Operation getOperation = pathItem.getGet();
+        assertNotNull(getOperation);
+        assertEquals(CALLBACK_GET_OPERATION_DESCRIPTION, getOperation.getDescription());
+
     }
 
     private Boolean isValidRestPath(Method method) {
