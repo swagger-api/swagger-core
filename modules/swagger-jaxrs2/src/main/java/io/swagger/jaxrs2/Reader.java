@@ -363,8 +363,10 @@ public class Reader {
         for (io.swagger.oas.annotations.media.Content content : contents) {
             ExampleObject examples[] = content.examples();
             for (ExampleObject example : examples) {
-                MediaType mediaType = getMediaType(example);
-                contentObject.addMediaType(content.mediaType(), mediaType);
+                Optional<MediaType> mediaType = getMediaType(example);
+                if (mediaType.isPresent()) {
+                    contentObject.addMediaType(content.mediaType(), mediaType.get());
+                }
             }
         }
         return Optional.of(contentObject);
@@ -378,14 +380,19 @@ public class Reader {
         if (annotationContent != null) {
             ExampleObject examples[] = annotationContent.examples();
             for (ExampleObject example : examples) {
-                MediaType mediaType = getMediaType(example);
-                content.addMediaType(annotationContent.mediaType(), mediaType);
+                Optional<MediaType> mediaType = getMediaType(example);
+                if (mediaType.isPresent()) {
+                    content.addMediaType(annotationContent.mediaType(), mediaType.get());
+                }
             }
         }
         return Optional.of(content);
     }
 
-    private MediaType getMediaType(ExampleObject example) {
+    private Optional<MediaType> getMediaType(ExampleObject example) {
+        if (example == null) {
+            return Optional.empty();
+        }
         MediaType mediaType = new MediaType();
         Example exampleObject = new Example();
         exampleObject.setDescription(example.name());
@@ -393,7 +400,7 @@ public class Reader {
         exampleObject.setExternalValue(example.externalValue());
         exampleObject.setValue(example.value());
         mediaType.addExamples(example.name(), exampleObject);
-        return mediaType;
+        return Optional.of(mediaType);
     }
 
     private Optional<Link> getLink(io.swagger.oas.annotations.links.Link link) {
@@ -401,16 +408,19 @@ public class Reader {
             return Optional.empty();
         }
         Link linkObject = new Link();
-        linkObject.setParameters(getLinkParameters(link.parameters()));
+        linkObject.setParameters(getLinkParameters(link.parameters()).get());
         linkObject.setDescription(link.description());
         linkObject.setOperationId(link.operationId());
         linkObject.setOperationRef(link.operationRef());
         return Optional.of(linkObject);
     }
 
-    private LinkParameters getLinkParameters(io.swagger.oas.annotations.links.LinkParameters linkParameters) {
+    private Optional<LinkParameters> getLinkParameters(io.swagger.oas.annotations.links.LinkParameters linkParameters) {
+        if (linkParameters == null) {
+            return Optional.empty();
+        }
         LinkParameters linkParametersObject = new LinkParameters();
         linkParametersObject.addExtension(linkParameters.name(), linkParameters.expression());
-        return linkParametersObject;
+        return Optional.of(linkParametersObject);
     }
 }
