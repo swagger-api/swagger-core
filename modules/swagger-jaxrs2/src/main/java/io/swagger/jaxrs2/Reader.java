@@ -62,7 +62,7 @@ public class Reader {
         Optional<SecurityScheme> securityScheme = getSecurityScheme(apiSecurityScheme);
         Components components = new Components();
         if (securityScheme.isPresent()) {
-            Map<String,SecurityScheme> securitySchemeMap = new HashMap();
+            Map<String, SecurityScheme> securitySchemeMap = new HashMap();
             securitySchemeMap.put(securityScheme.get().getName(), securityScheme.get());
             components.setSecuritySchemes(securitySchemeMap);
         }
@@ -76,6 +76,7 @@ public class Reader {
         io.swagger.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.Operation.class);
         io.swagger.oas.annotations.callbacks.Callback apiCallback = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.callbacks.Callback.class);
         io.swagger.oas.annotations.security.SecurityRequirement apiSecurity = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.security.SecurityRequirement.class);
+        io.swagger.oas.annotations.links.Link apiLinks = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.links.Link.class);
 
         if (apiOperation != null) {
             Optional<Callbacks> callbacksObjectFromAnnotation = getCallbacksObjectFromAnnotation(apiCallback);
@@ -87,6 +88,7 @@ public class Reader {
             if (securityRequirementObjectFromAnnotation.isPresent()) {
                 operation.setSecurity(securityRequirementObjectFromAnnotation.get());
             }
+            operation.setResponses(getApiResponsesFromResponseAnnotation(apiOperation.responses(), apiLinks).get());
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
         }
 
@@ -216,7 +218,7 @@ public class Reader {
         //Set Deprecated
         operation.setDeprecated(apiOperation.deprecated());
 
-        operation.setResponses(getApiResponsesFromResponseAnnotation(apiOperation.responses()).get());
+        //operation.setResponses(getApiResponsesFromResponseAnnotation(apiOperation.responses()).get());
         operation.requestBody(getRequestBodyObjectFromAnnotation(apiOperation.requestBody()).get());
         operation.setExternalDocs(getExternalDocumentationObjectFromAnnotation(apiOperation.externalDocs()).get());
         operation.setServers(getServersObjectListFromAnnotation(apiOperation.servers()).get());
@@ -334,19 +336,23 @@ public class Reader {
         return Optional.of(requestBodyObject);
     }
 
-    public Optional<ApiResponses> getApiResponsesFromResponseAnnotation(final io.swagger.oas.annotations.responses.ApiResponse[] responses) {
+    public Optional<ApiResponses> getApiResponsesFromResponseAnnotation(final io.swagger.oas.annotations.responses.ApiResponse[] responses, io.swagger.oas.annotations.links.Link links) {
         if (responses == null) {
             return Optional.empty();
         }
-        ApiResponses apiResponses = new ApiResponses();
+        ApiResponses apiResponsesObject = new ApiResponses();
         for (io.swagger.oas.annotations.responses.ApiResponse response : responses) {
-            ApiResponse apiResponse = new ApiResponse();
+            ApiResponse apiResponseObject = new ApiResponse();
             Content content = getContent(response.content()).get();
-            apiResponse.content(content);
-            apiResponse.setDescription(response.description());
-            apiResponses.addApiResponse(response.responseCode(), apiResponse);
+            apiResponseObject.content(content);
+            apiResponseObject.setDescription(response.description());
+            Optional<Link> link = getLink(links);
+            if (link.isPresent()) {
+                apiResponseObject.setLinks(link.get());
+            }
+            apiResponsesObject.addApiResponse(response.responseCode(), apiResponseObject);
         }
-        return Optional.of(apiResponses);
+        return Optional.of(apiResponsesObject);
     }
 
     private Optional<Content> getContents(io.swagger.oas.annotations.media.Content contents[]) {
@@ -390,15 +396,16 @@ public class Reader {
         return mediaType;
     }
 
-    private Link getLink(io.swagger.oas.annotations.links.Link[] links) {
-        Link linkObject = new Link();
-        for (io.swagger.oas.annotations.links.Link link : links) {
-            linkObject.setParameters(getLinkParameters(link.parameters()));
-            linkObject.setDescription(link.description());
-            linkObject.setOperationId(link.operationId());
-            linkObject.setOperationRef(link.operationRef());
+    private Optional<Link> getLink(io.swagger.oas.annotations.links.Link link) {
+        if (link == null) {
+            return Optional.empty();
         }
-        return linkObject;
+        Link linkObject = new Link();
+        linkObject.setParameters(getLinkParameters(link.parameters()));
+        linkObject.setDescription(link.description());
+        linkObject.setOperationId(link.operationId());
+        linkObject.setOperationRef(link.operationRef());
+        return Optional.of(linkObject);
     }
 
     private LinkParameters getLinkParameters(io.swagger.oas.annotations.links.LinkParameters linkParameters) {

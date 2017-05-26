@@ -8,6 +8,8 @@ import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.callbacks.Callbacks;
+import io.swagger.oas.models.links.Link;
+import io.swagger.oas.models.links.LinkParameters;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
@@ -52,6 +54,12 @@ public class ReaderTest {
     public static final String CALLBACK_SUBSCRIPTION_ID = "subscription";
     public static final String SECURITY_KEY = "security_key";
     public static final String SCOPE_VALUE = "write:petsread:pets";
+    public static final String LINK_DESCRIPTION = "Link Description";
+    public static final String LINK_NAME = "Link Name";
+    public static final String LINK_OPERATION_REF = "Operation Ref";
+    public static final String LINK_OPERATION_ID = "Operation Id";
+    public static final String LINK_PARAMETER_NAME = "Link Parameter";
+    public static final String LINK_EXPRESSION = "Link Expression";
 
     public static final int RESPONSES_NUMBER = 2;
     public static final int TAG_NUMBER = 1;
@@ -110,12 +118,22 @@ public class ReaderTest {
 
         Operation responseOperation = reader.parseMethod(methods[0]);
         assertNotNull(responseOperation);
+
         ApiResponses responses = responseOperation.getResponses();
         assertEquals(RESPONSES_NUMBER, responses.size());
 
         ApiResponse apiResponse = responses.get(RESPONSE_CODE_200);
         assertNotNull(apiResponse);
         assertEquals(RESPONSE_DESCRIPTION, apiResponse.getDescription());
+
+        Link links = apiResponse.getLinks();
+        assertNotNull(links);
+        assertEquals(LINK_DESCRIPTION, links.getDescription());
+        assertEquals(LINK_OPERATION_ID, links.getOperationId());
+        assertEquals(LINK_OPERATION_REF, links.getOperationRef());
+
+        LinkParameters linkParameters = links.getParameters();
+        assertNotNull(linkParameters);
 
         Content content = apiResponse.getContent();
         assertNotNull(content);
@@ -220,6 +238,10 @@ public class ReaderTest {
         Operation getOperation = pathItem.getGet();
         assertNotNull(getOperation);
         assertEquals(CALLBACK_GET_OPERATION_DESCRIPTION, getOperation.getDescription());
+
+        Operation putOperation = pathItem.getPut();
+        assertNotNull(putOperation);
+        assertEquals(CALLBACK_POST_OPERATION_DESCRIPTION, putOperation.getDescription());
 
     }
 

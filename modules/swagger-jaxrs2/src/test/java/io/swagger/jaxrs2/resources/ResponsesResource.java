@@ -2,6 +2,8 @@ package io.swagger.jaxrs2.resources;
 
 
 import io.swagger.oas.annotations.Operation;
+import io.swagger.oas.annotations.links.Link;
+import io.swagger.oas.annotations.links.LinkParameters;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
@@ -39,6 +41,16 @@ public class ResponsesResource {
                             )
                     )
             }
+    )
+    @Link(description = "Link Description",
+            name = "Link Name",
+            operationId = "Operation Id",
+            operationRef = "Operation Ref",
+            parameters =
+            @LinkParameters(
+                    name = "Link Parameter",
+                    expression = "Link Expression"
+            )
     )
     public void getResponses() {
     }
