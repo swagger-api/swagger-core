@@ -203,7 +203,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
     }
 
     Property propertyFromNode(JsonNode node) {
-        final String type = getString(node, PropertyBuilder.PropertyId.TYPE);
+        final String type = getType(node);
         final String title = getString(node, PropertyBuilder.PropertyId.TITLE);
         final String format = getString(node, PropertyBuilder.PropertyId.FORMAT);
 
@@ -310,5 +310,81 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         output.setDescription(description);
 
         return output;
+    }
+
+    /**
+     * Get the type of this node.
+     *
+     * As per http://swagger.io/specification/#schemaObject and
+     * http://json-schema.org/latest/json-schema-validation.html, 5.5.2.1,
+     * a type may be either
+     *   1. a string, in which case it names a primitive type, or
+     *   2. an array, in which case each element names a primitive type.
+     *
+     * In case 2, the object matches the schema if it matches *any* of the
+     * named types.
+     *
+     * To handle this from the point of view of generating bindings, we treat
+     * complex types as follows:
+     *
+     * 1. ["sometype", "null"] -> "sometype".
+     * 2. ["sometype", "othertype"] -> "object".
+     * 3. ["sometype", "sometype"] -> "sometype" with a warning issued.
+     * 4. [] -> error.
+     * 5. [42] -> error.
+     *
+     * Note that 1 is assuming that the client language does not care about
+     * nullability.
+     *
+     * Note that 2 is assuming that "object" is a good base type, and the
+     * client bindings do not want to handle this as a union type.
+     *
+     * Both these assumptions could be tightened up in the future.
+     *
+     * @return The name of the chosen type, or null if the given node does
+     * not have a type or it is invalid.
+     */
+    private String getType(JsonNode node) {
+        final JsonNode typeNode = getDetailNode(node, PropertyBuilder.PropertyId.TYPE);
+        if (typeNode == null) {
+            return null;
+        }
+        else if (typeNode.isTextual()) {
+            return typeNode.asText();
+        }
+        else if (typeNode.isArray()) {
+            ArrayNode an = (ArrayNode) typeNode;
+            String result = null;
+            for (JsonNode child : an) {
+                if (child instanceof TextNode) {
+                    String typeName = child.asText();
+                    if ("null".equals(typeName)) {
+                        // Silently ignore.
+                    }
+                    else if (result == null) {
+                        result = typeName;
+                    }
+                    else if (result.equals(typeName)) {
+                        LOGGER.warn("Ignoring duplicate type name " + typeName + " in property type " + typeNode);
+                    }
+                    else {
+                        return ObjectProperty.TYPE;
+                    }
+                }
+                else {
+                    LOGGER.warn("Ignoring invalid property type " + typeNode);
+                    return null;
+                }
+            }
+            if (result == null) {
+                LOGGER.warn("Ignoring invalid property type " + typeNode);
+                return null;
+            }
+            return result;
+        }
+        else {
+            LOGGER.warn("Ignoring invalid property type " + typeNode);
+            return null;
+        }
     }
 }
