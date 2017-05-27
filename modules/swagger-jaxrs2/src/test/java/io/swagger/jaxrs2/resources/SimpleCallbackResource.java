@@ -5,6 +5,7 @@ import io.swagger.oas.annotations.Parameter;
 import io.swagger.oas.annotations.callbacks.Callback;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
+import org.testng.xml.dom.Tag;
 
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -14,6 +15,7 @@ import javax.ws.rs.QueryParam;
 /**
  * Created by RafaelLopez on 5/20/17.
  */
+
 public class SimpleCallbackResource {
     @Path("/test")
     @POST

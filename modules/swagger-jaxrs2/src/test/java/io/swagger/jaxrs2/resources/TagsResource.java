@@ -13,7 +13,7 @@ public class TagsResource {
 
     @GET
     @Path("/")
-    @Operation(tags = "Example tag")
+    @Operation(tags = {"Example Tag", "Second Tag"})
     public Response getTags() {
         return Response.ok().entity("ok").build();
     }

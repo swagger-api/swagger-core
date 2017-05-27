@@ -21,6 +21,7 @@ import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.servers.ServerVariable;
 import io.swagger.oas.models.servers.ServerVariables;
+import io.swagger.oas.models.tags.Tag;
 import io.swagger.util.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,9 +30,10 @@ import java.util.*;
 
 
 public class Reader {
-    private final SecurityParser securityParser = new SecurityParser();
+    private SecurityParser securityParser;
     private OpenAPI openAPI;
     private Paths paths;
+    private Set<Tag> openApiTags;
 
     private static final String GET_METHOD = "get";
     private static final String POST_METHOD = "post";
@@ -45,12 +47,22 @@ public class Reader {
     public Reader(OpenAPI openAPI) {
         this.openAPI = openAPI;
         paths = new Paths();
+        securityParser = new SecurityParser();
+        openApiTags = new LinkedHashSet<>();
+    }
+
+    public OpenAPI getOpenAPI() {
+        return openAPI;
     }
 
     private OpenAPI read(Class cls) {
         //TODO Class level Annotations
         io.swagger.oas.annotations.security.SecurityScheme apiSecurityScheme = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.security.SecurityScheme.class);
         io.swagger.oas.annotations.servers.Server server = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.servers.Server.class);
+        io.swagger.oas.annotations.ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.ExternalDocumentation.class);
+
+        boolean hasPathAnnotation = (ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class) != null);
+
 
         Optional<SecurityScheme> securityScheme = securityParser.getSecurityScheme(apiSecurityScheme);
         Components components = new Components();
@@ -61,14 +73,19 @@ public class Reader {
         }
         openAPI.setComponents(components);
 
-        Optional<Server> serverOptional = getServerObjectFromAnnotation(server);
+        Optional<Server> serverOptional = getServer(server);
 
         Method methods[] = cls.getMethods();
         for (Method method : methods) {
             Operation operation = parseMethod(cls, method);
-
         }
 
+        ArrayList<Tag> tagList = new ArrayList<>();
+        tagList.addAll(openApiTags);
+        openAPI.setTags(tagList);
+
+
+        openAPI.setExternalDocs(getExternalDocumentation(apiExternalDocs).get());
         return openAPI;
     }
 
@@ -85,22 +102,22 @@ public class Reader {
         io.swagger.oas.annotations.links.Link apiLinks = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.links.Link.class);
 
         if (apiOperation != null) {
-            Optional<Callbacks> callbacksObjectFromAnnotation = getCallbacksObjectFromAnnotation(apiCallback);
+            Optional<Callbacks> callbacksObjectFromAnnotation = getCallbacks(apiCallback);
             if (callbacksObjectFromAnnotation.isPresent()) {
                 operation.setCallbacks(callbacksObjectFromAnnotation.get());
             }
 
-            Optional<List<SecurityRequirement>> securityRequirementObjectFromAnnotation = securityParser.getSecurityRequirementObjectFromAnnotation(apiSecurity);
+            Optional<List<SecurityRequirement>> securityRequirementObjectFromAnnotation = securityParser.getSecurityRequirement(apiSecurity);
             if (securityRequirementObjectFromAnnotation.isPresent()) {
                 operation.setSecurity(securityRequirementObjectFromAnnotation.get());
             }
-            operation.setResponses(getApiResponsesFromResponseAnnotation(apiOperation.responses(), apiLinks).get());
+            operation.setResponses(getApiResponses(apiOperation.responses(), apiLinks).get());
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
         }
         return operation;
     }
 
-    private Optional<Callbacks> getCallbacksObjectFromAnnotation(io.swagger.oas.annotations.callbacks.Callback apiCallback) {
+    private Optional<Callbacks> getCallbacks(io.swagger.oas.annotations.callbacks.Callback apiCallback) {
         if (apiCallback == null) {
             return Optional.empty();
         }
@@ -155,17 +172,18 @@ public class Reader {
 
     private void setOperationObjectFromApiOperationAnnotation(Operation operation, io.swagger.oas.annotations.Operation apiOperation) {
         operation.setTags(getStringListFromStringArray(apiOperation.tags()).get());
+        openApiTags.addAll(getTags(apiOperation.tags()).get());
         operation.setSummary(apiOperation.summary());
         operation.setDescription(apiOperation.description());
-        operation.setExternalDocs(getExternalDocumentationObjectFromAnnotation(apiOperation.externalDocs()).get());
+        operation.setExternalDocs(getExternalDocumentation(apiOperation.externalDocs()).get());
         operation.setOperationId(apiOperation.operationId());
-        operation.setParameters(getParametersListFromAnnotation(apiOperation.parameters()).get());
-        operation.setRequestBody(getRequestBodyObjectFromAnnotation(apiOperation.requestBody()).get());
+        operation.setParameters(getParametersList(apiOperation.parameters()).get());
+        operation.setRequestBody(getRequestBody(apiOperation.requestBody()).get());
         operation.setDeprecated(apiOperation.deprecated());
-        operation.setServers(getServersObjectListFromAnnotation(apiOperation.servers()).get());
+        operation.setServers(getServers(apiOperation.servers()).get());
     }
 
-    public Optional<List<Parameter>> getParametersListFromAnnotation(io.swagger.oas.annotations.Parameter[] parameters) {
+    public Optional<List<Parameter>> getParametersList(io.swagger.oas.annotations.Parameter[] parameters) {
         if (parameters == null) {
             return Optional.empty();
         }
@@ -185,14 +203,14 @@ public class Reader {
 
 
             io.swagger.oas.annotations.media.Schema schema = parameter.schema();
-            parameterObject.setSchema(getSchemaFromAnnotation(schema).get());
+            parameterObject.setSchema(getSchema(schema).get());
             parametersObject.add(parameterObject);
 
         }
         return Optional.of(parametersObject);
     }
 
-    private Optional<Schema> getSchemaFromAnnotation(io.swagger.oas.annotations.media.Schema schema) {
+    private Optional<Schema> getSchema(io.swagger.oas.annotations.media.Schema schema) {
         if (schema == null) {
             return Optional.empty();
         }
@@ -206,7 +224,7 @@ public class Reader {
         schemaObject.setExample(schema.example());
         schemaObject.setExclusiveMaximum(schema.exclusiveMaximum());
         schemaObject.setExclusiveMinimum(schema.exclusiveMinimum());
-        schemaObject.setExternalDocs(getExternalDocumentationObjectFromAnnotation(schema.externalDocs()).get());
+        schemaObject.setExternalDocs(getExternalDocumentation(schema.externalDocs()).get());
         schemaObject.setFormat(schema.format());
         schemaObject.setPattern(schema.pattern());
         schemaObject.setMaxLength(schema.maxLength());
@@ -220,6 +238,20 @@ public class Reader {
         return Optional.of(schemaObject);
     }
 
+    private Optional<Set<Tag>> getTags(String[] tags) {
+        if (tags == null) {
+            return Optional.empty();
+        }
+        Set<Tag> tagsList = new LinkedHashSet<>();
+        for (String tag : tags) {
+            Tag tagObject = new Tag();
+            tagObject.setDescription(tag);
+            tagObject.setName(tag);
+            tagsList.add(tagObject);
+        }
+        return Optional.of(tagsList);
+    }
+
     private Optional<List<String>> getStringListFromStringArray(String[] array) {
         if (array == null) {
             return Optional.empty();
@@ -231,19 +263,19 @@ public class Reader {
         return Optional.of(list);
     }
 
-    private Optional<List<Server>> getServersObjectListFromAnnotation(io.swagger.oas.annotations.servers.Server[] servers) {
+    private Optional<List<Server>> getServers(io.swagger.oas.annotations.servers.Server[] servers) {
         if (servers == null) {
             return Optional.empty();
         }
         List<Server> serverObjects = new ArrayList<>();
 
         for (io.swagger.oas.annotations.servers.Server server : servers) {
-            serverObjects.add(getServerObjectFromAnnotation(server).get());
+            serverObjects.add(getServer(server).get());
         }
         return Optional.of(serverObjects);
     }
 
-    private Optional<Server> getServerObjectFromAnnotation(io.swagger.oas.annotations.servers.Server server) {
+    private Optional<Server> getServer(io.swagger.oas.annotations.servers.Server server) {
         if (server == null) {
             return Optional.empty();
         }
@@ -263,7 +295,7 @@ public class Reader {
         return Optional.of(serverObject);
     }
 
-    private Optional<ExternalDocumentation> getExternalDocumentationObjectFromAnnotation(io.swagger.oas.annotations.ExternalDocumentation externalDocumentation) {
+    private Optional<ExternalDocumentation> getExternalDocumentation(io.swagger.oas.annotations.ExternalDocumentation externalDocumentation) {
         if (externalDocumentation == null) {
             return Optional.empty();
         }
@@ -273,7 +305,7 @@ public class Reader {
         return Optional.of(external);
     }
 
-    private Optional<RequestBody> getRequestBodyObjectFromAnnotation(io.swagger.oas.annotations.parameters.RequestBody requestBody) {
+    private Optional<RequestBody> getRequestBody(io.swagger.oas.annotations.parameters.RequestBody requestBody) {
         if (requestBody == null) {
             return Optional.empty();
         }
@@ -284,7 +316,7 @@ public class Reader {
         return Optional.of(requestBodyObject);
     }
 
-    public Optional<ApiResponses> getApiResponsesFromResponseAnnotation(final io.swagger.oas.annotations.responses.ApiResponse[] responses, io.swagger.oas.annotations.links.Link links) {
+    public Optional<ApiResponses> getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses, io.swagger.oas.annotations.links.Link links) {
         if (responses == null) {
             return Optional.empty();
         }

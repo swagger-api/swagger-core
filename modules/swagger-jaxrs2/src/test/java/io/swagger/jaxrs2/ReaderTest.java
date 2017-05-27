@@ -31,7 +31,8 @@ import static org.testng.Assert.assertEquals;
 
 
 public class ReaderTest {
-    private static final String EXAMPLE_TAG = "Example tag";
+    private static final String EXAMPLE_TAG = "Example Tag";
+    private static final String SECOND_TAG = "Second Tag";
     private static final String OPERATION_SUMMARY = "Operation Summary";
     private static final String OPERATION_DESCRIPTION = "Operation Description";
     private static final String CALLBACK_POST_OPERATION_DESCRIPTION = "payload data will be sent";
@@ -62,7 +63,7 @@ public class ReaderTest {
     private static final String LINK_EXPRESSION = "Link Expression";
 
     private static final int RESPONSES_NUMBER = 2;
-    private static final int TAG_NUMBER = 1;
+    private static final int TAG_NUMBER = 2;
     private static final int CALLBACK_NUMBER = 1;
     private static final int PARAMETER_NUMBER = 1;
     private static final int SECURITY_REQUIREMENT_NUMBER = 1;
@@ -110,6 +111,7 @@ public class ReaderTest {
         assertNotNull(operation);
         assertEquals(TAG_NUMBER, operation.getTags().size());
         assertEquals(EXAMPLE_TAG, operation.getTags().get(0));
+        assertEquals(SECOND_TAG, operation.getTags().get(1));
     }
 
     @Test(description = "Responses")

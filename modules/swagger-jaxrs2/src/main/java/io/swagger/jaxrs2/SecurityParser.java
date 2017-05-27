@@ -13,7 +13,7 @@ public class SecurityParser {
     public static final String SCOPE_NAME = "name";
     public static final String SCOPE_DESCRIPTION = "description";
 
-    public Optional<List<SecurityRequirement>> getSecurityRequirementObjectFromAnnotation(io.swagger.oas.annotations.security.SecurityRequirement securityRequirement) {
+    public Optional<List<SecurityRequirement>> getSecurityRequirement(io.swagger.oas.annotations.security.SecurityRequirement securityRequirement) {
         if (securityRequirement == null) {
             return Optional.empty();
         }
