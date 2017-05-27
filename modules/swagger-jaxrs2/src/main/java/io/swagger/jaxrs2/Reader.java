@@ -1,9 +1,6 @@
 package io.swagger.jaxrs2;
 
-import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.*;
@@ -34,6 +31,7 @@ import java.util.*;
 public class Reader {
     private final SecurityParser securityParser = new SecurityParser();
     private OpenAPI openAPI;
+    private Paths paths;
 
     private static final String GET_METHOD = "get";
     private static final String POST_METHOD = "post";
@@ -46,18 +44,13 @@ public class Reader {
 
     public Reader(OpenAPI openAPI) {
         this.openAPI = openAPI;
+        paths = new Paths();
     }
 
-    public Operation parseMethod(Method method) {
-        JavaType classType = TypeFactory.defaultInstance().constructType(method.getDeclaringClass());
-        BeanDescription bd = new ObjectMapper().getSerializationConfig().introspect(classType);
-        return parseMethod(classType.getClass(), method, bd.findMethod(method.getName(), method.getParameterTypes()),
-                Collections.<Parameter>emptyList(), Collections.<ApiResponse>emptyList());
-    }
-
-    private void read(Class cl) {
+    private OpenAPI read(Class cls) {
         //TODO Class level Annotations
-        io.swagger.oas.annotations.security.SecurityScheme apiSecurityScheme = ReflectionUtils.getAnnotation(cl, io.swagger.oas.annotations.security.SecurityScheme.class);
+        io.swagger.oas.annotations.security.SecurityScheme apiSecurityScheme = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.security.SecurityScheme.class);
+        io.swagger.oas.annotations.servers.Server server = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.servers.Server.class);
 
         Optional<SecurityScheme> securityScheme = securityParser.getSecurityScheme(apiSecurityScheme);
         Components components = new Components();
@@ -68,10 +61,23 @@ public class Reader {
         }
         openAPI.setComponents(components);
 
+        Optional<Server> serverOptional = getServerObjectFromAnnotation(server);
+
+        Method methods[] = cls.getMethods();
+        for (Method method : methods) {
+            Operation operation = parseMethod(cls, method);
+
+        }
+
+        return openAPI;
     }
 
-    private Operation parseMethod(Class<?> cls, Method method, AnnotatedMethod annotatedMethod,
-                                  List<Parameter> globalParameters, List<ApiResponse> classApiResponses) {
+    public Operation parseMethod(Method method) {
+        JavaType classType = TypeFactory.defaultInstance().constructType(method.getDeclaringClass());
+        return parseMethod(classType.getClass(), method);
+    }
+
+    private Operation parseMethod(Class<?> cls, Method method) {
         Operation operation = new Operation();
         io.swagger.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.Operation.class);
         io.swagger.oas.annotations.callbacks.Callback apiCallback = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.callbacks.Callback.class);
@@ -91,10 +97,8 @@ public class Reader {
             operation.setResponses(getApiResponsesFromResponseAnnotation(apiOperation.responses(), apiLinks).get());
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
         }
-
         return operation;
     }
-
 
     private Optional<Callbacks> getCallbacksObjectFromAnnotation(io.swagger.oas.annotations.callbacks.Callback apiCallback) {
         if (apiCallback == null) {
@@ -150,7 +154,7 @@ public class Reader {
     }
 
     private void setOperationObjectFromApiOperationAnnotation(Operation operation, io.swagger.oas.annotations.Operation apiOperation) {
-        operation.setTags(getTagsFromOperation(apiOperation.tags()).get());
+        operation.setTags(getStringListFromStringArray(apiOperation.tags()).get());
         operation.setSummary(apiOperation.summary());
         operation.setDescription(apiOperation.description());
         operation.setExternalDocs(getExternalDocumentationObjectFromAnnotation(apiOperation.externalDocs()).get());
@@ -178,6 +182,7 @@ public class Reader {
             parameterObject.setExplode(parameter.explode());
             parameterObject.setIn(parameter.in());
             parameterObject.setContent(getContents(parameter.content()).get());
+
 
             io.swagger.oas.annotations.media.Schema schema = parameter.schema();
             parameterObject.setSchema(getSchemaFromAnnotation(schema).get());
@@ -216,7 +221,7 @@ public class Reader {
     }
 
     private Optional<List<String>> getStringListFromStringArray(String[] array) {
-        if(array == null){
+        if (array == null) {
             return Optional.empty();
         }
         List<String> list = new ArrayList<>();
@@ -226,17 +231,6 @@ public class Reader {
         return Optional.of(list);
     }
 
-    private Optional<List<String>> getTagsFromOperation(String[] tags) {
-        if (tags == null) {
-            Optional.empty();
-        }
-        List<String> openApiTags = new ArrayList<>();
-        for (String tag : tags) {
-            openApiTags.add(tag);
-        }
-        return Optional.of(openApiTags);
-    }
-
     private Optional<List<Server>> getServersObjectListFromAnnotation(io.swagger.oas.annotations.servers.Server[] servers) {
         if (servers == null) {
             return Optional.empty();
@@ -244,20 +238,29 @@ public class Reader {
         List<Server> serverObjects = new ArrayList<>();
 
         for (io.swagger.oas.annotations.servers.Server server : servers) {
-            Server serverObject = new Server();
-            serverObject.setUrl(server.url());
-            serverObject.setDescription(server.description());
-            io.swagger.oas.annotations.servers.ServerVariable[] serverVariables = server.variables();
-            ServerVariables serverVariablesObject = new ServerVariables();
-            for (io.swagger.oas.annotations.servers.ServerVariable serverVariable : serverVariables) {
-                ServerVariable serverVariableObject = new ServerVariable();
-                serverVariableObject.setDescription(serverVariable.description());
-                serverVariablesObject.addServerVariable(serverVariableObject.getDescription(), serverVariableObject);
-            }
-
-            serverObject.setVariables(serverVariablesObject);
+            serverObjects.add(getServerObjectFromAnnotation(server).get());
         }
         return Optional.of(serverObjects);
+    }
+
+    private Optional<Server> getServerObjectFromAnnotation(io.swagger.oas.annotations.servers.Server server) {
+        if (server == null) {
+            return Optional.empty();
+        }
+
+        Server serverObject = new Server();
+        serverObject.setUrl(server.url());
+        serverObject.setDescription(server.description());
+        io.swagger.oas.annotations.servers.ServerVariable[] serverVariables = server.variables();
+        ServerVariables serverVariablesObject = new ServerVariables();
+        for (io.swagger.oas.annotations.servers.ServerVariable serverVariable : serverVariables) {
+            ServerVariable serverVariableObject = new ServerVariable();
+            serverVariableObject.setDescription(serverVariable.description());
+            serverVariablesObject.addServerVariable(serverVariableObject.getDescription(), serverVariableObject);
+        }
+        serverObject.setVariables(serverVariablesObject);
+
+        return Optional.of(serverObject);
     }
 
     private Optional<ExternalDocumentation> getExternalDocumentationObjectFromAnnotation(io.swagger.oas.annotations.ExternalDocumentation externalDocumentation) {
