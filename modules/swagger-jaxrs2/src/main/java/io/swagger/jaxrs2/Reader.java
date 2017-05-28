@@ -3,11 +3,17 @@ package io.swagger.jaxrs2;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.jaxrs2.util.ReaderUtils;
+import io.swagger.oas.models.Operation;
+import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.PathItem;
+import io.swagger.oas.models.Paths;
+import io.swagger.oas.models.Components;
 
-import io.swagger.oas.models.*;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.callbacks.Callbacks;
-import io.swagger.oas.models.security.SecurityRequirement;
+import io.swagger.oas.models.info.Contact;
+import io.swagger.oas.models.info.Info;
+import io.swagger.oas.models.info.License;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.tags.Tag;
@@ -46,6 +52,8 @@ public class Reader {
         io.swagger.oas.annotations.security.SecurityScheme apiSecurityScheme = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.security.SecurityScheme.class);
         io.swagger.oas.annotations.servers.Server server = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.servers.Server.class);
         io.swagger.oas.annotations.ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.ExternalDocumentation.class);
+        io.swagger.oas.annotations.info.Info apiInfo = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.info.Info.class);
+
 
         boolean hasPathAnnotation = (ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class) != null);
 
@@ -70,9 +78,46 @@ public class Reader {
         openAPI.setTags(tagList);
 
         openAPI.setExternalDocs(OperationParser.getExternalDocumentation(apiExternalDocs).get());
-
+        openAPI.setInfo(getInfo(apiInfo).get());
 
         return openAPI;
+    }
+
+    public Optional<Info> getInfo(io.swagger.oas.annotations.info.Info info){
+        if (info == null){
+            return Optional.empty();
+        }
+        Info infoObject = new Info();
+        infoObject.setDescription(info.description());
+        infoObject.setTermsOfService(info.termsOfService());
+        infoObject.setTitle(info.title());
+        infoObject.setVersion(info.version());
+        infoObject.setContact(getContact(info.contact()).get());
+        infoObject.setLicense(getLicense(info.license()).get());
+
+        return Optional.of(infoObject);
+    }
+
+    public Optional<Contact> getContact(io.swagger.oas.annotations.info.Contact contact){
+        if (contact == null){
+            return Optional.empty();
+        }
+        Contact contactObject = new Contact();
+        contactObject.setEmail(contact.email());
+        contactObject.setName(contact.name());
+        contactObject.setUrl(contact.url());
+        return Optional.of(contactObject);
+    }
+
+    public Optional<License> getLicense(io.swagger.oas.annotations.info.License license){
+        if (license == null){
+            return Optional.empty();
+        }
+        License licenseObject = new License();
+        licenseObject.setName(license.name());
+        licenseObject.setUrl(license.url());
+
+        return Optional.of(licenseObject);
     }
 
     public Operation parseMethod(Method method) {
@@ -88,15 +133,8 @@ public class Reader {
         io.swagger.oas.annotations.links.Link apiLinks = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.links.Link.class);
 
         if (apiOperation != null) {
-            Optional<Callbacks> callbacksObjectFromAnnotation = getCallbacks(apiCallback);
-            if (callbacksObjectFromAnnotation.isPresent()) {
-                operation.setCallbacks(callbacksObjectFromAnnotation.get());
-            }
-
-            Optional<List<SecurityRequirement>> securityRequirementObjectFromAnnotation = SecurityParser.getSecurityRequirement(apiSecurity);
-            if (securityRequirementObjectFromAnnotation.isPresent()) {
-                operation.setSecurity(securityRequirementObjectFromAnnotation.get());
-            }
+            getCallbacks(apiCallback).ifPresent(x -> operation.setCallbacks(x));
+            SecurityParser.getSecurityRequirement(apiSecurity).ifPresent(x -> operation.setSecurity(x));
             operation.setResponses(OperationParser.getApiResponses(apiOperation.responses(), apiLinks).get());
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
         }
