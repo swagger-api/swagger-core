@@ -7,6 +7,7 @@ import io.swagger.oas.annotations.links.LinkParameters;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
+import io.swagger.oas.annotations.servers.Server;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

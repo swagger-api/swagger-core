@@ -3,12 +3,7 @@ package io.swagger.jaxrs2;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.jaxrs2.util.ReaderUtils;
-import io.swagger.oas.models.Operation;
-import io.swagger.oas.models.OpenAPI;
-import io.swagger.oas.models.PathItem;
-import io.swagger.oas.models.Paths;
-import io.swagger.oas.models.Components;
-
+import io.swagger.oas.models.*;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.callbacks.Callbacks;
 import io.swagger.oas.models.info.Contact;
@@ -20,8 +15,12 @@ import io.swagger.oas.models.tags.Tag;
 import io.swagger.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Reader {
     private OpenAPI openAPI;
@@ -80,6 +79,8 @@ public class Reader {
         openAPI.setExternalDocs(OperationParser.getExternalDocumentation(apiExternalDocs).get());
         openAPI.setInfo(getInfo(apiInfo).get());
 
+        openAPI.setPaths(paths);
+
         return openAPI;
     }
 
@@ -136,6 +137,7 @@ public class Reader {
             getCallbacks(apiCallback).ifPresent(x -> operation.setCallbacks(x));
             SecurityParser.getSecurityRequirement(apiSecurity).ifPresent(x -> operation.setSecurity(x));
             operation.setResponses(OperationParser.getApiResponses(apiOperation.responses(), apiLinks).get());
+
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
         }
         return operation;

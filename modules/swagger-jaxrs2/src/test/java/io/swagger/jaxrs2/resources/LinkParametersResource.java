@@ -6,6 +6,7 @@ import io.swagger.oas.annotations.links.Link;
 import io.swagger.oas.annotations.links.LinkParameters;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.security.SecurityRequirement;
+import io.swagger.oas.annotations.servers.Server;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

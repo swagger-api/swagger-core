@@ -19,8 +19,11 @@ import io.swagger.oas.models.servers.ServerVariables;
 import io.swagger.oas.models.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by RafaelLopez on 5/27/17.
