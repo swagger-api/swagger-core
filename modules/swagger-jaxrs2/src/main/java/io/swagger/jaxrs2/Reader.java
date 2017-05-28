@@ -2,35 +2,22 @@ package io.swagger.jaxrs2;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import io.swagger.oas.annotations.media.ExampleObject;
+import io.swagger.jaxrs2.util.ReaderUtils;
+
 import io.swagger.oas.models.*;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.callbacks.Callbacks;
-import io.swagger.oas.models.examples.Example;
-import io.swagger.oas.models.links.Link;
-import io.swagger.oas.models.links.LinkParameters;
-import io.swagger.oas.models.media.Content;
-import io.swagger.oas.models.media.MediaType;
-import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.parameters.Parameter;
-import io.swagger.oas.models.parameters.RequestBody;
-import io.swagger.oas.models.responses.ApiResponse;
-import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.servers.Server;
-import io.swagger.oas.models.servers.ServerVariable;
-import io.swagger.oas.models.servers.ServerVariables;
 import io.swagger.oas.models.tags.Tag;
 import io.swagger.util.ReflectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.*;
 
 
 public class Reader {
-    private SecurityParser securityParser;
     private OpenAPI openAPI;
     private Paths paths;
     private Set<Tag> openApiTags;
@@ -47,7 +34,6 @@ public class Reader {
     public Reader(OpenAPI openAPI) {
         this.openAPI = openAPI;
         paths = new Paths();
-        securityParser = new SecurityParser();
         openApiTags = new LinkedHashSet<>();
     }
 
@@ -63,8 +49,7 @@ public class Reader {
 
         boolean hasPathAnnotation = (ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class) != null);
 
-
-        Optional<SecurityScheme> securityScheme = securityParser.getSecurityScheme(apiSecurityScheme);
+        Optional<SecurityScheme> securityScheme = SecurityParser.getSecurityScheme(apiSecurityScheme);
         Components components = new Components();
         if (securityScheme.isPresent()) {
             Map<String, SecurityScheme> securitySchemeMap = new HashMap();
@@ -73,7 +58,7 @@ public class Reader {
         }
         openAPI.setComponents(components);
 
-        Optional<Server> serverOptional = getServer(server);
+        Optional<Server> serverOptional = OperationParser.getServer(server);
 
         Method methods[] = cls.getMethods();
         for (Method method : methods) {
@@ -84,8 +69,9 @@ public class Reader {
         tagList.addAll(openApiTags);
         openAPI.setTags(tagList);
 
+        openAPI.setExternalDocs(OperationParser.getExternalDocumentation(apiExternalDocs).get());
 
-        openAPI.setExternalDocs(getExternalDocumentation(apiExternalDocs).get());
+
         return openAPI;
     }
 
@@ -107,11 +93,11 @@ public class Reader {
                 operation.setCallbacks(callbacksObjectFromAnnotation.get());
             }
 
-            Optional<List<SecurityRequirement>> securityRequirementObjectFromAnnotation = securityParser.getSecurityRequirement(apiSecurity);
+            Optional<List<SecurityRequirement>> securityRequirementObjectFromAnnotation = SecurityParser.getSecurityRequirement(apiSecurity);
             if (securityRequirementObjectFromAnnotation.isPresent()) {
                 operation.setSecurity(securityRequirementObjectFromAnnotation.get());
             }
-            operation.setResponses(getApiResponses(apiOperation.responses(), apiLinks).get());
+            operation.setResponses(OperationParser.getApiResponses(apiOperation.responses(), apiLinks).get());
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
         }
         return operation;
@@ -171,236 +157,15 @@ public class Reader {
     }
 
     private void setOperationObjectFromApiOperationAnnotation(Operation operation, io.swagger.oas.annotations.Operation apiOperation) {
-        operation.setTags(getStringListFromStringArray(apiOperation.tags()).get());
-        openApiTags.addAll(getTags(apiOperation.tags()).get());
+        operation.setTags(ReaderUtils.getStringListFromStringArray(apiOperation.tags()).get());
+        openApiTags.addAll(OperationParser.getTags(apiOperation.tags()).get());
         operation.setSummary(apiOperation.summary());
         operation.setDescription(apiOperation.description());
-        operation.setExternalDocs(getExternalDocumentation(apiOperation.externalDocs()).get());
+        operation.setExternalDocs(OperationParser.getExternalDocumentation(apiOperation.externalDocs()).get());
         operation.setOperationId(apiOperation.operationId());
-        operation.setParameters(getParametersList(apiOperation.parameters()).get());
-        operation.setRequestBody(getRequestBody(apiOperation.requestBody()).get());
+        operation.setParameters(OperationParser.getParametersList(apiOperation.parameters()).get());
+        operation.setRequestBody(OperationParser.getRequestBody(apiOperation.requestBody()).get());
         operation.setDeprecated(apiOperation.deprecated());
-        operation.setServers(getServers(apiOperation.servers()).get());
-    }
-
-    public Optional<List<Parameter>> getParametersList(io.swagger.oas.annotations.Parameter[] parameters) {
-        if (parameters == null) {
-            return Optional.empty();
-        }
-        List<Parameter> parametersObject = new ArrayList<>();
-        for (io.swagger.oas.annotations.Parameter parameter : parameters) {
-            Parameter parameterObject = new Parameter();
-            parameterObject.setDescription(parameter.description());
-            parameterObject.setDeprecated(parameter.deprecated());
-            parameterObject.setName(parameter.name());
-            parameterObject.setRequired(parameter.required());
-            parameterObject.setStyle(StringUtils.isNoneBlank(parameter.style()) ? Parameter.StyleEnum.valueOf(parameter.style()) : null);
-            parameterObject.setAllowEmptyValue(parameter.allowEmptyValue());
-            parameterObject.setAllowReserved(parameter.allowReserved());
-            parameterObject.setExplode(parameter.explode());
-            parameterObject.setIn(parameter.in());
-            parameterObject.setContent(getContents(parameter.content()).get());
-
-
-            io.swagger.oas.annotations.media.Schema schema = parameter.schema();
-            parameterObject.setSchema(getSchema(schema).get());
-            parametersObject.add(parameterObject);
-
-        }
-        return Optional.of(parametersObject);
-    }
-
-    private Optional<Schema> getSchema(io.swagger.oas.annotations.media.Schema schema) {
-        if (schema == null) {
-            return Optional.empty();
-        }
-        Schema schemaObject = new Schema();
-
-        schemaObject.set$ref(schema.ref());
-        schemaObject.setDefault(schema._default());
-        schemaObject.setDeprecated(schema.deprecated());
-        schemaObject.setDescription(schema.description());
-        schemaObject.setEnum(getStringListFromStringArray(schema._enum()).get());
-        schemaObject.setExample(schema.example());
-        schemaObject.setExclusiveMaximum(schema.exclusiveMaximum());
-        schemaObject.setExclusiveMinimum(schema.exclusiveMinimum());
-        schemaObject.setExternalDocs(getExternalDocumentation(schema.externalDocs()).get());
-        schemaObject.setFormat(schema.format());
-        schemaObject.setPattern(schema.pattern());
-        schemaObject.setMaxLength(schema.maxLength());
-        schemaObject.setMaxProperties(schema.maxProperties());
-        schemaObject.setMinLength(schema.minLength());
-        schemaObject.setMinProperties(schema.minProperties());
-        schemaObject.setReadOnly(schema.readOnly());
-        schemaObject.setType(schema.type());
-        schemaObject.setTitle(schema.title());
-        schemaObject.setWriteOnly(schema.writeOnly());
-        return Optional.of(schemaObject);
-    }
-
-    private Optional<Set<Tag>> getTags(String[] tags) {
-        if (tags == null) {
-            return Optional.empty();
-        }
-        Set<Tag> tagsList = new LinkedHashSet<>();
-        for (String tag : tags) {
-            Tag tagObject = new Tag();
-            tagObject.setDescription(tag);
-            tagObject.setName(tag);
-            tagsList.add(tagObject);
-        }
-        return Optional.of(tagsList);
-    }
-
-    private Optional<List<String>> getStringListFromStringArray(String[] array) {
-        if (array == null) {
-            return Optional.empty();
-        }
-        List<String> list = new ArrayList<>();
-        for (String value : array) {
-            list.add(value);
-        }
-        return Optional.of(list);
-    }
-
-    private Optional<List<Server>> getServers(io.swagger.oas.annotations.servers.Server[] servers) {
-        if (servers == null) {
-            return Optional.empty();
-        }
-        List<Server> serverObjects = new ArrayList<>();
-
-        for (io.swagger.oas.annotations.servers.Server server : servers) {
-            serverObjects.add(getServer(server).get());
-        }
-        return Optional.of(serverObjects);
-    }
-
-    private Optional<Server> getServer(io.swagger.oas.annotations.servers.Server server) {
-        if (server == null) {
-            return Optional.empty();
-        }
-
-        Server serverObject = new Server();
-        serverObject.setUrl(server.url());
-        serverObject.setDescription(server.description());
-        io.swagger.oas.annotations.servers.ServerVariable[] serverVariables = server.variables();
-        ServerVariables serverVariablesObject = new ServerVariables();
-        for (io.swagger.oas.annotations.servers.ServerVariable serverVariable : serverVariables) {
-            ServerVariable serverVariableObject = new ServerVariable();
-            serverVariableObject.setDescription(serverVariable.description());
-            serverVariablesObject.addServerVariable(serverVariableObject.getDescription(), serverVariableObject);
-        }
-        serverObject.setVariables(serverVariablesObject);
-
-        return Optional.of(serverObject);
-    }
-
-    private Optional<ExternalDocumentation> getExternalDocumentation(io.swagger.oas.annotations.ExternalDocumentation externalDocumentation) {
-        if (externalDocumentation == null) {
-            return Optional.empty();
-        }
-        ExternalDocumentation external = new ExternalDocumentation();
-        external.setDescription(externalDocumentation.description());
-        external.setUrl(externalDocumentation.url());
-        return Optional.of(external);
-    }
-
-    private Optional<RequestBody> getRequestBody(io.swagger.oas.annotations.parameters.RequestBody requestBody) {
-        if (requestBody == null) {
-            return Optional.empty();
-        }
-        RequestBody requestBodyObject = new RequestBody();
-        requestBodyObject.setDescription(requestBody.description());
-        requestBodyObject.setRequired(requestBody.required());
-        requestBodyObject.setContent(getContents(requestBody.content()).get());
-        return Optional.of(requestBodyObject);
-    }
-
-    public Optional<ApiResponses> getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses, io.swagger.oas.annotations.links.Link links) {
-        if (responses == null) {
-            return Optional.empty();
-        }
-        ApiResponses apiResponsesObject = new ApiResponses();
-        for (io.swagger.oas.annotations.responses.ApiResponse response : responses) {
-            ApiResponse apiResponseObject = new ApiResponse();
-            Content content = getContent(response.content()).get();
-            apiResponseObject.content(content);
-            apiResponseObject.setDescription(response.description());
-            Optional<Link> link = getLink(links);
-            if (link.isPresent()) {
-                apiResponseObject.setLinks(link.get());
-            }
-            apiResponsesObject.addApiResponse(response.responseCode(), apiResponseObject);
-        }
-        return Optional.of(apiResponsesObject);
-    }
-
-    private Optional<Content> getContents(io.swagger.oas.annotations.media.Content[] contents) {
-        if (contents == null) {
-            return Optional.empty();
-        }
-        Content contentObject = new Content();
-        for (io.swagger.oas.annotations.media.Content content : contents) {
-            ExampleObject[] examples = content.examples();
-            for (ExampleObject example : examples) {
-                Optional<MediaType> mediaType = getMediaType(example);
-                if (mediaType.isPresent()) {
-                    contentObject.addMediaType(content.mediaType(), mediaType.get());
-                }
-            }
-        }
-        return Optional.of(contentObject);
-    }
-
-    private Optional<Content> getContent(io.swagger.oas.annotations.media.Content annotationContent) {
-        if (annotationContent == null) {
-            Optional.empty();
-        }
-        Content content = new Content();
-        if (annotationContent != null) {
-            ExampleObject[] examples = annotationContent.examples();
-            for (ExampleObject example : examples) {
-                Optional<MediaType> mediaType = getMediaType(example);
-                if (mediaType.isPresent()) {
-                    content.addMediaType(annotationContent.mediaType(), mediaType.get());
-                }
-            }
-        }
-        return Optional.of(content);
-    }
-
-    private Optional<MediaType> getMediaType(ExampleObject example) {
-        if (example == null) {
-            return Optional.empty();
-        }
-        MediaType mediaType = new MediaType();
-        Example exampleObject = new Example();
-        exampleObject.setDescription(example.name());
-        exampleObject.setSummary(example.summary());
-        exampleObject.setExternalValue(example.externalValue());
-        exampleObject.setValue(example.value());
-        mediaType.addExamples(example.name(), exampleObject);
-        return Optional.of(mediaType);
-    }
-
-    private Optional<Link> getLink(io.swagger.oas.annotations.links.Link link) {
-        if (link == null) {
-            return Optional.empty();
-        }
-        Link linkObject = new Link();
-        linkObject.setParameters(getLinkParameters(link.parameters()).get());
-        linkObject.setDescription(link.description());
-        linkObject.setOperationId(link.operationId());
-        linkObject.setOperationRef(link.operationRef());
-        return Optional.of(linkObject);
-    }
-
-    private Optional<LinkParameters> getLinkParameters(io.swagger.oas.annotations.links.LinkParameters linkParameters) {
-        if (linkParameters == null) {
-            return Optional.empty();
-        }
-        LinkParameters linkParametersObject = new LinkParameters();
-        linkParametersObject.addExtension(linkParameters.name(), linkParameters.expression());
-        return Optional.of(linkParametersObject);
+        operation.setServers(OperationParser.getServers(apiOperation.servers()).get());
     }
 }

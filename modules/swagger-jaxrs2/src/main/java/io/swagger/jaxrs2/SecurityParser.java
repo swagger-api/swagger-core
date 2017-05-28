@@ -13,7 +13,7 @@ public class SecurityParser {
     public static final String SCOPE_NAME = "name";
     public static final String SCOPE_DESCRIPTION = "description";
 
-    public Optional<List<SecurityRequirement>> getSecurityRequirement(io.swagger.oas.annotations.security.SecurityRequirement securityRequirement) {
+    public static Optional<List<SecurityRequirement>> getSecurityRequirement(io.swagger.oas.annotations.security.SecurityRequirement securityRequirement) {
         if (securityRequirement == null) {
             return Optional.empty();
         }
@@ -29,7 +29,7 @@ public class SecurityParser {
         return Optional.of(securityRequirements);
     }
 
-    public Optional<SecurityScheme> getSecurityScheme(io.swagger.oas.annotations.security.SecurityScheme securityScheme) {
+    public static  Optional<SecurityScheme> getSecurityScheme(io.swagger.oas.annotations.security.SecurityScheme securityScheme) {
         if (securityScheme == null) {
             return Optional.empty();
         }
@@ -41,7 +41,7 @@ public class SecurityParser {
         return Optional.of(securitySchemeObject);
     }
 
-    private Optional<OAuthFlows> getOAuthFlows(io.swagger.oas.annotations.security.OAuthFlows oAuthFlows) {
+    public static  Optional<OAuthFlows> getOAuthFlows(io.swagger.oas.annotations.security.OAuthFlows oAuthFlows) {
         if (oAuthFlows == null) {
             Optional.empty();
         }
@@ -53,7 +53,7 @@ public class SecurityParser {
         return Optional.of(oAuthFlowsObject);
     }
 
-    private Optional<OAuthFlow> getOAuthFlow(io.swagger.oas.annotations.security.OAuthFlow oAuthFlow) {
+    public static  Optional<OAuthFlow> getOAuthFlow(io.swagger.oas.annotations.security.OAuthFlow oAuthFlow) {
         if (oAuthFlow == null) {
             return Optional.empty();
         }
@@ -65,7 +65,7 @@ public class SecurityParser {
         return Optional.of(oAuthFlowObject);
     }
 
-    private Optional<Scopes> getScopes(io.swagger.oas.annotations.security.Scopes scopes) {
+    public static  Optional<Scopes> getScopes(io.swagger.oas.annotations.security.Scopes scopes) {
         if (scopes == null) {
             return Optional.empty();
         }
