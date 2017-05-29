@@ -13,16 +13,15 @@ import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.tags.Tag;
 import io.swagger.util.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 public class Reader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
+
     private OpenAPI openAPI;
     private Paths paths;
     private Set<Tag> openApiTags;
@@ -45,6 +44,34 @@ public class Reader {
     public OpenAPI getOpenAPI() {
         return openAPI;
     }
+
+    /**
+     * Scans a set of classes for both ReaderListeners and OpenAPI annotations. All found listeners will
+     * be instantiated before any of the classes are scanned for Swagger annotations - so they can be invoked
+     * accordingly.
+     *
+     * @param classes a set of classes to scan
+     * @return the generated OpenAPI definition
+     */
+    public OpenAPI read(Set<Class<?>> classes) {
+        Set<Class<?>> sortedClasses = new TreeSet<>(new Comparator<Class<?>>() {
+            @Override
+            public int compare(Class<?> class1, Class<?> class2) {
+                if (class1.equals(class2)) {
+                    return 0;
+                } else if (class1.isAssignableFrom(class2)) {
+                    return -1;
+                } else if (class2.isAssignableFrom(class1)) {
+                    return 1;
+                }
+                return class1.getName().compareTo(class2.getName());
+            }
+        });
+        sortedClasses.addAll(classes);
+
+        return openAPI;
+    }
+
 
     private OpenAPI read(Class cls) {
         //TODO Class level Annotations
@@ -84,8 +111,8 @@ public class Reader {
         return openAPI;
     }
 
-    public Optional<Info> getInfo(io.swagger.oas.annotations.info.Info info){
-        if (info == null){
+    public Optional<Info> getInfo(io.swagger.oas.annotations.info.Info info) {
+        if (info == null) {
             return Optional.empty();
         }
         Info infoObject = new Info();
@@ -99,8 +126,8 @@ public class Reader {
         return Optional.of(infoObject);
     }
 
-    public Optional<Contact> getContact(io.swagger.oas.annotations.info.Contact contact){
-        if (contact == null){
+    public Optional<Contact> getContact(io.swagger.oas.annotations.info.Contact contact) {
+        if (contact == null) {
             return Optional.empty();
         }
         Contact contactObject = new Contact();
@@ -110,8 +137,8 @@ public class Reader {
         return Optional.of(contactObject);
     }
 
-    public Optional<License> getLicense(io.swagger.oas.annotations.info.License license){
-        if (license == null){
+    public Optional<License> getLicense(io.swagger.oas.annotations.info.License license) {
+        if (license == null) {
             return Optional.empty();
         }
         License licenseObject = new License();
@@ -134,8 +161,8 @@ public class Reader {
         io.swagger.oas.annotations.links.Link apiLinks = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.links.Link.class);
 
         if (apiOperation != null) {
-            getCallbacks(apiCallback).ifPresent(x -> operation.setCallbacks(x));
-            SecurityParser.getSecurityRequirement(apiSecurity).ifPresent(x -> operation.setSecurity(x));
+            getCallbacks(apiCallback).ifPresent(callbacks -> operation.setCallbacks(callbacks));
+            SecurityParser.getSecurityRequirement(apiSecurity).ifPresent(securityRequirements -> operation.setSecurity(securityRequirements));
             operation.setResponses(OperationParser.getApiResponses(apiOperation.responses(), apiLinks).get());
 
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);

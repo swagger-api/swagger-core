@@ -162,7 +162,7 @@ public class OperationParser {
             Content content = getContent(response.content()).get();
             apiResponseObject.content(content);
             apiResponseObject.setDescription(response.description());
-            getLink(links).ifPresent(x -> apiResponseObject.setLinks(x));
+            getLink(links).ifPresent(link -> apiResponseObject.setLinks(link));
 
             apiResponsesObject.addApiResponse(response.responseCode(), apiResponseObject);
         }
@@ -177,7 +177,7 @@ public class OperationParser {
         for (io.swagger.oas.annotations.media.Content content : contents) {
             ExampleObject[] examples = content.examples();
             for (ExampleObject example : examples) {
-                getMediaType(example).ifPresent(x -> contentObject.addMediaType(content.mediaType(), x));
+               getMediaType(example).ifPresent(mediaType -> contentObject.addMediaType(content.mediaType(), mediaType));
             }
         }
         return Optional.of(contentObject);
@@ -191,7 +191,7 @@ public class OperationParser {
         if (annotationContent != null) {
             ExampleObject[] examples = annotationContent.examples();
             for (ExampleObject example : examples) {
-                getMediaType(example).ifPresent(x -> content.addMediaType(annotationContent.mediaType(), x));
+                getMediaType(example).ifPresent(mediaType -> content.addMediaType(annotationContent.mediaType(), mediaType));
             }
         }
         return Optional.of(content);
