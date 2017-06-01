@@ -1,6 +1,7 @@
 package io.swagger.models;
 
 import io.swagger.models.parameters.Parameter;
+
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
 
@@ -105,6 +106,12 @@ public class PathTest {
 
     @Test
     public void testParameters() {
+        // when
+        Path pathWithoutParameters = new Path();
+
+        // then
+        assertTrue(pathWithoutParameters.getParameters().isEmpty());
+
         // given
         Path path = new Path();
         Parameter parameter = Mockito.mock(Parameter.class);
