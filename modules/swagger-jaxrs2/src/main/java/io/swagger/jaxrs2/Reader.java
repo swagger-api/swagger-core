@@ -10,9 +10,7 @@ import io.swagger.jaxrs2.config.ReaderConfig;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.jaxrs2.util.ReaderUtils;
-import io.swagger.oas.annotations.*;
 import io.swagger.oas.models.*;
-import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.callbacks.Callbacks;
 import io.swagger.oas.models.info.Contact;
@@ -136,35 +134,8 @@ public class Reader {
                 pathItemObject.set$ref(operation.getOperationId());
                 pathItemObject.setSummary(operation.getSummary());
                 pathItemObject.setDescription(operation.getDescription());
-                switch (extractOperationMethod(operation, method, OpenAPIExtensions.chain())) {
-                    case POST_METHOD:
-                        pathItemObject.post(operation);
-                        break;
-                    case GET_METHOD:
-                        pathItemObject.get(operation);
-                        break;
-                    case DELETE_METHOD:
-                        pathItemObject.delete(operation);
-                        break;
-                    case PUT_METHOD:
-                        pathItemObject.put(operation);
-                        break;
-                    case PATCH_METHOD:
-                        pathItemObject.patch(operation);
-                        break;
-                    case TRACE_METHOD:
-                        pathItemObject.trace(operation);
-                        break;
-                    case HEAD_METHOD:
-                        pathItemObject.head(operation);
-                        break;
-                    case OPTIONS_METHOD:
-                        pathItemObject.options(operation);
-                        break;
-                    default:
-                        // Do nothing here
-                        break;
-                }
+                String httpMethod = extractOperationMethod(operation, method, OpenAPIExtensions.chain());
+                setPathItemOperation(pathItemObject, httpMethod, operation);
 
                 paths.addPathItem(pathItemObject.get$ref(), pathItemObject);
             }
@@ -342,36 +313,7 @@ public class Reader {
 
             setOperationObjectFromApiOperationAnnotation(callbackNewOperation, callbackOperation);
 
-            switch (callbackOperation.method()) {
-                case POST_METHOD:
-                    pathItemObject.post(callbackNewOperation);
-                    break;
-                case GET_METHOD:
-                    pathItemObject.get(callbackNewOperation);
-                    break;
-                case DELETE_METHOD:
-                    pathItemObject.delete(callbackNewOperation);
-                    break;
-                case PUT_METHOD:
-                    pathItemObject.put(callbackNewOperation);
-                    break;
-                case PATCH_METHOD:
-                    pathItemObject.patch(callbackNewOperation);
-                    break;
-                case TRACE_METHOD:
-                    pathItemObject.trace(callbackNewOperation);
-                    break;
-                case HEAD_METHOD:
-                    pathItemObject.head(callbackNewOperation);
-                    break;
-                case OPTIONS_METHOD:
-                    pathItemObject.options(callbackNewOperation);
-                    break;
-                default:
-                    // Do nothing here
-                    break;
-
-            }
+            setPathItemOperation(pathItemObject, callbackOperation.method(), callbackNewOperation);
         }
         pathItemObject.setDescription(apiCallback.name());
         pathItemObject.setSummary(apiCallback.name());
@@ -380,6 +322,39 @@ public class Reader {
         callbacksObject.addCallback(apiCallback.name(), callbackObject);
 
         return Optional.of(callbacksObject);
+    }
+
+    private void setPathItemOperation(PathItem pathItemObject, String method, Operation callbackNewOperation) {
+        switch (method) {
+            case POST_METHOD:
+                pathItemObject.post(callbackNewOperation);
+                break;
+            case GET_METHOD:
+                pathItemObject.get(callbackNewOperation);
+                break;
+            case DELETE_METHOD:
+                pathItemObject.delete(callbackNewOperation);
+                break;
+            case PUT_METHOD:
+                pathItemObject.put(callbackNewOperation);
+                break;
+            case PATCH_METHOD:
+                pathItemObject.patch(callbackNewOperation);
+                break;
+            case TRACE_METHOD:
+                pathItemObject.trace(callbackNewOperation);
+                break;
+            case HEAD_METHOD:
+                pathItemObject.head(callbackNewOperation);
+                break;
+            case OPTIONS_METHOD:
+                pathItemObject.options(callbackNewOperation);
+                break;
+            default:
+                // Do nothing here
+                break;
+
+        }
     }
 
     private void setOperationObjectFromApiOperationAnnotation(Operation operation, io.swagger.oas.annotations.Operation apiOperation) {
