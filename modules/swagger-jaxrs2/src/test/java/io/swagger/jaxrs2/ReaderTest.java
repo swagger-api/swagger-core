@@ -2,10 +2,7 @@ package io.swagger.jaxrs2;
 
 import io.swagger.jaxrs2.resources.*;
 
-import io.swagger.oas.models.ExternalDocumentation;
-import io.swagger.oas.models.OpenAPI;
-import io.swagger.oas.models.Operation;
-import io.swagger.oas.models.PathItem;
+import io.swagger.oas.models.*;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.callbacks.Callbacks;
 import io.swagger.oas.models.links.Link;
@@ -25,6 +22,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import static org.testng.Assert.*;
 import static org.testng.Assert.assertEquals;
@@ -64,16 +62,32 @@ public class ReaderTest {
 
     private static final int RESPONSES_NUMBER = 2;
     private static final int TAG_NUMBER = 2;
-    private static final int CALLBACK_NUMBER = 1;
     private static final int PARAMETER_NUMBER = 1;
     private static final int SECURITY_REQUIREMENT_NUMBER = 1;
     private static final int SCOPE_NUMBER = 1;
+    private static final int PATHS_NUMBER = 1;
 
     private Reader reader;
 
     @BeforeClass
     public void setup() {
-        reader = new Reader((new OpenAPI()));
+        reader = new Reader(new OpenAPI(), null);
+    }
+
+    @Test(description = "scan methods")
+    public void testReadClass() {
+        OpenAPI openAPI = reader.read(BasicFieldsResource.class);
+        Paths paths = openAPI.getPaths();
+        assertEquals(PATHS_NUMBER, paths.size());
+        PathItem pathItem = paths.get("operationId");
+        assertNotNull(pathItem);
+        assertEquals(OPERATION_DESCRIPTION, pathItem.getDescription());
+        assertEquals(OPERATION_SUMMARY, pathItem.getSummary());
+        assertNull(pathItem.getPost());
+        Operation operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertEquals(OPERATION_SUMMARY, operation.getSummary());
+        assertEquals(OPERATION_DESCRIPTION, operation.getDescription());
     }
 
     @Test(description = "scan methods")
@@ -215,36 +229,6 @@ public class ReaderTest {
         assertNotNull(scopes);
         assertEquals(SCOPE_NUMBER, scopes.size());
         assertEquals(SCOPE_VALUE, scopes.get(0));
-    }
-
-
-    @Test(description = "Callbacks")
-    public void testGetCallbacks() {
-        Method[] methods = SimpleCallbackResource.class.getMethods();
-        Operation callbackOperation = reader.parseMethod(methods[0]);
-        assertNotNull(callbackOperation);
-        Callbacks callbacks = callbackOperation.getCallbacks();
-        assertNotNull(callbacks);
-        Callback callback = callbacks.get(CALLBACK_SUBSCRIPTION_ID);
-        assertNotNull(callback);
-        PathItem pathItem = callback.get(CALLBACK_SUBSCRIPTION_ID);
-        assertNotNull(pathItem);
-        Operation postOperation = pathItem.getPost();
-        assertNotNull(postOperation);
-        assertEquals(CALLBACK_POST_OPERATION_DESCRIPTION, postOperation.getDescription());
-
-        List<Parameter> parameters = postOperation.getParameters();
-        assertNotNull(parameters);
-        assertEquals(CALLBACK_NUMBER, parameters.size());
-
-        Operation getOperation = pathItem.getGet();
-        assertNotNull(getOperation);
-        assertEquals(CALLBACK_GET_OPERATION_DESCRIPTION, getOperation.getDescription());
-
-        Operation putOperation = pathItem.getPut();
-        assertNotNull(putOperation);
-        assertEquals(CALLBACK_POST_OPERATION_DESCRIPTION, putOperation.getDescription());
-
     }
 
     private Boolean isValidRestPath(Method method) {

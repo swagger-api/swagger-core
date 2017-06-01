@@ -13,7 +13,9 @@ public class BasicFieldsResource {
 
     @GET
     @Path("/")
-    @Operation(summary = "Operation Summary", description = "Operation Description")
+    @Operation(operationId = "operationId",
+            summary = "Operation Summary",
+            description = "Operation Description")
     public Response getSummaryAndDescription() {
         return Response.ok().entity("ok").build();
     }

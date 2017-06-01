@@ -48,7 +48,6 @@ public class OperationParser {
             parameterObject.setIn(parameter.in());
             parameterObject.setContent(getContents(parameter.content()).get());
 
-
             io.swagger.oas.annotations.media.Schema schema = parameter.schema();
             parameterObject.setSchema(getSchema(schema).get());
             parametersObject.add(parameterObject);
@@ -82,6 +81,7 @@ public class OperationParser {
         schemaObject.setType(schema.type());
         schemaObject.setTitle(schema.title());
         schemaObject.setWriteOnly(schema.writeOnly());
+
         return Optional.of(schemaObject);
     }
 
@@ -124,7 +124,7 @@ public class OperationParser {
         for (io.swagger.oas.annotations.servers.ServerVariable serverVariable : serverVariables) {
             ServerVariable serverVariableObject = new ServerVariable();
             serverVariableObject.setDescription(serverVariable.description());
-            serverVariablesObject.addServerVariable(serverVariableObject.getDescription(), serverVariableObject);
+            serverVariablesObject.addServerVariable(serverVariable.name(), serverVariableObject);
         }
         serverObject.setVariables(serverVariablesObject);
 
