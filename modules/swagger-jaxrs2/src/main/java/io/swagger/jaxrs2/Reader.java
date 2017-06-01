@@ -320,12 +320,66 @@ public class Reader {
         io.swagger.oas.annotations.links.Link apiLinks = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.links.Link.class);
 
         if (apiOperation != null) {
+            getCallbacks(apiCallback).ifPresent(callbacks -> operation.setCallbacks(callbacks));
             SecurityParser.getSecurityRequirement(apiSecurity).ifPresent(securityRequirements -> operation.setSecurity(securityRequirements));
             operation.setResponses(OperationParser.getApiResponses(apiOperation.responses(), apiLinks).get());
 
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
         }
         return operation;
+    }
+
+    private Optional<Callbacks> getCallbacks(io.swagger.oas.annotations.callbacks.Callback apiCallback) {
+        if (apiCallback == null) {
+            return Optional.empty();
+        }
+        Callbacks callbacksObject = new Callbacks();
+        Callback callbackObject = new Callback();
+        PathItem pathItemObject = new PathItem();
+
+        for (io.swagger.oas.annotations.Operation callbackOperation : apiCallback.operation()) {
+            Operation callbackNewOperation = new Operation();
+
+            setOperationObjectFromApiOperationAnnotation(callbackNewOperation, callbackOperation);
+
+            switch (callbackOperation.method()) {
+                case POST_METHOD:
+                    pathItemObject.post(callbackNewOperation);
+                    break;
+                case GET_METHOD:
+                    pathItemObject.get(callbackNewOperation);
+                    break;
+                case DELETE_METHOD:
+                    pathItemObject.delete(callbackNewOperation);
+                    break;
+                case PUT_METHOD:
+                    pathItemObject.put(callbackNewOperation);
+                    break;
+                case PATCH_METHOD:
+                    pathItemObject.patch(callbackNewOperation);
+                    break;
+                case TRACE_METHOD:
+                    pathItemObject.trace(callbackNewOperation);
+                    break;
+                case HEAD_METHOD:
+                    pathItemObject.head(callbackNewOperation);
+                    break;
+                case OPTIONS_METHOD:
+                    pathItemObject.options(callbackNewOperation);
+                    break;
+                default:
+                    // Do nothing here
+                    break;
+
+            }
+        }
+        pathItemObject.setDescription(apiCallback.name());
+        pathItemObject.setSummary(apiCallback.name());
+
+        callbackObject.addPathItem(apiCallback.name(), pathItemObject);
+        callbacksObject.addCallback(apiCallback.name(), callbackObject);
+
+        return Optional.of(callbacksObject);
     }
 
     private void setOperationObjectFromApiOperationAnnotation(Operation operation, io.swagger.oas.annotations.Operation apiOperation) {

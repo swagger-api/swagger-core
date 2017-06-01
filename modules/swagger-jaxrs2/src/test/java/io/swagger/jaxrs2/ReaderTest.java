@@ -62,6 +62,7 @@ public class ReaderTest {
 
     private static final int RESPONSES_NUMBER = 2;
     private static final int TAG_NUMBER = 2;
+    private static final int CALLBACK_NUMBER = 1;
     private static final int PARAMETER_NUMBER = 1;
     private static final int SECURITY_REQUIREMENT_NUMBER = 1;
     private static final int SCOPE_NUMBER = 1;
@@ -229,6 +230,36 @@ public class ReaderTest {
         assertNotNull(scopes);
         assertEquals(SCOPE_NUMBER, scopes.size());
         assertEquals(SCOPE_VALUE, scopes.get(0));
+    }
+
+
+    @Test(description = "Callbacks")
+    public void testGetCallbacks() {
+        Method[] methods = SimpleCallbackResource.class.getMethods();
+        Operation callbackOperation = reader.parseMethod(methods[0]);
+        assertNotNull(callbackOperation);
+        Callbacks callbacks = callbackOperation.getCallbacks();
+        assertNotNull(callbacks);
+        Callback callback = callbacks.get(CALLBACK_SUBSCRIPTION_ID);
+        assertNotNull(callback);
+        PathItem pathItem = callback.get(CALLBACK_SUBSCRIPTION_ID);
+        assertNotNull(pathItem);
+        Operation postOperation = pathItem.getPost();
+        assertNotNull(postOperation);
+        assertEquals(CALLBACK_POST_OPERATION_DESCRIPTION, postOperation.getDescription());
+
+        List<Parameter> parameters = postOperation.getParameters();
+        assertNotNull(parameters);
+        assertEquals(CALLBACK_NUMBER, parameters.size());
+
+        Operation getOperation = pathItem.getGet();
+        assertNotNull(getOperation);
+        assertEquals(CALLBACK_GET_OPERATION_DESCRIPTION, getOperation.getDescription());
+
+        Operation putOperation = pathItem.getPut();
+        assertNotNull(putOperation);
+        assertEquals(CALLBACK_POST_OPERATION_DESCRIPTION, putOperation.getDescription());
+
     }
 
     private Boolean isValidRestPath(Method method) {
