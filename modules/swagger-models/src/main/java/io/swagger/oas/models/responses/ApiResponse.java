@@ -16,10 +16,12 @@
 
 package io.swagger.oas.models.responses;
 
-import io.swagger.oas.models.headers.Headers;
+import io.swagger.oas.models.headers.Header;
 import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.media.Content;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -31,7 +33,7 @@ import java.util.Objects;
 
 public class ApiResponse {
   private String description = null;
-  private Headers headers = null;
+  private Map<String, Header> headers = null;
   private Content content = null;
   private Link links = null;
   private java.util.Map<String, Object> extensions = null;
@@ -59,19 +61,28 @@ public class ApiResponse {
   /**
    * returns the headers property from a ApiResponse instance.
    *
-   * @return Headers headers
+   * @return headers
    **/
 
-  public Headers getHeaders() {
+
+  public Map<String, Header> getHeaders() {
     return headers;
   }
 
-  public void setHeaders(Headers headers) {
+  public void setHeaders(Map<String, Header> headers) {
     this.headers = headers;
   }
 
-  public ApiResponse headers(Headers headers) {
+  public ApiResponse headers(Map<String, Header> headers) {
     this.headers = headers;
+    return this;
+  }
+
+  public ApiResponse addHeaderObject(String name, Header header) {
+    if(this.headers == null) {
+      headers = new HashMap<>();
+    }
+    headers.put(name, header);
     return this;
   }
 

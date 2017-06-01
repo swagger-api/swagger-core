@@ -16,6 +16,10 @@
 
 package io.swagger.oas.models.media;
 
+import io.swagger.oas.models.headers.Header;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -27,7 +31,7 @@ import java.util.Objects;
 
 public class EncodingProperty {
   private String contentType = null;
-  private Object headers = null;
+  private Map<String, Header> headers = null;
   /**
    * Gets or Sets style
    */
@@ -79,19 +83,27 @@ public class EncodingProperty {
   /**
    * returns the headers property from a EncodingProperty instance.
    *
-   * @return Object headers
+   * @return headers
    **/
 
-  public Object getHeaders() {
+  public Map<String, Header> getHeaders() {
     return headers;
   }
 
-  public void setHeaders(Object headers) {
+  public void setHeaders(Map<String, Header> headers) {
     this.headers = headers;
   }
 
-  public EncodingProperty headers(Object headers) {
+  public EncodingProperty headers(Map<String, Header> headers) {
     this.headers = headers;
+    return this;
+  }
+
+  public EncodingProperty addHeaderObject(String name, Header header) {
+    if(this.headers == null) {
+      headers = new HashMap<>();
+    }
+    headers.put(name, header);
     return this;
   }
 

@@ -16,8 +16,11 @@
 
 package io.swagger.oas.models.links;
 
+import io.swagger.oas.models.headers.Header;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import io.swagger.oas.models.headers.Headers;
 
 /**
  * Link
@@ -30,7 +33,7 @@ public class Link {
   private String operationRef = null;
   private String operationId = null;
   private LinkParameters parameters = null;
-  private Headers headers = null;
+  private Map<String, Header> headers = null;
   private String description = null;
   private java.util.Map<String, Object> extensions = null;
 
@@ -97,16 +100,24 @@ public class Link {
    * @return Headers headers
    **/
 
-  public Headers getHeaders() {
+  public Map<String, Header> getHeaders() {
     return headers;
   }
 
-  public void setHeaders(Headers headers) {
+  public void setHeaders(Map<String, Header> headers) {
     this.headers = headers;
   }
 
-  public Link headers(Headers headers) {
+  public Link headers(Map<String, Header> headers) {
     this.headers = headers;
+    return this;
+  }
+
+  public Link addHeaderObject(String name, Header header) {
+    if(this.headers == null) {
+      headers = new HashMap<>();
+    }
+    headers.put(name, header);
     return this;
   }
 
