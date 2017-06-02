@@ -35,7 +35,7 @@ public class ApiResponse {
   private String description = null;
   private Map<String, Header> headers = null;
   private Content content = null;
-  private Link links = null;
+  private java.util.Map<String, Link> links = null;
   private java.util.Map<String, Object> extensions = null;
   private String $ref = null;
 
@@ -111,19 +111,21 @@ public class ApiResponse {
    * @return Link links
    **/
 
-  public Link getLinks() {
+  public java.util.Map<String, Link> getLinks() {
     return links;
   }
 
-  public void setLinks(Link links) {
+  public void setLinks(java.util.Map<String, Link> links) {
     this.links = links;
   }
 
-  public ApiResponse links(Link links) {
-    this.links = links;
+  public ApiResponse link(String name, Link link) {
+    if(this.links == null) {
+      this.links = new HashMap<>();
+    }
+    this.links.put(name, link);
     return this;
   }
-
 
   /**
    * returns the $ref property from a Schema instance.
