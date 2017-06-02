@@ -111,7 +111,7 @@ public class SimpleBuilderTest {
                                                                 new MediaType().schema(new Schema()
                                                                         .ref("#/components/schemas/Address")))
                                                 )
-                                                .links(new Link()
+                                                .link("funky", new Link()
                                                         .operationId("getFunky")))
                                 )
                         )
