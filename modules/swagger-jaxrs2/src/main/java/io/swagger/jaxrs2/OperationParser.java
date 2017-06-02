@@ -4,6 +4,9 @@ import io.swagger.jaxrs2.util.ReaderUtils;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.examples.Example;
+import io.swagger.oas.models.info.Contact;
+import io.swagger.oas.models.info.Info;
+import io.swagger.oas.models.info.License;
 import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.links.LinkParameters;
 import io.swagger.oas.models.media.Content;
@@ -66,7 +69,7 @@ public class OperationParser {
         schemaObject.setDefault(schema._default());
         schemaObject.setDeprecated(schema.deprecated());
         schemaObject.setDescription(schema.description());
-        schemaObject.setEnum(ReaderUtils.getStringListFromStringArray(schema._enum()).get());
+        ReaderUtils.getStringListFromStringArray(schema._enum()).ifPresent(schemas->schemaObject.setEnum(schemas));
         schemaObject.setExample(schema.example());
         schemaObject.setExclusiveMaximum(schema.exclusiveMaximum());
         schemaObject.setExclusiveMinimum(schema.exclusiveMinimum());
@@ -230,5 +233,42 @@ public class OperationParser {
         LinkParameters linkParametersObject = new LinkParameters();
         linkParametersObject.addExtension(linkParameters.name(), linkParameters.expression());
         return Optional.of(linkParametersObject);
+    }
+
+    public static Optional<Info> getInfo(io.swagger.oas.annotations.info.Info info) {
+        if (info == null) {
+            return Optional.empty();
+        }
+        Info infoObject = new Info();
+        infoObject.setDescription(info.description());
+        infoObject.setTermsOfService(info.termsOfService());
+        infoObject.setTitle(info.title());
+        infoObject.setVersion(info.version());
+        getContact(info.contact()).ifPresent(contact -> infoObject.setContact(contact));
+        getLicense(info.license()).ifPresent(license -> infoObject.setLicense(license));
+
+        return Optional.of(infoObject);
+    }
+
+    public static Optional<Contact> getContact(io.swagger.oas.annotations.info.Contact contact) {
+        if (contact == null) {
+            return Optional.empty();
+        }
+        Contact contactObject = new Contact();
+        contactObject.setEmail(contact.email());
+        contactObject.setName(contact.name());
+        contactObject.setUrl(contact.url());
+        return Optional.of(contactObject);
+    }
+
+    public static Optional<License> getLicense(io.swagger.oas.annotations.info.License license) {
+        if (license == null) {
+            return Optional.empty();
+        }
+        License licenseObject = new License();
+        licenseObject.setName(license.name());
+        licenseObject.setUrl(license.url());
+
+        return Optional.of(licenseObject);
     }
 }
