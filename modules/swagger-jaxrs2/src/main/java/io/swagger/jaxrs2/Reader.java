@@ -6,7 +6,11 @@ import io.swagger.jaxrs2.config.DefaultReaderConfig;
 import io.swagger.jaxrs2.config.ReaderConfig;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.jaxrs2.util.ReaderUtils;
-import io.swagger.oas.models.*;
+import io.swagger.oas.models.Components;
+import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.Operation;
+import io.swagger.oas.models.PathItem;
+import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.callbacks.Callbacks;
 import io.swagger.oas.models.security.SecurityScheme;
@@ -15,7 +19,15 @@ import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Reader {
     private final ReaderConfig config;
@@ -122,6 +134,7 @@ public class Reader {
                 setPathItemOperation(pathItemObject, httpMethod, operation);
 
                 paths.addPathItem(pathItemObject.get$ref(), pathItemObject);
+                openAPI.setPaths(paths);
             }
         }
 
@@ -131,8 +144,6 @@ public class Reader {
 
         OperationParser.getExternalDocumentation(apiExternalDocs).ifPresent(externalDocumentation -> openAPI.setExternalDocs(externalDocumentation));
         OperationParser.getInfo(apiInfo).ifPresent(info -> openAPI.setInfo(info));
-
-        openAPI.setPaths(paths);
 
         return openAPI;
     }
@@ -168,9 +179,7 @@ public class Reader {
 
         for (io.swagger.oas.annotations.Operation callbackOperation : apiCallback.operation()) {
             Operation callbackNewOperation = new Operation();
-
             setOperationObjectFromApiOperationAnnotation(callbackNewOperation, callbackOperation);
-
             setPathItemOperation(pathItemObject, callbackOperation.method(), callbackNewOperation);
         }
         pathItemObject.setDescription(apiCallback.name());

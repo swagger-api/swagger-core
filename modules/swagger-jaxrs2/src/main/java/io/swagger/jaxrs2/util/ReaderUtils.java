@@ -19,8 +19,6 @@ public class ReaderUtils {
     private static final String POST_METHOD = "post";
     private static final String PUT_METHOD = "put";
     private static final String DELETE_METHOD = "delete";
-    private static final String PATCH_METHOD = "patch";
-    private static final String TRACE_METHOD = "trace";
     private static final String HEAD_METHOD = "head";
     private static final String OPTIONS_METHOD = "options";
     private static final String PATH_DELIMITER = "/";

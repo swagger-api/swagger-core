@@ -23,8 +23,8 @@ import io.swagger.oas.models.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -69,11 +69,11 @@ public class OperationParser {
         schemaObject.setDefault(schema._default());
         schemaObject.setDeprecated(schema.deprecated());
         schemaObject.setDescription(schema.description());
-        ReaderUtils.getStringListFromStringArray(schema._enum()).ifPresent(schemas->schemaObject.setEnum(schemas));
+        ReaderUtils.getStringListFromStringArray(schema._enum()).ifPresent(schemas -> schemaObject.setEnum(schemas));
         schemaObject.setExample(schema.example());
         schemaObject.setExclusiveMaximum(schema.exclusiveMaximum());
         schemaObject.setExclusiveMinimum(schema.exclusiveMinimum());
-        schemaObject.setExternalDocs(getExternalDocumentation(schema.externalDocs()).get());
+        getExternalDocumentation(schema.externalDocs()).ifPresent(externalDocumentation -> schemaObject.setExternalDocs(externalDocumentation));
         schemaObject.setFormat(schema.format());
         schemaObject.setPattern(schema.pattern());
         schemaObject.setMaxLength(schema.maxLength());
@@ -109,7 +109,7 @@ public class OperationParser {
         List<Server> serverObjects = new ArrayList<>();
 
         for (io.swagger.oas.annotations.servers.Server server : servers) {
-            serverObjects.add(getServer(server).get());
+            getServer(server).ifPresent(serverObject -> serverObjects.add(serverObject));
         }
         return Optional.of(serverObjects);
     }
@@ -151,7 +151,7 @@ public class OperationParser {
         RequestBody requestBodyObject = new RequestBody();
         requestBodyObject.setDescription(requestBody.description());
         requestBodyObject.setRequired(requestBody.required());
-        requestBodyObject.setContent(getContents(requestBody.content()).get());
+        getContents(requestBody.content()).ifPresent(content -> requestBodyObject.setContent(content));
         return Optional.of(requestBodyObject);
     }
 
@@ -165,7 +165,6 @@ public class OperationParser {
             Content content = getContent(response.content()).get();
             apiResponseObject.content(content);
             apiResponseObject.setDescription(response.description());
-            getLink(links).ifPresent(link -> apiResponseObject.setLinks(link));
 
             apiResponsesObject.addApiResponse(response.responseCode(), apiResponseObject);
         }
@@ -180,7 +179,7 @@ public class OperationParser {
         for (io.swagger.oas.annotations.media.Content content : contents) {
             ExampleObject[] examples = content.examples();
             for (ExampleObject example : examples) {
-               getMediaType(example).ifPresent(mediaType -> contentObject.addMediaType(content.mediaType(), mediaType));
+                getMediaType(example).ifPresent(mediaType -> contentObject.addMediaType(content.mediaType(), mediaType));
             }
         }
         return Optional.of(contentObject);

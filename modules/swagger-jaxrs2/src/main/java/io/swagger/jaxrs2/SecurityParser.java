@@ -1,6 +1,10 @@
 package io.swagger.jaxrs2;
 
-import io.swagger.oas.models.security.*;
+import io.swagger.oas.models.security.OAuthFlow;
+import io.swagger.oas.models.security.OAuthFlows;
+import io.swagger.oas.models.security.Scopes;
+import io.swagger.oas.models.security.SecurityRequirement;
+import io.swagger.oas.models.security.SecurityScheme;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +33,7 @@ public class SecurityParser {
         return Optional.of(securityRequirements);
     }
 
-    public static  Optional<SecurityScheme> getSecurityScheme(io.swagger.oas.annotations.security.SecurityScheme securityScheme) {
+    public static Optional<SecurityScheme> getSecurityScheme(io.swagger.oas.annotations.security.SecurityScheme securityScheme) {
         if (securityScheme == null) {
             return Optional.empty();
         }
@@ -37,35 +41,35 @@ public class SecurityParser {
         securitySchemeObject.setBearerFormat(securityScheme.bearerFormat());
         securitySchemeObject.setDescription(securityScheme.description());
         securitySchemeObject.setName(securityScheme.name());
-        securitySchemeObject.setFlows(getOAuthFlows(securityScheme.flows()).get());
+        getOAuthFlows(securityScheme.flows()).ifPresent(oAuthFlows -> securitySchemeObject.setFlows(oAuthFlows));
         return Optional.of(securitySchemeObject);
     }
 
-    public static  Optional<OAuthFlows> getOAuthFlows(io.swagger.oas.annotations.security.OAuthFlows oAuthFlows) {
+    public static Optional<OAuthFlows> getOAuthFlows(io.swagger.oas.annotations.security.OAuthFlows oAuthFlows) {
         if (oAuthFlows == null) {
-            Optional.empty();
+            return Optional.empty();
         }
         OAuthFlows oAuthFlowsObject = new OAuthFlows();
-        oAuthFlowsObject.setAuthorizationCode(getOAuthFlow(oAuthFlows.authorizationCode()).get());
-        oAuthFlowsObject.setClientCredentials(getOAuthFlow(oAuthFlows.clientCredentials()).get());
-        oAuthFlowsObject.setImplicit(getOAuthFlow(oAuthFlows.implicit()).get());
-        oAuthFlowsObject.setPassword(getOAuthFlow(oAuthFlows.password()).get());
+        getOAuthFlow(oAuthFlows.authorizationCode()).ifPresent(oAuthFlow -> oAuthFlowsObject.setAuthorizationCode(oAuthFlow));
+        getOAuthFlow(oAuthFlows.clientCredentials()).ifPresent(oAuthFlow -> oAuthFlowsObject.setClientCredentials(oAuthFlow));
+        getOAuthFlow(oAuthFlows.implicit()).ifPresent(oAuthFlow -> oAuthFlowsObject.setImplicit(oAuthFlow));
+        getOAuthFlow(oAuthFlows.password()).ifPresent(oAuthFlow -> oAuthFlowsObject.setPassword(oAuthFlow));
         return Optional.of(oAuthFlowsObject);
     }
 
-    public static  Optional<OAuthFlow> getOAuthFlow(io.swagger.oas.annotations.security.OAuthFlow oAuthFlow) {
+    public static Optional<OAuthFlow> getOAuthFlow(io.swagger.oas.annotations.security.OAuthFlow oAuthFlow) {
         if (oAuthFlow == null) {
             return Optional.empty();
         }
         OAuthFlow oAuthFlowObject = new OAuthFlow();
         oAuthFlowObject.setAuthorizationUrl(oAuthFlow.authorizationUrl());
-        oAuthFlowObject.setScopes(getScopes(oAuthFlow.scopes()).get());
+        getScopes(oAuthFlow.scopes()).ifPresent(scopes -> oAuthFlowObject.setScopes(scopes));
         oAuthFlowObject.setRefreshUrl(oAuthFlow.refreshUrl());
         oAuthFlowObject.setTokenUrl(oAuthFlow.tokenUrl());
         return Optional.of(oAuthFlowObject);
     }
 
-    public static  Optional<Scopes> getScopes(io.swagger.oas.annotations.security.Scopes scopes) {
+    public static Optional<Scopes> getScopes(io.swagger.oas.annotations.security.Scopes scopes) {
         if (scopes == null) {
             return Optional.empty();
         }
