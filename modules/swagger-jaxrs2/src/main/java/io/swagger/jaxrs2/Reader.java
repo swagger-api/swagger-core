@@ -1,9 +1,14 @@
 package io.swagger.jaxrs2;
 
+import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.jaxrs2.config.DefaultReaderConfig;
 import io.swagger.jaxrs2.config.ReaderConfig;
+import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.jaxrs2.util.ReaderUtils;
 import io.swagger.oas.models.Components;
@@ -13,23 +18,23 @@ import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.callbacks.Callbacks;
+import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
+import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
+import java.lang.reflect.Type;
+import java.util.*;
 
 public class Reader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
+
     private final ReaderConfig config;
 
     private OpenAPI openAPI;
@@ -109,8 +114,21 @@ public class Reader {
         openAPI.setComponents(components);
         final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
 
+        JavaType classType = TypeFactory.defaultInstance().constructType(cls);
+        BeanDescription bd = new ObjectMapper().getSerializationConfig().introspect(classType);
+
+        final List<Parameter> globalParameters = new ArrayList<Parameter>();
+
+        // look for constructor-level annotated properties
+        globalParameters.addAll(ReaderUtils.collectConstructorParameters(cls, openAPI));
+
+        // look for field-level annotated properties
+        globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, openAPI));
+
         Method methods[] = cls.getMethods();
         for (Method method : methods) {
+            AnnotatedMethod annotatedMethod = bd.findMethod(method.getName(), method.getParameterTypes());
+
             if (ReflectionUtils.isOverriddenMethod(method, cls)) {
                 continue;
             }
@@ -132,6 +150,30 @@ public class Reader {
                 pathItemObject.setDescription(operation.getDescription());
                 String httpMethod = ReaderUtils.extractOperationMethod(operation, method, OpenAPIExtensions.chain());
                 setPathItemOperation(pathItemObject, httpMethod, operation);
+
+                Annotation[][] paramAnnotations = ReflectionUtils.getParameterAnnotations(method);
+                if (annotatedMethod == null) {
+                    Type[] genericParameterTypes = method.getGenericParameterTypes();
+                    for (int i = 0; i < genericParameterTypes.length; i++) {
+                        final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
+                        List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
+
+                        for (Parameter parameter : parameters) {
+                            //operation.parameter(parameter);
+
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < annotatedMethod.getParameterCount(); i++) {
+                        AnnotatedParameter param = annotatedMethod.getParameter(i);
+                        final Type type = TypeFactory.defaultInstance().constructType(param.getParameterType(), cls);
+                        List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
+
+                        for (Parameter parameter : parameters) {
+                            //operation.parameter(parameter);
+                        }
+                    }
+                }
 
                 paths.addPathItem(pathItemObject.get$ref(), pathItemObject);
                 openAPI.setPaths(paths);
@@ -266,6 +308,38 @@ public class Reader {
 
         }
         return false;
+    }
+
+    private List<Parameter> getParameters(Type type, List<Annotation> annotations) {
+        final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
+        if (!chain.hasNext()) {
+            return Collections.emptyList();
+        }
+        LOGGER.debug("getParameters for {}", type);
+        Set<Type> typesToSkip = new HashSet<>();
+        final OpenAPIExtension extension = chain.next();
+        LOGGER.debug("trying extension {}", extension);
+
+        final List<Parameter> parameters = extension.extractParameters(annotations, type, typesToSkip, chain);
+        if (!parameters.isEmpty()) {
+            final List<Parameter> processed = new ArrayList<Parameter>(parameters.size());
+            for (Parameter parameter : parameters) {
+                if (ParameterProcessor.applyAnnotations(openAPI, parameter, type, annotations) != null) {
+                    processed.add(parameter);
+                }
+            }
+            return processed;
+        } else {
+            LOGGER.debug("no parameter found, looking at body params");
+            final List<Parameter> body = new ArrayList<Parameter>();
+            if (!typesToSkip.contains(type)) {
+                Parameter param = ParameterProcessor.applyAnnotations(openAPI, null, type, annotations);
+                if (param != null) {
+                    body.add(param);
+                }
+            }
+            return body;
+        }
     }
 
     private String extractOperationIdFromPathItem(PathItem path) {

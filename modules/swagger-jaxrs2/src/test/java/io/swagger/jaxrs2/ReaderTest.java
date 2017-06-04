@@ -140,7 +140,7 @@ public class ReaderTest {
     }
 
     @Test(description = "Do nothing")
-    public void testBasicEmptyClass() {
+    public void testBasicEmptyOperation() {
         Reader reader = new Reader(new OpenAPI(), null);
         Method[] methods = BasicClass.class.getMethods();
         Operation operation = reader.parseMethod(methods[0]);
@@ -204,28 +204,6 @@ public class ReaderTest {
         ApiResponse apiResponse = responses.get(RESPONSE_CODE_200);
         assertNotNull(apiResponse);
         assertEquals(RESPONSE_DESCRIPTION, apiResponse.getDescription());
-
-        /*Link links = apiResponse.getLinks();
-        assertNotNull(links);
-        assertEquals(LINK_DESCRIPTION, links.getDescription());
-        assertEquals(LINK_OPERATION_ID, links.getOperationId());
-        assertEquals(LINK_OPERATION_REF, links.getOperationRef());
-
-        LinkParameters linkParameters = links.getParameters();
-        assertNotNull(linkParameters);
-
-        Content content = apiResponse.getContent();
-        assertNotNull(content);
-        assertNotNull(content.get(APPLICATION_JSON));
-
-        apiResponse = responses.get(RESPONSE_CODE_DEFAULT);
-        assertNotNull(apiResponse);
-        assertEquals(RESPONSE_DESCRIPTION_BOO, apiResponse.getDescription());
-
-        content = apiResponse.getContent();
-        assertNotNull(content);
-        assertNotNull(content.get(GENERIC_MEDIA_TYPE));
-        */
     }
 
     @Test(description = "Request Body")

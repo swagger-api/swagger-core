@@ -7,8 +7,6 @@ import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.info.Contact;
 import io.swagger.oas.models.info.Info;
 import io.swagger.oas.models.info.License;
-import io.swagger.oas.models.links.Link;
-import io.swagger.oas.models.links.LinkParameters;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.MediaType;
 import io.swagger.oas.models.media.Schema;
@@ -211,27 +209,6 @@ public class OperationParser {
         exampleObject.setValue(example.value());
         mediaType.addExamples(example.name(), exampleObject);
         return Optional.of(mediaType);
-    }
-
-    public static Optional<Link> getLink(io.swagger.oas.annotations.links.Link link) {
-        if (link == null) {
-            return Optional.empty();
-        }
-        Link linkObject = new Link();
-        linkObject.setParameters(getLinkParameters(link.parameters()).get());
-        linkObject.setDescription(link.description());
-        linkObject.setOperationId(link.operationId());
-        linkObject.setOperationRef(link.operationRef());
-        return Optional.of(linkObject);
-    }
-
-    public static Optional<LinkParameters> getLinkParameters(io.swagger.oas.annotations.links.LinkParameters linkParameters) {
-        if (linkParameters == null) {
-            return Optional.empty();
-        }
-        LinkParameters linkParametersObject = new LinkParameters();
-        linkParametersObject.addExtension(linkParameters.name(), linkParameters.expression());
-        return Optional.of(linkParametersObject);
     }
 
     public static Optional<Info> getInfo(io.swagger.oas.annotations.info.Info info) {
