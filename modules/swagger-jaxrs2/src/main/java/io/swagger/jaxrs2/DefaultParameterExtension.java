@@ -12,6 +12,11 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.util.Json;
 import io.swagger.util.ParameterProcessor;
 
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -41,60 +46,40 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         Parameter parameter = null;
-        /*for (Annotation annotation : annotations) {
+        for (Annotation annotation : annotations) {
             if (annotation instanceof QueryParam) {
                 QueryParam param = (QueryParam) annotation;
-                QueryParameter qp = new QueryParameter()
-                        .name(param.value());
-
-                Property schema = createProperty(type);
-                if (schema != null) {
-                    qp.setProperty(schema);
-                }
+                Parameter qp = new Parameter();
+                qp.name(param.value());
                 parameter = qp;
             } else if (annotation instanceof PathParam) {
                 PathParam param = (PathParam) annotation;
-                PathParameter pp = new PathParameter()
-                        .name(param.value());
-                Property schema = createProperty(type);
-                if (schema != null) {
-                    pp.setProperty(schema);
-                }
+                Parameter pp = new Parameter();
+                pp.name(param.value());
                 parameter = pp;
             } else if (annotation instanceof HeaderParam) {
                 HeaderParam param = (HeaderParam) annotation;
-                HeaderParameter hp = new HeaderParameter()
-                        .name(param.value());
-                Property schema = createProperty(type);
-                if (schema != null) {
-                    hp.setProperty(schema);
-                }
-                parameter = hp;
+                Parameter pp = new Parameter();
+                pp.name(param.value());
+                parameter = pp;
             } else if (annotation instanceof CookieParam) {
                 CookieParam param = (CookieParam) annotation;
-                CookieParameter cp = new CookieParameter()
-                        .name(param.value());
-                Property schema = createProperty(type);
-                if (schema != null) {
-                    cp.setProperty(schema);
-                }
-                parameter = cp;
+                Parameter pp = new Parameter();
+                pp.name(param.value());
+                parameter = pp;
             } else if (annotation instanceof FormParam) {
                 FormParam param = (FormParam) annotation;
-                FormParameter fp = new FormParameter()
-                        .name(param.value());
-                Property schema = createProperty(type);
-                if (schema != null) {
-                    fp.setProperty(schema);
-                }
-                parameter = fp;
+                Parameter pp = new Parameter();
+                pp.name(param.value());
+                parameter = pp;
             } else {
                 handleAdditionalAnnotation(parameters, annotation, type, typesToSkip);
             }
         }
+
         if (parameter != null) {
             parameters.add(parameter);
-        }*/
+        }
 
         return parameters;
     }
@@ -107,6 +92,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
      * @param type
      * @param typesToSkip
      */
+
     private void handleAdditionalAnnotation(List<Parameter> parameters, Annotation annotation,
                                             final Type type, Set<Type> typesToSkip) {
         if (CLASS_BEAN_PARAM != null && CLASS_BEAN_PARAM.isAssignableFrom(annotation.getClass())) {

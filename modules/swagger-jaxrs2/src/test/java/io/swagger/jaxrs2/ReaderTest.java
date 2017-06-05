@@ -139,6 +139,12 @@ public class ReaderTest {
         assertEquals(OPERATION_DESCRIPTION, operation.getDescription());
     }
 
+    @Test(description = "Get the Param of an operation")
+    public void testSubscriptionIdParam() {
+        Reader reader = new Reader(new OpenAPI(), null);
+        OpenAPI openAPI = reader.read(DuplicatedOperationIdResource.class);
+    }
+
     @Test(description = "Do nothing")
     public void testBasicEmptyOperation() {
         Reader reader = new Reader(new OpenAPI(), null);

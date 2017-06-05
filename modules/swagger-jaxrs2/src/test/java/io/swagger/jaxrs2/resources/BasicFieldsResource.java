@@ -4,6 +4,7 @@ import io.swagger.oas.annotations.Operation;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 /**
@@ -16,7 +17,7 @@ public class BasicFieldsResource {
     @Operation(operationId = "operationId",
             summary = "Operation Summary",
             description = "Operation Description")
-    public Response getSummaryAndDescription() {
+    public Response getSummaryAndDescription(@QueryParam("subscriptionId") String subscriptionId) {
         return Response.ok().entity("ok").build();
     }
 

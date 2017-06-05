@@ -117,7 +117,7 @@ public class Reader {
         JavaType classType = TypeFactory.defaultInstance().constructType(cls);
         BeanDescription bd = new ObjectMapper().getSerializationConfig().introspect(classType);
 
-        final List<Parameter> globalParameters = new ArrayList<Parameter>();
+        final List<Parameter> globalParameters = new ArrayList<>();
 
         // look for constructor-level annotated properties
         globalParameters.addAll(ReaderUtils.collectConstructorParameters(cls, openAPI));
