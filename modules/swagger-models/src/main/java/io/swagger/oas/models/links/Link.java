@@ -17,10 +17,10 @@
 package io.swagger.oas.models.links;
 
 import io.swagger.oas.models.headers.Header;
+import io.swagger.oas.models.servers.Server;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Link
@@ -36,6 +36,26 @@ public class Link {
   private Map<String, Header> headers = null;
   private String description = null;
   private java.util.Map<String, Object> extensions = null;
+  private Server server;
+
+  /**
+   * returns the server property from a Link instance.
+   *
+   * @return Server server
+   **/
+
+  public Server getServer() {
+    return server;
+  }
+
+  public void setServer(Server server) {
+    this.server = server;
+  }
+
+  public Link server(Server server) {
+    this.setServer(server);
+    return this;
+  }
 
   /**
    * returns the operationRef property from a Link instance.
@@ -140,28 +160,50 @@ public class Link {
     return this;
   }
 
-
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof Link)) {
       return false;
     }
+
     Link link = (Link) o;
-    return Objects.equals(this.operationRef, link.operationRef) &&
-        Objects.equals(this.operationId, link.operationId) &&
-        Objects.equals(this.parameters, link.parameters) &&
-        Objects.equals(this.headers, link.headers) &&
-        Objects.equals(this.description, link.description);
+
+    if (operationRef != null ? !operationRef.equals(link.operationRef) : link.operationRef != null) {
+      return false;
+    }
+    if (operationId != null ? !operationId.equals(link.operationId) : link.operationId != null) {
+      return false;
+    }
+    if (parameters != null ? !parameters.equals(link.parameters) : link.parameters != null) {
+      return false;
+    }
+    if (headers != null ? !headers.equals(link.headers) : link.headers != null) {
+      return false;
+    }
+    if (description != null ? !description.equals(link.description) : link.description != null) {
+      return false;
+    }
+    if (extensions != null ? !extensions.equals(link.extensions) : link.extensions != null) {
+      return false;
+    }
+    return server != null ? server.equals(link.server) : link.server == null;
+
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(operationRef, operationId, parameters, headers, description);
+    int result = operationRef != null ? operationRef.hashCode() : 0;
+    result = 31 * result + (operationId != null ? operationId.hashCode() : 0);
+    result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
+    result = 31 * result + (headers != null ? headers.hashCode() : 0);
+    result = 31 * result + (description != null ? description.hashCode() : 0);
+    result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
+    result = 31 * result + (server != null ? server.hashCode() : 0);
+    return result;
   }
-
 
   public java.util.Map<String, Object> getExtensions() {
     return extensions;
