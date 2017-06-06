@@ -32,7 +32,7 @@ import java.util.Map;
 public class Link {
   private String operationRef = null;
   private String operationId = null;
-  private LinkParameters parameters = null;
+  private Map<String, String> parameters = null;
   private Map<String, Header> headers = null;
   private String description = null;
   private java.util.Map<String, Object> extensions = null;
@@ -101,16 +101,20 @@ public class Link {
    * @return LinkParameters parameters
    **/
 
-  public LinkParameters getParameters() {
+  public Map<String, String> getParameters() {
     return parameters;
   }
 
-  public void setParameters(LinkParameters parameters) {
+  public void setParameters(Map<String, String> parameters) {
     this.parameters = parameters;
   }
 
-  public Link parameters(LinkParameters parameters) {
-    this.parameters = parameters;
+  public Link parameters(String name, String parameter) {
+    if(this.parameters == null) {
+      this.parameters = new HashMap<>();
+    }
+    this.parameters.put(name, parameter);
+
     return this;
   }
 

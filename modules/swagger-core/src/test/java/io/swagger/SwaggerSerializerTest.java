@@ -10,6 +10,7 @@ import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.Person;
 import io.swagger.oas.models.info.Contact;
 import io.swagger.oas.models.info.Info;
+import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.IntegerSchema;
 import io.swagger.oas.models.media.MediaType;
@@ -93,6 +94,11 @@ public class SwaggerSerializerTest {
 
         final ApiResponse errorResponse = new ApiResponse()
                 .description("error response")
+                .link("myLink", new Link()
+                        .description("a link")
+                        .operationId("theLinkedOperationId")
+                        .parameters("userId", "gah")
+                )
                 .content(new Content()
                         .addMediaType("application/json", new io.swagger.oas.models.media.MediaType()
                         .schema(new Schema().ref("Error"))));
@@ -116,6 +122,7 @@ public class SwaggerSerializerTest {
         swagger.paths(new Paths().addPathItem("/pets", new PathItem()
                 .get(get).post(post)));
         final String swaggerJson = Json.mapper().writeValueAsString(swagger);
+        Json.prettyPrint(swagger);
         final OpenAPI rebuilt = Json.mapper().readValue(swaggerJson, OpenAPI.class);
         SerializationMatchers.assertEqualsToJson(rebuilt, swaggerJson);
     }
