@@ -19,16 +19,30 @@ package io.swagger.oas.models.links;
 import java.util.Objects;
 
 /**
- * LinkParameters
+ * LinkParameter
  *
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md#linkOParametersbject"
  */
 
 
-public class LinkParameters {
-  public LinkParameters() { }
+public class LinkParameter {
+  private String value;
+
+  public LinkParameter() { }
   private java.util.Map<String, Object> extensions = null;
 
+  public String getValue() {
+    return value;
+  }
+
+  public void setValue(String value) {
+    this.value = value;
+  }
+
+  public LinkParameter value(String value) {
+    this.value = value;
+    return this;
+  }
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -65,7 +79,7 @@ public class LinkParameters {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class LinkParameters {\n");
+    sb.append("class LinkParameter {\n");
     
     sb.append("}");
     return sb.toString();
