@@ -301,6 +301,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
                 for (String pkg : acceptablePackages) {
                     if (cls.getPackage().getName().startsWith(pkg)) {
                         output.add(cls);
+			break;
                     }
                 }
             }
