@@ -4,22 +4,13 @@ import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import io.swagger.jaxrs.Reader;
-import io.swagger.models.ArrayModel;
-import io.swagger.models.Model;
-import io.swagger.models.Operation;
-import io.swagger.models.RefModel;
-import io.swagger.models.Swagger;
-import io.swagger.models.TestEnum;
+import io.swagger.models.*;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.QueryParameter;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
-import io.swagger.models.properties.StringProperty;
-import io.swagger.models.properties.UUIDProperty;
+import io.swagger.models.properties.*;
 import io.swagger.resources.ResourceWithGenerics;
 import io.swagger.resources.generics.UserApiRoute;
-
+import io.swagger.resources.generics.UserApiRouteImpl;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -27,10 +18,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 public class GenericsTest {
     private final Swagger swagger = new Reader(new Swagger()).read(ResourceWithGenerics.class);
@@ -227,5 +215,13 @@ public class GenericsTest {
         assertEquals(properties.size(), 2);
         assertNotNull(properties.get("id"));
         assertNotNull(properties.get("name"));
+    }
+
+    @Test(description = "scan model implementing interface with Generic Type")
+    public void scanModelImplInterfaceWithGenericType() {
+        final Swagger swagger = new Reader(new Swagger()).read(UserApiRouteImpl.class);
+        assertNotNull(swagger);
+        assertEquals(((BodyParameter) swagger.getPath("/api/users2").getPost().getParameters().get(0))
+                .getSchema().getReference(), "#/definitions/UserEntity");
     }
 }
