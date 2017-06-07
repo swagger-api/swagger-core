@@ -4,6 +4,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import io.swagger.models.Swagger;
+import io.swagger.models.parameters.BodyParameter;
+import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.util.Json;
@@ -30,6 +32,50 @@ public class JsonDeserializationTest {
         final String json = ResourceUtils.loadClassResource(getClass(), "specFiles/compositionTest.json");
         final Object swagger = m.readValue(json, Swagger.class);
         assertTrue(swagger instanceof Swagger);
+    }
+
+    @Test(description = "it should deserialize a field x-examples if it is an object")
+    public void testObjectXExample() throws IOException {
+        final String json = "{\n" +
+                "   \"name\":\"body\",\n" +
+                "   \"in\":\"body\",\n" +
+                "   \"description\":\"body param with example\",\n" +
+                "   \"required\":true,\n" +
+                "   \"schema\": {\n" +
+                "     \"$ref\": \"#/definitions/Pet\"\n" +
+                "   },\n" +
+                "   \"x-examples\":{\n" +
+                "      \"application/json\": {\n" +
+                "        \"sampleKey\":\"samplevalue\"\n" +
+                "      }\n" +
+                "   }\n" +
+                "}";
+        final Parameter result = m.readValue(json, Parameter.class);
+        assertTrue(result instanceof BodyParameter);
+        assertEquals(1, ((BodyParameter) result).getExamples().size());
+        assertTrue(((BodyParameter) result).getExamples().get("application/json") instanceof Map);
+    }
+
+    @Test(description = "it should deserialize a field x-examples if it is a string")
+    public void tesStringXExample() throws IOException {
+        final String json = "{\n" +
+                "   \"name\":\"body\",\n" +
+                "   \"in\":\"body\",\n" +
+                "   \"description\":\"body param with example\",\n" +
+                "   \"required\":true,\n" +
+                "   \"schema\": {\n" +
+                "     \"$ref\": \"#/definitions/Pet\"\n" +
+                "   },\n" +
+                "   \"x-examples\":{\n" +
+                "      \"application/json\": \"{" +
+                "        \\\"sampleKey\\\":\\\"samplevalue\\\"" +
+                "      }\"\n" +
+                "   }\n" +
+                "}";
+        final Parameter result = m.readValue(json, Parameter.class);
+        assertTrue(result instanceof BodyParameter);
+        assertEquals(1, ((BodyParameter) result).getExamples().size());
+        assertTrue(((BodyParameter) result).getExamples().get("application/json") instanceof String);
     }
 
     @Test(description = "it should deserialize a simple ObjectProperty")

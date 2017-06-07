@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class BodyParameter extends AbstractParameter implements Parameter {
     Model schema;
-    Map<String, String> examples;
+    Map<String, Object> examples;
 
     public BodyParameter() {
         super.setIn("body");
@@ -44,17 +44,17 @@ public class BodyParameter extends AbstractParameter implements Parameter {
 
     public void addExample(String mediaType, String value) {
         if(examples == null) {
-            examples = new LinkedHashMap<String, String>();
+            examples = new LinkedHashMap<String, Object>();
         }
         examples.put(mediaType, value);
     }
 
     @JsonProperty("x-examples")
-    public Map<String, String> getExamples() {
+    public Map<String, Object> getExamples() {
         return examples;
     }
 
-    public void setExamples(Map<String, String> examples) {
+    public void setExamples(Map<String, Object> examples) {
         this.examples = examples;
     }
 
