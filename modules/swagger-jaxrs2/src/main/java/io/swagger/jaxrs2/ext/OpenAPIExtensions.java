@@ -1,5 +1,6 @@
 package io.swagger.jaxrs2.ext;
 
+import io.swagger.jaxrs2.DefaultParameterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,12 +27,12 @@ public class OpenAPIExtensions {
     }
 
     static {
-        extensions = new ArrayList<OpenAPIExtension>();
+        extensions = new ArrayList<>();
         ServiceLoader<OpenAPIExtension> loader = ServiceLoader.load(OpenAPIExtension.class);
         for (OpenAPIExtension ext : loader) {
             LOGGER.debug("adding extension " + ext);
             extensions.add(ext);
         }
-        //extensions.add(new DefaultParameterExtension());
+        extensions.add(new DefaultParameterExtension());
     }
 }

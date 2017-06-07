@@ -33,17 +33,17 @@ import java.util.List;
 public class ParameterProcessor {
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
-    public static Parameter applyAnnotations(OpenAPI swagger, Parameter parameter, Type type, List<Annotation> annotations) {
+    public static Parameter applyAnnotations(OpenAPI openAPI, Parameter parameter, Type type, List<Annotation> annotations) {
         final AnnotationsHelper helper = new AnnotationsHelper(annotations, type);
         if (helper.isContext()) {
             return null;
         }
-        if(parameter == null) {
+        if (parameter == null) {
             return null;
         }
         final ParamWrapper<?> param = null;
 
-        for(Annotation annotation : annotations) {
+        for (Annotation annotation : annotations) {
             if (annotation instanceof io.swagger.oas.annotations.Parameter) {
                 io.swagger.oas.annotations.Parameter p = (io.swagger.oas.annotations.Parameter) annotation;
                 if (StringUtils.isNotBlank(p.in())) {
@@ -60,8 +60,6 @@ public class ParameterProcessor {
                 }
                 if (hasSchemaAnnotation(p.schema())) {
                     Schema schema = processSchema(p.schema());
-
-                    // TODO: merge???
                     if (schema != null) {
                         parameter.setSchema(schema);
                     }
@@ -79,17 +77,17 @@ public class ParameterProcessor {
                 }
             } else if (annotation.annotationType().getName().equals("javax.validation.constraints.Size")) {
                 try {
-                    if(parameter.getSchema() == null) {
+                    if (parameter.getSchema() == null) {
                         parameter.setSchema(new ArraySchema());
                     }
-                    if(parameter.getSchema() instanceof ArraySchema) {
+                    if (parameter.getSchema() instanceof ArraySchema) {
                         ArraySchema as = (ArraySchema) parameter.getSchema();
                         Integer min = (Integer) annotation.annotationType().getMethod("min").invoke(annotation);
-                        if(min != null) {
+                        if (min != null) {
                             as.setMinItems(min);
                         }
                         Integer max = (Integer) annotation.annotationType().getMethod("max").invoke(annotation);
-                        if(max != null) {
+                        if (max != null) {
                             as.setMaxItems(max);
                         }
                     }
@@ -99,9 +97,9 @@ public class ParameterProcessor {
                 }
             }
         }
-        if(type != null) {
+        if (type != null) {
             Schema filled = fillSchema(parameter.getSchema(), type);
-            if(filled != null) {
+            if (filled != null) {
                 parameter.setSchema(filled);
             }
         }
@@ -109,15 +107,14 @@ public class ParameterProcessor {
 
         Schema paramSchema = parameter.getSchema();
 
-        if(paramSchema != null) {
-            if(paramSchema instanceof ArraySchema) {
+        if (paramSchema != null) {
+            if (paramSchema instanceof ArraySchema) {
                 ArraySchema as = (ArraySchema) paramSchema;
-                if(defaultValue != null) {
+                if (defaultValue != null) {
                     as.getItems().setDefault(defaultValue);
                 }
-            }
-            else {
-                if(defaultValue != null) {
+            } else {
+                if (defaultValue != null) {
                     paramSchema.setDefault(defaultValue);
                 }
             }
@@ -286,33 +283,29 @@ public class ParameterProcessor {
     }
 
     public static Schema fillSchema(Schema schema, Type type) {
-        if(schema != null) {
-            if(schema != null && StringUtils.isBlank(schema.getType())) {
+        if (schema != null) {
+            if (schema != null && StringUtils.isBlank(schema.getType())) {
                 PrimitiveType pt = PrimitiveType.fromType(type);
-                if(pt != null) {
+                if (pt != null) {
                     Schema inner = pt.createProperty();
                     return merge(schema, inner);
-                }
-                else {
+                } else {
                     return ModelConverters.getInstance().resolveProperty(type);
                 }
-            }
-            else if("array".equals(schema.getType())) {
-                Schema inner = fillSchema(((ArraySchema)schema).getItems(), type);
+            } else if ("array".equals(schema.getType())) {
+                Schema inner = fillSchema(((ArraySchema) schema).getItems(), type);
                 ArraySchema as = (ArraySchema) schema;
                 as.setItems(inner);
                 as.setMinItems(schema.getMinItems());
                 as.setMaxItems(schema.getMaxItems());
                 return as;
             }
-        }
-        else {
+        } else {
             PrimitiveType pt = PrimitiveType.fromType(type);
-            if(pt != null) {
+            if (pt != null) {
                 Schema inner = pt.createProperty();
                 return merge(schema, inner);
-            }
-            else {
+            } else {
                 return ModelConverters.getInstance().resolveProperty(type);
             }
         }
@@ -321,46 +314,46 @@ public class ParameterProcessor {
 
     // TODO!
     public static Schema merge(Schema from, Schema to) {
-        if(from == null) {
+        if (from == null) {
             return to;
         }
-        if(to.getDescription() == null) {
+        if (to.getDescription() == null) {
             to.setDescription(from.getDescription());
         }
-        if(to.getDefault() == null) {
+        if (to.getDefault() == null) {
             to.setDefault(from.getDefault());
         }
-        if(to.getEnum() == null) {
+        if (to.getEnum() == null) {
             to.setEnum(from.getEnum());
         }
-        if(to.getExclusiveMinimum() == null) {
+        if (to.getExclusiveMinimum() == null) {
             to.setExclusiveMinimum(from.getExclusiveMinimum());
         }
-        if(to.getExclusiveMaximum() == null) {
+        if (to.getExclusiveMaximum() == null) {
             to.setExclusiveMaximum(from.getExclusiveMaximum());
         }
-        if(to.getMinimum() == null) {
+        if (to.getMinimum() == null) {
             to.setMinimum(from.getMinimum());
         }
-        if(to.getMaximum() == null) {
+        if (to.getMaximum() == null) {
             to.setMaximum(from.getMaximum());
         }
         return to;
     }
 
     private static boolean hasArrayAnnotation(io.swagger.oas.annotations.media.ArraySchema array) {
-        if(array.uniqueItems() == false
+        if (array.uniqueItems() == false
                 && array.maxItems() == Integer.MIN_VALUE
                 && array.minItems() == Integer.MAX_VALUE
                 && !hasSchemaAnnotation(array.schema())
-        ) {
+                ) {
             return false;
         }
         return true;
     }
 
     private static boolean hasSchemaAnnotation(io.swagger.oas.annotations.media.Schema schema) {
-        if(StringUtils.isBlank(schema.type())
+        if (StringUtils.isBlank(schema.type())
                 && StringUtils.isBlank(schema.format())
                 && StringUtils.isBlank(schema.title())
                 && StringUtils.isBlank(schema.description())
@@ -389,7 +382,7 @@ public class ParameterProcessor {
                 && schema.not().equals(Void.class)
                 && schema.oneOf().length == 1 && schema.oneOf()[0].equals(Void.class)
                 && schema.anyOf().length == 1 && schema.anyOf()[0].equals(Void.class)
-        ) {
+                ) {
             return false;
         }
         return true;
@@ -407,72 +400,64 @@ public class ParameterProcessor {
 
     private static Schema processSchema(io.swagger.oas.annotations.media.Schema schema) {
         Schema output = null;
-        if(schema.type() != null) {
-            if("integer".equals(schema.type())) {
+        if (schema.type() != null) {
+            if ("integer".equals(schema.type())) {
                 output = new IntegerSchema();
-                if(StringUtils.isNotBlank(schema.format())) {
+                if (StringUtils.isNotBlank(schema.format())) {
                     output.format(schema.format());
                 }
             }
-            if("string".equals(schema.type())) {
-                if("password".equals(schema.format())) {
+            if ("string".equals(schema.type())) {
+                if ("password".equals(schema.format())) {
                     output = new PasswordSchema();
-                }
-                else if("binary".equals(schema.format())) {
+                } else if ("binary".equals(schema.format())) {
                     output = new BinarySchema();
-                }
-                else if("byte".equals(schema.format())) {
+                } else if ("byte".equals(schema.format())) {
                     output = new ByteArraySchema();
-                }
-                else if("date".equals(schema.format())) {
+                } else if ("date".equals(schema.format())) {
                     output = new DateSchema();
-                }
-                else if("date-time".equals(schema.format())) {
+                } else if ("date-time".equals(schema.format())) {
                     output = new DateTimeSchema();
-                }
-                else if("email".equals(schema.format())) {
+                } else if ("email".equals(schema.format())) {
                     output = new EmailSchema();
-                }
-                else if("uuid".equals(schema.format())) {
+                } else if ("uuid".equals(schema.format())) {
                     output = new UUIDSchema();
-                }
-                else {
+                } else {
                     output = new StringSchema();
                 }
-            }
-            else {
+            } else {
                 output = new Schema();
             }
 
             // TODO: other types
         }
-        if(output != null) {
-            if(StringUtils.isNotBlank(schema._default())) {
+        if (output != null) {
+            if (StringUtils.isNotBlank(schema._default())) {
                 output.setDefault(schema._default());
             }
-            if(schema._enum() != null) {
-                for(String v : schema._enum()) {
-                    if(StringUtils.isNotBlank(v)) {
+            if (schema._enum() != null) {
+                for (String v : schema._enum()) {
+                    if (StringUtils.isNotBlank(v)) {
                         output.addEnumItemObject(v);
                     }
                 }
             }
-            if(schema.exclusiveMinimum()) {
+            if (schema.exclusiveMinimum()) {
                 output.exclusiveMinimum(true);
             }
-            if(schema.exclusiveMaximum()) {
+            if (schema.exclusiveMaximum()) {
                 output.exclusiveMaximum(true);
             }
-            if(StringUtils.isNotBlank(schema.minimum())) {
+            if (StringUtils.isNotBlank(schema.minimum())) {
                 output.minimum(new BigDecimal(schema.minimum()));
             }
-            if(StringUtils.isNotBlank(schema.maximum())) {
+            if (StringUtils.isNotBlank(schema.maximum())) {
                 output.maximum(new BigDecimal(schema.maximum()));
             }
-            if(schema.minProperties() > 0) {
+            if (schema.minProperties() > 0) {
                 output.minProperties(schema.minProperties());
             }
-            if(schema.maxProperties() > 0) {
+            if (schema.maxProperties() > 0) {
                 output.maxProperties(schema.maxProperties());
             }
         }
@@ -536,9 +521,9 @@ public class ParameterProcessor {
      * accessing supported parameter annotations.
      */
     private static class AnnotationsHelper {
-//        private static final ApiParam DEFAULT_API_PARAM = getDefaultApiParam(null);
+        //        private static final ApiParam DEFAULT_API_PARAM = getDefaultApiParam(null);
         private boolean context;
-//        private ParamWrapper<?> apiParam = new ApiParamWrapper(DEFAULT_API_PARAM);
+        //        private ParamWrapper<?> apiParam = new ApiParamWrapper(DEFAULT_API_PARAM);
         private String type;
         private String format;
         private String defaultValue;
@@ -563,7 +548,7 @@ public class ParameterProcessor {
         public AnnotationsHelper(List<Annotation> annotations, Type _type) {
             String rsDefault = null;
             Size size = null;
-            if(annotations != null) {
+            if (annotations != null) {
                 for (Annotation item : annotations) {
                     if ("javax.ws.rs.core.Context".equals(item.annotationType().getName())) {
                         context = true;

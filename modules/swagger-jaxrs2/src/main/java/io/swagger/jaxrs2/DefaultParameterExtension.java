@@ -41,7 +41,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
     @Override
     public List<Parameter> extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip, Iterator<OpenAPIExtension> chain) {
         if (shouldIgnoreType(type, typesToSkip)) {
-            return new ArrayList<Parameter>();
+            return new ArrayList<>();
         }
 
         List<Parameter> parameters = new ArrayList<Parameter>();
