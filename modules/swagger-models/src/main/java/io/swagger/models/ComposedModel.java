@@ -93,9 +93,11 @@ public class ComposedModel extends AbstractModel {
     @JsonIgnore
     public void setInterfaces(List<RefModel> interfaces) {
         this.interfaces = interfaces;
-        for (RefModel model : interfaces) {
-            if (!allOf.contains(model)) {
-                allOf.add(model);
+        if (interfaces != null) {
+            for (RefModel model : interfaces) {
+                if (!allOf.contains(model)) {
+                    allOf.add(model);
+                }
             }
         }
     }
