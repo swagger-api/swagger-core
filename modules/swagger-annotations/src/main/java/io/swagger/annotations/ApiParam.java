@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * <p>
  * This annotation can be used only in combination of JAX-RS 1.x/2.x annotations.
  */
-@Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD})
+@Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiParam {
     /**

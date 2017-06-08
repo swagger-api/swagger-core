@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * with {@code @Api} and will ignore other resources (JAX-RS endpoints, Servlets and
  * so on).
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Api {
