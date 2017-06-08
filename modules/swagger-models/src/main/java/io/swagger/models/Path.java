@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @JsonPropertyOrder({"get", "head", "post", "put", "delete", "options", "patch"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Path {
 
     private Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
