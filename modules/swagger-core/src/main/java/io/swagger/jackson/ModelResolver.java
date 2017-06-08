@@ -52,23 +52,11 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
@@ -272,6 +260,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             Xml xml = new Xml().name(rootAnnotation.name());
             if (rootAnnotation.namespace() != null && !"".equals(rootAnnotation.namespace()) && !"##default".equals(rootAnnotation.namespace())) {
                 xml.namespace(rootAnnotation.namespace());
+            }
+            else {
+                // If namespace was not given in the annotation, look for it in package-info
+                Package pkg = type.getRawClass().getPackage();
+                if(pkg != null) {
+                    XmlSchema xmlSchma = pkg.getAnnotation(XmlSchema.class);
+                    if(xmlSchma != null) {
+                        xml.namespace(xmlSchma.namespace());
+                    }
+                }
             }
             model.xml(xml);
         }
