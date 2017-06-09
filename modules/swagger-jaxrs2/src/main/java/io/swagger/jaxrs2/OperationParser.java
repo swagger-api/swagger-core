@@ -60,7 +60,7 @@ public class OperationParser {
 		if (schema == null) {
 			return Optional.empty();
 		}
-		if(schema.implementation() != Void.class){
+		if (schema.implementation() != Void.class) {
 			return Optional.of(ModelConverters.getInstance().readAll(schema.implementation()));
 		}
 		return Optional.empty();
@@ -182,14 +182,18 @@ public class OperationParser {
 		if (example == null) {
 			return Optional.empty();
 		}
-		MediaType mediaType = new MediaType();
-		Example exampleObject = new Example();
-		exampleObject.setDescription(example.name());
-		exampleObject.setSummary(example.summary());
-		exampleObject.setExternalValue(example.externalValue());
-		exampleObject.setValue(example.value());
-		mediaType.addExamples(example.name(), exampleObject);
-		return Optional.of(mediaType);
+		if (StringUtils.isNotBlank(example.name())) {
+			MediaType mediaType = new MediaType();
+			Example exampleObject = new Example();
+			exampleObject.setDescription(example.name());
+			exampleObject.setSummary(example.summary());
+			exampleObject.setExternalValue(example.externalValue());
+			exampleObject.setValue(example.value());
+
+			mediaType.addExamples(example.name(), exampleObject);
+			return Optional.of(mediaType);
+		}
+		return Optional.empty();
 	}
 
 	public static Optional<Info> getInfo(io.swagger.oas.annotations.info.Info info) {

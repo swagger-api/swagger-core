@@ -24,6 +24,7 @@ import io.swagger.oas.models.tags.Tag;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,8 +123,10 @@ public class Reader {
 		Components components = new Components();
 		if (securityScheme.isPresent()) {
 			Map<String, SecurityScheme> securitySchemeMap = new HashMap<>();
-			securitySchemeMap.put(securityScheme.get().getName(), securityScheme.get());
-			components.setSecuritySchemes(securitySchemeMap);
+			if (StringUtils.isNotBlank(securityScheme.get().getName())) {
+				securitySchemeMap.put(securityScheme.get().getName(), securityScheme.get());
+				components.setSecuritySchemes(securitySchemeMap);
+			}
 		}
 
 		OperationParser.getSchema(apiSchema).ifPresent(stringSchemaMap -> components.setSchemas(stringSchemaMap));
@@ -169,20 +172,22 @@ public class Reader {
 				String httpMethod = ReaderUtils.extractOperationMethod(operation, method, OpenAPIExtensions.chain());
 				setPathItemOperation(pathItemObject, httpMethod, operation);
 
+				List<Parameter> operationParameters = new ArrayList<>();
 				Annotation[][] paramAnnotations = ReflectionUtils.getParameterAnnotations(method);
 				if (annotatedMethod == null) {
 					Type[] genericParameterTypes = method.getGenericParameterTypes();
 					for (int i = 0; i < genericParameterTypes.length; i++) {
 						final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
-						operation.setParameters(getParameters(type, Arrays.asList(paramAnnotations[i])));
+						operationParameters.addAll(getParameters(type, Arrays.asList(paramAnnotations[i])));
 					}
 				} else {
 					for (int i = 0; i < annotatedMethod.getParameterCount(); i++) {
 						AnnotatedParameter param = annotatedMethod.getParameter(i);
 						final Type type = TypeFactory.defaultInstance().constructType(param.getParameterType(), cls);
-						operation.setParameters(getParameters(type, Arrays.asList(paramAnnotations[i])));
+						operationParameters.addAll(getParameters(type, Arrays.asList(paramAnnotations[i])));
 					}
 				}
+				operation.setParameters(operationParameters);
 
 				paths.addPathItem(pathItemObject.get$ref(), pathItemObject);
 				if (openAPI.getPaths() != null) {
@@ -288,7 +293,6 @@ public class Reader {
 		operation.setDescription(apiOperation.description());
 		OperationParser.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(externalDocumentation -> operation.setExternalDocs(externalDocumentation));
 		operation.setOperationId(getOperationId(apiOperation.operationId()));
-		OperationParser.getParametersList(apiOperation.parameters()).ifPresent(parameters -> operation.setParameters(parameters));
 		OperationParser.getRequestBody(apiOperation.requestBody()).ifPresent(requestBody -> operation.setRequestBody(requestBody));
 		operation.setDeprecated(apiOperation.deprecated());
 		OperationParser.getServers(apiOperation.servers()).ifPresent(servers -> operation.setServers(servers));

@@ -1,6 +1,19 @@
 package io.swagger.jaxrs2;
 
-import io.swagger.jaxrs2.resources.*;
+import io.swagger.jaxrs2.resources.BasicClass;
+import io.swagger.jaxrs2.resources.BasicFieldsResource;
+import io.swagger.jaxrs2.resources.CompleteFieldsResource;
+import io.swagger.jaxrs2.resources.DeprecatedFieldsResource;
+import io.swagger.jaxrs2.resources.DuplicatedOperationIdResource;
+import io.swagger.jaxrs2.resources.DuplicatedSecurityResource;
+import io.swagger.jaxrs2.resources.ExternalDocsReference;
+import io.swagger.jaxrs2.resources.ParametersResource;
+import io.swagger.jaxrs2.resources.RequestBodyResource;
+import io.swagger.jaxrs2.resources.ResponsesResource;
+import io.swagger.jaxrs2.resources.SecurityResource;
+import io.swagger.jaxrs2.resources.SimpleCallbackResource;
+import io.swagger.jaxrs2.resources.SimpleMethods;
+import io.swagger.jaxrs2.resources.TagsResource;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.OpenAPI;
@@ -9,7 +22,6 @@ import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.callbacks.Callbacks;
-import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
@@ -42,7 +54,6 @@ public class ReaderTest {
 	private static final String OPERATION_DESCRIPTION = "Operation Description";
 	private static final String CALLBACK_POST_OPERATION_DESCRIPTION = "payload data will be sent";
 	private static final String CALLBACK_GET_OPERATION_DESCRIPTION = "payload data will be received";
-	private static final String APPLICATION_JSON = "application/json";
 	private static final String RESPONSE_CODE_200 = "200";
 	private static final String RESPONSE_DESCRIPTION = "voila!";
 	private static final String REQUEST_DESCRIPTION = "Request description";
@@ -55,12 +66,12 @@ public class ReaderTest {
 	private static final String SECURITY_KEY = "security_key";
 	private static final String SCOPE_VALUE = "write:petsread:pets";
 	private static final String OPERATION_ID = "operationId";
+	private static final String DUPLICATED_OPERATION_ID = "operationId_1";
 
 	private static final int RESPONSES_NUMBER = 2;
 	private static final int TAG_NUMBER = 2;
 	private static final int SCHEMAS = 2;
-	private static final int CALLBACK_NUMBER = 1;
-	private static final int PARAMETER_NUMBER = 1;
+	private static final int PARAMETER_NUMBER = 2;
 	private static final int SECURITY_REQUIREMENT_NUMBER = 1;
 	private static final int SCOPE_NUMBER = 1;
 	private static final int PATHS_NUMBER = 1;
@@ -105,10 +116,6 @@ public class ReaderTest {
 
 		RequestBody requestBody = operation.getRequestBody();
 		assertEquals(REQUEST_DESCRIPTION, requestBody.getDescription());
-
-		Content content = requestBody.getContent();
-		assertNotNull(content);
-		assertNotNull(content.get(APPLICATION_JSON));
 
 		ExternalDocumentation externalDocs = operation.getExternalDocs();
 		assertEquals(EXTERNAL_DOCS_DESCRIPTION, externalDocs.getDescription());
@@ -161,8 +168,8 @@ public class ReaderTest {
 		OpenAPI openAPI = reader.read(DuplicatedOperationIdResource.class);
 
 		Paths paths = openAPI.getPaths();
-		Operation firstOperation = paths.get("operationId").getGet();
-		Operation secondOperation = paths.get("operationId_1").getGet();
+		Operation firstOperation = paths.get(OPERATION_ID).getGet();
+		Operation secondOperation = paths.get(DUPLICATED_OPERATION_ID).getGet();
 		assertNotNull(firstOperation);
 		assertNotNull(secondOperation);
 		assertNotEquals(firstOperation.getOperationId(), secondOperation.getOperationId());
@@ -232,10 +239,6 @@ public class ReaderTest {
 		RequestBody requestBody = requestOperation.getRequestBody();
 		assertEquals(REQUEST_DESCRIPTION, requestBody.getDescription());
 
-		Content content = requestBody.getContent();
-		assertNotNull(content);
-		assertNotNull(content.get(APPLICATION_JSON));
-
 	}
 
 	@Test(description = "External Docs")
@@ -250,33 +253,9 @@ public class ReaderTest {
 		assertEquals(EXTERNAL_DOCS_URL, externalDocs.getUrl());
 	}
 
-	@Test(description = "Parameters")
-	public void testGetParameters() {
-		Reader reader = new Reader(new OpenAPI(), null);
-
-		Method[] methods = ParametersResource.class.getMethods();
-
-		Operation parametersOperation = reader.parseMethod(methods[0]);
-		assertNotNull(parametersOperation);
-
-		List<Parameter> parameters = parametersOperation.getParameters();
-		assertNotNull(parameters);
-		assertEquals(PARAMETER_NUMBER, parameters.size());
-		Parameter parameter = parameters.get(0);
-		assertNotNull(parameter);
-		assertEquals(PARAMETER_IN, parameter.getIn());
-		assertEquals(PARAMETER_NAME, parameter.getName());
-		assertEquals(PARAMETER_DESCRIPTION, parameter.getDescription());
-		assertEquals(Boolean.TRUE, parameter.getRequired());
-		assertEquals(Boolean.TRUE, parameter.getAllowEmptyValue());
-		assertEquals(Boolean.TRUE, parameter.getAllowReserved());
-		assertEquals(Boolean.FALSE, parameter.getDeprecated());
-	}
-
 	@Test(description = "Security Requirement")
 	public void testSecurityRequirement() {
 		Reader reader = new Reader(new OpenAPI(), null);
-
 		Method[] methods = SecurityResource.class.getMethods();
 
 		Operation securityOperation = reader.parseMethod(methods[0]);
@@ -294,7 +273,6 @@ public class ReaderTest {
 	@Test(description = "Callbacks")
 	public void testGetCallbacks() {
 		Reader reader = new Reader(new OpenAPI(), null);
-
 		Method[] methods = SimpleCallbackResource.class.getMethods();
 		Operation callbackOperation = reader.parseMethod(methods[0]);
 		assertNotNull(callbackOperation);
@@ -307,10 +285,6 @@ public class ReaderTest {
 		Operation postOperation = pathItem.getPost();
 		assertNotNull(postOperation);
 		assertEquals(CALLBACK_POST_OPERATION_DESCRIPTION, postOperation.getDescription());
-
-		List<Parameter> parameters = postOperation.getParameters();
-		assertNotNull(parameters);
-		assertEquals(CALLBACK_NUMBER, parameters.size());
 
 		Operation getOperation = pathItem.getGet();
 		assertNotNull(getOperation);
@@ -326,6 +300,16 @@ public class ReaderTest {
 		Reader reader = new Reader(new OpenAPI(), null);
 		OpenAPI openAPI = reader.read(BasicFieldsResource.class);
 		assertNotNull(openAPI);
+		Paths openAPIPaths = openAPI.getPaths();
+		assertNotNull(openAPIPaths);
+		PathItem pathItem = openAPIPaths.get(OPERATION_ID);
+		assertNotNull(pathItem);
+		Operation operation = pathItem.getGet();
+		assertNotNull(operation);
+		List<Parameter> parameters = operation.getParameters();
+		assertNotNull(parameters);
+		assertEquals(PARAMETER_NUMBER, parameters.size());
+
 	}
 
 	private Boolean isValidRestPath(Method method) {

@@ -13,14 +13,14 @@ import javax.ws.rs.Path;
  */
 public class RequestBodyResource {
 
-    @GET
-    @Path("/")
-    @Operation(requestBody =
-    @RequestBody(description = "Request description", content = @Content(
-            mediaType = "application/json",
-            schema = @Schema(implementation = ResponsesResource.SampleResponseSchema.class)
-    ))
-    )
-    public void setRequestBody() {
-    }
+	@GET
+	@Path("/")
+	@Operation(requestBody =
+	@RequestBody(description = "Request description", content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(name = "schema", implementation = ResponsesResource.SampleResponseSchema.class, example = "default")
+	))
+	)
+	public void setRequestBody() {
+	}
 }
