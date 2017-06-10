@@ -22,6 +22,7 @@ import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.callbacks.Callbacks;
+import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
@@ -67,6 +68,9 @@ public class ReaderTest {
 	private static final String SCOPE_VALUE = "write:petsread:pets";
 	private static final String OPERATION_ID = "operationId";
 	private static final String DUPLICATED_OPERATION_ID = "operationId_1";
+	private static final String SCHEMA_TYPE = "string";
+	private static final String SCHEMA_FORMAT = "uuid";
+	private static final String SCHEMA_DESCRIPTION = "the generated UUID";
 
 	private static final int RESPONSES_NUMBER = 2;
 	private static final int TAG_NUMBER = 2;
@@ -309,6 +313,21 @@ public class ReaderTest {
 		List<Parameter> parameters = operation.getParameters();
 		assertNotNull(parameters);
 		assertEquals(PARAMETER_NUMBER, parameters.size());
+		Parameter parameter = parameters.get(0);
+		assertNotNull(parameter);
+		assertEquals(PARAMETER_IN, parameter.getIn());
+		assertEquals(PARAMETER_NAME, parameter.getName());
+		assertEquals(PARAMETER_DESCRIPTION, parameter.getDescription());
+		assertEquals(Boolean.TRUE, parameter.getRequired());
+		assertEquals(Boolean.TRUE, parameter.getAllowEmptyValue());
+		assertEquals(Boolean.TRUE, parameter.getAllowReserved());
+		assertEquals(Boolean.FALSE, parameter.getDeprecated());
+		Schema schema = parameter.getSchema();
+		assertNotNull(schema);
+		assertEquals(SCHEMA_TYPE, schema.getType());
+		assertEquals(SCHEMA_FORMAT, schema.getFormat());
+		assertEquals(SCHEMA_DESCRIPTION, schema.getDescription());
+		assertEquals(Boolean.TRUE, schema.getReadOnly());
 
 	}
 

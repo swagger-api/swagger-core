@@ -38,22 +38,29 @@ public class OperationParser {
 		}
 		List<Parameter> parametersObject = new ArrayList<>();
 		for (io.swagger.oas.annotations.Parameter parameter : parameters) {
-			Parameter parameterObject = new Parameter();
-			parameterObject.setDescription(parameter.description());
-			parameterObject.setDeprecated(parameter.deprecated());
-			parameterObject.setName(parameter.name());
-			parameterObject.setRequired(parameter.required());
-			parameterObject.setStyle(StringUtils.isNoneBlank(parameter.style()) ? Parameter.StyleEnum.valueOf(parameter.style()) : null);
-			parameterObject.setAllowEmptyValue(parameter.allowEmptyValue());
-			parameterObject.setAllowReserved(parameter.allowReserved());
-			parameterObject.setExplode(parameter.explode());
-			parameterObject.setIn(parameter.in());
-			parameterObject.setContent(getContents(parameter.content()).get());
-
-			parametersObject.add(parameterObject);
+			getParameter(parameter).ifPresent(param->parametersObject.add(param));
 
 		}
 		return Optional.of(parametersObject);
+	}
+
+	public static Optional<Parameter> getParameter(io.swagger.oas.annotations.Parameter parameter){
+		if (parameter == null) {
+			return Optional.empty();
+		}
+		Parameter parameterObject = new Parameter();
+		parameterObject.setDescription(parameter.description());
+		parameterObject.setDeprecated(parameter.deprecated());
+		parameterObject.setName(parameter.name());
+		parameterObject.setRequired(parameter.required());
+		parameterObject.setStyle(StringUtils.isNoneBlank(parameter.style()) ? Parameter.StyleEnum.valueOf(parameter.style()) : null);
+		parameterObject.setAllowEmptyValue(parameter.allowEmptyValue());
+		parameterObject.setAllowReserved(parameter.allowReserved());
+		parameterObject.setExplode(parameter.explode());
+		parameterObject.setIn(parameter.in());
+		parameterObject.setContent(getContents(parameter.content()).get());
+
+		return Optional.of(parameterObject);
 	}
 
 	public static Optional<Map<String, Schema>> getSchema(io.swagger.oas.annotations.media.Schema schema) {
