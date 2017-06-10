@@ -38,7 +38,7 @@ public class OperationParser {
 		}
 		List<Parameter> parametersObject = new ArrayList<>();
 		for (io.swagger.oas.annotations.Parameter parameter : parameters) {
-			getParameter(parameter).ifPresent(param -> parametersObject.add(param));
+			getParameter(parameter).ifPresent(parametersObject::add);
 
 		}
 		return Optional.of(parametersObject);
@@ -64,7 +64,8 @@ public class OperationParser {
 		parameterObject.setAllowEmptyValue(parameter.allowEmptyValue());
 		parameterObject.setAllowReserved(parameter.allowReserved());
 		parameterObject.setExplode(parameter.explode());
-		parameterObject.setContent(getContents(parameter.content()).get());
+		getContents(parameter.content()).ifPresent(parameterObject::setContent);
+
 
 		return Optional.of(parameterObject);
 	}
@@ -100,7 +101,7 @@ public class OperationParser {
 		List<Server> serverObjects = new ArrayList<>();
 
 		for (io.swagger.oas.annotations.servers.Server server : servers) {
-			getServer(server).ifPresent(serverObject -> serverObjects.add(serverObject));
+			getServer(server).ifPresent(serverObjects::add);
 		}
 		return Optional.of(serverObjects);
 	}
@@ -154,7 +155,7 @@ public class OperationParser {
 			requestBodyObject.setDescription(requestBody.description());
 		}
 		requestBodyObject.setRequired(requestBody.required());
-		getContents(requestBody.content()).ifPresent(content -> requestBodyObject.setContent(content));
+		getContents(requestBody.content()).ifPresent(requestBodyObject::setContent);
 		return Optional.of(requestBodyObject);
 	}
 
@@ -165,8 +166,7 @@ public class OperationParser {
 		ApiResponses apiResponsesObject = new ApiResponses();
 		for (io.swagger.oas.annotations.responses.ApiResponse response : responses) {
 			ApiResponse apiResponseObject = new ApiResponse();
-			Content content = getContent(response.content()).get();
-			apiResponseObject.content(content);
+			getContent(response.content()).ifPresent(apiResponseObject::content);
 			if (StringUtils.isNotBlank(response.description())) {
 				apiResponseObject.setDescription(response.description());
 			}
@@ -248,8 +248,8 @@ public class OperationParser {
 		if (StringUtils.isNotBlank(info.version())) {
 			infoObject.setVersion(info.version());
 		}
-		getContact(info.contact()).ifPresent(contact -> infoObject.setContact(contact));
-		getLicense(info.license()).ifPresent(license -> infoObject.setLicense(license));
+		getContact(info.contact()).ifPresent(infoObject::setContact);
+		getLicense(info.license()).ifPresent(infoObject::setLicense);
 
 		return Optional.of(infoObject);
 	}

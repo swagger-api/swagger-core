@@ -166,9 +166,14 @@ public class Reader {
 
 				Operation operation = parseMethod(method);
 				PathItem pathItemObject = new PathItem();
-				pathItemObject.set$ref(operation.getOperationId());
-				pathItemObject.setSummary(operation.getSummary());
-				pathItemObject.setDescription(operation.getDescription());
+
+				if (StringUtils.isNotBlank(operation.getSummary())) {
+					pathItemObject.setSummary(operation.getSummary());
+				}
+
+				if (StringUtils.isNotBlank(operation.getDescription())) {
+					pathItemObject.setDescription(operation.getDescription());
+				}
 				String httpMethod = ReaderUtils.extractOperationMethod(operation, method, OpenAPIExtensions.chain());
 				setPathItemOperation(pathItemObject, httpMethod, operation);
 
@@ -245,6 +250,7 @@ public class Reader {
 			setOperationObjectFromApiOperationAnnotation(callbackNewOperation, callbackOperation);
 			setPathItemOperation(pathItemObject, callbackOperation.method(), callbackNewOperation);
 		}
+		
 		pathItemObject.setDescription(apiCallback.name());
 		pathItemObject.setSummary(apiCallback.name());
 
