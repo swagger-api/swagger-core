@@ -38,26 +38,32 @@ public class OperationParser {
 		}
 		List<Parameter> parametersObject = new ArrayList<>();
 		for (io.swagger.oas.annotations.Parameter parameter : parameters) {
-			getParameter(parameter).ifPresent(param->parametersObject.add(param));
+			getParameter(parameter).ifPresent(param -> parametersObject.add(param));
 
 		}
 		return Optional.of(parametersObject);
 	}
 
-	public static Optional<Parameter> getParameter(io.swagger.oas.annotations.Parameter parameter){
+	public static Optional<Parameter> getParameter(io.swagger.oas.annotations.Parameter parameter) {
 		if (parameter == null) {
 			return Optional.empty();
 		}
 		Parameter parameterObject = new Parameter();
-		parameterObject.setDescription(parameter.description());
+		if (StringUtils.isNotBlank(parameter.description())) {
+			parameterObject.setDescription(parameter.description());
+		}
+		if (StringUtils.isNotBlank(parameter.name())) {
+			parameterObject.setName(parameter.name());
+		}
+		if (StringUtils.isNotBlank(parameter.in())) {
+			parameterObject.setIn(parameter.in());
+		}
 		parameterObject.setDeprecated(parameter.deprecated());
-		parameterObject.setName(parameter.name());
 		parameterObject.setRequired(parameter.required());
 		parameterObject.setStyle(StringUtils.isNoneBlank(parameter.style()) ? Parameter.StyleEnum.valueOf(parameter.style()) : null);
 		parameterObject.setAllowEmptyValue(parameter.allowEmptyValue());
 		parameterObject.setAllowReserved(parameter.allowReserved());
 		parameterObject.setExplode(parameter.explode());
-		parameterObject.setIn(parameter.in());
 		parameterObject.setContent(getContents(parameter.content()).get());
 
 		return Optional.of(parameterObject);
@@ -105,13 +111,19 @@ public class OperationParser {
 		}
 
 		Server serverObject = new Server();
-		serverObject.setUrl(server.url());
-		serverObject.setDescription(server.description());
+		if (StringUtils.isNotBlank(server.url())) {
+			serverObject.setUrl(server.url());
+		}
+		if (StringUtils.isNotBlank(server.description())) {
+			serverObject.setDescription(server.description());
+		}
 		io.swagger.oas.annotations.servers.ServerVariable[] serverVariables = server.variables();
 		ServerVariables serverVariablesObject = new ServerVariables();
 		for (io.swagger.oas.annotations.servers.ServerVariable serverVariable : serverVariables) {
 			ServerVariable serverVariableObject = new ServerVariable();
-			serverVariableObject.setDescription(serverVariable.description());
+			if (StringUtils.isNotBlank(serverVariable.description())) {
+				serverVariableObject.setDescription(serverVariable.description());
+			}
 			serverVariablesObject.addServerVariable(serverVariable.name(), serverVariableObject);
 		}
 		serverObject.setVariables(serverVariablesObject);
@@ -124,8 +136,12 @@ public class OperationParser {
 			return Optional.empty();
 		}
 		ExternalDocumentation external = new ExternalDocumentation();
-		external.setDescription(externalDocumentation.description());
-		external.setUrl(externalDocumentation.url());
+		if (StringUtils.isNotBlank(externalDocumentation.description())) {
+			external.setDescription(externalDocumentation.description());
+		}
+		if (StringUtils.isNotBlank(externalDocumentation.url())) {
+			external.setUrl(externalDocumentation.url());
+		}
 		return Optional.of(external);
 	}
 
@@ -134,7 +150,9 @@ public class OperationParser {
 			return Optional.empty();
 		}
 		RequestBody requestBodyObject = new RequestBody();
-		requestBodyObject.setDescription(requestBody.description());
+		if (StringUtils.isNotBlank(requestBody.description())) {
+			requestBodyObject.setDescription(requestBody.description());
+		}
 		requestBodyObject.setRequired(requestBody.required());
 		getContents(requestBody.content()).ifPresent(content -> requestBodyObject.setContent(content));
 		return Optional.of(requestBodyObject);
@@ -149,7 +167,9 @@ public class OperationParser {
 			ApiResponse apiResponseObject = new ApiResponse();
 			Content content = getContent(response.content()).get();
 			apiResponseObject.content(content);
-			apiResponseObject.setDescription(response.description());
+			if (StringUtils.isNotBlank(response.description())) {
+				apiResponseObject.setDescription(response.description());
+			}
 
 			apiResponsesObject.addApiResponse(response.responseCode(), apiResponseObject);
 		}
@@ -192,10 +212,18 @@ public class OperationParser {
 		if (StringUtils.isNotBlank(example.name())) {
 			MediaType mediaType = new MediaType();
 			Example exampleObject = new Example();
-			exampleObject.setDescription(example.name());
-			exampleObject.setSummary(example.summary());
-			exampleObject.setExternalValue(example.externalValue());
-			exampleObject.setValue(example.value());
+			if (StringUtils.isNotBlank(example.name())) {
+				exampleObject.setDescription(example.name());
+			}
+			if (StringUtils.isNotBlank(example.summary())) {
+				exampleObject.setSummary(example.summary());
+			}
+			if (StringUtils.isNotBlank(example.externalValue())) {
+				exampleObject.setExternalValue(example.externalValue());
+			}
+			if (StringUtils.isNotBlank(example.value())) {
+				exampleObject.setValue(example.value());
+			}
 
 			mediaType.addExamples(example.name(), exampleObject);
 			return Optional.of(mediaType);
@@ -208,10 +236,18 @@ public class OperationParser {
 			return Optional.empty();
 		}
 		Info infoObject = new Info();
-		infoObject.setDescription(info.description());
-		infoObject.setTermsOfService(info.termsOfService());
-		infoObject.setTitle(info.title());
-		infoObject.setVersion(info.version());
+		if (StringUtils.isNotBlank(info.description())) {
+			infoObject.setDescription(info.description());
+		}
+		if (StringUtils.isNotBlank(info.termsOfService())) {
+			infoObject.setTermsOfService(info.termsOfService());
+		}
+		if (StringUtils.isNotBlank(info.title())) {
+			infoObject.setTitle(info.title());
+		}
+		if (StringUtils.isNotBlank(info.version())) {
+			infoObject.setVersion(info.version());
+		}
 		getContact(info.contact()).ifPresent(contact -> infoObject.setContact(contact));
 		getLicense(info.license()).ifPresent(license -> infoObject.setLicense(license));
 
@@ -223,9 +259,15 @@ public class OperationParser {
 			return Optional.empty();
 		}
 		Contact contactObject = new Contact();
-		contactObject.setEmail(contact.email());
-		contactObject.setName(contact.name());
-		contactObject.setUrl(contact.url());
+		if (StringUtils.isNotBlank(contact.email())) {
+			contactObject.setEmail(contact.email());
+		}
+		if (StringUtils.isNotBlank(contact.name())) {
+			contactObject.setName(contact.name());
+		}
+		if (StringUtils.isNotBlank(contact.url())) {
+			contactObject.setUrl(contact.url());
+		}
 		return Optional.of(contactObject);
 	}
 
@@ -234,9 +276,12 @@ public class OperationParser {
 			return Optional.empty();
 		}
 		License licenseObject = new License();
-		licenseObject.setName(license.name());
-		licenseObject.setUrl(license.url());
-
+		if (StringUtils.isNotBlank(license.name())) {
+			licenseObject.setName(license.name());
+		}
+		if (StringUtils.isNotBlank(license.url())) {
+			licenseObject.setUrl(license.url());
+		}
 		return Optional.of(licenseObject);
 	}
 }

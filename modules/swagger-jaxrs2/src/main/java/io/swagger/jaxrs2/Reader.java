@@ -289,8 +289,12 @@ public class Reader {
 	private void setOperationObjectFromApiOperationAnnotation(Operation operation, io.swagger.oas.annotations.Operation apiOperation) {
 		ReaderUtils.getStringListFromStringArray(apiOperation.tags()).ifPresent(tags -> operation.setTags(tags));
 		OperationParser.getTags(apiOperation.tags()).ifPresent(tag -> openApiTags.addAll(tag));
-		operation.setSummary(apiOperation.summary());
-		operation.setDescription(apiOperation.description());
+		if (StringUtils.isNotBlank(apiOperation.summary())) {
+			operation.setSummary(apiOperation.summary());
+		}
+		if (StringUtils.isNotBlank(apiOperation.description())) {
+			operation.setDescription(apiOperation.description());
+		}
 		OperationParser.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(externalDocumentation -> operation.setExternalDocs(externalDocumentation));
 		operation.setOperationId(getOperationId(apiOperation.operationId()));
 		OperationParser.getRequestBody(apiOperation.requestBody()).ifPresent(requestBody -> operation.setRequestBody(requestBody));

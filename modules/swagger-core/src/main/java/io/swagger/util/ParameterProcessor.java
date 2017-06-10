@@ -46,15 +46,21 @@ public class ParameterProcessor {
 		for (Annotation annotation : annotations) {
 			if (annotation instanceof io.swagger.oas.annotations.Parameter) {
 				io.swagger.oas.annotations.Parameter p = (io.swagger.oas.annotations.Parameter) annotation;
-				parameter.setDescription(p.description());
+				if (StringUtils.isNotBlank(p.description())) {
+					parameter.setDescription(p.description());
+				}
+				if (StringUtils.isNotBlank(p.name())) {
+					parameter.setName(p.name());
+				}
+				if (StringUtils.isNotBlank(p.in())) {
+					parameter.setIn(p.in());
+				}
 				parameter.setDeprecated(p.deprecated());
-				parameter.setName(p.name());
 				parameter.setRequired(p.required());
 				parameter.setStyle(StringUtils.isNoneBlank(p.style()) ? Parameter.StyleEnum.valueOf(p.style()) : null);
 				parameter.setAllowEmptyValue(p.allowEmptyValue());
 				parameter.setAllowReserved(p.allowReserved());
 				parameter.setExplode(p.explode());
-				parameter.setIn(p.in());
 				if (hasSchemaAnnotation(p.schema())) {
 					Schema schema = processSchema(p.schema());
 					if (schema != null) {
@@ -69,7 +75,9 @@ public class ParameterProcessor {
 			} else if (annotation.annotationType().getName().equals("javax.ws.rs.PathParam")) {
 				try {
 					String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
-					parameter.setName(name);
+					if (StringUtils.isNotBlank(name)) {
+						parameter.setName(name);
+					}
 				} catch (Exception e) {
 				}
 			} else if (annotation.annotationType().getName().equals("javax.validation.constraints.Size")) {
