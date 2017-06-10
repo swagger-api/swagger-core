@@ -21,7 +21,7 @@ public class DuplicatedOperationIdResource {
     }
 
     @GET
-    @Path("/")
+    @Path("/path")
     @Operation(operationId = "operationId",
             summary = "Operation Summary",
             description = "Operation Description")

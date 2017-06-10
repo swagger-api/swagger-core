@@ -166,7 +166,7 @@ public class Reader {
 
 				Operation operation = parseMethod(method);
 				PathItem pathItemObject = new PathItem();
-
+				pathItemObject.set$ref(operationPath);
 				if (StringUtils.isNotBlank(operation.getSummary())) {
 					pathItemObject.setSummary(operation.getSummary());
 				}
@@ -250,7 +250,6 @@ public class Reader {
 			setOperationObjectFromApiOperationAnnotation(callbackNewOperation, callbackOperation);
 			setPathItemOperation(pathItemObject, callbackOperation.method(), callbackNewOperation);
 		}
-		
 		pathItemObject.setDescription(apiCallback.name());
 		pathItemObject.setSummary(apiCallback.name());
 

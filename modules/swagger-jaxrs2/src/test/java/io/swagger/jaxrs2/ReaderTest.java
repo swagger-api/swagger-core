@@ -67,7 +67,8 @@ public class ReaderTest {
 	private static final String SECURITY_KEY = "security_key";
 	private static final String SCOPE_VALUE = "write:petsread:pets";
 	private static final String OPERATION_ID = "operationId";
-	private static final String DUPLICATED_OPERATION_ID = "operationId_1";
+	private static final String PATH_REF = "/";
+	private static final String PATH_2_REF = "/path";
 	private static final String SCHEMA_TYPE = "string";
 	private static final String SCHEMA_FORMAT = "uuid";
 	private static final String SCHEMA_DESCRIPTION = "the generated UUID";
@@ -87,7 +88,7 @@ public class ReaderTest {
 		OpenAPI openAPI = reader.read(BasicFieldsResource.class);
 		Paths paths = openAPI.getPaths();
 		assertEquals(PATHS_NUMBER, paths.size());
-		PathItem pathItem = paths.get(OPERATION_ID);
+		PathItem pathItem = paths.get(PATH_REF);
 		assertNotNull(pathItem);
 		assertEquals(OPERATION_DESCRIPTION, pathItem.getDescription());
 		assertEquals(OPERATION_SUMMARY, pathItem.getSummary());
@@ -104,7 +105,7 @@ public class ReaderTest {
 		OpenAPI openAPI = reader.read(CompleteFieldsResource.class);
 		Paths paths = openAPI.getPaths();
 		assertEquals(PATHS_NUMBER, paths.size());
-		PathItem pathItem = paths.get(OPERATION_ID);
+		PathItem pathItem = paths.get(PATH_REF);
 		assertNotNull(pathItem);
 		assertEquals(OPERATION_DESCRIPTION, pathItem.getDescription());
 		assertEquals(OPERATION_SUMMARY, pathItem.getSummary());
@@ -172,8 +173,9 @@ public class ReaderTest {
 		OpenAPI openAPI = reader.read(DuplicatedOperationIdResource.class);
 
 		Paths paths = openAPI.getPaths();
-		Operation firstOperation = paths.get(OPERATION_ID).getGet();
-		Operation secondOperation = paths.get(DUPLICATED_OPERATION_ID).getGet();
+		assertNotNull(paths);
+		Operation firstOperation = paths.get(PATH_REF).getGet();
+		Operation secondOperation = paths.get(PATH_2_REF).getGet();
 		assertNotNull(firstOperation);
 		assertNotNull(secondOperation);
 		assertNotEquals(firstOperation.getOperationId(), secondOperation.getOperationId());
@@ -306,7 +308,7 @@ public class ReaderTest {
 		assertNotNull(openAPI);
 		Paths openAPIPaths = openAPI.getPaths();
 		assertNotNull(openAPIPaths);
-		PathItem pathItem = openAPIPaths.get(OPERATION_ID);
+		PathItem pathItem = openAPIPaths.get(PATH_REF);
 		assertNotNull(pathItem);
 		Operation operation = pathItem.getGet();
 		assertNotNull(operation);
