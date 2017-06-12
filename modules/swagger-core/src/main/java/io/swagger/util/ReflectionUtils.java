@@ -258,7 +258,7 @@ public class ReflectionUtils {
                     .getParameterAnnotations();
 
             for (int i = 0; i < methodAnnotations.length; i++) {
-                List<Type> types = new ArrayList<Type>();
+                List<Type> types = new ArrayList<>();
                 for (int j = 0; j < methodAnnotations[i].length; j++) {
                     types.add(methodAnnotations[i][j].annotationType());
                 }
