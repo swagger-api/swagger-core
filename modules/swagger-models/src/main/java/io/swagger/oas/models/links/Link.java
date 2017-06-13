@@ -19,6 +19,7 @@ package io.swagger.oas.models.links;
 import io.swagger.oas.models.headers.Header;
 import io.swagger.oas.models.servers.Server;
 
+import java.util.Objects;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -174,14 +175,6 @@ public class Link {
     }
 
     Link link = (Link) o;
-<<<<<<< HEAD
-    return Objects.equals(this.operationRef, link.operationRef) &&
-        Objects.equals(this.operationId, link.operationId) &&
-        Objects.equals(this.parameters, link.parameters) &&
-        Objects.equals(this.headers, link.headers) &&
-        Objects.equals(this.description, link.description) &&
-        Objects.equals(this.extensions, link.extensions);
-=======
 
     if (operationRef != null ? !operationRef.equals(link.operationRef) : link.operationRef != null) {
       return false;
@@ -203,14 +196,10 @@ public class Link {
     }
     return server != null ? server.equals(link.server) : link.server == null;
 
->>>>>>> 6a291f51f0b3aa90b7b82d68e489d26af41a9635
   }
 
   @Override
   public int hashCode() {
-<<<<<<< HEAD
-    return Objects.hash(operationRef, operationId, parameters, headers, description, extensions);
-=======
     int result = operationRef != null ? operationRef.hashCode() : 0;
     result = 31 * result + (operationId != null ? operationId.hashCode() : 0);
     result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
@@ -219,7 +208,6 @@ public class Link {
     result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
     result = 31 * result + (server != null ? server.hashCode() : 0);
     return result;
->>>>>>> 6a291f51f0b3aa90b7b82d68e489d26af41a9635
   }
 
   public java.util.Map<String, Object> getExtensions() {
