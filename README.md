@@ -53,7 +53,6 @@ You need the following installed and available in your $PATH:
 
 * Java 7 (http://java.oracle.com)
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
-* Jackson 2.4.5 or greater
 
 
 ### To build from source (currently 1.5.11)
