@@ -100,12 +100,13 @@ public class Server {
     Server server = (Server) o;
     return Objects.equals(this.url, server.url) &&
         Objects.equals(this.description, server.description) &&
-        Objects.equals(this.variables, server.variables);
+        Objects.equals(this.variables, server.variables) &&
+        Objects.equals(this.extensions, server.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(url, description, variables);
+    return Objects.hash(url, description, variables, extensions);
   }
 
 

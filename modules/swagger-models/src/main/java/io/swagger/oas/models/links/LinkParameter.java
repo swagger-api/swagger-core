@@ -52,12 +52,14 @@ public class LinkParameter {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    return true;
+    LinkParameter linkParameters = (LinkParameter) o;
+    return Objects.equals(this.value, linkParameters.value) &&
+           Objects.equals(this.extensions, linkParameters.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash();
+    return Objects.hash(value, extensions);
   }
 
 

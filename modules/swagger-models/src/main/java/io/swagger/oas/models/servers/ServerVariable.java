@@ -110,12 +110,13 @@ public class ServerVariable {
     ServerVariable serverVariable = (ServerVariable) o;
     return Objects.equals(this._enum, serverVariable._enum) &&
         Objects.equals(this._default, serverVariable._default) &&
-        Objects.equals(this.description, serverVariable.description);
+        Objects.equals(this.description, serverVariable.description) &&
+        Objects.equals(this.extensions, serverVariable.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(_enum, _default, description);
+    return Objects.hash(_enum, _default, description, extensions);
   }
 
 

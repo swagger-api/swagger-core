@@ -79,12 +79,13 @@ public class License {
     }
     License license = (License) o;
     return Objects.equals(this.name, license.name) &&
-        Objects.equals(this.url, license.url);
+        Objects.equals(this.url, license.url) &&
+        Objects.equals(this.extensions, license.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, url);
+    return Objects.hash(name, url, extensions);
   }
 
 

@@ -133,12 +133,13 @@ public class MediaType {
     return Objects.equals(this.schema, mediaType.schema) &&
         Objects.equals(this.examples, mediaType.examples) &&
         Objects.equals(this.example, mediaType.example) &&
-        Objects.equals(this.encoding, mediaType.encoding);
+        Objects.equals(this.encoding, mediaType.encoding) &&
+        Objects.equals(this.extensions, mediaType.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(schema, examples, example, encoding);
+    return Objects.hash(schema, examples, example, encoding, extensions);
   }
 
 

@@ -19,6 +19,7 @@ package io.swagger.oas.models.links;
 import io.swagger.oas.models.headers.Header;
 import io.swagger.oas.models.servers.Server;
 
+import java.util.Objects;
 import java.util.HashMap;
 import java.util.Map;
 

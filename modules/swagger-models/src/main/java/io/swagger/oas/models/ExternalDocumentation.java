@@ -79,12 +79,13 @@ public class ExternalDocumentation {
     }
     ExternalDocumentation externalDocumentation = (ExternalDocumentation) o;
     return Objects.equals(this.description, externalDocumentation.description) &&
-        Objects.equals(this.url, externalDocumentation.url);
+        Objects.equals(this.url, externalDocumentation.url) &&
+        Objects.equals(this.extensions, externalDocumentation.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(description, url);
+    return Objects.hash(description, url, extensions);
   }
 
 

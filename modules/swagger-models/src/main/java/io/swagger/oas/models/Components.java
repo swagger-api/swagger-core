@@ -310,12 +310,13 @@ public class Components {
         Objects.equals(this.headers, components.headers) &&
         Objects.equals(this.securitySchemes, components.securitySchemes) &&
         Objects.equals(this.links, components.links) &&
-        Objects.equals(this.callbacks, components.callbacks);
+        Objects.equals(this.callbacks, components.callbacks) &&
+        Objects.equals(this.extensions, components.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(schemas, responses, parameters, examples, requestBodies, headers, securitySchemes, links, callbacks);
+    return Objects.hash(schemas, responses, parameters, examples, requestBodies, headers, securitySchemes, links, callbacks, extensions);
   }
 
 

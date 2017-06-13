@@ -121,12 +121,13 @@ public class OAuthFlow {
     return Objects.equals(this.authorizationUrl, oauthFlow.authorizationUrl) &&
         Objects.equals(this.tokenUrl, oauthFlow.tokenUrl) &&
         Objects.equals(this.refreshUrl, oauthFlow.refreshUrl) &&
-        Objects.equals(this.scopes, oauthFlow.scopes);
+        Objects.equals(this.scopes, oauthFlow.scopes) &&
+        Objects.equals(this.extensions, oauthFlow.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(authorizationUrl, tokenUrl, refreshUrl, scopes);
+    return Objects.hash(authorizationUrl, tokenUrl, refreshUrl, scopes, extensions);
   }
 
 

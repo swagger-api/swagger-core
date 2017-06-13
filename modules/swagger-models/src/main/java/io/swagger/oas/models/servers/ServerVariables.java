@@ -44,12 +44,14 @@ public class ServerVariables extends LinkedHashMap<String, ServerVariable> {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    return super.equals(o);
+    ServerVariables serverVariables = (ServerVariables) o;
+    return Objects.equals(this.extensions, serverVariables.extensions) && 
+      super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode());
+    return Objects.hash(extensions, super.hashCode());
   }
 
 

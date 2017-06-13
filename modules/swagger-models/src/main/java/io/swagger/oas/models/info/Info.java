@@ -162,12 +162,13 @@ public class Info {
         Objects.equals(this.termsOfService, info.termsOfService) &&
         Objects.equals(this.contact, info.contact) &&
         Objects.equals(this.license, info.license) &&
-        Objects.equals(this.version, info.version);
+        Objects.equals(this.version, info.version) &&
+        Objects.equals(this.extensions, info.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(title, description, termsOfService, contact, license, version);
+    return Objects.hash(title, description, termsOfService, contact, license, version, extensions);
   }
 
 

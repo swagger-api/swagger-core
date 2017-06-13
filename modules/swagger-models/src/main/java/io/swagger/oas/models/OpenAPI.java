@@ -266,12 +266,13 @@ public class OpenAPI {
         Objects.equals(this.security, openAPI.security) &&
         Objects.equals(this.tags, openAPI.tags) &&
         Objects.equals(this.paths, openAPI.paths) &&
-        Objects.equals(this.components, openAPI.components);
+        Objects.equals(this.components, openAPI.components) &&
+        Objects.equals(this.extensions, openAPI.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(openapi, info, externalDocs, servers, security, tags, paths, components);
+    return Objects.hash(openapi, info, externalDocs, servers, security, tags, paths, components, extensions);
   }
 
 

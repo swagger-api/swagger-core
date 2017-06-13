@@ -329,12 +329,13 @@ public class Operation {
         Objects.equals(this.callbacks, operation.callbacks) &&
         Objects.equals(this.deprecated, operation.deprecated) &&
         Objects.equals(this.security, operation.security) &&
-        Objects.equals(this.servers, operation.servers);
+        Objects.equals(this.servers, operation.servers) &&
+        Objects.equals(this.extensions, operation.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(tags, summary, description, externalDocs, operationId, parameters, requestBody, responses, callbacks, deprecated, security, servers);
+    return Objects.hash(tags, summary, description, externalDocs, operationId, parameters, requestBody, responses, callbacks, deprecated, security, servers, extensions);
   }
 
 
