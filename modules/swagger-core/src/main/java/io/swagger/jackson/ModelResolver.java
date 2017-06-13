@@ -56,6 +56,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchema;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -272,6 +273,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             Xml xml = new Xml().name(rootAnnotation.name());
             if (rootAnnotation.namespace() != null && !"".equals(rootAnnotation.namespace()) && !"##default".equals(rootAnnotation.namespace())) {
                 xml.namespace(rootAnnotation.namespace());
+            }
+            else {
+                // If namespace was not given in the annotation, look for it in package-info
+                Package pkg = type.getRawClass().getPackage();
+                if(pkg != null) {
+                    XmlSchema xmlSchma = pkg.getAnnotation(XmlSchema.class);
+                    if(xmlSchma != null) {
+                        xml.namespace(xmlSchma.namespace());
+                    }
+                }
             }
             model.xml(xml);
         }
