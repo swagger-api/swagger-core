@@ -1,5 +1,6 @@
 package io.swagger.jackson;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.introspect.Annotated;
@@ -16,6 +17,7 @@ import java.util.List;
 
 public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
     private static final long serialVersionUID = 1L;
+    private boolean isThereAHiddenField = false;
 
     @Override
     public Version version() {
@@ -26,6 +28,12 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
     public boolean hasIgnoreMarker(AnnotatedMember m) {
         ApiModelProperty ann = m.getAnnotation(ApiModelProperty.class);
         if (ann != null && ann.hidden()) {
+            isThereAHiddenField = true;
+            return true;
+        }
+        // Add a Ignore Marker when there's a Constructor with JsonCreator and also if there's any Hidden Field
+        JsonCreator constructor = m.getAnnotation(JsonCreator.class);
+        if (constructor != null && isThereAHiddenField) {
             return true;
         }
         return false;
