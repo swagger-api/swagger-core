@@ -732,12 +732,17 @@ public class Schema <T> {
         Objects.equals(this.example, schema.example) &&
         Objects.equals(this.externalDocs, schema.externalDocs) &&
         Objects.equals(this.deprecated, schema.deprecated) &&
-        Objects.equals(this.xml, schema.xml);
+        Objects.equals(this.xml, schema.xml) &&
+        Objects.equals(this.extensions, schema.extensions) &&
+        Objects.equals(this._enum, schema._enum) &&
+        Objects.equals(this._default, schema._default);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern, maxItems, minItems, uniqueItems, maxProperties, minProperties, required, type, not, properties, additionalProperties, description, format, $ref, nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml);
+    return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern, maxItems, 
+      minItems, uniqueItems, maxProperties, minProperties, required, type, not, properties, additionalProperties, description, format, $ref, 
+      nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions, _enum, _default);
   }
 
 

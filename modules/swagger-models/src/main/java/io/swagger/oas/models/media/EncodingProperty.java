@@ -178,12 +178,13 @@ public class EncodingProperty {
         Objects.equals(this.headers, encodingProperty.headers) &&
         Objects.equals(this.style, encodingProperty.style) &&
         Objects.equals(this.explode, encodingProperty.explode) &&
-        Objects.equals(this.allowReserved, encodingProperty.allowReserved);
+        Objects.equals(this.allowReserved, encodingProperty.allowReserved) &&
+        Objects.equals(this.extensions, encodingProperty.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(contentType, headers, style, explode, allowReserved);
+    return Objects.hash(contentType, headers, style, explode, allowReserved, extensions);
   }
 
 

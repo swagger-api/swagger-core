@@ -142,12 +142,13 @@ public class XML {
         Objects.equals(this.namespace, XML.namespace) &&
         Objects.equals(this.prefix, XML.prefix) &&
         Objects.equals(this.attribute, XML.attribute) &&
-        Objects.equals(this.wrapped, XML.wrapped);
+        Objects.equals(this.wrapped, XML.wrapped) &&
+        Objects.equals(this.extensions, XML.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, namespace, prefix, attribute, wrapped);
+    return Objects.hash(name, namespace, prefix, attribute, wrapped, extensions);
   }
 
 

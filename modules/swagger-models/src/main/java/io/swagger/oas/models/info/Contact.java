@@ -100,12 +100,13 @@ public class Contact {
     Contact contact = (Contact) o;
     return Objects.equals(this.name, contact.name) &&
         Objects.equals(this.url, contact.url) &&
-        Objects.equals(this.email, contact.email);
+        Objects.equals(this.email, contact.email) &&
+        Objects.equals(this.extensions, contact.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, url, email);
+    return Objects.hash(name, url, email, extensions);
   }
 
 

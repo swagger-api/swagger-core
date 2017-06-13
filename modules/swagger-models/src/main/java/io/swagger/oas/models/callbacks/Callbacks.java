@@ -44,12 +44,14 @@ public class Callbacks extends LinkedHashMap<String, Callback> {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    return super.equals(o);
+    Callbacks callbacks = (Callbacks) o;
+    return Objects.equals(this.extensions, callbacks.extensions) &&
+      super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode());
+    return Objects.hash(extensions, super.hashCode());
   }
 
 

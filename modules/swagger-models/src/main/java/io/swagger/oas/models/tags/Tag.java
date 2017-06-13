@@ -101,12 +101,13 @@ public class Tag {
     Tag tag = (Tag) o;
     return Objects.equals(this.name, tag.name) &&
         Objects.equals(this.description, tag.description) &&
-        Objects.equals(this.externalDocs, tag.externalDocs);
+        Objects.equals(this.externalDocs, tag.externalDocs) &&
+        Objects.equals(this.extensions, tag.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, description, externalDocs);
+    return Objects.hash(name, description, externalDocs, extensions);
   }
 
 

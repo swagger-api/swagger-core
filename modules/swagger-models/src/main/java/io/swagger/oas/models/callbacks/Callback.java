@@ -45,12 +45,14 @@ public class Callback extends LinkedHashMap<String, PathItem> {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    return super.equals(o);
+    Callback callback = (Callback) o;
+    return Objects.equals(this.extensions, callback.extensions) &&
+      super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode());
+    return Objects.hash(extensions, super.hashCode());
   }
 
 

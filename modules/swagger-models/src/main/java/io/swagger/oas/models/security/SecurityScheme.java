@@ -249,12 +249,13 @@ public class SecurityScheme {
         Objects.equals(this.scheme, securityScheme.scheme) &&
         Objects.equals(this.bearerFormat, securityScheme.bearerFormat) &&
         Objects.equals(this.flows, securityScheme.flows) &&
-        Objects.equals(this.openIdConnectUrl, securityScheme.openIdConnectUrl);
+        Objects.equals(this.openIdConnectUrl, securityScheme.openIdConnectUrl) &&
+        Objects.equals(this.extensions, securityScheme.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, description, name, in, scheme, bearerFormat, flows, openIdConnectUrl);
+    return Objects.hash(type, description, name, in, scheme, bearerFormat, flows, openIdConnectUrl, extensions);
   }
 
 

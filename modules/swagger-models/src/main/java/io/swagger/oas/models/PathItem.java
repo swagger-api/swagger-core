@@ -331,12 +331,13 @@ public class PathItem {
         Objects.equals(this.patch, pathItem.patch) &&
         Objects.equals(this.trace, pathItem.trace) &&
         Objects.equals(this.servers, pathItem.servers) &&
-        Objects.equals(this.parameters, pathItem.parameters);
+        Objects.equals(this.parameters, pathItem.parameters) &&
+        Objects.equals(this.extensions, pathItem.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash($ref, summary, description, get, put, post, delete, options, head, patch, trace, servers, parameters);
+    return Objects.hash($ref, summary, description, get, put, post, delete, options, head, patch, trace, servers, parameters, extensions);
   }
 
 

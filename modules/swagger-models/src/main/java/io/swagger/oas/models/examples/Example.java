@@ -119,12 +119,13 @@ public class Example {
     return Objects.equals(this.summary, example.summary) &&
         Objects.equals(this.description, example.description) &&
         Objects.equals(this.value, example.value) &&
-        Objects.equals(this.externalValue, example.externalValue);
+        Objects.equals(this.externalValue, example.externalValue) &&
+        Objects.equals(this.extensions, example.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(summary, description, value, externalValue);
+    return Objects.hash(summary, description, value, externalValue, extensions);
   }
 
 

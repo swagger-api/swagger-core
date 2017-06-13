@@ -161,12 +161,14 @@ public class ApiResponse {
     return Objects.equals(this.description, apiResponse.description) &&
         Objects.equals(this.headers, apiResponse.headers) &&
         Objects.equals(this.content, apiResponse.content) &&
-        Objects.equals(this.links, apiResponse.links);
+        Objects.equals(this.links, apiResponse.links) &&
+        Objects.equals(this.extensions, apiResponse.extensions) &&
+        Objects.equals(this.$ref, apiResponse.$ref);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(description, headers, content, links);
+    return Objects.hash(description, headers, content, links, extensions, $ref);
   }
 
 

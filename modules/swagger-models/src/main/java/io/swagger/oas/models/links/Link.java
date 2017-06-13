@@ -154,12 +154,13 @@ public class Link {
         Objects.equals(this.operationId, link.operationId) &&
         Objects.equals(this.parameters, link.parameters) &&
         Objects.equals(this.headers, link.headers) &&
-        Objects.equals(this.description, link.description);
+        Objects.equals(this.description, link.description) &&
+        Objects.equals(this.extensions, link.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(operationRef, operationId, parameters, headers, description);
+    return Objects.hash(operationRef, operationId, parameters, headers, description, extensions);
   }
 
 

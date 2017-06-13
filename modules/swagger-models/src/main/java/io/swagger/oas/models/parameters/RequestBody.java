@@ -101,12 +101,13 @@ public class RequestBody {
     RequestBody requestBody = (RequestBody) o;
     return Objects.equals(this.description, requestBody.description) &&
         Objects.equals(this.content, requestBody.content) &&
-        Objects.equals(this.required, requestBody.required);
+        Objects.equals(this.required, requestBody.required) &&
+        Objects.equals(this.extensions, requestBody.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(description, content, required);
+    return Objects.hash(description, content, required, extensions);
   }
 
 

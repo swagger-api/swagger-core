@@ -44,12 +44,14 @@ public class Paths extends LinkedHashMap<String, PathItem> {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    return super.equals(o);
+    Paths paths = (Paths) o;
+    return Objects.equals(this.extensions, paths.extensions) &&
+      super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode());
+    return Objects.hash(extensions, super.hashCode());
   }
 
 

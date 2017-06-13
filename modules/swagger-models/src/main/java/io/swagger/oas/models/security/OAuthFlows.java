@@ -121,12 +121,13 @@ public class OAuthFlows {
     return Objects.equals(this.implicit, oauthFlows.implicit) &&
         Objects.equals(this.password, oauthFlows.password) &&
         Objects.equals(this.clientCredentials, oauthFlows.clientCredentials) &&
-        Objects.equals(this.authorizationCode, oauthFlows.authorizationCode);
+        Objects.equals(this.authorizationCode, oauthFlows.authorizationCode) &&
+        Objects.equals(this.extensions, oauthFlows.extensions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(implicit, password, clientCredentials, authorizationCode);
+    return Objects.hash(implicit, password, clientCredentials, authorizationCode, extensions);
   }
 
 
