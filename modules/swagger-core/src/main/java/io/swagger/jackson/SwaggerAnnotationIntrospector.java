@@ -19,7 +19,6 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
 	private static final long serialVersionUID = 1L;
 	private boolean isThereAHiddenField = false;
 
-
 	@Override
 	public Version version() {
 		return PackageVersion.VERSION;
