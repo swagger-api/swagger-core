@@ -18,7 +18,8 @@ import static org.testng.Assert.assertTrue;
 
 public class BeanConfigTest {
 	
-    private final Set<?> expectedKeys = new HashSet<String>(Arrays.asList("/packageA", "/packageB"));
+    private final Set<?> expectedKeys = new HashSet<String>(Arrays.asList("/packageA", "/packageB", "/packageC"));
+    private final Set<?> expectedKeysOnlyB = new HashSet<String>(Arrays.asList("/packageB"));
     private final Set<Scheme> expectedSchemas = EnumSet.of(Scheme.HTTP, Scheme.HTTPS);
 
     private BeanConfig createBeanConfig(String rp) {
@@ -39,7 +40,7 @@ public class BeanConfigTest {
 
     @Test(description = "scan a simple resource")
     public void shouldScanASimpleResource() {
-        Swagger swagger = createBeanConfig("com.my.project.resources,org.my.project.resources").getSwagger();
+        Swagger swagger = createBeanConfig("com.my.project.resources,org.my.project.resources,org.myles.project.resources").getSwagger();
         assertNotNull(swagger);
         assertEquals(swagger.getPaths().keySet(), expectedKeys);
         assertEquals(swagger.getSchemes(), expectedSchemas);
@@ -47,9 +48,17 @@ public class BeanConfigTest {
 
     @Test(description = "deep scan packages per #1011")
     public void shouldDeepScanPakagesPer1011() {
-        Swagger swagger = createBeanConfig("com.my,org.my").getSwagger();
+        Swagger swagger = createBeanConfig("com.my,org.my,org.myles").getSwagger();
         assertNotNull(swagger);
         assertEquals(swagger.getPaths().keySet(), expectedKeys);
+        assertEquals(swagger.getSchemes(), expectedSchemas);
+    }
+
+    @Test(description = "don't take siblings to a specfied package name per #2127")
+    public void shouldNotTakeSiblingsToSpecifiedPackagesPer2127() {
+        Swagger swagger = createBeanConfig("org.my").getSwagger(); 
+        assertNotNull(swagger);
+        assertEquals(swagger.getPaths().keySet(), expectedKeysOnlyB, "Shouldn't pickup paths from 'org.myles' using package name 'org.my'");
         assertEquals(swagger.getSchemes(), expectedSchemas);
     }
 

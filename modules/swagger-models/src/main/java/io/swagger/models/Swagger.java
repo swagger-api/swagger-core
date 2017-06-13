@@ -405,27 +405,20 @@ public class Swagger {
         int result = 1;
         result = prime * result + ((basePath == null) ? 0 : basePath.hashCode());
         result = prime * result + ((consumes == null) ? 0 : consumes.hashCode());
-        result = prime * result
-                + ((definitions == null) ? 0 : definitions.hashCode());
-        result = prime * result
-                + ((externalDocs == null) ? 0 : externalDocs.hashCode());
+        result = prime * result + ((definitions == null) ? 0 : definitions.hashCode());
+        result = prime * result + ((externalDocs == null) ? 0 : externalDocs.hashCode());
         result = prime * result + ((host == null) ? 0 : host.hashCode());
         result = prime * result + ((info == null) ? 0 : info.hashCode());
-        result = prime * result
-                + ((parameters == null) ? 0 : parameters.hashCode());
+        result = prime * result + ((parameters == null) ? 0 : parameters.hashCode());
         result = prime * result + ((paths == null) ? 0 : paths.hashCode());
         result = prime * result + ((produces == null) ? 0 : produces.hashCode());
+        result = prime * result + ((responses == null) ? 0 : responses.hashCode());
         result = prime * result + ((schemes == null) ? 0 : schemes.hashCode());
-        result = prime
-                * result
-                + ((securityDefinitions == null) ? 0 : securityDefinitions
-                .hashCode());
-        result = prime
-                * result
-                + ((security == null) ? 0 : security
-                .hashCode());
+        result = prime * result + ((security == null) ? 0 : security.hashCode());
+        result = prime * result + ((securityDefinitions == null) ? 0 : securityDefinitions.hashCode());
         result = prime * result + ((swagger == null) ? 0 : swagger.hashCode());
         result = prime * result + ((tags == null) ? 0 : tags.hashCode());
+        result = prime * result + ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
         return result;
     }
 
@@ -504,6 +497,13 @@ public class Swagger {
         } else if (!produces.equals(other.produces)) {
             return false;
         }
+        if (responses == null) {
+            if (other.responses != null) {
+                return false;
+            }
+        } else if (!responses.equals(other.responses)) {
+            return false;
+        }
         if (schemes == null) {
             if (other.schemes != null) {
                 return false;
@@ -511,18 +511,18 @@ public class Swagger {
         } else if (!schemes.equals(other.schemes)) {
             return false;
         }
-        if (securityDefinitions == null) {
-            if (other.securityDefinitions != null) {
-                return false;
-            }
-        } else if (!securityDefinitions.equals(other.securityDefinitions)) {
-            return false;
-        }
         if (security == null) {
             if (other.security != null) {
                 return false;
             }
         } else if (!security.equals(other.security)) {
+            return false;
+        }
+        if (securityDefinitions == null) {
+            if (other.securityDefinitions != null) {
+                return false;
+            }
+        } else if (!securityDefinitions.equals(other.securityDefinitions)) {
             return false;
         }
         if (swagger == null) {
@@ -537,6 +537,13 @@ public class Swagger {
                 return false;
             }
         } else if (!tags.equals(other.tags)) {
+            return false;
+        }
+        if (vendorExtensions == null) {
+            if (other.vendorExtensions != null) {
+                return false;
+            }
+        } else if (!vendorExtensions.equals(other.vendorExtensions)) {
             return false;
         }
         return true;

@@ -15,6 +15,9 @@ import java.util.Map;
 import static org.testng.Assert.assertEquals;
 
 public class NumericFormatTest {
+	
+	private static final String NEWLINE = System.getProperty("line.separator");
+	
     @Test
     public void testFormatOfInteger() {
         final Map<String, Model> models = ModelConverters.getInstance().readAll(ModelWithIntegerFields.class);
@@ -22,17 +25,17 @@ public class NumericFormatTest {
 
         String json = Json.pretty(models);
         assertEquals(json,
-            "{\n" +
-            "  \"ModelWithIntegerFields\" : {\n" +
-            "    \"type\" : \"object\",\n" +
-            "    \"properties\" : {\n" +
-            "      \"id\" : {\n" +
-            "        \"type\" : \"integer\",\n" +
-            "        \"format\" : \"int32\",\n" +
-            "        \"minimum\" : 3\n" +
-            "      }\n" +
-            "    }\n" +
-            "  }\n" +
+            "{" + NEWLINE  +
+            "  \"ModelWithIntegerFields\" : {" + NEWLINE  +
+            "    \"type\" : \"object\"," + NEWLINE +
+            "    \"properties\" : {" + NEWLINE  +
+            "      \"id\" : {" + NEWLINE  +
+            "        \"type\" : \"integer\"," + NEWLINE  +
+            "        \"format\" : \"int32\"," + NEWLINE  +
+            "        \"minimum\" : 3" + NEWLINE  +
+            "      }" + NEWLINE  +
+            "    }" + NEWLINE  +
+            "  }" + NEWLINE  +
             "}");
     }
 
@@ -43,18 +46,18 @@ public class NumericFormatTest {
 
         String json = Json.pretty(models);
         assertEquals(json,
-            "{\n" +
-            "  \"ModelWithDecimalFields\" : {\n" +
-            "    \"type\" : \"object\",\n" +
-            "    \"properties\" : {\n" +
-            "      \"id\" : {\n" +
-            "        \"type\" : \"number\",\n" +
-            "        \"format\" : \"double\",\n" +
-            "        \"minimum\" : 3.3,\n" +
-            "        \"exclusiveMinimum\" : false\n" +
-            "      }\n" +
-            "    }\n" +
-            "  }\n" +
+            "{" + NEWLINE  +
+            "  \"ModelWithDecimalFields\" : {" + NEWLINE  +
+            "    \"type\" : \"object\"," + NEWLINE  +
+            "    \"properties\" : {" + NEWLINE  +
+            "      \"id\" : {" + NEWLINE  +
+            "        \"type\" : \"number\"," + NEWLINE  +
+            "        \"format\" : \"double\"," + NEWLINE  +
+            "        \"minimum\" : 3.3," + NEWLINE  +
+            "        \"exclusiveMinimum\" : false" + NEWLINE  +
+            "      }" + NEWLINE  +
+            "    }" + NEWLINE  +
+            "  }" + NEWLINE  +
             "}");
     }
 
@@ -66,19 +69,19 @@ public class NumericFormatTest {
         String json = Json.pretty(models);
 
         assertEquals(json,
-            "{\n" +
-            "  \"ModelWithoutScientificFields\" : {\n" +
-            "    \"type\" : \"object\",\n" +
-            "    \"properties\" : {\n" +
-            "      \"id\" : {\n" +
-            "        \"type\" : \"number\",\n" +
-            "        \"minimum\" : -9999999999999999.99,\n" +
-            "        \"maximum\" : 9999999999999999.99,\n" +
-            "        \"exclusiveMinimum\" : false,\n" +
-            "        \"exclusiveMaximum\" : false\n" +
-            "      }\n" +
-            "    }\n" +
-            "  }\n" +
+            "{" + NEWLINE  +
+            "  \"ModelWithoutScientificFields\" : {" + NEWLINE  +
+            "    \"type\" : \"object\"," + NEWLINE  +
+            "    \"properties\" : {" + NEWLINE  +
+            "      \"id\" : {" + NEWLINE  +
+            "        \"type\" : \"number\"," + NEWLINE  +
+            "        \"minimum\" : -9999999999999999.99," + NEWLINE  +
+            "        \"maximum\" : 9999999999999999.99," + NEWLINE  +
+            "        \"exclusiveMinimum\" : false," + NEWLINE  +
+            "        \"exclusiveMaximum\" : false" + NEWLINE  +
+            "      }" + NEWLINE  +
+            "    }" + NEWLINE  +
+            "  }" + NEWLINE  +
             "}");
 
     }
