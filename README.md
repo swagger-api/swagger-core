@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/swagger-api/swagger-core.svg?branch=master)](https://travis-ci.org/swagger-api/swagger-core)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project)
-[![PR Stats](http://issuestats.com/github/swagger-api/swagger-core/badge/pr)](http://issuestats.com/github/swagger-api/swagger-core) [![Issue Stats](http://issuestats.com/github/swagger-api/swagger-core/badge/issue)](http://issuestats.com/github/swagger-api/swagger-core)
 
 Javadocs for annotations with the current release are [available online](http://docs.swagger.io/swagger-core/current/apidocs/index.html).
 
