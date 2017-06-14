@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * Classes will be introspected automatically as they are used as types in operations,
  * but you may want to manipulate the structure of the models.
  */
-@Target({ElementType.TYPE})
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ApiModel {

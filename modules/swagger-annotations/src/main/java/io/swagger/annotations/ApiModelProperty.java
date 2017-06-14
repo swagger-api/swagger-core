@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 /**
  * Adds and manipulates data of a model property.
  */
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiModelProperty {
     /**

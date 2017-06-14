@@ -43,7 +43,7 @@ import java.lang.annotation.Target;
  * @see ApiOperation
  * @see ApiResponses
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiResponse {
     /**

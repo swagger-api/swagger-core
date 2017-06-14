@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  *
  * @see ApiImplicitParams
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiImplicitParam {
     /**
