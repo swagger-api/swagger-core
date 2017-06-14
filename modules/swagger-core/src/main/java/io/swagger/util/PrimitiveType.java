@@ -17,7 +17,7 @@ public enum PrimitiveType {
     /**
      * Boolean.
      */
-    BOOLEAN(Boolean.class, BooleanProperty.TYPE) {
+    BOOLEAN(Boolean.class, BooleanProperty.TYPE, true) {
         @Override
         public BooleanProperty createProperty() {
             return new BooleanProperty();
@@ -26,7 +26,7 @@ public enum PrimitiveType {
     /**
      * String.
      */
-    STRING(String.class, StringProperty.TYPE) {
+    STRING(String.class, StringProperty.TYPE, true) {
         @Override
         public StringProperty createProperty() {
             return new StringProperty();
@@ -35,7 +35,7 @@ public enum PrimitiveType {
     /**
      * Byte.
      */
-    BYTE(Byte.class, "byte") {
+    BYTE(Byte.class, "byte", true) {
         @Override
         public ByteArrayProperty createProperty() {
             return new ByteArrayProperty();
@@ -44,7 +44,7 @@ public enum PrimitiveType {
     /**
      * Binary
      */
-    BINARY(Byte.class, "binary") {
+    BINARY(Byte.class, "binary", true) {
         @Override
         public BinaryProperty createProperty() {
             return new BinaryProperty();
@@ -53,7 +53,7 @@ public enum PrimitiveType {
     /**
      * URI string.
      */
-    URI(java.net.URI.class) {
+    URI(java.net.URI.class, true) {
         @Override
         public StringProperty createProperty() {
             return new StringProperty(StringProperty.Format.URI);
@@ -62,7 +62,7 @@ public enum PrimitiveType {
     /**
      * URL string.
      */
-    URL(java.net.URL.class) {
+    URL(java.net.URL.class, true) {
         @Override
         public StringProperty createProperty() {
             return new StringProperty(StringProperty.Format.URL);
@@ -71,7 +71,7 @@ public enum PrimitiveType {
     /**
      * UUID string.
      */
-    UUID(java.util.UUID.class) {
+    UUID(java.util.UUID.class, true) {
         @Override
         public UUIDProperty createProperty() {
             return new UUIDProperty();
@@ -80,7 +80,7 @@ public enum PrimitiveType {
     /**
      * 32-bit integer.
      */
-    INT(Integer.class, IntegerProperty.TYPE) {
+    INT(Integer.class, IntegerProperty.TYPE, true) {
         @Override
         public IntegerProperty createProperty() {
             return new IntegerProperty();
@@ -89,7 +89,7 @@ public enum PrimitiveType {
     /**
      * 64-bit integer.
      */
-    LONG(Long.class, "long") {
+    LONG(Long.class, "long", true) {
         @Override
         public LongProperty createProperty() {
             return new LongProperty();
@@ -98,7 +98,7 @@ public enum PrimitiveType {
     /**
      * 32-bit decimal.
      */
-    FLOAT(Float.class, "float") {
+    FLOAT(Float.class, "float", true) {
         @Override
         public FloatProperty createProperty() {
             return new FloatProperty();
@@ -107,7 +107,7 @@ public enum PrimitiveType {
     /**
      * 64-bit decimal.
      */
-    DOUBLE(Double.class, "double") {
+    DOUBLE(Double.class, "double", true) {
         @Override
         public DoubleProperty createProperty() {
             return new DoubleProperty();
@@ -116,7 +116,7 @@ public enum PrimitiveType {
     /**
      * Generic integer number without specific format.
      */
-    INTEGER(java.math.BigInteger.class) {
+    INTEGER(java.math.BigInteger.class, true) {
         @Override
         public BaseIntegerProperty createProperty() {
             return new BaseIntegerProperty();
@@ -125,7 +125,7 @@ public enum PrimitiveType {
     /**
      * Generic decimal number without specific format.
      */
-    DECIMAL(java.math.BigDecimal.class, "number") {
+    DECIMAL(java.math.BigDecimal.class, "number", true) {
         @Override
         public DecimalProperty createProperty() {
             return new DecimalProperty();
@@ -134,7 +134,7 @@ public enum PrimitiveType {
     /**
      * Date.
      */
-    DATE(DateStub.class, "date") {
+    DATE(DateStub.class, "date", true) {
         @Override
         public DateProperty createProperty() {
             return new DateProperty();
@@ -143,7 +143,7 @@ public enum PrimitiveType {
     /**
      * Date and time.
      */
-    DATE_TIME(java.util.Date.class, "dateTime") {
+    DATE_TIME(java.util.Date.class, "dateTime", true) {
         @Override
         public DateTimeProperty createProperty() {
             return new DateTimeProperty();
@@ -152,7 +152,7 @@ public enum PrimitiveType {
     /**
      * Native Java file.
      */
-    FILE(java.io.File.class, "file") {
+    FILE(java.io.File.class, "file", true) {
         @Override
         public FileProperty createProperty() {
             return new FileProperty();
@@ -161,7 +161,7 @@ public enum PrimitiveType {
     /**
      * Generic object.
      */
-    OBJECT(Object.class) {
+    OBJECT(Object.class, false) {
         @Override
         public ObjectProperty createProperty() {
             return new ObjectProperty();
@@ -182,6 +182,7 @@ public enum PrimitiveType {
     private static final Map<String, PrimitiveType> NAMES;
     private final Class<?> keyClass;
     private final String commonName;
+    private final boolean isSwaggerPrimitive;
 
     static {
         final Map<Class<?>, PrimitiveType> keyClasses = new HashMap<Class<?>, PrimitiveType>();
@@ -227,13 +228,14 @@ public enum PrimitiveType {
         NAMES = Collections.unmodifiableMap(names);
     }
 
-    private PrimitiveType(Class<?> keyClass) {
-        this(keyClass, null);
+    private PrimitiveType(Class<?> keyClass, boolean isSwaggerPrimitive) {
+        this(keyClass, null, isSwaggerPrimitive);
     }
 
-    private PrimitiveType(Class<?> keyClass, String commonName) {
+    private PrimitiveType(Class<?> keyClass, String commonName, boolean isSwaggerPrimitive) {
         this.keyClass = keyClass;
         this.commonName = commonName;
+        this.isSwaggerPrimitive = isSwaggerPrimitive;
     }
 
     public static PrimitiveType fromType(Type type) {
@@ -299,5 +301,20 @@ public enum PrimitiveType {
     private static class DateStub {
         private DateStub() {
         }
+    }
+
+    public static boolean isSwaggerPrimitive(Property property) {
+        if (property == null) {
+            return false;
+        }
+        PrimitiveType primitiveType = fromName(property.getType());
+        if (primitiveType == null) {
+            return false;
+        }
+        return primitiveType.isSwaggerPrimitive();
+    }
+
+    public boolean isSwaggerPrimitive() {
+        return isSwaggerPrimitive;
     }
 }
