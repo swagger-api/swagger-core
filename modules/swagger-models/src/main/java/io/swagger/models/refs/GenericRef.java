@@ -83,7 +83,7 @@ public class GenericRef {
         //simple refs really only apply to internal refs
         if (format == RefFormat.INTERNAL) {
             String prefix = type.getInternalPrefix();
-            result = ref.substring(prefix.length());
+            result = ref.substring(ref.lastIndexOf("/") + 1);
         }
 
         return result;
