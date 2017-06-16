@@ -32,7 +32,7 @@ The OpenAPI Specification has undergone 3 revisions since initial creation in 20
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-1.5.15-SNAPSHOT (**current stable**)| 2017-03-17  | 2.0           | [tag v1.5.15-SNAPSHOT](https://github.com/swagger-api/swagger-core/tree/v1.5.15-SNAPSHOT) | Supported
+1.5.15 (**current stable**)| 2017-06-16  | 2.0           | [tag v1.5.15](https://github.com/swagger-api/swagger-core/tree/v1.5.15) | Supported
 1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Supported
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4) | Deprecated
 1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0) | Deprecated
@@ -53,7 +53,7 @@ You need the following installed and available in your $PATH:
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
 
-### To build from source (currently 1.5.15-SNAPSHOT)
+### To build from source (currently 1.5.15)
 ```
 # first time building locally
 mvn -N
