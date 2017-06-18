@@ -1,9 +1,9 @@
-package io.swagger.oas.annotations.test.operations;
+package io.swagger.annotations.operations;
 
+import io.swagger.annotations.AbstractAnnotationTest;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
-import io.swagger.oas.annotations.test.AbstractAnnotationTest;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.GET;

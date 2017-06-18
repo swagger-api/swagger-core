@@ -1,9 +1,9 @@
-package io.swagger.oas.annotations.test.pathItems;
+package io.swagger.jaxrs2.annotations.pathItems;
 
+import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.links.Link;
 import io.swagger.oas.annotations.links.LinkParameters;
-import io.swagger.oas.annotations.test.AbstractAnnotationTest;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Path;

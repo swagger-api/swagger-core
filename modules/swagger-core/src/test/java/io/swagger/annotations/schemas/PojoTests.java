@@ -1,7 +1,7 @@
-package io.swagger.oas.annotations.test.schemas;
+package io.swagger.annotations.schemas;
 
+import io.swagger.annotations.AbstractAnnotationTest;
 import io.swagger.oas.annotations.media.Schema;
-import io.swagger.oas.annotations.test.AbstractAnnotationTest;
 import org.testng.annotations.Test;
 
 import java.util.Date;

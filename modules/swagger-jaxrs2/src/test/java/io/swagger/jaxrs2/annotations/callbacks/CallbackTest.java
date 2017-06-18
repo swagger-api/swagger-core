@@ -1,11 +1,11 @@
-package io.swagger.oas.annotations.test.callbacks;
+package io.swagger.jaxrs2.annotations.callbacks;
 
+import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
 import io.swagger.oas.annotations.callbacks.Callback;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
-import io.swagger.oas.annotations.test.AbstractAnnotationTest;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.HeaderParam;

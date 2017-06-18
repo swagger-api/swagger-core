@@ -1,4 +1,4 @@
-package io.swagger.oas.annotations.test.security;
+package io.swagger.jaxrs2.annotations.security;
 
 import io.swagger.oas.annotations.security.OAuthFlow;
 import io.swagger.oas.annotations.security.OAuthFlows;

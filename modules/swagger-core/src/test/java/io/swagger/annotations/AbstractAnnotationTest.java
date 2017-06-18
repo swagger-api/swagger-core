@@ -1,4 +1,4 @@
-package io.swagger.oas.annotations.test;
+package io.swagger.annotations;
 
 public abstract class AbstractAnnotationTest {
     public String readIntoYaml(Class<?> cls) {

@@ -1,4 +1,4 @@
-package io.swagger.oas.annotations.test.info;
+package io.swagger.jaxrs2.annotations.info;
 
 import io.swagger.oas.annotations.info.Contact;
 import io.swagger.oas.annotations.info.Info;
