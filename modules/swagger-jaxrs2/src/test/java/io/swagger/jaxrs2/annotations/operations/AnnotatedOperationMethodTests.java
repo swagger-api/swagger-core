@@ -146,29 +146,37 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
 
     @Test(enabled = false, description = "reads an operation with response examples defined")
     public void testOperationWithResponseExamples() {
-        String yaml = readIntoYaml(GetOperationWithResponseExamples.class);
-
-        assertEquals(yaml,
-                "get:\n" +
-                        "  description: 'Defines a simple get operation with no inputs and a complex output object'\n" +
-                        "  operationId: getWithNoParameters\n" +
-                        "  summary: 'Simple get operation'\n" +
-                        "  deprecated: true\n" +
-                        "  parameters: []\n" +
-                        "  responses:\n" +
-                        "    200:\n" +
-                        "      description: 'voila'\n" +
-                        "      content:\n" +
-                        "        application/json:\n" +
-                        "          schema:\n" +
-                        "            type: object\n" +
-                        "            properties:\n" +
-                        "              id:\n" +
-                        "                type: string\n" +
-                        "          examples:\n" +
-                        "            basic:\n" +
-                        "              id: 19877734");
-
+        String openApiYAML = readIntoYaml(GetOperationWithResponseExamples.class);
+        int start = openApiYAML.indexOf("get:");
+        int end = openApiYAML.indexOf("servers:");
+        String extractedYAML = openApiYAML.substring(start, end);
+        String expectedYAML = "get:\n" +
+                "      tags:\n" +
+                "      - \"\"\n" +
+                "      summary: \"Simple get operation\"\n" +
+                "      description: \"Defines a simple get operation with no inputs and a complex output object\"\n" +
+                "      externalDocs: {}\n" +
+                "      operationId: \"getWithNoParameters\"\n" +
+                "      parameters: []\n" +
+                "      requestBody:\n" +
+                "        content: {}\n" +
+                "        required: false\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "        description: \"voila\"\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                id:\n" +
+                "                  type: string\n" +
+                "          examples:\n" +
+                "            basic:\n" +
+                "              id: 19877734\n" +
+                "      deprecated: true\n" +
+                "      ";
+        assertEquals(extractedYAML, expectedYAML);
     }
 
     static class GetOperationWithResponseExamples {
@@ -194,6 +202,8 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                         )
                 }
         )
+        @GET
+        @Path("/")
         public void simpleGet() {
         }
     }
