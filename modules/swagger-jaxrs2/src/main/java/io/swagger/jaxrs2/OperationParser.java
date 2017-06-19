@@ -20,6 +20,7 @@ import io.swagger.oas.models.servers.ServerVariables;
 import io.swagger.oas.models.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.print.attribute.standard.Media;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -181,10 +182,11 @@ public class OperationParser {
             return Optional.empty();
         }
         Content contentObject = new Content();
+        MediaType mediaType = new MediaType();
         for (io.swagger.oas.annotations.media.Content content : contents) {
             ExampleObject[] examples = content.examples();
             for (ExampleObject example : examples) {
-                getMediaType(example).ifPresent(mediaType -> contentObject.addMediaType(content.mediaType(), mediaType));
+                getMediaType(mediaType, example).ifPresent(mediaTypeObject -> contentObject.addMediaType(content.mediaType(), mediaType));
             }
         }
         return Optional.of(contentObject);
@@ -197,25 +199,25 @@ public class OperationParser {
         Content content = new Content();
         if (annotationContent != null) {
             MediaType mediaType = new MediaType();
-            if (annotationContent.schema().implementation() != Void.class) {
-                Map<String, Schema> schemaMap = ModelConverters.getInstance().read(annotationContent.schema().implementation());
+            Class<?> schemaImplementation = annotationContent.schema().implementation();
+            if (schemaImplementation != Void.class) {
+                Map<String, Schema> schemaMap = ModelConverters.getInstance().readAll(schemaImplementation);
                 schemaMap.forEach((k, v) -> mediaType.setSchema(v));
                 content.addMediaType(annotationContent.mediaType(), mediaType);
             }
             ExampleObject[] examples = annotationContent.examples();
             for (ExampleObject example : examples) {
-                getMediaType(example).ifPresent(mediaTypeObject -> content.addMediaType(annotationContent.mediaType(), mediaTypeObject));
+                getMediaType(mediaType, example).ifPresent(mediaTypeObject -> content.addMediaType(annotationContent.mediaType(), mediaTypeObject));
             }
         }
         return Optional.of(content);
     }
 
-    public static Optional<MediaType> getMediaType(ExampleObject example) {
+    public static Optional<MediaType> getMediaType(MediaType mediaType, ExampleObject example) {
         if (example == null) {
             return Optional.empty();
         }
         if (StringUtils.isNotBlank(example.name())) {
-            MediaType mediaType = new MediaType();
             Example exampleObject = new Example();
             if (StringUtils.isNotBlank(example.name())) {
                 exampleObject.setDescription(example.name());

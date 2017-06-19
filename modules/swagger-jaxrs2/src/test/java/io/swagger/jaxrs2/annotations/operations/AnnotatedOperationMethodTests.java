@@ -144,7 +144,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
         private String message;
     }
 
-    @Test(enabled = false, description = "reads an operation with response examples defined")
+    @Test(description = "reads an operation with response examples defined")
     public void testOperationWithResponseExamples() {
         String openApiYAML = readIntoYaml(GetOperationWithResponseExamples.class);
         int start = openApiYAML.indexOf("get:");
@@ -154,26 +154,29 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "      tags:\n" +
                 "      - \"\"\n" +
                 "      summary: \"Simple get operation\"\n" +
-                "      description: \"Defines a simple get operation with no inputs and a complex output object\"\n" +
+                "      description: \"Defines a simple get operation with no inputs and a complex output\"\n" +
                 "      externalDocs: {}\n" +
-                "      operationId: \"getWithNoParameters\"\n" +
+                "      operationId: \"getWithPayloadResponse\"\n" +
                 "      parameters: []\n" +
                 "      requestBody:\n" +
                 "        content: {}\n" +
                 "        required: false\n" +
                 "      responses:\n" +
                 "        200:\n" +
-                "        description: \"voila\"\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                id:\n" +
-                "                  type: string\n" +
-                "          examples:\n" +
-                "            basic:\n" +
-                "              id: 19877734\n" +
+                "          description: \"voila!\"\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: \"object\"\n" +
+                /*"                properties:\n" +
+                "                  id:\n" +
+                "                    type: string\n" +
+                */
+                "              examples:\n" +
+                "                basic:\n" +
+                "                  summary: \"shows a basic example\"\n" +
+                "                  description: \"basic\"\n" +
+                "                  value: \"{\\\"id\\\": 19877734}\"\n" +
                 "      deprecated: true\n" +
                 "      ";
         assertEquals(extractedYAML, expectedYAML);
@@ -182,7 +185,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     static class GetOperationWithResponseExamples {
         @Operation(
                 summary = "Simple get operation",
-                description = "Defines a simple get operation with no inputs and a complex output object",
+                description = "Defines a simple get operation with no inputs and a complex output",
                 operationId = "getWithPayloadResponse",
                 deprecated = true,
                 responses = {
