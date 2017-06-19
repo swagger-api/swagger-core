@@ -86,11 +86,10 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                type: \"object\"\n" +
-                /*"                properties:\n" +
+                "                properties:\n" +
                 "                  id:\n" +
-                "                    type: string\n" +
-                "                    description: 'the user id'\n" +
-                */
+                "                    type: \"string\"\n" +
+                "                    description: \"the user id\"\n" +
                 "        default:\n" +
                 "          description: \"boo\"\n" +
                 "          content:\n" +
@@ -136,7 +135,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
 
     static class SampleResponseSchema {
         @Schema(description = "the user id")
-        private String id;
+        public String id;
     }
 
     static class GenericError {
@@ -168,10 +167,10 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                type: \"object\"\n" +
-                /*"                properties:\n" +
+                "                properties:\n" +
                 "                  id:\n" +
-                "                    type: string\n" +
-                */
+                "                    type: \"string\"\n" +
+                "                    description: \"the user id\"\n" +
                 "              examples:\n" +
                 "                basic:\n" +
                 "                  summary: \"shows a basic example\"\n" +
