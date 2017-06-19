@@ -1,5 +1,6 @@
 package io.swagger.jaxrs2;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import io.swagger.converter.ModelConverters;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.ExternalDocumentation;

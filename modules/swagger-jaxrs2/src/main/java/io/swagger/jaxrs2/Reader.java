@@ -166,7 +166,6 @@ public class Reader {
 
                 Operation operation = parseMethod(method);
                 PathItem pathItemObject = new PathItem();
-                pathItemObject.set$ref(operationPath);
                 if (StringUtils.isNotBlank(operation.getSummary())) {
                     pathItemObject.setSummary(operation.getSummary());
                 }
@@ -195,7 +194,7 @@ public class Reader {
                 }
                 operation.setParameters(operationParameters);
 
-                paths.addPathItem(pathItemObject.get$ref(), pathItemObject);
+                paths.addPathItem(operationPath, pathItemObject);
                 if (openAPI.getPaths() != null) {
                     this.paths.putAll(openAPI.getPaths());
                 }

@@ -57,7 +57,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 }
         )
         @GET
-        @Path("/")
+        @Path("/path")
         public void simpleGet() {
         }
     }
@@ -127,7 +127,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                         )
                 }
         )
-        @Path("/")
+        @Path("/path")
         @GET
         public void simpleGet() {
         }
@@ -205,7 +205,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 }
         )
         @GET
-        @Path("/")
+        @Path("/path")
         public void simpleGet() {
         }
     }
