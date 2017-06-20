@@ -251,10 +251,6 @@ public class SecurityScheme {
      *
      * @return String $ref
      **/
-    public boolean isRef() {
-        return $ref == null || "".equals($ref.trim());
-    }
-
     public String get$ref() {
         return $ref;
     }

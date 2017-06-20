@@ -225,11 +225,6 @@ public class Link {
         return result;
     }
 
-
-    public boolean isRef() {
-        return $ref == null || "".equals($ref.trim());
-    }
-
     public String get$ref() {
         return $ref;
     }

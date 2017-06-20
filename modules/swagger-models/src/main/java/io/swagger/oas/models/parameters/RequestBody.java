@@ -104,10 +104,6 @@ public class RequestBody {
     this.extensions = extensions;
   }
 
-  public boolean isRef() {
-    return $ref == null || "".equals($ref.trim());
-  }
-
   public String get$ref() {
     return $ref;
   }

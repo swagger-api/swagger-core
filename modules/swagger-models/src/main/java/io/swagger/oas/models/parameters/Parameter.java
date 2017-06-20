@@ -331,10 +331,6 @@ public class Parameter {
         return this;
     }
 
-    public boolean isRef() {
-        return $ref == null || "".equals($ref.trim());
-    }
-
     public String get$ref() {
         return $ref;
     }

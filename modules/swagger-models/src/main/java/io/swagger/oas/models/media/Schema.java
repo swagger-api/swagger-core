@@ -570,21 +570,20 @@ public class Schema<T> {
      *
      * @return String $ref
      **/
-
-    public boolean isRef() {
-        return $ref == null || "".equals($ref.trim());
-    }
-
     public String get$ref() {
         return $ref;
     }
 
     public void set$ref(String $ref) {
+        if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
+            $ref = "#/components/schemas/" + $ref;
+        }
         this.$ref = $ref;
     }
 
     public Schema $ref(String $ref) {
-        this.$ref = $ref;
+
+        set$ref($ref);
         return this;
     }
 
