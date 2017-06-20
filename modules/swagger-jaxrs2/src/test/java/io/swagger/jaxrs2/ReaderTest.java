@@ -7,7 +7,6 @@ import io.swagger.jaxrs2.resources.DeprecatedFieldsResource;
 import io.swagger.jaxrs2.resources.DuplicatedOperationIdResource;
 import io.swagger.jaxrs2.resources.DuplicatedSecurityResource;
 import io.swagger.jaxrs2.resources.ExternalDocsReference;
-import io.swagger.jaxrs2.resources.ParametersResource;
 import io.swagger.jaxrs2.resources.RequestBodyResource;
 import io.swagger.jaxrs2.resources.ResponsesResource;
 import io.swagger.jaxrs2.resources.SecurityResource;
@@ -21,7 +20,6 @@ import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.callbacks.Callback;
-import io.swagger.oas.models.callbacks.Callbacks;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
@@ -45,7 +43,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 
 public class ReaderTest {
@@ -282,7 +284,7 @@ public class ReaderTest {
 		Method[] methods = SimpleCallbackResource.class.getMethods();
 		Operation callbackOperation = reader.parseMethod(methods[0]);
 		assertNotNull(callbackOperation);
-		Callbacks callbacks = callbackOperation.getCallbacks();
+		Map<String, Callback> callbacks = callbackOperation.getCallbacks();
 		assertNotNull(callbacks);
 		Callback callback = callbacks.get(CALLBACK_SUBSCRIPTION_ID);
 		assertNotNull(callback);
