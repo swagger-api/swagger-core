@@ -16,13 +16,14 @@
 
 package io.swagger.oas.models.parameters;
 
-import java.util.Objects;
 import io.swagger.oas.models.media.Content;
+
+import java.util.Objects;
 
 /**
  * RequestBody
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md#requestBodyObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#requestBodyObject"
  */
 
 

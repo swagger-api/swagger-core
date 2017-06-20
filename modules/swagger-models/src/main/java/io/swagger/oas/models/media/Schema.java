@@ -29,7 +29,7 @@ import java.util.Objects;
 /**
  * Schema
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md#schemaObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#schemaObject"
  */
 
 
@@ -67,6 +67,26 @@ public class Schema <T> {
   private XML xml = null;
   private java.util.Map<String, Object> extensions = null;
   protected List<T> _enum = null;
+  private Discriminator discriminator = null;
+
+  /**
+   * returns the discriminator property from a AllOfSchema instance.
+   *
+   * @return Discriminator discriminator
+   **/
+
+  public Discriminator getDiscriminator() {
+    return discriminator;
+  }
+
+  public void setDiscriminator(Discriminator discriminator) {
+    this.discriminator = discriminator;
+  }
+
+  public Schema discriminator(Discriminator discriminator) {
+    this.discriminator = discriminator;
+    return this;
+  }
 
   /**
    * returns the title property from a Schema instance.

@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * SecurityScheme
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md#securitySchemeObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#securitySchemeObject"
  */
 
 
@@ -57,8 +57,10 @@ public class SecurityScheme {
    * Gets or Sets in
    */
   public enum In {
+    COOKIE("cookie"),
+
     HEADER("header"),
-    
+
     QUERY("query");
 
     private String value;

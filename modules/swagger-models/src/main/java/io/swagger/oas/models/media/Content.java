@@ -16,14 +16,13 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.Objects;
 import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * Content
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md#contentObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#contentObject"
  */
 
 

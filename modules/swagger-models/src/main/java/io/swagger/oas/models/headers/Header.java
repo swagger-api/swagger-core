@@ -16,17 +16,18 @@
 
 package io.swagger.oas.models.headers;
 
-import java.util.Objects;
 import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.Schema;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Header
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md#headerObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#headerObject"
  */
 
 

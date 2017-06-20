@@ -16,20 +16,22 @@
 
 package io.swagger.oas.models;
 
-import java.util.Objects;
-import io.swagger.oas.models.callbacks.Callbacks;
+import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.servers.Server;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Operation
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md#operationObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#operationObject"
  */
 
 
@@ -42,7 +44,7 @@ public class Operation {
   private List<Parameter> parameters = null;
   private RequestBody requestBody = null;
   private ApiResponses responses = null;
-  private Callbacks callbacks = null;
+  private Map<String, Callback> callbacks = null;
   private Boolean deprecated = null;
   private List<SecurityRequirement> security = null;
   private List<Server> servers = null;
@@ -222,15 +224,15 @@ public class Operation {
    * @return Callbacks callbacks
    **/
 
-  public Callbacks getCallbacks() {
+  public Map<String, Callback> getCallbacks() {
     return callbacks;
   }
 
-  public void setCallbacks(Callbacks callbacks) {
+  public void setCallbacks(Map<String, Callback> callbacks) {
     this.callbacks = callbacks;
   }
 
-  public Operation callbacks(Callbacks callbacks) {
+  public Operation callbacks(Map<String, Callback> callbacks) {
     this.callbacks = callbacks;
     return this;
   }
