@@ -18,8 +18,6 @@ package io.swagger.oas.models.parameters;
 
 import io.swagger.oas.models.media.Content;
 
-import java.util.Objects;
-
 /**
  * RequestBody
  *
@@ -32,6 +30,7 @@ public class RequestBody {
   private Content content = null;
   private Boolean required = null;
   private java.util.Map<String, Object> extensions = null;
+  private String $ref = null;
 
   /**
    * returns the description property from a RequestBody instance.
@@ -90,28 +89,6 @@ public class RequestBody {
     return this;
   }
 
-
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    RequestBody requestBody = (RequestBody) o;
-    return Objects.equals(this.description, requestBody.description) &&
-        Objects.equals(this.content, requestBody.content) &&
-        Objects.equals(this.required, requestBody.required) &&
-        Objects.equals(this.extensions, requestBody.extensions);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(description, content, required, extensions);
-  }
-
-
   public java.util.Map<String, Object> getExtensions() {
     return extensions;
   }
@@ -125,6 +102,60 @@ public class RequestBody {
 
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
+  }
+
+  public boolean isRef() {
+    return $ref == null || "".equals($ref.trim());
+  }
+
+  public String get$ref() {
+    return $ref;
+  }
+
+  public void set$ref(String $ref) {
+    this.$ref = $ref;
+  }
+
+  public RequestBody $ref(String $ref) {
+    this.$ref = $ref;
+    return this;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof RequestBody)) {
+      return false;
+    }
+
+    RequestBody that = (RequestBody) o;
+
+    if (description != null ? !description.equals(that.description) : that.description != null) {
+      return false;
+    }
+    if (content != null ? !content.equals(that.content) : that.content != null) {
+      return false;
+    }
+    if (required != null ? !required.equals(that.required) : that.required != null) {
+      return false;
+    }
+    if (extensions != null ? !extensions.equals(that.extensions) : that.extensions != null) {
+      return false;
+    }
+    return $ref != null ? $ref.equals(that.$ref) : that.$ref == null;
+
+  }
+
+  @Override
+  public int hashCode() {
+    int result = description != null ? description.hashCode() : 0;
+    result = 31 * result + (content != null ? content.hashCode() : 0);
+    result = 31 * result + (required != null ? required.hashCode() : 0);
+    result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
+    result = 31 * result + ($ref != null ? $ref.hashCode() : 0);
+    return result;
   }
 
   @Override

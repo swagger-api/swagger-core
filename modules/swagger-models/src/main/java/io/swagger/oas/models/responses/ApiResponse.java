@@ -128,10 +128,13 @@ public class ApiResponse {
   }
 
   /**
-   * returns the $ref property from a Schema instance.
+   * returns the $ref property from an ApiResponse instance.
    *
    * @return String $ref
    **/
+  public boolean isRef() {
+    return $ref == null || "".equals($ref.trim());
+  }
 
   public String get$ref() {
     return $ref;
@@ -141,10 +144,7 @@ public class ApiResponse {
     this.$ref = $ref;
   }
 
-  public ApiResponse ref(String $ref) {
-    if($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
-      $ref = "#/components/responses/" + $ref;
-    }
+  public ApiResponse $ref(String $ref) {
     this.$ref = $ref;
     return this;
   }
@@ -196,6 +196,7 @@ public class ApiResponse {
     sb.append("    headers: ").append(toIndentedString(headers)).append("\n");
     sb.append("    content: ").append(toIndentedString(content)).append("\n");
     sb.append("    links: ").append(toIndentedString(links)).append("\n");
+    sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -21,7 +21,6 @@ import io.swagger.oas.models.servers.Server;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * PathItem
@@ -31,363 +30,406 @@ import java.util.Objects;
 
 
 public class PathItem {
-  private String $ref = null;
-  private String summary = null;
-  private String description = null;
-  private Operation get = null;
-  private Operation put = null;
-  private Operation post = null;
-  private Operation delete = null;
-  private Operation options = null;
-  private Operation head = null;
-  private Operation patch = null;
-  private Operation trace = null;
-  private List<Server> servers = null;
-  private List<Parameter> parameters = null;
-  private java.util.Map<String, Object> extensions = null;
+    private String summary = null;
+    private String description = null;
+    private Operation get = null;
+    private Operation put = null;
+    private Operation post = null;
+    private Operation delete = null;
+    private Operation options = null;
+    private Operation head = null;
+    private Operation patch = null;
+    private Operation trace = null;
+    private List<Server> servers = null;
+    private List<Parameter> parameters = null;
+    private String $ref = null;
+    private java.util.Map<String, Object> extensions = null;
 
-  /**
-   * returns the ref property from a PathItem instance.
-   *
-   * @return String ref
-   **/
+    /**
+     * returns the summary property from a PathItem instance.
+     *
+     * @return String summary
+     **/
 
-  public String get$ref() {
-    return $ref;
-  }
-
-  public void set$ref(String $ref) {
-    this.$ref = $ref;
-  }
-
-  public PathItem ref(String ref) {
-    this.$ref = ref;
-    return this;
-  }
-
-  /**
-   * returns the summary property from a PathItem instance.
-   *
-   * @return String summary
-   **/
-
-  public String getSummary() {
-    return summary;
-  }
-
-  public void setSummary(String summary) {
-    this.summary = summary;
-  }
-
-  public PathItem summary(String summary) {
-    this.summary = summary;
-    return this;
-  }
-
-  /**
-   * returns the description property from a PathItem instance.
-   *
-   * @return String description
-   **/
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public PathItem description(String description) {
-    this.description = description;
-    return this;
-  }
-
-  /**
-   * returns the get property from a PathItem instance.
-   *
-   * @return Operation get
-   **/
-
-  public Operation getGet() {
-    return get;
-  }
-
-  public void setGet(Operation get) {
-    this.get = get;
-  }
-
-  public PathItem get(Operation get) {
-    this.get = get;
-    return this;
-  }
-
-  /**
-   * returns the put property from a PathItem instance.
-   *
-   * @return Operation put
-   **/
-
-  public Operation getPut() {
-    return put;
-  }
-
-  public void setPut(Operation put) {
-    this.put = put;
-  }
-
-  public PathItem put(Operation put) {
-    this.put = put;
-    return this;
-  }
-
-  /**
-   * returns the post property from a PathItem instance.
-   *
-   * @return Operation post
-   **/
-
-  public Operation getPost() {
-    return post;
-  }
-
-  public void setPost(Operation post) {
-    this.post = post;
-  }
-
-  public PathItem post(Operation post) {
-    this.post = post;
-    return this;
-  }
-
-  /**
-   * returns the delete property from a PathItem instance.
-   *
-   * @return Operation delete
-   **/
-
-  public Operation getDelete() {
-    return delete;
-  }
-
-  public void setDelete(Operation delete) {
-    this.delete = delete;
-  }
-
-  public PathItem delete(Operation delete) {
-    this.delete = delete;
-    return this;
-  }
-
-  /**
-   * returns the options property from a PathItem instance.
-   *
-   * @return Operation options
-   **/
-
-  public Operation getOptions() {
-    return options;
-  }
-
-  public void setOptions(Operation options) {
-    this.options = options;
-  }
-
-  public PathItem options(Operation options) {
-    this.options = options;
-    return this;
-  }
-
-  /**
-   * returns the head property from a PathItem instance.
-   *
-   * @return Operation head
-   **/
-
-  public Operation getHead() {
-    return head;
-  }
-
-  public void setHead(Operation head) {
-    this.head = head;
-  }
-
-  public PathItem head(Operation head) {
-    this.head = head;
-    return this;
-  }
-
-  /**
-   * returns the patch property from a PathItem instance.
-   *
-   * @return Operation patch
-   **/
-
-  public Operation getPatch() {
-    return patch;
-  }
-
-  public void setPatch(Operation patch) {
-    this.patch = patch;
-  }
-
-  public PathItem patch(Operation patch) {
-    this.patch = patch;
-    return this;
-  }
-
-  /**
-   * returns the trace property from a PathItem instance.
-   *
-   * @return Operation trace
-   **/
-
-  public Operation getTrace() {
-    return trace;
-  }
-
-  public void setTrace(Operation trace) {
-    this.trace = trace;
-  }
-
-  public PathItem trace(Operation trace) {
-    this.trace = trace;
-    return this;
-  }
-
-  /**
-   * returns the servers property from a PathItem instance.
-   *
-   * @return List&lt;Server&gt; servers
-   **/
-
-  public List<Server> getServers() {
-    return servers;
-  }
-
-  public void setServers(List<Server> servers) {
-    this.servers = servers;
-  }
-
-  public PathItem servers(List<Server> servers) {
-    this.servers = servers;
-    return this;
-  }
-
-  public PathItem addServersItem(Server serversItem) {
-    if(this.servers == null) {
-      this.servers = new ArrayList<Server>();
+    public String getSummary() {
+        return summary;
     }
-    this.servers.add(serversItem);
-    return this;
-  }
 
-  /**
-   * returns the parameters property from a PathItem instance.
-   *
-   * @return List&lt;Parameter&gt; parameters
-   **/
-
-  public List<Parameter> getParameters() {
-    return parameters;
-  }
-
-  public void setParameters(List<Parameter> parameters) {
-    this.parameters = parameters;
-  }
-
-  public PathItem parameters(List<Parameter> parameters) {
-    this.parameters = parameters;
-    return this;
-  }
-
-  public PathItem addParametersItem(Parameter parametersItem) {
-    if(this.parameters == null) {
-      this.parameters = new ArrayList<Parameter>();
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
-    this.parameters.add(parametersItem);
-    return this;
-  }
 
-
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
+    public PathItem summary(String summary) {
+        this.summary = summary;
+        return this;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    /**
+     * returns the description property from a PathItem instance.
+     *
+     * @return String description
+     **/
+
+    public String getDescription() {
+        return description;
     }
-    PathItem pathItem = (PathItem) o;
-    return Objects.equals(this.$ref, pathItem.$ref) &&
-        Objects.equals(this.summary, pathItem.summary) &&
-        Objects.equals(this.description, pathItem.description) &&
-        Objects.equals(this.get, pathItem.get) &&
-        Objects.equals(this.put, pathItem.put) &&
-        Objects.equals(this.post, pathItem.post) &&
-        Objects.equals(this.delete, pathItem.delete) &&
-        Objects.equals(this.options, pathItem.options) &&
-        Objects.equals(this.head, pathItem.head) &&
-        Objects.equals(this.patch, pathItem.patch) &&
-        Objects.equals(this.trace, pathItem.trace) &&
-        Objects.equals(this.servers, pathItem.servers) &&
-        Objects.equals(this.parameters, pathItem.parameters) &&
-        Objects.equals(this.extensions, pathItem.extensions);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash($ref, summary, description, get, put, post, delete, options, head, patch, trace, servers, parameters, extensions);
-  }
-
-
-  public java.util.Map<String, Object> getExtensions() {
-    return extensions;
-  }
-
-  public void addExtension(String name, Object value) {
-    if(this.extensions == null) {
-      this.extensions = new java.util.HashMap<>();
+    public void setDescription(String description) {
+        this.description = description;
     }
-    this.extensions.put(name, value);
-  }
 
-  public void setExtensions(java.util.Map<String, Object> extensions) {
-    this.extensions = extensions;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class PathItem {\n");
-    
-    sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
-    sb.append("    summary: ").append(toIndentedString(summary)).append("\n");
-    sb.append("    description: ").append(toIndentedString(description)).append("\n");
-    sb.append("    get: ").append(toIndentedString(get)).append("\n");
-    sb.append("    put: ").append(toIndentedString(put)).append("\n");
-    sb.append("    post: ").append(toIndentedString(post)).append("\n");
-    sb.append("    delete: ").append(toIndentedString(delete)).append("\n");
-    sb.append("    options: ").append(toIndentedString(options)).append("\n");
-    sb.append("    head: ").append(toIndentedString(head)).append("\n");
-    sb.append("    patch: ").append(toIndentedString(patch)).append("\n");
-    sb.append("    trace: ").append(toIndentedString(trace)).append("\n");
-    sb.append("    servers: ").append(toIndentedString(servers)).append("\n");
-    sb.append("    parameters: ").append(toIndentedString(parameters)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+    public PathItem description(String description) {
+        this.description = description;
+        return this;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
-  
+
+    /**
+     * returns the get property from a PathItem instance.
+     *
+     * @return Operation get
+     **/
+
+    public Operation getGet() {
+        return get;
+    }
+
+    public void setGet(Operation get) {
+        this.get = get;
+    }
+
+    public PathItem get(Operation get) {
+        this.get = get;
+        return this;
+    }
+
+    /**
+     * returns the put property from a PathItem instance.
+     *
+     * @return Operation put
+     **/
+
+    public Operation getPut() {
+        return put;
+    }
+
+    public void setPut(Operation put) {
+        this.put = put;
+    }
+
+    public PathItem put(Operation put) {
+        this.put = put;
+        return this;
+    }
+
+    /**
+     * returns the post property from a PathItem instance.
+     *
+     * @return Operation post
+     **/
+
+    public Operation getPost() {
+        return post;
+    }
+
+    public void setPost(Operation post) {
+        this.post = post;
+    }
+
+    public PathItem post(Operation post) {
+        this.post = post;
+        return this;
+    }
+
+    /**
+     * returns the delete property from a PathItem instance.
+     *
+     * @return Operation delete
+     **/
+
+    public Operation getDelete() {
+        return delete;
+    }
+
+    public void setDelete(Operation delete) {
+        this.delete = delete;
+    }
+
+    public PathItem delete(Operation delete) {
+        this.delete = delete;
+        return this;
+    }
+
+    /**
+     * returns the options property from a PathItem instance.
+     *
+     * @return Operation options
+     **/
+
+    public Operation getOptions() {
+        return options;
+    }
+
+    public void setOptions(Operation options) {
+        this.options = options;
+    }
+
+    public PathItem options(Operation options) {
+        this.options = options;
+        return this;
+    }
+
+    /**
+     * returns the head property from a PathItem instance.
+     *
+     * @return Operation head
+     **/
+
+    public Operation getHead() {
+        return head;
+    }
+
+    public void setHead(Operation head) {
+        this.head = head;
+    }
+
+    public PathItem head(Operation head) {
+        this.head = head;
+        return this;
+    }
+
+    /**
+     * returns the patch property from a PathItem instance.
+     *
+     * @return Operation patch
+     **/
+
+    public Operation getPatch() {
+        return patch;
+    }
+
+    public void setPatch(Operation patch) {
+        this.patch = patch;
+    }
+
+    public PathItem patch(Operation patch) {
+        this.patch = patch;
+        return this;
+    }
+
+    /**
+     * returns the trace property from a PathItem instance.
+     *
+     * @return Operation trace
+     **/
+
+    public Operation getTrace() {
+        return trace;
+    }
+
+    public void setTrace(Operation trace) {
+        this.trace = trace;
+    }
+
+    public PathItem trace(Operation trace) {
+        this.trace = trace;
+        return this;
+    }
+
+    /**
+     * returns the servers property from a PathItem instance.
+     *
+     * @return List&lt;Server&gt; servers
+     **/
+
+    public List<Server> getServers() {
+        return servers;
+    }
+
+    public void setServers(List<Server> servers) {
+        this.servers = servers;
+    }
+
+    public PathItem servers(List<Server> servers) {
+        this.servers = servers;
+        return this;
+    }
+
+    public PathItem addServersItem(Server serversItem) {
+        if (this.servers == null) {
+            this.servers = new ArrayList<Server>();
+        }
+        this.servers.add(serversItem);
+        return this;
+    }
+
+    /**
+     * returns the parameters property from a PathItem instance.
+     *
+     * @return List&lt;Parameter&gt; parameters
+     **/
+
+    public List<Parameter> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(List<Parameter> parameters) {
+        this.parameters = parameters;
+    }
+
+    public PathItem parameters(List<Parameter> parameters) {
+        this.parameters = parameters;
+        return this;
+    }
+
+    public PathItem addParametersItem(Parameter parametersItem) {
+        if (this.parameters == null) {
+            this.parameters = new ArrayList<Parameter>();
+        }
+        this.parameters.add(parametersItem);
+        return this;
+    }
+
+    public java.util.Map<String, Object> getExtensions() {
+        return extensions;
+    }
+
+    public void addExtension(String name, Object value) {
+        if (this.extensions == null) {
+            this.extensions = new java.util.HashMap<>();
+        }
+        this.extensions.put(name, value);
+    }
+
+    public void setExtensions(java.util.Map<String, Object> extensions) {
+        this.extensions = extensions;
+    }
+
+    /**
+     * returns the ref property from a PathItem instance.
+     *
+     * @return String ref
+     **/
+    public boolean isRef() {
+        return $ref == null || "".equals($ref.trim());
+    }
+
+    public String get$ref() {
+        return $ref;
+    }
+
+    public void set$ref(String $ref) {
+        this.$ref = $ref;
+    }
+
+    public PathItem $ref(String $ref) {
+        this.$ref = $ref;
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PathItem)) {
+            return false;
+        }
+
+        PathItem pathItem = (PathItem) o;
+
+        if (summary != null ? !summary.equals(pathItem.summary) : pathItem.summary != null) {
+            return false;
+        }
+        if (description != null ? !description.equals(pathItem.description) : pathItem.description != null) {
+            return false;
+        }
+        if (get != null ? !get.equals(pathItem.get) : pathItem.get != null) {
+            return false;
+        }
+        if (put != null ? !put.equals(pathItem.put) : pathItem.put != null) {
+            return false;
+        }
+        if (post != null ? !post.equals(pathItem.post) : pathItem.post != null) {
+            return false;
+        }
+        if (delete != null ? !delete.equals(pathItem.delete) : pathItem.delete != null) {
+            return false;
+        }
+        if (options != null ? !options.equals(pathItem.options) : pathItem.options != null) {
+            return false;
+        }
+        if (head != null ? !head.equals(pathItem.head) : pathItem.head != null) {
+            return false;
+        }
+        if (patch != null ? !patch.equals(pathItem.patch) : pathItem.patch != null) {
+            return false;
+        }
+        if (trace != null ? !trace.equals(pathItem.trace) : pathItem.trace != null) {
+            return false;
+        }
+        if (servers != null ? !servers.equals(pathItem.servers) : pathItem.servers != null) {
+            return false;
+        }
+        if (parameters != null ? !parameters.equals(pathItem.parameters) : pathItem.parameters != null) {
+            return false;
+        }
+        if ($ref != null ? !$ref.equals(pathItem.$ref) : pathItem.$ref != null) {
+            return false;
+        }
+        return extensions != null ? extensions.equals(pathItem.extensions) : pathItem.extensions == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = summary != null ? summary.hashCode() : 0;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (get != null ? get.hashCode() : 0);
+        result = 31 * result + (put != null ? put.hashCode() : 0);
+        result = 31 * result + (post != null ? post.hashCode() : 0);
+        result = 31 * result + (delete != null ? delete.hashCode() : 0);
+        result = 31 * result + (options != null ? options.hashCode() : 0);
+        result = 31 * result + (head != null ? head.hashCode() : 0);
+        result = 31 * result + (patch != null ? patch.hashCode() : 0);
+        result = 31 * result + (trace != null ? trace.hashCode() : 0);
+        result = 31 * result + (servers != null ? servers.hashCode() : 0);
+        result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
+        result = 31 * result + ($ref != null ? $ref.hashCode() : 0);
+        result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class PathItem {\n");
+        sb.append("    summary: ").append(toIndentedString(summary)).append("\n");
+        sb.append("    description: ").append(toIndentedString(description)).append("\n");
+        sb.append("    get: ").append(toIndentedString(get)).append("\n");
+        sb.append("    put: ").append(toIndentedString(put)).append("\n");
+        sb.append("    post: ").append(toIndentedString(post)).append("\n");
+        sb.append("    delete: ").append(toIndentedString(delete)).append("\n");
+        sb.append("    options: ").append(toIndentedString(options)).append("\n");
+        sb.append("    head: ").append(toIndentedString(head)).append("\n");
+        sb.append("    patch: ").append(toIndentedString(patch)).append("\n");
+        sb.append("    trace: ").append(toIndentedString(trace)).append("\n");
+        sb.append("    servers: ").append(toIndentedString(servers)).append("\n");
+        sb.append("    parameters: ").append(toIndentedString(parameters)).append("\n");
+        sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
+
 }
 

@@ -33,6 +33,7 @@ import java.util.Objects;
 
 public class Header {
   private String description = null;
+  private String $ref = null;
   private Boolean required = null;
   private Boolean deprecated = null;
   private Boolean allowEmptyValue = null;
@@ -304,11 +305,28 @@ public class Header {
     this.extensions = extensions;
   }
 
+
+  public boolean isRef() {
+    return $ref == null || "".equals($ref.trim());
+  }
+
+  public String get$ref() {
+    return $ref;
+  }
+
+  public void set$ref(String $ref) {
+    this.$ref = $ref;
+  }
+
+  public Header $ref(String $ref) {
+    this.$ref = $ref;
+    return this;
+  }
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Header {\n");
-    
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    required: ").append(toIndentedString(required)).append("\n");
     sb.append("    deprecated: ").append(toIndentedString(deprecated)).append("\n");
@@ -319,6 +337,7 @@ public class Header {
     sb.append("    examples: ").append(toIndentedString(examples)).append("\n");
     sb.append("    example: ").append(toIndentedString(example)).append("\n");
     sb.append("    content: ").append(toIndentedString(content)).append("\n");
+    sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
     sb.append("}");
     return sb.toString();
   }
