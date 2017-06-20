@@ -17,7 +17,6 @@ import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.callbacks.Callback;
-import io.swagger.oas.models.callbacks.Callbacks;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
@@ -228,23 +227,27 @@ public class Reader {
         io.swagger.oas.annotations.security.SecurityRequirement apiSecurity = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.security.SecurityRequirement.class);
         io.swagger.oas.annotations.links.Link apiLinks = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.links.Link.class);
 
-        if (apiOperation != null) {
-            getCallbacks(apiCallback).ifPresent(callbacks -> operation.setCallbacks(callbacks));
-            SecurityParser.getSecurityRequirement(apiSecurity).ifPresent(securityRequirements -> operation.setSecurity(securityRequirements));
-            OperationParser.getApiResponses(apiOperation.responses(), apiLinks).ifPresent(apiResponses -> operation.setResponses(apiResponses));
-            setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
-        }
-        return operation;
-    }
 
-    private Optional<Callbacks> getCallbacks(io.swagger.oas.annotations.callbacks.Callback apiCallback) {
-        if (apiCallback == null) {
-            return Optional.empty();
-        }
-        Callbacks callbacksObject = new Callbacks();
-        Callback callbackObject = new Callback();
-        PathItem pathItemObject = new PathItem();
+		if (apiOperation != null) {
 
+			Map<String, Callback> callbacks = getCallbacks(apiCallback);
+
+			if (callbacks.size() > 0) {
+				operation.setCallbacks(callbacks);
+			}
+			SecurityParser.getSecurityRequirement(apiSecurity).ifPresent(securityRequirements -> operation.setSecurity(securityRequirements));
+			OperationParser.getApiResponses(apiOperation.responses(), apiLinks).ifPresent(apiResponses -> operation.setResponses(apiResponses));
+			setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
+		}
+		return operation;
+	}
+	private Map<String, Callback> getCallbacks(io.swagger.oas.annotations.callbacks.Callback apiCallback) {
+		Map<String, Callback> output = new HashMap<String, Callback>();
+		if (apiCallback == null) {
+			return output;
+		}
+		Callback callbackObject = new Callback();
+		PathItem pathItemObject = new PathItem();
         for (io.swagger.oas.annotations.Operation callbackOperation : apiCallback.operation()) {
             Operation callbackNewOperation = new Operation();
             setOperationObjectFromApiOperationAnnotation(callbackNewOperation, callbackOperation);
@@ -254,9 +257,9 @@ public class Reader {
         pathItemObject.setSummary(apiCallback.name());
 
         callbackObject.addPathItem(apiCallback.name(), pathItemObject);
-        callbacksObject.addCallback(apiCallback.name(), callbackObject);
+        output.put(apiCallback.name(), callbackObject);
 
-        return Optional.of(callbacksObject);
+        return output;
     }
 
     private void setPathItemOperation(PathItem pathItemObject, String method, Operation callbackNewOperation) {

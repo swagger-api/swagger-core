@@ -16,7 +16,6 @@
 
 package io.swagger.oas.models;
 
-import java.util.Objects;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.headers.Header;
@@ -26,14 +25,15 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.security.SecurityScheme;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Components
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md#componentsObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#componentsObject"
  */
 
 

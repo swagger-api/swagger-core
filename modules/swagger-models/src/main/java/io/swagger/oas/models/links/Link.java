@@ -17,16 +17,16 @@
 package io.swagger.oas.models.links;
 
 import io.swagger.oas.models.headers.Header;
+import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.servers.Server;
 
-import java.util.Objects;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Link
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md#linkObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#linkObject"
  */
 
 
@@ -34,6 +34,7 @@ public class Link {
   private String operationRef = null;
   private String operationId = null;
   private Map<String, String> parameters = null;
+  private RequestBody requestBody = null;
   private Map<String, Header> headers = null;
   private String description = null;
   private java.util.Map<String, Object> extensions = null;
@@ -78,10 +79,23 @@ public class Link {
   }
 
   /**
-   * returns the operationId property from a Link instance.
+   * returns the requestBody property from a Link instance.
    *
    * @return String operationId
    **/
+
+  public RequestBody getRequestBody() {
+    return requestBody;
+  }
+
+  public void setRequestBody(RequestBody requestBody) {
+    this.requestBody = requestBody;
+  }
+
+  public Link requestBody(RequestBody requestBody) {
+    this.requestBody = requestBody;
+    return this;
+  }
 
   public String getOperationId() {
     return operationId;

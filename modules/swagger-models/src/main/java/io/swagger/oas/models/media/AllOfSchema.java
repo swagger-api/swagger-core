@@ -16,12 +16,9 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.Objects;
-import io.swagger.oas.models.ExternalDocumentation;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * AllOfSchema
@@ -29,27 +26,7 @@ import java.util.Map;
 
 
 public class AllOfSchema extends Schema {
-  private String discriminator = null;
   private List<Schema> allOf = null;
-
-  /**
-   * returns the discriminator property from a AllOfSchema instance.
-   *
-   * @return String discriminator
-   **/
-
-  public String getDiscriminator() {
-    return discriminator;
-  }
-
-  public void setDiscriminator(String discriminator) {
-    this.discriminator = discriminator;
-  }
-
-  public AllOfSchema discriminator(String discriminator) {
-    this.discriminator = discriminator;
-    return this;
-  }
 
   /**
    * returns the allOf property from a AllOfSchema instance.
@@ -88,14 +65,13 @@ public class AllOfSchema extends Schema {
       return false;
     }
     AllOfSchema allOfSchema = (AllOfSchema) o;
-    return Objects.equals(this.discriminator, allOfSchema.discriminator) &&
-        Objects.equals(this.allOf, allOfSchema.allOf) &&
+    return Objects.equals(this.allOf, allOfSchema.allOf) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(discriminator, allOf, super.hashCode());
+    return Objects.hash(allOf, super.hashCode());
   }
 
 
@@ -105,7 +81,6 @@ public class AllOfSchema extends Schema {
     StringBuilder sb = new StringBuilder();
     sb.append("class AllOfSchema {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    discriminator: ").append(toIndentedString(discriminator)).append("\n");
     sb.append("    allOf: ").append(toIndentedString(allOf)).append("\n");
     sb.append("}");
     return sb.toString();

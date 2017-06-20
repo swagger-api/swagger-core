@@ -16,16 +16,16 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.Objects;
 import io.swagger.oas.models.examples.Example;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * MediaType
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md#mediaTypeObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#mediaTypeObject"
  */
 
 

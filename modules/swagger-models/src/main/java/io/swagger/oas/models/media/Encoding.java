@@ -16,62 +16,119 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.Objects;
-import java.util.LinkedHashMap;
+import io.swagger.oas.models.headers.Header;
+
 import java.util.Map;
 
 /**
  * Encoding
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc1/versions/3.0.md#encodingObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#encodingObject"
  */
 
 
-public class Encoding extends LinkedHashMap<String, EncodingProperty> {
-  public Encoding() { }
+public class Encoding {
+    private String contentType;
+    private Map<String, Header> headers;
+    private String style;
+    private Boolean explode;
+    private Boolean allowReserved;
 
-  public Encoding addEncodingProperty(String name, EncodingProperty item) {
-    this.put(name, item);
-    return this;
-  }
+    public enum StyleEnum {
+        FORM("form"),
+        SPACE_DELIMITED("spaceDelimited"),
+        PIPE_DELIMITED("pipeDelimited"),
+        DEEP_OBJECT("deepObject");
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
+        private String value;
+
+        StyleEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    public Encoding() {
     }
-    return super.equals(o);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode());
-  }
-
-
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class Encoding {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+    public Encoding contentType(String contentType) {
+        this.contentType = contentType;
+        return this;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
-  
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public Encoding headers(Map<String, Header> headers) {
+        this.headers = headers;
+        return this;
+    }
+
+    public Map<String, Header> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Map<String, Header> headers) {
+        this.headers = headers;
+    }
+
+    public Encoding style(String style) {
+        this.style = style;
+        return this;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public Encoding explode(Boolean explode) {
+        this.explode = explode;
+        return this;
+    }
+
+    public Boolean getExplode() {
+        return explode;
+    }
+
+    public void setExplode(Boolean explode) {
+        this.explode = explode;
+    }
+
+    public Encoding allowReserved(Boolean allowReserved) {
+        this.allowReserved = allowReserved;
+        return this;
+    }
+
+    public Boolean getAllowReserved() {
+        return allowReserved;
+    }
+
+    public void setAllowReserved(Boolean allowReserved) {
+        this.allowReserved = allowReserved;
+    }
+
+    @Override
+    public String toString() {
+        return "Encoding{" +
+                "contentType='" + contentType + '\'' +
+                ", headers=" + headers +
+                ", style='" + style + '\'' +
+                ", explode=" + explode +
+                ", allowReserved=" + allowReserved +
+                '}';
+    }
 }
 
