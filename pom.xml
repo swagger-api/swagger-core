@@ -17,7 +17,7 @@
     <artifactId>swagger-project</artifactId>
     <packaging>pom</packaging>
     <name>swagger-project</name>
-    <version>1.5.16-riskco</version>
+    <version>1.5.16-SNAPSHOT</version>
     <url>https://github.com/erikvanelsas/swagger-core</url>
     <scm>
 	<developerConnection>scm:git:https://github.com:erikvanelsas/swagger-core.git</developerConnection>
@@ -95,7 +95,7 @@
                     </goals>
                     <configuration>
                         <rules>
-                            <DependencyConvergence />
+                            <DependencyConvergence/>
                         </rules>
                     </configuration>
                   </execution>
@@ -370,7 +370,7 @@
                         <link>http://java.sun.com/javaee/5/docs/api</link>
                         <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
                     </links>
-                    <excludePackageNames />
+                    <excludePackageNames/>
                 </configuration>
             </plugin>
             <plugin>
