@@ -3,14 +3,14 @@
     <parent>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.5.16-riskco</version>
+        <version>1.5.17-riskco-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.swagger</groupId>
     <artifactId>swagger-hibernate-validations</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.16-riskco</version>
+    <version>1.5.17-riskco-SNAPSHOT</version>
     <name>swagger-hibernate-validations</name>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>

@@ -2,7 +2,7 @@
     <parent>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.5.16-riskco</version>
+        <version>1.5.17-riskco-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>

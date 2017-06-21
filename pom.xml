@@ -17,7 +17,7 @@
     <artifactId>swagger-project</artifactId>
     <packaging>pom</packaging>
     <name>swagger-project</name>
-    <version>1.5.16-riskco</version>
+    <version>1.5.17-riskco-SNAPSHOT</version>
     <url>https://github.com/erikvanelsas/swagger-core</url>
     <scm>
 		<developerConnection>scm:git:https://github.com/erikvanelsas/swagger-core.git</developerConnection>
