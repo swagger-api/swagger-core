@@ -20,7 +20,7 @@
     <version>1.5.16-riskco</version>
     <url>https://github.com/erikvanelsas/swagger-core</url>
     <scm>
-	<developerConnection>scm:git:https://github.com:erikvanelsas/swagger-core.git</developerConnection>
+		<developerConnection>scm:git:https://github.com/erikvanelsas/swagger-core.git</developerConnection>
         <url>https://github.com/erikvanelsas/swagger-core</url>
     </scm>
     <prerequisites>
