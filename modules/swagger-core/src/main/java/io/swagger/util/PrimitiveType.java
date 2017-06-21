@@ -3,6 +3,7 @@ package io.swagger.util;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.models.properties.*;
 
+import javax.money.MonetaryAmount;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
@@ -166,7 +167,24 @@ public enum PrimitiveType {
         public ObjectProperty createProperty() {
             return new ObjectProperty();
         }
+    },
+
+    /**
+     * Monetary Amount.
+     */
+    MONETARY_AMOUNT(javax.money.MonetaryAmount.class, "monetaryAmount") {
+        @Override
+        public ObjectProperty createProperty() {
+            return new ObjectProperty(populateMonetaryAmountProperties());
+        }
     };
+
+    private static Map<String, Property> populateMonetaryAmountProperties() {
+        Map<String, Property> propertiesByKey = new HashMap<>();
+        propertiesByKey.put("amount", new DoubleProperty());
+        propertiesByKey.put("currency", new StringProperty());
+        return propertiesByKey;
+    }
 
     private static final Map<Class<?>, PrimitiveType> KEY_CLASSES;
     private static final Map<Class<?>, PrimitiveType> BASE_CLASSES;
@@ -201,6 +219,7 @@ public enum PrimitiveType {
         addKeys(keyClasses, DATE_TIME, java.util.Date.class);
         addKeys(keyClasses, FILE, java.io.File.class);
         addKeys(keyClasses, OBJECT, Object.class);
+        addKeys(keyClasses, MONETARY_AMOUNT, MonetaryAmount.class);
         KEY_CLASSES = Collections.unmodifiableMap(keyClasses);
 
         final Map<Class<?>, PrimitiveType> baseClasses = new HashMap<Class<?>, PrimitiveType>();
@@ -227,11 +246,11 @@ public enum PrimitiveType {
         NAMES = Collections.unmodifiableMap(names);
     }
 
-    private PrimitiveType(Class<?> keyClass) {
+    PrimitiveType(Class<?> keyClass) {
         this(keyClass, null);
     }
 
-    private PrimitiveType(Class<?> keyClass, String commonName) {
+    PrimitiveType(Class<?> keyClass, String commonName) {
         this.keyClass = keyClass;
         this.commonName = commonName;
     }
