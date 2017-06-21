@@ -1,6 +1,5 @@
 package io.swagger.jaxrs2;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import io.swagger.converter.ModelConverters;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.ExternalDocumentation;
@@ -21,7 +20,6 @@ import io.swagger.oas.models.servers.ServerVariables;
 import io.swagger.oas.models.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.print.attribute.standard.Media;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -51,23 +49,42 @@ public class OperationParser {
             return Optional.empty();
         }
         Parameter parameterObject = new Parameter();
+        boolean isEmpty = true;
         if (StringUtils.isNotBlank(parameter.description())) {
             parameterObject.setDescription(parameter.description());
+            isEmpty = false;
         }
         if (StringUtils.isNotBlank(parameter.name())) {
             parameterObject.setName(parameter.name());
+            isEmpty = false;
         }
         if (StringUtils.isNotBlank(parameter.in())) {
             parameterObject.setIn(parameter.in());
+            isEmpty = false;
         }
         parameterObject.setDeprecated(parameter.deprecated());
-        parameterObject.setRequired(parameter.required());
+        if (parameter.required()) {
+            parameterObject.setRequired(parameter.required());
+            isEmpty = false;
+        }
         parameterObject.setStyle(StringUtils.isNoneBlank(parameter.style()) ? Parameter.StyleEnum.valueOf(parameter.style()) : null);
-        parameterObject.setAllowEmptyValue(parameter.allowEmptyValue());
-        parameterObject.setAllowReserved(parameter.allowReserved());
-        parameterObject.setExplode(parameter.explode());
-        getContents(parameter.content()).ifPresent(parameterObject::setContent);
+        if (parameter.allowEmptyValue()) {
+            parameterObject.setAllowEmptyValue(parameter.allowEmptyValue());
+            isEmpty = false;
+        }
+        if (parameter.allowReserved()) {
+            parameterObject.setAllowReserved(parameter.allowReserved());
+            isEmpty = false;
+        }
+        if (parameter.explode()) {
+            parameterObject.setExplode(parameter.explode());
+            isEmpty = false;
+        }
+        if (isEmpty) {
+            return Optional.empty();
+        }
 
+        getContents(parameter.content()).ifPresent(parameterObject::setContent);
 
         return Optional.of(parameterObject);
     }
@@ -87,11 +104,18 @@ public class OperationParser {
             return Optional.empty();
         }
         Set<Tag> tagsList = new LinkedHashSet<>();
+        boolean isEmpty = true;
         for (String tag : tags) {
             Tag tagObject = new Tag();
+            if (StringUtils.isNotBlank(tag)) {
+                isEmpty = false;
+            }
             tagObject.setDescription(tag);
             tagObject.setName(tag);
             tagsList.add(tagObject);
+        }
+        if (isEmpty) {
+            return Optional.empty();
         }
         return Optional.of(tagsList);
     }
@@ -101,9 +125,11 @@ public class OperationParser {
             return Optional.empty();
         }
         List<Server> serverObjects = new ArrayList<>();
-
         for (io.swagger.oas.annotations.servers.Server server : servers) {
             getServer(server).ifPresent(serverObjects::add);
+        }
+        if (serverObjects.size() == 0) {
+            return Optional.empty();
         }
         return Optional.of(serverObjects);
     }
@@ -114,11 +140,17 @@ public class OperationParser {
         }
 
         Server serverObject = new Server();
+        boolean isEmpty = true;
         if (StringUtils.isNotBlank(server.url())) {
             serverObject.setUrl(server.url());
+            isEmpty = false;
         }
         if (StringUtils.isNotBlank(server.description())) {
             serverObject.setDescription(server.description());
+            isEmpty = false;
+        }
+        if (isEmpty) {
+            return Optional.empty();
         }
         io.swagger.oas.annotations.servers.ServerVariable[] serverVariables = server.variables();
         ServerVariables serverVariablesObject = new ServerVariables();
@@ -138,12 +170,18 @@ public class OperationParser {
         if (externalDocumentation == null) {
             return Optional.empty();
         }
+        boolean isEmpty = true;
         ExternalDocumentation external = new ExternalDocumentation();
         if (StringUtils.isNotBlank(externalDocumentation.description())) {
+            isEmpty = false;
             external.setDescription(externalDocumentation.description());
         }
         if (StringUtils.isNotBlank(externalDocumentation.url())) {
+            isEmpty = false;
             external.setUrl(externalDocumentation.url());
+        }
+        if (isEmpty) {
+            return Optional.empty();
         }
         return Optional.of(external);
     }
@@ -153,10 +191,18 @@ public class OperationParser {
             return Optional.empty();
         }
         RequestBody requestBodyObject = new RequestBody();
+        boolean isEmpty = true;
         if (StringUtils.isNotBlank(requestBody.description())) {
             requestBodyObject.setDescription(requestBody.description());
+            isEmpty = false;
         }
-        requestBodyObject.setRequired(requestBody.required());
+        if (requestBody.required()) {
+            requestBodyObject.setRequired(requestBody.required());
+            isEmpty = false;
+        }
+        if (isEmpty) {
+            return Optional.empty();
+        }
         getContents(requestBody.content()).ifPresent(requestBodyObject::setContent);
         return Optional.of(requestBodyObject);
     }
@@ -195,7 +241,10 @@ public class OperationParser {
 
     public static Optional<Content> getContent(io.swagger.oas.annotations.media.Content annotationContent) {
         if (annotationContent == null) {
-            Optional.empty();
+            return Optional.empty();
+        }
+        if (StringUtils.isBlank(annotationContent.mediaType())) {
+            return Optional.empty();
         }
         Content content = new Content();
         if (annotationContent != null) {

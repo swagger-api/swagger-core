@@ -10,6 +10,7 @@ import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.ReflectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.DELETE;
@@ -144,8 +145,15 @@ public class ReaderUtils {
             return Optional.empty();
         }
         List<String> list = new ArrayList<>();
+        boolean isEmpty = true;
         for (String value : array) {
+            if (StringUtils.isNotBlank(value)) {
+                isEmpty = false;
+            }
             list.add(value);
+        }
+        if (isEmpty) {
+            return Optional.empty();
         }
         return Optional.of(list);
     }

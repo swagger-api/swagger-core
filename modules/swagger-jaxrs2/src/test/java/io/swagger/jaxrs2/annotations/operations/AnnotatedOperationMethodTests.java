@@ -19,25 +19,16 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     public void testSimpleGetOperation() {
         String openApiYAML = readIntoYaml(SimpleGetOperationTest.class);
         int start = openApiYAML.indexOf("get:");
-        int end = openApiYAML.indexOf("servers:");
+        int end = openApiYAML.indexOf("components:");
 
         String expectedYAML = "get:\n" +
-                "      tags:\n" +
-                "      - \"Tag\"\n" +
                 "      summary: \"Simple get operation\"\n" +
                 "      description: \"Defines a simple get operation with no inputs and a complex\"\n" +
-                "      externalDocs: {}\n" +
                 "      operationId: \"getWithNoParameters\"\n" +
-                "      parameters: []\n" +
-                "      requestBody:\n" +
-                "        content: {}\n" +
-                "        required: false\n" +
                 "      responses:\n" +
                 "        200:\n" +
                 "          description: \"voila!\"\n" +
-                "          content: {}\n" +
-                "      deprecated: true\n" +
-                "      ";
+                "      deprecated: true\n";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(extractedYAML, expectedYAML);
@@ -45,7 +36,6 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
 
     static class SimpleGetOperationTest {
         @Operation(
-                tags = {"Tag"},
                 summary = "Simple get operation",
                 description = "Defines a simple get operation with no inputs and a complex",
                 operationId = "getWithNoParameters",
@@ -66,19 +56,12 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     public void testGetOperationWithResponsePayloadAndAlternateCodes() {
         String openApiYAML = readIntoYaml(GetOperationWithResponsePayloadAndAlternateCodes.class);
         int start = openApiYAML.indexOf("get:");
-        int end = openApiYAML.indexOf("servers:");
+        int end = openApiYAML.indexOf("components:");
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "get:\n" +
-                "      tags:\n" +
-                "      - \"\"\n" +
                 "      summary: \"Simple get operation\"\n" +
                 "      description: \"Defines a simple get operation with no inputs and a complex\"\n" +
-                "      externalDocs: {}\n" +
                 "      operationId: \"getWithPayloadResponse\"\n" +
-                "      parameters: []\n" +
-                "      requestBody:\n" +
-                "        content: {}\n" +
-                "        required: false\n" +
                 "      responses:\n" +
                 "        200:\n" +
                 "          description: \"voila!\"\n" +
@@ -96,8 +79,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "            '*/*':\n" +
                 "              schema:\n" +
                 "                type: \"object\"\n" +
-                "      deprecated: true\n" +
-                "      ";
+                "      deprecated: true\n";
 
         assertEquals(extractedYAML, expectedYAML);
     }
@@ -147,19 +129,12 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     public void testOperationWithResponseExamples() {
         String openApiYAML = readIntoYaml(GetOperationWithResponseExamples.class);
         int start = openApiYAML.indexOf("get:");
-        int end = openApiYAML.indexOf("servers:");
+        int end = openApiYAML.indexOf("components:");
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "get:\n" +
-                "      tags:\n" +
-                "      - \"\"\n" +
                 "      summary: \"Simple get operation\"\n" +
                 "      description: \"Defines a simple get operation with no inputs and a complex output\"\n" +
-                "      externalDocs: {}\n" +
                 "      operationId: \"getWithPayloadResponse\"\n" +
-                "      parameters: []\n" +
-                "      requestBody:\n" +
-                "        content: {}\n" +
-                "        required: false\n" +
                 "      responses:\n" +
                 "        200:\n" +
                 "          description: \"voila!\"\n" +
@@ -176,8 +151,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "                  summary: \"shows a basic example\"\n" +
                 "                  description: \"basic\"\n" +
                 "                  value: \"{\\\"id\\\": 19877734}\"\n" +
-                "      deprecated: true\n" +
-                "      ";
+                "      deprecated: true\n";
         assertEquals(extractedYAML, expectedYAML);
     }
 
