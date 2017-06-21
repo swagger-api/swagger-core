@@ -1,21 +1,27 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<!--
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
         <version>5</version>
     </parent>
+-->
+    <parent>
+	<groupId>nl.riskco.maven</groupId>
+	<artifactId>riskco-parent</artifactId>
+	<version>1</version>
+    </parent>
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.swagger</groupId>
     <artifactId>swagger-project</artifactId>
     <packaging>pom</packaging>
     <name>swagger-project</name>
-    <version>1.5.15</version>
-    <url>https://github.com/swagger-api/swagger-core</url>
+    <version>1.5.17-riskco-SNAPSHOT</version>
+    <url>https://github.com/erikvanelsas/swagger-core</url>
     <scm>
-        <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
-        <developerConnection>scm:git:git@github.com:swagger-api/swagger-core.git</developerConnection>
-        <url>https://github.com/swagger-api/swagger-core</url>
+		<developerConnection>scm:git:https://github.com/erikvanelsas/swagger-core.git</developerConnection>
+        <url>https://github.com/erikvanelsas/swagger-core</url>
     </scm>
     <prerequisites>
         <maven>2.2.0</maven>
@@ -89,7 +95,7 @@
                     </goals>
                     <configuration>
                         <rules>
-                            <DependencyConvergence/>
+                            <DependencyConvergence />
                         </rules>
                     </configuration>
                   </execution>
@@ -261,38 +267,40 @@
                 </configuration>
             </plugin>
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <configuration>
-                        <releaseProfiles>release</releaseProfiles>
-                        <goals>sign</goals>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-maven-plugin</artifactId>
-                    <version>${jetty-version}</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.sun.jersey</groupId>
-                            <artifactId>jersey-servlet</artifactId>
-                            <version>${jersey-version}</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>${enforcer-plugin-version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.7.2.201409121644</version>
-                </plugin>
-            </plugins>
+	<pluginManagement>
+	    <plugins>
+	    <!--
+		<plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-gpg-plugin</artifactId>
+		    <configuration>
+			<releaseProfiles>release</releaseProfiles>
+			<goals>sign</goals>
+		    </configuration>
+		</plugin>
+	    -->
+		<plugin>
+		    <groupId>org.eclipse.jetty</groupId>
+		    <artifactId>jetty-maven-plugin</artifactId>
+		    <version>${jetty-version}</version>
+		    <dependencies>
+			<dependency>
+			    <groupId>com.sun.jersey</groupId>
+			    <artifactId>jersey-servlet</artifactId>
+			    <version>${jersey-version}</version>
+			</dependency>
+		    </dependencies>
+		</plugin>
+		<plugin>
+		    <artifactId>maven-enforcer-plugin</artifactId>
+		    <version>${enforcer-plugin-version}</version>
+		</plugin>
+		<plugin>
+		    <groupId>org.jacoco</groupId>
+		    <artifactId>jacoco-maven-plugin</artifactId>
+		    <version>0.7.2.201409121644</version>
+		</plugin>
+	    </plugins>
         </pluginManagement>
     </build>
     <profiles>
@@ -305,20 +313,22 @@
                 </property>
             </activation>
             <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
+		<plugins>
+		<!--
+		    <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-gpg-plugin</artifactId>
+			<executions>
+			    <execution>
+				<id>sign-artifacts</id>
+				<phase>verify</phase>
+				<goals>
+				    <goal>sign</goal>
+				</goals>
+			    </execution>
+			</executions>
+		    </plugin>
+		-->
                 </plugins>
             </build>
         </profile>
@@ -360,7 +370,7 @@
                         <link>http://java.sun.com/javaee/5/docs/api</link>
                         <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
                     </links>
-                    <excludePackageNames/>
+                    <excludePackageNames />
                 </configuration>
             </plugin>
             <plugin>
