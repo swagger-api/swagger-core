@@ -62,7 +62,9 @@ public class OperationParser {
             parameterObject.setIn(parameter.in());
             isEmpty = false;
         }
-        parameterObject.setDeprecated(parameter.deprecated());
+        if (parameter.deprecated()) {
+            parameterObject.setDeprecated(parameter.deprecated());
+        }
         if (parameter.required()) {
             parameterObject.setRequired(parameter.required());
             isEmpty = false;
@@ -292,18 +294,26 @@ public class OperationParser {
         if (info == null) {
             return Optional.empty();
         }
+        boolean isEmpty = true;
         Info infoObject = new Info();
         if (StringUtils.isNotBlank(info.description())) {
             infoObject.setDescription(info.description());
+            isEmpty = false;
         }
         if (StringUtils.isNotBlank(info.termsOfService())) {
             infoObject.setTermsOfService(info.termsOfService());
+            isEmpty = false;
         }
         if (StringUtils.isNotBlank(info.title())) {
             infoObject.setTitle(info.title());
+            isEmpty = false;
         }
         if (StringUtils.isNotBlank(info.version())) {
             infoObject.setVersion(info.version());
+            isEmpty = false;
+        }
+        if (isEmpty) {
+            return Optional.empty();
         }
         getContact(info.contact()).ifPresent(infoObject::setContact);
         getLicense(info.license()).ifPresent(infoObject::setLicense);
@@ -315,15 +325,22 @@ public class OperationParser {
         if (contact == null) {
             return Optional.empty();
         }
+        boolean isEmpty = true;
         Contact contactObject = new Contact();
         if (StringUtils.isNotBlank(contact.email())) {
             contactObject.setEmail(contact.email());
+            isEmpty = false;
         }
         if (StringUtils.isNotBlank(contact.name())) {
             contactObject.setName(contact.name());
+            isEmpty = false;
         }
         if (StringUtils.isNotBlank(contact.url())) {
             contactObject.setUrl(contact.url());
+            isEmpty = false;
+        }
+        if (isEmpty) {
+            return Optional.empty();
         }
         return Optional.of(contactObject);
     }
@@ -333,11 +350,17 @@ public class OperationParser {
             return Optional.empty();
         }
         License licenseObject = new License();
+        boolean isEmpty = true;
         if (StringUtils.isNotBlank(license.name())) {
             licenseObject.setName(license.name());
+            isEmpty = false;
         }
         if (StringUtils.isNotBlank(license.url())) {
             licenseObject.setUrl(license.url());
+            isEmpty = false;
+        }
+        if (isEmpty) {
+            return Optional.empty();
         }
         return Optional.of(licenseObject);
     }
