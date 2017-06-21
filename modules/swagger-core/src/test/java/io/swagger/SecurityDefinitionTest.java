@@ -54,7 +54,7 @@ public class SecurityDefinitionTest {
         swagger.securityDefinition("githubAccessCode",
                 new OAuth2Definition()
                         .accessCode("http://foo.com/accessCode", "http://foo.com/tokenUrl")
-                        .scope("user:email", "Grants read access to a user’s email addresses."));
+                        .scope("user:email", "Grants read access to a user's email addresses."));
 
         final Operation get = new Operation()
                 .produces("application/json")

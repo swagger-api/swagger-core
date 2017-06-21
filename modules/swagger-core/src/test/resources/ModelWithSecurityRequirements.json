@@ -84,7 +84,7 @@
             "tokenUrl":"http://foo.com/tokenUrl",
             "flow":"accessCode",
             "scopes":{
-                "user:email":"Grants read access to a user’s email addresses."
+                "user:email":"Grants read access to a user's email addresses."
             }
         }
     },
