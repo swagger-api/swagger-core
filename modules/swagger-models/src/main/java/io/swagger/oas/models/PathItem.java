@@ -16,6 +16,7 @@
 
 package io.swagger.oas.models;
 
+
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.servers.Server;
 
@@ -238,7 +239,7 @@ public class PathItem {
     }
 
 
-    public List<Operation> getOperations() {
+    public List<Operation> readOperations() {
         List<Operation> allOperations = new ArrayList<>();
         if (this.get != null) {
             allOperations.add(this.get);
@@ -280,7 +281,7 @@ public class PathItem {
     }
 
 
-    public Map<HttpMethod, Operation> getOperationMap() {
+    public Map<HttpMethod, Operation> readOperationsMap() {
         Map<HttpMethod, Operation> result = new LinkedHashMap<>();
 
         if (this.get != null) {
