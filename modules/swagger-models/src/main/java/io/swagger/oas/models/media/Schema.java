@@ -783,7 +783,8 @@ public class Schema<T> {
                 Objects.equals(this.xml, schema.xml) &&
                 Objects.equals(this.extensions, schema.extensions) &&
                 Objects.equals(this._enum, schema._enum) &&
-                Objects.equals(this._default, schema._default);
+                Objects.equals(this._default, schema._default) &&
+                Objects.equals(this.$ref, schema.$ref);
     }
 
     @Override
