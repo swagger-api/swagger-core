@@ -4,6 +4,7 @@ import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
 import io.swagger.oas.annotations.callbacks.Callback;
+import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
 import org.testng.annotations.Test;
@@ -16,58 +17,65 @@ import javax.ws.rs.QueryParam;
 import static org.testng.Assert.assertEquals;
 
 public class CallbackTest extends AbstractAnnotationTest {
-    @Test(enabled = false)
+    @Test
     public void testSimpleCallback() {
-        String yaml = readIntoYaml(SimpleCallback.class);
-
-        assertEquals(yaml,
-                "/test:\n" +
-                        "  post:\n" +
-                        "    description: subscribes a client to updates relevant to the requestor's account, as identified by the input token.  The supplied url will be used as the delivery address for response payloads\n" +
-                        "    operationId: subscribe\n" +
-                        "    parameters:\n" +
-                        "      - in: header\n" +
-                        "        name: x-auth-token\n" +
-                        "        description: the authentication token provided after initially authenticating to the application\n" +
-                        "        required: true\n" +
-                        "        schema:\n" +
-                        "          type: string\n" +
-                        "      - in: query\n" +
-                        "        name: url\n" +
-                        "        description: the URL to call with response data\n" +
-                        "        required: true\n" +
-                        "        schema:\n" +
-                        "          type: string\n" +
-                        "    responses:\n" +
-                        "      default:\n" +
-                        "        description: no description\n" +
-                        "          '*/*':\n" +
-                        "            schema:\n" +
-                        "              type: object\n" +
-                        "              properties:\n" +
-                        "                subscriptionId:\n" +
-                        "                  type: string\n" +
-                        "    callbacks:\n" +
-                        "      subscription:\n" +
-                        "        'http://$request.query.url':\n" +
-                        "          post:\n" +
-                        "            description: 'payload data will be sent'\n" +
-                        "            parameters:\n" +
-                        "              - in: path\n" +
-                        "                name: subscriptionId\n" +
-                        "                required: true\n" +
-                        "                schema:\n" +
-                        "                  description: the generated UUID\n" +
-                        "                  type: string\n" +
-                        "                  format: uuid\n" +
-                        "                  readOnly: true\n" +
-                        "            responses:\n" +
-                        "              200:\n" +
-                        "                description: Return this code if the callback was received and processed successfully\n" +
-                        "              205:\n" +
-                        "                description: Return this code to unsubscribe from future data updates\n" +
-                        "              default:\n" +
-                        "                description: All other response codes will disable this callback subscription");
+        String openApiYAML = readIntoYaml(SimpleCallback.class);
+        int start = openApiYAML.indexOf("/test:");
+        int end = openApiYAML.indexOf("components:");
+        String extractedYAML = openApiYAML.substring(start, end);
+        String expectedYAML = "/test:\n" +
+                "    post:\n" +
+                "      description: \"subscribes a client to updates relevant to the requestor's account,\\\n" +
+                "        \\ as identified by the input token.  The supplied url will be used as the\\\n" +
+                "        \\ delivery address for response payloads\"\n" +
+                "      operationId: \"subscribe\"\n" +
+                "      parameters:\n" +
+                "      - name: \"x-auth-token\"\n" +
+                "        in: \"header\"\n" +
+                /*"        description: \"the authentication token provided after initially authenticating to the application\"\n" +
+                "        required: true\n" +*/
+                "        schema:\n" +
+                "          type: \"string\"\n" +
+                "      - name: \"url\"\n" +
+                "        in: \"query\"\n" +
+                /*"        description: \"the URL to call with response data\"\n" +
+                "        required: true\n" +*/
+                "        schema:\n" +
+                "          type: \"string\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: \"no description\"\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: \"object\"\n" +
+                "                properties:\n" +
+                "                  subscriptionId:\n" +
+                "                    type: \"string\"\n" +
+                "      callbacks:\n" +
+                "        subscription:\n" +
+                "          http://$request.query.url:\n" +
+                "            post:\n" +
+                "              description: \"payload data will be sent \"\n" +
+                "              parameters:\n" +
+                "              - name: \"subscriptionId\"\n" +
+                "                in: \"path\"\n" +
+                "                required: true\n" +
+                "                schema:\n" +
+                "                  type: \"string\"\n" +
+                "                  description: \"the generated UUID\"\n" +
+                "                  format: \"uuid\"\n" +
+                "                  readOnly: true\n" +
+                "              responses:\n" +
+                "                200:\n" +
+                "                  description: \"Return this code if the callback was received and\\\n" +
+                "                    \\ processed successfully\"\n" +
+                "                205:\n" +
+                "                  description: \"Return this code to unsubscribe from future data updates\"\n" +
+                "                default:\n" +
+                "                  description: \"All other response codes will disable this callback\\\n" +
+                "                    \\ subscription\"\n";
+        assertEquals(extractedYAML, expectedYAML);
     }
 
     static class SimpleCallback {
@@ -81,12 +89,13 @@ public class CallbackTest extends AbstractAnnotationTest {
                         method = "post",
                         description = "payload data will be sent ",
                         parameters = {
-                                @Parameter(in = "path", name = "subscriptionId", required = true, schema = @Schema(
-                                        type = "string",
-                                        format = "uuid",
-                                        description = "the generated UUID",
-                                        readOnly = true
-                                ))
+                                @Parameter(in = "path", name = "subscriptionId", required = true,
+                                        schema = @Schema(
+                                                type = "string",
+                                                format = "uuid",
+                                                description = "the generated UUID",
+                                                readOnly = true
+                                        ))
                         },
                         responses = {
                                 @ApiResponse(
@@ -102,8 +111,20 @@ public class CallbackTest extends AbstractAnnotationTest {
                                         description = "All other response codes will disable this callback subscription"
                                 )
                         }))
-        @Operation(description = "subscribes a client to updates relevant to the requestor's account, as " +
-                "identified by the input token.  The supplied url will be used as the delivery address for response payloads")
+        @Operation(
+                operationId = "subscribe",
+                description = "subscribes a client to updates relevant to the requestor's account, as " +
+                        "identified by the input token.  The supplied url will be used as the delivery address for response payloads",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "default",
+                                description = "no description", content = @Content(
+                                mediaType = "*/*",
+                                schema =
+                                @Schema(
+                                        implementation = CallbackTest.SubscriptionResponse.class)
+                        ))
+                })
         public SubscriptionResponse subscribe(@Schema(required = true, description = "the authentication token " +
                 "provided after initially authenticating to the application") @HeaderParam("x-auth-token") String token,
                                               @Schema(required = true, description = "the URL to call with response " +
@@ -113,6 +134,6 @@ public class CallbackTest extends AbstractAnnotationTest {
     }
 
     static class SubscriptionResponse {
-        private String subscriptionUuid;
+        public String subscriptionId;
     }
 }

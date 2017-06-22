@@ -128,8 +128,7 @@ public class Reader {
             }
         }
 
-        OperationParser.getSchema(apiSchema).ifPresent(stringSchemaMap -> components.setSchemas(stringSchemaMap));
-
+        OperationParser.getSchema(apiSchema).ifPresent(components::setSchemas);
         mergeComponents(openAPI, components);
 
         final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
@@ -165,13 +164,7 @@ public class Reader {
 
                 Operation operation = parseMethod(method);
                 PathItem pathItemObject = new PathItem();
-                if (StringUtils.isNotBlank(operation.getSummary())) {
-                    pathItemObject.setSummary(operation.getSummary());
-                }
 
-                if (StringUtils.isNotBlank(operation.getDescription())) {
-                    pathItemObject.setDescription(operation.getDescription());
-                }
                 String httpMethod = ReaderUtils.extractOperationMethod(operation, method, OpenAPIExtensions.chain());
                 if (StringUtils.isNotBlank(httpMethod)) {
                     setPathItemOperation(pathItemObject, httpMethod, operation);
@@ -227,8 +220,6 @@ public class Reader {
         io.swagger.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.Operation.class);
         io.swagger.oas.annotations.callbacks.Callback apiCallback = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.callbacks.Callback.class);
         io.swagger.oas.annotations.security.SecurityRequirement apiSecurity = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.security.SecurityRequirement.class);
-        io.swagger.oas.annotations.links.Link apiLinks = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.links.Link.class);
-
 
         if (apiOperation != null) {
 
@@ -237,17 +228,17 @@ public class Reader {
             if (callbacks.size() > 0) {
                 operation.setCallbacks(callbacks);
             }
-            SecurityParser.getSecurityRequirement(apiSecurity).ifPresent(securityRequirements -> operation.setSecurity(securityRequirements));
-            OperationParser.getApiResponses(apiOperation.responses(), apiLinks).ifPresent(apiResponses -> operation.setResponses(apiResponses));
+            SecurityParser.getSecurityRequirement(apiSecurity).ifPresent(operation::setSecurity);
+
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
         }
         return operation;
     }
 
     private Map<String, Callback> getCallbacks(io.swagger.oas.annotations.callbacks.Callback apiCallback) {
-        Map<String, Callback> output = new HashMap<String, Callback>();
+        Map<String, Callback> callbackMap = new HashMap<>();
         if (apiCallback == null) {
-            return output;
+            return callbackMap;
         }
         Callback callbackObject = new Callback();
         PathItem pathItemObject = new PathItem();
@@ -256,13 +247,11 @@ public class Reader {
             setOperationObjectFromApiOperationAnnotation(callbackNewOperation, callbackOperation);
             setPathItemOperation(pathItemObject, callbackOperation.method(), callbackNewOperation);
         }
-        pathItemObject.setDescription(apiCallback.name());
-        pathItemObject.setSummary(apiCallback.name());
 
-        callbackObject.addPathItem(apiCallback.name(), pathItemObject);
-        output.put(apiCallback.name(), callbackObject);
+        callbackObject.addPathItem(apiCallback.callbackUrlExpression(), pathItemObject);
+        callbackMap.put(apiCallback.name(), callbackObject);
 
-        return output;
+        return callbackMap;
     }
 
     private void setPathItemOperation(PathItem pathItemObject, String method, Operation callbackNewOperation) {
@@ -298,19 +287,25 @@ public class Reader {
     }
 
     private void setOperationObjectFromApiOperationAnnotation(Operation operation, io.swagger.oas.annotations.Operation apiOperation) {
-        ReaderUtils.getStringListFromStringArray(apiOperation.tags()).ifPresent(tags -> operation.setTags(tags));
-        OperationParser.getTags(apiOperation.tags()).ifPresent(tag -> openApiTags.addAll(tag));
         if (StringUtils.isNotBlank(apiOperation.summary())) {
             operation.setSummary(apiOperation.summary());
         }
         if (StringUtils.isNotBlank(apiOperation.description())) {
             operation.setDescription(apiOperation.description());
         }
-        OperationParser.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(externalDocumentation -> operation.setExternalDocs(externalDocumentation));
-        operation.setOperationId(getOperationId(apiOperation.operationId()));
-        OperationParser.getRequestBody(apiOperation.requestBody()).ifPresent(requestBody -> operation.setRequestBody(requestBody));
-        operation.setDeprecated(apiOperation.deprecated());
-        OperationParser.getServers(apiOperation.servers()).ifPresent(servers -> operation.setServers(servers));
+        if (StringUtils.isNotBlank(apiOperation.operationId())) {
+            operation.setOperationId(getOperationId(apiOperation.operationId()));
+        }
+        if (apiOperation.deprecated()) {
+            operation.setDeprecated(apiOperation.deprecated());
+        }
+        ReaderUtils.getStringListFromStringArray(apiOperation.tags()).ifPresent(operation::setTags);
+        OperationParser.getTags(apiOperation.tags()).ifPresent(tag -> openApiTags.addAll(tag));
+        OperationParser.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(operation::setExternalDocs);
+        OperationParser.getRequestBody(apiOperation.requestBody()).ifPresent(operation::setRequestBody);
+        OperationParser.getApiResponses(apiOperation.responses()).ifPresent(operation::setResponses);
+        OperationParser.getServers(apiOperation.servers()).ifPresent(operation::setServers);
+        OperationParser.getParametersList(apiOperation.parameters()).ifPresent(operation::setParameters);
     }
 
     protected String getOperationId(String operationId) {

@@ -66,6 +66,7 @@ public class ReaderTest {
     private static final String PARAMETER_NAME = "subscriptionId";
     private static final String PARAMETER_DESCRIPTION = "parameter description";
     private static final String CALLBACK_SUBSCRIPTION_ID = "subscription";
+    private static final String CALLBACK_URL = "http://$request.query.url";
     private static final String SECURITY_KEY = "security_key";
     private static final String SCOPE_VALUE = "write:petsread:pets";
     private static final String PATH_REF = "/";
@@ -91,8 +92,6 @@ public class ReaderTest {
         assertEquals(PATHS_NUMBER, paths.size());
         PathItem pathItem = paths.get(PATH_REF);
         assertNotNull(pathItem);
-        assertEquals(OPERATION_DESCRIPTION, pathItem.getDescription());
-        assertEquals(OPERATION_SUMMARY, pathItem.getSummary());
         assertNull(pathItem.getPost());
         Operation operation = pathItem.getGet();
         assertNotNull(operation);
@@ -108,8 +107,6 @@ public class ReaderTest {
         assertEquals(PATHS_NUMBER, paths.size());
         PathItem pathItem = paths.get(PATH_REF);
         assertNotNull(pathItem);
-        assertEquals(OPERATION_DESCRIPTION, pathItem.getDescription());
-        assertEquals(OPERATION_SUMMARY, pathItem.getSummary());
         assertNull(pathItem.getPost());
         Operation operation = pathItem.getGet();
         assertNotNull(operation);
@@ -287,7 +284,7 @@ public class ReaderTest {
         assertNotNull(callbacks);
         Callback callback = callbacks.get(CALLBACK_SUBSCRIPTION_ID);
         assertNotNull(callback);
-        PathItem pathItem = callback.get(CALLBACK_SUBSCRIPTION_ID);
+        PathItem pathItem = callback.get(CALLBACK_URL);
         assertNotNull(pathItem);
         Operation postOperation = pathItem.getPost();
         assertNotNull(postOperation);

@@ -82,6 +82,11 @@ public class OperationParser {
             parameterObject.setExplode(parameter.explode());
             isEmpty = false;
         }
+        if (parameter.schema() != null) {
+            if(parameter.schema().implementation() ==  Void.class){
+                getManualSchema(parameter.schema()).ifPresent(parameterObject::setSchema);
+            }
+        }
         if (isEmpty) {
             return Optional.empty();
         }
@@ -99,6 +104,43 @@ public class OperationParser {
             return Optional.of(ModelConverters.getInstance().readAll(schema.implementation()));
         }
         return Optional.empty();
+    }
+
+    public static Optional<Schema> getManualSchema(io.swagger.oas.annotations.media.Schema schema) {
+        if (schema == null) {
+            return Optional.empty();
+        }
+        Schema schemaObject = new Schema();
+        boolean isEmpty = true;
+        if (StringUtils.isNotBlank(schema.description())) {
+            schemaObject.setDescription(schema.description());
+            isEmpty = false;
+        }
+        if (StringUtils.isNotBlank(schema.ref())) {
+            schemaObject.set$ref(schema.ref());
+            isEmpty = false;
+        }
+        if (StringUtils.isNotBlank(schema.description())) {
+            schemaObject.setDescription(schema.description());
+            isEmpty = false;
+        }
+        if (StringUtils.isNotBlank(schema.type())) {
+            schemaObject.setType(schema.type());
+            isEmpty = false;
+        }
+        if (StringUtils.isNotBlank(schema.format())) {
+            schemaObject.setFormat(schema.format());
+            isEmpty = false;
+        }
+        if (schema.readOnly()) {
+            schemaObject.setReadOnly(schema.readOnly());
+            isEmpty = false;
+        }
+
+        if (isEmpty) {
+            return Optional.empty();
+        }
+        return Optional.of(schemaObject);
     }
 
     public static Optional<Set<Tag>> getTags(String[] tags) {
@@ -209,7 +251,7 @@ public class OperationParser {
         return Optional.of(requestBodyObject);
     }
 
-    public static Optional<ApiResponses> getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses, io.swagger.oas.annotations.links.Link links) {
+    public static Optional<ApiResponses> getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses) {
         if (responses == null) {
             return Optional.empty();
         }
@@ -237,6 +279,9 @@ public class OperationParser {
             for (ExampleObject example : examples) {
                 getMediaType(mediaType, example).ifPresent(mediaTypeObject -> contentObject.addMediaType(content.mediaType(), mediaType));
             }
+        }
+        if (contentObject.size() == 0) {
+            return Optional.empty();
         }
         return Optional.of(contentObject);
     }
