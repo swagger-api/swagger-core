@@ -72,7 +72,7 @@
         </dependency>
         <dependency>
             <groupId>javax.money</groupId>
-            <artifactId>money-api</artifactId>
+            <artifactId>money-api-bp</artifactId>
             <version>1.0.1</version>
         </dependency>
         <dependency>
