@@ -13,7 +13,7 @@ public class InfoTest extends AbstractAnnotationTest {
     public void testSimpleInfoGet() {
         String openApiYAML = readIntoYaml(InfoTest.ClassWithInfoAnnotation.class);
         int start = openApiYAML.indexOf("info:");
-        int end = openApiYAML.indexOf("tags:");
+        int end = openApiYAML.length() - 1;
 
         String expectedYAML = "info:\n" +
                 "  title: \"the title\"\n" +
@@ -25,8 +25,7 @@ public class InfoTest extends AbstractAnnotationTest {
                 "  license:\n" +
                 "    name: \"Apache 2.0\"\n" +
                 "    url: \"http://foo.bar\"\n" +
-                "  version: \"0.0\"\n" +
-                "";
+                "  version: \"0.0\"";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(extractedYAML, expectedYAML);

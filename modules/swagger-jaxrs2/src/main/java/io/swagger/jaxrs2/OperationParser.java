@@ -7,6 +7,8 @@ import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.info.Contact;
 import io.swagger.oas.models.info.Info;
 import io.swagger.oas.models.info.License;
+import io.swagger.oas.models.links.Link;
+import io.swagger.oas.models.links.LinkParameter;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.MediaType;
 import io.swagger.oas.models.media.Schema;
@@ -40,6 +42,9 @@ public class OperationParser {
         for (io.swagger.oas.annotations.Parameter parameter : parameters) {
             getParameter(parameter).ifPresent(parametersObject::add);
 
+        }
+        if (parametersObject.size() == 0) {
+            return Optional.empty();
         }
         return Optional.of(parametersObject);
     }
@@ -83,7 +88,7 @@ public class OperationParser {
             isEmpty = false;
         }
         if (parameter.schema() != null) {
-            if(parameter.schema().implementation() ==  Void.class){
+            if (parameter.schema().implementation() == Void.class) {
                 getManualSchema(parameter.schema()).ifPresent(parameterObject::setSchema);
             }
         }
@@ -118,10 +123,6 @@ public class OperationParser {
         }
         if (StringUtils.isNotBlank(schema.ref())) {
             schemaObject.set$ref(schema.ref());
-            isEmpty = false;
-        }
-        if (StringUtils.isNotBlank(schema.description())) {
-            schemaObject.setDescription(schema.description());
             isEmpty = false;
         }
         if (StringUtils.isNotBlank(schema.type())) {
@@ -408,5 +409,39 @@ public class OperationParser {
             return Optional.empty();
         }
         return Optional.of(licenseObject);
+    }
+
+    public static Optional<Link> getLink(io.swagger.oas.annotations.links.Link link) {
+        if (link == null) {
+            return Optional.empty();
+        }
+        boolean isEmpty = true;
+        Link linkObject = new Link();
+        if (StringUtils.isNotBlank(link.description())) {
+            linkObject.setDescription(link.description());
+            isEmpty = false;
+        }
+        if (StringUtils.isNotBlank(link.operationId())) {
+            linkObject.setOperationId(link.operationId());
+            isEmpty = false;
+        }
+        if (StringUtils.isNotBlank(link.operationRef())) {
+            linkObject.setOperationRef(link.operationRef());
+            isEmpty = false;
+        }
+        if (isEmpty) {
+            Optional.empty();
+        }
+        //linkObject.setParameters(getLinkParameters(link.parameters()).get());
+        return Optional.of(linkObject);
+    }
+
+    public static Optional<LinkParameter> getLinkParameters(io.swagger.oas.annotations.links.LinkParameters linkParameters) {
+        if (linkParameters == null) {
+            return Optional.empty();
+        }
+        LinkParameter linkParametersObject = new LinkParameter();
+        linkParametersObject.addExtension(linkParameters.name(), linkParameters.expression());
+        return Optional.of(linkParametersObject);
     }
 }

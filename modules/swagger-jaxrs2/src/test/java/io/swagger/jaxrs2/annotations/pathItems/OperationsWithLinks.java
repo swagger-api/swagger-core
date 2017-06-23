@@ -12,7 +12,7 @@ import javax.ws.rs.QueryParam;
 import static org.testng.Assert.assertEquals;
 
 public class OperationsWithLinks extends AbstractAnnotationTest {
-    @Test(enabled = false, description = "Shows creating simple links")
+    @Test(description = "Shows creating simple links")
     public void createOperationWithLinks() {
         String yaml = readIntoYaml(ClassWithOperationAndLinks.class);
 

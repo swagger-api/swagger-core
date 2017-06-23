@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
 import static org.testng.Assert.assertEquals;
@@ -164,6 +165,7 @@ public class MergedOperationTests extends AbstractAnnotationTest {
                         responseCode = "201",
                         description = "value successfully processed")
         )
+        @Path("/add")
         public void addValue(InputValue input) {
         }
     }

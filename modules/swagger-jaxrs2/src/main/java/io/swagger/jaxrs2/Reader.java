@@ -120,16 +120,18 @@ public class Reader {
 
         Optional<SecurityScheme> securityScheme = SecurityParser.getSecurityScheme(apiSecurityScheme);
         Components components = new Components();
+        boolean isComponentEmpty = true;
         if (securityScheme.isPresent()) {
             Map<String, SecurityScheme> securitySchemeMap = new HashMap<>();
             if (StringUtils.isNotBlank(securityScheme.get().getName())) {
                 securitySchemeMap.put(securityScheme.get().getName(), securityScheme.get());
                 components.setSecuritySchemes(securitySchemeMap);
+                isComponentEmpty = false;
             }
         }
 
         OperationParser.getSchema(apiSchema).ifPresent(components::setSchemas);
-        mergeComponents(openAPI, components);
+        mergeComponents(openAPI, components, isComponentEmpty);
 
         final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
 
@@ -199,10 +201,12 @@ public class Reader {
 
         ArrayList<Tag> tagList = new ArrayList<>();
         tagList.addAll(openApiTags);
-        if (openAPI.getTags() != null) {
-            tagList.addAll(openAPI.getTags());
+        if (tagList.size() > 0) {
+            if (openAPI.getTags() != null) {
+                tagList.addAll(openAPI.getTags());
+            }
+            openAPI.setTags(tagList);
         }
-        openAPI.setTags(tagList);
 
         OperationParser.getExternalDocumentation(apiExternalDocs).ifPresent(externalDocumentation -> openAPI.setExternalDocs(externalDocumentation));
         OperationParser.getInfo(apiInfo).ifPresent(info -> openAPI.setInfo(info));
@@ -371,42 +375,44 @@ public class Reader {
         }
     }
 
-    private void mergeComponents(OpenAPI openAPI, Components components) {
+    private void mergeComponents(OpenAPI openAPI, Components components, boolean isComponentEmpty) {
         Components openAPIComponent = openAPI.getComponents();
-        if (openAPIComponent != null && components != null) {
-            if (components.getCallbacks() != null) {
-                components.getCallbacks().putAll(openAPIComponent.getCallbacks());
+        if (!isComponentEmpty) {
+            if (openAPIComponent != null) {
+                if (components.getCallbacks() != null) {
+                    components.getCallbacks().putAll(openAPIComponent.getCallbacks());
+                }
+                if (components.getExamples() != null) {
+                    components.getExamples().putAll(openAPIComponent.getExamples());
+                }
+                if (components.getExtensions() != null) {
+                    components.getExtensions().putAll(openAPIComponent.getExtensions());
+                }
+                if (components.getHeaders() != null) {
+                    components.getHeaders().putAll(openAPIComponent.getHeaders());
+                }
+                if (components.getLinks() != null) {
+                    components.getLinks().putAll(openAPIComponent.getLinks());
+                }
+                if (components.getParameters() != null) {
+                    components.getParameters().putAll(openAPIComponent.getParameters());
+                }
+                if (components.getRequestBodies() != null) {
+                    components.getRequestBodies().putAll(openAPIComponent.getRequestBodies());
+                }
+                if (components.getResponses() != null) {
+                    components.getResponses().putAll(openAPIComponent.getResponses());
+                }
+                if (components.getSchemas() != null) {
+                    components.getSchemas().putAll(openAPIComponent.getSchemas());
+                }
+                if (components.getSecuritySchemes() != null) {
+                    components.getSecuritySchemes().putAll(openAPIComponent.getSecuritySchemes());
+                }
+                openAPI.setComponents(components);
+            } else {
+                openAPI.setComponents(components);
             }
-            if (components.getExamples() != null) {
-                components.getExamples().putAll(openAPIComponent.getExamples());
-            }
-            if (components.getExtensions() != null) {
-                components.getExtensions().putAll(openAPIComponent.getExtensions());
-            }
-            if (components.getHeaders() != null) {
-                components.getHeaders().putAll(openAPIComponent.getHeaders());
-            }
-            if (components.getLinks() != null) {
-                components.getLinks().putAll(openAPIComponent.getLinks());
-            }
-            if (components.getParameters() != null) {
-                components.getParameters().putAll(openAPIComponent.getParameters());
-            }
-            if (components.getRequestBodies() != null) {
-                components.getRequestBodies().putAll(openAPIComponent.getRequestBodies());
-            }
-            if (components.getResponses() != null) {
-                components.getResponses().putAll(openAPIComponent.getResponses());
-            }
-            if (components.getSchemas() != null) {
-                components.getSchemas().putAll(openAPIComponent.getSchemas());
-            }
-            if (components.getSecuritySchemes() != null) {
-                components.getSecuritySchemes().putAll(openAPIComponent.getSecuritySchemes());
-            }
-            openAPI.setComponents(components);
-        } else {
-            openAPI.setComponents(components);
         }
     }
 

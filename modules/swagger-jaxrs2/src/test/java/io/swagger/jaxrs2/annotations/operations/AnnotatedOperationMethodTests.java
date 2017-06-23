@@ -19,7 +19,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     public void testSimpleGetOperation() {
         String openApiYAML = readIntoYaml(SimpleGetOperationTest.class);
         int start = openApiYAML.indexOf("get:");
-        int end = openApiYAML.indexOf("components:");
+        int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
                 "      summary: \"Simple get operation\"\n" +
@@ -28,7 +28,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        200:\n" +
                 "          description: \"voila!\"\n" +
-                "      deprecated: true\n";
+                "      deprecated: true";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(extractedYAML, expectedYAML);
@@ -56,7 +56,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     public void testGetOperationWithResponsePayloadAndAlternateCodes() {
         String openApiYAML = readIntoYaml(GetOperationWithResponsePayloadAndAlternateCodes.class);
         int start = openApiYAML.indexOf("get:");
-        int end = openApiYAML.indexOf("components:");
+        int end = openApiYAML.length() - 1;
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "get:\n" +
                 "      summary: \"Simple get operation\"\n" +
@@ -79,7 +79,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "            '*/*':\n" +
                 "              schema:\n" +
                 "                type: \"object\"\n" +
-                "      deprecated: true\n";
+                "      deprecated: true";
 
         assertEquals(extractedYAML, expectedYAML);
     }
@@ -129,7 +129,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     public void testOperationWithResponseExamples() {
         String openApiYAML = readIntoYaml(GetOperationWithResponseExamples.class);
         int start = openApiYAML.indexOf("get:");
-        int end = openApiYAML.indexOf("components:");
+        int end = openApiYAML.length() - 1;
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "get:\n" +
                 "      summary: \"Simple get operation\"\n" +
@@ -151,7 +151,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "                  summary: \"shows a basic example\"\n" +
                 "                  description: \"basic\"\n" +
                 "                  value: \"{\\\"id\\\": 19877734}\"\n" +
-                "      deprecated: true\n";
+                "      deprecated: true";
         assertEquals(extractedYAML, expectedYAML);
     }
 
