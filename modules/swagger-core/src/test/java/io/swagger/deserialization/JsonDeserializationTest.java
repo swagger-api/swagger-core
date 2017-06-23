@@ -18,14 +18,14 @@ public class JsonDeserializationTest {
 
     @Test(description = "it should deserialize the petstore")
     public void testPetstore() throws IOException {
-        final String json = ResourceUtils.loadClassResource(getClass(), "specFiles/petstore.json");
+        final String json = ResourceUtils.loadClassResource(getClass(), "specFiles/petstore-3.0.json");
         final Object swagger = m.readValue(json, OpenAPI.class);
         assertTrue(swagger instanceof OpenAPI);
     }
 
     @Test(description = "it should deserialize the composition test")
     public void testCompositionTest() throws IOException {
-        final String json = ResourceUtils.loadClassResource(getClass(), "specFiles/compositionTest.json");
+        final String json = ResourceUtils.loadClassResource(getClass(), "specFiles/compositionTest-3.0.json");
         final Object swagger = m.readValue(json, OpenAPI.class);
         assertTrue(swagger instanceof OpenAPI);
     }
