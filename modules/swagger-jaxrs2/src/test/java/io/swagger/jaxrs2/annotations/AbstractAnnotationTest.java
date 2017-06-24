@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.swagger.jaxrs2.Reader;
 import io.swagger.oas.models.OpenAPI;
+import io.swagger.util.Yaml;
 
 public abstract class AbstractAnnotationTest {
     public String readIntoYaml(Class<?> cls) {
@@ -13,10 +14,9 @@ public abstract class AbstractAnnotationTest {
         OpenAPI openAPI = reader.read(cls);
 
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            Yaml.mapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
             // parse JSON
-            JsonNode jsonNodeTree = objectMapper.readTree(objectMapper.writeValueAsString(openAPI));
+            JsonNode jsonNodeTree = Yaml.mapper().readTree(Yaml.mapper().writeValueAsString(openAPI));
             // return it as YAML
             return new YAMLMapper().writeValueAsString(jsonNodeTree);
         } catch (Exception e) {

@@ -1,6 +1,7 @@
 package io.swagger.jaxrs2.annotations.operations;
 
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
+import io.swagger.jaxrs2.resources.PetResource;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.ExampleObject;
@@ -182,5 +183,35 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
         @Path("/path")
         public void simpleGet() {
         }
+    }
+
+    @Test(description = "reads an operation from sample")
+    public void testCompleteOperation() {
+        String openApiYAML = readIntoYaml(PetResource.class);
+        int start = 0;
+        int end = openApiYAML.length() - 1;
+        String extractedYAML = openApiYAML.substring(start, end);
+        String expectedYAML = "get:\n" +
+                "      summary: \"Simple get operation\"\n" +
+                "      description: \"Defines a simple get operation with no inputs and a complex output\"\n" +
+                "      operationId: \"getWithPayloadResponse\"\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: \"voila!\"\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: \"object\"\n" +
+                "                properties:\n" +
+                "                  id:\n" +
+                "                    type: \"string\"\n" +
+                "                    description: \"the user id\"\n" +
+                "              examples:\n" +
+                "                basic:\n" +
+                "                  summary: \"shows a basic example\"\n" +
+                "                  description: \"basic\"\n" +
+                "                  value: \"{\\\"id\\\": 19877734}\"\n" +
+                "      deprecated: true";
+        assertEquals(extractedYAML, expectedYAML);
     }
 }

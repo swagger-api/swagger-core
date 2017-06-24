@@ -1,6 +1,7 @@
 package io.swagger.jaxrs2;
 
 import io.swagger.converter.ModelConverters;
+import io.swagger.jaxrs2.util.ReaderUtils;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.examples.Example;
@@ -23,6 +24,7 @@ import io.swagger.oas.models.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +35,8 @@ import java.util.Set;
  * Created by RafaelLopez on 5/27/17.
  */
 public class OperationParser {
+
+    public static final String RESPONSE_DEFAULT = "default";
 
     public static Optional<List<Parameter>> getParametersList(io.swagger.oas.annotations.Parameter[] parameters) {
         if (parameters == null) {
@@ -89,7 +93,7 @@ public class OperationParser {
         }
         if (parameter.schema() != null) {
             if (parameter.schema().implementation() == Void.class) {
-                getManualSchema(parameter.schema()).ifPresent(parameterObject::setSchema);
+                getSchemaFromAnnotation(parameter.schema()).ifPresent(parameterObject::setSchema);
             }
         }
         if (isEmpty) {
@@ -107,11 +111,18 @@ public class OperationParser {
         }
         if (schema.implementation() != Void.class) {
             return Optional.of(ModelConverters.getInstance().readAll(schema.implementation()));
+        } else {
+            Map<String, Schema> schemaMap = new HashMap<>();
+            Optional<Schema> schemaFromAnnotation = getSchemaFromAnnotation(schema);
+            if (schemaFromAnnotation.isPresent()) {
+                schemaMap.put(schemaFromAnnotation.get().getTitle(), schemaFromAnnotation.get());
+                return Optional.of(schemaMap);
+            }
         }
         return Optional.empty();
     }
 
-    public static Optional<Schema> getManualSchema(io.swagger.oas.annotations.media.Schema schema) {
+    public static Optional<Schema> getSchemaFromAnnotation(io.swagger.oas.annotations.media.Schema schema) {
         if (schema == null) {
             return Optional.empty();
         }
@@ -129,14 +140,55 @@ public class OperationParser {
             schemaObject.setType(schema.type());
             isEmpty = false;
         }
+        if (StringUtils.isNotBlank(schema._default())) {
+            schemaObject.setDefault(schema._default());
+            isEmpty = false;
+        }
+        if (StringUtils.isNotBlank(schema.example())) {
+            schemaObject.setExample(schema.example());
+            isEmpty = false;
+        }
         if (StringUtils.isNotBlank(schema.format())) {
             schemaObject.setFormat(schema.format());
             isEmpty = false;
         }
+        if (StringUtils.isNotBlank(schema.example())) {
+            schemaObject.setExample(schema.example());
+            isEmpty = false;
+        }
+        if (StringUtils.isNotBlank(schema.pattern())) {
+            schemaObject.setPattern(schema.pattern());
+            isEmpty = false;
+        }
+
         if (schema.readOnly()) {
             schemaObject.setReadOnly(schema.readOnly());
             isEmpty = false;
         }
+        if (schema.deprecated()) {
+            schemaObject.setDeprecated(schema.deprecated());
+            isEmpty = false;
+        }
+        if (schema.exclusiveMaximum()) {
+            schemaObject.setExclusiveMaximum(schema.exclusiveMaximum());
+            isEmpty = false;
+        }
+        if (schema.exclusiveMinimum()) {
+            schemaObject.setExclusiveMinimum(schema.exclusiveMinimum());
+            isEmpty = false;
+        }
+        if (schema.maxLength() > 0)
+            if (schema.maxProperties() > 0) {
+                schemaObject.setMaxProperties(schema.maxProperties());
+                isEmpty = false;
+            }
+        if (schema.minProperties() > 0) {
+            schemaObject.setMinProperties(schema.minProperties());
+            isEmpty = false;
+        }
+
+        ReaderUtils.getStringListFromStringArray(schema._enum()).ifPresent(schemaObject::setEnum);
+        getExternalDocumentation(schema.externalDocs()).ifPresent(schemaObject::setExternalDocs);
 
         if (isEmpty) {
             return Optional.empty();
@@ -263,8 +315,12 @@ public class OperationParser {
             if (StringUtils.isNotBlank(response.description())) {
                 apiResponseObject.setDescription(response.description());
             }
+            if (StringUtils.isNotBlank(response.responseCode())) {
+                apiResponsesObject.addApiResponse(response.responseCode(), apiResponseObject);
 
-            apiResponsesObject.addApiResponse(response.responseCode(), apiResponseObject);
+            } else {
+                apiResponsesObject.addApiResponse(RESPONSE_DEFAULT, apiResponseObject);
+            }
         }
         return Optional.of(apiResponsesObject);
     }
@@ -295,18 +351,19 @@ public class OperationParser {
             return Optional.empty();
         }
         Content content = new Content();
-        if (annotationContent != null) {
-            MediaType mediaType = new MediaType();
-            Class<?> schemaImplementation = annotationContent.schema().implementation();
-            if (schemaImplementation != Void.class) {
-                Map<String, Schema> schemaMap = ModelConverters.getInstance().readAll(schemaImplementation);
-                schemaMap.forEach((k, v) -> mediaType.setSchema(v));
-                content.addMediaType(annotationContent.mediaType(), mediaType);
-            }
-            ExampleObject[] examples = annotationContent.examples();
-            for (ExampleObject example : examples) {
-                getMediaType(mediaType, example).ifPresent(mediaTypeObject -> content.addMediaType(annotationContent.mediaType(), mediaTypeObject));
-            }
+        MediaType mediaType = new MediaType();
+        Class<?> schemaImplementation = annotationContent.schema().implementation();
+        if (schemaImplementation != Void.class) {
+            Map<String, Schema> schemaMap = ModelConverters.getInstance().readAll(schemaImplementation);
+            schemaMap.forEach((k, v) -> mediaType.setSchema(v));
+            content.addMediaType(annotationContent.mediaType(), mediaType);
+        } else {
+            getSchemaFromAnnotation(annotationContent.schema()).ifPresent(mediaType::setSchema);
+            content.addMediaType(annotationContent.mediaType(), mediaType);
+        }
+        ExampleObject[] examples = annotationContent.examples();
+        for (ExampleObject example : examples) {
+            getMediaType(mediaType, example).ifPresent(mediaTypeObject -> content.addMediaType(annotationContent.mediaType(), mediaTypeObject));
         }
         return Optional.of(content);
     }

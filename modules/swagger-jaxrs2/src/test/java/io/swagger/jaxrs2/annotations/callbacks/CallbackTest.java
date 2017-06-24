@@ -32,16 +32,16 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "      parameters:\n" +
                 "      - name: \"x-auth-token\"\n" +
                 "        in: \"header\"\n" +
-                /*"        description: \"the authentication token provided after initially authenticating to the application\"\n" +
-                "        required: true\n" +*/
                 "        schema:\n" +
                 "          type: \"string\"\n" +
+                "          description: \"the authentication token provided after initially authenticating\\\n" +
+                "            \\ to the application\"\n" +
+                "          readOnly: true\n" +
                 "      - name: \"url\"\n" +
                 "        in: \"query\"\n" +
-                /*"        description: \"the URL to call with response data\"\n" +
-                "        required: true\n" +*/
                 "        schema:\n" +
                 "          type: \"string\"\n" +
+                "          description: \"the URL to call with response data\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: \"no description\"\n" +
@@ -125,9 +125,9 @@ public class CallbackTest extends AbstractAnnotationTest {
                                         implementation = CallbackTest.SubscriptionResponse.class)
                         ))
                 })
-        public SubscriptionResponse subscribe(@Schema(required = true, description = "the authentication token " +
-                "provided after initially authenticating to the application") @HeaderParam("x-auth-token") String token,
-                                              @Schema(required = true, description = "the URL to call with response " +
+        public SubscriptionResponse subscribe(@Schema(readOnly = true, description = "the authentication token " +
+                "provided after initially authenticating to the application", type = "string") @HeaderParam("x-auth-token") String token,
+                                              @Schema(readOnly = true, description = "the URL to call with response " +
                                                       "data") @QueryParam("url") String url) {
             return null;
         }

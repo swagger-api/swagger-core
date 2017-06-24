@@ -6,6 +6,7 @@ import io.swagger.oas.annotations.links.Link;
 import io.swagger.oas.annotations.links.LinkParameters;
 import org.testng.annotations.Test;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
@@ -60,6 +61,7 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
                         name = "userId",
                         expression = "$request.query.userId"))
         })
+        @GET
         public User getUser(@QueryParam("userId") String userId) {
             return null;
         }
