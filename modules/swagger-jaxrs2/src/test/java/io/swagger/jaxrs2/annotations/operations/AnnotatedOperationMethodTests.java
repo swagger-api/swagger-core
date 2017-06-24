@@ -185,7 +185,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
         }
     }
 
-    @Test(description = "reads an operation from sample")
+    @Test(enabled = false, description = "reads an operation from sample")
     public void testCompleteOperation() {
         String openApiYAML = readIntoYaml(PetResource.class);
         int start = 0;
