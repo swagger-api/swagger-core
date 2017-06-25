@@ -185,33 +185,119 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
         }
     }
 
-    @Test(enabled = false, description = "reads an operation from sample")
+    @Test(description = "reads an operation from sample")
     public void testCompleteOperation() {
         String openApiYAML = readIntoYaml(PetResource.class);
         int start = 0;
         int end = openApiYAML.length() - 1;
         String extractedYAML = openApiYAML.substring(start, end);
-        String expectedYAML = "get:\n" +
-                "      summary: \"Simple get operation\"\n" +
-                "      description: \"Defines a simple get operation with no inputs and a complex output\"\n" +
-                "      operationId: \"getWithPayloadResponse\"\n" +
+        String expectedYAML = "---\n" +
+                "openapi: \"3.0.0-rc2\"\n" +
+                "paths:\n" +
+                "  /pet/{petId}:\n" +
+                "    get:\n" +
+                "      summary: \"Find pet by ID\"\n" +
+                "      description: \"Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will\\\n" +
+                "        \\ simulate API error conditions\"\n" +
+                "      parameters:\n" +
+                "      - name: \"petId\"\n" +
+                "        in: \"path\"\n" +
+                "        description: \"ID of pet that needs to be fetched\"\n" +
+                "        required: true\n" +
+                "        deprecated: false\n" +
+                "        allowEmptyValue: false\n" +
+                "        explode: false\n" +
+                "        allowReserved: false\n" +
+                "        schema:\n" +
+                "          type: \"integer\"\n" +
+                "          format: \"int64\"\n" +
                 "      responses:\n" +
-                "        200:\n" +
-                "          description: \"voila!\"\n" +
+                "        default:\n" +
+                "          description: \"The pet\"\n" +
+                "        400:\n" +
+                "          description: \"Invalid ID supplied\"\n" +
+                "        404:\n" +
+                "          description: \"Pet not found\"\n" +
+                "  /pet:\n" +
+                "    put:\n" +
+                "      summary: \"Update an existing pet\"\n" +
+                "      responses:\n" +
+                "        400:\n" +
+                "          description: \"Invalid ID supplied\"\n" +
+                "        404:\n" +
+                "          description: \"Pet not found\"\n" +
+                "        405:\n" +
+                "          description: \"Validation exception\"\n" +
+                "  /pet/findByStatus:\n" +
+                "    get:\n" +
+                "      summary: \"Finds Pets by status\"\n" +
+                "      description: \"Multiple status values can be provided with comma seperated strings\"\n" +
+                "      parameters:\n" +
+                "      - name: \"status\"\n" +
+                "        in: \"query\"\n" +
+                "        description: \"Status values that need to be considered for filter\"\n" +
+                "        required: true\n" +
+                "        deprecated: false\n" +
+                "        allowEmptyValue: false\n" +
+                "        explode: false\n" +
+                "        allowReserved: false\n" +
+                "        schema:\n" +
+                "          type: \"string\"\n" +
+                "      - name: \"skip\"\n" +
+                "        in: \"query\"\n" +
+                "        schema:\n" +
+                "          type: \"integer\"\n" +
+                "          format: \"int32\"\n" +
+                "      - name: \"limit\"\n" +
+                "        in: \"query\"\n" +
+                "        schema:\n" +
+                "          type: \"integer\"\n" +
+                "          format: \"int32\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                type: \"object\"\n" +
                 "                properties:\n" +
                 "                  id:\n" +
+                "                    type: \"integer\"\n" +
+                "                    format: \"int64\"\n" +
+                "                  name:\n" +
                 "                    type: \"string\"\n" +
-                "                    description: \"the user id\"\n" +
-                "              examples:\n" +
-                "                basic:\n" +
-                "                  summary: \"shows a basic example\"\n" +
-                "                  description: \"basic\"\n" +
-                "                  value: \"{\\\"id\\\": 19877734}\"\n" +
-                "      deprecated: true";
+                "        400:\n" +
+                "          description: \"Invalid status value\"\n" +
+                "  /pet/findByTags:\n" +
+                "    get:\n" +
+                "      summary: \"Finds Pets by tags\"\n" +
+                "      description: \"Muliple tags can be provided with comma seperated strings. Use\\\n" +
+                "        \\ tag1, tag2, tag3 for testing.\"\n" +
+                "      parameters:\n" +
+                "      - name: \"tags\"\n" +
+                "        in: \"query\"\n" +
+                "        description: \"Tags to filter by\"\n" +
+                "        required: true\n" +
+                "        deprecated: false\n" +
+                "        allowEmptyValue: false\n" +
+                "        explode: false\n" +
+                "        allowReserved: false\n" +
+                "        schema:\n" +
+                "          type: \"string\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: \"Pets matching criteria\"\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: \"object\"\n" +
+                "                properties:\n" +
+                "                  id:\n" +
+                "                    type: \"integer\"\n" +
+                "                    format: \"int64\"\n" +
+                "                  name:\n" +
+                "                    type: \"string\"\n" +
+                "        400:\n" +
+                "          description: \"Invalid tag value\"";
         assertEquals(extractedYAML, expectedYAML);
     }
 }

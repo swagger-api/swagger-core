@@ -304,7 +304,7 @@ public class OperationParser {
         return Optional.of(requestBodyObject);
     }
 
-    public static Optional<ApiResponses> getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses) {
+    public static Optional<ApiResponses> getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses, Map<String, Link> links) {
         if (responses == null) {
             return Optional.empty();
         }
@@ -314,14 +314,17 @@ public class OperationParser {
             getContent(response.content()).ifPresent(apiResponseObject::content);
             if (StringUtils.isNotBlank(response.description())) {
                 apiResponseObject.setDescription(response.description());
+                if (links != null && links.size() > 0) {
+                    apiResponseObject.setLinks(links);
+                }
             }
             if (StringUtils.isNotBlank(response.responseCode())) {
                 apiResponsesObject.addApiResponse(response.responseCode(), apiResponseObject);
-
             } else {
                 apiResponsesObject.addApiResponse(RESPONSE_DEFAULT, apiResponseObject);
             }
         }
+
         return Optional.of(apiResponsesObject);
     }
 
@@ -468,6 +471,20 @@ public class OperationParser {
         return Optional.of(licenseObject);
     }
 
+    public static Optional<Map<String, Link>> getLinks(io.swagger.oas.annotations.links.Link[] links) {
+        if (links == null) {
+            return Optional.empty();
+        }
+        Map<String, Link> linkMap = new HashMap<>();
+        for (io.swagger.oas.annotations.links.Link link : links) {
+            getLink(link).ifPresent(linkResult -> linkMap.put(link.name(), linkResult));
+        }
+        if (linkMap.size() == 0) {
+            Optional.empty();
+        }
+        return Optional.of(linkMap);
+    }
+
     public static Optional<Link> getLink(io.swagger.oas.annotations.links.Link link) {
         if (link == null) {
             return Optional.empty();
@@ -487,18 +504,23 @@ public class OperationParser {
             isEmpty = false;
         }
         if (isEmpty) {
-            Optional.empty();
+            return Optional.empty();
         }
-        //linkObject.setParameters(getLinkParameters(link.parameters()).get());
+        getLinkParameters(link.parameters()).ifPresent(linkObject::setParameters);
         return Optional.of(linkObject);
     }
 
-    public static Optional<LinkParameter> getLinkParameters(io.swagger.oas.annotations.links.LinkParameters linkParameters) {
+    public static Optional<Map<String, String>> getLinkParameters(io.swagger.oas.annotations.links.LinkParameters linkParameters) {
         if (linkParameters == null) {
             return Optional.empty();
         }
-        LinkParameter linkParametersObject = new LinkParameter();
-        linkParametersObject.addExtension(linkParameters.name(), linkParameters.expression());
-        return Optional.of(linkParametersObject);
+        Map<String, String> linkParametersMap = new HashMap<>();
+        if (StringUtils.isNotBlank(linkParameters.name())) {
+            linkParametersMap.put(linkParameters.name(), linkParameters.expression());
+        }
+        if (linkParametersMap.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(linkParametersMap);
     }
 }

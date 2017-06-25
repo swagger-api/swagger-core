@@ -17,6 +17,7 @@ import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.callbacks.Callback;
+import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -165,37 +167,39 @@ public class Reader {
                 }
 
                 Operation operation = parseMethod(method);
-                PathItem pathItemObject = new PathItem();
+                if (operation != null) {
+                    PathItem pathItemObject = new PathItem();
 
-                String httpMethod = ReaderUtils.extractOperationMethod(operation, method, OpenAPIExtensions.chain());
-                if (StringUtils.isNotBlank(httpMethod)) {
-                    setPathItemOperation(pathItemObject, httpMethod, operation);
-                }
-                List<Parameter> operationParameters = new ArrayList<>();
-                Annotation[][] paramAnnotations = ReflectionUtils.getParameterAnnotations(method);
-                if (annotatedMethod == null) {
-                    Type[] genericParameterTypes = method.getGenericParameterTypes();
-                    for (int i = 0; i < genericParameterTypes.length; i++) {
-                        final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
-                        operationParameters.addAll(getParameters(type, Arrays.asList(paramAnnotations[i])));
+                    String httpMethod = ReaderUtils.extractOperationMethod(operation, method, OpenAPIExtensions.chain());
+                    if (StringUtils.isNotBlank(httpMethod)) {
+                        setPathItemOperation(pathItemObject, httpMethod, operation);
                     }
-                } else {
-                    for (int i = 0; i < annotatedMethod.getParameterCount(); i++) {
-                        AnnotatedParameter param = annotatedMethod.getParameter(i);
-                        final Type type = TypeFactory.defaultInstance().constructType(param.getParameterType(), cls);
-                        operationParameters.addAll(getParameters(type, Arrays.asList(paramAnnotations[i])));
+                    List<Parameter> operationParameters = new ArrayList<>();
+                    Annotation[][] paramAnnotations = ReflectionUtils.getParameterAnnotations(method);
+                    if (annotatedMethod == null) {
+                        Type[] genericParameterTypes = method.getGenericParameterTypes();
+                        for (int i = 0; i < genericParameterTypes.length; i++) {
+                            final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
+                            operationParameters.addAll(getParameters(type, Arrays.asList(paramAnnotations[i])));
+                        }
+                    } else {
+                        for (int i = 0; i < annotatedMethod.getParameterCount(); i++) {
+                            AnnotatedParameter param = annotatedMethod.getParameter(i);
+                            final Type type = TypeFactory.defaultInstance().constructType(param.getParameterType(), cls);
+                            operationParameters.addAll(getParameters(type, Arrays.asList(paramAnnotations[i])));
+                        }
                     }
-                }
-                if (operationParameters.size() > 0) {
-                    operation.setParameters(operationParameters);
-                }
+                    if (operationParameters.size() > 0) {
+                        operation.setParameters(operationParameters);
+                    }
 
-                paths.addPathItem(operationPath, pathItemObject);
-                if (openAPI.getPaths() != null) {
-                    this.paths.putAll(openAPI.getPaths());
-                }
+                    paths.addPathItem(operationPath, pathItemObject);
+                    if (openAPI.getPaths() != null) {
+                        this.paths.putAll(openAPI.getPaths());
+                    }
 
-                openAPI.setPaths(this.paths);
+                    openAPI.setPaths(this.paths);
+                }
             }
         }
 
@@ -235,6 +239,8 @@ public class Reader {
             SecurityParser.getSecurityRequirement(apiSecurity).ifPresent(operation::setSecurity);
 
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
+        } else {
+            return null;
         }
         return operation;
     }
@@ -307,7 +313,8 @@ public class Reader {
         OperationParser.getTags(apiOperation.tags()).ifPresent(tag -> openApiTags.addAll(tag));
         OperationParser.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(operation::setExternalDocs);
         OperationParser.getRequestBody(apiOperation.requestBody()).ifPresent(operation::setRequestBody);
-        OperationParser.getApiResponses(apiOperation.responses()).ifPresent(operation::setResponses);
+        Optional<Map<String, Link>> links = OperationParser.getLinks(apiOperation.links());
+        OperationParser.getApiResponses(apiOperation.responses(), links.get()).ifPresent(operation::setResponses);
         OperationParser.getServers(apiOperation.servers()).ifPresent(operation::setServers);
         OperationParser.getParametersList(apiOperation.parameters()).ifPresent(operation::setParameters);
     }

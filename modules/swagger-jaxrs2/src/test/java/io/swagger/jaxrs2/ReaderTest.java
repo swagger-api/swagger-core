@@ -133,7 +133,7 @@ public class ReaderTest {
         for (final Method method : methods) {
             if (isValidRestPath(method)) {
                 Operation operation = reader.parseMethod(method);
-                assertNotNull(operation);
+                assertNull(operation);
             }
         }
     }
@@ -153,16 +153,7 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI(), null);
         Method[] methods = BasicClass.class.getMethods();
         Operation operation = reader.parseMethod(methods[0]);
-        assertNull(operation.getCallbacks());
-        assertNull(operation.getTags());
-        assertNull(operation.getExternalDocs());
-        assertNull(operation.getOperationId());
-        assertNull(operation.getParameters());
-        assertNull(operation.getResponses());
-        assertNull(operation.getSecurity());
-        assertNull(operation.getServers());
-        assertNull(operation.getSummary());
-        assertNull(operation.getDescription());
+        assertNull(operation);
     }
 
     @Test(description = "Get a Duplicated Operation Id")
