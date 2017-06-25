@@ -168,10 +168,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         // create a reference for the property
                         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(propType);
                         String name = _typeName(propType, beanDesc);
-                        property = new Schema().ref(constructRef(name));
+                        property = new Schema().$ref(constructRef(name));
                     }
                     else if(mi.get$ref() != null) {
-                        property = new Schema().ref(StringUtils.isNotEmpty(mi.get$ref()) ? mi.get$ref() : mi.getTitle());
+                        property = new Schema().$ref(StringUtils.isNotEmpty(mi.get$ref()) ? mi.get$ref() : mi.getTitle());
                     }
                     else {
                         property = innerModel;
@@ -481,7 +481,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 // no property from override, construct from propType
                 if (property == null) {
                     if (mp != null && StringUtils.isNotEmpty(mp.ref())) {
-                        property = new Schema().ref(mp.ref());
+                        property = new Schema().$ref(mp.ref());
                     } else if (member.getAnnotation(JsonIdentityInfo.class) != null) {
                         // TODO
 //                        property = GeneratorWrapper.processJsonIdentity(propType, context, _mapper,
@@ -803,7 +803,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 //            if (model instanceof ModelImpl) {
                 Schema mi = (Schema) model;
                 mi.getProperties().put(propertyName, id);
-                return new Schema().ref(StringUtils.isNotEmpty(mi.get$ref())
+                return new Schema().$ref(StringUtils.isNotEmpty(mi.get$ref())
                         ? mi.get$ref() : mi.getTitle());
 //            }
 //            return null;

@@ -206,7 +206,7 @@ public class PropertySerializationTest {
 
     @Test(description = "it should serialize a RefProperty")
     public void serializeRefProperty() throws IOException {
-        final Schema p = new Schema().ref("#/definitions/Dog");
+        final Schema p = new Schema().$ref("#/definitions/Dog");
         final String json = "{\"$ref\":\"#/definitions/Dog\"}";
         assertEquals(m.writeValueAsString(p), json);
     }

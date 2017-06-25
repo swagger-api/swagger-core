@@ -109,7 +109,7 @@ public class SimpleBuilderTest {
                                                 .content(new Content()
                                                         .addMediaType("application/json",
                                                                 new MediaType().schema(new Schema()
-                                                                        .ref("#/components/schemas/Address")))
+                                                                        .$ref("#/components/schemas/Address")))
                                                 )
                                                 .link("funky", new Link()
                                                         .operationId("getFunky")))

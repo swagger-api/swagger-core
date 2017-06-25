@@ -77,11 +77,11 @@ public class SecurityDefinitionTest {
 
         final ApiResponse response = new ApiResponse()
                 .description("pets returned")
-                .content(new Content().addMediaType("*/*", new MediaType().schema(new Schema().ref("Person"))));
+                .content(new Content().addMediaType("*/*", new MediaType().schema(new Schema().$ref("Person"))));
 
         final ApiResponse errorResponse = new ApiResponse()
                 .description("error response")
-                .content(new Content().addMediaType("*/*", new MediaType().schema(new Schema().ref("Error"))));
+                .content(new Content().addMediaType("*/*", new MediaType().schema(new Schema().$ref("Error"))));
 
         get.responses(new ApiResponses()
                 .addApiResponse("200", response)

@@ -89,7 +89,7 @@ public class SwaggerSerializerTest {
                 .description("pets returned")
                 .content(new Content()
                     .addMediaType("application/json", new io.swagger.oas.models.media.MediaType()
-                    .schema(new Schema().ref("Person"))
+                    .schema(new Schema().$ref("Person"))
                     .example("fun")));
 
         final ApiResponse errorResponse = new ApiResponse()
@@ -101,7 +101,7 @@ public class SwaggerSerializerTest {
                 )
                 .content(new Content()
                         .addMediaType("application/json", new io.swagger.oas.models.media.MediaType()
-                        .schema(new Schema().ref("Error"))));
+                        .schema(new Schema().$ref("Error"))));
 
         get.responses(new ApiResponses()
                 .addApiResponse("200", response)
@@ -117,7 +117,7 @@ public class SwaggerSerializerTest {
                 .requestBody(new RequestBody()
                         .description("the pet to add")
                         .content(new Content().addMediaType("*/*", new MediaType()
-                        .schema(new Schema().ref("Person")))));
+                        .schema(new Schema().$ref("Person")))));
 
         swagger.paths(new Paths().addPathItem("/pets", new PathItem()
                 .get(get).post(post)));

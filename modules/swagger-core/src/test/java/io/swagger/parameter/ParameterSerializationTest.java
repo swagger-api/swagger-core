@@ -246,7 +246,7 @@ public class ParameterSerializationTest {
 
     @Test(description = "it should serialize a ref BodyParameter")
     public void serializeRefBodyParameter() {
-        final Schema model = new Schema().ref("#/definitions/Cat");
+        final Schema model = new Schema().$ref("#/definitions/Cat");
         final RequestBody p = new RequestBody()
                 .content(new Content().addMediaType("*/*",
                         new MediaType().schema(model)));
@@ -257,7 +257,7 @@ public class ParameterSerializationTest {
 
     @Test(description = "it should serialize an array BodyParameter")
     public void serializeArrayBodyParameter() {
-        final Schema model = new ArraySchema().items(new Schema().ref("#/definitions/Cat"));
+        final Schema model = new ArraySchema().items(new Schema().$ref("#/definitions/Cat"));
         final RequestBody p = new RequestBody()
                 .content(new Content().addMediaType("*/*",
                         new MediaType().schema(model)));

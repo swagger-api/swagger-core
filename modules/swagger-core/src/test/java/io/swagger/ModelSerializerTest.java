@@ -108,7 +108,7 @@ public class ModelSerializerTest {
     @Test(description = "it should serialize an array model")
     public void serializeArrayModel() throws IOException {
         final ArraySchema model = new ArraySchema();
-        model.setItems(new Schema().ref("Pet"));
+        model.setItems(new Schema().$ref("Pet"));
         assertEquals(m.writeValueAsString(model), "{\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/Pet\"}}");
     }
 
@@ -122,7 +122,7 @@ public class ModelSerializerTest {
 
     @Test(enabled = false, description = "it should not create an xml object for $ref")
     public void shouldNotCreateXmlObjectForRef() throws IOException {
-        final Schema model = new Schema().ref("Monster");
+        final Schema model = new Schema().$ref("Monster");
         model.setDescription("oops");
         model.setExternalDocs(new ExternalDocumentation()
                 .description("external docs")
