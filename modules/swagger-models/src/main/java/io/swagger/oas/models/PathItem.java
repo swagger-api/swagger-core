@@ -16,11 +16,14 @@
 
 package io.swagger.oas.models;
 
+
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.servers.Server;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * PathItem
@@ -233,6 +236,80 @@ public class PathItem {
     public PathItem trace(Operation trace) {
         this.trace = trace;
         return this;
+    }
+
+
+    public List<Operation> readOperations() {
+        List<Operation> allOperations = new ArrayList<>();
+        if (this.get != null) {
+            allOperations.add(this.get);
+        }
+        if (this.put != null) {
+            allOperations.add(this.put);
+        }
+        if (this.head != null) {
+            allOperations.add(this.head);
+        }
+        if (this.post != null) {
+            allOperations.add(this.post);
+        }
+        if (this.delete != null) {
+            allOperations.add(this.delete);
+        }
+        if (this.patch != null) {
+            allOperations.add(this.patch);
+        }
+        if (this.options != null) {
+            allOperations.add(this.options);
+        }
+        if (this.trace != null) {
+            allOperations.add(this.trace);
+        }
+
+        return allOperations;
+    }
+
+    public enum HttpMethod {
+        POST,
+        GET,
+        PUT,
+        PATCH,
+        DELETE,
+        HEAD,
+        OPTIONS,
+        TRACE
+    }
+
+
+    public Map<HttpMethod, Operation> readOperationsMap() {
+        Map<HttpMethod, Operation> result = new LinkedHashMap<>();
+
+        if (this.get != null) {
+            result.put(HttpMethod.GET, this.get);
+        }
+        if (this.put != null) {
+            result.put(HttpMethod.PUT, this.put);
+        }
+        if (this.post != null) {
+            result.put(HttpMethod.POST, this.post);
+        }
+        if (this.delete != null) {
+            result.put(HttpMethod.DELETE, this.delete);
+        }
+        if (this.patch != null) {
+            result.put(HttpMethod.PATCH, this.patch);
+        }
+        if (this.head != null) {
+            result.put(HttpMethod.HEAD, this.head);
+        }
+        if (this.options != null) {
+            result.put(HttpMethod.OPTIONS, this.options);
+        }
+        if (this.trace != null) {
+            result.put(HttpMethod.TRACE, this.trace);
+        }
+
+        return result;
     }
 
     /**
