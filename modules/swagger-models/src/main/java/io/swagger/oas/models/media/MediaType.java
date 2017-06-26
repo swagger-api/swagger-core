@@ -33,7 +33,7 @@ public class MediaType {
   private Schema schema = null;
   private Map<String, Example> examples = null;
   private String example = null;
-  private Encoding encoding = null;
+  private Map<String, Encoding> encoding = null;
   private java.util.Map<String, Object> extensions = null;
 
   /**
@@ -107,16 +107,24 @@ public class MediaType {
    * @return Encoding encoding
    **/
 
-  public Encoding getEncoding() {
+  public Map<String, Encoding> getEncoding() {
     return encoding;
   }
 
-  public void setEncoding(Encoding encoding) {
+  public void setEncoding(Map<String,Encoding> encoding) {
     this.encoding = encoding;
   }
 
-  public MediaType encoding(Encoding encoding) {
+  public MediaType encoding(Map<String, Encoding> encoding) {
     this.encoding = encoding;
+    return this;
+  }
+
+  public MediaType addEncoding(String key, Encoding encodingItem) {
+    if(this.encoding == null) {
+      this.encoding = new HashMap<String, Encoding>();
+    }
+    this.encoding.put(key, encodingItem);
     return this;
   }
 
