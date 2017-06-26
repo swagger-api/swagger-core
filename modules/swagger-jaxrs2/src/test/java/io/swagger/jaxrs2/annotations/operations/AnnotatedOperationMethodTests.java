@@ -204,10 +204,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "        in: \"path\"\n" +
                 "        description: \"ID of pet that needs to be fetched\"\n" +
                 "        required: true\n" +
-                "        deprecated: false\n" +
-                "        allowEmptyValue: false\n" +
                 "        explode: false\n" +
-                "        allowReserved: false\n" +
                 "        schema:\n" +
                 "          type: \"integer\"\n" +
                 "          format: \"int64\"\n" +
@@ -237,10 +234,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "        in: \"query\"\n" +
                 "        description: \"Status values that need to be considered for filter\"\n" +
                 "        required: true\n" +
-                "        deprecated: false\n" +
-                "        allowEmptyValue: false\n" +
                 "        explode: false\n" +
-                "        allowReserved: false\n" +
                 "        schema:\n" +
                 "          type: \"string\"\n" +
                 "      - name: \"skip\"\n" +
@@ -277,10 +271,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "        in: \"query\"\n" +
                 "        description: \"Tags to filter by\"\n" +
                 "        required: true\n" +
-                "        deprecated: false\n" +
-                "        allowEmptyValue: false\n" +
                 "        explode: false\n" +
-                "        allowReserved: false\n" +
                 "        schema:\n" +
                 "          type: \"string\"\n" +
                 "      responses:\n" +

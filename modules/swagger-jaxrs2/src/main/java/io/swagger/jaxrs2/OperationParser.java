@@ -315,7 +315,9 @@ public class OperationParser {
             if (StringUtils.isNotBlank(response.description())) {
                 apiResponseObject.setDescription(response.description());
                 if (links != null && links.size() > 0) {
-                    apiResponseObject.setLinks(links);
+                    if ("default".equals(response.responseCode()) || "200".equals(response.responseCode())) {
+                        apiResponseObject.setLinks(links);
+                    }
                 }
             }
             if (StringUtils.isNotBlank(response.responseCode())) {

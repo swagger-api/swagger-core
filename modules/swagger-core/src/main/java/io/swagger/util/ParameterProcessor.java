@@ -61,12 +61,22 @@ public class ParameterProcessor {
                 if (StringUtils.isNotBlank(p.in())) {
                     parameter.setIn(p.in());
                 }
-                parameter.setDeprecated(p.deprecated());
-                parameter.setRequired(p.required());
+                if (p.deprecated()) {
+                    parameter.setDeprecated(p.deprecated());
+                }
+                if (p.required()) {
+                    parameter.setRequired(p.required());
+                }
+                if (p.allowEmptyValue()) {
+                    parameter.setAllowEmptyValue(p.allowEmptyValue());
+                }
+                if (p.allowReserved()) {
+                    parameter.setAllowReserved(p.allowReserved());
+                }
+                // TODO - Explode - Style behaviour
                 parameter.setStyle(StringUtils.isNoneBlank(p.style()) ? Parameter.StyleEnum.valueOf(p.style()) : null);
-                parameter.setAllowEmptyValue(p.allowEmptyValue());
-                parameter.setAllowReserved(p.allowReserved());
                 parameter.setExplode(p.explode());
+
                 if (hasSchemaAnnotation(p.schema())) {
                     Schema schema = processSchema(p.schema());
                     if (schema != null) {

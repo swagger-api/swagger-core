@@ -312,7 +312,6 @@ public class ReaderTest {
         assertEquals(Boolean.TRUE, parameter.getRequired());
         assertEquals(Boolean.TRUE, parameter.getAllowEmptyValue());
         assertEquals(Boolean.TRUE, parameter.getAllowReserved());
-        assertEquals(Boolean.FALSE, parameter.getDeprecated());
         Schema schema = parameter.getSchema();
         assertNotNull(schema);
         assertEquals(SCHEMA_TYPE, schema.getType());

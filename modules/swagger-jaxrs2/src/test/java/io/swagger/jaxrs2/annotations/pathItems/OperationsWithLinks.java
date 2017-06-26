@@ -40,12 +40,12 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
                 "                userId: \"$request.query.userId\"\n" +
                 "/addresses:\n" +
                 "    get:\n" +
-                "      operationId: getAddress\n" +
+                "      operationId: \"getAddress\"\n" +
                 "      parameters:\n" +
-                "        - in: \"query\"\n" +
-                "          name: \"userId\"\n" +
-                "          schema:\n" +
-                "            type: \"string\"\n" +
+                "      - in: \"query\"\n" +
+                "        name: \"userId\"\n" +
+                "        schema:\n" +
+                "          type: \"string\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: \"no description\"\n" +
@@ -58,20 +58,28 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
 
     static class ClassWithOperationAndLinks {
         @Path("/users")
-        @Operation(operationId = "getUser", responses = {@ApiResponse(description = "no description")}, links = {
-                @Link(
-                        name = "address",
-                        operationId = "getAddress",
-                        parameters = @LinkParameters(
-                                name = "userId",
-                                expression = "$request.query.userId"))
-        })
+        @Operation(operationId = "getUser",
+                responses = {
+                        @ApiResponse(description = "no description")},
+                links = {
+                        @Link(
+                                name = "address",
+                                operationId = "getAddress",
+                                parameters = @LinkParameters(
+                                        name = "userId",
+                                        expression = "$request.query.userId"))
+                })
         @GET
         public User getUser(@QueryParam("userId") String userId) {
             return null;
         }
 
         @Path("/addresses")
+        @Operation(operationId = "getAddress",
+                responses = {
+                        @ApiResponse(description = "no description")
+                })
+        @GET
         public Address getAddress(@QueryParam("userId") String userId) {
             return null;
         }
@@ -96,10 +104,10 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
                         "  get:\n" +
                         "    operationId: getUser\n" +
                         "    parameters:\n" +
-                        "      - in: query\n" +
-                        "        name: userId\n" +
-                        "        schema:\n" +
-                        "          type: string\n" +
+                        "    - in: query\n" +
+                        "      name: userId\n" +
+                        "      schema:\n" +
+                        "        type: string\n" +
                         "    responses:\n" +
                         "      default:\n" +
                         "        description: no description\n" +
