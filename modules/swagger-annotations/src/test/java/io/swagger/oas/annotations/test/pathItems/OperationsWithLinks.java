@@ -3,6 +3,7 @@ package io.swagger.oas.annotations.test.pathItems;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.links.Link;
 import io.swagger.oas.annotations.links.LinkParameters;
+import io.swagger.oas.annotations.responses.ApiResponse;
 import io.swagger.oas.annotations.test.AbstractAnnotationTest;
 import org.testng.annotations.Test;
 
@@ -52,14 +53,17 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
 
     static class ClassWithOperationAndLinks {
         @Path("/users")
-        @Operation(links = {
-            @Link(
-                name = "address",
-                operationId = "getAddress",
-                parameters = @LinkParameters(
-                        name = "userId",
-                        expression = "$request.query.userId"))
-        })
+        @Operation(responses = {
+                @ApiResponse(
+                        description = "no description",
+                        links = {
+                    @Link(
+                        name = "address",
+                        operationId = "getAddress",
+                        parameters = @LinkParameters(
+                                name = "userId",
+                                expression = "$request.query.userId"))
+        })})
         public User getUser(@QueryParam("userId") String userId) {
             return null;
         }
@@ -103,10 +107,13 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
 
     static class ClassWithOperationAndLinkReferences {
         @Path("/users")
-        @Operation(links = {
+        @Operation(responses = {
+                @ApiResponse(
+                        description = "no description",
+                        links = {
             @Link(
                 operationRef = "#/components/links/MyLink")
-        })
+        })})
         public User getUser(@QueryParam("userId") String userId) {
             return null;
         }
