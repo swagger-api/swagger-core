@@ -140,7 +140,7 @@ public class RequestBody {
     if (extensions != null ? !extensions.equals(that.extensions) : that.extensions != null) {
       return false;
     }
-    return $ref != null ? $ref.equals(that.$ref) : that.$ref == null;
+    return $ref != null ? !$ref.equals(that.$ref) : that.$ref == null;
 
   }
 

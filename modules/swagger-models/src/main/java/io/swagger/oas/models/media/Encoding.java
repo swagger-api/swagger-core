@@ -19,6 +19,7 @@ package io.swagger.oas.models.media;
 import io.swagger.oas.models.headers.Header;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Encoding
@@ -118,6 +119,28 @@ public class Encoding {
 
     public void setAllowReserved(Boolean allowReserved) {
         this.allowReserved = allowReserved;
+    }
+
+
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Encoding encoding = (Encoding) o;
+        return Objects.equals(this.contentType, encoding.contentType) &&
+            Objects.equals(this.headers, encoding.headers) &&
+            Objects.equals(this.style, encoding.style) &&
+            Objects.equals(this.explode, encoding.explode) &&
+            Objects.equals(this.allowReserved, encoding.allowReserved);            
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(contentType, headers, style, explode, allowReserved);
     }
 
     @Override
