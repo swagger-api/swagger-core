@@ -200,10 +200,16 @@ public class Link {
         if (parameters != null ? !parameters.equals(link.parameters) : link.parameters != null) {
             return false;
         }
+        if (requestBody != null ? !requestBody.equals(link.requestBody) : link.requestBody != null) {
+            return false;
+        }
         if (headers != null ? !headers.equals(link.headers) : link.headers != null) {
             return false;
         }
         if (description != null ? !description.equals(link.description) : link.description != null) {
+            return false;
+        }
+        if ($ref != null ? !$ref.equals(link.$ref) : link.$ref != null) {
             return false;
         }
         if (extensions != null ? !extensions.equals(link.extensions) : link.extensions != null) {
