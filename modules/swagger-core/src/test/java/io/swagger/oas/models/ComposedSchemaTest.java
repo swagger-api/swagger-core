@@ -1,6 +1,6 @@
 package io.swagger.oas.models;
 
-import io.swagger.oas.models.media.AllOfSchema;
+import io.swagger.oas.models.media.ComposedSchema;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.util.Json;
 import org.testng.annotations.Test;
@@ -8,9 +8,9 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-public class ComposedModelTest {
+public class ComposedSchemaTest {
     @Test(enabled = false)
-    public void testDeserializeComposedModel() throws Exception {
+    public void testDeserializeComposedSchema() throws Exception {
         String json = "{\n" +
                 "  \"type\": \"object\",\n" +
                 "  \"allOf\": [\n" +
@@ -40,8 +40,8 @@ public class ComposedModelTest {
                 "}";
 
         Schema model = Json.mapper().readValue(json, Schema.class);
-        assertTrue(model instanceof AllOfSchema);
-        AllOfSchema cm = (AllOfSchema) model;
+        assertTrue(model instanceof ComposedSchema);
+        ComposedSchema cm = (ComposedSchema) model;
 
         assertTrue(cm.getAllOf().size() == 4);
         assertTrue(cm.getAllOf().get(2).getProperties().containsKey("propInt"));

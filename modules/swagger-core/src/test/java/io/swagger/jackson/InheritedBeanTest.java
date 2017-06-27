@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.converter.ModelConverterContextImpl;
-import io.swagger.oas.models.media.AllOfSchema;
+import io.swagger.oas.models.media.ComposedSchema;
 import io.swagger.oas.models.media.Schema;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -36,8 +36,8 @@ public class InheritedBeanTest extends SwaggerTestBase {
         final Schema subModel = context.getDefinedModels().get("Sub1Bean");
         assertNotNull(subModel);
         // make sure child points at parent
-        assertTrue(subModel instanceof AllOfSchema);
-        AllOfSchema cm = (AllOfSchema) subModel;
+        assertTrue(subModel instanceof ComposedSchema);
+        ComposedSchema cm = (ComposedSchema) subModel;
         // TODO enable
 //        assertEquals(cm.getParent().getReference(), "#/definitions/BaseBean");
 
@@ -51,8 +51,8 @@ public class InheritedBeanTest extends SwaggerTestBase {
         final Schema subModel = context.resolve(Sub1Bean.class);
         assertNotNull(subModel);
         // make sure child points at parent
-        assertTrue(subModel instanceof AllOfSchema);
-        AllOfSchema cm = (AllOfSchema) subModel;
+        assertTrue(subModel instanceof ComposedSchema);
+        ComposedSchema cm = (ComposedSchema) subModel;
 //        assertEquals(cm.getParent().getReference(), "#/definitions/BaseBean");
 
         // make sure parent properties are filtered out of subclass
@@ -119,8 +119,8 @@ public class InheritedBeanTest extends SwaggerTestBase {
         final Schema sub1Model = context.getDefinedModels().get("MultipleSub1Bean");
         assertNotNull(sub1Model);
         // make sure child points at parent
-        assertTrue(sub1Model instanceof AllOfSchema);
-        AllOfSchema cm1 = (AllOfSchema) sub1Model;
+        assertTrue(sub1Model instanceof ComposedSchema);
+        ComposedSchema cm1 = (ComposedSchema) sub1Model;
         // TODO enable
 //        assertEquals(cm1.getParent().getReference(), "#/definitions/MultipleBaseBean");
 
@@ -131,8 +131,8 @@ public class InheritedBeanTest extends SwaggerTestBase {
         final Schema sub2Model = context.getDefinedModels().get("MultipleSub2Bean");
         assertNotNull(sub2Model);
         // make sure child points at parent
-        assertTrue(sub2Model instanceof AllOfSchema);
-        AllOfSchema cm2 = (AllOfSchema) sub2Model;
+        assertTrue(sub2Model instanceof ComposedSchema);
+        ComposedSchema cm2 = (ComposedSchema) sub2Model;
         // TODO enable
 //        assertEquals(cm2.getParent().getReference(), "#/definitions/MultipleBaseBean");
 
@@ -146,8 +146,8 @@ public class InheritedBeanTest extends SwaggerTestBase {
         final Schema subModel = context.resolve(MultipleSub1Bean.class);
         assertNotNull(subModel);
         // make sure child points at parent
-        assertTrue(subModel instanceof AllOfSchema);
-        AllOfSchema cm = (AllOfSchema) subModel;
+        assertTrue(subModel instanceof ComposedSchema);
+        ComposedSchema cm = (ComposedSchema) subModel;
         // TODO enable
 //        assertEquals(cm.getParent().getReference(), "#/definitions/MultipleBaseBean");
 
@@ -162,8 +162,8 @@ public class InheritedBeanTest extends SwaggerTestBase {
         final Schema sub1Model = context.getDefinedModels().get("MultipleSub1Bean");
         assertNotNull(sub1Model);
         // make sure child points at parent
-        assertTrue(sub1Model instanceof AllOfSchema);
-        AllOfSchema cm1 = (AllOfSchema) sub1Model;
+        assertTrue(sub1Model instanceof ComposedSchema);
+        ComposedSchema cm1 = (ComposedSchema) sub1Model;
         // TODO enable
 //        assertEquals(cm1.getParent().getReference(), "#/definitions/MultipleBaseBean");
 
@@ -174,8 +174,8 @@ public class InheritedBeanTest extends SwaggerTestBase {
         final Schema sub2Model = context.getDefinedModels().get("MultipleSub2Bean");
         assertNotNull(sub2Model);
         // make sure child points at parent
-        assertTrue(sub2Model instanceof AllOfSchema);
-        AllOfSchema cm2 = (AllOfSchema) sub2Model;
+        assertTrue(sub2Model instanceof ComposedSchema);
+        ComposedSchema cm2 = (ComposedSchema) sub2Model;
         // TODO enable
 //        assertEquals(cm2.getParent().getReference(), "#/definitions/MultipleBaseBean");
 

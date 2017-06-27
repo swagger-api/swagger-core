@@ -16,67 +16,66 @@
   "components": {
     "schemas": {
       "Pet": {
+        "discriminator": {
+          "propertyName": "pet_type",
+          "mapping": {
+            "cachorro": "Dog"
+          }
+        },
+        "required": [
+          "pet_type"
+        ],
+        "type": "object",
+        "properties": {
+          "pet_type": {
+            "type": "string"
+          }
+        }
+      },
+      "Lizard": {
         "allOf": [
           {
-            "$ref": "Human"
+            "$ref": "#/components/schemas/Pet"
           },
           {
-            "$ref": "Animal"
-          },
-          {
-            "$ref": "Bird"
-          },
-          {
+            "type": "object",
             "properties": {
-              "isDomestic": {
+              "lovesRocks": {
                 "type": "boolean"
               }
             }
           }
         ]
       },
-      "Human": {
-        "required": [
-          "name"
-        ],
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The name of the human"
+      "Dog": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Pet"
           },
-          "type": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
+          {
+            "type": "object",
+            "properties": {
+              "bark": {
+                "type": "string"
+              }
+            }
           }
-        },
-        "discriminator": "type"
+        ]
       },
-      "Animal": {
-        "required": [
-          "hasLegs"
-        ],
-        "properties": {
-          "hasLegs": {
-            "type": "boolean"
+      "Cat": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Pet"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              }
+            }
           }
-        },
-        "discriminator": "hasLegs"
-      },
-      "Bird": {
-        "required": [
-          "hasWings"
-        ],
-        "properties": {
-          "hasWings": {
-            "type": "boolean"
-          }
-        },
-        "discriminator": "hasWings"
+        ]
       }
     }
   }
