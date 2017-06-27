@@ -360,6 +360,10 @@ public class OperationParser {
         }
         if (StringUtils.isNotBlank(annotationContent.mediaType())) {
             content.addMediaType(annotationContent.mediaType(), mediaType);
+        } else {
+            if (mediaType.getSchema() != null) {
+                content.addMediaType("*/*", mediaType);
+            }
         }
         ExampleObject[] examples = annotationContent.examples();
         for (ExampleObject example : examples) {
@@ -510,7 +514,8 @@ public class OperationParser {
         return Optional.of(linkObject);
     }
 
-    public static Optional<Map<String, String>> getLinkParameters(io.swagger.oas.annotations.links.LinkParameters linkParameters) {
+    public static Optional<Map<String, String>> getLinkParameters(io.swagger.oas.annotations.links.LinkParameters
+                                                                          linkParameters) {
         if (linkParameters == null) {
             return Optional.empty();
         }

@@ -166,7 +166,12 @@ public class Reader {
 
                 Operation operation = parseMethod(method);
                 if (operation != null) {
-                    PathItem pathItemObject = new PathItem();
+                    PathItem pathItemObject;
+                    if (openAPI.getPaths() != null && openAPI.getPaths().get(operationPath) != null) {
+                        pathItemObject = openAPI.getPaths().get(operationPath);
+                    } else {
+                        pathItemObject = new PathItem();
+                    }
 
                     String httpMethod = ReaderUtils.extractOperationMethod(operation, method, OpenAPIExtensions.chain());
                     if (StringUtils.isNotBlank(httpMethod)) {

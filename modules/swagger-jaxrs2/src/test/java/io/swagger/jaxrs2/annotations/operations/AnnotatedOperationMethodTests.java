@@ -211,23 +211,21 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: \"The pet\"\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: \"object\"\n" +
+                "                properties:\n" +
+                "                  id:\n" +
+                "                    type: \"integer\"\n" +
+                "                    format: \"int64\"\n" +
+                "                  name:\n" +
+                "                    type: \"string\"\n" +
                 "        400:\n" +
                 "          description: \"Invalid ID supplied\"\n" +
                 "        404:\n" +
                 "          description: \"Pet not found\"\n" +
-                "  /pet/add:\n" +
-                "    post:\n" +
-                "      summary: \"Add a new pet to the store\"\n" +
-                "      parameters:\n" +
-                "      - description: \"Pet object that needs to be added to the store\"\n" +
-                "        required: true\n" +
-                "        explode: false\n" +
-                "        schema:\n" +
-                "          $ref: \"#/components/schemas/Pet\"\n" +
-                "      responses:\n" +
-                "        405:\n" +
-                "          description: \"Invalid input\"\n" +
-                "  /pet/update:\n" +
+                "  /pet:\n" +
                 "    put:\n" +
                 "      summary: \"Update an existing pet\"\n" +
                 "      parameters:\n" +
@@ -243,6 +241,17 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "          description: \"Pet not found\"\n" +
                 "        405:\n" +
                 "          description: \"Validation exception\"\n" +
+                "    post:\n" +
+                "      summary: \"Add a new pet to the store\"\n" +
+                "      parameters:\n" +
+                "      - description: \"Pet object that needs to be added to the store\"\n" +
+                "        required: true\n" +
+                "        explode: false\n" +
+                "        schema:\n" +
+                "          $ref: \"#/components/schemas/Pet\"\n" +
+                "      responses:\n" +
+                "        405:\n" +
+                "          description: \"Invalid input\"\n" +
                 "  /pet/findByStatus:\n" +
                 "    get:\n" +
                 "      summary: \"Finds Pets by status\"\n" +
