@@ -66,6 +66,7 @@ public class PetResource {
             responses = {
                     @ApiResponse(responseCode = "405", description = "Invalid input")
             })
+    @Path("/add")
     public Response addPet(
             @Parameter(description = "Pet object that needs to be added to the store", required = true) Pet pet) {
         petData.addPet(pet);
@@ -78,6 +79,7 @@ public class PetResource {
                     @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
                     @ApiResponse(responseCode = "404", description = "Pet not found"),
                     @ApiResponse(responseCode = "405", description = "Validation exception")})
+    @Path("/update")
     public Response updatePet(
             @Parameter(description = "Pet object that needs to be added to the store", required = true) Pet pet) {
         petData.addPet(pet);

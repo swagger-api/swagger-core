@@ -82,6 +82,9 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 pp.setIn(FORM_PARAM);
                 pp.setName(param.value());
                 parameter = pp;
+            } else if (annotation instanceof io.swagger.oas.annotations.Parameter) {
+                Parameter pp = new Parameter();
+                parameter = pp;
             } else {
                 handleAdditionalAnnotation(parameters, annotation, type, typesToSkip);
             }

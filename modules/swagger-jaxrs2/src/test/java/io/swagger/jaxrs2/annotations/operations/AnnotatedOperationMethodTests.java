@@ -215,9 +215,27 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "          description: \"Invalid ID supplied\"\n" +
                 "        404:\n" +
                 "          description: \"Pet not found\"\n" +
-                "  /pet:\n" +
+                "  /pet/add:\n" +
+                "    post:\n" +
+                "      summary: \"Add a new pet to the store\"\n" +
+                "      parameters:\n" +
+                "      - description: \"Pet object that needs to be added to the store\"\n" +
+                "        required: true\n" +
+                "        explode: false\n" +
+                "        schema:\n" +
+                "          $ref: \"#/components/schemas/Pet\"\n" +
+                "      responses:\n" +
+                "        405:\n" +
+                "          description: \"Invalid input\"\n" +
+                "  /pet/update:\n" +
                 "    put:\n" +
                 "      summary: \"Update an existing pet\"\n" +
+                "      parameters:\n" +
+                "      - description: \"Pet object that needs to be added to the store\"\n" +
+                "        required: true\n" +
+                "        explode: false\n" +
+                "        schema:\n" +
+                "          $ref: \"#/components/schemas/Pet\"\n" +
                 "      responses:\n" +
                 "        400:\n" +
                 "          description: \"Invalid ID supplied\"\n" +

@@ -347,23 +347,26 @@ public class OperationParser {
         if (annotationContent == null) {
             return Optional.empty();
         }
-        if (StringUtils.isBlank(annotationContent.mediaType())) {
-            return Optional.empty();
-        }
+
         Content content = new Content();
         MediaType mediaType = new MediaType();
         Class<?> schemaImplementation = annotationContent.schema().implementation();
+        Map<String, Schema> schemaMap;
         if (schemaImplementation != Void.class) {
-            Map<String, Schema> schemaMap = ModelConverters.getInstance().readAll(schemaImplementation);
+            schemaMap = ModelConverters.getInstance().readAll(schemaImplementation);
             schemaMap.forEach((k, v) -> mediaType.setSchema(v));
-            content.addMediaType(annotationContent.mediaType(), mediaType);
         } else {
             getSchemaFromAnnotation(annotationContent.schema()).ifPresent(mediaType::setSchema);
+        }
+        if (StringUtils.isNotBlank(annotationContent.mediaType())) {
             content.addMediaType(annotationContent.mediaType(), mediaType);
         }
         ExampleObject[] examples = annotationContent.examples();
         for (ExampleObject example : examples) {
             getMediaType(mediaType, example).ifPresent(mediaTypeObject -> content.addMediaType(annotationContent.mediaType(), mediaTypeObject));
+        }
+        if (content.size() == 0) {
+            return Optional.empty();
         }
         return Optional.of(content);
     }
