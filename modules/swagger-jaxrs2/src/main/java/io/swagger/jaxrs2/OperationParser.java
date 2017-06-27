@@ -9,7 +9,6 @@ import io.swagger.oas.models.info.Contact;
 import io.swagger.oas.models.info.Info;
 import io.swagger.oas.models.info.License;
 import io.swagger.oas.models.links.Link;
-import io.swagger.oas.models.links.LinkParameter;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.MediaType;
 import io.swagger.oas.models.media.Schema;
@@ -304,7 +303,7 @@ public class OperationParser {
         return Optional.of(requestBodyObject);
     }
 
-    public static Optional<ApiResponses> getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses, Map<String, Link> links) {
+    public static Optional<ApiResponses> getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses) {
         if (responses == null) {
             return Optional.empty();
         }
@@ -314,11 +313,7 @@ public class OperationParser {
             getContent(response.content()).ifPresent(apiResponseObject::content);
             if (StringUtils.isNotBlank(response.description())) {
                 apiResponseObject.setDescription(response.description());
-                if (links != null && links.size() > 0) {
-                    if ("default".equals(response.responseCode()) || "200".equals(response.responseCode())) {
-                        apiResponseObject.setLinks(links);
-                    }
-                }
+                getLinks(response.links()).ifPresent(apiResponseObject::setLinks);
             }
             if (StringUtils.isNotBlank(response.responseCode())) {
                 apiResponsesObject.addApiResponse(response.responseCode(), apiResponseObject);
@@ -482,7 +477,7 @@ public class OperationParser {
             getLink(link).ifPresent(linkResult -> linkMap.put(link.name(), linkResult));
         }
         if (linkMap.size() == 0) {
-            Optional.empty();
+            return Optional.empty();
         }
         return Optional.of(linkMap);
     }

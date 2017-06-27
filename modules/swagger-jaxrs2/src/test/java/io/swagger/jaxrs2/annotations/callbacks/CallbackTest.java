@@ -42,6 +42,7 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "        schema:\n" +
                 "          type: \"string\"\n" +
                 "          description: \"the URL to call with response data\"\n" +
+                /*"          readOnly: true\n" +*/
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: \"no description\"\n" +

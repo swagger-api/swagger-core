@@ -16,6 +16,7 @@
 
 package io.swagger.oas.annotations.responses;
 
+import io.swagger.oas.annotations.links.Link;
 import io.swagger.oas.annotations.media.Content;
 
 import java.lang.annotation.ElementType;
@@ -25,9 +26,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 
  *
- * 
+ *
+ *
  **/
 
 
@@ -36,7 +37,7 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface ApiResponse {
   /**
-   * 
+   *
    **/
   String description() default "";
 
@@ -46,7 +47,12 @@ public @interface ApiResponse {
   String responseCode() default "";
 
   /**
-   * 
+   *
+   **/
+  Link[] links() default @Link();
+
+  /**
+   *
    **/
   Content content() default @Content();
 

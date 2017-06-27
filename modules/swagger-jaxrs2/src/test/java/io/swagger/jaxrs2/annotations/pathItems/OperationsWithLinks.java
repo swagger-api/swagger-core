@@ -4,6 +4,8 @@ import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.links.Link;
 import io.swagger.oas.annotations.links.LinkParameters;
+import io.swagger.oas.annotations.media.Content;
+import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
 import org.testng.annotations.Test;
 
@@ -14,13 +16,28 @@ import javax.ws.rs.QueryParam;
 import static org.testng.Assert.assertEquals;
 
 public class OperationsWithLinks extends AbstractAnnotationTest {
-    @Test(enabled = false, description = "Shows creating simple links")
+    @Test(description = "Shows creating simple links")
     public void createOperationWithLinks() {
         String openApiYAML = readIntoYaml(ClassWithOperationAndLinks.class);
-        int start = openApiYAML.indexOf("/users:");
+        int start = openApiYAML.indexOf("/addresses:");
         int end = openApiYAML.length() - 1;
 
-        String expectedYAML = "/users:\n" +
+        String expectedYAML = "/addresses:\n" +
+                "    get:\n" +
+                "      operationId: \"getAddress\"\n" +
+                "      parameters:\n" +
+                "      - name: \"userId\"\n" +
+                "        in: \"query\"\n" +
+                "        schema:\n" +
+                "          type: \"string\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: \"no description\"\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/Address\"\n" +
+                "  /users:\n" +
                 "    get:\n" +
                 "      operationId: \"getUser\"\n" +
                 "      parameters:\n" +
@@ -31,26 +48,15 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: \"no description\"\n" +
-                "          schema:\n" +
-                "            $ref: \"#/components/schemas/User\"\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/User\"\n" +
                 "          links:\n" +
                 "            address:\n" +
                 "              operationId: \"getAddress\"\n" +
                 "              parameters:\n" +
-                "                userId: \"$request.query.userId\"\n" +
-                "/addresses:\n" +
-                "    get:\n" +
-                "      operationId: \"getAddress\"\n" +
-                "      parameters:\n" +
-                "      - in: \"query\"\n" +
-                "        name: \"userId\"\n" +
-                "        schema:\n" +
-                "          type: \"string\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: \"no description\"\n" +
-                "          schema:\n" +
-                "            $ref: \"#/components/schemas/Address\"";
+                "                userId: \"$request.query.userId\"";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(extractedYAML, expectedYAML);
@@ -60,15 +66,17 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
         @Path("/users")
         @Operation(operationId = "getUser",
                 responses = {
-                        @ApiResponse(description = "no description")},
-                links = {
-                        @Link(
-                                name = "address",
-                                operationId = "getAddress",
-                                parameters = @LinkParameters(
-                                        name = "userId",
-                                        expression = "$request.query.userId"))
-                })
+                        @ApiResponse(description = "no description",
+                                content = @Content(mediaType = "*/*", schema = @Schema(ref = "#/components/schemas/User")),
+                                links = {
+                                        @Link(
+                                                name = "address",
+                                                operationId = "getAddress",
+                                                parameters = @LinkParameters(
+                                                        name = "userId",
+                                                        expression = "$request.query.userId"))
+                                })}
+        )
         @GET
         public User getUser(@QueryParam("userId") String userId) {
             return null;
@@ -76,8 +84,11 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
 
         @Path("/addresses")
         @Operation(operationId = "getAddress",
+
                 responses = {
-                        @ApiResponse(description = "no description")
+                        @ApiResponse(content = @Content(mediaType = "*/*",
+                                schema = @Schema(ref = "#/components/schemas/Address")),
+                                description = "no description")
                 })
         @GET
         public Address getAddress(@QueryParam("userId") String userId) {
@@ -119,10 +130,19 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
 
     static class ClassWithOperationAndLinkReferences {
         @Path("/users")
-        @Operation(links = {
-                @Link(
-                        operationRef = "#/components/links/MyLink")
-        })
+        @Operation(operationId = "getUser",
+                responses = {
+                        @ApiResponse(description = "no description",
+                                links = {
+                                        @Link(
+                                                name = "user",
+                                                operationId = "getUser",
+                                                operationRef = "#/components/links/MyLink",
+                                                parameters = @LinkParameters(
+                                                        name = "userId",
+                                                        expression = "$request.query.userId"))
+                                })}
+        )
         public User getUser(@QueryParam("userId") String userId) {
             return null;
         }

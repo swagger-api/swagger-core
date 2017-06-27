@@ -17,7 +17,6 @@ import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.callbacks.Callback;
-import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
@@ -30,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -313,8 +311,7 @@ public class Reader {
         OperationParser.getTags(apiOperation.tags()).ifPresent(tag -> openApiTags.addAll(tag));
         OperationParser.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(operation::setExternalDocs);
         OperationParser.getRequestBody(apiOperation.requestBody()).ifPresent(operation::setRequestBody);
-        Optional<Map<String, Link>> links = OperationParser.getLinks(apiOperation.links());
-        OperationParser.getApiResponses(apiOperation.responses(), links.get()).ifPresent(operation::setResponses);
+        OperationParser.getApiResponses(apiOperation.responses()).ifPresent(operation::setResponses);
         OperationParser.getServers(apiOperation.servers()).ifPresent(operation::setServers);
         OperationParser.getParametersList(apiOperation.parameters()).ifPresent(operation::setParameters);
     }

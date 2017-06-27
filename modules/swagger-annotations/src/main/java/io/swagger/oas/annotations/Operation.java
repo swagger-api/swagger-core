@@ -16,7 +16,6 @@
 
 package io.swagger.oas.annotations;
 
-import io.swagger.oas.annotations.links.Link;
 import io.swagger.oas.annotations.parameters.RequestBody;
 import io.swagger.oas.annotations.responses.ApiResponse;
 import io.swagger.oas.annotations.servers.Server;
@@ -59,7 +58,7 @@ public @interface Operation {
   String description() default "";
 
   /**
-   * 
+   *
    **/
   ExternalDocumentation externalDocs() default @ExternalDocumentation();
 
@@ -74,19 +73,14 @@ public @interface Operation {
   Parameter[] parameters() default @Parameter();
 
   /**
-   * 
+   *
    **/
   RequestBody requestBody() default @RequestBody();
 
   /**
-   * 
+   *
    **/
   ApiResponse[] responses() default @ApiResponse();
-
-  /**
-   * 
-   **/
-  Link[] links() default @Link();
 
   /**
    * allows an operation to be marked as deprecated.  Alternatively use the @Deprecated annotation
@@ -94,7 +88,7 @@ public @interface Operation {
   boolean deprecated() default false;
 
   /**
-   * 
+   *
    **/
   Server[] servers() default @Server();
 
