@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.swagger.oas.models.media.ArraySchema;
 import io.swagger.oas.models.media.BooleanSchema;
+import io.swagger.oas.models.media.ComposedSchema;
 import io.swagger.oas.models.media.DateSchema;
 import io.swagger.oas.models.media.DateTimeSchema;
 import io.swagger.oas.models.media.EmailSchema;
@@ -39,16 +40,18 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
     public Schema deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
         JsonNode node = jp.getCodec().readTree(jp);
-        JsonNode sub = node.get("$ref");
         JsonNode allOf = node.get("allOf");
+        JsonNode anyOf = node.get("anyOf");
+        JsonNode oneOf = node.get("oneOf");
 
-        // TODO
+        Schema schema = null;
 
-        /*
-        if (sub != null) {
-            return Json.mapper().convertValue(sub, RefModel.class);
-        } else if (allOf != null) {
-            ComposedModel model = null;
+        if (allOf != null || anyOf != null || oneOf != null) {
+
+            ComposedSchema composedSchema = Json.mapper().convertValue(node, ComposedSchema.class);
+
+            // TODO do we support stuff similar to below?
+/*
             // we only support one parent, no multiple inheritance or composition
             model = Json.mapper().convertValue(node, ComposedModel.class);
             List<Model> allComponents = model.getAllOf();
@@ -69,66 +72,56 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
                     model.setChild(new ModelImpl());
                 }
             }
-            return model;
-        } else
-        {*/
-        sub = node.get("type");
-        String format = node.get("format") == null ? "" : node.get("format").textValue();
+*/
+            return composedSchema;
 
-        Schema model = null;
+        } else {
 
-        if (sub != null && "array".equals(((TextNode) sub).textValue())) {
-            model = Json.mapper().convertValue(node, ArraySchema.class);
-        } else if(sub != null) {
-            if (sub.textValue().equals("integer")) {
-                model = Json.mapper().convertValue(node, IntegerSchema.class);
-                if(StringUtils.isBlank(format)) {
-                    model.setFormat(null);
+            JsonNode type = node.get("type");
+            String format = node.get("format") == null ? "" : node.get("format").textValue();
+
+            if (type != null && "array".equals(((TextNode) type).textValue())) {
+                schema = Json.mapper().convertValue(node, ArraySchema.class);
+            } else if (type != null) {
+                if (type.textValue().equals("integer")) {
+                    schema = Json.mapper().convertValue(node, IntegerSchema.class);
+                    if (StringUtils.isBlank(format)) {
+                        schema.setFormat(null);
+                    }
+                } else if (type.textValue().equals("number")) {
+                    schema = Json.mapper().convertValue(node, NumberSchema.class);
+                } else if (type.textValue().equals("boolean")) {
+                    schema = Json.mapper().convertValue(node, BooleanSchema.class);
+                } else if (type.textValue().equals("string")) {
+                    if ("date".equals(format)) {
+                        schema = Json.mapper().convertValue(node, DateSchema.class);
+                    } else if ("date-time".equals(format)) {
+                        schema = Json.mapper().convertValue(node, DateTimeSchema.class);
+                    } else if ("email".equals(format)) {
+                        schema = Json.mapper().convertValue(node, EmailSchema.class);
+                    } else if ("password".equals(format)) {
+                        schema = Json.mapper().convertValue(node, PasswordSchema.class);
+                    } else if ("uuid".equals(format)) {
+                        schema = Json.mapper().convertValue(node, UUIDSchema.class);
+                    } else {
+                        schema = Json.mapper().convertValue(node, StringSchema.class);
+                    }
+                } else if (type.textValue().equals("object")) {
+                    JsonNode additionalProperties = node.get("additionalProperties");
+                    if (additionalProperties != null) {
+                        Schema innerSchema = Json.mapper().convertValue(additionalProperties, Schema.class);
+                        MapSchema ms = Json.mapper().convertValue(node, MapSchema.class);
+                        ms.setAdditionalProperties(innerSchema);
+                        schema = ms;
+                    } else {
+                        schema = Json.mapper().convertValue(node, ObjectSchema.class);
+                    }
                 }
+            } else if (node.get("$ref") != null) {
+                schema = new Schema().$ref(node.get("$ref").asText());
+            } else { // assume object
+                schema = Json.mapper().convertValue(node, ObjectSchema.class);
             }
-            else if (sub.textValue().equals("number")) {
-                model = Json.mapper().convertValue(node, NumberSchema.class);
-            }
-            else if (sub.textValue().equals("boolean")) {
-                model = Json.mapper().convertValue(node, BooleanSchema.class);
-            }
-            else if (sub.textValue().equals("string")) {
-                if("date".equals(format)) {
-                    model = Json.mapper().convertValue(node, DateSchema.class);
-                }
-                else if("date-time".equals(format)) {
-                    model = Json.mapper().convertValue(node, DateTimeSchema.class);
-                }
-                else if("email".equals(format)) {
-                    model = Json.mapper().convertValue(node, EmailSchema.class);
-                }
-                else if("password".equals(format)) {
-                    model = Json.mapper().convertValue(node, PasswordSchema.class);
-                }
-                else if("uuid".equals(format)) {
-                    model = Json.mapper().convertValue(node, UUIDSchema.class);
-                }
-                else {
-                    model = Json.mapper().convertValue(node, StringSchema.class);
-                }
-            }
-            else if (sub.textValue().equals("object")) {
-                JsonNode additionalProperties = node.get("additionalProperties");
-                if(additionalProperties != null) {
-                    Schema innerSchema = Json.mapper().convertValue(additionalProperties, Schema.class);
-                    MapSchema ms = Json.mapper().convertValue(node, MapSchema.class);
-                    ms.setAdditionalProperties(innerSchema);
-                    model = ms;
-                }
-                else {
-                    model = Json.mapper().convertValue(node, ObjectSchema.class);
-                }
-            }
-        } else if(node.get("$ref") != null) {
-            model = new Schema().$ref(node.get("$ref").asText());
-        }
-        else { // assume object
-            model = Json.mapper().convertValue(node, ObjectSchema.class);
         }
 
         // check extensions
@@ -142,7 +135,7 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
                     value =  null;
                 }
                 if(value instanceof TextNode) {
-                    model.addExtension(key, ((TextNode)value).asText());
+                    schema.addExtension(key, ((TextNode)value).asText());
                 }
                 else {
                     if(value instanceof ObjectNode) {
@@ -166,11 +159,11 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
                     else if (value instanceof DoubleNode) {
                         value = ((DoubleNode)value).doubleValue();
                     }
-                    model.addExtension(key, value);
+                    schema.addExtension(key, value);
                 }
             }
         }
 
-        return model;
+        return schema;
     }
 }

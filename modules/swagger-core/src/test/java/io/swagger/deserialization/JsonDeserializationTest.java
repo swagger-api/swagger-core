@@ -2,6 +2,7 @@ package io.swagger.deserialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.media.ComposedSchema;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.util.Json;
 import io.swagger.util.ResourceUtils;
@@ -26,8 +27,13 @@ public class JsonDeserializationTest {
     @Test(description = "it should deserialize the composition test")
     public void testCompositionTest() throws IOException {
         final String json = ResourceUtils.loadClassResource(getClass(), "specFiles/compositionTest-3.0.json");
-        final Object swagger = m.readValue(json, OpenAPI.class);
-        assertTrue(swagger instanceof OpenAPI);
+        final Object deserialized = m.readValue(json, OpenAPI.class);
+        assertTrue(deserialized instanceof OpenAPI);
+        OpenAPI openAPI = (OpenAPI)deserialized;
+        Schema lizardSchema = openAPI.getComponents().getSchemas().get("Lizard");
+        assertTrue(lizardSchema instanceof ComposedSchema);
+        assertEquals(((ComposedSchema)lizardSchema).getAllOf().size(), 2);
+
     }
 
     @Test(description = "it should deserialize a simple ObjectProperty")

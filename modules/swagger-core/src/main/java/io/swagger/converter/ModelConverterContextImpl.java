@@ -93,7 +93,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 //                resolvedImpl = ((ComposedModel) resolved).getChild();
 //            }
 //            if (resolvedImpl instanceof ModelImpl) {
-//                ModelImpl impl = (ModelImpl) resolvedIm
+//                ModelImpl impl = (ModelImpl) resolvedImpl
 
 //                if (impl.getName() != null) {
 //                    modelByName.put(impl.getName(), resolved);
