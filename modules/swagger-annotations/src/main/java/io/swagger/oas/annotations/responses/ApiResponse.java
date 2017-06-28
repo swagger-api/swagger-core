@@ -36,24 +36,24 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ApiResponse {
-  /**
-   *
-   **/
-  String description() default "";
+    /**
+     *
+     **/
+    String description() default "";
 
-  /**
-   * the HTTP response code, or default, for the supplied response
-   **/
-  String responseCode() default "";
+    /**
+     * the HTTP response code, or default, for the supplied response
+     **/
+    String responseCode() default "";
 
-  /**
-   *
-   **/
-  Link[] links() default @Link();
+    /**
+     *
+     **/
+    Link[] links() default @Link();
 
-  /**
-   *
-   **/
-  Content content() default @Content();
+    /**
+     *
+     **/
+    Content content() default @Content();
 
 }

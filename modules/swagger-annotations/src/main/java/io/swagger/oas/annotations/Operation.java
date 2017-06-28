@@ -33,63 +33,63 @@ import java.lang.annotation.Target;
  **/
 
 
-@Target({ ElementType.METHOD })
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Operation {
-  /**
-   * the HTTP method for this operation
-   **/
-  String method() default "";
+    /**
+     * the HTTP method for this operation
+     **/
+    String method() default "";
 
-  /**
-   * Tags can be used for logical grouping of operations by resources or any other qualifier.
-   **/
-  String[] tags() default "";
+    /**
+     * Tags can be used for logical grouping of operations by resources or any other qualifier.
+     **/
+    String[] tags() default "";
 
-  /**
-   * Provides a brief description of this operation. Should be 120 characters or less for proper visibility in Swagger-UI.
-   **/
-  String summary() default "";
+    /**
+     * Provides a brief description of this operation. Should be 120 characters or less for proper visibility in Swagger-UI.
+     **/
+    String summary() default "";
 
-  /**
-   * A verbose description of the operation.
-   **/
-  String description() default "";
+    /**
+     * A verbose description of the operation.
+     **/
+    String description() default "";
 
-  /**
-   *
-   **/
-  ExternalDocumentation externalDocs() default @ExternalDocumentation();
+    /**
+     *
+     **/
+    ExternalDocumentation externalDocs() default @ExternalDocumentation();
 
-  /**
-   * The operationId is used by third-party tools to uniquely identify this operation.
-   **/
-  String operationId() default "";
+    /**
+     * The operationId is used by third-party tools to uniquely identify this operation.
+     **/
+    String operationId() default "";
 
-  /**
-   * An optional array of parameters which will be added to any automatically detected parameters in the method itself
-   **/
-  Parameter[] parameters() default @Parameter();
+    /**
+     * An optional array of parameters which will be added to any automatically detected parameters in the method itself
+     **/
+    Parameter[] parameters() default @Parameter();
 
-  /**
-   *
-   **/
-  RequestBody requestBody() default @RequestBody();
+    /**
+     *
+     **/
+    RequestBody requestBody() default @RequestBody();
 
-  /**
-   *
-   **/
-  ApiResponse[] responses() default @ApiResponse();
+    /**
+     *
+     **/
+    ApiResponse[] responses() default @ApiResponse();
 
-  /**
-   * allows an operation to be marked as deprecated.  Alternatively use the @Deprecated annotation
-   **/
-  boolean deprecated() default false;
+    /**
+     * allows an operation to be marked as deprecated.  Alternatively use the @Deprecated annotation
+     **/
+    boolean deprecated() default false;
 
-  /**
-   *
-   **/
-  Server[] servers() default @Server();
+    /**
+     *
+     **/
+    Server[] servers() default @Server();
 
 }
