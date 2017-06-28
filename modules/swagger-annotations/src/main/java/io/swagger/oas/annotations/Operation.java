@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 
 /**
  * Operation Annotation
- * <p>
+ *
  * TODO: longer description
  **/
 
@@ -81,7 +81,6 @@ public @interface Operation {
      *
      **/
     ApiResponse[] responses() default @ApiResponse();
-
 
     /**
      * allows an operation to be marked as deprecated.  Alternatively use the @Deprecated annotation
