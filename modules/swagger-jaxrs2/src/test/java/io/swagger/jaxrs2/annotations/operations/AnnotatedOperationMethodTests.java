@@ -242,13 +242,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                type: \"object\"\n" +
-                "                properties:\n" +
-                "                  id:\n" +
-                "                    type: \"integer\"\n" +
-                "                    format: \"int64\"\n" +
-                "                  name:\n" +
-                "                    type: \"string\"\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "        400:\n" +
                 "          description: \"Invalid ID supplied\"\n" +
                 "        404:\n" +
@@ -304,13 +298,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                type: \"object\"\n" +
-                "                properties:\n" +
-                "                  id:\n" +
-                "                    type: \"integer\"\n" +
-                "                    format: \"int64\"\n" +
-                "                  name:\n" +
-                "                    type: \"string\"\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "        400:\n" +
                 "          description: \"Invalid status value\"\n" +
                 "  /pet/findByTags:\n" +
@@ -331,13 +319,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                type: \"object\"\n" +
-                "                properties:\n" +
-                "                  id:\n" +
-                "                    type: \"integer\"\n" +
-                "                    format: \"int64\"\n" +
-                "                  name:\n" +
-                "                    type: \"string\"\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "        400:\n" +
                 "          description: \"Invalid tag value\"\n" +
                 "components:\n" +

@@ -355,12 +355,11 @@ public class OperationParser {
         if (schemaImplementation != Void.class) {
             schemaMap = ModelConverters.getInstance().readAll(schemaImplementation);
             schemaMap.forEach((key, schema) -> {
-                //TODO implement Refs
-                Schema schemaObject = new Schema();
-                schemaObject.set$ref(COMPONENTES_REF + key);
-                mediaType.setSchema(schema);
                 components.addSchemas(key, schema);
             });
+            Schema schemaObject = new Schema();
+            schemaObject.set$ref(COMPONENTES_REF + schemaImplementation.getSimpleName());
+            mediaType.setSchema(schemaObject);
         } else {
             getSchemaFromAnnotation(annotationContent.schema()).ifPresent(mediaType::setSchema);
         }

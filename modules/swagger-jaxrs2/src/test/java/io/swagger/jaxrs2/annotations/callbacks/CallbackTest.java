@@ -21,7 +21,7 @@ public class CallbackTest extends AbstractAnnotationTest {
     public void testSimpleCallback() {
         String openApiYAML = readIntoYaml(SimpleCallback.class);
         int start = openApiYAML.indexOf("/test:");
-        int end = openApiYAML.indexOf("components:");
+        int end = openApiYAML.length() - 1;
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "/test:\n" +
                 "    post:\n" +
@@ -49,10 +49,7 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                type: \"object\"\n" +
-                "                properties:\n" +
-                "                  subscriptionId:\n" +
-                "                    type: \"string\"\n" +
+                "                $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "      callbacks:\n" +
                 "        subscription:\n" +
                 "          http://$request.query.url:\n" +
@@ -75,7 +72,19 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "                  description: \"Return this code to unsubscribe from future data updates\"\n" +
                 "                default:\n" +
                 "                  description: \"All other response codes will disable this callback\\\n" +
-                "                    \\ subscription\"\n";
+                "                    \\ subscription\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    string:\n" +
+                "      type: \"string\"\n" +
+                "      description: \"the generated UUID\"\n" +
+                "      format: \"uuid\"\n" +
+                "      readOnly: true\n" +
+                "    SubscriptionResponse:\n" +
+                "      type: \"object\"\n" +
+                "      properties:\n" +
+                "        subscriptionId:\n" +
+                "          type: \"string\"";
         assertEquals(extractedYAML, expectedYAML);
     }
 
