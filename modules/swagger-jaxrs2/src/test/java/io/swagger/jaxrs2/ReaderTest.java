@@ -1,5 +1,6 @@
 package io.swagger.jaxrs2;
 
+import io.swagger.jaxrs2.config.OpenAPIConfig;
 import io.swagger.jaxrs2.resources.BasicClass;
 import io.swagger.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.jaxrs2.resources.CompleteFieldsResource;
@@ -28,6 +29,8 @@ import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.security.SecurityScheme;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -86,8 +89,8 @@ public class ReaderTest {
 
 	@Test(description = "test a simple resource class")
 	public void testSimpleReadClass() {
-		Reader reader = new Reader(new OpenAPI(), null);
-		OpenAPI openAPI = reader.read(BasicFieldsResource.class);
+	    Reader reader = new Reader(new OpenAPIConfig().setClasses(ImmutableSet.of(BasicFieldsResource.class)));
+		OpenAPI openAPI = reader.read();
 		Paths paths = openAPI.getPaths();
 		assertEquals(PATHS_NUMBER, paths.size());
 		PathItem pathItem = paths.get(PATH_REF);
@@ -103,8 +106,8 @@ public class ReaderTest {
 
 	@Test(description = "scan methods")
 	public void testCompleteReadClass() {
-		Reader reader = new Reader(new OpenAPI(), null);
-		OpenAPI openAPI = reader.read(CompleteFieldsResource.class);
+		Reader reader = new Reader(new OpenAPIConfig().setClasses(ImmutableSet.of(CompleteFieldsResource.class)));
+		OpenAPI openAPI = reader.read();
 		Paths paths = openAPI.getPaths();
 		assertEquals(PATHS_NUMBER, paths.size());
 		PathItem pathItem = paths.get(PATH_REF);
@@ -132,7 +135,7 @@ public class ReaderTest {
 
 	@Test(description = "scan methods")
 	public void testScanMethods() {
-		Reader reader = new Reader(new OpenAPI(), null);
+		Reader reader = new Reader(new OpenAPIConfig());
 		Method[] methods = SimpleMethods.class.getMethods();
 		for (final Method method : methods) {
 			if (isValidRestPath(method)) {
@@ -144,7 +147,7 @@ public class ReaderTest {
 
 	@Test(description = "Get a Summary and Description")
 	public void testGetSummaryAndDescription() {
-		Reader reader = new Reader(new OpenAPI(), null);
+		Reader reader = new Reader(new OpenAPIConfig());
 		Method[] methods = BasicFieldsResource.class.getMethods();
 		Operation operation = reader.parseMethod(methods[0]);
 		assertNotNull(operation);
@@ -154,7 +157,7 @@ public class ReaderTest {
 
 	@Test(description = "Do nothing because there aren't Operation Annotations")
 	public void testBasicEmptyOperation() {
-		Reader reader = new Reader(new OpenAPI(), null);
+		Reader reader = new Reader(new OpenAPIConfig());
 		Method[] methods = BasicClass.class.getMethods();
 		Operation operation = reader.parseMethod(methods[0]);
 		assertNull(operation.getCallbacks());
@@ -171,8 +174,8 @@ public class ReaderTest {
 
 	@Test(description = "Get a Duplicated Operation Id")
 	public void testResolveDuplicatedOperationId() {
-		Reader reader = new Reader(new OpenAPI(), null);
-		OpenAPI openAPI = reader.read(DuplicatedOperationIdResource.class);
+		Reader reader = new Reader(new OpenAPIConfig().setClasses(ImmutableSet.of(DuplicatedOperationIdResource.class)));
+		OpenAPI openAPI = reader.read();
 
 		Paths paths = openAPI.getPaths();
 		assertNotNull(paths);
@@ -189,8 +192,8 @@ public class ReaderTest {
 		classes.add(SecurityResource.class);
 		classes.add(DuplicatedSecurityResource.class);
 
-		Reader reader = new Reader(new OpenAPI(), null);
-		OpenAPI openAPI = reader.read(classes);
+		Reader reader = new Reader(new OpenAPIConfig().setClasses(classes));
+		OpenAPI openAPI = reader.read();
 		assertNotNull(openAPI);
 		Components components = openAPI.getComponents();
 		assertNotNull(components);
@@ -201,7 +204,7 @@ public class ReaderTest {
 
 	@Test(description = "Deprecated Method")
 	public void testDeprecatedMethod() {
-		Reader reader = new Reader(new OpenAPI(), null);
+		Reader reader = new Reader(new OpenAPIConfig());
 		Method[] methods = DeprecatedFieldsResource.class.getMethods();
 		Operation deprecatedOperation = reader.parseMethod(methods[0]);
 		assertNotNull(deprecatedOperation);
@@ -210,7 +213,7 @@ public class ReaderTest {
 
 	@Test(description = "Get tags")
 	public void testGetTags() {
-		Reader reader = new Reader(new OpenAPI(), null);
+		Reader reader = new Reader(new OpenAPIConfig());
 		Method[] methods = TagsResource.class.getMethods();
 		Operation operation = reader.parseMethod(methods[0]);
 		assertNotNull(operation);
@@ -221,7 +224,7 @@ public class ReaderTest {
 
 	@Test(description = "Responses")
 	public void testGetResponses() {
-		Reader reader = new Reader(new OpenAPI(), null);
+		Reader reader = new Reader(new OpenAPIConfig());
 
 		Method[] methods = ResponsesResource.class.getMethods();
 
@@ -238,7 +241,7 @@ public class ReaderTest {
 
 	@Test(description = "Request Body")
 	public void testGetRequestBody() {
-		Reader reader = new Reader(new OpenAPI(), null);
+		Reader reader = new Reader(new OpenAPIConfig());
 
 		Method[] methods = RequestBodyResource.class.getMethods();
 
@@ -251,7 +254,7 @@ public class ReaderTest {
 
 	@Test(description = "External Docs")
 	public void testGetExternalDocs() {
-		Reader reader = new Reader(new OpenAPI(), null);
+		Reader reader = new Reader(new OpenAPIConfig());
 
 		Method[] methods = ExternalDocsReference.class.getMethods();
 		Operation externalDocsOperation = reader.parseMethod(methods[0]);
@@ -263,7 +266,7 @@ public class ReaderTest {
 
 	@Test(description = "Security Requirement")
 	public void testSecurityRequirement() {
-		Reader reader = new Reader(new OpenAPI(), null);
+		Reader reader = new Reader(new OpenAPIConfig());
 		Method[] methods = SecurityResource.class.getMethods();
 
 		Operation securityOperation = reader.parseMethod(methods[0]);
@@ -280,7 +283,7 @@ public class ReaderTest {
 
 	@Test(description = "Callbacks")
 	public void testGetCallbacks() {
-		Reader reader = new Reader(new OpenAPI(), null);
+		Reader reader = new Reader(new OpenAPIConfig());
 		Method[] methods = SimpleCallbackResource.class.getMethods();
 		Operation callbackOperation = reader.parseMethod(methods[0]);
 		assertNotNull(callbackOperation);
@@ -305,8 +308,8 @@ public class ReaderTest {
 
 	@Test(description = "Get the Param of an operation")
 	public void testSubscriptionIdParam() {
-		Reader reader = new Reader(new OpenAPI(), null);
-		OpenAPI openAPI = reader.read(BasicFieldsResource.class);
+		Reader reader = new Reader(new OpenAPIConfig().setClasses(ImmutableSet.of(BasicFieldsResource.class)));
+		OpenAPI openAPI = reader.read();
 		assertNotNull(openAPI);
 		Paths openAPIPaths = openAPI.getPaths();
 		assertNotNull(openAPIPaths);
