@@ -21,7 +21,7 @@ public class CallbackTest extends AbstractAnnotationTest {
     public void testSimpleCallback() {
         String openApiYAML = readIntoYaml(SimpleCallback.class);
         int start = openApiYAML.indexOf("/test:");
-        int end = openApiYAML.length() - 1;
+        int end = openApiYAML.indexOf("components:");
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "/test:\n" +
                 "    post:\n" +
@@ -75,7 +75,7 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "                  description: \"Return this code to unsubscribe from future data updates\"\n" +
                 "                default:\n" +
                 "                  description: \"All other response codes will disable this callback\\\n" +
-                "                    \\ subscription\"";
+                "                    \\ subscription\"\n";
         assertEquals(extractedYAML, expectedYAML);
     }
 

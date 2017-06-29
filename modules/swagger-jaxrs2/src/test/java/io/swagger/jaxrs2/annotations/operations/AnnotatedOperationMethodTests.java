@@ -15,7 +15,6 @@ import javax.ws.rs.Path;
 import static org.testng.Assert.assertEquals;
 
 public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
-
     @Test
     public void testSimpleGetOperation() {
         String openApiYAML = readIntoYaml(SimpleGetOperationTest.class);
@@ -54,10 +53,39 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     }
 
     @Test
+    public void testSimpleGetOperationWithoutResponses() {
+        String openApiYAML = readIntoYaml(SimpleGetWithoutResponses.class);
+        int start = openApiYAML.indexOf("get:");
+        int end = openApiYAML.length() - 1;
+
+        String expectedYAML = "get:\n" +
+                "      summary: \"Simple get operation\"\n" +
+                "      description: \"Defines a simple get operation with no inputs or responses\"\n" +
+                "      operationId: \"getWithNoParametersAndNoResponses\"\n" +
+                "      deprecated: true";
+        String extractedYAML = openApiYAML.substring(start, end);
+
+        assertEquals(extractedYAML, expectedYAML);
+    }
+
+    static class SimpleGetWithoutResponses {
+        @Operation(
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs or responses",
+                operationId = "getWithNoParametersAndNoResponses",
+                deprecated = true
+        )
+        @GET
+        @Path("/path")
+        public void simpleGet() {
+        }
+    }
+
+    @Test
     public void testGetOperationWithResponsePayloadAndAlternateCodes() {
         String openApiYAML = readIntoYaml(GetOperationWithResponsePayloadAndAlternateCodes.class);
         int start = openApiYAML.indexOf("get:");
-        int end = openApiYAML.length() - 1;
+        int end = openApiYAML.indexOf("components");
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "get:\n" +
                 "      summary: \"Simple get operation\"\n" +
@@ -80,7 +108,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "            '*/*':\n" +
                 "              schema:\n" +
                 "                type: \"object\"\n" +
-                "      deprecated: true";
+                "      deprecated: true\n";
 
         assertEquals(extractedYAML, expectedYAML);
     }
@@ -130,7 +158,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     public void testOperationWithResponseExamples() {
         String openApiYAML = readIntoYaml(GetOperationWithResponseExamples.class);
         int start = openApiYAML.indexOf("get:");
-        int end = openApiYAML.length() - 1;
+        int end = openApiYAML.indexOf("components");
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "get:\n" +
                 "      summary: \"Simple get operation\"\n" +
@@ -151,8 +179,9 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "                basic:\n" +
                 "                  summary: \"shows a basic example\"\n" +
                 "                  description: \"basic\"\n" +
-                "                  value: \"{\\\"id\\\": 19877734}\"\n" +
-                "      deprecated: true";
+                "                  value:\n" +
+                "                    id: 19877734\n" +
+                "      deprecated: true\n";
         assertEquals(extractedYAML, expectedYAML);
     }
 
@@ -204,7 +233,6 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "        in: \"path\"\n" +
                 "        description: \"ID of pet that needs to be fetched\"\n" +
                 "        required: true\n" +
-                "        explode: false\n" +
                 "        schema:\n" +
                 "          type: \"integer\"\n" +
                 "          format: \"int64\"\n" +
@@ -231,7 +259,6 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "      parameters:\n" +
                 "      - description: \"Pet object that needs to be added to the store\"\n" +
                 "        required: true\n" +
-                "        explode: false\n" +
                 "        schema:\n" +
                 "          $ref: \"#/components/schemas/Pet\"\n" +
                 "      responses:\n" +
@@ -246,7 +273,6 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "      parameters:\n" +
                 "      - description: \"Pet object that needs to be added to the store\"\n" +
                 "        required: true\n" +
-                "        explode: false\n" +
                 "        schema:\n" +
                 "          $ref: \"#/components/schemas/Pet\"\n" +
                 "      responses:\n" +
@@ -261,7 +287,6 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "        in: \"query\"\n" +
                 "        description: \"Status values that need to be considered for filter\"\n" +
                 "        required: true\n" +
-                "        explode: false\n" +
                 "        schema:\n" +
                 "          type: \"string\"\n" +
                 "      - name: \"skip\"\n" +
@@ -298,7 +323,6 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "        in: \"query\"\n" +
                 "        description: \"Tags to filter by\"\n" +
                 "        required: true\n" +
-                "        explode: false\n" +
                 "        schema:\n" +
                 "          type: \"string\"\n" +
                 "      responses:\n" +
@@ -315,7 +339,48 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "                  name:\n" +
                 "                    type: \"string\"\n" +
                 "        400:\n" +
-                "          description: \"Invalid tag value\"";
+                "          description: \"Invalid tag value\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Category:\n" +
+                "      type: \"object\"\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: \"integer\"\n" +
+                "          format: \"int64\"\n" +
+                "        name:\n" +
+                "          type: \"string\"\n" +
+                "    Tag:\n" +
+                "      type: \"object\"\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: \"integer\"\n" +
+                "          format: \"int64\"\n" +
+                "        name:\n" +
+                "          type: \"string\"\n" +
+                "    Pet:\n" +
+                "      type: \"object\"\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: \"integer\"\n" +
+                "          format: \"int64\"\n" +
+                "        category:\n" +
+                "          $ref: \"#/components/schemas/Category\"\n" +
+                "        name:\n" +
+                "          type: \"string\"\n" +
+                "        photoUrls:\n" +
+                "          type: \"array\"\n" +
+                "          items:\n" +
+                "            type: \"string\"\n" +
+                "        tags:\n" +
+                "          type: \"array\"\n" +
+                "          items:\n" +
+                "            $ref: \"#/components/schemas/Tag\"\n" +
+                "        status:\n" +
+                "          type: \"string\"\n" +
+                "          description: \"pet status in the store\"\n" +
+                "          enum:\n" +
+                "          - \"available,pending,sold\"";
         assertEquals(extractedYAML, expectedYAML);
     }
 }

@@ -51,6 +51,7 @@ public class Reader {
     private final ReaderConfig config;
 
     private OpenAPI openAPI;
+    private Components components;
     private Paths paths;
     private Set<Tag> openApiTags;
 
@@ -68,6 +69,7 @@ public class Reader {
         paths = new Paths();
         openApiTags = new LinkedHashSet<>();
         this.config = new DefaultReaderConfig();
+        components = new Components();
     }
 
     public OpenAPI getOpenAPI() {
@@ -116,22 +118,19 @@ public class Reader {
         io.swagger.oas.annotations.security.SecurityScheme apiSecurityScheme = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.security.SecurityScheme.class);
         io.swagger.oas.annotations.ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.ExternalDocumentation.class);
         io.swagger.oas.annotations.info.Info apiInfo = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.info.Info.class);
-        io.swagger.oas.annotations.media.Schema apiSchema = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.media.Schema.class);
 
         Optional<SecurityScheme> securityScheme = SecurityParser.getSecurityScheme(apiSecurityScheme);
-        Components components = new Components();
-        boolean isComponentEmpty = true;
         if (securityScheme.isPresent()) {
             Map<String, SecurityScheme> securitySchemeMap = new HashMap<>();
             if (StringUtils.isNotBlank(securityScheme.get().getName())) {
                 securitySchemeMap.put(securityScheme.get().getName(), securityScheme.get());
-                components.setSecuritySchemes(securitySchemeMap);
-                isComponentEmpty = false;
+                if (components.getSecuritySchemes() != null && components.getSecuritySchemes().size() != 0) {
+                    components.getSecuritySchemes().putAll(securitySchemeMap);
+                } else {
+                    components.setSecuritySchemes(securitySchemeMap);
+                }
             }
         }
-
-        OperationParser.getSchema(apiSchema).ifPresent(components::setSchemas);
-        mergeComponents(openAPI, components, isComponentEmpty);
 
         final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
 
@@ -204,6 +203,11 @@ public class Reader {
                     openAPI.setPaths(this.paths);
                 }
             }
+        }
+
+        if (components.getSecuritySchemes() != null && components.getSecuritySchemes().size() > 0 ||
+                components.getSchemas() != null && components.getSchemas().size() > 0) {
+            openAPI.setComponents(components);
         }
 
         ArrayList<Tag> tagList = new ArrayList<>();
@@ -315,10 +319,10 @@ public class Reader {
         ReaderUtils.getStringListFromStringArray(apiOperation.tags()).ifPresent(operation::setTags);
         OperationParser.getTags(apiOperation.tags()).ifPresent(tag -> openApiTags.addAll(tag));
         OperationParser.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(operation::setExternalDocs);
-        OperationParser.getRequestBody(apiOperation.requestBody()).ifPresent(operation::setRequestBody);
-        OperationParser.getApiResponses(apiOperation.responses()).ifPresent(operation::setResponses);
+        OperationParser.getRequestBody(apiOperation.requestBody(), components).ifPresent(operation::setRequestBody);
+        OperationParser.getApiResponses(apiOperation.responses(), components).ifPresent(operation::setResponses);
         OperationParser.getServers(apiOperation.servers()).ifPresent(operation::setServers);
-        OperationParser.getParametersList(apiOperation.parameters()).ifPresent(operation::setParameters);
+        OperationParser.getParametersList(apiOperation.parameters(), components).ifPresent(operation::setParameters);
     }
 
     protected String getOperationId(String operationId) {
@@ -384,7 +388,7 @@ public class Reader {
         }
     }
 
-    private void mergeComponents(OpenAPI openAPI, Components components, boolean isComponentEmpty) {
+    private void mergeComponents(OpenAPI openAPI, boolean isComponentEmpty) {
         Components openAPIComponent = openAPI.getComponents();
         if (!isComponentEmpty) {
             if (openAPIComponent != null) {
@@ -415,13 +419,9 @@ public class Reader {
                 if (components.getSchemas() != null) {
                     components.getSchemas().putAll(openAPIComponent.getSchemas());
                 }
-                if (components.getSecuritySchemes() != null) {
-                    components.getSecuritySchemes().putAll(openAPIComponent.getSecuritySchemes());
-                }
-                openAPI.setComponents(components);
-            } else {
-                openAPI.setComponents(components);
+
             }
+            openAPI.setComponents(components);
         }
     }
 

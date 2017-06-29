@@ -75,7 +75,9 @@ public class ParameterProcessor {
                 }
                 // TODO - Explode - Style behaviour
                 parameter.setStyle(StringUtils.isNoneBlank(p.style()) ? Parameter.StyleEnum.valueOf(p.style()) : null);
-                parameter.setExplode(p.explode());
+                if (p.explode()) {
+                    parameter.setExplode(p.explode());
+                }
 
                 if (hasSchemaAnnotation(p.schema())) {
                     Schema schema = processSchema(p.schema());

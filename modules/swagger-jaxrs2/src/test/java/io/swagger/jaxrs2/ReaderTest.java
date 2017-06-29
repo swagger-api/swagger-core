@@ -77,7 +77,7 @@ public class ReaderTest {
 
     private static final int RESPONSES_NUMBER = 2;
     private static final int TAG_NUMBER = 2;
-    private static final int SCHEMAS = 2;
+    private static final int SECURITY_SCHEMAS = 2;
     private static final int PARAMETER_NUMBER = 2;
     private static final int SECURITY_REQUIREMENT_NUMBER = 1;
     private static final int SCOPE_NUMBER = 1;
@@ -183,7 +183,7 @@ public class ReaderTest {
         assertNotNull(components);
         Map<String, SecurityScheme> securitySchemes = components.getSecuritySchemes();
         assertNotNull(securitySchemes);
-        assertEquals(SCHEMAS, securitySchemes.size());
+        assertEquals(SECURITY_SCHEMAS, securitySchemes.size());
     }
 
     @Test(description = "Deprecated Method")
