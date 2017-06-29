@@ -6,8 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import io.swagger.jaxrs2.config.DefaultReaderConfig;
-import io.swagger.jaxrs2.config.ReaderConfig;
+import io.swagger.jaxrs2.config.OpenAPIConfig;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.jaxrs2.util.ReaderUtils;
@@ -48,7 +47,7 @@ import java.util.TreeSet;
 public class Reader {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
 
-	private final ReaderConfig config;
+	private OpenAPIConfig config;
 
 	private OpenAPI openAPI;
 	private Paths paths;
@@ -63,23 +62,20 @@ public class Reader {
 	private static final String HEAD_METHOD = "head";
 	private static final String OPTIONS_METHOD = "options";
 
-	public Reader(OpenAPI openAPI, ReaderConfig config) {
-		this.openAPI = openAPI;
+	public Reader(OpenAPIConfig config) {
 		paths = new Paths();
 		openApiTags = new LinkedHashSet<>();
-		this.config = new DefaultReaderConfig();
+		this.config = config;
+		this.openAPI = config.getOpenAPI() == null ? new OpenAPI() : config.getOpenAPI();
 	}
 
 	public OpenAPI getOpenAPI() {
 		return openAPI;
 	}
 
-	/**
-	 * Scans a single class for Swagger annotations - does not invoke ReaderListeners
-	 */
-	public OpenAPI read(Class<?> cls) {
-		return read(cls, "");
-	}
+    public OpenAPI read() {
+        return read(config.getClasses());
+    }
 
 	/**
 	 * Scans a set of classes for both ReaderListeners and OpenAPI annotations. All found listeners will
@@ -89,7 +85,7 @@ public class Reader {
 	 * @param classes a set of classes to scan
 	 * @return the generated OpenAPI definition
 	 */
-	public OpenAPI read(Set<Class<?>> classes) {
+	private OpenAPI read(Set<Class<?>> classes) {
 		Set<Class<?>> sortedClasses = new TreeSet<>(new Comparator<Class<?>>() {
 			@Override
 			public int compare(Class<?> class1, Class<?> class2) {
