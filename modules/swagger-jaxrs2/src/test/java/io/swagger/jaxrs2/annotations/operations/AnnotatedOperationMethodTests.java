@@ -270,6 +270,9 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "          application/json:\n" +
                 "            schema:\n" +
                 "              $ref: \"#/components/schemas/Pet\"\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        405:\n" +
