@@ -19,6 +19,7 @@ import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.MediaType;
+import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.security.SecurityScheme;
@@ -217,14 +218,10 @@ public class Reader {
                                         Content content = new Content();
                                         if (consumes != null) {
                                             for (String value : consumes.value()) {
-                                                MediaType mediaTypeObject = new MediaType();
-                                                mediaTypeObject.setSchema(parameter.getSchema());
-                                                content.addMediaType(value, mediaTypeObject);
+                                                setMediaTypeToContent(parameter.getSchema(), content, value);
                                             }
                                         } else {
-                                            MediaType mediaTypeObject = new MediaType();
-                                            mediaTypeObject.setSchema(parameter.getSchema());
-                                            content.addMediaType(DEFAULT_MEDIA_TYPE_VALUE, mediaTypeObject);
+                                            setMediaTypeToContent(parameter.getSchema(), content, DEFAULT_MEDIA_TYPE_VALUE);
                                         }
 
                                         requestBody.setContent(content);
@@ -270,6 +267,12 @@ public class Reader {
         OperationParser.getInfo(apiInfo).ifPresent(info -> openAPI.setInfo(info));
 
         return openAPI;
+    }
+
+    private void setMediaTypeToContent(Schema schema, Content content, String value) {
+        MediaType mediaTypeObject = new MediaType();
+        mediaTypeObject.setSchema(schema);
+        content.addMediaType(value, mediaTypeObject);
     }
 
     public Operation parseMethod(Method method) {
