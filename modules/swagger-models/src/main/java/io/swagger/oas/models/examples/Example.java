@@ -24,7 +24,7 @@ package io.swagger.oas.models.examples;
 public class Example {
     private String summary = null;
     private String description = null;
-    private String value = null;
+    private Object value = null;
     private String externalValue = null;
     private String $ref = null;
     private java.util.Map<String, Object> extensions = null;
@@ -70,18 +70,18 @@ public class Example {
     /**
      * returns the value property from a Example instance.
      *
-     * @return String value
+     * @return Object value
      **/
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
-    public Example value(String value) {
+    public Example value(Object value) {
         this.value = value;
         return this;
     }
