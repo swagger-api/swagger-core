@@ -50,6 +50,7 @@ import java.util.TreeSet;
 
 public class Reader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
+    public static final String DEFAULT_MEDIA_TYPE_VALUE = "*/*";
 
     private final ReaderConfig config;
 
@@ -213,16 +214,19 @@ public class Reader {
                                     }
 
                                     if (parameter.getSchema() != null) {
-                                        String mediaType = "*/*";
-                                        if (consumes != null) {
-                                            if (consumes.value().length == 1) {
-                                                mediaType = consumes.value()[0];
-                                            }
-                                        }
                                         Content content = new Content();
-                                        MediaType mediaTypeObject = new MediaType();
-                                        mediaTypeObject.setSchema(parameter.getSchema());
-                                        content.addMediaType(mediaType, mediaTypeObject);
+                                        if (consumes != null) {
+                                            for (String value : consumes.value()) {
+                                                MediaType mediaTypeObject = new MediaType();
+                                                mediaTypeObject.setSchema(parameter.getSchema());
+                                                content.addMediaType(value, mediaTypeObject);
+                                            }
+                                        } else {
+                                            MediaType mediaTypeObject = new MediaType();
+                                            mediaTypeObject.setSchema(parameter.getSchema());
+                                            content.addMediaType(DEFAULT_MEDIA_TYPE_VALUE, mediaTypeObject);
+                                        }
+
                                         requestBody.setContent(content);
                                         isRequestBodyEmpty = false;
                                     }
