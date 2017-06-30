@@ -25,6 +25,7 @@ import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
 
 import javax.ws.rs.BeanParam;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -62,6 +63,7 @@ public class PetResource {
     }
 
     @POST
+    @Consumes("application/json")
     @Operation(summary = "Add a new pet to the store",
             responses = {
                     @ApiResponse(responseCode = "405", description = "Invalid input")

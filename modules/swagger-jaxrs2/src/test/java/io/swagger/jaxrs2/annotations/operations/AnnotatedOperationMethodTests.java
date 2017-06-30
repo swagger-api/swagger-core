@@ -249,6 +249,10 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "      operationId: \"updatePet\"\n" +
                 "      requestBody:\n" +
                 "        description: \"Pet object that needs to be added to the store\"\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        400:\n" +
@@ -262,6 +266,10 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "      operationId: \"addPet\"\n" +
                 "      requestBody:\n" +
                 "        description: \"Pet object that needs to be added to the store\"\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        405:\n" +

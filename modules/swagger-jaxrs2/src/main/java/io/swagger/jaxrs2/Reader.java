@@ -17,6 +17,8 @@ import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.callbacks.Callback;
+import io.swagger.oas.models.media.Content;
+import io.swagger.oas.models.media.MediaType;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.security.SecurityScheme;
@@ -155,6 +157,7 @@ public class Reader {
                 continue;
             }
             javax.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class);
+            javax.ws.rs.Consumes consumes = ReflectionUtils.getAnnotation(method, javax.ws.rs.Consumes.class);
 
             String operationPath = ReaderUtils.getPath(apiPath, methodPath, parentPath);
 
@@ -200,10 +203,6 @@ public class Reader {
                                         requestBody.set$ref(parameter.get$ref());
                                         isRequestBodyEmpty = false;
                                     }
-                                    if (parameter.getContent() != null) {
-                                        requestBody.setContent(parameter.getContent());
-                                        isRequestBodyEmpty = false;
-                                    }
                                     if (StringUtils.isNotBlank(parameter.getDescription())) {
                                         requestBody.setDescription(parameter.getDescription());
                                         isRequestBodyEmpty = false;
@@ -213,6 +212,20 @@ public class Reader {
                                         isRequestBodyEmpty = false;
                                     }
 
+                                    if (parameter.getSchema() != null) {
+                                        String mediaType = "*/*";
+                                        if (consumes != null) {
+                                            if (consumes.value().length == 1) {
+                                                mediaType = consumes.value()[0];
+                                            }
+                                        }
+                                        Content content = new Content();
+                                        MediaType mediaTypeObject = new MediaType();
+                                        mediaTypeObject.setSchema(parameter.getSchema());
+                                        content.addMediaType(mediaType, mediaTypeObject);
+                                        requestBody.setContent(content);
+                                        isRequestBodyEmpty = false;
+                                    }
                                     if (!isRequestBodyEmpty) {
                                         operation.setRequestBody(requestBody);
                                     }
