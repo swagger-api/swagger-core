@@ -18,6 +18,7 @@ import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.parameters.Parameter;
+import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
 import io.swagger.util.ParameterProcessor;
@@ -147,6 +148,7 @@ public class Reader {
 
         Method methods[] = cls.getMethods();
         for (Method method : methods) {
+            RequestBody requestBody = new RequestBody();
             AnnotatedMethod annotatedMethod = bd.findMethod(method.getName(), method.getParameterTypes());
 
             if (ReflectionUtils.isOverriddenMethod(method, cls)) {
@@ -188,7 +190,35 @@ public class Reader {
                         for (int i = 0; i < annotatedMethod.getParameterCount(); i++) {
                             AnnotatedParameter param = annotatedMethod.getParameter(i);
                             final Type type = TypeFactory.defaultInstance().constructType(param.getParameterType(), cls);
-                            operationParameters.addAll(getParameters(type, Arrays.asList(paramAnnotations[i])));
+                            List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
+                            for (Parameter parameter : parameters) {
+                                if (StringUtils.isNotBlank(parameter.getIn())) {
+                                    operationParameters.add(parameter);
+                                } else {
+                                    boolean isRequestBodyEmpty = true;
+                                    if (StringUtils.isNotBlank(parameter.get$ref())) {
+                                        requestBody.set$ref(parameter.get$ref());
+                                        isRequestBodyEmpty = false;
+                                    }
+                                    if (parameter.getContent() != null) {
+                                        requestBody.setContent(parameter.getContent());
+                                        isRequestBodyEmpty = false;
+                                    }
+                                    if (StringUtils.isNotBlank(parameter.getDescription())) {
+                                        requestBody.setDescription(parameter.getDescription());
+                                        isRequestBodyEmpty = false;
+                                    }
+                                    if (parameter.getRequired()) {
+                                        requestBody.setRequired(parameter.getRequired());
+                                        isRequestBodyEmpty = false;
+                                    }
+
+                                    if (!isRequestBodyEmpty) {
+                                        operation.setRequestBody(requestBody);
+                                    }
+
+                                }
+                            }
                         }
                     }
                     if (operationParameters.size() > 0) {
@@ -246,6 +276,9 @@ public class Reader {
             SecurityParser.getSecurityRequirement(apiSecurity).ifPresent(operation::setSecurity);
 
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
+            if (StringUtils.isBlank(operation.getOperationId())) {
+                operation.setOperationId(method.getName());
+            }
         } else {
             return null;
         }

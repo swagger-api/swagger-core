@@ -40,7 +40,8 @@ public class OperationParser {
 
     public static final String RESPONSE_DEFAULT = "default";
     public static final String MEDIA_TYPE = "*/*";
-    public static final String COMPONENTES_REF = "#/components/schemas/";
+    public static final String COMPONENTS_REF = "#/components/schemas/";
+    public static final String DEFAULT_DESCRIPTION = "no description";
 
     public static Optional<List<Parameter>> getParametersList(io.swagger.oas.annotations.Parameter[] parameters, Components components) {
         if (parameters == null) {
@@ -320,7 +321,10 @@ public class OperationParser {
             }
         }
         if (apiResponsesObject.isEmpty()) {
-            return Optional.empty();
+            ApiResponse apiResponseObject = new ApiResponse();
+            apiResponseObject.setDescription(DEFAULT_DESCRIPTION);
+            apiResponsesObject.addApiResponse(RESPONSE_DEFAULT, apiResponseObject);
+
         }
         return Optional.of(apiResponsesObject);
     }
@@ -358,7 +362,7 @@ public class OperationParser {
                 components.addSchemas(key, schema);
             });
             Schema schemaObject = new Schema();
-            schemaObject.set$ref(COMPONENTES_REF + schemaImplementation.getSimpleName());
+            schemaObject.set$ref(COMPONENTS_REF + schemaImplementation.getSimpleName());
             mediaType.setSchema(schemaObject);
         } else {
             getSchemaFromAnnotation(annotationContent.schema()).ifPresent(mediaType::setSchema);

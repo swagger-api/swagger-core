@@ -232,12 +232,12 @@ public class ParameterProcessor {
                 && schema.minProperties() == 0
                 && schema.maxProperties() == 0
                 && schema.requiredProperties().length == 1 && StringUtils.isBlank(schema.requiredProperties()[0])
-                && schema.required() == false
-                && schema.nullable() == false
-                && schema.readOnly() == false
-                && schema.writeOnly() == false
+                && !schema.required()
+                && !schema.nullable()
+                && !schema.readOnly()
+                && !schema.writeOnly()
                 && schema.examples().length == 1 && StringUtils.isBlank(schema.examples()[0])
-                && schema.deprecated() == false
+                && !schema.deprecated()
                 && schema._enum().length == 1 && StringUtils.isBlank(schema._enum()[0])
                 && StringUtils.isBlank(schema._default())
                 && StringUtils.isBlank(schema.example())

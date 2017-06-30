@@ -62,6 +62,9 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "      summary: \"Simple get operation\"\n" +
                 "      description: \"Defines a simple get operation with no inputs or responses\"\n" +
                 "      operationId: \"getWithNoParametersAndNoResponses\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: \"no description\"\n" +
                 "      deprecated: true";
         String extractedYAML = openApiYAML.substring(start, end);
 
@@ -85,7 +88,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     public void testGetOperationWithResponsePayloadAndAlternateCodes() {
         String openApiYAML = readIntoYaml(GetOperationWithResponsePayloadAndAlternateCodes.class);
         int start = openApiYAML.indexOf("get:");
-        int end = openApiYAML.indexOf("components");
+        int end = openApiYAML.indexOf("components:");
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "get:\n" +
                 "      summary: \"Simple get operation\"\n" +
@@ -97,17 +100,13 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                type: \"object\"\n" +
-                "                properties:\n" +
-                "                  id:\n" +
-                "                    type: \"string\"\n" +
-                "                    description: \"the user id\"\n" +
+                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
                 "        default:\n" +
                 "          description: \"boo\"\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                type: \"object\"\n" +
+                "                $ref: \"#/components/schemas/GenericError\"\n" +
                 "      deprecated: true\n";
 
         assertEquals(extractedYAML, expectedYAML);
@@ -150,15 +149,15 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
     }
 
     static class GenericError {
-        private int code;
-        private String message;
+        public int code;
+        public String message;
     }
 
     @Test(description = "reads an operation with response examples defined")
     public void testOperationWithResponseExamples() {
         String openApiYAML = readIntoYaml(GetOperationWithResponseExamples.class);
         int start = openApiYAML.indexOf("get:");
-        int end = openApiYAML.indexOf("components");
+        int end = openApiYAML.indexOf("components:");
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "get:\n" +
                 "      summary: \"Simple get operation\"\n" +
@@ -170,11 +169,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                type: \"object\"\n" +
-                "                properties:\n" +
-                "                  id:\n" +
-                "                    type: \"string\"\n" +
-                "                    description: \"the user id\"\n" +
+                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
                 "              examples:\n" +
                 "                basic:\n" +
                 "                  summary: \"shows a basic example\"\n" +
@@ -228,6 +223,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "      summary: \"Find pet by ID\"\n" +
                 "      description: \"Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will\\\n" +
                 "        \\ simulate API error conditions\"\n" +
+                "      operationId: \"getPetById\"\n" +
                 "      parameters:\n" +
                 "      - name: \"petId\"\n" +
                 "        in: \"path\"\n" +
@@ -250,11 +246,10 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "  /pet:\n" +
                 "    put:\n" +
                 "      summary: \"Update an existing pet\"\n" +
-                "      parameters:\n" +
-                "      - description: \"Pet object that needs to be added to the store\"\n" +
+                "      operationId: \"updatePet\"\n" +
+                "      requestBody:\n" +
+                "        description: \"Pet object that needs to be added to the store\"\n" +
                 "        required: true\n" +
-                "        schema:\n" +
-                "          $ref: \"#/components/schemas/Pet\"\n" +
                 "      responses:\n" +
                 "        400:\n" +
                 "          description: \"Invalid ID supplied\"\n" +
@@ -264,11 +259,10 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "          description: \"Validation exception\"\n" +
                 "    post:\n" +
                 "      summary: \"Add a new pet to the store\"\n" +
-                "      parameters:\n" +
-                "      - description: \"Pet object that needs to be added to the store\"\n" +
+                "      operationId: \"addPet\"\n" +
+                "      requestBody:\n" +
+                "        description: \"Pet object that needs to be added to the store\"\n" +
                 "        required: true\n" +
-                "        schema:\n" +
-                "          $ref: \"#/components/schemas/Pet\"\n" +
                 "      responses:\n" +
                 "        405:\n" +
                 "          description: \"Invalid input\"\n" +
@@ -276,6 +270,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "    get:\n" +
                 "      summary: \"Finds Pets by status\"\n" +
                 "      description: \"Multiple status values can be provided with comma seperated strings\"\n" +
+                "      operationId: \"findPetsByStatus\"\n" +
                 "      parameters:\n" +
                 "      - name: \"status\"\n" +
                 "        in: \"query\"\n" +
@@ -306,6 +301,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "      summary: \"Finds Pets by tags\"\n" +
                 "      description: \"Muliple tags can be provided with comma seperated strings. Use\\\n" +
                 "        \\ tag1, tag2, tag3 for testing.\"\n" +
+                "      operationId: \"findPetsByTags\"\n" +
                 "      parameters:\n" +
                 "      - name: \"tags\"\n" +
                 "        in: \"query\"\n" +
