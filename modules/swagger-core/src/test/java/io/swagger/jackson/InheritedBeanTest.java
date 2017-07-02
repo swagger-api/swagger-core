@@ -78,6 +78,24 @@ public class InheritedBeanTest extends SwaggerTestBase {
         assertBasePropertiesValid(baseModel.getProperties());
     }
 
+    @Test
+    public void testComposedAnyBean() throws Exception {
+        final Schema subModel = context.resolve(UberObject.class);
+        assertNotNull(subModel);
+        // make sure child points at parent
+        assertTrue(subModel instanceof ComposedSchema);
+        ComposedSchema cm = (ComposedSchema) subModel;
+        assertEquals(cm.getAllOf().get(0).get$ref(), "#/components/schemas/BaseBean");
+
+        // make sure parent properties are filtered out of subclass
+        assertSub1PropertiesValid(cm.getProperties());
+
+        final Schema baseModel = context.getDefinedModels().get("BaseBean");
+        assertNotNull(baseModel);
+        assertBasePropertiesValid(baseModel.getProperties());
+    }
+
+
     private void assertBasePropertiesValid(Map<String, Schema> baseProperites) {
         assertEquals(baseProperites.size(), 3);
         for (Map.Entry<String, Schema> entry : baseProperites.entrySet()) {
@@ -131,11 +149,56 @@ public class InheritedBeanTest extends SwaggerTestBase {
         public String type;
         public int a;
         public String b;
+
+        public int getD() {
+            return d;
+        }
+
+        public void setD(int d) {
+            this.d = d;
+        }
+
+        private int d;
     }
 
-    @io.swagger.oas.annotations.media.Schema(description = "Sub2Bean", allOf = {BaseBean2.class}, anyOf = {BaseBean2.class})
+    @io.swagger.oas.annotations.media.Schema(description = "Sub2Bean", allOf = {BaseBean2.class}, anyOf = {BaseBean.class})
     static class Sub2Bean extends BaseBean2 {
+        public int a;
         public int c;
+    }
+
+    @io.swagger.oas.annotations.media.Schema(anyOf = {UserObject.class, EmployeeObject.class})
+    static class UberObject implements UserObject, EmployeeObject {
+        private String id;
+        private String name;
+        private String department;
+
+        @Override
+        public String getDepartment() {
+            return department;
+        }
+        @Override
+        public String getId() {
+            return id;
+        }
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
+
+    @io.swagger.oas.annotations.media.Schema(description = "A User Object")
+    interface UserObject {
+        @io.swagger.oas.annotations.media.Schema(format = "uuid", required = true)
+        String getId();
+        String getName();
+    }
+
+    @io.swagger.oas.annotations.media.Schema(description = "An Employee Object", requiredProperties = {"department"})
+    interface EmployeeObject {
+        @io.swagger.oas.annotations.media.Schema(format = "email")
+        String getId();
+        String getDepartment();
     }
 
     @Test(enabled = false)
