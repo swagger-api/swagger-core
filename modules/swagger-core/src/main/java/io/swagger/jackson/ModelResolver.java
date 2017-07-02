@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -21,14 +22,18 @@ import com.google.common.collect.Iterables;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.oas.models.media.ArraySchema;
+import io.swagger.oas.models.media.ComposedSchema;
 import io.swagger.oas.models.media.IntegerSchema;
 import io.swagger.oas.models.media.MapSchema;
 import io.swagger.oas.models.media.NumberSchema;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.media.StringSchema;
 import io.swagger.oas.models.media.UUIDSchema;
+import io.swagger.util.Json;
 import io.swagger.util.PrimitiveType;
 import io.swagger.util.ReflectionUtils;
+import io.swagger.util.Yaml;
+import javafx.scene.Parent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +54,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -56,6 +62,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
@@ -219,6 +228,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     public Schema resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
+        LOGGER.error("resolver resolve" + type.getTypeName());
         if (type.isEnumType()) {
             // We don't build models for primitive types
             return null;
@@ -230,7 +240,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
         // Couple of possibilities for defining
         String name = _typeName(type, beanDesc);
-
+        LOGGER.error("resolver name:" + name);
         if ("Object".equals(name)) {
             return new Schema();
         }
@@ -249,6 +259,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          */
         Schema resolvedModel = context.resolve(type.getRawClass());
         if (resolvedModel != null) {
+            LOGGER.error("resolver resolvedModel not null: " + resolvedModel.getClass().getSimpleName());
             // TODO
             /*
             if (!(resolvedModel instanceof ModelImpl || resolvedModel instanceof ComposedModel)
@@ -267,10 +278,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         final Schema model = new Schema()
                 .type("object")
+                .title(name)
                 .description(_description(beanDesc.getClassInfo()));
 
         if (!type.isContainerType()) {
             // define the model here to support self/cyclic referencing of models
+            LOGGER.error("resolver defining model: " + name + " " + type.getTypeName());
             context.defineModel(name, model, type, null);
         }
 
@@ -299,9 +312,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (ignoreProperties != null) {
             propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
         }
-/*
-        final ApiModel apiModel = beanDesc.getClassAnnotations().get(ApiModel.class);
-        String disc = (apiModel == null) ? "" : apiModel.discriminator();
+
+        final io.swagger.oas.annotations.media.Schema schemaAnnotation = beanDesc.getClassAnnotations().get(io.swagger.oas.annotations.media.Schema.class);
+
+/* TODO
+
+        String disc = (schemaAnnotation == null) ? "" : schemaAnnotation.discriminator();
 
         if (apiModel != null && StringUtils.isNotEmpty(apiModel.reference())) {
             model.setReference(apiModel.reference());
@@ -583,6 +599,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          * available for modification by resolveSubtypes, when their parents are created.
          */
         Class<?> currentType = type.getRawClass();
+        LOGGER.error("resolver define model Type/currentType: " + type.getTypeName() + " " + currentType.getSimpleName());
         context.defineModel(name, model, currentType, null);
 
         /**
@@ -590,17 +607,41 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          * of properties is available to filter from any subtypes
          **/
         if (!resolveSubtypes(model, beanDesc, context)) {
+            LOGGER.error("resolver resolveSubtypes false: " + type.getTypeName());
 //            model.setDiscriminator(null);
         }
-/*
-        if (apiModel != null) {
-             * Check if the @ApiModel annotation has a parent property containing a value that should not be ignored
-            Class<?> parentClass = apiModel.parent();
+
+        if (schemaAnnotation != null) {
+            // TODO not??
+            // TODO check this ; check here also interfaces, and different if allOf and anyOf?? start with
+            // allOf resolving parent class, QUESTION: only if parent is superclass?
+            // Check if the @Schema annotation has a parent (allOf, anyOf, oneOf, not?) property containing a value that should not be ignored
+
+            Class<?>[] allOf = schemaAnnotation.allOf();
+            Class<?>[] anyOf = schemaAnnotation.anyOf();
+            Class<?>[] oneOf = schemaAnnotation.oneOf();
+            Class<?>[] not = schemaAnnotation.allOf();
+
+            // try to read all of them anyway and resolve?
+            List<Class<?>> parentClasses = Stream.of(allOf, anyOf, oneOf, not)
+                    .flatMap(Stream::of)
+                    .distinct()
+                    .filter(c -> !this.shouldIgnoreClass(c))
+                    .filter(c -> !(c.equals(Void.class)))
+                    .collect(Collectors.toList());
+
+            if (parentClasses.isEmpty()) {
+                return model;
+            }
+            parentClasses.forEach(context::resolve);
+
+            /* TODO do we need logic below? do we need the "parent" to define whatever allOf (or oneOf?)
             if (parentClass != null && !parentClass.equals(Void.class) && !this.shouldIgnoreClass(parentClass)) {
                 JavaType parentType = _mapper.constructType(parentClass);
                 final BeanDescription parentBeanDesc = _mapper.getSerializationConfig().introspect(parentType);
 
 //                 * Retrieve all the sub-types of the parent class and ensure that the current type is one of those types
+                // TODO this is not anymore true? do we need to only resolve when mentioned in parent? why?
                 boolean currentTypeIsParentSubType = false;
                 List<NamedType> subTypes = _intr.findSubtypes(parentBeanDesc.getClassInfo());
                 if (subTypes != null) {
@@ -644,8 +685,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     return context.resolve(currentType);
                 }
             }
+                    */
         }
-        */
+
+
         return model;
     }
 
@@ -887,7 +930,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context) {
         final List<NamedType> types = _intr.findSubtypes(bean.getClassInfo());
-
+        LOGGER.error("resolveSubtypes types: " + Json.pretty(types));
         if (types == null) {
             return false;
         }
@@ -908,7 +951,103 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 continue;
             }
 
+            LOGGER.error("resolveSubtypes revolving type: " + Json.pretty(subtypeType.getSimpleName()));
             final Schema subtypeModel = context.resolve(subtypeType);
+
+            if (subtypeModel.getTitle().equals(model.getTitle())) {
+                subtypeModel.setTitle(_typeNameResolver.nameForType(_mapper.constructType(subtypeType),
+                        TypeNameResolver.Options.SKIP_API_MODEL));
+            }
+
+            // remove shared properties defined in the parent
+            final Map<String, Schema> baseProps = model.getProperties();
+            final Map<String, Schema> subtypeProps = subtypeModel.getProperties();
+            if (baseProps != null && subtypeProps != null) {
+                for (Map.Entry<String, Schema> entry : baseProps.entrySet()) {
+                    if (entry.getValue().equals(subtypeProps.get(entry.getKey()))) {
+                        subtypeProps.remove(entry.getKey());
+                    }
+                }
+            }
+
+            subtypeModel.setDiscriminator(null);
+
+            // TODO for the moment populate ComposedSchema with prev Schema fields
+            // possibly refactor all logic to build a composed schema in the first place
+
+
+            ComposedSchema child = (ComposedSchema)new ComposedSchema()
+                    .title(subtypeModel.getTitle())
+                    .deprecated(subtypeModel.getDeprecated())
+                    .additionalProperties(subtypeModel.getAdditionalProperties())
+                    .description(subtypeModel.getDescription())
+                    .discriminator(subtypeModel.getDiscriminator())
+                    .example(subtypeModel.getExample())
+                    .exclusiveMaximum(subtypeModel.getExclusiveMaximum())
+                    .exclusiveMinimum(subtypeModel.getExclusiveMinimum())
+                    .externalDocs(subtypeModel.getExternalDocs())
+                    .format(subtypeModel.getFormat())
+                    .maximum(subtypeModel.getMaximum())
+                    .maxItems(subtypeModel.getMaxItems())
+                    .maxLength(subtypeModel.getMaxLength())
+                    .maxProperties(subtypeModel.getMaxProperties())
+                    .minimum(subtypeModel.getMinimum())
+                    .minItems(subtypeModel.getMinItems())
+                    .minLength(subtypeModel.getMinLength())
+                    .minProperties(subtypeModel.getMinProperties())
+                    .multipleOf(subtypeModel.getMultipleOf())
+                    .not(subtypeModel.getNot())
+                    .nullable(subtypeModel.getNullable())
+                    .pattern(subtypeModel.getPattern())
+                    .properties(subtypeModel.getProperties())
+                    .readOnly(subtypeModel.getReadOnly())
+                    .required(subtypeModel.getRequired())
+                    .type(subtypeModel.getType())
+                    .uniqueItems(subtypeModel.getUniqueItems())
+                    .writeOnly(subtypeModel.getWriteOnly())
+                    .xml(subtypeModel.getXml());
+
+            JavaType subtypeJavaType =_mapper.constructType(subtypeType);
+            final BeanDescription subBeanDesc = _mapper.getSerializationConfig().introspect(subtypeJavaType);
+            final io.swagger.oas.annotations.media.Schema subSchemaAnnotation = subBeanDesc.getClassAnnotations().get(io.swagger.oas.annotations.media.Schema.class);
+
+            Class<?>[] allOf = subSchemaAnnotation.allOf();
+            Class<?>[] anyOf = subSchemaAnnotation.anyOf();
+            Class<?>[] oneOf = subSchemaAnnotation.oneOf();
+            Class<?> not = subSchemaAnnotation.not();
+            // TODO not??
+            Class<?>[] parentClass = {beanClass};
+
+            List<Class<?>> allOfFiltered = Stream.of(allOf)
+                    .distinct()
+                    .filter(c -> !this.shouldIgnoreClass(c))
+                    .filter(c -> !(c.equals(Void.class)))
+                    .collect(Collectors.toList());
+            allOfFiltered.forEach(c -> child.addAllOfItem(context.resolve(c)));
+
+            List<Class<?>> anyOfFiltered = Stream.of(anyOf)
+                    .distinct()
+                    .filter(c -> !this.shouldIgnoreClass(c))
+                    .filter(c -> !(c.equals(Void.class)))
+                    .collect(Collectors.toList());
+            anyOfFiltered.forEach(c -> child.addAnyOfItem(context.resolve(c)));
+
+            List<Class<?>> oneOfFiltered = Stream.of(oneOf)
+                    .distinct()
+                    .filter(c -> !this.shouldIgnoreClass(c))
+                    .filter(c -> !(c.equals(Void.class)))
+                    .collect(Collectors.toList());
+            oneOfFiltered.forEach(c -> child.addOneOfItem(context.resolve(c)));
+            Class aaa = not;
+            Class bbb = Void.class;
+            if (!Void.class.equals(not)) {
+                child.not(context.resolve(not.getClass()));
+            }
+
+            child.addAllOfItem(new Schema().$ref(model.getTitle()));
+            context.defineModel(subtypeModel.getTitle(), child, subtypeType, null);
+            ++count;
+
 
             // TODO
             /*
@@ -967,4 +1106,47 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             resultTypes.removeAll(superTypes);
         }
     }
+
+
+
+    private List<Class<?>> concatClasses(List<Class<?>[]> arrays) {
+
+        List<Stream<Class<?>>> aa = arrays.stream().map(a -> Arrays.asList(a).stream()).collect((Collectors.toList()));
+        Class<?>[] allOf = {String.class, Integer.class};
+        Class<?>[] anyOf = {Long.class, Integer.class};
+        Class<?>[] oneOf = {Long.class, BigDecimal.class,  List.class};
+        //String[] result = Stream.of(allOf, anyOf, oneOf).flatMap(Stream::of).toArray(String[]::new);
+        List<Class<?>> result = Stream.of(allOf, anyOf, oneOf).flatMap(Stream::of).distinct().collect(Collectors.toList());
+        //List<Class<?>> result = Stream.of(aa).distinct().collect(Collectors.toList());;
+        //List<Class<?>> result = Stream.of(Arrays.asList(allOf), Arrays.asList(anyOf), Arrays.asList(oneOf)).flatMap(x -> x);
+        //List<Class<?>> result = Stream.of(Arrays.asList(allOf).stream(), Arrays.asList(anyOf).stream(), Arrays.asList(oneOf).stream()).flatMap(Function.identity()).distinct().collect(Collectors.toList());;
+
+/*
+        List<Class<?>> result = Stream.concat(Arrays.asList(allOf).stream(), Arrays.asList(anyOf).stream())
+                .distinct()
+                .collect(Collectors.toList());
+*/
+        Yaml.prettyPrint(result);
+        return result;
+    }
+
+    public static void main(String[] args) {
+
+        Class<?>[] allOf = {String.class, Integer.class};
+        Class<?>[] anyOf = {Long.class, Integer.class};
+        Class<?>[] oneOf = {Long.class, BigDecimal.class,  List.class};
+        //String[] result = Stream.of(allOf, anyOf, oneOf).flatMap(Stream::of).toArray(String[]::new);
+        List<Class<?>> result = Stream.of(allOf, anyOf, oneOf).flatMap(Stream::of).distinct().collect(Collectors.toList());
+        //List<Class<?>> result = Stream.of(aa).distinct().collect(Collectors.toList());;
+        //List<Class<?>> result = Stream.of(Arrays.asList(allOf), Arrays.asList(anyOf), Arrays.asList(oneOf)).flatMap(x -> x);
+        //List<Class<?>> result = Stream.of(Arrays.asList(allOf).stream(), Arrays.asList(anyOf).stream(), Arrays.asList(oneOf).stream()).flatMap(Function.identity()).distinct().collect(Collectors.toList());;
+
+/*
+        List<Class<?>> result = Stream.concat(Arrays.asList(allOf).stream(), Arrays.asList(anyOf).stream())
+                .distinct()
+                .collect(Collectors.toList());
+*/
+        Yaml.prettyPrint(result);
+    }
+
 }

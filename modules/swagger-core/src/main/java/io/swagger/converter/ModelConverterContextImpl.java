@@ -69,7 +69,10 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 
     @Override
     public Schema resolve(Type type) {
+        LOGGER.error("CONTEXT resolve" + type.getTypeName());
+        if (type.equals(Class.class)) throw new RuntimeException("ASDDDDDDDDDDDDDD");
         if (processedTypes.contains(type)) {
+            LOGGER.error("CONTEXT returning processed for " + type.getTypeName());
             return modelByType.get(type);
         } else {
             processedTypes.add(type);
@@ -82,9 +85,13 @@ public class ModelConverterContextImpl implements ModelConverterContext {
         if (converters.hasNext()) {
             ModelConverter converter = converters.next();
             LOGGER.debug("trying extension " + converter);
+            LOGGER.error("CONTEXT converter resolving for " + type.getTypeName());
             resolved = converter.resolve(type, this, converters);
         }
         if (resolved != null) {
+            LOGGER.error("CONTEXT resolved not null for " + type.getTypeName());
+            LOGGER.error("CONTEXT resolved class " + resolved.getClass().getName());
+            LOGGER.error("CONTEXT resolved title " + resolved.getTitle());
             modelByType.put(type, resolved);
 
             Schema resolvedImpl = resolved;
