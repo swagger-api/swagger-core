@@ -26,7 +26,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
         context = new ModelConverterContextImpl(modelResolver);
     }
 
-    @Test(enabled = false)
+    @Test
     public void testInheritedBean() throws Exception {
         final Schema baseModel = context.resolve(BaseBean.class);
 
@@ -38,25 +38,40 @@ public class InheritedBeanTest extends SwaggerTestBase {
         // make sure child points at parent
         assertTrue(subModel instanceof ComposedSchema);
         ComposedSchema cm = (ComposedSchema) subModel;
-        // TODO enable
-//        assertEquals(cm.getParent().getReference(), "#/definitions/BaseBean");
+        assertEquals(cm.getAllOf().get(0).get$ref(), "#/components/schemas/BaseBean");
 
-        // TODO enable
         // make sure parent properties are filtered out of subclass
-//        assertSub1PropertiesValid(cm.getChild().getProperties());
+        assertSub1PropertiesValid(cm.getProperties());
     }
 
-    @Test(enabled = false)
+    @Test
     public void testInheritedChildBean() throws Exception {
         final Schema subModel = context.resolve(Sub1Bean.class);
         assertNotNull(subModel);
         // make sure child points at parent
         assertTrue(subModel instanceof ComposedSchema);
         ComposedSchema cm = (ComposedSchema) subModel;
-//        assertEquals(cm.getParent().getReference(), "#/definitions/BaseBean");
+        assertEquals(cm.getAllOf().get(0).get$ref(), "#/components/schemas/BaseBean");
 
         // make sure parent properties are filtered out of subclass
-//        assertSub1PropertiesValid(cm.getChild().getProperties());
+        assertSub1PropertiesValid(cm.getProperties());
+
+        final Schema baseModel = context.getDefinedModels().get("BaseBean");
+        assertNotNull(baseModel);
+        assertBasePropertiesValid(baseModel.getProperties());
+    }
+
+    @Test
+    public void testComposedChildBean() throws Exception {
+        final Schema subModel = context.resolve(Sub2Bean.class);
+        assertNotNull(subModel);
+        // make sure child points at parent
+        assertTrue(subModel instanceof ComposedSchema);
+        ComposedSchema cm = (ComposedSchema) subModel;
+        assertEquals(cm.getAllOf().get(0).get$ref(), "#/components/schemas/BaseBean");
+
+        // make sure parent properties are filtered out of subclass
+        assertSub1PropertiesValid(cm.getProperties());
 
         final Schema baseModel = context.getDefinedModels().get("BaseBean");
         assertNotNull(baseModel);
@@ -102,10 +117,24 @@ public class InheritedBeanTest extends SwaggerTestBase {
         public String b;
     }
 
-    @io.swagger.oas.annotations.media.Schema(description = "Sub1Bean"
-//            , parent = BaseBean.class
-    )
+    @io.swagger.oas.annotations.media.Schema(description = "Sub1Bean", allOf = {BaseBean.class})
     static class Sub1Bean extends BaseBean {
+        public int c;
+    }
+
+    @JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
+    @JsonSubTypes({@JsonSubTypes.Type(value = Sub2Bean.class, name = "sub2")})
+    @io.swagger.oas.annotations.media.Schema(description = "BaseBean2"
+//            , discriminator = "type", subTypes = {Sub1Bean.class}
+    )
+    static class BaseBean2 {
+        public String type;
+        public int a;
+        public String b;
+    }
+
+    @io.swagger.oas.annotations.media.Schema(description = "Sub2Bean", allOf = {BaseBean2.class}, anyOf = {BaseBean2.class})
+    static class Sub2Bean extends BaseBean2 {
         public int c;
     }
 
