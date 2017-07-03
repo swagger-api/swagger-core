@@ -22,6 +22,7 @@ import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.servers.ServerVariable;
 import io.swagger.oas.models.servers.ServerVariables;
 import io.swagger.oas.models.tags.Tag;
+import io.swagger.util.ParameterProcessor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -91,7 +92,9 @@ public class OperationParser {
             parameterObject.setAllowReserved(parameter.allowReserved());
             isEmpty = false;
         }
-        if (parameter.explode()) {
+
+        ParameterProcessor.setParameterStyle(parameterObject, parameter);
+        if (parameter.explode() || Parameter.StyleEnum.FORM.equals(parameterObject.getStyle())) {
             parameterObject.setExplode(parameter.explode());
             isEmpty = false;
         }

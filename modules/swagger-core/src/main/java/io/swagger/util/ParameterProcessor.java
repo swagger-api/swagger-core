@@ -31,6 +31,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class ParameterProcessor {
+    public static final String HEADER = "header";
+    public static final String PATH = "path";
+    public static final String QUERY = "query";
+    public static final String COOKIE = "cookie";
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
     public static Parameter applyAnnotations(OpenAPI openAPI, Parameter parameter, Type type, List<Annotation> annotations) {
@@ -73,10 +77,11 @@ public class ParameterProcessor {
                 if (p.allowReserved()) {
                     parameter.setAllowReserved(p.allowReserved());
                 }
-                // TODO - Explode - Style behaviour
-                parameter.setStyle(StringUtils.isNoneBlank(p.style()) ? Parameter.StyleEnum.valueOf(p.style()) : null);
-                if (p.explode()) {
-                    parameter.setExplode(p.explode());
+
+                setParameterStyle(parameter, p);
+
+                if (p.explode() || Parameter.StyleEnum.FORM.equals(parameter.getStyle())) {
+                    parameter.setExplode(Boolean.TRUE);
                 }
 
                 if (hasSchemaAnnotation(p.schema())) {
@@ -143,6 +148,18 @@ public class ParameterProcessor {
             }
         }
         return parameter;
+    }
+
+    public static void setParameterStyle(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
+        if (StringUtils.isNotBlank(p.style())) {
+            parameter.setStyle(Parameter.StyleEnum.valueOf(p.style()));
+        } else {
+            if (HEADER.equals(p.in()) || PATH.equals(p.in())) {
+                parameter.setStyle(Parameter.StyleEnum.SIMPLE);
+            } else if (QUERY.equals(p.in()) || COOKIE.equals(p.in())) {
+                parameter.setStyle(Parameter.StyleEnum.FORM);
+            }
+        }
     }
 
     public static Schema fillSchema(Schema schema, Type type) {

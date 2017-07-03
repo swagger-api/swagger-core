@@ -49,7 +49,10 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-
+/**
+ * Test for the Reader Class
+ *
+ */
 public class ReaderTest {
     private static final String EXAMPLE_TAG = "Example Tag";
     private static final String SECOND_TAG = "Second Tag";
