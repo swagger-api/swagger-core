@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -29,10 +28,8 @@ import io.swagger.oas.models.media.NumberSchema;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.media.StringSchema;
 import io.swagger.oas.models.media.UUIDSchema;
-import io.swagger.util.Json;
 import io.swagger.util.PrimitiveType;
 import io.swagger.util.ReflectionUtils;
-import io.swagger.util.Yaml;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -259,12 +256,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (isComposedSchema) {
             model = new ComposedSchema()
                     .type("object")
-                    .title(name)
+                    .name(name)
                     .description(_description(beanDesc.getClassInfo()));
         } else {
             model = new Schema()
                     .type("object")
-                    .title(name)
+                    .name(name)
                     .description(_description(beanDesc.getClassInfo()));
         }
 
@@ -599,7 +596,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (schemaAnnotation != null) {
             Class<?> not = schemaAnnotation.not();
             if (!Void.class.equals(not)) {
-                model.not((new Schema().$ref(context.resolve(not.getClass()).getTitle())));
+                model.not((new Schema().$ref(context.resolve(not.getClass()).getName())));
             }
         }
 
@@ -622,7 +619,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .collect(Collectors.toList());
             allOfFiltered.forEach(c -> {
                 Schema allOfRef = context.resolve(c);
-                composedSchema.addAllOfItem(new Schema().$ref(allOfRef.getTitle()));
+                composedSchema.addAllOfItem(new Schema().$ref(allOfRef.getName()));
                 final Map<String, Schema> baseProps = allOfRef.getProperties();
                 final Map<String, Schema> subtypeProps = composedSchema.getProperties();
                 if (baseProps != null && subtypeProps != null) {
@@ -647,7 +644,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 // TODO do we want to expand this? or use ref? and remove interface schema??
                 // or do we want to only "resolve" interfaces, and not classes in anyOf?
                 // TODO do we want to implement the same for allOf and oneOf?
-                //composedSchema.addAnyOfItem(new Schema().$ref(anyOfRef.getTitle()));
+                //composedSchema.addAnyOfItem(new Schema().$ref(anyOfRef.getName()));
                 composedSchema.addAnyOfItem(anyOfRef);
                 // remove shared properties defined in the parent
                 final Map<String, Schema> baseProps = anyOfRef.getProperties();
@@ -670,7 +667,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .filter(c -> !this.shouldIgnoreClass(c))
                     .filter(c -> !(c.equals(Void.class)))
                     .collect(Collectors.toList());
-            oneOfFiltered.forEach(c -> composedSchema.addOneOfItem(new Schema().$ref(context.resolve(c).getTitle())));
+            oneOfFiltered.forEach(c -> composedSchema.addOneOfItem(new Schema().$ref(context.resolve(c).getName())));
 
 
             /* TODO do we need logic below (from 2.0)? do we need the "child" to be referenced by the "parent" to be resolved?
@@ -984,8 +981,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             final Schema subtypeModel = context.resolve(subtypeType);
 
-            if (subtypeModel.getTitle().equals(model.getTitle())) {
-                subtypeModel.setTitle(_typeNameResolver.nameForType(_mapper.constructType(subtypeType),
+            if (subtypeModel.getName().equals(model.getName())) {
+                subtypeModel.setName(_typeNameResolver.nameForType(_mapper.constructType(subtypeType),
                         TypeNameResolver.Options.SKIP_API_MODEL));
             }
 
