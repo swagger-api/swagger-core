@@ -214,6 +214,16 @@ public @interface Schema {
   String _default() default "";
 
   /**
+   * provides a discriminator property value.
+   */
+  String discriminatorProperty() default "";
+
+  /**
+   * provides discriminator mapping values.
+   */
+  DiscriminatorMapping[] discriminatorMapping() default @DiscriminatorMapping;
+
+  /**
    * allows schema to be marked as hidden
    */
   boolean hidden() default false;

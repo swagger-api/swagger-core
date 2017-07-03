@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.converter.ModelConverterContextImpl;
+import io.swagger.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.oas.models.media.ComposedSchema;
 import io.swagger.oas.models.media.Schema;
 import org.testng.annotations.BeforeTest;
@@ -30,7 +31,6 @@ public class InheritedBeanTest extends SwaggerTestBase {
     @Test
     public void testInheritedBean() throws Exception {
         final Schema baseModel = context.resolve(BaseBean.class);
-
         assertNotNull(baseModel);
         assertBasePropertiesValid(baseModel.getProperties());
 
@@ -165,7 +165,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
     @JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
     @JsonSubTypes({@JsonSubTypes.Type(value = Sub1Bean.class, name = "sub1")})
     @io.swagger.oas.annotations.media.Schema(description = "BaseBean"
-//            , discriminator = "type", subTypes = {Sub1Bean.class}
+           //, discriminatorProperty = "type", discriminatorMapping = {@DiscriminatorMapping(value = "Sub1BeanMapped", schema = Sub1Bean.class)}
     )
     static class BaseBean {
         public String type;
