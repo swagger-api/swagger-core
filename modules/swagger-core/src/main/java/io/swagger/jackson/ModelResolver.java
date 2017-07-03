@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -20,8 +21,10 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.collect.Iterables;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
+import io.swagger.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.oas.models.media.ArraySchema;
 import io.swagger.oas.models.media.ComposedSchema;
+import io.swagger.oas.models.media.Discriminator;
 import io.swagger.oas.models.media.IntegerSchema;
 import io.swagger.oas.models.media.MapSchema;
 import io.swagger.oas.models.media.NumberSchema;
@@ -296,13 +299,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
         }
 
-/* TODO
+        final io.swagger.oas.annotations.media.Schema schemaAnnotation = beanDesc.getClassAnnotations().get(io.swagger.oas.annotations.media.Schema.class);
 
-        String disc = (schemaAnnotation == null) ? "" : schemaAnnotation.discriminator();
+        String disc = (schemaAnnotation == null) ? "" : schemaAnnotation.discriminatorProperty();
 
-        if (apiModel != null && StringUtils.isNotEmpty(apiModel.reference())) {
-            model.setReference(apiModel.reference());
-        }
 
         if (disc.isEmpty()) {
             // longer method would involve AnnotationIntrospector.findTypeResolver(...) but:
@@ -312,9 +312,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         if (!disc.isEmpty()) {
-            model.setDiscriminator(disc);
+            Discriminator discriminator = new Discriminator()
+                    .propertyName(disc);
+            DiscriminatorMapping mappings[] = schemaAnnotation.discriminatorMapping();
+            if (mappings != null && mappings.length > 0) {
+                for (DiscriminatorMapping mapping: mappings) {
+                    if (!mapping.value().isEmpty() && !mapping.schema().equals(Void.class)) {
+                        discriminator.mapping(mapping.value(), context.resolve(mapping.schema()).getName());
+                    }
+                }
+
+            }
+
+            model.setDiscriminator(discriminator);
         }
-*/
         List<Schema> props = new ArrayList<Schema>();
         Map<String, Schema> modelProps = new LinkedHashMap<String, Schema>();
 
@@ -586,12 +597,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          * This must be done after model.setProperties so that the model's set
          * of properties is available to filter from any subtypes
          **/
-        // TODO discriminator
         if (!resolveSubtypes(model, beanDesc, context)) {
-//            model.setDiscriminator(null);
+             model.setDiscriminator(null);
         }
-
-        final io.swagger.oas.annotations.media.Schema schemaAnnotation = beanDesc.getClassAnnotations().get(io.swagger.oas.annotations.media.Schema.class);
 
         if (schemaAnnotation != null) {
             Class<?> not = schemaAnnotation.not();
@@ -601,7 +609,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if (isComposedSchema) {
-            // TODO remove child props if present in parent also for oneOf??
             composedSchemaReferencedClasses.forEach(context::resolve);
 
             ComposedSchema composedSchema = (ComposedSchema)model;
@@ -620,18 +627,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             allOfFiltered.forEach(c -> {
                 Schema allOfRef = context.resolve(c);
                 composedSchema.addAllOfItem(new Schema().$ref(allOfRef.getName()));
-                final Map<String, Schema> baseProps = allOfRef.getProperties();
-                final Map<String, Schema> subtypeProps = composedSchema.getProperties();
-                if (baseProps != null && subtypeProps != null) {
-                    for (Map.Entry<String, Schema> entry : baseProps.entrySet()) {
-                        if (entry.getValue().equals(subtypeProps.get(entry.getKey()))) {
-                            subtypeProps.remove(entry.getKey());
-                        }
-                    }
-                }
-                if (subtypeProps.isEmpty()) {
-                    composedSchema.setProperties(null);
-                }
+                removeParentProperties(composedSchema, allOfRef);
             });
 
             List<Class<?>> anyOfFiltered = Stream.of(anyOf)
@@ -647,19 +643,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 //composedSchema.addAnyOfItem(new Schema().$ref(anyOfRef.getName()));
                 composedSchema.addAnyOfItem(anyOfRef);
                 // remove shared properties defined in the parent
-                final Map<String, Schema> baseProps = anyOfRef.getProperties();
-                final Map<String, Schema> subtypeProps = composedSchema.getProperties();
-                if (baseProps != null && subtypeProps != null) {
-                    for (Map.Entry<String, Schema> entry : baseProps.entrySet()) {
-                        if (entry.getValue().equals(subtypeProps.get(entry.getKey()))) {
-                            subtypeProps.remove(entry.getKey());
-                        }
-                    }
-                }
-                if (subtypeProps.isEmpty()) {
-                    composedSchema.setProperties(null);
-                }
-
+                removeParentProperties(composedSchema, anyOfRef);
             });
 
             List<Class<?>> oneOfFiltered = Stream.of(oneOf)
@@ -667,7 +651,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .filter(c -> !this.shouldIgnoreClass(c))
                     .filter(c -> !(c.equals(Void.class)))
                     .collect(Collectors.toList());
-            oneOfFiltered.forEach(c -> composedSchema.addOneOfItem(new Schema().$ref(context.resolve(c).getName())));
+            oneOfFiltered.forEach(c -> {
+                Schema oneOfRef = context.resolve(c);
+                composedSchema.addOneOfItem(new Schema().$ref(oneOfRef.getName()));
+                // remove shared properties defined in the parent
+                removeParentProperties(composedSchema, oneOfRef);
+            });
 
 
             /* TODO do we need logic below (from 2.0)? do we need the "child" to be referenced by the "parent" to be resolved?
@@ -1026,6 +1015,21 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final List<NamedType> superTypes = _intr.findSubtypes(superBean.getClassInfo());
         if (superTypes != null) {
             resultTypes.removeAll(superTypes);
+        }
+    }
+
+    private void removeParentProperties (Schema child, Schema parent) {
+        final Map<String, Schema> baseProps = parent.getProperties();
+        final Map<String, Schema> subtypeProps = child.getProperties();
+        if (baseProps != null && subtypeProps != null) {
+            for (Map.Entry<String, Schema> entry : baseProps.entrySet()) {
+                if (entry.getValue().equals(subtypeProps.get(entry.getKey()))) {
+                    subtypeProps.remove(entry.getKey());
+                }
+            }
+        }
+        if (subtypeProps.isEmpty()) {
+            child.setProperties(null);
         }
     }
 
