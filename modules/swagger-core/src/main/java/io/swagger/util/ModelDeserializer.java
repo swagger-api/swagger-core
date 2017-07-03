@@ -49,30 +49,6 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
         if (allOf != null || anyOf != null || oneOf != null) {
 
             ComposedSchema composedSchema = Json.mapper().convertValue(node, ComposedSchema.class);
-
-            // TODO do we support stuff similar to below?
-/*
-            // we only support one parent, no multiple inheritance or composition
-            model = Json.mapper().convertValue(node, ComposedModel.class);
-            List<Model> allComponents = model.getAllOf();
-            if (allComponents.size() >= 1) {
-                model.setParent(allComponents.get(0));
-                if (allComponents.size() >= 2) {
-                    model.setChild(allComponents.get(allComponents.size() - 1));
-                    List<RefModel> interfaces = new ArrayList<RefModel>();
-                    int size = allComponents.size();
-                    for (Model m : allComponents.subList(1, size - 1)) {
-                        if (m instanceof RefModel) {
-                            RefModel ref = (RefModel) m;
-                            interfaces.add(ref);
-                        }
-                    }
-                    model.setInterfaces(interfaces);
-                } else {
-                    model.setChild(new ModelImpl());
-                }
-            }
-*/
             return composedSchema;
 
         } else {
