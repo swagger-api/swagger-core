@@ -35,6 +35,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+@Consumes("application/json")
 @Path("/pet")
 @Produces({"application/json", "application/xml"})
 public class PetResource {
@@ -88,6 +89,7 @@ public class PetResource {
 
     @GET
     @Path("/findByStatus")
+    @Produces("application/json")
     @Operation(summary = "Finds Pets by status",
             description = "Multiple status values can be provided with comma seperated strings",
             responses = {

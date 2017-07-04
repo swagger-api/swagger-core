@@ -59,6 +59,8 @@ public class Reader {
     private Components components;
     private Paths paths;
     private Set<Tag> openApiTags;
+    javax.ws.rs.Consumes classConsumes;
+
 
     private static final String GET_METHOD = "get";
     private static final String POST_METHOD = "post";
@@ -123,6 +125,7 @@ public class Reader {
         io.swagger.oas.annotations.security.SecurityScheme apiSecurityScheme = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.security.SecurityScheme.class);
         io.swagger.oas.annotations.ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.ExternalDocumentation.class);
         io.swagger.oas.annotations.info.Info apiInfo = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.info.Info.class);
+        classConsumes = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Consumes.class);
 
         Optional<SecurityScheme> securityScheme = SecurityParser.getSecurityScheme(apiSecurityScheme);
         if (securityScheme.isPresent()) {
@@ -218,6 +221,10 @@ public class Reader {
                                         Content content = new Content();
                                         if (consumes != null) {
                                             for (String value : consumes.value()) {
+                                                setMediaTypeToContent(parameter.getSchema(), content, value);
+                                            }
+                                        } else if (classConsumes != null) {
+                                            for (String value : classConsumes.value()) {
                                                 setMediaTypeToContent(parameter.getSchema(), content, value);
                                             }
                                         } else {
