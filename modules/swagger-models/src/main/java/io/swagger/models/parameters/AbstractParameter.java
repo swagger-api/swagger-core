@@ -2,6 +2,8 @@ package io.swagger.models.parameters;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.models.properties.ArrayProperty;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,6 +18,8 @@ public abstract class AbstractParameter {
     protected String pattern;
     protected Boolean allowEmptyValue;
     protected Boolean readOnly;
+    protected String type;
+    protected String collectionFormat;
 
     @Override
     public boolean equals(Object o) {
@@ -52,6 +56,12 @@ public abstract class AbstractParameter {
         if (allowEmptyValue != null ? !allowEmptyValue.equals(that.allowEmptyValue) : that.allowEmptyValue != null) {
             return false;
         }
+        if (type != null ? !type.equals(that.type) : that.type != null) {
+            return false;
+        }
+        if (collectionFormat != null ? !collectionFormat.equals(that.collectionFormat) : that.collectionFormat != null) {
+             return false;
+        }
         return readOnly != null ? readOnly.equals(that.readOnly) : that.readOnly == null;
 
     }
@@ -67,6 +77,8 @@ public abstract class AbstractParameter {
         result = 31 * result + (pattern != null ? pattern.hashCode() : 0);
         result = 31 * result + (allowEmptyValue != null ? allowEmptyValue.hashCode() : 0);
         result = 31 * result + (readOnly != null ? readOnly.hashCode() : 0);
+        result = 31 * result + (collectionFormat != null ? collectionFormat.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
         return result;
     }
 
@@ -132,6 +144,28 @@ public abstract class AbstractParameter {
 
     public void setPattern(String pattern) {
         this.pattern = pattern;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+        setCollectionFormat(ArrayProperty.isType(type) ? getDefaultCollectionFormat() : null);
+    }
+
+    public String getCollectionFormat() {
+        return collectionFormat;
+    }
+
+    public void setCollectionFormat(String collectionFormat) {
+        this.collectionFormat = collectionFormat;
+    }
+
+    @JsonIgnore
+    protected String getDefaultCollectionFormat() {
+        return "csv";
     }
 
     @JsonAnyGetter

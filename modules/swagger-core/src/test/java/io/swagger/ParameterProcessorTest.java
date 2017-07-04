@@ -498,4 +498,24 @@ public class ParameterProcessorTest {
         assertEquals(param0.getFormat(), "int64");
 
     }
+
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "id", dataType = "com.example.api.model.UpsertPet", paramType = "body", required = true)
+    })
+    private void implicitParameterizedMethodParameterizedType() {
+    }
+
+    @Test(description = "test for issue #2191 fixing.")
+    public void implicitParameterParameterizedTypeProcessorTest() throws NoSuchMethodException {
+        final ApiImplicitParams params = getClass().getDeclaredMethod("implicitParameterizedMethodParameterizedType")
+                .getAnnotation(ApiImplicitParams.class);
+        final BodyParameter param0 = (BodyParameter) ParameterProcessor.applyAnnotations(null, new BodyParameter(),
+                String.class, Collections.<Annotation>singletonList(params.value()[0]));
+
+        assertEquals(param0.getName(), "id");
+        assertEquals(param0.getIn(), "body");
+        assertEquals(param0.getRequired(), true);
+        assertEquals(param0.getType(), "com.example.api.model.UpsertPet");
+
+    }
 }

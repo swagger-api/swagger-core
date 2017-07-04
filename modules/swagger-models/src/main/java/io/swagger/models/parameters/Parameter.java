@@ -40,4 +40,12 @@ public interface Parameter {
     Boolean getAllowEmptyValue();
 
     void setAllowEmptyValue(Boolean allowEmptyValue);
+
+    String getType();
+
+    void setType(String type);
+
+    String getCollectionFormat();
+
+    void setCollectionFormat(String collectionFormat);
 }

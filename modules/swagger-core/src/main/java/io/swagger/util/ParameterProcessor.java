@@ -252,12 +252,20 @@ public class ParameterProcessor {
             bp.setRequired(param.isRequired());
             bp.setName(StringUtils.isNotEmpty(param.getName()) ? param.getName() : "body");
 
+            if (StringUtils.isNotEmpty(param.getDataType())) {
+                bp.setType(param.getDataType());
+            }
+
             if (StringUtils.isNotEmpty(param.getDescription())) {
                 bp.setDescription(param.getDescription());
             }
 
             if (StringUtils.isNotEmpty(param.getAccess())) {
                 bp.setAccess(param.getAccess());
+            }
+
+            if(helper.getType() != null) {
+                bp.setType(helper.getType());
             }
 
             final Property property = ModelConverters.getInstance().readAsProperty(type);

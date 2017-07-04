@@ -6,9 +6,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface SerializableParameter extends Parameter {
-    String getType();
-
-    void setType(String type);
 
     Property getItems();
 
@@ -17,10 +14,6 @@ public interface SerializableParameter extends Parameter {
     String getFormat();
 
     void setFormat(String format);
-
-    String getCollectionFormat();
-
-    void setCollectionFormat(String collectionFormat);
 
     List<String> getEnum();
 

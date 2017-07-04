@@ -26,9 +26,7 @@ import java.util.List;
         "uniqueItems", "multipleOf" })
 public abstract class AbstractSerializableParameter<T extends AbstractSerializableParameter<T>> extends AbstractParameter implements SerializableParameter {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSerializableParameter.class);
-    protected String type;
     protected String format;
-    protected String collectionFormat;
     protected Property items;
     protected Boolean exclusiveMaximum;
     protected BigDecimal maximum;
@@ -113,11 +111,6 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     public T readOnly(Boolean readOnly) {
         this.setReadOnly(readOnly);
         return castThis();
-    }
-
-    @JsonIgnore
-    protected String getDefaultCollectionFormat() {
-        return "csv";
     }
 
     public T items(Property items) {
@@ -238,27 +231,6 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     @Override
     public void setFormat(String format) {
         this.format = format;
-    }
-
-    @Override
-    public String getType() {
-        return type;
-    }
-
-    @Override
-    public void setType(String type) {
-        this.type = type;
-        setCollectionFormat(ArrayProperty.isType(type) ? getDefaultCollectionFormat() : null);
-    }
-
-    @Override
-    public String getCollectionFormat() {
-        return collectionFormat;
-    }
-
-    @Override
-    public void setCollectionFormat(String collectionFormat) {
-        this.collectionFormat = collectionFormat;
     }
 
     public void setProperty(Property property) {
@@ -481,9 +453,6 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         if (_enum == null) {
             if (other._enum != null) return false;
         } else if (!_enum.equals(other._enum)) return false;
-        if (collectionFormat == null) {
-            if (other.collectionFormat != null) return false;
-        } else if (!collectionFormat.equals(other.collectionFormat)) return false;
         if (defaultValue == null) {
             if (other.defaultValue != null) return false;
         } else if (!defaultValue.equals(other.defaultValue)) return false;
@@ -526,9 +495,6 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         if (pattern == null) {
             if (other.pattern != null) return false;
         } else if (!pattern.equals(other.pattern)) return false;
-        if (type == null) {
-            if (other.type != null) return false;
-        } else if (!type.equals(other.type)) return false;
         if (uniqueItems == null) {
             if (other.uniqueItems != null) return false;
         } else if (!uniqueItems.equals(other.uniqueItems)) return false;
@@ -540,7 +506,6 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((_enum == null) ? 0 : _enum.hashCode());
-        result = prime * result + ((collectionFormat == null) ? 0 : collectionFormat.hashCode());
         result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
         result = prime * result + ((example == null) ? 0 : example.hashCode());
         result = prime * result + ((exclusiveMaximum == null) ? 0 : exclusiveMaximum.hashCode());
@@ -555,7 +520,6 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         result = prime * result + ((minimum == null) ? 0 : minimum.hashCode());
         result = prime * result + ((multipleOf == null) ? 0 : multipleOf.hashCode());
         result = prime * result + ((pattern == null) ? 0 : pattern.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((uniqueItems == null) ? 0 : uniqueItems.hashCode());
         return result;
     }
