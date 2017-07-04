@@ -95,7 +95,7 @@ public class OperationParser {
 
         ParameterProcessor.setParameterStyle(parameterObject, parameter);
         if (parameter.explode() || Parameter.StyleEnum.FORM.equals(parameterObject.getStyle())) {
-            parameterObject.setExplode(parameter.explode());
+            parameterObject.setExplode(Boolean.TRUE);
             isEmpty = false;
         }
         if (parameter.schema() != null) {

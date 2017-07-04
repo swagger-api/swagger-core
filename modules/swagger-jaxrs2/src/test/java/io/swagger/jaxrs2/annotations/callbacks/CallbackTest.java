@@ -57,9 +57,10 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "              description: \"payload data will be sent \"\n" +
                 "              parameters:\n" +
                 "              - name: \"subscriptionId\"\n" +
-                "                in: \"path\"\n" +
+                "                in: \"query\"\n" +
                 "                required: true\n" +
-                "                style: \"SIMPLE\"\n" +
+                "                style: \"FORM\"\n" +
+                "                explode: true\n" +
                 "                schema:\n" +
                 "                  type: \"string\"\n" +
                 "                  description: \"the generated UUID\"\n" +
@@ -100,7 +101,7 @@ public class CallbackTest extends AbstractAnnotationTest {
                         method = "post",
                         description = "payload data will be sent ",
                         parameters = {
-                                @Parameter(in = "path", name = "subscriptionId", required = true,
+                                @Parameter(in = "query", name = "subscriptionId", required = true,
                                         schema = @Schema(
                                                 type = "string",
                                                 format = "uuid",
