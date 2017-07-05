@@ -236,7 +236,10 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "        default:\n" +
                 "          description: \"The pet\"\n" +
                 "          content:\n" +
-                "            '*/*':\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "            application/xml:\n" +
                 "              schema:\n" +
                 "                $ref: \"#/components/schemas/Pet\"\n" +
                 "        400:\n" +
