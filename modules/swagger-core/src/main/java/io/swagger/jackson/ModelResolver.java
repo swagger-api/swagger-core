@@ -252,8 +252,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (resolvedModel != null) {
             return resolvedModel;
         }
-
-        List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(beanDesc);
+        // TODO modified not to consider super class (as @JsonTypeInfo is not marked inherited) to handle composed model stuff; ok?
+        //List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(beanDesc);
+        List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass());
         boolean isComposedSchema = composedSchemaReferencedClasses != null;
         final Schema model;
         if (isComposedSchema) {
@@ -299,33 +300,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
         }
 
-        final io.swagger.oas.annotations.media.Schema schemaAnnotation = beanDesc.getClassAnnotations().get(io.swagger.oas.annotations.media.Schema.class);
-
-        String disc = (schemaAnnotation == null) ? "" : schemaAnnotation.discriminatorProperty();
-
-
-        if (disc.isEmpty()) {
-            // longer method would involve AnnotationIntrospector.findTypeResolver(...) but:
-            JsonTypeInfo typeInfo = beanDesc.getClassAnnotations().get(JsonTypeInfo.class);
-            if (typeInfo != null) {
-                disc = typeInfo.property();
-            }
-        }
-        if (!disc.isEmpty()) {
-            Discriminator discriminator = new Discriminator()
-                    .propertyName(disc);
-            DiscriminatorMapping mappings[] = schemaAnnotation.discriminatorMapping();
-            if (mappings != null && mappings.length > 0) {
-                for (DiscriminatorMapping mapping: mappings) {
-                    if (!mapping.value().isEmpty() && !mapping.schema().equals(Void.class)) {
-                        discriminator.mapping(mapping.value(), context.resolve(mapping.schema()).getName());
-                    }
-                }
-
-            }
-
-            model.setDiscriminator(discriminator);
-        }
         List<Schema> props = new ArrayList<Schema>();
         Map<String, Schema> modelProps = new LinkedHashMap<String, Schema>();
 
@@ -600,6 +574,39 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (!resolveSubtypes(model, beanDesc, context)) {
              model.setDiscriminator(null);
         }
+        // TODO modified not to consider super class (as @Schema is not marked inherited) to handle composed model stuff; ok?
+        //final io.swagger.oas.annotations.media.Schema schemaAnnotation = beanDesc.getClassAnnotations().get(io.swagger.oas.annotations.media.Schema.class);
+        final io.swagger.oas.annotations.media.Schema schemaAnnotation = type.getRawClass().getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+
+        String disc = (schemaAnnotation == null) ? "" : schemaAnnotation.discriminatorProperty();
+
+
+        if (disc.isEmpty()) {
+            // longer method would involve AnnotationIntrospector.findTypeResolver(...) but:
+            // TODO modified not to consider super class (as @JsonTypeInfo is not marked inherited) to handle composed model stuff; ok?
+            //JsonTypeInfo typeInfo = beanDesc.getClassAnnotations().get(JsonTypeInfo.class);
+            JsonTypeInfo typeInfo = type.getRawClass().getAnnotation(JsonTypeInfo.class);
+            if (typeInfo != null) {
+                disc = typeInfo.property();
+            }
+        }
+        if (!disc.isEmpty()) {
+            Discriminator discriminator = new Discriminator()
+                    .propertyName(disc);
+            DiscriminatorMapping mappings[] = schemaAnnotation.discriminatorMapping();
+            if (mappings != null && mappings.length > 0) {
+                for (DiscriminatorMapping mapping: mappings) {
+                    if (!mapping.value().isEmpty() && !mapping.schema().equals(Void.class)) {
+                        discriminator.mapping(mapping.value(), constructRef(context.resolve(mapping.schema()).getName()));
+                    }
+                }
+
+            }
+
+            model.setDiscriminator(discriminator);
+        }
+
+
 
         if (schemaAnnotation != null) {
             Class<?> not = schemaAnnotation.not();
@@ -609,7 +616,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if (isComposedSchema) {
-            composedSchemaReferencedClasses.forEach(context::resolve);
 
             ComposedSchema composedSchema = (ComposedSchema)model;
 
@@ -1033,9 +1039,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-
-    private List<Class<?>> getComposedSchemaReferencedClasses(BeanDescription beanDesc) {
-        final io.swagger.oas.annotations.media.Schema schemaAnnotation = beanDesc.getClassAnnotations().get(io.swagger.oas.annotations.media.Schema.class);
+    // TODO modified not to consider super class (as @JsonTypeInfo is not marked inherited) to handle composed model stuff; ok?
+    //private List<Class<?>> getComposedSchemaReferencedClasses(BeanDescription beanDesc) {
+    private List<Class<?>> getComposedSchemaReferencedClasses(Class<?> clazz) {
+        //final io.swagger.oas.annotations.media.Schema schemaAnnotation = beanDesc.getClassAnnotations().get(io.swagger.oas.annotations.media.Schema.class);
+        final io.swagger.oas.annotations.media.Schema schemaAnnotation = clazz.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
         if (schemaAnnotation != null) {
             // TODO not??
             Class<?>[] allOf = schemaAnnotation.allOf();
