@@ -34,6 +34,9 @@ public class InheritedBeanTest extends SwaggerTestBase {
         assertNotNull(baseModel);
         assertBasePropertiesValid(baseModel.getProperties());
 
+        assertEquals(baseModel.getDiscriminator().getPropertyName(), "type");
+        assertEquals(baseModel.getDiscriminator().getMapping().get("Sub1BeanMapped"), "#/components/schemas/Sub1Bean");
+
         final Schema subModel = context.getDefinedModels().get("Sub1Bean");
         assertNotNull(subModel);
         // make sure child points at parent
@@ -165,7 +168,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
     @JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
     @JsonSubTypes({@JsonSubTypes.Type(value = Sub1Bean.class, name = "sub1")})
     @io.swagger.oas.annotations.media.Schema(description = "BaseBean"
-           //, discriminatorProperty = "type", discriminatorMapping = {@DiscriminatorMapping(value = "Sub1BeanMapped", schema = Sub1Bean.class)}
+           , discriminatorProperty = "type", discriminatorMapping = {@DiscriminatorMapping(value = "Sub1BeanMapped", schema = Sub1Bean.class)}
     )
     static class BaseBean {
         public String type;
