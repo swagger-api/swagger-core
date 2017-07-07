@@ -310,6 +310,9 @@ public class Header {
   }
 
   public void set$ref(String $ref) {
+    if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
+      $ref = "#/components/headers/" + $ref;
+    }
     this.$ref = $ref;
   }
 
