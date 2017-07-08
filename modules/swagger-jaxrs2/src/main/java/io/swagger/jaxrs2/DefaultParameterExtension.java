@@ -25,6 +25,11 @@ import java.util.List;
 import java.util.Set;
 
 public class DefaultParameterExtension extends AbstractOpenAPIExtension {
+    private static String QUERY_PARAM = "query";
+    private static String HEADER_PARAM = "header";
+    private static String COOKIE_PARAM = "cookie";
+    private static String PATH_PARAM = "path";
+    private static String FORM_PARAM = "form";
     // make jaxrs 2.0 classes optional
     private static Class<?> CLASS_BEAN_PARAM;
 
@@ -44,33 +49,41 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
             return new ArrayList<>();
         }
 
-        List<Parameter> parameters = new ArrayList<Parameter>();
+        List<Parameter> parameters = new ArrayList<>();
         Parameter parameter = null;
         for (Annotation annotation : annotations) {
             if (annotation instanceof QueryParam) {
                 QueryParam param = (QueryParam) annotation;
                 Parameter qp = new Parameter();
-                qp.name(param.value());
+                qp.setIn(QUERY_PARAM);
+                qp.setName(param.value());
                 parameter = qp;
             } else if (annotation instanceof PathParam) {
                 PathParam param = (PathParam) annotation;
                 Parameter pp = new Parameter();
-                pp.name(param.value());
+                pp.setIn(PATH_PARAM);
+                pp.setName(param.value());
                 parameter = pp;
             } else if (annotation instanceof HeaderParam) {
                 HeaderParam param = (HeaderParam) annotation;
                 Parameter pp = new Parameter();
-                pp.name(param.value());
+                pp.setIn(HEADER_PARAM);
+                pp.setName(param.value());
                 parameter = pp;
             } else if (annotation instanceof CookieParam) {
                 CookieParam param = (CookieParam) annotation;
                 Parameter pp = new Parameter();
-                pp.name(param.value());
+                pp.setIn(COOKIE_PARAM);
+                pp.setName(param.value());
                 parameter = pp;
             } else if (annotation instanceof FormParam) {
                 FormParam param = (FormParam) annotation;
                 Parameter pp = new Parameter();
-                pp.name(param.value());
+                pp.setIn(FORM_PARAM);
+                pp.setName(param.value());
+                parameter = pp;
+            } else if (annotation instanceof io.swagger.oas.annotations.Parameter) {
+                Parameter pp = new Parameter();
                 parameter = pp;
             } else {
                 handleAdditionalAnnotation(parameters, annotation, type, typesToSkip);

@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  **/
 
 
-@Target({ElementType.METHOD})
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ApiResponse {
@@ -49,11 +49,11 @@ public @interface ApiResponse {
     /**
      *
      **/
-    Content content() default @Content();
+    Link[] links() default @Link();
 
     /**
      *
      **/
-    Link[] links() default @Link();
+    Content content() default @Content();
 
 }
