@@ -24,6 +24,7 @@ import io.swagger.oas.models.servers.ServerVariables;
 import io.swagger.oas.models.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.ws.rs.Produces;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -296,7 +297,7 @@ public class OperationParser {
         return Optional.of(requestBodyObject);
     }
 
-    public static Optional<ApiResponses> getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses, Components components) {
+    public static Optional<ApiResponses> getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses, Produces classProduces, Produces methodProduces, Components components) {
         if (responses == null) {
             return Optional.empty();
         }
@@ -306,7 +307,7 @@ public class OperationParser {
             if (StringUtils.isNotBlank(response.description())) {
                 apiResponseObject.setDescription(response.description());
             }
-            getContent(response.content(), components).ifPresent(apiResponseObject::content);
+            getContent(response.content(), classProduces, methodProduces, components).ifPresent(apiResponseObject::content);
             if (StringUtils.isNotBlank(apiResponseObject.getDescription()) || apiResponseObject.getContent() != null) {
 
                 Map<String, Link> links = getLinks(response.links());
@@ -347,7 +348,7 @@ public class OperationParser {
         return Optional.of(contentObject);
     }
 
-    public static Optional<Content> getContent(io.swagger.oas.annotations.media.Content annotationContent, Components components) {
+    public static Optional<Content> getContent(io.swagger.oas.annotations.media.Content annotationContent, Produces classProduces, Produces methodProduces, Components components) {
         if (annotationContent == null) {
             return Optional.empty();
         }
@@ -371,7 +372,17 @@ public class OperationParser {
             content.addMediaType(annotationContent.mediaType(), mediaType);
         } else {
             if (mediaType.getSchema() != null) {
-                content.addMediaType(MEDIA_TYPE, mediaType);
+                if (methodProduces != null) {
+                    for (String value : methodProduces.value()) {
+                        content.addMediaType(value, mediaType);
+                    }
+                } else if (classProduces != null) {
+                    for (String value : classProduces.value()) {
+                        content.addMediaType(value, mediaType);
+                    }
+                } else {
+                    content.addMediaType(MEDIA_TYPE, mediaType);
+                }
             }
         }
         ExampleObject[] examples = annotationContent.examples();

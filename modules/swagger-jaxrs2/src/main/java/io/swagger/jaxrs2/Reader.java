@@ -59,6 +59,10 @@ public class Reader {
     private Components components;
     private Paths paths;
     private Set<Tag> openApiTags;
+    javax.ws.rs.Consumes classConsumes;
+    javax.ws.rs.Produces classProduces;
+    javax.ws.rs.Produces methodProduces;
+
 
     private static final String GET_METHOD = "get";
     private static final String POST_METHOD = "post";
@@ -123,6 +127,8 @@ public class Reader {
         io.swagger.oas.annotations.security.SecurityScheme apiSecurityScheme = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.security.SecurityScheme.class);
         io.swagger.oas.annotations.ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.ExternalDocumentation.class);
         io.swagger.oas.annotations.info.Info apiInfo = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.info.Info.class);
+        classConsumes = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Consumes.class);
+        classProduces = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Produces.class);
 
         Optional<SecurityScheme> securityScheme = SecurityParser.getSecurityScheme(apiSecurityScheme);
         if (securityScheme.isPresent()) {
@@ -154,12 +160,13 @@ public class Reader {
         for (Method method : methods) {
             RequestBody requestBody = new RequestBody();
             AnnotatedMethod annotatedMethod = bd.findMethod(method.getName(), method.getParameterTypes());
+            methodProduces = ReflectionUtils.getAnnotation(method, javax.ws.rs.Produces.class);
 
             if (ReflectionUtils.isOverriddenMethod(method, cls)) {
                 continue;
             }
             javax.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class);
-            javax.ws.rs.Consumes consumes = ReflectionUtils.getAnnotation(method, javax.ws.rs.Consumes.class);
+            javax.ws.rs.Consumes methodConsumes = ReflectionUtils.getAnnotation(method, javax.ws.rs.Consumes.class);
 
             String operationPath = ReaderUtils.getPath(apiPath, methodPath, parentPath);
 
@@ -216,8 +223,12 @@ public class Reader {
 
                                     if (parameter.getSchema() != null) {
                                         Content content = new Content();
-                                        if (consumes != null) {
-                                            for (String value : consumes.value()) {
+                                        if (methodConsumes != null) {
+                                            for (String value : methodConsumes.value()) {
+                                                setMediaTypeToContent(parameter.getSchema(), content, value);
+                                            }
+                                        } else if (classConsumes != null) {
+                                            for (String value : classConsumes.value()) {
                                                 setMediaTypeToContent(parameter.getSchema(), content, value);
                                             }
                                         } else {
@@ -373,7 +384,7 @@ public class Reader {
         OperationParser.getTags(apiOperation.tags()).ifPresent(tag -> openApiTags.addAll(tag));
         OperationParser.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(operation::setExternalDocs);
         OperationParser.getRequestBody(apiOperation.requestBody(), components).ifPresent(operation::setRequestBody);
-        OperationParser.getApiResponses(apiOperation.responses(), components).ifPresent(operation::setResponses);
+        OperationParser.getApiResponses(apiOperation.responses(), classProduces, methodProduces, components).ifPresent(operation::setResponses);
         OperationParser.getServers(apiOperation.servers()).ifPresent(operation::setServers);
         OperationParser.getParametersList(apiOperation.parameters(), components).ifPresent(operation::setParameters);
     }

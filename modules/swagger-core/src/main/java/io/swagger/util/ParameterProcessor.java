@@ -73,7 +73,6 @@ public class ParameterProcessor {
                 if (p.allowReserved()) {
                     parameter.setAllowReserved(p.allowReserved());
                 }
-                // TODO - Explode - Style behaviour
                 parameter.setStyle(StringUtils.isNoneBlank(p.style()) ? Parameter.StyleEnum.valueOf(p.style()) : null);
                 if (p.explode()) {
                     parameter.setExplode(p.explode());

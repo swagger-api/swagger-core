@@ -236,7 +236,10 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "        default:\n" +
                 "          description: \"The pet\"\n" +
                 "          content:\n" +
-                "            '*/*':\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "            application/xml:\n" +
                 "              schema:\n" +
                 "                $ref: \"#/components/schemas/Pet\"\n" +
                 "        400:\n" +
@@ -250,7 +253,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "      requestBody:\n" +
                 "        description: \"Pet object that needs to be added to the store\"\n" +
                 "        content:\n" +
-                "          '*/*':\n" +
+                "          application/json:\n" +
                 "            schema:\n" +
                 "              $ref: \"#/components/schemas/Pet\"\n" +
                 "        required: true\n" +
