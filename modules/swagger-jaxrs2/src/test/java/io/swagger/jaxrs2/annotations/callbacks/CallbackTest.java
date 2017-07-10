@@ -25,68 +25,62 @@ public class CallbackTest extends AbstractAnnotationTest {
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "/test:\n" +
                 "    post:\n" +
-                "      description: \"subscribes a client to updates relevant to the requestor's account,\\\n" +
-                "        \\ as identified by the input token.  The supplied url will be used as the\\\n" +
-                "        \\ delivery address for response payloads\"\n" +
-                "      operationId: \"subscribe\"\n" +
+                "      description: subscribes a client to updates relevant to the requestor's account, as identified by the input token.  The supplied url will be used as the delivery address for response payloads\n" +
+                "      operationId: subscribe\n" +
                 "      parameters:\n" +
-                "      - name: \"x-auth-token\"\n" +
-                "        in: \"header\"\n" +
+                "      - name: x-auth-token\n" +
+                "        in: header\n" +
                 "        schema:\n" +
-                "          type: \"string\"\n" +
-                "          description: \"the authentication token provided after initially authenticating\\\n" +
-                "            \\ to the application\"\n" +
+                "          type: string\n" +
+                "          description: the authentication token provided after initially authenticating to the application\n" +
                 "          readOnly: true\n" +
-                "      - name: \"url\"\n" +
-                "        in: \"query\"\n" +
+                "      - name: url\n" +
+                "        in: query\n" +
                 "        schema:\n" +
-                "          type: \"string\"\n" +
-                "          description: \"the URL to call with response data\"\n" +
-                /*"          readOnly: true\n" +*/
+                "          type: string\n" +
+                "          description: the URL to call with response data\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: \"no description\"\n" +
+                "          description: no description\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
+                "                $ref: '#/components/schemas/SubscriptionResponse'\n" +
                 "      callbacks:\n" +
                 "        subscription:\n" +
                 "          http://$request.query.url:\n" +
                 "            post:\n" +
-                "              description: \"payload data will be sent \"\n" +
+                "              description: payload data will be sent\n" +
                 "              parameters:\n" +
-                "              - name: \"subscriptionId\"\n" +
-                "                in: \"query\"\n" +
+                "              - name: subscriptionId\n" +
+                "                in: path\n" +
                 "                required: true\n" +
-                "                style: \"FORM\"\n" +
-                "                explode: true\n" +
+                "                style: SIMPLE\n" +
                 "                schema:\n" +
-                "                  type: \"string\"\n" +
-                "                  description: \"the generated UUID\"\n" +
-                "                  format: \"uuid\"\n" +
+                "                  type: string\n" +
+                "                  description: the generated UUID\n" +
+                "                  format: uuid\n" +
                 "                  readOnly: true\n" +
                 "              responses:\n" +
                 "                200:\n" +
-                "                  description: \"Return this code if the callback was received and\\\n" +
-                "                    \\ processed successfully\"\n" +
+                "                  description: Return this code if the callback was received and processed successfully\n" +
                 "                205:\n" +
-                "                  description: \"Return this code to unsubscribe from future data updates\"\n" +
+                "                  description: Return this code to unsubscribe from future data updates\n" +
                 "                default:\n" +
-                "                  description: \"All other response codes will disable this callback\\\n" +
-                "                    \\ subscription\"\n" +
+                "                  description: All other response codes will disable this callback subscription\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    string:\n" +
-                "      type: \"string\"\n" +
-                "      description: \"the generated UUID\"\n" +
-                "      format: \"uuid\"\n" +
+                "      type: string\n" +
+                "      description: the generated UUID\n" +
+                "      format: uuid\n" +
                 "      readOnly: true\n" +
                 "    SubscriptionResponse:\n" +
-                "      type: \"object\"\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        subscriptionId:\n" +
-                "          type: \"string\"";
+                "          type: string";
+        System.out.println(expectedYAML);
         assertEquals(extractedYAML, expectedYAML);
     }
 
@@ -99,9 +93,9 @@ public class CallbackTest extends AbstractAnnotationTest {
                 operation =
                 @Operation(
                         method = "post",
-                        description = "payload data will be sent ",
+                        description = "payload data will be sent",
                         parameters = {
-                                @Parameter(in = "query", name = "subscriptionId", required = true,
+                                @Parameter(in = "path", name = "subscriptionId", required = true,
                                         schema = @Schema(
                                                 type = "string",
                                                 format = "uuid",

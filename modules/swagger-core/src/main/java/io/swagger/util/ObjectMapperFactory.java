@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 
 
 public class ObjectMapperFactory {
@@ -24,7 +25,13 @@ public class ObjectMapperFactory {
     }
 
     protected static ObjectMapper createYaml(boolean includePathDeserializer, boolean includeResponseDeserializer) {
-        return create(new YAMLFactory(), includePathDeserializer, includeResponseDeserializer);
+        YAMLFactory factory = new YAMLFactory();
+        factory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
+        factory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
+        factory.enable(YAMLGenerator.Feature.SPLIT_LINES);
+        factory.enable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS);
+
+        return create(factory, includePathDeserializer, includeResponseDeserializer);
     }
 
     private static ObjectMapper create(JsonFactory jsonFactory, boolean includePathDeserializer, boolean includeResponseDeserializer) {

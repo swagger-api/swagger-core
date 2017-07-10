@@ -230,6 +230,9 @@ public class Link {
     }
 
     public void set$ref(String $ref) {
+        if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
+            $ref = "#/components/links/" + $ref;
+        }
         this.$ref = $ref;
     }
 
