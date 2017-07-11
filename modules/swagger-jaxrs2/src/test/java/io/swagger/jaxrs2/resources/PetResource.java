@@ -35,6 +35,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+@Consumes("application/json")
 @Path("/pet")
 @Produces({"application/json", "application/xml"})
 public class PetResource {
@@ -88,6 +89,7 @@ public class PetResource {
 
     @GET
     @Path("/findByStatus")
+    @Produces("application/xml")
     @Operation(summary = "Finds Pets by status",
             description = "Multiple status values can be provided with comma seperated strings",
             responses = {
@@ -107,12 +109,12 @@ public class PetResource {
 
     @GET
     @Path("/findByTags")
+    @Produces("application/json")
     @Operation(summary = "Finds Pets by tags",
             description = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
             responses = {
                     @ApiResponse(description = "Pets matching criteria",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Pet.class))
+                            content = @Content(schema = @Schema(implementation = Pet.class))
                     ),
                     @ApiResponse(description = "Invalid tag value", responseCode = "400")
             })
