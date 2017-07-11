@@ -19,7 +19,7 @@
         "discriminator": {
           "propertyName": "pet_type",
           "mapping": {
-            "cachorro": "Dog"
+            "cachorro": "#/components/schemas/Dog"
           }
         },
         "required": [
