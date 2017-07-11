@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -20,7 +21,10 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.collect.Iterables;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
+import io.swagger.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.oas.models.media.ArraySchema;
+import io.swagger.oas.models.media.ComposedSchema;
+import io.swagger.oas.models.media.Discriminator;
 import io.swagger.oas.models.media.IntegerSchema;
 import io.swagger.oas.models.media.MapSchema;
 import io.swagger.oas.models.media.NumberSchema;
@@ -56,6 +60,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
@@ -157,10 +163,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             } else {
                 // complex type
                 Schema innerModel = context.resolve(propType);
-                // TODO
-//                if (innerModel instanceof ComposedModel) {
-//                    innerModel = ((ComposedModel) innerModel).getChild();
-//                }
                 if (innerModel instanceof Schema) {
                     Schema mi = (Schema) innerModel;
 
@@ -230,7 +232,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
         // Couple of possibilities for defining
         String name = _typeName(type, beanDesc);
-
         if ("Object".equals(name)) {
             return new Schema();
         }
@@ -249,25 +250,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          */
         Schema resolvedModel = context.resolve(type.getRawClass());
         if (resolvedModel != null) {
-            // TODO
-            /*
-            if (!(resolvedModel instanceof ModelImpl || resolvedModel instanceof ComposedModel)
-                    || (resolvedModel instanceof ModelImpl && ((ModelImpl) resolvedModel).getName().equals(name))) {
-                return resolvedModel;
-            } else if (resolvedModel instanceof ComposedModel) {
-                Model childModel = ((ComposedModel) resolvedModel).getChild();
-                if (childModel != null && (!(childModel instanceof ModelImpl)
-                        || ((ModelImpl) childModel).getName().equals(name))) {
-                    return resolvedModel;
-                }
-            }
-            */
             return resolvedModel;
         }
-
-        final Schema model = new Schema()
-                .type("object")
-                .description(_description(beanDesc.getClassInfo()));
+        // TODO modified not to consider super class (as @JsonTypeInfo is not marked inherited) to handle composed model stuff; ok?
+        //List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(beanDesc);
+        List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass());
+        boolean isComposedSchema = composedSchemaReferencedClasses != null;
+        final Schema model;
+        if (isComposedSchema) {
+            model = new ComposedSchema()
+                    .type("object")
+                    .name(name)
+                    .description(_description(beanDesc.getClassInfo()));
+        } else {
+            model = new Schema()
+                    .type("object")
+                    .name(name)
+                    .description(_description(beanDesc.getClassInfo()));
+        }
 
         if (!type.isContainerType()) {
             // define the model here to support self/cyclic referencing of models
@@ -299,25 +299,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (ignoreProperties != null) {
             propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
         }
-/*
-        final ApiModel apiModel = beanDesc.getClassAnnotations().get(ApiModel.class);
-        String disc = (apiModel == null) ? "" : apiModel.discriminator();
 
-        if (apiModel != null && StringUtils.isNotEmpty(apiModel.reference())) {
-            model.setReference(apiModel.reference());
-        }
-
-        if (disc.isEmpty()) {
-            // longer method would involve AnnotationIntrospector.findTypeResolver(...) but:
-            JsonTypeInfo typeInfo = beanDesc.getClassAnnotations().get(JsonTypeInfo.class);
-            if (typeInfo != null) {
-                disc = typeInfo.property();
-            }
-        }
-        if (!disc.isEmpty()) {
-            model.setDiscriminator(disc);
-        }
-*/
         List<Schema> props = new ArrayList<Schema>();
         Map<String, Schema> modelProps = new LinkedHashMap<String, Schema>();
 
@@ -590,17 +572,107 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          * of properties is available to filter from any subtypes
          **/
         if (!resolveSubtypes(model, beanDesc, context)) {
-//            model.setDiscriminator(null);
+             model.setDiscriminator(null);
         }
-/*
-        if (apiModel != null) {
-             * Check if the @ApiModel annotation has a parent property containing a value that should not be ignored
-            Class<?> parentClass = apiModel.parent();
+        // TODO modified not to consider super class (as @Schema is not marked inherited) to handle composed model stuff; ok?
+        //final io.swagger.oas.annotations.media.Schema schemaAnnotation = beanDesc.getClassAnnotations().get(io.swagger.oas.annotations.media.Schema.class);
+        final io.swagger.oas.annotations.media.Schema schemaAnnotation = type.getRawClass().getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+
+        String disc = (schemaAnnotation == null) ? "" : schemaAnnotation.discriminatorProperty();
+
+
+        if (disc.isEmpty()) {
+            // longer method would involve AnnotationIntrospector.findTypeResolver(...) but:
+            // TODO modified not to consider super class (as @JsonTypeInfo is not marked inherited) to handle composed model stuff; ok?
+            //JsonTypeInfo typeInfo = beanDesc.getClassAnnotations().get(JsonTypeInfo.class);
+            JsonTypeInfo typeInfo = type.getRawClass().getAnnotation(JsonTypeInfo.class);
+            if (typeInfo != null) {
+                disc = typeInfo.property();
+            }
+        }
+        if (!disc.isEmpty()) {
+            Discriminator discriminator = new Discriminator()
+                    .propertyName(disc);
+            DiscriminatorMapping mappings[] = schemaAnnotation.discriminatorMapping();
+            if (mappings != null && mappings.length > 0) {
+                for (DiscriminatorMapping mapping: mappings) {
+                    if (!mapping.value().isEmpty() && !mapping.schema().equals(Void.class)) {
+                        discriminator.mapping(mapping.value(), constructRef(context.resolve(mapping.schema()).getName()));
+                    }
+                }
+
+            }
+
+            model.setDiscriminator(discriminator);
+        }
+
+
+
+        if (schemaAnnotation != null) {
+            Class<?> not = schemaAnnotation.not();
+            if (!Void.class.equals(not)) {
+                model.not((new Schema().$ref(context.resolve(not.getClass()).getName())));
+            }
+        }
+
+        if (isComposedSchema) {
+
+            ComposedSchema composedSchema = (ComposedSchema)model;
+
+
+            Class<?>[] allOf = schemaAnnotation.allOf();
+            Class<?>[] anyOf = schemaAnnotation.anyOf();
+            Class<?>[] oneOf = schemaAnnotation.oneOf();
+
+
+            List<Class<?>> allOfFiltered = Stream.of(allOf)
+                    .distinct()
+                    .filter(c -> !this.shouldIgnoreClass(c))
+                    .filter(c -> !(c.equals(Void.class)))
+                    .collect(Collectors.toList());
+            allOfFiltered.forEach(c -> {
+                Schema allOfRef = context.resolve(c);
+                composedSchema.addAllOfItem(new Schema().$ref(allOfRef.getName()));
+                removeParentProperties(composedSchema, allOfRef);
+            });
+
+            List<Class<?>> anyOfFiltered = Stream.of(anyOf)
+                    .distinct()
+                    .filter(c -> !this.shouldIgnoreClass(c))
+                    .filter(c -> !(c.equals(Void.class)))
+                    .collect(Collectors.toList());
+            anyOfFiltered.forEach(c -> {
+                Schema anyOfRef = context.resolve(c);
+                // TODO do we want to expand this? or use ref? and remove interface schema??
+                // or do we want to only "resolve" interfaces, and not classes in anyOf?
+                // TODO do we want to implement the same for allOf and oneOf?
+                //composedSchema.addAnyOfItem(new Schema().$ref(anyOfRef.getName()));
+                composedSchema.addAnyOfItem(anyOfRef);
+                // remove shared properties defined in the parent
+                removeParentProperties(composedSchema, anyOfRef);
+            });
+
+            List<Class<?>> oneOfFiltered = Stream.of(oneOf)
+                    .distinct()
+                    .filter(c -> !this.shouldIgnoreClass(c))
+                    .filter(c -> !(c.equals(Void.class)))
+                    .collect(Collectors.toList());
+            oneOfFiltered.forEach(c -> {
+                Schema oneOfRef = context.resolve(c);
+                composedSchema.addOneOfItem(new Schema().$ref(oneOfRef.getName()));
+                // remove shared properties defined in the parent
+                removeParentProperties(composedSchema, oneOfRef);
+            });
+
+
+            /* TODO do we need logic below (from 2.0)? do we need the "child" to be referenced by the "parent" to be resolved?
+            // why is/was that needed?
             if (parentClass != null && !parentClass.equals(Void.class) && !this.shouldIgnoreClass(parentClass)) {
                 JavaType parentType = _mapper.constructType(parentClass);
                 final BeanDescription parentBeanDesc = _mapper.getSerializationConfig().introspect(parentType);
 
 //                 * Retrieve all the sub-types of the parent class and ensure that the current type is one of those types
+                // TODO this is not anymore true? do we need to only resolve when mentioned in parent? why?
                 boolean currentTypeIsParentSubType = false;
                 List<NamedType> subTypes = _intr.findSubtypes(parentBeanDesc.getClassInfo());
                 if (subTypes != null) {
@@ -644,8 +716,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     return context.resolve(currentType);
                 }
             }
+            END TODO */
         }
-        */
+
+
         return model;
     }
 
@@ -796,17 +870,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 ModelConverterContext context) {
 //            id.setTitle(propertyName);
             Schema model = context.resolve(type);
-            // TODO
-//            if (model instanceof ComposedModel) {
-//                model = ((ComposedModel) model).getChild();
-//            }
-//            if (model instanceof ModelImpl) {
                 Schema mi = (Schema) model;
                 mi.getProperties().put(propertyName, id);
                 return new Schema().$ref(StringUtils.isNotEmpty(mi.get$ref())
                         ? mi.get$ref() : mi.getTitle());
-//            }
-//            return null;
         }
     }
 
@@ -887,7 +954,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context) {
         final List<NamedType> types = _intr.findSubtypes(bean.getClassInfo());
-
         if (types == null) {
             return false;
         }
@@ -910,34 +976,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             final Schema subtypeModel = context.resolve(subtypeType);
 
-            // TODO
-            /*
-            if (subtypeModel instanceof ModelImpl) {
-                final ModelImpl impl = (ModelImpl) subtypeModel;
+            if (subtypeModel.getName().equals(model.getName())) {
+                subtypeModel.setName(_typeNameResolver.nameForType(_mapper.constructType(subtypeType),
+                        TypeNameResolver.Options.SKIP_API_MODEL));
+            }
 
-                // check if model name was inherited
-                if (impl.getName().equals(model.getName())) {
-                    impl.setName(_typeNameResolver.nameForType(_mapper.constructType(subtypeType),
-                            TypeNameResolver.Options.SKIP_API_MODEL));
-                }
-
-                // remove shared properties defined in the parent
-                final Map<String, Property> baseProps = model.getProperties();
-                final Map<String, Property> subtypeProps = impl.getProperties();
-                if (baseProps != null && subtypeProps != null) {
-                    for (Map.Entry<String, Property> entry : baseProps.entrySet()) {
-                        if (entry.getValue().equals(subtypeProps.get(entry.getKey()))) {
-                            subtypeProps.remove(entry.getKey());
-                        }
+            // TODO why do we need stuff below? if child defines the same it's his problem..
+/*
+            // remove shared properties defined in the parent
+            final Map<String, Schema> baseProps = model.getProperties();
+            final Map<String, Schema> subtypeProps = subtypeModel.getProperties();
+            if (baseProps != null && subtypeProps != null) {
+                for (Map.Entry<String, Schema> entry : baseProps.entrySet()) {
+                    if (entry.getValue().equals(subtypeProps.get(entry.getKey()))) {
+                        subtypeProps.remove(entry.getKey());
                     }
                 }
-
-                impl.setDiscriminator(null);
-                ComposedModel child = new ComposedModel().parent(new RefModel(model.getName())).child(impl);
-                context.defineModel(impl.getName(), child, subtypeType, null);
-                ++count;
             }
-            */
+*/
         }
         return count != 0;
     }
@@ -966,5 +1022,46 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (superTypes != null) {
             resultTypes.removeAll(superTypes);
         }
+    }
+
+    private void removeParentProperties (Schema child, Schema parent) {
+        final Map<String, Schema> baseProps = parent.getProperties();
+        final Map<String, Schema> subtypeProps = child.getProperties();
+        if (baseProps != null && subtypeProps != null) {
+            for (Map.Entry<String, Schema> entry : baseProps.entrySet()) {
+                if (entry.getValue().equals(subtypeProps.get(entry.getKey()))) {
+                    subtypeProps.remove(entry.getKey());
+                }
+            }
+        }
+        if (subtypeProps.isEmpty()) {
+            child.setProperties(null);
+        }
+    }
+
+    // TODO modified not to consider super class (as @JsonTypeInfo is not marked inherited) to handle composed model stuff; ok?
+    //private List<Class<?>> getComposedSchemaReferencedClasses(BeanDescription beanDesc) {
+    private List<Class<?>> getComposedSchemaReferencedClasses(Class<?> clazz) {
+        //final io.swagger.oas.annotations.media.Schema schemaAnnotation = beanDesc.getClassAnnotations().get(io.swagger.oas.annotations.media.Schema.class);
+        final io.swagger.oas.annotations.media.Schema schemaAnnotation = clazz.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schemaAnnotation != null) {
+            // TODO not??
+            Class<?>[] allOf = schemaAnnotation.allOf();
+            Class<?>[] anyOf = schemaAnnotation.anyOf();
+            Class<?>[] oneOf = schemaAnnotation.oneOf();
+
+            // try to read all of them anyway and resolve?
+            List<Class<?>> parentClasses = Stream.of(allOf, anyOf, oneOf)
+                    .flatMap(Stream::of)
+                    .distinct()
+                    .filter(c -> !this.shouldIgnoreClass(c))
+                    .filter(c -> !(c.equals(Void.class)))
+                    .collect(Collectors.toList());
+
+            if (!parentClasses.isEmpty()) {
+                return parentClasses;
+            }
+        }
+        return null;
     }
 }
