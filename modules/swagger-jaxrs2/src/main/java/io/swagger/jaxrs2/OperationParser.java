@@ -3,6 +3,7 @@ package io.swagger.jaxrs2;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs2.util.ReaderUtils;
+import io.swagger.oas.annotations.enums.Explode;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.ExternalDocumentation;
@@ -95,7 +96,14 @@ public class OperationParser {
         }
 
         ParameterProcessor.setParameterStyle(parameterObject, parameter);
-        if (parameter.explode() || Parameter.StyleEnum.FORM.equals(parameterObject.getStyle())) {
+        if (Explode.DEFAULT.equals(parameter.explode())) {
+            if (Parameter.StyleEnum.FORM.equals(parameterObject.getStyle())) {
+                parameterObject.setExplode(Boolean.TRUE);
+                isEmpty = false;
+            } else {
+                parameterObject.setExplode(Boolean.FALSE);
+            }
+        } else if (Explode.TRUE.equals(parameter.explode())) {
             parameterObject.setExplode(Boolean.TRUE);
             isEmpty = false;
         }

@@ -1,6 +1,7 @@
 package io.swagger.util;
 
 import io.swagger.converter.ModelConverters;
+import io.swagger.oas.annotations.enums.Explode;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.media.ArraySchema;
 import io.swagger.oas.models.media.BinarySchema;
@@ -80,7 +81,13 @@ public class ParameterProcessor {
 
                 setParameterStyle(parameter, p);
 
-                if (p.explode() || Parameter.StyleEnum.FORM.equals(parameter.getStyle())) {
+                if (Explode.DEFAULT.equals(p.explode())) {
+                    if (Parameter.StyleEnum.FORM.equals(parameter.getStyle())) {
+                        parameter.setExplode(Boolean.TRUE);
+                    } else {
+                        parameter.setExplode(Boolean.FALSE);
+                    }
+                } else if (Explode.TRUE.equals(p.explode())) {
                     parameter.setExplode(Boolean.TRUE);
                 }
 
