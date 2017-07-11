@@ -103,6 +103,36 @@ public class InheritedBeanTest extends SwaggerTestBase {
     }
 
 
+    @Test
+    public void testHierarchy() throws Exception {
+        final Schema baseModel = context.resolve(BaseBean3.class);
+        assertNotNull(baseModel);
+        assertBasePropertiesValid(baseModel.getProperties());
+
+        assertEquals(baseModel.getDiscriminator().getPropertyName(), "type");
+        assertEquals(baseModel.getDiscriminator().getMapping().get("ChildBean3Mapped"), "#/components/schemas/ChildBean3");
+
+        final Schema subModel = context.getDefinedModels().get("ChildBean3");
+        assertNotNull(subModel);
+        // make sure child points at parent
+        assertTrue(subModel instanceof ComposedSchema);
+        ComposedSchema cm = (ComposedSchema) subModel;
+        assertEquals(cm.getAllOf().get(0).get$ref(), "#/components/schemas/BaseBean3");
+        // make sure parent properties are filtered out of subclass
+        assertSub1PropertiesValid(cm.getProperties());
+
+        // assert grandchild
+        final Schema subSubModel = context.getDefinedModels().get("GrandChildBean3");
+        assertNotNull(subSubModel);
+        // make sure child points at parent
+        assertTrue(subSubModel instanceof ComposedSchema);
+        cm = (ComposedSchema) subSubModel;
+        assertEquals(cm.getAllOf().get(0).get$ref(), "#/components/schemas/ChildBean3");
+        // make sure parent properties are filtered out of subclass
+        assertSub2PropertiesValid(cm.getProperties());
+
+    }
+
     private void assertBasePropertiesValid(Map<String, Schema> baseProperites) {
         assertEquals(baseProperites.size(), 3);
         for (Map.Entry<String, Schema> entry : baseProperites.entrySet()) {
@@ -207,6 +237,28 @@ public class InheritedBeanTest extends SwaggerTestBase {
         public int a;
         public int c;
     }
+
+    @JsonSubTypes({@JsonSubTypes.Type(value = ChildBean3.class, name = "childBean3")})
+    @io.swagger.oas.annotations.media.Schema(description = "BaseBean3"
+            , discriminatorProperty = "type", discriminatorMapping = {@DiscriminatorMapping(value = "ChildBean3Mapped", schema = ChildBean3.class)}
+    )
+    static class BaseBean3 {
+        public String type;
+        public int a;
+        public String b;
+    }
+
+    @JsonSubTypes({@JsonSubTypes.Type(value = GrandChildBean3.class, name = "grandChildBean3")})
+    @io.swagger.oas.annotations.media.Schema(description = "ChildBean3", allOf = {BaseBean3.class})
+    static class ChildBean3 extends BaseBean3 {
+        public int c;
+    }
+
+    @io.swagger.oas.annotations.media.Schema(description = "GrandChildBean3", allOf = {ChildBean3.class})
+    static class GrandChildBean3 extends ChildBean3 {
+        public int d;
+    }
+
 
     @io.swagger.oas.annotations.media.Schema(anyOf = {UserObject.class, EmployeeObject.class})
     static class UberObject implements UserObject, EmployeeObject {

@@ -34,6 +34,10 @@ public class JsonDeserializationTest {
         assertTrue(lizardSchema instanceof ComposedSchema);
         assertEquals(((ComposedSchema)lizardSchema).getAllOf().size(), 2);
 
+        Schema petSchema = openAPI.getComponents().getSchemas().get("Pet");
+        assertEquals(petSchema.getDiscriminator().getPropertyName(), "pet_type");
+        assertEquals(petSchema.getDiscriminator().getMapping().get("cachorro"), "#/components/schemas/Dog");
+
     }
 
     @Test(description = "it should deserialize a simple ObjectProperty")
