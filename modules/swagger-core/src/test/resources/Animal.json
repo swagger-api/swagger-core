@@ -14,52 +14,45 @@
         }
     },
     "Human": {
+        "type": "object",
         "allOf": [
             {
                 "$ref": "#/components/schemas/Animal"
-            },
-            {
-                "type": "object",
-                "properties": {
-                    "firstName": {
-                        "type": "string"
-                    },
-                    "lastName": {
-                        "type": "string"
-                    }
-                }
             }
-        ]
+        ],
+        "properties": {
+            "firstName": {
+                "type": "string"
+            },
+            "lastName": {
+                "type": "string"
+            }
+        }
     },
     "Pet": {
+        "type": "object",
         "allOf": [
             {
                 "$ref": "#/components/schemas/Animal"
-            },
-            {
-                "type": "object",
-                "required": [
-                    "isDomestic",
-                    "name",
-                    "type"
-                ],
-                "properties": {
-                    "type": {
-                        "type": "string",
-                        "position": 1,
-                        "description": "The pet type"
-                    },
-                    "name": {
-                        "type": "string",
-                        "position": 2,
-                        "description": "The name of the pet"
-                    },
-                    "isDomestic": {
-                        "type": "boolean",
-                        "position": 3
-                    }
-                }
             }
-        ]
+        ],
+        "required": [
+            "isDomestic",
+            "name",
+            "type"
+        ],
+        "properties": {
+            "type": {
+                "type": "string",
+                "description": "The pet type"
+            },
+            "name": {
+                "type": "string",
+                "description": "The name of the pet"
+            },
+            "isDomestic": {
+                "type": "boolean"
+            }
+        }
     }
 }

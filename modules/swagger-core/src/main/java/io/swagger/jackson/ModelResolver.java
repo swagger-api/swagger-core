@@ -623,7 +623,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .collect(Collectors.toList());
             allOfFiltered.forEach(c -> {
                 Schema allOfRef = context.resolve(c);
-                composedSchema.addAllOfItem(new Schema().$ref(allOfRef.getName()));
+                Schema refSchema = new Schema().$ref(allOfRef.getName());
+                // allOf could have already being added during subtype resolving
+                if (composedSchema.getAllOf() == null || !composedSchema.getAllOf().contains(refSchema)) {
+                    composedSchema.addAllOfItem(refSchema);
+                }
                 removeParentProperties(composedSchema, allOfRef);
             });
 
@@ -972,19 +976,60 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         TypeNameResolver.Options.SKIP_API_MODEL));
             }
 
-            // TODO why do we need stuff below? if child defines the same it's his problem..
-/*
-            // remove shared properties defined in the parent
-            final Map<String, Schema> baseProps = model.getProperties();
-            final Map<String, Schema> subtypeProps = subtypeModel.getProperties();
-            if (baseProps != null && subtypeProps != null) {
-                for (Map.Entry<String, Schema> entry : baseProps.entrySet()) {
-                    if (entry.getValue().equals(subtypeProps.get(entry.getKey()))) {
-                        subtypeProps.remove(entry.getKey());
-                    }
-                }
+            // here schema could be not composed, but we want it to be composed, doing same work as done
+            // in resolve method??
+
+            ComposedSchema composedSchema = null;
+            if (!(subtypeModel instanceof ComposedSchema)) {
+                // create composed schema
+                // TODO any smarter way?
+                composedSchema = (ComposedSchema)new ComposedSchema()
+                        .title(subtypeModel.getTitle())
+                        .name(subtypeModel.getName())
+                        .deprecated(subtypeModel.getDeprecated())
+                        .additionalProperties(subtypeModel.getAdditionalProperties())
+                        .description(subtypeModel.getDescription())
+                        .discriminator(subtypeModel.getDiscriminator())
+                        .example(subtypeModel.getExample())
+                        .exclusiveMaximum(subtypeModel.getExclusiveMaximum())
+                        .exclusiveMinimum(subtypeModel.getExclusiveMinimum())
+                        .externalDocs(subtypeModel.getExternalDocs())
+                        .format(subtypeModel.getFormat())
+                        .maximum(subtypeModel.getMaximum())
+                        .maxItems(subtypeModel.getMaxItems())
+                        .maxLength(subtypeModel.getMaxLength())
+                        .maxProperties(subtypeModel.getMaxProperties())
+                        .minimum(subtypeModel.getMinimum())
+                        .minItems(subtypeModel.getMinItems())
+                        .minLength(subtypeModel.getMinLength())
+                        .minProperties(subtypeModel.getMinProperties())
+                        .multipleOf(subtypeModel.getMultipleOf())
+                        .not(subtypeModel.getNot())
+                        .nullable(subtypeModel.getNullable())
+                        .pattern(subtypeModel.getPattern())
+                        .properties(subtypeModel.getProperties())
+                        .readOnly(subtypeModel.getReadOnly())
+                        .required(subtypeModel.getRequired())
+                        .type(subtypeModel.getType())
+                        .uniqueItems(subtypeModel.getUniqueItems())
+                        .writeOnly(subtypeModel.getWriteOnly())
+                        .xml(subtypeModel.getXml());
+
+
+            } else {
+                composedSchema = (ComposedSchema)subtypeModel;
             }
-*/
+            Schema refSchema = new Schema().$ref(model.getName());
+            // allOf could have already being added during type resolving when @Schema(allOf..) is declared
+            if (composedSchema.getAllOf() == null || !composedSchema.getAllOf().contains(refSchema)) {
+                composedSchema.addAllOfItem(refSchema);
+            }
+            removeParentProperties(composedSchema, model);
+
+            // replace previous schema..
+            Class<?> currentType = subtype.getType();
+            context.defineModel(composedSchema.getName(), composedSchema, currentType, null);
+
         }
         return count != 0;
     }

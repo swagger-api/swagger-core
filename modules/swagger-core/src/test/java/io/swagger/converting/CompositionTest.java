@@ -23,7 +23,7 @@ public class CompositionTest {
         compareAsJson(Human.class, "Human.json");
     }
 
-    @Test(enabled = false, description = "read a model with composition")
+    @Test(description = "read a model with composition")
     public void readModelWithComposition() throws IOException {
         compareAsJson(Animal.class, "Animal.json");
     }
