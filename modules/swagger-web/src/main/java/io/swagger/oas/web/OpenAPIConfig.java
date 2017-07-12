@@ -17,7 +17,5 @@ public interface OpenAPIConfig {
 
     Map<String, Object> getUserDefinedOptions();
 
-    boolean isPrettyPrint();
-
     boolean isScanAllResources();
 }
