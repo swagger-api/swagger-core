@@ -63,6 +63,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.swagger.util.RefUtils.constructRef;
+
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
 
@@ -72,18 +74,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     public ObjectMapper objectMapper() {
         return _mapper;
-    }
-
-    private String constructRef(String simpleRef) {
-        return "#/components/schemas/" + simpleRef;
-    }
-
-    private String extractSimpleName(String ref) {
-        int idx = ref.lastIndexOf("/");
-        if(idx > 0) {
-            return ref.substring(idx);
-        }
-        return ref;
     }
 
     protected boolean shouldIgnoreClass(Type type) {
@@ -593,14 +583,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (!disc.isEmpty()) {
             Discriminator discriminator = new Discriminator()
                     .propertyName(disc);
-            DiscriminatorMapping mappings[] = schemaAnnotation.discriminatorMapping();
-            if (mappings != null && mappings.length > 0) {
-                for (DiscriminatorMapping mapping: mappings) {
-                    if (!mapping.value().isEmpty() && !mapping.schema().equals(Void.class)) {
-                        discriminator.mapping(mapping.value(), constructRef(context.resolve(mapping.schema()).getName()));
+            if (schemaAnnotation != null) {
+                DiscriminatorMapping mappings[] = schemaAnnotation.discriminatorMapping();
+                if (mappings != null && mappings.length > 0) {
+                    for (DiscriminatorMapping mapping : mappings) {
+                        if (!mapping.value().isEmpty() && !mapping.schema().equals(Void.class)) {
+                            discriminator.mapping(mapping.value(), constructRef(context.resolve(mapping.schema()).getName()));
+                        }
                     }
                 }
-
             }
 
             model.setDiscriminator(discriminator);

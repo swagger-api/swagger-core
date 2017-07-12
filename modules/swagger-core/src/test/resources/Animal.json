@@ -9,12 +9,14 @@
                 "type": "string"
             }
         },
-        "discriminator": "type"
+        "discriminator" : {
+            "propertyName" : "type"
+        }
     },
     "Human": {
         "allOf": [
             {
-                "$ref": "#/definitions/Animal"
+                "$ref": "#/components/schemas/Animal"
             },
             {
                 "type": "object",
@@ -32,7 +34,7 @@
     "Pet": {
         "allOf": [
             {
-                "$ref": "#/definitions/Animal"
+                "$ref": "#/components/schemas/Animal"
             },
             {
                 "type": "object",

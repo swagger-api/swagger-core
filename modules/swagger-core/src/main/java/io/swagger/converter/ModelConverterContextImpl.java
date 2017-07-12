@@ -54,7 +54,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
         }
         modelByName.put(name, model);
 
-        if (StringUtils.isNotBlank(prevName)) {
+        if (StringUtils.isNotBlank(prevName) && !prevName.equals(name)) {
             modelByName.remove(prevName);
         }
 
