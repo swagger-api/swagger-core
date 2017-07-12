@@ -78,16 +78,6 @@ public final class BasicOpenAPIConfig implements OpenAPIConfig {
     }
 
     @Override
-    public boolean isPrettyPrint() {
-        return prettyPrint;
-    }
-
-    public OpenAPIConfig setPrettyPrint(boolean prettyPrint) {
-        this.prettyPrint = prettyPrint;
-        return this;
-    }
-
-    @Override
     public boolean isScanAllResources() {
         return scanAllResources;
     }
