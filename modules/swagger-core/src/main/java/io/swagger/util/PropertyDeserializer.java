@@ -135,9 +135,6 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
             throws IOException, JsonProcessingException {
         JsonNode node = jp.getCodec().readTree(jp);
         Property property = propertyFromNode(node);
-        if(property != null) {
-            property.setXml(getXml(node));
-        }
         return property;
     }
 
@@ -210,6 +207,8 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
 
         String description = getString(node, PropertyBuilder.PropertyId.DESCRIPTION);
 
+        Xml xml = getXml(node);
+
         JsonNode detailNode = node.get("$ref");
         if (detailNode != null) {
             RefProperty refProperty = new RefProperty(detailNode.asText());
@@ -227,7 +226,8 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                 if (items != null) {
                     MapProperty mapProperty = new MapProperty(items)
                             .description(description)
-                            .title(title);
+                            .title(title)
+                            .xml(xml);
                     mapProperty.setExample(example);
                     mapProperty.setMinProperties(getInteger(node, PropertyBuilder.PropertyId.MIN_PROPERTIES));
                     mapProperty.setMaxProperties(getInteger(node, PropertyBuilder.PropertyId.MAX_PROPERTIES));
@@ -260,7 +260,8 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                 if("array".equals(detailNodeType)) {
                     ArrayProperty ap = new ArrayProperty()
                             .description(description)
-                            .title(title);
+                            .title(title)
+                            .xml(xml);
                     ap.setExample(example);
                     PropertyBuilder.merge(ap, argsFromNode(detailNode));
                     ap.setDescription(description);
@@ -274,7 +275,8 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                 }
                 ObjectProperty objectProperty = new ObjectProperty(properties)
                         .description(description)
-                        .title(title);
+                        .title(title)
+                        .xml(xml);
                 objectProperty.setReadOnly(readOnly);
                 objectProperty.setExample(example);
                 objectProperty.setVendorExtensionMap(getVendorExtensions(node));
@@ -292,7 +294,8 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                 ArrayProperty arrayProperty = new ArrayProperty()
                         .items(subProperty)
                         .description(description)
-                        .title(title);
+                        .title(title)
+                        .xml(xml);
                 arrayProperty.setReadOnly(readOnly);
                 arrayProperty.setMinItems(getInteger(node, PropertyBuilder.PropertyId.MIN_ITEMS));
                 arrayProperty.setMaxItems(getInteger(node, PropertyBuilder.PropertyId.MAX_ITEMS));
@@ -313,6 +316,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
             LOGGER.warn("no property from " + type + ", " + format + ", " + args);
             return null;
         }
+        output.setXml(xml);
         output.setDescription(description);
 
         return output;
