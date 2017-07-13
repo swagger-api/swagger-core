@@ -55,8 +55,6 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "              - name: subscriptionId\n" +
                 "                in: path\n" +
                 "                required: true\n" +
-                "                style: SIMPLE\n" +
-                "                explode: false\n" +
                 "                schema:\n" +
                 "                  type: string\n" +
                 "                  description: the generated UUID\n" +

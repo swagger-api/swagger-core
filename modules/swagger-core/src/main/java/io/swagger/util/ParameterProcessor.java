@@ -27,6 +27,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.List;
@@ -80,16 +81,7 @@ public class ParameterProcessor {
                 }
 
                 setParameterStyle(parameter, p);
-
-                if (Explode.DEFAULT.equals(p.explode())) {
-                    if (Parameter.StyleEnum.FORM.equals(parameter.getStyle())) {
-                        parameter.setExplode(Boolean.TRUE);
-                    } else {
-                        parameter.setExplode(Boolean.FALSE);
-                    }
-                } else if (Explode.TRUE.equals(p.explode())) {
-                    parameter.setExplode(Boolean.TRUE);
-                }
+                setParameterExplode(parameter, p);
 
                 if (hasSchemaAnnotation(p.schema())) {
                     Schema schema = processSchema(p.schema());
@@ -157,14 +149,40 @@ public class ParameterProcessor {
         return parameter;
     }
 
+    public static void setParameterExplode(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
+        if (isExplodable(p)) {
+            if (Explode.TRUE.equals(p.explode())) {
+                parameter.setExplode(Boolean.TRUE);
+            } else if (Explode.FALSE.equals(p.explode())) {
+                parameter.setExplode(Boolean.FALSE);
+            }
+        }
+    }
+
+    private static boolean isExplodable(io.swagger.oas.annotations.Parameter p) {
+        io.swagger.oas.annotations.media.Schema schema = p.schema();
+        boolean explode = true;
+        if (schema != null) {
+            Class implementation = schema.implementation();
+            if (implementation == Void.class) {
+                if (!schema.type().equals("object") && !schema.type().equals("array")) {
+                    explode = false;
+                }
+            }
+        }
+        return explode;
+    }
+
     public static void setParameterStyle(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
-        if (StringUtils.isNotBlank(p.style())) {
-            parameter.setStyle(Parameter.StyleEnum.valueOf(p.style()));
-        } else {
-            if (HEADER.equals(p.in()) || PATH.equals(p.in())) {
-                parameter.setStyle(Parameter.StyleEnum.SIMPLE);
-            } else if (QUERY.equals(p.in()) || COOKIE.equals(p.in())) {
-                parameter.setStyle(Parameter.StyleEnum.FORM);
+        if (isExplodable(p)) {
+            if (StringUtils.isNotBlank(p.style())) {
+                parameter.setStyle(Parameter.StyleEnum.valueOf(p.style()));
+            } else {
+                if (HEADER.equals(p.in()) || PATH.equals(p.in())) {
+                    parameter.setStyle(Parameter.StyleEnum.SIMPLE);
+                } else if (QUERY.equals(p.in()) || COOKIE.equals(p.in())) {
+                    parameter.setStyle(Parameter.StyleEnum.FORM);
+                }
             }
         }
     }
