@@ -16,6 +16,7 @@
 
 package io.swagger.oas.annotations.responses;
 
+import io.swagger.oas.annotations.links.Link;
 import io.swagger.oas.annotations.media.Content;
 
 import java.lang.annotation.ElementType;
@@ -25,9 +26,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 
  *
- * 
+ *
+ *
  **/
 
 
@@ -35,19 +36,24 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ApiResponse {
-  /**
-   * 
-   **/
-  String description() default "";
+    /**
+     *
+     **/
+    String description() default "";
 
-  /**
-   * the HTTP response code, or default, for the supplied response
-   **/
-  String responseCode() default "";
+    /**
+     * the HTTP response code, or default, for the supplied response
+     **/
+    String responseCode() default "";
 
-  /**
-   * 
-   **/
-  Content content() default @Content();
+    /**
+     *
+     **/
+    Link[] links() default @Link();
+
+    /**
+     *
+     **/
+    Content content() default @Content();
 
 }
