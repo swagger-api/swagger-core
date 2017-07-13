@@ -22,10 +22,10 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
 
     @Override
     public boolean hasIgnoreMarker(AnnotatedMember m) {
-//        ApiModelProperty ann = m.getAnnotation(ApiModelProperty.class);
-//        if (ann != null && ann.hidden()) {
-//            return true;
-//        }
+        Schema ann = m.getAnnotation(Schema.class);
+        if (ann != null && ann.hidden()) {
+            return true;
+        }
         return false;
     }
 
@@ -56,6 +56,7 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
 
     @Override
     public Integer findPropertyIndex(Annotated a) {
+        // TODO remove if not supporting position
 //        ApiModelProperty prop = a.getAnnotation(ApiModelProperty.class);
 //        if (prop != null && prop.position() != 0) {
 //            return prop.position();
@@ -65,6 +66,7 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
 
     @Override
     public List<NamedType> findSubtypes(Annotated a) {
+        // TODO remove if we are relying on JsonSubTypes only
 //        final ApiModel api = a.getAnnotation(ApiModel.class);
 //        if (api != null) {
 //            final Class<?>[] classes = api.subTypes();

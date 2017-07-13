@@ -3,6 +3,7 @@ package io.swagger.converting;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
+import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
@@ -17,16 +18,23 @@ import io.swagger.oas.models.media.MediaType;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.media.StringSchema;
 import io.swagger.oas.models.parameters.Parameter;
+import io.swagger.oas.models.parameters.QueryParameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.servers.Server;
 import io.swagger.util.Json;
+import io.swagger.util.OutputReplacer;
+import io.swagger.util.ResourceUtils;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class SwaggerSerializerTest {
     ObjectMapper m = Json.mapper();
@@ -126,17 +134,17 @@ public class SwaggerSerializerTest {
         final OpenAPI rebuilt = Json.mapper().readValue(swaggerJson, OpenAPI.class);
         SerializationMatchers.assertEqualsToJson(rebuilt, swaggerJson);
     }
-/*
     @Test(description = "it should read the uber api")
     public void readUberApi() throws IOException {
         final String jsonString = ResourceUtils.loadClassResource(getClass(), "uber.json");
-        final Swagger swagger = Json.mapper().readValue(jsonString, Swagger.class);
+        final OpenAPI swagger = Json.mapper().readValue(jsonString, OpenAPI.class);
         assertNotNull(swagger);
     }
 
+
     @Test(description = "it should write a spec with parameter references")
     public void writeSpecWithParameterReferences() throws IOException {
-        final Model personModel = ModelConverters.getInstance().read(Person.class).get("Person");
+        final Schema personModel = ModelConverters.getInstance().read(Person.class).get("Person");
 
         final Info info = new Info()
                 .version("1.0.0")
@@ -148,40 +156,40 @@ public class SwaggerSerializerTest {
                 .url("http://swagger.io");
         info.setContact(contact);
 
-        final Swagger swagger = new Swagger()
+        final OpenAPI swagger = new OpenAPI()
                 .info(info)
-                .host("petstore.swagger.io")
-                .securityDefinition("api-key", new ApiKeyAuthDefinition("key", In.HEADER))
-                .scheme(Scheme.HTTP)
-                .consumes("application/json")
-                .produces("application/json")
-                .model("Person", personModel);
+                .addServersItem(new Server().url("http://petstore.swagger.io"))
+                //.consumes("application/json")
+                //.produces("application/json")
+                .schema("Person", personModel);
 
-        final QueryParameter parameter = new QueryParameter()
+        final QueryParameter parameter = (QueryParameter)new QueryParameter()
                 .name("id")
                 .description("a common get parameter")
-                .property(new LongProperty());
+                .schema(new IntegerSchema());
 
         final Operation get = new Operation()
-                .produces("application/json")
+                //.produces("application/json")
                 .summary("finds pets in the system")
                 .description("a longer description")
-                .tag("Pet Operations")
+                //.tag("Pet Operations")
                 .operationId("get pet by id")
-                .parameter(new RefParameter("foo"));
+                .addParametersItem(new Parameter().$ref("#/parameters/Foo"));
 
-        swagger.parameter("foo", parameter)
-                .path("/pets", new Path().get(get));
+
+        swagger
+                .components(new Components().addParameters("Foo", parameter))
+                .path("/pets", new PathItem().get(get));
 
         final String swaggerJson = Json.mapper().writeValueAsString(swagger);
-        final Swagger rebuilt = Json.mapper().readValue(swaggerJson, Swagger.class);
-        assertEquals(Json.pretty(swagger), Json.pretty(rebuilt));
+        final OpenAPI rebuilt = Json.mapper().readValue(swaggerJson, OpenAPI.class);
+        assertEquals(Json.pretty(rebuilt), Json.pretty(swagger));
     }
 
     @Test
     public void prettyPrintTest() throws IOException {
         final String json = ResourceUtils.loadClassResource(getClass(), "uber.json");
-        final Swagger swagger = Json.mapper().readValue(json, Swagger.class);
+        final OpenAPI swagger = Json.mapper().readValue(json, OpenAPI.class);
         final String outputStream = OutputReplacer.OUT.run(new OutputReplacer.Function() {
             @Override
             public void run() {
@@ -222,5 +230,4 @@ public class SwaggerSerializerTest {
 
         }
     }
-    */
 }

@@ -51,6 +51,9 @@ public class SnakeCaseConverterTest {
                 "         \"title\":{" +
                 "            \"type\":\"string\"" +
                 "         }" +
+                "      }," +
+                "      \"xml\":{" +
+                "        \"name\":\"snakeCaseModel\"" +
                 "      }" +
                 "   }" +
                 "}";

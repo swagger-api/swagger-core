@@ -93,7 +93,7 @@ public class ModelConverterTest {
         assertEquals(model, "MyModel");
     }
 
-    @Test(enabled = false, description = "it should override an inherited model's name")
+    @Test(description = "it should override an inherited model's name")
     public void overrideInheritedModelName() {
         final Map<String, Schema> rootSchemas = readAll(AbstractModelWithApiModel.class);
         assertEquals(rootSchemas.size(), 3);
@@ -121,7 +121,7 @@ public class ModelConverterTest {
         assertEquals(itr.next(), "is_persistent");
     }
 
-    @Test(enabled = false, description = "it should serialize a parameterized type per 606")
+    @Test(description = "it should serialize a parameterized type per 606")
     public void serializeParameterizedType() {
         final Map<String, Schema> schemas = readAll(Employee.class);
 
@@ -154,7 +154,7 @@ public class ModelConverterTest {
         assertEquals(employee.getXml().getName(), "employee");
     }
 
-    @Test(enabled = false, description = "it should ignore hidden fields")
+    @Test(description = "it should ignore hidden fields")
     public void ignoreHiddenFields() {
         final Map<String, Schema> schemas = readAll(ClientOptInput.class);
 

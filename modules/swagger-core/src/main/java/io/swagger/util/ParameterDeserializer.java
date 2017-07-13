@@ -22,10 +22,11 @@ public class ParameterDeserializer extends JsonDeserializer<Parameter> {
         JsonNode node = jp.getCodec().readTree(jp);
         JsonNode sub = node.get("$ref");
         JsonNode inNode = node.get("in");
-/*
+
         if (sub != null) {
-            result = Json.mapper().convertValue(sub, RefParameter.class);
-        } else if (inNode != null)*/ {
+            // TODO is this ok? otherwise  add name? or use some refparameter?
+            result = new Parameter().$ref(sub.asText());
+        } else if (inNode != null) {
             String in = inNode.asText();
             if ("query".equals(in)) {
                 result = Json.mapper().convertValue(node, QueryParameter.class);

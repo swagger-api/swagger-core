@@ -145,6 +145,8 @@ public class JsonDeserializationTest {
         ApiResponse refResponse = (ApiResponse) response;
         assertEquals(refResponse.get$ref(), expectedRef);
     }
+
+    // TODO
 /*
     @Test
     public void testDeserializeSecurity() throws Exception {

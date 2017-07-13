@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class CompositionTest {
 
-    @Test(enabled = false, description = "read a model with required params and description")
+    @Test(description = "read a model with required params and description")
     public void readModelWithRequiredParams() throws IOException {
         compareAsJson(Human.class, "Human.json");
     }
@@ -38,7 +38,7 @@ public class CompositionTest {
         compareAsJson(AbstractBaseModelWithoutFields.class, "AbstractBaseModelWithoutFields.json");
     }
 
-    @Test(enabled = false, description = "create a ModelWithFieldWithSubTypes")
+    @Test(description = "create a ModelWithFieldWithSubTypes")
     public void createModelWithFieldWithSubTypes() throws IOException {
         compareAsJson(ModelWithFieldWithSubTypes.class, "ModelWithFieldWithSubTypes.json");
     }

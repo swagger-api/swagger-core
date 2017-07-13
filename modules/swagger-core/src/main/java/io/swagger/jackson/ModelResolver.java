@@ -31,6 +31,7 @@ import io.swagger.oas.models.media.NumberSchema;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.media.StringSchema;
 import io.swagger.oas.models.media.UUIDSchema;
+import io.swagger.oas.models.media.XML;
 import io.swagger.util.PrimitiveType;
 import io.swagger.util.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -126,9 +127,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         if(annotation instanceof XmlElement) {
                             XmlElement xmlElement =   (XmlElement)annotation;
                             if(xmlElement != null && xmlElement.name() != null && !"".equals(xmlElement.name()) && !"##default".equals(xmlElement.name())) {
-//                                Xml xml = items.getXml() != null ? items.getXml() : new Xml();
-//                                xml.setName(xmlElement.name());
-//                                items.setXml(xml);
+                                XML xml = items.getXml() != null ? items.getXml() : new XML();
+                                xml.setName(xmlElement.name());
+                                items.setXml(xml);
                             }
                         }
                     }
@@ -273,13 +274,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         XmlRootElement rootAnnotation = beanDesc.getClassAnnotations().get(XmlRootElement.class);
         if (rootAnnotation != null && !"".equals(rootAnnotation.name()) && !"##default".equals(rootAnnotation.name())) {
             LOGGER.debug("{}", rootAnnotation);
-            /*
-            Xml xml = new Xml().name(rootAnnotation.name());
+            XML xml = new XML().name(rootAnnotation.name());
             if (rootAnnotation.namespace() != null && !"".equals(rootAnnotation.namespace()) && !"##default".equals(rootAnnotation.namespace())) {
                 xml.namespace(rootAnnotation.namespace());
             }
             model.xml(xml);
-            */
         }
         final XmlAccessorType xmlAccessorTypeAnnotation = beanDesc.getClassAnnotations().get(XmlAccessorType.class);
 
@@ -471,6 +470,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
 
                 if (property != null) {
+                    property.setName(propName);
                     if (property.get$ref() == null) {
                         Boolean required = md.getRequired();
                         if (required != null && !Boolean.FALSE.equals(required)) {
