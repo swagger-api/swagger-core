@@ -16,19 +16,19 @@ public class AnimalClass {
 
     String type;
     String name;
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    String getType(){
+    public String getType(){
         return type;
     }
 
-    void setType(String type){
+    public void setType(String type){
         this.type = type;
     }
 }

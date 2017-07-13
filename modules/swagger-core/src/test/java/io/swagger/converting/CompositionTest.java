@@ -28,9 +28,9 @@ public class CompositionTest {
         compareAsJson(Animal.class, "Animal.json");
     }
 
-    @Test(enabled = false, description = "read a model with composition")
+    @Test(description = "read a model with composition")
     public void readClassModelWithComposition() throws IOException {
-        compareAsJson(AnimalClass.class, "Animal.json");
+        compareAsJson(AnimalClass.class, "AnimalClass.json");
     }
 
     @Test(description = "create a model")
