@@ -10,28 +10,27 @@ import java.util.Set;
 import io.swagger.oas.models.OpenAPI;
 
 public final class BasicOpenAPIConfig implements OpenAPIConfig {
-    private Set<Class<?>> classesToBeScanned;
+    private Set<String> resourcesBeScanned;
     private Map<String, Object> environment;
     private Class<?> filterClass;
     private Collection<String> ignoredRoutes;
     private OpenAPI openAPI;
-    private boolean prettyPrint;
     private boolean scanAllResources;
 
     public BasicOpenAPIConfig() {
-        classesToBeScanned = Collections.<Class<?>>emptySet();
+        resourcesBeScanned = Collections.<String>emptySet();
         environment = Collections.<String, Object>emptyMap();
         ignoredRoutes = Collections.<String>emptySet();
     }
 
     @Override
-    public Set<Class<?>> getClasses() {
-        return classesToBeScanned;
+    public Set<String> getResources() {
+        return resourcesBeScanned;
     }
 
-    public OpenAPIConfig setClasses(Set<Class<?>> classesToBeScanned) {
-        this.classesToBeScanned = classesToBeScanned == null || classesToBeScanned.isEmpty()
-                ? Collections.<Class<?>>emptySet() : Collections.unmodifiableSet(classesToBeScanned);
+    public OpenAPIConfig setResources(Set<String> resourcesBeScanned) {
+        this.resourcesBeScanned = resourcesBeScanned == null || resourcesBeScanned.isEmpty()
+                ? Collections.<String>emptySet() : Collections.unmodifiableSet(resourcesBeScanned);
         return this;
     }
 
