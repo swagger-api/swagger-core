@@ -7,7 +7,7 @@ import java.util.Set;
 import io.swagger.oas.models.OpenAPI;
 
 public interface OpenAPIConfig {
-    Set<Class<?>> getClasses();
+    Set<String> getResources();
 
     Class<?> getFilterClass();
 
