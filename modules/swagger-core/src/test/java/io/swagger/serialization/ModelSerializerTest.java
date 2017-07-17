@@ -120,14 +120,14 @@ public class ModelSerializerTest {
         assertEquals(m.writeValueAsString(p), json);
     }
 
-    @Test(enabled = false, description = "it should not create an xml object for $ref")
+    @Test(description = "it should not create an xml object for $ref")
     public void shouldNotCreateXmlObjectForRef() throws IOException {
         final Schema model = new Schema().$ref("Monster");
         model.setDescription("oops");
         model.setExternalDocs(new ExternalDocumentation()
                 .description("external docs")
                 .url("http://swagger.io"));
-        assertEquals(Json.mapper().writeValueAsString(model), "{\"$ref\":\"#/definitions/Monster\"}");
+        assertEquals(Json.mapper().writeValueAsString(model), "{\"$ref\":\"#/components/schemas/Monster\"}");
     }
 
     @Test(description = "it should make a field readOnly by annotation")
@@ -212,21 +212,6 @@ public class ModelSerializerTest {
         Schema property = (Schema)model.getProperties().get("id");
         assertTrue(property.getReadOnly());
     }
-
-    /*
-    @Test(description = "it should deserialize a model with custom format")
-    public void deserializeModelWithCustomFormat() throws IOException {
-        final String json = "{\n" +
-                "   \"properties\":{\n" +
-                "      \"id\":{\n" +
-                "         \"type\":\"string\",\n" +
-                "         \"format\":\"custom\"\n" +
-                "      }\n" +
-                "   }\n" +
-                "}";
-        final ModelImpl model = Json.mapper().readValue(json, ModelImpl.class);
-        Json.prettyPrint(model);
-    }*/
 
     @Test(description = "it should generate a JSON with read-only from pojo, #1161")
     public void readOnlyJsonGeneration() throws IOException {

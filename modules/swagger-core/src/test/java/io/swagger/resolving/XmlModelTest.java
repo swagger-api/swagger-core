@@ -58,38 +58,37 @@ public class XmlModelTest {
 
         assertNull(xml);
     }
-    // TODO do we want to handle hidden as in 2.0?
-    @Test(enabled = false, description = "it should stay hidden per 534")
+    @Test(description = "it should stay hidden per 534")
     public void stayHidden() {
         final Map<String, Schema> schemas = ModelConverters.getInstance().readAll(Issue534.class);
         assertEquals(schemas.get("Issue534").getProperties().size(), 1);
     }
 
-    /*
     @Test(description = "it should process a model with JAXB annotations")
     public void processModelWithJAXBAnnotations() {
-        final Map<String, Model> schemas = ModelConverters.getInstance().readAll(ModelWithJAXBAnnotations.class);
+        final Map<String, Schema> schemas = ModelConverters.getInstance().readAll(ModelWithJAXBAnnotations.class);
         assertEquals(schemas.size(), 1);
 
-        final Model model = schemas.get("ModelWithJAXBAnnotations");
+        final Schema model = schemas.get("ModelWithJAXBAnnotations");
         assertNotNull(model);
-        assertTrue(model instanceof ModelImpl);
+        assertTrue(model instanceof Schema);
 
-        final Xml rootXml = ((ModelImpl) model).getXml();
+        final XML rootXml = model.getXml();
         assertNotNull(rootXml);
         assertEquals(rootXml.getName(), "rootName");
 
-        for (Map.Entry<String, Property> entry : model.getProperties().entrySet()) {
+        Map<String, Schema> props = model.getProperties();
+        for (Map.Entry<String, Schema> entry : props.entrySet()) {
             final String name = entry.getKey();
-            final Property property = entry.getValue();
+            final Schema property = entry.getValue();
             if ("id".equals(name)) {
-                final Xml xml = property.getXml();
+                final XML xml = property.getXml();
                 assertNotNull(xml);
                 assertNull(xml.getName());
                 assertTrue(xml.getAttribute());
                 assertNull(xml.getWrapped());
             } else if ("name".equals(name)) {
-                final Xml xml = property.getXml();
+                final XML xml = property.getXml();
                 assertNotNull(xml);
                 assertEquals(xml.getName(), "renamed");
                 assertNull(xml.getAttribute());
@@ -97,7 +96,7 @@ public class XmlModelTest {
             } else if (Arrays.asList("list", "forcedElement").contains(name)) {
                 assertNull(property.getXml());
             } else if ("wrappedList".equals(name)) {
-                final Xml xml = property.getXml();
+                final XML xml = property.getXml();
                 assertNotNull(xml);
                 assertEquals(xml.getName(), "wrappedListItems");
                 assertNull(xml.getAttribute());
@@ -138,14 +137,13 @@ public class XmlModelTest {
                 "      type: \"string\"\n" +
                 "xml:\n" +
                 "  name: \"rootName\"";
-        final ModelImpl model = io.swagger.util.Yaml.mapper().readValue(yaml, ModelImpl.class);
+        final Schema model = io.swagger.util.Yaml.mapper().readValue(yaml, Schema.class);
 
-        final Property wrappedList = model.getProperties().get("wrappedList");
+        final Schema wrappedList = (Schema)model.getProperties().get("wrappedList");
         assertNotNull(wrappedList);
         assertNotNull(wrappedList.getXml());
         assertEquals(wrappedList.getXml().getName(), "wrappedListItems");
     }
-*/
 
     @XmlRootElement(name = "monster")
     class Monster {

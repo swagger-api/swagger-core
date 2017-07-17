@@ -19,10 +19,8 @@ import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
@@ -36,13 +34,6 @@ public class ParameterSerializationTest {
         final Parameter p = new QueryParameter()
                 .schema(new StringSchema());
         final String json = "{\"in\":\"query\",\"schema\":{\"type\":\"string\"}}";
-        SerializationMatchers.assertEqualsToJson(p, json);
-    }
-
-    @Test(description = "it should deserialize a QueryParameter")
-    public void deserializeQueryParameter() throws IOException {
-        final String json = "{\"in\":\"query\",\"required\":false,\"schema\":{\"type\":\"string\"}}";
-        final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
@@ -62,35 +53,11 @@ public class ParameterSerializationTest {
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
-    @Test(description = "it should deserialize a QueryParameter with array")
-    public void deserializeArrayQueryParameter() throws IOException {
-        final String json = "{" +
-                "   \"in\":\"query\"," +
-                "   \"required\":false," +
-                "   \"schema\":{" +
-                "     \"type\":\"array\"," +
-                "     \"items\":{" +
-                "        \"type\":\"string\"" +
-                "     }" +
-                "   }" +
-                "}";
-        final Parameter p = m.readValue(json, Parameter.class);
-        SerializationMatchers.assertEqualsToJson(p, json);
-    }
-
     @Test(description = "it should serialize a PathParameter")
     public void serializePathParameter() {
         final Parameter p = new PathParameter().schema(new StringSchema());
         final String json = "{\"in\":\"path\",\"required\":true,\"schema\":{\"type\":\"string\"}}";
         SerializationMatchers.assertEqualsToJson(p, json);
-    }
-
-    @Test(description = "it should deserialize a PathParameter")
-    public void deserializePathParameter() throws IOException {
-        final String json = "{\"in\":\"query\",\"required\":true,\"schema\":{\"type\":\"string\"}}";
-        final Parameter p = m.readValue(json, Parameter.class);
-        SerializationMatchers.assertEqualsToJson(p, json);
-        assertTrue(p.getRequired());
     }
 
     @Test(description = "it should serialize a PathParameter with string array")
@@ -111,34 +78,11 @@ public class ParameterSerializationTest {
         SerializationMatchers.assertEqualsToYaml(p, yaml);
     }
 
-    @Test(description = "it should deserialize a PathParameter with string array")
-    public void deserializeStringArrayPathParameter() throws IOException {
-        final String json = "{\"in\":\"path\",\"required\":true,\"schema\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}";
-        final Parameter p = m.readValue(json, Parameter.class);
-        SerializationMatchers.assertEqualsToJson(p, json);
-    }
-
     @Test(description = "it should serialize a PathParameter with integer array")
     public void serializeIntegerArrayPathParameter() {
         final Parameter p = new PathParameter()
                 .schema(new ArraySchema().items(new IntegerSchema()));
         final String json = "{\"in\":\"path\",\"required\":true,\"schema\":{\"type\":\"array\",\"items\":{\"type\":\"integer\",\"format\":\"int32\"}}}\n";
-        SerializationMatchers.assertEqualsToJson(p, json);
-    }
-
-    @Test(description = "it should deserialize a PathParameter with integer array ")
-    public void deserializeIntegerArrayPathParameter() throws IOException {
-        final String json = "{" +
-                "   \"in\":\"path\"," +
-                "   \"required\":true," +
-                "   \"schema\":{" +
-                "   \"type\":\"array\"," +
-                "   \"items\":{" +
-                "      \"type\":\"integer\"," +
-                "      \"format\":\"int32\"" +
-                "   }}" +
-                "}";
-        final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
@@ -155,13 +99,6 @@ public class ParameterSerializationTest {
         SerializationMatchers.assertEqualsToYaml(p, yaml);
     }
 
-    @Test(description = "it should deserialize a HeaderParameter")
-    public void deserializeHeaderParameter() throws IOException {
-        final String json = "{\"in\":\"header\",\"required\":true,\"schema\":{\"type\":\"string\"}}";
-        final Parameter p = m.readValue(json, Parameter.class);
-        SerializationMatchers.assertEqualsToJson(p, json);
-    }
-
     @Test(description = "it should serialize a string array HeaderParameter")
     public void serializeStringArrayHeaderParameter() {
         final Parameter p = new HeaderParameter()
@@ -171,14 +108,7 @@ public class ParameterSerializationTest {
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
-    @Test(description = "it should deserialize a string array HeaderParameter")
-    public void deserializeStringArrayHeaderParameter() throws IOException {
-        final String json = "{\"in\":\"header\",\"required\":true,\"schema\":{\"type\":\"string\"}}";
-        final Parameter p = m.readValue(json, Parameter.class);
-        SerializationMatchers.assertEqualsToJson(p, json);
-    }
-
-    @Test(enabled = false, description = "it should serialize a BodyParameter")
+    @Test(description = "it should serialize a BodyParameter")
     public void serializeBodyParameter() {
         final Schema model = new Schema()
                 .title("Cat")
@@ -187,21 +117,11 @@ public class ParameterSerializationTest {
                 .content(new Content().addMediaType("*/*",
                         new MediaType().schema(model)));
 
-        final String json = "{" +
-                "   \"in\":\"body\"," +
-                "   \"required\":false," +
-                "   \"schema\":{" +
-                "      \"properties\":{" +
-                "         \"name\":{" +
-                "            \"type\":\"string\"" +
-                "         }" +
-                "      }" +
-                "   }" +
-                "}";
+        final String json = "{\"content\":{\"*/*\":{\"schema\":{\"title\":\"Cat\",\"properties\":{\"name\":{\"type\":\"string\"}}}}}}";
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
-    @Test(enabled = false, description = "it should serialize a BodyParameter to yaml")
+    @Test(description = "it should serialize a BodyParameter to yaml")
     public void serializeBodyParameterToYaml() {
         final Schema model = new Schema()
                 .title("Cat")
@@ -210,38 +130,14 @@ public class ParameterSerializationTest {
                 .content(new Content().addMediaType("*/*",
                         new MediaType().schema(model)));
         final String yaml = "---\n" +
-                "in: \"body\"\n" +
-                "required: false\n" +
-                "schema:\n" +
-                "  properties:\n" +
-                "    name:\n" +
-                "      type: \"string\"";
+                "content:\n" +
+                "  '*/*':\n" +
+                "    schema:\n" +
+                "      title: Cat\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string";
         SerializationMatchers.assertEqualsToYaml(p, yaml);
-    }
-
-    @Test(description = "it should deserialize a BodyParameter")
-    public void deserializeBodyParameter() throws IOException {
-
-        final String json =
-                "{\"content\":{" +
-                "  \"*/*\":{" +
-                "    \"schema\":{" +
-                "      \"type\":\"string\"}}}}";
-        final RequestBody p = m.readValue(json, RequestBody.class);
-        SerializationMatchers.assertEqualsToJson(p, json);
-    }
-
-    @Test(enabled = false, description = "it should deserialize a read only parameter")
-    public void deserializeReadOnlyParameter() throws IOException {
-        final String json =
-                "{" +
-                "   \"in\":\"path\"," +
-                "   \"required\":false," +
-                "   \"type\":\"string\"," +
-                "   \"readOnly\":\"true\"" +
-                "}";
-        final Parameter p = m.readValue(json, Parameter.class);
-        assertTrue(p.getSchema().getReadOnly());
     }
 
     @Test(description = "it should serialize a ref BodyParameter")
@@ -265,14 +161,7 @@ public class ParameterSerializationTest {
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
-    @Test(description = "it should deserialize an array BodyParameter")
-    public void deserializeArrayBodyParameter() throws IOException {
-        final String json = "{\"content\":{\"*/*\":{\"schema\":{\"type\":\"array\",\"items\":{\"$ref\":\"#/definitions/Cat\"}}}}}";
-        final RequestBody p = m.readValue(json, RequestBody.class);
-        SerializationMatchers.assertEqualsToJson(p, json);
-    }
-
-    @Test(enabled = false, description = "it should serialize a path parameter with enum")
+    @Test(description = "it should serialize a path parameter with enum")
     public void serializeEnumPathParameter() {
         List<String> values = new ArrayList<>();
         values.add("a");
@@ -283,51 +172,12 @@ public class ParameterSerializationTest {
         final String json = "{" +
                 "   \"in\":\"path\"," +
                 "   \"required\":true," +
-                "   \"items\":{" +
-                "      \"type\":\"string\"" +
-                "   }," +
-                "   \"enum\":[\"a\",\"b\",\"c\"]" +
-                "}";
-        SerializationMatchers.assertEqualsToJson(p, json);
-    }
-
-    @Test(description = "it should deserialize a path parameter with enum")
-    public void deserializeEnumPathParameter() throws IOException {
-        final String json = "{" +
-                "   \"in\":\"path\"," +
-                "   \"required\":true," +
                 "   \"schema\":{" +
-                "     \"type\":\"array\"," +
-                "     \"items\":{" +
-                "        \"type\":\"string\"," +
-                "        \"enum\":[\"a\",\"b\",\"c\"]" +
-                "     }" +
-                "}}";
-        final Parameter p = m.readValue(json, Parameter.class);
-        SerializationMatchers.assertEqualsToJson(p, json);
-
-        ArraySchema as = (ArraySchema)p.getSchema();
-        assertEquals(((StringSchema)as.getItems()).getEnum(), Arrays.asList("a", "b", "c"));
-    }
-
-    @Test(description = "it should deserialize a number path parameter with enum")
-    public void deserializeNumberEnumPathParameter() throws IOException {
-        final String json = "{" +
-                "   \"in\":\"path\"," +
-                "   \"required\":true," +
-                "   \"schema\":{" +
-                "     \"type\":\"array\"," +
-                "     \"items\":{" +
-                "        \"type\":\"integer\"," +
-                "        \"format\":\"int32\"," +
-                "        \"enum\":[1,2,3]" +
-                "     }" +
+                "      \"type\":\"string\"," +
+                "       \"enum\":[\"a\",\"b\",\"c\"]" +
                 "   }" +
                 "}";
-        final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
-
-        assertEquals(((IntegerSchema)((ArraySchema) p.getSchema()).getItems()).getEnum(), Arrays.asList(1,2,3));
     }
 
     @Test(description = "should serialize correctly typed numeric enums")
@@ -358,32 +208,64 @@ public class ParameterSerializationTest {
         SerializationMatchers.assertEqualsToYaml(swagger, yaml);
     }
 
-    @Test(enabled = false, description = "should serialize string value")
+    @Test(description = "should serialize string value")
     public void testStringValue() {
-        final QueryParameter param = new QueryParameter();
+        final QueryParameter param = (QueryParameter) new QueryParameter().required(false);
         Schema schema = new Schema()
                 .type("string");
+        schema.setDefault("false");
 
-//        param.setDefaultValue("false");
-        final String json = "{\"in\":\"query\",\"required\":false,\"type\":\"string\",\"default\":\"false\"}";
+        param.setSchema(schema);
+        final String json = "{" +
+                "   \"in\":\"query\"," +
+                "   \"required\":false," +
+                "   \"schema\":{" +
+                "      \"type\":\"string\"," +
+                "       \"default\":\"false\"" +
+                "   }" +
+                "}";
+
         SerializationMatchers.assertEqualsToJson(param, json);
     }
 
-    @Test(enabled = false, description = "should serialize boolean value")
+    @Test(description = "should serialize boolean value")
     public void testBooleanValue() {
-        final Parameter param = new QueryParameter()
-                .schema(new Schema().type("boolean"));
-//        param.setDefaultValue("false");
-        final String json = "{\"in\":\"query\",\"required\":false,\"type\":\"boolean\",\"default\":false}";
+        final QueryParameter param = (QueryParameter) new QueryParameter().required(false);
+        Schema schema = new Schema()
+                .type("boolean");
+        schema.setDefault("false");
+
+        param.setSchema(schema);
+        final String json = "{" +
+                "   \"in\":\"query\"," +
+                "   \"required\":false," +
+                "   \"schema\":{" +
+                "      \"type\":\"boolean\"," +
+                "       \"default\":\"false\"" +
+                "   }" +
+                "}";
+
         SerializationMatchers.assertEqualsToJson(param, json);
     }
 
-    @Test(enabled = false, description = "should serialize long value")
+    @Test(description = "should serialize long value")
     public void testLongValue() {
-        final QueryParameter param = new QueryParameter();
-        param.setSchema(new IntegerSchema().format("int64"));
-        //setDefaultValue("1234");
-        final String json = "{\"in\":\"query\",\"required\":false,\"type\":\"integer\",\"default\":1234,\"format\":\"1nt64\"}";
+
+        final QueryParameter param = (QueryParameter) new QueryParameter().required(false);
+        Schema schema = new IntegerSchema().format("int64");
+        schema.setDefault("1234");
+
+        param.setSchema(schema);
+        final String json = "{" +
+                "   \"in\":\"query\"," +
+                "   \"required\":false," +
+                "   \"schema\":{" +
+                "      \"type\":\"integer\"," +
+                "       \"default\":1234," +
+                "       \"format\":\"int64\"" +
+                "   }" +
+                "}";
+
         SerializationMatchers.assertEqualsToJson(param, json);
     }
 
@@ -396,48 +278,86 @@ public class ParameterSerializationTest {
         SerializationMatchers.assertEqualsToJson(param, json);
     }
 
-    @Test(enabled = false, description = "should serialize double value")
+    @Test(description = "should serialize float value")
     public void testFloatValue() {
+
         final QueryParameter param = new QueryParameter();
-        param.setSchema(new NumberSchema()
-            .format("float"));
-//        param.setDefaultValue("12.34");
-        final String json = "{\"in\":\"query\",\"required\":false,\"type\":\"number\",\"default\":12.34,\"format\":\"float\"}";
+        param.setSchema(new NumberSchema()._default(new BigDecimal("12.34")).format("float"));
+
+        final String json = "{\"in\":\"query\",\"schema\":{\"type\":\"number\",\"format\":\"float\",\"default\":12.34}}";
         SerializationMatchers.assertEqualsToJson(param, json);
     }
 
-    @Test(enabled = false, description = "should serialize incorrect boolean value as string")
+    @Test(description = "should serialize incorrect boolean value as string")
     public void testIncorrectBoolean() {
-        final QueryParameter param = new QueryParameter();
-        param.setSchema(new Schema().type("boolean"));
-//        param.setDefaultValue("test");
-        final String json = "{\"in\":\"query\",\"required\":false,\"type\":\"boolean\",\"default\":\"test\"}";
+        final QueryParameter param = (QueryParameter) new QueryParameter().required(false);
+        Schema schema = new Schema()
+                .type("boolean");
+        schema.setDefault("test");
+
+        param.setSchema(schema);
+        final String json = "{" +
+                "   \"in\":\"query\"," +
+                "   \"required\":false," +
+                "   \"schema\":{" +
+                "      \"type\":\"boolean\"," +
+                "       \"default\":\"test\"" +
+                "   }" +
+                "}";
+
         SerializationMatchers.assertEqualsToJson(param, json);
     }
 
-    @Test(enabled = false, description = "should serialize incorrect long value as string")
+    @Test(description = "should not serialize incorrect long value")
     public void testIncorrectLong() {
-        final QueryParameter param = new QueryParameter();
-        param.setSchema(new IntegerSchema().format("int64"));
-//        param.setDefaultValue("test");
-        final String json = "{\"in\":\"query\",\"required\":false,\"type\":\"integer\",\"default\":\"test\",\"format\":\"1nt64\"}";
+        final QueryParameter param = (QueryParameter) new QueryParameter().required(false);
+        Schema schema = new IntegerSchema().format("int64");
+        schema.setDefault("test");
+
+        param.setSchema(schema);
+        final String json = "{" +
+                "   \"in\":\"query\"," +
+                "   \"required\":false," +
+                "   \"schema\":{" +
+                "      \"type\":\"integer\"," +
+                "       \"format\":\"int64\"" +
+                "   }" +
+                "}";
+
         SerializationMatchers.assertEqualsToJson(param, json);
     }
 
-    @Test(enabled = false, description = "should serialize incorrect double value as string")
+    @Test(description = "should not serialize incorrect double value")
     public void testIncorrectDouble() {
-        final QueryParameter param = new QueryParameter();
-        param.setSchema(new NumberSchema().format("double"));
-//        param.setDefaultValue("test");
-        final String json = "{\"in\":\"query\",\"required\":false,\"type\":\"number\",\"default\":\"test\",\"format\":\"double\"}";
+        final QueryParameter param = (QueryParameter) new QueryParameter().required(false);
+        Schema schema = new NumberSchema().format("double");
+        schema.setDefault("test");
+
+        param.setSchema(schema);
+        final String json = "{" +
+                "   \"in\":\"query\"," +
+                "   \"required\":false," +
+                "   \"schema\":{" +
+                "      \"type\":\"number\"," +
+                "       \"format\":\"double\"" +
+                "   }" +
+                "}";
+
         SerializationMatchers.assertEqualsToJson(param, json);
     }
 
-    @Test(enabled = false, description = "should mark a parameter as readOnly")
+    @Test(description = "should mark a parameter as readOnly")
     public void testReadOnlyParameter() throws Exception {
         final QueryParameter qp = new QueryParameter();
         qp.setSchema(new StringSchema().readOnly(true));
-        final String json = "{\"in\":\"query\",\"required\":false,\"readOnly\":true}";
+        final String json = "{" +
+                "   \"in\":\"query\"," +
+                "   \"schema\":{" +
+                "      \"type\":\"string\"," +
+                "      \"readOnly\":true" +
+                "   }" +
+                "}";
+
         SerializationMatchers.assertEqualsToJson(qp, json);
     }
 

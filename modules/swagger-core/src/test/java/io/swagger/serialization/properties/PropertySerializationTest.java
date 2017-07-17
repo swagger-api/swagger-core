@@ -299,6 +299,7 @@ public class PropertySerializationTest {
         assertEquals(m.writeValueAsString(p), json);
     }
 
+    // TODO test File Uploads instead
     @Test(enabled = false, description = "it should read a file property")
     public void serializeFileProperty() throws IOException {
         final String json = "{\"type\":\"file\"}";
