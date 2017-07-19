@@ -1,6 +1,8 @@
 package io.swagger.resolving;
 
 import io.swagger.oas.annotations.Operation;
+import io.swagger.oas.annotations.extensions.Extension;
+import io.swagger.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.util.BaseReaderUtils;
 
 import com.google.common.collect.ImmutableMap;
@@ -12,7 +14,6 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
 
-// TODO will extensions be supported in annotations?
 public class BaseReaderUtilsTest {
 
     @DataProvider
@@ -44,12 +45,12 @@ public class BaseReaderUtilsTest {
         Assert.assertEquals(map, expected);
     }
 
-    @ApiOperation(value = "method")
+    @Operation(description = "method")
     private void methodOne() {
 
     }
 
-    @ApiOperation(value = "method", extensions = {
+    @Operation(description = "method", extensions = {
             @Extension(name = "test", properties = {
                     @ExtensionProperty(name = "test1", value = "")
             })})
@@ -57,7 +58,7 @@ public class BaseReaderUtilsTest {
 
     }
 
-    @ApiOperation(value = "method", extensions = {
+    @Operation(description = "method", extensions = {
             @Extension(properties = {
                     @ExtensionProperty(name = "test1", value = "value1"),
                     @ExtensionProperty(name = "test2", value = "value2")
@@ -70,7 +71,7 @@ public class BaseReaderUtilsTest {
 
     }
 
-    @ApiOperation(value = "method", extensions = {
+    @Operation(description = "method", extensions = {
             @Extension(name = "test", properties = {
                     @ExtensionProperty(name = "test1", value = "value1"),
                     @ExtensionProperty(name = "test2", value = "value2")
@@ -84,7 +85,7 @@ public class BaseReaderUtilsTest {
 
     }
 
-    @ApiOperation(value = "method", extensions = {
+    @Operation(description = "method", extensions = {
             @Extension(properties = {
                     @ExtensionProperty(name = "test1", value = "value1"),
                     @ExtensionProperty(name = "test2", value = "value2")
@@ -98,7 +99,7 @@ public class BaseReaderUtilsTest {
 
     }
 
-    @ApiOperation(value = "method", extensions = {
+    @Operation(description = "method", extensions = {
             @Extension(name = "test1", properties = {
                     @ExtensionProperty(name = "test1", value = "value1"),
                     @ExtensionProperty(name = "test2", value = "value2")

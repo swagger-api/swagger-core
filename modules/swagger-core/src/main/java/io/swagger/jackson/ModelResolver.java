@@ -898,11 +898,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 StringSchema sp = (StringSchema) property;
                 sp.minLength(new Integer(size.min()));
                 sp.maxLength(new Integer(size.max()));
-            } /*else if (property instanceof ArrayProperty) {
-                ArrayProperty sp = (ArrayProperty) property;
+            } else if (property instanceof ArraySchema) {
+                ArraySchema sp = (ArraySchema) property;
                 sp.setMinItems(size.min());
                 sp.setMaxItems(size.max());
-            }*/
+            }
         }
         if (annos.containsKey("javax.validation.constraints.DecimalMin")) {
             DecimalMin min = (DecimalMin) annos.get("javax.validation.constraints.DecimalMin");
