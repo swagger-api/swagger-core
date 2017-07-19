@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+// TODO #2312
 public abstract class AbstractModelConverter implements ModelConverter {
     protected final ObjectMapper _mapper;
     protected final AnnotationIntrospector _intr;
