@@ -24,7 +24,6 @@ public class ParameterDeserializer extends JsonDeserializer<Parameter> {
         JsonNode inNode = node.get("in");
 
         if (sub != null) {
-            // TODO is this ok? otherwise  add name? or use some refparameter?
             result = new Parameter().$ref(sub.asText());
         } else if (inNode != null) {
             String in = inNode.asText();

@@ -55,7 +55,7 @@ public class JsonSerializationTest {
 
     }
 
-    // TODO
+    // TODO #2312
 /*
     @Test
     public void testSerializeSecurityRequirement_UsingSpecCompliantMethods() throws Exception {

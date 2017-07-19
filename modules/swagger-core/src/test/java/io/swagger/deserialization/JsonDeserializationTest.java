@@ -146,7 +146,7 @@ public class JsonDeserializationTest {
         assertEquals(refResponse.get$ref(), expectedRef);
     }
 
-    // TODO
+    // TODO #2312
 /*
     @Test
     public void testDeserializeSecurity() throws Exception {

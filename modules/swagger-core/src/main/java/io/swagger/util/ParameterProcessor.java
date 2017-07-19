@@ -174,7 +174,7 @@ public class ParameterProcessor {
         return schema;
     }
 
-    // TODO!
+    // TODO! #2312 complete merge
     public static Schema merge(Schema from, Schema to) {
         if (from == null) {
             return to;
@@ -291,7 +291,7 @@ public class ParameterProcessor {
                 output = new Schema();
             }
 
-            // TODO: other types
+            // TODO: #2312 other types
         }
         if (output != null) {
             if (StringUtils.isNotBlank(schema._default())) {

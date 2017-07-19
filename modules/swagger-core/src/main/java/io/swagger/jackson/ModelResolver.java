@@ -243,8 +243,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (resolvedModel != null) {
             return resolvedModel;
         }
-        // TODO modified not to consider super class (as @JsonTypeInfo is not marked inherited) to handle composed model stuff; ok?
-        //List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(beanDesc);
+        // TODO #2312 - needs clone implemented in #2227
+        // uses raw class, as it does not consider super class while handling schema annotation for composed model props
         List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass());
         boolean isComposedSchema = composedSchemaReferencedClasses != null;
         final Schema model;
@@ -421,7 +421,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         property = context.resolve(cls, annotations);
                     }
                     /*else if (or.toLowerCase().startsWith("map[")) {
-                        // TODO
+                        // TODO #2312
 //                        int pos = or.indexOf(",");
 //                        if (pos > 0) {
 //                            String innerType = or.substring(pos + 1, or.length() - 1);
@@ -454,7 +454,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     if (mp != null && StringUtils.isNotEmpty(mp.ref())) {
                         property = new Schema().$ref(mp.ref());
                     } else if (member.getAnnotation(JsonIdentityInfo.class) != null) {
-                        // TODO
+                        // TODO #2312
 //                        property = GeneratorWrapper.processJsonIdentity(propType, context, _mapper,
 //                                member.getAnnotation(JsonIdentityInfo.class),
 //                                member.getAnnotation(JsonIdentityReference.class));
@@ -561,8 +561,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (!resolveSubtypes(model, beanDesc, context)) {
              model.setDiscriminator(null);
         }
-        // TODO modified not to consider super class (as @Schema is not marked inherited) to handle composed model stuff; ok?
-        //final io.swagger.oas.annotations.media.Schema schemaAnnotation = beanDesc.getClassAnnotations().get(io.swagger.oas.annotations.media.Schema.class);
+        // uses raw class, as it does not consider super class while handling schema annotation for composed model props
         final io.swagger.oas.annotations.media.Schema schemaAnnotation = type.getRawClass().getAnnotation(io.swagger.oas.annotations.media.Schema.class);
 
         String disc = (schemaAnnotation == null) ? "" : schemaAnnotation.discriminatorProperty();
@@ -570,8 +569,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         if (disc.isEmpty()) {
             // longer method would involve AnnotationIntrospector.findTypeResolver(...) but:
-            // TODO modified not to consider super class (as @JsonTypeInfo is not marked inherited) to handle composed model stuff; ok?
-            //JsonTypeInfo typeInfo = beanDesc.getClassAnnotations().get(JsonTypeInfo.class);
+            // uses raw class, as it does not consider super class while handling schema annotation for composed model props
             JsonTypeInfo typeInfo = type.getRawClass().getAnnotation(JsonTypeInfo.class);
             if (typeInfo != null) {
                 disc = typeInfo.property();
@@ -653,59 +651,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 removeParentProperties(composedSchema, oneOfRef);
             });
 
-
-            /* TODO do we need logic below (from 2.0)? do we need the "child" to be referenced by the "parent" to be resolved?
-            // why is/was that needed?
-            if (parentClass != null && !parentClass.equals(Void.class) && !this.shouldIgnoreClass(parentClass)) {
-                JavaType parentType = _mapper.constructType(parentClass);
-                final BeanDescription parentBeanDesc = _mapper.getSerializationConfig().introspect(parentType);
-
-//                 * Retrieve all the sub-types of the parent class and ensure that the current type is one of those types
-                // TODO this is not anymore true? do we need to only resolve when mentioned in parent? why?
-                boolean currentTypeIsParentSubType = false;
-                List<NamedType> subTypes = _intr.findSubtypes(parentBeanDesc.getClassInfo());
-                if (subTypes != null) {
-                    for (NamedType subType : subTypes) {
-                        if (subType.getType().equals(currentType)) {
-                            currentTypeIsParentSubType = true;
-                            break;
-                        }
-                    }
-                }
-
-//                 Retrieve the subTypes from the parent class @ApiModel annotation and ensure that the current type
-//                 is one of those types.
-                boolean currentTypeIsParentApiModelSubType = false;
-                final ApiModel parentApiModel = parentBeanDesc.getClassAnnotations().get(ApiModel.class);
-                if (parentApiModel != null) {
-                    Class<?>[] apiModelSubTypes = parentApiModel.subTypes();
-                    if (apiModelSubTypes != null) {
-                        for (Class<?> subType : apiModelSubTypes) {
-                            if (subType.equals(currentType)) {
-                                currentTypeIsParentApiModelSubType = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-
-//                 If the current type is a sub-type of the parent class and is listed in the subTypes property of the
-//                 parent class @ApiModel annotation, then do the following:
-//                 1. Resolve the model for the parent class. This will result in the parent model being created, and the
-//                 current child model being updated to be a ComposedModel referencing the parent.
-//                 2. Resolve and return the current child type again. This will return the new ComposedModel from the
-//                 context, which was created in step 1 above. Admittedly, there is a small chance that this may result
-//                 in a stack overflow, if the context does not correctly cache the model for the current type. However,
-//                 as context caching is assumed elsewhere to avoid cyclical model creation, this was deemed to be
-//                 sufficient.
-
-                if (currentTypeIsParentSubType && currentTypeIsParentApiModelSubType) {
-                    context.resolve(parentClass);
-                    return context.resolve(currentType);
-                }
-            }
-            END TODO */
         }
 
 
@@ -737,9 +682,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (suffix == null) {
                 suffix = "";
             }
+            // TODO #2312 - needs clone implemented in #2227
             for (Schema prop : (Collection<Schema>)innerModel.getProperties().values()) {
-                // TODO
-//                props.add(prop.rename(prefix + prop.getName() + suffix));
+                //props.add(prop.rename(prefix + prop.getName() + suffix));
             }
         }
     }
@@ -873,6 +818,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 annos.put(anno.annotationType().getName(), anno);
             }
         }
+        // TODO #2312
         if (annos.containsKey("javax.validation.constraints.NotNull")) {
 //            property.setRequired(true);
         }
@@ -976,7 +922,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             ComposedSchema composedSchema = null;
             if (!(subtypeModel instanceof ComposedSchema)) {
                 // create composed schema
-                // TODO any smarter way?
+                // TODO #2312 - smarter way needs clone implemented in #2227
                 composedSchema = (ComposedSchema)new ComposedSchema()
                         .title(subtypeModel.getTitle())
                         .name(subtypeModel.getName())
@@ -1069,13 +1015,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    // TODO modified not to consider super class (as @JsonTypeInfo is not marked inherited) to handle composed model stuff; ok?
-    //private List<Class<?>> getComposedSchemaReferencedClasses(BeanDescription beanDesc) {
     private List<Class<?>> getComposedSchemaReferencedClasses(Class<?> clazz) {
-        //final io.swagger.oas.annotations.media.Schema schemaAnnotation = beanDesc.getClassAnnotations().get(io.swagger.oas.annotations.media.Schema.class);
         final io.swagger.oas.annotations.media.Schema schemaAnnotation = clazz.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
         if (schemaAnnotation != null) {
-            // TODO not??
             Class<?>[] allOf = schemaAnnotation.allOf();
             Class<?>[] anyOf = schemaAnnotation.anyOf();
             Class<?>[] oneOf = schemaAnnotation.oneOf();

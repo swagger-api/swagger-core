@@ -56,7 +56,7 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
 
     @Override
     public List<NamedType> findSubtypes(Annotated a) {
-        // TODO remove if we are relying on JsonSubTypes only
+        // TODO #2312 remove if we are relying on JsonSubTypes only
 //        final ApiModel api = a.getAnnotation(ApiModel.class);
 //        if (api != null) {
 //            final Class<?>[] classes = api.subTypes();

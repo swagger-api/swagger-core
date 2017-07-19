@@ -263,10 +263,9 @@ public class ModelConverterTest {
         for (Class<?> cls : Arrays.asList(URI.class, URL.class, UUID.class)) {
             final Map<String, Schema> schemas = readAll(cls);
             assertEquals(schemas.size(), 0);
-            // TODO
-//            final Schema property = ModelConverters.getInstance().readAsProperty(cls);
-//            assertNotNull(property);
-//            assertEquals(property.getType(), "string");
+            final Schema property = ModelConverters.getInstance().resolveProperty(cls);
+            assertNotNull(property);
+            assertEquals(property.getType(), "string");
         }
     }
 
