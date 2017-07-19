@@ -43,25 +43,6 @@ public abstract class AbstractModelConverter implements ModelConverter {
 
     }
 /*
-    protected static Comparator<Property> getPropertyComparator() {
-        return new Comparator<Property>() {
-            @Override
-            public int compare(Property one, Property two) {
-                if (one.getPosition() == null && two.getPosition() == null) {
-                    return 0;
-                }
-                if (one.getPosition() == null) {
-                    return -1;
-                }
-                if (two.getPosition() == null) {
-                    return 1;
-                }
-                return one.getPosition().compareTo(two.getPosition());
-            }
-        };
-    }
-    */
-/*
     @Override
     public Property resolve(Type type,
                                     ModelConverterContext context,

@@ -55,16 +55,6 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
     }
 
     @Override
-    public Integer findPropertyIndex(Annotated a) {
-        // TODO remove if not supporting position
-//        ApiModelProperty prop = a.getAnnotation(ApiModelProperty.class);
-//        if (prop != null && prop.position() != 0) {
-//            return prop.position();
-//        }
-        return null;
-    }
-
-    @Override
     public List<NamedType> findSubtypes(Annotated a) {
         // TODO remove if we are relying on JsonSubTypes only
 //        final ApiModel api = a.getAnnotation(ApiModel.class);

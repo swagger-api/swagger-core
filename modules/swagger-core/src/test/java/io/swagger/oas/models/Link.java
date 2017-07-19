@@ -32,11 +32,7 @@ public class Link<T> {
 
     @XmlElement
     @JsonProperty
-    @Schema(
-//            access = "public",
-            required = true
-//            , position = 1
-    )
+    @Schema(required = true)
     public String getHref() {
         return href;
     }
@@ -47,11 +43,7 @@ public class Link<T> {
 
     @XmlElement
     @JsonProperty
-    @Schema(
-//            access = "public",
- required = true
-// , position = 2
- )
+    @Schema(required = true)
     public String getRel() {
         return rel;
     }
@@ -62,11 +54,7 @@ public class Link<T> {
 
     @XmlElement
     @JsonProperty
-    @Schema(
-//            access = "public",
- required = false
-// , position = 3
- )
+    @Schema(required = true)
     public String getStatus() {
         return status;
     }

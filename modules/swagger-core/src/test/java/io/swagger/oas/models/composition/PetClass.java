@@ -8,9 +8,7 @@ public class PetClass extends AnimalClass {
     private Boolean isDomestic;
 
 
-    @Schema(
-//            position = 1,
-            required = true, description = "The pet type")
+    @Schema(required = true, description = "The pet type")
     public String getType() {
         return type;
     }
@@ -20,9 +18,7 @@ public class PetClass extends AnimalClass {
         this.type = type;
     }
 
-    @Schema(
-//            position = 2,
-            required = true, description = "The name of the pet")
+    @Schema(required = true, description = "The name of the pet")
     public String getName() {
         return name;
     }
@@ -31,9 +27,7 @@ public class PetClass extends AnimalClass {
         this.name = name;
     }
 
-    @Schema(
-//            position = 3,
-            required = true)
+    @Schema(required = true)
     public Boolean getIsDomestic() {
         return isDomestic;
     }

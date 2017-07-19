@@ -483,9 +483,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         }
 
                         Integer index = _intr.findPropertyIndex(member);
-                        if (index != null) {
-//                        property.setPosition(index);
-                        }
                         String _defaultValue = _findDefaultValue(member);
                         property.setDefault(_defaultValue);
                         if(minimum != null) {
@@ -638,11 +635,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .collect(Collectors.toList());
             anyOfFiltered.forEach(c -> {
                 Schema anyOfRef = context.resolve(c);
-                // TODO do we want to expand this? or use ref? and remove interface schema??
-                // or do we want to only "resolve" interfaces, and not classes in anyOf?
-                // TODO do we want to implement the same for allOf and oneOf?
                 //composedSchema.addAnyOfItem(new Schema().$ref(anyOfRef.getName()));
-                composedSchema.addAnyOfItem(anyOfRef);
+                composedSchema.addAnyOfItem(new Schema().$ref(anyOfRef.getName()));
                 // remove shared properties defined in the parent
                 removeParentProperties(composedSchema, anyOfRef);
             });

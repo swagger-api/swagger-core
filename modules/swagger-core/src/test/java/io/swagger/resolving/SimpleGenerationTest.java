@@ -64,15 +64,6 @@ public class SimpleGenerationTest extends SwaggerTestBase {
         final Schema jsonOrderBean = context.resolve(JsonOrderBean.class);
         final Map<String, Schema> props = jsonOrderBean.getProperties();
         assertEquals(new ArrayList<String>(props.keySet()), Arrays.asList("a", "b", "c", "d"));
-
-        final Schema positionBean = context.resolve(PositionBean.class);
-        final Map<String, Schema> positionBeanProps = positionBean.getProperties();
-        assertEquals(positionBeanProps.size(), 4);
-
-        final Schema prop = positionBeanProps.get("c");
-        assertNotNull(prop);
-        // TODO
-//        assertEquals((int)prop.getPosition(), 3);
     }
 
     @Test
@@ -144,20 +135,6 @@ public class SimpleGenerationTest extends SwaggerTestBase {
         public int d;
         public int a;
         public int c;
-        public int b;
-    }
-
-    static class PositionBean {
-        @io.swagger.oas.annotations.media.Schema//(position = 4)
-        public int d;
-
-        @io.swagger.oas.annotations.media.Schema//(position = 1)
-        public int a;
-
-        @io.swagger.oas.annotations.media.Schema//(position = 3)
-        public int c;
-
-        @io.swagger.oas.annotations.media.Schema//(position = 2)
         public int b;
     }
 

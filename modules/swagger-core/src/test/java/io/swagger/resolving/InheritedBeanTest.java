@@ -91,16 +91,14 @@ public class InheritedBeanTest extends SwaggerTestBase {
         assertTrue(uberModel instanceof ComposedSchema);
         ComposedSchema cm = (ComposedSchema) uberModel;
         assertEquals(cm.getAnyOf().size(), 2);
-        //assertEquals(cm.getAnyOf().get(0).get$ref(), "#/components/schemas/UserObject");
-        assertEquals(cm.getAnyOf().get(0).getProperties().size(), 2);
+        assertEquals(cm.getAnyOf().get(0).get$ref(), "#/components/schemas/UserObject");
         // make sure parent properties are filtered out of subclass
         assertNull(cm.getProperties());
 
-/*
         final Schema interfaceModel = context.getDefinedModels().get("UserObject");
         assertNotNull(interfaceModel);
         assertUserObjectPropertiesValid(interfaceModel.getProperties());
-*/
+
     }
 
 

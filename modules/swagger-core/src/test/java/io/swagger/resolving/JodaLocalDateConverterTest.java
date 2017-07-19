@@ -23,24 +23,19 @@ public class JodaLocalDateConverterTest {
 
         final Schema dateTimeProperty = (Schema)model.getProperties().get("createdAt");
         assertTrue(dateTimeProperty instanceof DateSchema);
-        // TODO
-//        assertEquals((int) dateTimeProperty.getPosition(), 1);
-        // TODO
-//        assertTrue(dateTimeProperty.getRequired());
+        assertTrue(model.getRequired().contains("createdAt"));
         assertEquals(dateTimeProperty.getDescription(), "creation localDate");
 
         final Schema nameProperty = (Schema)model.getProperties().get("name");
         assertTrue(nameProperty instanceof StringSchema);
-        // TODO
-//        assertEquals((int) nameProperty.getPosition(), 2);
         assertEquals(nameProperty.getDescription(), "name of the model");
     }
 
     class ModelWithJodaLocalDate {
-        @io.swagger.oas.annotations.media.Schema(description = "name of the model"/*, position = 2*/)
+        @io.swagger.oas.annotations.media.Schema(description = "name of the model")
         public String name;
 
-        @io.swagger.oas.annotations.media.Schema(description = "creation localDate", required = true/*, position = 1*/)
+        @io.swagger.oas.annotations.media.Schema(description = "creation localDate", required = true)
         public LocalDate createdAt;
     }
 }

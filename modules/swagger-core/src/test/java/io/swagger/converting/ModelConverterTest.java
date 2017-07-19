@@ -369,15 +369,15 @@ public class ModelConverterTest {
     }
 
     class DateModel {
-        @io.swagger.oas.annotations.media.Schema(/*position = 1*/)
+        @io.swagger.oas.annotations.media.Schema
         public Date date;
-        @io.swagger.oas.annotations.media.Schema(/*position=2*/)
+        @io.swagger.oas.annotations.media.Schema
         public int intValue;
-        @io.swagger.oas.annotations.media.Schema(/*position=3*/)
+        @io.swagger.oas.annotations.media.Schema
         public Long longValue;
-        @io.swagger.oas.annotations.media.Schema(/*position=4*/)
+        @io.swagger.oas.annotations.media.Schema
         public Float floatValue;
-        @io.swagger.oas.annotations.media.Schema(/*position=5*/)
+        @io.swagger.oas.annotations.media.Schema
         public Double doubleValue;
     }
 }
