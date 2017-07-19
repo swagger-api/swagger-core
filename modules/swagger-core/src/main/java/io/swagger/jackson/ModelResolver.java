@@ -23,11 +23,17 @@ import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.oas.models.media.ArraySchema;
+import io.swagger.oas.models.media.BinarySchema;
+import io.swagger.oas.models.media.ByteArraySchema;
 import io.swagger.oas.models.media.ComposedSchema;
+import io.swagger.oas.models.media.DateSchema;
+import io.swagger.oas.models.media.DateTimeSchema;
 import io.swagger.oas.models.media.Discriminator;
+import io.swagger.oas.models.media.EmailSchema;
 import io.swagger.oas.models.media.IntegerSchema;
 import io.swagger.oas.models.media.MapSchema;
 import io.swagger.oas.models.media.NumberSchema;
+import io.swagger.oas.models.media.PasswordSchema;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.media.StringSchema;
 import io.swagger.oas.models.media.UUIDSchema;
@@ -107,6 +113,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return resolveProperty(_mapper.constructType(type), context, annotations, next);
     }
 
+    private io.swagger.oas.annotations.media.Schema getSchemaAnnotation(Annotation... annotations) {
+        if (annotations == null) {
+            return null;
+        }
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof io.swagger.oas.annotations.media.Schema) {
+                return (io.swagger.oas.annotations.media.Schema) annotation;
+            }
+        }
+        return null;
+    }
+
     public Schema resolveProperty(JavaType propType,
             ModelConverterContext context,
             Annotation[] annotations,
@@ -142,7 +160,32 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 property = arrayProperty;
             }
         } else {
-            property = PrimitiveType.createProperty(propType);
+            // handle strings with format
+            io.swagger.oas.annotations.media.Schema schemaAnnotation = getSchemaAnnotation(annotations);
+            if (schemaAnnotation != null &&
+                    !StringUtils.isBlank(schemaAnnotation.format()) &&
+                    propType.getRawClass().isAssignableFrom(String.class)) {
+                if ("password".equals(schemaAnnotation.format())) {
+                    property = new PasswordSchema();
+                } else if ("binary".equals(schemaAnnotation.format())) {
+                    property = new BinarySchema();
+                } else if ("byte".equals(schemaAnnotation.format())) {
+                    property = new ByteArraySchema();
+                } else if ("date".equals(schemaAnnotation.format())) {
+                    property = new DateSchema();
+                } else if ("date-time".equals(schemaAnnotation.format())) {
+                    property = new DateTimeSchema();
+                } else if ("email".equals(schemaAnnotation.format())) {
+                    property = new EmailSchema();
+                } else if ("uuid".equals(schemaAnnotation.format())) {
+                    property = new UUIDSchema();
+                } else {
+                    property = new StringSchema();
+                    property.format(schemaAnnotation.format());
+                }
+            } else {
+                property = PrimitiveType.createProperty(propType);
+            }
         }
 
         if (property == null) {
@@ -259,6 +302,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .name(name)
                     .description(_description(beanDesc.getClassInfo()));
         }
+
+        // handle title, only set if present in class annotation (not superclass)
+        final io.swagger.oas.annotations.media.Schema schemaAnnotationForTitle = type.getRawClass().getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        final String title = schemaAnnotationForTitle == null ? null : StringUtils.trimToNull(schemaAnnotationForTitle.title());
+        if (!StringUtils.isBlank(title)) {
+            model.title(title);
+        }
+
 
         if (!type.isContainerType()) {
             // define the model here to support self/cyclic referencing of models
