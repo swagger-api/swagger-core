@@ -1,7 +1,6 @@
 package io.swagger.serialization;
 
 
-import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
@@ -10,8 +9,6 @@ import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.servers.Server;
 import io.swagger.util.Json;
 import org.testng.annotations.Test;
-
-import java.util.Arrays;
 
 import static org.testng.Assert.assertEquals;
 

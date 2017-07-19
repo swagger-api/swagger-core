@@ -23,9 +23,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
 public class ParameterSerializationTest {
     private final ObjectMapper m = Json.mapper();
 

@@ -16,7 +16,6 @@
 
 package io.swagger.oas.annotations.security;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -1,6 +1,5 @@
 package io.swagger.util.reflection;
 
-import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
 import io.swagger.util.reflection.resources.Child;
 import io.swagger.util.reflection.resources.IParent;
