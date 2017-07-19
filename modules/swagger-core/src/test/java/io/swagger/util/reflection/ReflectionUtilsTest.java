@@ -133,10 +133,18 @@ public class ReflectionUtilsTest {
         Assert.assertEquals(Collections.emptyList(), ReflectionUtils.getDeclaredFields(cls));
     }
 
+    @Test
+    public void testFindMethodForNullClass() throws Exception {
+        Method method = ReflectionUtilsTest.class.getMethod("testFindMethodForNullClass", (Class<?>[]) null);
+        assertNull(ReflectionUtils.findMethod(method, null));
+    }
+
+    // TODO we don't have currently support for 2,0 `ApiImplicitParams` equivalent, either remove or add/fix Parameter annotation
+    /*
     @Test(enabled = false)
     public void getIndirectAnnotation() throws NoSuchMethodException {
         final Method method = Child.class.getMethod("indirectAnnotationMethod");
-        Assert.assertNotNull(ReflectionUtils.getAnnotation(method, Schema.class));
+        Assert.assertNotNull(ReflectionUtils.getAnnotation(method, Schema.class)); // TODO not schema but param?
     }
 
     @Test(enabled = false)
@@ -148,10 +156,5 @@ public class ReflectionUtilsTest {
     public void getIndirectAnnotationFromInterface() throws NoSuchMethodException {
         Assert.assertNotNull(ReflectionUtils.getAnnotation(Child.class, Schema.class));
     }
-
-    @Test
-    public void testFindMethodForNullClass() throws Exception {
-        Method method = ReflectionUtilsTest.class.getMethod("testFindMethodForNullClass", (Class<?>[]) null);
-        assertNull(ReflectionUtils.findMethod(method, null));
-    }
+    */
 }
