@@ -24,29 +24,25 @@ import java.lang.annotation.Target;
 
 
 /**
- * 
- *
- * 
+ * Contact information for the exposed API.
  **/
-
-
 @Target({ ElementType.METHOD,
           ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Contact {
   /**
-   * 
+   * The identifying name of the contact person/organization.
    **/
   String name() default "";
 
   /**
-   * 
+   * The URL pointing to the contact information. MUST be in the format of a URL.
    **/
   String url() default "";
 
   /**
-   * 
+   * The email address of the contact person/organization. MUST be in the format of an email address.
    **/
   String email() default "";
 

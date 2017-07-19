@@ -24,44 +24,40 @@ import java.lang.annotation.Target;
 
 
 /**
- * 
- *
- * 
+ * This annotation provides metadata about the API, and maps to the Info object in OpenAPI Specification 3.
  **/
-
-
 @Target({ ElementType.METHOD,
           ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Info {
   /**
-   * 
+   * The title of the application.
    **/
   String title();
 
   /**
-   * 
+   * A short description of the application. CommonMark syntax can be used for rich text representation.
    **/
   String description() default "";
 
   /**
-   * 
+   * A URL to the Terms of Service for the API. MUST be in the format of a URL.
    **/
   String termsOfService() default "";
 
   /**
-   * 
+   * The contact information for the exposed API.
    **/
   Contact contact() default @Contact();
 
   /**
-   * 
+   * The license information for the exposed API.
    **/
   License license() default @License();
 
   /**
-   * 
+   * The version of the API definition.
    **/
   String version();
 

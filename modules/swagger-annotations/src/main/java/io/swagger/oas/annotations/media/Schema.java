@@ -25,12 +25,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 
- *
  * The Schema Object allows the definition of input and output data types. These types can be objects, but also primitives and arrays. This object is an extended subset of the JSON Schema Specification Wright Draft 00.
  **/
-
-
 @Target({ ElementType.FIELD,
           ElementType.METHOD,
           ElementType.PARAMETER,
@@ -38,178 +34,179 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Schema {
+	
   /**
-   * provides a java class as implementation for this schema.  When provided, additional information in the Schema annotation will augment the java class after introspection
+   * Provides a java class as implementation for this schema.  When provided, additional information in the Schema annotation will augment the java class after introspection.
    **/
   Class<?> implementation() default Void.class;
 
   /**
-   * provides a java class to be used to disallow matching properties.
+   * Provides a java class to be used to disallow matching properties.
    **/
   Class<?> not() default Void.class;
 
   /**
-   * provides an array of java class implementations which can be used to describe multiple acceptable schemas.  If more than one match the derived schemas, a validation error will occur
+   * Provides an array of java class implementations which can be used to describe multiple acceptable schemas.  If more than one match the derived schemas, a validation error will occur.
    **/
   Class<?>[] oneOf() default Void.class;
 
   /**
-   * provides an array of java class implementations which can be used to describe multiple acceptable schemas.  If any match, the schema will be considered valid
+   * Provides an array of java class implementations which can be used to describe multiple acceptable schemas.  If any match, the schema will be considered valid.
    **/
   Class<?>[] anyOf() default Void.class;
 
   /**
-   * the name of the schema or property
+   * The name of the schema or property.
    **/
   String name() default "";
 
   /**
-   * a title to explain the purpose of the schema
+   * A title to explain the purpose of the schema.
    **/
   String title() default "";
 
   /**
-   * constrains a value such that when divided by the multipleOf, the remainder must be an integer.
+   * Constrains a value such that when divided by the multipleOf, the remainder must be an integer.  Ignored if the value is 0.
    **/
   int multipleOf() default 0;
 
   /**
-   * sets the minimum numeric value for a property.  Ignored if the value is an empty string.
+   * Sets the maximum numeric value for a property.  Ignored if the value is an empty string.
    **/
   String maximum() default "";
 
   /**
-   * if true, makes the maximum value exclusive, or a less-than criteria
+   * if true, makes the maximum value exclusive, or a less-than criteria.
    **/
   boolean exclusiveMaximum() default false;
 
   /**
-   * if true, makes the maximum value exclusive, or a greater-than criteria
+   * Sets the minimum numeric value for a property.  Ignored if the value is an empty string.
    **/
   String minimum() default "";
 
   /**
-   * 
+   * If true, makes the minimum value exclusive, or a greater-than criteria.
    **/
   boolean exclusiveMinimum() default false;
 
   /**
-   * sets the maximum length of a string value.  Ignored if the value is Integer.MIN_VALUE.
+   * Sets the maximum length of a string value.  Ignored if the value is Integer.MIN_VALUE.
    **/
   int maxLength() default Integer.MIN_VALUE;
 
   /**
-   * sets the minimum length of a string value.  Ignored if the value is Integer.MAX_VALUE.
+   * Sets the minimum length of a string value.  Ignored if the value is Integer.MAX_VALUE.
    **/
   int minLength() default Integer.MAX_VALUE;
 
   /**
-   * a pattern that the value must satisfy
+   * A pattern that the value must satisfy. Ignored if the value is an empty string.
    **/
   String pattern() default "";
 
-//  /**
-//   * sets the maximum number of items in an array.  Ignored if value is Integer.MIN_VALUE.
-//   **/
-//  int maxItems() default Integer.MIN_VALUE;
-//
-//  /**
-//   * sets the minimum number of items in an array.  Ignored if value is Integer.MAX_VALUE.
-//   **/
-//  int minItems() default Integer.MAX_VALUE;
-//
-//  /**
-//   * determines whether an array of items will be unique
-//   **/
-//  boolean uniqueItems() default false;
+  /**
+   * Sets the maximum number of items in an array.  Ignored if value is Integer.MIN_VALUE.
+   **/
+  int maxItems() default Integer.MIN_VALUE;
 
   /**
-   * constrains the number of arbitrary properties when additionalProperties is defined.  Ignored if value is 0.
+   * Sets the minimum number of items in an array.  Ignored if value is Integer.MAX_VALUE.
+   **/
+  int minItems() default Integer.MAX_VALUE;
+
+  /**
+   * Determines whether an array of items will be unique.
+   **/
+  boolean uniqueItems() default false;
+
+  /**
+   * Constrains the number of arbitrary properties when additionalProperties is defined.  Ignored if value is 0.
    **/
   int maxProperties() default 0;
 
   /**
-   * constrains the number of arbitrary properties when additionalProperties is defined.  Ignored if value is 0.
+   * Constrains the number of arbitrary properties when additionalProperties is defined.  Ignored if value is 0.
    **/
   int minProperties() default 0;
 
   /**
-   * Allows multiple properties in an object to be marked as required
+   * Allows multiple properties in an object to be marked as required.
    **/
   String[] requiredProperties() default "";
 
   /**
-   * Mandates that the annotated item is required or not
+   * Mandates that the annotated item is required or not.
    **/
   boolean required() default false;
 
   /**
-   * a description of the schema
+   * A description of the schema.
    **/
   String description() default "";
 
   /**
-   * provides an optional override for the format.  If a consumer is unaware of the meaning of the format, they shall fall back to using the basic type without format.  For example, if \&quot;type: integer, format: int128\&quot; were used to designate a very large integer, most consumers will not understand how to handle it, and fall back to simply \&quot;type: integer\&quot;
+   * Provides an optional override for the format.  If a consumer is unaware of the meaning of the format, they shall fall back to using the basic type without format.  For example, if \&quot;type: integer, format: int128\&quot; were used to designate a very large integer, most consumers will not understand how to handle it, and fall back to simply \&quot;type: integer\&quot;
    **/
   String format() default "";
 
   /**
-   * 
+   * References a schema definition in an external OpenAPI document.
    **/
   String ref() default "";
 
   /**
-   * if true, designates a value as possibly null
+   * If true, designates a value as possibly null.
    **/
   boolean nullable() default false;
 
   /**
-   * sets whether the value can be modified by a consumer
+   * Sets whether the value should only be read during a response but not written to during a request.
    **/
   boolean readOnly() default false;
 
   /**
-   * sets whether a value can only be written to by a consumer
+   * Sets whether a value should only be written to during a request but not returned during a response.
    **/
   boolean writeOnly() default false;
 
   /**
-   * provides an array examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
+   * Provides an array examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
    **/
-  String[] examples() default "";
+  String[] examples() default {""};
 
   /**
-   * provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
+   * Provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
    **/
   String example() default "";
 
   /**
-   * 
+   * Additional external documentation for this schema.
    **/
   ExternalDocumentation externalDocs() default @ExternalDocumentation();
 
   /**
-   * 
+   * Specifies that a schema is deprecated and should be transitioned out of usage.
    **/
   boolean deprecated() default false;
 
   /**
-   * provides an override for the basic type of the schema.  Must be a valid type per the OpenAPI Specification
+   * Provides an override for the basic type of the schema.  Must be a valid type per the OpenAPI Specification.
    **/
   String type() default "";
 
   /**
-   * provides a list of allowable values.
+   * Provides a list of allowable values.
    */
   String[] _enum() default {""};
 
   /**
-   * provides a default value.
+   * Provides a default value.
    */
   String _default() default "";
 
   /**
-   * allows schema to be marked as hidden
+   * Allows schema to be marked as hidden.
    */
   boolean hidden() default false;
 }
