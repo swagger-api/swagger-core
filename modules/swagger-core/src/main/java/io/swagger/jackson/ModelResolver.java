@@ -561,6 +561,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             }
                         }
                         if (mp != null) {
+                            // TODO maybe only for string-like props (String, Email..Password..)
+                            if(!StringUtils.isBlank(mp.pattern())) {
+                                property.setPattern(mp.pattern());
+                            }
                             if(mp._enum().length > 0) {
                                 for(String _enum : mp._enum()) {
                                     if(StringUtils.isNotBlank(_enum)) {
@@ -646,6 +650,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
 
         if (schemaAnnotation != null) {
+            String ref = schemaAnnotation.ref();
+            // consider ref as is
+            if (!StringUtils.isBlank(ref)) {
+                model.$ref(ref);
+            }
             Class<?> not = schemaAnnotation.not();
             if (!Void.class.equals(not)) {
                 model.not((new Schema().$ref(context.resolve(not.getClass()).getName())));

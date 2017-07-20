@@ -123,13 +123,14 @@ public abstract class AbstractModelConverter implements ModelConverter {
     }
 
     protected String _findExampleValue(Annotated a) {
-        /*
-        ApiModelProperty prop = a.getAnnotation(ApiModelProperty.class);
-        if (prop != null) {
-            if (!prop.example().isEmpty()) {
-                return prop.example();
+
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null) {
+            if (!schema.example().isEmpty()) {
+                return schema.example();
             }
-        }*/
+        }
+
         return null;
     }
 
