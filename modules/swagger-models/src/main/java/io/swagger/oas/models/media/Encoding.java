@@ -170,5 +170,46 @@ public class Encoding {
                 ", extensions=" + extensions +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Encoding)) {
+            return false;
+        }
+
+        Encoding encoding = (Encoding) o;
+
+        if (contentType != null ? !contentType.equals(encoding.contentType) : encoding.contentType != null) {
+            return false;
+        }
+        if (headers != null ? !headers.equals(encoding.headers) : encoding.headers != null) {
+            return false;
+        }
+        if (style != null ? !style.equals(encoding.style) : encoding.style != null) {
+            return false;
+        }
+        if (explode != null ? !explode.equals(encoding.explode) : encoding.explode != null) {
+            return false;
+        }
+        if (extensions != null ? !extensions.equals(encoding.extensions) : encoding.extensions != null) {
+            return false;
+        }
+        return allowReserved != null ? allowReserved.equals(encoding.allowReserved) : encoding.allowReserved == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = contentType != null ? contentType.hashCode() : 0;
+        result = 31 * result + (headers != null ? headers.hashCode() : 0);
+        result = 31 * result + (style != null ? style.hashCode() : 0);
+        result = 31 * result + (explode != null ? explode.hashCode() : 0);
+        result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
+        result = 31 * result + (allowReserved != null ? allowReserved.hashCode() : 0);
+        return result;
+    }
 }
 
