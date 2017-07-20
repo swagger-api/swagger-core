@@ -34,6 +34,7 @@ public class Encoding {
     private String style;
     private Boolean explode;
     private Boolean allowReserved;
+    private java.util.Map<String, Object> extensions = null;
 
     public enum StyleEnum {
         FORM("form"),
@@ -121,26 +122,19 @@ public class Encoding {
         this.allowReserved = allowReserved;
     }
 
-
-    @Override
-    public boolean equals(java.lang.Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Encoding encoding = (Encoding) o;
-        return Objects.equals(this.contentType, encoding.contentType) &&
-            Objects.equals(this.headers, encoding.headers) &&
-            Objects.equals(this.style, encoding.style) &&
-            Objects.equals(this.explode, encoding.explode) &&
-            Objects.equals(this.allowReserved, encoding.allowReserved);            
+    public java.util.Map<String, Object> getExtensions() {
+        return extensions;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(contentType, headers, style, explode, allowReserved);
+    public void addExtension(String name, Object value) {
+        if(this.extensions == null) {
+            this.extensions = new java.util.HashMap<>();
+        }
+        this.extensions.put(name, value);
+    }
+
+    public void setExtensions(java.util.Map<String, Object> extensions) {
+        this.extensions = extensions;
     }
 
     @Override
