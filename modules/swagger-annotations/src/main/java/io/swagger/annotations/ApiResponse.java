@@ -85,4 +85,6 @@ public @interface ApiResponse {
      * Valid values are "List", "Set" or "Map". Any other value will be ignored.
      */
     String responseContainer() default "";
+
+    Example examples() default @Example(value = @ExampleProperty(value = "", mediaType = ""));
 }
