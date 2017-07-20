@@ -144,6 +144,7 @@ public class Encoding {
                 ", headers=" + headers +
                 ", style='" + style + '\'' +
                 ", explode=" + explode +
+                ", extensions=" + extensions +
                 ", allowReserved=" + allowReserved +
                 '}';
     }
