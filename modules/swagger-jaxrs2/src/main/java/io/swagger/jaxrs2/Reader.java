@@ -2,7 +2,6 @@ package io.swagger.jaxrs2;
 
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -11,6 +10,7 @@ import io.swagger.jaxrs2.config.ReaderConfig;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.jaxrs2.util.ReaderUtils;
+import io.swagger.oas.integration.OpenApiReader;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
@@ -24,6 +24,7 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
+import io.swagger.util.Json;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
@@ -49,7 +50,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Reader {
+public class Reader implements OpenApiReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
     public static final String DEFAULT_MEDIA_TYPE_VALUE = "*/*";
 
@@ -63,7 +64,6 @@ public class Reader {
     javax.ws.rs.Produces classProduces;
     javax.ws.rs.Produces methodProduces;
 
-
     private static final String GET_METHOD = "get";
     private static final String POST_METHOD = "post";
     private static final String PUT_METHOD = "put";
@@ -73,7 +73,7 @@ public class Reader {
     private static final String HEAD_METHOD = "head";
     private static final String OPTIONS_METHOD = "options";
 
-    public Reader(OpenAPI openAPI, ReaderConfig config) {
+    public Reader(OpenAPI openAPI) {
         this.openAPI = openAPI;
         paths = new Paths();
         openApiTags = new LinkedHashSet<>();
@@ -123,6 +123,10 @@ public class Reader {
         return openAPI;
     }
 
+    public OpenAPI read(Set<Class<?>> classes, Map<String, Object> resources) {
+        return read(classes);
+    }
+
     public OpenAPI read(Class<?> cls, String parentPath) {
         io.swagger.oas.annotations.security.SecurityScheme apiSecurityScheme = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.security.SecurityScheme.class);
         io.swagger.oas.annotations.ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.ExternalDocumentation.class);
@@ -146,7 +150,7 @@ public class Reader {
         final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
 
         JavaType classType = TypeFactory.defaultInstance().constructType(cls);
-        BeanDescription bd = new ObjectMapper().getSerializationConfig().introspect(classType);
+        BeanDescription bd = Json.mapper().getSerializationConfig().introspect(classType);
 
         final List<Parameter> globalParameters = new ArrayList<>();
 
@@ -216,7 +220,7 @@ public class Reader {
                                         requestBody.setDescription(parameter.getDescription());
                                         isRequestBodyEmpty = false;
                                     }
-                                    if (parameter.getRequired()) {
+                                    if (Boolean.TRUE.equals(parameter.getRequired())) {
                                         requestBody.setRequired(parameter.getRequired());
                                         isRequestBodyEmpty = false;
                                     }

@@ -166,13 +166,14 @@
         </dependency>
         <dependency>
             <groupId>io.swagger</groupId>
-            <artifactId>swagger-core</artifactId>
-            <version>${core.version}</version>
+            <artifactId>swagger-integration</artifactId>
+            <version>${integration.version}</version>
         </dependency>
     </dependencies>
     <properties>
         <models.version>2.0.0-SNAPSHOT</models.version>
         <annotations.version>2.0.0-SNAPSHOT</annotations.version>
         <core.version>2.0.0-SNAPSHOT</core.version>
+        <integration.version>2.0.0-SNAPSHOT</integration.version>
     </properties>
 </project>

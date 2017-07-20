@@ -8,7 +8,7 @@ import io.swagger.util.Yaml;
 
 public abstract class AbstractAnnotationTest {
     public String readIntoYaml(Class<?> cls) {
-        Reader reader = new Reader(new OpenAPI(), null);
+        Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(cls);
 
         try {

@@ -67,7 +67,7 @@ public abstract class BaseApiListingResource {
                 classes = scanner.classes();
             }
             if (classes != null) {
-                Reader reader = new Reader(openAPI, ReaderConfigUtils.getReaderConfig(context));
+                Reader reader = new Reader(openAPI); // TODO , ReaderConfigUtils.getReaderConfig(context));
                 openAPI = reader.read(classes);
                 if (scanner instanceof SwaggerConfig) {
                     openAPI = ((SwaggerConfig) scanner).configure(openAPI);
