@@ -224,8 +224,10 @@ public class Link {
         int result = operationRef != null ? operationRef.hashCode() : 0;
         result = 31 * result + (operationId != null ? operationId.hashCode() : 0);
         result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
+        result = 31 * result + (requestBody != null ? requestBody.hashCode() : 0);
         result = 31 * result + (headers != null ? headers.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + ($ref != null ? $ref.hashCode() : 0);
         result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
         result = 31 * result + (server != null ? server.hashCode() : 0);
         return result;
@@ -270,6 +272,7 @@ public class Link {
         sb.append("    operationRef: ").append(toIndentedString(operationRef)).append("\n");
         sb.append("    operationId: ").append(toIndentedString(operationId)).append("\n");
         sb.append("    parameters: ").append(toIndentedString(parameters)).append("\n");
+        sb.append("    requestBody: ").append(toIndentedString(requestBody)).append("\n");
         sb.append("    headers: ").append(toIndentedString(headers)).append("\n");
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
         sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
