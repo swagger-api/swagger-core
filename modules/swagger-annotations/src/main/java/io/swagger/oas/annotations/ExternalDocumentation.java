@@ -24,23 +24,20 @@ import java.lang.annotation.Target;
 
 
 /**
- * External documentation.
- *
- * 
+ * Allows referencing an external resource for extended documentation.
  **/
-
-
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ExternalDocumentation {
+	
   /**
-   * 
+   * A short description of the target documentation.
    **/
   String description() default "";
 
   /**
-   * 
+   * The URL for the target documentation. Value must be in the format of a URL.
    **/
   String url() default "";
 

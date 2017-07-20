@@ -16,38 +16,29 @@
 
 package io.swagger.oas.annotations;
 
-import io.swagger.oas.annotations.media.ArraySchema;
-import io.swagger.oas.annotations.media.Content;
-import io.swagger.oas.annotations.media.Schema;
-import io.swagger.oas.annotations.parameters.Parameters;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import io.swagger.oas.annotations.media.MediaType;
+import io.swagger.oas.annotations.media.Schema;
 
 /**
- * 
- *
- * 
+ * Describes a single operation parameter
  **/
-
-
 @Target({ ElementType.PARAMETER,
           ElementType.METHOD })
-@Repeatable(Parameters.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Parameter {
   /**
-   * the name of the parameter
+   * The name of the parameter.
    **/
   String name() default "";
 
   /**
-   * the location of the parameter.  Ignored when empty string
+   * The location of the parameter.  Possible values are "query", "header", "path" or "cookie".  Ignored when empty string.
    **/
   String in() default "";
 
@@ -57,12 +48,12 @@ public @interface Parameter {
   String description() default "";
 
   /**
-   * Specifies that the parameter is not optional and must be present
+   * Specifies that the parameter is not optional and must be present.
    **/
   boolean required() default false;
 
   /**
-   * 
+   * Specifies that a parameter is deprecated and should be transitioned out of usage.
    **/
   boolean deprecated() default false;
 
@@ -72,35 +63,42 @@ public @interface Parameter {
   boolean allowEmptyValue() default false;
 
   /**
-   * 
+   * Describes how the parameter value will be serialized depending on the type of the parameter value. Default values (based on value of in): for query - form; for path - simple; for header - simple; for cookie - form.
    **/
   String style() default "";
 
   /**
-   * 
+   * When this is true, parameter values of type array or object generate separate parameters for each value of the array or key-value pair of the map. For other types of parameters this property has no effect. When style is form, the default value is true. For all other styles, the default value is false.
    **/
   boolean explode() default false;
 
   /**
-   * 
+   * Determines whether the parameter value SHOULD allow reserved characters, as defined by RFC3986 :/?#[]@!$&'()*+,;= to be included without percent-encoding. This property only applies to parameters with an in value of query. The default value is false.
    **/
   boolean allowReserved() default false;
 
   /**
-   * 
+   * The schema defining the type used for the parameter.
    **/
   Schema schema() default @Schema();
 
-
-  ArraySchema array() default @ArraySchema();
-
   /**
-   * 
+   * The representation of this parameter.
    **/
-  Content[] content() default @Content();
+  MediaType content() default @MediaType();
 
   /**
-   * allows parameter to be marked as hidden
+   * Allows this parameter to be marked as hidden
    */
   boolean hidden() default false;
+  
+  /**
+   * Provides an array examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
+   **/
+  String[] examples() default {""};
+
+  /**
+   * Provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
+   **/
+  String example() default "";
 }

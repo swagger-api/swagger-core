@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import io.swagger.oas.annotations.media.Content;
+import io.swagger.oas.annotations.media.MediaType;
 import java.util.List;
 
 /**
@@ -44,7 +44,7 @@ public @interface RequestBody {
   /**
    * 
    **/
-  Content[] content() default @Content();
+  MediaType[] content() default @MediaType();
 
   /**
    * 

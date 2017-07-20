@@ -34,7 +34,7 @@ import java.util.List;
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface Content {
+public @interface MediaType {
   /**
    * the media type that this content object applies to
    **/

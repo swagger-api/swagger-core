@@ -27,18 +27,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Operation Annotation
- *
- * TODO: longer description
+ * Describes a single API operation on a path.
  **/
-
-
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Operation {
     /**
-     * the HTTP method for this operation
+     * The HTTP method for this operation.
      **/
     String method() default "";
 
@@ -58,7 +54,7 @@ public @interface Operation {
     String description() default "";
 
     /**
-     *
+     * Additional external documentation for this operation.
      **/
     ExternalDocumentation externalDocs() default @ExternalDocumentation();
 
