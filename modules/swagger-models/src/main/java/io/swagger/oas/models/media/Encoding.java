@@ -33,6 +33,7 @@ public class Encoding {
     private String style;
     private Boolean explode;
     private Boolean allowReserved;
+    private java.util.Map<String, Object> extensions = null;
 
     public enum StyleEnum {
         FORM("form"),
@@ -118,6 +119,21 @@ public class Encoding {
 
     public void setAllowReserved(Boolean allowReserved) {
         this.allowReserved = allowReserved;
+    }
+
+    public java.util.Map<String, Object> getExtensions() {
+        return extensions;
+    }
+
+    public void addExtension(String name, Object value) {
+        if(this.extensions == null) {
+            this.extensions = new java.util.HashMap<>();
+        }
+        this.extensions.put(name, value);
+    }
+
+    public void setExtensions(java.util.Map<String, Object> extensions) {
+        this.extensions = extensions;
     }
 
     @Override
