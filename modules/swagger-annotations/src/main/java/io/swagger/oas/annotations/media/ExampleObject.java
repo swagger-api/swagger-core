@@ -24,33 +24,29 @@ import java.lang.annotation.Target;
 
 
 /**
- * 
- *
- * 
+ * This object illustrates an example of 
  **/
-
-
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ExampleObject {
   /**
-   * a unique name to identify this particular example
+   * A unique name to identify this particular example
    **/
   String name() default "";
 
   /**
-   * a brief summary of the purpose or context of the example
+   * A brief summary of the purpose or context of the example
    **/
   String summary() default "";
 
   /**
-   * a string representation of the example.  If the media type associated with the example allows parsing into an object, it may be converted from a string
+   * A string representation of the example.  If the media type associated with the example allows parsing into an object, it may be converted from a string
    **/
   String value() default "";
 
   /**
-   * a URL to point to an external document to be used as an example.  This is mutually exclusive with the value property
+   * A URL to point to an external document to be used as an example.  This is mutually exclusive with the value property
    **/
   String externalValue() default "";
 

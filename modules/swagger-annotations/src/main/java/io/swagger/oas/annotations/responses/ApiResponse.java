@@ -26,34 +26,30 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- *
- *
- *
+ * Describes a single response from an API Operation, including design-time, static links to operations based on the response.
  **/
-
-
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ApiResponse {
     /**
-     *
+     *A short description of the response. 
      **/
     String description() default "";
 
     /**
-     * the HTTP response code, or default, for the supplied response
+     * The HTTP response code, or 'default', for the supplied response.  May only have 1 default entry.  
      **/
-    String responseCode() default "";
+    String responseCode() default "default";
 
     /**
-     *
+     * An array of operation links that can be followed from the response.
      **/
-    Link[] links() default @Link();
+    Link[] links() default {};
 
     /**
-     *
+     * An array containing descriptions of potential response payloads.
      **/
-    MediaType content() default @MediaType();
+    MediaType[] content() default {};
 
 }

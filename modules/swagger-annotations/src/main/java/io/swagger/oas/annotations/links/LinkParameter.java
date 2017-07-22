@@ -14,25 +14,33 @@
  * limitations under the License.
  */
 
-package io.swagger.oas.annotations.security;
+package io.swagger.oas.annotations.links;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
- * 
- *
- * 
+ * Represents a parameter to pass to an operation as specified with operationId or identified via operationRef.
  **/
-
-
-@Target({  })
+@Target({ ElementType.FIELD,
+          ElementType.METHOD,
+          ElementType.PARAMETER,
+          ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface Scopes {
-    String name() default "";
+public @interface LinkParameter {
+  /**
+   * The name of this link parameter.
+   **/
+  String name() default "";
 
-    String description() default "";
+  /**
+   * A constant or an expression to be evaluated and passed to the linked operation.
+   **/
+  String expression() default "";
+
 }

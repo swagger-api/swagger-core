@@ -14,37 +14,27 @@
  * limitations under the License.
  */
 
-package io.swagger.oas.annotations.links;
+package io.swagger.oas.annotations.security;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
- * 
- *
- * 
+ * Represents an OAuth scope.
  **/
-
-
-@Target({ ElementType.FIELD,
-          ElementType.METHOD,
-          ElementType.PARAMETER,
-          ElementType.TYPE })
+@Target({  })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface LinkParameters {
-  /**
-   * 
-   **/
-  String name() default "";
+public @interface OAuthScope {
+	/**
+	 * Name of the scope.
+	 */
+    String name() default "";
 
-  /**
-   * 
-   **/
-  String expression() default "";
-
+    /**
+     * Short description of the scope.
+     */
+    String description() default "";
 }

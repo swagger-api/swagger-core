@@ -41,7 +41,7 @@ public @interface Operation {
     /**
      * Tags can be used for logical grouping of operations by resources or any other qualifier.
      **/
-    String[] tags() default "";
+    String[] tags() default {};
 
     /**
      * Provides a brief description of this operation. Should be 120 characters or less for proper visibility in Swagger-UI.
@@ -64,28 +64,28 @@ public @interface Operation {
     String operationId() default "";
 
     /**
-     * An optional array of parameters which will be added to any automatically detected parameters in the method itself
+     * An optional array of parameters which will be added to any automatically detected parameters in the method itself.
      **/
-    Parameter[] parameters() default @Parameter();
+    Parameter[] parameters() default {};
 
     /**
-     *
+     * The request body applicable for this operation.
      **/
     RequestBody requestBody() default @RequestBody();
 
     /**
-     *
+     * The list of possible responses as they are returned from executing this operation.
      **/
-    ApiResponse[] responses() default @ApiResponse();
+    ApiResponse[] responses() default {};
 
     /**
-     * allows an operation to be marked as deprecated.  Alternatively use the @Deprecated annotation
+     * Allows an operation to be marked as deprecated.  Alternatively use the @Deprecated annotation
      **/
     boolean deprecated() default false;
 
     /**
-     *
+     * An alternative server array to service this operation.
      **/
-    Server[] servers() default @Server();
+    Server[] servers() default {};
         
 }

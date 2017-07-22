@@ -22,31 +22,25 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import java.util.List;
-
 /**
- * 
- *
- * 
+ * This object provides schema and examples for a particular media type.
  **/
-
-
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface MediaType {
   /**
-   * the media type that this content object applies to
+   * The media type that this object applies to.
    **/
   String mediaType() default "";
 
   /**
-   * an array of examples used to show the use of the associated schema
+   * An array of examples used to show the use of the associated schema
    **/
-  ExampleObject[] examples() default @ExampleObject();
+  ExampleObject[] examples() default {};
 
   /**
-   * 
+   * The schema defining the type used for the request body.
    **/
   Schema schema() default @Schema();
 

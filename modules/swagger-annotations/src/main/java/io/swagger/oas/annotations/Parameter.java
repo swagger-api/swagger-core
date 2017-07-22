@@ -95,7 +95,7 @@ public @interface Parameter {
   /**
    * Provides an array examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
    **/
-  String[] examples() default {""};
+  String[] examples() default {};
 
   /**
    * Provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.

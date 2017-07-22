@@ -23,15 +23,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import io.swagger.oas.annotations.Operation;
-import java.util.List;
 
 /**
- * 
- *
- * 
+ * This object represents a webhook that will be invoked.
  **/
-
-
 @Target({ ElementType.FIELD,
           ElementType.METHOD,
           ElementType.PARAMETER,
@@ -40,18 +35,18 @@ import java.util.List;
 @Inherited
 public @interface Callback {
   /**
-   * the friendly name used to refer to this callback
+   * The friendly name used to refer to this callback
    **/
   String name() default "";
 
   /**
-   * an absolute URL which defines the destination which will be called with the supplied operation definition
+   * An absolute URL which defines the destination which will be called with the supplied operation definition.  An example is http://notificationServer.com?transactionId={$request.body#/id}&email={$request.body#/email}.
    **/
   String callbackUrlExpression() default "";
 
   /**
-   * the operation that will be executed on callback
+   * The operation that will be executed on callback
    **/
-  Operation[] operation() default @Operation();
+  Operation operation() default @Operation();
 
 }

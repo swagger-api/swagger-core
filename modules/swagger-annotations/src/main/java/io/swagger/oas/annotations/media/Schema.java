@@ -48,12 +48,12 @@ public @interface Schema {
   /**
    * Provides an array of java class implementations which can be used to describe multiple acceptable schemas.  If more than one match the derived schemas, a validation error will occur.
    **/
-  Class<?>[] oneOf() default Void.class;
+  Class<?>[] oneOf() default {};
 
   /**
    * Provides an array of java class implementations which can be used to describe multiple acceptable schemas.  If any match, the schema will be considered valid.
    **/
-  Class<?>[] anyOf() default Void.class;
+  Class<?>[] anyOf() default {};
 
   /**
    * The name of the schema or property.
@@ -133,7 +133,7 @@ public @interface Schema {
   /**
    * Allows multiple properties in an object to be marked as required.
    **/
-  String[] requiredProperties() default "";
+  String[] requiredProperties() default {};
 
   /**
    * Mandates that the annotated item is required or not.
@@ -171,15 +171,15 @@ public @interface Schema {
   boolean writeOnly() default false;
 
   /**
-   * Provides an array examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
-   **/
-  String[] examples() default {""};
-
-  /**
    * Provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
    **/
   String example() default "";
 
+  /**
+   * Provides an array examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
+   **/
+  ExampleObject[] examples() default {};
+  
   /**
    * Additional external documentation for this schema.
    **/
@@ -196,14 +196,14 @@ public @interface Schema {
   String type() default "";
 
   /**
-   * Provides a list of allowable values.
+   * Provides a list of allowable values.  This field map to the enum property in the OAS schema.
    */
-  String[] _enum() default {""};
+  String[] allowableValues() default {};
 
   /**
    * Provides a default value.
    */
-  String _default() default "";
+  String defaultValue() default "";
 
   /**
    * Allows schema to be marked as hidden.

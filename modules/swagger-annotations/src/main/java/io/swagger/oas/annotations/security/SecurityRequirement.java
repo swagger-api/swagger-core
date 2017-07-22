@@ -23,18 +23,20 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 
- *
- * 
+ * Specifies a security requirement for an operation. 
  **/
-
-
 @Target({ ElementType.METHOD,
           ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface SecurityRequirement {
-    String name() default "";
+	/**
+	 * Required. This name must correspond to a declared SecurityRequirement.  
+	 */
+    String name();
 
-    String[] scopes() default "";
+    /**
+     * If the security scheme is of type "oauth2" or "openIdConnect", then the value is a list of scope names required for the execution.  For other security scheme types, the array must be empty.
+     */
+    String[] scopes() default {};
 }
