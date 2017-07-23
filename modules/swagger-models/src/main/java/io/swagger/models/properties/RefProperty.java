@@ -1,6 +1,8 @@
 package io.swagger.models.properties;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.models.Xml;
 import io.swagger.models.refs.GenericRef;
 import io.swagger.models.refs.RefFormat;
 import io.swagger.models.refs.RefType;
@@ -99,5 +101,10 @@ public class RefProperty extends AbstractProperty implements Property {
             return false;
         }
         return true;
+    }
+
+    public RefProperty xml(Xml xml) {
+        this.setXml(xml);
+        return this;
     }
 }

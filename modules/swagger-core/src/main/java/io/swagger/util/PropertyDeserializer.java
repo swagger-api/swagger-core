@@ -215,6 +215,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
             refProperty.setDescription(description);
             refProperty.setTitle(title);
             refProperty.setReadOnly(readOnly);
+            refProperty.setXml(xml);
             return refProperty;
         }
 
