@@ -5,11 +5,10 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import io.swagger.jaxrs2.config.DefaultReaderConfig;
-import io.swagger.jaxrs2.config.ReaderConfig;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.jaxrs2.util.ReaderUtils;
+import io.swagger.oas.integration.OpenApiConfiguration;
 import io.swagger.oas.integration.OpenApiReader;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
@@ -54,7 +53,7 @@ public class Reader implements OpenApiReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
     public static final String DEFAULT_MEDIA_TYPE_VALUE = "*/*";
 
-    private final ReaderConfig config;
+    private final OpenApiConfiguration config;
 
     private OpenAPI openAPI;
     private Components components;
@@ -74,10 +73,18 @@ public class Reader implements OpenApiReader {
     private static final String OPTIONS_METHOD = "options";
 
     public Reader(OpenAPI openAPI) {
-        this.openAPI = openAPI;
+        this(new OpenApiConfiguration().openApi(openAPI));
+    }
+
+    public Reader(OpenApiConfiguration openApiConfiguration) {
+        this.config = openApiConfiguration;
+
+        // TODO init openApi by cloning the one in config
+        //clone openApiConfiguration.getOpenApi();
+        this.openAPI = config.getOpenApi();
         paths = new Paths();
         openApiTags = new LinkedHashSet<>();
-        this.config = new DefaultReaderConfig();
+        //this.config = new DefaultReaderConfig();
         components = new Components();
     }
 

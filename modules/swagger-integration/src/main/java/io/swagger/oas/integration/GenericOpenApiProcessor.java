@@ -1,13 +1,9 @@
 package io.swagger.oas.integration;
 
 
-import com.google.common.base.Objects;
 import io.swagger.oas.models.OpenAPI;
-import io.swagger.oas.models.info.Info;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GenericOpenApiProcessor implements OpenApiProcessor {
@@ -109,30 +105,25 @@ public class GenericOpenApiProcessor implements OpenApiProcessor {
         return this;
     }
 
-    public final GenericOpenApiProcessor withOpenApiConfigurationFromMap(Map<String, String> properties) {
-        this.openApiConfiguration = new OpenApiConfiguration().withProperties(properties);
-        return this;
-    }
     @Override
     public OpenApiProcessor init() {
 
         if (openApiConfiguration == null) {
             openApiConfiguration = new OpenApiConfiguration();
         }
-        if (openApiScanner == null) {
-            openApiScanner = new GenericOpenApiScanner(openApiConfiguration);
+        // TODO handle exceptions
+        try {
+            if (openApiScanner == null) {
+                openApiScanner = new GenericOpenApiContext().buildScanner(openApiConfiguration);
+            }
+            if (openApiReader == null) {
+                // TODO use a real generic openApi reader only reading openApi annotations..
+                openApiReader = new GenericOpenApiContext().buildReader(openApiConfiguration);
+            }
+        } catch(Exception e){
+            // TODO
         }
-        if (openApiReader == null) {
-            // TODO use a real generic openApi reader only reading openApi annotations..
-            openApiReader = new OpenApiReader() {
-                @Override
-                public OpenAPI read(Set<Class<?>> classes, Map<String, Object> resources) {
-                    OpenAPI openApi = openApiConfiguration.getOpenApi();
-                    return openApi;
 
-                }
-            };
-        }
         return this;
     }
 
@@ -160,6 +151,5 @@ public class GenericOpenApiProcessor implements OpenApiProcessor {
             return (cacheTTL > 0 && System.currentTimeMillis() - createdAt > cacheTTL);
         }
     }
-
 
 }

@@ -2,11 +2,7 @@ package io.swagger.oas.integration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.swagger.oas.models.OpenAPI;
-import io.swagger.oas.models.info.Info;
 import io.swagger.util.Json;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,7 +11,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -23,11 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class OpenApiConfiguration {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(OpenApiConfiguration.class);
-
     private OpenAPI openApi = new OpenAPI();
 
-    Map<String, String> rawProperties = new ConcurrentHashMap<String, String>();
+    Map<String, Object> userDefinedOptions = new ConcurrentHashMap<>();
     private boolean basePathAsKey;
 
     private String id;
@@ -36,6 +33,55 @@ public class OpenApiConfiguration {
     private String readerClass;
     private String scannerClass;
     private String processorClass;
+
+    private boolean prettyPrint;
+
+    private boolean scanAllResources;
+    private Collection<String> ignoredRoutes = Collections.emptySet();
+
+    public boolean isScanAllResources() {
+        return scanAllResources;
+    }
+
+    public void setScanAllResources(boolean scanAllResources) {
+        this.scanAllResources = scanAllResources;
+    }
+
+    public OpenApiConfiguration withScanAllResources(boolean scanAllResources) {
+        this.scanAllResources = scanAllResources;
+        return this;
+    }
+
+    public Collection<String> getIgnoredRoutes() {
+        return ignoredRoutes;
+    }
+
+    public void setIgnoredRoutes(Collection<String> ignoredRoutes) {
+        this.ignoredRoutes = ignoredRoutes == null || ignoredRoutes.isEmpty() ? Collections.<String>emptySet()
+                : Collections.unmodifiableCollection(new HashSet<String>(ignoredRoutes));
+    }
+
+    public OpenApiConfiguration withIgnoredRoutes(Collection<String> ignoredRoutes) {
+        this.ignoredRoutes = ignoredRoutes == null || ignoredRoutes.isEmpty() ? Collections.<String>emptySet()
+                : Collections.unmodifiableCollection(new HashSet<String>(ignoredRoutes));
+        return this;
+    }
+
+    public boolean isPrettyPrint() {
+        return prettyPrint;
+    }
+
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
+    }
+
+    public OpenApiConfiguration withPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
+        return this;
+    }
+
+
+
 
     public String getResourceClasses() {
         return resourceClasses;
@@ -175,12 +221,12 @@ public class OpenApiConfiguration {
         this.processorClass = processorClass;
     }
 
-    public Map<String, String> getRawProperties() {
-        return rawProperties;
+    public Map<String, Object> getUserDefinedOptions() {
+        return userDefinedOptions;
     }
 
-    public void setRawProperties(Map<String, String> rawProperties) {
-        this.rawProperties = rawProperties;
+    public void setUserDefinedOptions(Map<String, Object> userDefinedOptions) {
+        this.userDefinedOptions = userDefinedOptions;
     }
 
     public OpenApiConfiguration withScannerClass(String scannerClass) {
@@ -198,26 +244,9 @@ public class OpenApiConfiguration {
         return this;
     }
 
-    public OpenApiConfiguration withProperties(Map<String, String> properties) {
-        if (properties != null) {
-            rawProperties.putAll(properties);
-            loadRawProperties();
-        }
+    public OpenApiConfiguration withUserDefinedOptions(Map<String, Object> userDefinedOptions) {
+        this.userDefinedOptions = userDefinedOptions;
         return this;
-    }
-
-    // TODO ENUM ETC
-    private void loadRawProperties() {
-        for (String key : rawProperties.keySet()) {
-            switch (key.charAt(0)) {
-/*                case (RESOURCE_PACKAGE_KEY):
-                    resourcePackage = rawProperties.get(key);
-                    break;*/
-                default:
-                    resourcePackage = rawProperties.get(key);
-            }
-        }
-
     }
 
     public boolean isBasePathAsKey() {
@@ -261,14 +290,6 @@ public class OpenApiConfiguration {
     }
 
 
-    public OpenApiConfiguration withJavaProperties(Properties properties) {
-        if (properties != null) {
-            Map<String, String> map = (Map) properties;
-            return withProperties(map);
-        }
-        return this;
-    }
-
     public OpenApiConfiguration withId(String id) {
         this.id = id;
         return this;
@@ -282,5 +303,4 @@ public class OpenApiConfiguration {
     }
 
 
-    public enum CONFIG_FILE_FORMAT {PROPERTIES, INI, JSON, YAML, XML}
 }

@@ -36,7 +36,7 @@ public class IntegrationTest {
         OpenApiProcessor p = new GenericOpenApiProcessor().withOpenApiConfiguration(config);
 
 
-        p.setOpenApiReader(new Reader(config.getOpenApi()));
+        p.setOpenApiReader(new Reader(config));
         p.setOpenApiScanner(new AnnotationJaxrsScanner().withOpenApiConfiguration(config));
         OpenApiContext ctx = new GenericOpenApiContext().addOpenApiProcessor(p).init();
         // TODO basePath/url handling
@@ -52,9 +52,10 @@ public class IntegrationTest {
             URL url = this.getClass().getResource("/integration/openapi-configuration.json");
             System.out.println(url.getPath());
             //if (true) return;
-
+            String configPath = "/integration/openapi-configuration.json";
             //ctx = new XmlWebOpenApiContext().withOpenApiConfiguration(config).init();
-            ctx = new XmlWebOpenApiContext().withConfigLocation(url.getPath()).init();
+            //ctx = new XmlWebOpenApiContext().withConfigLocation(url.getPath()).init();
+            ctx = new XmlWebOpenApiContext().withConfigLocation(configPath).init();
             openApi = ctx.read();
 
             assertNotNull(openApi);

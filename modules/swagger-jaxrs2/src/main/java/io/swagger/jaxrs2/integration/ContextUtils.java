@@ -1,12 +1,9 @@
 package io.swagger.jaxrs2.integration;
 
-import io.swagger.oas.integration.OpenApiConfiguration;
 import io.swagger.oas.integration.OpenApiContext;
-import io.swagger.oas.integration.OpenApiContextLocator;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletConfig;
-import javax.ws.rs.core.Application;
 
 public class ContextUtils {
 
@@ -42,46 +39,19 @@ public class ContextUtils {
                 sc.getInitParameter(paramKey);
     }
 
-    public static OpenApiContext getOrBuildContext(OpenApiConfiguration openApiConfiguration) {
-        return getOrBuildContext(null, null, null, null, null, openApiConfiguration);
-    }
+    public static String getContextIdFromServletConfig(ServletConfig config) {
 
-    public static OpenApiContext getOrBuildContext(String ctxId, Application app, ServletConfig sc, String configLocation, String resourcePackage, OpenApiConfiguration openApiConfiguration) {
-        // TODO USE instead servletContext attribute? or possibly both
-
+        String ctxId = null;
+        if (config != null) {
+            ctxId = getInitParam(config, OpenApiContext.OPENAPI_CONTEXT_ID_KEY);
+            if (StringUtils.isBlank(ctxId)) {
+                ctxId = OpenApiContext.OPENAPI_CONTEXT_ID_PREFIX + "servlet." + config.getServletName();
+            }
+        }
         if (StringUtils.isBlank(ctxId)) {
             ctxId = OpenApiContext.OPENAPI_CONTEXT_ID_DEFAULT;
         }
-
-        OpenApiContext ctx = OpenApiContextLocator.getInstance().getOpenApiContext(ctxId);
-
-        if (ctx == null) {
-            OpenApiContext rootCtx = OpenApiContextLocator.getInstance().getOpenApiContext(OpenApiContext.OPENAPI_CONTEXT_ID_DEFAULT);
-            ctx = new XmlWebOpenApiContext()
-                    .withServletConfig(sc)
-                    .withApp(app)
-                    .withOpenApiConfiguration(openApiConfiguration)
-                    .withParent(rootCtx);
-            if (ctx.getConfigLocation() == null && configLocation != null) {
-                ((XmlWebOpenApiContext)ctx).withConfigLocation(configLocation);
-            }
-/*
-                if (basePath != null) {
-                    ((XmlWebOpenApiContext)ctx).withBasePath(basePath);
-                }
-*/
-            if (resourcePackage != null) {
-                ((XmlWebOpenApiContext)ctx).withResourcePackage(resourcePackage);
-            }
-            ctx.init(); // includes registering itself with OpenApiContextLocator
-/*
-            } else {
-                OpenApiContextLocator.getInstance().putOpenApiContext(ctxId, ctx);
-            }
-*/
-        }
-        return ctx;
+        return ctxId;
     }
-
 
 }

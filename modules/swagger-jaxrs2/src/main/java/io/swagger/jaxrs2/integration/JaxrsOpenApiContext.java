@@ -25,7 +25,7 @@ public class JaxrsOpenApiContext<T extends JaxrsOpenApiContext> extends GenericO
     @Override
     protected OpenApiReader buildReader(OpenApiConfiguration openApiConfiguration) throws Exception {
         LOGGER.trace("buildReader");
-        return new Reader(openApiConfiguration.getOpenApi());
+        return new Reader(openApiConfiguration);
     }
 
     @Override

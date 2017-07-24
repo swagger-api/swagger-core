@@ -96,6 +96,12 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
     @Override
     public OpenApiProcessor getDefaultProcessor() {
+        if (openApiProcessors.isEmpty()) {
+            if (parent != null) {
+                return parent.getDefaultProcessor();
+            }
+            return null;
+        }
         return openApiProcessors.get(id);
     }
 
@@ -135,41 +141,14 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         } else {
             processor = new GenericOpenApiProcessor().withId(id).withOpenApiConfiguration(openApiConfiguration);
         }
+
+        // TODO remove, set by processor
         processor.setOpenApiScanner(buildScanner(openApiConfiguration));
         processor.setOpenApiReader(buildReader(openApiConfiguration));
         return processor;
     }
 
-    protected OpenApiReader buildReader(final OpenApiConfiguration openApiConfiguration) throws Exception {
-        OpenApiReader reader;
-        if (StringUtils.isNotBlank(openApiConfiguration.getReaderClass())) {
-            Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getReaderClass());
-            // TODO instantiate with configuration
-            reader = (OpenApiReader) cls.newInstance();
-        } else {
-            reader = new OpenApiReader() {
-                @Override
-                public OpenAPI read(Set<Class<?>> classes, Map<String, Object> resources) {
-                    OpenAPI openApi = openApiConfiguration.getOpenApi();
-                    return openApi;
 
-                }
-            };
-        }
-        return reader;
-    }
-
-    protected OpenApiScanner buildScanner(final OpenApiConfiguration openApiConfiguration) throws Exception {
-        OpenApiScanner scanner;
-        if (StringUtils.isNotBlank(openApiConfiguration.getScannerClass())) {
-            Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getScannerClass());
-            // TODO instantiate with configuration
-            scanner = (OpenApiScanner) cls.newInstance();
-        } else {
-            scanner = new GenericOpenApiScanner(openApiConfiguration);
-        }
-        return scanner;
-    }
 
     // TODO implement in subclass, also handle classpath
     protected URL buildConfigLocationURL(String configLocation) {
@@ -178,7 +157,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         // TODO CLASSPATH, file path..
         //ServletContext.getResource()
         String sanitize = (configLocation.startsWith("/") ? configLocation : "/" + configLocation);
-        if (true) return this.getClass().getResource(configLocation);
+        if (true) return this.getClass().getResource(sanitize);
 
 
 
@@ -218,9 +197,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             }
         }
 
-        // TODO here try with openApiController? and replace OpenApiConfiguration.fromUrl
+        // TODO here try with openApiBuilder? and replace OpenApiConfiguration.fromUrl
 
-        if (openApiProcessors.isEmpty()) {
+        if (openApiProcessors.isEmpty() && parent == null) {
             try {
 
                 if (openApiConfiguration == null) {
@@ -248,6 +227,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     @Override
     public OpenAPI read() {
         if (openApiProcessors.isEmpty()) {
+            if (parent != null) {
+                return parent.read();
+            }
             return null;
         }
         return getDefaultProcessor().read();
@@ -263,8 +245,42 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
                 return openApiProcessors.get(id).getOpenApiConfiguration();
             }
         }
+        // try parent
+        if (parent != null) {
+            return parent.getOpenApiConfiguration();
+        }
         return null;
     }
 
+    protected OpenApiReader buildReader(final OpenApiConfiguration openApiConfiguration) throws Exception {
+        OpenApiReader reader;
+        if (StringUtils.isNotBlank(openApiConfiguration.getReaderClass())) {
+            Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getReaderClass());
+            // TODO instantiate with configuration
+            reader = (OpenApiReader) cls.newInstance();
+        } else {
+            reader = new OpenApiReader() {
+                @Override
+                public OpenAPI read(Set<Class<?>> classes, Map<String, Object> resources) {
+                    OpenAPI openApi = openApiConfiguration.getOpenApi();
+                    return openApi;
+
+                }
+            };
+        }
+        return reader;
+    }
+
+    protected OpenApiScanner buildScanner(final OpenApiConfiguration openApiConfiguration) throws Exception {
+        OpenApiScanner scanner;
+        if (StringUtils.isNotBlank(openApiConfiguration.getScannerClass())) {
+            Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getScannerClass());
+            // TODO instantiate with configuration
+            scanner = (OpenApiScanner) cls.newInstance();
+        } else {
+            scanner = new GenericOpenApiScanner(openApiConfiguration);
+        }
+        return scanner;
+    }
 
 }
