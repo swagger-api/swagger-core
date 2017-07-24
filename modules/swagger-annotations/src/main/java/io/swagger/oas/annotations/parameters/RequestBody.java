@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import io.swagger.oas.annotations.media.MediaType;
+import io.swagger.oas.annotations.media.Content;
 
 /**
  * Describes a single request body.
@@ -39,7 +39,7 @@ public @interface RequestBody {
   /**
    * The content of the request body.
    **/
-  MediaType[] content() default {};
+  Content[] content() default {};
 
   /**
    * Determines if the request body is required in the request. Defaults to false.

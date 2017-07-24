@@ -17,7 +17,7 @@
 package io.swagger.oas.annotations.responses;
 
 import io.swagger.oas.annotations.links.Link;
-import io.swagger.oas.annotations.media.MediaType;
+import io.swagger.oas.annotations.media.Content;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -48,8 +48,8 @@ public @interface ApiResponse {
     Link[] links() default {};
 
     /**
-     * An array containing descriptions of potential response payloads.
+     * An array containing descriptions of potential response payloads, for different media types.
      **/
-    MediaType[] content() default {};
+    Content[] content() default {};
 
 }

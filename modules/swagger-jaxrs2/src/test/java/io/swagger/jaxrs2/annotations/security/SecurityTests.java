@@ -4,7 +4,7 @@ import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.jaxrs2.annotations.info.InfoTest;
 import io.swagger.oas.annotations.security.OAuthFlow;
 import io.swagger.oas.annotations.security.OAuthFlows;
-import io.swagger.oas.annotations.security.Scopes;
+import io.swagger.oas.annotations.security.OAuthScope;
 import io.swagger.oas.annotations.security.SecurityRequirement;
 import io.swagger.oas.annotations.security.SecurityScheme;
 import org.testng.annotations.Test;
@@ -89,7 +89,7 @@ public class SecurityTests extends AbstractAnnotationTest {
             in = "header",
             flows = @OAuthFlows(
                     implicit = @OAuthFlow(authorizationUrl = "http://url.com/auth",
-                            scopes = @Scopes(name = "write:pets", description = "modify pets in your account"))))
+                            scopes = @OAuthScope(name = "write:pets", description = "modify pets in your account"))))
     static class OAuth2SchemeOnClass {
 
     }

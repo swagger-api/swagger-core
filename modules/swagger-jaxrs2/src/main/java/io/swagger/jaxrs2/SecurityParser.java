@@ -5,6 +5,7 @@ import io.swagger.oas.models.security.OAuthFlows;
 import io.swagger.oas.models.security.Scopes;
 import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.security.SecurityScheme;
+import io.swagger.oas.annotations.security.OAuthScope;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -82,13 +83,15 @@ public class SecurityParser {
 		return Optional.of(oAuthFlowObject);
 	}
 
-	public static Optional<Scopes> getScopes(io.swagger.oas.annotations.security.Scopes scopes) {
+	public static Optional<Scopes> getScopes(OAuthScope[] scopes) {
 		if (scopes == null) {
 			return Optional.empty();
 		}
 		Scopes scopesObject = new Scopes();
-		scopesObject.addString(SCOPE_NAME, scopes.name());
-		scopesObject.addString(SCOPE_DESCRIPTION, scopes.description());
+		
+		for (OAuthScope scope : scopes) {
+			scopesObject.addString(scope.name(), scope.description());
+		}
 		return Optional.of(scopesObject);
 	}
 

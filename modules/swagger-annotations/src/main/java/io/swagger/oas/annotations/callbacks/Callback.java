@@ -36,17 +36,20 @@ import io.swagger.oas.annotations.Operation;
 public @interface Callback {
   /**
    * The friendly name used to refer to this callback
+   * @return the name of the callback
    **/
   String name() default "";
 
-  /**
-   * An absolute URL which defines the destination which will be called with the supplied operation definition.  An example is http://notificationServer.com?transactionId={$request.body#/id}&email={$request.body#/email}.
-   **/
+/**
+ * An absolute URL which defines the destination which will be called with the supplied operation definition.  
+ * @return the callback URL
+ */
   String callbackUrlExpression() default "";
 
   /**
-   * The operation that will be executed on callback
+   * The array of operations that will be called out-of band 
+   * @return the callback operations
    **/
-  Operation operation() default @Operation();
+  Operation[] operation() default {};
 
 }

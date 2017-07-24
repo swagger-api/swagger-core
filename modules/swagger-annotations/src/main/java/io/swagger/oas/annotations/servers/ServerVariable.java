@@ -34,7 +34,7 @@ public @interface ServerVariable {
   String name();
 
   /**
-   * An array of allowable values for this variable.  
+   * An array of allowable values for this variable.  This field map to the enum property in the OAS schema.
    **/
   String[] allowableValues() default "";
 

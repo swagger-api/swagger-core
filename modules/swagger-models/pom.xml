@@ -89,7 +89,7 @@
     </dependencies>
 
     <properties>
-        <annotations.version>2.0.0-SNAPSHOT</annotations.version>
+        <annotations.version>3.0.0-SNAPSHOT</annotations.version>
         <validation-api-version>1.1.0.Final</validation-api-version>
         <coverage.complexity.minimum>0.07</coverage.complexity.minimum>
         <coverage.line.minimum>0.0</coverage.line.minimum>

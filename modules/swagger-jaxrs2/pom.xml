@@ -5,7 +5,7 @@
     <parent>
         <artifactId>swagger-project</artifactId>
         <groupId>io.swagger</groupId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -172,7 +172,7 @@
     </dependencies>
     <properties>
         <models.version>2.0.0-SNAPSHOT</models.version>
-        <annotations.version>2.0.0-SNAPSHOT</annotations.version>
+        <annotations.version>3.0.0-SNAPSHOT</annotations.version>
         <core.version>2.0.0-SNAPSHOT</core.version>
     </properties>
 </project>

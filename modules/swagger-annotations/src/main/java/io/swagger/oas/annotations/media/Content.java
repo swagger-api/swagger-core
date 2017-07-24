@@ -28,19 +28,22 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface MediaType {
+public @interface Content {
   /**
    * The media type that this object applies to.
+   * @return the media type value
    **/
   String mediaType() default "";
 
   /**
-   * An array of examples used to show the use of the associated schema
+   * An array of examples used to show the use of the associated schema.
+   * @return the list of examples
    **/
   ExampleObject[] examples() default {};
 
   /**
    * The schema defining the type used for the request body.
+   * @return the schema of this media type
    **/
   Schema schema() default @Schema();
 

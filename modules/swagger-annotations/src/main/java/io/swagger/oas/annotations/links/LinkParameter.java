@@ -35,11 +35,13 @@ import java.lang.annotation.Target;
 public @interface LinkParameter {
   /**
    * The name of this link parameter.
+   * @return the parameter's name
    **/
   String name() default "";
 
   /**
    * A constant or an expression to be evaluated and passed to the linked operation.
+   * @return the parameter's value
    **/
   String expression() default "";
 
