@@ -16,6 +16,8 @@
 
 package io.swagger.oas.annotations;
 
+import io.swagger.oas.annotations.extensions.Extension;
+import io.swagger.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.oas.annotations.parameters.RequestBody;
 import io.swagger.oas.annotations.responses.ApiResponse;
 import io.swagger.oas.annotations.servers.Server;
@@ -91,5 +93,10 @@ public @interface Operation {
      *
      **/
     Server[] servers() default @Server();
+
+    /**
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default @Extension(properties = @ExtensionProperty(name = "", value = ""));
 
 }

@@ -54,7 +54,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
         }
         modelByName.put(name, model);
 
-        if (StringUtils.isNotBlank(prevName)) {
+        if (StringUtils.isNotBlank(prevName) && !prevName.equals(name)) {
             modelByName.remove(prevName);
         }
 
@@ -88,17 +88,6 @@ public class ModelConverterContextImpl implements ModelConverterContext {
             modelByType.put(type, resolved);
 
             Schema resolvedImpl = resolved;
-            // TODO look at composed models
-//            if (resolvedImpl instanceof ComposedModel) {
-//                resolvedImpl = ((ComposedModel) resolved).getChild();
-//            }
-//            if (resolvedImpl instanceof ModelImpl) {
-//                ModelImpl impl = (ModelImpl) resolvedIm
-
-//                if (impl.getName() != null) {
-//                    modelByName.put(impl.getName(), resolved);
-//                }
-//            }
             if(resolvedImpl.getTitle() != null) {
                 modelByName.put(resolvedImpl.getTitle(), resolved);
             }

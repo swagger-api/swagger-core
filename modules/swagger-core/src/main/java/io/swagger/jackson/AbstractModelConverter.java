@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+// TODO #2312
 public abstract class AbstractModelConverter implements ModelConverter {
     protected final ObjectMapper _mapper;
     protected final AnnotationIntrospector _intr;
@@ -42,25 +43,6 @@ public abstract class AbstractModelConverter implements ModelConverter {
         _intr = mapper.getSerializationConfig().getAnnotationIntrospector();
 
     }
-/*
-    protected static Comparator<Property> getPropertyComparator() {
-        return new Comparator<Property>() {
-            @Override
-            public int compare(Property one, Property two) {
-                if (one.getPosition() == null && two.getPosition() == null) {
-                    return 0;
-                }
-                if (one.getPosition() == null) {
-                    return -1;
-                }
-                if (two.getPosition() == null) {
-                    return 1;
-                }
-                return one.getPosition().compareTo(two.getPosition());
-            }
-        };
-    }
-    */
 /*
     @Override
     public Property resolve(Type type,
@@ -141,13 +123,14 @@ public abstract class AbstractModelConverter implements ModelConverter {
     }
 
     protected String _findExampleValue(Annotated a) {
-        /*
-        ApiModelProperty prop = a.getAnnotation(ApiModelProperty.class);
-        if (prop != null) {
-            if (!prop.example().isEmpty()) {
-                return prop.example();
+
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null) {
+            if (!schema.example().isEmpty()) {
+                return schema.example();
             }
-        }*/
+        }
+
         return null;
     }
 

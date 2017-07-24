@@ -51,6 +51,7 @@ public @interface ApiResponse {
      **/
     Link[] links() default @Link();
 
+    // TODO #2312 as array, according to spec
     /**
      *
      **/

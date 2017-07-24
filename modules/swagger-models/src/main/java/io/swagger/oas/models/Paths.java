@@ -18,7 +18,6 @@ package io.swagger.oas.models;
 
 import java.util.Objects;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Paths

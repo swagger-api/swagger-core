@@ -23,7 +23,7 @@ public class DeserializationModule extends SimpleModule {
         this.addDeserializer(Parameter.class, new ParameterDeserializer());
 //        this.addDeserializer(RequestBody.class, new RequestBodyDeserializer());
 
-        // TODO
+        // TODO #2312
 //        this.addDeserializer(SecurityDefinition.class, new SecurityDefinitionDeserializer());
     }
 

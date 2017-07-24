@@ -23,7 +23,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import io.swagger.oas.annotations.media.Content;
-import java.util.List;
 
 /**
  * 

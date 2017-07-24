@@ -3,8 +3,6 @@ package io.swagger.jaxrs2.listing;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
