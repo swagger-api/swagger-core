@@ -1,33 +1,25 @@
 package io.swagger.oas.integration;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.type.TypeReference;
 import io.swagger.oas.models.OpenAPI;
-import io.swagger.util.Json;
+import io.swagger.oas.web.OpenAPIConfig;
+import io.swagger.oas.web.OpenApiReader;
+import io.swagger.oas.web.OpenApiScanner;
+import org.apache.commons.lang3.StringUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class OpenApiConfiguration { // implements OpenAPIConfig {
+public class OpenApiConfiguration implements OpenAPIConfig {
 
     private OpenAPI openApi = new OpenAPI();
 
     Map<String, Object> userDefinedOptions = new ConcurrentHashMap<>();
-    private boolean basePathAsKey;
+    private boolean basePathAsKey; // TODO
 
     private String id;
     private String resourcePackageNames;
@@ -82,9 +74,71 @@ public class OpenApiConfiguration { // implements OpenAPIConfig {
         return this;
     }
 
+    @Override
+    public Set<String> getResourcePackages() {
+        if (StringUtils.isBlank(resourcePackageNames)) {
+            return null;
+        }
+        Set<String> packages = new HashSet<>();
+        String[] parts = resourcePackageNames.split(",");
+        for (String pkg : parts) {
+            if (!"".equals(pkg)) {
+                packages.add(pkg);
+            }
+        }
+        return Collections.unmodifiableSet(packages);
+    }
 
+    @Override
+    public OpenAPI getOpenAPI() {
+        return openApi;
+    }
+
+    @Override
     public Set<Class<?>> getResourceClasses() {
         return resourceClasses;
+    }
+
+    @Override
+    public Class<OpenApiReader> getReaderClass() {
+        // TODO
+        if (StringUtils.isBlank(readerClassName)) {
+            return null;
+        }
+        try {
+            return (Class<OpenApiReader>) this.getClass().getClassLoader().loadClass(readerClassName);
+        } catch (Exception e) {
+            // TODO
+            return null;
+        }
+    }
+
+    @Override
+    public Class<OpenApiScanner> getScannerClass() {
+        // TODO
+        if (StringUtils.isBlank(scannerClassName)) {
+            return null;
+        }
+        try {
+            return (Class<OpenApiScanner>) this.getClass().getClassLoader().loadClass(scannerClassName);
+        } catch (Exception e) {
+            // TODO
+            return null;
+        }
+    }
+
+    @Override
+    public Class<?> getFilterClass() {
+        // TODO use SwaggerSpecFilter
+        if (StringUtils.isBlank(filterClassName)) {
+            return null;
+        }
+        try {
+            return (Class<?>) this.getClass().getClassLoader().loadClass(filterClassName);
+        } catch (Exception e) {
+            // TODO
+            return null;
+        }
     }
 
     public void setResourceClasses(Set<Class<?>> resourceClasses) {
@@ -97,87 +151,6 @@ public class OpenApiConfiguration { // implements OpenAPIConfig {
 
     private boolean pathAsProcessorKey;
 
-    public static Map<String, OpenApiConfiguration> fromUrl(URL location, String defaultId) {
-
-        // get file as string (for the moment, TODO use commons config)
-        // load from classpath etc, look from file..
-        try {
-            Map<String, OpenApiConfiguration> configurationMap = new HashMap<>();
-
-            String configAsString = readUrl(location);
-            List<OpenApiConfiguration> configurations = Json.mapper().readValue(configAsString, new TypeReference<List<OpenApiConfiguration>>() {
-            });
-            for (OpenApiConfiguration config : configurations) {
-                // TODO we have multiple base paths in 3.0? how to handle?
-                // TODO use urls as kyes, but need to resolve the url with placeholders and use that?
-                // for the moment use title instead,
-/*
-                if (config.openApi.getInfo() == null || StringUtils.isEmpty(config.openApi.getInfo().getTitle())){
-                    if (StringUtils.isEmpty(id)) {
-                        config.openApi.setInfo(
-                                (config.openApi.getInfo() == null ?
-                                        new Info() :
-                                        config.openApi.getInfo()).title("/")
-                        );
-                    } else {
-                        config.openApi.setInfo(
-                                (config.openApi.getInfo() == null ?
-                                        new Info() :
-                                        config.openApi.getInfo()).title(id)
-                        );
-                    }
-                }
-
-                configurationMap.put(config.openApi.getInfo().getTitle(), config);
-*/
-
-                configurationMap.put((config.getId() == null) ? defaultId : config.getId(), config);
-
-/*
-                if (StringUtils.isEmpty(config.openApi.basePath("/"))){
-                    if (StringUtils.isEmpty(basePath)) {
-                        config.openApi.basePath("/");
-                    } else {
-                        config.openApi.basePath(basePath);
-                    }
-                }
-                configurationMap.put(config.openApi.getBasePath(), config);
-*/
-            }
-            return configurationMap;
-
-        } catch (Exception e) {
-            // TODO
-            e.printStackTrace();
-            throw new RuntimeException("exception reading config", e);
-        }
-
-    }
-
-    private static Properties loadProperties(URI uri) throws IOException {
-        FileReader reader = new FileReader(new File(uri));
-        Properties props = new Properties();
-        props.load(reader);
-        reader.close();
-        return props;
-    }
-
-    private static String readUrl(URL url) throws IOException {
-        StringBuffer sb = new StringBuffer();
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(url.openStream()));
-
-        String inputLine;
-        while ((inputLine = in.readLine()) != null) {
-            sb.append(inputLine).append("\n");
-        }
-        in.close();
-        return sb.toString();
-    }
-
-    public OpenAPI getOpenApi() {
-        return openApi;
-    }
     public void setOpenApi (OpenAPI openApi) {
         this.openApi = openApi;
     }

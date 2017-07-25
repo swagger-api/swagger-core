@@ -9,7 +9,6 @@ import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.jaxrs2.util.ReaderUtils;
 import io.swagger.oas.integration.OpenApiConfiguration;
-import io.swagger.oas.integration.OpenApiReader;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
@@ -23,6 +22,7 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
+import io.swagger.oas.web.OpenApiReader;
 import io.swagger.util.Json;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
@@ -80,8 +80,8 @@ public class Reader implements OpenApiReader {
         this.config = openApiConfiguration;
 
         // TODO init openApi by cloning the one in config
-        //clone openApiConfiguration.getOpenApi();
-        this.openAPI = config.getOpenApi();
+        //clone openApiConfiguration.getOpenAPI();
+        this.openAPI = config.getOpenAPI();
         paths = new Paths();
         openApiTags = new LinkedHashSet<>();
         //this.config = new DefaultReaderConfig();

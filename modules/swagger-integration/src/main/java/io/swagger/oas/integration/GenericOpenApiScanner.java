@@ -1,5 +1,6 @@
 package io.swagger.oas.integration;
 
+import io.swagger.oas.web.OpenApiScanner;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;

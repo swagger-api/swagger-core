@@ -11,9 +11,9 @@ public interface OpenAPIConfig {
 
     Set<Class<?>> getResourceClasses();
 
-    OpenApiReader getReaderClass();
+    Class<OpenApiReader> getReaderClass();
 
-    OpenApiScanner getScannerClass();
+    Class<OpenApiScanner> getScannerClass();
 
     // TODO use updated/renamed SwaggerSpecFilter, moved to swagger-web
     Class<?> getFilterClass();

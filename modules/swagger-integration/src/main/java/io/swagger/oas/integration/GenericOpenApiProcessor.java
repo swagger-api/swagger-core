@@ -2,6 +2,8 @@ package io.swagger.oas.integration;
 
 
 import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.web.OpenApiReader;
+import io.swagger.oas.web.OpenApiScanner;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -66,9 +68,9 @@ public class GenericOpenApiProcessor implements OpenApiProcessor {
         return this.id;
 /*
         if (openApiConfiguration !=  null) {
-            if (openApiConfiguration.getOpenApi().getInfo() != null &&
-                    !StringUtils.isEmpty(openApiConfiguration.getOpenApi().getInfo().getTitle())){
-                return openApiConfiguration.getOpenApi().getInfo().getTitle();
+            if (openApiConfiguration.getOpenAPI().getInfo() != null &&
+                    !StringUtils.isEmpty(openApiConfiguration.getOpenAPI().getInfo().getTitle())){
+                return openApiConfiguration.getOpenAPI().getInfo().getTitle();
             }
         }
         return null;
@@ -77,10 +79,10 @@ public class GenericOpenApiProcessor implements OpenApiProcessor {
 
     public void setId (String id) {
   /*      if (openApiConfiguration !=  null) {
-            openApiConfiguration.getOpenApi().setInfo(
-                    (openApiConfiguration.getOpenApi().getInfo() == null ?
+            openApiConfiguration.getOpenAPI().setInfo(
+                    (openApiConfiguration.getOpenAPI().getInfo() == null ?
                             new Info() :
-                            openApiConfiguration.getOpenApi().getInfo()).title(id)
+                            openApiConfiguration.getOpenAPI().getInfo()).title(id)
             );
         }*/
         this.id = id;

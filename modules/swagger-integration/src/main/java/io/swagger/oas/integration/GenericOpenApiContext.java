@@ -2,6 +2,8 @@ package io.swagger.oas.integration;
 
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.info.Info;
+import io.swagger.oas.web.OpenApiReader;
+import io.swagger.oas.web.OpenApiScanner;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -123,10 +125,10 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
     public GenericOpenApiContext addOpenApiProcessor(OpenApiProcessor openApiProcessor) {
         if (StringUtils.isEmpty(openApiProcessor.getId())) {
-            openApiProcessor.getOpenApiConfiguration().getOpenApi().setInfo(
-                    (openApiProcessor.getOpenApiConfiguration().getOpenApi().getInfo() == null ?
+            openApiProcessor.getOpenApiConfiguration().getOpenAPI().setInfo(
+                    (openApiProcessor.getOpenApiConfiguration().getOpenAPI().getInfo() == null ?
                             new Info() :
-                            openApiProcessor.getOpenApiConfiguration().getOpenApi().getInfo()).title(id)
+                            openApiProcessor.getOpenApiConfiguration().getOpenAPI().getInfo()).title(id)
             );
         }
         openApiProcessors.put(openApiProcessor.getId(), openApiProcessor);
@@ -185,7 +187,11 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         URL configUrl = locateConfig();
         if (configUrl != null) {
             // TODO handle urls and stuff, also use loadConfiguration protected now in WebXmlContext..
-            Map<String, OpenApiConfiguration> configurations = OpenApiConfiguration.fromUrl(locateConfig(), id);
+            Map<String, OpenApiConfiguration> configurations =
+                    new LocationOpenApiConfigBuilder()
+                    .configLocation(locateConfig())
+                    .buildMultiple(id);
+            //Map<String, OpenApiConfiguration> configurations = OpenApiConfiguration.fromUrl(locateConfig(), id);
             for (String id : configurations.keySet()) {
                 try {
                     openApiProcessors.put(id, buildProcessor(id, configurations.get(id)));
@@ -262,7 +268,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             reader = new OpenApiReader() {
                 @Override
                 public OpenAPI read(Set<Class<?>> classes, Map<String, Object> resources) {
-                    OpenAPI openApi = openApiConfiguration.getOpenApi();
+                    OpenAPI openApi = openApiConfiguration.getOpenAPI();
                     return openApi;
 
                 }

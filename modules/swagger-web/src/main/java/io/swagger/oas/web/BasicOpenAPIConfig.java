@@ -17,16 +17,16 @@ public final class BasicOpenAPIConfig implements OpenAPIConfig {
     private Collection<String> ignoredRoutes;
     private OpenAPI openAPI;
     private boolean scanAllResources;
-    private OpenApiReader readerClass;
-    private OpenApiScanner scannerClass;
+    private Class<OpenApiReader> readerClass;
+    private Class<OpenApiScanner> scannerClass;
     private boolean prettyPrint;
 
-    public BasicOpenAPIConfig setReaderClass(OpenApiReader readerClass) {
+    public BasicOpenAPIConfig setReaderClass(Class<OpenApiReader> readerClass) {
         this.readerClass = readerClass;
         return this;
     }
 
-    public BasicOpenAPIConfig setScannerClass(OpenApiScanner scannerClass) {
+    public BasicOpenAPIConfig setScannerClass(Class<OpenApiScanner> scannerClass) {
         this.scannerClass = scannerClass;
         return this;
     }
@@ -55,12 +55,12 @@ public final class BasicOpenAPIConfig implements OpenAPIConfig {
     }
 
     @Override
-    public OpenApiReader getReaderClass() {
+    public Class<OpenApiReader> getReaderClass() {
         return readerClass;
     }
 
     @Override
-    public OpenApiScanner getScannerClass() {
+    public Class<OpenApiScanner> getScannerClass() {
         return scannerClass;
     }
 

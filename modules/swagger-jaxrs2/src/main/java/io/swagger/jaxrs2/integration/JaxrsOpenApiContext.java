@@ -4,8 +4,8 @@ import io.swagger.jaxrs2.Reader;
 import io.swagger.oas.integration.GenericOpenApiContext;
 import io.swagger.oas.integration.OpenApiConfiguration;
 import io.swagger.oas.integration.OpenApiContext;
-import io.swagger.oas.integration.OpenApiReader;
-import io.swagger.oas.integration.OpenApiScanner;
+import io.swagger.oas.web.OpenApiReader;
+import io.swagger.oas.web.OpenApiScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

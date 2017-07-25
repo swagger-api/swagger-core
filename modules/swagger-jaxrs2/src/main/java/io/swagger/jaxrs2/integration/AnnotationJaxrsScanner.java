@@ -1,7 +1,7 @@
 package io.swagger.jaxrs2.integration;
 
 import io.swagger.oas.integration.OpenApiConfiguration;
-import io.swagger.oas.integration.OpenApiScanner;
+import io.swagger.oas.web.OpenApiScanner;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
