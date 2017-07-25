@@ -11,7 +11,7 @@ public class Issue534 {
 
     @XmlElementWrapper(name = "order_specials")
     @XmlElement(name = "order_special")
-    @Schema//(hidden = true)
+    @Schema(hidden = true)
     public List<SpecialOrderItem> getOrder_specials() {
         return null;
     }

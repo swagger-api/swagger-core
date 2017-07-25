@@ -32,11 +32,7 @@ public class Department {
 
     @XmlElement
     @JsonProperty
-    @Schema(
-//            access = "public",
-            required = true
-//            , position = 1
-    )
+    @Schema(required = true)
     public String getName() {
         return name;
     }
@@ -47,11 +43,7 @@ public class Department {
 
     @XmlElement
     @JsonProperty
-    @Schema(
-//            access = "public",
-            required = true
-//            , position = 2
-    )
+    @Schema(required = true)
     public String getDeptCode() {
         return deptCode;
     }

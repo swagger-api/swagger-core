@@ -1,7 +1,6 @@
 package io.swagger.jaxrs2.annotations.security;
 
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
-import io.swagger.jaxrs2.annotations.info.InfoTest;
 import io.swagger.oas.annotations.security.OAuthFlow;
 import io.swagger.oas.annotations.security.OAuthFlows;
 import io.swagger.oas.annotations.security.OAuthScope;

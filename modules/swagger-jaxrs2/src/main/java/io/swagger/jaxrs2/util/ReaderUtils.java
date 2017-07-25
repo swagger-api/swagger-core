@@ -10,7 +10,6 @@ import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.ReflectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.DELETE;

@@ -2,9 +2,7 @@ package io.swagger.oas.models.composition;
 
 import io.swagger.oas.annotations.media.Schema;
 
-@Schema(description = "Shake hands with Thing1"
-//        , parent = AbstractBaseModelWithSubTypes.class
-)
+@Schema(description = "Shake hands with Thing1", allOf = {AbstractBaseModelWithSubTypes.class})
 public class Thing1 extends AbstractBaseModelWithSubTypes {
 
     @Schema(description = "Override the abstract a")
