@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * This object illustrates an example of 
+ * This object illustrates an example of a particular content
  **/
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
