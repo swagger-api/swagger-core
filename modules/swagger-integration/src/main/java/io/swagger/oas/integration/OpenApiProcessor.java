@@ -16,6 +16,10 @@ public interface OpenApiProcessor {
 
     void setOpenApiReader(OpenApiReader openApiReader);
 
+    void setOpenApiConfiguration(OpenApiConfiguration openApiConfiguration);
+
+    void setId(String id);
+
     OpenApiConfiguration getOpenApiConfiguration();
 
 }

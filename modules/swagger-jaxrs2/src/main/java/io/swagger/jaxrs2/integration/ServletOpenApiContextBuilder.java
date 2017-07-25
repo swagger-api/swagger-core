@@ -29,6 +29,7 @@ public class ServletOpenApiContextBuilder<T extends ServletOpenApiContextBuilder
             if (ctx.getConfigLocation() == null && configLocation != null) {
                 ((XmlWebOpenApiContext)ctx).configLocation(configLocation);
             }
+            // TODO
 /*
                 if (basePath != null) {
                     ((XmlWebOpenApiContext)ctx).basePath(basePath);
@@ -40,11 +41,6 @@ public class ServletOpenApiContextBuilder<T extends ServletOpenApiContextBuilder
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator
             }
-/*
-            } else {
-                OpenApiContextLocator.getInstance().putOpenApiContext(ctxId, ctx);
-            }
-*/
         }
         return ctx;
     }

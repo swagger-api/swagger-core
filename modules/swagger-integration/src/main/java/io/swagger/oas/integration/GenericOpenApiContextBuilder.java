@@ -28,6 +28,7 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
             if (ctx.getConfigLocation() == null && configLocation != null) {
                 ((GenericOpenApiContext)ctx).configLocation(configLocation);
             }
+            // TODO basepath
 /*
                 if (basePath != null) {
                     ((XmlWebOpenApiContext)ctx).basePath(basePath);
@@ -39,11 +40,6 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator
             }
-/*
-            } else {
-                OpenApiContextLocator.getInstance().putOpenApiContext(ctxId, ctx);
-            }
-*/
         }
         return ctx;
     }

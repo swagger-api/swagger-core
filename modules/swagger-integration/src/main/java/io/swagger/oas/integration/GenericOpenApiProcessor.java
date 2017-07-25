@@ -5,7 +5,6 @@ import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.web.OpenApiReader;
 import io.swagger.oas.web.OpenApiScanner;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GenericOpenApiProcessor implements OpenApiProcessor {
@@ -39,6 +38,7 @@ public class GenericOpenApiProcessor implements OpenApiProcessor {
         return openApiReader;
     }
 
+    @Override
     public void setOpenApiReader(OpenApiReader openApiReader) {
         this.openApiReader = openApiReader;
     }
@@ -47,6 +47,7 @@ public class GenericOpenApiProcessor implements OpenApiProcessor {
         return openApiScanner;
     }
 
+    @Override
     public void setOpenApiScanner(OpenApiScanner openApiScanner) {
         this.openApiScanner = openApiScanner;
     }
@@ -56,6 +57,7 @@ public class GenericOpenApiProcessor implements OpenApiProcessor {
         return openApiConfiguration;
     }
 
+    @Override
     public void setOpenApiConfiguration(OpenApiConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
     }
@@ -66,25 +68,10 @@ public class GenericOpenApiProcessor implements OpenApiProcessor {
     @Override
     public String getId() {
         return this.id;
-/*
-        if (openApiConfiguration !=  null) {
-            if (openApiConfiguration.getOpenAPI().getInfo() != null &&
-                    !StringUtils.isEmpty(openApiConfiguration.getOpenAPI().getInfo().getTitle())){
-                return openApiConfiguration.getOpenAPI().getInfo().getTitle();
-            }
-        }
-        return null;
-*/
     }
 
+    @Override
     public void setId (String id) {
-  /*      if (openApiConfiguration !=  null) {
-            openApiConfiguration.getOpenAPI().setInfo(
-                    (openApiConfiguration.getOpenAPI().getInfo() == null ?
-                            new Info() :
-                            openApiConfiguration.getOpenAPI().getInfo()).title(id)
-            );
-        }*/
         this.id = id;
     }
     public GenericOpenApiProcessor id (String id) {
@@ -92,7 +79,7 @@ public class GenericOpenApiProcessor implements OpenApiProcessor {
         return this;
     }
 
-    public final GenericOpenApiProcessor withOpenApiReader(OpenApiReader openApiReader) {
+    public final GenericOpenApiProcessor openApiReader(OpenApiReader openApiReader) {
         this.openApiReader = openApiReader;
         return this;
     }

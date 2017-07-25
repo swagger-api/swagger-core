@@ -1,6 +1,7 @@
 package io.swagger.oas.integration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.oas.web.OpenAPIConfig;
 import io.swagger.oas.web.OpenAPIConfigBuilder;
 import io.swagger.util.Json;
@@ -9,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +24,14 @@ public class LocationOpenApiConfigBuilder implements OpenAPIConfigBuilder {
     public Map<String, OpenApiConfiguration> buildMultiple(String defaultId) {
 
         if (configLocation == null) {
-            throw new RuntimeException("null location");
+            //TODO
+            //throw new RuntimeException("null location");
+            return null;
         }
 
         // get file as string (for the moment, TODO use commons config)
         // load from classpath etc, look from file..
+        // TODO multiple formats, yaml..
         try {
             Map<String, OpenApiConfiguration> configurationMap = new HashMap<>();
 
@@ -34,8 +40,17 @@ public class LocationOpenApiConfigBuilder implements OpenAPIConfigBuilder {
             // TODO use urls as kyes, but need to resolve the url with placeholders and use that?
             // TODO we have multiple base paths in 3.0? how to handle?
             // TODO use urls as kyes, but need to resolve the url with placeholders and use that?
-            List<OpenApiConfiguration> configurations = Json.mapper().readValue(configAsString, new TypeReference<List<OpenApiConfiguration>>() {
-            });
+            // check if not array
+            JsonNode configNode = Json.mapper().readTree(configAsString);
+            final List<OpenApiConfiguration> configurations;
+            if (configNode.isArray()) {
+                configurations = Json.mapper().readValue(configAsString, new TypeReference<List<OpenApiConfiguration>>() {
+                });
+            } else {
+                OpenApiConfiguration config = Json.mapper().readValue(configAsString, OpenApiConfiguration.class);
+                configurations = Collections.singletonList(config);
+            }
+
             for (OpenApiConfiguration config : configurations) {
                 configurationMap.put((config.getId() == null) ? defaultId : config.getId(), config);
             }
@@ -44,15 +59,18 @@ public class LocationOpenApiConfigBuilder implements OpenAPIConfigBuilder {
         } catch (Exception e) {
             // TODO
             e.printStackTrace();
-            throw new RuntimeException("exception reading config", e);
+            //throw new RuntimeException("exception reading config", e);
+            return null;
         }
     }
 
 
     @Override
-    public OpenAPIConfig build(Map<String, Object> environment) {
+    public OpenAPIConfig build() {
         if (configLocation == null) {
-            throw new RuntimeException("null location");
+            // TODO
+            //throw new RuntimeException("null location");
+            return null;
         }
         // get file as string (for the moment, TODO use commons config)
         // load from classpath etc, look from file..
@@ -67,7 +85,8 @@ public class LocationOpenApiConfigBuilder implements OpenAPIConfigBuilder {
         } catch (Exception e) {
             // TODO
             e.printStackTrace();
-            throw new RuntimeException("exception reading config", e);
+            return null;
+            //throw new RuntimeException("exception reading config", e);
         }
     }
 

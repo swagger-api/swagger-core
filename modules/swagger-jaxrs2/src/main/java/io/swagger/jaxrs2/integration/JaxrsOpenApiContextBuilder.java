@@ -19,6 +19,7 @@ public class JaxrsOpenApiContextBuilder<T extends JaxrsOpenApiContextBuilder> ex
             ctxId = OpenApiContext.OPENAPI_CONTEXT_ID_DEFAULT;
         }
 
+        // TODO merge this and other contextBuilder impls
         OpenApiContext ctx = OpenApiContextLocator.getInstance().getOpenApiContext(ctxId);
 
         if (ctx == null) {
@@ -32,6 +33,7 @@ public class JaxrsOpenApiContextBuilder<T extends JaxrsOpenApiContextBuilder> ex
             if (ctx.getConfigLocation() == null && configLocation != null) {
                 ((XmlWebOpenApiContext)ctx).configLocation(configLocation);
             }
+            // TODO
 /*
                 if (basePath != null) {
                     ((XmlWebOpenApiContext)ctx).basePath(basePath);
@@ -43,11 +45,6 @@ public class JaxrsOpenApiContextBuilder<T extends JaxrsOpenApiContextBuilder> ex
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator
             }
-/*
-            } else {
-                OpenApiContextLocator.getInstance().putOpenApiContext(ctxId, ctx);
-            }
-*/
         }
         return ctx;
     }

@@ -15,20 +15,20 @@ import java.util.Set;
 
 public class GenericOpenApiContext<T extends GenericOpenApiContext> implements OpenApiContext {
 
-    private OpenApiConfiguration openApiConfiguration;
-
     protected String resourcePackageNames;
-
-    private String basePath = "/";
-
-    private Map<String, OpenApiProcessor> openApiProcessors = new HashMap<String, OpenApiProcessor>();
-
     protected String id = OPENAPI_CONTEXT_ID_DEFAULT;
     protected OpenApiContext parent;
-
+    protected String configLocation;
+    private OpenApiConfiguration openApiConfiguration;
+    private String basePath = "/";
+    private Map<String, OpenApiProcessor> openApiProcessors = new HashMap<String, OpenApiProcessor>();
 
     public String getResourcePackageNames() {
         return resourcePackageNames;
+    }
+
+    public void setResourcePackageNames(String resourcePackageNames) {
+        this.resourcePackageNames = resourcePackageNames;
     }
 
     public T resourcePackageNames(String resourcePackageNames) {
@@ -54,10 +54,6 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return (T) this;
     }
 
-    public void setOpenApiConfiguration(OpenApiConfiguration openApiConfiguration) {
-        this.openApiConfiguration = openApiConfiguration;
-    }
-
     public String getConfigLocation() {
         return configLocation;
     }
@@ -66,24 +62,18 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         this.configLocation = configLocation;
     }
 
-    protected String configLocation;
-
     public final T configLocation(String configLocation) {
         this.configLocation = configLocation;
         return (T) this;
     }
 
-    public void setOpenApiProcessors(Map<String, OpenApiProcessor> openApiProcessors) {
-        this.openApiProcessors = openApiProcessors;
+    @Override
+    public String getId() {
+        return this.id;
     }
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    @Override
-    public String getId() {
-        return this.id;
     }
 
     public final T id(String id) {
@@ -94,6 +84,10 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     @Override
     public Map<String, OpenApiProcessor> getOpenApiProcessors() {
         return openApiProcessors;
+    }
+
+    public void setOpenApiProcessors(Map<String, OpenApiProcessor> openApiProcessors) {
+        this.openApiProcessors = openApiProcessors;
     }
 
     @Override
@@ -107,21 +101,19 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return openApiProcessors.get(id);
     }
 
-
-    public void setParent(OpenApiContext parent) {
-        this.parent = parent;
-    }
-
     @Override
     public OpenApiContext getParent() {
         return this.parent;
+    }
+
+    public void setParent(OpenApiContext parent) {
+        this.parent = parent;
     }
 
     public final T parent(OpenApiContext parent) {
         this.parent = parent;
         return (T) this;
     }
-
 
     public GenericOpenApiContext addOpenApiProcessor(OpenApiProcessor openApiProcessor) {
         if (StringUtils.isEmpty(openApiProcessor.getId())) {
@@ -141,20 +133,17 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getProcessorClassName());
             processor = (OpenApiProcessor) cls.newInstance();
         } else {
-            processor = new GenericOpenApiProcessor().id(id).openApiConfiguration(openApiConfiguration);
+            processor = new GenericOpenApiProcessor();
         }
-
-        // TODO remove, set by processor
+        processor.setOpenApiConfiguration(openApiConfiguration);
+        processor.setId(id);
         processor.setOpenApiScanner(buildScanner(openApiConfiguration));
         processor.setOpenApiReader(buildReader(openApiConfiguration));
         return processor;
     }
 
-
-
     // TODO implement in subclass, also handle classpath
     protected URL buildConfigLocationURL(String configLocation) {
-
 
         // TODO CLASSPATH, file path..
         //ServletContext.getResource()
@@ -181,17 +170,22 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return null;
     }
 
+    protected Map<String, OpenApiConfiguration> loadConfigurations() {
+        if (StringUtils.isNotEmpty(configLocation)) {
+            return new LocationOpenApiConfigBuilder()
+                    .configLocation(locateConfig())
+                    .buildMultiple(id);
+        }
+        // TODO check known location in classpath, or same dir or whatever..
+        return null;
+    }
+
     @Override
     public OpenApiContext init() {
 
         URL configUrl = locateConfig();
         if (configUrl != null) {
-            // TODO handle urls and stuff, also use loadConfiguration protected now in WebXmlContext..
-            Map<String, OpenApiConfiguration> configurations =
-                    new LocationOpenApiConfigBuilder()
-                    .configLocation(locateConfig())
-                    .buildMultiple(id);
-            //Map<String, OpenApiConfiguration> configurations = OpenApiConfiguration.fromUrl(locateConfig(), id);
+            Map<String, OpenApiConfiguration> configurations = loadConfigurations();
             for (String id : configurations.keySet()) {
                 try {
                     openApiProcessors.put(id, buildProcessor(id, configurations.get(id)));
@@ -202,8 +196,6 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
             }
         }
-
-        // TODO here try with openApiBuilder? and replace OpenApiConfiguration.fromUrl
 
         if (openApiProcessors.isEmpty() && parent == null) {
             try {
@@ -256,6 +248,10 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             return parent.getOpenApiConfiguration();
         }
         return null;
+    }
+
+    public void setOpenApiConfiguration(OpenApiConfiguration openApiConfiguration) {
+        this.openApiConfiguration = openApiConfiguration;
     }
 
     protected OpenApiReader buildReader(final OpenApiConfiguration openApiConfiguration) throws Exception {

@@ -7,21 +7,13 @@ import io.swagger.oas.integration.OpenApiConfiguration;
 import io.swagger.oas.integration.OpenApiContext;
 import io.swagger.oas.integration.OpenApiProcessor;
 import io.swagger.oas.models.OpenAPI;
-import org.apache.commons.io.FileUtils;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertEquals;
 
 public class IntegrationTest {
@@ -40,7 +32,6 @@ public class IntegrationTest {
         p.setOpenApiScanner(new AnnotationJaxrsScanner().openApiConfiguration(config));
         OpenApiContext ctx = new GenericOpenApiContext().addOpenApiProcessor(p).init();
         // TODO basePath/url handling
-        // TODO add getDefaultProcessor
         OpenAPI openApi = ctx.getDefaultProcessor().read();
         //OpenAPI openApi = ctx.getOpenApiProcessors().get("/").read();
 
@@ -49,9 +40,6 @@ public class IntegrationTest {
 
 
         try {
-            URL url = this.getClass().getResource("/integration/openapi-configuration.json");
-            System.out.println(url.getPath());
-            //if (true) return;
             String configPath = "/integration/openapi-configuration.json";
             //ctx = new XmlWebOpenApiContext().openApiConfiguration(config).init();
             //ctx = new XmlWebOpenApiContext().configLocation(url.getPath()).init();

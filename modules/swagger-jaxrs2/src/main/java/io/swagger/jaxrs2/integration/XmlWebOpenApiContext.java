@@ -1,5 +1,6 @@
 package io.swagger.jaxrs2.integration;
 
+import io.swagger.oas.integration.OpenApiConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,8 +9,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import java.net.URL;
-
-import static io.swagger.jaxrs2.integration.ContextUtils.*;
+import java.util.Map;
 
 public class XmlWebOpenApiContext<T extends XmlWebOpenApiContext<T>> extends JaxrsOpenApiContext<T> implements WebOpenApiContext {
 
@@ -34,18 +34,6 @@ public class XmlWebOpenApiContext<T extends XmlWebOpenApiContext<T>> extends Jax
         this.servletConfig = servletConfig;
         this.servletContext = servletConfig.getServletContext();
         id(OPENAPI_CONTEXT_ID_PREFIX + "servlet." + servletConfig.getServletName());
-        String location = getInitParam (servletConfig, OPENAPI_CONFIGURATION_LOCATION_KEY);
-        if (location != null) {
-            configLocation(location);
-        }
-        String resourcePackage = resolveResourcePackage(servletConfig);
-        if (resourcePackage != null) {
-            resourcePackageNames(resourcePackage);
-        }
-        String basePath = getInitParam (servletConfig, OPENAPI_CONFIGURATION_BASEPATH_KEY);
-        if (basePath != null) {
-            basePath(basePath);
-        }
         return (T)this;
     }
 
@@ -55,6 +43,14 @@ public class XmlWebOpenApiContext<T extends XmlWebOpenApiContext<T>> extends Jax
 
         if (StringUtils.isNotEmpty(configLocation)) {
             return super.locateConfig();
+        }
+        if (servletConfig != null) {
+            String location = ContextUtils.getInitParam(servletConfig, ContextUtils.OPENAPI_CONFIGURATION_LOCATION_KEY);
+            if (!StringUtils.isBlank(location)) {
+                // TODO..
+                this.configLocation = location;
+                return buildConfigLocationURL(location);
+            }
         }
         // check known locations
         //  /WEB-INF/openApi/openApiconfig.properties
@@ -69,6 +65,18 @@ public class XmlWebOpenApiContext<T extends XmlWebOpenApiContext<T>> extends Jax
 
         //return OpenApiConfiguration.fromUri(location, "props");
 
+    }
+
+    @Override
+    protected Map<String, OpenApiConfiguration> loadConfigurations() {
+        if (StringUtils.isNotEmpty(configLocation)) {
+            return new ServletOpenApiConfigBuilder()
+                    .servletConfig(servletConfig)
+                    .configLocation(locateConfig())
+                    .buildMultiple(id);
+        }
+        // TODO check known location in classpath, or same dir or whatever..
+        return null;
     }
 
 }

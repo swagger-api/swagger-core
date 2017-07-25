@@ -16,9 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class OpenApiConfiguration implements OpenAPIConfig {
 
-    private OpenAPI openApi = new OpenAPI();
-
     Map<String, Object> userDefinedOptions = new ConcurrentHashMap<>();
+    private OpenAPI openApi = new OpenAPI();
     private boolean basePathAsKey; // TODO
 
     private String id;
@@ -32,6 +31,9 @@ public class OpenApiConfiguration implements OpenAPIConfig {
     private boolean prettyPrint;
     private boolean scanAllResources;
     private Collection<String> ignoredRoutes = Collections.emptySet();
+    @JsonIgnore
+    private Set<Class<?>> resourceClasses;
+    private boolean pathAsProcessorKey;
 
     public boolean isScanAllResources() {
         return scanAllResources;
@@ -99,6 +101,10 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         return resourceClasses;
     }
 
+    public void setResourceClasses(Set<Class<?>> resourceClasses) {
+        this.resourceClasses = resourceClasses;
+    }
+
     @Override
     public Class<OpenApiReader> getReaderClass() {
         // TODO
@@ -140,16 +146,6 @@ public class OpenApiConfiguration implements OpenAPIConfig {
             return null;
         }
     }
-
-    public void setResourceClasses(Set<Class<?>> resourceClasses) {
-        this.resourceClasses = resourceClasses;
-    }
-
-    @JsonIgnore
-    private Set<Class<?>> resourceClasses;
-
-
-    private boolean pathAsProcessorKey;
 
     public void setOpenApi (OpenAPI openApi) {
         this.openApi = openApi;
@@ -197,25 +193,27 @@ public class OpenApiConfiguration implements OpenAPIConfig {
     }
 
     public Map<String, Object> getUserDefinedOptions() {
+        // TODO return instead specific options in form of map..
         return userDefinedOptions;
     }
 
+    // TODO remove
     public void setUserDefinedOptions(Map<String, Object> userDefinedOptions) {
         this.userDefinedOptions = userDefinedOptions;
     }
 
-    public OpenApiConfiguration scannerClass(String scannerClass) {
-        this.scannerClassName = scannerClass;
+    public OpenApiConfiguration scannerClassName(String scannerClassName) {
+        this.scannerClassName = scannerClassName;
         return this;
     }
 
-    public OpenApiConfiguration readerClassName(String readerClass) {
-        this.readerClassName = readerClass;
+    public OpenApiConfiguration readerClassName(String readerClassName) {
+        this.readerClassName = readerClassName;
         return this;
     }
 
-    public OpenApiConfiguration processorClass(String processorClass) {
-        this.processorClassName = processorClass;
+    public OpenApiConfiguration processorClassName(String processorClassName) {
+        this.processorClassName = processorClassName;
         return this;
     }
 
@@ -272,11 +270,10 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.filterClassName = filterClassName;
     }
 
-    public OpenApiConfiguration filterClass(String filterClass) {
-        this.filterClassName = filterClass;
+    public OpenApiConfiguration filterClassName(String filterClassName) {
+        this.filterClassName = filterClassName;
         return this;
     }
-
 
     public OpenApiConfiguration id(String id) {
         this.id = id;
@@ -289,6 +286,5 @@ public class OpenApiConfiguration implements OpenAPIConfig {
     public void setId(String id) {
         this.id = id;
     }
-
 
 }
