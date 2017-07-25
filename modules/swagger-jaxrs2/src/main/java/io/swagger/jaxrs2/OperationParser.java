@@ -112,7 +112,7 @@ public class OperationParser {
             return Optional.empty();
         }
 
-        getContents(new io.swagger.oas.annotations.media.Content[]{parameter.content()}, components).ifPresent(parameterObject::setContent);
+        getContents(parameter.content(), components).ifPresent(parameterObject::setContent);
 
         return Optional.of(parameterObject);
     }

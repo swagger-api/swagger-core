@@ -93,10 +93,10 @@ public @interface Parameter {
   Schema schema() default @Schema();
 
   /**
-   * The media type representation of this parameter.
+   * The representation of this parameter, for different media types.
    * @return the content of the parameter
    **/
-  Content content() default @Content();
+  Content[] content() default @Content();
 
   /**
    * Allows this parameter to be marked as hidden

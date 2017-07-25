@@ -426,7 +426,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                     LOGGER.debug("overriding datatype from {} to {}", propType, cls.getName());
 
-                    if (as != null) {
+                    if ("array".equals(mp.type())) {
                         ArraySchema propertySchema = new ArraySchema();
                         Schema innerSchema = null;
 
@@ -534,8 +534,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             }
                         }
                         if (mp != null) {
-                            if(mp._enum().length > 0) {
-                                for(String _enum : mp._enum()) {
+                            if(mp.allowableValues().length > 0) {
+                                for(String _enum : mp.allowableValues()) {
                                     if(StringUtils.isNotBlank(_enum)) {
                                         property.addEnumItemObject(_enum);
                                     }
