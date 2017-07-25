@@ -22,7 +22,7 @@ public class AnnotationJaxrsScanner<T extends AnnotationJaxrsScanner<T>> impleme
     private OpenApiConfiguration openApiConfiguration;
     protected static Logger LOGGER = LoggerFactory.getLogger(AnnotationJaxrsScanner.class);
 
-    public T withOpenApiConfiguration (OpenApiConfiguration openApiConfiguration) {
+    public T openApiConfiguration (OpenApiConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
         return (T)this;
     }

@@ -10,12 +10,12 @@ public class AnnotationAndConfigJaxrsScanner extends AnnotationJaxrsScanner<Anno
     private Application app;
     private ServletConfig sc;
 
-    public AnnotationAndConfigJaxrsScanner withApplication (Application app) {
+    public AnnotationAndConfigJaxrsScanner application (Application app) {
         this.app = app;
         return this;
     }
 
-    public AnnotationAndConfigJaxrsScanner withServletConfig (ServletConfig s1c) {
+    public AnnotationAndConfigJaxrsScanner servletConfig (ServletConfig s1c) {
         this.sc = sc;
         return this;
     }

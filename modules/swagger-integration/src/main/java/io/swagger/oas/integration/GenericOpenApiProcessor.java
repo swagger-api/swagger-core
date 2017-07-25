@@ -87,7 +87,7 @@ public class GenericOpenApiProcessor implements OpenApiProcessor {
         }*/
         this.id = id;
     }
-    public GenericOpenApiProcessor withId (String id) {
+    public GenericOpenApiProcessor id (String id) {
         setId(id);
         return this;
     }
@@ -97,12 +97,12 @@ public class GenericOpenApiProcessor implements OpenApiProcessor {
         return this;
     }
 
-    public final GenericOpenApiProcessor withOpenApiScanner(OpenApiScanner openApiScanner) {
+    public final GenericOpenApiProcessor openApiScanner(OpenApiScanner openApiScanner) {
         this.openApiScanner = openApiScanner;
         return this;
     }
 
-    public final GenericOpenApiProcessor withOpenApiConfiguration(OpenApiConfiguration openApiConfiguration) {
+    public final GenericOpenApiProcessor openApiConfiguration(OpenApiConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
         return this;
     }

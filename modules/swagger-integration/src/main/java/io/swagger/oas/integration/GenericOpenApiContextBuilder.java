@@ -22,19 +22,19 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
         if (ctx == null) {
             OpenApiContext rootCtx = OpenApiContextLocator.getInstance().getOpenApiContext(OpenApiContext.OPENAPI_CONTEXT_ID_DEFAULT);
             ctx = new GenericOpenApiContext()
-                    .withOpenApiConfiguration(openApiConfiguration)
-                    .withParent(rootCtx);
+                    .openApiConfiguration(openApiConfiguration)
+                    .parent(rootCtx);
 
             if (ctx.getConfigLocation() == null && configLocation != null) {
-                ((GenericOpenApiContext)ctx).withConfigLocation(configLocation);
+                ((GenericOpenApiContext)ctx).configLocation(configLocation);
             }
 /*
                 if (basePath != null) {
-                    ((XmlWebOpenApiContext)ctx).withBasePath(basePath);
+                    ((XmlWebOpenApiContext)ctx).basePath(basePath);
                 }
 */
             if (((GenericOpenApiContext)ctx).getResourcePackageNames() == null && resourcePackageNames != null) {
-                ((GenericOpenApiContext)ctx).withResourcePackageNames(resourcePackageNames);
+                ((GenericOpenApiContext)ctx).resourcePackageNames(resourcePackageNames);
             }
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator

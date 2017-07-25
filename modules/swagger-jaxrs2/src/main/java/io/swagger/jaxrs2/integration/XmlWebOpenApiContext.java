@@ -28,23 +28,23 @@ public class XmlWebOpenApiContext<T extends XmlWebOpenApiContext<T>> extends Jax
         return servletConfig;
     }
 
-    public T withServletConfig(ServletConfig servletConfig) {
+    public T servletConfig(ServletConfig servletConfig) {
 
         if (servletConfig == null) return (T)this;
         this.servletConfig = servletConfig;
         this.servletContext = servletConfig.getServletContext();
-        withId(OPENAPI_CONTEXT_ID_PREFIX + "servlet." + servletConfig.getServletName());
+        id(OPENAPI_CONTEXT_ID_PREFIX + "servlet." + servletConfig.getServletName());
         String location = getInitParam (servletConfig, OPENAPI_CONFIGURATION_LOCATION_KEY);
         if (location != null) {
-            withConfigLocation(location);
+            configLocation(location);
         }
         String resourcePackage = resolveResourcePackage(servletConfig);
         if (resourcePackage != null) {
-            withResourcePackageNames(resourcePackage);
+            resourcePackageNames(resourcePackage);
         }
         String basePath = getInitParam (servletConfig, OPENAPI_CONFIGURATION_BASEPATH_KEY);
         if (basePath != null) {
-            withBasePath(basePath);
+            basePath(basePath);
         }
         return (T)this;
     }

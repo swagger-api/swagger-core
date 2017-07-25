@@ -31,7 +31,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return resourcePackageNames;
     }
 
-    public T withResourcePackageNames(String resourcePackageNames) {
+    public T resourcePackageNames(String resourcePackageNames) {
         this.resourcePackageNames = resourcePackageNames;
         return (T) this;
     }
@@ -44,12 +44,12 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         this.basePath = basePath;
     }
 
-    public final T withBasePath(String basePath) {
+    public final T basePath(String basePath) {
         this.basePath = basePath;
         return (T) this;
     }
 
-    public T withOpenApiConfiguration(OpenApiConfiguration openApiConfiguration) {
+    public T openApiConfiguration(OpenApiConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
         return (T) this;
     }
@@ -68,7 +68,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
     protected String configLocation;
 
-    public final T withConfigLocation(String configLocation) {
+    public final T configLocation(String configLocation) {
         this.configLocation = configLocation;
         return (T) this;
     }
@@ -86,7 +86,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return this.id;
     }
 
-    public final T withId(String id) {
+    public final T id(String id) {
         this.id = id;
         return (T) this;
     }
@@ -117,7 +117,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return this.parent;
     }
 
-    public final T withParent(OpenApiContext parent) {
+    public final T parent(OpenApiContext parent) {
         this.parent = parent;
         return (T) this;
     }
@@ -141,7 +141,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getProcessorClassName());
             processor = (OpenApiProcessor) cls.newInstance();
         } else {
-            processor = new GenericOpenApiProcessor().withId(id).withOpenApiConfiguration(openApiConfiguration);
+            processor = new GenericOpenApiProcessor().id(id).openApiConfiguration(openApiConfiguration);
         }
 
         // TODO remove, set by processor
@@ -209,7 +209,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             try {
 
                 if (openApiConfiguration == null) {
-                    openApiConfiguration = new OpenApiConfiguration().withResourcePackageNames(resourcePackageNames);
+                    openApiConfiguration = new OpenApiConfiguration().resourcePackageNames(resourcePackageNames);
                     openApiConfiguration.setId(id);
                 }
 

@@ -16,7 +16,7 @@ public class JaxrsOpenApiContext<T extends JaxrsOpenApiContext> extends GenericO
 
     private Application app;
 
-    public T withApp(Application app) {
+    public T app(Application app) {
         this.app = app;
         return (T)this;
     }
@@ -31,7 +31,7 @@ public class JaxrsOpenApiContext<T extends JaxrsOpenApiContext> extends GenericO
     @Override
     protected OpenApiScanner buildScanner(OpenApiConfiguration openApiConfiguration) throws Exception {
         LOGGER.trace("buildscanner");
-        return new AnnotationJaxrsScanner().withOpenApiConfiguration(openApiConfiguration);
+        return new AnnotationJaxrsScanner().openApiConfiguration(openApiConfiguration);
     }
 
 }

@@ -41,7 +41,7 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.scanAllResources = scanAllResources;
     }
 
-    public OpenApiConfiguration withScanAllResources(boolean scanAllResources) {
+    public OpenApiConfiguration scanAllResources(boolean scanAllResources) {
         this.scanAllResources = scanAllResources;
         return this;
     }
@@ -55,7 +55,7 @@ public class OpenApiConfiguration implements OpenAPIConfig {
                 : Collections.unmodifiableCollection(new HashSet<String>(ignoredRoutes));
     }
 
-    public OpenApiConfiguration withIgnoredRoutes(Collection<String> ignoredRoutes) {
+    public OpenApiConfiguration ignoredRoutes(Collection<String> ignoredRoutes) {
         this.ignoredRoutes = ignoredRoutes == null || ignoredRoutes.isEmpty() ? Collections.<String>emptySet()
                 : Collections.unmodifiableCollection(new HashSet<String>(ignoredRoutes));
         return this;
@@ -69,7 +69,7 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.prettyPrint = prettyPrint;
     }
 
-    public OpenApiConfiguration withPrettyPrint(boolean prettyPrint) {
+    public OpenApiConfiguration prettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
         return this;
     }
@@ -167,7 +167,7 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.pathAsProcessorKey = pathAsProcessorKey;
     }
 
-    public OpenApiConfiguration withPathAsProcessorKey(boolean pathAsProcessorKey) {
+    public OpenApiConfiguration pathAsProcessorKey(boolean pathAsProcessorKey) {
         this.pathAsProcessorKey = pathAsProcessorKey;
         return this;
     }
@@ -204,22 +204,22 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.userDefinedOptions = userDefinedOptions;
     }
 
-    public OpenApiConfiguration withScannerClass(String scannerClass) {
+    public OpenApiConfiguration scannerClass(String scannerClass) {
         this.scannerClassName = scannerClass;
         return this;
     }
 
-    public OpenApiConfiguration withReaderClassName(String readerClass) {
+    public OpenApiConfiguration readerClassName(String readerClass) {
         this.readerClassName = readerClass;
         return this;
     }
 
-    public OpenApiConfiguration withProcessorClass(String processorClass) {
+    public OpenApiConfiguration processorClass(String processorClass) {
         this.processorClassName = processorClass;
         return this;
     }
 
-    public OpenApiConfiguration withUserDefinedOptions(Map<String, Object> userDefinedOptions) {
+    public OpenApiConfiguration userDefinedOptions(Map<String, Object> userDefinedOptions) {
         this.userDefinedOptions = userDefinedOptions;
         return this;
     }
@@ -232,7 +232,7 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.basePathAsKey = basePathAsKey;
     }
 
-    public OpenApiConfiguration withBasePathAsKey(boolean basePathAsKey) {
+    public OpenApiConfiguration basePathAsKey(boolean basePathAsKey) {
         this.basePathAsKey = basePathAsKey;
         return this;
     }
@@ -245,7 +245,7 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.resourcePackageNames = resourcePackageNames;
     }
 
-    public OpenApiConfiguration withResourcePackageNames(String resourcePackage) {
+    public OpenApiConfiguration resourcePackageNames(String resourcePackage) {
         this.resourcePackageNames = resourcePackage;
         return this;
     }
@@ -258,7 +258,7 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.resourceClassNames = resourceClassNames;
     }
 
-    public OpenApiConfiguration withResourceClassNames(String resourceClassNames) {
+    public OpenApiConfiguration resourceClassNames(String resourceClassNames) {
         this.resourceClassNames = resourceClassNames;
         return this;
     }
@@ -272,13 +272,13 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.filterClassName = filterClassName;
     }
 
-    public OpenApiConfiguration withFilterClass(String filterClass) {
+    public OpenApiConfiguration filterClass(String filterClass) {
         this.filterClassName = filterClass;
         return this;
     }
 
 
-    public OpenApiConfiguration withId(String id) {
+    public OpenApiConfiguration id(String id) {
         this.id = id;
         return this;
     }

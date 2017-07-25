@@ -31,13 +31,13 @@ public class IntegrationTest {
     @Test(description = "scan a simple resource")
     public void shouldScanWithNewInitialization() {
         OpenApiConfiguration config = new OpenApiConfiguration()
-                .withResourcePackageNames("com.my.project.resources,org.my.project.resources")
+                .resourcePackageNames("com.my.project.resources,org.my.project.resources")
                 .openApi(new OpenAPI());
-        OpenApiProcessor p = new GenericOpenApiProcessor().withOpenApiConfiguration(config);
+        OpenApiProcessor p = new GenericOpenApiProcessor().openApiConfiguration(config);
 
 
         p.setOpenApiReader(new Reader(config));
-        p.setOpenApiScanner(new AnnotationJaxrsScanner().withOpenApiConfiguration(config));
+        p.setOpenApiScanner(new AnnotationJaxrsScanner().openApiConfiguration(config));
         OpenApiContext ctx = new GenericOpenApiContext().addOpenApiProcessor(p).init();
         // TODO basePath/url handling
         // TODO add getDefaultProcessor
@@ -53,9 +53,9 @@ public class IntegrationTest {
             System.out.println(url.getPath());
             //if (true) return;
             String configPath = "/integration/openapi-configuration.json";
-            //ctx = new XmlWebOpenApiContext().withOpenApiConfiguration(config).init();
-            //ctx = new XmlWebOpenApiContext().withConfigLocation(url.getPath()).init();
-            ctx = new XmlWebOpenApiContext().withConfigLocation(configPath).init();
+            //ctx = new XmlWebOpenApiContext().openApiConfiguration(config).init();
+            //ctx = new XmlWebOpenApiContext().configLocation(url.getPath()).init();
+            ctx = new XmlWebOpenApiContext().configLocation(configPath).init();
             openApi = ctx.read();
 
             assertNotNull(openApi);

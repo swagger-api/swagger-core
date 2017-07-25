@@ -24,21 +24,21 @@ public class JaxrsOpenApiContextBuilder<T extends JaxrsOpenApiContextBuilder> ex
         if (ctx == null) {
             OpenApiContext rootCtx = OpenApiContextLocator.getInstance().getOpenApiContext(OpenApiContext.OPENAPI_CONTEXT_ID_DEFAULT);
             ctx = new XmlWebOpenApiContext()
-                    .withServletConfig(servletConfig)
-                    .withApp(application)
-                    .withOpenApiConfiguration(openApiConfiguration)
-                    .withParent(rootCtx);
+                    .servletConfig(servletConfig)
+                    .app(application)
+                    .openApiConfiguration(openApiConfiguration)
+                    .parent(rootCtx);
 
             if (ctx.getConfigLocation() == null && configLocation != null) {
-                ((XmlWebOpenApiContext)ctx).withConfigLocation(configLocation);
+                ((XmlWebOpenApiContext)ctx).configLocation(configLocation);
             }
 /*
                 if (basePath != null) {
-                    ((XmlWebOpenApiContext)ctx).withBasePath(basePath);
+                    ((XmlWebOpenApiContext)ctx).basePath(basePath);
                 }
 */
             if (((XmlWebOpenApiContext)ctx).getResourcePackageNames() == null && resourcePackageNames != null) {
-                ((XmlWebOpenApiContext)ctx).withResourcePackageNames(resourcePackageNames);
+                ((XmlWebOpenApiContext)ctx).resourcePackageNames(resourcePackageNames);
             }
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator
