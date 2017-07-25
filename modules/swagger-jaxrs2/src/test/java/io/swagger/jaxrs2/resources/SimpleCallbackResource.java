@@ -21,7 +21,7 @@ public class SimpleCallbackResource {
 	@Callback(
 			callbackUrlExpression = "http://$request.query.url",
 			name = "subscription",
-			operation = 
+			operation = {
 					@Operation(
 							method = "post",
 							description = "payload data will be sent",
@@ -46,7 +46,15 @@ public class SimpleCallbackResource {
 											responseCode = "default",
 											description = "All other response codes will disable this callback subscription"
 									)
-							}))
+							}),
+					@Operation(
+							method = "get",
+							description = "payload data will be received"
+							),
+					@Operation(
+							method = "put",
+							description = "payload data will be sent"
+							)})
 	@Operation(description = "subscribes a client to updates relevant to the requestor's account, as " +
 			"identified by the input token.  The supplied url will be used as the delivery address for response payloads")
 	public SubscriptionResponse subscribe(@Schema(required = true, description = "the authentication token " +
