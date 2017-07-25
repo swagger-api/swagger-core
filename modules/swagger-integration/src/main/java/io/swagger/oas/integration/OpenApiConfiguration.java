@@ -1,5 +1,6 @@
 package io.swagger.oas.integration;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.util.Json;
@@ -18,9 +19,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class OpenApiConfiguration {
+public class OpenApiConfiguration { // implements OpenAPIConfig {
 
     private OpenAPI openApi = new OpenAPI();
 
@@ -28,14 +30,14 @@ public class OpenApiConfiguration {
     private boolean basePathAsKey;
 
     private String id;
-    private String resourcePackage;
-    private String filterClass;
-    private String readerClass;
-    private String scannerClass;
-    private String processorClass;
+    private String resourcePackageNames;
+    private String resourceClassNames;
+    private String filterClassName;
+    private String readerClassName;
+    private String scannerClassName;
+    private String processorClassName;
 
     private boolean prettyPrint;
-
     private boolean scanAllResources;
     private Collection<String> ignoredRoutes = Collections.emptySet();
 
@@ -81,17 +83,17 @@ public class OpenApiConfiguration {
     }
 
 
-
-
-    public String getResourceClasses() {
+    public Set<Class<?>> getResourceClasses() {
         return resourceClasses;
     }
 
-    public void setResourceClasses(String resourceClasses) {
+    public void setResourceClasses(Set<Class<?>> resourceClasses) {
         this.resourceClasses = resourceClasses;
     }
 
-    private String resourceClasses;
+    @JsonIgnore
+    private Set<Class<?>> resourceClasses;
+
 
     private boolean pathAsProcessorKey;
 
@@ -197,28 +199,28 @@ public class OpenApiConfiguration {
         return this;
     }
 
-    public String getReaderClass() {
-        return readerClass;
+    public String getReaderClassName() {
+        return readerClassName;
     }
 
-    public void setReaderClass(String readerClass) {
-        this.readerClass = readerClass;
+    public void setReaderClassName(String readerClassName) {
+        this.readerClassName = readerClassName;
     }
 
-    public String getScannerClass() {
-        return scannerClass;
+    public String getScannerClassName() {
+        return scannerClassName;
     }
 
-    public void setScannerClass(String scannerClass) {
-        this.scannerClass = scannerClass;
+    public void setScannerClassName(String scannerClassName) {
+        this.scannerClassName = scannerClassName;
     }
 
-    public String getProcessorClass() {
-        return processorClass;
+    public String getProcessorClassName() {
+        return processorClassName;
     }
 
-    public void setProcessorClass(String processorClass) {
-        this.processorClass = processorClass;
+    public void setProcessorClassName(String processorClassName) {
+        this.processorClassName = processorClassName;
     }
 
     public Map<String, Object> getUserDefinedOptions() {
@@ -230,17 +232,17 @@ public class OpenApiConfiguration {
     }
 
     public OpenApiConfiguration withScannerClass(String scannerClass) {
-        this.scannerClass = scannerClass;
+        this.scannerClassName = scannerClass;
         return this;
     }
 
-    public OpenApiConfiguration withReaderClass(String readerClass) {
-        this.readerClass = readerClass;
+    public OpenApiConfiguration withReaderClassName(String readerClass) {
+        this.readerClassName = readerClass;
         return this;
     }
 
     public OpenApiConfiguration withProcessorClass(String processorClass) {
-        this.processorClass = processorClass;
+        this.processorClassName = processorClass;
         return this;
     }
 
@@ -262,30 +264,43 @@ public class OpenApiConfiguration {
         return this;
     }
 
-    public String getResourcePackage() {
-        return resourcePackage;
+    public String getResourcePackageNames() {
+        return resourcePackageNames;
     }
 
-    public void setResourcePackage(String resourcePackage) {
-        this.resourcePackage = resourcePackage;
+    public void setResourcePackageNames(String resourcePackageNames) {
+        this.resourcePackageNames = resourcePackageNames;
     }
 
-    public OpenApiConfiguration withResourcePackage(String resourcePackage) {
-        this.resourcePackage = resourcePackage;
+    public OpenApiConfiguration withResourcePackageNames(String resourcePackage) {
+        this.resourcePackageNames = resourcePackage;
+        return this;
+    }
+
+    public String getResourceClassNames() {
+        return resourceClassNames;
+    }
+
+    public void setResourceClassNames(String resourcePackageNames) {
+        this.resourceClassNames = resourceClassNames;
+    }
+
+    public OpenApiConfiguration withResourceClassNames(String resourceClassNames) {
+        this.resourceClassNames = resourceClassNames;
         return this;
     }
 
 
-    public String getFilterClass() {
-        return filterClass;
+    public String getFilterClassName() {
+        return filterClassName;
     }
 
-    public void setFilterClass(String filterClass) {
-        this.filterClass = filterClass;
+    public void setFilterClassName(String filterClassName) {
+        this.filterClassName = filterClassName;
     }
 
     public OpenApiConfiguration withFilterClass(String filterClass) {
-        this.filterClass = filterClass;
+        this.filterClassName = filterClass;
         return this;
     }
 

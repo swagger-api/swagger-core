@@ -37,8 +37,8 @@ public class JaxrsOpenApiContextBuilder<T extends JaxrsOpenApiContextBuilder> ex
                     ((XmlWebOpenApiContext)ctx).withBasePath(basePath);
                 }
 */
-            if (((XmlWebOpenApiContext)ctx).getResourcePackage() == null && resourcePackage != null) {
-                ((XmlWebOpenApiContext)ctx).withResourcePackage(resourcePackage);
+            if (((XmlWebOpenApiContext)ctx).getResourcePackageNames() == null && resourcePackageNames != null) {
+                ((XmlWebOpenApiContext)ctx).withResourcePackageNames(resourcePackageNames);
             }
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator

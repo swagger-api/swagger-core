@@ -6,7 +6,6 @@ import io.swagger.oas.integration.OpenApiContextLocator;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletConfig;
-import javax.ws.rs.core.Application;
 
 public class ServletOpenApiContextBuilder<T extends ServletOpenApiContextBuilder> extends GenericOpenApiContextBuilder<ServletOpenApiContextBuilder> {
 
@@ -35,8 +34,8 @@ public class ServletOpenApiContextBuilder<T extends ServletOpenApiContextBuilder
                     ((XmlWebOpenApiContext)ctx).withBasePath(basePath);
                 }
 */
-            if (((XmlWebOpenApiContext)ctx).getResourcePackage() == null && resourcePackage != null) {
-                ((XmlWebOpenApiContext)ctx).withResourcePackage(resourcePackage);
+            if (((XmlWebOpenApiContext)ctx).getResourcePackageNames() == null && resourcePackageNames != null) {
+                ((XmlWebOpenApiContext)ctx).withResourcePackageNames(resourcePackageNames);
             }
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator

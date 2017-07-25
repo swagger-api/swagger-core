@@ -7,7 +7,7 @@ import javax.servlet.ServletConfig;
 
 public class ContextUtils {
 
-    public static final String OPENAPI_CONFIGURATION_RESOURCEPACKAGE_KEY = "openApi.configuration.resourcePackage";
+    public static final String OPENAPI_CONFIGURATION_RESOURCEPACKAGE_KEY = "openApi.configuration.resourcePackageNames";
     public static final String OPENAPI_CONFIGURATION_BASEPATH_KEY = "openApi.configuration.basePath";
     public static final String OPENAPI_CONFIGURATION_LOCATION_KEY = "openApi.configuration.location";
     public static final String JERSEY1_PACKAGE_KEY = "com.sun.jersey.config.property.packages";

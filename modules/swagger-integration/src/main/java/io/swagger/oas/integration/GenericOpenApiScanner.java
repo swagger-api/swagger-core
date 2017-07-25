@@ -1,5 +1,6 @@
 package io.swagger.oas.integration;
 
+import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
@@ -31,8 +32,8 @@ public class GenericOpenApiScanner implements OpenApiScanner {
         boolean allowAllPackages = false;
 
         // if classes are passed, use them
-        if (openApiConfiguration.getResourceClasses() != null && !"".equals(openApiConfiguration.getResourceClasses())) {
-            String[] parts = openApiConfiguration.getResourceClasses().split(",");
+        if (StringUtils.isNotBlank(openApiConfiguration.getResourceClassNames())) {
+            String[] parts = openApiConfiguration.getResourceClassNames().split(",");
             for (String className : parts) {
                 if (!"".equals(className)) {
                     try {
@@ -47,8 +48,8 @@ public class GenericOpenApiScanner implements OpenApiScanner {
         }
 
 
-        if (openApiConfiguration.getResourcePackage() != null && !"".equals(openApiConfiguration.getResourcePackage())) {
-            String[] parts = openApiConfiguration.getResourcePackage().split(",");
+        if (StringUtils.isNotBlank(openApiConfiguration.getResourcePackageNames())) {
+            String[] parts = openApiConfiguration.getResourcePackageNames().split(",");
             for (String pkg : parts) {
                 if (!"".equals(pkg)) {
                     acceptablePackages.add(pkg);

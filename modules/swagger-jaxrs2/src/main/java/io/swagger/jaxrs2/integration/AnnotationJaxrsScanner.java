@@ -2,6 +2,7 @@ package io.swagger.jaxrs2.integration;
 
 import io.swagger.oas.integration.OpenApiConfiguration;
 import io.swagger.oas.integration.OpenApiScanner;
+import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
@@ -39,8 +40,8 @@ public class AnnotationJaxrsScanner<T extends AnnotationJaxrsScanner<T>> impleme
         Set<String> acceptablePackages = new HashSet<String>();
 
         boolean allowAllPackages = false;
-        if ( openApiConfiguration.getResourcePackage() != null && !"".equals(openApiConfiguration.getResourcePackage())) {
-            String[] parts = openApiConfiguration.getResourcePackage().split(",");
+        if (StringUtils.isNotBlank(openApiConfiguration.getResourcePackageNames())) {
+            String[] parts = openApiConfiguration.getResourcePackageNames().split(",");
             for (String pkg : parts) {
                 if (!"".equals(pkg)) {
                     acceptablePackages.add(pkg);

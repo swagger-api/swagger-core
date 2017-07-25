@@ -7,7 +7,7 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
     protected String ctxId;
 
     protected String configLocation;
-    protected String resourcePackage;
+    protected String resourcePackageNames;
     protected OpenApiConfiguration openApiConfiguration;
 
 
@@ -33,8 +33,8 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
                     ((XmlWebOpenApiContext)ctx).withBasePath(basePath);
                 }
 */
-            if (((GenericOpenApiContext)ctx).getResourcePackage() == null && resourcePackage != null) {
-                ((GenericOpenApiContext)ctx).withResourcePackage(resourcePackage);
+            if (((GenericOpenApiContext)ctx).getResourcePackageNames() == null && resourcePackageNames != null) {
+                ((GenericOpenApiContext)ctx).withResourcePackageNames(resourcePackageNames);
             }
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator
@@ -64,12 +64,12 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
         this.configLocation = configLocation;
     }
 
-    public String getResourcePackage() {
-        return resourcePackage;
+    public String getResourcePackageNames() {
+        return resourcePackageNames;
     }
 
-    public void setResourcePackage(String resourcePackage) {
-        this.resourcePackage = resourcePackage;
+    public void setResourcePackageNames(String resourcePackageNames) {
+        this.resourcePackageNames = resourcePackageNames;
     }
 
     public OpenApiConfiguration getOpenApiConfiguration() {
@@ -91,8 +91,8 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
         return (T) this;
     }
 
-    public T resourcePackage(String resourcePackage) {
-        this.resourcePackage = resourcePackage;
+    public T resourcePackageNames(String resourcePackageNames) {
+        this.resourcePackageNames = resourcePackageNames;
         return (T) this;
     }
 

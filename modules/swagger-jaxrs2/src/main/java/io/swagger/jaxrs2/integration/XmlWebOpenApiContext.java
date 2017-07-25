@@ -1,6 +1,5 @@
 package io.swagger.jaxrs2.integration;
 
-import io.swagger.oas.integration.OpenApiConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +40,7 @@ public class XmlWebOpenApiContext<T extends XmlWebOpenApiContext<T>> extends Jax
         }
         String resourcePackage = resolveResourcePackage(servletConfig);
         if (resourcePackage != null) {
-            withResourcePackage(resourcePackage);
+            withResourcePackageNames(resourcePackage);
         }
         String basePath = getInitParam (servletConfig, OPENAPI_CONFIGURATION_BASEPATH_KEY);
         if (basePath != null) {

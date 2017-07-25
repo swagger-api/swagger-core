@@ -10,27 +10,69 @@ import java.util.Set;
 import io.swagger.oas.models.OpenAPI;
 
 public final class BasicOpenAPIConfig implements OpenAPIConfig {
-    private Set<String> resourcesBeScanned;
+    private Set<Class<?>> resourceClasses;
+    private Set<String> resourcePackages;
     private Map<String, Object> environment;
     private Class<?> filterClass;
     private Collection<String> ignoredRoutes;
     private OpenAPI openAPI;
     private boolean scanAllResources;
+    private OpenApiReader readerClass;
+    private OpenApiScanner scannerClass;
+    private boolean prettyPrint;
+
+    public BasicOpenAPIConfig setReaderClass(OpenApiReader readerClass) {
+        this.readerClass = readerClass;
+        return this;
+    }
+
+    public BasicOpenAPIConfig setScannerClass(OpenApiScanner scannerClass) {
+        this.scannerClass = scannerClass;
+        return this;
+    }
+
+    public BasicOpenAPIConfig setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
+        return this;
+    }
 
     public BasicOpenAPIConfig() {
-        resourcesBeScanned = Collections.<String>emptySet();
+        resourceClasses = Collections.emptySet();
+        resourcePackages = Collections.emptySet();
         environment = Collections.<String, Object>emptyMap();
         ignoredRoutes = Collections.<String>emptySet();
     }
 
     @Override
-    public Set<String> getResources() {
-        return resourcesBeScanned;
+    public Set<String> getResourcePackages() {
+        return resourcePackages;
     }
 
-    public OpenAPIConfig setResources(Set<String> resourcesBeScanned) {
-        this.resourcesBeScanned = resourcesBeScanned == null || resourcesBeScanned.isEmpty()
-                ? Collections.<String>emptySet() : Collections.unmodifiableSet(resourcesBeScanned);
+    public OpenAPIConfig setResourcePackages(Set<String> resourcePackages) {
+        this.resourcePackages = resourcePackages == null || resourcePackages.isEmpty()
+                ? Collections.emptySet() : Collections.unmodifiableSet(resourcePackages);
+        return this;
+    }
+
+    @Override
+    public OpenApiReader getReaderClass() {
+        return readerClass;
+    }
+
+    @Override
+    public OpenApiScanner getScannerClass() {
+        return scannerClass;
+    }
+
+    @Override
+    public Set<Class<?>> getResourceClasses() {
+        return resourceClasses;
+    }
+
+
+    public OpenAPIConfig setResourceClasses(Set<Class<?>> resourceClasses) {
+        this.resourceClasses = resourceClasses == null || resourceClasses.isEmpty()
+                ? Collections.<Class<?>>emptySet() : Collections.unmodifiableSet(resourceClasses);
         return this;
     }
 
@@ -79,6 +121,11 @@ public final class BasicOpenAPIConfig implements OpenAPIConfig {
     @Override
     public boolean isScanAllResources() {
         return scanAllResources;
+    }
+
+    @Override
+    public boolean isPrettyPrint() {
+        return prettyPrint;
     }
 
     public void setScanAllResources(boolean scanAllResources) {

@@ -7,8 +7,15 @@ import java.util.Set;
 import io.swagger.oas.models.OpenAPI;
 
 public interface OpenAPIConfig {
-    Set<String> getResources();
+    Set<String> getResourcePackages();
 
+    Set<Class<?>> getResourceClasses();
+
+    OpenApiReader getReaderClass();
+
+    OpenApiScanner getScannerClass();
+
+    // TODO use updated/renamed SwaggerSpecFilter, moved to swagger-web
     Class<?> getFilterClass();
 
     Collection<String> getIgnoredRoutes();
@@ -18,4 +25,6 @@ public interface OpenAPIConfig {
     Map<String, Object> getUserDefinedOptions();
 
     boolean isScanAllResources();
+
+    boolean isPrettyPrint();
 }

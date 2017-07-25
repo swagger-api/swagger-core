@@ -36,7 +36,7 @@ public abstract class BaseOpenApiListingResource {
         OpenApiContext ctx = new JaxrsOpenApiContextBuilder()
                 .servletConfig(config)
                 .application(app)
-                .resourcePackage(resourcePackage)
+                .resourcePackageNames(resourcePackageNames)
                 .configLocation(configLocation)
                 .openApiConfiguration(openApiConfiguration)
                 .ctxId(ctxId)
@@ -49,9 +49,9 @@ public abstract class BaseOpenApiListingResource {
 
 
         if (oas != null) {
-            if (ctx.getOpenApiConfiguration() != null && ctx.getOpenApiConfiguration().getFilterClass() != null) {
+            if (ctx.getOpenApiConfiguration() != null && ctx.getOpenApiConfiguration().getFilterClassName() != null) {
                 try {
-                    SwaggerSpecFilter filterImpl = (SwaggerSpecFilter) Class.forName(ctx.getOpenApiConfiguration().getFilterClass()).newInstance();
+                    SwaggerSpecFilter filterImpl = (SwaggerSpecFilter) Class.forName(ctx.getOpenApiConfiguration().getFilterClassName()).newInstance();
                     SpecFilter f = new SpecFilter();
                     oas = f.filter(oas, filterImpl, getQueryParams(uriInfo.getQueryParameters()), getCookies(headers),
                             getHeaders(headers));
@@ -126,17 +126,17 @@ public abstract class BaseOpenApiListingResource {
         return this;
     }
 
-    protected String resourcePackage;
+    protected String resourcePackageNames;
 
-    public String getResourcePackage() {
-        return resourcePackage;
+    public String getResourcePackageNames() {
+        return resourcePackageNames;
     }
-    public void setResourcePackage (String resourcePackage) {
-        this.resourcePackage = resourcePackage;
+    public void setResourcePackageNames(String resourcePackageNames) {
+        this.resourcePackageNames = resourcePackageNames;
     }
 
-    public BaseOpenApiListingResource resourcePackage(String resourcePackage) {
-        setResourcePackage(resourcePackage);
+    public BaseOpenApiListingResource resourcePackageNames(String resourcePackageNames) {
+        setResourcePackageNames(resourcePackageNames);
         return this;
     }
 

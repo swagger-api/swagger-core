@@ -15,7 +15,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
     private OpenApiConfiguration openApiConfiguration;
 
-    protected String resourcePackage;
+    protected String resourcePackageNames;
 
     private String basePath = "/";
 
@@ -25,12 +25,12 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     protected OpenApiContext parent;
 
 
-    public String getResourcePackage() {
-        return resourcePackage;
+    public String getResourcePackageNames() {
+        return resourcePackageNames;
     }
 
-    public T withResourcePackage(String resourcePackage) {
-        this.resourcePackage = resourcePackage;
+    public T withResourcePackageNames(String resourcePackageNames) {
+        this.resourcePackageNames = resourcePackageNames;
         return (T) this;
     }
 
@@ -135,8 +135,8 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
     protected OpenApiProcessor buildProcessor(String id, final OpenApiConfiguration openApiConfiguration) throws Exception {
         OpenApiProcessor processor;
-        if (StringUtils.isNotBlank(openApiConfiguration.getProcessorClass())) {
-            Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getProcessorClass());
+        if (StringUtils.isNotBlank(openApiConfiguration.getProcessorClassName())) {
+            Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getProcessorClassName());
             processor = (OpenApiProcessor) cls.newInstance();
         } else {
             processor = new GenericOpenApiProcessor().withId(id).withOpenApiConfiguration(openApiConfiguration);
@@ -203,7 +203,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             try {
 
                 if (openApiConfiguration == null) {
-                    openApiConfiguration = new OpenApiConfiguration().withResourcePackage(resourcePackage);
+                    openApiConfiguration = new OpenApiConfiguration().withResourcePackageNames(resourcePackageNames);
                     openApiConfiguration.setId(id);
                 }
 
@@ -254,8 +254,8 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
     protected OpenApiReader buildReader(final OpenApiConfiguration openApiConfiguration) throws Exception {
         OpenApiReader reader;
-        if (StringUtils.isNotBlank(openApiConfiguration.getReaderClass())) {
-            Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getReaderClass());
+        if (StringUtils.isNotBlank(openApiConfiguration.getReaderClassName())) {
+            Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getReaderClassName());
             // TODO instantiate with configuration
             reader = (OpenApiReader) cls.newInstance();
         } else {
@@ -273,8 +273,8 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
     protected OpenApiScanner buildScanner(final OpenApiConfiguration openApiConfiguration) throws Exception {
         OpenApiScanner scanner;
-        if (StringUtils.isNotBlank(openApiConfiguration.getScannerClass())) {
-            Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getScannerClass());
+        if (StringUtils.isNotBlank(openApiConfiguration.getScannerClassName())) {
+            Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getScannerClassName());
             // TODO instantiate with configuration
             scanner = (OpenApiScanner) cls.newInstance();
         } else {

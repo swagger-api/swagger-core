@@ -33,7 +33,12 @@
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-core</artifactId>
-			<version>${models.version}</version>
+			<version>${swagger.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-web</artifactId>
+			<version>${swagger.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -69,6 +74,6 @@
 		</plugins>
 	</build>
 	<properties>
-		<models.version>2.0.0-SNAPSHOT</models.version>
+		<swagger.version>2.0.0-SNAPSHOT</swagger.version>
 	</properties>
 </project>

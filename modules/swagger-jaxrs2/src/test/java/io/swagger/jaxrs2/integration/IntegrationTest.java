@@ -31,7 +31,7 @@ public class IntegrationTest {
     @Test(description = "scan a simple resource")
     public void shouldScanWithNewInitialization() {
         OpenApiConfiguration config = new OpenApiConfiguration()
-                .withResourcePackage("com.my.project.resources,org.my.project.resources")
+                .withResourcePackageNames("com.my.project.resources,org.my.project.resources")
                 .openApi(new OpenAPI());
         OpenApiProcessor p = new GenericOpenApiProcessor().withOpenApiConfiguration(config);
 
