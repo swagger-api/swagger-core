@@ -19,7 +19,6 @@ package io.swagger.oas.models.callbacks;
 import java.util.Objects;
 import io.swagger.oas.models.PathItem;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Callback

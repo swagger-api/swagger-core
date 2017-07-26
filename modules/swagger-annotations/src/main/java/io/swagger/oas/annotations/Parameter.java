@@ -95,6 +95,7 @@ public @interface Parameter {
 
   ArraySchema array() default @ArraySchema();
 
+  // TODO #2312 single object, according to spec
   /**
    * 
    **/

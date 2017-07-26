@@ -59,6 +59,11 @@ public @interface Schema {
   Class<?>[] anyOf() default Void.class;
 
   /**
+   * provides an array of java class implementations which can be used to describe multiple acceptable schemas.  If all match, the schema will be considered valid
+   **/
+  Class<?>[] allOf() default Void.class;
+
+  /**
    * the name of the schema or property
    **/
   String name() default "";
@@ -207,6 +212,16 @@ public @interface Schema {
    * provides a default value.
    */
   String _default() default "";
+
+  /**
+   * provides a discriminator property value.
+   */
+  String discriminatorProperty() default "";
+
+  /**
+   * provides discriminator mapping values.
+   */
+  DiscriminatorMapping[] discriminatorMapping() default @DiscriminatorMapping;
 
   /**
    * allows schema to be marked as hidden
