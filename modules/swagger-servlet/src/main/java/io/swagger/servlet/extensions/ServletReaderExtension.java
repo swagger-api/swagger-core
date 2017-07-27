@@ -392,7 +392,7 @@ public class ServletReaderExtension implements ReaderExtension {
 
     @Override
     public void applyImplicitParameters(ReaderContext context, Operation operation, Method method) {
-        final ApiImplicitParams implicitParams = method.getAnnotation(ApiImplicitParams.class);
+        final ApiImplicitParams implicitParams = ReflectionUtils.getAnnotation(method, ApiImplicitParams.class);
         if (implicitParams != null && implicitParams.value().length > 0) {
             for (ApiImplicitParam param : implicitParams.value()) {
                 final Parameter p = readImplicitParam(context.getSwagger(), param);
@@ -405,7 +405,7 @@ public class ServletReaderExtension implements ReaderExtension {
 
     @Override
     public void applyExtensions(ReaderContext context, Operation operation, Method method) {
-        final ApiOperation apiOperation = method.getAnnotation( ApiOperation.class );
+        final ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class );
         if( apiOperation != null ) {
             operation.getVendorExtensions().putAll(BaseReaderUtils.parseExtensions(apiOperation.extensions()));
         }
