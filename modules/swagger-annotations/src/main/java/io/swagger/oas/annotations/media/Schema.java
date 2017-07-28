@@ -246,7 +246,7 @@ public @interface Schema {
 
   /**
    * Provides a discriminator property value.
-   * @return the descriminator property
+   * @return the discriminator property
    */
   String discriminatorProperty() default "";
 
@@ -254,7 +254,7 @@ public @interface Schema {
    * Provides discriminator mapping values.
    * @return the discriminator mappings
    */
-  DiscriminatorMapping[] discriminatorMapping() default @DiscriminatorMapping;
+  DiscriminatorMapping[] discriminatorMapping() default {};
 
   /**
    * Allows schema to be marked as hidden.
