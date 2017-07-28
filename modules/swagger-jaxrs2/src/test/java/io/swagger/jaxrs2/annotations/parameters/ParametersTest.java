@@ -33,20 +33,17 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      - name: subscriptionId\n" +
                 "        in: path\n" +
                 "        required: true\n" +
-                "        style: SIMPLE\n" +
+                "        style: simple\n" +
                 "      - name: formId\n" +
                 "        in: query\n" +
                 "        required: true\n" +
-                "        style: FORM\n" +
                 "      - name: explodeFalse\n" +
                 "        in: query\n" +
                 "        required: true\n" +
-                "        style: FORM\n" +
                 "        explode: false\n" +
                 "      - name: explodeTrue\n" +
                 "        in: query\n" +
                 "        required: true\n" +
-                "        style: FORM\n" +
                 "        explode: true\n" +
                 "      - name: explodeAvoiding\n" +
                 "        in: query\n" +
@@ -88,7 +85,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                         "identified by the input token.  The supplied url will be used as the delivery address for response payloads",
                 parameters = {
                         @Parameter(in = "path", name = "subscriptionId", required = true,
-                                schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class)),
+                                schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class), style = "simple"),
                         @Parameter(in = "query", name = "formId", required = true,
                                 schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class)),
                         @Parameter(in = "query", name = "explodeFalse", required = true, explode = Explode.FALSE,
