@@ -11,7 +11,6 @@ import io.swagger.oas.models.tags.Tag;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -21,55 +20,33 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class SpecFilter {
-    public OpenAPI filter(OpenAPI swagger, SwaggerSpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    private final static String GET = "get";
+    private final static String HEAD = "head";
+    private final static String PUT = "put";
+    private final static String POST = "post";
+    private final static String DELETE = "delete";
+    private final static String PATCH = "patch";
+    private final static String OPTIONS = "options";
+
+    public OpenAPI filter(OpenAPI openAPI, OpenAPISpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         OpenAPI clone = new OpenAPI();
-        clone.info(swagger.getInfo())
-                .tags(swagger.getTags() == null ? null : new ArrayList<Tag>(swagger.getTags())
-//                .host(swagger.getHost())
-//                .basePath(swagger.getBasePath())
-//                .schemes(swagger.getSchemes())
-//                .consumes(swagger.getConsumes())
-//                .produces(swagger.getProduces())
-//                .externalDocs(swagger.getExternalDocs())
-//                .vendorExtensions(swagger.getVendorExtensions()
-                );
+        clone.info(openAPI.getInfo());
+        clone.openapi(openAPI.getOpenapi());
+        clone.tags(openAPI.getTags() == null ? null : new ArrayList<>(openAPI.getTags()));
 
-        final Set<String> filteredTags = new HashSet<String>();
-        final Set<String> allowedTags = new HashSet<String>();
-        for (String resourcePath : swagger.getPaths().keySet()) {
-            PathItem path = swagger.getPaths().get(resourcePath);
-            Map<String, Operation> ops = new HashMap<String, Operation>();
-            ops.put("get", path.getGet());
-            ops.put("head", path.getHead());
-            ops.put("put", path.getPut());
-            ops.put("post", path.getPost());
-            ops.put("delete", path.getDelete());
-            ops.put("patch", path.getPatch());
-            ops.put("options", path.getOptions());
-
+        final Set<String> filteredTags = new HashSet<>();
+        final Set<String> allowedTags = new HashSet<>();
+        for (String resourcePath : openAPI.getPaths().keySet()) {
+            PathItem path = openAPI.getPaths().get(resourcePath);
             PathItem clonedPath = new PathItem();
-            for (String key : ops.keySet()) {
-                Operation op = ops.get(key);
-                if (op != null) {
-                    final Set<String> tags;
-                    ApiDescription description = new ApiDescription(resourcePath, key);
-                    if (filter.isOperationAllowed(op, description, params, cookies, headers)) {
-                        // TODO
-//                        clonedPath.set(key, filterOperation(filter, op, params, cookies, headers));
-                        tags = allowedTags;
-                    } else {
-                        tags = filteredTags;
-                    }
-                    if (op.getTags() != null) {
-                        tags.addAll(op.getTags());
-                    }
-                }
-            }
-            // TODO
-//            if (!clonedPath.isEmpty()) {
-//                clone.path(resourcePath, clonedPath);
-//            }
+            clonedPath.setGet(path.getGet());
+            clonedPath.setPost(path.getPost());
+            clonedPath.setPut(path.getPut());
+            clone.path(resourcePath, clonedPath);
         }
+
+        clone.setComponents(openAPI.getComponents());
+
         final List<Tag> tags = clone.getTags();
         filteredTags.removeAll(allowedTags);
         if (tags != null && !filteredTags.isEmpty()) {
@@ -83,32 +60,27 @@ public class SpecFilter {
             }
         }
 
-        Map<String, Schema> definitions = filterDefinitions(filter, swagger.getComponents().getSchemas(), params, cookies, headers);
-        // TODO
-//        clone.setSecurityDefinitions(swagger.getSecurityDefinitions());
-        clone.setSecurity(swagger.getSecurity());
-        // TODO
-//        clone.setDefinitions(definitions);
+        clone.setSecurity(openAPI.getSecurity());
 
-        // isRemovingUnreferencedDefinitions is not defined in SwaggerSpecFilter to avoid breaking compatibility with
-        // existing client filters directly implementing SwaggerSpecFilter.
         if (filter instanceof AbstractSpecFilter) {
-            if (((AbstractSpecFilter)filter).isRemovingUnreferencedDefinitions()) {
-                clone = removeBrokenReferenceDefinitions (clone);
+            if (((AbstractSpecFilter) filter).isRemovingUnreferencedDefinitions()) {
+                clone = removeBrokenReferenceDefinitions(clone);
             }
         }
 
         return clone;
     }
 
-    private OpenAPI removeBrokenReferenceDefinitions (OpenAPI swagger) {
+    private OpenAPI removeBrokenReferenceDefinitions(OpenAPI openAPI) {
 
-        if (swagger.getComponents().getSchemas() == null || swagger.getComponents().getSchemas().isEmpty()) return swagger;
+        if (openAPI.getComponents().getSchemas() == null || openAPI.getComponents().getSchemas().isEmpty()) {
+            return openAPI;
+        }
 
-        Set<String> referencedDefinitions =  new TreeSet<String>();
+        Set<String> referencedDefinitions = new TreeSet<String>();
 
-        if (swagger.getComponents().getResponses() != null) {
-            for (ApiResponse response: swagger.getComponents().getResponses().values()) {
+        if (openAPI.getComponents().getResponses() != null) {
+            for (ApiResponse response : openAPI.getComponents().getResponses().values()) {
                 // TODO
 //                String propertyRef = getPropertyRef(response.getSchema());
 //                if (propertyRef != null) {
@@ -116,8 +88,8 @@ public class SpecFilter {
 //                }
             }
         }
-        if (swagger.getComponents().getParameters() != null) {
-            for (Parameter p: swagger.getComponents().getParameters().values()) {
+        if (openAPI.getComponents().getParameters() != null) {
+            for (Parameter p : openAPI.getComponents().getParameters().values()) {
                 // TODO
 //                if (p instanceof BodyParameter) {
 //                    BodyParameter bp = (BodyParameter) p;
@@ -128,10 +100,10 @@ public class SpecFilter {
 //                }
             }
         }
-        if (swagger.getPaths() != null) {
-            for (PathItem path : swagger.getPaths().values()) {
+        if (openAPI.getPaths() != null) {
+            for (PathItem path : openAPI.getPaths().values()) {
                 if (path.getParameters() != null) {
-                    for (Parameter p: path.getParameters()) {
+                    for (Parameter p : path.getParameters()) {
                         // TODO
 //                        if (p instanceof BodyParameter) {
 //                            BodyParameter bp = (BodyParameter) p;
@@ -170,58 +142,60 @@ public class SpecFilter {
             }
         }
 
-        if (swagger.getComponents().getSchemas() != null) {
-            Set<String> nestedReferencedDefinitions =  new TreeSet<String>();
-            for (String ref : referencedDefinitions){
-                locateReferencedDefinitions(ref, nestedReferencedDefinitions, swagger);
+        if (openAPI.getComponents().getSchemas() != null) {
+            Set<String> nestedReferencedDefinitions = new TreeSet<>();
+            for (String ref : referencedDefinitions) {
+                locateReferencedDefinitions(ref, nestedReferencedDefinitions, openAPI);
             }
             referencedDefinitions.addAll(nestedReferencedDefinitions);
-            swagger.getComponents().getSchemas().keySet().retainAll(referencedDefinitions);
+            openAPI.getComponents().getSchemas().keySet().retainAll(referencedDefinitions);
         }
-        
-        return swagger;
+
+        return openAPI;
     }
 
-    private void locateReferencedDefinitions (Map<String, Schema> props, Set<String> nestedReferencedDefinitions, OpenAPI swagger) {
-        if (props == null) return;
-        for (String keyProp: props.keySet()) {
+    private void locateReferencedDefinitions(Map<String, Schema> props, Set<String> nestedReferencedDefinitions, OpenAPI openAPI) {
+        if (props == null) {
+            return;
+        }
+        for (String keyProp : props.keySet()) {
             Schema p = props.get(keyProp);
             String ref = getPropertyRef(p);
             if (ref != null) {
-                locateReferencedDefinitions(ref, nestedReferencedDefinitions, swagger);
+                locateReferencedDefinitions(ref, nestedReferencedDefinitions, openAPI);
             }
         }
     }
 
-    private void locateReferencedDefinitions(String ref, Set<String> nestedReferencedDefinitions, OpenAPI swagger) {
+    private void locateReferencedDefinitions(String ref, Set<String> nestedReferencedDefinitions, OpenAPI openAPI) {
         // if not already processed so as to avoid infinite loops
         if (!nestedReferencedDefinitions.contains(ref)) {
             nestedReferencedDefinitions.add(ref);
 
-            Schema model = swagger.getComponents().getSchemas().get(ref);
+            Schema model = openAPI.getComponents().getSchemas().get(ref);
             if (model != null) {
-                locateReferencedDefinitions(model.getProperties(), nestedReferencedDefinitions, swagger);
+                locateReferencedDefinitions(model.getProperties(), nestedReferencedDefinitions, openAPI);
             }
         }
     }
 
-    public Map<String, Schema> filterDefinitions(SwaggerSpecFilter filter, Map<String, Schema> definitions, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    public Map<String, Schema> filterDefinitions(OpenAPISpecFilter filter, Map<String, Schema> definitions, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         if (definitions == null) {
             return null;
         }
-        Map<String, Schema> clonedDefinitions = new LinkedHashMap<String, Schema>();
+        Map<String, Schema> clonedDefinitions = new LinkedHashMap<>();
 
         for (String key : definitions.keySet()) {
             Schema definition = definitions.get(key);
-            Map<String, Schema> clonedProperties = new LinkedHashMap<String, Schema>();
+            Map<String, Schema> clonedProperties = new LinkedHashMap<>();
             if (definition.getProperties() != null) {
-                for (String propName : (Set<String>)definition.getProperties().keySet()) {
-                    Schema property = (Schema)definition.getProperties().get(propName);
+                for (String propName : (Set<String>) definition.getProperties().keySet()) {
+                    Schema property = (Schema) definition.getProperties().get(propName);
                     if (property != null) {
-                        boolean shouldInclude = filter.isPropertyAllowed(definition, property, propName, params, cookies, headers);
+                        /*boolean shouldInclude = filter.isPropertyAllowed(definition, property, propName, params, cookies, headers);
                         if (shouldInclude) {
                             clonedProperties.put(propName, property);
-                        }
+                        }*/
                     }
                 }
             }
@@ -242,7 +216,7 @@ public class SpecFilter {
         return clonedDefinitions;
     }
 
-    public Operation filterOperation(SwaggerSpecFilter filter, Operation op, ApiDescription description, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    public Operation filterOperation(OpenAPISpecFilter filter, Operation op, ApiDescription description, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         Operation clonedOperation = new Operation()
                 .summary(op.getSummary())
                 .description(op.getDescription())
@@ -259,9 +233,9 @@ public class SpecFilter {
         List<Parameter> clonedParams = new ArrayList<Parameter>();
         if (op.getParameters() != null) {
             for (Parameter param : op.getParameters()) {
-                if (filter.isParamAllowed(param, op, description, params, cookies, headers)) {
+                /*if (filter.isParamAllowed(param, op, description, params, cookies, headers)) {
                     clonedParams.add(param);
-                }
+                }*/
             }
         }
         clonedOperation.setParameters(clonedParams);
@@ -282,7 +256,7 @@ public class SpecFilter {
         } else if (property instanceof RefProperty) {
             return ((RefProperty) property).getSimpleRef();
         }*/
-        if(property.get$ref() != null) {
+        if (property.get$ref() != null) {
             return property.get$ref();
         }
         return null;
@@ -310,8 +284,8 @@ public class SpecFilter {
             return new HashSet<String>(Arrays.asList(((RefModel) model).getSimpleRef()));
         }
         */
-        if(model.get$ref() != null) {
-            return new HashSet<String>(Arrays.asList((model.get$ref())));
+        if (model.get$ref() != null) {
+            return new HashSet<>(Arrays.asList((model.get$ref())));
         }
         return null;
     }

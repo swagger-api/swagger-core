@@ -1,15 +1,15 @@
 package io.swagger.config;
 
-import io.swagger.core.filter.SwaggerSpecFilter;
+import io.swagger.core.filter.OpenAPISpecFilter;
 
 public class FilterFactory {
-    protected static SwaggerSpecFilter FILTER = null;
+    protected static OpenAPISpecFilter FILTER = null;
 
-    public static SwaggerSpecFilter getFilter() {
+    public static OpenAPISpecFilter getFilter() {
         return FILTER;
     }
 
-    public static void setFilter(SwaggerSpecFilter filter) {
+    public static void setFilter(OpenAPISpecFilter filter) {
         FILTER = filter;
     }
 }

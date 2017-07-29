@@ -28,20 +28,20 @@ import static org.testng.Assert.fail;
 
 public class SpecFilterTest {
 
-    @Test(enabled = false, description = "it should clone everything")
+    @Test(description = "it should clone everything")
     public void cloneEverything() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/petstore.json");
-        final OpenAPI filtered = new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null);
+        final OpenAPI openAPI = getOpenAPI("specFiles/petstore-3.0-v2.json");
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoOpOperationsFilter(), null, null, null);
 
-        assertEquals(Json.pretty(swagger), Json.pretty(filtered));
+        assertEquals(Json.pretty(openAPI), Json.pretty(filtered));
     }
 
-    @Test(description = "it should clone everything concurrently")
+    @Test(enabled = false, description = "it should clone everything concurrently")
     public void cloneEverythingConcurrent() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/petstore.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/petstore.json");
 
         ThreadGroup tg = new ThreadGroup("SpecFilterTest" + "|" + System.currentTimeMillis());
-        final Map<String, OpenAPI> filteredMap = new ConcurrentHashMap<String, OpenAPI>();
+        final Map<String, OpenAPI> filteredMap = new ConcurrentHashMap<>();
         for (int i = 0; i < 10; i++) {
             final int id = i;
             new Thread(tg, "SpecFilterTest"){
@@ -100,7 +100,7 @@ public class SpecFilterTest {
 
     @Test(enabled = false, description = "it should filter away get operations in a resource")
     public void filterAwayGetOperations() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/petstore.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/petstore.json");
         final NoGetOperationsFilter filter = new NoGetOperationsFilter();
 
         final OpenAPI filtered = new SpecFilter().filter(swagger, filter, null, null, null);
@@ -117,7 +117,7 @@ public class SpecFilterTest {
 
     @Test(enabled = false, description = "it should filter away the store resource")
     public void filterAwayStoreResource() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/petstore.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/petstore.json");
         final NoUserOperationsFilter filter = new NoUserOperationsFilter();
 
         final OpenAPI filtered = new SpecFilter().filter(swagger, filter, null, null, null);
@@ -133,7 +133,7 @@ public class SpecFilterTest {
 
     @Test(enabled = false, description = "it should filter away secret parameters")
     public void filterAwaySecretParameters() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/sampleSpec.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/sampleSpec.json");
         final RemoveInternalParamsFilter filter = new RemoveInternalParamsFilter();
 
         final OpenAPI filtered = new SpecFilter().filter(swagger, filter, null, null, null);
@@ -154,7 +154,7 @@ public class SpecFilterTest {
 
     @Test(enabled = false, description = "it should filter away internal model properties")
     public void filterAwayInternalModelProperties() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/sampleSpec.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/sampleSpec.json");
         final InternalModelPropertiesRemoverFilter filter = new InternalModelPropertiesRemoverFilter();
 
         final OpenAPI filtered = new SpecFilter().filter(swagger, filter, null, null, null);
@@ -168,7 +168,7 @@ public class SpecFilterTest {
 
     @Test(enabled = false, description = "it should filter away broken reference model properties")
     public void filterAwayBrokenReferenceModelProperties() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/paramAndResponseRef.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/paramAndResponseRef.json");
 
         assertNotNull(swagger.getComponents().getSchemas().get("Order"));
         assertNotNull(swagger.getComponents().getSchemas().get("NoPropertiesModel"));
@@ -195,7 +195,7 @@ public class SpecFilterTest {
 
     @Test(enabled = false, description = "it should retain non-broken reference model properties")
     public void retainNonBrokenReferenceModelProperties() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/paramAndResponseRefArray.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/paramAndResponseRefArray.json");
 
         assertNotNull(swagger.getComponents().getSchemas().get("User"));
 
@@ -214,7 +214,7 @@ public class SpecFilterTest {
 
     @Test(enabled = false, description = "it should retain non-broken reference model composed properties")
     public void retainNonBrokenReferenceModelComposedProperties() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/paramAndResponseRefComposed.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/paramAndResponseRefComposed.json");
 
         assertNotNull(swagger.getComponents().getSchemas().get("User"));
 
@@ -233,7 +233,7 @@ public class SpecFilterTest {
 
     @Test(enabled = false, description = "recursive models, e.g. A-> A or A-> B and B -> A should not result in stack overflow")
     public void removeUnreferencedDefinitionsOfRecuriveModels() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/recursivemodels.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/recursivemodels.json");
         final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
         final OpenAPI filtered = new SpecFilter().filter(swagger, remover, null, null, null);
 
@@ -244,7 +244,7 @@ public class SpecFilterTest {
 
     @Test(enabled = false, description = "broken references should not result in NPE")
     public void removeUnreferencedModelOverride() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/brokenrefmodel.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/brokenrefmodel.json");
         final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
         final OpenAPI filtered = new SpecFilter().filter(swagger, remover, null, null, null);
 
@@ -253,7 +253,7 @@ public class SpecFilterTest {
 
     @Test(enabled = false, description = "Retain models referenced from additonalProperties")
     public void retainModelsReferencesFromAdditionalProperties() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/additionalpropsmodel.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/additionalpropsmodel.json");
         final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
         final OpenAPI filtered = new SpecFilter().filter(swagger, remover, null, null, null);
 
@@ -263,7 +263,7 @@ public class SpecFilterTest {
 
     @Test(enabled = false, description = "Clone should retain any 'deperecated' flags present on operations")
     public void cloneRetainDeperecatedFlags() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/deprecatedoperationmodel.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/deprecatedoperationmodel.json");
         final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
         final OpenAPI filtered = new SpecFilter().filter(swagger, remover, null, null, null);
 
@@ -293,7 +293,7 @@ public class SpecFilterTest {
 
     @Test(enabled = false, description = "it should contain all tags in the top level Swagger object")
     public void shouldContainAllTopLevelTags() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/petstore.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/petstore.json");
         final NoOpOperationsFilter filter = new NoOpOperationsFilter();
         final OpenAPI filtered = new SpecFilter().filter(swagger, filter, null, null, null);
         assertEquals(getTagNames(filtered), Sets.newHashSet("pet", "user", "store"));
@@ -301,7 +301,7 @@ public class SpecFilterTest {
 
     @Test(enabled = false, description = "it should not contain user tags in the top level Swagger object")
     public void shouldNotContainTopLevelUserTags() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/petstore.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/petstore.json");
         final NoUserOperationsFilter filter = new NoUserOperationsFilter();
         final OpenAPI filtered = new SpecFilter().filter(swagger, filter, null, null, null);
         assertEquals(getTagNames(filtered), Sets.newHashSet("pet", "store"));
@@ -309,7 +309,7 @@ public class SpecFilterTest {
 
     @Test(enabled = false, description = "it should filter with null definitions")
     public void filterWithNullDefinitions() throws IOException {
-        final OpenAPI swagger = getSwagger("specFiles/petstore.json");
+        final OpenAPI swagger = getOpenAPI("specFiles/petstore.json");
         swagger.getComponents().setSchemas(null);
 
         final InternalModelPropertiesRemoverFilter filter = new InternalModelPropertiesRemoverFilter();
@@ -318,14 +318,14 @@ public class SpecFilterTest {
     }
 
     private Set getTagNames(OpenAPI swagger) {
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
         for (Tag item : swagger.getTags()) {
             result.add(item.getName());
         }
         return result;
     }
 
-    private OpenAPI getSwagger(String path) throws IOException {
+    private OpenAPI getOpenAPI(String path) throws IOException {
         final String json = ResourceUtils.loadClassResource(getClass(), path);
         return Json.mapper().readValue(json, OpenAPI.class);
     }

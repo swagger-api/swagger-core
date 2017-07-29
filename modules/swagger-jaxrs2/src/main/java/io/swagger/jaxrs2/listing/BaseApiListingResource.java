@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.config.FilterFactory;
 import io.swagger.config.Scanner;
 import io.swagger.config.SwaggerConfig;
+import io.swagger.core.filter.OpenAPISpecFilter;
 import io.swagger.core.filter.SpecFilter;
-import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs2.Reader;
 import io.swagger.jaxrs2.config.JaxrsScanner;
 import io.swagger.jaxrs2.config.ReaderConfigUtils;
@@ -130,7 +130,7 @@ public abstract class BaseApiListingResource {
             }
         }
         if (openAPI != null) {
-            SwaggerSpecFilter filterImpl = FilterFactory.getFilter();
+            OpenAPISpecFilter filterImpl = FilterFactory.getFilter();
             if (filterImpl != null) {
                 SpecFilter f = new SpecFilter();
                 openAPI = f.filter(openAPI, filterImpl, getQueryParams(uriInfo.getQueryParameters()), getCookies(headers),

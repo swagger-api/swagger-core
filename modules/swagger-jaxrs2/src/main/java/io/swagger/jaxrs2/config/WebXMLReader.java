@@ -2,7 +2,7 @@ package io.swagger.jaxrs2.config;
 
 import io.swagger.config.FilterFactory;
 import io.swagger.config.SwaggerConfig;
-import io.swagger.core.filter.SwaggerSpecFilter;
+import io.swagger.core.filter.OpenAPISpecFilter;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.info.Info;
 import org.slf4j.Logger;
@@ -73,7 +73,7 @@ public class WebXMLReader implements SwaggerConfig {
         filterClass = servletConfig.getInitParameter("swagger.filter");
         if (filterClass != null) {
             try {
-                SwaggerSpecFilter filter = (SwaggerSpecFilter) Class.forName(filterClass).newInstance();
+                OpenAPISpecFilter filter = (OpenAPISpecFilter) Class.forName(filterClass).newInstance();
                 if (filter != null) {
                     FilterFactory.setFilter(filter);
                 }
