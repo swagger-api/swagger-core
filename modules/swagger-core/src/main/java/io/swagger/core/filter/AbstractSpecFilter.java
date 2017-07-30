@@ -12,15 +12,6 @@ import java.util.Map;
 import java.util.Optional;
 
 public abstract class AbstractSpecFilter implements OpenAPISpecFilter {
-    public boolean isOperationAllowed(
-            Operation operation,
-            ApiDescription api,
-            Map<String, List<String>> params,
-            Map<String, String> cookies,
-            Map<String, List<String>> headers) {
-        return true;
-    }
-
     @Override
     public Optional<Operation> filterOperation(Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         return Optional.empty();
@@ -32,7 +23,7 @@ public abstract class AbstractSpecFilter implements OpenAPISpecFilter {
     }
 
     @Override
-    public Optional<Parameter> filterParameter(Parameter parameter, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    public Optional<Parameter> filterParameter(Operation operation, Parameter parameter, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         return Optional.empty();
     }
 
@@ -46,7 +37,4 @@ public abstract class AbstractSpecFilter implements OpenAPISpecFilter {
         return Optional.empty();
     }
 
-    public boolean isRemovingUnreferencedDefinitions() {
-        return false;
-    }
 }

@@ -12,13 +12,6 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface OpenAPISpecFilter {
-    boolean isOperationAllowed(
-            Operation operation,
-            ApiDescription api,
-            Map<String, List<String>> params,
-            Map<String, String> cookies,
-            Map<String, List<String>> headers);
-
     Optional<Operation> filterOperation(
             Operation operation,
             ApiDescription api,
@@ -41,6 +34,7 @@ public interface OpenAPISpecFilter {
             Map<String, List<String>> headers);
 
     Optional<Parameter> filterParameter(
+            Operation operation,
             Parameter parameter,
             ApiDescription api,
             Map<String, List<String>> params,
