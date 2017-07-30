@@ -376,7 +376,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore)) {
                 List<Annotation> annotationList = new ArrayList<Annotation>();
-                for (Annotation a : member.annotations()) {
+                for (Annotation a : member.getAllAnnotations().annotations()) {
                     annotationList.add(a);
                 }
 
@@ -669,7 +669,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             return PrimitiveType.createProperty(propType);
                         } else {
                             return context.resolveProperty(propType,
-                                    Iterables.toArray(propMember.annotations(), Annotation.class));
+                                    Iterables.toArray(propMember.getAllAnnotations().annotations(), Annotation.class));
                         }
                     }
                 }

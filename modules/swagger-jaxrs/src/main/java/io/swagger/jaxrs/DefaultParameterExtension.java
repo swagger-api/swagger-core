@@ -142,7 +142,7 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension {
                 if (field != null) {
                     paramType = field.getRawType();
 
-                    for (final Annotation fieldAnnotation : field.annotations()) {
+                    for (final Annotation fieldAnnotation : field.getAllAnnotations().annotations()) {
                         if (!paramAnnotations.contains(fieldAnnotation)) {
                             paramAnnotations.add(fieldAnnotation);
                         }
@@ -156,7 +156,7 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension {
                         paramType = setter.getRawParameterTypes() != null ? setter.getRawParameterTypes()[0] : null;
                     }
 
-                    for (final Annotation fieldAnnotation : setter.annotations()) {
+                    for (final Annotation fieldAnnotation : setter.getAllAnnotations().annotations()) {
                         if (!paramAnnotations.contains(fieldAnnotation)) {
                             paramAnnotations.add(fieldAnnotation);
                         }
@@ -170,7 +170,7 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension {
                         paramType = getter.getRawReturnType();
                     }
 
-                    for (final Annotation fieldAnnotation : getter.annotations()) {
+                    for (final Annotation fieldAnnotation : getter.getAllAnnotations().annotations()) {
                         if (!paramAnnotations.contains(fieldAnnotation)) {
                             paramAnnotations.add(fieldAnnotation);
                         }
