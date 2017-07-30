@@ -5,15 +5,11 @@ import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
-import io.swagger.oas.models.tags.Tag;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 public class SpecFilter {
     private final static String GET = "get";
@@ -30,14 +26,11 @@ public class SpecFilter {
         clone.openapi(openAPI.getOpenapi());
         clone.tags(openAPI.getTags() == null ? null : new ArrayList<>(openAPI.getTags()));
 
-        final Set<String> filteredTags = new HashSet<>();
-        final Set<String> allowedTags = new HashSet<>();
         Paths clonedPaths = new Paths();
         for (String resourcePath : openAPI.getPaths().keySet()) {
             PathItem pathItem = openAPI.getPaths().get(resourcePath);
 
             PathItem clonedPathItem = new PathItem();
-
             clonedPathItem.setGet(filterOperation(filter, pathItem.getGet(), GET, resourcePath, params, cookies, headers));
             clonedPathItem.setPost(filterOperation(filter, pathItem.getPost(), POST, resourcePath, params, cookies, headers));
             clonedPathItem.setPut(filterOperation(filter, pathItem.getPut(), PUT, resourcePath, params, cookies, headers));
@@ -45,23 +38,14 @@ public class SpecFilter {
             clonedPathItem.setPatch(filterOperation(filter, pathItem.getPatch(), PATCH, resourcePath, params, cookies, headers));
             clonedPathItem.setHead(filterOperation(filter, pathItem.getHead(), HEAD, resourcePath, params, cookies, headers));
             clonedPathItem.setOptions(filterOperation(filter, pathItem.getOptions(), OPTIONS, resourcePath, params, cookies, headers));
+            clonedPathItem.setDescription(pathItem.getDescription());
+            clonedPathItem.set$ref(pathItem.get$ref());
+            clonedPathItem.setSummary(pathItem.getSummary());
+
             clonedPaths.addPathItem(resourcePath, clonedPathItem);
 
             clone.paths(clonedPaths);
             clone.setComponents(openAPI.getComponents());
-
-            final List<Tag> tags = clone.getTags();
-            filteredTags.removeAll(allowedTags);
-            if (tags != null && !filteredTags.isEmpty()) {
-                for (Iterator<Tag> it = tags.iterator(); it.hasNext(); ) {
-                    if (filteredTags.contains(it.next().getName())) {
-                        it.remove();
-                    }
-                }
-                if (clone.getTags().isEmpty()) {
-                    clone.setTags(null);
-                }
-            }
             clone.setSecurity(openAPI.getSecurity());
         }
         return clone;
