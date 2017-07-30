@@ -34,56 +34,18 @@ public class SpecFilter {
         final Set<String> allowedTags = new HashSet<>();
         Paths clonedPaths = new Paths();
         for (String resourcePath : openAPI.getPaths().keySet()) {
-            PathItem path = openAPI.getPaths().get(resourcePath);
+            PathItem pathItem = openAPI.getPaths().get(resourcePath);
 
-            PathItem clonedPath = new PathItem();
-            Operation get = path.getGet();
-            if (get != null) {
-                Operation filteredOperation = filterOperation(filter, get, resourcePath, GET, params, cookies, headers);
-                clonedPath.setGet(filteredOperation);
-                clonedPaths.addPathItem(resourcePath, clonedPath);
-            }
-            Operation put = path.getPut();
-            if (put != null) {
-                Operation filteredOperation = filterOperation(filter, put, resourcePath, PUT, params, cookies, headers);
-                clonedPath.setPut(filteredOperation);
-                clonedPaths.addPathItem(resourcePath, clonedPath);
-            }
+            PathItem clonedPathItem = new PathItem();
 
-            Operation post = path.getPost();
-            if (post != null) {
-                Operation filteredOperation = filterOperation(filter, post, resourcePath, POST, params, cookies, headers);
-                clonedPath.setPost(filteredOperation);
-                clonedPaths.addPathItem(resourcePath, clonedPath);
-            }
-
-            Operation delete = path.getDelete();
-            if (delete != null) {
-                Operation filteredOperation = filterOperation(filter, delete, resourcePath, DELETE, params, cookies, headers);
-                clonedPath.setDelete(filteredOperation);
-                clonedPaths.addPathItem(resourcePath, clonedPath);
-            }
-
-            Operation head = path.getHead();
-            if (head != null) {
-                Operation filteredOperation = filterOperation(filter, head, resourcePath, HEAD, params, cookies, headers);
-                clonedPath.setHead(filteredOperation);
-                clonedPaths.addPathItem(resourcePath, clonedPath);
-            }
-
-            Operation patch = path.getPatch();
-            if (patch != null) {
-                Operation filteredOperation = filterOperation(filter, patch, resourcePath, PATCH, params, cookies, headers);
-                clonedPath.setPatch(filteredOperation);
-                clonedPaths.addPathItem(resourcePath, clonedPath);
-            }
-
-            Operation options = path.getOptions();
-            if (options != null) {
-                Operation filteredOperation = filterOperation(filter, options, resourcePath, OPTIONS, params, cookies, headers);
-                clonedPath.setOptions(filteredOperation);
-                clonedPaths.addPathItem(resourcePath, clonedPath);
-            }
+            clonedPathItem.setGet(filterOperation(filter, pathItem.getGet(), GET, resourcePath, params, cookies, headers));
+            clonedPathItem.setPost(filterOperation(filter, pathItem.getPost(), POST, resourcePath, params, cookies, headers));
+            clonedPathItem.setPut(filterOperation(filter, pathItem.getPut(), PUT, resourcePath, params, cookies, headers));
+            clonedPathItem.setDelete(filterOperation(filter, pathItem.getDelete(), DELETE, resourcePath, params, cookies, headers));
+            clonedPathItem.setPatch(filterOperation(filter, pathItem.getPatch(), PATCH, resourcePath, params, cookies, headers));
+            clonedPathItem.setHead(filterOperation(filter, pathItem.getHead(), HEAD, resourcePath, params, cookies, headers));
+            clonedPathItem.setOptions(filterOperation(filter, pathItem.getOptions(), OPTIONS, resourcePath, params, cookies, headers));
+            clonedPaths.addPathItem(resourcePath, clonedPathItem);
 
             clone.paths(clonedPaths);
             clone.setComponents(openAPI.getComponents());
@@ -100,26 +62,19 @@ public class SpecFilter {
                     clone.setTags(null);
                 }
             }
-
             clone.setSecurity(openAPI.getSecurity());
-
-            if (filter instanceof AbstractSpecFilter) {
-            /*if (((AbstractSpecFilter) filter).isRemovingUnreferencedDefinitions()) {
-                clone = removeBrokenReferenceDefinitions(clone);
-            }*/
-            }
         }
         return clone;
     }
 
     private Operation filterOperation(OpenAPISpecFilter filter, Operation operation, String resourcePath, String key, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
-
-        ApiDescription description = new ApiDescription(resourcePath, key);
-        Optional<Operation> filteredOp = filter.filterOperation(operation, description, params, cookies, headers);
-        if (filteredOp.isPresent()) {
-            return filteredOp.get();
+        if (operation != null) {
+            ApiDescription description = new ApiDescription(resourcePath, key);
+            Optional<Operation> filteredOp = filter.filterOperation(operation, description, params, cookies, headers);
+            if (filteredOp.isPresent()) {
+                return filteredOp.get();
+            }
         }
         return operation;
-
     }
 }
