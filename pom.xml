@@ -508,7 +508,7 @@
         <rest-assured-version>2.8.0</rest-assured-version>
         <surefire-version>2.18.1</surefire-version>
         <maven-plugin-version>1.0.0</maven-plugin-version>
-        <commons-lang-version>3.5</commons-lang-version>
+        <commons-lang-version>3.6</commons-lang-version>
         <slf4j-version>1.7.22</slf4j-version>
         <jetty-version>9.2.14.v20151106</jetty-version>
         <servlet-api-version>2.5</servlet-api-version>

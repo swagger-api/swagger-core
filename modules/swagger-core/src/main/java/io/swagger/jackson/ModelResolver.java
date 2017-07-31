@@ -376,7 +376,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore)) {
                 List<Annotation> annotationList = new ArrayList<Annotation>();
-                for (Annotation a : member.getAllAnnotations().annotations()) {
+                for (Annotation a : annotations(member)) {
                     annotationList.add(a);
                 }
 
@@ -669,7 +669,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             return PrimitiveType.createProperty(propType);
                         } else {
                             return context.resolveProperty(propType,
-                                    Iterables.toArray(propMember.getAllAnnotations().annotations(), Annotation.class));
+                                    Iterables.toArray(annotations(propMember), Annotation.class));
                         }
                     }
                 }
@@ -926,6 +926,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final List<NamedType> superTypes = _intr.findSubtypes(superBean.getClassInfo());
         if (superTypes != null) {
             resultTypes.removeAll(superTypes);
+        }
+    }
+
+    private static Iterable<Annotation> annotations(AnnotatedMember member) {
+        if (member == null || member.getAllAnnotations() == null) {
+            return Collections.emptyList();
+        } else {
+            return member.getAllAnnotations().annotations();
         }
     }
 }
