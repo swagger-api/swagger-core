@@ -1,5 +1,6 @@
 package io.swagger.jaxrs2.integration;
 
+import io.swagger.oas.integration.OpenApiConfigurationException;
 import io.swagger.oas.integration.OpenApiContext;
 import io.swagger.oas.integration.OpenApiContextLocator;
 import io.swagger.oas.models.OpenAPI;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static io.swagger.jaxrs2.integration.ContextUtils.getContextIdFromServletConfig;
+import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.getContextIdFromServletConfig;
 
 public class OpenApiServlet extends HttpServlet {
 
@@ -29,10 +30,14 @@ public class OpenApiServlet extends HttpServlet {
 
     super.init(config);
     String ctxId = getContextIdFromServletConfig(config);
-    new ServletOpenApiContextBuilder()
-            .servletConfig(config)
-            .ctxId(ctxId)
-            .buildContext(true);
+    try {
+      new ServletOpenApiContextBuilder()
+              .servletConfig(config)
+              .ctxId(ctxId)
+              .buildContext(true);
+    } catch (OpenApiConfigurationException e) {
+      e.printStackTrace();
+    }
   }
 
 
@@ -58,7 +63,7 @@ public class OpenApiServlet extends HttpServlet {
     }
 
     boolean pretty = false;
-    if (ctx.getOpenApiConfiguration() != null && ctx.getOpenApiConfiguration().isPrettyPrint()) {
+    if (ctx.getOpenApiConfiguration() != null && Boolean.TRUE.equals(ctx.getOpenApiConfiguration().isPrettyPrint())) {
       pretty = true;
     }
 

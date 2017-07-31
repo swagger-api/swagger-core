@@ -9,6 +9,8 @@ import io.swagger.oas.models.OpenAPI;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 import javax.ws.rs.core.Application;
@@ -21,10 +23,13 @@ import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import static io.swagger.jaxrs2.integration.ContextUtils.getContextIdFromServletConfig;
+import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.getContextIdFromServletConfig;
 
 public abstract class BaseOpenApiListingResource {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(BaseOpenApiListingResource.class);
 
     protected Response getOpenApi(HttpHeaders headers,
                                   ServletConfig config,
@@ -36,28 +41,27 @@ public abstract class BaseOpenApiListingResource {
         OpenApiContext ctx = new JaxrsOpenApiContextBuilder()
                 .servletConfig(config)
                 .application(app)
-                .resourcePackageNames(resourcePackageNames)
+                .resourcePackages(resourcePackages)
                 .configLocation(configLocation)
                 .openApiConfiguration(openApiConfiguration)
                 .ctxId(ctxId)
                 .buildContext(true);
         OpenAPI oas = ctx.read();
         boolean pretty = false;
-        if (ctx.getOpenApiConfiguration() != null && ctx.getOpenApiConfiguration().isPrettyPrint()) {
+        if (ctx.getOpenApiConfiguration() != null && Boolean.TRUE.equals(ctx.getOpenApiConfiguration().isPrettyPrint())) {
             pretty = true;
         }
 
 
         if (oas != null) {
-            if (ctx.getOpenApiConfiguration() != null && ctx.getOpenApiConfiguration().getFilterClassName() != null) {
+            if (ctx.getOpenApiConfiguration() != null && ctx.getOpenApiConfiguration().getFilterClass() != null) {
                 try {
-                    SwaggerSpecFilter filterImpl = (SwaggerSpecFilter) Class.forName(ctx.getOpenApiConfiguration().getFilterClassName()).newInstance();
+                    SwaggerSpecFilter filterImpl = (SwaggerSpecFilter) Class.forName(ctx.getOpenApiConfiguration().getFilterClass()).newInstance();
                     SpecFilter f = new SpecFilter();
                     oas = f.filter(oas, filterImpl, getQueryParams(uriInfo.getQueryParameters()), getCookies(headers),
                             getHeaders(headers));
                 } catch (Exception e) {
-                    // TODO
-                    // LOGGER.error("failed to load filter", e);
+                    LOGGER.error("failed to load filter", e);
                 }
             }
         }
@@ -126,17 +130,17 @@ public abstract class BaseOpenApiListingResource {
         return this;
     }
 
-    protected String resourcePackageNames;
+    protected Set<String> resourcePackages;
 
-    public String getResourcePackageNames() {
-        return resourcePackageNames;
+    public Set<String> getResourcePackages() {
+        return resourcePackages;
     }
-    public void setResourcePackageNames(String resourcePackageNames) {
-        this.resourcePackageNames = resourcePackageNames;
+    public void setResourcePackages(Set<String> resourcePackages) {
+        this.resourcePackages = resourcePackages;
     }
 
-    public BaseOpenApiListingResource resourcePackageNames(String resourcePackageNames) {
-        setResourcePackageNames(resourcePackageNames);
+    public BaseOpenApiListingResource resourcePackages(Set<String> resourcePackages) {
+        setResourcePackages(resourcePackages);
         return this;
     }
 

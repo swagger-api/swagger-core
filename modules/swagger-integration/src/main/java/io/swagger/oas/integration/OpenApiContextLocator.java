@@ -5,8 +5,6 @@ import java.util.concurrent.ConcurrentMap;
 
 public class OpenApiContextLocator {
 
-    // TODO default context?
-
     private static OpenApiContextLocator instance;
 
     private ConcurrentMap<String, OpenApiContext> map = new ConcurrentHashMap<String, OpenApiContext>();

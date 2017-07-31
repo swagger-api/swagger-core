@@ -1,43 +1,37 @@
 package io.swagger.oas.integration;
 
 import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.info.Info;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertEquals;
 
-// TODO
 public class IntegrationTest {
 
+    // TODO after implementation of generic reader and possibly generic scanner if we reintroduce "api" or similar annotation
     private final Set expectedKeys = new HashSet<String>(Arrays.asList("/packageA", "/packageB"));
 
-    @Test(description = "scan a simple resource")
-    public void shouldScanWithNewInitialization() throws Exception{
+    @Test(description = "initialize a context and read")
+    public void shouldInitialize() throws Exception{
+
         OpenApiConfiguration config = new OpenApiConfiguration()
-                .resourcePackageNames("com.my.project.resources,org.my.project.resources")
-                .openApi(new OpenAPI());
-        OpenApiProcessor p = new GenericOpenApiProcessor().openApiConfiguration(config);
+                .resourcePackages(Stream.of("com.my.project.resources", "org.my.project.resources").collect(Collectors.toSet()))
+                .openApi(new OpenAPI().info(new Info().description("TEST INFO DESC")));
 
-
-        p.setOpenApiReader(new GenericOpenApiContext().buildReader(config));
-        p.setOpenApiScanner(new GenericOpenApiContext().buildScanner(config));
-        OpenApiContext ctx = new GenericOpenApiContext().addOpenApiProcessor(p).init();
-        // TODO basePath/url handling
-        // TODO add getDefaultProcessor
-        OpenAPI openApi = ctx.getDefaultProcessor().read();
-        //OpenAPI openApi = ctx.getOpenApiProcessors().get("/").read();
+        OpenApiContext ctx = new GenericOpenApiContext()
+                .openApiConfiguration(config)
+                //.openApiReader()
+                //.openApiReader()
+                .init();
+        OpenAPI openApi = ctx.read();
 
         assertNotNull(openApi);
-        // TODO
-        //assertEquals(openApi.getPaths().keySet(), expectedKeys);
-
-        //assertEquals(openApi.getSchemes(), expectedSchemas);
     }
 
 }

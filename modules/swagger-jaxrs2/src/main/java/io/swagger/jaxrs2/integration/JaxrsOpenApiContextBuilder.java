@@ -1,6 +1,7 @@
 package io.swagger.jaxrs2.integration;
 
 import io.swagger.oas.integration.GenericOpenApiContextBuilder;
+import io.swagger.oas.integration.OpenApiConfigurationException;
 import io.swagger.oas.integration.OpenApiContext;
 import io.swagger.oas.integration.OpenApiContextLocator;
 import org.apache.commons.lang3.StringUtils;
@@ -14,12 +15,11 @@ public class JaxrsOpenApiContextBuilder<T extends JaxrsOpenApiContextBuilder> ex
     protected ServletConfig servletConfig;
 
     @Override
-    public OpenApiContext buildContext(boolean init) {
+    public OpenApiContext buildContext(boolean init) throws OpenApiConfigurationException{
         if (StringUtils.isBlank(ctxId)) {
             ctxId = OpenApiContext.OPENAPI_CONTEXT_ID_DEFAULT;
         }
 
-        // TODO merge this and other contextBuilder impls
         OpenApiContext ctx = OpenApiContextLocator.getInstance().getOpenApiContext(ctxId);
 
         if (ctx == null) {
@@ -33,14 +33,8 @@ public class JaxrsOpenApiContextBuilder<T extends JaxrsOpenApiContextBuilder> ex
             if (ctx.getConfigLocation() == null && configLocation != null) {
                 ((XmlWebOpenApiContext)ctx).configLocation(configLocation);
             }
-            // TODO
-/*
-                if (basePath != null) {
-                    ((XmlWebOpenApiContext)ctx).basePath(basePath);
-                }
-*/
-            if (((XmlWebOpenApiContext)ctx).getResourcePackageNames() == null && resourcePackageNames != null) {
-                ((XmlWebOpenApiContext)ctx).resourcePackageNames(resourcePackageNames);
+            if (((XmlWebOpenApiContext)ctx).getResourcePackages() == null && resourcePackages != null) {
+                ((XmlWebOpenApiContext)ctx).resourcePackages(resourcePackages);
             }
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator

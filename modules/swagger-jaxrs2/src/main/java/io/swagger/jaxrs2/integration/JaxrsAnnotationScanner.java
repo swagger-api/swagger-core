@@ -2,7 +2,6 @@ package io.swagger.jaxrs2.integration;
 
 import io.swagger.oas.integration.OpenApiConfiguration;
 import io.swagger.oas.web.OpenApiScanner;
-import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
@@ -17,10 +16,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class AnnotationJaxrsScanner<T extends AnnotationJaxrsScanner<T>> implements OpenApiScanner {
+public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> implements OpenApiScanner {
 
     private OpenApiConfiguration openApiConfiguration;
-    protected static Logger LOGGER = LoggerFactory.getLogger(AnnotationJaxrsScanner.class);
+    protected static Logger LOGGER = LoggerFactory.getLogger(JaxrsAnnotationScanner.class);
 
     public T openApiConfiguration (OpenApiConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
@@ -30,9 +29,7 @@ public class AnnotationJaxrsScanner<T extends AnnotationJaxrsScanner<T>> impleme
     @Override
     public Set<Class<?>> classes() {
 
-        LOGGER.trace ("classes() - {}", "start");
         if (openApiConfiguration == null) {
-            LOGGER.trace ("classes() - {}", "config null");
             openApiConfiguration = new OpenApiConfiguration();
         }
 
@@ -40,9 +37,8 @@ public class AnnotationJaxrsScanner<T extends AnnotationJaxrsScanner<T>> impleme
         Set<String> acceptablePackages = new HashSet<String>();
 
         boolean allowAllPackages = false;
-        if (StringUtils.isNotBlank(openApiConfiguration.getResourcePackageNames())) {
-            String[] parts = openApiConfiguration.getResourcePackageNames().split(",");
-            for (String pkg : parts) {
+        if (openApiConfiguration.getResourcePackages() != null && !openApiConfiguration.getResourcePackages().isEmpty()) {
+            for (String pkg : openApiConfiguration.getResourcePackages()) {
                 if (!"".equals(pkg)) {
                     acceptablePackages.add(pkg);
                     config.addUrls(ClasspathHelper.forPackage(pkg));

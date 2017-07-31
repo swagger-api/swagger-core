@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.jaxrs2.util.ReaderUtils;
+import io.swagger.oas.integration.ContextUtils;
 import io.swagger.oas.integration.OpenApiConfiguration;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
@@ -73,11 +74,11 @@ public class Reader implements OpenApiReader {
     private static final String OPTIONS_METHOD = "options";
 
     public Reader(OpenAPI openAPI) {
-        this(new OpenApiConfiguration().openApi(openAPI));
+        this(ContextUtils.deepCopy(new OpenApiConfiguration().openApi(openAPI)));
     }
 
     public Reader(OpenApiConfiguration openApiConfiguration) {
-        this.config = openApiConfiguration;
+        this.config = ContextUtils.deepCopy(openApiConfiguration);
 
         // TODO init openApi by cloning the one in config
         //clone openApiConfiguration.getOpenAPI();

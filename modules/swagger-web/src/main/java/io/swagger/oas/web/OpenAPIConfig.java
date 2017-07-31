@@ -9,14 +9,13 @@ import io.swagger.oas.models.OpenAPI;
 public interface OpenAPIConfig {
     Set<String> getResourcePackages();
 
-    Set<Class<?>> getResourceClasses();
+    Set<String> getResourceClasses();
 
-    Class<OpenApiReader> getReaderClass();
+    String getReaderClass();
 
-    Class<OpenApiScanner> getScannerClass();
+    String getScannerClass();
 
-    // TODO use updated/renamed SwaggerSpecFilter, moved to swagger-web
-    Class<?> getFilterClass();
+    String getFilterClass();
 
     Collection<String> getIgnoredRoutes();
 
@@ -24,7 +23,7 @@ public interface OpenAPIConfig {
 
     Map<String, Object> getUserDefinedOptions();
 
-    boolean isScanAllResources();
+    Boolean isScanAllResources();
 
-    boolean isPrettyPrint();
+    Boolean isPrettyPrint();
 }

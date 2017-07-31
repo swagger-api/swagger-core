@@ -1,14 +1,16 @@
 package io.swagger.jaxrs2.integration;
 
-import io.swagger.oas.integration.OpenApiConfiguration;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.oas.integration.OpenApiConfigurationLoader;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
-import java.net.URL;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class XmlWebOpenApiContext<T extends XmlWebOpenApiContext<T>> extends JaxrsOpenApiContext<T> implements WebOpenApiContext {
@@ -30,53 +32,32 @@ public class XmlWebOpenApiContext<T extends XmlWebOpenApiContext<T>> extends Jax
 
     public T servletConfig(ServletConfig servletConfig) {
 
-        if (servletConfig == null) return (T)this;
+        if (!ServletConfigContextUtils.isServletConfigAvailable(servletConfig)) return (T)this;
         this.servletConfig = servletConfig;
         this.servletContext = servletConfig.getServletContext();
         id(OPENAPI_CONTEXT_ID_PREFIX + "servlet." + servletConfig.getServletName());
         return (T)this;
     }
 
-    // TODO DRAFT
+
     @Override
-    protected URL locateConfig() {
+    protected List<ImmutablePair<String, String>> getKnownLocations() {
 
-        if (StringUtils.isNotEmpty(configLocation)) {
-            return super.locateConfig();
-        }
-        if (servletConfig != null) {
-            String location = ContextUtils.getInitParam(servletConfig, ContextUtils.OPENAPI_CONFIGURATION_LOCATION_KEY);
-            if (!StringUtils.isBlank(location)) {
-                // TODO..
-                this.configLocation = location;
-                return buildConfigLocationURL(location);
-            }
-        }
-        // check known locations
-        //  /WEB-INF/openApi/openApiconfig.properties
-        //  /WEB-INF/openApi/openApiconfig.json
-        //  /WEB-INF/openApi/openApiconfig.yaml
-        //  /WEB-INF/openApi/openApiconfig...
-
-        //
-
-        // super locate at the end
-        return super.locateConfig();
-
-        //return OpenApiConfiguration.fromUri(location, "props");
-
+        List<ImmutablePair<String, String>> locations = new LinkedList<>(Arrays.asList(
+                new ImmutablePair<>("servlet", ServletConfigContextUtils.OPENAPI_CONFIGURATION_LOCATION_KEY),
+                new ImmutablePair<>("file", "WEBINF/openapi-configuration.yaml"),
+                new ImmutablePair<>("file", "WEBINF/openapi-configuration.json")
+        ));
+        locations.addAll(super.getKnownLocations());
+        locations.add(new ImmutablePair<>("servlet", ""));  // get config from init params
+        return locations;
     }
 
     @Override
-    protected Map<String, OpenApiConfiguration> loadConfigurations() {
-        if (StringUtils.isNotEmpty(configLocation)) {
-            return new ServletOpenApiConfigBuilder()
-                    .servletConfig(servletConfig)
-                    .configLocation(locateConfig())
-                    .buildMultiple(id);
-        }
-        // TODO check known location in classpath, or same dir or whatever..
-        return null;
+    protected Map<String, OpenApiConfigurationLoader> getLocationLoaders() {
+        Map<String, OpenApiConfigurationLoader> map = super.getLocationLoaders();
+        map.put("servlet", new ServletOpenApiConfigurationLoader(servletConfig));
+        return map;
     }
 
 }

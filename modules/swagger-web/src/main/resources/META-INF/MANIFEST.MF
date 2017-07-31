@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1500989174552
+Bnd-LastModified: 1501505517729
 Build-Jdk: 1.8.0_72
 Built-By: frantuma
 Bundle-Description: Sonatype helps open source projects to set up Maven 

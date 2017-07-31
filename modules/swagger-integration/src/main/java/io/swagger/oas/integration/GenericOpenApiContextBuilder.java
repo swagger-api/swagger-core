@@ -2,17 +2,19 @@ package io.swagger.oas.integration;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Set;
+
 public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder> implements OpenApiContextBuilder {
 
     protected String ctxId;
 
     protected String configLocation;
-    protected String resourcePackageNames;
+    protected Set<String> resourcePackages;
     protected OpenApiConfiguration openApiConfiguration;
 
 
     @Override
-    public OpenApiContext buildContext(boolean init) {
+    public OpenApiContext buildContext(boolean init) throws OpenApiConfigurationException{
         if (StringUtils.isBlank(ctxId)) {
             ctxId = OpenApiContext.OPENAPI_CONTEXT_ID_DEFAULT;
         }
@@ -28,14 +30,8 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
             if (ctx.getConfigLocation() == null && configLocation != null) {
                 ((GenericOpenApiContext)ctx).configLocation(configLocation);
             }
-            // TODO basepath
-/*
-                if (basePath != null) {
-                    ((XmlWebOpenApiContext)ctx).basePath(basePath);
-                }
-*/
-            if (((GenericOpenApiContext)ctx).getResourcePackageNames() == null && resourcePackageNames != null) {
-                ((GenericOpenApiContext)ctx).resourcePackageNames(resourcePackageNames);
+            if (((GenericOpenApiContext)ctx).getResourcePackages() == null && resourcePackages != null) {
+                ((GenericOpenApiContext)ctx).resourcePackages(resourcePackages);
             }
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator
@@ -60,12 +56,12 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
         this.configLocation = configLocation;
     }
 
-    public String getResourcePackageNames() {
-        return resourcePackageNames;
+    public Set<String> getResourcePackages() {
+        return resourcePackages;
     }
 
-    public void setResourcePackageNames(String resourcePackageNames) {
-        this.resourcePackageNames = resourcePackageNames;
+    public void setResourcePackages(Set<String> resourcePackages) {
+        this.resourcePackages = resourcePackages;
     }
 
     public OpenApiConfiguration getOpenApiConfiguration() {
@@ -87,8 +83,8 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
         return (T) this;
     }
 
-    public T resourcePackageNames(String resourcePackageNames) {
-        this.resourcePackageNames = resourcePackageNames;
+    public T resourcePackages(Set<String> resourcePackages) {
+        this.resourcePackages = resourcePackages;
         return (T) this;
     }
 

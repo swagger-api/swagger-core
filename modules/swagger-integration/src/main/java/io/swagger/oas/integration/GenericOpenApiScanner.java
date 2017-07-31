@@ -8,6 +8,8 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +17,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class GenericOpenApiScanner implements OpenApiScanner {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(GenericOpenApiScanner.class);
 
     OpenApiConfiguration openApiConfiguration;
 
@@ -33,15 +37,13 @@ public class GenericOpenApiScanner implements OpenApiScanner {
         boolean allowAllPackages = false;
 
         // if classes are passed, use them
-        if (StringUtils.isNotBlank(openApiConfiguration.getResourceClassNames())) {
-            String[] parts = openApiConfiguration.getResourceClassNames().split(",");
-            for (String className : parts) {
+        if (openApiConfiguration.getResourceClasses() != null && !openApiConfiguration.getResourceClasses().isEmpty()) {
+            for (String className : openApiConfiguration.getResourceClasses()) {
                 if (!"".equals(className)) {
                     try {
                         output.add(Class.forName(className));
                     } catch (ClassNotFoundException e) {
-                        // TODO
-                        //e.printStackTrace();
+                        LOGGER.warn("error loading class from resourceClasses: " + e.getMessage(), e);
                     }
                 }
             }
@@ -49,9 +51,8 @@ public class GenericOpenApiScanner implements OpenApiScanner {
         }
 
 
-        if (StringUtils.isNotBlank(openApiConfiguration.getResourcePackageNames())) {
-            String[] parts = openApiConfiguration.getResourcePackageNames().split(",");
-            for (String pkg : parts) {
+        if (openApiConfiguration.getResourcePackages() != null && !openApiConfiguration.getResourcePackages().isEmpty()) {
+            for (String pkg : openApiConfiguration.getResourcePackages()) {
                 if (!"".equals(pkg)) {
                     acceptablePackages.add(pkg);
                     config.addUrls(ClasspathHelper.forPackage(pkg));
@@ -63,7 +64,7 @@ public class GenericOpenApiScanner implements OpenApiScanner {
 
         config.setScanners(new ResourcesScanner(), new TypeAnnotationsScanner(), new SubTypesScanner());
 
-        final Reflections reflections = new Reflections(config);
+        //final Reflections reflections = new Reflections(config);
         // TODO if we add an @Api annotation scan for that, same for defintion
         // this is generic, specific Jaxrs scanner will also look for @Path
 /*
@@ -88,6 +89,6 @@ public class GenericOpenApiScanner implements OpenApiScanner {
 
     @Override
     public Map<String, Object> resources() {
-        return new HashMap<String, Object>();
+        return new HashMap<>();
     }
 }
