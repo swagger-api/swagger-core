@@ -3,6 +3,7 @@ package io.swagger.jaxrs2;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs2.util.ReaderUtils;
+import io.swagger.oas.annotations.enums.Explode;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.ExternalDocumentation;
@@ -22,6 +23,7 @@ import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.servers.ServerVariable;
 import io.swagger.oas.models.servers.ServerVariables;
 import io.swagger.oas.models.tags.Tag;
+import io.swagger.util.ParameterProcessor;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.Produces;
@@ -83,7 +85,6 @@ public class OperationParser {
             parameterObject.setRequired(parameter.required());
             isEmpty = false;
         }
-        parameterObject.setStyle(StringUtils.isNoneBlank(parameter.style()) ? Parameter.StyleEnum.valueOf(parameter.style()) : null);
         if (parameter.allowEmptyValue()) {
             parameterObject.setAllowEmptyValue(parameter.allowEmptyValue());
             isEmpty = false;
@@ -92,8 +93,11 @@ public class OperationParser {
             parameterObject.setAllowReserved(parameter.allowReserved());
             isEmpty = false;
         }
-        if (parameter.explode()) {
-            parameterObject.setExplode(parameter.explode());
+
+        ParameterProcessor.setParameterStyle(parameterObject, parameter);
+        ParameterProcessor.setParameterExplode(parameterObject, parameter);
+
+        if (!Explode.DEFAULT.equals(parameter.explode())) {
             isEmpty = false;
         }
         if (parameter.schema() != null) {
