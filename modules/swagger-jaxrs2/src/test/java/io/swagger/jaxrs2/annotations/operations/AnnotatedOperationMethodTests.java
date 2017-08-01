@@ -23,12 +23,12 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
         int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
-                "      summary: \"Simple get operation\"\n" +
-                "      description: \"Defines a simple get operation with no inputs and a complex\"\n" +
-                "      operationId: \"getWithNoParameters\"\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex\n" +
+                "      operationId: getWithNoParameters\n" +
                 "      responses:\n" +
                 "        200:\n" +
-                "          description: \"voila!\"\n" +
+                "          description: voila!\n" +
                 "      deprecated: true";
         String extractedYAML = openApiYAML.substring(start, end);
 
@@ -60,12 +60,12 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
         int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
-                "      summary: \"Simple get operation\"\n" +
-                "      description: \"Defines a simple get operation with no inputs or responses\"\n" +
-                "      operationId: \"getWithNoParametersAndNoResponses\"\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs or responses\n" +
+                "      operationId: getWithNoParametersAndNoResponses\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: \"no description\"\n" +
+                "          description: no description\n" +
                 "      deprecated: true";
         String extractedYAML = openApiYAML.substring(start, end);
 
@@ -92,22 +92,22 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
         int end = openApiYAML.indexOf("components:");
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "get:\n" +
-                "      summary: \"Simple get operation\"\n" +
-                "      description: \"Defines a simple get operation with no inputs and a complex\"\n" +
-                "      operationId: \"getWithPayloadResponse\"\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex\n" +
+                "      operationId: getWithPayloadResponse\n" +
                 "      responses:\n" +
                 "        200:\n" +
-                "          description: \"voila!\"\n" +
+                "          description: voila!\n" +
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
+                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
                 "        default:\n" +
-                "          description: \"boo\"\n" +
+                "          description: boo\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: \"#/components/schemas/GenericError\"\n" +
+                "                $ref: '#/components/schemas/GenericError'\n" +
                 "      deprecated: true\n";
 
         assertEquals(extractedYAML, expectedYAML);
@@ -161,22 +161,21 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
         int end = openApiYAML.indexOf("components:");
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "get:\n" +
-                "      summary: \"Simple get operation\"\n" +
-                "      description: \"Defines a simple get operation with no inputs and a complex output\"\n" +
-                "      operationId: \"getWithPayloadResponse\"\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "      operationId: getWithPayloadResponse\n" +
                 "      responses:\n" +
                 "        200:\n" +
-                "          description: \"voila!\"\n" +
+                "          description: voila!\n" +
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
+                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
                 "              examples:\n" +
                 "                basic:\n" +
-                "                  summary: \"shows a basic example\"\n" +
-                "                  description: \"basic\"\n" +
-                "                  value:\n" +
-                "                    id: 19877734\n" +
+                "                  summary: shows a basic example\n" +
+                "                  description: basic\n" +
+                "                  value: '{id: 19877734}'\n" +
                 "      deprecated: true\n";
         assertEquals(extractedYAML, expectedYAML);
     }
@@ -198,7 +197,7 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                                                 @ExampleObject(
                                                         name = "basic",
                                                         summary = "shows a basic example",
-                                                        value = "{\"id\": 19877734}")
+                                                        value = "{id: 19877734}")
                                         }
                                 )
                         )
@@ -216,174 +215,183 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
         int start = 0;
         int end = openApiYAML.length() - 1;
         String extractedYAML = openApiYAML.substring(start, end);
-        String expectedYAML = "---\n" +
-                "openapi: \"3.0.0\"\n" +
+        String expectedYAML = "openapi: 3.0.0\n" +
                 "paths:\n" +
                 "  /pet/{petId}:\n" +
                 "    get:\n" +
-                "      summary: \"Find pet by ID\"\n" +
-                "      description: \"Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will\\\n" +
-                "        \\ simulate API error conditions\"\n" +
-                "      operationId: \"getPetById\"\n" +
+                "      summary: Find pet by ID\n" +
+                "      description: Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will simulate API error conditions\n" +
+                "      operationId: getPetById\n" +
                 "      parameters:\n" +
-                "      - name: \"petId\"\n" +
-                "        in: \"path\"\n" +
-                "        description: \"ID of pet that needs to be fetched\"\n" +
+                "      - name: petId\n" +
+                "        in: path\n" +
+                "        description: ID of pet that needs to be fetched\n" +
                 "        required: true\n" +
                 "        schema:\n" +
-                "          type: \"integer\"\n" +
-                "          format: \"int64\"\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: \"The pet\"\n" +
+                "          description: The pet\n" +
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
                 "            application/xml:\n" +
                 "              schema:\n" +
-                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
                 "        400:\n" +
-                "          description: \"Invalid ID supplied\"\n" +
+                "          description: Invalid ID supplied\n" +
                 "        404:\n" +
-                "          description: \"Pet not found\"\n" +
+                "          description: Pet not found\n" +
                 "  /pet:\n" +
                 "    put:\n" +
-                "      summary: \"Update an existing pet\"\n" +
-                "      operationId: \"updatePet\"\n" +
+                "      summary: Update an existing pet\n" +
+                "      operationId: updatePet\n" +
                 "      requestBody:\n" +
-                "        description: \"Pet object that needs to be added to the store\"\n" +
+                "        description: Pet object that needs to be added to the store\n" +
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: \"#/components/schemas/Pet\"\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        400:\n" +
-                "          description: \"Invalid ID supplied\"\n" +
+                "          description: Invalid ID supplied\n" +
                 "        404:\n" +
-                "          description: \"Pet not found\"\n" +
+                "          description: Pet not found\n" +
                 "        405:\n" +
-                "          description: \"Validation exception\"\n" +
+                "          description: Validation exception\n" +
                 "    post:\n" +
-                "      summary: \"Add a new pet to the store\"\n" +
-                "      operationId: \"addPet\"\n" +
+                "      summary: Add a new pet to the store\n" +
+                "      operationId: addPet\n" +
                 "      requestBody:\n" +
-                "        description: \"Pet object that needs to be added to the store\"\n" +
+                "        description: Pet object that needs to be added to the store\n" +
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: \"#/components/schemas/Pet\"\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: \"#/components/schemas/Pet\"\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        405:\n" +
-                "          description: \"Invalid input\"\n" +
+                "          description: Invalid input\n" +
                 "  /pet/findByStatus:\n" +
                 "    get:\n" +
-                "      summary: \"Finds Pets by status\"\n" +
-                "      description: \"Multiple status values can be provided with comma seperated strings\"\n" +
-                "      operationId: \"findPetsByStatus\"\n" +
+                "      summary: Finds Pets by status\n" +
+                "      description: Multiple status values can be provided with comma seperated strings\n" +
+                "      operationId: findPetsByStatus\n" +
                 "      parameters:\n" +
-                "      - name: \"status\"\n" +
-                "        in: \"query\"\n" +
-                "        description: \"Status values that need to be considered for filter\"\n" +
+                "      - name: status\n" +
+                "        in: query\n" +
+                "        description: Status values that need to be considered for filter\n" +
                 "        required: true\n" +
                 "        schema:\n" +
-                "          type: \"string\"\n" +
-                "      - name: \"skip\"\n" +
-                "        in: \"query\"\n" +
+                "          type: string\n" +
+                "      - name: skip\n" +
+                "        in: query\n" +
                 "        schema:\n" +
-                "          type: \"integer\"\n" +
-                "          format: \"int32\"\n" +
-                "      - name: \"limit\"\n" +
-                "        in: \"query\"\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "      - name: limit\n" +
+                "        in: query\n" +
                 "        schema:\n" +
-                "          type: \"integer\"\n" +
-                "          format: \"int32\"\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
                 "        400:\n" +
-                "          description: \"Invalid status value\"\n" +
+                "          description: Invalid status value\n" +
                 "  /pet/findByTags:\n" +
                 "    get:\n" +
-                "      summary: \"Finds Pets by tags\"\n" +
-                "      description: \"Muliple tags can be provided with comma seperated strings. Use\\\n" +
-                "        \\ tag1, tag2, tag3 for testing.\"\n" +
-                "      operationId: \"findPetsByTags\"\n" +
+                "      summary: Finds Pets by tags\n" +
+                "      description: Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.\n" +
+                "      operationId: findPetsByTags\n" +
                 "      parameters:\n" +
-                "      - name: \"tags\"\n" +
-                "        in: \"query\"\n" +
-                "        description: \"Tags to filter by\"\n" +
+                "      - name: tags\n" +
+                "        in: query\n" +
+                "        description: Tags to filter by\n" +
                 "        required: true\n" +
                 "        schema:\n" +
-                "          type: \"string\"\n" +
+                "          type: string\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: \"Pets matching criteria\"\n" +
+                "          description: Pets matching criteria\n" +
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
                 "        400:\n" +
-                "          description: \"Invalid tag value\"\n" +
+                "          description: Invalid tag value\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    Category:\n" +
-                "      type: \"object\"\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        id:\n" +
-                "          type: \"integer\"\n" +
-                "          format: \"int64\"\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
                 "        name:\n" +
-                "          type: \"string\"\n" +
+                "          type: string\n" +
+                "      xml:\n" +
+                "        name: Category\n" +
                 "    Tag:\n" +
-                "      type: \"object\"\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        id:\n" +
-                "          type: \"integer\"\n" +
-                "          format: \"int64\"\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
                 "        name:\n" +
-                "          type: \"string\"\n" +
+                "          type: string\n" +
+                "      xml:\n" +
+                "        name: Tag\n" +
                 "    Pet:\n" +
-                "      type: \"object\"\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        id:\n" +
-                "          type: \"integer\"\n" +
-                "          format: \"int64\"\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
                 "        category:\n" +
-                "          $ref: \"#/components/schemas/Category\"\n" +
+                "          $ref: '#/components/schemas/Category'\n" +
                 "        name:\n" +
-                "          type: \"string\"\n" +
+                "          type: string\n" +
                 "        photoUrls:\n" +
-                "          type: \"array\"\n" +
+                "          type: array\n" +
+                "          xml:\n" +
+                "            wrapped: true\n" +
                 "          items:\n" +
-                "            type: \"string\"\n" +
+                "            type: string\n" +
+                "            xml:\n" +
+                "              name: photoUrl\n" +
                 "        tags:\n" +
-                "          type: \"array\"\n" +
+                "          type: array\n" +
+                "          xml:\n" +
+                "            wrapped: true\n" +
                 "          items:\n" +
-                "            $ref: \"#/components/schemas/Tag\"\n" +
+                "            $ref: '#/components/schemas/Tag'\n" +
                 "        status:\n" +
-                "          type: \"string\"\n" +
-                "          description: \"pet status in the store\"\n" +
+                "          type: string\n" +
+                "          description: pet status in the store\n" +
                 "          enum:\n" +
-                "          - \"available,pending,sold\"";
+                "          - available,pending,sold\n" +
+                "      xml:\n" +
+                "        name: Pet";
         assertEquals(extractedYAML, expectedYAML);
     }
 
-    @Test(description = "reads the pet resource from sample")
+    @Test(description = "reads the user resource from sample")
     public void testCompleteUserResource() {
         String openApiYAML = readIntoYaml(UserResource.class);
         int start = 0;
         int end = openApiYAML.length() - 1;
         String extractedYAML = openApiYAML.substring(start, end);
-        String expectedYAML = "openapi: 3.0.0-rc2\n" +
+        String expectedYAML = "openapi: 3.0.0\n" +
                 "paths:\n" +
                 "  /user:\n" +
                 "    post:\n" +
