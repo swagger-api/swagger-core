@@ -1,5 +1,5 @@
 ---
-openapi: 3.0.0-RC1
+openapi: 3.0.0
 servers:
 - url: http://petstore.swagger.io/v2
 - url: https://development.gigantic-server.com/v1
