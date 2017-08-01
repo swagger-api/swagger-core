@@ -2,6 +2,7 @@ package io.swagger.jaxrs2.annotations.operations;
 
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.jaxrs2.resources.PetResource;
+import io.swagger.jaxrs2.resources.UserResource;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.ExampleObject;
@@ -209,14 +210,14 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
         }
     }
 
-    @Test(description = "reads an operation from sample")
-    public void testCompleteOperation() {
+    @Test(description = "reads the pet resource from sample")
+    public void testCompletePetResource() {
         String openApiYAML = readIntoYaml(PetResource.class);
         int start = 0;
         int end = openApiYAML.length() - 1;
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "---\n" +
-                "openapi: \"3.0.0-rc2\"\n" +
+                "openapi: \"3.0.0\"\n" +
                 "paths:\n" +
                 "  /pet/{petId}:\n" +
                 "    get:\n" +
@@ -373,6 +374,191 @@ public class AnnotatedOperationMethodTests extends AbstractAnnotationTest {
                 "          description: \"pet status in the store\"\n" +
                 "          enum:\n" +
                 "          - \"available,pending,sold\"";
+        assertEquals(extractedYAML, expectedYAML);
+    }
+
+    @Test(description = "reads the pet resource from sample")
+    public void testCompleteUserResource() {
+        String openApiYAML = readIntoYaml(UserResource.class);
+        int start = 0;
+        int end = openApiYAML.length() - 1;
+        String extractedYAML = openApiYAML.substring(start, end);
+        String expectedYAML = "openapi: 3.0.0-rc2\n" +
+                "paths:\n" +
+                "  /user:\n" +
+                "    post:\n" +
+                "      summary: Create user\n" +
+                "      description: This can only be done by the logged in user.\n" +
+                "      operationId: createUser\n" +
+                "      requestBody:\n" +
+                "        description: Created user object\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/User'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: no description\n" +
+                "  /user/createWithArray:\n" +
+                "    post:\n" +
+                "      summary: Creates list of users with given input array\n" +
+                "      operationId: createUsersWithArrayInput\n" +
+                "      requestBody:\n" +
+                "        description: List of user object\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: array\n" +
+                "              items:\n" +
+                "                $ref: '#/components/schemas/User'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: no description\n" +
+                "  /user/createWithList:\n" +
+                "    post:\n" +
+                "      summary: Creates list of users with given input array\n" +
+                "      operationId: createUsersWithListInput\n" +
+                "      requestBody:\n" +
+                "        description: List of user object\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: array\n" +
+                "              items:\n" +
+                "                $ref: '#/components/schemas/User'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: no description\n" +
+                "  /user/{username}:\n" +
+                "    get:\n" +
+                "      summary: Get user by user name\n" +
+                "      operationId: getUserByName\n" +
+                "      parameters:\n" +
+                "      - name: username\n" +
+                "        in: path\n" +
+                "        description: 'The name that needs to be fetched. Use user1 for testing. '\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: The user\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/User'\n" +
+                "        400:\n" +
+                "          description: User not found\n" +
+                "    put:\n" +
+                "      summary: Updated user\n" +
+                "      description: This can only be done by the logged in user.\n" +
+                "      operationId: updateUser\n" +
+                "      parameters:\n" +
+                "      - name: username\n" +
+                "        in: path\n" +
+                "        description: name that need to be deleted\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      requestBody:\n" +
+                "        description: Updated user object\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/User'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: user updated\n" +
+                "        400:\n" +
+                "          description: Invalid user supplied\n" +
+                "        404:\n" +
+                "          description: User not found\n" +
+                "    delete:\n" +
+                "      summary: Delete user\n" +
+                "      description: This can only be done by the logged in user.\n" +
+                "      operationId: deleteUser\n" +
+                "      parameters:\n" +
+                "      - name: username\n" +
+                "        in: path\n" +
+                "        description: The name that needs to be deleted\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: user deteled\n" +
+                "        400:\n" +
+                "          description: Invalid username supplied\n" +
+                "        404:\n" +
+                "          description: User not found\n" +
+                "  /user/login:\n" +
+                "    get:\n" +
+                "      summary: Logs user into the system\n" +
+                "      operationId: loginUser\n" +
+                "      parameters:\n" +
+                "      - name: username\n" +
+                "        in: query\n" +
+                "        description: The user name for login\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      - name: password\n" +
+                "        in: query\n" +
+                "        description: The password for login in clear text\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: Successfully logged in\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "            application/xml:\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "        400:\n" +
+                "          description: Invalid username/password supplied\n" +
+                "  /user/logout:\n" +
+                "    get:\n" +
+                "      summary: Logs out current logged in user session\n" +
+                "      operationId: logoutUser\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: no description\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    User:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "        username:\n" +
+                "          type: string\n" +
+                "        firstName:\n" +
+                "          type: string\n" +
+                "        lastName:\n" +
+                "          type: string\n" +
+                "        email:\n" +
+                "          type: string\n" +
+                "        password:\n" +
+                "          type: string\n" +
+                "        phone:\n" +
+                "          type: string\n" +
+                "        userStatus:\n" +
+                "          type: integer\n" +
+                "          description: User Status\n" +
+                "          format: int32\n" +
+                "          enum:\n" +
+                "          - null\n" +
+                "      xml:\n" +
+                "        name: User";
         assertEquals(extractedYAML, expectedYAML);
     }
 }

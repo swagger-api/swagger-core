@@ -170,11 +170,12 @@ public class OperationParser {
             schemaObject.setExclusiveMinimum(schema.exclusiveMinimum());
             isEmpty = false;
         }
-        if (schema.maxLength() > 0)
+        if (schema.maxLength() > 0) {
             if (schema.maxProperties() > 0) {
                 schemaObject.setMaxProperties(schema.maxProperties());
                 isEmpty = false;
             }
+        }
         if (schema.minProperties() > 0) {
             schemaObject.setMinProperties(schema.minProperties());
             isEmpty = false;
@@ -358,13 +359,18 @@ public class OperationParser {
         Class<?> schemaImplementation = annotationContent.schema().implementation();
         Map<String, Schema> schemaMap;
         if (schemaImplementation != Void.class) {
-            schemaMap = ModelConverters.getInstance().readAll(schemaImplementation);
-            schemaMap.forEach((key, schema) -> {
-                components.addSchemas(key, schema);
-            });
             Schema schemaObject = new Schema();
-            schemaObject.set$ref(COMPONENTS_REF + schemaImplementation.getSimpleName());
+            if (schemaImplementation.getName().startsWith("java.lang")) {
+                schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
+            } else {
+                schemaMap = ModelConverters.getInstance().readAll(schemaImplementation);
+                schemaMap.forEach((key, schema) -> {
+                    components.addSchemas(key, schema);
+                });
+                schemaObject.set$ref(COMPONENTS_REF + schemaImplementation.getSimpleName());
+            }
             mediaType.setSchema(schemaObject);
+
         } else {
             getSchemaFromAnnotation(annotationContent.schema()).ifPresent(mediaType::setSchema);
         }
