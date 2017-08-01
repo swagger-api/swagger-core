@@ -1,4 +1,4 @@
-package io.swagger.jaxrs2.integration.listing;
+package io.swagger.jaxrs2.integration.resources;
 
 import javax.servlet.ServletConfig;
 import javax.ws.rs.GET;
@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 @Path("/openApi")
-public class AcceptHeaderOpenApiListingResource extends BaseOpenApiListingResource {
+public class AcceptHeaderOpenApiResource extends BaseOpenApiResource {
     @Context
     ServletConfig config;
 

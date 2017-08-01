@@ -1,4 +1,4 @@
-package io.swagger.jaxrs2.integration.listing;
+package io.swagger.jaxrs2.integration.resources;
 
 import io.swagger.core.filter.SpecFilter;
 import io.swagger.core.filter.SwaggerSpecFilter;
@@ -27,9 +27,9 @@ import java.util.Set;
 
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.getContextIdFromServletConfig;
 
-public abstract class BaseOpenApiListingResource {
+public abstract class BaseOpenApiResource {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(BaseOpenApiListingResource.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(BaseOpenApiResource.class);
 
     protected Response getOpenApi(HttpHeaders headers,
                                   ServletConfig config,
@@ -125,7 +125,7 @@ public abstract class BaseOpenApiListingResource {
         this.configLocation = configLocation;
     }
 
-    public BaseOpenApiListingResource configLocation(String configLocation) {
+    public BaseOpenApiResource configLocation(String configLocation) {
         setConfigLocation(configLocation);
         return this;
     }
@@ -139,7 +139,7 @@ public abstract class BaseOpenApiListingResource {
         this.resourcePackages = resourcePackages;
     }
 
-    public BaseOpenApiListingResource resourcePackages(Set<String> resourcePackages) {
+    public BaseOpenApiResource resourcePackages(Set<String> resourcePackages) {
         setResourcePackages(resourcePackages);
         return this;
     }
@@ -153,7 +153,7 @@ public abstract class BaseOpenApiListingResource {
         this.openApiConfiguration = openApiConfiguration;
     }
 
-    public BaseOpenApiListingResource openApiConfiguration(OpenApiConfiguration openApiConfiguration) {
+    public BaseOpenApiResource openApiConfiguration(OpenApiConfiguration openApiConfiguration) {
         setOpenApiConfiguration(openApiConfiguration);
         return this;
     }
