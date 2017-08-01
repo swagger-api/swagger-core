@@ -1,6 +1,5 @@
 package io.swagger.oas.integration;
 
-import io.swagger.oas.web.OpenAPIConfig;
 import io.swagger.oas.web.OpenAPIConfigBuilder;
 
 import java.io.IOException;
@@ -14,7 +13,7 @@ public class ServiceOpenApiConfigurationLoader implements OpenApiConfigurationLo
 
         ServiceLoader<OpenAPIConfigBuilder> loader = ServiceLoader.load(OpenAPIConfigBuilder.class);
         if (loader.iterator().hasNext()) {
-            return cloneFromInterface(loader.iterator().next().build());
+            return ContextUtils.cloneConfigFromInterface(loader.iterator().next().build());
         }
         throw new IOException("Error loading OpenAPIConfigBuilder service implementation.");
     }
@@ -32,19 +31,5 @@ public class ServiceOpenApiConfigurationLoader implements OpenApiConfigurationLo
         } catch (Exception e) {
             return false;
         }
-    }
-
-    private OpenApiConfiguration cloneFromInterface(OpenAPIConfig configInterface) {
-
-        return new OpenApiConfiguration()
-                .openApi(configInterface.getOpenAPI())
-                .userDefinedOptions(configInterface.getUserDefinedOptions())
-                .filterClass(configInterface.getFilterClass())
-                .prettyPrint(configInterface.isPrettyPrint())
-                .readerClass(configInterface.getReaderClass())
-                .resourcePackages(configInterface.getResourcePackages())
-                .resourceClasses(configInterface.getResourceClasses())
-                .scanAllResources(configInterface.isScanAllResources())
-                .scannerClass(configInterface.getScannerClass());
     }
 }

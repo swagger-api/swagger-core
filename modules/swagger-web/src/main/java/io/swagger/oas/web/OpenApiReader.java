@@ -7,5 +7,7 @@ import java.util.Set;
 
 public interface OpenApiReader {
 
+    void setConfiguration(OpenAPIConfig openApiConfiguration);
+
     OpenAPI read(Set<Class<?>> classes, Map<String, Object> resources);
 }

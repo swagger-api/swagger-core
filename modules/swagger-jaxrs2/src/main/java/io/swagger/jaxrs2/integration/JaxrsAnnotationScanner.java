@@ -1,7 +1,8 @@
 package io.swagger.jaxrs2.integration;
 
+import io.swagger.oas.integration.ContextUtils;
 import io.swagger.oas.integration.OpenApiConfiguration;
-import io.swagger.oas.web.OpenApiScanner;
+import io.swagger.oas.web.OpenAPIConfig;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
@@ -11,19 +12,38 @@ import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.Application;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> implements OpenApiScanner {
+public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> implements JaxrsOpenApiScanner {
 
-    private OpenApiConfiguration openApiConfiguration;
+    protected OpenApiConfiguration openApiConfiguration;
+    protected Application application;
     protected static Logger LOGGER = LoggerFactory.getLogger(JaxrsAnnotationScanner.class);
+
+    public JaxrsAnnotationScanner application (Application application) {
+        this.application = application;
+        return this;
+    }
+
+    @Override
+    public void setApplication(Application application) {
+        this.application = application;
+    }
+
+
 
     public T openApiConfiguration (OpenApiConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
         return (T)this;
+    }
+
+    @Override
+    public void setConfiguration(OpenAPIConfig openApiConfiguration) {
+        this.openApiConfiguration = ContextUtils.cloneConfigFromInterface(openApiConfiguration);
     }
 
     @Override

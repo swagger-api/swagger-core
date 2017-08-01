@@ -23,6 +23,7 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
+import io.swagger.oas.web.OpenAPIConfig;
 import io.swagger.oas.web.OpenApiReader;
 import io.swagger.util.Json;
 import io.swagger.util.ParameterProcessor;
@@ -54,7 +55,7 @@ public class Reader implements OpenApiReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
     public static final String DEFAULT_MEDIA_TYPE_VALUE = "*/*";
 
-    private final OpenApiConfiguration config;
+    protected OpenApiConfiguration config;
 
     private OpenAPI openAPI;
     private Components components;
@@ -73,20 +74,22 @@ public class Reader implements OpenApiReader {
     private static final String HEAD_METHOD = "head";
     private static final String OPTIONS_METHOD = "options";
 
+    public Reader() {
+        this.openAPI = new OpenAPI();
+        paths = new Paths();
+        openApiTags = new LinkedHashSet<>();
+        components = new Components();
+
+    }
     public Reader(OpenAPI openAPI) {
-        this(ContextUtils.deepCopy(new OpenApiConfiguration().openApi(openAPI)));
+        this();
+        setConfiguration(new OpenApiConfiguration().openApi(openAPI));
     }
 
     public Reader(OpenApiConfiguration openApiConfiguration) {
-        this.config = ContextUtils.deepCopy(openApiConfiguration);
-
-        // TODO init openApi by cloning the one in config
-        //clone openApiConfiguration.getOpenAPI();
+        this();
+        setConfiguration(openApiConfiguration);
         this.openAPI = config.getOpenAPI();
-        paths = new Paths();
-        openApiTags = new LinkedHashSet<>();
-        //this.config = new DefaultReaderConfig();
-        components = new Components();
     }
 
     public OpenAPI getOpenAPI() {
@@ -129,6 +132,11 @@ public class Reader implements OpenApiReader {
         }
 
         return openAPI;
+    }
+
+    @Override
+    public void setConfiguration(OpenAPIConfig openApiConfiguration) {
+        this.config = ContextUtils.deepCopy(ContextUtils.cloneConfigFromInterface(openApiConfiguration));
     }
 
     public OpenAPI read(Set<Class<?>> classes, Map<String, Object> resources) {

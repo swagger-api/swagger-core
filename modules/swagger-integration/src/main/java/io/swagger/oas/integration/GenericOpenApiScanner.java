@@ -1,5 +1,6 @@
 package io.swagger.oas.integration;
 
+import io.swagger.oas.web.OpenAPIConfig;
 import io.swagger.oas.web.OpenApiScanner;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -22,8 +23,9 @@ public class GenericOpenApiScanner implements OpenApiScanner {
 
     OpenApiConfiguration openApiConfiguration;
 
-    public GenericOpenApiScanner(OpenApiConfiguration openApiConfiguration) {
-        this.openApiConfiguration = openApiConfiguration;
+    @Override
+    public void setConfiguration(OpenAPIConfig openApiConfiguration) {
+        this.openApiConfiguration = ContextUtils.cloneConfigFromInterface(openApiConfiguration);
     }
 
     @Override

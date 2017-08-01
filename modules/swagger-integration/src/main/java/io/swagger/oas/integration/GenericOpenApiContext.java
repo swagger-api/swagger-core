@@ -1,6 +1,7 @@
 package io.swagger.oas.integration;
 
 import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.web.OpenAPIConfig;
 import io.swagger.oas.web.OpenApiReader;
 import io.swagger.oas.web.OpenApiScanner;
 import org.apache.commons.lang3.StringUtils;
@@ -166,15 +167,24 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         OpenApiReader reader;
         if (StringUtils.isNotBlank(openApiConfiguration.getReaderClass())) {
             Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getReaderClass());
-            // TODO instantiate with configuration
             reader = (OpenApiReader) cls.newInstance();
         } else {
-            reader = (classes, resources) -> {
-                OpenAPI openApi = openApiConfiguration.getOpenAPI();
-                return openApi;
+            reader = new OpenApiReader() {
 
+                OpenAPIConfig openApiConfiguration;
+                @Override
+                public void setConfiguration(OpenAPIConfig openApiConfiguration) {
+                    this.openApiConfiguration = openApiConfiguration;
+                }
+
+                @Override
+                public OpenAPI read(Set<Class<?>> classes, Map<String, Object> resources) {
+                    OpenAPI openApi = openApiConfiguration.getOpenAPI();
+                    return openApi;
+                }
             };
         }
+        reader.setConfiguration(openApiConfiguration);
         return reader;
     }
 
@@ -182,11 +192,11 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         OpenApiScanner scanner;
         if (StringUtils.isNotBlank(openApiConfiguration.getScannerClass())) {
             Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getScannerClass());
-            // TODO instantiate with configuration
             scanner = (OpenApiScanner) cls.newInstance();
         } else {
-            scanner = new GenericOpenApiScanner(openApiConfiguration);
+            scanner = new GenericOpenApiScanner();
         }
+        scanner.setConfiguration(openApiConfiguration);
         return scanner;
     }
 

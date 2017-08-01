@@ -32,25 +32,28 @@ public class JaxrsOpenApiContext<T extends JaxrsOpenApiContext> extends GenericO
         OpenApiReader reader;
         if (StringUtils.isNotBlank(openApiConfiguration.getReaderClass())) {
             Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getReaderClass());
-            // TODO instantiate with configuration
             reader = (OpenApiReader) cls.newInstance();
         } else {
             reader = new Reader(openApiConfiguration);
         }
+        reader.setConfiguration(openApiConfiguration);
         return reader;
     }
 
     @Override
     protected OpenApiScanner buildScanner(OpenApiConfiguration openApiConfiguration) throws Exception {
+
         OpenApiScanner scanner;
         if (StringUtils.isNotBlank(openApiConfiguration.getScannerClass())) {
             Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getScannerClass());
-            // TODO instantiate with configuration
             scanner = (OpenApiScanner) cls.newInstance();
         } else {
-            scanner = new JaxrsApplicationAndAnnotationScanner().application(app).openApiConfiguration(openApiConfiguration);
+            scanner = new JaxrsApplicationAndAnnotationScanner();
+        }
+        scanner.setConfiguration(openApiConfiguration);
+        if (scanner instanceof JaxrsOpenApiScanner) {
+            ((JaxrsOpenApiScanner)scanner).setApplication(app);
         }
         return scanner;
     }
-
 }
