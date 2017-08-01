@@ -25,6 +25,20 @@ public class OpenApiConfiguration implements OpenAPIConfig {
     private Boolean prettyPrint;
     private Boolean scanAllResources;
     private Collection<String> ignoredRoutes = Collections.emptySet();
+    private Long cacheTTL = -1L;
+
+    public Long getCacheTTL() {
+        return cacheTTL;
+    }
+
+    public void setCacheTTL(Long cacheTTL) {
+        this.cacheTTL = cacheTTL;
+    }
+
+    public OpenApiConfiguration cacheTTL(Long cacheTTL) {
+        this.cacheTTL = cacheTTL;
+        return this;
+    }
 
     public Boolean isScanAllResources() {
         return scanAllResources;

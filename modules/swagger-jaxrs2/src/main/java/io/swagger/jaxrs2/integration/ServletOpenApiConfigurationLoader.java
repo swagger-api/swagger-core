@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletConfig;
 import java.io.IOException;
 
+import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_CACHE_TTL_KEY;
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_FILTER_KEY;
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_PRETTYPRINT_KEY;
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_READER_KEY;
@@ -20,6 +21,7 @@ import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CO
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_BUILDER_KEY;
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.getBooleanInitParam;
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.getInitParam;
+import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.getLongInitParam;
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.resolveResourceClasses;
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.resolveResourcePackages;
 
@@ -49,6 +51,7 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
                     .scanAllResources(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_SCANALLRESOURCES_KEY))
                     .prettyPrint(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_PRETTYPRINT_KEY))
                     .readerClass(getInitParam(servletConfig, OPENAPI_CONFIGURATION_READER_KEY))
+                    .cacheTTL(getLongInitParam(servletConfig, OPENAPI_CONFIGURATION_CACHE_TTL_KEY))
                     .scannerClass(getInitParam(servletConfig, OPENAPI_CONFIGURATION_SCANNER_KEY));
 
             return configuration;

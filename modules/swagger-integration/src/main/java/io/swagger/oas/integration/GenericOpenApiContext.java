@@ -265,6 +265,10 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             throw new OpenApiConfigurationException("error initializing context: " + e.getMessage(), e);
         }
 
+        // set cache TTL if present in configuration
+        if (openApiConfiguration.getCacheTTL() != null) {
+            this.cacheTTL = openApiConfiguration.getCacheTTL();
+        }
         register();
         return (T) this;
     }

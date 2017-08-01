@@ -22,6 +22,7 @@ public class ServletConfigContextUtils {
     public static final String OPENAPI_CONFIGURATION_SCANALLRESOURCES_KEY = "openApi.configuration.scanAllResources";
     public static final String OPENAPI_CONFIGURATION_RESOURCECLASSES_KEY = "openApi.configuration.resourceClasses";
     public static final String OPENAPI_CONFIGURATION_FILTER_KEY = "openApi.configuration.filterClass";
+    public static final String OPENAPI_CONFIGURATION_CACHE_TTL_KEY = "openApi.configuration.filterClass";
 
     public static Set<String> resolveResourcePackages(ServletConfig servletConfig) {
         if (!isServletConfigAvailable(servletConfig)) {
@@ -77,6 +78,18 @@ public class ServletConfigContextUtils {
             return null;
         }
         return Boolean.valueOf(Boolean.parseBoolean(param));
+    }
+
+    public static Long getLongInitParam(ServletConfig sc, String paramKey) {
+        String param = getInitParam(sc, paramKey);
+        if (StringUtils.isBlank(param)) {
+            return null;
+        }
+        try {
+            return Long.parseLong(param);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     public static String getContextIdFromServletConfig(ServletConfig config) {
