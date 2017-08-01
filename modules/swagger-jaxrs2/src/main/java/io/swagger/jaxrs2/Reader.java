@@ -277,13 +277,15 @@ public class Reader implements OpenApiReader {
             openAPI.setComponents(components);
         }
 
-        ArrayList<Tag> tagList = new ArrayList<>();
-        tagList.addAll(openApiTags);
-        if (tagList.size() > 0) {
+
+
+        if (!openApiTags.isEmpty()) {
+            Set<Tag> tagsSet  = new LinkedHashSet<>();
+            tagsSet.addAll(openApiTags);
             if (openAPI.getTags() != null) {
-                tagList.addAll(openAPI.getTags());
+                tagsSet.addAll(openAPI.getTags());
             }
-            openAPI.setTags(tagList);
+            openAPI.setTags(new ArrayList<>(tagsSet));
         }
 
         OperationParser.getExternalDocumentation(apiExternalDocs).ifPresent(externalDocumentation -> openAPI.setExternalDocs(externalDocumentation));
