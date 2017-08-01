@@ -21,6 +21,8 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import io.swagger.oas.annotations.enums.Explode;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
 
@@ -78,7 +80,7 @@ public @interface Parameter {
    * When this is true, parameter values of type array or object generate separate parameters for each value of the array or key-value pair of the map. For other types of parameters this property has no effect. When style is form, the default value is true. For all other styles, the default value is false.
    *@return whether or not to expand individual array members
    **/
-  boolean explode() default false;
+  Explode explode() default Explode.DEFAULT;
 
   /**
    * Determines whether the parameter value should allow reserved characters, as defined by RFC3986. This property only applies to parameters with an in value of query. The default value is false.

@@ -24,39 +24,39 @@ public class OperationsWithLinks extends AbstractAnnotationTest {
 
         String expectedYAML = "/addresses:\n" +
                 "    get:\n" +
-                "      operationId: \"getAddress\"\n" +
+                "      operationId: getAddress\n" +
                 "      parameters:\n" +
-                "      - name: \"userId\"\n" +
-                "        in: \"query\"\n" +
+                "      - name: userId\n" +
+                "        in: query\n" +
                 "        schema:\n" +
-                "          type: \"string\"\n" +
+                "          type: string\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: \"no description\"\n" +
+                "          description: no description\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: \"#/components/schemas/Address\"\n" +
+                "                $ref: '#/components/schemas/Address'\n" +
                 "  /users:\n" +
                 "    get:\n" +
-                "      operationId: \"getUser\"\n" +
+                "      operationId: getUser\n" +
                 "      parameters:\n" +
-                "      - name: \"userId\"\n" +
-                "        in: \"query\"\n" +
+                "      - name: userId\n" +
+                "        in: query\n" +
                 "        schema:\n" +
-                "          type: \"string\"\n" +
+                "          type: string\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: \"no description\"\n" +
+                "          description: no description\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: \"#/components/schemas/User\"\n" +
+                "                $ref: '#/components/schemas/User'\n" +
                 "          links:\n" +
                 "            address:\n" +
-                "              operationId: \"getAddress\"\n" +
+                "              operationId: getAddress\n" +
                 "              parameters:\n" +
-                "                userId: \"$request.query.userId\"";
+                "                userId: $request.query.userId";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(extractedYAML, expectedYAML);
