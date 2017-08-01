@@ -3,8 +3,8 @@ package io.swagger.jaxrs2.integration.resources;
 import io.swagger.core.filter.SpecFilter;
 import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs2.integration.JaxrsOpenApiContextBuilder;
-import io.swagger.oas.integration.OpenApiConfiguration;
-import io.swagger.oas.integration.OpenApiContext;
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.oas.integration.api.OpenApiContext;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
@@ -144,16 +144,16 @@ public abstract class BaseOpenApiResource {
         return this;
     }
 
-    protected OpenApiConfiguration openApiConfiguration;
+    protected OpenAPIConfiguration openApiConfiguration;
 
-    public OpenApiConfiguration getOpenApiConfiguration() {
+    public OpenAPIConfiguration getOpenApiConfiguration() {
         return openApiConfiguration;
     }
-    public void setOpenApiConfiguration (OpenApiConfiguration openApiConfiguration) {
+    public void setOpenApiConfiguration (OpenAPIConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
     }
 
-    public BaseOpenApiResource openApiConfiguration(OpenApiConfiguration openApiConfiguration) {
+    public BaseOpenApiResource openApiConfiguration(OpenAPIConfiguration openApiConfiguration) {
         setOpenApiConfiguration(openApiConfiguration);
         return this;
     }

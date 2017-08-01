@@ -1,5 +1,7 @@
 package io.swagger.oas.integration;
 
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.oas.integration.api.OpenApiContext;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.info.Info;
 import org.testng.annotations.Test;
@@ -20,7 +22,7 @@ public class IntegrationTest {
     @Test(description = "initialize a context and read")
     public void shouldInitialize() throws Exception{
 
-        OpenApiConfiguration config = new OpenApiConfiguration()
+        OpenAPIConfiguration config = new OpenApiConfigurationImpl()
                 .resourcePackages(Stream.of("com.my.project.resources", "org.my.project.resources").collect(Collectors.toSet()))
                 .openApi(new OpenAPI().info(new Info().description("TEST INFO DESC")));
 

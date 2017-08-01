@@ -1,4 +1,4 @@
-package io.swagger.oas.web;
+package io.swagger.oas.integration.api;
 
 import java.util.Collection;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Set;
 
 import io.swagger.oas.models.OpenAPI;
 
-public interface OpenAPIConfig {
+public interface OpenAPIConfiguration {
     Set<String> getResourcePackages();
 
     Set<String> getResourceClasses();
@@ -26,4 +26,6 @@ public interface OpenAPIConfig {
     Boolean isScanAllResources();
 
     Boolean isPrettyPrint();
+
+    Long getCacheTTL();
 }

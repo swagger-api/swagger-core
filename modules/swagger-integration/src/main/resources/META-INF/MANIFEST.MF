@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1501600916611
+Bnd-LastModified: 1501604640975
 Build-Jdk: 1.8.0_72
 Built-By: frantuma
 Bundle-Description: Sonatype helps open source projects to set up Maven 
@@ -11,15 +11,13 @@ Bundle-SymbolicName: io.swagger.integration
 Bundle-Version: 2.0.0.SNAPSHOT
 Created-By: Apache Maven Bundle Plugin
 Export-Package: io.swagger.oas.integration;version="2.0.0.SNAPSHOT";uses
- :="io.swagger.oas.models,io.swagger.oas.web,org.apache.commons.lang3.tu
- ple,org.slf4j"
+ :="io.swagger.oas.models,org.apache.commons.lang3.tuple,org.slf4j"
 implementation-version: 2.0.0-SNAPSHOT
 Import-Package: com.fasterxml.jackson.databind;version="[2.8,3)",io.swag
- ger.oas.models;version="[2.0,3)",io.swagger.oas.web;version="[2.0,3)",i
- o.swagger.util;version="[2.0,3)",org.apache.commons.lang3;version="[3.2
- ,4)",org.apache.commons.lang3.tuple;version="[3.2,4)",org.reflections.s
- canners;version="[0.9,1)",org.reflections.util;version="[0.9,1)",org.sl
- f4j;version="[1.7,2)"
+ ger.oas.models;version="[2.0,3)",io.swagger.util;version="[2.0,3)",org.
+ apache.commons.lang3;version="[3.2,4)",org.apache.commons.lang3.tuple;v
+ ersion="[3.2,4)",org.reflections.scanners;version="[0.9,1)",org.reflect
+ ions.util;version="[0.9,1)",org.slf4j;version="[1.7,2)"
 mode: development
 Originally-Created-By: Apache Maven Bundle Plugin
 package: io.swagger

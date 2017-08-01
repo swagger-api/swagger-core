@@ -1,5 +1,7 @@
 package io.swagger.oas.integration;
 
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.oas.integration.api.OpenApiConfigurationLoader;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.slf4j.Logger;
@@ -9,13 +11,13 @@ public interface StringOpenApiConfigurationLoader extends OpenApiConfigurationLo
 
     Logger LOGGER = LoggerFactory.getLogger(StringOpenApiConfigurationLoader.class);
 
-    default OpenApiConfiguration deserializeConfig(String path, String configAsString) {
+    default OpenAPIConfiguration deserializeConfig(String path, String configAsString) {
 
         try {
             if (path.toLowerCase().endsWith("json")) {
-                return Json.mapper().readValue(configAsString, OpenApiConfiguration.class);
+                return Json.mapper().readValue(configAsString, OpenApiConfigurationImpl.class);
             } else { // assume yaml
-                return Yaml.mapper().readValue(configAsString, OpenApiConfiguration.class);
+                return Yaml.mapper().readValue(configAsString, OpenApiConfigurationImpl.class);
             }
 
         } catch (Exception e) {

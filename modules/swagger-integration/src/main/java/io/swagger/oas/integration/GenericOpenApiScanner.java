@@ -1,9 +1,7 @@
 package io.swagger.oas.integration;
 
-import io.swagger.oas.web.OpenAPIConfig;
-import io.swagger.oas.web.OpenApiScanner;
-import org.apache.commons.lang3.StringUtils;
-import org.reflections.Reflections;
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.oas.integration.api.OpenApiScanner;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -21,11 +19,11 @@ public class GenericOpenApiScanner implements OpenApiScanner {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GenericOpenApiScanner.class);
 
-    OpenApiConfiguration openApiConfiguration;
+    OpenAPIConfiguration openApiConfiguration;
 
     @Override
-    public void setConfiguration(OpenAPIConfig openApiConfiguration) {
-        this.openApiConfiguration = ContextUtils.cloneConfigFromInterface(openApiConfiguration);
+    public void setConfiguration(OpenAPIConfiguration openApiConfiguration) {
+        this.openApiConfiguration = openApiConfiguration;
     }
 
     @Override

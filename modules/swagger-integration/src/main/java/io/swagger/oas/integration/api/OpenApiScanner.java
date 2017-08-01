@@ -1,11 +1,11 @@
-package io.swagger.oas.web;
+package io.swagger.oas.integration.api;
 
 import java.util.Map;
 import java.util.Set;
 
 public interface OpenApiScanner {
 
-    void setConfiguration(OpenAPIConfig openApiConfiguration);
+    void setConfiguration(OpenAPIConfiguration openApiConfiguration);
 
     Set<Class<?>> classes();
 

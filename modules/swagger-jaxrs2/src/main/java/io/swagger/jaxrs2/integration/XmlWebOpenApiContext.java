@@ -1,6 +1,6 @@
 package io.swagger.jaxrs2.integration;
 
-import io.swagger.oas.integration.OpenApiConfigurationLoader;
+import io.swagger.oas.integration.api.OpenApiConfigurationLoader;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

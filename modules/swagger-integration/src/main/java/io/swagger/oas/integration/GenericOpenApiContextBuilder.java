@@ -1,5 +1,8 @@
 package io.swagger.oas.integration;
 
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.oas.integration.api.OpenApiContext;
+import io.swagger.oas.integration.api.OpenApiContextBuilder;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Set;
@@ -10,7 +13,7 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
 
     protected String configLocation;
     protected Set<String> resourcePackages;
-    protected OpenApiConfiguration openApiConfiguration;
+    protected OpenAPIConfiguration openApiConfiguration;
 
 
     @Override
@@ -64,11 +67,11 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
         this.resourcePackages = resourcePackages;
     }
 
-    public OpenApiConfiguration getOpenApiConfiguration() {
+    public OpenAPIConfiguration getOpenApiConfiguration() {
         return openApiConfiguration;
     }
 
-    public void setOpenApiConfiguration(OpenApiConfiguration openApiConfiguration) {
+    public void setOpenApiConfiguration(OpenAPIConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
     }
 
@@ -88,7 +91,7 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
         return (T) this;
     }
 
-    public T openApiConfiguration(OpenApiConfiguration openApiConfiguration) {
+    public T openApiConfiguration(OpenAPIConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
         return (T) this;
     }

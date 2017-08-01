@@ -1,9 +1,11 @@
 package io.swagger.oas.integration;
 
+import io.swagger.oas.integration.api.OpenApiConfigurationLoader;
+import io.swagger.oas.integration.api.OpenApiContext;
 import io.swagger.oas.models.OpenAPI;
-import io.swagger.oas.web.OpenAPIConfig;
-import io.swagger.oas.web.OpenApiReader;
-import io.swagger.oas.web.OpenApiScanner;
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.oas.integration.api.OpenApiReader;
+import io.swagger.oas.integration.api.OpenApiScanner;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
@@ -26,7 +28,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     protected String id = OPENAPI_CONTEXT_ID_DEFAULT;
     protected OpenApiContext parent;
     protected String configLocation;
-    private OpenApiConfiguration openApiConfiguration;
+    private OpenAPIConfiguration openApiConfiguration;
 
     private OpenApiReader openApiReader;
     private OpenApiScanner openApiScanner;
@@ -104,7 +106,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return (T) this;
     }
 
-    public T openApiConfiguration(OpenApiConfiguration openApiConfiguration) {
+    public T openApiConfiguration(OpenAPIConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
         return (T) this;
     }
@@ -155,15 +157,15 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     }
 
     @Override
-    public OpenApiConfiguration getOpenApiConfiguration() {
+    public OpenAPIConfiguration getOpenApiConfiguration() {
         return openApiConfiguration;
     }
 
-    public void setOpenApiConfiguration(OpenApiConfiguration openApiConfiguration) {
+    public void setOpenApiConfiguration(OpenAPIConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
     }
 
-    protected OpenApiReader buildReader(final OpenApiConfiguration openApiConfiguration) throws Exception {
+    protected OpenApiReader buildReader(final OpenAPIConfiguration openApiConfiguration) throws Exception {
         OpenApiReader reader;
         if (StringUtils.isNotBlank(openApiConfiguration.getReaderClass())) {
             Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getReaderClass());
@@ -171,9 +173,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         } else {
             reader = new OpenApiReader() {
 
-                OpenAPIConfig openApiConfiguration;
+                OpenAPIConfiguration openApiConfiguration;
                 @Override
-                public void setConfiguration(OpenAPIConfig openApiConfiguration) {
+                public void setConfiguration(OpenAPIConfiguration openApiConfiguration) {
                     this.openApiConfiguration = openApiConfiguration;
                 }
 
@@ -188,7 +190,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return reader;
     }
 
-    protected OpenApiScanner buildScanner(final OpenApiConfiguration openApiConfiguration) throws Exception {
+    protected OpenApiScanner buildScanner(final OpenAPIConfiguration openApiConfiguration) throws Exception {
         OpenApiScanner scanner;
         if (StringUtils.isNotBlank(openApiConfiguration.getScannerClass())) {
             Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getScannerClass());
@@ -219,7 +221,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return map;
     }
 
-    protected OpenApiConfiguration loadConfiguration() throws OpenApiConfigurationException{
+    protected OpenAPIConfiguration loadConfiguration() throws OpenApiConfigurationException{
 
         Map<String, OpenApiConfigurationLoader> loaders = getLocationLoaders();
         try {
@@ -257,11 +259,11 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         }
 
         if (openApiConfiguration == null) {
-            openApiConfiguration = new OpenApiConfiguration().resourcePackages(resourcePackages);
-            openApiConfiguration.setId(id);
+            openApiConfiguration = new OpenApiConfigurationImpl().resourcePackages(resourcePackages);
+            ((OpenApiConfigurationImpl)openApiConfiguration).setId(id);
         }
 
-        mergeParentConfiguration(openApiConfiguration, parent);
+        openApiConfiguration = mergeParentConfiguration(openApiConfiguration, parent);
 
         try {
             if (openApiReader == null) {
@@ -283,42 +285,54 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return (T) this;
     }
 
-    private void mergeParentConfiguration (OpenApiConfiguration config, OpenApiContext parent) {
+    private OpenAPIConfiguration mergeParentConfiguration (OpenAPIConfiguration config, OpenApiContext parent) {
         if (parent == null || parent.getOpenApiConfiguration() == null) {
-            return;
+            return config;
         }
-        OpenApiConfiguration parentConfig = parent.getOpenApiConfiguration();
-        if (config.getResourceClasses() == null) {
-            config.setResourceClasses(parentConfig.getResourceClasses());
-        }
-        if (config.getFilterClass() == null) {
-            config.setFilterClass(parentConfig.getFilterClass());
-        }
-        if (config.getIgnoredRoutes() == null) {
-            config.setIgnoredRoutes(parentConfig.getIgnoredRoutes());
-        }
-        if (config.getOpenAPI() == null) {
-            config.setOpenApi(parentConfig.getOpenAPI());
-        }
-        if (config.getReaderClass() == null) {
-            config.setReaderClass(parentConfig.getReaderClass());
-        }
-        if (config.getResourcePackages() == null) {
-            config.setResourcePackages(parentConfig.getResourcePackages());
-        }
-        if (config.getScannerClass() == null) {
-            config.setScannerClass(parentConfig.getScannerClass());
-        }
-        if (config.getUserDefinedOptions() == null) {
-            config.setUserDefinedOptions(parentConfig.getUserDefinedOptions());
-        }
-        if (config.isPrettyPrint() == null) {
-            config.setPrettyPrint(parentConfig.isPrettyPrint());
-        }
-        if (config.isScanAllResources() == null) {
-            config.setScanAllResources(parentConfig.isScanAllResources());
+        OpenAPIConfiguration parentConfig = parent.getOpenApiConfiguration();
+
+        OpenApiConfigurationImpl merged = null;
+
+        if (config instanceof OpenApiConfigurationImpl) {
+            merged = (OpenApiConfigurationImpl)config;
+        } else {
+            merged = (OpenApiConfigurationImpl)ContextUtils.deepCopy(config);
         }
 
+        if (merged.getResourceClasses() == null) {
+            merged.setResourceClasses(parentConfig.getResourceClasses());
+        }
+        if (merged.getFilterClass() == null) {
+            merged.setFilterClass(parentConfig.getFilterClass());
+        }
+        if (merged.getIgnoredRoutes() == null) {
+            merged.setIgnoredRoutes(parentConfig.getIgnoredRoutes());
+        }
+        if (merged.getOpenAPI() == null) {
+            merged.setOpenApi(parentConfig.getOpenAPI());
+        }
+        if (merged.getReaderClass() == null) {
+            merged.setReaderClass(parentConfig.getReaderClass());
+        }
+        if (merged.getResourcePackages() == null) {
+            merged.setResourcePackages(parentConfig.getResourcePackages());
+        }
+        if (merged.getScannerClass() == null) {
+            merged.setScannerClass(parentConfig.getScannerClass());
+        }
+        if (merged.getCacheTTL() == null) {
+            merged.setCacheTTL(parentConfig.getCacheTTL());
+        }
+        if (merged.getUserDefinedOptions() == null) {
+            merged.setUserDefinedOptions(parentConfig.getUserDefinedOptions());
+        }
+        if (merged.isPrettyPrint() == null) {
+            merged.setPrettyPrint(parentConfig.isPrettyPrint());
+        }
+        if (merged.isScanAllResources() == null) {
+            merged.setScanAllResources(parentConfig.isScanAllResources());
+        }
+        return merged;
     }
 
     @Override

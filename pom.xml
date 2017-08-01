@@ -346,7 +346,6 @@
         <module>modules/swagger-annotations</module>
         <module>modules/swagger-models</module>
         <module>modules/swagger-core</module>
-        <module>modules/swagger-web</module>
         <module>modules/swagger-integration</module>
         <module>modules/swagger-jaxrs2</module>
         <!-- <module>modules/swagger-hibernate-validations</module> -->

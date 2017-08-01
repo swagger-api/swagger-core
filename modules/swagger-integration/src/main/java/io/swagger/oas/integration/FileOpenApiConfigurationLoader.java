@@ -1,5 +1,7 @@
 package io.swagger.oas.integration;
 
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,7 +9,7 @@ import java.io.IOException;
 public class FileOpenApiConfigurationLoader implements StringOpenApiConfigurationLoader {
 
     @Override
-    public OpenApiConfiguration load(String path)  throws IOException {
+    public OpenAPIConfiguration load(String path)  throws IOException {
         File file = new File(path);
         return deserializeConfig(path, readInputStreamToString(new FileInputStream(file)));
     }

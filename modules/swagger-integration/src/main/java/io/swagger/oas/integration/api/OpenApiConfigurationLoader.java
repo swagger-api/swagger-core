@@ -1,4 +1,4 @@
-package io.swagger.oas.integration;
+package io.swagger.oas.integration.api;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 
 public interface OpenApiConfigurationLoader {
 
-    OpenApiConfiguration load(String path) throws IOException;
+    OpenAPIConfiguration load(String path) throws IOException;
 
     boolean exists(String path);
 

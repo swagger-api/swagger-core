@@ -1,8 +1,8 @@
 package io.swagger.jaxrs2.integration;
 
 import io.swagger.oas.integration.ContextUtils;
-import io.swagger.oas.integration.OpenApiConfiguration;
-import io.swagger.oas.web.OpenAPIConfig;
+import io.swagger.oas.integration.OpenApiConfigurationImpl;
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> implements JaxrsOpenApiScanner {
 
-    protected OpenApiConfiguration openApiConfiguration;
+    protected OpenAPIConfiguration openApiConfiguration;
     protected Application application;
     protected static Logger LOGGER = LoggerFactory.getLogger(JaxrsAnnotationScanner.class);
 
@@ -36,21 +36,21 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
 
 
 
-    public T openApiConfiguration (OpenApiConfiguration openApiConfiguration) {
+    public T openApiConfiguration (OpenAPIConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
         return (T)this;
     }
 
     @Override
-    public void setConfiguration(OpenAPIConfig openApiConfiguration) {
-        this.openApiConfiguration = ContextUtils.cloneConfigFromInterface(openApiConfiguration);
+    public void setConfiguration(OpenAPIConfiguration openApiConfiguration) {
+        this.openApiConfiguration = openApiConfiguration;
     }
 
     @Override
     public Set<Class<?>> classes() {
 
         if (openApiConfiguration == null) {
-            openApiConfiguration = new OpenApiConfiguration();
+            openApiConfiguration = new OpenApiConfigurationImpl();
         }
 
         ConfigurationBuilder config = new ConfigurationBuilder();

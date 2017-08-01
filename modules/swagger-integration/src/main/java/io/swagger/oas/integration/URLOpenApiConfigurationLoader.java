@@ -1,12 +1,15 @@
 package io.swagger.oas.integration;
 
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.oas.integration.api.OpenApiConfigurationLoader;
+
 import java.io.IOException;
 
 // TODO
 public class URLOpenApiConfigurationLoader implements OpenApiConfigurationLoader {
 
     @Override
-    public OpenApiConfiguration load(String path)  throws IOException {
+    public OpenAPIConfiguration load(String path)  throws IOException {
         return null;
     }
 

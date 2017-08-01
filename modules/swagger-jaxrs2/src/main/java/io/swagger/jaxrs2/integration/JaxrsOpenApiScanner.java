@@ -1,6 +1,6 @@
 package io.swagger.jaxrs2.integration;
 
-import io.swagger.oas.web.OpenApiScanner;
+import io.swagger.oas.integration.api.OpenApiScanner;
 
 import javax.ws.rs.core.Application;
 import java.util.Map;

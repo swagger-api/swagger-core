@@ -1,7 +1,7 @@
 package io.swagger.oas.integration;
 
 import io.swagger.oas.models.OpenAPI;
-import io.swagger.oas.web.OpenAPIConfig;
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class OpenApiConfiguration implements OpenAPIConfig {
+public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
 
     Map<String, Object> userDefinedOptions = new ConcurrentHashMap<>();
     private OpenAPI openApi = new OpenAPI();
@@ -35,7 +35,7 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.cacheTTL = cacheTTL;
     }
 
-    public OpenApiConfiguration cacheTTL(Long cacheTTL) {
+    public OpenApiConfigurationImpl cacheTTL(Long cacheTTL) {
         this.cacheTTL = cacheTTL;
         return this;
     }
@@ -48,7 +48,7 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.scanAllResources = scanAllResources;
     }
 
-    public OpenApiConfiguration scanAllResources(Boolean scanAllResources) {
+    public OpenApiConfigurationImpl scanAllResources(Boolean scanAllResources) {
         this.scanAllResources = scanAllResources;
         return this;
     }
@@ -62,7 +62,7 @@ public class OpenApiConfiguration implements OpenAPIConfig {
                 : Collections.unmodifiableCollection(new HashSet<String>(ignoredRoutes));
     }
 
-    public OpenApiConfiguration ignoredRoutes(Collection<String> ignoredRoutes) {
+    public OpenApiConfigurationImpl ignoredRoutes(Collection<String> ignoredRoutes) {
         this.ignoredRoutes = ignoredRoutes == null || ignoredRoutes.isEmpty() ? Collections.<String>emptySet()
                 : Collections.unmodifiableCollection(new HashSet<String>(ignoredRoutes));
         return this;
@@ -76,7 +76,7 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.prettyPrint = prettyPrint;
     }
 
-    public OpenApiConfiguration prettyPrint(Boolean prettyPrint) {
+    public OpenApiConfigurationImpl prettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
         return this;
     }
@@ -90,7 +90,7 @@ public class OpenApiConfiguration implements OpenAPIConfig {
     public void setOpenApi (OpenAPI openApi) {
         this.openApi = openApi;
     }
-    public OpenApiConfiguration openApi (OpenAPI openApi) {
+    public OpenApiConfigurationImpl openApi (OpenAPI openApi) {
         this.openApi = openApi;
         return this;
     }
@@ -119,17 +119,17 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.userDefinedOptions = userDefinedOptions;
     }
 
-    public OpenApiConfiguration scannerClass(String scannerClass) {
+    public OpenApiConfigurationImpl scannerClass(String scannerClass) {
         this.scannerClass = scannerClass;
         return this;
     }
 
-    public OpenApiConfiguration readerClass(String readerClass) {
+    public OpenApiConfigurationImpl readerClass(String readerClass) {
         this.readerClass = readerClass;
         return this;
     }
 
-    public OpenApiConfiguration userDefinedOptions(Map<String, Object> userDefinedOptions) {
+    public OpenApiConfigurationImpl userDefinedOptions(Map<String, Object> userDefinedOptions) {
         this.userDefinedOptions = userDefinedOptions;
         return this;
     }
@@ -143,7 +143,7 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.resourcePackages = resourcePackages;
     }
 
-    public OpenApiConfiguration resourcePackages(Set<String> resourcePackages) {
+    public OpenApiConfigurationImpl resourcePackages(Set<String> resourcePackages) {
         this.resourcePackages = resourcePackages;
         return this;
     }
@@ -156,7 +156,7 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.resourceClasses = resourceClasses;
     }
 
-    public OpenApiConfiguration resourceClasses(Set<String> resourceClasses) {
+    public OpenApiConfigurationImpl resourceClasses(Set<String> resourceClasses) {
         this.resourceClasses = resourceClasses;
         return this;
     }
@@ -170,12 +170,12 @@ public class OpenApiConfiguration implements OpenAPIConfig {
         this.filterClass = filterClass;
     }
 
-    public OpenApiConfiguration filterClass(String filterClass) {
+    public OpenApiConfigurationImpl filterClass(String filterClass) {
         this.filterClass = filterClass;
         return this;
     }
 
-    public OpenApiConfiguration id(String id) {
+    public OpenApiConfigurationImpl id(String id) {
         this.id = id;
         return this;
     }

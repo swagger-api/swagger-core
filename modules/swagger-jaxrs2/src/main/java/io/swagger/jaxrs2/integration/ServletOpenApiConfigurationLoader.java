@@ -2,9 +2,10 @@ package io.swagger.jaxrs2.integration;
 
 import io.swagger.oas.integration.ClasspathOpenApiConfigurationLoader;
 import io.swagger.oas.integration.FileOpenApiConfigurationLoader;
-import io.swagger.oas.integration.OpenApiConfiguration;
-import io.swagger.oas.integration.OpenApiConfigurationLoader;
-import io.swagger.oas.web.OpenAPIConfigBuilder;
+import io.swagger.oas.integration.OpenApiConfigurationImpl;
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.oas.integration.api.OpenApiConfigurationLoader;
+import io.swagger.oas.integration.api.OpenAPIConfigBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +40,12 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
     }
 
     @Override
-    public OpenApiConfiguration load(String path)  throws IOException {
+    public OpenAPIConfiguration load(String path)  throws IOException {
         if (servletConfig == null) {
             return null;
         }
         if (StringUtils.isBlank(path)) { // we want to resolve from servlet params
-            OpenApiConfiguration configuration = new OpenApiConfiguration()
+            OpenApiConfigurationImpl configuration = new OpenApiConfigurationImpl()
                     .resourcePackages(resolveResourcePackages(servletConfig))
                     .filterClass(getInitParam(servletConfig, OPENAPI_CONFIGURATION_FILTER_KEY))
                     .resourceClasses(resolveResourceClasses(servletConfig))
@@ -73,7 +74,7 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
                 Class cls = getClass().getClassLoader().loadClass(builderClassName);
                 // TODO instantiate with configuration
                 OpenAPIConfigBuilder builder = (OpenAPIConfigBuilder) cls.newInstance();
-                return (OpenApiConfiguration) builder.build();
+                return builder.build();
             } catch (Exception e) {
                 LOGGER.error("error loading builder: " + e.getMessage(), e);
             }
