@@ -85,7 +85,6 @@ public class OperationParser {
             parameterObject.setRequired(parameter.required());
             isEmpty = false;
         }
-        parameterObject.setStyle(StringUtils.isNoneBlank(parameter.style()) ? Parameter.StyleEnum.valueOf(parameter.style().toUpperCase()) : null);
         if (parameter.allowEmptyValue()) {
             parameterObject.setAllowEmptyValue(parameter.allowEmptyValue());
             isEmpty = false;
