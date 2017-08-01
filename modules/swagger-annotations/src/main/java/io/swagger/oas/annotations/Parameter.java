@@ -16,6 +16,7 @@
 
 package io.swagger.oas.annotations;
 
+import io.swagger.oas.annotations.enums.Explode;
 import io.swagger.oas.annotations.media.ArraySchema;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
@@ -79,7 +80,7 @@ public @interface Parameter {
   /**
    * 
    **/
-  boolean explode() default false;
+  Explode explode() default Explode.DEFAULT;
 
   /**
    * 
