@@ -90,13 +90,6 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-            <!--<plugin>-->
-            <!--<groupId>org.apache.maven.plugins</groupId>-->
-            <!--<artifactId>maven-javadoc-plugin</artifactId>-->
-            <!--<configuration>-->
-            <!--<additionalparam>-Xdoclint:none</additionalparam>-->
-            <!--</configuration>-->
-            <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -195,80 +188,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.1</version>
             </plugin>
-
-            <!--plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>**/io/swagger/config/FilterFactory.*</exclude>
-                        <exclude>**/io/swagger/model/ApiInfo.*</exclude>
-                        <exclude>**/io/swagger/util/Yaml.*</exclude>
-                        <exclude>**/io/swagger/jackson/*</exclude>
-                        <exclude>**/io/swagger/converter/ModelConverters.*</exclude>
-
-                        <exclude>**/io/swagger/jaxrs/json/JacksonJsonProvider.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/listing/ApiListingResource.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/listing/SwaggerSerializers.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/config/WebXMLReader.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/config/DefaultJaxrsScanner.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/config/DefaultJaxrsConfig.*</exclude>
-
-                        <exclude>**/io/swagger/servlet/config/WebXMLReader.*</exclude>
-                        <exclude>**/io/swagger/servlet/config/ServletScanner.*</exclude>
-                        <exclude>**/io/swagger/servlet/config/DefaultServletConfig.*</exclude>
-                        <exclude>**/io/swagger/servlet/listing/ApiDeclarationServlet.*</exclude>
-                    </excludes>
-                    <rules>
-                        <rule>
-                            <element>BUNDLE</element>
-                            <limits>
-                                <limit>
-                                    <counter>COMPLEXITY</counter>
-                                    <value>COVEREDRATIO</value>
-                                    <minimum>${coverage.complexity.minimum}</minimum>
-                                </limit>
-                                <limit>
-                                    <counter>CLASS</counter>
-                                    <value>MISSEDCOUNT</value>
-                                    <maximum>${coverage.missed.classes}</maximum>
-                                </limit>
-                            </limits>
-                        </rule>
-                        <rule>
-                            <element>CLASS</element>
-                            <limits>
-                                <limit>
-                                    <counter>LINE</counter>
-                                    <value>COVEREDRATIO</value>
-                                    <minimum>${coverage.line.minimum}</minimum>
-                                </limit>
-                            </limits>
-                        </rule>
-                    </rules>
-                </configuration>
-            </plugin-->
+            <!-- TODO tests coverage -->
         </plugins>
         <pluginManagement>
             <plugins>
@@ -348,8 +268,6 @@
         <module>modules/swagger-core</module>
         <module>modules/swagger-integration</module>
         <module>modules/swagger-jaxrs2</module>
-        <!-- <module>modules/swagger-hibernate-validations</module> -->
-        <!-- <module>modules/swagger-servlet</module> -->
     </modules>
     <reporting>
         <outputDirectory>target/site</outputDirectory>
@@ -362,8 +280,8 @@
                     <aggregate>true</aggregate>
                     <debug>true</debug>
                     <links>
-                        <link>http://java.sun.com/javaee/5/docs/api</link>
-                        <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+                        <link>http://java.sun.com/javaee/7/docs/api</link>
+                        <link>https://docs.oracle.com/javase/8/docs/api</link>
                     </links>
                     <excludePackageNames/>
                 </configuration>
@@ -510,7 +428,6 @@
         <commons-lang-version>3.2.1</commons-lang-version>
         <slf4j-version>1.7.22</slf4j-version>
         <jetty-version>9.2.14.v20151106</jetty-version>
-        <servlet-api-version>2.5</servlet-api-version>
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
