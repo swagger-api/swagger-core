@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
+public class SwaggerConfiguration implements OpenAPIConfiguration {
 
     Map<String, Object> userDefinedOptions;
     private OpenAPI openAPI;
@@ -32,7 +32,7 @@ public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
         this.cacheTTL = cacheTTL;
     }
 
-    public OpenApiConfigurationImpl cacheTTL(Long cacheTTL) {
+    public SwaggerConfiguration cacheTTL(Long cacheTTL) {
         this.cacheTTL = cacheTTL;
         return this;
     }
@@ -45,7 +45,7 @@ public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
         this.scanAllResources = scanAllResources;
     }
 
-    public OpenApiConfigurationImpl scanAllResources(Boolean scanAllResources) {
+    public SwaggerConfiguration scanAllResources(Boolean scanAllResources) {
         this.scanAllResources = scanAllResources;
         return this;
     }
@@ -58,7 +58,7 @@ public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
         this.ignoredRoutes = ignoredRoutes;
     }
 
-    public OpenApiConfigurationImpl ignoredRoutes(Collection<String> ignoredRoutes) {
+    public SwaggerConfiguration ignoredRoutes(Collection<String> ignoredRoutes) {
         this.ignoredRoutes = ignoredRoutes;
         return this;
     }
@@ -71,7 +71,7 @@ public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
         this.prettyPrint = prettyPrint;
     }
 
-    public OpenApiConfigurationImpl prettyPrint(Boolean prettyPrint) {
+    public SwaggerConfiguration prettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
         return this;
     }
@@ -85,7 +85,7 @@ public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
     public void setOpenAPI (OpenAPI openAPI) {
         this.openAPI = openAPI;
     }
-    public OpenApiConfigurationImpl openAPI(OpenAPI openAPI) {
+    public SwaggerConfiguration openAPI(OpenAPI openAPI) {
         this.openAPI = openAPI;
         return this;
     }
@@ -114,17 +114,17 @@ public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
         this.userDefinedOptions = userDefinedOptions;
     }
 
-    public OpenApiConfigurationImpl scannerClass(String scannerClass) {
+    public SwaggerConfiguration scannerClass(String scannerClass) {
         this.scannerClass = scannerClass;
         return this;
     }
 
-    public OpenApiConfigurationImpl readerClass(String readerClass) {
+    public SwaggerConfiguration readerClass(String readerClass) {
         this.readerClass = readerClass;
         return this;
     }
 
-    public OpenApiConfigurationImpl userDefinedOptions(Map<String, Object> userDefinedOptions) {
+    public SwaggerConfiguration userDefinedOptions(Map<String, Object> userDefinedOptions) {
         this.userDefinedOptions = userDefinedOptions;
         return this;
     }
@@ -138,7 +138,7 @@ public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
         this.resourcePackages = resourcePackages;
     }
 
-    public OpenApiConfigurationImpl resourcePackages(Set<String> resourcePackages) {
+    public SwaggerConfiguration resourcePackages(Set<String> resourcePackages) {
         this.resourcePackages = resourcePackages;
         return this;
     }
@@ -151,7 +151,7 @@ public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
         this.resourceClasses = resourceClasses;
     }
 
-    public OpenApiConfigurationImpl resourceClasses(Set<String> resourceClasses) {
+    public SwaggerConfiguration resourceClasses(Set<String> resourceClasses) {
         this.resourceClasses = resourceClasses;
         return this;
     }
@@ -165,12 +165,12 @@ public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
         this.filterClass = filterClass;
     }
 
-    public OpenApiConfigurationImpl filterClass(String filterClass) {
+    public SwaggerConfiguration filterClass(String filterClass) {
         this.filterClass = filterClass;
         return this;
     }
 
-    public OpenApiConfigurationImpl id(String id) {
+    public SwaggerConfiguration id(String id) {
         this.id = id;
         return this;
     }

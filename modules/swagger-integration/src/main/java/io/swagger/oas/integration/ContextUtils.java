@@ -14,7 +14,7 @@ public class ContextUtils {
             return null;
         }
         try {
-            return Json.mapper().readValue(Json.pretty(config), OpenApiConfigurationImpl.class);
+            return Json.mapper().readValue(Json.pretty(config), SwaggerConfiguration.class);
         } catch (Exception e) {
             LOGGER.error("Exception cloning config: " + e.getMessage(), e);
             return config;

@@ -259,8 +259,8 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         }
 
         if (openApiConfiguration == null) {
-            openApiConfiguration = new OpenApiConfigurationImpl().resourcePackages(resourcePackages);
-            ((OpenApiConfigurationImpl)openApiConfiguration).setId(id);
+            openApiConfiguration = new SwaggerConfiguration().resourcePackages(resourcePackages);
+            ((SwaggerConfiguration)openApiConfiguration).setId(id);
         }
 
         openApiConfiguration = mergeParentConfiguration(openApiConfiguration, parent);
@@ -291,12 +291,12 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         }
         OpenAPIConfiguration parentConfig = parent.getOpenApiConfiguration();
 
-        OpenApiConfigurationImpl merged = null;
+        SwaggerConfiguration merged = null;
 
-        if (config instanceof OpenApiConfigurationImpl) {
-            merged = (OpenApiConfigurationImpl)config;
+        if (config instanceof SwaggerConfiguration) {
+            merged = (SwaggerConfiguration)config;
         } else {
-            merged = (OpenApiConfigurationImpl)ContextUtils.deepCopy(config);
+            merged = (SwaggerConfiguration)ContextUtils.deepCopy(config);
         }
 
         if (merged.getResourceClasses() == null) {

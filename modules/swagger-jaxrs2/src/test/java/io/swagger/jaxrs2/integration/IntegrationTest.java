@@ -2,7 +2,7 @@ package io.swagger.jaxrs2.integration;
 
 import io.swagger.jaxrs2.Reader;
 import io.swagger.oas.integration.GenericOpenApiContext;
-import io.swagger.oas.integration.OpenApiConfigurationImpl;
+import io.swagger.oas.integration.SwaggerConfiguration;
 import io.swagger.oas.integration.api.OpenApiContext;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.info.Info;
@@ -23,7 +23,7 @@ public class IntegrationTest {
 
     @Test(description = "scan a simple resource")
     public void shouldScanWithNewInitialization() throws Exception{
-        OpenApiConfigurationImpl config = new OpenApiConfigurationImpl()
+        SwaggerConfiguration config = new SwaggerConfiguration()
                 .resourcePackages(Stream.of("com.my.project.resources", "org.my.project.resources").collect(Collectors.toSet()))
                 .openAPI(new OpenAPI().info(new Info().description("TEST INFO DESC")));
         OpenApiContext ctx = new GenericOpenApiContext()

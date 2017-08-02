@@ -15,9 +15,9 @@ public interface StringOpenApiConfigurationLoader extends OpenApiConfigurationLo
 
         try {
             if (path.toLowerCase().endsWith("json")) {
-                return Json.mapper().readValue(configAsString, OpenApiConfigurationImpl.class);
+                return Json.mapper().readValue(configAsString, SwaggerConfiguration.class);
             } else { // assume yaml
-                return Yaml.mapper().readValue(configAsString, OpenApiConfigurationImpl.class);
+                return Yaml.mapper().readValue(configAsString, SwaggerConfiguration.class);
             }
 
         } catch (Exception e) {

@@ -22,7 +22,7 @@ public class IntegrationTest {
     @Test(description = "initialize a context and read")
     public void shouldInitialize() throws Exception{
 
-        OpenAPIConfiguration config = new OpenApiConfigurationImpl()
+        OpenAPIConfiguration config = new SwaggerConfiguration()
                 .resourcePackages(Stream.of("com.my.project.resources", "org.my.project.resources").collect(Collectors.toSet()))
                 .openAPI(new OpenAPI().info(new Info().description("TEST INFO DESC")));
 

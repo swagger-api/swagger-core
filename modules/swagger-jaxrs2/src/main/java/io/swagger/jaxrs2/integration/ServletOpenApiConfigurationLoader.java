@@ -2,7 +2,7 @@ package io.swagger.jaxrs2.integration;
 
 import io.swagger.oas.integration.ClasspathOpenApiConfigurationLoader;
 import io.swagger.oas.integration.FileOpenApiConfigurationLoader;
-import io.swagger.oas.integration.OpenApiConfigurationImpl;
+import io.swagger.oas.integration.SwaggerConfiguration;
 import io.swagger.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.oas.integration.api.OpenApiConfigurationLoader;
 import io.swagger.oas.integration.api.OpenAPIConfigBuilder;
@@ -45,7 +45,7 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
             return null;
         }
         if (StringUtils.isBlank(path)) { // we want to resolve from servlet params
-            OpenApiConfigurationImpl configuration = new OpenApiConfigurationImpl()
+            SwaggerConfiguration configuration = new SwaggerConfiguration()
                     .resourcePackages(resolveResourcePackages(servletConfig))
                     .filterClass(getInitParam(servletConfig, OPENAPI_CONFIGURATION_FILTER_KEY))
                     .resourceClasses(resolveResourceClasses(servletConfig))

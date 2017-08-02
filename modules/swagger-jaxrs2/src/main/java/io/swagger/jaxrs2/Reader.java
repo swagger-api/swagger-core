@@ -9,7 +9,7 @@ import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.jaxrs2.util.ReaderUtils;
 import io.swagger.oas.integration.ContextUtils;
-import io.swagger.oas.integration.OpenApiConfigurationImpl;
+import io.swagger.oas.integration.SwaggerConfiguration;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
@@ -83,7 +83,7 @@ public class Reader implements OpenApiReader {
     }
     public Reader(OpenAPI openAPI) {
         this();
-        setConfiguration(new OpenApiConfigurationImpl().openAPI(openAPI));
+        setConfiguration(new SwaggerConfiguration().openAPI(openAPI));
     }
 
     public Reader(OpenAPIConfiguration openApiConfiguration) {

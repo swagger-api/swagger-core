@@ -1,7 +1,6 @@
 package io.swagger.jaxrs2.integration;
 
-import io.swagger.oas.integration.ContextUtils;
-import io.swagger.oas.integration.OpenApiConfigurationImpl;
+import io.swagger.oas.integration.SwaggerConfiguration;
 import io.swagger.oas.integration.api.OpenAPIConfiguration;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -50,7 +49,7 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
     public Set<Class<?>> classes() {
 
         if (openApiConfiguration == null) {
-            openApiConfiguration = new OpenApiConfigurationImpl();
+            openApiConfiguration = new SwaggerConfiguration();
         }
 
         ConfigurationBuilder config = new ConfigurationBuilder();
