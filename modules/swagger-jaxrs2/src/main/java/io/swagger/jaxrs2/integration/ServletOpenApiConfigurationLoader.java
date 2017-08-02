@@ -17,7 +17,7 @@ import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CO
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_FILTER_KEY;
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_PRETTYPRINT_KEY;
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_READER_KEY;
-import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SCANALLRESOURCES_KEY;
+import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_READALLRESOURCES_KEY;
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SCANNER_KEY;
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_BUILDER_KEY;
 import static io.swagger.jaxrs2.integration.ServletConfigContextUtils.getBooleanInitParam;
@@ -49,7 +49,7 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
                     .resourcePackages(resolveResourcePackages(servletConfig))
                     .filterClass(getInitParam(servletConfig, OPENAPI_CONFIGURATION_FILTER_KEY))
                     .resourceClasses(resolveResourceClasses(servletConfig))
-                    .scanAllResources(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_SCANALLRESOURCES_KEY))
+                    .readAllResources(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_READALLRESOURCES_KEY))
                     .prettyPrint(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_PRETTYPRINT_KEY))
                     .readerClass(getInitParam(servletConfig, OPENAPI_CONFIGURATION_READER_KEY))
                     .cacheTTL(getLongInitParam(servletConfig, OPENAPI_CONFIGURATION_CACHE_TTL_KEY))

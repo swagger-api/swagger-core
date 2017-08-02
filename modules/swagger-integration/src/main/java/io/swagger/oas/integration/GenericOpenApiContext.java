@@ -329,8 +329,8 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         if (merged.isPrettyPrint() == null) {
             merged.setPrettyPrint(parentConfig.isPrettyPrint());
         }
-        if (merged.isScanAllResources() == null) {
-            merged.setScanAllResources(parentConfig.isScanAllResources());
+        if (merged.isReadAllResources() == null) {
+            merged.setReadAllResources(parentConfig.isReadAllResources());
         }
         return merged;
     }

@@ -20,7 +20,7 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
     private String scannerClass;
 
     private Boolean prettyPrint;
-    private Boolean scanAllResources;
+    private Boolean readAllResources;
     private Collection<String> ignoredRoutes;
     private Long cacheTTL = -1L;
 
@@ -37,16 +37,16 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
         return this;
     }
 
-    public Boolean isScanAllResources() {
-        return scanAllResources;
+    public Boolean isReadAllResources() {
+        return readAllResources;
     }
 
-    public void setScanAllResources(Boolean scanAllResources) {
-        this.scanAllResources = scanAllResources;
+    public void setReadAllResources(Boolean readAllResources) {
+        this.readAllResources = readAllResources;
     }
 
-    public SwaggerConfiguration scanAllResources(Boolean scanAllResources) {
-        this.scanAllResources = scanAllResources;
+    public SwaggerConfiguration readAllResources(Boolean readAllResources) {
+        this.readAllResources = readAllResources;
         return this;
     }
 

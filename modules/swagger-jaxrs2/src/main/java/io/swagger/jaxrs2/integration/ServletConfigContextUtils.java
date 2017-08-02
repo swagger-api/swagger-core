@@ -19,7 +19,7 @@ public class ServletConfigContextUtils {
     public static final String OPENAPI_CONFIGURATION_SCANNER_KEY = "openApi.configuration.scannerClass";
     public static final String OPENAPI_CONFIGURATION_BUILDER_KEY = "openApi.configuration.builderClass";
     public static final String OPENAPI_CONFIGURATION_PRETTYPRINT_KEY = "openApi.configuration.prettyPrint";
-    public static final String OPENAPI_CONFIGURATION_SCANALLRESOURCES_KEY = "openApi.configuration.scanAllResources";
+    public static final String OPENAPI_CONFIGURATION_READALLRESOURCES_KEY = "openApi.configuration.readAllResources";
     public static final String OPENAPI_CONFIGURATION_RESOURCECLASSES_KEY = "openApi.configuration.resourceClasses";
     public static final String OPENAPI_CONFIGURATION_FILTER_KEY = "openApi.configuration.filterClass";
     public static final String OPENAPI_CONFIGURATION_CACHE_TTL_KEY = "openApi.configuration.filterClass";

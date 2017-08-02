@@ -23,7 +23,7 @@ public interface OpenAPIConfiguration {
 
     Map<String, Object> getUserDefinedOptions();
 
-    Boolean isScanAllResources();
+    Boolean isReadAllResources();
 
     Boolean isPrettyPrint();
 
