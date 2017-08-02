@@ -4,16 +4,13 @@ import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.integration.api.OpenAPIConfiguration;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
 
-    Map<String, Object> userDefinedOptions = new ConcurrentHashMap<>();
-    private OpenAPI openApi = new OpenAPI();
+    Map<String, Object> userDefinedOptions;
+    private OpenAPI openAPI;
 
     private String id;
     private Set<String> resourcePackages;
@@ -24,7 +21,7 @@ public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
 
     private Boolean prettyPrint;
     private Boolean scanAllResources;
-    private Collection<String> ignoredRoutes = Collections.emptySet();
+    private Collection<String> ignoredRoutes;
     private Long cacheTTL = -1L;
 
     public Long getCacheTTL() {
@@ -58,13 +55,11 @@ public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
     }
 
     public void setIgnoredRoutes(Collection<String> ignoredRoutes) {
-        this.ignoredRoutes = ignoredRoutes == null || ignoredRoutes.isEmpty() ? Collections.<String>emptySet()
-                : Collections.unmodifiableCollection(new HashSet<String>(ignoredRoutes));
+        this.ignoredRoutes = ignoredRoutes;
     }
 
     public OpenApiConfigurationImpl ignoredRoutes(Collection<String> ignoredRoutes) {
-        this.ignoredRoutes = ignoredRoutes == null || ignoredRoutes.isEmpty() ? Collections.<String>emptySet()
-                : Collections.unmodifiableCollection(new HashSet<String>(ignoredRoutes));
+        this.ignoredRoutes = ignoredRoutes;
         return this;
     }
 
@@ -83,15 +78,15 @@ public class OpenApiConfigurationImpl implements OpenAPIConfiguration {
 
     @Override
     public OpenAPI getOpenAPI() {
-        return openApi;
+        return openAPI;
     }
 
 
-    public void setOpenApi (OpenAPI openApi) {
-        this.openApi = openApi;
+    public void setOpenAPI (OpenAPI openAPI) {
+        this.openAPI = openAPI;
     }
-    public OpenApiConfigurationImpl openApi (OpenAPI openApi) {
-        this.openApi = openApi;
+    public OpenApiConfigurationImpl openAPI(OpenAPI openAPI) {
+        this.openAPI = openAPI;
         return this;
     }
 

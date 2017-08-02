@@ -309,7 +309,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             merged.setIgnoredRoutes(parentConfig.getIgnoredRoutes());
         }
         if (merged.getOpenAPI() == null) {
-            merged.setOpenApi(parentConfig.getOpenAPI());
+            merged.setOpenAPI(parentConfig.getOpenAPI());
         }
         if (merged.getReaderClass() == null) {
             merged.setReaderClass(parentConfig.getReaderClass());

@@ -83,13 +83,12 @@ public class Reader implements OpenApiReader {
     }
     public Reader(OpenAPI openAPI) {
         this();
-        setConfiguration(new OpenApiConfigurationImpl().openApi(openAPI));
+        setConfiguration(new OpenApiConfigurationImpl().openAPI(openAPI));
     }
 
     public Reader(OpenAPIConfiguration openApiConfiguration) {
         this();
         setConfiguration(openApiConfiguration);
-        this.openAPI = config.getOpenAPI();
     }
 
     public OpenAPI getOpenAPI() {
@@ -136,7 +135,12 @@ public class Reader implements OpenApiReader {
 
     @Override
     public void setConfiguration(OpenAPIConfiguration openApiConfiguration) {
-        this.config = ContextUtils.deepCopy(openApiConfiguration);
+        if (openApiConfiguration != null) {
+            this.config = ContextUtils.deepCopy(openApiConfiguration);
+            if (openApiConfiguration.getOpenAPI() != null) {
+                this.openAPI = this.config.getOpenAPI();
+            }
+        }
     }
 
     public OpenAPI read(Set<Class<?>> classes, Map<String, Object> resources) {

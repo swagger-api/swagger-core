@@ -25,7 +25,7 @@ public class IntegrationTest {
     public void shouldScanWithNewInitialization() throws Exception{
         OpenApiConfigurationImpl config = new OpenApiConfigurationImpl()
                 .resourcePackages(Stream.of("com.my.project.resources", "org.my.project.resources").collect(Collectors.toSet()))
-                .openApi(new OpenAPI().info(new Info().description("TEST INFO DESC")));
+                .openAPI(new OpenAPI().info(new Info().description("TEST INFO DESC")));
         OpenApiContext ctx = new GenericOpenApiContext()
                 .openApiConfiguration(config)
                 .openApiReader(new Reader(config))

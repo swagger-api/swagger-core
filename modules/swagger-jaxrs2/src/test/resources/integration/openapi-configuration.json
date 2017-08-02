@@ -3,7 +3,7 @@
         "com.my.project.resources",
         "org.my.project.resources"
     ],
-    "openApi": {
+    "openAPI": {
         "info": {
             "version": "1.0",
             "title": "Swagger Pet Sample App",

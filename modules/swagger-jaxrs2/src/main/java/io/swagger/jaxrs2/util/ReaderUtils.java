@@ -158,6 +158,9 @@ public class ReaderUtils {
     }
 
     public static boolean isIgnored(String path, OpenAPIConfiguration config) {
+        if (config.getIgnoredRoutes() == null) {
+            return false;
+        }
         for (String item : config.getIgnoredRoutes()) {
             final int length = item.length();
             if (path.startsWith(item) && (path.length() == length || path.startsWith(PATH_DELIMITER, length))) {
