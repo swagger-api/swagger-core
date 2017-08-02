@@ -37,4 +37,9 @@ public abstract class AbstractSpecFilter implements OpenAPISpecFilter {
         return Optional.of(schema);
     }
 
+    @Override
+    public boolean isRemovingUnreferencedDefinitions() {
+        return true;
+    }
+
 }

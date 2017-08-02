@@ -48,4 +48,6 @@ public interface OpenAPISpecFilter {
             Map<String, List<String>> params,
             Map<String, String> cookies,
             Map<String, List<String>> headers);
+
+    boolean isRemovingUnreferencedDefinitions();
 }
