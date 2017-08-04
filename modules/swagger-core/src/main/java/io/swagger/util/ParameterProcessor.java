@@ -87,7 +87,12 @@ public class ParameterProcessor {
                     if (schema != null) {
                         parameter.setSchema(schema);
                     }
-                } 
+                } else if (hasArrayAnnotation(p.array())) {
+                 Schema arraySchema = processArraySchema(p.array());
+                 if (arraySchema != null) {
+                     parameter.setSchema(arraySchema);
+                 }
+                }
             } else if (annotation.annotationType().getName().equals("javax.ws.rs.PathParam")) {
                 try {
                     String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
@@ -142,7 +147,28 @@ public class ParameterProcessor {
         }
         return parameter;
     }
-
+    
+    private static boolean hasArrayAnnotation(io.swagger.oas.annotations.media.ArraySchema array) {
+         if (array.uniqueItems() == false
+                 && array.maxItems() == Integer.MIN_VALUE
+                 && array.minItems() == Integer.MAX_VALUE
+                 && !hasSchemaAnnotation(array.schema())
+                 ) {
+             return false;
+         }
+         return true;
+     }
+      
+    private static Schema processArraySchema(io.swagger.oas.annotations.media.ArraySchema array) {
+         ArraySchema output = new ArraySchema();
+ 
+        Schema schema = processSchema(array.schema());
+ 
+         output.setItems(schema);
+ 
+         return output;
+     }    
+    
     public static void setParameterExplode(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
         if (isExplodable(p)) {
             if (Explode.TRUE.equals(p.explode())) {
@@ -336,13 +362,6 @@ public class ParameterProcessor {
                 output.maxProperties(schema.maxProperties());
             }
         }
-        
-        //If it's an array type we need to wrap the model Schema with a model ArraySchema
-         if ("array".equals(schema.type())) {
-        	 Schema inner = output;
-        	 output = new ArraySchema();
-        	 ((ArraySchema)output).setItems(inner);
-         }
          
         return output;
     }

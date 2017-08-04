@@ -410,8 +410,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 annotations = annotationList.toArray(new Annotation[annotationList.size()]);
 
-                io.swagger.oas.annotations.media.Schema mp = member.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+                io.swagger.oas.annotations.media.Schema mp = null;
                 
+                io.swagger.oas.annotations.media.ArraySchema as = null;
+                as = member.getAnnotation(io.swagger.oas.annotations.media.ArraySchema.class);
+                if (as != null) {
+                    mp = as.schema();
+                } else {
+                    mp = member.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+                }                
 
                 if(mp != null) {
                     if (mp.readOnly()) {
@@ -448,7 +455,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                     LOGGER.debug("overriding datatype from {} to {}", propType, cls.getName());
 
-                    if ("array".equals(mp.type())) {
+                    if (as != null) {
                         ArraySchema propertySchema = new ArraySchema();
                         Schema innerSchema = null;
 

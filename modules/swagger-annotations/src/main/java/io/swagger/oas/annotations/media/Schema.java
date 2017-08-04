@@ -125,24 +125,6 @@ public @interface Schema {
   String pattern() default "";
 
   /**
-   * Sets the maximum number of items in an array.  Ignored if value is Integer.MIN_VALUE.  Used only if type is array.
-   * @return the maximum number of items in this schema
-   **/
-  int maxItems() default Integer.MIN_VALUE;
-
-  /**
-   * Sets the minimum number of items in an array.  Ignored if value is Integer.MAX_VALUE.  Used only if type is array.
-   * @return the minimum number of items in this schema
-   **/
-  int minItems() default Integer.MAX_VALUE;
-
-  /**
-   * Determines whether an array of items will be unique.  Used only if type is array.
-   * @return whether or not the items in this schema must be unique
-   **/
-  boolean uniqueItems() default false;
-
-  /**
    * Constrains the number of arbitrary properties when additionalProperties is defined.  Ignored if value is 0.
    * @return the maximum number of properties for this schema
    **/

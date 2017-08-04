@@ -23,6 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import io.swagger.oas.annotations.enums.Explode;
+import io.swagger.oas.annotations.media.ArraySchema;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
 
@@ -93,12 +94,19 @@ public @interface Parameter {
    * @return the schema of the parameter
    **/
   Schema schema() default @Schema();
+  
+  /**
+   * The schema of the array that defines this parameter.
+   * 
+   * @return the schema of the array
+   */
+  ArraySchema array() default @ArraySchema();
 
   /**
    * The representation of this parameter, for different media types.
    * @return the content of the parameter
    **/
-  Content[] content() default @Content();
+  Content[] content() default {};
 
   /**
    * Allows this parameter to be marked as hidden
