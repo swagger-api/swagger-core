@@ -14,7 +14,7 @@ import javax.ws.rs.QueryParam;
 
 import static org.testng.Assert.assertEquals;
 
-public class MergedOperationTests extends AbstractAnnotationTest {
+public class MergedOperationTest extends AbstractAnnotationTest {
     @Test(enabled = false, description = "shows a response when no annotation is present")
     public void testUnannotatedMethod() {
         String yaml = readIntoYaml(UnannotatedMethodClass.class);

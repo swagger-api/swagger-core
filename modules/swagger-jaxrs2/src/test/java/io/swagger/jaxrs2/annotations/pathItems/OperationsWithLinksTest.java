@@ -15,8 +15,8 @@ import javax.ws.rs.QueryParam;
 
 import static org.testng.Assert.assertEquals;
 
-public class OperationsWithLinks extends AbstractAnnotationTest {
-    @Test(description = "Shows creating simple links")
+public class OperationsWithLinksTest extends AbstractAnnotationTest {
+    @Test(enabled = false, description = "Shows creating simple links")
     public void createOperationWithLinks() {
         String openApiYAML = readIntoYaml(ClassWithOperationAndLinks.class);
         int start = openApiYAML.indexOf("/addresses:");
