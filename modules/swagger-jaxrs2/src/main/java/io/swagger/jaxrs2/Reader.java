@@ -469,6 +469,7 @@ public class Reader implements OpenApiReader {
             LOGGER.debug("no parameter found, looking at body params");
             final List<Parameter> body = new ArrayList<>();
             if (!typesToSkip.contains(type)) {
+                // TODO #2312 body - passing null means returned always NULL
                 Parameter param = ParameterProcessor.applyAnnotations(openAPI, null, type, annotations);
                 if (param != null) {
                     body.add(param);

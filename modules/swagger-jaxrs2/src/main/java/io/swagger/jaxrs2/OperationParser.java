@@ -362,8 +362,6 @@ public class OperationParser {
         MediaType mediaType = new MediaType();
         Class<?> schemaImplementation = annotationContent.schema().implementation();
         Map<String, Schema> schemaMap;
-        // TODO #2312 not handling primitive and string types correctly, as it creates
-        // anyway a ref schema
         if (schemaImplementation != Void.class) {
             Schema schemaObject = new Schema();
             if (schemaImplementation.getName().startsWith("java.lang")) {

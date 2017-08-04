@@ -286,7 +286,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (resolvedModel != null) {
             return resolvedModel;
         }
-        // TODO #2312 - needs clone implemented in #2227
         // uses raw class, as it does not consider super class while handling schema annotation for composed model props
         List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass());
         boolean isComposedSchema = composedSchemaReferencedClasses != null;
@@ -471,44 +470,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     else {
                         property = context.resolve(cls, annotations);
                     }
-                    /*else if (or.toLowerCase().startsWith("map[")) {
-                        // TODO #2312
-//                        int pos = or.indexOf(",");
-//                        if (pos > 0) {
-//                            String innerType = or.substring(pos + 1, or.length() - 1);
-//                            MapProperty p = new MapProperty();
-//                            Property primitiveProperty = PrimitiveType.createProperty(innerType);
-//                            if (primitiveProperty != null) {
-//                                p.setAdditionalProperties(primitiveProperty);
-//                            } else {
-//                                innerJavaType = getInnerType(innerType);
-//                                p.setAdditionalProperties(context.resolveProperty(innerJavaType, annotations));
-//                            }
-//                            property = p;
-//                        }
-                    } else {
-                        Schema primitiveProperty = PrimitiveType.createProperty(or);
-                        if (primitiveProperty != null) {
-                            property = primitiveProperty;
-                        } else {
-                            innerJavaType = getInnerType(or);
-                            property = context.resolve(innerJavaType, annotations);
-                        }
-                    }
-                    if (innerJavaType != null) {
-                        context.resolve(innerJavaType);
-                    }*/
+                    // TODO #2312 possibly consider also type or remove from annotation and use only "implementation"
                 }
 
                 // no property from override, construct from propType
                 if (property == null) {
                     if (mp != null && StringUtils.isNotEmpty(mp.ref())) {
                         property = new Schema().$ref(mp.ref());
+/*
                     } else if (member.getAnnotation(JsonIdentityInfo.class) != null) {
                         // TODO #2312
-//                        property = GeneratorWrapper.processJsonIdentity(propType, context, _mapper,
-//                                member.getAnnotation(JsonIdentityInfo.class),
-//                                member.getAnnotation(JsonIdentityReference.class));
+                        property = GeneratorWrapper.processJsonIdentity(propType, context, _mapper,
+                                member.getAnnotation(JsonIdentityInfo.class),
+                                member.getAnnotation(JsonIdentityReference.class));
+*/
                     }
                     if (property == null) {
                         JsonUnwrapped uw = member.getAnnotation(JsonUnwrapped.class);
@@ -862,12 +837,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         private static Schema process(Schema id, String propertyName, JavaType type,
                 ModelConverterContext context) {
-//            id.setTitle(propertyName);
             Schema model = context.resolve(type);
-                Schema mi = (Schema) model;
+                Schema mi = model;
                 mi.getProperties().put(propertyName, id);
                 return new Schema().$ref(StringUtils.isNotEmpty(mi.get$ref())
-                        ? mi.get$ref() : mi.getTitle());
+                        ? mi.get$ref() : mi.getName());
         }
     }
 

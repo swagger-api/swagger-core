@@ -9,6 +9,7 @@ public class ContextUtils {
 
     private static Logger LOGGER = LoggerFactory.getLogger(ContextUtils.class);
 
+    // TODO implement proper clone see #2227
     public static OpenAPIConfiguration deepCopy (OpenAPIConfiguration config) {
         if (config == null) {
             return null;

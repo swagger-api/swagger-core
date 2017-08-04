@@ -12,6 +12,7 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.util.Json;
 import io.swagger.util.ParameterProcessor;
 
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
@@ -30,16 +31,6 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
     private static String COOKIE_PARAM = "cookie";
     private static String PATH_PARAM = "path";
     private static String FORM_PARAM = "form";
-    // make jaxrs 2.0 classes optional
-    private static Class<?> CLASS_BEAN_PARAM;
-
-    static {
-        try {
-            CLASS_BEAN_PARAM = Class.forName("javax.ws.rs.BeanParam", true, DefaultParameterExtension.class.getClassLoader());
-        } catch (Throwable t) {
-            //ignore and assume no jsr399-api on classpath
-        }
-    }
 
     final ObjectMapper mapper = Json.mapper();
 
@@ -108,7 +99,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
 
     private void handleAdditionalAnnotation(List<Parameter> parameters, Annotation annotation,
                                             final Type type, Set<Type> typesToSkip) {
-        if (CLASS_BEAN_PARAM != null && CLASS_BEAN_PARAM.isAssignableFrom(annotation.getClass())) {
+        if (BeanParam.class.isAssignableFrom(annotation.getClass())) {
             // Use Jackson's logic for processing Beans
             final BeanDescription beanDesc = mapper.getSerializationConfig().introspect(constructType(type));
             final List<BeanPropertyDefinition> properties = beanDesc.findProperties();
