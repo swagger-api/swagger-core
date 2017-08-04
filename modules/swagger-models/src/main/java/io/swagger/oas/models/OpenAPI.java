@@ -35,7 +35,7 @@ import java.util.Objects;
 
 
 public class OpenAPI {
-  private String openapi = "3.0.0-rc2";
+  private String openapi = "3.0.0";
   private Info info = null;
   private ExternalDocumentation externalDocs = null;
   private List<Server> servers = null;
