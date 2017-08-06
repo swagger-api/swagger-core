@@ -121,6 +121,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
     static class MethodWithPartialAnnotation {
         @GET
         @Operation(description = "returns a value")
+        @Path("/get")
         public SimpleResponse getSimpleResponseWithParameters(
                 @Schema(
                         description = "a GUID for the user in uuid-v4 format",
@@ -134,28 +135,29 @@ public class MergedOperationTest extends AbstractAnnotationTest {
         }
     }
 
-    @Test(enabled = false, description = "shows how a request body is passed")
+    @Test(description = "shows how a request body is passed")
     public void testRequestBody() {
         String yaml = readIntoYaml(MethodWithRequestBody.class);
+        String expectedYaml = "openapi: 3.0.0\n" +
+                "paths:\n" +
+                "  /add:\n" +
+                "    post:\n" +
+                "      description: receives a body\n" +
+                "      operationId: addValue\n" +
+                "      parameters:\n" +
+                "      - name: input\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          $ref: '#/components/schemas/InputValue'\n" +
+                "      responses:\n" +
+                "        201:\n" +
+                "          description: value successfully processed\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    InputValue:\n" +
+                "      type: object\n";
 
-        assertEquals(yaml,
-                "post:\n" +
-                        "  operationId: addValue\n" +
-                        "  description: receives a body\n" +
-                        "  parameters:\n" +
-                        "    - in: body\n" +
-                        "      name: input\n" +
-                        "      schema:\n" +
-                        "        type: object\n" +
-                        "        properties:\n" +
-                        "          id:\n" +
-                        "            type: integer\n" +
-                        "            format: int64\n" +
-                        "          name:\n" +
-                        "            type: string\n" +
-                        "  responses:\n" +
-                        "    201:\n" +
-                        "      description: value successfully processed");
+        assertEquals(yaml, expectedYaml);
     }
 
     static class MethodWithRequestBody {
@@ -166,7 +168,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
                         description = "value successfully processed")
         )
         @Path("/add")
-        public void addValue(InputValue input) {
+        public void addValue(@QueryParam("input") InputValue input) {
         }
     }
 

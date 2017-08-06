@@ -16,7 +16,7 @@ import javax.ws.rs.QueryParam;
 import static org.testng.Assert.assertEquals;
 
 public class OperationsWithLinksTest extends AbstractAnnotationTest {
-    @Test(enabled = false, description = "Shows creating simple links")
+    @Test(description = "Shows creating simple links")
     public void createOperationWithLinks() {
         String openApiYAML = readIntoYaml(ClassWithOperationAndLinks.class);
         int start = openApiYAML.indexOf("/addresses:");
@@ -106,26 +106,34 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
         private String zip;
     }
 
-    @Test(enabled = false, description = "Shows creating simple links")
+    @Test(description = "Shows creating simple links")
     public void createOperationWithLinkReferences() {
-        String yaml = readIntoYaml(ClassWithOperationAndLinkReferences.class);
+        String openApiYAML = readIntoYaml(ClassWithOperationAndLinks.class);
+        int start = openApiYAML.indexOf("/users:");
+        int end = openApiYAML.length() - 1;
 
-        assertEquals(yaml,
-                "/users:\n" +
-                        "  get:\n" +
-                        "    operationId: getUser\n" +
-                        "    parameters:\n" +
-                        "    - in: query\n" +
-                        "      name: userId\n" +
-                        "      schema:\n" +
-                        "        type: string\n" +
-                        "    responses:\n" +
-                        "      default:\n" +
-                        "        description: no description\n" +
-                        "        schema:\n" +
-                        "          $ref: '#/components/schemas/User'\n" +
-                        "        links:\n" +
-                        "          $ref: '#/components/links/MyLink'");
+        String expectedYaml = "/users:\n" +
+                "    get:\n" +
+                "      operationId: getUser\n" +
+                "      parameters:\n" +
+                "      - name: userId\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: no description\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/User'\n" +
+                "          links:\n" +
+                "            address:\n" +
+                "              operationId: getAddress\n" +
+                "              parameters:\n" +
+                "                userId: $request.query.userId";
+        String extractedYAML = openApiYAML.substring(start, end);
+        assertEquals(extractedYAML, expectedYaml);
     }
 
     static class ClassWithOperationAndLinkReferences {
@@ -143,6 +151,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                                                         expression = "$request.query.userId"))
                                 })}
         )
+        @GET
         public User getUser(@QueryParam("userId") String userId) {
             return null;
         }

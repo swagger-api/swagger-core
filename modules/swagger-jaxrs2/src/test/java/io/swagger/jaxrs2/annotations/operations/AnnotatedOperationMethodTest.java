@@ -210,7 +210,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         }
     }
 
-    @Test(enabled = false, description = "reads the pet resource from sample")
+    @Test(description = "reads the pet resource from sample")
     public void testCompletePetResource() {
         String openApiYAML = readIntoYaml(PetResource.class);
         int start = 0;
@@ -342,6 +342,15 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          type: string\n" +
                 "      xml:\n" +
                 "        name: Category\n" +
+                "    QueryResultBean:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        skip:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        limit:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
                 "    Tag:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -386,7 +395,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         assertEquals(extractedYAML, expectedYAML);
     }
 
-    @Test(enabled = false, description = "reads the user resource from sample")
+    @Test(description = "reads the user resource from sample")
     public void testCompleteUserResource() {
         String openApiYAML = readIntoYaml(UserResource.class);
         int start = 0;
@@ -571,7 +580,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         assertEquals(extractedYAML, expectedYAML);
     }
 
-    @Test(enabled = false, description = "reads the simple user resource from sample")
+    @Test(description = "reads the simple user resource from sample")
     public void testSimpleUserResource() {
         String openApiYAML = readIntoYaml(SimpleUserResource.class);
         int start = 0;

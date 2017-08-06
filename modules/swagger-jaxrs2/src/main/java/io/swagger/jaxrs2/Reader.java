@@ -5,11 +5,15 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import io.swagger.converter.ModelConverter;
+import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.jaxrs2.util.ReaderUtils;
 import io.swagger.oas.integration.ContextUtils;
 import io.swagger.oas.integration.SwaggerConfiguration;
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.oas.integration.api.OpenApiReader;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
@@ -23,8 +27,6 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.integration.api.OpenApiReader;
 import io.swagger.util.Json;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
@@ -81,6 +83,7 @@ public class Reader implements OpenApiReader {
         components = new Components();
 
     }
+
     public Reader(OpenAPI openAPI) {
         this();
         setConfiguration(new SwaggerConfiguration().openAPI(openAPI));
@@ -289,10 +292,8 @@ public class Reader implements OpenApiReader {
             openAPI.setComponents(components);
         }
 
-
-
         if (!openApiTags.isEmpty()) {
-            Set<Tag> tagsSet  = new LinkedHashSet<>();
+            Set<Tag> tagsSet = new LinkedHashSet<>();
             tagsSet.addAll(openApiTags);
             if (openAPI.getTags() != null) {
                 tagsSet.addAll(openAPI.getTags());
@@ -462,6 +463,8 @@ public class Reader implements OpenApiReader {
             for (Parameter parameter : parameters) {
                 if (ParameterProcessor.applyAnnotations(openAPI, parameter, type, annotations) != null) {
                     processed.add(parameter);
+                    Map<String, Schema> schemaMap = ModelConverters.getInstance().readAll(type);
+                    schemaMap.forEach((key, schema) -> components.addSchemas(key, schema));
                 }
             }
             return processed;

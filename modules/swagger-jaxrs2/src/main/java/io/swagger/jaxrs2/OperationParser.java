@@ -157,7 +157,6 @@ public class OperationParser {
             schemaObject.setPattern(schema.pattern());
             isEmpty = false;
         }
-
         if (schema.readOnly()) {
             schemaObject.setReadOnly(schema.readOnly());
             isEmpty = false;

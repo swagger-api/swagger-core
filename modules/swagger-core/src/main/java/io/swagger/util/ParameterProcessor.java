@@ -331,6 +331,13 @@ public class ParameterProcessor {
             if (StringUtils.isNotBlank(schema._default())) {
                 output.setDefault(schema._default());
             }
+
+            if (StringUtils.isNotBlank(schema.pattern())) {
+                output.setPattern(schema.pattern());
+            }
+            if (StringUtils.isNotBlank(schema.format())) {
+                output.setFormat(schema.format());
+            }
             if (StringUtils.isNotBlank(schema.description())) {
                 output.setDescription(schema.description());
             }
@@ -487,7 +494,6 @@ public class ParameterProcessor {
                     || double.class.isAssignableFrom(clazz);
         }
 
-
         /**
          */
         public boolean isContext() {
@@ -559,6 +565,5 @@ public class ParameterProcessor {
             return collectionFormat;
         }
     }
-
 
 }
