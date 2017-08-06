@@ -15,23 +15,11 @@ import javax.ws.rs.QueryParam;
 import static org.testng.Assert.assertEquals;
 
 public class MergedOperationTest extends AbstractAnnotationTest {
-    @Test(enabled = false, description = "shows a response when no annotation is present")
+    @Test(description = "shows a response when no annotation is present")
     public void testUnannotatedMethod() {
         String yaml = readIntoYaml(UnannotatedMethodClass.class);
-
-        assertEquals(yaml,
-                "get:\n" +
-                        "  operationId: getSimpleResponse\n" +
-                        "  parameters: []\n" +
-                        "  responses:\n" +
-                        "    default:\n" +
-                        "      content:\n" +
-                        "        */*:\n" +
-                        "          schema:\n" +
-                        "            type: object\n" +
-                        "            properties:\n" +
-                        "              id:\n" +
-                        "                type: string\n");
+        String expectedYaml = "openapi: 3.0.0\n";
+        assertEquals(yaml, expectedYaml);
     }
 
     static class UnannotatedMethodClass {
@@ -45,38 +33,37 @@ public class MergedOperationTest extends AbstractAnnotationTest {
         private String id;
     }
 
-    @Test(enabled = false, description = "shows how a method with parameters and no special annotations is processed")
+    @Test(description = "shows how a method with parameters and no special annotations is processed")
     public void testAnnotatedParameters() {
         String yaml = readIntoYaml(MethodWithParameters.class);
 
         assertEquals(yaml,
-                "get:\n" +
-                        "  operationId: getSimpleResponseWithParameters\n" +
-                        "  parameters:\n" +
-                        "    - in: query\n" +
-                        "      name: id\n" +
-                        "      schema:\n" +
-                        "        type: string\n" +
-                        "    - in: header\n" +
-                        "      name: x-authorized-by\n" +
-                        "      style: simple\n" +
-                        "      schema:\n" +
-                        "        type: array\n" +
-                        "        items:\n" +
+                "openapi: 3.0.0\n" +
+                        "paths:\n" +
+                        "  /findAll:\n" +
+                        "    get:\n" +
+                        "      description: method with parameters\n" +
+                        "      operationId: getSimpleResponseWithParameters\n" +
+                        "      parameters:\n" +
+                        "      - name: id\n" +
+                        "        in: query\n" +
+                        "        schema:\n" +
                         "          type: string\n" +
-                        "  responses:\n" +
-                        "    default:\n" +
-                        "      content:\n" +
-                        "        */*:\n" +
-                        "          schema:\n" +
-                        "            type: object\n" +
-                        "            properties:\n" +
-                        "              id:\n" +
-                        "                type: string");
+                        "      - name: x-authorized-by\n" +
+                        "        in: header\n" +
+                        "        schema:\n" +
+                        "          type: array\n" +
+                        "          items:\n" +
+                        "            type: string\n" +
+                        "      responses:\n" +
+                        "        default:\n" +
+                        "          description: no description\n");
     }
 
     static class MethodWithParameters {
         @GET
+        @Operation(description = "method with parameters")
+        @Path("/findAll")
         public SimpleResponse getSimpleResponseWithParameters(
                 @QueryParam("id") String id,
                 @HeaderParam("x-authorized-by") String[] auth) {
@@ -84,44 +71,40 @@ public class MergedOperationTest extends AbstractAnnotationTest {
         }
     }
 
-    @Test(enabled = false, description = "shows how annotations can decorate an operation")
+    @Test(description = "shows how annotations can decorate an operation")
     public void testPartiallyAnnotatedMethod() {
         String yaml = readIntoYaml(MethodWithPartialAnnotation.class);
+        String expectedYaml = "openapi: 3.0.0\n" +
+                "paths:\n" +
+                "  /findAll:\n" +
+                "    get:\n" +
+                "      description: returns a value\n" +
+                "      operationId: getSimpleResponseWithParameters\n" +
+                "      parameters:\n" +
+                "      - name: id\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'\n" +
+                "          type: string\n" +
+                "          description: a GUID for the user in uuid-v4 format\n" +
+                "          format: uuid\n" +
+                "      - name: x-authorized-by\n" +
+                "        in: header\n" +
+                "        schema:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: no description\n";
 
-        assertEquals(yaml,
-                "get:\n" +
-                        "  operationId: getSimpleResponseWithParameters\n" +
-                        "  parameters:\n" +
-                        "    - in: query\n" +
-                        "      name: id\n" +
-                        "      description: a GUID for th user in uuid-v4 format\n" +
-                        "      required: true\n" +
-                        "      schema:\n" +
-                        "        type: string\n" +
-                        "        format: uuid\n" +
-                        "        pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'\n" +
-                        "    - in: header\n" +
-                        "      name: x-authorized-by\n" +
-                        "      style: simple\n" +
-                        "      schema:\n" +
-                        "        type: array\n" +
-                        "        items:\n" +
-                        "          type: string\n" +
-                        "  responses:\n" +
-                        "    default:\n" +
-                        "      content:\n" +
-                        "        */*:\n" +
-                        "          schema:\n" +
-                        "            type: object\n" +
-                        "            properties:\n" +
-                        "              id:\n" +
-                        "                type: string");
+        assertEquals(yaml, expectedYaml);
     }
 
     static class MethodWithPartialAnnotation {
         @GET
         @Operation(description = "returns a value")
-        @Path("/get")
+        @Path("/findAll")
         public SimpleResponse getSimpleResponseWithParameters(
                 @Schema(
                         description = "a GUID for the user in uuid-v4 format",

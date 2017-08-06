@@ -213,6 +213,12 @@ public class ParameterProcessor {
         if (from == null) {
             return to;
         }
+        if (to.getPattern() == null) {
+            to.setPattern(from.getPattern());
+        }
+        if (to.getFormat() == null) {
+            to.setFormat(from.getFormat());
+        }
         if (to.getDescription() == null) {
             to.setDescription(from.getDescription());
         }
