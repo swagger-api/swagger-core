@@ -21,6 +21,8 @@ public class BeanValidatorTest {
         final Schema model = schemas.get("BeanValidationsModel");
         final Map<String, Schema> properties = model.getProperties();
 
+        Assert.assertTrue(model.getRequired().contains("id"));
+
         final IntegerSchema age = (IntegerSchema) properties.get("age");
         Assert.assertEquals(age.getMinimum(), new BigDecimal(13.0));
         Assert.assertEquals(age.getMaximum(), new BigDecimal(99.0));

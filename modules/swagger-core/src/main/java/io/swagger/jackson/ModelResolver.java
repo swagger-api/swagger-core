@@ -549,7 +549,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             }
                         }
                         JAXBAnnotationsHelper.apply(member, property);
-                        applyBeanValidatorAnnotations(property, annotations);
+                        applyBeanValidatorAnnotations(property, annotations, model);
                     }
                 }
 
@@ -845,21 +845,19 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    protected void applyBeanValidatorAnnotations(Schema property, Annotation[] annotations) {
+    protected void applyBeanValidatorAnnotations(Schema property, Annotation[] annotations, Schema parent) {
         Map<String, Annotation> annos = new HashMap<String, Annotation>();
         if (annotations != null) {
             for (Annotation anno : annotations) {
                 annos.put(anno.annotationType().getName(), anno);
             }
         }
-        // TODO #2312
         if (annos.containsKey("javax.validation.constraints.NotNull")) {
-//            property.setRequired(true);
+            parent.addRequiredItem(property.getName());
         }
         if (annos.containsKey("javax.validation.constraints.Min")) {
             if ("integer".equals(property.getType()) || "number". equals(property.getType())) {
                 Min min = (Min) annos.get("javax.validation.constraints.Min");
-//                AbstractNumericProperty ap = (AbstractNumericProperty) property;
                 property.setMinimum(new BigDecimal(min.value()));
             }
         }

@@ -51,26 +51,4 @@ public class JsonSerializationTest {
         assertEquals(rebuilt.getPaths().get("/health").getGet().getResponses().get("200"), expectedResponse);
 
     }
-
-    // TODO #2312
-/*
-    @Test
-    public void testSerializeSecurityRequirement_UsingSpecCompliantMethods() throws Exception {
-        SecurityRequirement securityRequirement = new SecurityRequirement().requirement("oauth2", Arrays.asList("hello", "world"));
-
-        String json = Json.mapper().writeValueAsString(securityRequirement);
-        assertEquals(json, "{\"oauth2\":[\"hello\",\"world\"]}");
-
-        securityRequirement = new SecurityRequirement().requirement("api_key");
-
-        json = Json.mapper().writeValueAsString(securityRequirement);
-        assertEquals(json, "{\"api_key\":[]}");
-
-        Swagger swagger = new Swagger()
-                .security(new SecurityRequirement().requirement("api_key").requirement("basic_auth"))
-                .security(new SecurityRequirement().requirement("oauth2", Arrays.asList("hello", "world")));
-        json = Json.mapper().writeValueAsString(swagger);
-        assertEquals(json, "{\"swagger\":\"2.0\",\"security\":[{\"api_key\":[],\"basic_auth\":[]},{\"oauth2\":[\"hello\",\"world\"]}]}");
-    }
-*/
 }

@@ -71,7 +71,8 @@ public class ReaderTest {
     private static final String CALLBACK_SUBSCRIPTION_ID = "subscription";
     private static final String CALLBACK_URL = "http://$request.query.url";
     private static final String SECURITY_KEY = "security_key";
-    private static final String SCOPE_VALUE = "write:petsread:pets";
+    private static final String SCOPE_VALUE1 = "write:pets";
+    private static final String SCOPE_VALUE2 = "read:pets";
     private static final String PATH_REF = "/";
     private static final String PATH_2_REF = "/path";
     private static final String SCHEMA_TYPE = "string";
@@ -83,7 +84,7 @@ public class ReaderTest {
     private static final int SECURITY_SCHEMAS = 2;
     private static final int PARAMETER_NUMBER = 2;
     private static final int SECURITY_REQUIREMENT_NUMBER = 1;
-    private static final int SCOPE_NUMBER = 1;
+    private static final int SCOPE_NUMBER = 2;
     private static final int PATHS_NUMBER = 1;
 
 
@@ -264,7 +265,8 @@ public class ReaderTest {
         List<String> scopes = securityRequirements.get(0).get(SECURITY_KEY);
         assertNotNull(scopes);
         assertEquals(SCOPE_NUMBER, scopes.size());
-        assertEquals(SCOPE_VALUE, scopes.get(0));
+        assertEquals(SCOPE_VALUE1, scopes.get(0));
+        assertEquals(SCOPE_VALUE2, scopes.get(1));
     }
 
 
