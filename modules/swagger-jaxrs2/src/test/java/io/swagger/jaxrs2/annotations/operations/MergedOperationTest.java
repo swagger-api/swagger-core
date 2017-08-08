@@ -127,11 +127,11 @@ public class MergedOperationTest extends AbstractAnnotationTest {
                 "    post:\n" +
                 "      description: receives a body\n" +
                 "      operationId: addValue\n" +
-                "      parameters:\n" +
-                "      - name: input\n" +
-                "        in: query\n" +
-                "        schema:\n" +
-                "          $ref: '#/components/schemas/InputValue'\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/InputValue'\n" +
                 "      responses:\n" +
                 "        201:\n" +
                 "          description: value successfully processed\n" +

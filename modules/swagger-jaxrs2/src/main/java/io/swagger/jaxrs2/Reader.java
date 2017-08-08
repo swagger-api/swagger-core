@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
@@ -231,7 +230,9 @@ public class Reader implements OpenApiReader {
                             final Type type = TypeFactory.defaultInstance().constructType(param.getParameterType(), cls);
                             List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
                             for (Parameter parameter : parameters) {
-                                if (StringUtils.isNotBlank(parameter.getIn())) {
+                                Schema parameterSchema = parameter.getSchema();
+                                // TODO this is the requestBody validation key - Is needed a refactor to extract some requestBodies
+                                if (StringUtils.isNotBlank(parameter.getIn()) && isSchemaPrimitive(parameterSchema)) {
                                     operationParameters.add(parameter);
                                 } else {
                                     boolean isRequestBodyEmpty = true;
@@ -266,6 +267,12 @@ public class Reader implements OpenApiReader {
                                         isRequestBodyEmpty = false;
                                     }
                                     if (!isRequestBodyEmpty) {
+                                        if (parameterSchema != null) {
+                                            Map<String, Schema> schemaMap = ModelConverters.getInstance().readAll(type);
+                                            schemaMap.forEach((key, schema) -> {
+                                                components.addSchemas(key, schema);
+                                            });
+                                        }
                                         operation.setRequestBody(requestBody);
                                     }
 
@@ -305,6 +312,17 @@ public class Reader implements OpenApiReader {
         OperationParser.getInfo(apiInfo).ifPresent(info -> openAPI.setInfo(info));
 
         return openAPI;
+    }
+
+    private boolean isSchemaPrimitive(Schema schema) {
+        if (schema == null) {
+            return false;
+        }
+        if ("string".equals(schema.getType()) || "array".equals(schema.getType()) || "integer".equals(schema.getType())) {
+            return true;
+        }
+
+        return false;
     }
 
     private void setMediaTypeToContent(Schema schema, Content content, String value) {

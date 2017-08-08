@@ -108,7 +108,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
 
     @Test(description = "Shows creating simple links")
     public void createOperationWithLinkReferences() {
-        String openApiYAML = readIntoYaml(ClassWithOperationAndLinks.class);
+        String openApiYAML = readIntoYaml(ClassWithOperationAndLinkReferences.class);
         int start = openApiYAML.indexOf("/users:");
         int end = openApiYAML.length() - 1;
 
@@ -123,13 +123,10 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: no description\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: '#/components/schemas/User'\n" +
                 "          links:\n" +
-                "            address:\n" +
-                "              operationId: getAddress\n" +
+                "            user:\n" +
+                "              operationRef: '#/components/links/MyLink'\n" +
+                "              operationId: getUser\n" +
                 "              parameters:\n" +
                 "                userId: $request.query.userId";
         String extractedYAML = openApiYAML.substring(start, end);
