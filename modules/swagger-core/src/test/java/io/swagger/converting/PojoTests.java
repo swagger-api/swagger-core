@@ -9,12 +9,10 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
-// TODO #2312
 public class PojoTests {
 
     private Map<String, io.swagger.oas.models.media.Schema> read(Type type) {
@@ -256,11 +254,11 @@ public class PojoTests {
                 "      type: string\n" +
                 "      description: 'A valid user social security'\n" +
                 "      pattern: '^\\d{3}-?\\d{2}-?\\d{4}$'";
-        SerializationMatchers.assertEqualsToYaml(read(classWithIdConstraints.class), yaml);
+        SerializationMatchers.assertEqualsToYaml(read(ClassWithIdConstraints.class), yaml);
     }
 
     @Schema(title = "AuthorizedUser")
-    static class classWithIdConstraints {
+    static class ClassWithIdConstraints {
         @Schema(pattern = "^\\d{3}-?\\d{2}-?\\d{4}$", description = "A valid user social security")
         private String id;
 
@@ -273,27 +271,29 @@ public class PojoTests {
         }
     }
 
-    // TODO #2312 implement math support in resolver; verify that _not_ is an array or `not`
-    @Test(enabled = false, description = "Shows how to restrict a particular schema")
+    @Test(description = "Shows how to restrict a particular schema")
     public void testExcludeSchema () {
 
-        String yaml = "ArbitraryDataReceiver:\n" +
-                "  type: object\n" +
-                "  additionalProperties: true\n" +
-                "  not:\n" +
-                "    - type: object\n" +
-                "      title: AuthorizedUser\n" +
-                "      properties:\n" +
-                "        id:\n" +
-                "          type: string\n" +
-                "          description: 'A valid user social security'\n" +
-                "          pattern: '^\\d{3}-?\\d{2}-?\\d{4}$'";
-        SerializationMatchers.assertEqualsToYaml(read(ArbitraryDataReceiver.class), yaml);
+        String yaml = "type: object\n" +
+                "description: We don't store social security numbers here!\n" +
+                "not:\n" +
+                "  $ref: \"#/components/schemas/AuthorizedUser\"";
+
+        String yamlUser = "type: object\n" +
+                "title: AuthorizedUser\n" +
+                "properties:\n" +
+                "  id:\n" +
+                "    type: string\n" +
+                "    description: 'A valid user social security'\n" +
+                "    pattern: '^\\d{3}-?\\d{2}-?\\d{4}$'";
+        Map<String, io.swagger.oas.models.media.Schema> map = readAll(ArbitraryDataReceiver.class);
+        SerializationMatchers.assertEqualsToYaml(map.get("ArbitraryDataReceiver"), yaml);
+        SerializationMatchers.assertEqualsToYaml(map.get("AuthorizedUser"), yamlUser);
 
     }
 
-    @Schema(not = classWithIdConstraints.class, description = "We don't store social security numbers here!")
-    static class ArbitraryDataReceiver extends HashMap<String, Object> {}
+    @Schema(not = ClassWithIdConstraints.class, description = "We don't store social security numbers here!")
+    static class ArbitraryDataReceiver {}
 
     @Test(description = "Shows how to override a definition with a schema reference")
     public void testSchemaReference () {
@@ -465,12 +465,16 @@ public class PojoTests {
                 this.id = id;
             }
     }
+    */
 
+    // TODO #2312 string arrays and maps impl and tests
+    /*
     @Test(enabled = false, description = "shows how to model a string array schema")
     public void testStringArraySchema() {
 
     }
     */
+
     @Schema(type = "string"/* container = "array" */)
     static class stringArraySchema {}
 
