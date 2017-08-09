@@ -632,7 +632,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
             Class<?> not = schemaAnnotation.not();
             if (!Void.class.equals(not)) {
-                model.not((new Schema().$ref(context.resolve(not.getClass()).getName())));
+                model.not((new Schema().$ref(context.resolve(not).getName())));
+            }
+            if (schemaAnnotation.requiredProperties() != null &&
+                    schemaAnnotation.requiredProperties().length > 0 &&
+                    StringUtils.isNotBlank(schemaAnnotation.requiredProperties()[0])) {
+                for (String prop: schemaAnnotation.requiredProperties()) {
+                    model.addRequiredItem(prop);
+                }
             }
         }
 
