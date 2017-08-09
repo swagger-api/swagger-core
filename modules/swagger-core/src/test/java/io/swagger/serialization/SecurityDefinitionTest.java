@@ -23,11 +23,19 @@ import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.servers.Server;
 import io.swagger.util.ResourceUtils;
+import io.swagger.util.TestUtils;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 
 public class SecurityDefinitionTest {
+
+    @Test(description = "it should serialize correctly security")
+    public void serializeSecurity() throws IOException {
+        final OpenAPI oas = TestUtils.deserializeJsonFileFromClasspath("specFiles/securityDefinitions.json", OpenAPI.class);
+        final String json = ResourceUtils.loadClassResource(getClass(), "specFiles/securityDefinitions.json");
+        SerializationMatchers.assertEqualsToJson(oas, json);
+    }
 
     @Test(description = "it should create a model with security requirements")
     public void createModelWithSecurityRequirements() throws IOException{

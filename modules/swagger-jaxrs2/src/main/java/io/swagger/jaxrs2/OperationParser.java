@@ -1,6 +1,5 @@
 package io.swagger.jaxrs2;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs2.util.ReaderUtils;
 import io.swagger.oas.annotations.enums.Explode;
@@ -24,6 +23,7 @@ import io.swagger.oas.models.servers.ServerVariable;
 import io.swagger.oas.models.servers.ServerVariables;
 import io.swagger.oas.models.tags.Tag;
 import io.swagger.util.ParameterProcessor;
+import io.swagger.util.Json;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.Produces;
@@ -422,7 +422,7 @@ public class OperationParser {
             }
             if (StringUtils.isNotBlank(example.value())) {
                 try {
-                    exampleObject.setValue(new ObjectMapper().readTree(example.value()));
+                    exampleObject.setValue(Json.mapper().readTree(example.value()));
                 } catch (IOException e) {
                     exampleObject.setValue(example.value());
                 }

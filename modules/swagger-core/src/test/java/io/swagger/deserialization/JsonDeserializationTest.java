@@ -1,6 +1,8 @@
 package io.swagger.deserialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.oas.models.security.SecurityRequirement;
+import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.util.TestUtils;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.PathItem;
@@ -13,6 +15,7 @@ import io.swagger.util.ResourceUtils;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
@@ -146,42 +149,74 @@ public class JsonDeserializationTest {
         assertEquals(refResponse.get$ref(), expectedRef);
     }
 
-    // TODO #2312
-/*
     @Test
     public void testDeserializeSecurity() throws Exception {
-        final Swagger swagger = TestUtils.deserializeJsonFileFromClasspath("specFiles/securityDefinitions.json", Swagger.class);
+        final OpenAPI swagger = TestUtils.deserializeJsonFileFromClasspath("specFiles/securityDefinitions.json", OpenAPI.class);
 
         final List<SecurityRequirement> security = swagger.getSecurity();
-        final List<SecurityRequirement> securityRequirements = swagger.getSecurityRequirement();
         assertNotNull(security);
-        assertEquals(security, securityRequirements);
+        assertEquals(security.size(), 3);
 
-        assertEquals(security.size(), 2);
+        final Map<String, SecurityScheme> securitySchemes = swagger.getComponents().getSecuritySchemes();
+        assertNotNull(securitySchemes);
+        assertEquals(securitySchemes.size(), 4);
+
+        {
+            final SecurityScheme scheme = securitySchemes.get("petstore_auth");
+            assertNotNull(scheme);
+            assertEquals(scheme.getType().toString(), "oauth2");
+            assertEquals(scheme.getFlows().getImplicit().getAuthorizationUrl(), "http://petstore.swagger.io/oauth/dialog");
+            assertEquals(scheme.getFlows().getImplicit().getScopes().get("write:pets"), "modify pets in your account");
+            assertEquals(scheme.getFlows().getImplicit().getScopes().get("read:pets"), "read your pets");
+        }
+
+        {
+            final SecurityScheme scheme = securitySchemes.get("api_key");
+            assertNotNull(scheme);
+            assertEquals(scheme.getType().toString(), "apiKey");
+            assertEquals(scheme.getIn().toString(), "header");
+            assertEquals(scheme.getName(), "api_key");
+        }
+
+        {
+            final SecurityScheme scheme = securitySchemes.get("http");
+            assertNotNull(scheme);
+            assertEquals(scheme.getType().toString(), "http");
+            assertEquals(scheme.getScheme(), "basic");
+        }
+
+        {
+            final SecurityScheme scheme = securitySchemes.get("open_id_connect");
+            assertNotNull(scheme);
+            assertEquals(scheme.getType().toString(), "openIdConnect");
+            assertEquals(scheme.getOpenIdConnectUrl(), "http://petstore.swagger.io/openid");
+        }
 
         {
             final SecurityRequirement securityRequirement = security.get(0);
-            final Map<String, List<String>> requirements = securityRequirement.getRequirements();
-            final List<String> basic_auth = requirements.get("basic_auth");
-            assertNotNull(basic_auth);
-            assertTrue(basic_auth.isEmpty());
+            final List<String> scopes = securityRequirement.get("petstore_auth");
+            assertNotNull(scopes);
+            assertEquals(scopes.size(), 2);
+            assertTrue(scopes.contains("write:pets"));
+            assertTrue(scopes.contains("read:pets"));
 
-            final List<String> api_key = requirements.get("api_key");
-            assertNotNull(api_key);
-            assertTrue(api_key.isEmpty());
         }
 
         {
             final SecurityRequirement securityRequirement = security.get(1);
-            final Map<String, List<String>> requirements = securityRequirement.getRequirements();
-            final List<String> oauth2 = requirements.get("oauth2");
-            assertNotNull(oauth2);
-            assertFalse(oauth2.isEmpty());
+            final List<String> scopes = securityRequirement.get("api_key");
+            assertNotNull(scopes);
+            assertTrue(scopes.isEmpty());
 
-            assertEquals(oauth2.get(0), "hello");
-            assertEquals(oauth2.get(1), "world");
+        }
+
+        {
+            final SecurityRequirement securityRequirement = security.get(2);
+            final List<String> scopes = securityRequirement.get("http");
+            assertNotNull(scopes);
+            assertTrue(scopes.isEmpty());
+
         }
     }
-*/
 
 }
