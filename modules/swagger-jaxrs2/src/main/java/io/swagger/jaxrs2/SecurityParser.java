@@ -9,6 +9,7 @@ import io.swagger.oas.annotations.security.OAuthScope;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,11 +26,11 @@ public class SecurityParser {
 		}
 		List<SecurityRequirement> securityRequirements = new ArrayList<>();
 		SecurityRequirement securityRequirementObject = new SecurityRequirement();
-		StringBuilder scopes = new StringBuilder();
-		for (String scope : securityRequirement.scopes()) {
-			scopes.append(scope);
+		if (securityRequirement.scopes().length > 0) {
+			securityRequirementObject.addList(securityRequirement.name(), Arrays.asList(securityRequirement.scopes()));
+		} else {
+			securityRequirementObject.addList(securityRequirement.name());
 		}
-		securityRequirementObject.addList(securityRequirement.name(), scopes.toString());
 		securityRequirements.add(securityRequirementObject);
 
 		return Optional.of(securityRequirements);
@@ -40,6 +41,21 @@ public class SecurityParser {
 			return Optional.empty();
 		}
 		SecurityScheme securitySchemeObject = new SecurityScheme();
+
+		if (StringUtils.isNotBlank(securityScheme.in())) {
+			securitySchemeObject.setIn(getIn(securityScheme.in()));
+		}
+		if (StringUtils.isNotBlank(securityScheme.type())) {
+			securitySchemeObject.setType(getType(securityScheme.type()));
+		}
+
+		if (StringUtils.isNotBlank(securityScheme.openIdConnectUrl())) {
+			securitySchemeObject.setOpenIdConnectUrl(securityScheme.openIdConnectUrl());
+		}
+		if (StringUtils.isNotBlank(securityScheme.scheme())) {
+			securitySchemeObject.setScheme(securityScheme.scheme());
+		}
+
 		if (StringUtils.isNotBlank(securityScheme.bearerFormat())) {
 			securitySchemeObject.setBearerFormat(securityScheme.bearerFormat());
 		}
@@ -54,7 +70,7 @@ public class SecurityParser {
 	}
 
 	public static Optional<OAuthFlows> getOAuthFlows(io.swagger.oas.annotations.security.OAuthFlows oAuthFlows) {
-		if (oAuthFlows == null) {
+		if (isEmpty(oAuthFlows)) {
 			return Optional.empty();
 		}
 		OAuthFlows oAuthFlowsObject = new OAuthFlows();
@@ -66,7 +82,7 @@ public class SecurityParser {
 	}
 
 	public static Optional<OAuthFlow> getOAuthFlow(io.swagger.oas.annotations.security.OAuthFlow oAuthFlow) {
-		if (oAuthFlow == null) {
+		if (isEmpty(oAuthFlow)) {
 			return Optional.empty();
 		}
 		OAuthFlow oAuthFlowObject = new OAuthFlow();
@@ -84,7 +100,7 @@ public class SecurityParser {
 	}
 
 	public static Optional<Scopes> getScopes(OAuthScope[] scopes) {
-		if (scopes == null) {
+		if (isEmpty(scopes)) {
 			return Optional.empty();
 		}
 		Scopes scopesObject = new Scopes();
@@ -93,6 +109,60 @@ public class SecurityParser {
 			scopesObject.addString(scope.name(), scope.description());
 		}
 		return Optional.of(scopesObject);
+	}
+
+
+	private static SecurityScheme.In getIn(String value) {
+		return Arrays.stream(SecurityScheme.In.values()).filter(i -> i.toString().equals(value)).findFirst().orElse(null);
+	}
+
+	private static SecurityScheme.Type getType(String value) {
+		return Arrays.stream(SecurityScheme.Type.values()).filter(i -> i.toString().equals(value)).findFirst().orElse(null);
+	}
+
+	private static boolean isEmpty(io.swagger.oas.annotations.security.OAuthFlows oAuthFlows) {
+		if (oAuthFlows == null) {
+			return true;
+		}
+		if (!isEmpty(oAuthFlows.implicit())) {
+			return false;
+		}
+		if (!isEmpty(oAuthFlows.authorizationCode())) {
+			return false;
+		}
+		if (!isEmpty(oAuthFlows.clientCredentials())) {
+			return false;
+		}
+		if (!isEmpty(oAuthFlows.password())) {
+			return false;
+		}
+		return true;
+	}
+
+	private static boolean isEmpty(io.swagger.oas.annotations.security.OAuthFlow oAuthFlow) {
+		if (oAuthFlow == null) {
+			return true;
+		}
+		if (!StringUtils.isBlank(oAuthFlow.authorizationUrl())) {
+			return false;
+		}
+		if (!StringUtils.isBlank(oAuthFlow.refreshUrl())) {
+			return false;
+		}
+		if (!StringUtils.isBlank(oAuthFlow.tokenUrl())) {
+			return false;
+		}
+		if (!isEmpty(oAuthFlow.scopes())) {
+			return false;
+		}
+		return true;
+	}
+
+	private static boolean isEmpty(OAuthScope[] scopes) {
+		if (scopes == null || scopes.length == 0) {
+			return true;
+		}
+		return false;
 	}
 
 }

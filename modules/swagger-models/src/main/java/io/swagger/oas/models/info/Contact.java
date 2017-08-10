@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * Contact
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#contactObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#contactObject"
  */
 
 

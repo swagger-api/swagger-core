@@ -2,15 +2,14 @@ package io.swagger.jaxrs2;
 
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import io.swagger.jaxrs2.config.DefaultReaderConfig;
-import io.swagger.jaxrs2.config.ReaderConfig;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.jaxrs2.util.ReaderUtils;
+import io.swagger.oas.integration.ContextUtils;
+import io.swagger.oas.integration.SwaggerConfiguration;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
@@ -24,6 +23,9 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.oas.integration.api.OpenApiReader;
+import io.swagger.util.Json;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
@@ -49,11 +51,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Reader {
+public class Reader implements OpenApiReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
     public static final String DEFAULT_MEDIA_TYPE_VALUE = "*/*";
 
-    private final ReaderConfig config;
+    protected OpenAPIConfiguration config;
 
     private OpenAPI openAPI;
     private Components components;
@@ -62,7 +64,6 @@ public class Reader {
     javax.ws.rs.Consumes classConsumes;
     javax.ws.rs.Produces classProduces;
     javax.ws.rs.Produces methodProduces;
-
 
     private static final String GET_METHOD = "get";
     private static final String POST_METHOD = "post";
@@ -73,12 +74,21 @@ public class Reader {
     private static final String HEAD_METHOD = "head";
     private static final String OPTIONS_METHOD = "options";
 
-    public Reader(OpenAPI openAPI, ReaderConfig config) {
-        this.openAPI = openAPI;
+    public Reader() {
+        this.openAPI = new OpenAPI();
         paths = new Paths();
         openApiTags = new LinkedHashSet<>();
-        this.config = new DefaultReaderConfig();
         components = new Components();
+
+    }
+    public Reader(OpenAPI openAPI) {
+        this();
+        setConfiguration(new SwaggerConfiguration().openAPI(openAPI));
+    }
+
+    public Reader(OpenAPIConfiguration openApiConfiguration) {
+        this();
+        setConfiguration(openApiConfiguration);
     }
 
     public OpenAPI getOpenAPI() {
@@ -123,6 +133,20 @@ public class Reader {
         return openAPI;
     }
 
+    @Override
+    public void setConfiguration(OpenAPIConfiguration openApiConfiguration) {
+        if (openApiConfiguration != null) {
+            this.config = ContextUtils.deepCopy(openApiConfiguration);
+            if (openApiConfiguration.getOpenAPI() != null) {
+                this.openAPI = this.config.getOpenAPI();
+            }
+        }
+    }
+
+    public OpenAPI read(Set<Class<?>> classes, Map<String, Object> resources) {
+        return read(classes);
+    }
+
     public OpenAPI read(Class<?> cls, String parentPath) {
         io.swagger.oas.annotations.security.SecurityScheme apiSecurityScheme = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.security.SecurityScheme.class);
         io.swagger.oas.annotations.ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.ExternalDocumentation.class);
@@ -146,7 +170,7 @@ public class Reader {
         final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
 
         JavaType classType = TypeFactory.defaultInstance().constructType(cls);
-        BeanDescription bd = new ObjectMapper().getSerializationConfig().introspect(classType);
+        BeanDescription bd = Json.mapper().getSerializationConfig().introspect(classType);
 
         final List<Parameter> globalParameters = new ArrayList<>();
 
@@ -216,7 +240,7 @@ public class Reader {
                                         requestBody.setDescription(parameter.getDescription());
                                         isRequestBodyEmpty = false;
                                     }
-                                    if (parameter.getRequired()) {
+                                    if (Boolean.TRUE.equals(parameter.getRequired())) {
                                         requestBody.setRequired(parameter.getRequired());
                                         isRequestBodyEmpty = false;
                                     }
@@ -265,13 +289,15 @@ public class Reader {
             openAPI.setComponents(components);
         }
 
-        ArrayList<Tag> tagList = new ArrayList<>();
-        tagList.addAll(openApiTags);
-        if (tagList.size() > 0) {
+
+
+        if (!openApiTags.isEmpty()) {
+            Set<Tag> tagsSet  = new LinkedHashSet<>();
+            tagsSet.addAll(openApiTags);
             if (openAPI.getTags() != null) {
-                tagList.addAll(openAPI.getTags());
+                tagsSet.addAll(openAPI.getTags());
             }
-            openAPI.setTags(tagList);
+            openAPI.setTags(new ArrayList<>(tagsSet));
         }
 
         OperationParser.getExternalDocumentation(apiExternalDocs).ifPresent(externalDocumentation -> openAPI.setExternalDocs(externalDocumentation));
@@ -443,6 +469,7 @@ public class Reader {
             LOGGER.debug("no parameter found, looking at body params");
             final List<Parameter> body = new ArrayList<>();
             if (!typesToSkip.contains(type)) {
+                // TODO #2312 body - passing null means returned always NULL
                 Parameter param = ParameterProcessor.applyAnnotations(openAPI, null, type, annotations);
                 if (param != null) {
                     body.add(param);
