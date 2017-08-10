@@ -5,11 +5,14 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.jaxrs2.util.ReaderUtils;
 import io.swagger.oas.integration.ContextUtils;
 import io.swagger.oas.integration.SwaggerConfiguration;
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.oas.integration.api.OpenApiReader;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
@@ -21,10 +24,10 @@ import io.swagger.oas.models.media.MediaType;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
+import io.swagger.oas.models.responses.ApiResponse;
+import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.integration.api.OpenApiReader;
 import io.swagger.util.Json;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
@@ -81,6 +84,7 @@ public class Reader implements OpenApiReader {
         components = new Components();
 
     }
+
     public Reader(OpenAPI openAPI) {
         this();
         setConfiguration(new SwaggerConfiguration().openAPI(openAPI));
@@ -228,6 +232,7 @@ public class Reader implements OpenApiReader {
                             final Type type = TypeFactory.defaultInstance().constructType(param.getParameterType(), cls);
                             List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
                             for (Parameter parameter : parameters) {
+                                Schema parameterSchema = parameter.getSchema();
                                 if (StringUtils.isNotBlank(parameter.getIn())) {
                                     operationParameters.add(parameter);
                                 } else {
@@ -263,6 +268,12 @@ public class Reader implements OpenApiReader {
                                         isRequestBodyEmpty = false;
                                     }
                                     if (!isRequestBodyEmpty) {
+                                        if (parameterSchema != null) {
+                                            Map<String, Schema> schemaMap = ModelConverters.getInstance().readAll(type);
+                                            schemaMap.forEach((key, schema) -> {
+                                                components.addSchemas(key, schema);
+                                            });
+                                        }
                                         operation.setRequestBody(requestBody);
                                     }
 
@@ -289,10 +300,8 @@ public class Reader implements OpenApiReader {
             openAPI.setComponents(components);
         }
 
-
-
         if (!openApiTags.isEmpty()) {
-            Set<Tag> tagsSet  = new LinkedHashSet<>();
+            Set<Tag> tagsSet = new LinkedHashSet<>();
             tagsSet.addAll(openApiTags);
             if (openAPI.getTags() != null) {
                 tagsSet.addAll(openAPI.getTags());
@@ -336,10 +345,60 @@ public class Reader implements OpenApiReader {
             if (StringUtils.isBlank(operation.getOperationId())) {
                 operation.setOperationId(method.getName());
             }
-        } else {
+        } else { // TODO #2312 - return an operation also if no Operation annotation, but @GET / @POST .. or @PATH
             return null;
         }
+        // handle return type, add as response in case.
+        Type returnType = method.getGenericReturnType();
+        if (!shouldIgnoreClass(returnType.getTypeName())) {
+            //returnType.g
+            // TODO #2312 also add content to existing responses (from annotation) if it is not specified in annotation
+            Map<String, Schema> schemaMap = ModelConverters.getInstance().read(returnType);
+            if (schemaMap != null  && !schemaMap.values().isEmpty()) {
+                Schema returnTypeSchema = schemaMap.values().iterator().next();
+                if (operation.getResponses() == null) {
+                    operation.responses(
+                            new ApiResponses()._default(
+                                    new ApiResponse()
+                                            .content(
+                                                    new Content()
+                                                        .addMediaType("*/*",
+                                                                new MediaType()
+                                                                .schema(new Schema().$ref(returnTypeSchema.getName())
+                                                        )
+                                                    )
+                                            )
+                            )
+                    );
+                }
+                if (operation.getResponses().getDefault() != null &&
+                        StringUtils.isBlank(operation.getResponses().getDefault().get$ref()) &&
+                        operation.getResponses().getDefault().getContent() == null) {
+                    operation.getResponses().getDefault().content(new Content()
+                            .addMediaType("*/*",
+                                    new MediaType()
+                                            .schema(new Schema().$ref(returnTypeSchema.getName())
+                                            )
+                            )
+                    );
+                }
+                schemaMap = ModelConverters.getInstance().readAll(returnType);
+                schemaMap.forEach((key, schema) -> components.addSchemas(key, schema));
+
+            }
+        }
+
         return operation;
+    }
+
+    private boolean shouldIgnoreClass(String className) {
+        if (StringUtils.isBlank(className)) {
+            return true;
+        }
+        boolean ignore = false;
+        ignore = ignore || className.startsWith("javax.ws.rs.");
+        ignore = ignore || className.equalsIgnoreCase("void");
+        return ignore;
     }
 
     private Map<String, Callback> getCallbacks(io.swagger.oas.annotations.callbacks.Callback apiCallback) {
@@ -462,6 +521,8 @@ public class Reader implements OpenApiReader {
             for (Parameter parameter : parameters) {
                 if (ParameterProcessor.applyAnnotations(openAPI, parameter, type, annotations) != null) {
                     processed.add(parameter);
+                    Map<String, Schema> schemaMap = ModelConverters.getInstance().readAll(type);
+                    schemaMap.forEach((key, schema) -> components.addSchemas(key, schema));
                 }
             }
             return processed;
@@ -469,7 +530,6 @@ public class Reader implements OpenApiReader {
             LOGGER.debug("no parameter found, looking at body params");
             final List<Parameter> body = new ArrayList<>();
             if (!typesToSkip.contains(type)) {
-                // TODO #2312 body - passing null means returned always NULL
                 Parameter param = ParameterProcessor.applyAnnotations(openAPI, null, type, annotations);
                 if (param != null) {
                     body.add(param);

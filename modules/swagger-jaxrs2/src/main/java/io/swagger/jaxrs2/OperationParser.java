@@ -157,7 +157,6 @@ public class OperationParser {
             schemaObject.setPattern(schema.pattern());
             isEmpty = false;
         }
-
         if (schema.readOnly()) {
             schemaObject.setReadOnly(schema.readOnly());
             isEmpty = false;
@@ -322,14 +321,14 @@ public class OperationParser {
                 if (StringUtils.isNotBlank(response.responseCode())) {
                     apiResponsesObject.addApiResponse(response.responseCode(), apiResponseObject);
                 } else {
-                    apiResponsesObject.addApiResponse(RESPONSE_DEFAULT, apiResponseObject);
+                    apiResponsesObject._default(apiResponseObject);
                 }
             }
         }
         if (apiResponsesObject.isEmpty()) {
             ApiResponse apiResponseObject = new ApiResponse();
             apiResponseObject.setDescription(DEFAULT_DESCRIPTION);
-            apiResponsesObject.addApiResponse(RESPONSE_DEFAULT, apiResponseObject);
+            apiResponsesObject._default(apiResponseObject);
 
         }
         return Optional.of(apiResponsesObject);
