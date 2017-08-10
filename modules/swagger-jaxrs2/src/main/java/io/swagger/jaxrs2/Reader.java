@@ -24,6 +24,8 @@ import io.swagger.oas.models.media.MediaType;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
+import io.swagger.oas.models.responses.ApiResponse;
+import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
 import io.swagger.util.Json;
@@ -231,8 +233,7 @@ public class Reader implements OpenApiReader {
                             List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
                             for (Parameter parameter : parameters) {
                                 Schema parameterSchema = parameter.getSchema();
-                                // TODO this is the requestBody validation key - Is needed a refactor to extract some requestBodies
-                                if (StringUtils.isNotBlank(parameter.getIn()) && isSchemaPrimitive(parameterSchema)) {
+                                if (StringUtils.isNotBlank(parameter.getIn())) {
                                     operationParameters.add(parameter);
                                 } else {
                                     boolean isRequestBodyEmpty = true;
@@ -314,17 +315,6 @@ public class Reader implements OpenApiReader {
         return openAPI;
     }
 
-    private boolean isSchemaPrimitive(Schema schema) {
-        if (schema == null) {
-            return false;
-        }
-        if ("string".equals(schema.getType()) || "array".equals(schema.getType()) || "integer".equals(schema.getType())) {
-            return true;
-        }
-
-        return false;
-    }
-
     private void setMediaTypeToContent(Schema schema, Content content, String value) {
         MediaType mediaTypeObject = new MediaType();
         mediaTypeObject.setSchema(schema);
@@ -355,10 +345,60 @@ public class Reader implements OpenApiReader {
             if (StringUtils.isBlank(operation.getOperationId())) {
                 operation.setOperationId(method.getName());
             }
-        } else {
+        } else { // TODO #2312 - return an operation also if no Operation annotation, but @GET / @POST .. or @PATH
             return null;
         }
+        // handle return type, add as response in case.
+        Type returnType = method.getGenericReturnType();
+        if (!shouldIgnoreClass(returnType.getTypeName())) {
+            //returnType.g
+            // TODO #2312 also add content to existing responses (from annotation) if it is not specified in annotation
+            Map<String, Schema> schemaMap = ModelConverters.getInstance().read(returnType);
+            if (schemaMap != null  && !schemaMap.values().isEmpty()) {
+                Schema returnTypeSchema = schemaMap.values().iterator().next();
+                if (operation.getResponses() == null) {
+                    operation.responses(
+                            new ApiResponses()._default(
+                                    new ApiResponse()
+                                            .content(
+                                                    new Content()
+                                                        .addMediaType("*/*",
+                                                                new MediaType()
+                                                                .schema(new Schema().$ref(returnTypeSchema.getName())
+                                                        )
+                                                    )
+                                            )
+                            )
+                    );
+                }
+                if (operation.getResponses().getDefault() != null &&
+                        StringUtils.isBlank(operation.getResponses().getDefault().get$ref()) &&
+                        operation.getResponses().getDefault().getContent() == null) {
+                    operation.getResponses().getDefault().content(new Content()
+                            .addMediaType("*/*",
+                                    new MediaType()
+                                            .schema(new Schema().$ref(returnTypeSchema.getName())
+                                            )
+                            )
+                    );
+                }
+                schemaMap = ModelConverters.getInstance().readAll(returnType);
+                schemaMap.forEach((key, schema) -> components.addSchemas(key, schema));
+
+            }
+        }
+
         return operation;
+    }
+
+    private boolean shouldIgnoreClass(String className) {
+        if (StringUtils.isBlank(className)) {
+            return true;
+        }
+        boolean ignore = false;
+        ignore = ignore || className.startsWith("javax.ws.rs.");
+        ignore = ignore || className.equalsIgnoreCase("void");
+        return ignore;
     }
 
     private Map<String, Callback> getCallbacks(io.swagger.oas.annotations.callbacks.Callback apiCallback) {
@@ -490,7 +530,6 @@ public class Reader implements OpenApiReader {
             LOGGER.debug("no parameter found, looking at body params");
             final List<Parameter> body = new ArrayList<>();
             if (!typesToSkip.contains(type)) {
-                // TODO #2312 body - passing null means returned always NULL
                 Parameter param = ParameterProcessor.applyAnnotations(openAPI, null, type, annotations);
                 if (param != null) {
                     body.add(param);

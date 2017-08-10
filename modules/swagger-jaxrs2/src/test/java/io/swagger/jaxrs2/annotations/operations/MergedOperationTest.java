@@ -57,7 +57,15 @@ public class MergedOperationTest extends AbstractAnnotationTest {
                         "            type: string\n" +
                         "      responses:\n" +
                         "        default:\n" +
-                        "          description: no description\n");
+                        "          description: no description\n" +
+                        "          content:\n" +
+                        "            '*/*':\n" +
+                        "              schema:\n" +
+                        "                $ref: '#/components/schemas/SimpleResponse'\n" +
+                        "components:\n" +
+                        "  schemas:\n" +
+                        "    SimpleResponse:\n" +
+                        "      type: object\n");
     }
 
     static class MethodWithParameters {
@@ -96,7 +104,15 @@ public class MergedOperationTest extends AbstractAnnotationTest {
                 "            type: string\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n";
+                "          description: no description\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/SimpleResponse'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    SimpleResponse:\n" +
+                "      type: object\n";
 
         assertEquals(yaml, expectedYaml);
     }
@@ -151,7 +167,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
                         description = "value successfully processed")
         )
         @Path("/add")
-        public void addValue(@QueryParam("input") InputValue input) {
+        public void addValue(InputValue input) {
         }
     }
 

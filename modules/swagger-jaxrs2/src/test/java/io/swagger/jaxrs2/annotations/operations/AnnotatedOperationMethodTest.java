@@ -14,6 +14,8 @@ import org.testng.annotations.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
+import java.io.IOException;
+
 import static org.testng.Assert.assertEquals;
 
 public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
@@ -211,40 +213,9 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     }
 
     @Test(description = "reads the pet resource from sample")
-    public void testCompletePetResource() {
-        String openApiYAML = readIntoYaml(PetResource.class);
-        int start = 0;
-        int end = openApiYAML.length() - 1;
-        String extractedYAML = openApiYAML.substring(start, end);
+    public void testCompletePetResource() throws IOException {
         String expectedYAML = "openapi: 3.0.0\n" +
                 "paths:\n" +
-                "  /pet/{petId}:\n" +
-                "    get:\n" +
-                "      summary: Find pet by ID\n" +
-                "      description: Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will simulate API error conditions\n" +
-                "      operationId: getPetById\n" +
-                "      parameters:\n" +
-                "      - name: petId\n" +
-                "        in: path\n" +
-                "        description: ID of pet that needs to be fetched\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int64\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: The pet\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
-                "            application/xml:\n" +
-                "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
-                "        400:\n" +
-                "          description: Invalid ID supplied\n" +
-                "        404:\n" +
-                "          description: Pet not found\n" +
                 "  /pet:\n" +
                 "    put:\n" +
                 "      summary: Update an existing pet\n" +
@@ -276,6 +247,84 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "            schema:\n" +
                 "              $ref: '#/components/schemas/Pet'\n" +
                 "        required: true\n" +
+                "      responses:\n" +
+                "        405:\n" +
+                "          description: Invalid input\n" +
+                "  /pet/bodynoannotation:\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store no annotation\n" +
+                "      operationId: addPetNoAnnotation\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "      responses:\n" +
+                "        405:\n" +
+                "          description: Invalid input\n" +
+                "  /pet/{petId}:\n" +
+                "    get:\n" +
+                "      summary: Find pet by ID\n" +
+                "      description: Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will simulate API error conditions\n" +
+                "      operationId: getPetById\n" +
+                "      parameters:\n" +
+                "      - name: petId\n" +
+                "        in: path\n" +
+                "        description: ID of pet that needs to be fetched\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: The pet\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
+                "            application/xml:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
+                "        400:\n" +
+                "          description: Invalid ID supplied\n" +
+                "        404:\n" +
+                "          description: Pet not found\n" +
+                "  /pet/bodyid:\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store passing an integer with generic parameter annotation\n" +
+                "      operationId: addPetByInteger\n" +
+                "      requestBody:\n" +
+                "        description: Pet object that needs to be added to the store\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: integer\n" +
+                "              format: int32\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              type: integer\n" +
+                "              format: int32\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        405:\n" +
+                "          description: Invalid input\n" +
+                "  /pet/bodyidnoannotation:\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store passing an integer without parameter annotation\n" +
+                "      operationId: addPetByIntegerNoAnnotation\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: integer\n" +
+                "              format: int32\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              type: integer\n" +
+                "              format: int32\n" +
                 "      responses:\n" +
                 "        405:\n" +
                 "          description: Invalid input\n" +
@@ -392,15 +441,13 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          - available,pending,sold\n" +
                 "      xml:\n" +
                 "        name: Pet";
-        assertEquals(extractedYAML, expectedYAML);
+
+        compareAsYaml(PetResource.class, expectedYAML);
+
     }
 
     @Test(description = "reads the user resource from sample")
-    public void testCompleteUserResource() {
-        String openApiYAML = readIntoYaml(UserResource.class);
-        int start = 0;
-        int end = openApiYAML.length() - 1;
-        String extractedYAML = openApiYAML.substring(start, end);
+    public void testCompleteUserResource() throws IOException {
         String expectedYAML = "openapi: 3.0.0\n" +
                 "paths:\n" +
                 "  /user:\n" +
@@ -577,7 +624,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          - null\n" +
                 "      xml:\n" +
                 "        name: User";
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(UserResource.class, expectedYAML);
     }
 
     @Test(description = "reads the simple user resource from sample")
