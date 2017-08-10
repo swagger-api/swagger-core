@@ -32,10 +32,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class ParameterProcessor {
-    public static final String HEADER = "header";
-    public static final String PATH = "path";
-    public static final String QUERY = "query";
-    public static final String COOKIE = "cookie";
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
     public static Parameter applyAnnotations(OpenAPI openAPI, Parameter parameter, Type type, List<Annotation> annotations) {
@@ -44,10 +40,9 @@ public class ParameterProcessor {
             return null;
         }
         if (parameter == null) {
-            return null;
+            // consider it to be body param
+            parameter = new Parameter();
         }
-        final ParamWrapper<?> param = null;
-
         for (Annotation annotation : annotations) {
             if (annotation instanceof io.swagger.oas.annotations.media.Schema) {
                 Schema schema = processSchema((io.swagger.oas.annotations.media.Schema) annotation);
@@ -213,6 +208,12 @@ public class ParameterProcessor {
         if (from == null) {
             return to;
         }
+        if (to.getPattern() == null) {
+            to.setPattern(from.getPattern());
+        }
+        if (to.getFormat() == null) {
+            to.setFormat(from.getFormat());
+        }
         if (to.getDescription() == null) {
             to.setDescription(from.getDescription());
         }
@@ -331,6 +332,13 @@ public class ParameterProcessor {
             if (StringUtils.isNotBlank(schema._default())) {
                 output.setDefault(schema._default());
             }
+
+            if (StringUtils.isNotBlank(schema.pattern())) {
+                output.setPattern(schema.pattern());
+            }
+            if (StringUtils.isNotBlank(schema.format())) {
+                output.setFormat(schema.format());
+            }
             if (StringUtils.isNotBlank(schema.description())) {
                 output.setDescription(schema.description());
             }
@@ -364,46 +372,6 @@ public class ParameterProcessor {
             }
         }
         return output;
-    }
-
-    /**
-     * Wraps either an @ApiParam or and @ApiImplicitParam
-     */
-
-    public interface ParamWrapper<T extends Annotation> {
-        String getName();
-
-        String getDescription();
-
-        String getDefaultValue();
-
-        String getAllowableValues();
-
-        boolean isRequired();
-
-        String getAccess();
-
-        boolean isAllowMultiple();
-
-        String getDataType();
-
-        String getParamType();
-
-        T getAnnotation();
-
-        boolean isHidden();
-
-        String getExample();
-
-        String getType();
-
-        String getFormat();
-
-        boolean getReadOnly();
-
-        boolean getAllowEmptyValue();
-
-        String getCollectionFormat();
     }
 
     /**
@@ -487,7 +455,6 @@ public class ParameterProcessor {
                     || double.class.isAssignableFrom(clazz);
         }
 
-
         /**
          */
         public boolean isContext() {
@@ -559,6 +526,5 @@ public class ParameterProcessor {
             return collectionFormat;
         }
     }
-
 
 }
