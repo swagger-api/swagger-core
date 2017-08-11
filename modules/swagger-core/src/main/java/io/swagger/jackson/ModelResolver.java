@@ -560,8 +560,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-//        Collections.sort(props, getPropertyComparator());
-
         if(modelProps.size() > 0) {
             model.setProperties(modelProps);
         }

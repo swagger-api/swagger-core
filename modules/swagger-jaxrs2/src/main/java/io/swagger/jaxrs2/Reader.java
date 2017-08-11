@@ -351,7 +351,6 @@ public class Reader implements OpenApiReader {
         // handle return type, add as response in case.
         Type returnType = method.getGenericReturnType();
         if (!shouldIgnoreClass(returnType.getTypeName())) {
-            //returnType.g
             // TODO #2312 also add content to existing responses (from annotation) if it is not specified in annotation
             Map<String, Schema> schemaMap = ModelConverters.getInstance().read(returnType);
             if (schemaMap != null  && !schemaMap.values().isEmpty()) {
