@@ -16,6 +16,7 @@
 
 package io.swagger.oas.models.media;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.oas.models.ExternalDocumentation;
 
 import java.math.BigDecimal;
@@ -29,13 +30,14 @@ import java.util.Objects;
 /**
  * Schema
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#schemaObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#schemaObject"
  */
 
 
 public class Schema<T> {
     protected T _default;
 
+    private String name;
     private String title = null;
     private BigDecimal multipleOf = null;
     private BigDecimal maximum = null;
@@ -68,6 +70,25 @@ public class Schema<T> {
     private java.util.Map<String, Object> extensions = null;
     protected List<T> _enum = null;
     private Discriminator discriminator = null;
+
+    /**
+     * returns the name property from a from a Schema instance. Ignored in serialization.
+     *
+     * @return String name
+     **/
+    @JsonIgnore
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Schema name(String name) {
+        this.setName(name);
+        return this;
+    }
 
     /**
      * returns the discriminator property from a AllOfSchema instance.

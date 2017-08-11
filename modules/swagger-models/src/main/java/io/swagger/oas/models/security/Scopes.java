@@ -18,12 +18,11 @@ package io.swagger.oas.models.security;
 
 import java.util.Objects;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Scopes
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#scopedObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#scopedObject"
  */
 
 

@@ -2,12 +2,9 @@ package io.swagger.jaxrs2.resources;
 
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
-import io.swagger.oas.annotations.info.Info;
 import io.swagger.oas.annotations.media.Schema;
 
-import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;

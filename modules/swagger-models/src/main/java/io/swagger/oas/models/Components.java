@@ -33,7 +33,7 @@ import java.util.Objects;
 /**
  * Components
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#componentsObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#componentsObject"
  */
 
 

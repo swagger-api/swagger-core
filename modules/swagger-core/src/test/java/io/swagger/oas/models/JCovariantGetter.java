@@ -3,12 +3,12 @@ package io.swagger.oas.models;
 import io.swagger.oas.annotations.media.Schema;
 
 public abstract class JCovariantGetter {
-    @Schema//(position = 1)
+    @Schema
     public Object getMyProperty() {
         return "42";
     }
 
-    @Schema//(position = 2)
+    @Schema
     public Object getMyOtherProperty() {
         return "42";
     }

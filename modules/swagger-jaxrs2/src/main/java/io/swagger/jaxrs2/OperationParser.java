@@ -1,8 +1,8 @@
 package io.swagger.jaxrs2;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs2.util.ReaderUtils;
+import io.swagger.oas.annotations.enums.Explode;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.ExternalDocumentation;
@@ -22,6 +22,8 @@ import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.servers.ServerVariable;
 import io.swagger.oas.models.servers.ServerVariables;
 import io.swagger.oas.models.tags.Tag;
+import io.swagger.util.ParameterProcessor;
+import io.swagger.util.Json;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.Produces;
@@ -83,7 +85,6 @@ public class OperationParser {
             parameterObject.setRequired(parameter.required());
             isEmpty = false;
         }
-        parameterObject.setStyle(StringUtils.isNoneBlank(parameter.style()) ? Parameter.StyleEnum.valueOf(parameter.style()) : null);
         if (parameter.allowEmptyValue()) {
             parameterObject.setAllowEmptyValue(parameter.allowEmptyValue());
             isEmpty = false;
@@ -92,8 +93,11 @@ public class OperationParser {
             parameterObject.setAllowReserved(parameter.allowReserved());
             isEmpty = false;
         }
-        if (parameter.explode()) {
-            parameterObject.setExplode(parameter.explode());
+
+        ParameterProcessor.setParameterStyle(parameterObject, parameter);
+        ParameterProcessor.setParameterExplode(parameterObject, parameter);
+
+        if (!Explode.DEFAULT.equals(parameter.explode())) {
             isEmpty = false;
         }
         if (parameter.schema() != null) {
@@ -153,7 +157,6 @@ public class OperationParser {
             schemaObject.setPattern(schema.pattern());
             isEmpty = false;
         }
-
         if (schema.readOnly()) {
             schemaObject.setReadOnly(schema.readOnly());
             isEmpty = false;
@@ -170,11 +173,12 @@ public class OperationParser {
             schemaObject.setExclusiveMinimum(schema.exclusiveMinimum());
             isEmpty = false;
         }
-        if (schema.maxLength() > 0)
+        if (schema.maxLength() > 0) {
             if (schema.maxProperties() > 0) {
                 schemaObject.setMaxProperties(schema.maxProperties());
                 isEmpty = false;
             }
+        }
         if (schema.minProperties() > 0) {
             schemaObject.setMinProperties(schema.minProperties());
             isEmpty = false;
@@ -317,14 +321,14 @@ public class OperationParser {
                 if (StringUtils.isNotBlank(response.responseCode())) {
                     apiResponsesObject.addApiResponse(response.responseCode(), apiResponseObject);
                 } else {
-                    apiResponsesObject.addApiResponse(RESPONSE_DEFAULT, apiResponseObject);
+                    apiResponsesObject._default(apiResponseObject);
                 }
             }
         }
         if (apiResponsesObject.isEmpty()) {
             ApiResponse apiResponseObject = new ApiResponse();
             apiResponseObject.setDescription(DEFAULT_DESCRIPTION);
-            apiResponsesObject.addApiResponse(RESPONSE_DEFAULT, apiResponseObject);
+            apiResponsesObject._default(apiResponseObject);
 
         }
         return Optional.of(apiResponsesObject);
@@ -358,13 +362,18 @@ public class OperationParser {
         Class<?> schemaImplementation = annotationContent.schema().implementation();
         Map<String, Schema> schemaMap;
         if (schemaImplementation != Void.class) {
-            schemaMap = ModelConverters.getInstance().readAll(schemaImplementation);
-            schemaMap.forEach((key, schema) -> {
-                components.addSchemas(key, schema);
-            });
             Schema schemaObject = new Schema();
-            schemaObject.set$ref(COMPONENTS_REF + schemaImplementation.getSimpleName());
+            if (schemaImplementation.getName().startsWith("java.lang")) {
+                schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
+            } else {
+                schemaMap = ModelConverters.getInstance().readAll(schemaImplementation);
+                schemaMap.forEach((key, schema) -> {
+                    components.addSchemas(key, schema);
+                });
+                schemaObject.set$ref(COMPONENTS_REF + schemaImplementation.getSimpleName());
+            }
             mediaType.setSchema(schemaObject);
+
         } else {
             getSchemaFromAnnotation(annotationContent.schema()).ifPresent(mediaType::setSchema);
         }
@@ -412,7 +421,7 @@ public class OperationParser {
             }
             if (StringUtils.isNotBlank(example.value())) {
                 try {
-                    exampleObject.setValue(new ObjectMapper().readTree(example.value()));
+                    exampleObject.setValue(Json.mapper().readTree(example.value()));
                 } catch (IOException e) {
                     exampleObject.setValue(example.value());
                 }

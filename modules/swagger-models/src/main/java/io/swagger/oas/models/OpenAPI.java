@@ -30,12 +30,12 @@ import java.util.Objects;
 /**
  * OpenAPI
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#oasObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md"
  */
 
 
 public class OpenAPI {
-  private String openapi = "3.0.0-rc2";
+  private String openapi = "3.0.0";
   private Info info = null;
   private ExternalDocumentation externalDocs = null;
   private List<Server> servers = null;

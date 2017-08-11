@@ -42,38 +42,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
         _intr = mapper.getSerializationConfig().getAnnotationIntrospector();
 
     }
-/*
-    protected static Comparator<Property> getPropertyComparator() {
-        return new Comparator<Property>() {
-            @Override
-            public int compare(Property one, Property two) {
-                if (one.getPosition() == null && two.getPosition() == null) {
-                    return 0;
-                }
-                if (one.getPosition() == null) {
-                    return -1;
-                }
-                if (two.getPosition() == null) {
-                    return 1;
-                }
-                return one.getPosition().compareTo(two.getPosition());
-            }
-        };
-    }
-    */
-/*
-    @Override
-    public Property resolve(Type type,
-                                    ModelConverterContext context,
-                                    Annotation[] annotations,
-                                    Iterator<ModelConverter> chain) {
-        if (chain.hasNext()) {
-            return chain.next().resolveProperty(type, context, annotations, chain);
-        } else {
-            return null;
-        }
-    }
-*/
+
     protected String _description(Annotated ann) {
         // while name suggests it's only for properties, should work for any Annotated thing.
         // also; with Swagger introspector's help, should get it from ApiModel/ApiModelProperty
@@ -141,23 +110,23 @@ public abstract class AbstractModelConverter implements ModelConverter {
     }
 
     protected String _findExampleValue(Annotated a) {
-        /*
-        ApiModelProperty prop = a.getAnnotation(ApiModelProperty.class);
-        if (prop != null) {
-            if (!prop.example().isEmpty()) {
-                return prop.example();
+
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null) {
+            if (!schema.example().isEmpty()) {
+                return schema.example();
             }
-        }*/
+        }
+
         return null;
     }
 
     protected Boolean _findReadOnly(Annotated a) {
-        /*
-        ApiModelProperty prop = a.getAnnotation(ApiModelProperty.class);
-        if (prop != null) {
-            return prop.readOnly();
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        // TODO possibly set schema.readOnly to be Boolean object
+        if (schema != null && schema.readOnly()) {
+            return schema.readOnly();
         }
-        */
         return null;
     }
 

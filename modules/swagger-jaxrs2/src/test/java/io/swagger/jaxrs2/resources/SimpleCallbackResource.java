@@ -5,7 +5,6 @@ import io.swagger.oas.annotations.Parameter;
 import io.swagger.oas.annotations.callbacks.Callback;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
-import org.testng.xml.dom.Tag;
 
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;

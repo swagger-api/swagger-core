@@ -1,6 +1,7 @@
 package io.swagger.util;
 
 import io.swagger.converter.ModelConverters;
+import io.swagger.oas.annotations.enums.Explode;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.media.ArraySchema;
 import io.swagger.oas.models.media.BinarySchema;
@@ -39,10 +40,9 @@ public class ParameterProcessor {
             return null;
         }
         if (parameter == null) {
-            return null;
+            // consider it to be body param
+            parameter = new Parameter();
         }
-        final ParamWrapper<?> param = null;
-
         for (Annotation annotation : annotations) {
             if (annotation instanceof io.swagger.oas.annotations.media.Schema) {
                 Schema schema = processSchema((io.swagger.oas.annotations.media.Schema) annotation);
@@ -73,10 +73,9 @@ public class ParameterProcessor {
                 if (p.allowReserved()) {
                     parameter.setAllowReserved(p.allowReserved());
                 }
-                parameter.setStyle(StringUtils.isNoneBlank(p.style()) ? Parameter.StyleEnum.valueOf(p.style()) : null);
-                if (p.explode()) {
-                    parameter.setExplode(p.explode());
-                }
+
+                setParameterStyle(parameter, p);
+                setParameterExplode(parameter, p);
 
                 if (hasSchemaAnnotation(p.schema())) {
                     Schema schema = processSchema(p.schema());
@@ -144,6 +143,36 @@ public class ParameterProcessor {
         return parameter;
     }
 
+    public static void setParameterExplode(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
+        if (isExplodable(p)) {
+            if (Explode.TRUE.equals(p.explode())) {
+                parameter.setExplode(Boolean.TRUE);
+            } else if (Explode.FALSE.equals(p.explode())) {
+                parameter.setExplode(Boolean.FALSE);
+            }
+        }
+    }
+
+    private static boolean isExplodable(io.swagger.oas.annotations.Parameter p) {
+        io.swagger.oas.annotations.media.Schema schema = p.schema();
+        boolean explode = true;
+        if (schema != null) {
+            Class implementation = schema.implementation();
+            if (implementation == Void.class) {
+                if (!schema.type().equals("object") && !schema.type().equals("array")) {
+                    explode = false;
+                }
+            }
+        }
+        return explode;
+    }
+
+    public static void setParameterStyle(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
+        if (StringUtils.isNotBlank(p.style())) {
+            parameter.setStyle(Parameter.StyleEnum.valueOf(p.style().toUpperCase()));
+        }
+    }
+
     public static Schema fillSchema(Schema schema, Type type) {
         if (schema != null) {
             if (schema != null && StringUtils.isBlank(schema.getType())) {
@@ -174,31 +203,75 @@ public class ParameterProcessor {
         return schema;
     }
 
-    // TODO!
     public static Schema merge(Schema from, Schema to) {
         if (from == null) {
             return to;
         }
-        if (to.getDescription() == null) {
-            to.setDescription(from.getDescription());
-        }
         if (to.getDefault() == null) {
             to.setDefault(from.getDefault());
+        }
+        if (to.getDeprecated() == null) {
+            to.setDeprecated(from.getDeprecated());
+        }
+        if (to.getDescription() == null) {
+            to.setDescription(from.getDescription());
         }
         if (to.getEnum() == null) {
             to.setEnum(from.getEnum());
         }
-        if (to.getExclusiveMinimum() == null) {
-            to.setExclusiveMinimum(from.getExclusiveMinimum());
+        if (to.getExample() == null) {
+            to.setExample(from.getExample());
         }
         if (to.getExclusiveMaximum() == null) {
             to.setExclusiveMaximum(from.getExclusiveMaximum());
         }
-        if (to.getMinimum() == null) {
-            to.setMinimum(from.getMinimum());
+        if (to.getExclusiveMinimum() == null) {
+            to.setExclusiveMinimum(from.getExclusiveMinimum());
+        }
+        if (to.getExtensions() == null) {
+            to.setExtensions(from.getExtensions());
+        }
+        if (to.getExternalDocs() == null) {
+            to.setExternalDocs(from.getExternalDocs());
+        }
+        if (to.getFormat() == null) {
+            to.setFormat(from.getFormat());
         }
         if (to.getMaximum() == null) {
             to.setMaximum(from.getMaximum());
+        }
+        if (to.getMaxLength() == null) {
+            to.setMaxLength(from.getMaxLength());
+        }
+        if (to.getMinimum() == null) {
+            to.setMinimum(from.getMinimum());
+        }
+        if (to.getMinLength() == null) {
+            to.setMinLength(from.getMinLength());
+        }
+        if (to.getMultipleOf() == null) {
+            to.setMultipleOf(from.getMultipleOf());
+        }
+        if (to.getNullable() == null) {
+            to.setNullable(from.getNullable());
+        }
+        if (to.getPattern() == null) {
+            to.setPattern(from.getPattern());
+        }
+        if (to.getReadOnly() == null) {
+            to.setReadOnly(from.getReadOnly());
+        }
+        if (to.getRequired() == null) {
+            to.setRequired(from.getRequired());
+        }
+        if (to.getTitle() == null) {
+            to.setTitle(from.getTitle());
+        }
+        if (to.getXml() == null) {
+            to.setXml(from.getXml());
+        }
+        if (to.getWriteOnly() == null) {
+            to.setWriteOnly(from.getWriteOnly());
         }
         return to;
     }
@@ -291,11 +364,18 @@ public class ParameterProcessor {
                 output = new Schema();
             }
 
-            // TODO: other types
+            // TODO: #2312 other types
         }
         if (output != null) {
             if (StringUtils.isNotBlank(schema._default())) {
                 output.setDefault(schema._default());
+            }
+
+            if (StringUtils.isNotBlank(schema.pattern())) {
+                output.setPattern(schema.pattern());
+            }
+            if (StringUtils.isNotBlank(schema.format())) {
+                output.setFormat(schema.format());
             }
             if (StringUtils.isNotBlank(schema.description())) {
                 output.setDescription(schema.description());
@@ -330,46 +410,6 @@ public class ParameterProcessor {
             }
         }
         return output;
-    }
-
-    /**
-     * Wraps either an @ApiParam or and @ApiImplicitParam
-     */
-
-    public interface ParamWrapper<T extends Annotation> {
-        String getName();
-
-        String getDescription();
-
-        String getDefaultValue();
-
-        String getAllowableValues();
-
-        boolean isRequired();
-
-        String getAccess();
-
-        boolean isAllowMultiple();
-
-        String getDataType();
-
-        String getParamType();
-
-        T getAnnotation();
-
-        boolean isHidden();
-
-        String getExample();
-
-        String getType();
-
-        String getFormat();
-
-        boolean getReadOnly();
-
-        boolean getAllowEmptyValue();
-
-        String getCollectionFormat();
     }
 
     /**
@@ -453,7 +493,6 @@ public class ParameterProcessor {
                     || double.class.isAssignableFrom(clazz);
         }
 
-
         /**
          */
         public boolean isContext() {
@@ -525,6 +564,5 @@ public class ParameterProcessor {
             return collectionFormat;
         }
     }
-
 
 }

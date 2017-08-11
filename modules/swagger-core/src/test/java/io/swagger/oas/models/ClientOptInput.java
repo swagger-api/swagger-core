@@ -16,8 +16,7 @@ public class ClientOptInput {
         this.opts = opts;
     }
 
-    // TODO
-    @Schema//(hidden = true)
+    @Schema(hidden = true)
     public JsonNode getModel() {
         return model;
     }
