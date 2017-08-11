@@ -467,27 +467,4 @@ public class PojoTests {
     }
     */
 
-    // TODO #2312 string arrays and maps impl and tests
-    /*
-    @Test(enabled = false, description = "shows how to model a string array schema")
-    public void testStringArraySchema() {
-
-    }
-    */
-
-    @Schema(type = "string"/* container = "array" */)
-    static class stringArraySchema {}
-
-    @Test(enabled = false, description = "shows how to model a string map schema")
-    public void testStringMapSchema() {
-
-    }
-
-    @Schema(type = "string"/* container = "map" */)
-    static class stringMapSchema {}
-
-    static class JavaSucks {
-        @Schema(implementation = JavaSucks.class)
-        public Object values;
-    }
 }

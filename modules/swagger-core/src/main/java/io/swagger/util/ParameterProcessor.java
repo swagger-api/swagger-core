@@ -203,37 +203,75 @@ public class ParameterProcessor {
         return schema;
     }
 
-    // TODO! #2312 complete merge
     public static Schema merge(Schema from, Schema to) {
         if (from == null) {
             return to;
         }
-        if (to.getPattern() == null) {
-            to.setPattern(from.getPattern());
+        if (to.getDefault() == null) {
+            to.setDefault(from.getDefault());
         }
-        if (to.getFormat() == null) {
-            to.setFormat(from.getFormat());
+        if (to.getDeprecated() == null) {
+            to.setDeprecated(from.getDeprecated());
         }
         if (to.getDescription() == null) {
             to.setDescription(from.getDescription());
         }
-        if (to.getDefault() == null) {
-            to.setDefault(from.getDefault());
-        }
         if (to.getEnum() == null) {
             to.setEnum(from.getEnum());
         }
-        if (to.getExclusiveMinimum() == null) {
-            to.setExclusiveMinimum(from.getExclusiveMinimum());
+        if (to.getExample() == null) {
+            to.setExample(from.getExample());
         }
         if (to.getExclusiveMaximum() == null) {
             to.setExclusiveMaximum(from.getExclusiveMaximum());
         }
-        if (to.getMinimum() == null) {
-            to.setMinimum(from.getMinimum());
+        if (to.getExclusiveMinimum() == null) {
+            to.setExclusiveMinimum(from.getExclusiveMinimum());
+        }
+        if (to.getExtensions() == null) {
+            to.setExtensions(from.getExtensions());
+        }
+        if (to.getExternalDocs() == null) {
+            to.setExternalDocs(from.getExternalDocs());
+        }
+        if (to.getFormat() == null) {
+            to.setFormat(from.getFormat());
         }
         if (to.getMaximum() == null) {
             to.setMaximum(from.getMaximum());
+        }
+        if (to.getMaxLength() == null) {
+            to.setMaxLength(from.getMaxLength());
+        }
+        if (to.getMinimum() == null) {
+            to.setMinimum(from.getMinimum());
+        }
+        if (to.getMinLength() == null) {
+            to.setMinLength(from.getMinLength());
+        }
+        if (to.getMultipleOf() == null) {
+            to.setMultipleOf(from.getMultipleOf());
+        }
+        if (to.getNullable() == null) {
+            to.setNullable(from.getNullable());
+        }
+        if (to.getPattern() == null) {
+            to.setPattern(from.getPattern());
+        }
+        if (to.getReadOnly() == null) {
+            to.setReadOnly(from.getReadOnly());
+        }
+        if (to.getRequired() == null) {
+            to.setRequired(from.getRequired());
+        }
+        if (to.getTitle() == null) {
+            to.setTitle(from.getTitle());
+        }
+        if (to.getXml() == null) {
+            to.setXml(from.getXml());
+        }
+        if (to.getWriteOnly() == null) {
+            to.setWriteOnly(from.getWriteOnly());
         }
         return to;
     }
