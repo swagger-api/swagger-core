@@ -1,9 +1,9 @@
 package io.swagger.jaxrs2.integration;
 
-import io.swagger.oas.integration.api.OpenApiContext;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+
+import io.swagger.oas.integration.ext.OpenApiContext;
 
 public interface WebOpenApiContext extends OpenApiContext {
 

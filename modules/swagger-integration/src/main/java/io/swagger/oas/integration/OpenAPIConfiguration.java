@@ -1,4 +1,4 @@
-package io.swagger.oas.integration.api;
+package io.swagger.oas.integration;
 
 import java.util.Collection;
 import java.util.Map;
@@ -24,8 +24,4 @@ public interface OpenAPIConfiguration {
     Map<String, Object> getUserDefinedOptions();
 
     Boolean isReadAllResources();
-
-    Boolean isPrettyPrint();
-
-    Long getCacheTTL();
 }

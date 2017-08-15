@@ -1,11 +1,12 @@
-package io.swagger.oas.integration;
+package io.swagger.oas.integration.impl;
 
-import io.swagger.oas.integration.api.OpenApiConfigurationLoader;
-import io.swagger.oas.integration.api.OpenApiContext;
+import io.swagger.oas.integration.OpenAPIConfiguration;
+import io.swagger.oas.integration.OpenAPIReader;
+import io.swagger.oas.integration.OpenAPIScanner;
+import io.swagger.oas.integration.ext.OpenApiConfigurationLoader;
+import io.swagger.oas.integration.ext.OpenApiContext;
 import io.swagger.oas.models.OpenAPI;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.integration.api.OpenApiReader;
-import io.swagger.oas.integration.api.OpenApiScanner;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
@@ -30,14 +31,16 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     protected String configLocation;
     private OpenAPIConfiguration openApiConfiguration;
 
-    private OpenApiReader openApiReader;
-    private OpenApiScanner openApiScanner;
+    private OpenAPIReader openApiReader;
+    private OpenAPIScanner openApiScanner;
 
     private ConcurrentHashMap<String, Cache> cache = new ConcurrentHashMap<>();
 
     // 0 doesn't cache
     // -1 perpetual
     private long cacheTTL = -1;
+
+    public static final String OPENAPI_CONFIGURATION_CACHE_TTL_KEY = "openApi.configuration.cacheTTL";
 
     public long getCacheTTL() {
         return cacheTTL;
@@ -51,30 +54,30 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         this.cacheTTL = cacheTTL;
         return (T) this;
     }
-    public OpenApiReader getOpenApiReader() {
+    public OpenAPIReader getOpenApiReader() {
         return openApiReader;
     }
 
     @Override
-    public void setOpenApiReader(OpenApiReader openApiReader) {
+    public void setOpenApiReader(OpenAPIReader openApiReader) {
         this.openApiReader = openApiReader;
     }
 
-    public OpenApiScanner getOpenApiScanner() {
+    public OpenAPIScanner getOpenApiScanner() {
         return openApiScanner;
     }
 
     @Override
-    public void setOpenApiScanner(OpenApiScanner openApiScanner) {
+    public void setOpenApiScanner(OpenAPIScanner openApiScanner) {
         this.openApiScanner = openApiScanner;
     }
 
-    public final T openApiReader(OpenApiReader openApiReader) {
+    public final T openApiReader(OpenAPIReader openApiReader) {
         this.openApiReader = openApiReader;
         return (T) this;
     }
 
-    public final T openApiScanner(OpenApiScanner openApiScanner) {
+    public final T openApiScanner(OpenAPIScanner openApiScanner) {
         this.openApiScanner = openApiScanner;
         return (T) this;
     }
@@ -165,13 +168,13 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         this.openApiConfiguration = openApiConfiguration;
     }
 
-    protected OpenApiReader buildReader(final OpenAPIConfiguration openApiConfiguration) throws Exception {
-        OpenApiReader reader;
+    protected OpenAPIReader buildReader(final OpenAPIConfiguration openApiConfiguration) throws Exception {
+        OpenAPIReader reader;
         if (StringUtils.isNotBlank(openApiConfiguration.getReaderClass())) {
             Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getReaderClass());
-            reader = (OpenApiReader) cls.newInstance();
+            reader = (OpenAPIReader) cls.newInstance();
         } else {
-            reader = new OpenApiReader() {
+            reader = new OpenAPIReader() {
 
                 OpenAPIConfiguration openApiConfiguration;
                 @Override
@@ -190,11 +193,11 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return reader;
     }
 
-    protected OpenApiScanner buildScanner(final OpenAPIConfiguration openApiConfiguration) throws Exception {
-        OpenApiScanner scanner;
+    protected OpenAPIScanner buildScanner(final OpenAPIConfiguration openApiConfiguration) throws Exception {
+        OpenAPIScanner scanner;
         if (StringUtils.isNotBlank(openApiConfiguration.getScannerClass())) {
             Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getScannerClass());
-            scanner = (OpenApiScanner) cls.newInstance();
+            scanner = (OpenAPIScanner) cls.newInstance();
         } else {
             scanner = new GenericOpenApiScanner();
         }
@@ -277,10 +280,23 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             throw new OpenApiConfigurationException("error initializing context: " + e.getMessage(), e);
         }
 
-        // set cache TTL if present in configuration
-        if (openApiConfiguration.getCacheTTL() != null) {
-            this.cacheTTL = openApiConfiguration.getCacheTTL();
-        }
+		// set cache TTL if present in configuration
+		if (openApiConfiguration.getUserDefinedOptions() != null) {
+			Object cacheTTLObj = openApiConfiguration.getUserDefinedOptions().get(OPENAPI_CONFIGURATION_CACHE_TTL_KEY);
+			if (cacheTTLObj != null) {
+				if (cacheTTLObj instanceof Long) {
+					this.cacheTTL = (long) cacheTTLObj;
+				} else if (cacheTTLObj instanceof Integer) {
+					this.cacheTTL = ((Integer) cacheTTLObj).longValue();
+				} else if (cacheTTLObj instanceof String) {
+					try {
+						this.cacheTTL = Long.parseLong((String) cacheTTLObj);
+					} catch (NumberFormatException e) {
+						LOGGER.error("error reading 'cacheTTL' configuration: " + e.getMessage(), e);
+					}
+				}
+			}
+		}
         register();
         return (T) this;
     }
@@ -320,14 +336,8 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         if (merged.getScannerClass() == null) {
             merged.setScannerClass(parentConfig.getScannerClass());
         }
-        if (merged.getCacheTTL() == null) {
-            merged.setCacheTTL(parentConfig.getCacheTTL());
-        }
         if (merged.getUserDefinedOptions() == null) {
             merged.setUserDefinedOptions(parentConfig.getUserDefinedOptions());
-        }
-        if (merged.isPrettyPrint() == null) {
-            merged.setPrettyPrint(parentConfig.isPrettyPrint());
         }
         if (merged.isReadAllResources() == null) {
             merged.setReadAllResources(parentConfig.isReadAllResources());

@@ -1,8 +1,8 @@
 package io.swagger.jaxrs2.integration;
 
-import io.swagger.oas.integration.OpenApiConfigurationException;
-import io.swagger.oas.integration.api.OpenApiContext;
-import io.swagger.oas.integration.OpenApiContextLocator;
+import io.swagger.oas.integration.ext.OpenApiContext;
+import io.swagger.oas.integration.impl.OpenApiConfigurationException;
+import io.swagger.oas.integration.impl.OpenApiContextLocator;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
@@ -63,7 +63,8 @@ public class OpenApiServlet extends HttpServlet {
     }
 
     boolean pretty = false;
-    if (ctx.getOpenApiConfiguration() != null && Boolean.TRUE.equals(ctx.getOpenApiConfiguration().isPrettyPrint())) {
+    if (ctx.getOpenApiConfiguration() != null && ctx.getOpenApiConfiguration().getUserDefinedOptions() != null
+    		&& Boolean.TRUE.equals(ctx.getOpenApiConfiguration().getUserDefinedOptions().get(ServletConfigContextUtils.OPENAPI_CONFIGURATION_PRETTYPRINT_KEY))) {
       pretty = true;
     }
 

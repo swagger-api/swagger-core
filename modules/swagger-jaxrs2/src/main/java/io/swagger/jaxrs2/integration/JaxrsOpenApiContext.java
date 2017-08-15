@@ -1,11 +1,12 @@
 package io.swagger.jaxrs2.integration;
 
 import io.swagger.jaxrs2.Reader;
-import io.swagger.oas.integration.GenericOpenApiContext;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.integration.api.OpenApiContext;
-import io.swagger.oas.integration.api.OpenApiReader;
-import io.swagger.oas.integration.api.OpenApiScanner;
+import io.swagger.oas.integration.OpenAPIConfiguration;
+import io.swagger.oas.integration.OpenAPIReader;
+import io.swagger.oas.integration.OpenAPIScanner;
+import io.swagger.oas.integration.ext.OpenApiContext;
+import io.swagger.oas.integration.impl.GenericOpenApiContext;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +25,11 @@ public class JaxrsOpenApiContext<T extends JaxrsOpenApiContext> extends GenericO
 
 
     @Override
-    protected OpenApiReader buildReader(OpenAPIConfiguration openApiConfiguration) throws Exception {
-        OpenApiReader reader;
+    protected OpenAPIReader buildReader(OpenAPIConfiguration openApiConfiguration) throws Exception {
+        OpenAPIReader reader;
         if (StringUtils.isNotBlank(openApiConfiguration.getReaderClass())) {
             Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getReaderClass());
-            reader = (OpenApiReader) cls.newInstance();
+            reader = (OpenAPIReader) cls.newInstance();
         } else {
             reader = new Reader();
         }
@@ -37,12 +38,12 @@ public class JaxrsOpenApiContext<T extends JaxrsOpenApiContext> extends GenericO
     }
 
     @Override
-    protected OpenApiScanner buildScanner(OpenAPIConfiguration openApiConfiguration) throws Exception {
+    protected OpenAPIScanner buildScanner(OpenAPIConfiguration openApiConfiguration) throws Exception {
 
-        OpenApiScanner scanner;
+        OpenAPIScanner scanner;
         if (StringUtils.isNotBlank(openApiConfiguration.getScannerClass())) {
             Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getScannerClass());
-            scanner = (OpenApiScanner) cls.newInstance();
+            scanner = (OpenAPIScanner) cls.newInstance();
         } else {
             scanner = new JaxrsApplicationAndAnnotationScanner();
         }

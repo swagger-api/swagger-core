@@ -1,5 +1,4 @@
-package io.swagger.oas.integration.api;
-
+package io.swagger.oas.integration.ext;
 
 import io.swagger.oas.integration.OpenAPIConfiguration;
 import io.swagger.oas.integration.OpenAPIReader;

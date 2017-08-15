@@ -1,9 +1,10 @@
 package io.swagger.jaxrs2.integration;
 
-import io.swagger.oas.integration.GenericOpenApiContextBuilder;
-import io.swagger.oas.integration.OpenApiConfigurationException;
-import io.swagger.oas.integration.api.OpenApiContext;
-import io.swagger.oas.integration.OpenApiContextLocator;
+import io.swagger.oas.integration.ext.OpenApiContext;
+import io.swagger.oas.integration.impl.GenericOpenApiContextBuilder;
+import io.swagger.oas.integration.impl.OpenApiConfigurationException;
+import io.swagger.oas.integration.impl.OpenApiContextLocator;
+
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletConfig;
