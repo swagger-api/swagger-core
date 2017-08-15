@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface Schema {
   /**
-   * Provides a java class as implementation for this schema.  When provided, additional information in the Schema annotation will augment the java class after introspection.
+   * Provides a java class as implementation for this schema.  When provided, additional information in the Schema annotation (except for type information) will augment the java class after introspection.
    * @return a class that implements this schema
    **/
   Class<?> implementation() default Void.class;
@@ -62,7 +62,7 @@ public @interface Schema {
    * Provides an array of java class implementations which can be used to describe multiple acceptable schemas.  If all match, the schema will be considered valid
    * @return the list of classes to match   
    **/
-  Class<?>[] allOf() default Void.class;
+  Class<?>[] allOf() default {};
 
   /**
    * The name of the schema or property.
@@ -80,7 +80,7 @@ public @interface Schema {
    * Constrains a value such that when divided by the multipleOf, the remainder must be an integer.  Ignored if the value is 0.
    * @return the multiplier constraint of the schema
    **/
-  int multipleOf() default 0;
+  double multipleOf() default 0;
 
   /**
    * Sets the maximum numeric value for a property.  Ignored if the value is an empty string.
@@ -95,7 +95,7 @@ public @interface Schema {
   boolean exclusiveMaximum() default false;
 
   /**
-   * Sets the minimum numeric value for a property.  Ignored if the value is an empty string.
+   * Sets the minimum numeric value for a property.  Ignored if the value is an empty string or not a number.
    * @return the minimum value for this schema
    **/
   String minimum() default "";
@@ -107,16 +107,16 @@ public @interface Schema {
   boolean exclusiveMinimum() default false;
 
   /**
-   * Sets the maximum length of a string value.  Ignored if the value is Integer.MIN_VALUE.
+   * Sets the maximum length of a string value.  Ignored if the value is negative.
    * @return the maximum length of this schema
    **/
-  int maxLength() default Integer.MIN_VALUE;
+  int maxLength() default Integer.MAX_VALUE;
 
   /**
-   * Sets the minimum length of a string value.  Ignored if the value is Integer.MAX_VALUE.
+   * Sets the minimum length of a string value.  Ignored if the value is negative.
    * @return the minimum length of this schema
    **/
-  int minLength() default Integer.MAX_VALUE;
+  int minLength() default 0;
 
   /**
    * A pattern that the value must satisfy. Ignored if the value is an empty string.

@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface SecurityScheme {
   /**
-   * Required. The type of the security scheme. Valid values are "apiKey", "http", "oauth2", "openIdConnect".
+   * The type of the security scheme. Valid values are "apiKey", "http", "oauth2", "openIdConnect".
    **/
   String type();
 

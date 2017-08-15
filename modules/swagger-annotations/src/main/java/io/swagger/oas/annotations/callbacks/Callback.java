@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 import io.swagger.oas.annotations.Operation;
 
 /**
- * This object represents a webhook that will be invoked.
+ * This object represents a callback URL that will be invoked.
  **/
 @Target({ ElementType.FIELD,
           ElementType.METHOD,

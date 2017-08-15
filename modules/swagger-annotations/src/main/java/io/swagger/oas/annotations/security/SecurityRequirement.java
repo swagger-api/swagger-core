@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface SecurityRequirement {
 	/**
-	 * Required. This name must correspond to a declared SecurityRequirement.  
+	 * This name must correspond to a declared SecurityRequirement.  
 	 */
     String name();
 

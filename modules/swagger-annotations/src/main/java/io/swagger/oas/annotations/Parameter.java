@@ -54,7 +54,7 @@ public @interface Parameter {
   String description() default "";
 
   /**
-   * Specifies that the parameter is not optional and must be present.
+   * Determines whether this parameter is mandatory. If the parameter location is "path", this property is required and its value must be true. Otherwise, the property may be included and its default value is false.
    * @return whether or not the parameter is required
    **/
   boolean required() default false;
@@ -72,38 +72,38 @@ public @interface Parameter {
   boolean allowEmptyValue() default false;
 
   /**
-   * Describes how the parameter value will be serialized depending on the type of the parameter value. Default values (based on value of in): for query - form; for path - simple; for header - simple; for cookie - form.
+   * Describes how the parameter value will be serialized depending on the type of the parameter value. Default values (based on value of in): for query - form; for path - simple; for header - simple; for cookie - form.  Ignored if the properties content or array are specified.
    * @return the style of the parameter
    **/
   String style() default "";
 
   /**
-   * When this is true, parameter values of type array or object generate separate parameters for each value of the array or key-value pair of the map. For other types of parameters this property has no effect. When style is form, the default value is true. For all other styles, the default value is false.
+   * When this is true, parameter values of type array or object generate separate parameters for each value of the array or key-value pair of the map. For other types of parameters this property has no effect. When style is form, the default value is true. For all other styles, the default value is false.  Ignored if the properties content or array are specified.
    *@return whether or not to expand individual array members
    **/
   Explode explode() default Explode.DEFAULT;
 
   /**
-   * Determines whether the parameter value should allow reserved characters, as defined by RFC3986. This property only applies to parameters with an in value of query. The default value is false.
+   * Determines whether the parameter value should allow reserved characters, as defined by RFC3986. This property only applies to parameters with an in value of query. The default value is false.  Ignored if the properties content or array are specified.
    * @return whether or not the parameter allows reserved characters
    **/
   boolean allowReserved() default false;
 
   /**
-   * The schema defining the type used for the parameter.
+   * The schema defining the type used for the parameter.  Ignored if the properties content or array are specified.
    * @return the schema of the parameter
    **/
   Schema schema() default @Schema();
   
   /**
-   * The schema of the array that defines this parameter.
+   * The schema of the array that defines this parameter.  Ignored if the property content is specified.
    * 
    * @return the schema of the array
    */
   ArraySchema array() default @ArraySchema();
 
   /**
-   * The representation of this parameter, for different media types.
+   * The representation of this parameter, for different media types.  
    * @return the content of the parameter
    **/
   Content[] content() default {};
@@ -115,13 +115,13 @@ public @interface Parameter {
   boolean hidden() default false;
   
   /**
-   * Provides an array examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
+   * Provides an array examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.  Ignored if the properties content or array are specified.
    * @return the list of examples for this parameter
    **/
   String[] examples() default {};
 
   /**
-   * Provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
+   * Provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.  Ignored if the properties examples, content or array are specified.
    * @return an example of the parameter
    **/
   String example() default "";

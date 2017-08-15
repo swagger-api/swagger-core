@@ -42,7 +42,7 @@ public @interface Link {
   String name() default "";
 
   /**
-   * A relative or absolute reference to an OAS operation. This field is mutually exclusive of the operationId field, and must point to an Operation Object. Relative operationRef values may be used to locate an existing Operation Object in the OpenAPI definition.
+   * A relative or absolute reference to an OAS operation. This field is mutually exclusive of the operationId field, and must point to an Operation Object. Relative operationRef values may be used to locate an existing Operation Object in the OpenAPI definition.  Ignored if the operationId property is specified.
    * @return an operation reference
    **/
   String operationRef() default "";

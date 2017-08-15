@@ -30,12 +30,12 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface OAuthFlow {
   /**
-   * Required. The authorization URL to be used for this flow. This must be in the form of a URL.  Applies to oauth2 ("implicit", "authorizationCode") type.
+   * The authorization URL to be used for this flow. This must be in the form of a URL.  Applies to oauth2 ("implicit", "authorizationCode") type.
    **/
   String authorizationUrl() default "";
 
   /**
-   * Required. The token URL to be used for this flow. This must be in the form of a URL.  Applies to oauth2 ("password", "clientCredentials", "authorizationCode") type.
+   * The token URL to be used for this flow. This must be in the form of a URL.  Applies to oauth2 ("password", "clientCredentials", "authorizationCode") type.
    **/
   String tokenUrl() default "";
 
@@ -45,7 +45,7 @@ public @interface OAuthFlow {
   String refreshUrl() default "";
 
   /**
-   * Required. The available scopes for the OAuth2 security scheme.  Applies to oauth2 type.
+   * The available scopes for the OAuth2 security scheme.  Applies to oauth2 type.
    **/
   OAuthScope[] scopes() default {};
 

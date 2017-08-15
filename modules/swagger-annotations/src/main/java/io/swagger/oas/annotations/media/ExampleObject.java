@@ -43,13 +43,13 @@ public @interface ExampleObject {
   String summary() default "";
 
   /**
-   * A string representation of the example.  If the media type associated with the example allows parsing into an object, it may be converted from a string
+   * A string representation of the example.  This is mutually exclusive with the externalValue property, and ignored if the externalValue property is specified.  If the media type associated with the example allows parsing into an object, it may be converted from a string
    @return the value of the example
    **/
   String value() default "";
 
   /**
-   * A URL to point to an external document to be used as an example.  This is mutually exclusive with the value property
+   * A URL to point to an external document to be used as an example.  This is mutually exclusive with the value property.
    * @return an external URL of the example
    **/
   String externalValue() default "";
