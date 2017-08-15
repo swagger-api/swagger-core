@@ -1,9 +1,9 @@
 package io.swagger.jaxrs2.integration;
 
 import io.swagger.jaxrs2.Reader;
-import io.swagger.oas.integration.GenericOpenApiContext;
-import io.swagger.oas.integration.SwaggerConfiguration;
-import io.swagger.oas.integration.api.OpenApiContext;
+import io.swagger.oas.integration.ext.OpenApiContext;
+import io.swagger.oas.integration.impl.GenericOpenApiContext;
+import io.swagger.oas.integration.impl.SwaggerConfiguration;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.info.Info;
 import org.testng.annotations.Test;

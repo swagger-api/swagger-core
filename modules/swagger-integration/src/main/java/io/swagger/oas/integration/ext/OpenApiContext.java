@@ -1,7 +1,9 @@
-package io.swagger.oas.integration.api;
+package io.swagger.oas.integration.ext;
 
-
-import io.swagger.oas.integration.OpenApiConfigurationException;
+import io.swagger.oas.integration.OpenAPIConfiguration;
+import io.swagger.oas.integration.OpenAPIReader;
+import io.swagger.oas.integration.OpenAPIScanner;
+import io.swagger.oas.integration.impl.OpenApiConfigurationException;
 import io.swagger.oas.models.OpenAPI;
 
 public interface OpenApiContext {
@@ -22,8 +24,8 @@ public interface OpenApiContext {
 
     OpenApiContext getParent();
 
-    void setOpenApiScanner(OpenApiScanner openApiScanner);
+    void setOpenApiScanner(OpenAPIScanner openApiScanner);
 
-    void setOpenApiReader(OpenApiReader openApiReader);
+    void setOpenApiReader(OpenAPIReader openApiReader);
 
 }

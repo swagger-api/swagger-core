@@ -1,7 +1,8 @@
 package io.swagger.jaxrs2.integration;
 
-import io.swagger.oas.integration.SwaggerConfiguration;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.oas.integration.OpenAPIConfiguration;
+import io.swagger.oas.integration.impl.SwaggerConfiguration;
+
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;

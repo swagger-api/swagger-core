@@ -1,9 +1,9 @@
-package io.swagger.oas.integration;
-
-import io.swagger.oas.integration.api.OpenApiContext;
+package io.swagger.oas.integration.impl;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import io.swagger.oas.integration.ext.OpenApiContext;
 
 public class OpenApiContextLocator {
 

@@ -1,13 +1,12 @@
-package io.swagger.oas.integration.api;
+package io.swagger.oas.integration;
 
 import io.swagger.oas.models.OpenAPI;
 
 import java.util.Map;
 import java.util.Set;
 
-public interface OpenApiReader {
-
-    void setConfiguration(OpenAPIConfiguration openApiConfiguration);
+public interface OpenAPIReader {
+    void setConfiguration(OpenAPIConfiguration openAPIConfiguration);
 
     OpenAPI read(Set<Class<?>> classes, Map<String, Object> resources);
 }

@@ -1,7 +1,5 @@
-package io.swagger.oas.integration;
+package io.swagger.oas.integration.impl;
 
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.integration.api.OpenApiScanner;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -10,12 +8,15 @@ import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.swagger.oas.integration.OpenAPIConfiguration;
+import io.swagger.oas.integration.OpenAPIScanner;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class GenericOpenApiScanner implements OpenApiScanner {
+public class GenericOpenApiScanner implements OpenAPIScanner {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GenericOpenApiScanner.class);
 
