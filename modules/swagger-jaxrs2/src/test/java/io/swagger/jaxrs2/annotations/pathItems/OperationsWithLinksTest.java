@@ -13,30 +13,17 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
+import java.io.IOException;
+
 import static org.testng.Assert.assertEquals;
 
 public class OperationsWithLinksTest extends AbstractAnnotationTest {
-    @Test(enabled = false, description = "Shows creating simple links")
-    public void createOperationWithLinks() {
-        String openApiYAML = readIntoYaml(ClassWithOperationAndLinks.class);
-        int start = openApiYAML.indexOf("/addresses:");
-        int end = openApiYAML.length() - 1;
 
-        String expectedYAML = "/addresses:\n" +
-                "    get:\n" +
-                "      operationId: getAddress\n" +
-                "      parameters:\n" +
-                "      - name: userId\n" +
-                "        in: query\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: no description\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: '#/components/schemas/Address'\n" +
+    @Test(description = "Shows creating simple links")
+    public void createOperationWithLinks() throws IOException{
+
+        String expectedYAML = "openapi: 3.0.0\n" +
+                "paths:\n" +
                 "  /users:\n" +
                 "    get:\n" +
                 "      operationId: getUser\n" +
@@ -56,10 +43,73 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "            address:\n" +
                 "              operationId: getAddress\n" +
                 "              parameters:\n" +
-                "                userId: $request.query.userId";
-        String extractedYAML = openApiYAML.substring(start, end);
+                "                userId: $request.query.userId\n" +
+                "  /addresses:\n" +
+                "    get:\n" +
+                "      operationId: getAddress\n" +
+                "      parameters:\n" +
+                "      - name: userId\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: no description\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Address'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    User:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: string\n" +
+                "        username:\n" +
+                "          type: string\n" +
+                "    Address:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        street:\n" +
+                "          type: string\n" +
+                "        zip:\n" +
+                "          type: string";
 
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(ClassWithOperationAndLinks.class, expectedYAML);
+    }
+
+    @Test(description = "Shows creating operation response without annotation")
+    public void createOperationWithResponseNoAnnotation() throws IOException{
+
+        String expectedYAML = "openapi: 3.0.0\n" +
+                "paths:\n" +
+                "  /users:\n" +
+                "    get:\n" +
+                "      operationId: getUser\n" +
+                "      parameters:\n" +
+                "      - name: userId\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: no description\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/User'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    User:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: string\n" +
+                "        username:\n" +
+                "          type: string";
+
+        compareAsYaml(ClassWithResponseNoAnnotation.class, expectedYAML);
     }
 
     static class ClassWithOperationAndLinks {
@@ -96,36 +146,95 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
         }
     }
 
+    static class ClassWithResponseNoAnnotation {
+        @Path("/users")
+        @Operation(operationId = "getUser")
+        @GET
+        public User getUser(@QueryParam("userId") String userId) {
+            return null;
+        }
+    }
+
     static class User {
         private String id;
         private String username;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
     }
 
     static class Address {
         private String street;
         private String zip;
+
+        public String getStreet() {
+            return street;
+        }
+
+        public void setStreet(String street) {
+            this.street = street;
+        }
+
+        public String getZip() {
+            return zip;
+        }
+
+        public void setZip(String zip) {
+            this.zip = zip;
+        }
     }
 
-    @Test(enabled = false, description = "Shows creating simple links")
+    @Test(description = "Shows creating simple links")
     public void createOperationWithLinkReferences() {
-        String yaml = readIntoYaml(ClassWithOperationAndLinkReferences.class);
+        String openApiYAML = readIntoYaml(ClassWithOperationAndLinkReferences.class);
+        int start = openApiYAML.indexOf("/users:");
+        int end = openApiYAML.length() - 1;
 
-        assertEquals(yaml,
-                "/users:\n" +
-                        "  get:\n" +
-                        "    operationId: getUser\n" +
-                        "    parameters:\n" +
-                        "    - in: query\n" +
-                        "      name: userId\n" +
-                        "      schema:\n" +
-                        "        type: string\n" +
-                        "    responses:\n" +
-                        "      default:\n" +
-                        "        description: no description\n" +
-                        "        schema:\n" +
-                        "          $ref: '#/components/schemas/User'\n" +
-                        "        links:\n" +
-                        "          $ref: '#/components/links/MyLink'");
+        String expectedYaml = "/users:\n" +
+                "    get:\n" +
+                "      operationId: getUser\n" +
+                "      parameters:\n" +
+                "      - name: userId\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: no description\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/User'\n" +
+                "          links:\n" +
+                "            user:\n" +
+                "              operationRef: '#/components/links/MyLink'\n" +
+                "              operationId: getUser\n" +
+                "              parameters:\n" +
+                "                userId: $request.query.userId\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    User:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: string\n" +
+                "        username:\n" +
+                "          type: string";
+        String extractedYAML = openApiYAML.substring(start, end);
+        assertEquals(extractedYAML, expectedYaml);
     }
 
     static class ClassWithOperationAndLinkReferences {
@@ -143,6 +252,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                                                         expression = "$request.query.userId"))
                                 })}
         )
+        @GET
         public User getUser(@QueryParam("userId") String userId) {
             return null;
         }

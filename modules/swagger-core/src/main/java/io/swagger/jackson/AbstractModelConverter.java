@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-// TODO #2312
 public abstract class AbstractModelConverter implements ModelConverter {
     protected final ObjectMapper _mapper;
     protected final AnnotationIntrospector _intr;
@@ -43,19 +42,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
         _intr = mapper.getSerializationConfig().getAnnotationIntrospector();
 
     }
-/*
-    @Override
-    public Property resolve(Type type,
-                                    ModelConverterContext context,
-                                    Annotation[] annotations,
-                                    Iterator<ModelConverter> chain) {
-        if (chain.hasNext()) {
-            return chain.next().resolveProperty(type, context, annotations, chain);
-        } else {
-            return null;
-        }
-    }
-*/
+
     protected String _description(Annotated ann) {
         // while name suggests it's only for properties, should work for any Annotated thing.
         // also; with Swagger introspector's help, should get it from ApiModel/ApiModelProperty
@@ -135,12 +122,11 @@ public abstract class AbstractModelConverter implements ModelConverter {
     }
 
     protected Boolean _findReadOnly(Annotated a) {
-        /*
-        ApiModelProperty prop = a.getAnnotation(ApiModelProperty.class);
-        if (prop != null) {
-            return prop.readOnly();
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        // TODO possibly set schema.readOnly to be Boolean object
+        if (schema != null && schema.readOnly()) {
+            return schema.readOnly();
         }
-        */
         return null;
     }
 
