@@ -136,7 +136,7 @@ public class PetResource {
                     )}
     )
     public Response findPetsByStatus(
-            @Parameter(description = "Status values that need to be considered for filter", required = true/*, defaultValue = "available", allowableValues = "available,pending,sold", allowMultiple = true*/) @QueryParam("status") String status,
+            @Parameter(description = "Status values that need to be considered for filter", required = true) @QueryParam("status") String status,
             @BeanParam QueryResultBean qr
     ) {
         return Response.ok(petData.findPetByStatus(status)).build();

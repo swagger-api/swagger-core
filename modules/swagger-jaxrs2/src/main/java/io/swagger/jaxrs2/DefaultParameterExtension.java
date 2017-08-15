@@ -16,6 +16,7 @@ import javax.ws.rs.BeanParam;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.MatrixParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import java.lang.annotation.Annotation;
@@ -31,6 +32,8 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
     private static String COOKIE_PARAM = "cookie";
     private static String PATH_PARAM = "path";
     private static String FORM_PARAM = "form";
+    private static String MATRIX_PARAM = "matrix";
+    private static String BEAN_PARAM = "bean";
 
     final ObjectMapper mapper = Json.mapper();
 
@@ -72,6 +75,22 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 Parameter pp = new Parameter();
                 pp.setIn(FORM_PARAM);
                 pp.setName(param.value());
+                parameter = pp;
+            }  else if (annotation instanceof FormParam) {
+                FormParam param = (FormParam) annotation;
+                Parameter pp = new Parameter();
+                pp.setIn(FORM_PARAM);
+                pp.setName(param.value());
+                parameter = pp;
+            }  else if (annotation instanceof MatrixParam) {
+                MatrixParam param = (MatrixParam) annotation;
+                Parameter pp = new Parameter();
+                pp.setIn(MATRIX_PARAM);
+                pp.setName(param.value());
+                parameter = pp;
+            } else if (annotation instanceof BeanParam) {
+                Parameter pp = new Parameter();
+                pp.setIn(BEAN_PARAM);
                 parameter = pp;
             } else if (annotation instanceof io.swagger.oas.annotations.Parameter) {
                 Parameter pp = new Parameter();

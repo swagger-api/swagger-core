@@ -340,16 +340,9 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "        schema:\n" +
                 "          type: string\n" +
-                "      - name: skip\n" +
-                "        in: query\n" +
+                "      - in: bean\n" +
                 "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "      - name: limit\n" +
-                "        in: query\n" +
-                "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
+                "          $ref: '#/components/schemas/QueryResultBean'\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          content:\n" +
