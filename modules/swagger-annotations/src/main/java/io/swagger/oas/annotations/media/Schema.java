@@ -189,12 +189,6 @@ public @interface Schema {
    * @return an example of this schema
    **/
   String example() default "";
-
-  /**
-   * Provides an array examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
-   * @return a list of examples of this schema
-   **/
-  String[] examples() default {};
   
   /**
    * Additional external documentation for this schema.
