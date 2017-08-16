@@ -4,9 +4,9 @@
 
 The goal of Swagger™ is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, Swagger removes the guesswork in calling the service.
 
-Swagger-core is the Java implementation of Swagger. Current version supports *JAX-RS*.
+Swagger-core is the Java implementation of Swagger. Current version supports *JAX-RS2*.
 
-Check out [Swagger-Spec](https://github.com/OAI/OpenAPI-Specification) for additional information about the Swagger project.
+Check out the [OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification) for additional information about the Swagger project.
 
 ## Support
 The following methods are available to obtain support for Swagger:
@@ -21,9 +21,8 @@ The OpenAPI Specification has undergone several revisions since initial creation
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
 2.0.0-rc0            |              | 3.0           | [2.0](https://github.com/swagger-api/swagger-core/tree/2.0) | Under Development
-1.5.12 (**current stable**)|              | 2.0           | [master](https://github.com/swagger-api/swagger-core) | Maintenance
-1.5.10                     | 2016-08-19   | 2.0           | [tag v1.5.10](https://github.com/swagger-api/swagger-core/tree/v1.5.10) | Supported
-1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Supported
+1.5.16 (**current stable**)| 2017-07-05  | 2.0           | [tag v1.5.16](https://github.com/swagger-api/swagger-core/tree/v1.5.16) | Supported
+1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Deprecated
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4) | Deprecated
 1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0) | Deprecated
 
@@ -59,7 +58,7 @@ Of course if you don't want to build locally you can grab artifacts from maven c
 
 `http://repo1.maven.org/maven2/io/swagger/`
 
-## Sample Apps - *UPDATED*
+## Sample Apps
 The samples have moved to [a new repository](https://github.com/swagger-api/swagger-samples/tree/2.0) and contain various integrations and configurations.
 
 
