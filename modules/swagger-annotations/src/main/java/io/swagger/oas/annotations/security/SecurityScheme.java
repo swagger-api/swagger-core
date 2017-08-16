@@ -42,17 +42,17 @@ public @interface SecurityScheme {
   String description() default "";
 
   /**
-   * Required. The name of the header or query parameter to be used. Applies to apiKey type.
+   * The name of the header or query parameter to be used. Applies to apiKey type.
    **/
   String name() default "";
 
   /**
-   * Required. The location of the API key. Valid values are "query" or "header".  Applies to apiKey type.
+   * The location of the API key. Valid values are "query" or "header".  Applies to apiKey type.
    **/
   String in() default "";
 
   /**
-   * Required. The name of the HTTP Authorization scheme to be used in the Authorization header as defined in RFC 7235.  Applies to http type.
+   * The name of the HTTP Authorization scheme to be used in the Authorization header as defined in RFC 7235.  Applies to http type.
    **/
   String scheme() default "";
 
