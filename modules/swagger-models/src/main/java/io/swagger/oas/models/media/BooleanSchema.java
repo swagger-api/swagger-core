@@ -38,15 +38,33 @@ public class BooleanSchema extends Schema {
     return type;
   }
 
+  /**
+   * sets this BooleanSchema's type property to the given type.
+   *
+   * @param String type
+   */
   public void setType(String type) {
     this.type = type;
   }
 
+  /**
+   * sets this BooleanSchema's type property to the given type and
+   * returns this instance of BooleanSchema
+   *
+   * @param String type
+   * @return BooleanSchema
+   */
   public BooleanSchema type(String type) {
     this.type = type;
     return this;
   }
 
+  /**
+   * sets the _default property of this BooleanSchema to the given _default value.
+   * 
+   * @param byte[] _default
+   * @return BooleanSchema
+   */
   public BooleanSchema _default(Boolean _default) {
     super.setDefault(_default);
     return this;
@@ -64,11 +82,22 @@ public class BooleanSchema extends Schema {
     return null;
   }
 
+  /**
+   * sets the _enum property of this BooleanSchema to the given _enum value.
+   * 
+   * @param List&lt;byte[]&gt; _enum
+   * @return BooleanSchema
+   */
   public BooleanSchema _enum(List<Boolean> _enum) {
     this._enum = _enum;
     return this;
   }
 
+  /**
+   * Adds the given _enumItem to this BooleanSchema's List of _enumItems.
+   *
+   * @param byte[] _enumItem
+   */
   public BooleanSchema addEnumItem(Boolean _enumItem) {
     if(this._enum == null) {
       this._enum = new ArrayList<Boolean>();

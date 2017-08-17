@@ -51,10 +51,22 @@ public class Link {
         return server;
     }
 
+    /**
+     * sets this Link's server property to the given server.
+     *
+     * @param Server server
+     */
     public void setServer(Server server) {
         this.server = server;
     }
 
+    /**
+     * sets this Link's server property to the given server and
+     * returns this instance of Link
+     *
+     * @param Server server
+     * @return Link
+     */
     public Link server(Server server) {
         this.setServer(server);
         return this;
@@ -70,10 +82,22 @@ public class Link {
         return operationRef;
     }
 
+    /**
+     * sets this Link's operationRef property to the given operationRef.
+     *
+     * @param String operationRef
+     */
     public void setOperationRef(String operationRef) {
         this.operationRef = operationRef;
     }
 
+    /**
+     * sets this Link's operationRef property to the given operationRef and
+     * returns this instance of Link
+     *
+     * @param String operationRef
+     * @return Link
+     */
     public Link operationRef(String operationRef) {
         this.operationRef = operationRef;
         return this;
@@ -82,30 +106,59 @@ public class Link {
     /**
      * returns the requestBody property from a Link instance.
      *
-     * @return String operationId
+     * @return RequestBody requestBody
      **/
 
     public RequestBody getRequestBody() {
         return requestBody;
     }
 
+    /**
+     * sets this Link's requestBody property to the given requestBody.
+     *
+     * @param RequestBody requestBody
+     */
     public void setRequestBody(RequestBody requestBody) {
         this.requestBody = requestBody;
     }
 
+    /**
+     * sets this Link's requestBody property to the given requestBody and
+     * returns this instance of Link
+     *
+     * @param RequestBody requestBody
+     * @return Link
+     */
     public Link requestBody(RequestBody requestBody) {
         this.requestBody = requestBody;
         return this;
     }
 
+    /**
+     * returns this Link's requestBody property for this instance of Link.
+     *
+     * @param String operationId
+     */
     public String getOperationId() {
         return operationId;
     }
 
+    /**
+     * sets this Link's operationId property to the given operationId.
+     *
+     * @param String operationId
+     */
     public void setOperationId(String operationId) {
         this.operationId = operationId;
     }
 
+    /**
+     * sets this Link's operationId property to the given operationId and
+     * returns this instance of Link
+     *
+     * @param String operationId
+     * @return Link
+     */
     public Link operationId(String operationId) {
         this.operationId = operationId;
         return this;
@@ -116,15 +169,27 @@ public class Link {
      *
      * @return LinkParameters parameters
      **/
-
     public Map<String, String> getParameters() {
         return parameters;
     }
 
+    /**
+     * sets this Link's parameters property to the given parameters.
+     *
+     * @param LinkParameters parameters
+     */
     public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
     }
 
+    /**
+     * sets this Link's parameter property to the given parameter and
+     * returns this instance of Link
+     *
+     * @param String name
+     * @param String parameter
+     * @return Link
+     */
     public Link parameters(String name, String parameter) {
         if (this.parameters == null) {
             this.parameters = new HashMap<>();
@@ -144,15 +209,34 @@ public class Link {
         return headers;
     }
 
+    /**
+     * sets this Link's headers property to the given headers.
+     *
+     * @param Map&lt;String, Header&gt; headers
+     */
     public void setHeaders(Map<String, Header> headers) {
         this.headers = headers;
     }
 
+    /**
+     * sets this Link's headers property to the given headers and
+     * returns this instance of Link
+     *
+     * @param Map&lt;String, Header&gt; headers
+     * @return Link
+     */
     public Link headers(Map<String, Header> headers) {
         this.headers = headers;
         return this;
     }
 
+    /**
+     * Adds the given Header to this Link's map of headers, with the given name as its key.
+     *
+     * @param String name
+     * @param Header header
+     * @return Link
+     */
     public Link addHeaderObject(String name, Header header) {
         if (this.headers == null) {
             headers = new HashMap<>();
@@ -171,10 +255,22 @@ public class Link {
         return description;
     }
 
+    /**
+     * returns the description property from a Link instance.
+     *
+     * @return String description
+     **/
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * sets this Link's description property to the given description and
+     * returns this instance of Link
+     *
+     * @param String description
+     * @return Link
+     */
     public Link description(String description) {
         this.description = description;
         return this;
@@ -225,10 +321,20 @@ public class Link {
         return result;
     }
 
+    /**
+     * returns the $ref property from a Link instance.
+     *
+     * @return String $ref
+     **/
     public String get$ref() {
         return $ref;
     }
 
+    /**
+     * sets the $ref property for a Link instance.
+     *
+     * @param String $ref
+     **/
     public void set$ref(String $ref) {
         if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
             $ref = "#/components/links/" + $ref;
@@ -236,15 +342,33 @@ public class Link {
         this.$ref = $ref;
     }
 
+    /**
+     * sets this Link's $ref property to the given description and
+     * returns this instance of Link
+     *
+     * @param String $ref 
+     * @return Link
+     */
     public Link $ref(String $ref) {
         this.$ref = $ref;
         return this;
     }
 
+    /**
+     * returns the extensions property from a Link instance.
+     *
+     * @return Map&lt;String, Object&gt; extensions
+     */
     public java.util.Map<String, Object> getExtensions() {
         return extensions;
     }
 
+    /**
+     * Adds the given Object to this Link's map of extensions, with the given name as its key.
+     *
+     * @param String key
+     * @param Object value
+     */
     public void addExtension(String name, Object value) {
         if (this.extensions == null) {
             this.extensions = new java.util.HashMap<>();
@@ -252,6 +376,11 @@ public class Link {
         this.extensions.put(name, value);
     }
 
+    /**
+     * sets the extensions property for a Link instance.
+     *
+     * @return Map&lt;String, Object&gt; extensions
+     */
     public void setExtensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
     }

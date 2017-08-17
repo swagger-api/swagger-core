@@ -43,10 +43,22 @@ public class Info {
     return title;
   }
 
+  /**
+   * sets this Info's title property to the given title.
+   *
+   * @param String title
+   */
   public void setTitle(String title) {
     this.title = title;
   }
 
+  /**
+   * sets this Info's title property to the given title and
+   * returns this instance of Info
+   *
+   * @param String title
+   * @return Info
+   */
   public Info title(String title) {
     this.title = title;
     return this;
@@ -62,10 +74,22 @@ public class Info {
     return description;
   }
 
+  /**
+   * sets this Info's description property to the given description.
+   *
+   * @param String description
+   */
   public void setDescription(String description) {
     this.description = description;
   }
 
+  /**
+   * sets this Info's description property to the given description and
+   * returns this instance of Info
+   *
+   * @param String description
+   * @return Info
+   */
   public Info description(String description) {
     this.description = description;
     return this;
@@ -81,10 +105,22 @@ public class Info {
     return termsOfService;
   }
 
+  /**
+   * sets this Info's termsOfService property to the given termsOfService.
+   *
+   * @param String termsOfService
+   */
   public void setTermsOfService(String termsOfService) {
     this.termsOfService = termsOfService;
   }
 
+  /**
+   * sets this Info's termsOfService property to the given termsOfService and
+   * returns this instance of Info
+   *
+   * @param String termsOfService
+   * @return Info
+   */
   public Info termsOfService(String termsOfService) {
     this.termsOfService = termsOfService;
     return this;
@@ -100,10 +136,22 @@ public class Info {
     return contact;
   }
 
+  /**
+   * sets this Info's contact property to the given contact.
+   *
+   * @param Contact contact
+   */
   public void setContact(Contact contact) {
     this.contact = contact;
   }
 
+  /**
+   * sets this Info's contact property to the given contact and
+   * returns this instance of Info
+   *
+   * @param Contact contact
+   * @return Info
+   */
   public Info contact(Contact contact) {
     this.contact = contact;
     return this;
@@ -119,10 +167,22 @@ public class Info {
     return license;
   }
 
+  /**
+   * sets this Info's license property to the given license.
+   *
+   * @param License license
+   */
   public void setLicense(License license) {
     this.license = license;
   }
 
+  /**
+   * sets this Info's license property to the given license and
+   * returns this instance of Info
+   *
+   * @param License license
+   * @return Info
+   */
   public Info license(License license) {
     this.license = license;
     return this;
@@ -138,15 +198,26 @@ public class Info {
     return version;
   }
 
+  /**
+   * sets this Info's version property to the given version.
+   *
+   * @param String version
+   */
   public void setVersion(String version) {
     this.version = version;
   }
 
+  /**
+   * sets this Info's version property to the given version and
+   * returns this instance of Info
+   *
+   * @param String version
+   * @return Info
+   */
   public Info version(String version) {
     this.version = version;
     return this;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -171,11 +242,21 @@ public class Info {
     return Objects.hash(title, description, termsOfService, contact, license, version, extensions);
   }
 
-
+  /**
+   * returns the extensions property from a Info instance.
+   *
+   * @return Map&lt;String, Object&gt; extensions
+   */
   public java.util.Map<String, Object> getExtensions() {
     return extensions;
   }
 
+  /**
+   * Adds the given Object to this Info's map of extensions, with the given key as its key.
+   *
+   * @param String key
+   * @param Object value
+   */
   public void addExtension(String name, Object value) {
     if(this.extensions == null) {
       this.extensions = new java.util.HashMap<>();
@@ -183,10 +264,15 @@ public class Info {
     this.extensions.put(name, value);
   }
 
+  /**
+    * sets the extensions property for a Info instance.
+    *
+    * @return Map&lt;String, Object&gt; extensions
+    */
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
   }
-
+ 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

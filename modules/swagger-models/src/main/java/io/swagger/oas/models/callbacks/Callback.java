@@ -31,6 +31,12 @@ public class Callback extends LinkedHashMap<String, PathItem> {
   public Callback() { }
   private java.util.Map<String, Object> extensions = null;
 
+  /**
+   * Adds the given PathItem to this Callbacks's list of PathItems, with the given key as its key.
+   *
+   * @param String name
+   * @param PathItem item
+   */
   public Callback addPathItem(String name, PathItem item) {
     this.put(name, item);
     return this;
@@ -54,11 +60,22 @@ public class Callback extends LinkedHashMap<String, PathItem> {
     return Objects.hash(extensions, super.hashCode());
   }
 
-
+  /**
+   * returns the extensions property from a Callback instance.
+   *
+   * @return Map&lt;String, Object&gt; extensions
+   **/
   public java.util.Map<String, Object> getExtensions() {
     return extensions;
   }
 
+  /**
+   * Adds the given Object to this Callback's map of extensions, with the given key as its key.
+   *
+   * @param String key
+   * @param Object value
+   * @return Components
+   */
   public void addExtension(String name, Object value) {
     if(this.extensions == null) {
       this.extensions = new java.util.HashMap<>();
@@ -66,6 +83,11 @@ public class Callback extends LinkedHashMap<String, PathItem> {
     this.extensions.put(name, value);
   }
 
+  /**
+   * sets this Components' extensions property to the given map of extensions.
+   *
+   * @param Map&lt;String, Object&gt;extensions
+   */
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
   }

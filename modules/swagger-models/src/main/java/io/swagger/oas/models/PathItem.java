@@ -58,10 +58,22 @@ public class PathItem {
         return summary;
     }
 
+    /**
+     * sets this PathItem's summary property to the given summary.
+     *
+     * @param String summary
+     */
     public void setSummary(String summary) {
         this.summary = summary;
     }
 
+    /**
+    * sets this PathItem's summary property to the given summary and
+    * returns this instance of PathItem
+    *
+    * @param String summary
+    * @return PathItem
+    */
     public PathItem summary(String summary) {
         this.summary = summary;
         return this;
@@ -77,10 +89,22 @@ public class PathItem {
         return description;
     }
 
+    /**
+     * sets this PathItem's description property to the given description.
+     *
+     * @param String description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+    * sets this PathItem's description property to the given description and
+    * returns this instance of PathItem
+    *
+    * @param String description
+    * @return PathItem
+    */
     public PathItem description(String description) {
         this.description = description;
         return this;
@@ -91,15 +115,26 @@ public class PathItem {
      *
      * @return Operation get
      **/
-
     public Operation getGet() {
         return get;
     }
 
+    /**
+     * sets this PathItem's get property to the given get.
+     *
+     * @param Operation get
+     */
     public void setGet(Operation get) {
         this.get = get;
     }
 
+    /**
+    * sets this PathItem's get property to the given get and
+    * returns this instance of PathItem
+    *
+    * @param Operation get
+    * @return PathItem
+    */
     public PathItem get(Operation get) {
         this.get = get;
         return this;
@@ -115,10 +150,22 @@ public class PathItem {
         return put;
     }
 
+    /**
+     * sets this PathItem's put property to the given put.
+     *
+     * @param Operation put
+     */
     public void setPut(Operation put) {
         this.put = put;
     }
 
+    /**
+    * sets this PathItem's put property to the given put and
+    * returns this instance of PathItem
+    *
+    * @param Operation put
+    * @return PathItem
+    */
     public PathItem put(Operation put) {
         this.put = put;
         return this;
@@ -134,10 +181,22 @@ public class PathItem {
         return post;
     }
 
+    /**
+     * sets this PathItem's post property to the given post.
+     *
+     * @param Operation post
+     */
     public void setPost(Operation post) {
         this.post = post;
     }
 
+    /**
+    * sets this PathItem's post property to the given post and
+    * returns this instance of PathItem
+    *
+    * @param Operation post
+    * @return PathItem
+    */
     public PathItem post(Operation post) {
         this.post = post;
         return this;
@@ -153,10 +212,22 @@ public class PathItem {
         return delete;
     }
 
+    /**
+     * sets this PathItem's delete property to the given delete.
+     *
+     * @param Operation delete
+     */
     public void setDelete(Operation delete) {
         this.delete = delete;
     }
 
+    /**
+    * sets this PathItem's delete property to the given delete and
+    * returns this instance of PathItem
+    *
+    * @param Operation delete
+    * @return PathItem
+    */
     public PathItem delete(Operation delete) {
         this.delete = delete;
         return this;
@@ -172,10 +243,22 @@ public class PathItem {
         return options;
     }
 
+    /**
+     * sets this PathItem's options property to the given options.
+     *
+     * @param Operation options
+     */
     public void setOptions(Operation options) {
         this.options = options;
     }
 
+    /**
+    * sets this PathItem's options property to the given options and
+    * returns this instance of PathItem
+    *
+    * @param Operation options
+    * @return PathItem
+    */
     public PathItem options(Operation options) {
         this.options = options;
         return this;
@@ -191,10 +274,22 @@ public class PathItem {
         return head;
     }
 
+    /**
+     * sets this PathItem's head property to the given head.
+     *
+     * @param Operation head
+     */
     public void setHead(Operation head) {
         this.head = head;
     }
 
+    /**
+    * sets this PathItem's head property to the given head and
+    * returns this instance of PathItem
+    *
+    * @param Operation head
+    * @return PathItem
+    */
     public PathItem head(Operation head) {
         this.head = head;
         return this;
@@ -210,10 +305,22 @@ public class PathItem {
         return patch;
     }
 
+    /**
+     * sets this PathItem's patch property to the given patch.
+     *
+     * @param Operation patch
+     */
     public void setPatch(Operation patch) {
         this.patch = patch;
     }
 
+    /**
+    * sets this PathItem's patch property to the given patch and
+    * returns this instance of PathItem
+    *
+    * @param Operation patch
+    * @return PathItem
+    */
     public PathItem patch(Operation patch) {
         this.patch = patch;
         return this;
@@ -229,16 +336,32 @@ public class PathItem {
         return trace;
     }
 
+    /**
+     * sets this PathItem's trace property to the given trace.
+     *
+     * @param Operation trace
+     */
     public void setTrace(Operation trace) {
         this.trace = trace;
     }
 
+    /**
+    * sets this PathItem's trace property to the given trace and
+    * returns this instance of PathItem
+    *
+    * @param Operation trace
+    * @return PathItem
+    */
     public PathItem trace(Operation trace) {
         this.trace = trace;
         return this;
     }
 
-
+    /**
+     * Returns a list of all the operation for this path.
+     * 
+     * @return List&lt;Operation&gt; allOperations
+     */
     public List<Operation> readOperations() {
         List<Operation> allOperations = new ArrayList<>();
         if (this.get != null) {
@@ -269,6 +392,9 @@ public class PathItem {
         return allOperations;
     }
 
+    /**
+     * All of the possible types of methods for this path
+     */
     public enum HttpMethod {
         POST,
         GET,
@@ -280,7 +406,11 @@ public class PathItem {
         TRACE
     }
 
-
+    /**
+     * Returns a map with all the operations for this path, where the HttpMethods are keys.
+     * 
+     * @return Map&lt;HttpMethod, Operation&gt; result
+     */
     public Map<HttpMethod, Operation> readOperationsMap() {
         Map<HttpMethod, Operation> result = new LinkedHashMap<>();
 
@@ -322,15 +452,34 @@ public class PathItem {
         return servers;
     }
 
+    /**
+     * sets this PathItem's servers property to the given servers.
+     *
+     * @param List&lt;Server&gt; servers
+     */
     public void setServers(List<Server> servers) {
         this.servers = servers;
     }
 
+    /**
+    * sets this PathItem's patch servers to the given servers and
+    * returns this instance of PathItem
+    *
+    * @param List&lt;Server&gt; servers
+    * @return PathItem
+    */
     public PathItem servers(List<Server> servers) {
         this.servers = servers;
         return this;
     }
 
+    /**
+     * Adds the given serversItem to this PathItem's list of serversItem, with the given key as its key.
+     *
+     * @param String key
+     * @param Server serversItem
+     * @return PathItem
+    */
     public PathItem addServersItem(Server serversItem) {
         if (this.servers == null) {
             this.servers = new ArrayList<Server>();
@@ -349,15 +498,34 @@ public class PathItem {
         return parameters;
     }
 
+    /**
+     * sets this PathItem's parameters property to the given parameters.
+     *
+     * @param List&lt;Parameter&gt; servers
+     */
     public void setParameters(List<Parameter> parameters) {
         this.parameters = parameters;
     }
 
+    /**
+     * sets this PathItem's patch parameters to the given parameters and
+     * returns this instance of PathItem
+     *
+     * @param List&lt;Parameter&gt; servers
+     * @return PathItem
+     */
     public PathItem parameters(List<Parameter> parameters) {
         this.parameters = parameters;
         return this;
     }
 
+    /**
+     * Adds the given parametersItem to this PathItem's list of parametersItem, with the given key as its key.
+     *
+     * @param String key
+     * @param Parameter parametersItem
+     * @return PathItem
+    */
     public PathItem addParametersItem(Parameter parametersItem) {
         if (this.parameters == null) {
             this.parameters = new ArrayList<Parameter>();
@@ -366,10 +534,21 @@ public class PathItem {
         return this;
     }
 
+    /**
+     * returns the extensions property from a PathItem instance.
+     *
+     * @return Map&lt;String, Object&gt; extensions
+     **/
     public java.util.Map<String, Object> getExtensions() {
         return extensions;
     }
 
+    /**
+     * Adds the given extension to this PathItem's list of extension, with the given key as its key.
+     *
+     * @param String key
+     * @param Object value
+    */
     public void addExtension(String name, Object value) {
         if (this.extensions == null) {
             this.extensions = new java.util.HashMap<>();
@@ -377,6 +556,11 @@ public class PathItem {
         this.extensions.put(name, value);
     }
 
+    /**
+     * sets this PathItem's patch extensions to the given extensions
+     *
+     * @param Map&lt;String, Object&gt; extensions
+     **/
     public void setExtensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
     }
@@ -390,10 +574,22 @@ public class PathItem {
         return $ref;
     }
 
+    /**
+     * sets this PathItem's $ref property to the given $ref.
+     *
+     * @param String $ref
+     */
     public void set$ref(String $ref) {
         this.$ref = $ref;
     }
 
+    /**
+     * sets this PathItem's $ref parameters to the given $ref and
+     * returns this instance of PathItem
+     *
+     * @param List&lt;String&gt; $ref
+     * @return PathItem
+     */
     public PathItem $ref(String $ref) {
         this.$ref = $ref;
         return this;
@@ -471,7 +667,7 @@ public class PathItem {
         result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
         return result;
     }
-
+   
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
