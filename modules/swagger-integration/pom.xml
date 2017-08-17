@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>io.swagger</groupId>
 		<artifactId>swagger-project</artifactId>
-		<version>2.0.0-rc0</version>
+		<version>2.0.0-rc1</version>
 		<relativePath>../..</relativePath>
 	</parent>
 	<groupId>io.swagger</groupId>
 	<artifactId>swagger-integration</artifactId>
-	<version>2.0.0-rc0</version>
+	<version>2.0.0-rc1</version>
 	<packaging>bundle</packaging>
 	<name>swagger-integration</name>
 	<dependencies>
@@ -50,30 +50,18 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<version>${felix-version}</version>
 				<extensions>true</extensions>
-				<executions>
-					<execution>
-						<id>set_failok</id>
-						<goals>
-							<goal>manifest</goal>
-						</goals>
-						<configuration>
-							<instructions>
-								<_failok>true</_failok>
-							</instructions>
-						</configuration>
-					</execution>
-				</executions>
 				<configuration>
-					<manifestLocation>src/main/resources/META-INF</manifestLocation>
-					<rebuildBundle>true</rebuildBundle>
 					<instructions>
-						<Export-Package>io.swagger.oas.integration</Export-Package>
+						<Export-Package>
+							io.swagger.oas.integration,
+							io.swagger.oas.integration.api
+						</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 	<properties>
-		<swagger.version>2.0.0-rc0</swagger.version>
+		<swagger.version>2.0.0-rc1</swagger.version>
 	</properties>
 </project>
