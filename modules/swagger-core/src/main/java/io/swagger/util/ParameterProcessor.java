@@ -318,7 +318,6 @@ public class ParameterProcessor {
                 && !schema.nullable()
                 && !schema.readOnly()
                 && !schema.writeOnly()
-                && schema.examples().length == 1 && StringUtils.isBlank(schema.examples()[0])
                 && !schema.deprecated()
                 && schema.allowableValues().length == 1 && StringUtils.isBlank(schema.allowableValues()[0])
                 && StringUtils.isBlank(schema.defaultValue())
