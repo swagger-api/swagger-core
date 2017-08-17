@@ -32,7 +32,7 @@ The OpenAPI Specification has undergone 3 revisions since initial creation in 20
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-2.0.0-rc0                 | 2017-08-16   | 3.0           | [tag v2.0.0-rc0](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc0) | Supported
+2.0.0-rc1                 | 2017-08-17   | 3.0           | [tag v2.0.0-rc1](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc1) | Supported
 1.5.16 (**current stable**)| 2017-07-15  | 2.0           | [tag v1.5.16](https://github.com/swagger-api/swagger-core/tree/v1.5.16) | Supported
 1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Supported
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4) | Deprecated
@@ -51,6 +51,12 @@ If you're interested in the change history of swagger and the swagger-core frame
 You need the following installed and available in your $PATH:
 
 * Java 7 (http://java.oracle.com)
+* Apache maven 3.0.4 or greater (http://maven.apache.org/)
+
+### Prerequisites 2.X
+You need the following installed and available in your $PATH:
+
+* Java 8 (http://java.oracle.com)
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
 
