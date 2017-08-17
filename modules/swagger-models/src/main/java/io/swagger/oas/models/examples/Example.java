@@ -39,10 +39,22 @@ public class Example {
         return summary;
     }
 
+    /**
+     * sets this Example's summary property to the given summary.
+     *
+     * @param String summary
+     */
     public void setSummary(String summary) {
         this.summary = summary;
     }
 
+    /**
+     * sets this Example's summary property to the given summary and
+     * returns this instance of Example
+     *
+     * @param String summary
+     * @return Example
+     */
     public Example summary(String summary) {
         this.summary = summary;
         return this;
@@ -58,10 +70,22 @@ public class Example {
         return description;
     }
 
+    /**
+     * sets this Example's description property to the given description.
+     *
+     * @param String description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * sets this Example's description property to the given description and
+     * returns this instance of Example
+     *
+     * @param String description
+     * @return Example
+     */
     public Example description(String description) {
         this.description = description;
         return this;
@@ -77,10 +101,22 @@ public class Example {
         return value;
     }
 
+    /**
+     * sets this Example's value property to the given value.
+     *
+     * @param Object value
+     */
     public void setValue(Object value) {
         this.value = value;
     }
 
+    /**
+     * sets this Example's value property to the given value and
+     * returns this instance of Example
+     *
+     * @param Object value
+     * @return Example
+     */
     public Example value(Object value) {
         this.value = value;
         return this;
@@ -96,19 +132,41 @@ public class Example {
         return externalValue;
     }
 
+    /**
+     * sets this Example's externalValue property to the given externalValue.
+     *
+     * @param String externalValue
+     */
     public void setExternalValue(String externalValue) {
         this.externalValue = externalValue;
     }
 
+    /**
+     * sets this Example's externalValue property to the given externalValue and
+     * returns this instance of Example
+     *
+     * @param String externalValue
+     * @return Example
+     */
     public Example externalValue(String externalValue) {
         this.externalValue = externalValue;
         return this;
     }
 
+    /**
+     * returns the $ref property from a Example instance.
+     *
+     * @return String $ref
+     */
     public String get$ref() {
         return $ref;
     }
 
+    /**
+     * sets this Example's $ref property to the given $ref.
+     *
+     * @param String $ref
+     */
     public void set$ref(String $ref) {
         if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
             $ref = "#/components/examples/" + $ref;
@@ -116,15 +174,33 @@ public class Example {
         this.$ref = $ref;
     }
 
+    /**
+     * sets this Example's $ref property to the given $ref and
+     * returns this instance of Example
+     *
+     * @param String $ref
+     * @return Example
+     */
     public Example $ref(String $ref) {
         this.$ref = $ref;
         return this;
     }
 
+    /**
+     * returns the extensions property from a Example instance.
+     *
+     * @return Map&lt;String, Object&gt; extensions
+     **/
     public java.util.Map<String, Object> getExtensions() {
         return extensions;
     }
 
+    /**
+     * Adds the given Object to this Example's map of extensions, with the given key as its key.
+     *
+     * @param String key
+     * @param Object value
+     */
     public void addExtension(String name, Object value) {
         if (this.extensions == null) {
             this.extensions = new java.util.HashMap<>();
@@ -132,6 +208,11 @@ public class Example {
         this.extensions.put(name, value);
     }
 
+    /**
+     * sets the extensions property for a Example instance.
+     *
+     * @return Map&lt;String, Object&gt; extensions
+     **/
     public void setExtensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
     }

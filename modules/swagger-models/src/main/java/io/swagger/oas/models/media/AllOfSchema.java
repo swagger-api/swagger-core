@@ -16,30 +16,62 @@
 
 package io.swagger.oas.models.media;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
- * Content
- *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#contentObject"
+ * AllOfSchema
  */
 
 
-public class Content extends LinkedHashMap<String, MediaType> {
-  public Content() { }
+public class AllOfSchema extends Schema {
+  private List<Schema> allOf = null;
 
   /**
-   * Adds the MediaType for this Content, where name is the naem of hte MediaType and item is the MediaType itself
+   * returns the allOf property from a AllOfSchema instance.
    *
-   * @param String name
-   * @param MediaType item
-   * @return Content
+   * @return List&lt;Schema&gt; allOf
+   **/
+  public List<Schema> getAllOf() {
+    return allOf;
+  }
+
+  /**
+   * sets this AllOfSchema's allOf property to the given allOf.
+   *
+   * @param List&lt;Schema&gt; allOf
    */
-  public Content addMediaType(String name, MediaType item) {
-    this.put(name, item);
+  public void setAllOf(List<Schema> allOf) {
+    this.allOf = allOf;
+  }
+
+  /**
+   * sets this AllOfSchema's allOf property to the given allOf and
+   * returns this instance of AllOfSchema
+   *
+   * @param List&lt;Schema&gt; allOf
+   * @return AllOfSchema
+   */
+  public AllOfSchema allOf(List<Schema> allOf) {
+    this.allOf = allOf;
     return this;
   }
+
+  /**
+   * Adds the given allOfItem to this AllOfSchema's map of allOfItems, with the given key as its key.
+   *
+   * @param Schema allOfItem
+   * @return AllOfSchema
+   */
+  public AllOfSchema addAllOfItem(Schema allOfItem) {
+    if(this.allOf == null) {
+      this.allOf = new ArrayList<Schema>();
+    }
+    this.allOf.add(allOfItem);
+    return this;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -49,12 +81,14 @@ public class Content extends LinkedHashMap<String, MediaType> {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    return super.equals(o);
+    AllOfSchema allOfSchema = (AllOfSchema) o;
+    return Objects.equals(this.allOf, allOfSchema.allOf) &&
+        super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode());
+    return Objects.hash(allOf, super.hashCode());
   }
 
 
@@ -62,8 +96,9 @@ public class Content extends LinkedHashMap<String, MediaType> {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Content {\n");
+    sb.append("class AllOfSchema {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    allOf: ").append(toIndentedString(allOf)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -73,10 +73,22 @@ public class Header {
     return description;
   }
 
+  /**
+   * sets this Header's description property to the given description.
+   *
+   * @param String description
+   */
   public void setDescription(String description) {
     this.description = description;
   }
 
+  /**
+   * sets this Header's description property to the given description and
+   * returns this instance of Header
+   *
+   * @param String description
+   * @return Header
+   */
   public Header description(String description) {
     this.description = description;
     return this;
@@ -92,10 +104,22 @@ public class Header {
     return required;
   }
 
+  /**
+   * sets this Header's required property to the given required.
+   *
+   * @param Boolean required
+   */
   public void setRequired(Boolean required) {
     this.required = required;
   }
 
+  /**
+   * sets this Header's required property to the given required and
+   * returns this instance of Header
+   *
+   * @param Boolean required
+   * @return Header
+   */
   public Header required(Boolean required) {
     this.required = required;
     return this;
@@ -111,10 +135,22 @@ public class Header {
     return deprecated;
   }
 
+  /**
+   * sets this Header's deprecated property to the given deprecated.
+   *
+   * @param Boolean deprecated
+   */
   public void setDeprecated(Boolean deprecated) {
     this.deprecated = deprecated;
   }
 
+  /**
+   * sets this Header's deprecated property to the given deprecated and
+   * returns this instance of Header
+   *
+   * @param Boolean deprecated
+   * @return Header
+   */
   public Header deprecated(Boolean deprecated) {
     this.deprecated = deprecated;
     return this;
@@ -130,10 +166,22 @@ public class Header {
     return allowEmptyValue;
   }
 
+  /**
+   * sets this Header's allowEmptyValue property to the given allowEmptyValue.
+   *
+   * @param Boolean allowEmptyValue
+   */
   public void setAllowEmptyValue(Boolean allowEmptyValue) {
     this.allowEmptyValue = allowEmptyValue;
   }
 
+  /**
+   * sets this Header's allowEmptyValue property to the given allowEmptyValue and
+   * returns this instance of Header
+   *
+   * @param Boolean allowEmptyValue
+   * @return Header
+   */
   public Header allowEmptyValue(Boolean allowEmptyValue) {
     this.allowEmptyValue = allowEmptyValue;
     return this;
@@ -149,10 +197,22 @@ public class Header {
     return style;
   }
 
+  /**
+   * sets this Header's style property to the given style.
+   *
+   * @param StyleEnum style
+   */
   public void setStyle(StyleEnum style) {
     this.style = style;
   }
 
+  /**
+   * sets this Header's style property to the given style and
+   * returns this instance of Header
+   *
+   * @param StyleEnum style
+   * @return Header
+   */
   public Header style(StyleEnum style) {
     this.style = style;
     return this;
@@ -168,10 +228,22 @@ public class Header {
     return explode;
   }
 
+  /**
+   * sets this Header's explode property to the given explode.
+   *
+   * @param Boolean allowEmptyValue
+   */
   public void setExplode(Boolean explode) {
     this.explode = explode;
   }
 
+  /**
+   * sets this Header's explode property to the given explode and
+   * returns this instance of Header
+   *
+   * @param Boolean explode
+   * @return Header
+   */
   public Header explode(Boolean explode) {
     this.explode = explode;
     return this;
@@ -187,10 +259,22 @@ public class Header {
     return schema;
   }
 
+  /**
+   * sets this Header's schema property to the given schema.
+   *
+   * @param Schema schema
+   */
   public void setSchema(Schema schema) {
     this.schema = schema;
   }
 
+  /**
+   * sets this Header's schema property to the given schema and
+   * returns this instance of Header
+   *
+   * @param Schema schema
+   * @return Header
+   */
   public Header schema(Schema schema) {
     this.schema = schema;
     return this;
@@ -206,15 +290,34 @@ public class Header {
     return examples;
   }
 
+  /**
+   * sets this Header's examples property to the given examples.
+   *
+   * @param List&lt;Example&gt; examples
+   */
   public void setExamples(List<Example> examples) {
     this.examples = examples;
   }
 
+  /**
+   * sets this Header's examples property to the given examples and
+   * returns this instance of Header
+   *
+   * @param List&lt;Example&gt; examples
+   * @return Header
+   */
   public Header examples(List<Example> examples) {
     this.examples = examples;
     return this;
   }
 
+  /**
+   * Adds the given examplesItem to this Header's list of examples, with the given key as its key.
+   *
+   * @param String key
+   * @param Example examplesItem
+   * @return OpenAPI
+   */
   public Header addExamplesItem(Example examplesItem) {
     if(this.examples == null) {
       this.examples = new ArrayList<Example>();
@@ -233,10 +336,22 @@ public class Header {
     return example;
   }
 
+  /**
+   * sets this Header's example property to the given example.
+   *
+   * @param String example
+   */
   public void setExample(String example) {
     this.example = example;
   }
 
+  /**
+   * sets this Header's example property to the given example and
+   * returns this instance of Header
+   *
+   * @param String example
+   * @return Header
+   */
   public Header example(String example) {
     this.example = example;
     return this;
@@ -252,15 +367,26 @@ public class Header {
     return content;
   }
 
+  /**
+   * sets this Header's content property to the given content.
+   *
+   * @param Content content
+   */
   public void setContent(Content content) {
     this.content = content;
   }
 
+  /**
+   * sets this Header's content property to the given content and
+   * returns this instance of Header
+   *
+   * @param Content content
+   * @return Header
+   */
   public Header content(Content content) {
     this.content = content;
     return this;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -289,11 +415,21 @@ public class Header {
     return Objects.hash(description, required, deprecated, allowEmptyValue, style, explode, schema, examples, example, content, extensions);
   }
 
-
+  /**
+   * returns the extensions property from a Header instance.
+   *
+   * @return Map&lt;String, Object&gt; extensions
+   */
   public java.util.Map<String, Object> getExtensions() {
     return extensions;
   }
 
+  /**
+   * Adds the given Object to this Header's map of extensions, with the given key as its key.
+   *
+   * @param String key
+   * @param Object value
+   */
   public void addExtension(String name, Object value) {
     if(this.extensions == null) {
       this.extensions = new java.util.HashMap<>();
@@ -301,14 +437,29 @@ public class Header {
     this.extensions.put(name, value);
   }
 
+  /**
+    * sets the extensions property for a Header instance.
+    *
+    * @return Map&lt;String, Object&gt; extensions
+    */
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
   }
 
+  /**
+   * returns the $ref property from a Header instance.
+   *
+   * @return String $ref
+   */
   public String get$ref() {
     return $ref;
   }
 
+  /**
+   * sets this Header's $ref property to the given $ref.
+   *
+   * @param String $ref
+   */
   public void set$ref(String $ref) {
     if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
       $ref = "#/components/headers/" + $ref;
@@ -316,11 +467,18 @@ public class Header {
     this.$ref = $ref;
   }
 
+  /**
+   * sets this Header's $ref property to the given $ref and
+   * returns this instance of Header
+   *
+   * @param String $ref
+   * @return Header
+   */
   public Header $ref(String $ref) {
     this.$ref = $ref;
     return this;
   }
-
+ 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
