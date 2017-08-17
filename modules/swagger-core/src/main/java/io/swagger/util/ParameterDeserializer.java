@@ -3,8 +3,10 @@ package io.swagger.util;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectReader;
 import io.swagger.oas.models.parameters.CookieParameter;
 import io.swagger.oas.models.parameters.HeaderParameter;
 import io.swagger.oas.models.parameters.Parameter;
@@ -27,14 +29,20 @@ public class ParameterDeserializer extends JsonDeserializer<Parameter> {
             result = new Parameter().$ref(sub.asText());
         } else if (inNode != null) {
             String in = inNode.asText();
+
+            ObjectReader reader = null;
+
             if ("query".equals(in)) {
-                result = Json.mapper().convertValue(node, QueryParameter.class);
+                reader = Json.mapper().readerFor(QueryParameter.class);
             } else if ("header".equals(in)) {
-                result = Json.mapper().convertValue(node, HeaderParameter.class);
+                reader = Json.mapper().readerFor(HeaderParameter.class);
             } else if ("path".equals(in)) {
-                result = Json.mapper().convertValue(node, PathParameter.class);
+                reader = Json.mapper().readerFor(PathParameter.class);
             } else if ("cookie".equals(in)) {
-                result = Json.mapper().convertValue(node, CookieParameter.class);
+                reader = Json.mapper().readerFor(CookieParameter.class);
+            }
+            if (reader != null) {
+                result = reader.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(node);
             }
         }
 
