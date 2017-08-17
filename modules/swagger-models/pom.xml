@@ -98,4 +98,17 @@
         <powermock.version>1.6.4</powermock.version>
         <mockito-version>1.10.19</mockito-version>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>disable-java8-doclint</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <additionalparam>-Xdoclint:none</additionalparam>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
