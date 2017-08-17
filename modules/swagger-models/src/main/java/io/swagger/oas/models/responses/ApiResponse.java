@@ -16,20 +16,19 @@
 
 package io.swagger.oas.models.responses;
 
-import io.swagger.oas.models.headers.Header;
-import io.swagger.oas.models.links.Link;
-import io.swagger.oas.models.media.Content;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import io.swagger.oas.models.headers.Header;
+import io.swagger.oas.models.links.Link;
+import io.swagger.oas.models.media.Content;
+
 /**
  * ApiResponse
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#responseObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#responseObject"
  */
-
 
 public class ApiResponse {
     private String description = null;
@@ -49,9 +48,24 @@ public class ApiResponse {
         return description;
     }
 
+    /**
+     * Sets the description property of a ApiResponse instance
+     * to the parameter.
+     *
+     * @param description
+     */
+
     public void setDescription(String description) {
         this.description = description;
     }
+
+    /**
+     * Sets the description property of a ApiResponse instance
+     * to the parameter and returns the instance.
+     *
+     * @param description
+     * @return ApiResponse instance with the set description property
+     */
 
     public ApiResponse description(String description) {
         this.description = description;
@@ -61,22 +75,46 @@ public class ApiResponse {
     /**
      * returns the headers property from a ApiResponse instance.
      *
-     * @return headers
+     * @return Map&lt;String, Header&gt; headers
      **/
-
 
     public Map<String, Header> getHeaders() {
         return headers;
     }
 
+    /**
+     * Sets the headers property of a ApiResponse instance
+     * to the parameter.
+     *
+     * @param headers
+     */
+
     public void setHeaders(Map<String, Header> headers) {
         this.headers = headers;
     }
+
+    /**
+     * Sets the headers property of a ApiResponse instance
+     * to the parameter and returns the instance.
+     *
+     * @param headers
+     * @return ApiResponse instance with the set headers property
+     */
 
     public ApiResponse headers(Map<String, Header> headers) {
         this.headers = headers;
         return this;
     }
+
+    /**
+     * Adds a header item to the headers map of an ApiResponse instance
+     * at the specified key and returns the instance.
+     * If headers is null, creates a new HashMap and adds item to it.
+     *
+     * @param name - map key
+     * @param header - map value
+     * @return ApiResponse instance with the added header item
+     */
 
     public ApiResponse addHeaderObject(String name, Header header) {
         if (this.headers == null) {
@@ -96,9 +134,24 @@ public class ApiResponse {
         return content;
     }
 
+    /**
+     * Sets the content property of an ApiResponse instance
+     * to the parameter.
+     *
+     * @param content
+     */
+
     public void setContent(Content content) {
         this.content = content;
     }
+
+    /**
+     * Sets the content property of an ApiResponse instance
+     * to the parameter and returns the instance.
+     *
+     * @param content
+     * @return ApiResponse instance with the set content property
+     */
 
     public ApiResponse content(Content content) {
         this.content = content;
@@ -115,9 +168,28 @@ public class ApiResponse {
         return links;
     }
 
+    /**
+     * Sets the links property of an ApiResponse instance
+     * to the parameter.
+     *
+     * @param links
+     */
+
     public void setLinks(java.util.Map<String, Link> links) {
         this.links = links;
     }
+
+    /**
+     * Sets the links property of an ApiResponse instance
+     * using key, value pair and returns the instance.
+     * <p>
+     * If links is null, creates a new HashMap and adds the
+     * key-value pair to it.
+     *
+     * @param link
+     * @param link
+     * @return ApiResponse instance with the set links property
+     */
 
     public ApiResponse link(String name, Link link) {
         if (this.links == null) {
@@ -136,12 +208,27 @@ public class ApiResponse {
         return $ref;
     }
 
+    /**
+     * Sets the $ref property of an ApiResponse instance
+     * to the parameter.
+     *
+     * @param String $ref
+     */
+
     public void set$ref(String $ref) {
         if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
             $ref = "#/components/responses/" + $ref;
         }
         this.$ref = $ref;
     }
+
+    /**
+     * Sets the $ref property of an ApiResponse instance
+     * to the parameter and returns the instance.
+     *
+     * @param $ref
+     * @return ApiResponse instance with the set $ref property
+     */
 
     public ApiResponse $ref(String $ref) {
         set$ref($ref);
@@ -159,11 +246,11 @@ public class ApiResponse {
         }
         ApiResponse apiResponse = (ApiResponse) o;
         return Objects.equals(this.description, apiResponse.description) &&
-                Objects.equals(this.headers, apiResponse.headers) &&
-                Objects.equals(this.content, apiResponse.content) &&
-                Objects.equals(this.links, apiResponse.links) &&
-                Objects.equals(this.extensions, apiResponse.extensions) &&
-                Objects.equals(this.$ref, apiResponse.$ref);
+               Objects.equals(this.headers, apiResponse.headers) &&
+               Objects.equals(this.content, apiResponse.content) &&
+               Objects.equals(this.links, apiResponse.links) &&
+               Objects.equals(this.extensions, apiResponse.extensions) &&
+               Objects.equals(this.$ref, apiResponse.$ref);
     }
 
     @Override
@@ -171,10 +258,26 @@ public class ApiResponse {
         return Objects.hash(description, headers, content, links, extensions, $ref);
     }
 
+    /**
+     * Returns extensions property of a ApiResponse instance.
+     *
+     * @return Map&lt;String, Object&gt; extensions
+     */
 
     public java.util.Map<String, Object> getExtensions() {
         return extensions;
     }
+
+    /**
+     * Adds an object item to extensions map at
+     * the specified key.
+     * <p>
+     * If extensions is null, creates a new HashMap
+     * and adds item to it
+     *
+     * @param name - map key
+     * @param value - map value
+     */
 
     public void addExtension(String name, Object value) {
         if (this.extensions == null) {
@@ -182,6 +285,13 @@ public class ApiResponse {
         }
         this.extensions.put(name, value);
     }
+
+    /**
+     * Sets extensions property of a ApiResponse instance
+     * to the parameter.
+     *
+     * @param extensions
+     */
 
     public void setExtensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
@@ -202,9 +312,14 @@ public class ApiResponse {
     }
 
     /**
-     * Convert the given object to string with each line indented by 4 spaces
+     * Converts the given object to string with each line indented by 4 spaces
      * (except the first line).
+     * This method adds formatting to the general toString() method.
+     *
+     * @param o Java object to be represented as String
+     * @return Formatted String representation of the object
      */
+
     private String toIndentedString(java.lang.Object o) {
         if (o == null) {
             return "null";
@@ -213,4 +328,3 @@ public class ApiResponse {
     }
 
 }
-

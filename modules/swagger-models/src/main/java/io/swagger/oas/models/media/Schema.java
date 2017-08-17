@@ -16,9 +16,6 @@
 
 package io.swagger.oas.models.media;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.oas.models.ExternalDocumentation;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,12 +24,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.oas.models.ExternalDocumentation;
+
 /**
  * Schema
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#schemaObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#schemaObject"
  */
-
 
 public class Schema<T> {
     protected T _default;
@@ -81,9 +81,24 @@ public class Schema<T> {
         return this.name;
     }
 
+    /**
+     * Sets the name property of a Schema instance
+     * to the parameter.
+     *
+     * @param name
+     */
+
     public void setName(String name) {
         this.name = name;
     }
+
+    /**
+     * Sets the name property of a Schema instance
+     * to the parameter and returns the instance.
+     *
+     * @param name
+     * @return Schema instance with the modified name property
+     */
 
     public Schema name(String name) {
         this.setName(name);
@@ -91,7 +106,7 @@ public class Schema<T> {
     }
 
     /**
-     * returns the discriminator property from a AllOfSchema instance.
+     * returns the discriminator property from a Schema instance.
      *
      * @return Discriminator discriminator
      **/
@@ -100,9 +115,24 @@ public class Schema<T> {
         return discriminator;
     }
 
+    /**
+     * Sets discriminator property of a Schema instance
+     * to the parameter.
+     *
+     * @param discriminator
+     */
+
     public void setDiscriminator(Discriminator discriminator) {
         this.discriminator = discriminator;
     }
+
+    /**
+     * Sets discriminator property of a Schema instance
+     * to the parameter and returns the instance.
+     *
+     * @param discriminator
+     * @return Schema instance with the modified discriminator.
+     */
 
     public Schema discriminator(Discriminator discriminator) {
         this.discriminator = discriminator;
@@ -119,9 +149,24 @@ public class Schema<T> {
         return title;
     }
 
+    /**
+     * Sets the title property of a Schema instance
+     * to the parameter.
+     *
+     * @param title
+     */
+
     public void setTitle(String title) {
         this.title = title;
     }
+
+    /**
+     * Sets the title property of a Schema instance
+     * to the parameter and returns the modified instance.
+     *
+     * @param title
+     * @return Schema instance with the modified title.
+     */
 
     public Schema title(String title) {
         this.title = title;
@@ -138,21 +183,54 @@ public class Schema<T> {
         return _default;
     }
 
+    /**
+     * Set _default property of a Schema instance
+     * to the parameter.
+     *
+     * @param _default
+     */
+
     public void setDefault(Object _default) {
         this._default = cast(_default);
     }
+
+    /**
+     * Casts a Java object to a generic type T.
+     *
+     * @param value
+     * @return T value
+     */
 
     protected T cast(Object value) {
         return (T) value;
     }
 
+    /**
+     * Returns _enum property for a Schema instance.
+     *
+     * @return List&lt;T&gt; _enum
+     */
+
     public List<T> getEnum() {
         return _enum;
     }
 
+    /**
+     * Sets _enum property of a Schema instance
+     * to the parameter.
+     *
+     * @param _enum
+     */
+
     public void setEnum(List<T> _enum) {
         this._enum = _enum;
     }
+
+    /**
+     * Adds a generic type T item to _enum of a Schema instance.
+     *
+     * @param _enumItem
+     */
 
     public void addEnumItemObject(T _enumItem) {
         if (this._enum == null) {
@@ -173,9 +251,24 @@ public class Schema<T> {
         return multipleOf;
     }
 
+    /**
+     * Sets multipleOf property of a Schema instance
+     * to the parameter.
+     *
+     * @param multipleOf
+     */
+
     public void setMultipleOf(BigDecimal multipleOf) {
         this.multipleOf = multipleOf;
     }
+
+    /**
+     * Sets multipleOf property of a Schema instance
+     * to the parameter and returns the instance.
+     *
+     * @param multipleOf
+     * @return Schema instance with the modified multipleOf property
+     */
 
     public Schema multipleOf(BigDecimal multipleOf) {
         this.multipleOf = multipleOf;
@@ -192,9 +285,24 @@ public class Schema<T> {
         return maximum;
     }
 
+    /**
+     * Sets maximum property of a Schema instance
+     * to the parameter.
+     *
+     * @param maximum
+     */
+
     public void setMaximum(BigDecimal maximum) {
         this.maximum = maximum;
     }
+
+    /**
+     * Sets maximum property of a Schema instance to the parameter
+     * and returns the instance.
+     *
+     * @param maximum
+     * @return Schema instance with the modified maximum property
+     */
 
     public Schema maximum(BigDecimal maximum) {
         this.maximum = maximum;
@@ -211,9 +319,24 @@ public class Schema<T> {
         return exclusiveMaximum;
     }
 
+    /**
+     * Sets exclusiveMaximum property of a Schema instance
+     * to the parameter.
+     *
+     * @param exclusiveMaximum
+     */
+
     public void setExclusiveMaximum(Boolean exclusiveMaximum) {
         this.exclusiveMaximum = exclusiveMaximum;
     }
+
+    /**
+     * Sets exclusiveMaximum property of a Schema instance to the parameter
+     * and returns the instance.
+     *
+     * @param exclusiveMaximum
+     * @return Schema instance with modified exclusiveMaximum property.
+     */
 
     public Schema exclusiveMaximum(Boolean exclusiveMaximum) {
         this.exclusiveMaximum = exclusiveMaximum;
@@ -230,9 +353,24 @@ public class Schema<T> {
         return minimum;
     }
 
+    /**
+     * Sets minimum property of a Schema instance
+     * to the parameter.
+     *
+     * @param minimum
+     */
+
     public void setMinimum(BigDecimal minimum) {
         this.minimum = minimum;
     }
+
+    /**
+     * Sets minimum property of a Schema instance
+     * to the parameter and returns the instance
+     *
+     * @param minimum
+     * @return Schema instance with the modified minimum property.
+     */
 
     public Schema minimum(BigDecimal minimum) {
         this.minimum = minimum;
@@ -249,9 +387,24 @@ public class Schema<T> {
         return exclusiveMinimum;
     }
 
+    /**
+     * Sets exclusiveMinimum property of a Schema instance
+     * to the parameter.
+     *
+     * @param exclusiveMinimum
+     */
+
     public void setExclusiveMinimum(Boolean exclusiveMinimum) {
         this.exclusiveMinimum = exclusiveMinimum;
     }
+
+    /**
+     * Sets exclusiveMinimum property of a Schema instance
+     * to the parameter and returns the instance.
+     *
+     * @param exclusiveMinimum
+     * @return Schema instance with the modified exclusiveMinimum property.
+     */
 
     public Schema exclusiveMinimum(Boolean exclusiveMinimum) {
         this.exclusiveMinimum = exclusiveMinimum;
@@ -270,9 +423,24 @@ public class Schema<T> {
         return maxLength;
     }
 
+    /**
+     * Sets maxLength property of a Schema instance
+     * to the parameter.
+     *
+     * @param maxLength
+     */
+
     public void setMaxLength(Integer maxLength) {
         this.maxLength = maxLength;
     }
+
+    /**
+     * Sets maxLength property of a Schema instance
+     * to the parameter and returns the instance
+     *
+     * @param maxLength
+     * @return Schema instance with the modified maxLength property.
+     */
 
     public Schema maxLength(Integer maxLength) {
         this.maxLength = maxLength;
@@ -291,9 +459,24 @@ public class Schema<T> {
         return minLength;
     }
 
+    /**
+     * Sets minLength property of a Schema instance
+     * to the parameter.
+     *
+     * @param minLength
+     */
+
     public void setMinLength(Integer minLength) {
         this.minLength = minLength;
     }
+
+    /**
+     * Sets minLength property of a Schema instance
+     * to the parameter and returns the instance
+     *
+     * @param minLength
+     * @return Schema instance with the modified minLength property.
+     */
 
     public Schema minLength(Integer minLength) {
         this.minLength = minLength;
@@ -310,9 +493,24 @@ public class Schema<T> {
         return pattern;
     }
 
+    /**
+     * Sets pattern property of a Schema instance
+     * to the parameter.
+     *
+     * @param pattern
+     */
+
     public void setPattern(String pattern) {
         this.pattern = pattern;
     }
+
+    /**
+     * Sets pattern property of a Schema instance
+     * to the parameter and returns the instance
+     *
+     * @param pattern
+     * @return Schema instance with the modified pattern property.
+     */
 
     public Schema pattern(String pattern) {
         this.pattern = pattern;
@@ -331,9 +529,24 @@ public class Schema<T> {
         return maxItems;
     }
 
+    /**
+     * Sets maxItems property of a Schema instance
+     * to the parameter.
+     *
+     * @param maxItems
+     */
+
     public void setMaxItems(Integer maxItems) {
         this.maxItems = maxItems;
     }
+
+    /**
+     * Sets maxItems property of a Schema instance
+     * to the parameter and returns the instance.
+     *
+     * @param maxItems
+     * @return Schema instance with the modified maxItems property.
+     */
 
     public Schema maxItems(Integer maxItems) {
         this.maxItems = maxItems;
@@ -352,9 +565,24 @@ public class Schema<T> {
         return minItems;
     }
 
+    /**
+     * Sets minItems property of Schema instance
+     * to the parameter.
+     *
+     * @param minItems
+     */
+
     public void setMinItems(Integer minItems) {
         this.minItems = minItems;
     }
+
+    /**
+     * Sets minItems property of a Schema instance
+     * to the parameter and returns the instance.
+     *
+     * @param minItems
+     * @return Schema instance with the modified minItems property.
+     */
 
     public Schema minItems(Integer minItems) {
         this.minItems = minItems;
@@ -371,9 +599,24 @@ public class Schema<T> {
         return uniqueItems;
     }
 
+    /**
+     * Sets uniqueItems property of a Schema instance
+     * to the parameter.
+     *
+     * @param uniqueItems
+     */
+
     public void setUniqueItems(Boolean uniqueItems) {
         this.uniqueItems = uniqueItems;
     }
+
+    /**
+     * Sets uniqueItems property of a Schema instance
+     * to the parameter and returns the instance.
+     *
+     * @param uniqueItems
+     * @return Schema instance with the modified uniqueItems property.
+     */
 
     public Schema uniqueItems(Boolean uniqueItems) {
         this.uniqueItems = uniqueItems;
@@ -392,9 +635,24 @@ public class Schema<T> {
         return maxProperties;
     }
 
+    /**
+     * Sets maxProperties property of a Schema instance
+     * to the parameter.
+     *
+     * @param maxProperties
+     */
+
     public void setMaxProperties(Integer maxProperties) {
         this.maxProperties = maxProperties;
     }
+
+    /**
+     * Sets maxProperties property of a Schema instance
+     * to the parameter and returns the instance.
+     *
+     * @param maxProperties
+     * @return Schema instance with the modified maxProperty property.
+     */
 
     public Schema maxProperties(Integer maxProperties) {
         this.maxProperties = maxProperties;
@@ -413,9 +671,24 @@ public class Schema<T> {
         return minProperties;
     }
 
+    /**
+     * Sets minProperties property of a Schema instance
+     * to the parameter.
+     *
+     * @param minProperties
+     */
+
     public void setMinProperties(Integer minProperties) {
         this.minProperties = minProperties;
     }
+
+    /**
+     * Sets minProperties property of a Schema instance
+     * to the parameter and returns the instance.
+     *
+     * @param minProperties
+     * @return Schema instance with the modified minProperty property.
+     */
 
     public Schema minProperties(Integer minProperties) {
         this.minProperties = minProperties;
@@ -431,6 +704,14 @@ public class Schema<T> {
     public List<String> getRequired() {
         return required;
     }
+
+    /**
+     * Sets required property of a Schema instance if
+     * it is null or does not contain the List items
+     * passed in as method arguments.
+     *
+     * @param required
+     */
 
     public void setRequired(List<String> required) {
         List<String> list = new ArrayList<>();
@@ -450,10 +731,26 @@ public class Schema<T> {
         this.required = list;
     }
 
+    /**
+     * Sets required List property of a Schema instance
+     * to the parameter and returns the instance.
+     *
+     * @param required
+     * @return Schema instance with the set required property.
+     */
+
     public Schema required(List<String> required) {
         this.required = required;
         return this;
     }
+
+    /**
+     * Adds an item to required List of a Schema instance.
+     * Creates new ArrayList if instance's required property is null.
+     *
+     * @param requiredItem
+     * @return Schema instance with added required item.
+     */
 
     public Schema addRequiredItem(String requiredItem) {
         if (this.required == null) {
@@ -474,9 +771,24 @@ public class Schema<T> {
         return type;
     }
 
+    /**
+     * Sets the type property of a Schema instance
+     * to the parameter.
+     *
+     * @param type
+     */
+
     public void setType(String type) {
         this.type = type;
     }
+
+    /**
+     * Sets the type property of a Schema instance
+     * to the parameter and returns the instance.
+     *
+     * @param type
+     * @return Schema instance with the modified type property.
+     */
 
     public Schema type(String type) {
         this.type = type;
@@ -493,9 +805,25 @@ public class Schema<T> {
         return not;
     }
 
+    /**
+     * Sets the not property of a Schema instance
+     * to the parameter.
+     *
+     * @param not
+     */
+
     public void setNot(Schema not) {
         this.not = not;
     }
+
+    /**
+     * Sets the not property of a Schema instance
+     * to the parameter and
+     * returns the instance.
+     *
+     * @param not
+     * @return Schema with the modified not property.
+     */
 
     public Schema not(Schema not) {
         this.not = not;
@@ -512,14 +840,38 @@ public class Schema<T> {
         return properties;
     }
 
+    /**
+     * Sets properties property of a Schema instance
+     * to the parameter.
+     *
+     * @param properties
+     */
+
     public void setProperties(Map<String, Schema> properties) {
         this.properties = properties;
     }
+
+    /**
+     * Sets properties property of a Schema instance
+     * to the parameter and returns the modified instance.
+     *
+     * @param properties
+     * @return Schema instance with the set properties property.
+     */
 
     public Schema properties(Map<String, Schema> properties) {
         this.properties = properties;
         return this;
     }
+
+    /**
+     * Adds a Schema property item at specified key to properties
+     * property of a Schema instance and returns the instance.
+     *
+     * @param key
+     * @param propertiesItem
+     * @return Schema instance with added property item.
+     */
 
     public Schema addProperties(String key, Schema propertiesItem) {
         if (this.properties == null) {
@@ -539,9 +891,24 @@ public class Schema<T> {
         return additionalProperties;
     }
 
+    /**
+     * Sets additionalProperties property of a Schema instance
+     * to the parameter.
+     *
+     * @param additionalProperties
+     */
+
     public void setAdditionalProperties(Schema additionalProperties) {
         this.additionalProperties = additionalProperties;
     }
+
+    /**
+     * Sets additionalProperties property of a Schema instance
+     * to the parameter and returns the instance.
+     *
+     * @param additionalProperties
+     * @return Schema instance with the set additionalProperties property
+     */
 
     public Schema additionalProperties(Schema additionalProperties) {
         this.additionalProperties = additionalProperties;
@@ -558,9 +925,24 @@ public class Schema<T> {
         return description;
     }
 
+    /**
+     * Sets description property of a Schema instance
+     * to the parameter.
+     *
+     * @param description
+     */
+
     public void setDescription(String description) {
         this.description = description;
     }
+
+    /**
+     * Sets description property of a Schema instance
+     * to the parameter and returns the instance.
+     *
+     * @param description
+     * @return Schema instance with the set description property
+     */
 
     public Schema description(String description) {
         this.description = description;
@@ -577,9 +959,24 @@ public class Schema<T> {
         return format;
     }
 
+    /**
+     * Sets format property of a Schema instance
+     * to the parameter.
+     *
+     * @param format
+     */
+
     public void setFormat(String format) {
         this.format = format;
     }
+
+    /**
+     * Sets format property of a Schema instance
+     * to the parameter and returns the instance.
+     *
+     * @param format
+     * @return Schema instance with the set format property.
+     */
 
     public Schema format(String format) {
         this.format = format;
@@ -595,6 +992,13 @@ public class Schema<T> {
         return $ref;
     }
 
+    /**
+     * Set $ref property of a Schema instance
+     * to the parameter.
+     *
+     * @param $ref
+     */
+
     public void set$ref(String $ref) {
         if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
             $ref = "#/components/schemas/" + $ref;
@@ -602,12 +1006,19 @@ public class Schema<T> {
         this.$ref = $ref;
     }
 
+    /**
+     * Set $ref property of a Schema instance
+     * to the parameter and return the instance.
+     *
+     * @param $ref
+     * @return Schema instance with the set $ref property.
+     */
+
     public Schema $ref(String $ref) {
 
         set$ref($ref);
         return this;
     }
-
 
     /**
      * returns the nullable property from a Schema instance.
@@ -619,9 +1030,24 @@ public class Schema<T> {
         return nullable;
     }
 
+    /**
+     * Sets nullable property of a Schema instance
+     * to the parameter.
+     *
+     * @param nullable
+     */
+
     public void setNullable(Boolean nullable) {
         this.nullable = nullable;
     }
+
+    /**
+     * Sets nullable property of a Schema instance
+     * to the parameter and return the instance.
+     *
+     * @param nullable
+     * @return Schema instance with the set nullable property.
+     */
 
     public Schema nullable(Boolean nullable) {
         this.nullable = nullable;
@@ -638,9 +1064,24 @@ public class Schema<T> {
         return readOnly;
     }
 
+    /**
+     * Sets readOnly property of a Schema instance
+     * to the parameter.
+     *
+     * @param readOnly
+     */
+
     public void setReadOnly(Boolean readOnly) {
         this.readOnly = readOnly;
     }
+
+    /**
+     * Sets readOnly property of a Schema instance
+     * to the parameter and return the instance.
+     *
+     * @param readOnly
+     * @return Schema instance with the set readOnly property.
+     */
 
     public Schema readOnly(Boolean readOnly) {
         this.readOnly = readOnly;
@@ -657,9 +1098,24 @@ public class Schema<T> {
         return writeOnly;
     }
 
+    /**
+     * Sets writeOnly property of a Schema instance
+     * to the parameter.
+     *
+     * @param writeOnly
+     */
+
     public void setWriteOnly(Boolean writeOnly) {
         this.writeOnly = writeOnly;
     }
+
+    /**
+     * Sets writeOnly property of a Schema instance
+     * to the parameter and return the instance.
+     *
+     * @param writeOnly
+     * @return Schema instance with the set writeOnly property.
+     */
 
     public Schema writeOnly(Boolean writeOnly) {
         this.writeOnly = writeOnly;
@@ -676,9 +1132,24 @@ public class Schema<T> {
         return example;
     }
 
+    /**
+     * Sets example property of a Schema instance
+     * to the parameter.
+     *
+     * @param example
+     */
+
     public void setExample(Object example) {
         this.example = cast(example);
     }
+
+    /**
+     * Sets example property of a Schema instance
+     * to the parameter and return the instance.
+     *
+     * @param example
+     * @return Schema instance with the set example property.
+     */
 
     public Schema example(Object example) {
         this.example = cast(example);
@@ -695,9 +1166,25 @@ public class Schema<T> {
         return externalDocs;
     }
 
+    /**
+     * Sets externalDocs property of a Schema instance
+     * to the parameter.
+     *
+     * @param externalDocs
+     */
+
     public void setExternalDocs(ExternalDocumentation externalDocs) {
         this.externalDocs = externalDocs;
     }
+
+    /**
+     * Sets externalDocs property of a Schema instance
+     * to the parameter and
+     * return the instance.
+     *
+     * @param externalDocs
+     * @return Schema instance with the set externalDocs property
+     */
 
     public Schema externalDocs(ExternalDocumentation externalDocs) {
         this.externalDocs = externalDocs;
@@ -714,9 +1201,25 @@ public class Schema<T> {
         return deprecated;
     }
 
+    /**
+     * Sets deprecated property of a Schema instance
+     * to the parameter.
+     *
+     * @param deprecated
+     */
+
     public void setDeprecated(Boolean deprecated) {
         this.deprecated = deprecated;
     }
+
+    /**
+     * Sets deprecated property of a Schema instance
+     * to the parameter and
+     * return the instance.
+     *
+     * @param deprecated
+     * @return Schema instance with the set deprecated property
+     */
 
     public Schema deprecated(Boolean deprecated) {
         this.deprecated = deprecated;
@@ -733,15 +1236,30 @@ public class Schema<T> {
         return xml;
     }
 
+    /**
+     * Sets xml property of a Schema instance
+     * to the parameter.
+     *
+     * @param xml
+     */
+
     public void setXml(XML xml) {
         this.xml = xml;
     }
+
+    /**
+     * Sets xml property of a Schema instance
+     * to the parameter and
+     * return the instance.
+     *
+     * @param xml
+     * @return Schema instance with the set xml property
+     */
 
     public Schema xml(XML xml) {
         this.xml = xml;
         return this;
     }
-
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -753,50 +1271,63 @@ public class Schema<T> {
         }
         Schema schema = (Schema) o;
         return Objects.equals(this.title, schema.title) &&
-                Objects.equals(this.multipleOf, schema.multipleOf) &&
-                Objects.equals(this.maximum, schema.maximum) &&
-                Objects.equals(this.exclusiveMaximum, schema.exclusiveMaximum) &&
-                Objects.equals(this.minimum, schema.minimum) &&
-                Objects.equals(this.exclusiveMinimum, schema.exclusiveMinimum) &&
-                Objects.equals(this.maxLength, schema.maxLength) &&
-                Objects.equals(this.minLength, schema.minLength) &&
-                Objects.equals(this.pattern, schema.pattern) &&
-                Objects.equals(this.maxItems, schema.maxItems) &&
-                Objects.equals(this.minItems, schema.minItems) &&
-                Objects.equals(this.uniqueItems, schema.uniqueItems) &&
-                Objects.equals(this.maxProperties, schema.maxProperties) &&
-                Objects.equals(this.minProperties, schema.minProperties) &&
-                Objects.equals(this.required, schema.required) &&
-                Objects.equals(this.type, schema.type) &&
-                Objects.equals(this.not, schema.not) &&
-                Objects.equals(this.properties, schema.properties) &&
-                Objects.equals(this.additionalProperties, schema.additionalProperties) &&
-                Objects.equals(this.description, schema.description) &&
-                Objects.equals(this.format, schema.format) &&
-                Objects.equals(this.$ref, schema.$ref) &&
-                Objects.equals(this.nullable, schema.nullable) &&
-                Objects.equals(this.readOnly, schema.readOnly) &&
-                Objects.equals(this.writeOnly, schema.writeOnly) &&
-                Objects.equals(this.example, schema.example) &&
-                Objects.equals(this.externalDocs, schema.externalDocs) &&
-                Objects.equals(this.deprecated, schema.deprecated) &&
-                Objects.equals(this.xml, schema.xml) &&
-                Objects.equals(this.extensions, schema.extensions) &&
-                Objects.equals(this._enum, schema._enum) &&
-                Objects.equals(this._default, schema._default);
+               Objects.equals(this.multipleOf, schema.multipleOf) &&
+               Objects.equals(this.maximum, schema.maximum) &&
+               Objects.equals(this.exclusiveMaximum, schema.exclusiveMaximum) &&
+               Objects.equals(this.minimum, schema.minimum) &&
+               Objects.equals(this.exclusiveMinimum, schema.exclusiveMinimum) &&
+               Objects.equals(this.maxLength, schema.maxLength) &&
+               Objects.equals(this.minLength, schema.minLength) &&
+               Objects.equals(this.pattern, schema.pattern) &&
+               Objects.equals(this.maxItems, schema.maxItems) &&
+               Objects.equals(this.minItems, schema.minItems) &&
+               Objects.equals(this.uniqueItems, schema.uniqueItems) &&
+               Objects.equals(this.maxProperties, schema.maxProperties) &&
+               Objects.equals(this.minProperties, schema.minProperties) &&
+               Objects.equals(this.required, schema.required) &&
+               Objects.equals(this.type, schema.type) &&
+               Objects.equals(this.not, schema.not) &&
+               Objects.equals(this.properties, schema.properties) &&
+               Objects.equals(this.additionalProperties, schema.additionalProperties) &&
+               Objects.equals(this.description, schema.description) &&
+               Objects.equals(this.format, schema.format) &&
+               Objects.equals(this.$ref, schema.$ref) &&
+               Objects.equals(this.nullable, schema.nullable) &&
+               Objects.equals(this.readOnly, schema.readOnly) &&
+               Objects.equals(this.writeOnly, schema.writeOnly) &&
+               Objects.equals(this.example, schema.example) &&
+               Objects.equals(this.externalDocs, schema.externalDocs) &&
+               Objects.equals(this.deprecated, schema.deprecated) &&
+               Objects.equals(this.xml, schema.xml) &&
+               Objects.equals(this.extensions, schema.extensions) &&
+               Objects.equals(this._enum, schema._enum) &&
+               Objects.equals(this._default, schema._default);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern, maxItems,
-                minItems, uniqueItems, maxProperties, minProperties, required, type, not, properties, additionalProperties, description, format, $ref,
-                nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions, _enum, _default);
+                            minItems, uniqueItems, maxProperties, minProperties, required, type, not, properties, additionalProperties, description, format, $ref,
+                            nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions, _enum, _default);
     }
 
+    /**
+     * Returns extensions property of a Schema instance.
+     *
+     * @return Map&lt;String, Object&gt; extensions
+     */
 
     public java.util.Map<String, Object> getExtensions() {
         return extensions;
     }
+
+    /**
+     * Adds an object item to extensions map at
+     * the specified key.
+     *
+     * @param name - map key
+     * @param value - map value
+     */
 
     public void addExtension(String name, Object value) {
         if (this.extensions == null) {
@@ -804,6 +1335,12 @@ public class Schema<T> {
         }
         this.extensions.put(name, value);
     }
+
+    /**
+     * Sets extensions property of a Schema instance
+     *
+     * @param extensions
+     */
 
     public void setExtensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
@@ -848,9 +1385,14 @@ public class Schema<T> {
     }
 
     /**
-     * Convert the given object to string with each line indented by 4 spaces
+     * Converts the given object to string with each line indented by 4 spaces
      * (except the first line).
+     * This method adds formatting to the general toString() method.
+     *
+     * @param o Java object to be represented as String
+     * @return Formatted String representation of the object
      */
+
     private String toIndentedString(java.lang.Object o) {
         if (o == null) {
             return "null";
@@ -859,4 +1401,3 @@ public class Schema<T> {
     }
 
 }
-

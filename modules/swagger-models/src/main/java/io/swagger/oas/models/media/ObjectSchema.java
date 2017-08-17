@@ -22,85 +22,122 @@ import java.util.Objects;
  * ObjectSchema
  */
 
-
 public class ObjectSchema extends Schema<Object> {
-  private String type = "object";
-  private Object defaultObject = null;
+    private String type = "object";
+    private final Object defaultObject = null;
 
-  /**
-   * returns the type property from a ObjectSchema instance.
-   *
-   * @return String type
-   **/
+    /**
+     * returns the type property from a ObjectSchema instance.
+     *
+     * @return String type
+     **/
 
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public ObjectSchema type(String type) {
-    this.type = type;
-    return this;
-  }
-
-  public Schema example(Object example) {
-    if(example != null) {
-      super.example = example.toString();
+    @Override
+    public String getType() {
+        return type;
     }
-    return this;
-  }
 
-  @Override
-  protected Object cast(Object value) {
-    return value;
-  }
+    /**
+     * Sets the type property of ObjectSchema instance
+     * to the parameter.
+     *
+     * @param type
+     */
 
-
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
+    @Override
+    public void setType(String type) {
+        this.type = type;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    /**
+     * Sets the type property of ObjectSchema instance
+     * to the parameter and returns the instance.
+     *
+     * @param type
+     * @return ObjectSchema instance with modified type property
+     */
+
+    @Override
+    public ObjectSchema type(String type) {
+        this.type = type;
+        return this;
     }
-    ObjectSchema objectSchema = (ObjectSchema) o;
-    return Objects.equals(this.type, objectSchema.type) &&
-        Objects.equals(this.defaultObject, objectSchema.defaultObject) &&
-        super.equals(o);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(type, defaultObject, super.hashCode());
-  }
+    /**
+     * Sets inherited example property of an ObjectSchema instance
+     * to the parameter and returns the instance.
+     * Converts passed Object argument to String representation.
+     * Inherits example property from Schema.
+     *
+     * @param example
+     * @return Schema instance with modified example property
+     */
 
-
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class ObjectSchema {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    defaultObject: ").append(toIndentedString(defaultObject)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+    @Override
+    public Schema example(Object example) {
+        if (example != null) {
+            super.example = example.toString();
+        }
+        return this;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
-  
+
+    /**
+     * Casts any object to Java object type.
+     *
+     * @param value
+     * @return Object value or null
+     * @see java.lang.Object
+     */
+
+    @Override
+    protected Object cast(Object value) {
+        return value;
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ObjectSchema objectSchema = (ObjectSchema) o;
+        return Objects.equals(this.type, objectSchema.type) &&
+               Objects.equals(this.defaultObject, objectSchema.defaultObject) &&
+               super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, defaultObject, super.hashCode());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class ObjectSchema {\n");
+        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+        sb.append("    type: ").append(toIndentedString(type)).append("\n");
+        sb.append("    defaultObject: ").append(toIndentedString(defaultObject)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     * This method adds formatting to the general toString() method.
+     *
+     * @param o Java object to be represented as String
+     * @return String representation of the object formatted
+     */
+
+    private String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
+
 }
-

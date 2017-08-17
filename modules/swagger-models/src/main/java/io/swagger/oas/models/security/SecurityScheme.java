@@ -19,9 +19,8 @@ package io.swagger.oas.models.security;
 /**
  * SecurityScheme
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#securitySchemeObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#securitySchemeObject"
  */
-
 
 public class SecurityScheme {
     /**
@@ -33,7 +32,7 @@ public class SecurityScheme {
         OAUTH2("oauth2"),
         OPENIDCONNECT("openIdConnect");
 
-        private String value;
+        private final String value;
 
         Type(String value) {
             this.value = value;
@@ -60,7 +59,7 @@ public class SecurityScheme {
 
         QUERY("query");
 
-        private String value;
+        private final String value;
 
         In(String value) {
             this.value = value;
@@ -89,9 +88,24 @@ public class SecurityScheme {
         return type;
     }
 
+    /**
+     * Sets the type property of a SecurityScheme instance
+     * to the parameter
+     *
+     * @param type
+     */
+
     public void setType(Type type) {
         this.type = type;
     }
+
+    /**
+     * Sets the type property of a SecurityScheme instance
+     * to the parameter and returns the instance.
+     *
+     * @param type
+     * @return SecurityScheme instance with the set type property
+     */
 
     public SecurityScheme type(Type type) {
         this.type = type;
@@ -108,9 +122,24 @@ public class SecurityScheme {
         return description;
     }
 
+    /**
+     * Sets the description property of a SecurityScheme instance
+     * to the parameter.
+     *
+     * @param description
+     */
+
     public void setDescription(String description) {
         this.description = description;
     }
+
+    /**
+     * Sets the description property of a SecurityScheme instance
+     * to the parameter and returns the instance.
+     *
+     * @param description
+     * @return SecurityScheme instance with the set description property
+     */
 
     public SecurityScheme description(String description) {
         this.description = description;
@@ -127,9 +156,24 @@ public class SecurityScheme {
         return name;
     }
 
+    /**
+     * Sets the name property of a SecurityScheme instance
+     * to the parameter.
+     *
+     * @param name
+     */
+
     public void setName(String name) {
         this.name = name;
     }
+
+    /**
+     * Sets the name property of a SecurityScheme instance
+     * to the parameter and returns the instance.
+     *
+     * @param name
+     * @return SecurityScheme instance with the set name property
+     */
 
     public SecurityScheme name(String name) {
         this.name = name;
@@ -146,9 +190,24 @@ public class SecurityScheme {
         return in;
     }
 
+    /**
+     * Sets the in property of a SecurityScheme instance
+     * to the parameter.
+     *
+     * @param in
+     */
+
     public void setIn(In in) {
         this.in = in;
     }
+
+    /**
+     * Sets the in property of a SecurityScheme instance
+     * to the parameter and returns the instance.
+     *
+     * @param in
+     * @return SecurityScheme instance with the set in property
+     */
 
     public SecurityScheme in(In in) {
         this.in = in;
@@ -165,9 +224,24 @@ public class SecurityScheme {
         return scheme;
     }
 
+    /**
+     * Sets the scheme property of a SecurityScheme instance
+     * to the parameter.
+     *
+     * @param scheme
+     */
+
     public void setScheme(String scheme) {
         this.scheme = scheme;
     }
+
+    /**
+     * Sets the scheme property of a SecurityScheme instance
+     * to the parameter and returns the instance.
+     *
+     * @param scheme
+     * @return SecurityScheme instance with the set scheme property
+     */
 
     public SecurityScheme scheme(String scheme) {
         this.scheme = scheme;
@@ -184,9 +258,24 @@ public class SecurityScheme {
         return bearerFormat;
     }
 
+    /**
+     * Sets the bearerFormat property of a SecurityScheme instance
+     * to the parameter.
+     *
+     * @param bearerFormat
+     */
+
     public void setBearerFormat(String bearerFormat) {
         this.bearerFormat = bearerFormat;
     }
+
+    /**
+     * Sets the bearerFormat property of a SecurityScheme instance
+     * to the parameter and returns the instance.
+     *
+     * @param bearerFormat
+     * @return SecurityScheme instance with the set bearerFormat property
+     */
 
     public SecurityScheme bearerFormat(String bearerFormat) {
         this.bearerFormat = bearerFormat;
@@ -203,9 +292,24 @@ public class SecurityScheme {
         return flows;
     }
 
+    /**
+     * Sets the flows property of a SecurityScheme instance
+     * to the parameter.
+     *
+     * @param flows
+     */
+
     public void setFlows(OAuthFlows flows) {
         this.flows = flows;
     }
+
+    /**
+     * Sets the flows property of a SecurityScheme instance
+     * to the parameter and returns the instance.
+     *
+     * @param flows
+     * @return SecurityScheme instance with the set flows property
+     */
 
     public SecurityScheme flows(OAuthFlows flows) {
         this.flows = flows;
@@ -222,18 +326,48 @@ public class SecurityScheme {
         return openIdConnectUrl;
     }
 
+    /**
+     * Sets the openIdConnectUrl property of a SecurityScheme instance
+     * to the parameter.
+     *
+     * @param openIdConnectUrl
+     */
+
     public void setOpenIdConnectUrl(String openIdConnectUrl) {
         this.openIdConnectUrl = openIdConnectUrl;
     }
+
+    /**
+     * Sets the openIdConnectUrl property of a SecurityScheme instance
+     * to the parameter and returns the instance.
+     *
+     * @param openIdConnectUrl
+     * @return SecurityScheme instance with the set openIdConnectUrl property
+     */
 
     public SecurityScheme openIdConnectUrl(String openIdConnectUrl) {
         this.openIdConnectUrl = openIdConnectUrl;
         return this;
     }
 
+    /**
+     * Returns extensions property of a SecurityScheme instance.
+     *
+     * @return Map&lt;String, Object&gt; extensions
+     */
+
     public java.util.Map<String, Object> getExtensions() {
         return extensions;
     }
+
+    /**
+     * Adds an object item to extensions map of a SecurityScheme instance
+     * at the specified key.
+     * If extensions is null, then creates a new HashMap and adds the item.
+     *
+     * @param name
+     * @param value
+     */
 
     public void addExtension(String name, Object value) {
         if (this.extensions == null) {
@@ -241,6 +375,13 @@ public class SecurityScheme {
         }
         this.extensions.put(name, value);
     }
+
+    /**
+     * Sets extensions property of a SecurityScheme instance
+     * to the parameter.
+     *
+     * @param extensions
+     */
 
     public void setExtensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
@@ -255,12 +396,27 @@ public class SecurityScheme {
         return $ref;
     }
 
+    /**
+     * Sets the $ref property of a SecurityScheme instance
+     * to the parameter.
+     *
+     * @param $ref
+     */
+
     public void set$ref(String $ref) {
         if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
             $ref = "#/components/securitySchemes/" + $ref;
         }
         this.$ref = $ref;
     }
+
+    /**
+     * Sets the $ref property of a SecurityScheme instance
+     * to the parameter and returns the instance.
+     *
+     * @param $ref
+     * @return SecurityScheme instance with the set $ref property
+     */
 
     public SecurityScheme $ref(String $ref) {
         this.$ref = $ref;
@@ -342,9 +498,14 @@ public class SecurityScheme {
     }
 
     /**
-     * Convert the given object to string with each line indented by 4 spaces
+     * Converts the given object to string with each line indented by 4 spaces
      * (except the first line).
+     * This method adds formatting to the general toString() method.
+     *
+     * @param o Java object to be represented as String
+     * @return Formatted String representation of the object
      */
+
     private String toIndentedString(java.lang.Object o) {
         if (o == null) {
             return "null";
@@ -353,4 +514,3 @@ public class SecurityScheme {
     }
 
 }
-

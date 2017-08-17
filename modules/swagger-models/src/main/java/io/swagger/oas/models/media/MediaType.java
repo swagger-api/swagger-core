@@ -16,179 +16,288 @@
 
 package io.swagger.oas.models.media;
 
-import io.swagger.oas.models.examples.Example;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import io.swagger.oas.models.examples.Example;
+
 /**
  * MediaType
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#mediaTypeObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#mediaTypeObject"
  */
 
-
 public class MediaType {
-  private Schema schema = null;
-  private Map<String, Example> examples = null;
-  private String example = null;
-  private Map<String, Encoding> encoding = null;
-  private java.util.Map<String, Object> extensions = null;
+    private Schema schema = null;
+    private Map<String, Example> examples = null;
+    private String example = null;
+    private Map<String, Encoding> encoding = null;
+    private java.util.Map<String, Object> extensions = null;
 
-  /**
-   * returns the schema property from a MediaType instance.
-   *
-   * @return Schema schema
-   **/
+    /**
+     * returns the schema property from a MediaType instance.
+     *
+     * @return Schema schema
+     **/
 
-  public Schema getSchema() {
-    return schema;
-  }
-
-  public void setSchema(Schema schema) {
-    this.schema = schema;
-  }
-
-  public MediaType schema(Schema schema) {
-    this.schema = schema;
-    return this;
-  }
-
-  /**
-   * returns the examples property from a MediaType instance.
-   *
-   * @return Map&lt;String, Example&gt; examples
-   **/
-
-  public Map<String, Example> getExamples() {
-    return examples;
-  }
-
-  public void setExamples(Map<String, Example> examples) {
-    this.examples = examples;
-  }
-
-  public MediaType examples(Map<String, Example> examples) {
-    this.examples = examples;
-    return this;
-  }
-
-  public MediaType addExamples(String key, Example examplesItem) {
-    if(this.examples == null) {
-      this.examples = new HashMap<String, Example>();
+    public Schema getSchema() {
+        return schema;
     }
-    this.examples.put(key, examplesItem);
-    return this;
-  }
 
-  /**
-   * returns the example property from a MediaType instance.
-   *
-   * @return String example
-   **/
+    /**
+     * Sets schema field of a MediaType instance to the
+     * parameter.
+     *
+     * @param schema
+     */
 
-  public String getExample() {
-    return example;
-  }
-
-  public void setExample(String example) {
-    this.example = example;
-  }
-
-  public MediaType example(String example) {
-    this.example = example;
-    return this;
-  }
-
-  /**
-   * returns the encoding property from a MediaType instance.
-   *
-   * @return Encoding encoding
-   **/
-
-  public Map<String, Encoding> getEncoding() {
-    return encoding;
-  }
-
-  public void setEncoding(Map<String,Encoding> encoding) {
-    this.encoding = encoding;
-  }
-
-  public MediaType encoding(Map<String, Encoding> encoding) {
-    this.encoding = encoding;
-    return this;
-  }
-
-  public MediaType addEncoding(String key, Encoding encodingItem) {
-    if(this.encoding == null) {
-      this.encoding = new HashMap<String, Encoding>();
+    public void setSchema(Schema schema) {
+        this.schema = schema;
     }
-    this.encoding.put(key, encodingItem);
-    return this;
-  }
 
+    /**
+     * Sets schema property of a MediaType instance to the
+     * parameter and returns the instance.
+     *
+     * @param schema
+     * @return MediaType instance with the set schema property
+     */
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
+    public MediaType schema(Schema schema) {
+        this.schema = schema;
+        return this;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    /**
+     * returns the examples map of String to Example from a MediaType instance.
+     *
+     * @return Map&lt;String, Example&gt; examples
+     **/
+
+    public Map<String, Example> getExamples() {
+        return examples;
     }
-    MediaType mediaType = (MediaType) o;
-    return Objects.equals(this.schema, mediaType.schema) &&
-        Objects.equals(this.examples, mediaType.examples) &&
-        Objects.equals(this.example, mediaType.example) &&
-        Objects.equals(this.encoding, mediaType.encoding) &&
-        Objects.equals(this.extensions, mediaType.extensions);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(schema, examples, example, encoding, extensions);
-  }
+    /**
+     * Sets examples field of a MediaType instance to the
+     * parameter.
+     *
+     * @param examples
+     */
 
-
-  public java.util.Map<String, Object> getExtensions() {
-    return extensions;
-  }
-
-  public void addExtension(String name, Object value) {
-    if(this.extensions == null) {
-      this.extensions = new java.util.HashMap<>();
+    public void setExamples(Map<String, Example> examples) {
+        this.examples = examples;
     }
-    this.extensions.put(name, value);
-  }
 
-  public void setExtensions(java.util.Map<String, Object> extensions) {
-    this.extensions = extensions;
-  }
+    /**
+     * Sets examples field of a MediaType instance to the
+     * parameter and returns the instance.
+     *
+     * @param examples
+     * @return MediaType instance with the set examples property
+     */
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class MediaType {\n");
-    
-    sb.append("    schema: ").append(toIndentedString(schema)).append("\n");
-    sb.append("    examples: ").append(toIndentedString(examples)).append("\n");
-    sb.append("    example: ").append(toIndentedString(example)).append("\n");
-    sb.append("    encoding: ").append(toIndentedString(encoding)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+    public MediaType examples(Map<String, Example> examples) {
+        this.examples = examples;
+        return this;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
-  
+
+    /**
+     * Adds an example item to examples map of a MediaType instance
+     * and returns the instance.
+     * <p>
+     * If the examples property is null, creates a new HashMap
+     * and adds the item to it.
+     *
+     * @param key
+     * @param examplesItem
+     * @return MediaType instance with the set example item
+     */
+
+    public MediaType addExamples(String key, Example examplesItem) {
+        if (this.examples == null) {
+            this.examples = new HashMap<String, Example>();
+        }
+        this.examples.put(key, examplesItem);
+        return this;
+    }
+
+    /**
+     * returns the example property from a MediaType instance.
+     *
+     * @return String example
+     **/
+
+    public String getExample() {
+        return example;
+    }
+
+    /**
+     * Sets example property of a MediaType instance to the
+     * parameter.
+     *
+     * @param example
+     */
+
+    public void setExample(String example) {
+        this.example = example;
+    }
+
+    /**
+     * Sets example property of a MediaType instance to the
+     * parameter and returns the instance.
+     *
+     * @param example
+     * @return MediaType instance with the set example property
+     */
+
+    public MediaType example(String example) {
+        this.example = example;
+        return this;
+    }
+
+    /**
+     * returns the encoding property from a MediaType instance.
+     *
+     * @return Encoding encoding
+     **/
+
+    public Map<String, Encoding> getEncoding() {
+        return encoding;
+    }
+
+    /**
+     * Sets encoding property of a MediaType instance to the
+     * parameter.
+     *
+     * @param encoding
+     */
+
+    public void setEncoding(Map<String, Encoding> encoding) {
+        this.encoding = encoding;
+    }
+
+    /**
+     * Sets encoding property of a MediaType instance to the
+     * parameter and returns the instance.
+     *
+     * @param encoding
+     * @return MediaType instance with the set encoding property
+     */
+
+    public MediaType encoding(Map<String, Encoding> encoding) {
+        this.encoding = encoding;
+        return this;
+    }
+
+    /**
+     * Adds an Encoding item to encoding map of a MediaType instance
+     * and returns the instance.
+     * <p>
+     * If the encoding property is null, creates a new HashMap
+     * and adds the item to it.
+     *
+     * @param String key
+     * @param Encoding encodingItem
+     * @return MediaType instance with the added encoding item
+     */
+
+    public MediaType addEncoding(String key, Encoding encodingItem) {
+        if (this.encoding == null) {
+            this.encoding = new HashMap<String, Encoding>();
+        }
+        this.encoding.put(key, encodingItem);
+        return this;
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MediaType mediaType = (MediaType) o;
+        return Objects.equals(this.schema, mediaType.schema) &&
+               Objects.equals(this.examples, mediaType.examples) &&
+               Objects.equals(this.example, mediaType.example) &&
+               Objects.equals(this.encoding, mediaType.encoding) &&
+               Objects.equals(this.extensions, mediaType.extensions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(schema, examples, example, encoding, extensions);
+    }
+
+    /**
+     * Returns extensions property of a MediaType instance.
+     *
+     * @return Map&lt;String, Object&gt; extensions
+     */
+
+    public java.util.Map<String, Object> getExtensions() {
+        return extensions;
+    }
+
+    /**
+     * Adds an object item to extensions map for
+     * the specified name key.
+     * <p>
+     * If the extensions property is null, creates a new HashMap
+     * and adds the item to it.
+     *
+     * @param name - map key
+     * @param value - map value
+     */
+
+    public void addExtension(String name, Object value) {
+        if (this.extensions == null) {
+            this.extensions = new java.util.HashMap<>();
+        }
+        this.extensions.put(name, value);
+    }
+
+    /**
+     * Sets extensions property of a MediaType instance
+     * to the parameter.
+     *
+     * @param extensions
+     */
+
+    public void setExtensions(java.util.Map<String, Object> extensions) {
+        this.extensions = extensions;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class MediaType {\n");
+
+        sb.append("    schema: ").append(toIndentedString(schema)).append("\n");
+        sb.append("    examples: ").append(toIndentedString(examples)).append("\n");
+        sb.append("    example: ").append(toIndentedString(example)).append("\n");
+        sb.append("    encoding: ").append(toIndentedString(encoding)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     * This method adds formatting to the general toString() method.
+     *
+     * @param o Java object to be represented as String
+     * @return Formatted String representation of the object
+     */
+
+    private String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
+
 }
-

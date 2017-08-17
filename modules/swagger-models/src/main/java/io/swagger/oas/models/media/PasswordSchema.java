@@ -24,126 +24,195 @@ import java.util.Objects;
  * PasswordSchema
  */
 
-
 public class PasswordSchema extends Schema<String> {
-  private String type = "string";
-  private String format = "password";
+    private String type = "string";
+    private String format = "password";
 
-  /**
-   * returns the type property from a PasswordSchema instance.
-   *
-   * @return String type
-   **/
+    /**
+     * returns the type property from a PasswordSchema instance.
+     *
+     * @return String type
+     **/
 
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public PasswordSchema type(String type) {
-    this.type = type;
-    return this;
-  }
-
-  /**
-   * returns the format property from a PasswordSchema instance.
-   *
-   * @return String format
-   **/
-
-  public String getFormat() {
-    return format;
-  }
-
-  public void setFormat(String format) {
-    this.format = format;
-  }
-
-  public PasswordSchema format(String format) {
-    this.format = format;
-    return this;
-  }
-
-  public PasswordSchema _default(String _default) {
-    this._default = _default;
-    return this;
-  }
-
-  @Override
-  protected String cast(Object value) {
-    if(value != null) {
-      try {
-        return value.toString();
-      }
-      catch (Exception e) {
-      }
+    @Override
+    public String getType() {
+        return type;
     }
-    return null;
-  }
 
-  public PasswordSchema _enum(List<String> _enum) {
-    this._enum = _enum;
-    return this;
-  }
+    /**
+     * Sets the type property of a PasswordSchema instance
+     * to the parameter.
+     *
+     * @param type
+     */
 
-  public PasswordSchema addEnumItem(String _enumItem) {
-    if(this._enum == null) {
-      this._enum = new ArrayList<String>();
+    @Override
+    public void setType(String type) {
+        this.type = type;
     }
-    this._enum.add(_enumItem);
-    return this;
-  }
 
+    /**
+     * Sets the type property of a PasswordSchema instance
+     * to the parameter and returns the instance.
+     *
+     * @param type
+     * @return PasswordSchema instance with the modified type property
+     */
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
+    @Override
+    public PasswordSchema type(String type) {
+        this.type = type;
+        return this;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    /**
+     * returns the format property from a PasswordSchema instance.
+     *
+     * @return String format
+     **/
+
+    @Override
+    public String getFormat() {
+        return format;
     }
-    PasswordSchema passwordSchema = (PasswordSchema) o;
-    return Objects.equals(this.type, passwordSchema.type) &&
-        Objects.equals(this.format, passwordSchema.format) &&
-        Objects.equals(this._default, passwordSchema._default) &&
-        Objects.equals(this._enum, passwordSchema._enum) &&
-        super.equals(o);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(type, format, _default, _enum, super.hashCode());
-  }
+    /**
+     * Sets the format property for a PasswordSchema instance
+     * to the parameter.
+     *
+     * @param format
+     **/
 
-
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class PasswordSchema {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    format: ").append(toIndentedString(format)).append("\n");
-    sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
-    sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+    @Override
+    public void setFormat(String format) {
+        this.format = format;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
-  
+
+    /**
+     * Sets the format property for a PasswordSchema instance
+     * to the parameter and returns the instance.
+     *
+     * @param format
+     * @return PasswordSchema instance with modified format
+     **/
+
+    @Override
+    public PasswordSchema format(String format) {
+        this.format = format;
+        return this;
+    }
+
+    /**
+     * Sets the inherited _default property of a PasswordSchema instance
+     * to the parameter and returns the instance.
+     * _default is inherited from Schema.
+     *
+     * @param _default
+     * @return The instance of PasswordSchema with the set _default
+     */
+
+    public PasswordSchema _default(String _default) {
+        this._default = _default;
+        return this;
+    }
+
+    /**
+     * Converts object to String representation
+     *
+     * @param Object value
+     * @return String value
+     */
+
+    @Override
+    protected String cast(Object value) {
+        if (value != null) {
+            try {
+                return value.toString();
+            } catch (Exception e) {
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Sets inherited _enum property of a PasswordSchema instance
+     * to the parameter.
+     * _enum is inherited from Schema.
+     *
+     * @param _enum
+     * @return A PasswordSchema instance with set _enum
+     * @see Schema
+     */
+
+    public PasswordSchema _enum(List<String> _enum) {
+        this._enum = _enum;
+        return this;
+    }
+
+    /**
+     * Adds an item to _enum List.
+     * If _enum is null, will create a new ArrayList and add the item.
+     *
+     * @param _enumItem to be added to the _enum List
+     * @return PasswordSchema instance with the modified _enum
+     */
+
+    public PasswordSchema addEnumItem(String _enumItem) {
+        if (this._enum == null) {
+            this._enum = new ArrayList<String>();
+        }
+        this._enum.add(_enumItem);
+        return this;
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PasswordSchema passwordSchema = (PasswordSchema) o;
+        return Objects.equals(this.type, passwordSchema.type) &&
+               Objects.equals(this.format, passwordSchema.format) &&
+               Objects.equals(this._default, passwordSchema._default) &&
+               Objects.equals(this._enum, passwordSchema._enum) &&
+               super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, format, _default, _enum, super.hashCode());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class PasswordSchema {\n");
+        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+        sb.append("    type: ").append(toIndentedString(type)).append("\n");
+        sb.append("    format: ").append(toIndentedString(format)).append("\n");
+        sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
+        sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     * This method adds formatting to the general toString() method.
+     *
+     * @param o Java object to be represented as String
+     * @return String representation of the object formatted
+     */
+
+    private String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
+
 }
-
