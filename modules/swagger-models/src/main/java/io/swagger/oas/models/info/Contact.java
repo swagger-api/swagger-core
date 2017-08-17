@@ -41,10 +41,22 @@ public class Contact {
     return name;
   }
 
+  /**
+   * sets this Contact's name property to the given name.
+   *
+   * @param String name
+   */
   public void setName(String name) {
     this.name = name;
   }
 
+  /**
+   * sets this Contact's name property to the given name and
+   * returns this instance of Contact
+   *
+   * @param String name
+   * @return Contact
+   */
   public Contact name(String name) {
     this.name = name;
     return this;
@@ -60,10 +72,22 @@ public class Contact {
     return url;
   }
 
+  /**
+   * sets this Contact's url property to the given url.
+   *
+   * @param String url
+   */
   public void setUrl(String url) {
     this.url = url;
   }
 
+  /**
+   * sets this Contact's url property to the given url and
+   * returns this instance of Contact
+   *
+   * @param String url
+   * @return Contact
+   */
   public Contact url(String url) {
     this.url = url;
     return this;
@@ -79,15 +103,26 @@ public class Contact {
     return email;
   }
 
+  /**
+   * sets this Contact's email property to the given email.
+   *
+   * @param String email
+   */
   public void setEmail(String email) {
     this.email = email;
   }
 
+  /**
+   * sets this Contact's email property to the given email and
+   * returns this instance of Contact
+   *
+   * @param String email
+   * @return Contact
+   */
   public Contact email(String email) {
     this.email = email;
     return this;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -109,11 +144,21 @@ public class Contact {
     return Objects.hash(name, url, email, extensions);
   }
 
-
+  /**
+   * returns the extensions property from a Contact instance.
+   *
+   * @return Map&lt;String, Object&gt; extensions
+   */
   public java.util.Map<String, Object> getExtensions() {
     return extensions;
   }
 
+  /**
+   * Adds the given Object to this Contact's map of extensions, with the given key as its key.
+   *
+   * @param String key
+   * @param Object value
+   */
   public void addExtension(String name, Object value) {
     if(this.extensions == null) {
       this.extensions = new java.util.HashMap<>();
@@ -121,6 +166,11 @@ public class Contact {
     this.extensions.put(name, value);
   }
 
+  /**
+    * sets the extensions property for a Contact instance.
+    *
+    * @return Map&lt;String, Object&gt; extensions
+    */
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
   }

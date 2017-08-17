@@ -39,10 +39,22 @@ public class ByteArraySchema extends Schema<byte[]> {
     return type;
   }
 
+  /**
+   * sets this ByteArraySchema's type property to the given type.
+   *
+   * @param String type
+   */
   public void setType(String type) {
     this.type = type;
   }
 
+  /**
+   * sets this ByteArraySchema's type property to the given type and
+   * returns this instance of ByteArraySchema
+   *
+   * @param String type
+   * @return ByteArraySchema
+   */
   public ByteArraySchema type(String type) {
     this.type = type;
     return this;
@@ -58,15 +70,33 @@ public class ByteArraySchema extends Schema<byte[]> {
     return format;
   }
 
+  /**
+   * sets this ByteArraySchema's format property to the given format.
+   *
+   * @param String format
+   */
   public void setFormat(String format) {
     this.format = format;
   }
 
+  /**
+   * sets this ByteArraySchema's format property to the given format and
+   * returns this instance of ByteArraySchema
+   *
+   * @param String format
+   * @return ByteArraySchema
+   */
   public ByteArraySchema format(String format) {
     this.format = format;
     return this;
   }
 
+  /**
+   * sets the _default property of this ByteArraySchema to the given _default value.
+   * 
+   * @param byte[] _default
+   * @return ByteArraySchema
+   */
   public ByteArraySchema _default(byte[] _default) {
     super.setDefault(_default);
     return this;
@@ -86,11 +116,22 @@ public class ByteArraySchema extends Schema<byte[]> {
     return null;
   }
 
+  /**
+   * sets the _enum property of this ByteArraySchema to the given _enum value.
+   * 
+   * @param List&lt;byte[]&gt; _enum
+   * @return ByteArraySchema
+   */
   public ByteArraySchema _enum(List<byte[]> _enum) {
     this._enum = _enum;
     return this;
   }
 
+  /**
+   * Adds the given _enumItem to this ByteArraySchema's List of _enumItems.
+   *
+   * @param byte[] _enumItem
+   */
   public ByteArraySchema addEnumItem(byte[] _enumItem) {
     if(this._enum == null) {
       this._enum = new ArrayList<byte[]>();

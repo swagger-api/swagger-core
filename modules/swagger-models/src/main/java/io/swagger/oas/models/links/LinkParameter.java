@@ -31,14 +31,31 @@ public class LinkParameter {
   public LinkParameter() { }
   private java.util.Map<String, Object> extensions = null;
 
+  /**
+   * returns the value property from a LinkParameter instance.
+   *
+   * @return String value
+   **/
   public String getValue() {
     return value;
   }
 
+  /**
+   * sets this LinkParameter's value property to the given value.
+   *
+   * @param String value
+   */
   public void setValue(String value) {
     this.value = value;
   }
 
+  /**
+   * sets this LinkParameter's value property to the given value and
+   * returns this instance of LinkParameter
+   *
+   * @param String value
+   * @return LinkParameter
+   */
   public LinkParameter value(String value) {
     this.value = value;
     return this;
@@ -62,11 +79,21 @@ public class LinkParameter {
     return Objects.hash(value, extensions);
   }
 
-
+  /**
+   * returns the extensions property from a LinkParameter instance.
+   *
+   * @return Map&lt;String, Object&gt; extensions
+   */
   public java.util.Map<String, Object> getExtensions() {
     return extensions;
   }
 
+  /**
+   * Adds the given Object to this LinkParameter's map of extensions, with the given key as its key.
+   *
+   * @param String key
+   * @param Object value
+   */
   public void addExtension(String name, Object value) {
     if(this.extensions == null) {
       this.extensions = new java.util.HashMap<>();
@@ -74,6 +101,11 @@ public class LinkParameter {
     this.extensions.put(name, value);
   }
 
+  /**
+   * sets the extensions property for a LinkParameter instance.
+   *
+   * @return Map&lt;String, Object&gt; extensions
+   */
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
   }

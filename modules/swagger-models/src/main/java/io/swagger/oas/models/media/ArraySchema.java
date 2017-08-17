@@ -37,10 +37,22 @@ public class ArraySchema extends Schema {
     return type;
   }
 
+  /**
+   * sets this ArraySchema's type property to the given type.
+   *
+   * @param String type
+   */
   public void setType(String type) {
     this.type = type;
   }
 
+  /**
+   * sets this ArraySchema's type property to the given type and
+   * returns this instance of ArraySchema
+   *
+   * @param String type
+   * @return ArraySchema
+   */
   public ArraySchema type(String type) {
     this.type = type;
     return this;
@@ -56,10 +68,22 @@ public class ArraySchema extends Schema {
     return items;
   }
 
+  /**
+   * sets this ArraySchema's items property to the given items.
+   *
+   * @param Schema items
+   */
   public void setItems(Schema items) {
     this.items = items;
   }
 
+  /**
+   * sets this ArraySchema's items property to the given items and
+   * returns this instance of ArraySchema
+   *
+   * @param Schema items
+   * @return ArraySchema
+   */
   public ArraySchema items(Schema items) {
     this.items = items;
     return this;

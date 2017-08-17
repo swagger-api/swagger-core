@@ -55,10 +55,22 @@ public class OpenAPI {
     return openapi;
   }
 
+  /**
+   * sets this OpenAPI's openapi property to the given openapi.
+   *
+   * @param String openapi
+   */
   public void setOpenapi(String openapi) {
     this.openapi = openapi;
   }
-
+  
+  /**
+   * sets this OpenAPI's openapi property to the given openapi and
+   * returns this instance of OpenAPI
+   *
+   * @param String openapi
+   * @return OpenAPI
+   */
   public OpenAPI openapi(String openapi) {
     this.openapi = openapi;
     return this;
@@ -74,10 +86,22 @@ public class OpenAPI {
     return info;
   }
 
+  /**
+   * sets this OpenAPI's info property to the given info.
+   *
+   * @param Info info
+   */
   public void setInfo(Info info) {
     this.info = info;
   }
 
+  /**
+   * sets this OpenAPI's info property to the given info and
+   * returns this instance of OpenAPI
+   *
+   * @param Info info
+   * @return OpenAPI
+   */
   public OpenAPI info(Info info) {
     this.info = info;
     return this;
@@ -88,22 +112,33 @@ public class OpenAPI {
    *
    * @return ExternalDocumentation externalDocs
    **/
-
   public ExternalDocumentation getExternalDocs() {
     return externalDocs;
   }
 
+  /**
+   * sets this OpenAPI's externalDocs property to the given externalDocs.
+   *
+   * @param ExternalDocumentation externalDocs
+   */
   public void setExternalDocs(ExternalDocumentation externalDocs) {
     this.externalDocs = externalDocs;
   }
 
+  /**
+   * sets this OpenAPI's externalDocs property to the given externalDocs and
+   * returns this instance of OpenAPI
+   *
+   * @param ExternalDocumentation externalDocs
+   * @return OpenAPI
+   */
   public OpenAPI externalDocs(ExternalDocumentation externalDocs) {
     this.externalDocs = externalDocs;
     return this;
   }
 
   /**
-   * Servers defined in the API
+   * returns the Servers defined in the API
    *
    * @return List&lt;Server&gt; servers
    **/
@@ -112,15 +147,34 @@ public class OpenAPI {
     return servers;
   }
 
+  /**
+   * sets this OpenAPI's servers property to the given servers.
+   *
+   * @param List&lt;Server&gt;servers
+   */
   public void setServers(List<Server> servers) {
     this.servers = servers;
   }
 
+  /**
+   * sets this OpenAPI's servers property to the given servers and
+   * returns this instance of OpenAPI
+   *
+   * @param List&lt;Server&gt;servers
+   * @return OpenAPI
+   */
   public OpenAPI servers(List<Server> servers) {
     this.servers = servers;
     return this;
   }
 
+  /**
+   * Adds the given serversItem to this OpenAPI's list of servers, with the given key as its key.
+   *
+   * @param String key
+   * @param Server serversItem
+   * @return OpenAPI
+   */
   public OpenAPI addServersItem(Server serversItem) {
     if(this.servers == null) {
       this.servers = new ArrayList<Server>();
@@ -139,15 +193,34 @@ public class OpenAPI {
     return security;
   }
 
+  /**
+   * sets this OpenAPI's security property to the given security.
+   *
+   * @param List&lt;SecurityRequirement&gt;security
+   */
   public void setSecurity(List<SecurityRequirement> security) {
     this.security = security;
   }
 
+  /**
+   * sets this OpenAPI's security property to the given security and
+   * returns this instance of OpenAPI
+   *
+   * @param List&lt;SecurityRequirement&gt;servers
+   * @return OpenAPI
+   */
   public OpenAPI security(List<SecurityRequirement> security) {
     this.security = security;
     return this;
   }
 
+  /**
+   * Adds the given securityItem to this OpenAPI's list of securitItems, with the given key as its key.
+   *
+   * @param String key
+   * @param SecurityRequirement securityItem
+   * @return OpenAPI
+   */
   public OpenAPI addSecurityItem(SecurityRequirement securityItem) {
     if(this.security == null) {
       this.security = new ArrayList<SecurityRequirement>();
@@ -166,15 +239,34 @@ public class OpenAPI {
     return tags;
   }
 
+  /**
+   * sets this OpenAPI's tags property to the given Tags.
+   *
+   * @param List&lt;Tag&gt;tags
+   */
   public void setTags(List<Tag> tags) {
     this.tags = tags;
   }
 
+  /**
+   * sets this OpenAPI's tags property to the given tags and
+   * returns this instance of OpenAPI
+   *
+   * @param List&lt;Tag&gt;tags
+   * @return OpenAPI
+   */
   public OpenAPI tags(List<Tag> tags) {
     this.tags = tags;
     return this;
   }
 
+  /**
+   * Adds the given tagsItem to this OpenAPI's list of tags, with the given key as its key.
+   *
+   * @param String key
+   * @param Tag tagsItem
+   * @return OpenAPI
+   */
   public OpenAPI addTagsItem(Tag tagsItem) {
     if(this.tags == null) {
       this.tags = new ArrayList<Tag>();
@@ -193,10 +285,22 @@ public class OpenAPI {
     return paths;
   }
 
+ /**
+   * sets this OpenAPI's paths property to the given paths.
+   *
+   * @param List&lt;Paths&gt;paths
+   */
   public void setPaths(Paths paths) {
     this.paths = paths;
   }
 
+  /**
+   * sets this OpenAPI's paths property to the given paths and
+   * returns this instance of OpenAPI
+   *
+   * @param List&lt;Paths&gt;paths
+   * @return OpenAPI
+   */
   public OpenAPI paths(Paths paths) {
     this.paths = paths;
     return this;
@@ -212,10 +316,22 @@ public class OpenAPI {
     return components;
   }
 
+  /**
+   * sets this OpenAPI's components property to the given components.
+   *
+   * @param List&lt;Components&gt;components
+   */
   public void setComponents(Components components) {
     this.components = components;
   }
 
+  /**
+   * sets this OpenAPI's components property to the given components and
+   * returns this instance of OpenAPI
+   *
+   * @param List&lt;Components&gt;components
+   * @return OpenAPI
+   */
   public OpenAPI components(Components components) {
     this.components = components;
     return this;
@@ -225,6 +341,13 @@ public class OpenAPI {
    * helpers
    */
 
+  /**
+   * Adds the given path item to this OpenAPI's list of paths
+   * 
+   * @param String name
+   * @param PathItem path
+   * @return OpenAPI
+   */
   public OpenAPI path(String name, PathItem path) {
     if(this.paths == null) {
       this.paths = new Paths();
@@ -234,6 +357,13 @@ public class OpenAPI {
     return this;
   }
 
+  /**
+   * Adds the given schema to this OpenAPI's components property.
+   * 
+   * @param String name
+   * @param Schema schema
+   * @return OpenAPI
+   */
   public OpenAPI schema(String name, Schema schema) {
     if(components == null) {
       this.components = new Components();
@@ -242,6 +372,13 @@ public class OpenAPI {
     return this;
   }
 
+  /**
+   * Adds the given securityScheme to this OpenAPI's securitySchemes
+   * 
+   * @param String name
+   * @param SecurityScheme securityScheme
+   * @return OpenAPI
+   */
   public OpenAPI schemaRequirement(String name, SecurityScheme securityScheme) {
     if(components == null) {
       this.components = new Components();
@@ -275,11 +412,22 @@ public class OpenAPI {
     return Objects.hash(openapi, info, externalDocs, servers, security, tags, paths, components, extensions);
   }
 
-
+  /**
+   * returns the extensions property from a OpenAPI instance.
+   *
+   * @return Map&lt;String, Object&gt; extensions
+   **/
   public java.util.Map<String, Object> getExtensions() {
     return extensions;
   }
 
+  /**
+   * Adds the given Object to this OpenAPI's map of extensions, with the given key as its key.
+   *
+   * @param String key
+   * @param Object value
+   * @return OpenAPI
+   */
   public void addExtension(String name, Object value) {
     if(this.extensions == null) {
       this.extensions = new java.util.HashMap<>();
@@ -287,6 +435,11 @@ public class OpenAPI {
     this.extensions.put(name, value);
   }
 
+  /**
+   * sets this OpenAPI's extensions property to the given map of extensions.
+   *
+   * @param Map&lt;String, Object&gt;extensions
+   */
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
   }

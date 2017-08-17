@@ -59,15 +59,33 @@ public class Components {
     return schemas;
   }
 
+ /**
+  * sets this Components' schemas property to the given schema.
+  * 
+  * @param Map&lt;String, Schema&gt;schemas
+  */
   public void setSchemas(Map<String, Schema> schemas) {
     this.schemas = schemas;
   }
 
+ /**
+  * sets this Components' schemas property to the given schema and returns this Components.
+  * 
+  * @param Map&lt;String, Schema&gt;schemas
+  * @return Components
+  */
   public Components schemas(Map<String, Schema> schemas) {
     this.schemas = schemas;
     return this;
   }
 
+  /**
+    * Adds the given schema to this Components list of schemas, with the given key as its key.
+    *
+    * @param String key
+    * @param Schema schemasItem
+    * @return Components
+    */
   public Components addSchemas(String key, Schema schemasItem) {
     if(this.schemas == null) {
       this.schemas = new HashMap<String, Schema>();
@@ -86,15 +104,32 @@ public class Components {
     return responses;
   }
 
+  /**
+   * sets this Components' responses property to the given map of ApiResponses.
+   *
+   * @param Map&lt;String, ApiResponse&gt;respones
+   */
   public void setResponses(Map<String, ApiResponse> responses) {
     this.responses = responses;
   }
 
+  /**
+   * sets this Components' responses property to the given map of ApiResponses and
+   * return this instance of Components.
+   *
+   * @param Map&lt;String, ApiResponse&gt;responses
+   */
   public Components responses(Map<String, ApiResponse> responses) {
     this.responses = responses;
     return this;
   }
-
+  /**
+   * Adds the given response to this Components' map of responses, with the given key as its key.
+   *
+   * @param String key
+   * @param ApiResponse responsesItem
+   * @return Components instance
+   */  
   public Components addResponses(String key, ApiResponse responsesItem) {
     if(this.responses == null) {
       this.responses = new HashMap<String, ApiResponse>();
@@ -112,16 +147,34 @@ public class Components {
   public Map<String, Parameter> getParameters() {
     return parameters;
   }
-
+  /**
+   * sets this Components' parameters property to the given map of Parameters.
+   *
+   * @param Map&lt;String, Parameter&gt;parameters
+   */
   public void setParameters(Map<String, Parameter> parameters) {
     this.parameters = parameters;
   }
 
+  /**
+   * sets this Components' parameters property to the given map of Parameters and
+   * returns this instance of Components.
+   *
+   * @param Map&lt;String, Parameter&gt;parameters
+   * @return Components
+   */
   public Components parameters(Map<String, Parameter> parameters) {
     this.parameters = parameters;
     return this;
   }
 
+  /**
+   * Adds the given parameters to this Components' map of parameters, with the given key as its key.
+   *
+   * @param String key
+   * @param Parameter parametersItem
+   * @return Components
+   */
   public Components addParameters(String key, Parameter parametersItem) {
     if(this.parameters == null) {
       this.parameters = new HashMap<String, Parameter>();
@@ -140,15 +193,34 @@ public class Components {
     return examples;
   }
 
+  /**
+   * sets this Components' examples property to the given map of Examples.
+   *
+   * @param Map&lt;String, Example&gt;examples
+   */
   public void setExamples(Map<String, Example> examples) {
     this.examples = examples;
   }
 
+  /**
+   * sets this Components' examples property to the given map of Examples and
+   * returns this instance of Components.
+   *
+   * @param Map&lt;String, Example&gt;examples
+   * @return Components
+   */
   public Components examples(Map<String, Example> examples) {
     this.examples = examples;
     return this;
   }
 
+  /**
+   * Adds the given Example to this Components' map of Examples, with the given key as its key.
+   *
+   * @param String key
+   * @param Example examplesItem
+   * @return Components
+   */  
   public Components addExamples(String key, Example examplesItem) {
     if(this.examples == null) {
       this.examples = new HashMap<String, Example>();
@@ -167,15 +239,34 @@ public class Components {
     return requestBodies;
   }
 
+  /**
+   * sets this Components' requestBodies property to the given map of RequestBodies.
+   *
+   * @param Map&lt;String, RequestBody&gt;requestBodies
+   */
   public void setRequestBodies(Map<String, RequestBody> requestBodies) {
     this.requestBodies = requestBodies;
   }
 
+  /**
+   * sets this Components' requestBodies property to the given map of RequestBodies and
+   * returns this instance of Components.
+   *
+   * @param Map&lt;String, RequestBody&gt;requestBodies
+   * @return Components
+   */
   public Components requestBodies(Map<String, RequestBody> requestBodies) {
     this.requestBodies = requestBodies;
     return this;
   }
 
+  /**
+   * Adds the given RequestBody to this Components' map of RequestBodies, with the given key as its key.
+   *
+   * @param String key
+   * @param RequestBody requestBodiesItem
+   * @return Components
+   */
   public Components addRequestBodies(String key, RequestBody requestBodiesItem) {
     if(this.requestBodies == null) {
       this.requestBodies = new HashMap<String, RequestBody>();
@@ -194,15 +285,33 @@ public class Components {
     return headers;
   }
 
+  /**
+   * sets this Components' headers property to the given map of Headers.
+   *
+   * @param Map&lt;String, Header&gt;headers
+   */
   public void setHeaders(Map<String, Header> headers) {
     this.headers = headers;
   }
 
+  /**
+   * sets this Components' headers property to the given map of Headers and
+   * returns this instance of Components.
+   *
+   * @param Map&lt;String, Header&gt;headers
+   * @return Components
+   */
   public Components headers(Map<String, Header> headers) {
     this.headers = headers;
     return this;
   }
-
+  /**
+   * Adds the given Header to this Components' map of Headers, with the given key as its key.
+   *
+   * @param String key
+   * @param Header headersItem
+   * @return Components
+   */
   public Components addHeaders(String key, Header headersItem) {
     if(this.headers == null) {
       this.headers = new HashMap<String, Header>();
@@ -221,15 +330,34 @@ public class Components {
     return securitySchemes;
   }
 
+  /**
+   * sets this Components' securitySchemes property to the given map of SecuritySchemes.
+   *
+   * @param Map&lt;String, SecurityScheme&gt;securitySchemes
+   */
   public void setSecuritySchemes(Map<String, SecurityScheme> securitySchemes) {
     this.securitySchemes = securitySchemes;
   }
 
+  /**
+   * sets this Components' securitySchemes property to the given map of SecuritySchemes and
+   * returns this instance of Components.
+   *
+   * @param Map&lt;String, SecurityScheme&gt;securitySchemes
+   * @return Components
+   */
   public Components securitySchemes(Map<String, SecurityScheme> securitySchemes) {
     this.securitySchemes = securitySchemes;
     return this;
   }
 
+  /**
+   * Adds the given SecurityScheme to this Components' map of SecuritySchemes, with the given key as its key.
+   *
+   * @param String key
+   * @param SecurityScheme securitySchemesItem
+   * @return Components
+   */
   public Components addSecuritySchemes(String key, SecurityScheme securitySchemesItem) {
     if(this.securitySchemes == null) {
       this.securitySchemes = new HashMap<String, SecurityScheme>();
@@ -248,15 +376,34 @@ public class Components {
     return links;
   }
 
+  /**
+   * sets this Components' links property to the given map of Links.
+   *
+   * @param Map&lt;String, Link&gt;links
+   */
   public void setLinks(Map<String, Link> links) {
     this.links = links;
   }
 
+  /**
+   * sets this Components' links property to the given map of Links and
+   * returns this instance of Components.
+   *
+   * @param Map&lt;String, Link&gt;links
+   * @return Components
+   */
   public Components links(Map<String, Link> links) {
     this.links = links;
     return this;
   }
 
+  /**
+   * Adds the given Link to this Components' map of Links, with the given key as its key.
+   *
+   * @param String key
+   * @param Link linksItem
+   * @return Components
+   */
   public Components addLinks(String key, Link linksItem) {
     if(this.links == null) {
       this.links = new HashMap<String, Link>();
@@ -275,15 +422,33 @@ public class Components {
     return callbacks;
   }
 
+    /**
+     * sets this Components' callbacks property to the given map of Callbacks.
+     *
+     * @param Map&lt;String, Callback&gt;callbacks
+     */
   public void setCallbacks(Map<String, Callback> callbacks) {
     this.callbacks = callbacks;
   }
 
+  /**
+     * sets this Components' callbacks property to the given map of Callbacks and
+     * returns this instance of Components.
+     *
+     * @param Map&lt;String, Callback&gt;callbacks
+     * @return Components
+     */
   public Components callbacks(Map<String, Callback> callbacks) {
     this.callbacks = callbacks;
     return this;
   }
-
+  /**
+   * Adds the given Callback to this Components' map of Callbacks, with the given key as its key.
+   *
+   * @param String key
+   * @param Callback callbacksItem
+   * @return Components
+   */
   public Components addCallbacks(String key, Callback callbacksItem) {
     if(this.callbacks == null) {
       this.callbacks = new HashMap<String, Callback>();
@@ -291,7 +456,6 @@ public class Components {
     this.callbacks.put(key, callbacksItem);
     return this;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -319,11 +483,22 @@ public class Components {
     return Objects.hash(schemas, responses, parameters, examples, requestBodies, headers, securitySchemes, links, callbacks, extensions);
   }
 
-
+  /**
+   * returns the extensions property from a Components instance.
+   *
+   * @return Map&lt;String, Object&gt; extensions
+   **/
   public java.util.Map<String, Object> getExtensions() {
     return extensions;
   }
 
+  /**
+   * Adds the given Object to this Components' map of extensions, with the given key as its key.
+   *
+   * @param String key
+   * @param Object value
+   * @return Components
+   */
   public void addExtension(String name, Object value) {
     if(this.extensions == null) {
       this.extensions = new java.util.HashMap<>();
@@ -331,6 +506,11 @@ public class Components {
     this.extensions.put(name, value);
   }
 
+  /**
+   * sets this Components' extensions property to the given map of extensions.
+   *
+   * @param Map&lt;String, Object&gt;extensions
+   */
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
   }

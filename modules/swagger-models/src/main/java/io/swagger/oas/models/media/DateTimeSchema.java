@@ -40,10 +40,22 @@ public class DateTimeSchema extends Schema<Date> {
     return type;
   }
 
+  /**
+   * sets this DateTimeSchema's type property to the given type.
+   *
+   * @param String type
+   */
   public void setType(String type) {
     this.type = type;
   }
 
+  /**
+   * sets this DateTimeSchema's type property to the given type and
+   * returns this instance of DateTimeSchema
+   *
+   * @param String type
+   * @return DateTimeSchema
+   */
   public DateTimeSchema type(String type) {
     this.type = type;
     return this;
@@ -59,15 +71,33 @@ public class DateTimeSchema extends Schema<Date> {
     return format;
   }
 
+  /**
+   * sets this DateTimeSchema's format property to the given format.
+   *
+   * @param String format
+   */
   public void setFormat(String format) {
     this.format = format;
   }
 
+  /**
+   * sets this DateTimeSchema's format property to the given format and
+   * returns this instance of DateTimeSchema
+   *
+   * @param String format
+   * @return DateTimeSchema
+   */
   public DateTimeSchema format(String format) {
     this.format = format;
     return this;
   }
 
+  /**
+   * sets the _default property of this DateTimeSchema to the given _default value.
+   * 
+   * @param byte[] _default
+   * @return DateTimeSchema
+   */
   public DateTimeSchema _default(Date _default) {
     super.setDefault(_default);
     return this;
@@ -87,11 +117,22 @@ public class DateTimeSchema extends Schema<Date> {
     return null;
   }
 
+  /**
+   * sets the _enum property of this DateTimeSchema to the given _enum value.
+   * 
+   * @param List&lt;byte[]&gt; _enum
+   * @return DateTimeSchema
+   */
   public DateTimeSchema _enum(List<Date> _enum) {
     this._enum = _enum;
     return this;
   }
 
+  /**
+   * Adds the given _enumItem to this DateTimeSchema's List of _enumItems.
+   *
+   * @param byte[] _enumItem
+   */
   public DateTimeSchema addEnumItem(Date _enumItem) {
     if(this._enum == null) {
       this._enum = new ArrayList<Date>();

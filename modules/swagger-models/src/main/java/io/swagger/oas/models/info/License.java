@@ -40,10 +40,22 @@ public class License {
     return name;
   }
 
+  /**
+   * sets this License's name property to the given name.
+   *
+   * @param String name
+   */
   public void setName(String name) {
     this.name = name;
   }
 
+  /**
+   * sets this License's name property to the given name and
+   * returns this instance of License
+   *
+   * @param String name
+   * @return License
+   */
   public License name(String name) {
     this.name = name;
     return this;
@@ -59,15 +71,26 @@ public class License {
     return url;
   }
 
+  /**
+   * sets this License's url property to the given url.
+   *
+   * @param String url
+   */
   public void setUrl(String url) {
     this.url = url;
   }
 
+  /**
+   * sets this License's url property to the given url and
+   * returns this instance of License
+   *
+   * @param String url
+   * @return License
+   */
   public License url(String url) {
     this.url = url;
     return this;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -88,11 +111,21 @@ public class License {
     return Objects.hash(name, url, extensions);
   }
 
-
+  /**
+   * returns the extensions property from a License instance.
+   *
+   * @return Map&lt;String, Object&gt; extensions
+   */
   public java.util.Map<String, Object> getExtensions() {
     return extensions;
   }
 
+  /**
+   * Adds the given Object to this License's map of extensions, with the given key as its key.
+   *
+   * @param String key
+   * @param Object value
+   */
   public void addExtension(String name, Object value) {
     if(this.extensions == null) {
       this.extensions = new java.util.HashMap<>();
@@ -100,6 +133,11 @@ public class License {
     this.extensions.put(name, value);
   }
 
+  /**
+   * sets the extensions property for a License instance.
+   *
+   * @return Map&lt;String, Object&gt; extensions
+   */
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
   }
