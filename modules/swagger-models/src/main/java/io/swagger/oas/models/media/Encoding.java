@@ -30,7 +30,7 @@ import java.util.Map;
 public class Encoding {
     private String contentType;
     private Map<String, Header> headers;
-    private String style;
+    private StyleEnum style;
     private Boolean explode;
     private Boolean allowReserved;
     private java.util.Map<String, Object> extensions = null;
@@ -82,16 +82,16 @@ public class Encoding {
         this.headers = headers;
     }
 
-    public Encoding style(String style) {
+    public Encoding style(StyleEnum style) {
         this.style = style;
         return this;
     }
 
-    public String getStyle() {
+    public StyleEnum getStyle() {
         return style;
     }
 
-    public void setStyle(String style) {
+    public void setStyle(StyleEnum style) {
         this.style = style;
     }
 
