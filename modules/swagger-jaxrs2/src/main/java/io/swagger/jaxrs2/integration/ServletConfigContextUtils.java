@@ -14,6 +14,7 @@ public class ServletConfigContextUtils {
     public static final String OPENAPI_CONFIGURATION_LOCATION_KEY = "openApi.configuration.location";
     public static final String JERSEY1_PACKAGE_KEY = "com.sun.jersey.config.property.packages";
     public static final String JERSEY2_PACKAGE_KEY = "jersey.config.server.provider.packages";
+    public static final String JERSEY2_CLASSES_KEY = "jersey.config.server.provider.classnames";
 
     public static final String OPENAPI_CONFIGURATION_READER_KEY = "openApi.configuration.readerClass";
     public static final String OPENAPI_CONFIGURATION_SCANNER_KEY = "openApi.configuration.scannerClass";
@@ -55,6 +56,13 @@ public class ServletConfigContextUtils {
             return null;
         }
         String resourceClasses = getInitParam (servletConfig, OPENAPI_CONFIGURATION_RESOURCECLASSES_KEY);
+        if (resourceClasses == null) {
+            // jersey 2
+            resourceClasses = getInitParam (servletConfig, JERSEY2_CLASSES_KEY);
+            if (resourceClasses != null) {
+                resourceClasses = resourceClasses.replace(';', ',');
+            }
+        }
         if (StringUtils.isBlank(resourceClasses)) {
             return null;
         }

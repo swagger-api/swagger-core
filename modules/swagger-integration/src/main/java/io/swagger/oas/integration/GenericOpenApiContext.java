@@ -259,7 +259,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         }
 
         if (openApiConfiguration == null) {
-            openApiConfiguration = new SwaggerConfiguration().resourcePackages(resourcePackages);
+            openApiConfiguration = new SwaggerConfiguration().resourcePackages(resourcePackages).resourceClasses(resourceClasses);
             ((SwaggerConfiguration)openApiConfiguration).setId(id);
         }
 
