@@ -20,7 +20,7 @@ The OpenAPI Specification has undergone several revisions since initial creation
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-2.0.0-rc0            |              | 3.0           | [2.0](https://github.com/swagger-api/swagger-core/tree/2.0) | Under Development
+2.0.0-rc1            | 2017-08-17  | 3.0           | [tag v2.0.0-rc1](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc1) | Under Development
 1.5.16 (**current stable**)| 2017-07-05  | 2.0           | [tag v1.5.16](https://github.com/swagger-api/swagger-core/tree/v1.5.16) | Supported
 1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Deprecated
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4) | Deprecated
@@ -78,7 +78,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-## v2.0.0-rc0 Notable Features:
+## v2.0.0-rc1 Notable Features:
 
 - First official release candidate of OpenApi 3.0 support. swagger-core now produces OpenAPI 3.0 specs only. swagger-core 2.0 version is not backward compatible with previous 1.x versions.
 - Available on Maven central, and the sources are in the 2.0 branch. PRs should be submitted against the 2.0 branch.
@@ -86,7 +86,7 @@ limitations under the License.
 - Java 8
 - Consistent integration mechanism
 
-## v2.0.0-rc0 Limitations
+## v2.0.0-rc1 Limitations
 
 - Resolve resource operations also when not annotated with `@Operation` _(swagger-jaxrs2)_
 - Implement `subtypes` field in `Schema` annotation, with related resolver processing _(swagger-annotations / core)_
