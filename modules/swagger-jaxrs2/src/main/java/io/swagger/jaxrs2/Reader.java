@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
+import com.fasterxml.jackson.databind.type.SimpleType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
@@ -224,13 +225,13 @@ public class Reader implements OpenApiReader {
                         Type[] genericParameterTypes = method.getGenericParameterTypes();
                         for (int i = 0; i < genericParameterTypes.length; i++) {
                             final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
-                            operationParameters.addAll(getParameters(type, Arrays.asList(paramAnnotations[i])));
+                            operationParameters.addAll(getParameters(type, Arrays.asList(paramAnnotations[i]), operation));
                         }
                     } else {
                         for (int i = 0; i < annotatedMethod.getParameterCount(); i++) {
                             AnnotatedParameter param = annotatedMethod.getParameter(i);
                             final Type type = TypeFactory.defaultInstance().constructType(param.getParameterType(), cls);
-                            List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
+                            List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]), operation);
                             for (Parameter parameter : parameters) {
                                 Schema parameterSchema = parameter.getSchema();
                                 if (StringUtils.isNotBlank(parameter.getIn())) {
@@ -353,7 +354,7 @@ public class Reader implements OpenApiReader {
         if (!shouldIgnoreClass(returnType.getTypeName())) {
             // TODO #2312 also add content to existing responses (from annotation) if it is not specified in annotation
             Map<String, Schema> schemaMap = ModelConverters.getInstance().read(returnType);
-            if (schemaMap != null  && !schemaMap.values().isEmpty()) {
+            if (schemaMap != null && !schemaMap.values().isEmpty()) {
                 Schema returnTypeSchema = schemaMap.values().iterator().next();
                 if (operation.getResponses() == null) {
                     operation.responses(
@@ -361,11 +362,11 @@ public class Reader implements OpenApiReader {
                                     new ApiResponse()
                                             .content(
                                                     new Content()
-                                                        .addMediaType("*/*",
-                                                                new MediaType()
-                                                                .schema(new Schema().$ref(returnTypeSchema.getName())
-                                                        )
-                                                    )
+                                                            .addMediaType("*/*",
+                                                                    new MediaType()
+                                                                            .schema(new Schema().$ref(returnTypeSchema.getName())
+                                                                            )
+                                                            )
                                             )
                             )
                     );
@@ -467,7 +468,6 @@ public class Reader implements OpenApiReader {
         ReaderUtils.getStringListFromStringArray(apiOperation.tags()).ifPresent(operation::setTags);
         OperationParser.getTags(apiOperation.tags()).ifPresent(tag -> openApiTags.addAll(tag));
         OperationParser.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(operation::setExternalDocs);
-        OperationParser.getRequestBody(apiOperation.requestBody(), components).ifPresent(operation::setRequestBody);
         OperationParser.getApiResponses(apiOperation.responses(), classProduces, methodProduces, components).ifPresent(operation::setResponses);
         OperationParser.getServers(apiOperation.servers()).ifPresent(operation::setServers);
         OperationParser.getParametersList(apiOperation.parameters(), components).ifPresent(operation::setParameters);
@@ -504,7 +504,7 @@ public class Reader implements OpenApiReader {
         return false;
     }
 
-    private List<Parameter> getParameters(Type type, List<Annotation> annotations) {
+    private List<Parameter> getParameters(Type type, List<Annotation> annotations, Operation operation) {
         final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
         if (!chain.hasNext()) {
             return Collections.emptyList();
@@ -531,47 +531,38 @@ public class Reader implements OpenApiReader {
             if (!typesToSkip.contains(type)) {
                 Parameter param = ParameterProcessor.applyAnnotations(openAPI, null, type, annotations);
                 if (param != null) {
-                    body.add(param);
+                    if (annotations.size() > 0 && annotations.get(0) instanceof io.swagger.oas.annotations.parameters.RequestBody) {
+                        Optional<RequestBody> optionalRequestBody = OperationParser.getRequestBody((io.swagger.oas.annotations.parameters.RequestBody) annotations.get(0), components);
+                        if (optionalRequestBody.isPresent()) {
+                            if (operation.getRequestBody() == null) {
+                                operation.setRequestBody(optionalRequestBody.get());
+                            }
+                        }
+                    } else {
+                        if (operation.getRequestBody() == null) {
+                            RequestBody requestBody = new RequestBody();
+                            Content content = new Content();
+                            Schema schemaObject = new Schema();
+                            MediaType mediaType = new MediaType();
+                            Map<String, Schema> schemaMap = ModelConverters.getInstance().read(type);
+                            if(!schemaMap.isEmpty()){
+                                schemaObject.set$ref(OperationParser.COMPONENTS_REF + ((SimpleType) type).getRawClass().getSimpleName());
+                                schemaMap.forEach((key, schema) -> {
+                                    OperationParser.applyProduces(classProduces, methodProduces, content, mediaType);
+                                    components.addSchemas(key, schema);
+                                });
+                            } else {
+                                schemaObject.setType(((SimpleType) type).getRawClass().getName());
+                                OperationParser.applyProduces(classProduces, methodProduces, content, mediaType);
+                            }
+                            mediaType.setSchema(schemaObject);
+                            requestBody.setContent(content);
+                            operation.setRequestBody(requestBody);
+                        }
+                    }
                 }
             }
             return body;
-        }
-    }
-
-    private void mergeComponents(OpenAPI openAPI, boolean isComponentEmpty) {
-        Components openAPIComponent = openAPI.getComponents();
-        if (!isComponentEmpty) {
-            if (openAPIComponent != null) {
-                if (components.getCallbacks() != null) {
-                    components.getCallbacks().putAll(openAPIComponent.getCallbacks());
-                }
-                if (components.getExamples() != null) {
-                    components.getExamples().putAll(openAPIComponent.getExamples());
-                }
-                if (components.getExtensions() != null) {
-                    components.getExtensions().putAll(openAPIComponent.getExtensions());
-                }
-                if (components.getHeaders() != null) {
-                    components.getHeaders().putAll(openAPIComponent.getHeaders());
-                }
-                if (components.getLinks() != null) {
-                    components.getLinks().putAll(openAPIComponent.getLinks());
-                }
-                if (components.getParameters() != null) {
-                    components.getParameters().putAll(openAPIComponent.getParameters());
-                }
-                if (components.getRequestBodies() != null) {
-                    components.getRequestBodies().putAll(openAPIComponent.getRequestBodies());
-                }
-                if (components.getResponses() != null) {
-                    components.getResponses().putAll(openAPIComponent.getResponses());
-                }
-                if (components.getSchemas() != null) {
-                    components.getSchemas().putAll(openAPIComponent.getSchemas());
-                }
-
-            }
-            openAPI.setComponents(components);
         }
     }
 

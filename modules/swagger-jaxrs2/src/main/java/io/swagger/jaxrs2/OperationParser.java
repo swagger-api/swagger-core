@@ -22,8 +22,8 @@ import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.servers.ServerVariable;
 import io.swagger.oas.models.servers.ServerVariables;
 import io.swagger.oas.models.tags.Tag;
-import io.swagger.util.ParameterProcessor;
 import io.swagger.util.Json;
+import io.swagger.util.ParameterProcessor;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.Produces;
@@ -41,7 +41,6 @@ import java.util.Set;
  */
 public class OperationParser {
 
-    public static final String RESPONSE_DEFAULT = "default";
     public static final String MEDIA_TYPE = "*/*";
     public static final String COMPONENTS_REF = "#/components/schemas/";
     public static final String DEFAULT_DESCRIPTION = "no description";
@@ -280,27 +279,6 @@ public class OperationParser {
         return Optional.of(external);
     }
 
-    public static Optional<RequestBody> getRequestBody(io.swagger.oas.annotations.parameters.RequestBody requestBody, Components components) {
-        if (requestBody == null) {
-            return Optional.empty();
-        }
-        RequestBody requestBodyObject = new RequestBody();
-        boolean isEmpty = true;
-        if (StringUtils.isNotBlank(requestBody.description())) {
-            requestBodyObject.setDescription(requestBody.description());
-            isEmpty = false;
-        }
-        if (requestBody.required()) {
-            requestBodyObject.setRequired(requestBody.required());
-            isEmpty = false;
-        }
-        if (isEmpty) {
-            return Optional.empty();
-        }
-        getContents(requestBody.content(), components).ifPresent(requestBodyObject::setContent);
-        return Optional.of(requestBodyObject);
-    }
-
     public static Optional<ApiResponses> getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses, Produces classProduces, Produces methodProduces, Components components) {
         if (responses == null) {
             return Optional.empty();
@@ -334,16 +312,38 @@ public class OperationParser {
         return Optional.of(apiResponsesObject);
     }
 
+    public static Optional<RequestBody> getRequestBody(io.swagger.oas.annotations.parameters.RequestBody requestBody, Components components) {
+        if (requestBody == null) {
+            return Optional.empty();
+        }
+        RequestBody requestBodyObject = new RequestBody();
+        boolean isEmpty = true;
+        if (StringUtils.isNotBlank(requestBody.description())) {
+            requestBodyObject.setDescription(requestBody.description());
+            isEmpty = false;
+        }
+        if (requestBody.required()) {
+            requestBodyObject.setRequired(requestBody.required());
+            isEmpty = false;
+        }
+        if (isEmpty) {
+            return Optional.empty();
+        }
+        getContents(requestBody.content(), components).ifPresent(requestBodyObject::setContent);
+        return Optional.of(requestBodyObject);
+    }
+
     public static Optional<Content> getContents(io.swagger.oas.annotations.media.Content[] contents, Components components) {
         if (contents == null) {
             return Optional.empty();
         }
         Content contentObject = new Content();
         MediaType mediaType = new MediaType();
+
         for (io.swagger.oas.annotations.media.Content content : contents) {
-            ExampleObject[] examples = content.examples();
-            for (ExampleObject example : examples) {
-                getMediaType(mediaType, example).ifPresent(mediaTypeObject -> contentObject.addMediaType(content.mediaType(), mediaType));
+            getSchema(content, components).ifPresent(mediaType::setSchema);
+            if (mediaType.getSchema() != null) {
+                contentObject.addMediaType(MEDIA_TYPE, mediaType);
             }
         }
         if (contentObject.size() == 0) {
@@ -359,6 +359,42 @@ public class OperationParser {
 
         Content content = new Content();
         MediaType mediaType = new MediaType();
+
+        getSchema(annotationContent, components).ifPresent(mediaType::setSchema);
+
+        if (StringUtils.isNotBlank(annotationContent.mediaType())) {
+            content.addMediaType(annotationContent.mediaType(), mediaType);
+        } else {
+            if (mediaType.getSchema() != null) {
+                applyProduces(classProduces, methodProduces, content, mediaType);
+            }
+        }
+        ExampleObject[] examples = annotationContent.examples();
+        for (ExampleObject example : examples) {
+            getMediaType(mediaType, example).ifPresent(mediaTypeObject -> content.addMediaType(annotationContent.mediaType(), mediaTypeObject));
+        }
+        if (content.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(content);
+    }
+
+    public static void applyProduces(Produces classProduces, Produces methodProduces, Content content, MediaType mediaType) {
+        if (methodProduces != null) {
+            for (String value : methodProduces.value()) {
+                content.addMediaType(value, mediaType);
+            }
+        } else if (classProduces != null) {
+            for (String value : classProduces.value()) {
+                content.addMediaType(value, mediaType);
+            }
+        } else {
+            content.addMediaType(MEDIA_TYPE, mediaType);
+        }
+
+    }
+
+    public static Optional<Schema> getSchema(io.swagger.oas.annotations.media.Content annotationContent, Components components) {
         Class<?> schemaImplementation = annotationContent.schema().implementation();
         Map<String, Schema> schemaMap;
         if (schemaImplementation != Void.class) {
@@ -372,36 +408,15 @@ public class OperationParser {
                 });
                 schemaObject.set$ref(COMPONENTS_REF + schemaImplementation.getSimpleName());
             }
-            mediaType.setSchema(schemaObject);
+            return Optional.of(schemaObject);
 
         } else {
-            getSchemaFromAnnotation(annotationContent.schema()).ifPresent(mediaType::setSchema);
-        }
-        if (StringUtils.isNotBlank(annotationContent.mediaType())) {
-            content.addMediaType(annotationContent.mediaType(), mediaType);
-        } else {
-            if (mediaType.getSchema() != null) {
-                if (methodProduces != null) {
-                    for (String value : methodProduces.value()) {
-                        content.addMediaType(value, mediaType);
-                    }
-                } else if (classProduces != null) {
-                    for (String value : classProduces.value()) {
-                        content.addMediaType(value, mediaType);
-                    }
-                } else {
-                    content.addMediaType(MEDIA_TYPE, mediaType);
-                }
+            Optional<Schema> schemaFromAnnotation = getSchemaFromAnnotation(annotationContent.schema());
+            if (schemaFromAnnotation.isPresent()) {
+                return Optional.of(schemaFromAnnotation.get());
             }
         }
-        ExampleObject[] examples = annotationContent.examples();
-        for (ExampleObject example : examples) {
-            getMediaType(mediaType, example).ifPresent(mediaTypeObject -> content.addMediaType(annotationContent.mediaType(), mediaTypeObject));
-        }
-        if (content.size() == 0) {
-            return Optional.empty();
-        }
-        return Optional.of(content);
+        return Optional.empty();
     }
 
     public static Optional<MediaType> getMediaType(MediaType mediaType, ExampleObject example) {
