@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class ServletConfigContextUtils {
 
-    public static final String OPENAPI_CONFIGURATION_RESOURCEPACKAGE_KEY = "openApi.configuration.resourcePackage";
+    public static final String OPENAPI_CONFIGURATION_RESOURCEPACKAGE_KEY = "openApi.configuration.resourcePackages";
     public static final String OPENAPI_CONFIGURATION_LOCATION_KEY = "openApi.configuration.location";
     public static final String JERSEY1_PACKAGE_KEY = "com.sun.jersey.config.property.packages";
     public static final String JERSEY2_PACKAGE_KEY = "jersey.config.server.provider.packages";

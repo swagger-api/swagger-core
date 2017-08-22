@@ -1,6 +1,10 @@
 package io.swagger.deserialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.matchers.SerializationMatchers;
+import io.swagger.oas.models.headers.Header;
+import io.swagger.oas.models.media.Encoding;
+import io.swagger.oas.models.media.EncodingProperty;
 import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.util.TestUtils;
@@ -217,6 +221,27 @@ public class JsonDeserializationTest {
             assertTrue(scopes.isEmpty());
 
         }
+    }
+
+    @Test(description = "it should deserialize a Header with style")
+    public void deserializeHeaderWithStyle() throws IOException {
+        final String json = "{\"description\":\"aaaa\",\"style\":\"simple\"}";
+        final Header p = m.readValue(json, Header.class);
+        SerializationMatchers.assertEqualsToJson(p, json);
+    }
+
+    @Test(description = "it should deserialize an Encoding with style")
+    public void deserializeEncodingWithStyle() throws IOException {
+        final String json = "{\"style\":\"spaceDelimited\"}";
+        final Encoding p = m.readValue(json, Encoding.class);
+        SerializationMatchers.assertEqualsToJson(p, json);
+    }
+
+    @Test(description = "it should deserialize an EncodingProperty with style")
+    public void deserializeEncodingPropertyWithStyle() throws IOException {
+        final String json = "{\"style\":\"spaceDelimited\"}";
+        final EncodingProperty p = m.readValue(json, EncodingProperty.class);
+        SerializationMatchers.assertEqualsToJson(p, json);
     }
 
 }

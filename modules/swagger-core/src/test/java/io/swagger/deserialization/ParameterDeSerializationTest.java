@@ -28,6 +28,13 @@ public class ParameterDeSerializationTest {
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
+    @Test(description = "it should deserialize a QueryParameter with style")
+    public void deserializeQueryParameterWithStyle() throws IOException {
+        final String json = "{\"in\":\"query\",\"style\":\"form\",\"required\":false,\"schema\":{\"type\":\"string\"}}";
+        final Parameter p = m.readValue(json, Parameter.class);
+        SerializationMatchers.assertEqualsToJson(p, json);
+    }
+
     @Test(description = "it should deserialize a QueryParameter with array")
     public void deserializeArrayQueryParameter() throws IOException {
         final String json = "{" +

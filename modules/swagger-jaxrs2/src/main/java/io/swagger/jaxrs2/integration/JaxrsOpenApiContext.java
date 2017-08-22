@@ -1,6 +1,7 @@
 package io.swagger.jaxrs2.integration;
 
 import io.swagger.jaxrs2.Reader;
+import io.swagger.jaxrs2.integration.api.JaxrsOpenApiScanner;
 import io.swagger.oas.integration.GenericOpenApiContext;
 import io.swagger.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.oas.integration.api.OpenApiContext;

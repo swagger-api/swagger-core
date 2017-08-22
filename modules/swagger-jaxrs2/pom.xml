@@ -28,7 +28,12 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            io.swagger.jaxrs2
+                            io.swagger.jaxrs2,
+                            io.swagger.jaxrs2.ext,
+                            io.swagger.jaxrs2.integration,
+                            io.swagger.jaxrs2.integration.api,
+                            io.swagger.jaxrs2.integration.resources,
+                            io.swagger.jaxrs2.util
                         </Export-Package>
                         <Import-Package>
                             javax.ws.rs*;version="[2.0,0)",

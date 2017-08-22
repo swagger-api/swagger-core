@@ -1,4 +1,4 @@
-package io.swagger.jaxrs2.integration;
+package io.swagger.jaxrs2.integration.api;
 
 import io.swagger.oas.integration.api.OpenApiScanner;
 
