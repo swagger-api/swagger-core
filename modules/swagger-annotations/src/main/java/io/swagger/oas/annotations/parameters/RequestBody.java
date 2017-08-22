@@ -25,28 +25,24 @@ import java.lang.annotation.Target;
 import io.swagger.oas.annotations.media.Content;
 
 /**
- * 
- *
- * 
+ * Describes a single request body.
  **/
-
-
 @Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface RequestBody {
   /**
-   * 
+   * A brief description of the request body.
    **/
   String description() default "";
 
   /**
-   * 
+   * The content of the request body.
    **/
-  Content[] content() default @Content();
+  Content[] content() default {};
 
   /**
-   * 
+   * Determines if the request body is required in the request. Defaults to false.
    **/
   boolean required() default false;
 

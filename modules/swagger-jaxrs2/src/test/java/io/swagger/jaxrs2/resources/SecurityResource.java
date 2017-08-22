@@ -14,7 +14,7 @@ import javax.ws.rs.Path;
         in = "header",
         description = "myOauthSecurity Description",
         flows = @OAuthFlows(implicit = @OAuthFlow(authorizationUrl = "http://x.com",
-                scopes = @Scopes(
+                scopes = @OAuthScope(
                         name = "write:pets",
                         description = "modify pets in your account"))
         )

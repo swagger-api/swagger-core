@@ -22,33 +22,29 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 
- *
- * 
+ * An object representing a Server Variable for server URL template substitution.
  **/
-
-
 @Target({  })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ServerVariable {
   /**
-   * 
+   * Required.  The name of this variable.
    **/
-  String name() default "";
+  String name();
 
   /**
-   * the allowableValues maps to the enum property in the OAS schema
+   * An array of allowable values for this variable.  This field map to the enum property in the OAS schema.
    **/
   String[] allowableValues() default "";
 
   /**
-   * the value attribute maps to the default property in the OAS schema
+   * Required.  The default value of this variable.
    **/
-  String value() default "";
+  String defaultValue();
 
   /**
-   * 
+   * An optional description for the server variable.
    **/
   String description() default "";
 
