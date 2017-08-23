@@ -121,9 +121,6 @@ public class ReaderTest {
         assertEquals(EXAMPLE_TAG, operation.getTags().get(0));
         assertEquals(SECOND_TAG, operation.getTags().get(1));
 
-        RequestBody requestBody = operation.getRequestBody();
-        assertEquals(REQUEST_DESCRIPTION, requestBody.getDescription());
-
         ExternalDocumentation externalDocs = operation.getExternalDocs();
         assertEquals(EXTERNAL_DOCS_DESCRIPTION, externalDocs.getDescription());
         assertEquals(EXTERNAL_DOCS_URL, externalDocs.getUrl());
@@ -225,19 +222,6 @@ public class ReaderTest {
         ApiResponse apiResponse = responses.get(RESPONSE_CODE_200);
         assertNotNull(apiResponse);
         assertEquals(RESPONSE_DESCRIPTION, apiResponse.getDescription());
-    }
-
-    @Test(description = "Request Body")
-    public void testGetRequestBody() {
-        Reader reader = new Reader(new OpenAPI());
-
-        Method[] methods = RequestBodyResource.class.getMethods();
-
-        Operation requestOperation = reader.parseMethod(methods[0]);
-        assertNotNull(requestOperation);
-        RequestBody requestBody = requestOperation.getRequestBody();
-        assertEquals(REQUEST_DESCRIPTION, requestBody.getDescription());
-
     }
 
     @Test(description = "External Docs")
