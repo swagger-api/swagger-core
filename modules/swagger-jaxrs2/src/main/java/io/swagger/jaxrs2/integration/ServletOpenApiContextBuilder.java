@@ -33,6 +33,9 @@ public class ServletOpenApiContextBuilder<T extends ServletOpenApiContextBuilder
             if (((XmlWebOpenApiContext)ctx).getResourcePackages() == null && resourcePackages != null) {
                 ((XmlWebOpenApiContext)ctx).resourcePackages(resourcePackages);
             }
+            if (((XmlWebOpenApiContext)ctx).getResourceClasses() == null && resourceClasses != null) {
+                ((XmlWebOpenApiContext)ctx).resourceClasses(resourceClasses);
+            }
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator
             }

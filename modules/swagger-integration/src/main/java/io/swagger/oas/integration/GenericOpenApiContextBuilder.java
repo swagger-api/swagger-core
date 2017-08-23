@@ -13,6 +13,7 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
 
     protected String configLocation;
     protected Set<String> resourcePackages;
+    protected Set<String> resourceClasses;
     protected OpenAPIConfiguration openApiConfiguration;
 
 
@@ -35,6 +36,9 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
             }
             if (((GenericOpenApiContext)ctx).getResourcePackages() == null && resourcePackages != null) {
                 ((GenericOpenApiContext)ctx).resourcePackages(resourcePackages);
+            }
+            if (((GenericOpenApiContext)ctx).getResourceClasses() == null && resourceClasses != null) {
+                ((GenericOpenApiContext)ctx).resourceClasses(resourceClasses);
             }
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator
@@ -93,6 +97,19 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
 
     public T openApiConfiguration(OpenAPIConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
+        return (T) this;
+    }
+
+    public Set<String> getResourceClasses() {
+        return resourceClasses;
+    }
+
+    public void setResourceClasses(Set<String> resourceClasses) {
+        this.resourceClasses = resourceClasses;
+    }
+
+    public T resourceClasses(Set<String> resourceClasses) {
+        this.resourceClasses = resourceClasses;
         return (T) this;
     }
 
