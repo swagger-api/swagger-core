@@ -1,9 +1,10 @@
-package io.swagger.oas.integration;
+package io.swagger.oas.integration.impl;
 
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.integration.api.OpenApiContext;
-import io.swagger.oas.integration.api.OpenApiContextBuilder;
 import org.apache.commons.lang3.StringUtils;
+
+import io.swagger.oas.integration.OpenAPIConfiguration;
+import io.swagger.oas.integration.ext.OpenApiContext;
+import io.swagger.oas.integration.ext.OpenApiContextBuilder;
 
 import java.util.Set;
 

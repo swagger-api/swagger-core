@@ -1,9 +1,11 @@
-package io.swagger.oas.integration.api;
+package io.swagger.oas.integration.ext;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import io.swagger.oas.integration.OpenAPIConfiguration;
 
 public interface OpenApiConfigurationLoader {
 

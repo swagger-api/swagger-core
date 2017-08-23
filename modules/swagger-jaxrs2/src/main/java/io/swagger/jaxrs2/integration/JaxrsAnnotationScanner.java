@@ -1,8 +1,9 @@
 package io.swagger.jaxrs2.integration;
 
 import io.swagger.jaxrs2.integration.api.JaxrsOpenApiScanner;
-import io.swagger.oas.integration.SwaggerConfiguration;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.oas.integration.OpenAPIConfiguration;
+import io.swagger.oas.integration.impl.SwaggerConfiguration;
+
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
@@ -47,7 +48,7 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
     }
 
     @Override
-    public Set<Class<?>> classes() {
+    public Set<Class<?>> getClasses() {
 
         if (openApiConfiguration == null) {
             openApiConfiguration = new SwaggerConfiguration();
@@ -91,7 +92,7 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
     }
 
     @Override
-    public Map<String, Object> resources() {
+    public Map<String, Object> getResources() {
         return new HashMap<String, Object>();
     }
 }

@@ -9,10 +9,10 @@ import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.jaxrs2.util.ReaderUtils;
-import io.swagger.oas.integration.ContextUtils;
-import io.swagger.oas.integration.SwaggerConfiguration;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.integration.api.OpenApiReader;
+import io.swagger.oas.integration.OpenAPIConfiguration;
+import io.swagger.oas.integration.OpenAPIReader;
+import io.swagger.oas.integration.impl.ContextUtils;
+import io.swagger.oas.integration.impl.SwaggerConfiguration;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
@@ -54,7 +54,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Reader implements OpenApiReader {
+public class Reader implements OpenAPIReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
     public static final String DEFAULT_MEDIA_TYPE_VALUE = "*/*";
 

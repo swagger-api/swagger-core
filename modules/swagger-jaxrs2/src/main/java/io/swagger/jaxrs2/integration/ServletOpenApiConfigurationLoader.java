@@ -1,11 +1,12 @@
 package io.swagger.jaxrs2.integration;
 
-import io.swagger.oas.integration.ClasspathOpenApiConfigurationLoader;
-import io.swagger.oas.integration.FileOpenApiConfigurationLoader;
-import io.swagger.oas.integration.SwaggerConfiguration;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.integration.api.OpenApiConfigurationLoader;
-import io.swagger.oas.integration.api.OpenAPIConfigBuilder;
+import io.swagger.oas.integration.impl.ClasspathOpenApiConfigurationLoader;
+import io.swagger.oas.integration.OpenAPIConfiguration;
+import io.swagger.oas.integration.OpenAPIConfigurationBuilder;
+import io.swagger.oas.integration.ext.OpenApiConfigurationLoader;
+import io.swagger.oas.integration.impl.FileOpenApiConfigurationLoader;
+import io.swagger.oas.integration.impl.SwaggerConfiguration;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,8 +74,8 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
             try {
                 Class cls = getClass().getClassLoader().loadClass(builderClassName);
                 // TODO instantiate with configuration
-                OpenAPIConfigBuilder builder = (OpenAPIConfigBuilder) cls.newInstance();
-                return builder.build();
+                OpenAPIConfigurationBuilder builder = (OpenAPIConfigurationBuilder) cls.newInstance();
+                return builder.build(null);
             } catch (Exception e) {
                 LOGGER.error("error loading builder: " + e.getMessage(), e);
             }

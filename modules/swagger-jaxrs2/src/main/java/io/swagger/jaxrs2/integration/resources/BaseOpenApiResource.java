@@ -3,8 +3,9 @@ package io.swagger.jaxrs2.integration.resources;
 import io.swagger.core.filter.SpecFilter;
 import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs2.integration.JaxrsOpenApiContextBuilder;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.integration.api.OpenApiContext;
+import io.swagger.jaxrs2.integration.ServletConfigContextUtils;
+import io.swagger.oas.integration.OpenAPIConfiguration;
+import io.swagger.oas.integration.ext.OpenApiContext;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
@@ -48,7 +49,8 @@ public abstract class BaseOpenApiResource {
                 .buildContext(true);
         OpenAPI oas = ctx.read();
         boolean pretty = false;
-        if (ctx.getOpenApiConfiguration() != null && Boolean.TRUE.equals(ctx.getOpenApiConfiguration().isPrettyPrint())) {
+        if (ctx.getOpenApiConfiguration() != null && ctx.getOpenApiConfiguration().getUserDefinedOptions() != null
+                && Boolean.TRUE.equals(ctx.getOpenApiConfiguration().getUserDefinedOptions().get(ServletConfigContextUtils.OPENAPI_CONFIGURATION_PRETTYPRINT_KEY))) {
             pretty = true;
         }
 
