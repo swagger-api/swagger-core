@@ -3,7 +3,7 @@ package io.swagger.jaxrs2.resources;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.security.OAuthFlow;
 import io.swagger.oas.annotations.security.OAuthFlows;
-import io.swagger.oas.annotations.security.Scopes;
+import io.swagger.oas.annotations.security.OAuthScope;
 import io.swagger.oas.annotations.security.SecurityRequirement;
 import io.swagger.oas.annotations.security.SecurityScheme;
 
@@ -18,7 +18,7 @@ import javax.ws.rs.Path;
         in = "header",
         description = "myOauthSecurity Description2",
         flows = @OAuthFlows(implicit = @OAuthFlow(authorizationUrl = "http://x.com",
-                scopes = @Scopes(
+                scopes = @OAuthScope(
                         name = "write:pets",
                         description = "modify pets in your account"))
         )

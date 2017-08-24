@@ -83,10 +83,10 @@ public class ParameterProcessor {
                         parameter.setSchema(schema);
                     }
                 } else if (hasArrayAnnotation(p.array())) {
-                    Schema arraySchema = processArraySchema(p.array());
-                    if (arraySchema != null) {
-                        parameter.setSchema(arraySchema);
-                    }
+                 Schema arraySchema = processArraySchema(p.array());
+                 if (arraySchema != null) {
+                     parameter.setSchema(arraySchema);
+                 }
                 }
             } else if (annotation.annotationType().getName().equals("javax.ws.rs.PathParam")) {
                 try {
@@ -142,7 +142,28 @@ public class ParameterProcessor {
         }
         return parameter;
     }
-
+    
+    private static boolean hasArrayAnnotation(io.swagger.oas.annotations.media.ArraySchema array) {
+         if (array.uniqueItems() == false
+                 && array.maxItems() == Integer.MIN_VALUE
+                 && array.minItems() == Integer.MAX_VALUE
+                 && !hasSchemaAnnotation(array.schema())
+                 ) {
+             return false;
+         }
+         return true;
+     }
+      
+    private static Schema processArraySchema(io.swagger.oas.annotations.media.ArraySchema array) {
+         ArraySchema output = new ArraySchema();
+ 
+        Schema schema = processSchema(array.schema());
+ 
+         output.setItems(schema);
+ 
+         return output;
+     }    
+    
     public static void setParameterExplode(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
         if (isExplodable(p)) {
             if (Explode.TRUE.equals(p.explode())) {
@@ -276,17 +297,6 @@ public class ParameterProcessor {
         return to;
     }
 
-    private static boolean hasArrayAnnotation(io.swagger.oas.annotations.media.ArraySchema array) {
-        if (array.uniqueItems() == false
-                && array.maxItems() == Integer.MIN_VALUE
-                && array.minItems() == Integer.MAX_VALUE
-                && !hasSchemaAnnotation(array.schema())
-                ) {
-            return false;
-        }
-        return true;
-    }
-
     private static boolean hasSchemaAnnotation(io.swagger.oas.annotations.media.Schema schema) {
         if (StringUtils.isBlank(schema.type())
                 && StringUtils.isBlank(schema.format())
@@ -308,10 +318,9 @@ public class ParameterProcessor {
                 && !schema.nullable()
                 && !schema.readOnly()
                 && !schema.writeOnly()
-                && schema.examples().length == 1 && StringUtils.isBlank(schema.examples()[0])
                 && !schema.deprecated()
-                && schema._enum().length == 1 && StringUtils.isBlank(schema._enum()[0])
-                && StringUtils.isBlank(schema._default())
+                && schema.allowableValues().length == 1 && StringUtils.isBlank(schema.allowableValues()[0])
+                && StringUtils.isBlank(schema.defaultValue())
                 && StringUtils.isBlank(schema.example())
                 && StringUtils.isBlank(schema.pattern())
                 && schema.not().equals(Void.class)
@@ -323,16 +332,6 @@ public class ParameterProcessor {
         return true;
     }
 
-    private static Schema processArraySchema(io.swagger.oas.annotations.media.ArraySchema array) {
-        ArraySchema output = new ArraySchema();
-
-        Schema schema = processSchema(array.schema());
-
-        output.setItems(schema);
-
-        return output;
-    }
-
     private static Schema processSchema(io.swagger.oas.annotations.media.Schema schema) {
         Schema output = null;
         if (schema.type() != null) {
@@ -341,9 +340,8 @@ public class ParameterProcessor {
                 if (StringUtils.isNotBlank(schema.format())) {
                     output.format(schema.format());
                 }
-            }
-            if ("string".equals(schema.type())) {
-                if ("password".equals(schema.format())) {
+            } else if ("string".equals(schema.type())) {
+            	if ("password".equals(schema.format())) {
                     output = new PasswordSchema();
                 } else if ("binary".equals(schema.format())) {
                     output = new BinarySchema();
@@ -367,8 +365,8 @@ public class ParameterProcessor {
             // TODO: #2312 other types
         }
         if (output != null) {
-            if (StringUtils.isNotBlank(schema._default())) {
-                output.setDefault(schema._default());
+            if (StringUtils.isNotBlank(schema.defaultValue())) {
+                output.setDefault(schema.defaultValue());
             }
 
             if (StringUtils.isNotBlank(schema.pattern())) {
@@ -380,8 +378,8 @@ public class ParameterProcessor {
             if (StringUtils.isNotBlank(schema.description())) {
                 output.setDescription(schema.description());
             }
-            if (schema._enum() != null) {
-                for (String v : schema._enum()) {
+            if (schema.allowableValues() != null) {
+                for (String v : schema.allowableValues()) {
                     if (StringUtils.isNotBlank(v)) {
                         output.addEnumItemObject(v);
                     }
@@ -409,6 +407,7 @@ public class ParameterProcessor {
                 output.maxProperties(schema.maxProperties());
             }
         }
+         
         return output;
     }
 
