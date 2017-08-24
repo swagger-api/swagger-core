@@ -1,4 +1,4 @@
-package io.swagger.jaxrs2.annotations.responses;
+package io.swagger.jaxrs2.annotations.requests;
 
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.jaxrs2.resources.model.Pet;
@@ -9,11 +9,11 @@ import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.parameters.RequestBody;
 import org.testng.annotations.Test;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -84,7 +84,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "    put:\n" +
                 "      summary: Modify pet\n" +
                 "      description: Modifying pet.\n" +
-                "      operationId: methodWithRequestBodyWithoutAnnotationAndTwoProduces\n" +
+                "      operationId: methodWithRequestBodyWithoutAnnotationAndTwoConsumes\n" +
                 "      requestBody:\n" +
                 "        content:\n" +
                 "          application/json:\n" +
@@ -99,7 +99,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "    post:\n" +
                 "      summary: Create pet\n" +
                 "      description: Creating pet.\n" +
-                "      operationId: methodWithTwoRequestBodyWithoutAnnotationAndTwoProduces\n" +
+                "      operationId: methodWithTwoRequestBodyWithoutAnnotationAndTwoConsumes\n" +
                 "      requestBody:\n" +
                 "        content:\n" +
                 "          application/json:\n" +
@@ -119,10 +119,12 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                type: int\n" +
+                "                type: integer\n" +
+                "                format: int32\n" +
                 "            application/xml:\n" +
                 "              schema:\n" +
-                "                type: int\n" +
+                "                type: integer\n" +
+                "                format: int32\n" +
                 "        responses:\n" +
                 "          default:\n" +
                 "            description: no description\n" +
@@ -154,6 +156,26 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "          - null\n" +
                 "      xml:\n" +
                 "        name: User\n" +
+                "    Category:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "      xml:\n" +
+                "        name: Category\n" +
+                "    Tag:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "      xml:\n" +
+                "        name: Tag\n" +
                 "    Pet:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -224,8 +246,8 @@ public class RequestBodyTest extends AbstractAnnotationTest {
         @Path("/pet")
         @Operation(summary = "Modify pet",
                 description = "Modifying pet.")
-        @Produces({"application/json", "application/xml"})
-        public Response methodWithRequestBodyWithoutAnnotationAndTwoProduces(
+        @Consumes({"application/json", "application/xml"})
+        public Response methodWithRequestBodyWithoutAnnotationAndTwoConsumes(
                 User user) {
             return Response.ok().entity("").build();
         }
@@ -234,8 +256,8 @@ public class RequestBodyTest extends AbstractAnnotationTest {
         @Path("/pet")
         @Operation(summary = "Create pet",
                 description = "Creating pet.")
-        @Produces({"application/json", "application/xml"})
-        public Response methodWithTwoRequestBodyWithoutAnnotationAndTwoProduces(
+        @Consumes({"application/json", "application/xml"})
+        public Response methodWithTwoRequestBodyWithoutAnnotationAndTwoConsumes(
                 Pet pet, User user) {
             return Response.ok().entity("").build();
         }
@@ -244,7 +266,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
         @Path("/pet")
         @Operation(summary = "Delete pet",
                 description = "Deleting pet.")
-        @Produces({"application/json", "application/xml"})
+        @Consumes({"application/json", "application/xml"})
         public Response methodWithOneSimpleRequestBody(int id) {
             return Response.ok().entity("").build();
         }

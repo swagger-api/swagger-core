@@ -216,33 +216,6 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     public void testCompletePetResource() throws IOException {
         String expectedYAML = "openapi: 3.0.0\n" +
                 "paths:\n" +
-                "  /pet/{petId}:\n" +
-                "    get:\n" +
-                "      summary: Find pet by ID\n" +
-                "      description: Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will simulate API error conditions\n" +
-                "      operationId: getPetById\n" +
-                "      parameters:\n" +
-                "      - name: petId\n" +
-                "        in: path\n" +
-                "        description: ID of pet that needs to be fetched\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int64\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: The pet\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
-                "            application/xml:\n" +
-                "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
-                "        400:\n" +
-                "          description: Invalid ID supplied\n" +
-                "        404:\n" +
-                "          description: Pet not found\n" +
                 "  /pet:\n" +
                 "    put:\n" +
                 "      summary: Update an existing pet\n" +
@@ -292,6 +265,33 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        405:\n" +
                 "          description: Invalid input\n" +
+                "  /pet/{petId}:\n" +
+                "    get:\n" +
+                "      summary: Find pet by ID\n" +
+                "      description: Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will simulate API error conditions\n" +
+                "      operationId: getPetById\n" +
+                "      parameters:\n" +
+                "      - name: petId\n" +
+                "        in: path\n" +
+                "        description: ID of pet that needs to be fetched\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: The pet\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
+                "            application/xml:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
+                "        400:\n" +
+                "          description: Invalid ID supplied\n" +
+                "        404:\n" +
+                "          description: Pet not found\n" +
                 "  /pet/bodyid:\n" +
                 "    post:\n" +
                 "      summary: Add a new pet to the store passing an integer with generic parameter annotation\n" +
@@ -319,10 +319,12 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              type: int\n" +
+                "              type: integer\n" +
+                "              format: int32\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              type: int\n" +
+                "              type: integer\n" +
+                "              format: int32\n" +
                 "      responses:\n" +
                 "        405:\n" +
                 "          description: Invalid input\n" +
