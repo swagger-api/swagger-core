@@ -4,6 +4,7 @@ import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
 import io.swagger.oas.annotations.enums.Explode;
+import io.swagger.oas.annotations.media.ArraySchema;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
@@ -53,6 +54,14 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "          description: the generated id\n" +
                 "          format: id\n" +
                 "          readOnly: true\n" +
+                "      - name: arrayParameter\n" +
+                "        in: query\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          maxItems: 10\n" +
+                "          minItems: 1\n" +
+                "          uniqueItems: true\n" +
+                "          type: array\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: no description\n" +
@@ -98,6 +107,11 @@ public class ParametersTest extends AbstractAnnotationTest {
                                         format = "id",
                                         description = "the generated id",
                                         readOnly = true
+                                )),
+                        @Parameter(in = "query", name = "arrayParameter", required = true, explode = Explode.TRUE,
+                                array = @ArraySchema(maxItems = 10, minItems = 1,
+                                        schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class),
+                                        uniqueItems = true
                                 ))
                 },
                 responses = {

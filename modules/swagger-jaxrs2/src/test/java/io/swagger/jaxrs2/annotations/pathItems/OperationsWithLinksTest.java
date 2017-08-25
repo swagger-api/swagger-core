@@ -220,7 +220,6 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "                $ref: '#/components/schemas/User'\n" +
                 "          links:\n" +
                 "            user:\n" +
-                "              operationRef: '#/components/links/MyLink'\n" +
                 "              operationId: getUser\n" +
                 "              parameters:\n" +
                 "                userId: $request.query.userId\n" +
