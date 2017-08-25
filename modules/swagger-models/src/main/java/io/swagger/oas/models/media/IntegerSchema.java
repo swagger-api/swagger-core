@@ -24,126 +24,203 @@ import java.util.Objects;
  * IntegerSchema
  */
 
-
 public class IntegerSchema extends Schema<Integer> {
-  private String type = "integer";
-  private String format = "int32";
+    private String type = "integer";
+    private String format = "int32";
 
-  /**
-   * returns the type property from a IntegerSchema instance.
-   *
-   * @return String type
-   **/
+    /**
+     * returns the type property from an IntegerSchema instance.
+     *
+     * @return String type
+     **/
 
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public IntegerSchema type(String type) {
-    this.type = type;
-    return this;
-  }
-
-  /**
-   * returns the format property from a IntegerSchema instance.
-   *
-   * @return String format
-   **/
-
-  public String getFormat() {
-    return format;
-  }
-
-  public void setFormat(String format) {
-    this.format = format;
-  }
-
-  public IntegerSchema format(String format) {
-    this.format = format;
-    return this;
-  }
-
-  public IntegerSchema _default(Integer _default) {
-    super.setDefault(_default);
-    return this;
-  }
-
-  @Override
-  protected Integer cast(Object value) {
-    if(value != null) {
-      try {
-        return Integer.parseInt(value.toString());
-      }
-      catch (Exception e) {
-      }
+    @Override
+    public String getType() {
+        return type;
     }
-    return null;
-  }
 
-  public IntegerSchema _enum(List<Integer> _enum) {
-    this._enum = _enum;
-    return this;
-  }
+    /**
+     * Sets the type property for an IntegerSchema instance to the
+     * parameter.
+     * Type for IntegerSchema instance is "integer"
+     *
+     * @param type
+     **/
 
-  public IntegerSchema addEnumItem(Integer _enumItem) {
-    if(this._enum == null) {
-      this._enum = new ArrayList<Integer>();
+    @Override
+    public void setType(String type) {
+        this.type = type;
     }
-    this._enum.add(_enumItem);
-    return this;
-  }
 
+    /**
+     * Sets the type property for an IntegerSchema instance to the
+     * parameter and returns the instance.
+     * Type for IntegerSchema instance is "integer"
+     *
+     * @param type
+     * @return IntegerSchema instance with the set type
+     **/
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
+    @Override
+    public IntegerSchema type(String type) {
+        this.type = type;
+        return this;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    /**
+     * returns the format property from a IntegerSchema instance.
+     * The format property for IntegerSchema can be: "int32" or "int64"
+     *
+     * @return String format
+     **/
+
+    @Override
+    public String getFormat() {
+        return format;
     }
-    IntegerSchema integerSchema = (IntegerSchema) o;
-    return Objects.equals(this.type, integerSchema.type) &&
-        Objects.equals(this.format, integerSchema.format) &&
-        Objects.equals(this._default, integerSchema._default) &&
-        Objects.equals(this._enum, integerSchema._enum) &&
-        super.equals(o);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(type, format, _default, _enum, super.hashCode());
-  }
+    /**
+     * Sets the format property for an IntegerSchema instance to the
+     * parameter.
+     * The format property for IntegerSchema can be: "int32" or "int64"
+     *
+     * @param format
+     **/
 
-
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class IntegerSchema {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    format: ").append(toIndentedString(format)).append("\n");
-    sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
-    sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+    @Override
+    public void setFormat(String format) {
+        this.format = format;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
-  
+
+    /**
+     * Sets the format property for an IntegerSchema instance to the
+     * parameter and returns the instance.
+     * The format property for IntegerSchema can be: "int32" or "int64"
+     *
+     * @param format
+     * @return IntegerSchema instance with the set format
+     **/
+
+    @Override
+    public IntegerSchema format(String format) {
+        this.format = format;
+        return this;
+    }
+
+    /**
+     * Sets the _default property of an IntegerSchema instance to the
+     * parameter and returns the instance.
+     * _default property is inherited from super class Schema
+     * Method setDefault inherited from Schema super class.
+     *
+     * @param _default
+     * @return IntegerSchema instance with the set _default
+     * @see Schema.setDefault
+     */
+
+    public IntegerSchema _default(Integer _default) {
+        super.setDefault(_default);
+        return this;
+    }
+
+    /**
+     * Cast Java object to Integer type.
+     *
+     * @param value
+     * @return Integer value or null
+     * @see java.lang.Integer
+     * @see java.lang.Object
+     */
+
+    @Override
+    protected Integer cast(Object value) {
+        if (value != null) {
+            try {
+                return Integer.parseInt(value.toString());
+            } catch (Exception e) {
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Sets inherited _enum property of an IntegerSchema instance to the
+     * parameter.
+     * _enum is inherited from Schema.
+     *
+     * @param _enum
+     * @return IntegerSchema instance with the set _enum
+     * @see Schema
+     */
+
+    public IntegerSchema _enum(List<Integer> _enum) {
+        this._enum = _enum;
+        return this;
+    }
+
+    /**
+     * Adds an item to _enum List.
+     * If _enum is null, will create a new ArrayList and add the item.
+     *
+     * @param _enumItem
+     * @return IntegerSchema instance with modified _enum
+     */
+
+    public IntegerSchema addEnumItem(Integer _enumItem) {
+        if (this._enum == null) {
+            this._enum = new ArrayList<Integer>();
+        }
+        this._enum.add(_enumItem);
+        return this;
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        IntegerSchema integerSchema = (IntegerSchema) o;
+        return Objects.equals(this.type, integerSchema.type) &&
+               Objects.equals(this.format, integerSchema.format) &&
+               Objects.equals(this._default, integerSchema._default) &&
+               Objects.equals(this._enum, integerSchema._enum) &&
+               super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, format, _default, _enum, super.hashCode());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class IntegerSchema {\n");
+        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+        sb.append("    type: ").append(toIndentedString(type)).append("\n");
+        sb.append("    format: ").append(toIndentedString(format)).append("\n");
+        sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
+        sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     * This method adds formatting to the general toString() method.
+     *
+     * @param o Java object to be represented as String
+     * @return String representation of the object formatted
+     */
+    private String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
+
 }
-

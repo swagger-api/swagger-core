@@ -40,15 +40,33 @@ public class ComposedSchema extends Schema {
     return allOf;
   }
 
+  /**
+   * sets the allOf property of this instance of ComposedSchema
+   * 
+   * @param List&lt;Schema&gt; allOf
+   */
   public void setAllOf(List<Schema> allOf) {
     this.allOf = allOf;
   }
 
+  /**
+   * sets the allOf property of this instance of ComposedSchema 
+   * and returns this ComposedSchema
+   * 
+   * @param List&lt;Schema&gt; allOf
+   * @return ComposedSchema
+   */
   public ComposedSchema allOf(List<Schema> allOf) {
     this.allOf = allOf;
     return this;
   }
 
+  /**
+    * adds the given allOfItem Schema to this ComposedSchema's list of allOfItems
+    * 
+    * @param Schema allOfItem
+    * @return ComposedSchema
+    */
   public ComposedSchema addAllOfItem(Schema allOfItem) {
     if(this.allOf == null) {
       this.allOf = new ArrayList<Schema>();
@@ -67,15 +85,33 @@ public class ComposedSchema extends Schema {
     return anyOf;
   }
 
+  /**
+   * sets the anyOf property of this instance of ComposedSchema
+   * 
+   * @param List&lt;Schema&gt; anyOf
+   */
   public void setAnyOf(List<Schema> anyOf) {
     this.anyOf = anyOf;
   }
 
+  /**
+   * sets the anyOf property of this instance of ComposedSchema 
+   * and returns this ComposedSchema
+   * 
+   * @param List&lt;Schema&gt; anyOf
+   * @return ComposedSchema
+   */
   public ComposedSchema anyOf(List<Schema> anyOf) {
     this.anyOf = anyOf;
     return this;
   }
 
+  /**
+    * adds the given anyOfItem Schema to this ComposedSchema's list of anyOfItems
+    * 
+    * @param Schema anyOfItem
+    * @return ComposedSchema
+    */
   public ComposedSchema addAnyOfItem(Schema anyOfItem) {
     if(this.anyOf == null) {
       this.anyOf = new ArrayList<Schema>();
@@ -94,15 +130,33 @@ public class ComposedSchema extends Schema {
     return oneOf;
   }
 
+  /**
+   * sets the oneOf property of this instance of ComposedSchema
+   * 
+   * @param List&lt;Schema&gt; oneOf
+   */
   public void setOneOf(List<Schema> oneOf) {
     this.oneOf = oneOf;
   }
 
+  /**
+   * sets the oneOf property of this instance of ComposedSchema 
+   * and returns this ComposedSchema
+   * 
+   * @param List&lt;Schema&gt; oneOf
+   * @return ComposedSchema
+   */
   public ComposedSchema oneOf(List<Schema> oneOf) {
     this.oneOf = oneOf;
     return this;
   }
 
+  /**
+    * adds the given oneOfItem Schema to this ComposedSchema's list of oneOfItems
+    * 
+    * @param Schema oneOfItem
+    * @return ComposedSchema
+    */
   public ComposedSchema addOneOfItem(Schema oneOfItem) {
     if(this.oneOf == null) {
       this.oneOf = new ArrayList<Schema>();

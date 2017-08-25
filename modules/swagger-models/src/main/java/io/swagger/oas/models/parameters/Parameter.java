@@ -16,20 +16,19 @@
 
 package io.swagger.oas.models.parameters;
 
-import io.swagger.oas.models.examples.Example;
-import io.swagger.oas.models.media.Content;
-import io.swagger.oas.models.media.Schema;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import io.swagger.oas.models.examples.Example;
+import io.swagger.oas.models.media.Content;
+import io.swagger.oas.models.media.Schema;
+
 /**
  * Parameter
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#parameterObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#parameterObject"
  */
-
 
 public class Parameter {
     private String name = null;
@@ -52,7 +51,7 @@ public class Parameter {
         PIPEDELIMITED("pipeDelimited"),
         DEEPOBJECT("deepObject");
 
-        private String value;
+        private final String value;
 
         StyleEnum(String value) {
             this.value = value;
@@ -83,9 +82,24 @@ public class Parameter {
         return name;
     }
 
+    /**
+     * Sets the name property of a Parameter instance
+     * to the parameter.
+     *
+     * @param name
+     */
+
     public void setName(String name) {
         this.name = name;
     }
+
+    /**
+     * Sets the name property of a Parameter instance
+     * to the parameter and returns the instance.
+     *
+     * @param name
+     * @return Parameter instance with the modified name property
+     */
 
     public Parameter name(String name) {
         this.name = name;
@@ -102,12 +116,29 @@ public class Parameter {
         return in;
     }
 
+    /**
+     * Sets the in property of a Parameter instance
+     * to the parameter.
+     * If in property is set to path then also sets
+     * required property to true.
+     *
+     * @param in
+     */
+
     public void setIn(String in) {
         if ("path".equals(in)) {
             this.required = true;
         }
         this.in = in;
     }
+
+    /**
+     * Sets the in property of a Parameter instance
+     * to the parameter and returns the instance.
+     *
+     * @param in
+     * @return Parameter instance with the modified in property
+     */
 
     public Parameter in(String in) {
         setIn(in);
@@ -124,9 +155,24 @@ public class Parameter {
         return description;
     }
 
+    /**
+     * Sets the description property of a Parameter instance
+     * to the parameter.
+     *
+     * @param description
+     */
+
     public void setDescription(String description) {
         this.description = description;
     }
+
+    /**
+     * Sets the description property of a Parameter instance
+     * to the parameter and returns the instance.
+     *
+     * @param description
+     * @return Parameter instance with the modified description property
+     */
 
     public Parameter description(String description) {
         this.description = description;
@@ -143,9 +189,24 @@ public class Parameter {
         return required;
     }
 
+    /**
+     * Sets the required property of a Parameter instance
+     * to the parameter.
+     *
+     * @param required
+     */
+
     public void setRequired(Boolean required) {
         this.required = required;
     }
+
+    /**
+     * Sets the required property of a Parameter instance
+     * to the parameter and returns the instance.
+     *
+     * @param required
+     * @return Parameter instance with the modified required property
+     */
 
     public Parameter required(Boolean required) {
         this.required = required;
@@ -162,9 +223,24 @@ public class Parameter {
         return deprecated;
     }
 
+    /**
+     * Sets the deprecated property of a Parameter instance
+     * to the parameter.
+     *
+     * @param deprecated
+     */
+
     public void setDeprecated(Boolean deprecated) {
         this.deprecated = deprecated;
     }
+
+    /**
+     * Sets the deprecated property of a Parameter instance
+     * to the parameter and returns the instance.
+     *
+     * @param deprecated
+     * @return Parameter instance with the modified deprecated property
+     */
 
     public Parameter deprecated(Boolean deprecated) {
         this.deprecated = deprecated;
@@ -181,9 +257,24 @@ public class Parameter {
         return allowEmptyValue;
     }
 
+    /**
+     * Sets the allowEmptyValue property of a Parameter instance
+     * to the parameter.
+     *
+     * @param allowEmptyValue
+     */
+
     public void setAllowEmptyValue(Boolean allowEmptyValue) {
         this.allowEmptyValue = allowEmptyValue;
     }
+
+    /**
+     * Sets the allowEmptyValue property of a Parameter instance
+     * to the parameter and returns the instance.
+     *
+     * @param allowEmptyValue
+     * @return Parameter instance with the modified allowEmptyValue property
+     */
 
     public Parameter allowEmptyValue(Boolean allowEmptyValue) {
         this.allowEmptyValue = allowEmptyValue;
@@ -200,9 +291,24 @@ public class Parameter {
         return style;
     }
 
+    /**
+     * Sets the style property of a Parameter instance
+     * to the parameter.
+     *
+     * @param style
+     */
+
     public void setStyle(StyleEnum style) {
         this.style = style;
     }
+
+    /**
+     * Sets the style property of a Parameter instance
+     * to the parameter and returns the instance.
+     *
+     * @param style
+     * @return Parameter instance with the modified style property
+     */
 
     public Parameter style(StyleEnum style) {
         this.style = style;
@@ -219,9 +325,24 @@ public class Parameter {
         return explode;
     }
 
+    /**
+     * Sets the explode property of a Parameter instance
+     * to the parameter.
+     *
+     * @param explode
+     */
+
     public void setExplode(Boolean explode) {
         this.explode = explode;
     }
+
+    /**
+     * Sets the explode property of a Parameter instance
+     * to the parameter and returns the instance.
+     *
+     * @param explode
+     * @return Parameter instance with the modified explode property
+     */
 
     public Parameter explode(Boolean explode) {
         this.explode = explode;
@@ -238,9 +359,24 @@ public class Parameter {
         return allowReserved;
     }
 
+    /**
+     * Sets the allowReserved property of a Parameter instance
+     * to the parameter.
+     *
+     * @param allowReserved
+     */
+
     public void setAllowReserved(Boolean allowReserved) {
         this.allowReserved = allowReserved;
     }
+
+    /**
+     * Sets the allowReserved property of a Parameter instance
+     * to the parameter and returns the instance.
+     *
+     * @param allowReserved
+     * @return Parameter instance with the modified allowReserved property
+     */
 
     public Parameter allowReserved(Boolean allowReserved) {
         this.allowReserved = allowReserved;
@@ -257,9 +393,24 @@ public class Parameter {
         return schema;
     }
 
+    /**
+     * Sets the schema property of a Parameter instance
+     * to the parameter.
+     *
+     * @param schema
+     */
+
     public void setSchema(Schema schema) {
         this.schema = schema;
     }
+
+    /**
+     * Sets the schema property of a Parameter instance
+     * to the parameter and returns the instance.
+     *
+     * @param schema
+     * @return Parameter instance with the modified schema property
+     */
 
     public Parameter schema(Schema schema) {
         this.schema = schema;
@@ -280,10 +431,27 @@ public class Parameter {
         this.examples = examples;
     }
 
+    /**
+     * Sets the examples property of a Parameter instance
+     * to the parameter.
+     *
+     * @param examples
+     */
+
     public Parameter examples(Map<String, Example> examples) {
         this.examples = examples;
         return this;
     }
+
+    /**
+     * Adds an example item to the examples property of a Parameter instance
+     * at the specified key and returns the instance.
+     * If examples is null, creates a new HashMap and adds item
+     *
+     * @param key
+     * @param examplesItem
+     * @return Parameter instance with the added example item
+     */
 
     public Parameter addExamples(String key, Example examplesItem) {
         if (this.examples == null) {
@@ -303,9 +471,24 @@ public class Parameter {
         return example;
     }
 
+    /**
+     * Sets the example property of a Parameter instance
+     * to the parameter.
+     *
+     * @param example
+     */
+
     public void setExample(String example) {
         this.example = example;
     }
+
+    /**
+     * Sets the example property of a Parameter instance
+     * to the parameter and returns the instance.
+     *
+     * @param example
+     * @return Parameter instance with the modified example property
+     */
 
     public Parameter example(String example) {
         this.example = example;
@@ -322,18 +505,46 @@ public class Parameter {
         return content;
     }
 
+    /**
+     * Sets the content property of a Parameter instance
+     * to the parameter.
+     *
+     * @param content
+     */
+
     public void setContent(Content content) {
         this.content = content;
     }
+
+    /**
+     * Sets the content property of a Parameter instance
+     * to the parameter and returns the instance.
+     *
+     * @param content
+     * @return Parameter instance with the modified content property
+     */
 
     public Parameter content(Content content) {
         this.content = content;
         return this;
     }
 
+    /**
+     * returns the $ref property from a Parameter instance.
+     *
+     * @return String $ref
+     **/
+
     public String get$ref() {
         return $ref;
     }
+
+    /**
+     * Sets $ref property of a Parameter instance
+     * to the parameter.
+     *
+     * @param $ref
+     */
 
     public void set$ref(String $ref) {
         if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
@@ -341,6 +552,14 @@ public class Parameter {
         }
         this.$ref = $ref;
     }
+
+    /**
+     * Sets $ref property of a Parameter instance
+     * to the parameter and return the instance.
+     *
+     * @param $ref
+     * @return Parameter instance with the set $ref property.
+     */
 
     public Parameter $ref(String $ref) {
         this.$ref = $ref;
@@ -357,19 +576,19 @@ public class Parameter {
         }
         Parameter parameter = (Parameter) o;
         return Objects.equals(this.name, parameter.name) &&
-                Objects.equals(this.in, parameter.in) &&
-                Objects.equals(this.description, parameter.description) &&
-                Objects.equals(this.required, parameter.required) &&
-                Objects.equals(this.deprecated, parameter.deprecated) &&
-                Objects.equals(this.allowEmptyValue, parameter.allowEmptyValue) &&
-                Objects.equals(this.style, parameter.style) &&
-                Objects.equals(this.explode, parameter.explode) &&
-                Objects.equals(this.allowReserved, parameter.allowReserved) &&
-                Objects.equals(this.schema, parameter.schema) &&
-                Objects.equals(this.examples, parameter.examples) &&
-                Objects.equals(this.example, parameter.example) &&
-                Objects.equals(this.content, parameter.content) &&
-                Objects.equals(this.extensions, parameter.extensions);
+               Objects.equals(this.in, parameter.in) &&
+               Objects.equals(this.description, parameter.description) &&
+               Objects.equals(this.required, parameter.required) &&
+               Objects.equals(this.deprecated, parameter.deprecated) &&
+               Objects.equals(this.allowEmptyValue, parameter.allowEmptyValue) &&
+               Objects.equals(this.style, parameter.style) &&
+               Objects.equals(this.explode, parameter.explode) &&
+               Objects.equals(this.allowReserved, parameter.allowReserved) &&
+               Objects.equals(this.schema, parameter.schema) &&
+               Objects.equals(this.examples, parameter.examples) &&
+               Objects.equals(this.example, parameter.example) &&
+               Objects.equals(this.content, parameter.content) &&
+               Objects.equals(this.extensions, parameter.extensions);
     }
 
     @Override
@@ -377,10 +596,26 @@ public class Parameter {
         return Objects.hash(name, in, description, required, deprecated, allowEmptyValue, style, explode, allowReserved, schema, examples, example, content, extensions);
     }
 
+    /**
+     * Returns extensions property of a Parameter instance.
+     *
+     * @return Map&lt;String, Object&gt; extensions
+     */
 
     public java.util.Map<String, Object> getExtensions() {
         return extensions;
     }
+
+    /**
+     * Adds an object item to extensions map at
+     * the specified key.
+     * <p>
+     * If extensions is null, creates a new HashMap
+     * and adds item to it
+     *
+     * @param String name - map key
+     * @param Object value - map value
+     */
 
     public void addExtension(String name, Object value) {
         if (this.extensions == null) {
@@ -388,6 +623,12 @@ public class Parameter {
         }
         this.extensions.put(name, value);
     }
+
+    /**
+     * Sets extensions property of a Parameter instance
+     *
+     * @param Map&lt;String, Object&gt; extensions
+     */
 
     public void setExtensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
@@ -417,9 +658,14 @@ public class Parameter {
     }
 
     /**
-     * Convert the given object to string with each line indented by 4 spaces
+     * Converts the given object to string with each line indented by 4 spaces
      * (except the first line).
+     * This method adds formatting to the general toString() method.
+     *
+     * @param o Java object to be represented as String
+     * @return Formatted String representation of the object
      */
+
     private String toIndentedString(java.lang.Object o) {
         if (o == null) {
             return "null";
@@ -428,4 +674,3 @@ public class Parameter {
     }
 
 }
-

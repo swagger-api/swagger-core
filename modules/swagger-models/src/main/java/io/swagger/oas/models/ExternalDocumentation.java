@@ -40,10 +40,22 @@ public class ExternalDocumentation {
     return description;
   }
 
+  /**
+   * sets this ExternalDocumentation's description property to the given description.
+   *
+   * @param String description
+   */
   public void setDescription(String description) {
     this.description = description;
   }
 
+  /**
+   * sets this ExternalDocumentation's description property to the given description and
+   * returns this instance of ExternalDocumentation.
+   *
+   * @param String description
+   * @return ExternalDocumentation
+   */
   public ExternalDocumentation description(String description) {
     this.description = description;
     return this;
@@ -59,15 +71,26 @@ public class ExternalDocumentation {
     return url;
   }
 
+  /**
+   * sets this ExternalDocumentation's url property to the given url.
+   *
+   * @param String url
+   */
   public void setUrl(String url) {
     this.url = url;
   }
 
+  /**
+   * sets this ExternalDocumentation's url property to the given url and
+   * returns this instance of ExternalDocumentation.
+   *
+   * @param String url
+   * @return ExternalDocumentation
+   */
   public ExternalDocumentation url(String url) {
     this.url = url;
     return this;
   }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -88,11 +111,22 @@ public class ExternalDocumentation {
     return Objects.hash(description, url, extensions);
   }
 
-
+  /**
+   * returns the extensions property from a ExternalDocumentation instance.
+   *
+   * @return Map&lt;String, Object&gt;extensions
+   **/
   public java.util.Map<String, Object> getExtensions() {
     return extensions;
   }
 
+  /**
+   * Adds the given extension to this ExternalDocumentation's map of extensions, with the given key as its key.
+   *
+   * @param String key
+   * @param Object value
+   * @return Components
+   */
   public void addExtension(String name, Object value) {
     if(this.extensions == null) {
       this.extensions = new java.util.HashMap<>();
@@ -100,6 +134,11 @@ public class ExternalDocumentation {
     this.extensions.put(name, value);
   }
 
+  /**
+   * sets this ExternalDocumentation's extensions property to the given extensions.
+   *
+   * @param Map&lt;String, Object&gt;extensions
+   */
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
   }

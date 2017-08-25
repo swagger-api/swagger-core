@@ -29,6 +29,13 @@ import java.util.Objects;
 public class Content extends LinkedHashMap<String, MediaType> {
   public Content() { }
 
+  /**
+   * Adds the MediaType for this Content, where name is the naem of hte MediaType and item is the MediaType itself
+   *
+   * @param String name
+   * @param MediaType item
+   * @return Content
+   */
   public Content addMediaType(String name, MediaType item) {
     this.put(name, item);
     return this;
