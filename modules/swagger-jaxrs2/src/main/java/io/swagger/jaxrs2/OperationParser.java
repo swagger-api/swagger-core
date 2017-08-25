@@ -352,6 +352,7 @@ public class OperationParser {
         if (isEmpty) {
             return Optional.empty();
         }
+
         getContents(requestBody.content(), components).ifPresent(requestBodyObject::setContent);
         return Optional.of(requestBodyObject);
     }

@@ -112,7 +112,16 @@ public class ParametersTest extends AbstractAnnotationTest {
                                 array = @ArraySchema(maxItems = 10, minItems = 1,
                                         schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class),
                                         uniqueItems = true
-                                ))
+                                ),
+                                schema = @Schema(
+                                        type = "int",
+                                        format = "id",
+                                        description = "the generated id",
+                                        readOnly = true),
+                                content = @Content(schema = @Schema(type = "int",
+                                        format = "id",
+                                        description = "the generated id",
+                                        readOnly = true)))
                 },
                 responses = {
                         @ApiResponse(
