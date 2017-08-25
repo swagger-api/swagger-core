@@ -23,7 +23,7 @@ public class ModelWithRanges {
         return 2;
     }
 
-    @Schema(description = "some string values", _enum = {"str1", "str2"})
+    @Schema(description = "some string values", allowableValues = {"str1", "str2"})
     public String getStringValues() {
         return "test";
     }
