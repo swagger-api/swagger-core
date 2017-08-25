@@ -23,13 +23,12 @@ import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.servers.ServerVariable;
 import io.swagger.oas.models.servers.ServerVariables;
 import io.swagger.oas.models.tags.Tag;
-import io.swagger.util.ParameterProcessor;
 import io.swagger.util.Json;
+import io.swagger.util.ParameterProcessor;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.Produces;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -43,7 +42,6 @@ import java.util.Set;
  */
 public class OperationParser {
 
-    public static final String RESPONSE_DEFAULT = "default";
     public static final String MEDIA_TYPE = "*/*";
     public static final String COMPONENTS_REF = "#/components/schemas/";
     public static final String DEFAULT_DESCRIPTION = "no description";
@@ -343,9 +341,9 @@ public class OperationParser {
         Content contentObject = new Content();
         MediaType mediaType = new MediaType();
         for (io.swagger.oas.annotations.media.Content annotationContent : annotationContents) {
-            ExampleObject[] examples = annotationContent.examples();
-            for (ExampleObject example : examples) {
-                getMediaType(mediaType, example).ifPresent(mediaTypeObject -> contentObject.addMediaType(annotationContent.mediaType(), mediaType));
+            getSchema(annotationContent, components).ifPresent(mediaType::setSchema);
+            if (mediaType.getSchema() != null) {
+                contentObject.addMediaType(MEDIA_TYPE, mediaType);
             }
         }
         if (contentObject.size() == 0) {
@@ -364,50 +362,64 @@ public class OperationParser {
 
         for (io.swagger.oas.annotations.media.Content annotationContent : annotationContents) {
             MediaType mediaType = new MediaType();
-            Class<?> schemaImplementation = annotationContent.schema().implementation();
-            Map<String, Schema> schemaMap;
-            if (schemaImplementation != Void.class) {
-                Schema schemaObject = new Schema();
-                if (schemaImplementation.getName().startsWith("java.lang")) {
-                    schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
-                } else {
-                    schemaMap = ModelConverters.getInstance().readAll(schemaImplementation);
-                    schemaMap.forEach((key, schema) -> {
-                        components.addSchemas(key, schema);
-                    });
-                    schemaObject.set$ref(COMPONENTS_REF + schemaImplementation.getSimpleName());
-                }
-                mediaType.setSchema(schemaObject);
+            getSchema(annotationContent, components).ifPresent(mediaType::setSchema);
 
-            } else {
-                getSchemaFromAnnotation(annotationContent.schema()).ifPresent(mediaType::setSchema);
-            }
             if (StringUtils.isNotBlank(annotationContent.mediaType())) {
                 content.addMediaType(annotationContent.mediaType(), mediaType);
             } else {
                 if (mediaType.getSchema() != null) {
-                    if (methodProduces != null) {
-                        for (String value : methodProduces.value()) {
-                            content.addMediaType(value, mediaType);
-                        }
-                    } else if (classProduces != null) {
-                        for (String value : classProduces.value()) {
-                            content.addMediaType(value, mediaType);
-                        }
-                    } else {
-                        content.addMediaType(MEDIA_TYPE, mediaType);
-                    }
+                    applyProduces(classProduces, methodProduces, content, mediaType);
                 }
             }
             ExampleObject[] examples = annotationContent.examples();
             for (ExampleObject example : examples) {
                 getMediaType(mediaType, example).ifPresent(mediaTypeObject -> content.addMediaType(annotationContent.mediaType(), mediaTypeObject));
-                }
+            }
         }
         if (content.size() == 0) {
             return Optional.empty();
         }
         return Optional.of(content);
+    }
+
+    public static void applyProduces(Produces classProduces, Produces methodProduces, Content content, MediaType mediaType) {
+        if (methodProduces != null) {
+            for (String value : methodProduces.value()) {
+                content.addMediaType(value, mediaType);
+            }
+        } else if (classProduces != null) {
+            for (String value : classProduces.value()) {
+                content.addMediaType(value, mediaType);
+            }
+        } else {
+            content.addMediaType(MEDIA_TYPE, mediaType);
+        }
+
+    }
+
+    public static Optional<Schema> getSchema(io.swagger.oas.annotations.media.Content annotationContent, Components components) {
+        Class<?> schemaImplementation = annotationContent.schema().implementation();
+        Map<String, Schema> schemaMap;
+        if (schemaImplementation != Void.class) {
+            Schema schemaObject = new Schema();
+            if (schemaImplementation.getName().startsWith("java.lang")) {
+                schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
+            } else {
+                schemaMap = ModelConverters.getInstance().readAll(schemaImplementation);
+                schemaMap.forEach((key, schema) -> {
+                    components.addSchemas(key, schema);
+                });
+                schemaObject.set$ref(COMPONENTS_REF + schemaImplementation.getSimpleName());
+            }
+            return Optional.of(schemaObject);
+
+        } else {
+            Optional<Schema> schemaFromAnnotation = getSchemaFromAnnotation(annotationContent.schema());
+            if (schemaFromAnnotation.isPresent()) {
+                return Optional.of(schemaFromAnnotation.get());
+            }
+        }
+        return Optional.empty();
     }
 
     public static Optional<MediaType> getMediaType(MediaType mediaType, ExampleObject example) {

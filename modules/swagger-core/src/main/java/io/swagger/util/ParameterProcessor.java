@@ -202,7 +202,7 @@ public class ParameterProcessor {
                     Schema inner = pt.createProperty();
                     return merge(schema, inner);
                 } else {
-                    return ModelConverters.getInstance().resolveProperty(type);
+                    return merge(schema, ModelConverters.getInstance().resolveProperty(type));
                 }
             } else if ("array".equals(schema.getType())) {
                 Schema inner = fillSchema(((ArraySchema) schema).getItems(), type);
