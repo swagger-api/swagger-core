@@ -3,6 +3,7 @@ package io.swagger.jaxrs2;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs2.util.ReaderUtils;
 import io.swagger.oas.annotations.enums.Explode;
+import io.swagger.oas.annotations.links.LinkParameter;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.ExternalDocumentation;
@@ -10,7 +11,6 @@ import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.info.Contact;
 import io.swagger.oas.models.info.Info;
 import io.swagger.oas.models.info.License;
-import io.swagger.oas.annotations.links.LinkParameter;
 import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.media.ArraySchema;
 import io.swagger.oas.models.media.Content;
@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.Produces;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -54,13 +53,13 @@ public class OperationParser {
     public static final String DEFAULT_DESCRIPTION = "no description";
     public static final String COMMA = ",";
 
-    public static Optional<List<Parameter>> getParametersList(io.swagger.oas.annotations.Parameter[] parameters, Components components) {
+    public static Optional<List<Parameter>> getParametersList(io.swagger.oas.annotations.Parameter[] parameters, Produces classProduces, Produces methodProduces, Components components) {
         if (parameters == null) {
             return Optional.empty();
         }
         List<Parameter> parametersObject = new ArrayList<>();
         for (io.swagger.oas.annotations.Parameter parameter : parameters) {
-            getParameter(parameter, components).ifPresent(parametersObject::add);
+            getParameter(parameter, classProduces, methodProduces, components).ifPresent(parametersObject::add);
         }
         if (parametersObject.size() == 0) {
             return Optional.empty();
@@ -68,7 +67,7 @@ public class OperationParser {
         return Optional.of(parametersObject);
     }
 
-    public static Optional<Parameter> getParameter(io.swagger.oas.annotations.Parameter parameter, Components components) {
+    public static Optional<Parameter> getParameter(io.swagger.oas.annotations.Parameter parameter, Produces classProduces, Produces methodProduces, Components components) {
         if (parameter == null) {
             return Optional.empty();
         }
@@ -108,7 +107,7 @@ public class OperationParser {
         if (!Explode.DEFAULT.equals(parameter.explode())) {
             isEmpty = false;
         }
-        getContents(parameter.content(), components).ifPresent(parameterObject::setContent);
+        getContent(parameter.content(), classProduces, methodProduces, components).ifPresent(parameterObject::setContent);
         if (parameterObject.getContent() == null) {
             getArraySchema(parameter.array()).ifPresent(parameterObject::setSchema);
             if (parameterObject.getSchema() == null) {
@@ -337,7 +336,7 @@ public class OperationParser {
         return Optional.of(external);
     }
 
-    public static Optional<RequestBody> getRequestBody(io.swagger.oas.annotations.parameters.RequestBody requestBody, Components components) {
+    public static Optional<RequestBody> getRequestBody(io.swagger.oas.annotations.parameters.RequestBody requestBody, Produces classProduces, Produces methodProduces, Components components) {
         if (requestBody == null) {
             return Optional.empty();
         }
@@ -354,7 +353,7 @@ public class OperationParser {
         if (isEmpty) {
             return Optional.empty();
         }
-        getContents(requestBody.content(), components).ifPresent(requestBodyObject::setContent);
+        getContent(requestBody.content(), classProduces, methodProduces, components).ifPresent(requestBodyObject::setContent);
         return Optional.of(requestBodyObject);
     }
 
@@ -389,24 +388,6 @@ public class OperationParser {
 
         }
         return Optional.of(apiResponsesObject);
-    }
-
-    public static Optional<Content> getContents(io.swagger.oas.annotations.media.Content[] annotationContents, Components components) {
-        if (annotationContents == null) {
-            return Optional.empty();
-        }
-        Content contentObject = new Content();
-        MediaType mediaType = new MediaType();
-        for (io.swagger.oas.annotations.media.Content annotationContent : annotationContents) {
-            ExampleObject[] examples = annotationContent.examples();
-            for (ExampleObject example : examples) {
-                getMediaType(mediaType, example).ifPresent(mediaTypeObject -> contentObject.addMediaType(annotationContent.mediaType(), mediaType));
-            }
-        }
-        if (contentObject.size() == 0) {
-            return Optional.empty();
-        }
-        return Optional.of(contentObject);
     }
 
     public static Optional<Content> getContent(io.swagger.oas.annotations.media.Content[] annotationContents, Produces classProduces, Produces methodProduces, Components components) {
@@ -457,7 +438,7 @@ public class OperationParser {
             ExampleObject[] examples = annotationContent.examples();
             for (ExampleObject example : examples) {
                 getMediaType(mediaType, example).ifPresent(mediaTypeObject -> content.addMediaType(annotationContent.mediaType(), mediaTypeObject));
-                }
+            }
         }
         if (content.size() == 0) {
             return Optional.empty();
@@ -619,9 +600,9 @@ public class OperationParser {
             return linkParametersMap;
         }
         for (LinkParameter parameter : linkParameter) {
-	        if (StringUtils.isNotBlank(parameter.name())) {
-	            linkParametersMap.put(parameter.name(), parameter.expression());
-	        }
+            if (StringUtils.isNotBlank(parameter.name())) {
+                linkParametersMap.put(parameter.name(), parameter.expression());
+            }
         }
 
         return linkParametersMap;

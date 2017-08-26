@@ -353,7 +353,7 @@ public class Reader implements OpenApiReader {
         if (!shouldIgnoreClass(returnType.getTypeName())) {
             // TODO #2312 also add content to existing responses (from annotation) if it is not specified in annotation
             Map<String, Schema> schemaMap = ModelConverters.getInstance().read(returnType);
-            if (schemaMap != null  && !schemaMap.values().isEmpty()) {
+            if (schemaMap != null && !schemaMap.values().isEmpty()) {
                 Schema returnTypeSchema = schemaMap.values().iterator().next();
                 if (operation.getResponses() == null) {
                     operation.responses(
@@ -361,11 +361,11 @@ public class Reader implements OpenApiReader {
                                     new ApiResponse()
                                             .content(
                                                     new Content()
-                                                        .addMediaType("*/*",
-                                                                new MediaType()
-                                                                .schema(new Schema().$ref(returnTypeSchema.getName())
-                                                        )
-                                                    )
+                                                            .addMediaType("*/*",
+                                                                    new MediaType()
+                                                                            .schema(new Schema().$ref(returnTypeSchema.getName())
+                                                                            )
+                                                            )
                                             )
                             )
                     );
@@ -467,10 +467,10 @@ public class Reader implements OpenApiReader {
         ReaderUtils.getStringListFromStringArray(apiOperation.tags()).ifPresent(operation::setTags);
         OperationParser.getTags(apiOperation.tags()).ifPresent(tag -> openApiTags.addAll(tag));
         OperationParser.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(operation::setExternalDocs);
-        OperationParser.getRequestBody(apiOperation.requestBody(), components).ifPresent(operation::setRequestBody);
+        OperationParser.getRequestBody(apiOperation.requestBody(), classProduces, methodProduces, components).ifPresent(operation::setRequestBody);
         OperationParser.getApiResponses(apiOperation.responses(), classProduces, methodProduces, components).ifPresent(operation::setResponses);
         OperationParser.getServers(apiOperation.servers()).ifPresent(operation::setServers);
-        OperationParser.getParametersList(apiOperation.parameters(), components).ifPresent(operation::setParameters);
+        OperationParser.getParametersList(apiOperation.parameters(), classProduces, methodProduces, components).ifPresent(operation::setParameters);
     }
 
     protected String getOperationId(String operationId) {

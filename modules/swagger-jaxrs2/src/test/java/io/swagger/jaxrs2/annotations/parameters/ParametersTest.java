@@ -57,11 +57,13 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      - name: arrayParameter\n" +
                 "        in: query\n" +
                 "        required: true\n" +
-                "        schema:\n" +
-                "          maxItems: 10\n" +
-                "          minItems: 1\n" +
-                "          uniqueItems: true\n" +
-                "          type: array\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: int\n" +
+                "              description: the generated id\n" +
+                "              format: id\n" +
+                "              readOnly: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: no description\n" +
