@@ -78,6 +78,7 @@ public class PetResource {
     @POST
     @Path("/bodynoannotation")
     @Consumes({"application/json", "application/xml"})
+    @Produces({"application/json", "application/xml"})
     @Operation(summary = "Add a new pet to the store no annotation",
             responses = {
                     @ApiResponse(responseCode = "405", description = "Invalid input")

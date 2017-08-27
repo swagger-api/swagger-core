@@ -7,7 +7,6 @@ import io.swagger.jaxrs2.resources.DeprecatedFieldsResource;
 import io.swagger.jaxrs2.resources.DuplicatedOperationIdResource;
 import io.swagger.jaxrs2.resources.DuplicatedSecurityResource;
 import io.swagger.jaxrs2.resources.ExternalDocsReference;
-import io.swagger.jaxrs2.resources.RequestBodyResource;
 import io.swagger.jaxrs2.resources.ResponsesResource;
 import io.swagger.jaxrs2.resources.SecurityResource;
 import io.swagger.jaxrs2.resources.SimpleCallbackResource;
@@ -22,7 +21,6 @@ import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.callbacks.Callback;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
-import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.security.SecurityRequirement;
@@ -51,7 +49,6 @@ import static org.testng.Assert.assertTrue;
 
 /**
  * Test for the Reader Class
- *
  */
 public class ReaderTest {
     private static final String EXAMPLE_TAG = "Example Tag";
@@ -62,7 +59,6 @@ public class ReaderTest {
     private static final String CALLBACK_GET_OPERATION_DESCRIPTION = "payload data will be received";
     private static final String RESPONSE_CODE_200 = "200";
     private static final String RESPONSE_DESCRIPTION = "voila!";
-    private static final String REQUEST_DESCRIPTION = "Request description";
     private static final String EXTERNAL_DOCS_DESCRIPTION = "External documentation description";
     private static final String EXTERNAL_DOCS_URL = "http://url.com";
     private static final String PARAMETER_IN = "path";
@@ -86,7 +82,6 @@ public class ReaderTest {
     private static final int SECURITY_REQUIREMENT_NUMBER = 1;
     private static final int SCOPE_NUMBER = 2;
     private static final int PATHS_NUMBER = 1;
-
 
     @Test(description = "test a simple resource class")
     public void testSimpleReadClass() {
@@ -121,14 +116,10 @@ public class ReaderTest {
         assertEquals(EXAMPLE_TAG, operation.getTags().get(0));
         assertEquals(SECOND_TAG, operation.getTags().get(1));
 
-        RequestBody requestBody = operation.getRequestBody();
-        assertEquals(REQUEST_DESCRIPTION, requestBody.getDescription());
-
         ExternalDocumentation externalDocs = operation.getExternalDocs();
         assertEquals(EXTERNAL_DOCS_DESCRIPTION, externalDocs.getDescription());
         assertEquals(EXTERNAL_DOCS_URL, externalDocs.getUrl());
     }
-
 
     @Test(description = "scan methods")
     public void testScanMethods() {
@@ -227,19 +218,6 @@ public class ReaderTest {
         assertEquals(RESPONSE_DESCRIPTION, apiResponse.getDescription());
     }
 
-    @Test(description = "Request Body")
-    public void testGetRequestBody() {
-        Reader reader = new Reader(new OpenAPI());
-
-        Method[] methods = RequestBodyResource.class.getMethods();
-
-        Operation requestOperation = reader.parseMethod(methods[0]);
-        assertNotNull(requestOperation);
-        RequestBody requestBody = requestOperation.getRequestBody();
-        assertEquals(REQUEST_DESCRIPTION, requestBody.getDescription());
-
-    }
-
     @Test(description = "External Docs")
     public void testGetExternalDocs() {
         Reader reader = new Reader(new OpenAPI());
@@ -268,7 +246,6 @@ public class ReaderTest {
         assertEquals(SCOPE_VALUE1, scopes.get(0));
         assertEquals(SCOPE_VALUE2, scopes.get(1));
     }
-
 
     @Test(description = "Callbacks")
     public void testGetCallbacks() {
