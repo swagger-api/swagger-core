@@ -10,6 +10,7 @@ import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
 import org.testng.annotations.Test;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -135,6 +136,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                                         implementation = ParametersTest.SubscriptionResponse.class)
                         ))
                 })
+        @Consumes({"application/json", "application/xml"})
         public ParametersTest.SubscriptionResponse subscribe() {
             return null;
         }
