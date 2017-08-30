@@ -21,7 +21,9 @@ import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.Schema;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -58,7 +60,7 @@ public class Header {
   private StyleEnum style = null;
   private Boolean explode = null;
   private Schema schema = null;
-  private List<Example> examples = null;
+  private Map<String, Example> examples = null;
   private String example = null;
   private Content content = null;
   private java.util.Map<String, Object> extensions = null;
@@ -196,30 +198,31 @@ public class Header {
     return this;
   }
 
+
   /**
    * returns the examples property from a Header instance.
    *
-   * @return List&lt;Example&gt; examples
+   * @return Map&lt;String, Example&gt; examples
    **/
 
-  public List<Example> getExamples() {
+  public Map<String, Example> getExamples() {
     return examples;
   }
 
-  public void setExamples(List<Example> examples) {
+  public void setExamples(Map<String, Example> examples) {
     this.examples = examples;
   }
 
-  public Header examples(List<Example> examples) {
+  public Header examples(Map<String, Example> examples) {
     this.examples = examples;
     return this;
   }
 
-  public Header addExamplesItem(Example examplesItem) {
-    if(this.examples == null) {
-      this.examples = new ArrayList<Example>();
+  public Header addExample(String key, Example examplesItem) {
+    if (this.examples == null) {
+      this.examples = new HashMap<String, Example>();
     }
-    this.examples.add(examplesItem);
+    this.examples.put(key, examplesItem);
     return this;
   }
 
