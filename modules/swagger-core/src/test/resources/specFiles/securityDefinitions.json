@@ -1,9 +1,59 @@
 {
-  "swagger" : "2.0",
-  "security" : [ {
-    "basic_auth" : [ ],
-    "api_key" : [ ]
-  }, {
-    "oauth2" : [ "hello", "world" ]
-  } ]
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "license": {
+      "name": "MIT"
+    },
+    "title": "Swagger Petstore"
+  },
+  "servers": [
+    {
+      "url": "http://petstore.swagger.io/v1"
+    }
+  ],
+  "paths": {},
+  "security": [
+    {
+      "petstore_auth": [
+        "write:pets",
+        "read:pets"
+      ]
+    },
+    {
+      "api_key": []
+    },
+    {
+      "http": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "petstore_auth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+            "scopes": {
+              "write:pets": "modify pets in your account",
+              "read:pets": "read your pets"
+            }
+          }
+        }
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "header"
+      },
+      "http": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "open_id_connect": {
+        "type": "openIdConnect",
+        "openIdConnectUrl": "http://petstore.swagger.io/openid"
+      }
+    }
+  }
 }

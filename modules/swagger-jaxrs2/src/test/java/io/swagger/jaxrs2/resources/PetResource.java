@@ -75,6 +75,42 @@ public class PetResource {
         return Response.ok().entity("SUCCESS").build();
     }
 
+    @POST
+    @Path("/bodynoannotation")
+    @Consumes({"application/json", "application/xml"})
+    @Produces({"application/json", "application/xml"})
+    @Operation(summary = "Add a new pet to the store no annotation",
+            responses = {
+                    @ApiResponse(responseCode = "405", description = "Invalid input")
+            })
+    public Response addPetNoAnnotation(Pet pet) {
+        petData.addPet(pet);
+        return Response.ok().entity("SUCCESS").build();
+    }
+
+    @POST
+    @Path("/bodyid")
+    @Consumes({"application/json", "application/xml"})
+    @Operation(summary = "Add a new pet to the store passing an integer with generic parameter annotation",
+            responses = {
+                    @ApiResponse(responseCode = "405", description = "Invalid input")
+            })
+    public Response addPetByInteger(
+            @Parameter(description = "Pet object that needs to be added to the store", required = true) int petId) {
+        return Response.ok().entity("SUCCESS").build();
+    }
+
+    @POST
+    @Path("/bodyidnoannotation")
+    @Consumes({"application/json", "application/xml"})
+    @Operation(summary = "Add a new pet to the store passing an integer without parameter annotation",
+            responses = {
+                    @ApiResponse(responseCode = "405", description = "Invalid input")
+            })
+    public Response addPetByIntegerNoAnnotation(int petId) {
+        return Response.ok().entity("SUCCESS").build();
+    }
+
     @PUT
     @Operation(summary = "Update an existing pet",
             responses = {

@@ -25,12 +25,8 @@ import java.lang.annotation.Target;
 import io.swagger.oas.annotations.Operation;
 
 /**
- * 
- *
- * 
+ * This object represents a callback URL that will be invoked.
  **/
-
-
 @Target({ ElementType.FIELD,
           ElementType.METHOD,
           ElementType.PARAMETER,
@@ -39,18 +35,21 @@ import io.swagger.oas.annotations.Operation;
 @Inherited
 public @interface Callback {
   /**
-   * the friendly name used to refer to this callback
+   * The friendly name used to refer to this callback
+   * @return the name of the callback
    **/
   String name() default "";
 
-  /**
-   * an absolute URL which defines the destination which will be called with the supplied operation definition
-   **/
+/**
+ * An absolute URL which defines the destination which will be called with the supplied operation definition.  
+ * @return the callback URL
+ */
   String callbackUrlExpression() default "";
 
   /**
-   * the operation that will be executed on callback
+   * The array of operations that will be called out-of band 
+   * @return the callback operations
    **/
-  Operation[] operation() default @Operation();
+  Operation[] operation() default {};
 
 }

@@ -9,12 +9,10 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
-// TODO #2312
 public class PojoTests {
 
     private Map<String, io.swagger.oas.models.media.Schema> read(Type type) {
@@ -163,328 +161,310 @@ public class PojoTests {
     }
 
 
-@Test(description = "@Schema is allowing multiple definition interfaces to represent this model")
-public void testModelWithMultipleRepresentations () {
+    @Test(description = "@Schema is allowing multiple definition interfaces to represent this model")
+    public void testModelWithMultipleRepresentations () {
 
-    String yaml = "anyOf:\n" +
-            "- $ref: \"#/components/schemas/UserObject\"\n" +
-            "- $ref: \"#/components/schemas/EmployeeObject\"\n" +
-            "type: object\n" +
-            "required:\n" +
-            "  - id";
+        String yaml = "anyOf:\n" +
+                "- $ref: \"#/components/schemas/UserObject\"\n" +
+                "- $ref: \"#/components/schemas/EmployeeObject\"\n" +
+                "type: object\n" +
+                "required:\n" +
+                "  - id";
 
-    final String json = "{\"UberObject\": {" +
-            "   \"anyOf\":[" +
-            "   {\"$ref\": \"#/components/schemas/UserObject\"}," +
-            "   {\"$ref\": \"#/components/schemas/EmployeeObject\"}" +
-            "   ]" +
-            "}}";
+        final String json = "{\"UberObject\": {" +
+                "   \"anyOf\":[" +
+                "   {\"$ref\": \"#/components/schemas/UserObject\"}," +
+                "   {\"$ref\": \"#/components/schemas/EmployeeObject\"}" +
+                "   ]" +
+                "}}";
 
-    String yamlUser = "type: object\n" +
-            "description: 'A User Object'\n" +
-            "required:\n" +
-            "  - id\n" +
-            "properties:\n" +
-            "  id:\n" +
-            "    type: string\n" +
-            "    format: uuid\n" +
-            "  name:\n" +
-            "    type: string\n";
+        String yamlUser = "type: object\n" +
+                "description: 'A User Object'\n" +
+                "required:\n" +
+                "  - id\n" +
+                "properties:\n" +
+                "  id:\n" +
+                "    type: string\n" +
+                "    format: uuid\n" +
+                "  name:\n" +
+                "    type: string\n";
 
-    String yamlEmployee = "type: object\n" +
-            "description: An Employee Object\n" +
-            //// TODO #2312 resolve requiredProperties
-            // "required:\n" +
-            // "  - department\n" +
-            "properties:\n" +
-            "  id:\n" +
-            "    type: string\n" +
-            "    format: email\n" +
-            "  department:\n" +
-            "    type: string";
+        String yamlEmployee = "type: object\n" +
+                "description: An Employee Object\n" +
+                "required:\n" +
+                "  - department\n" +
+                "properties:\n" +
+                "  id:\n" +
+                "    type: string\n" +
+                "    format: email\n" +
+                "  department:\n" +
+                "    type: string";
 
-    final Map<String, io.swagger.oas.models.media.Schema> schemas = readAll(UberObject.class);
-    assertEquals(schemas.size(), 3);
-    SerializationMatchers.assertEqualsToYaml(schemas.get("UberObject"), yaml);
-    SerializationMatchers.assertEqualsToYaml(schemas.get("UserObject"), yamlUser);
-    SerializationMatchers.assertEqualsToYaml(schemas.get("EmployeeObject"), yamlEmployee);
+        final Map<String, io.swagger.oas.models.media.Schema> schemas = readAll(UberObject.class);
+        assertEquals(schemas.size(), 3);
+        SerializationMatchers.assertEqualsToYaml(schemas.get("UberObject"), yaml);
+        SerializationMatchers.assertEqualsToYaml(schemas.get("UserObject"), yamlUser);
+        SerializationMatchers.assertEqualsToYaml(schemas.get("EmployeeObject"), yamlEmployee);
 
-}
-
-@Schema(anyOf = {UserObject.class, EmployeeObject.class})
-static class UberObject implements UserObject, EmployeeObject {
-    private String id;
-    private String name;
-    private String department;
-
-    @Override
-    public String getDepartment() {
-        return department;
-    }
-    @Override
-    public String getId() {
-        return id;
-    }
-    @Override
-    public String getName() {
-        return name;
-    }
-}
-
-@Schema(description = "A User Object")
-interface UserObject {
-    @Schema(format = "uuid", required = true)
-    String getId();
-    String getName();
-}
-
-@Schema(description = "An Employee Object",  requiredProperties = {"department"})
-interface EmployeeObject {
-    @Schema(format = "email")
-    String getId();
-    String getDepartment();
-}
-
-
-@Test(description = "Shows how @Schema can be used to allow only certain data formats")
-public void testModelWithSpecificFormat () {
-
-    String yaml = "AuthorizedUser:\n" +
-            "  type: object\n" +
-            "  title: AuthorizedUser\n" +
-            "  properties:\n" +
-            "    id:\n" +
-            "      type: string\n" +
-            "      description: 'A valid user social security'\n" +
-            "      pattern: '^\\d{3}-?\\d{2}-?\\d{4}$'";
-    SerializationMatchers.assertEqualsToYaml(read(classWithIdConstraints.class), yaml);
-}
-
-@Schema(title = "AuthorizedUser")
-static class classWithIdConstraints {
-    @Schema(pattern = "^\\d{3}-?\\d{2}-?\\d{4}$", description = "A valid user social security")
-    private String id;
-
-    public String getId() {
-        return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    @Schema(anyOf = {UserObject.class, EmployeeObject.class})
+    static class UberObject implements UserObject, EmployeeObject {
+        private String id;
+        private String name;
+        private String department;
+
+        @Override
+        public String getDepartment() {
+            return department;
+        }
+        @Override
+        public String getId() {
+            return id;
+        }
+        @Override
+        public String getName() {
+            return name;
+        }
     }
-}
 
-// TODO #2312 implement math support in resolver; verify that _not_ is an array or `not`
-@Test(enabled = false, description = "Shows how to restrict a particular schema")
-public void testExcludeSchema () {
+    @Schema(description = "A User Object")
+    interface UserObject {
+        @Schema(format = "uuid", required = true)
+        String getId();
+        String getName();
+    }
 
-    String yaml = "ArbitraryDataReceiver:\n" +
-            "  type: object\n" +
-            "  additionalProperties: true\n" +
-            "  not:\n" +
-            "    - type: object\n" +
-            "      title: AuthorizedUser\n" +
-            "      properties:\n" +
-            "        id:\n" +
-            "          type: string\n" +
-            "          description: 'A valid user social security'\n" +
-            "          pattern: '^\\d{3}-?\\d{2}-?\\d{4}$'";
-    SerializationMatchers.assertEqualsToYaml(read(ArbitraryDataReceiver.class), yaml);
-
-}
-
-@Schema(not = classWithIdConstraints.class, description = "We don't store social security numbers here!")
-static class ArbitraryDataReceiver extends HashMap<String, Object> {}
-
-@Test(description = "Shows how to override a definition with a schema reference")
-public void testSchemaReference () {
-
-    String yaml = "NotAPet:\n" +
-            "  $ref: http://petstore.swagger.io/v2/swagger.json#/definitions/Tag";
-    SerializationMatchers.assertEqualsToYaml(read(NotAPet.class), yaml);
-
-}
-
-@Schema(ref = "http://petstore.swagger.io/v2/swagger.json#/definitions/Tag")
-static class NotAPet {}
+    @Schema(description = "An Employee Object",  requiredProperties = {"department"})
+    interface EmployeeObject {
+        @Schema(format = "email")
+        String getId();
+        String getDepartment();
+    }
 
 
-@Test(description = "Shows how to add a reference on a property")
-public void testPropertySchemaReference () {
+    @Test(description = "Shows how @Schema can be used to allow only certain data formats")
+    public void testModelWithSpecificFormat () {
 
-    String yaml = "ModelWithSchemaPropertyReference:\n" +
-            "  type: object\n" +
-            "  properties:\n" +
-            "    notATag:\n" +
-            "      $ref: 'http://petstore.swagger.io/v2/swagger.json#/definitions/Tag'";
-    SerializationMatchers.assertEqualsToYaml(read(ModelWithSchemaPropertyReference.class), yaml);
+        String yaml = "AuthorizedUser:\n" +
+                "  type: object\n" +
+                "  title: AuthorizedUser\n" +
+                "  properties:\n" +
+                "    id:\n" +
+                "      type: string\n" +
+                "      description: 'A valid user social security'\n" +
+                "      pattern: '^\\d{3}-?\\d{2}-?\\d{4}$'";
+        SerializationMatchers.assertEqualsToYaml(read(ClassWithIdConstraints.class), yaml);
+    }
 
-}
+    @Schema(title = "AuthorizedUser")
+    static class ClassWithIdConstraints {
+        @Schema(pattern = "^\\d{3}-?\\d{2}-?\\d{4}$", description = "A valid user social security")
+        private String id;
 
-static class ModelWithSchemaPropertyReference {
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+    }
+
+    @Test(description = "Shows how to restrict a particular schema")
+    public void testExcludeSchema () {
+
+        String yaml = "type: object\n" +
+                "description: We don't store social security numbers here!\n" +
+                "not:\n" +
+                "  $ref: \"#/components/schemas/AuthorizedUser\"";
+
+        String yamlUser = "type: object\n" +
+                "title: AuthorizedUser\n" +
+                "properties:\n" +
+                "  id:\n" +
+                "    type: string\n" +
+                "    description: 'A valid user social security'\n" +
+                "    pattern: '^\\d{3}-?\\d{2}-?\\d{4}$'";
+        Map<String, io.swagger.oas.models.media.Schema> map = readAll(ArbitraryDataReceiver.class);
+        SerializationMatchers.assertEqualsToYaml(map.get("ArbitraryDataReceiver"), yaml);
+        SerializationMatchers.assertEqualsToYaml(map.get("AuthorizedUser"), yamlUser);
+
+    }
+
+    @Schema(not = ClassWithIdConstraints.class, description = "We don't store social security numbers here!")
+    static class ArbitraryDataReceiver {}
+
+    @Test(description = "Shows how to override a definition with a schema reference")
+    public void testSchemaReference () {
+
+        String yaml = "NotAPet:\n" +
+                "  $ref: http://petstore.swagger.io/v2/swagger.json#/definitions/Tag";
+        SerializationMatchers.assertEqualsToYaml(read(NotAPet.class), yaml);
+
+    }
 
     @Schema(ref = "http://petstore.swagger.io/v2/swagger.json#/definitions/Tag")
-    private String notATag;
+    static class NotAPet {}
 
-    public String getNotATag() {
-        return notATag;
+
+    @Test(description = "Shows how to add a reference on a property")
+    public void testPropertySchemaReference () {
+
+        String yaml = "ModelWithSchemaPropertyReference:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    notATag:\n" +
+                "      $ref: 'http://petstore.swagger.io/v2/swagger.json#/definitions/Tag'";
+        SerializationMatchers.assertEqualsToYaml(read(ModelWithSchemaPropertyReference.class), yaml);
+
     }
 
-    public void setNotATag(String notATag) {
-        this.notATag = notATag;
+    static class ModelWithSchemaPropertyReference {
+
+        @Schema(ref = "http://petstore.swagger.io/v2/swagger.json#/definitions/Tag")
+        private String notATag;
+
+        public String getNotATag() {
+            return notATag;
+        }
+
+        public void setNotATag(String notATag) {
+            this.notATag = notATag;
+        }
+
     }
 
-}
+    @Test(description = "Shows how to override a property name")
+    public void testPropertyNameOverride () {
 
-@Test(description = "Shows how to override a property name")
-public void testPropertyNameOverride () {
+        String yaml = "ModelWithPropertyNameOverride:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    username:\n" +
+                "      type: string";
+        SerializationMatchers.assertEqualsToYaml(read(ModelWithPropertyNameOverride.class), yaml);
 
-    String yaml = "ModelWithPropertyNameOverride:\n" +
-            "  type: object\n" +
-            "  properties:\n" +
-            "    username:\n" +
-            "      type: string";
-    SerializationMatchers.assertEqualsToYaml(read(ModelWithPropertyNameOverride.class), yaml);
-
-}
-
-static class ModelWithPropertyNameOverride {
-    public String getDefinitelyNotCalledUsername() {
-        return definitelyNotCalledUsername;
     }
 
-    public void setDefinitelyNotCalledUsername(String definitelyNotCalledUsername) {
-        this.definitelyNotCalledUsername = definitelyNotCalledUsername;
+    static class ModelWithPropertyNameOverride {
+        public String getDefinitelyNotCalledUsername() {
+            return definitelyNotCalledUsername;
+        }
+
+        public void setDefinitelyNotCalledUsername(String definitelyNotCalledUsername) {
+            this.definitelyNotCalledUsername = definitelyNotCalledUsername;
+        }
+
+        @Schema(name = "username")
+        private String definitelyNotCalledUsername;
     }
 
-    @Schema(name = "username")
-    private String definitelyNotCalledUsername;
-}
 
 
+    @Test(description = "Shows how to override a model name")
+    public void testModelNameOverride () {
 
-@Test(description = "Shows how to override a model name")
-public void testModelNameOverride () {
+        String yaml = "ModelWithNameOverride:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    id:\n" +
+                "      type: string";
+        SerializationMatchers.assertEqualsToYaml(read(ModelWithNameOverride.class), yaml);
 
-    String yaml = "ModelWithNameOverride:\n" +
-            "  type: object\n" +
-            "  properties:\n" +
-            "    id:\n" +
-            "      type: string";
-    SerializationMatchers.assertEqualsToYaml(read(ModelWithNameOverride.class), yaml);
-
-}
-
-@Schema(name = "Employee")
-static class ModelWithNameOverride {
-    private String id;
-    public String getId() {
-        return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-}
-
-
-@Test(description = "Shows how to provide model examples")
-public void testModelPropertyExampleOverride () {
-
-    String yaml = "modelWithPropertyExampleOverride:\n" +
-            "  type: object\n" +
-            "  properties:\n" +
-            "    id:\n" +
-            "      type: string\n" +
-            "      example: abc-123";
-    SerializationMatchers.assertEqualsToYaml(read(modelWithPropertyExampleOverride.class), yaml);
-}
-
-static class modelWithPropertyExampleOverride {
-    @Schema(example = "abc-123")
-    private String id;
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-}
-
-// TODO #2312 examples and string array
-    /*
-@Test(enabled = false, description = "Shows how to provide multiple property examples")
-public void testMultipleModelPropertyExampleOverrides() {
-    String yaml = readIntoYaml(modelWithMultiplePropertyExamples.class);
-
-    assertEquals(yaml,
-        "type: object\n" +
-        "properties:\n" +
-        "  id:\n" +
-        "    type: string\n" +
-        "    examples:\n" +
-        "      - abc-123\n" +
-        "      - zz-aa-bb\n");
-}
-
-static class modelWithMultiplePropertyExamples {
-    @Schema(examples = {"abc-123", "zz-aa-bb"})
-    private String id;
-            public String getId() {
+    @Schema(name = "Employee")
+    static class ModelWithNameOverride {
+        private String id;
+        public String getId() {
             return id;
         }
 
         public void setId(String id) {
             this.id = id;
         }
-}
+    }
 
-@Test(enabled = false, description = "Show how to completely override an object example")
-public void testModelExampleOverride() {
-    String yaml = readIntoYaml(modelWithExampleOverride.class);
 
-    assertEquals(yaml,
-        "type: object\n" +
-        "example: \n" +
-        "  foo: bar\n" +
-        "  baz: true\n" +
-        "properties:\n" +
-        "  id:\n" +
-        "    type: string");
-}
+    @Test(description = "Shows how to provide model examples")
+    public void testModelPropertyExampleOverride () {
 
-@Schema(example = "{\"foo\": \"bar\",\"baz\": true}")
-static class modelWithExampleOverride {
-    private String id;
-            public String getId() {
+        String yaml = "modelWithPropertyExampleOverride:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    id:\n" +
+                "      type: string\n" +
+                "      example: abc-123";
+        SerializationMatchers.assertEqualsToYaml(read(modelWithPropertyExampleOverride.class), yaml);
+    }
+
+    static class modelWithPropertyExampleOverride {
+        @Schema(example = "abc-123")
+        private String id;
+        public String getId() {
             return id;
         }
 
         public void setId(String id) {
             this.id = id;
         }
-}
-
-@Test(enabled = false, description = "shows how to model a string array schema")
-public void testStringArraySchema() {
-
-}
-*/
-    @Schema(type = "string"/* container = "array" */)
-    static class stringArraySchema {}
-
-    @Test(enabled = false, description = "shows how to model a string map schema")
-    public void testStringMapSchema() {
 
     }
 
-    @Schema(type = "string"/* container = "map" */)
-    static class stringMapSchema {}
+    // TODO #2312 examples and string array
+        /*
+    @Test(enabled = false, description = "Shows how to provide multiple property examples")
+    public void testMultipleModelPropertyExampleOverrides() {
+        String yaml = readIntoYaml(modelWithMultiplePropertyExamples.class);
 
-    static class JavaSucks {
-        @Schema(implementation = JavaSucks.class)
-        public Object values;
+        assertEquals(yaml,
+            "type: object\n" +
+            "properties:\n" +
+            "  id:\n" +
+            "    type: string\n" +
+            "    examples:\n" +
+            "      - abc-123\n" +
+            "      - zz-aa-bb\n");
     }
+
+    static class modelWithMultiplePropertyExamples {
+        @Schema(examples = {"abc-123", "zz-aa-bb"})
+        private String id;
+                public String getId() {
+                return id;
+            }
+
+            public void setId(String id) {
+                this.id = id;
+            }
+    }
+
+    @Test(enabled = false, description = "Show how to completely override an object example")
+    public void testModelExampleOverride() {
+        String yaml = readIntoYaml(modelWithExampleOverride.class);
+
+        assertEquals(yaml,
+            "type: object\n" +
+            "example: \n" +
+            "  foo: bar\n" +
+            "  baz: true\n" +
+            "properties:\n" +
+            "  id:\n" +
+            "    type: string");
+    }
+
+    @Schema(example = "{\"foo\": \"bar\",\"baz\": true}")
+    static class modelWithExampleOverride {
+        private String id;
+                public String getId() {
+                return id;
+            }
+
+            public void setId(String id) {
+                this.id = id;
+            }
+    }
+    */
+
 }

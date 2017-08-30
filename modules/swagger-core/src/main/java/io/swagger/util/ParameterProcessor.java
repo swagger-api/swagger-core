@@ -1,6 +1,7 @@
 package io.swagger.util;
 
 import io.swagger.converter.ModelConverters;
+import io.swagger.oas.annotations.enums.Explode;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.media.ArraySchema;
 import io.swagger.oas.models.media.BinarySchema;
@@ -39,10 +40,9 @@ public class ParameterProcessor {
             return null;
         }
         if (parameter == null) {
-            return null;
+            // consider it to be body param
+            parameter = new Parameter();
         }
-        final ParamWrapper<?> param = null;
-
         for (Annotation annotation : annotations) {
             if (annotation instanceof io.swagger.oas.annotations.media.Schema) {
                 Schema schema = processSchema((io.swagger.oas.annotations.media.Schema) annotation);
@@ -73,10 +73,9 @@ public class ParameterProcessor {
                 if (p.allowReserved()) {
                     parameter.setAllowReserved(p.allowReserved());
                 }
-                parameter.setStyle(StringUtils.isNoneBlank(p.style()) ? Parameter.StyleEnum.valueOf(p.style()) : null);
-                if (p.explode()) {
-                    parameter.setExplode(p.explode());
-                }
+
+                setParameterStyle(parameter, p);
+                setParameterExplode(parameter, p);
 
                 if (hasSchemaAnnotation(p.schema())) {
                     Schema schema = processSchema(p.schema());
@@ -84,10 +83,10 @@ public class ParameterProcessor {
                         parameter.setSchema(schema);
                     }
                 } else if (hasArrayAnnotation(p.array())) {
-                    Schema arraySchema = processArraySchema(p.array());
-                    if (arraySchema != null) {
-                        parameter.setSchema(arraySchema);
-                    }
+                 Schema arraySchema = processArraySchema(p.array());
+                 if (arraySchema != null) {
+                     parameter.setSchema(arraySchema);
+                 }
                 }
             } else if (annotation.annotationType().getName().equals("javax.ws.rs.PathParam")) {
                 try {
@@ -143,6 +142,57 @@ public class ParameterProcessor {
         }
         return parameter;
     }
+    
+    private static boolean hasArrayAnnotation(io.swagger.oas.annotations.media.ArraySchema array) {
+         if (array.uniqueItems() == false
+                 && array.maxItems() == Integer.MIN_VALUE
+                 && array.minItems() == Integer.MAX_VALUE
+                 && !hasSchemaAnnotation(array.schema())
+                 ) {
+             return false;
+         }
+         return true;
+     }
+      
+    private static Schema processArraySchema(io.swagger.oas.annotations.media.ArraySchema array) {
+         ArraySchema output = new ArraySchema();
+ 
+        Schema schema = processSchema(array.schema());
+ 
+         output.setItems(schema);
+ 
+         return output;
+     }    
+    
+    public static void setParameterExplode(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
+        if (isExplodable(p)) {
+            if (Explode.TRUE.equals(p.explode())) {
+                parameter.setExplode(Boolean.TRUE);
+            } else if (Explode.FALSE.equals(p.explode())) {
+                parameter.setExplode(Boolean.FALSE);
+            }
+        }
+    }
+
+    private static boolean isExplodable(io.swagger.oas.annotations.Parameter p) {
+        io.swagger.oas.annotations.media.Schema schema = p.schema();
+        boolean explode = true;
+        if (schema != null) {
+            Class implementation = schema.implementation();
+            if (implementation == Void.class) {
+                if (!schema.type().equals("object") && !schema.type().equals("array")) {
+                    explode = false;
+                }
+            }
+        }
+        return explode;
+    }
+
+    public static void setParameterStyle(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
+        if (StringUtils.isNotBlank(p.style())) {
+            parameter.setStyle(Parameter.StyleEnum.valueOf(p.style().toUpperCase()));
+        }
+    }
 
     public static Schema fillSchema(Schema schema, Type type) {
         if (schema != null) {
@@ -152,7 +202,7 @@ public class ParameterProcessor {
                     Schema inner = pt.createProperty();
                     return merge(schema, inner);
                 } else {
-                    return ModelConverters.getInstance().resolveProperty(type);
+                    return merge(schema, ModelConverters.getInstance().resolveProperty(type));
                 }
             } else if ("array".equals(schema.getType())) {
                 Schema inner = fillSchema(((ArraySchema) schema).getItems(), type);
@@ -174,44 +224,77 @@ public class ParameterProcessor {
         return schema;
     }
 
-    // TODO! #2312 complete merge
     public static Schema merge(Schema from, Schema to) {
         if (from == null) {
             return to;
         }
-        if (to.getDescription() == null) {
-            to.setDescription(from.getDescription());
-        }
         if (to.getDefault() == null) {
             to.setDefault(from.getDefault());
+        }
+        if (to.getDeprecated() == null) {
+            to.setDeprecated(from.getDeprecated());
+        }
+        if (to.getDescription() == null) {
+            to.setDescription(from.getDescription());
         }
         if (to.getEnum() == null) {
             to.setEnum(from.getEnum());
         }
-        if (to.getExclusiveMinimum() == null) {
-            to.setExclusiveMinimum(from.getExclusiveMinimum());
+        if (to.getExample() == null) {
+            to.setExample(from.getExample());
         }
         if (to.getExclusiveMaximum() == null) {
             to.setExclusiveMaximum(from.getExclusiveMaximum());
         }
-        if (to.getMinimum() == null) {
-            to.setMinimum(from.getMinimum());
+        if (to.getExclusiveMinimum() == null) {
+            to.setExclusiveMinimum(from.getExclusiveMinimum());
+        }
+        if (to.getExtensions() == null) {
+            to.setExtensions(from.getExtensions());
+        }
+        if (to.getExternalDocs() == null) {
+            to.setExternalDocs(from.getExternalDocs());
+        }
+        if (to.getFormat() == null) {
+            to.setFormat(from.getFormat());
         }
         if (to.getMaximum() == null) {
             to.setMaximum(from.getMaximum());
         }
-        return to;
-    }
-
-    private static boolean hasArrayAnnotation(io.swagger.oas.annotations.media.ArraySchema array) {
-        if (array.uniqueItems() == false
-                && array.maxItems() == Integer.MIN_VALUE
-                && array.minItems() == Integer.MAX_VALUE
-                && !hasSchemaAnnotation(array.schema())
-                ) {
-            return false;
+        if (to.getMaxLength() == null) {
+            to.setMaxLength(from.getMaxLength());
         }
-        return true;
+        if (to.getMinimum() == null) {
+            to.setMinimum(from.getMinimum());
+        }
+        if (to.getMinLength() == null) {
+            to.setMinLength(from.getMinLength());
+        }
+        if (to.getMultipleOf() == null) {
+            to.setMultipleOf(from.getMultipleOf());
+        }
+        if (to.getNullable() == null) {
+            to.setNullable(from.getNullable());
+        }
+        if (to.getPattern() == null) {
+            to.setPattern(from.getPattern());
+        }
+        if (to.getReadOnly() == null) {
+            to.setReadOnly(from.getReadOnly());
+        }
+        if (to.getRequired() == null) {
+            to.setRequired(from.getRequired());
+        }
+        if (to.getTitle() == null) {
+            to.setTitle(from.getTitle());
+        }
+        if (to.getXml() == null) {
+            to.setXml(from.getXml());
+        }
+        if (to.getWriteOnly() == null) {
+            to.setWriteOnly(from.getWriteOnly());
+        }
+        return to;
     }
 
     private static boolean hasSchemaAnnotation(io.swagger.oas.annotations.media.Schema schema) {
@@ -235,10 +318,9 @@ public class ParameterProcessor {
                 && !schema.nullable()
                 && !schema.readOnly()
                 && !schema.writeOnly()
-                && schema.examples().length == 1 && StringUtils.isBlank(schema.examples()[0])
                 && !schema.deprecated()
-                && schema._enum().length == 1 && StringUtils.isBlank(schema._enum()[0])
-                && StringUtils.isBlank(schema._default())
+                && schema.allowableValues().length == 1 && StringUtils.isBlank(schema.allowableValues()[0])
+                && StringUtils.isBlank(schema.defaultValue())
                 && StringUtils.isBlank(schema.example())
                 && StringUtils.isBlank(schema.pattern())
                 && schema.not().equals(Void.class)
@@ -250,16 +332,6 @@ public class ParameterProcessor {
         return true;
     }
 
-    private static Schema processArraySchema(io.swagger.oas.annotations.media.ArraySchema array) {
-        ArraySchema output = new ArraySchema();
-
-        Schema schema = processSchema(array.schema());
-
-        output.setItems(schema);
-
-        return output;
-    }
-
     private static Schema processSchema(io.swagger.oas.annotations.media.Schema schema) {
         Schema output = null;
         if (schema.type() != null) {
@@ -268,9 +340,8 @@ public class ParameterProcessor {
                 if (StringUtils.isNotBlank(schema.format())) {
                     output.format(schema.format());
                 }
-            }
-            if ("string".equals(schema.type())) {
-                if ("password".equals(schema.format())) {
+            } else if ("string".equals(schema.type())) {
+            	if ("password".equals(schema.format())) {
                     output = new PasswordSchema();
                 } else if ("binary".equals(schema.format())) {
                     output = new BinarySchema();
@@ -294,14 +365,21 @@ public class ParameterProcessor {
             // TODO: #2312 other types
         }
         if (output != null) {
-            if (StringUtils.isNotBlank(schema._default())) {
-                output.setDefault(schema._default());
+            if (StringUtils.isNotBlank(schema.defaultValue())) {
+                output.setDefault(schema.defaultValue());
+            }
+
+            if (StringUtils.isNotBlank(schema.pattern())) {
+                output.setPattern(schema.pattern());
+            }
+            if (StringUtils.isNotBlank(schema.format())) {
+                output.setFormat(schema.format());
             }
             if (StringUtils.isNotBlank(schema.description())) {
                 output.setDescription(schema.description());
             }
-            if (schema._enum() != null) {
-                for (String v : schema._enum()) {
+            if (schema.allowableValues() != null) {
+                for (String v : schema.allowableValues()) {
                     if (StringUtils.isNotBlank(v)) {
                         output.addEnumItemObject(v);
                     }
@@ -329,47 +407,8 @@ public class ParameterProcessor {
                 output.maxProperties(schema.maxProperties());
             }
         }
+         
         return output;
-    }
-
-    /**
-     * Wraps either an @ApiParam or and @ApiImplicitParam
-     */
-
-    public interface ParamWrapper<T extends Annotation> {
-        String getName();
-
-        String getDescription();
-
-        String getDefaultValue();
-
-        String getAllowableValues();
-
-        boolean isRequired();
-
-        String getAccess();
-
-        boolean isAllowMultiple();
-
-        String getDataType();
-
-        String getParamType();
-
-        T getAnnotation();
-
-        boolean isHidden();
-
-        String getExample();
-
-        String getType();
-
-        String getFormat();
-
-        boolean getReadOnly();
-
-        boolean getAllowEmptyValue();
-
-        String getCollectionFormat();
     }
 
     /**
@@ -453,7 +492,6 @@ public class ParameterProcessor {
                     || double.class.isAssignableFrom(clazz);
         }
 
-
         /**
          */
         public boolean isContext() {
@@ -525,6 +563,5 @@ public class ParameterProcessor {
             return collectionFormat;
         }
     }
-
 
 }

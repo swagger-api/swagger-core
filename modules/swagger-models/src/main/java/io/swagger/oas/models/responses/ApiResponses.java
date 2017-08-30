@@ -22,12 +22,13 @@ import java.util.Objects;
 /**
  * ApiResponses
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc2/versions/3.0.md#responsesObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#responsesObject"
  */
 
 
 public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
-  private ApiResponse _default = null;
+
+  public static final String DEFAULT = "default";
 
   public ApiResponses addApiResponse(String name, ApiResponse item) {
     this.put(name, item);
@@ -40,15 +41,15 @@ public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
    **/
 
   public ApiResponse getDefault() {
-    return _default;
+    return this.get(DEFAULT);
   }
 
   public void setDefault(ApiResponse _default) {
-    this._default = _default;
+    addApiResponse(DEFAULT, _default);
   }
 
   public ApiResponses _default(ApiResponse _default) {
-    this._default = _default;
+    setDefault(_default);
     return this;
   }
 
@@ -62,13 +63,12 @@ public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
       return false;
     }
     ApiResponses apiResponses = (ApiResponses) o;
-    return Objects.equals(this._default, apiResponses._default) &&
-        super.equals(o);
+    return super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(_default, super.hashCode());
+    return Objects.hash(super.hashCode());
   }
 
   @Override
@@ -76,7 +76,6 @@ public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
     StringBuilder sb = new StringBuilder();
     sb.append("class ApiResponses {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
     sb.append("}");
     return sb.toString();
   }

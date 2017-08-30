@@ -28,6 +28,13 @@ public class ParameterDeSerializationTest {
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
+    @Test(description = "it should deserialize a QueryParameter with style")
+    public void deserializeQueryParameterWithStyle() throws IOException {
+        final String json = "{\"in\":\"query\",\"style\":\"form\",\"required\":false,\"schema\":{\"type\":\"string\"}}";
+        final Parameter p = m.readValue(json, Parameter.class);
+        SerializationMatchers.assertEqualsToJson(p, json);
+    }
+
     @Test(description = "it should deserialize a QueryParameter with array")
     public void deserializeArrayQueryParameter() throws IOException {
         final String json = "{" +
@@ -164,7 +171,7 @@ public class ParameterDeSerializationTest {
     @Test(description = "should serialize correctly typed numeric enums")
     public void testIssue1765() throws Exception {
         String yaml =
-                "openapi: '3.0.0-rc1'\n" +
+                "openapi: '3.0.0'\n" +
                 "paths:\n" +
                 "  /test:\n" +
                 "    get:\n" +

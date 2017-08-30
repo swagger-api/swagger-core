@@ -2,9 +2,9 @@ package io.swagger.jaxrs2.util;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import io.swagger.jaxrs2.config.ReaderConfig;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
+import io.swagger.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.parameters.Parameter;
@@ -157,7 +157,10 @@ public class ReaderUtils {
         return Optional.of(list);
     }
 
-    public static boolean isIgnored(String path, ReaderConfig config) {
+    public static boolean isIgnored(String path, OpenAPIConfiguration config) {
+        if (config.getIgnoredRoutes() == null) {
+            return false;
+        }
         for (String item : config.getIgnoredRoutes()) {
             final int length = item.length();
             if (path.startsWith(item) && (path.length() == length || path.startsWith(PATH_DELIMITER, length))) {

@@ -286,7 +286,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (resolvedModel != null) {
             return resolvedModel;
         }
-        // TODO #2312 - needs clone implemented in #2227
         // uses raw class, as it does not consider super class while handling schema annotation for composed model props
         List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass());
         boolean isComposedSchema = composedSchemaReferencedClasses != null;
@@ -411,14 +410,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 annotations = annotationList.toArray(new Annotation[annotationList.size()]);
 
                 io.swagger.oas.annotations.media.Schema mp = null;
-
+                
                 io.swagger.oas.annotations.media.ArraySchema as = null;
                 as = member.getAnnotation(io.swagger.oas.annotations.media.ArraySchema.class);
                 if (as != null) {
                     mp = as.schema();
                 } else {
                     mp = member.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
-                }
+                }                
 
                 if(mp != null) {
                     if (mp.readOnly()) {
@@ -471,44 +470,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     else {
                         property = context.resolve(cls, annotations);
                     }
-                    /*else if (or.toLowerCase().startsWith("map[")) {
-                        // TODO #2312
-//                        int pos = or.indexOf(",");
-//                        if (pos > 0) {
-//                            String innerType = or.substring(pos + 1, or.length() - 1);
-//                            MapProperty p = new MapProperty();
-//                            Property primitiveProperty = PrimitiveType.createProperty(innerType);
-//                            if (primitiveProperty != null) {
-//                                p.setAdditionalProperties(primitiveProperty);
-//                            } else {
-//                                innerJavaType = getInnerType(innerType);
-//                                p.setAdditionalProperties(context.resolveProperty(innerJavaType, annotations));
-//                            }
-//                            property = p;
-//                        }
-                    } else {
-                        Schema primitiveProperty = PrimitiveType.createProperty(or);
-                        if (primitiveProperty != null) {
-                            property = primitiveProperty;
-                        } else {
-                            innerJavaType = getInnerType(or);
-                            property = context.resolve(innerJavaType, annotations);
-                        }
-                    }
-                    if (innerJavaType != null) {
-                        context.resolve(innerJavaType);
-                    }*/
+                    // TODO #2312 possibly consider also type or remove from annotation and use only "implementation"
                 }
 
                 // no property from override, construct from propType
                 if (property == null) {
                     if (mp != null && StringUtils.isNotEmpty(mp.ref())) {
                         property = new Schema().$ref(mp.ref());
+/*
                     } else if (member.getAnnotation(JsonIdentityInfo.class) != null) {
                         // TODO #2312
-//                        property = GeneratorWrapper.processJsonIdentity(propType, context, _mapper,
-//                                member.getAnnotation(JsonIdentityInfo.class),
-//                                member.getAnnotation(JsonIdentityReference.class));
+                        property = GeneratorWrapper.processJsonIdentity(propType, context, _mapper,
+                                member.getAnnotation(JsonIdentityInfo.class),
+                                member.getAnnotation(JsonIdentityReference.class));
+*/
                     }
                     if (property == null) {
                         JsonUnwrapped uw = member.getAnnotation(JsonUnwrapped.class);
@@ -565,8 +540,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             if(!StringUtils.isBlank(mp.pattern())) {
                                 property.setPattern(mp.pattern());
                             }
-                            if(mp._enum().length > 0) {
-                                for(String _enum : mp._enum()) {
+							if(mp.allowableValues().length > 0) {
+							    for(String _enum : mp.allowableValues()) {
                                     if(StringUtils.isNotBlank(_enum)) {
                                         property.addEnumItemObject(_enum);
                                     }
@@ -574,7 +549,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             }
                         }
                         JAXBAnnotationsHelper.apply(member, property);
-                        applyBeanValidatorAnnotations(property, annotations);
+                        applyBeanValidatorAnnotations(property, annotations, model);
                     }
                 }
 
@@ -584,8 +559,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
-
-//        Collections.sort(props, getPropertyComparator());
 
         if(modelProps.size() > 0) {
             model.setProperties(modelProps);
@@ -657,7 +630,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
             Class<?> not = schemaAnnotation.not();
             if (!Void.class.equals(not)) {
-                model.not((new Schema().$ref(context.resolve(not.getClass()).getName())));
+                model.not((new Schema().$ref(context.resolve(not).getName())));
+            }
+            if (schemaAnnotation.requiredProperties() != null &&
+                    schemaAnnotation.requiredProperties().length > 0 &&
+                    StringUtils.isNotBlank(schemaAnnotation.requiredProperties()[0])) {
+                for (String prop: schemaAnnotation.requiredProperties()) {
+                    model.addRequiredItem(prop);
+                }
             }
         }
 
@@ -862,30 +842,27 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         private static Schema process(Schema id, String propertyName, JavaType type,
                 ModelConverterContext context) {
-//            id.setTitle(propertyName);
             Schema model = context.resolve(type);
-                Schema mi = (Schema) model;
+                Schema mi = model;
                 mi.getProperties().put(propertyName, id);
                 return new Schema().$ref(StringUtils.isNotEmpty(mi.get$ref())
-                        ? mi.get$ref() : mi.getTitle());
+                        ? mi.get$ref() : mi.getName());
         }
     }
 
-    protected void applyBeanValidatorAnnotations(Schema property, Annotation[] annotations) {
+    protected void applyBeanValidatorAnnotations(Schema property, Annotation[] annotations, Schema parent) {
         Map<String, Annotation> annos = new HashMap<String, Annotation>();
         if (annotations != null) {
             for (Annotation anno : annotations) {
                 annos.put(anno.annotationType().getName(), anno);
             }
         }
-        // TODO #2312
         if (annos.containsKey("javax.validation.constraints.NotNull")) {
-//            property.setRequired(true);
+            parent.addRequiredItem(property.getName());
         }
         if (annos.containsKey("javax.validation.constraints.Min")) {
             if ("integer".equals(property.getType()) || "number". equals(property.getType())) {
                 Min min = (Min) annos.get("javax.validation.constraints.Min");
-//                AbstractNumericProperty ap = (AbstractNumericProperty) property;
                 property.setMinimum(new BigDecimal(min.value()));
             }
         }
