@@ -218,7 +218,7 @@ public class Header {
     return this;
   }
 
-  public Header addExamples(String key, Example examplesItem) {
+  public Header addExample(String key, Example examplesItem) {
     if (this.examples == null) {
       this.examples = new HashMap<String, Example>();
     }
