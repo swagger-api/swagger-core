@@ -54,7 +54,8 @@
 					<instructions>
 						<Export-Package>
 							io.swagger.oas.integration,
-							io.swagger.oas.integration.api
+							io.swagger.oas.integration.ext,
+							io.swagger.oas.integration.impl
 						</Export-Package>
 					</instructions>
 				</configuration>

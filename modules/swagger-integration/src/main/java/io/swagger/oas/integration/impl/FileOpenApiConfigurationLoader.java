@@ -1,10 +1,10 @@
-package io.swagger.oas.integration;
-
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
+package io.swagger.oas.integration.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
+import io.swagger.oas.integration.OpenAPIConfiguration;
 
 public class FileOpenApiConfigurationLoader implements StringOpenApiConfigurationLoader {
 

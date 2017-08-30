@@ -1,9 +1,9 @@
-package io.swagger.oas.integration;
-
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.integration.api.OpenApiConfigurationLoader;
+package io.swagger.oas.integration.impl;
 
 import java.io.IOException;
+
+import io.swagger.oas.integration.OpenAPIConfiguration;
+import io.swagger.oas.integration.ext.OpenApiConfigurationLoader;
 
 // TODO
 public class URLOpenApiConfigurationLoader implements OpenApiConfigurationLoader {

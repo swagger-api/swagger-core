@@ -1,11 +1,11 @@
-package io.swagger.oas.integration;
-
-import io.swagger.oas.integration.api.OpenAPIConfigBuilder;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.integration.api.OpenApiConfigurationLoader;
+package io.swagger.oas.integration.impl;
 
 import java.io.IOException;
 import java.util.ServiceLoader;
+
+import io.swagger.oas.integration.OpenAPIConfiguration;
+import io.swagger.oas.integration.OpenAPIConfigurationBuilder;
+import io.swagger.oas.integration.ext.OpenApiConfigurationLoader;
 
 // TODO doesn't support multiple configs
 public class ServiceOpenApiConfigurationLoader implements OpenApiConfigurationLoader {
@@ -13,9 +13,9 @@ public class ServiceOpenApiConfigurationLoader implements OpenApiConfigurationLo
     @Override
     public OpenAPIConfiguration load(String path)  throws IOException {
 
-        ServiceLoader<OpenAPIConfigBuilder> loader = ServiceLoader.load(OpenAPIConfigBuilder.class);
+        ServiceLoader<OpenAPIConfigurationBuilder> loader = ServiceLoader.load(OpenAPIConfigurationBuilder.class);
         if (loader.iterator().hasNext()) {
-            return loader.iterator().next().build();
+            return loader.iterator().next().build(null);
         }
         throw new IOException("Error loading OpenAPIConfigBuilder service implementation.");
     }
@@ -24,7 +24,7 @@ public class ServiceOpenApiConfigurationLoader implements OpenApiConfigurationLo
     public boolean exists(String path) {
 
         try {
-            ServiceLoader<OpenAPIConfigBuilder> loader = ServiceLoader.load(OpenAPIConfigBuilder.class);
+            ServiceLoader<OpenAPIConfigurationBuilder> loader = ServiceLoader.load(OpenAPIConfigurationBuilder.class);
             if (loader.iterator().hasNext()) {
                 loader.iterator().next();
                 return true;

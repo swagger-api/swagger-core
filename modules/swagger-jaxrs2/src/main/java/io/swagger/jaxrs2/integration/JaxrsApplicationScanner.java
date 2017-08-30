@@ -6,7 +6,7 @@ import java.util.Set;
 public class JaxrsApplicationScanner extends JaxrsAnnotationScanner<JaxrsApplicationScanner> {
 
     @Override
-    public Set<Class<?>> classes() {
+    public Set<Class<?>> getClasses() {
         Set<Class<?>> output = new HashSet<Class<?>>();
         if (application != null) {
             Set<Class<?>> clz = application.getClasses();

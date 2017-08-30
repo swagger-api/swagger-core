@@ -1,14 +1,15 @@
 package io.swagger.jaxrs2.integration.api;
 
-import io.swagger.oas.integration.api.OpenApiScanner;
-
 import javax.ws.rs.core.Application;
+
+import io.swagger.oas.integration.OpenAPIScanner;
+
 import java.util.Map;
 
-public interface JaxrsOpenApiScanner extends OpenApiScanner{
+public interface JaxrsOpenApiScanner extends OpenAPIScanner{
 
 
     void setApplication (Application application);
 
-    Map<String, Object> resources();
+    Map<String, Object> getResources();
 }

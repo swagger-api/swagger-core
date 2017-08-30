@@ -1,14 +1,16 @@
-package io.swagger.oas.integration;
+package io.swagger.oas.integration.impl;
 
+import io.swagger.oas.integration.OpenAPIConfiguration;
 import io.swagger.oas.models.OpenAPI;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 public class SwaggerConfiguration implements OpenAPIConfiguration {
-
+    public static final String OPENAPI_CONFIGURATION_CACHE_TTL_KEY = "openApi.configuration.cacheTTL";
+    public static final String OPENAPI_CONFIGURATION_PRETTYPRINT_KEY = "openApi.configuration.prettyPrint";
+    
     Map<String, Object> userDefinedOptions;
     private OpenAPI openAPI;
 
@@ -21,6 +23,7 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
 
     private Boolean prettyPrint;
     private Boolean readAllResources;
+    private Boolean scanningDisabled;
     private Collection<String> ignoredRoutes;
     private Long cacheTTL = -1L;
 
@@ -47,6 +50,19 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
 
     public SwaggerConfiguration readAllResources(Boolean readAllResources) {
         this.readAllResources = readAllResources;
+        return this;
+    }
+    
+    public Boolean isScanningDisabled() {
+        return readAllResources;
+    }
+
+    public void setScanningDisabled(Boolean scanningDisabled) {
+        this.scanningDisabled = scanningDisabled;
+    }
+
+    public SwaggerConfiguration scanningDisabled(Boolean scanningDisabled) {
+        this.scanningDisabled = scanningDisabled;
         return this;
     }
 

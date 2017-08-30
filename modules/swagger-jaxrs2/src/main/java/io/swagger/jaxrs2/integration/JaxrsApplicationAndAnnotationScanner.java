@@ -7,8 +7,8 @@ public class JaxrsApplicationAndAnnotationScanner extends JaxrsAnnotationScanner
 
 
     @Override
-    public Set<Class<?>> classes() {
-        Set<Class<?>> classes = super.classes();
+    public Set<Class<?>> getClasses() {
+        Set<Class<?>> classes = super.getClasses();
         Set<Class<?>> output = new HashSet<Class<?>>();
         if (application != null) {
             Set<Class<?>> clz = application.getClasses();
