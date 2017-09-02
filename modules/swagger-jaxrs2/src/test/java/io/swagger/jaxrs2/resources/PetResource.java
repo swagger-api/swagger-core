@@ -21,6 +21,7 @@ import io.swagger.jaxrs2.resources.model.Pet;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
 import io.swagger.oas.annotations.media.Content;
+import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
 
@@ -46,7 +47,8 @@ public class PetResource {
     @Operation(summary = "Find pet by ID",
             description = "Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will simulate API error conditions",
             responses = {
-                    @ApiResponse(description = "The pet", content = @Content(
+                    @ApiResponse(
+                            description = "The pet", content = @Content(
                             schema = @Schema(implementation = Pet.class)
                     )),
                     @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
