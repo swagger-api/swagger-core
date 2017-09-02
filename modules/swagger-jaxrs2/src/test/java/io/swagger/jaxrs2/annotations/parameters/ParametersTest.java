@@ -84,7 +84,6 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      description: the generated id\n" +
                 "      format: id\n" +
                 "      readOnly: true";
-        System.out.println(expectedYAML);
         assertEquals(extractedYAML, expectedYAML);
     }
 
@@ -98,8 +97,12 @@ public class ParametersTest extends AbstractAnnotationTest {
                 parameters = {
                         @Parameter(in = "path", name = "subscriptionId", required = true,
                                 schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class), style = "simple",
-                                examples = {@ExampleObject(name = "example1", value = "example1", summary = "Summary example 1", externalValue = "external value 1"),
-                                           @ExampleObject(name = "example2", value = "example2", summary = "Summary example 2", externalValue = "external value 2")}),
+                                examples = {
+                                        @ExampleObject(name = "example1", value = "example1",
+                                                summary = "Summary example 1", externalValue = "external value 1"),
+                                        @ExampleObject(name = "example2", value = "example2",
+                                                summary = "Summary example 2", externalValue = "external value 2")
+                                }),
                         @Parameter(in = "query", name = "formId", required = true,
                                 schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class)),
                         @Parameter(in = "query", name = "explodeFalse", required = true, explode = Explode.FALSE,
@@ -116,7 +119,6 @@ public class ParametersTest extends AbstractAnnotationTest {
                 },
                 responses = {
                         @ApiResponse(
-                                responseCode = "default",
                                 description = "no description", content = @Content(
                                 mediaType = "*/*",
                                 schema =
