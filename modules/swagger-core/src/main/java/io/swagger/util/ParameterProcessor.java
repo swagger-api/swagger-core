@@ -2,7 +2,9 @@ package io.swagger.util;
 
 import io.swagger.converter.ModelConverters;
 import io.swagger.oas.annotations.enums.Explode;
+import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.media.ArraySchema;
 import io.swagger.oas.models.media.BinarySchema;
 import io.swagger.oas.models.media.ByteArraySchema;
@@ -26,10 +28,12 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public class ParameterProcessor {
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);

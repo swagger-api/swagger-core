@@ -3,6 +3,7 @@ package io.swagger.jaxrs2;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs2.util.ReaderUtils;
 import io.swagger.oas.annotations.enums.Explode;
+import io.swagger.oas.annotations.links.LinkParameter;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.ExternalDocumentation;
@@ -10,7 +11,6 @@ import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.info.Contact;
 import io.swagger.oas.models.info.Info;
 import io.swagger.oas.models.info.License;
-import io.swagger.oas.annotations.links.LinkParameter;
 import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.MediaType;
@@ -78,6 +78,10 @@ public class OperationParser {
             parameterObject.setIn(parameter.in());
             isEmpty = false;
         }
+        if (StringUtils.isNotBlank(parameter.example())) {
+            parameterObject.setIn(parameter.example());
+            isEmpty = false;
+        }
         if (parameter.deprecated()) {
             parameterObject.setDeprecated(parameter.deprecated());
         }
@@ -92,6 +96,15 @@ public class OperationParser {
         if (parameter.allowReserved()) {
             parameterObject.setAllowReserved(parameter.allowReserved());
             isEmpty = false;
+        }
+
+        Map<String, Example> exampleMap = new HashMap<>();
+        for (ExampleObject exampleObject : parameter.examples()) {
+            getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
+        }
+
+        if (exampleMap.size() > 0) {
+            parameterObject.setExamples(exampleMap);
         }
 
         ParameterProcessor.setParameterStyle(parameterObject, parameter);
@@ -373,7 +386,8 @@ public class OperationParser {
             }
             ExampleObject[] examples = annotationContent.examples();
             for (ExampleObject example : examples) {
-                getMediaType(mediaType, example).ifPresent(mediaTypeObject -> content.addMediaType(annotationContent.mediaType(), mediaTypeObject));
+                getExample(example).ifPresent(exampleObject -> mediaType.addExamples(example.name(), exampleObject));
+                content.addMediaType(annotationContent.mediaType(), mediaType);
             }
         }
         if (content.size() == 0) {
@@ -422,7 +436,7 @@ public class OperationParser {
         return Optional.empty();
     }
 
-    public static Optional<MediaType> getMediaType(MediaType mediaType, ExampleObject example) {
+    public static Optional<Example> getExample(ExampleObject example) {
         if (example == null) {
             return Optional.empty();
         }
@@ -444,9 +458,7 @@ public class OperationParser {
                     exampleObject.setValue(example.value());
                 }
             }
-
-            mediaType.addExamples(example.name(), exampleObject);
-            return Optional.of(mediaType);
+            return Optional.of(exampleObject);
         }
         return Optional.empty();
     }
@@ -572,9 +584,9 @@ public class OperationParser {
             return linkParametersMap;
         }
         for (LinkParameter parameter : linkParameter) {
-	        if (StringUtils.isNotBlank(parameter.name())) {
-	            linkParametersMap.put(parameter.name(), parameter.expression());
-	        }
+            if (StringUtils.isNotBlank(parameter.name())) {
+                linkParametersMap.put(parameter.name(), parameter.expression());
+            }
         }
 
         return linkParametersMap;
