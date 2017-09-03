@@ -5,6 +5,7 @@ import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
+import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
 
 import java.util.ArrayList;
@@ -98,4 +99,13 @@ public class SpecFilter {
 
     }
 
+    private Schema filterProperty(OpenAPISpecFilter filter, Schema property, String resourcePath, String key, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        if (property != null) {
+            Optional<Schema> filteredProperty = filter.filterProperty(property, property, "", params, cookies, headers);
+            if (filteredProperty.isPresent()) {
+                return filteredProperty.get();
+            }
+        }
+        return null;
+    }
 }
