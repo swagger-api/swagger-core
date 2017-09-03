@@ -5,6 +5,7 @@ import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
+import io.swagger.oas.models.parameters.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,11 +55,30 @@ public class SpecFilter {
     private Operation filterOperation(OpenAPISpecFilter filter, Operation operation, String resourcePath, String key, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         if (operation != null) {
             ApiDescription description = new ApiDescription(resourcePath, key);
-            Optional<Operation> filteredOp = filter.filterOperation(operation, description, params, cookies, headers);
-            if (filteredOp.isPresent()) {
-                return filteredOp.get();
+            Optional<Operation> filteredOperation = filter.filterOperation(operation, description, params, cookies, headers);
+            if (filteredOperation.isPresent()) {
+                return filteredOperation.get();
             }
         }
-        return operation;
+        return null;
+    }
+
+    private PathItem filterPathItem(PathItem pathItem) {
+        if (pathItem != null) {
+
+        }
+        return pathItem;
+    }
+
+    private Parameter filterParameter(OpenAPISpecFilter filter, Operation operation, Parameter parameter, String resourcePath, String key, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        if (parameter != null) {
+            ApiDescription description = new ApiDescription(resourcePath, key);
+            Optional<Parameter> filteredParameter = filter.filterParameter(operation, parameter, description, params, cookies, headers);
+            if(filteredParameter.isPresent()){
+                return filteredParameter.get();
+            }
+        }
+        return parameter;
+
     }
 }

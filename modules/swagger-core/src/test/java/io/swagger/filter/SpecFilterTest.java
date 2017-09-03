@@ -36,6 +36,23 @@ public class SpecFilterTest {
         assertEquals(Json.pretty(openAPI), Json.pretty(filtered));
     }
 
+
+    @Test(description = "it should filter away get operations in a resource")
+    public void filterAwayGetOperations() throws IOException {
+        final OpenAPI openAPI = getOpenAPI("specFiles/petstore-3.0-v2.json");
+        final NoGetOperationsFilter filter = new NoGetOperationsFilter();
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, filter, null, null, null);
+
+        if (filtered.getPaths() != null) {
+            for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
+                assertNull(entry.getValue().getGet());
+            }
+        } else {
+            fail("paths should not be null");
+        }
+
+    }
+
     @Test(enabled = false, description = "it should clone everything concurrently")
     public void cloneEverythingConcurrent() throws IOException {
         final OpenAPI swagger = getOpenAPI("specFiles/petstore.json");
@@ -96,23 +113,6 @@ public class SpecFilterTest {
         final OpenAPI filtered = new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null);
 
         SerializationMatchers.assertEqualsToJson(filtered, json);
-    }
-
-    @Test(enabled = false, description = "it should filter away get operations in a resource")
-    public void filterAwayGetOperations() throws IOException {
-        final OpenAPI swagger = getOpenAPI("specFiles/petstore.json");
-        final NoGetOperationsFilter filter = new NoGetOperationsFilter();
-
-        final OpenAPI filtered = new SpecFilter().filter(swagger, filter, null, null, null);
-
-        if (filtered.getPaths() != null) {
-            for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
-                assertNull(entry.getValue().getGet());
-            }
-        } else {
-            fail("paths should not be null");
-        }
-
     }
 
     @Test(enabled = false, description = "it should filter away the store resource")
