@@ -22,6 +22,10 @@ public class SpecFilter {
     private final static String OPTIONS = "options";
 
     public OpenAPI filter(OpenAPI openAPI, OpenAPISpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        OpenAPI filteredOpenAPI = filterOpenAPI(filter, openAPI, params, cookies, headers);
+        if (filteredOpenAPI != null) {
+            return filteredOpenAPI;
+        }
         OpenAPI clone = new OpenAPI();
         clone.info(openAPI.getInfo());
         clone.openapi(openAPI.getOpenapi());
@@ -52,6 +56,16 @@ public class SpecFilter {
         return clone;
     }
 
+    private OpenAPI filterOpenAPI(OpenAPISpecFilter filter, OpenAPI openAPI, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        if (openAPI != null) {
+            Optional<OpenAPI> filteredOpenAPI = filter.filterOpenAPI(openAPI, null, params, cookies, headers);
+            if (filteredOpenAPI.isPresent()) {
+                filteredOpenAPI.get();
+            }
+        }
+        return null;
+    }
+
     private Operation filterOperation(OpenAPISpecFilter filter, Operation operation, String resourcePath, String key, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         if (operation != null) {
             ApiDescription description = new ApiDescription(resourcePath, key);
@@ -63,22 +77,25 @@ public class SpecFilter {
         return null;
     }
 
-    private PathItem filterPathItem(PathItem pathItem) {
-        if (pathItem != null) {
-
+    private PathItem filterPathItem(OpenAPISpecFilter filter, Operation operation, PathItem pathItem, String resourcePath, String key, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        ApiDescription description = new ApiDescription(resourcePath, key);
+        Optional<PathItem> filteredPathItem = filter.filterPathItem(pathItem, description, params, cookies, headers);
+        if (filteredPathItem.isPresent()) {
+            return filteredPathItem.get();
         }
-        return pathItem;
+        return null;
     }
 
     private Parameter filterParameter(OpenAPISpecFilter filter, Operation operation, Parameter parameter, String resourcePath, String key, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         if (parameter != null) {
             ApiDescription description = new ApiDescription(resourcePath, key);
             Optional<Parameter> filteredParameter = filter.filterParameter(operation, parameter, description, params, cookies, headers);
-            if(filteredParameter.isPresent()){
+            if (filteredParameter.isPresent()) {
                 return filteredParameter.get();
             }
         }
-        return parameter;
+        return null;
 
     }
+
 }
