@@ -36,20 +36,20 @@ public class SpecFilter {
         for (String resourcePath : openAPI.getPaths().keySet()) {
             PathItem pathItem = openAPI.getPaths().get(resourcePath);
 
-            PathItem clonedPathItem = new PathItem();
-            clonedPathItem.setGet(filterOperation(filter, pathItem.getGet(), resourcePath, GET, params, cookies, headers));
-            clonedPathItem.setPost(filterOperation(filter, pathItem.getPost(), resourcePath, POST, params, cookies, headers));
-            clonedPathItem.setPut(filterOperation(filter, pathItem.getPut(), resourcePath, PUT, params, cookies, headers));
-            clonedPathItem.setDelete(filterOperation(filter, pathItem.getDelete(), resourcePath, DELETE, params, cookies, headers));
-            clonedPathItem.setPatch(filterOperation(filter, pathItem.getPatch(), resourcePath, PATCH, params, cookies, headers));
-            clonedPathItem.setHead(filterOperation(filter, pathItem.getHead(), resourcePath, HEAD, params, cookies, headers));
-            clonedPathItem.setOptions(filterOperation(filter, pathItem.getOptions(), resourcePath, OPTIONS, params, cookies, headers));
-            clonedPathItem.setDescription(pathItem.getDescription());
-            clonedPathItem.set$ref(pathItem.get$ref());
-            clonedPathItem.setSummary(pathItem.getSummary());
-
-            clonedPaths.addPathItem(resourcePath, clonedPathItem);
-
+            PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, null, params, cookies, headers);
+            if (filteredPathItem != null) {
+                filteredPathItem.setGet(filterOperation(filter, pathItem.getGet(), resourcePath, GET, params, cookies, headers));
+                filteredPathItem.setPost(filterOperation(filter, pathItem.getPost(), resourcePath, POST, params, cookies, headers));
+                filteredPathItem.setPut(filterOperation(filter, pathItem.getPut(), resourcePath, PUT, params, cookies, headers));
+                filteredPathItem.setDelete(filterOperation(filter, pathItem.getDelete(), resourcePath, DELETE, params, cookies, headers));
+                filteredPathItem.setPatch(filterOperation(filter, pathItem.getPatch(), resourcePath, PATCH, params, cookies, headers));
+                filteredPathItem.setHead(filterOperation(filter, pathItem.getHead(), resourcePath, HEAD, params, cookies, headers));
+                filteredPathItem.setOptions(filterOperation(filter, pathItem.getOptions(), resourcePath, OPTIONS, params, cookies, headers));
+                filteredPathItem.setDescription(pathItem.getDescription());
+                filteredPathItem.set$ref(pathItem.get$ref());
+                filteredPathItem.setSummary(pathItem.getSummary());
+                clonedPaths.addPathItem(resourcePath, filteredPathItem);
+            }
             clone.paths(clonedPaths);
             clone.setComponents(openAPI.getComponents());
             clone.setSecurity(openAPI.getSecurity());
@@ -78,7 +78,7 @@ public class SpecFilter {
         return null;
     }
 
-    private PathItem filterPathItem(OpenAPISpecFilter filter, Operation operation, PathItem pathItem, String resourcePath, String key, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    private PathItem filterPathItem(OpenAPISpecFilter filter, PathItem pathItem, String resourcePath, String key, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         ApiDescription description = new ApiDescription(resourcePath, key);
         Optional<PathItem> filteredPathItem = filter.filterPathItem(pathItem, description, params, cookies, headers);
         if (filteredPathItem.isPresent()) {
