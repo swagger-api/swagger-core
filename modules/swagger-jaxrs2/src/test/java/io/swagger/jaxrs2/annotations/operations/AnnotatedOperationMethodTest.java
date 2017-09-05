@@ -537,6 +537,17 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "        schema:\n" +
                 "          type: string\n" +
+                "        examples:\n" +
+                "          example2:\n" +
+                "            summary: Summary example 2\n" +
+                "            description: example2\n" +
+                "            value: example2\n" +
+                "            externalValue: external value 2\n" +
+                "          example1:\n" +
+                "            summary: Summary example 1\n" +
+                "            description: example1\n" +
+                "            value: example1\n" +
+                "            externalValue: external value 1\n" +
                 "      requestBody:\n" +
                 "        description: Updated user object\n" +
                 "        content:\n" +

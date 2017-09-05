@@ -100,7 +100,7 @@ public class OperationParser {
 
         Map<String, Example> exampleMap = new HashMap<>();
         for (ExampleObject exampleObject : parameter.examples()) {
-            getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
+            ParameterProcessor.getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
         }
 
         if (exampleMap.size() > 0) {
@@ -386,7 +386,7 @@ public class OperationParser {
             }
             ExampleObject[] examples = annotationContent.examples();
             for (ExampleObject example : examples) {
-                getExample(example).ifPresent(exampleObject -> mediaType.addExamples(example.name(), exampleObject));
+                ParameterProcessor.getExample(example).ifPresent(exampleObject -> mediaType.addExamples(example.name(), exampleObject));
                 content.addMediaType(annotationContent.mediaType(), mediaType);
             }
         }
@@ -432,33 +432,6 @@ public class OperationParser {
             if (schemaFromAnnotation.isPresent()) {
                 return Optional.of(schemaFromAnnotation.get());
             }
-        }
-        return Optional.empty();
-    }
-
-    public static Optional<Example> getExample(ExampleObject example) {
-        if (example == null) {
-            return Optional.empty();
-        }
-        if (StringUtils.isNotBlank(example.name())) {
-            Example exampleObject = new Example();
-            if (StringUtils.isNotBlank(example.name())) {
-                exampleObject.setDescription(example.name());
-            }
-            if (StringUtils.isNotBlank(example.summary())) {
-                exampleObject.setSummary(example.summary());
-            }
-            if (StringUtils.isNotBlank(example.externalValue())) {
-                exampleObject.setExternalValue(example.externalValue());
-            }
-            if (StringUtils.isNotBlank(example.value())) {
-                try {
-                    exampleObject.setValue(Json.mapper().readTree(example.value()));
-                } catch (IOException e) {
-                    exampleObject.setValue(example.value());
-                }
-            }
-            return Optional.of(exampleObject);
         }
         return Optional.empty();
     }
