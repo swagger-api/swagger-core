@@ -37,13 +37,13 @@ public class SpecFilter {
             PathItem pathItem = openAPI.getPaths().get(resourcePath);
 
             PathItem clonedPathItem = new PathItem();
-            clonedPathItem.setGet(filterOperation(filter, pathItem.getGet(), GET, resourcePath, params, cookies, headers));
-            clonedPathItem.setPost(filterOperation(filter, pathItem.getPost(), POST, resourcePath, params, cookies, headers));
-            clonedPathItem.setPut(filterOperation(filter, pathItem.getPut(), PUT, resourcePath, params, cookies, headers));
-            clonedPathItem.setDelete(filterOperation(filter, pathItem.getDelete(), DELETE, resourcePath, params, cookies, headers));
-            clonedPathItem.setPatch(filterOperation(filter, pathItem.getPatch(), PATCH, resourcePath, params, cookies, headers));
-            clonedPathItem.setHead(filterOperation(filter, pathItem.getHead(), HEAD, resourcePath, params, cookies, headers));
-            clonedPathItem.setOptions(filterOperation(filter, pathItem.getOptions(), OPTIONS, resourcePath, params, cookies, headers));
+            clonedPathItem.setGet(filterOperation(filter, pathItem.getGet(), resourcePath, GET, params, cookies, headers));
+            clonedPathItem.setPost(filterOperation(filter, pathItem.getPost(), resourcePath, POST, params, cookies, headers));
+            clonedPathItem.setPut(filterOperation(filter, pathItem.getPut(), resourcePath, PUT, params, cookies, headers));
+            clonedPathItem.setDelete(filterOperation(filter, pathItem.getDelete(), resourcePath, DELETE, params, cookies, headers));
+            clonedPathItem.setPatch(filterOperation(filter, pathItem.getPatch(), resourcePath, PATCH, params, cookies, headers));
+            clonedPathItem.setHead(filterOperation(filter, pathItem.getHead(), resourcePath, HEAD, params, cookies, headers));
+            clonedPathItem.setOptions(filterOperation(filter, pathItem.getOptions(), resourcePath, OPTIONS, params, cookies, headers));
             clonedPathItem.setDescription(pathItem.getDescription());
             clonedPathItem.set$ref(pathItem.get$ref());
             clonedPathItem.setSummary(pathItem.getSummary());

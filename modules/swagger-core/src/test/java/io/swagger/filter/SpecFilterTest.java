@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
@@ -35,7 +34,6 @@ public class SpecFilterTest {
 
         assertEquals(Json.pretty(openAPI), Json.pretty(filtered));
     }
-
 
     @Test(description = "it should filter away get operations in a resource")
     public void filterAwayGetOperations() throws IOException {
@@ -53,6 +51,27 @@ public class SpecFilterTest {
 
     }
 
+    @Test(description = "it should filter away the store resource")
+    public void filterAwayPetResource() throws IOException {
+        final OpenAPI swagger = getOpenAPI("specFiles/petstore-3.0-v2.json");
+        final NoPetOperationsFilter filter = new NoPetOperationsFilter();
+
+        final OpenAPI filtered = new SpecFilter().filter(swagger, filter, null, null, null);
+
+        if (filtered.getPaths() != null) {
+            for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
+                assertNull(entry.getValue().getDelete());
+                assertNull(entry.getValue().getPost());
+                assertNull(entry.getValue().getPut());
+                assertNull(entry.getValue().getGet());
+                assertNull(entry.getValue().getHead());
+                assertNull(entry.getValue().getOptions());
+            }
+        } else {
+            fail("paths should not be null");
+        }
+    }
+
     @Test(enabled = false, description = "it should clone everything concurrently")
     public void cloneEverythingConcurrent() throws IOException {
         final OpenAPI swagger = getOpenAPI("specFiles/petstore.json");
@@ -61,12 +80,11 @@ public class SpecFilterTest {
         final Map<String, OpenAPI> filteredMap = new ConcurrentHashMap<>();
         for (int i = 0; i < 10; i++) {
             final int id = i;
-            new Thread(tg, "SpecFilterTest"){
-                public void run(){
+            new Thread(tg, "SpecFilterTest") {
+                public void run() {
                     try {
                         filteredMap.put("filtered " + id, new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null));
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -100,7 +118,7 @@ public class SpecFilterTest {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            for (OpenAPI filtered: filteredMap.values()) {
+            for (OpenAPI filtered : filteredMap.values()) {
                 assertEquals(Json.pretty(swagger), Json.pretty(filtered));
             }
         }
@@ -113,22 +131,6 @@ public class SpecFilterTest {
         final OpenAPI filtered = new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null);
 
         SerializationMatchers.assertEqualsToJson(filtered, json);
-    }
-
-    @Test(enabled = false, description = "it should filter away the store resource")
-    public void filterAwayStoreResource() throws IOException {
-        final OpenAPI swagger = getOpenAPI("specFiles/petstore.json");
-        final NoUserOperationsFilter filter = new NoUserOperationsFilter();
-
-        final OpenAPI filtered = new SpecFilter().filter(swagger, filter, null, null, null);
-
-        if (filtered.getPaths() != null) {
-            for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
-                assertNotEquals(entry.getKey(), "/user");
-            }
-        } else {
-            fail("paths should not be null");
-        }
     }
 
     @Test(enabled = false, description = "it should filter away secret parameters")
@@ -159,12 +161,11 @@ public class SpecFilterTest {
 
         final OpenAPI filtered = new SpecFilter().filter(swagger, filter, null, null, null);
         for (Map.Entry<String, Schema> entry : filtered.getComponents().getSchemas().entrySet()) {
-            for (String propName : (Set<String>)entry.getValue().getProperties().keySet()) {
+            for (String propName : (Set<String>) entry.getValue().getProperties().keySet()) {
                 assertFalse(propName.startsWith("_"));
             }
         }
     }
-
 
     @Test(enabled = false, description = "it should filter away broken reference model properties")
     public void filterAwayBrokenReferenceModelProperties() throws IOException {
@@ -302,7 +303,7 @@ public class SpecFilterTest {
     @Test(enabled = false, description = "it should not contain user tags in the top level Swagger object")
     public void shouldNotContainTopLevelUserTags() throws IOException {
         final OpenAPI swagger = getOpenAPI("specFiles/petstore.json");
-        final NoUserOperationsFilter filter = new NoUserOperationsFilter();
+        final NoPetOperationsFilter filter = new NoPetOperationsFilter();
         final OpenAPI filtered = new SpecFilter().filter(swagger, filter, null, null, null);
         assertEquals(getTagNames(filtered), Sets.newHashSet("pet", "store"));
     }

@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Sample filter to avoid all get operations for the resource
+ * Sample filter to avoid all resources for the /user resource
  **/
-public class NoGetOperationsFilter extends AbstractSpecFilter {
+public class NoPetOperationsFilter extends AbstractSpecFilter {
     @Override
     public Optional<Operation> filterOperation(Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
-        if ("get".equals(api.getMethod())) {
+        if (api.getPath().startsWith("/pet")) {
             return Optional.empty();
         }
         return Optional.of(operation);
