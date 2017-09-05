@@ -27,9 +27,11 @@ import static org.testng.Assert.fail;
 
 public class SpecFilterTest {
 
+    private static final String RESOURCE_PATH = "specFiles/petstore-3.0-v2.json";
+
     @Test(description = "it should clone everything")
     public void cloneEverything() throws IOException {
-        final OpenAPI openAPI = getOpenAPI("specFiles/petstore-3.0-v2.json");
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
         final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoOpOperationsFilter(), null, null, null);
 
         assertEquals(Json.pretty(openAPI), Json.pretty(filtered));
@@ -37,7 +39,7 @@ public class SpecFilterTest {
 
     @Test(description = "it should filter away get operations in a resource")
     public void filterAwayGetOperations() throws IOException {
-        final OpenAPI openAPI = getOpenAPI("specFiles/petstore-3.0-v2.json");
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
         final NoGetOperationsFilter filter = new NoGetOperationsFilter();
         final OpenAPI filtered = new SpecFilter().filter(openAPI, filter, null, null, null);
 
@@ -51,13 +53,12 @@ public class SpecFilterTest {
 
     }
 
-    @Test(description = "it should filter away the store resource")
+    @Test(description = "it should filter away the pet resource")
     public void filterAwayPetResource() throws IOException {
-        final OpenAPI swagger = getOpenAPI("specFiles/petstore-3.0-v2.json");
+        final OpenAPI swagger = getOpenAPI(RESOURCE_PATH);
         final NoPetOperationsFilter filter = new NoPetOperationsFilter();
 
         final OpenAPI filtered = new SpecFilter().filter(swagger, filter, null, null, null);
-
         if (filtered.getPaths() != null) {
             for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
                 assertNull(entry.getValue().getDelete());
@@ -70,6 +71,13 @@ public class SpecFilterTest {
         } else {
             fail("paths should not be null");
         }
+    }
+
+    @Test(description = "it should filter an openAPI object")
+    public void filterOpenAPI() throws IOException {
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoOpenAPIFilter(), null, null, null);
+        assertNull(filtered);
     }
 
     @Test(enabled = false, description = "it should clone everything concurrently")

@@ -24,7 +24,7 @@ public class SpecFilter {
 
     public OpenAPI filter(OpenAPI openAPI, OpenAPISpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         OpenAPI filteredOpenAPI = filterOpenAPI(filter, openAPI, params, cookies, headers);
-        if (filteredOpenAPI != null) {
+        if (filteredOpenAPI == null) {
             return filteredOpenAPI;
         }
         OpenAPI clone = new OpenAPI();
@@ -61,7 +61,7 @@ public class SpecFilter {
         if (openAPI != null) {
             Optional<OpenAPI> filteredOpenAPI = filter.filterOpenAPI(openAPI, null, params, cookies, headers);
             if (filteredOpenAPI.isPresent()) {
-                filteredOpenAPI.get();
+                return filteredOpenAPI.get();
             }
         }
         return null;
