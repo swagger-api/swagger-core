@@ -23,12 +23,10 @@ import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.servers.ServerVariable;
 import io.swagger.oas.models.servers.ServerVariables;
 import io.swagger.oas.models.tags.Tag;
-import io.swagger.util.Json;
 import io.swagger.util.ParameterProcessor;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.Produces;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -79,7 +77,7 @@ public class OperationParser {
             isEmpty = false;
         }
         if (StringUtils.isNotBlank(parameter.example())) {
-            parameterObject.setIn(parameter.example());
+            parameterObject.setExample(parameter.example());
             isEmpty = false;
         }
         if (parameter.deprecated()) {
@@ -102,7 +100,6 @@ public class OperationParser {
         for (ExampleObject exampleObject : parameter.examples()) {
             ParameterProcessor.getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
         }
-
         if (exampleMap.size() > 0) {
             parameterObject.setExamples(exampleMap);
         }

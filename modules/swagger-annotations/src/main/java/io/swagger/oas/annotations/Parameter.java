@@ -116,8 +116,8 @@ public @interface Parameter {
   boolean hidden() default false;
 
   /**
-   * An array of examples used to show the use of the associated schema.
-   * @return the list of examples
+   * An array of examples  of the schema used to show the use of the associated schema.
+   * @return array of examples of the parameter
    **/
   ExampleObject[] examples() default {};
 

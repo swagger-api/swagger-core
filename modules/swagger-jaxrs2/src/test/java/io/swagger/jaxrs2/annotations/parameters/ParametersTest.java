@@ -49,6 +49,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      - name: formId\n" +
                 "        in: query\n" +
                 "        required: true\n" +
+                "        example: Example\n" +
                 "      - name: explodeFalse\n" +
                 "        in: query\n" +
                 "        required: true\n" +
@@ -104,7 +105,8 @@ public class ParametersTest extends AbstractAnnotationTest {
                                                 summary = "Summary example 2", externalValue = "external value 2")
                                 }),
                         @Parameter(in = "query", name = "formId", required = true,
-                                schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class)),
+                                schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class),
+                                example = "Example"),
                         @Parameter(in = "query", name = "explodeFalse", required = true, explode = Explode.FALSE,
                                 schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class)),
                         @Parameter(in = "query", name = "explodeTrue", required = true, explode = Explode.TRUE,
