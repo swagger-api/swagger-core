@@ -58,6 +58,12 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "              format: uuid\n" +
                 "              readOnly: true\n" +
                 "              example: Schema example\n" +
+                "            examples:\n" +
+                "              Default Response:\n" +
+                "                summary: Subscription Response Example\n" +
+                "                description: Default Response\n" +
+                "                value: SubscriptionResponse\n" +
+                "                externalValue: Subscription Response value 1\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
