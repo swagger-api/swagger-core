@@ -100,6 +100,7 @@ public class OperationParser {
         for (ExampleObject exampleObject : parameter.examples()) {
             ParameterProcessor.getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
         }
+
         if (exampleMap.size() > 0) {
             parameterObject.setExamples(exampleMap);
         }

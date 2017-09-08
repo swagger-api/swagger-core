@@ -1,11 +1,13 @@
 package io.swagger.jaxrs2.annotations.examples;
 
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
+import io.swagger.jaxrs2.resources.model.User;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.annotations.media.Schema;
+import io.swagger.oas.annotations.parameters.RequestBody;
 import io.swagger.oas.annotations.responses.ApiResponse;
 import org.testng.annotations.Test;
 
@@ -46,6 +48,17 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "            value: 12345\n" +
                 "            externalValue: Subscription external value 1\n" +
                 "        example: example\n" +
+                "      requestBody:\n" +
+                "        description: Created user object\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: string\n" +
+                "              description: the generated UUID\n" +
+                "              format: uuid\n" +
+                "              readOnly: true\n" +
+                "              example: Schema example\n" +
+                "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: no description\n" +
@@ -109,7 +122,18 @@ public class ExamplesTest extends AbstractAnnotationTest {
                                         }
                                 ))
                 })
-        public ExamplesTest.SubscriptionResponse subscribe() {
+        public ExamplesTest.SubscriptionResponse subscribe(@RequestBody(description = "Created user object", required = true,
+                content = @Content(
+                        schema = @Schema(
+                                type = "string",
+                                format = "uuid",
+                                description = "the generated UUID",
+                                readOnly = true,
+                                example = "Schema example"),
+                        examples = {
+                                @ExampleObject(name = "Default Response", value = "SubscriptionResponse",
+                                        summary = "Subscription Response Example", externalValue = "Subscription Response value 1")
+                        })) User user) {
             return null;
         }
     }
