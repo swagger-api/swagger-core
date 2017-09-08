@@ -237,7 +237,6 @@ public class RequestBodyTest extends AbstractAnnotationTest {
         @Path("/user")
         @Operation(summary = "Delete user",
                 description = "This can only be done by the logged in user.")
-        @Consumes({"application/json", "application/xml"})
         public Response methodWithoutRequestBodyAndTwoParameters(
                 @QueryParam("name") String name, @QueryParam("code") String code) {
             return Response.ok().entity("").build();
