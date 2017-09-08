@@ -5,7 +5,6 @@ import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
 import io.swagger.oas.annotations.enums.Explode;
 import io.swagger.oas.annotations.media.Content;
-import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
 import org.testng.annotations.Test;
@@ -35,17 +34,6 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "        in: path\n" +
                 "        required: true\n" +
                 "        style: simple\n" +
-                "        examples:\n" +
-                "          example2:\n" +
-                "            summary: Summary example 2\n" +
-                "            description: example2\n" +
-                "            value: example2\n" +
-                "            externalValue: external value 2\n" +
-                "          example1:\n" +
-                "            summary: Summary example 1\n" +
-                "            description: example1\n" +
-                "            value: example1\n" +
-                "            externalValue: external value 1\n" +
                 "      - name: formId\n" +
                 "        in: query\n" +
                 "        required: true\n" +
@@ -97,13 +85,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                         "identified by the input token.  The supplied url will be used as the delivery address for response payloads",
                 parameters = {
                         @Parameter(in = "path", name = "subscriptionId", required = true,
-                                schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class), style = "simple",
-                                examples = {
-                                        @ExampleObject(name = "example1", value = "example1",
-                                                summary = "Summary example 1", externalValue = "external value 1"),
-                                        @ExampleObject(name = "example2", value = "example2",
-                                                summary = "Summary example 2", externalValue = "external value 2")
-                                }),
+                                schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class), style = "simple"),
                         @Parameter(in = "query", name = "formId", required = true,
                                 schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class),
                                 example = "Example"),
