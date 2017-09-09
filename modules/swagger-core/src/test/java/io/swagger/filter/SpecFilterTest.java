@@ -55,10 +55,10 @@ public class SpecFilterTest {
 
     @Test(description = "it should filter away the pet resource")
     public void filterAwayPetResource() throws IOException {
-        final OpenAPI swagger = getOpenAPI(RESOURCE_PATH);
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
         final NoPetOperationsFilter filter = new NoPetOperationsFilter();
 
-        final OpenAPI filtered = new SpecFilter().filter(swagger, filter, null, null, null);
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, filter, null, null, null);
         if (filtered.getPaths() != null) {
             for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
                 assertNull(entry.getValue().getDelete());
@@ -67,6 +67,44 @@ public class SpecFilterTest {
                 assertNull(entry.getValue().getGet());
                 assertNull(entry.getValue().getHead());
                 assertNull(entry.getValue().getOptions());
+            }
+        } else {
+            fail("paths should not be null");
+        }
+    }
+
+    @Test(description = "it should replace away with a new operation")
+    public void replaceGetResources() throws IOException {
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
+        final ReplaceGetOperationsFilter filter = new ReplaceGetOperationsFilter();
+
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, filter, null, null, null);
+        if (filtered.getPaths() != null) {
+            for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
+                Operation get = entry.getValue().getGet();
+                if (get != null) {
+                    assertEquals("New Operation", get.getOperationId());
+                    assertEquals("Replaced Operation", get.getDescription());
+                }
+            }
+        } else {
+            fail("paths should not be null");
+        }
+    }
+
+    @Test(description = "it should change away with a new operation")
+    public void changeGetResources() throws IOException {
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
+        final ChangeGetOperationsFilter filter = new ChangeGetOperationsFilter();
+
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, filter, null, null, null);
+        if (filtered.getPaths() != null) {
+            for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
+                Operation get = entry.getValue().getGet();
+                if (get != null) {
+                    assertEquals("Changed Operation", get.getOperationId());
+                    assertEquals("Changing some attributes of the operation", get.getDescription());
+                }
             }
         } else {
             fail("paths should not be null");
