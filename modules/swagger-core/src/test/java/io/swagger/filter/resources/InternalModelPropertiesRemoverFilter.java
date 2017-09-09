@@ -1,4 +1,4 @@
-package io.swagger.filter;
+package io.swagger.filter.resources;
 
 import io.swagger.core.filter.AbstractSpecFilter;
 import io.swagger.oas.models.media.Schema;

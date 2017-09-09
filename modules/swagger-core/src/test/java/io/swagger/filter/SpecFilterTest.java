@@ -2,6 +2,16 @@ package io.swagger.filter;
 
 import com.google.common.collect.Sets;
 import io.swagger.core.filter.SpecFilter;
+import io.swagger.filter.resources.ChangeGetOperationsFilter;
+import io.swagger.filter.resources.InternalModelPropertiesRemoverFilter;
+import io.swagger.filter.resources.NoGetOperationsFilter;
+import io.swagger.filter.resources.NoOpOperationsFilter;
+import io.swagger.filter.resources.NoOpenAPIFilter;
+import io.swagger.filter.resources.NoPathItemFilter;
+import io.swagger.filter.resources.NoPetOperationsFilter;
+import io.swagger.filter.resources.RemoveInternalParamsFilter;
+import io.swagger.filter.resources.RemoveUnreferencedDefinitionsFilter;
+import io.swagger.filter.resources.ReplaceGetOperationsFilter;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
@@ -28,6 +38,8 @@ import static org.testng.Assert.fail;
 public class SpecFilterTest {
 
     private static final String RESOURCE_PATH = "specFiles/petstore-3.0-v2.json";
+    private static final String CHANGED_OPERATION_ID = "Changed Operation";
+    private static final String CHANGED_OPERATION_DESCRIPTION = "Changing some attributes of the operation";
 
     @Test(description = "it should clone everything")
     public void cloneEverything() throws IOException {
@@ -50,7 +62,6 @@ public class SpecFilterTest {
         } else {
             fail("paths should not be null");
         }
-
     }
 
     @Test(description = "it should filter away the pet resource")
@@ -102,8 +113,8 @@ public class SpecFilterTest {
             for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
                 Operation get = entry.getValue().getGet();
                 if (get != null) {
-                    assertEquals("Changed Operation", get.getOperationId());
-                    assertEquals("Changing some attributes of the operation", get.getDescription());
+                    assertEquals(CHANGED_OPERATION_ID, get.getOperationId());
+                    assertEquals(CHANGED_OPERATION_DESCRIPTION, get.getDescription());
                 }
             }
         } else {
@@ -116,6 +127,13 @@ public class SpecFilterTest {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
         final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoOpenAPIFilter(), null, null, null);
         assertNull(filtered);
+    }
+
+    @Test(description = "it should filter an openAPI object")
+    public void filterPathItem() throws IOException {
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoPathItemFilter(), null, null, null);
+        assertEquals(0, filtered.getPaths().size());
     }
 
     @Test(enabled = false, description = "it should clone everything concurrently")

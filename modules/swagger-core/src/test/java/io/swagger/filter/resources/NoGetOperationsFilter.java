@@ -1,4 +1,4 @@
-package io.swagger.filter;
+package io.swagger.filter.resources;
 
 import io.swagger.core.filter.AbstractSpecFilter;
 import io.swagger.model.ApiDescription;
@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Sample filter to avoid all resources for the /user resource
+ * Sample filter to avoid all get operations for the resource
  **/
-public class NoPetOperationsFilter extends AbstractSpecFilter {
+public class NoGetOperationsFilter extends AbstractSpecFilter {
     @Override
     public Optional<Operation> filterOperation(Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
-        if (api.getPath().startsWith("/pet")) {
+        if ("get".equals(api.getMethod())) {
             return Optional.empty();
         }
         return Optional.of(operation);
