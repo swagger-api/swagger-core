@@ -40,6 +40,8 @@ public class SpecFilterTest {
     private static final String RESOURCE_PATH = "specFiles/petstore-3.0-v2.json";
     private static final String CHANGED_OPERATION_ID = "Changed Operation";
     private static final String CHANGED_OPERATION_DESCRIPTION = "Changing some attributes of the operation";
+    public static final String NEW_OPERATION_ID = "New Operation";
+    public static final String NEW_OPREATION_DESCRIPTION = "Replaced Operation";
 
     @Test(description = "it should clone everything")
     public void cloneEverything() throws IOException {
@@ -87,34 +89,24 @@ public class SpecFilterTest {
     @Test(description = "it should replace away with a new operation")
     public void replaceGetResources() throws IOException {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
-        final ReplaceGetOperationsFilter filter = new ReplaceGetOperationsFilter();
-
-        final OpenAPI filtered = new SpecFilter().filter(openAPI, filter, null, null, null);
-        if (filtered.getPaths() != null) {
-            for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
-                Operation get = entry.getValue().getGet();
-                if (get != null) {
-                    assertEquals("New Operation", get.getOperationId());
-                    assertEquals("Replaced Operation", get.getDescription());
-                }
-            }
-        } else {
-            fail("paths should not be null");
-        }
+        OpenAPI filter = new SpecFilter().filter(openAPI, new ReplaceGetOperationsFilter(), null, null, null);
+        assertOperations(filter, NEW_OPERATION_ID, NEW_OPREATION_DESCRIPTION);
     }
 
     @Test(description = "it should change away with a new operation")
     public void changeGetResources() throws IOException {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
-        final ChangeGetOperationsFilter filter = new ChangeGetOperationsFilter();
+        OpenAPI filter = new SpecFilter().filter(openAPI, new ChangeGetOperationsFilter(), null, null, null);
+        assertOperations(filter, CHANGED_OPERATION_ID, CHANGED_OPERATION_DESCRIPTION);
+    }
 
-        final OpenAPI filtered = new SpecFilter().filter(openAPI, filter, null, null, null);
+    private void assertOperations(OpenAPI filtered, String operationId, String description) {
         if (filtered.getPaths() != null) {
             for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
                 Operation get = entry.getValue().getGet();
                 if (get != null) {
-                    assertEquals(CHANGED_OPERATION_ID, get.getOperationId());
-                    assertEquals(CHANGED_OPERATION_DESCRIPTION, get.getDescription());
+                    assertEquals(operationId, get.getOperationId());
+                    assertEquals(description, get.getDescription());
                 }
             }
         } else {
@@ -136,9 +128,9 @@ public class SpecFilterTest {
         assertEquals(0, filtered.getPaths().size());
     }
 
-    @Test(enabled = false, description = "it should clone everything concurrently")
+    @Test(description = "it should clone everything concurrently")
     public void cloneEverythingConcurrent() throws IOException {
-        final OpenAPI swagger = getOpenAPI("specFiles/petstore.json");
+        final OpenAPI swagger = getOpenAPI(RESOURCE_PATH);
 
         ThreadGroup tg = new ThreadGroup("SpecFilterTest" + "|" + System.currentTimeMillis());
         final Map<String, OpenAPI> filteredMap = new ConcurrentHashMap<>();

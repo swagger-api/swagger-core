@@ -72,7 +72,19 @@ public class SpecFilter {
             ApiDescription description = new ApiDescription(resourcePath, key);
             Optional<Operation> filteredOperation = filter.filterOperation(operation, description, params, cookies, headers);
             if (filteredOperation.isPresent()) {
-                return filteredOperation.get();
+                List<Parameter> filteredParameters = new ArrayList<>();
+                Operation filteredOperationGet = filteredOperation.get();
+                List<Parameter> parameters = filteredOperationGet.getParameters();
+                if(parameters != null){
+                    for (Parameter parameter : parameters) {
+                        Parameter filteredParameter = filterParameter(filter, operation, parameter, resourcePath, key, params, cookies, headers);
+                        if (filteredParameter != null) {
+                            filteredParameters.add(filteredParameter);
+                        }
+                    }
+                }
+                filteredOperationGet.setParameters(filteredParameters);
+                return filteredOperationGet;
             }
         }
         return null;
