@@ -7,6 +7,7 @@ import io.swagger.filter.resources.InternalModelPropertiesRemoverFilter;
 import io.swagger.filter.resources.NoGetOperationsFilter;
 import io.swagger.filter.resources.NoOpOperationsFilter;
 import io.swagger.filter.resources.NoOpenAPIFilter;
+import io.swagger.filter.resources.NoParametersWithoutQueryInFilter;
 import io.swagger.filter.resources.NoPathItemFilter;
 import io.swagger.filter.resources.NoPetOperationsFilter;
 import io.swagger.filter.resources.RemoveInternalParamsFilter;
@@ -31,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
@@ -40,8 +42,9 @@ public class SpecFilterTest {
     private static final String RESOURCE_PATH = "specFiles/petstore-3.0-v2.json";
     private static final String CHANGED_OPERATION_ID = "Changed Operation";
     private static final String CHANGED_OPERATION_DESCRIPTION = "Changing some attributes of the operation";
-    public static final String NEW_OPERATION_ID = "New Operation";
-    public static final String NEW_OPREATION_DESCRIPTION = "Replaced Operation";
+    private static final String NEW_OPERATION_ID = "New Operation";
+    private static final String NEW_OPREATION_DESCRIPTION = "Replaced Operation";
+    public static final String QUERY = "query";
 
     @Test(description = "it should clone everything")
     public void cloneEverything() throws IOException {
@@ -115,22 +118,47 @@ public class SpecFilterTest {
     }
 
     @Test(description = "it should filter an openAPI object")
-    public void filterOpenAPI() throws IOException {
+    public void filterAwayOpenAPI() throws IOException {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
         final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoOpenAPIFilter(), null, null, null);
         assertNull(filtered);
     }
 
-    @Test(description = "it should filter an openAPI object")
-    public void filterPathItem() throws IOException {
+    @Test(description = "it should filter any PathItem objects without Ref")
+    public void filterAwayPathItemWithoutRef() throws IOException {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
         final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoPathItemFilter(), null, null, null);
         assertEquals(0, filtered.getPaths().size());
     }
 
+    @Test(description = "it should filter any query parameter")
+    public void filterAwayQueryParameters() throws IOException {
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoParametersWithoutQueryInFilter(), null, null, null);
+        if (filtered.getPaths() != null) {
+            for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
+                assertParameters(entry.getValue().getGet());
+                assertParameters(entry.getValue().getPost());
+                assertParameters(entry.getValue().getPut());
+                assertParameters(entry.getValue().getPatch());
+                assertParameters(entry.getValue().getHead());
+                assertParameters(entry.getValue().getDelete());
+                assertParameters(entry.getValue().getOptions());
+            }
+        }
+    }
+
+    private void assertParameters(Operation operation) {
+        if (operation != null) {
+            for (Parameter parameter : operation.getParameters()) {
+                assertNotEquals(QUERY, parameter.getIn());
+            }
+        }
+    }
+
     @Test(description = "it should clone everything concurrently")
     public void cloneEverythingConcurrent() throws IOException {
-        final OpenAPI swagger = getOpenAPI(RESOURCE_PATH);
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
 
         ThreadGroup tg = new ThreadGroup("SpecFilterTest" + "|" + System.currentTimeMillis());
         final Map<String, OpenAPI> filteredMap = new ConcurrentHashMap<>();
@@ -139,7 +167,7 @@ public class SpecFilterTest {
             new Thread(tg, "SpecFilterTest") {
                 public void run() {
                     try {
-                        filteredMap.put("filtered " + id, new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null));
+                        filteredMap.put("filtered " + id, new SpecFilter().filter(openAPI, new NoOpOperationsFilter(), null, null, null));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -147,7 +175,7 @@ public class SpecFilterTest {
             }.start();
         }
 
-        new Thread(new FailureHandler(tg, filteredMap, swagger)).start();
+        new Thread(new FailureHandler(tg, filteredMap, openAPI)).start();
     }
 
     class FailureHandler implements Runnable {
