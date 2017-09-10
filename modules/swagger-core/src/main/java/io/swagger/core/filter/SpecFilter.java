@@ -75,10 +75,11 @@ public class SpecFilter {
                 List<Parameter> filteredParameters = new ArrayList<>();
                 Operation filteredOperationGet = filteredOperation.get();
                 List<Parameter> parameters = filteredOperationGet.getParameters();
-                if(parameters != null){
+                if (parameters != null) {
                     for (Parameter parameter : parameters) {
                         Parameter filteredParameter = filterParameter(filter, operation, parameter, resourcePath, key, params, cookies, headers);
                         if (filteredParameter != null) {
+                            filteredParameter.setSchema(filterProperty(filter, parameter.getSchema(), resourcePath, key, params, cookies, headers));
                             filteredParameters.add(filteredParameter);
                         }
                     }
