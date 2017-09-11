@@ -381,6 +381,11 @@ public class PathItem {
         this.extensions = extensions;
     }
 
+    public PathItem extensions(java.util.Map<String, Object> extensions) {
+      this.extensions = extensions;
+      return this;
+    }
+
     /**
      * returns the ref property from a PathItem instance.
      *

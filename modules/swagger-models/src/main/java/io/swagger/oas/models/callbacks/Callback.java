@@ -16,9 +16,10 @@
 
 package io.swagger.oas.models.callbacks;
 
-import java.util.Objects;
 import io.swagger.oas.models.PathItem;
+
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 /**
  * Callback
@@ -68,6 +69,11 @@ public class Callback extends LinkedHashMap<String, PathItem> {
 
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
+  }
+
+  public Callback extensions(java.util.Map<String, Object> extensions) {
+    this.extensions = extensions;
+    return this;
   }
 
   @Override

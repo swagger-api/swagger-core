@@ -136,6 +136,11 @@ public class Encoding {
         this.extensions = extensions;
     }
 
+    public Encoding extensions(java.util.Map<String, Object> extensions) {
+        this.extensions = extensions;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Encoding{" +

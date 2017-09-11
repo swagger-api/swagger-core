@@ -125,6 +125,11 @@ public class Contact {
     this.extensions = extensions;
   }
 
+  public Contact extensions(java.util.Map<String, Object> extensions) {
+    this.extensions = extensions;
+    return this;
+  }
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

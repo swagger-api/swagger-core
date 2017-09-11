@@ -167,6 +167,11 @@ public class XML {
     this.extensions = extensions;
   }
 
+  public XML extensions(java.util.Map<String, Object> extensions) {
+    this.extensions = extensions;
+    return this;
+  }
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

@@ -136,6 +136,11 @@ public class Example {
         this.extensions = extensions;
     }
 
+    public Example extensions(java.util.Map<String, Object> extensions) {
+        this.extensions = extensions;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -291,6 +291,11 @@ public class OpenAPI {
     this.extensions = extensions;
   }
 
+  public OpenAPI extensions(java.util.Map<String, Object> extensions) {
+    this.extensions = extensions;
+    return this;
+  }
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

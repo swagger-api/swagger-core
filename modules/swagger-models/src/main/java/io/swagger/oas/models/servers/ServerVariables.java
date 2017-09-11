@@ -16,8 +16,8 @@
 
 package io.swagger.oas.models.servers;
 
-import java.util.Objects;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 /**
  * ServerVariables
@@ -67,6 +67,11 @@ public class ServerVariables extends LinkedHashMap<String, ServerVariable> {
 
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
+  }
+
+  public ServerVariables extensions(java.util.Map<String, Object> extensions) {
+    this.extensions = extensions;
+    return this;
   }
 
   @Override

@@ -20,9 +20,7 @@ import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.media.Content;
 import io.swagger.oas.models.media.Schema;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -306,6 +304,11 @@ public class Header {
 
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
+  }
+
+  public Header extensions(java.util.Map<String, Object> extensions) {
+    this.extensions = extensions;
+    return this;
   }
 
   public String get$ref() {

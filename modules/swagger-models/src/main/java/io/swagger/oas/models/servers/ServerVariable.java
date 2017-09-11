@@ -16,9 +16,9 @@
 
 package io.swagger.oas.models.servers;
 
-import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * ServerVariable
@@ -133,6 +133,11 @@ public class ServerVariable {
 
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
+  }
+
+  public ServerVariable extensions(java.util.Map<String, Object> extensions) {
+    this.extensions = extensions;
+    return this;
   }
 
   @Override

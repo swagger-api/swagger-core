@@ -104,6 +104,11 @@ public class License {
     this.extensions = extensions;
   }
 
+  public License extensions(java.util.Map<String, Object> extensions) {
+    this.extensions = extensions;
+    return this;
+  }
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

@@ -246,6 +246,11 @@ public class SecurityScheme {
         this.extensions = extensions;
     }
 
+    public SecurityScheme extensions(java.util.Map<String, Object> extensions) {
+        this.extensions = extensions;
+        return this;
+    }
+
     /**
      * returns the $ref property from an SecurityScheme instance.
      *
