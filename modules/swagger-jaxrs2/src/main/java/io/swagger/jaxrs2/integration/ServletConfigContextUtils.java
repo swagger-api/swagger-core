@@ -23,7 +23,7 @@ public class ServletConfigContextUtils {
     public static final String OPENAPI_CONFIGURATION_READALLRESOURCES_KEY = "openApi.configuration.readAllResources";
     public static final String OPENAPI_CONFIGURATION_RESOURCECLASSES_KEY = "openApi.configuration.resourceClasses";
     public static final String OPENAPI_CONFIGURATION_FILTER_KEY = "openApi.configuration.filterClass";
-    public static final String OPENAPI_CONFIGURATION_CACHE_TTL_KEY = "openApi.configuration.filterClass";
+    public static final String OPENAPI_CONFIGURATION_CACHE_TTL_KEY = "openApi.configuration.cacheTTL";
 
     public static Set<String> resolveResourcePackages(ServletConfig servletConfig) {
         if (!isServletConfigAvailable(servletConfig)) {
