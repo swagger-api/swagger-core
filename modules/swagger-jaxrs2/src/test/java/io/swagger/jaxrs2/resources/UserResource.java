@@ -23,6 +23,7 @@ import io.swagger.jaxrs2.resources.model.User;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
 import io.swagger.oas.annotations.media.Content;
+import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
 
@@ -79,7 +80,12 @@ public class UserResource {
                     @ApiResponse(responseCode = "400", description = "Invalid user supplied"),
                     @ApiResponse(responseCode = "404", description = "User not found")})
     public Response updateUser(
-            @Parameter(description = "name that need to be deleted", required = true) @PathParam("username") String username,
+            @Parameter(description = "name that need to be deleted", required = true, examples = {
+                    @ExampleObject(name = "example1", value = "example1",
+                            summary = "Summary example 1", externalValue = "external value 1"),
+                    @ExampleObject(name = "example2", value = "example2",
+                            summary = "Summary example 2", externalValue = "external value 2")
+            }) @PathParam("username") String username,
             @Parameter(description = "Updated user object", required = true) User user) {
         userData.addUser(user);
         return Response.ok().entity("").build();

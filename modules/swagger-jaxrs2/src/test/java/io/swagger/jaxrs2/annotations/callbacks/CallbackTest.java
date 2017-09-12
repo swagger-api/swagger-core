@@ -57,6 +57,8 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "                in: path\n" +
                 "                required: true\n" +
                 "                schema:\n" +
+                "                  maximum: 34\n" +
+                "                  minimum: 2\n" +
                 "                  type: string\n" +
                 "                  description: the generated UUID\n" +
                 "                  format: uuid\n" +
@@ -71,6 +73,8 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    string:\n" +
+                "      maximum: 34\n" +
+                "      minimum: 2\n" +
                 "      type: string\n" +
                 "      description: the generated UUID\n" +
                 "      format: uuid\n" +
@@ -100,7 +104,9 @@ public class CallbackTest extends AbstractAnnotationTest {
                                                 type = "string",
                                                 format = "uuid",
                                                 description = "the generated UUID",
-                                                readOnly = true
+                                                readOnly = true,
+                                                minimum = "2",
+                                                maximum = "34"
                                         ))
                         },
                         responses = {
