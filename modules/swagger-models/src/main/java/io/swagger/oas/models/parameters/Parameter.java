@@ -285,7 +285,7 @@ public class Parameter {
         return this;
     }
 
-    public Parameter addExamples(String key, Example examplesItem) {
+    public Parameter addExample(String key, Example examplesItem) {
         if (this.examples == null) {
             this.examples = new HashMap<String, Example>();
         }
