@@ -280,7 +280,7 @@ public class Reader implements OpenApiReader {
                 if (operation.getRequestBody() == null) {
                     io.swagger.oas.annotations.parameters.RequestBody requestBodyAnnotation = getRequestBody(Arrays.asList(paramAnnotations));
                     if (requestBodyAnnotation != null) {
-                        Optional<RequestBody> optionalRequestBody = OperationParser.getRequestBody(requestBodyAnnotation, components);
+                        Optional<RequestBody> optionalRequestBody = OperationParser.getRequestBody(requestBodyAnnotation, classConsumes, methodConsumes, components);
                         if (optionalRequestBody.isPresent()) {
                             requestBody = optionalRequestBody.get();
                             if (StringUtils.isBlank(requestBody.get$ref()) &&
@@ -339,7 +339,6 @@ public class Reader implements OpenApiReader {
                             } else {
                                 setMediaTypeToContent(parameter.getSchema(), content, DEFAULT_MEDIA_TYPE_VALUE);
                             }
-
                             requestBody.setContent(content);
                             isRequestBodyEmpty = false;
                         }
@@ -362,9 +361,9 @@ public class Reader implements OpenApiReader {
         if (annotations == null) {
             return null;
         }
-        for (Annotation a: annotations) {
+        for (Annotation a : annotations) {
             if (a instanceof io.swagger.oas.annotations.parameters.RequestBody) {
-                return (io.swagger.oas.annotations.parameters.RequestBody)a;
+                return (io.swagger.oas.annotations.parameters.RequestBody) a;
             }
         }
         return null;
@@ -524,7 +523,7 @@ public class Reader implements OpenApiReader {
         OperationParser.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(operation::setExternalDocs);
         OperationParser.getApiResponses(apiOperation.responses(), classProduces, methodProduces, components).ifPresent(operation::setResponses);
         OperationParser.getServers(apiOperation.servers()).ifPresent(operation::setServers);
-        OperationParser.getParametersList(apiOperation.parameters(), components).ifPresent(operation::setParameters);
+        OperationParser.getParametersList(apiOperation.parameters(), classProduces, methodProduces, components).ifPresent(operation::setParameters);
     }
 
     protected String getOperationId(String operationId) {
