@@ -46,8 +46,8 @@ public class XmlWebOpenApiContext<T extends XmlWebOpenApiContext<T>> extends Jax
 
         List<ImmutablePair<String, String>> locations = new LinkedList<>(Arrays.asList(
                 new ImmutablePair<>("servlet", ServletConfigContextUtils.OPENAPI_CONFIGURATION_LOCATION_KEY),
-                new ImmutablePair<>("file", "WEBINF/openapi-configuration.yaml"),
-                new ImmutablePair<>("file", "WEBINF/openapi-configuration.json")
+                new ImmutablePair<>("file", "WEB-INF/openapi-configuration.yaml"),
+                new ImmutablePair<>("file", "WEB-INF/openapi-configuration.json")
         ));
         locations.addAll(super.getKnownLocations());
         locations.add(new ImmutablePair<>("servlet", ""));  // get config from init params
