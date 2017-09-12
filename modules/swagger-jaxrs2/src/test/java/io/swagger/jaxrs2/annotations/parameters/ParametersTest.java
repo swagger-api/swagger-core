@@ -39,6 +39,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      - name: formId\n" +
                 "        in: query\n" +
                 "        required: true\n" +
+                "        example: Example\n" +
                 "      - name: explodeFalse\n" +
                 "        in: query\n" +
                 "        required: true\n" +
@@ -84,7 +85,6 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      description: the generated id\n" +
                 "      format: id\n" +
                 "      readOnly: true";
-        System.out.println(expectedYAML);
         assertEquals(extractedYAML, expectedYAML);
     }
 
@@ -99,7 +99,8 @@ public class ParametersTest extends AbstractAnnotationTest {
                         @Parameter(in = "path", name = "subscriptionId", required = true,
                                 schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class), style = "simple"),
                         @Parameter(in = "query", name = "formId", required = true,
-                                schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class)),
+                                schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class),
+                                example = "Example"),
                         @Parameter(in = "query", name = "explodeFalse", required = true, explode = Explode.FALSE,
                                 schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class)),
                         @Parameter(in = "query", name = "explodeTrue", required = true, explode = Explode.TRUE,
@@ -128,7 +129,6 @@ public class ParametersTest extends AbstractAnnotationTest {
                 },
                 responses = {
                         @ApiResponse(
-                                responseCode = "default",
                                 description = "no description", content = @Content(
                                 mediaType = "*/*",
                                 schema =

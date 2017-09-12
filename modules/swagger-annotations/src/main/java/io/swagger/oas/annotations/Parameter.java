@@ -25,6 +25,7 @@ import java.lang.annotation.Target;
 import io.swagger.oas.annotations.enums.Explode;
 import io.swagger.oas.annotations.media.ArraySchema;
 import io.swagger.oas.annotations.media.Content;
+import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.annotations.media.Schema;
 
 /**
@@ -113,12 +114,12 @@ public @interface Parameter {
    * @return whether or not this parameter is hidden
    */
   boolean hidden() default false;
-  
+
   /**
-   * Provides an array examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.  Ignored if the properties content or array are specified.
-   * @return the list of examples for this parameter
+   * An array of examples  of the schema used to show the use of the associated schema.
+   * @return array of examples of the parameter
    **/
-  String[] examples() default {};
+  ExampleObject[] examples() default {};
 
   /**
    * Provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.  Ignored if the properties examples, content or array are specified.

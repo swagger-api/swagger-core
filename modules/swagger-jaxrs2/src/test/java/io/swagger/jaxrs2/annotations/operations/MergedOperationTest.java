@@ -127,7 +127,6 @@ public class MergedOperationTest extends AbstractAnnotationTest {
                         required = true,
                         format = "uuid",
                         pattern = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
-
                 @QueryParam("id") String id,
                 @HeaderParam("x-authorized-by") String[] auth) {
             return null;

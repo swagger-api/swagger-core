@@ -2,7 +2,9 @@ package io.swagger.util;
 
 import io.swagger.converter.ModelConverters;
 import io.swagger.oas.annotations.enums.Explode;
+import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.media.ArraySchema;
 import io.swagger.oas.models.media.BinarySchema;
 import io.swagger.oas.models.media.ByteArraySchema;
@@ -26,10 +28,14 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class ParameterProcessor {
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
@@ -61,6 +67,9 @@ public class ParameterProcessor {
                 if (StringUtils.isNotBlank(p.in())) {
                     parameter.setIn(p.in());
                 }
+                if (StringUtils.isNotBlank(p.example())) {
+                    parameter.setExample(p.example());
+                }
                 if (p.deprecated()) {
                     parameter.setDeprecated(p.deprecated());
                 }
@@ -74,6 +83,14 @@ public class ParameterProcessor {
                     parameter.setAllowReserved(p.allowReserved());
                 }
 
+                Map<String, Example> exampleMap = new HashMap<>();
+                for (ExampleObject exampleObject : p.examples()) {
+                    getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
+                }
+                if (exampleMap.size() > 0) {
+                    parameter.setExamples(exampleMap);
+                }
+
                 setParameterStyle(parameter, p);
                 setParameterExplode(parameter, p);
 
@@ -83,10 +100,10 @@ public class ParameterProcessor {
                         parameter.setSchema(schema);
                     }
                 } else if (hasArrayAnnotation(p.array())) {
-                 Schema arraySchema = processArraySchema(p.array());
-                 if (arraySchema != null) {
-                     parameter.setSchema(arraySchema);
-                 }
+                    Schema arraySchema = processArraySchema(p.array());
+                    if (arraySchema != null) {
+                        parameter.setSchema(arraySchema);
+                    }
                 }
             } else if (annotation.annotationType().getName().equals("javax.ws.rs.PathParam")) {
                 try {
@@ -142,28 +159,55 @@ public class ParameterProcessor {
         }
         return parameter;
     }
-    
+
+    public static Optional<Example> getExample(ExampleObject example) {
+        if (example == null) {
+            return Optional.empty();
+        }
+        if (StringUtils.isNotBlank(example.name())) {
+            Example exampleObject = new Example();
+            if (StringUtils.isNotBlank(example.name())) {
+                exampleObject.setDescription(example.name());
+            }
+            if (StringUtils.isNotBlank(example.summary())) {
+                exampleObject.setSummary(example.summary());
+            }
+            if (StringUtils.isNotBlank(example.externalValue())) {
+                exampleObject.setExternalValue(example.externalValue());
+            }
+            if (StringUtils.isNotBlank(example.value())) {
+                try {
+                    exampleObject.setValue(Json.mapper().readTree(example.value()));
+                } catch (IOException e) {
+                    exampleObject.setValue(example.value());
+                }
+            }
+            return Optional.of(exampleObject);
+        }
+        return Optional.empty();
+    }
+
     private static boolean hasArrayAnnotation(io.swagger.oas.annotations.media.ArraySchema array) {
-         if (array.uniqueItems() == false
-                 && array.maxItems() == Integer.MIN_VALUE
-                 && array.minItems() == Integer.MAX_VALUE
-                 && !hasSchemaAnnotation(array.schema())
-                 ) {
-             return false;
-         }
-         return true;
-     }
-      
+        if (array.uniqueItems() == false
+                && array.maxItems() == Integer.MIN_VALUE
+                && array.minItems() == Integer.MAX_VALUE
+                && !hasSchemaAnnotation(array.schema())
+                ) {
+            return false;
+        }
+        return true;
+    }
+
     private static Schema processArraySchema(io.swagger.oas.annotations.media.ArraySchema array) {
-         ArraySchema output = new ArraySchema();
- 
+        ArraySchema output = new ArraySchema();
+
         Schema schema = processSchema(array.schema());
- 
-         output.setItems(schema);
- 
-         return output;
-     }    
-    
+
+        output.setItems(schema);
+
+        return output;
+    }
+
     public static void setParameterExplode(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
         if (isExplodable(p)) {
             if (Explode.TRUE.equals(p.explode())) {
@@ -341,7 +385,7 @@ public class ParameterProcessor {
                     output.format(schema.format());
                 }
             } else if ("string".equals(schema.type())) {
-            	if ("password".equals(schema.format())) {
+                if ("password".equals(schema.format())) {
                     output = new PasswordSchema();
                 } else if ("binary".equals(schema.format())) {
                     output = new BinarySchema();
@@ -407,7 +451,7 @@ public class ParameterProcessor {
                 output.maxProperties(schema.maxProperties());
             }
         }
-         
+
         return output;
     }
 

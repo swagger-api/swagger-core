@@ -86,6 +86,10 @@ public class OperationParser {
             parameterObject.setIn(parameter.in());
             isEmpty = false;
         }
+        if (StringUtils.isNotBlank(parameter.example())) {
+            parameterObject.setExample(parameter.example());
+            isEmpty = false;
+        }
         if (parameter.deprecated()) {
             parameterObject.setDeprecated(parameter.deprecated());
         }
@@ -100,6 +104,15 @@ public class OperationParser {
         if (parameter.allowReserved()) {
             parameterObject.setAllowReserved(parameter.allowReserved());
             isEmpty = false;
+        }
+
+        Map<String, Example> exampleMap = new HashMap<>();
+        for (ExampleObject exampleObject : parameter.examples()) {
+            ParameterProcessor.getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
+        }
+
+        if (exampleMap.size() > 0) {
+            parameterObject.setExamples(exampleMap);
         }
 
         ParameterProcessor.setParameterStyle(parameterObject, parameter);
@@ -406,16 +419,16 @@ public class OperationParser {
             MediaType mediaType = new MediaType();
             getSchema(annotationContent, components).ifPresent(mediaType::setSchema);
 
+            ExampleObject[] examples = annotationContent.examples();
+            for (ExampleObject example : examples) {
+                ParameterProcessor.getExample(example).ifPresent(exampleObject -> mediaType.addExamples(example.name(), exampleObject));
+            }
             if (StringUtils.isNotBlank(annotationContent.mediaType())) {
                 content.addMediaType(annotationContent.mediaType(), mediaType);
             } else {
                 if (mediaType.getSchema() != null) {
                     applyTypes(classTypes, methodTypes, content, mediaType);
                 }
-            }
-            ExampleObject[] examples = annotationContent.examples();
-            for (ExampleObject example : examples) {
-                getMediaType(mediaType, example).ifPresent(mediaTypeObject -> content.addMediaType(annotationContent.mediaType(), mediaTypeObject));
             }
         }
         if (content.size() == 0) {
@@ -462,35 +475,6 @@ public class OperationParser {
             content.addMediaType(MEDIA_TYPE, mediaType);
         }
 
-    }
-
-    public static Optional<MediaType> getMediaType(MediaType mediaType, ExampleObject example) {
-        if (example == null) {
-            return Optional.empty();
-        }
-        if (StringUtils.isNotBlank(example.name())) {
-            Example exampleObject = new Example();
-            if (StringUtils.isNotBlank(example.name())) {
-                exampleObject.setDescription(example.name());
-            }
-            if (StringUtils.isNotBlank(example.summary())) {
-                exampleObject.setSummary(example.summary());
-            }
-            if (StringUtils.isNotBlank(example.externalValue())) {
-                exampleObject.setExternalValue(example.externalValue());
-            }
-            if (StringUtils.isNotBlank(example.value())) {
-                try {
-                    exampleObject.setValue(Json.mapper().readTree(example.value()));
-                } catch (IOException e) {
-                    exampleObject.setValue(example.value());
-                }
-            }
-
-            mediaType.addExamples(example.name(), exampleObject);
-            return Optional.of(mediaType);
-        }
-        return Optional.empty();
     }
 
     public static Optional<Info> getInfo(io.swagger.oas.annotations.info.Info info) {
