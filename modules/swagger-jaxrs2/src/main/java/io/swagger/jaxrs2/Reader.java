@@ -286,6 +286,22 @@ public class Reader implements OpenApiReader {
                             if (StringUtils.isBlank(requestBody.get$ref()) &&
                                     (requestBody.getContent() == null || requestBody.getContent().isEmpty())) {
                                 if (parameter.getSchema() != null) {
+                                    Content content = new Content();
+                                    if (methodConsumes != null) {
+                                        for (String value : methodConsumes.value()) {
+                                            setMediaTypeToContent(parameter.getSchema(), content, value);
+                                        }
+                                    } else if (classConsumes != null) {
+                                        for (String value : classConsumes.value()) {
+                                            setMediaTypeToContent(parameter.getSchema(), content, value);
+                                        }
+                                    } else {
+                                        setMediaTypeToContent(parameter.getSchema(), content, DEFAULT_MEDIA_TYPE_VALUE);
+                                    }
+
+                                    requestBody.setContent(content);
+                                }
+                                if (parameter.getSchema() != null) {
                                     Map<String, Schema> schemaMap = ModelConverters.getInstance().readAll(type);
                                     schemaMap.forEach((key, schema) -> {
                                         components.addSchemas(key, schema);
