@@ -10,10 +10,11 @@ import java.util.stream.Collectors;
 
 public class ServletConfigContextUtils {
 
-    public static final String OPENAPI_CONFIGURATION_RESOURCEPACKAGE_KEY = "openApi.configuration.resourcePackage";
+    public static final String OPENAPI_CONFIGURATION_RESOURCEPACKAGE_KEY = "openApi.configuration.resourcePackages";
     public static final String OPENAPI_CONFIGURATION_LOCATION_KEY = "openApi.configuration.location";
     public static final String JERSEY1_PACKAGE_KEY = "com.sun.jersey.config.property.packages";
     public static final String JERSEY2_PACKAGE_KEY = "jersey.config.server.provider.packages";
+    public static final String JERSEY2_CLASSES_KEY = "jersey.config.server.provider.classnames";
 
     public static final String OPENAPI_CONFIGURATION_READER_KEY = "openApi.configuration.readerClass";
     public static final String OPENAPI_CONFIGURATION_SCANNER_KEY = "openApi.configuration.scannerClass";
@@ -22,7 +23,7 @@ public class ServletConfigContextUtils {
     public static final String OPENAPI_CONFIGURATION_READALLRESOURCES_KEY = "openApi.configuration.readAllResources";
     public static final String OPENAPI_CONFIGURATION_RESOURCECLASSES_KEY = "openApi.configuration.resourceClasses";
     public static final String OPENAPI_CONFIGURATION_FILTER_KEY = "openApi.configuration.filterClass";
-    public static final String OPENAPI_CONFIGURATION_CACHE_TTL_KEY = "openApi.configuration.filterClass";
+    public static final String OPENAPI_CONFIGURATION_CACHE_TTL_KEY = "openApi.configuration.cacheTTL";
 
     public static Set<String> resolveResourcePackages(ServletConfig servletConfig) {
         if (!isServletConfigAvailable(servletConfig)) {
@@ -55,6 +56,13 @@ public class ServletConfigContextUtils {
             return null;
         }
         String resourceClasses = getInitParam (servletConfig, OPENAPI_CONFIGURATION_RESOURCECLASSES_KEY);
+        if (resourceClasses == null) {
+            // jersey 2
+            resourceClasses = getInitParam (servletConfig, JERSEY2_CLASSES_KEY);
+            if (resourceClasses != null) {
+                resourceClasses = resourceClasses.replace(';', ',');
+            }
+        }
         if (StringUtils.isBlank(resourceClasses)) {
             return null;
         }

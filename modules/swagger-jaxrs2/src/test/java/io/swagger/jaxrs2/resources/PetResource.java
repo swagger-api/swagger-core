@@ -46,7 +46,8 @@ public class PetResource {
     @Operation(summary = "Find pet by ID",
             description = "Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will simulate API error conditions",
             responses = {
-                    @ApiResponse(description = "The pet", content = @Content(
+                    @ApiResponse(
+                            description = "The pet", content = @Content(
                             schema = @Schema(implementation = Pet.class)
                     )),
                     @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
@@ -78,6 +79,7 @@ public class PetResource {
     @POST
     @Path("/bodynoannotation")
     @Consumes({"application/json", "application/xml"})
+    @Produces({"application/json", "application/xml"})
     @Operation(summary = "Add a new pet to the store no annotation",
             responses = {
                     @ApiResponse(responseCode = "405", description = "Invalid input")

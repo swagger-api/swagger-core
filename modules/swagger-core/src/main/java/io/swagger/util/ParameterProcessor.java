@@ -2,7 +2,9 @@ package io.swagger.util;
 
 import io.swagger.converter.ModelConverters;
 import io.swagger.oas.annotations.enums.Explode;
+import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.media.ArraySchema;
 import io.swagger.oas.models.media.BinarySchema;
 import io.swagger.oas.models.media.ByteArraySchema;
@@ -26,10 +28,14 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class ParameterProcessor {
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
@@ -61,6 +67,9 @@ public class ParameterProcessor {
                 if (StringUtils.isNotBlank(p.in())) {
                     parameter.setIn(p.in());
                 }
+                if (StringUtils.isNotBlank(p.example())) {
+                    parameter.setExample(p.example());
+                }
                 if (p.deprecated()) {
                     parameter.setDeprecated(p.deprecated());
                 }
@@ -72,6 +81,14 @@ public class ParameterProcessor {
                 }
                 if (p.allowReserved()) {
                     parameter.setAllowReserved(p.allowReserved());
+                }
+
+                Map<String, Example> exampleMap = new HashMap<>();
+                for (ExampleObject exampleObject : p.examples()) {
+                    getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
+                }
+                if (exampleMap.size() > 0) {
+                    parameter.setExamples(exampleMap);
                 }
 
                 setParameterStyle(parameter, p);
@@ -143,6 +160,54 @@ public class ParameterProcessor {
         return parameter;
     }
 
+    public static Optional<Example> getExample(ExampleObject example) {
+        if (example == null) {
+            return Optional.empty();
+        }
+        if (StringUtils.isNotBlank(example.name())) {
+            Example exampleObject = new Example();
+            if (StringUtils.isNotBlank(example.name())) {
+                exampleObject.setDescription(example.name());
+            }
+            if (StringUtils.isNotBlank(example.summary())) {
+                exampleObject.setSummary(example.summary());
+            }
+            if (StringUtils.isNotBlank(example.externalValue())) {
+                exampleObject.setExternalValue(example.externalValue());
+            }
+            if (StringUtils.isNotBlank(example.value())) {
+                try {
+                    exampleObject.setValue(Json.mapper().readTree(example.value()));
+                } catch (IOException e) {
+                    exampleObject.setValue(example.value());
+                }
+            }
+            return Optional.of(exampleObject);
+        }
+        return Optional.empty();
+    }
+
+    private static boolean hasArrayAnnotation(io.swagger.oas.annotations.media.ArraySchema array) {
+        if (array.uniqueItems() == false
+                && array.maxItems() == Integer.MIN_VALUE
+                && array.minItems() == Integer.MAX_VALUE
+                && !hasSchemaAnnotation(array.schema())
+                ) {
+            return false;
+        }
+        return true;
+    }
+
+    private static Schema processArraySchema(io.swagger.oas.annotations.media.ArraySchema array) {
+        ArraySchema output = new ArraySchema();
+
+        Schema schema = processSchema(array.schema());
+
+        output.setItems(schema);
+
+        return output;
+    }
+
     public static void setParameterExplode(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
         if (isExplodable(p)) {
             if (Explode.TRUE.equals(p.explode())) {
@@ -181,7 +246,7 @@ public class ParameterProcessor {
                     Schema inner = pt.createProperty();
                     return merge(schema, inner);
                 } else {
-                    return ModelConverters.getInstance().resolveProperty(type);
+                    return merge(schema, ModelConverters.getInstance().resolveProperty(type));
                 }
             } else if ("array".equals(schema.getType())) {
                 Schema inner = fillSchema(((ArraySchema) schema).getItems(), type);
@@ -276,17 +341,6 @@ public class ParameterProcessor {
         return to;
     }
 
-    private static boolean hasArrayAnnotation(io.swagger.oas.annotations.media.ArraySchema array) {
-        if (array.uniqueItems() == false
-                && array.maxItems() == Integer.MIN_VALUE
-                && array.minItems() == Integer.MAX_VALUE
-                && !hasSchemaAnnotation(array.schema())
-                ) {
-            return false;
-        }
-        return true;
-    }
-
     private static boolean hasSchemaAnnotation(io.swagger.oas.annotations.media.Schema schema) {
         if (StringUtils.isBlank(schema.type())
                 && StringUtils.isBlank(schema.format())
@@ -308,10 +362,9 @@ public class ParameterProcessor {
                 && !schema.nullable()
                 && !schema.readOnly()
                 && !schema.writeOnly()
-                && schema.examples().length == 1 && StringUtils.isBlank(schema.examples()[0])
                 && !schema.deprecated()
-                && schema._enum().length == 1 && StringUtils.isBlank(schema._enum()[0])
-                && StringUtils.isBlank(schema._default())
+                && schema.allowableValues().length == 1 && StringUtils.isBlank(schema.allowableValues()[0])
+                && StringUtils.isBlank(schema.defaultValue())
                 && StringUtils.isBlank(schema.example())
                 && StringUtils.isBlank(schema.pattern())
                 && schema.not().equals(Void.class)
@@ -323,16 +376,6 @@ public class ParameterProcessor {
         return true;
     }
 
-    private static Schema processArraySchema(io.swagger.oas.annotations.media.ArraySchema array) {
-        ArraySchema output = new ArraySchema();
-
-        Schema schema = processSchema(array.schema());
-
-        output.setItems(schema);
-
-        return output;
-    }
-
     private static Schema processSchema(io.swagger.oas.annotations.media.Schema schema) {
         Schema output = null;
         if (schema.type() != null) {
@@ -341,8 +384,7 @@ public class ParameterProcessor {
                 if (StringUtils.isNotBlank(schema.format())) {
                     output.format(schema.format());
                 }
-            }
-            if ("string".equals(schema.type())) {
+            } else if ("string".equals(schema.type())) {
                 if ("password".equals(schema.format())) {
                     output = new PasswordSchema();
                 } else if ("binary".equals(schema.format())) {
@@ -367,8 +409,8 @@ public class ParameterProcessor {
             // TODO: #2312 other types
         }
         if (output != null) {
-            if (StringUtils.isNotBlank(schema._default())) {
-                output.setDefault(schema._default());
+            if (StringUtils.isNotBlank(schema.defaultValue())) {
+                output.setDefault(schema.defaultValue());
             }
 
             if (StringUtils.isNotBlank(schema.pattern())) {
@@ -380,8 +422,8 @@ public class ParameterProcessor {
             if (StringUtils.isNotBlank(schema.description())) {
                 output.setDescription(schema.description());
             }
-            if (schema._enum() != null) {
-                for (String v : schema._enum()) {
+            if (schema.allowableValues() != null) {
+                for (String v : schema.allowableValues()) {
                     if (StringUtils.isNotBlank(v)) {
                         output.addEnumItemObject(v);
                     }
@@ -409,6 +451,7 @@ public class ParameterProcessor {
                 output.maxProperties(schema.maxProperties());
             }
         }
+
         return output;
     }
 

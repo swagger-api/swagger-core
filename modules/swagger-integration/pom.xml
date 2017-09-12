@@ -50,24 +50,12 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<version>${felix-version}</version>
 				<extensions>true</extensions>
-				<executions>
-					<execution>
-						<id>set_failok</id>
-						<goals>
-							<goal>manifest</goal>
-						</goals>
-						<configuration>
-							<instructions>
-								<_failok>true</_failok>
-							</instructions>
-						</configuration>
-					</execution>
-				</executions>
 				<configuration>
-					<manifestLocation>src/main/resources/META-INF</manifestLocation>
-					<rebuildBundle>true</rebuildBundle>
 					<instructions>
-						<Export-Package>io.swagger.oas.integration</Export-Package>
+						<Export-Package>
+							io.swagger.oas.integration,
+							io.swagger.oas.integration.api
+						</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

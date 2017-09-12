@@ -13,7 +13,6 @@ import org.testng.annotations.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-
 import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
@@ -111,6 +110,12 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "            '*/*':\n" +
                 "              schema:\n" +
                 "                $ref: '#/components/schemas/GenericError'\n" +
+                "              examples:\n" +
+                "                boo:\n" +
+                "                  summary: example of boo\n" +
+                "                  description: boo\n" +
+                "                  value: example\n" +
+                "                  externalValue: example of external value\n" +
                 "      deprecated: true\n";
 
         assertEquals(extractedYAML, expectedYAML);
@@ -132,11 +137,15 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                                 )
                         ),
                         @ApiResponse(
-                                responseCode = "default",
                                 description = "boo",
                                 content = @Content(
                                         mediaType = "*/*",
-                                        schema = @Schema(implementation = GenericError.class)
+                                        schema = @Schema(implementation = GenericError.class),
+                                        examples = {
+                                                @ExampleObject(name = "boo", value = "example",
+                                                        summary = "example of boo", externalValue = "example of external value")
+                                        }
+
                                 )
                         )
                 }
@@ -528,6 +537,17 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "        schema:\n" +
                 "          type: string\n" +
+                "        examples:\n" +
+                "          example2:\n" +
+                "            summary: Summary example 2\n" +
+                "            description: example2\n" +
+                "            value: example2\n" +
+                "            externalValue: external value 2\n" +
+                "          example1:\n" +
+                "            summary: Summary example 1\n" +
+                "            description: example1\n" +
+                "            value: example1\n" +
+                "            externalValue: external value 1\n" +
                 "      requestBody:\n" +
                 "        description: Updated user object\n" +
                 "        content:\n" +

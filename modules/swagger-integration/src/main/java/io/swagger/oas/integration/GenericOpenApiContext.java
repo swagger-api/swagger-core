@@ -204,7 +204,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
     protected List<ImmutablePair<String, String>> getKnownLocations() {
         return Arrays.asList(
-                new ImmutablePair<>("classpath", "openapi-configiguration.yaml"),
+                new ImmutablePair<>("classpath", "openapi-configuration.yaml"),
                 new ImmutablePair<>("classpath", "openapi-configuration.json"),
                 new ImmutablePair<>("file", "openapi-configuration.yaml"),
                 new ImmutablePair<>("file", "openapi-configuration.json"),
@@ -259,7 +259,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         }
 
         if (openApiConfiguration == null) {
-            openApiConfiguration = new SwaggerConfiguration().resourcePackages(resourcePackages);
+            openApiConfiguration = new SwaggerConfiguration().resourcePackages(resourcePackages).resourceClasses(resourceClasses);
             ((SwaggerConfiguration)openApiConfiguration).setId(id);
         }
 

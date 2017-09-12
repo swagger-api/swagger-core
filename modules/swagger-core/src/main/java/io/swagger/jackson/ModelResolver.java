@@ -410,14 +410,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 annotations = annotationList.toArray(new Annotation[annotationList.size()]);
 
                 io.swagger.oas.annotations.media.Schema mp = null;
-
+                
                 io.swagger.oas.annotations.media.ArraySchema as = null;
                 as = member.getAnnotation(io.swagger.oas.annotations.media.ArraySchema.class);
                 if (as != null) {
                     mp = as.schema();
                 } else {
                     mp = member.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
-                }
+                }                
 
                 if(mp != null) {
                     if (mp.readOnly()) {
@@ -540,8 +540,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             if(!StringUtils.isBlank(mp.pattern())) {
                                 property.setPattern(mp.pattern());
                             }
-                            if(mp._enum().length > 0) {
-                                for(String _enum : mp._enum()) {
+							if(mp.allowableValues().length > 0) {
+							    for(String _enum : mp.allowableValues()) {
                                     if(StringUtils.isNotBlank(_enum)) {
                                         property.addEnumItemObject(_enum);
                                     }

@@ -28,11 +28,6 @@ public class CompleteFieldsResource {
                     description = "External documentation description",
                     url = "http://url.com"
             ),
-            requestBody =
-            @RequestBody(description = "Request description", content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ResponsesResource.SampleResponseSchema.class)
-            )),
             parameters = {
                     @Parameter(in = "path", name = "subscriptionId",
                             required = true, description = "parameter description",
