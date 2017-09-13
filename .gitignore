@@ -13,4 +13,5 @@ site/_site/
 coverage
 .ruby-version
 .idea
+*.iml
 .sass-cache
