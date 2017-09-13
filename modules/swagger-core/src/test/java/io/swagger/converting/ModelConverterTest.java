@@ -1,6 +1,24 @@
+/**
+ * Copyright 2017 SmartBear Software
+ * (c) Copyright 2017 Hewlett Packard Enterprise Development LP
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.swagger.converting;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.oas.models.Cat;
@@ -9,6 +27,7 @@ import io.swagger.oas.models.Employee;
 import io.swagger.oas.models.EmptyModel;
 import io.swagger.oas.models.JacksonReadonlyModel;
 import io.swagger.oas.models.JodaDateTimeModel;
+import io.swagger.oas.models.JsonValueModel;
 import io.swagger.oas.models.Model1155;
 import io.swagger.oas.models.ModelPropertyName;
 import io.swagger.oas.models.ModelWithAltPropertyName;
@@ -297,6 +316,26 @@ public class ModelConverterTest {
         Schema property = (Schema)model.getProperties().get("offset");
         assertEquals(property.getType(), "string");
         assertEquals(property.getFormat(), "date-time");
+    }
+    
+    @Test(description = "it tests a model using a JsonValue method to override its type")
+    public void checkJsonValueHandling() {
+        final Map<String, Schema> schemas = readAll(JsonValueModel.class);
+        final Map<String, Schema> properties = schemas.get("JsonValueModel").getProperties();
+        // "value" is a class with a JsonValue method returning String, so should be string type.
+        assertNotNull(properties.get("value"));
+        assertEquals(properties.get("value").getType(), "string");
+        // "inner" is a class (InnerBean) with a JsonValue method returning ComplexBean
+        assertNotNull(properties.get("inner"));
+        assertEquals(properties.get("inner").get$ref(), "#/components/schemas/ComplexBean");
+        // Check ComplexBean has the correct fields and has not been mapped to InnerBean.
+        final Map<String, Schema> innerProperties = schemas.get("ComplexBean").getProperties();
+        assertEquals(innerProperties.keySet(), Sets.newHashSet("count", "name"));
+        // "list" is a class (ListBean) with a JsonValue method returning a list
+        assertNotNull(properties.get("list"));
+        assertEquals(properties.get("list").getType(), "array");
+        // ListBean should not be a resolved type, as it should just map to list
+        assertNull(schemas.get("ListBean"));
     }
 
     private void checkType(Schema property, Class<?> cls, String type, String format) {
