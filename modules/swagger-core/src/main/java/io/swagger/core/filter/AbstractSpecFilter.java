@@ -33,6 +33,11 @@ public abstract class AbstractSpecFilter implements OpenAPISpecFilter {
     }
 
     @Override
+    public Optional<Schema> filterSchema(Schema schema, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        return Optional.of(schema);
+    }
+
+    @Override
     public Optional<Schema> filterProperty(Schema schema, Schema property, String propertyName, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         return Optional.of(schema);
     }

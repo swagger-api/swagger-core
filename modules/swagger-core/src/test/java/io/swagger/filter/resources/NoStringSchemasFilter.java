@@ -14,7 +14,7 @@ public class NoStringSchemasFilter extends AbstractSpecFilter {
     private static final String TYPE = "string";
 
     @Override
-    public Optional<Schema> filterProperty(Schema schema, Schema property, String propertyName, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    public Optional<Schema> filterSchema(Schema schema, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         if (TYPE.equals(schema.getType())) {
             return Optional.empty();
         }
