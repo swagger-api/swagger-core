@@ -843,6 +843,7 @@ public class Schema<T> {
         sb.append("    example: ").append(toIndentedString(example)).append("\n");
         sb.append("    externalDocs: ").append(toIndentedString(externalDocs)).append("\n");
         sb.append("    deprecated: ").append(toIndentedString(deprecated)).append("\n");
+        sb.append("    discriminator: ").append(toIndentedString(discriminator)).append("\n");
         sb.append("    xml: ").append(toIndentedString(xml)).append("\n");
         sb.append("}");
         return sb.toString();
