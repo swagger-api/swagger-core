@@ -782,6 +782,7 @@ public class Schema<T> {
                 Objects.equals(this.deprecated, schema.deprecated) &&
                 Objects.equals(this.xml, schema.xml) &&
                 Objects.equals(this.extensions, schema.extensions) &&
+                Objects.equals(this.discriminator, schema.discriminator) &&
                 Objects.equals(this._enum, schema._enum) &&
                 Objects.equals(this._default, schema._default);
     }
@@ -790,7 +791,7 @@ public class Schema<T> {
     public int hashCode() {
         return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern, maxItems,
                 minItems, uniqueItems, maxProperties, minProperties, required, type, not, properties, additionalProperties, description, format, $ref,
-                nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions, _enum, _default);
+                nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions, discriminator, _enum, _default);
     }
 
 
@@ -842,6 +843,7 @@ public class Schema<T> {
         sb.append("    example: ").append(toIndentedString(example)).append("\n");
         sb.append("    externalDocs: ").append(toIndentedString(externalDocs)).append("\n");
         sb.append("    deprecated: ").append(toIndentedString(deprecated)).append("\n");
+        sb.append("    discriminator: ").append(toIndentedString(discriminator)).append("\n");
         sb.append("    xml: ").append(toIndentedString(xml)).append("\n");
         sb.append("}");
         return sb.toString();
