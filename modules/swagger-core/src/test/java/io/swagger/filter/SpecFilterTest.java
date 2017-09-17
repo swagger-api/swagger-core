@@ -159,23 +159,23 @@ public class SpecFilterTest {
     }
 
     @Test(description = "it should filter any query parameter")
-    public void filterAwayIntegersSchemas() throws IOException {
+    public void filterAwayStringsSchemas() throws IOException {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
         final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoStringSchemasFilter(), null, null, null);
         if (filtered.getPaths() != null) {
             for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
-                validateSchemas(entry.getValue().getGet());
-                validateSchemas(entry.getValue().getPost());
-                validateSchemas(entry.getValue().getPut());
-                validateSchemas(entry.getValue().getPatch());
-                validateSchemas(entry.getValue().getHead());
-                validateSchemas(entry.getValue().getDelete());
-                validateSchemas(entry.getValue().getOptions());
+                validateSchemasInOperations(entry.getValue().getGet());
+                validateSchemasInOperations(entry.getValue().getPost());
+                validateSchemasInOperations(entry.getValue().getPut());
+                validateSchemasInOperations(entry.getValue().getPatch());
+                validateSchemasInOperations(entry.getValue().getHead());
+                validateSchemasInOperations(entry.getValue().getDelete());
+                validateSchemasInOperations(entry.getValue().getOptions());
             }
         }
     }
 
-    private void validateSchemas(Operation operation) {
+    private void validateSchemasInOperations(Operation operation) {
         if (operation != null) {
             for (Parameter parameter : operation.getParameters()) {
                 Schema schema = parameter.getSchema();

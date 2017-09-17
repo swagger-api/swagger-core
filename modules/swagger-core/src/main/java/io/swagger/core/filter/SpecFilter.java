@@ -92,18 +92,28 @@ public class SpecFilter {
 
                 RequestBody requestBody = filteredOperation.get().getRequestBody();
                 if (requestBody != null) {
-                    Content content = requestBody.getContent();
-                    content.forEach((contentKey, mediaType) -> {
-                        mediaType.setSchema(filterSchema(filter, mediaType.getSchema(), params, cookies, headers));
-                    });
+                    filterSchemaFromContent(filter, params, cookies, headers, requestBody.getContent());
                 }
 
                 ApiResponses responses = filteredOperation.get().getResponses();
-                
+                if (responses != null) {
+                    responses.forEach((responseKey, response) -> {
+                        filterSchemaFromContent(filter, params, cookies, headers, response.getContent());
+                    });
+                }
+
                 return filteredOperationGet;
             }
         }
         return null;
+    }
+
+    private void filterSchemaFromContent(OpenAPISpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers, Content content) {
+        if (content != null) {
+            content.forEach((contentKey, mediaType) -> {
+                mediaType.setSchema(filterSchema(filter, mediaType.getSchema(), params, cookies, headers));
+            });
+        }
     }
 
     private PathItem filterPathItem(OpenAPISpecFilter filter, PathItem pathItem, String resourcePath, String key, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
@@ -129,9 +139,9 @@ public class SpecFilter {
 
     private Schema filterSchema(OpenAPISpecFilter filter, Schema schema, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         if (schema != null) {
-            Optional<Schema> filteredProperty = filter.filterSchema(schema, params, cookies, headers);
-            if (filteredProperty.isPresent()) {
-                return filteredProperty.get();
+            Optional<Schema> filteredSchema = filter.filterSchema(schema, params, cookies, headers);
+            if (filteredSchema.isPresent()) {
+                return filteredSchema.get();
             }
         }
         return null;
