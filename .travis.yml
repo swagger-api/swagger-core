@@ -5,5 +5,5 @@ jdk:
   - oraclejdk8
 after_success:
   - if [ $SONATYPE_USERNAME ] && [ -z $TRAVIS_TAG ] && [ $TRAVIS_PULL_REQUEST == false ]; then
-      mvn clean deploy --settings .travis/settings.xml;
+      ./mvnw clean deploy --settings .travis/settings.xml;
     fi;
