@@ -1,6 +1,7 @@
 package io.swagger.core.filter;
 
 import io.swagger.model.ApiDescription;
+import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
@@ -33,6 +34,10 @@ public class SpecFilter {
         OpenAPI clone = new OpenAPI();
         clone.info(filteredOpenAPI.getInfo());
         clone.openapi(filteredOpenAPI.getOpenapi());
+        clone.setExtensions(openAPI.getExtensions());
+        clone.setExternalDocs(openAPI.getExternalDocs());
+        clone.setSecurity(openAPI.getSecurity());
+        clone.setServers(openAPI.getServers());
         clone.tags(filteredOpenAPI.getTags() == null ? null : new ArrayList<>(openAPI.getTags()));
 
         Paths clonedPaths = new Paths();
@@ -42,6 +47,7 @@ public class SpecFilter {
             PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, null, params, cookies, headers);
             if (filteredPathItem != null) {
                 filteredPathItem.setGet(filterOperation(filter, pathItem.getGet(), resourcePath, GET, params, cookies, headers));
+
                 filteredPathItem.setPost(filterOperation(filter, pathItem.getPost(), resourcePath, POST, params, cookies, headers));
                 filteredPathItem.setPut(filterOperation(filter, pathItem.getPut(), resourcePath, PUT, params, cookies, headers));
                 filteredPathItem.setDelete(filterOperation(filter, pathItem.getDelete(), resourcePath, DELETE, params, cookies, headers));
@@ -56,7 +62,6 @@ public class SpecFilter {
         }
         clone.paths(clonedPaths);
         clone.setComponents(openAPI.getComponents());
-        clone.setSecurity(openAPI.getSecurity());
 
         return clone;
     }
@@ -83,7 +88,7 @@ public class SpecFilter {
                     for (Parameter parameter : parameters) {
                         Parameter filteredParameter = filterParameter(filter, operation, parameter, resourcePath, key, params, cookies, headers);
                         if (filteredParameter != null) {
-                            filteredParameter.setSchema(filterSchema(filter, parameter.getSchema(), params, cookies, headers));
+                            filteredParameter.setSchema(filterProperty(filter, parameter.getSchema(), params, cookies, headers));
                             filteredParameters.add(filteredParameter);
                         }
                     }
@@ -111,7 +116,7 @@ public class SpecFilter {
     private void filterSchemaFromContent(OpenAPISpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers, Content content) {
         if (content != null) {
             content.forEach((contentKey, mediaType) -> {
-                mediaType.setSchema(filterSchema(filter, mediaType.getSchema(), params, cookies, headers));
+                mediaType.setSchema(filterProperty(filter, mediaType.getSchema(), params, cookies, headers));
             });
         }
     }
@@ -140,6 +145,16 @@ public class SpecFilter {
     private Schema filterSchema(OpenAPISpecFilter filter, Schema schema, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         if (schema != null) {
             Optional<Schema> filteredSchema = filter.filterSchema(schema, params, cookies, headers);
+            if (filteredSchema.isPresent()) {
+                return filteredSchema.get();
+            }
+        }
+        return null;
+    }
+
+    private Schema filterProperty(OpenAPISpecFilter filter, Schema property, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        if (property != null) {
+            Optional<Schema> filteredSchema = filter.filterSchema(property, params, cookies, headers);
             if (filteredSchema.isPresent()) {
                 return filteredSchema.get();
             }

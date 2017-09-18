@@ -48,9 +48,7 @@ public interface OpenAPISpecFilter {
             Map<String, List<String>> headers);
 
     Optional<Schema> filterProperty(
-            Schema schema,
             Schema property,
-            String propertyName,
             Map<String, List<String>> params,
             Map<String, String> cookies,
             Map<String, List<String>> headers);
