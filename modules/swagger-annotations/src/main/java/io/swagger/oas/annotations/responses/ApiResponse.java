@@ -16,6 +16,7 @@
 
 package io.swagger.oas.annotations.responses;
 
+import io.swagger.oas.annotations.headers.Header;
 import io.swagger.oas.annotations.links.Link;
 import io.swagger.oas.annotations.media.Content;
 
@@ -33,14 +34,19 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface ApiResponse {
     /**
-     *A short description of the response. 
+     * A short description of the response. 
      **/
     String description() default "";
 
     /**
-     * The HTTP response code, or 'default', for the supplied response.  May only have 1 default entry.  
+     * The HTTP response code, or 'default', for the supplied response. May only have 1 default entry.  
      **/
     String responseCode() default "default";
+
+    /**
+     * An array of response headers. Allows additional information to be included with response.
+     **/
+    Header[] headers() default {};
 
     /**
      * An array of operation links that can be followed from the response.

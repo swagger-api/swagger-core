@@ -8,6 +8,7 @@ import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.examples.Example;
+import io.swagger.oas.models.headers.Header;
 import io.swagger.oas.models.info.Contact;
 import io.swagger.oas.models.info.Info;
 import io.swagger.oas.models.info.License;
@@ -385,7 +386,8 @@ public class OperationParser {
             }
             getContent(response.content(), classProduces == null ? new String[0] : classProduces.value(),
                     methodProduces == null ? new String[0] : methodProduces.value(), components).ifPresent(apiResponseObject::content);
-            if (StringUtils.isNotBlank(apiResponseObject.getDescription()) || apiResponseObject.getContent() != null) {
+            getHeaders(response.headers(), components).ifPresent(apiResponseObject::headers);
+            if (StringUtils.isNotBlank(apiResponseObject.getDescription()) || apiResponseObject.getContent() != null || apiResponseObject.getHeaders() != null) {
 
                 Map<String, Link> links = getLinks(response.links());
                 if (links.size() > 0) {
@@ -435,6 +437,67 @@ public class OperationParser {
             return Optional.empty();
         }
         return Optional.of(content);
+    }
+
+    public static Optional<Map<String, Header>> getHeaders(io.swagger.oas.annotations.headers.Header[] annotationHeaders, Components components) {
+        if (annotationHeaders == null) {
+            return Optional.empty();
+        }
+
+        Map<String, Header> headers = new HashMap<>();
+        for (io.swagger.oas.annotations.headers.Header header : annotationHeaders) {
+            getHeader(header, components).ifPresent(headerResult -> headers.put(header.name(), headerResult));
+        }
+
+        if (headers.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(headers);
+    }
+
+    public static Optional<Header> getHeader(io.swagger.oas.annotations.headers.Header header, Components components) {
+
+        if (header == null) {
+            return Optional.empty();
+        }
+
+        Header headerObject = new Header();
+        boolean isEmpty = true;
+        if (StringUtils.isNotBlank(header.description())) {
+            headerObject.setDescription(header.description());
+            isEmpty = false;
+        }
+        if (header.deprecated()) {
+            headerObject.setDeprecated(header.deprecated());
+        }
+        if (header.required()) {
+            headerObject.setRequired(header.required());
+            isEmpty = false;
+        }
+        if (header.allowEmptyValue()) {
+            headerObject.setAllowEmptyValue(header.allowEmptyValue());
+            isEmpty = false;
+        }
+
+        headerObject.setStyle(Header.StyleEnum.SIMPLE);
+
+        if (header.schema() != null) {
+            if (header.schema().implementation() == Void.class) {
+                getSchemaFromAnnotation(header.schema()).ifPresent(schema -> {
+                    if (StringUtils.isNotBlank(schema.getType())) {
+                        headerObject.setSchema(schema);
+                        //schema inline no need to add to components
+                        //components.addSchemas(schema.getType(), schema);
+                    }
+                });
+            }
+        }
+
+        if (isEmpty) {
+            return Optional.empty();
+        }
+
+        return Optional.of(headerObject);
     }
 
     public static Optional<Schema> getSchema(io.swagger.oas.annotations.media.Content annotationContent, Components components) {
