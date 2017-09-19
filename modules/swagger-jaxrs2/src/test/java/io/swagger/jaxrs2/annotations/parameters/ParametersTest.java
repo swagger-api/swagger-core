@@ -29,7 +29,9 @@ public class ParametersTest extends AbstractAnnotationTest {
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "/test:\n" +
                 "    post:\n" +
-                "      description: subscribes a client to updates relevant to the requestor's account, as identified by the input token.  The supplied url will be used as the delivery address for response payloads\n" +
+                "      description: subscribes a client to updates relevant to the requestor's account,\n" +
+                "        as identified by the input token.  The supplied url will be used as the delivery\n" +
+                "        address for response payloads\n" +
                 "      operationId: subscribe\n" +
                 "      parameters:\n" +
                 "      - name: subscriptionId\n" +

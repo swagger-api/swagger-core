@@ -204,15 +204,9 @@
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
                     <version>${jetty-version}</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.sun.jersey</groupId>
-                            <artifactId>jersey-servlet</artifactId>
-                            <version>${jersey-version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${enforcer-plugin-version}</version>
                 </plugin>
@@ -358,7 +352,7 @@
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
+                <artifactId>javax.servlet-api</artifactId>
                 <version>${servlet-api-version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -367,26 +361,6 @@
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>${slf4j-version}</version>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-client</artifactId>
-                <version>${jersey-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-core</artifactId>
-                <version>${jersey-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-json</artifactId>
-                <version>${jersey-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-servlet</artifactId>
-                <version>${jersey-version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -404,35 +378,87 @@
                 <artifactId>guava</artifactId>
                 <version>${guava-version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.joda</groupId>
+                <artifactId>joda-convert</artifactId>
+                <version>${joda-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>${javax.ws-version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
         <joda-version>1.2</joda-version>
         <joda-time-version>2.7</joda-time-version>
-
+        <snakeyaml-version>1.18</snakeyaml-version>
+        <javax.ws-version>2.0.1</javax.ws-version>
         <felix-version>2.4.0</felix-version>
-        <servlet-api-version>2.5</servlet-api-version>
-        <jersey-version>1.13</jersey-version>
-        <jersey2-version>2.25.1</jersey2-version>
-        <jackson-version>2.8.9</jackson-version>
-        <jackson-annotations-version>2.8.0</jackson-annotations-version>
-        <logback-version>1.0.1</logback-version>
+        <servlet-api-version>3.1.0</servlet-api-version>
+        <jersey2-version>2.26</jersey2-version>
+        <jackson-version>2.9.1</jackson-version>
+        <logback-version>1.2.3</logback-version>
         <reflections-version>0.9.11</reflections-version>
-        <guava-version>20.0</guava-version>
-
-        <testng-version>6.9.10</testng-version>
-        <mockito-version>1.9.5</mockito-version>
+        <guava-version>23.0</guava-version>
+        <commons-lang-version>3.6</commons-lang-version>
+        <commons-io-version>2.5</commons-io-version>
+        <slf4j-version>1.7.25</slf4j-version>
+        <jetty-version>9.4.6.v20170531</jetty-version>
+        <testng-version>6.11</testng-version>
+        <mockito-version>1.10.19</mockito-version>
         <rest-assured-version>2.8.0</rest-assured-version>
-        <surefire-version>2.18.1</surefire-version>
-        <maven-plugin-version>1.0.0</maven-plugin-version>
-        <commons-lang-version>3.2.1</commons-lang-version>
-        <slf4j-version>1.7.22</slf4j-version>
-        <jetty-version>9.2.14.v20151106</jetty-version>
+
+        <surefire-version>2.20</surefire-version>
+        <enforcer-plugin-version>3.0.0-M1</enforcer-plugin-version>
+        <failsafe-plugin-version>2.20</failsafe-plugin-version>
+
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
-        <commons-io-version>2.5</commons-io-version>
-        <enforcer-plugin-version>1.4</enforcer-plugin-version>
-        <failsafe-plugin-version>2.19.1</failsafe-plugin-version>
+
     </properties>
 </project>
