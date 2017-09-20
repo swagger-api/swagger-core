@@ -10,6 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>swagger-jaxrs2</artifactId>
+    <packaging>bundle</packaging>
     <name>swagger-jaxrs2</name>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -36,7 +37,7 @@
                             io.swagger.jaxrs2.util
                         </Export-Package>
                         <Import-Package>
-                            javax.ws.rs*;version="[2.0,0)",
+                            javax.ws.rs*;version="2.0",
                             *
                         </Import-Package>
                     </instructions>
@@ -58,7 +59,6 @@
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty-version}</version>
                 <configuration>
                     <scanIntervalSeconds>10</scanIntervalSeconds>
                     <stopKey>a</stopKey>
@@ -104,17 +104,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-annotations</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
@@ -128,13 +122,11 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback-version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>${logback-version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

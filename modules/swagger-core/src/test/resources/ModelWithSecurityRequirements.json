@@ -79,7 +79,6 @@
   },
   "components": {
     "schemas": {
-      "Error": null,
       "Person": {
         "type": "object",
         "properties": {

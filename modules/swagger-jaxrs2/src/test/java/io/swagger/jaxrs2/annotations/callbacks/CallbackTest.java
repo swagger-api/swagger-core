@@ -25,14 +25,17 @@ public class CallbackTest extends AbstractAnnotationTest {
         String extractedYAML = openApiYAML.substring(start, end);
         String expectedYAML = "/test:\n" +
                 "    post:\n" +
-                "      description: subscribes a client to updates relevant to the requestor's account, as identified by the input token.  The supplied url will be used as the delivery address for response payloads\n" +
+                "      description: subscribes a client to updates relevant to the requestor's account,\n" +
+                "        as identified by the input token.  The supplied url will be used as the delivery\n" +
+                "        address for response payloads\n" +
                 "      operationId: subscribe\n" +
                 "      parameters:\n" +
                 "      - name: x-auth-token\n" +
                 "        in: header\n" +
                 "        schema:\n" +
                 "          type: string\n" +
-                "          description: the authentication token provided after initially authenticating to the application\n" +
+                "          description: the authentication token provided after initially authenticating\n" +
+                "            to the application\n" +
                 "          readOnly: true\n" +
                 "      - name: url\n" +
                 "        in: query\n" +
@@ -65,11 +68,13 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "                  readOnly: true\n" +
                 "              responses:\n" +
                 "                200:\n" +
-                "                  description: Return this code if the callback was received and processed successfully\n" +
+                "                  description: Return this code if the callback was received and processed\n" +
+                "                    successfully\n" +
                 "                205:\n" +
                 "                  description: Return this code to unsubscribe from future data updates\n" +
                 "                default:\n" +
-                "                  description: All other response codes will disable this callback subscription\n" +
+                "                  description: All other response codes will disable this callback\n" +
+                "                    subscription\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    string:\n" +

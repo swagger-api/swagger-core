@@ -1,5 +1,6 @@
 package io.swagger.matchers;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
@@ -35,7 +36,8 @@ public class SerializationMatchers {
             LOGGER.error("Failed to read value", e);
         }
         if (!lhs.equals(new ObjectNodeComparator(), rhs)) {
-            fail(String.format("Serialized object:\n%s\ndoes not equal to expected serialized string:\n%s", lhs, rhs));
+            assertEquals(Yaml.pretty(lhs), Yaml.pretty(rhs));
+            //fail(String.format("Serialized object:\n%s\ndoes not equal to expected serialized string:\n%s", lhs, rhs));
         }
     }
 
