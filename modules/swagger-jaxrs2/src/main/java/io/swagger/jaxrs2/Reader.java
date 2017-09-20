@@ -26,6 +26,7 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.responses.ApiResponses;
+import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
 import io.swagger.util.Json;
@@ -524,6 +525,27 @@ public class Reader implements OpenApiReader {
         OperationParser.getApiResponses(apiOperation.responses(), classProduces, methodProduces, components).ifPresent(operation::setResponses);
         OperationParser.getServers(apiOperation.servers()).ifPresent(operation::setServers);
         OperationParser.getParametersList(apiOperation.parameters(), classProduces, methodProduces, components).ifPresent(operation::setParameters);
+    
+        // security
+        List<SecurityRequirement> securityRequirements = operation.getSecurity();
+
+        if (securityRequirements != null && securityRequirements.size() > 0) {
+            Optional<List<SecurityRequirement>> requirementsObject = OperationParser.getSecurityRequirements(apiOperation.security());
+            if (requirementsObject.isPresent()) {
+                List<SecurityRequirement> requirements = requirementsObject.get();
+
+                for (SecurityRequirement secReq : requirements) {
+                    if (!securityRequirements.contains(secReq)) {
+                        securityRequirements.add(secReq);
+                    }
+                }
+                
+                operation.setSecurity(securityRequirements);
+            }
+        } else {
+            OperationParser.getSecurityRequirements(apiOperation.security()).ifPresent(operation::setSecurity);
+        }
+    
     }
 
     protected String getOperationId(String operationId) {

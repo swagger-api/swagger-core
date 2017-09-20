@@ -21,6 +21,7 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.responses.ApiResponses;
+import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.servers.ServerVariable;
 import io.swagger.oas.models.servers.ServerVariables;
@@ -37,6 +38,7 @@ import javax.ws.rs.Produces;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -671,5 +673,36 @@ public class OperationParser {
         }
 
         return linkParametersMap;
+    }
+
+
+    public static Optional<List<SecurityRequirement>> getSecurityRequirements(io.swagger.oas.annotations.security.SecurityRequirement[] security) {
+        if (security == null) {
+            return Optional.empty();
+        }
+        List<SecurityRequirement> securityRequirements = new ArrayList<>();
+    
+        for (io.swagger.oas.annotations.security.SecurityRequirement sec : security) {
+            String name = sec.name();
+
+            if (StringUtils.isBlank(name)) {
+                continue;
+            }
+
+            SecurityRequirement securityRequirementObject = new SecurityRequirement();
+            if (sec.scopes().length > 0) {
+                securityRequirementObject.addList(name, Arrays.asList(sec.scopes()));
+            } else {
+                securityRequirementObject.addList(name);
+            }
+            securityRequirements.add(securityRequirementObject);
+
+        }
+    
+        if (securityRequirements.isEmpty()) {
+            return Optional.empty();
+        }
+    
+        return Optional.of(securityRequirements);
     }
 }
