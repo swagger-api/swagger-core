@@ -369,12 +369,13 @@ public class Parameter {
                 Objects.equals(this.examples, parameter.examples) &&
                 Objects.equals(this.example, parameter.example) &&
                 Objects.equals(this.content, parameter.content) &&
+                Objects.equals(this.$ref, parameter.$ref) &&
                 Objects.equals(this.extensions, parameter.extensions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, in, description, required, deprecated, allowEmptyValue, style, explode, allowReserved, schema, examples, example, content, extensions);
+        return Objects.hash(name, in, description, required, deprecated, allowEmptyValue, style, explode, allowReserved, schema, examples, example, content, $ref, extensions);
     }
 
 

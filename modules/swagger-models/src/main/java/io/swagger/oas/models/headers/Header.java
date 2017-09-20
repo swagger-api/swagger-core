@@ -284,12 +284,13 @@ public class Header {
         Objects.equals(this.examples, header.examples) &&
         Objects.equals(this.example, header.example) &&
         Objects.equals(this.content, header.content) &&
-        Objects.equals(this.extensions, header.extensions);
+        Objects.equals(this.extensions, header.extensions) &&
+        Objects.equals(this.$ref, header.$ref);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(description, required, deprecated, allowEmptyValue, style, explode, schema, examples, example, content, extensions);
+    return Objects.hash(description, required, deprecated, allowEmptyValue, style, explode, schema, examples, example, content, extensions, $ref);
   }
 
 
