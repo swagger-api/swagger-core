@@ -44,7 +44,7 @@ public abstract class AbstractSpecFilter implements OpenAPISpecFilter {
 
     @Override
     public boolean isRemovingUnreferencedDefinitions() {
-        return true;
+        return false;
     }
 
 }

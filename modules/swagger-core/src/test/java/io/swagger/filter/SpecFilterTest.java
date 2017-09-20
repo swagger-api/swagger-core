@@ -10,7 +10,7 @@ import io.swagger.filter.resources.NoOpenAPIFilter;
 import io.swagger.filter.resources.NoParametersWithoutQueryInFilter;
 import io.swagger.filter.resources.NoPathItemFilter;
 import io.swagger.filter.resources.NoPetOperationsFilter;
-import io.swagger.filter.resources.NoStringSchemasFilter;
+import io.swagger.filter.resources.NoPetRefSchemaFilter;
 import io.swagger.filter.resources.RemoveInternalParamsFilter;
 import io.swagger.filter.resources.RemoveUnreferencedDefinitionsFilter;
 import io.swagger.filter.resources.ReplaceGetOperationsFilter;
@@ -20,6 +20,7 @@ import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
+import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.tags.Tag;
 import io.swagger.util.Json;
 import io.swagger.util.ResourceUtils;
@@ -46,7 +47,7 @@ public class SpecFilterTest {
     private static final String NEW_OPERATION_ID = "New Operation";
     private static final String NEW_OPERATION_DESCRIPTION = "Replaced Operation";
     private static final String QUERY = "query";
-    private static final String STRING = "string";
+    private static final String PET_REF = "#/components/schemas/Pet";
 
     @Test(description = "it should clone everything")
     public void cloneEverything() throws IOException {
@@ -158,10 +159,10 @@ public class SpecFilterTest {
         }
     }
 
-    @Test(description = "it should filter any query parameter")
-    public void filterAwayStringsSchemas() throws IOException {
+    @Test(description = "it should filter any Pet Ref in Schemas")
+    public void filterAwayPetRefInSchemas() throws IOException {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
-        final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoStringSchemasFilter(), null, null, null);
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoPetRefSchemaFilter(), null, null, null);
         if (filtered.getPaths() != null) {
             for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
                 validateSchemasInOperations(entry.getValue().getGet());
@@ -180,9 +181,30 @@ public class SpecFilterTest {
             for (Parameter parameter : operation.getParameters()) {
                 Schema schema = parameter.getSchema();
                 if (schema != null) {
-                    assertNotEquals(STRING, schema.getType());
+                    assertNotEquals(PET_REF, schema.get$ref());
                 }
             }
+
+            RequestBody requestBody = operation.getRequestBody();
+            if (requestBody != null) {
+                requestBody.getContent().forEach((key, content) -> {
+                    Schema schema = content.getSchema();
+                    if (schema != null) {
+                        assertNotEquals(PET_REF, schema.get$ref());
+                    }
+                });
+            }
+
+            operation.getResponses().forEach((key, response) -> {
+                if (response != null && response.getContent() != null) {
+                    response.getContent().forEach((contentKey, content) -> {
+                        Schema schema = content.getSchema();
+                        if (schema != null) {
+                            assertNotEquals(PET_REF, schema.get$ref());
+                        }
+                    });
+                }
+            });
         }
     }
 

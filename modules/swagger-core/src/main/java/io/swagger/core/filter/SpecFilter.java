@@ -1,7 +1,6 @@
 package io.swagger.core.filter;
 
 import io.swagger.model.ApiDescription;
-import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
@@ -63,6 +62,12 @@ public class SpecFilter {
         clone.paths(clonedPaths);
         clone.setComponents(openAPI.getComponents());
 
+        if (filter instanceof AbstractSpecFilter) {
+            if (filter.isRemovingUnreferencedDefinitions()) {
+                clone = removeBrokenReferenceDefinitions(clone);
+            }
+        }
+
         return clone;
     }
 
@@ -88,7 +93,7 @@ public class SpecFilter {
                     for (Parameter parameter : parameters) {
                         Parameter filteredParameter = filterParameter(filter, operation, parameter, resourcePath, key, params, cookies, headers);
                         if (filteredParameter != null) {
-                            filteredParameter.setSchema(filterProperty(filter, parameter.getSchema(), params, cookies, headers));
+                            filteredParameter.setSchema(filterSchema(filter, parameter.getSchema(), params, cookies, headers));
                             filteredParameters.add(filteredParameter);
                         }
                     }
@@ -116,7 +121,7 @@ public class SpecFilter {
     private void filterSchemaFromContent(OpenAPISpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers, Content content) {
         if (content != null) {
             content.forEach((contentKey, mediaType) -> {
-                mediaType.setSchema(filterProperty(filter, mediaType.getSchema(), params, cookies, headers));
+                mediaType.setSchema(filterSchema(filter, mediaType.getSchema(), params, cookies, headers));
             });
         }
     }
@@ -160,5 +165,9 @@ public class SpecFilter {
             }
         }
         return null;
+    }
+
+    public OpenAPI removeBrokenReferenceDefinitions(OpenAPI clone) {
+        return clone;
     }
 }
