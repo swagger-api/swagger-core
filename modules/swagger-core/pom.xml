@@ -32,20 +32,6 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>${felix-version}</version>
                 <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Export-Package>
-                            io.swagger.converter,
-                            io.swagger.core,
-                            io.swagger.core.filter,
-                            io.swagger.core.util,
-                            io.swagger.reader,
-                            io.swagger.config,
-                            io.swagger.oas.models,
-                            io.swagger.util
-                        </Export-Package>
-                    </instructions>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -73,23 +59,14 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>${jackson-annotations-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-annotations</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>${jackson-version}</version>
         </dependency>
         <dependency>
             <groupId>io.swagger</groupId>
@@ -99,7 +76,6 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>${joda-time-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -109,19 +85,16 @@
         <dependency>
             <groupId>org.joda</groupId>
             <artifactId>joda-convert</artifactId>
-            <version>${joda-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback-version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>${logback-version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
