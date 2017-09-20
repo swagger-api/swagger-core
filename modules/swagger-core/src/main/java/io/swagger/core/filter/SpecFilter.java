@@ -1,6 +1,7 @@
 package io.swagger.core.filter;
 
 import io.swagger.model.ApiDescription;
+import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
@@ -12,6 +13,7 @@ import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponses;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,12 +26,15 @@ public class SpecFilter {
     private final static String DELETE = "delete";
     private final static String PATCH = "patch";
     private final static String OPTIONS = "options";
+    private Map<String, Schema> definedSchemas = null;
 
     public OpenAPI filter(OpenAPI openAPI, OpenAPISpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         OpenAPI filteredOpenAPI = filterOpenAPI(filter, openAPI, params, cookies, headers);
         if (filteredOpenAPI == null) {
             return filteredOpenAPI;
         }
+
+        definedSchemas = new HashMap<>();
         OpenAPI clone = new OpenAPI();
         clone.info(filteredOpenAPI.getInfo());
         clone.openapi(filteredOpenAPI.getOpenapi());
@@ -46,7 +51,6 @@ public class SpecFilter {
             PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, null, params, cookies, headers);
             if (filteredPathItem != null) {
                 filteredPathItem.setGet(filterOperation(filter, pathItem.getGet(), resourcePath, GET, params, cookies, headers));
-
                 filteredPathItem.setPost(filterOperation(filter, pathItem.getPost(), resourcePath, POST, params, cookies, headers));
                 filteredPathItem.setPut(filterOperation(filter, pathItem.getPut(), resourcePath, PUT, params, cookies, headers));
                 filteredPathItem.setDelete(filterOperation(filter, pathItem.getDelete(), resourcePath, DELETE, params, cookies, headers));
@@ -151,7 +155,9 @@ public class SpecFilter {
         if (schema != null) {
             Optional<Schema> filteredSchema = filter.filterSchema(schema, params, cookies, headers);
             if (filteredSchema.isPresent()) {
+                definedSchemas.put(filteredSchema.get().getType(), filteredSchema.get());
                 return filteredSchema.get();
+
             }
         }
         return null;
@@ -168,6 +174,8 @@ public class SpecFilter {
     }
 
     public OpenAPI removeBrokenReferenceDefinitions(OpenAPI clone) {
+        Components components = clone.getComponents();
+        components.getSchemas().entrySet().removeIf((schema -> !definedSchemas.containsKey(schema.getValue().getType())));
         return clone;
     }
 }

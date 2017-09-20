@@ -269,6 +269,22 @@ public class SpecFilterTest {
         SerializationMatchers.assertEqualsToJson(filtered, json);
     }
 
+    @Test(description = "it should filter away broken reference model properties")
+    public void filterAwayBrokenReferenceModelProperties() throws IOException {
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
+
+        assertNotNull(openAPI.getComponents().getSchemas().get("Pet"));
+
+        OpenAPI filtered = new SpecFilter().filter(openAPI, new NoPetRefSchemaFilter(), null, null, null);
+
+        assertNotNull(filtered.getComponents().getSchemas().get("Pet"));
+
+        final RemoveUnreferencedDefinitionsFilter refFilter = new RemoveUnreferencedDefinitionsFilter();
+        filtered = new SpecFilter().filter(openAPI, refFilter, null, null, null);
+
+        assertNull(filtered.getComponents().getSchemas().get("Pet"));
+    }
+
     @Test(enabled = false, description = "it should filter away secret parameters")
     public void filterAwaySecretParameters() throws IOException {
         final OpenAPI swagger = getOpenAPI("specFiles/sampleSpec.json");
@@ -301,33 +317,6 @@ public class SpecFilterTest {
                 assertFalse(propName.startsWith("_"));
             }
         }
-    }
-
-    @Test(enabled = false, description = "it should filter away broken reference model properties")
-    public void filterAwayBrokenReferenceModelProperties() throws IOException {
-        final OpenAPI swagger = getOpenAPI("specFiles/paramAndResponseRef.json");
-
-        assertNotNull(swagger.getComponents().getSchemas().get("Order"));
-        assertNotNull(swagger.getComponents().getSchemas().get("NoPropertiesModel"));
-        assertNotNull(swagger.getComponents().getSchemas().get("OrderTag"));
-        assertNotNull(swagger.getComponents().getSchemas().get("Tag"));
-
-        final NoOpOperationsFilter noOpfilter = new NoOpOperationsFilter();
-        OpenAPI filtered = new SpecFilter().filter(swagger, noOpfilter, null, null, null);
-
-        assertNotNull(filtered.getComponents().getSchemas().get("Order"));
-        assertNotNull(filtered.getComponents().getSchemas().get("NoPropertiesModel"));
-        assertNotNull(filtered.getComponents().getSchemas().get("OrderTag"));
-        assertNotNull(filtered.getComponents().getSchemas().get("Tag"));
-
-        final RemoveUnreferencedDefinitionsFilter refFilter = new RemoveUnreferencedDefinitionsFilter();
-        filtered = new SpecFilter().filter(swagger, refFilter, null, null, null);
-
-        assertNull(filtered.getComponents().getSchemas().get("Order"));
-        assertNull(filtered.getComponents().getSchemas().get("NoPropertiesModel"));
-        assertNull(filtered.getComponents().getSchemas().get("OrderTag"));
-        assertNotNull(filtered.getComponents().getSchemas().get("Tag"));
-
     }
 
     @Test(enabled = false, description = "it should retain non-broken reference model properties")
