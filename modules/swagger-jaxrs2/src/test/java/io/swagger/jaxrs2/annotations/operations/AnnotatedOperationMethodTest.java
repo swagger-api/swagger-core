@@ -5,6 +5,7 @@ import io.swagger.jaxrs2.resources.PetResource;
 import io.swagger.jaxrs2.resources.SimpleUserResource;
 import io.swagger.jaxrs2.resources.UserResource;
 import io.swagger.oas.annotations.Operation;
+import io.swagger.oas.annotations.Parameter;
 import io.swagger.oas.annotations.headers.Header;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.ExampleObject;
@@ -14,6 +15,7 @@ import org.testng.annotations.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
@@ -193,6 +195,38 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         assertEquals(extractedYAML, expectedYAML);
     }
 
+    @Test(description = "reads an operation with response examples defined")
+    public void testOperationWithParameterExample() {
+        String openApiYAML = readIntoYaml(GetOperationWithParameterExample.class);
+        int start = openApiYAML.indexOf("get:");
+        int end = openApiYAML.indexOf("components:");
+        String extractedYAML = openApiYAML.substring(start, end);
+        String expectedYAML = "get:\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with a parameter example\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      parameters:\n" +
+                "      - in: query\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "        example:\n" +
+                "          id: 19877734\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "              examples:\n" +
+                "                basic:\n" +
+                "                  summary: shows a basic example\n" +
+                "                  description: basic\n" +
+                "                  value: '{id: 19877734}'\n" +
+                "      deprecated: true\n";
+        assertEquals(extractedYAML, expectedYAML);
+    }
+
     static class GetOperationWithResponseExamples {
         @Operation(
                 summary = "Simple get operation",
@@ -219,6 +253,35 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         @GET
         @Path("/path")
         public void simpleGet() {
+        }
+    }
+
+    static class GetOperationWithParameterExample {
+        @Operation(
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with a parameter example",
+                operationId = "getWithPayloadResponse",
+                deprecated = true,
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!",
+                                content = @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = SampleResponseSchema.class),
+                                        examples = {
+                                                @ExampleObject(
+                                                        name = "basic",
+                                                        summary = "shows a basic example",
+                                                        value = "{id: 19877734}")
+                                        }
+                                )
+                        )
+                }
+        )
+        @GET
+        @Path("/path")
+        public void simpleGet(@Parameter(in = "query", example = "{\"id\": 19877734}") String exParam) {
         }
     }
 
