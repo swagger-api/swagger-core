@@ -211,10 +211,6 @@ public class OperationParser {
             schemaObject.setFormat(schema.format());
             isEmpty = false;
         }
-        if (StringUtils.isNotBlank(schema.example())) {
-            schemaObject.setExample(schema.example());
-            isEmpty = false;
-        }
         if (StringUtils.isNotBlank(schema.pattern())) {
             schemaObject.setPattern(schema.pattern());
             isEmpty = false;
@@ -235,27 +231,52 @@ public class OperationParser {
             schemaObject.setExclusiveMinimum(schema.exclusiveMinimum());
             isEmpty = false;
         }
-        if (schema.maxLength() > 0) {
-            if (schema.maxProperties() > 0) {
-                schemaObject.setMaxProperties(schema.maxProperties());
-                isEmpty = false;
-            }
+        if (schema.maxProperties() > 0) {
+            schemaObject.setMaxProperties(schema.maxProperties());
+            isEmpty = false;
+        }
+        if (schema.maxLength() != Integer.MAX_VALUE && schema.maxLength() > 0) {
+            schemaObject.setMaxLength(schema.maxLength());
+            isEmpty = false;
         }
         if (schema.minProperties() > 0) {
             schemaObject.setMinProperties(schema.minProperties());
             isEmpty = false;
         }
-
-        if (NumberUtils.isNumber(schema.maximum())) {
+        if (schema.minLength() > 0) {
+            schemaObject.setMinLength(schema.minLength());
+            isEmpty = false;
+        }
+        if (schema.multipleOf() != 0) {
+            schemaObject.setMultipleOf(new BigDecimal(schema.multipleOf()));
+            isEmpty = false;
+        }
+        if (NumberUtils.isCreatable(schema.maximum())) {
             String filteredMaximum = schema.maximum().replaceAll(COMMA, StringUtils.EMPTY);
             schemaObject.setMaximum(new BigDecimal(filteredMaximum));
         }
-
-        if (NumberUtils.isNumber(schema.minimum())) {
+        if (NumberUtils.isCreatable(schema.minimum())) {
             String filteredMinimum = schema.minimum().replaceAll(COMMA, StringUtils.EMPTY);
             schemaObject.setMinimum(new BigDecimal(filteredMinimum));
         }
+        if (schema.nullable()) {
+            schemaObject.setNullable(schema.nullable());
+            isEmpty = false;
+        }
+        if (StringUtils.isNotBlank(schema.title())) {
+            schemaObject.setTitle(schema.title());
+            isEmpty = false;
+        }
+        if (StringUtils.isNotBlank(schema.name())) {
+            schemaObject.setName(schema.name());
+            isEmpty = false;
+        }
+        if (schema.writeOnly()) {
+            schemaObject.setWriteOnly(schema.writeOnly());
+            isEmpty = false;
+        }
 
+        ReaderUtils.getStringListFromStringArray(schema.requiredProperties()).ifPresent(schemaObject::setRequired);
         ReaderUtils.getStringListFromStringArray(schema.allowableValues()).ifPresent(schemaObject::setEnum);
         getExternalDocumentation(schema.externalDocs()).ifPresent(schemaObject::setExternalDocs);
 
