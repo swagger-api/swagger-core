@@ -155,18 +155,25 @@ public class SpecFilter {
         if (schema != null) {
             Optional<Schema> filteredSchema = filter.filterSchema(schema, params, cookies, headers);
             if (filteredSchema.isPresent()) {
-                definedSchemas.put(filteredSchema.get().getType(), filteredSchema.get());
-                return filteredSchema.get();
+                Schema filtered = filteredSchema.get();
+                if (filtered.getProperties() != null) {
+                    filtered.getProperties().forEach((key, schemaProperty) -> {
+                        filtered.getProperties().put(key, filterSchemaProperty(filter, (Schema) schemaProperty, params, cookies, headers));
+                    });
+                }
+                definedSchemas.put(filtered.getType(), filtered);
+                return filtered;
 
             }
         }
         return null;
     }
 
-    private Schema filterProperty(OpenAPISpecFilter filter, Schema property, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    private Schema filterSchemaProperty(OpenAPISpecFilter filter, Schema property, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         if (property != null) {
             Optional<Schema> filteredSchema = filter.filterSchema(property, params, cookies, headers);
             if (filteredSchema.isPresent()) {
+                definedSchemas.put(filteredSchema.get().getType(), filteredSchema.get());
                 return filteredSchema.get();
             }
         }
