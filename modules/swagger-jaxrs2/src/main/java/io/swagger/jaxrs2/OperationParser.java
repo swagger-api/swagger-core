@@ -90,7 +90,11 @@ public class OperationParser {
             isEmpty = false;
         }
         if (StringUtils.isNotBlank(parameter.example())) {
-            parameterObject.setExample(parameter.example());
+            try {
+                parameterObject.setExample(Json.mapper().readTree(parameter.example()));
+            } catch (IOException e) {
+                parameterObject.setExample(parameter.example());
+            }
             isEmpty = false;
         }
         if (parameter.deprecated()) {
