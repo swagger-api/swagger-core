@@ -43,6 +43,7 @@ import static org.testng.Assert.fail;
 public class SpecFilterTest {
 
     private static final String RESOURCE_PATH = "specFiles/petstore-3.0-v2.json";
+    private static final String RESOURCE_PATH_WITHOUT_MODELS = "specFiles/petstore-3.0-v2_withoutModels.json";
     private static final String CHANGED_OPERATION_ID = "Changed Operation";
     private static final String CHANGED_OPERATION_DESCRIPTION = "Changing some attributes of the operation";
     private static final String NEW_OPERATION_ID = "New Operation";
@@ -261,9 +262,9 @@ public class SpecFilterTest {
         }
     }
 
-    @Test(enabled = false, description = "it should clone everything from JSON without models")
+    @Test(description = "it should clone everything from JSON without models")
     public void cloneWithoutModels() throws IOException {
-        final String json = ResourceUtils.loadClassResource(getClass(), "specFiles/noModels.json");
+        final String json = ResourceUtils.loadClassResource(getClass(), RESOURCE_PATH_WITHOUT_MODELS);
         final OpenAPI swagger = Json.mapper().readValue(json, OpenAPI.class);
         final OpenAPI filtered = new SpecFilter().filter(swagger, new NoOpOperationsFilter(), null, null, null);
 
