@@ -11,6 +11,8 @@ import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
+import io.swagger.oas.annotations.security.SecurityRequirement;
+
 import org.testng.annotations.Test;
 
 import javax.ws.rs.GET;
@@ -856,5 +858,135 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      xml:\n" +
                 "        name: User";
         assertEquals(extractedYAML, expectedYAML);
+    }
+
+    @Test
+    public void testSimpleGetOperationWithSecurity() {
+        
+        String openApiYAML = readIntoYaml(SimpleGetOperationWithSecurity.class);
+        int start = openApiYAML.indexOf("get:");
+        int end = openApiYAML.length() - 1;
+        
+        String expectedYAML = "get:\n" +
+                                "      summary: Simple get operation\n" +
+                                "      description: Defines a simple get operation with no inputs and a complex\n" +
+                                "      operationId: getWithNoParameters\n" +
+                                "      responses:\n" +
+                                "        200:\n" +
+                                "          description: voila!\n" +
+                                "      security:\n" +
+                                "      - petstore-auth:\n" +
+                                "        - write:pets";
+        String extractedYAML = openApiYAML.substring(start, end);
+
+        assertEquals(expectedYAML, extractedYAML);
+    }
+        
+    static class SimpleGetOperationWithSecurity {
+        @Operation(
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex",
+                operationId = "getWithNoParameters",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!")
+                        },
+                security = @SecurityRequirement(
+                                            name = "petstore-auth",
+                                            scopes = "write:pets"))
+                @GET
+                @Path("/path")
+                public void simpleGet() {}
+                }
+
+
+    @Test
+    public void testSimpleGetOperationWithMultipleSecurity() {
+
+        String openApiYAML = readIntoYaml(SimpleGetOperationWithMultipleSecurityScopes.class);
+        int start = openApiYAML.indexOf("get:");
+        int end = openApiYAML.length() - 1;
+
+        String expectedYAML = "get:\n" +
+                                "      summary: Simple get operation\n" +
+                                "      description: Defines a simple get operation with no inputs and a complex\n" +
+                                "      operationId: getWithNoParameters\n" +
+                                "      responses:\n" +
+                                "        200:\n" +
+                                "          description: voila!\n" +
+                                "      security:\n" +
+                                "      - petstore-auth:\n" +
+                                "        - write:pets\n" +
+                                "        - read:pets";
+        String extractedYAML = openApiYAML.substring(start, end);
+
+        assertEquals(extractedYAML, expectedYAML);
+    }
+    
+    static class SimpleGetOperationWithMultipleSecurityScopes {
+        @Operation(
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex",
+                operationId = "getWithNoParameters",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!")
+                        },
+                security = @SecurityRequirement(
+                                        name = "petstore-auth",
+                                        scopes = { "write:pets", "read:pets" }))
+        @GET
+        @Path("/path")
+        public void simpleGet() {}
+    }
+
+    @Test
+    public void testSimpleGetOperationWithMultipleSecurityAnnotations() {
+    
+        String openApiYAML = readIntoYaml(SimpleGetOperationWithMultipleSecurityAnnotations.class);
+        int start = openApiYAML.indexOf("get:");
+        int end = openApiYAML.length() - 1;
+
+        String expectedYAML = "get:\n" +
+                                "      summary: Simple get operation\n" +
+                                "      description: Defines a simple get operation with no inputs and a complex\n" +
+                                "      operationId: getWithNoParameters\n" +
+                                "      responses:\n" +
+                                "        200:\n" +
+                                "          description: voila!\n" +
+                                "      security:\n" +
+                                "      - review-auth:\n" +
+                                "        - write:review\n" +
+                                "      - petstore-auth:\n" +
+                                "        - write:pets\n" +
+                                "        - read:pets\n" +
+                                "      - api_key: []";
+        String extractedYAML = openApiYAML.substring(start, end);
+    
+        assertEquals(extractedYAML, expectedYAML);
+    }
+    
+    static class SimpleGetOperationWithMultipleSecurityAnnotations {
+        @SecurityRequirement(name = "review-auth", scopes = { "write:review" })
+        @Operation(
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex",
+                operationId = "getWithNoParameters",
+                responses = {
+                        @ApiResponse(
+                                        responseCode = "200",
+                                        description = "voila!")
+                       },
+                security = { @SecurityRequirement(
+                                            name = "petstore-auth",
+                                            scopes = { "write:pets", "read:pets" }),
+                             @SecurityRequirement(
+                                            name = "api_key",
+                                            scopes = {}), })
+        @GET
+        @Path("/path")
+        public void simpleGet() {}
     }
 }
