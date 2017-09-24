@@ -17,23 +17,34 @@ import java.util.Optional;
  * Created by RafaelLopez on 5/26/17.
  */
 public class SecurityParser {
-	public static final String SCOPE_NAME = "name";
-	public static final String SCOPE_DESCRIPTION = "description";
 
-	public static Optional<List<SecurityRequirement>> getSecurityRequirement(io.swagger.oas.annotations.security.SecurityRequirement securityRequirement) {
-		if (securityRequirement == null) {
+	public static Optional<List<SecurityRequirement>> getSecurityRequirements(io.swagger.oas.annotations.security.SecurityRequirement[] securityRequirementsApi) {
+		if (securityRequirementsApi == null || securityRequirementsApi.length == 0) {
 			return Optional.empty();
 		}
 		List<SecurityRequirement> securityRequirements = new ArrayList<>();
-		SecurityRequirement securityRequirementObject = new SecurityRequirement();
-		if (securityRequirement.scopes().length > 0) {
-			securityRequirementObject.addList(securityRequirement.name(), Arrays.asList(securityRequirement.scopes()));
-		} else {
-			securityRequirementObject.addList(securityRequirement.name());
+		for (io.swagger.oas.annotations.security.SecurityRequirement securityRequirementApi: securityRequirementsApi) {
+			if (StringUtils.isBlank(securityRequirementApi.name())) {
+				continue;
+			}
+			SecurityRequirement securityRequirement = new SecurityRequirement();
+			if (securityRequirementApi.scopes().length > 0) {
+				securityRequirement.addList(securityRequirementApi.name(), Arrays.asList(securityRequirementApi.scopes()));
+			} else {
+				securityRequirement.addList(securityRequirementApi.name());
+			}
+			securityRequirements.add(securityRequirement);
 		}
-		securityRequirements.add(securityRequirementObject);
-
+		if (securityRequirements.isEmpty()) {
+			return Optional.empty();
+		}
 		return Optional.of(securityRequirements);
+	}
+	public static Optional<List<SecurityRequirement>> getSecurityRequirements(io.swagger.oas.annotations.security.SecurityRequirement securityRequirementApi) {
+		if (securityRequirementApi == null) {
+			return Optional.empty();
+		}
+		return getSecurityRequirements(new io.swagger.oas.annotations.security.SecurityRequirement[] {securityRequirementApi});
 	}
 
 	public static Optional<SecurityScheme> getSecurityScheme(io.swagger.oas.annotations.security.SecurityScheme securityScheme) {

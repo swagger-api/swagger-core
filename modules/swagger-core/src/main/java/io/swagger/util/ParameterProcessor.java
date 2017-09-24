@@ -68,7 +68,11 @@ public class ParameterProcessor {
                     parameter.setIn(p.in());
                 }
                 if (StringUtils.isNotBlank(p.example())) {
-                    parameter.setExample(p.example());
+                    try {
+                        parameter.setExample(Json.mapper().readTree(p.example()));
+                    } catch (IOException e) {
+                        parameter.setExample(p.example());
+                    }
                 }
                 if (p.deprecated()) {
                     parameter.setDeprecated(p.deprecated());
