@@ -31,12 +31,17 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface SecurityRequirement {
 	/**
-	 * This name must correspond to a declared SecurityRequirement.  
+	 * This name must correspond to a declared SecurityRequirement. 
+     * 
+     * @return String name 
 	 */
     String name();
 
     /**
-     * If the security scheme is of type "oauth2" or "openIdConnect", then the value is a list of scope names required for the execution.  For other security scheme types, the array must be empty.
+     * If the security scheme is of type "oauth2" or "openIdConnect", then the value is a list of scope names required for the execution.  
+     * For other security scheme types, the array must be empty.
+     * 
+     * @return String array of scopes
      */
     String[] scopes() default {};
 }

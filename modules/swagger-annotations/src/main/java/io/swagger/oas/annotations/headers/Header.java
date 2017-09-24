@@ -32,6 +32,8 @@ import io.swagger.oas.annotations.media.Schema;
 public @interface Header {
     /**
      * Required: The name of the header. The name is only used as the key to store this header in a map.
+     * 
+     * @return the header's name
      **/
     String name() default "";
 
