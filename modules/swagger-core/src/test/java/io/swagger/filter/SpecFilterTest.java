@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import io.swagger.core.filter.SpecFilter;
 import io.swagger.filter.resources.ChangeGetOperationsFilter;
 import io.swagger.filter.resources.InternalModelPropertiesRemoverFilter;
+import io.swagger.filter.resources.NoCategoryRefSchemaFilter;
 import io.swagger.filter.resources.NoGetOperationsFilter;
 import io.swagger.filter.resources.NoOpOperationsFilter;
 import io.swagger.filter.resources.NoOpenAPIFilter;
@@ -273,16 +274,18 @@ public class SpecFilterTest {
     public void filterAwayBrokenReferenceModelProperties() throws IOException {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
 
-        assertNotNull(openAPI.getComponents().getSchemas().get("Pet"));
+        assertNotNull(openAPI.getComponents().getSchemas().get("Category"));
 
-        OpenAPI filtered = new SpecFilter().filter(openAPI, new NoPetRefSchemaFilter(), null, null, null);
+        OpenAPI filtered = new SpecFilter().filter(openAPI, new NoCategoryRefSchemaFilter(), null, null, null);
 
-        assertNotNull(filtered.getComponents().getSchemas().get("Pet"));
+        assertNotNull(filtered.getComponents().getSchemas().get("Category"));
 
         final RemoveUnreferencedDefinitionsFilter refFilter = new RemoveUnreferencedDefinitionsFilter();
         filtered = new SpecFilter().filter(openAPI, refFilter, null, null, null);
 
-        assertNull(filtered.getComponents().getSchemas().get("Pet"));
+        assertNull(filtered.getComponents().getSchemas().get("Category"));
+        assertNotNull(filtered.getComponents().getSchemas().get("Tag"));
+        assertNotNull(filtered.getComponents().getSchemas().get("Pet"));
     }
 
     @Test(enabled = false, description = "it should filter away secret parameters")

@@ -11,6 +11,7 @@ import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponses;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -161,10 +162,20 @@ public class SpecFilter {
                         filtered.getProperties().put(key, filterSchemaProperty(filter, (Schema) schemaProperty, params, cookies, headers));
                     });
                 }
-                definedSchemas.put(filtered.getType(), filtered);
+                definedSchemas.put(extractStringTypeFromSchema(filtered), filtered);
                 return filtered;
 
             }
+        }
+        return null;
+    }
+
+    private String extractStringTypeFromSchema(Schema schema) {
+        if (StringUtils.isNotBlank(schema.getType())) {
+            return schema.getType();
+        } else if (StringUtils.isNotBlank(schema.get$ref())) {
+            String[] schemaRef = schema.get$ref().split("/");
+            return schemaRef[schemaRef.length - 1];
         }
         return null;
     }
@@ -173,7 +184,7 @@ public class SpecFilter {
         if (property != null) {
             Optional<Schema> filteredSchema = filter.filterSchema(property, params, cookies, headers);
             if (filteredSchema.isPresent()) {
-                definedSchemas.put(filteredSchema.get().getType(), filteredSchema.get());
+                definedSchemas.put(extractStringTypeFromSchema(filteredSchema.get()), filteredSchema.get());
                 return filteredSchema.get();
             }
         }
@@ -182,7 +193,7 @@ public class SpecFilter {
 
     public OpenAPI removeBrokenReferenceDefinitions(OpenAPI clone) {
         Components components = clone.getComponents();
-        components.getSchemas().entrySet().removeIf((schema -> !definedSchemas.containsKey(schema.getValue().getType())));
+        components.getSchemas().entrySet().removeIf((schema -> !definedSchemas.containsKey(schema.getValue().getXml().getName())));
         return clone;
     }
 }

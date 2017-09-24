@@ -52,7 +52,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Pet"
+                                "$ref": "#/components/schemas/Category"
                             }
                         }
                     },
@@ -83,7 +83,7 @@
                         },
                         "application/xml": {
                             "schema": {
-                                "$ref": "#/components/schemas/Pet"
+                                "$ref": "#/components/schemas/Tag"
                             }
                         }
                     },
