@@ -394,7 +394,7 @@ public class Reader implements OpenApiReader {
             if (callbacks.size() > 0) {
                 operation.setCallbacks(callbacks);
             }
-            SecurityParser.getSecurityRequirement(apiSecurity).ifPresent(operation::setSecurity);
+            SecurityParser.getSecurityRequirements(apiSecurity).ifPresent(operation::setSecurity);
 
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
             if (StringUtils.isBlank(operation.getOperationId())) {
@@ -529,21 +529,20 @@ public class Reader implements OpenApiReader {
         // security
         List<SecurityRequirement> securityRequirements = operation.getSecurity();
 
+        // TODO logic within `if` below is only needed because we also resolve method level single @SecurityRequirement annotation, which must be merged
         if (securityRequirements != null && securityRequirements.size() > 0) {
-            Optional<List<SecurityRequirement>> requirementsObject = OperationParser.getSecurityRequirements(apiOperation.security());
+            Optional<List<SecurityRequirement>> requirementsObject = SecurityParser.getSecurityRequirements(apiOperation.security());
             if (requirementsObject.isPresent()) {
                 List<SecurityRequirement> requirements = requirementsObject.get();
-
                 for (SecurityRequirement secReq : requirements) {
                     if (!securityRequirements.contains(secReq)) {
                         securityRequirements.add(secReq);
                     }
                 }
-                
                 operation.setSecurity(securityRequirements);
             }
         } else {
-            OperationParser.getSecurityRequirements(apiOperation.security()).ifPresent(operation::setSecurity);
+            SecurityParser.getSecurityRequirements(apiOperation.security()).ifPresent(operation::setSecurity);
         }
     
     }

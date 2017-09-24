@@ -904,7 +904,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     @Test
     public void testSimpleGetOperationWithMultipleSecurity() {
 
-        String openApiYAML = readIntoYaml(SimpleGetOperationWithMultipleSecurity.class);
+        String openApiYAML = readIntoYaml(SimpleGetOperationWithMultipleSecurityScopes.class);
         int start = openApiYAML.indexOf("get:");
         int end = openApiYAML.length() - 1;
 
@@ -924,7 +924,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         assertEquals(extractedYAML, expectedYAML);
     }
     
-    static class SimpleGetOperationWithMultipleSecurity {
+    static class SimpleGetOperationWithMultipleSecurityScopes {
         @Operation(
                 summary = "Simple get operation",
                 description = "Defines a simple get operation with no inputs and a complex",
