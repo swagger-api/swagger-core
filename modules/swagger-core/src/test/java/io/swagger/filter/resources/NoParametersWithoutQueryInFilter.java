@@ -16,10 +16,11 @@ public class NoParametersWithoutQueryInFilter extends AbstractSpecFilter {
     private static final String QUERY_IN = "query";
 
     @Override
-    public Optional<Parameter> filterParameter(Operation operation, Parameter parameter, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    public Optional<Parameter> filterParameter(Parameter parameter, Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         if (QUERY_IN.equals(parameter.getIn())) {
             return Optional.empty();
         }
         return Optional.of(parameter);
+
     }
 }

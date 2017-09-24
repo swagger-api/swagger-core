@@ -30,12 +30,32 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "string"
+                                    "type": "#/components/schemas/Pet"
                                 }
                             },
                             "application/xml": {
                                 "schema": {
                                     "$ref": "#/components/schemas/Pet"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "X-Rate-Limit-Limit": {
+                                "description": "The number of allowed requests in the current period",
+                                "schema": {
+                                    "$ref": "#/components/schemas/PetHeader"
+                                }
+                            },
+                            "X-Rate-Limit-Remaining": {
+                                "description": "The number of remaining requests in the current period",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-Rate-Limit-Reset": {
+                                "description": "The number of seconds left in the current period",
+                                "schema": {
+                                    "type": "integer"
                                 }
                             }
                         }
@@ -193,6 +213,21 @@
                 },
                 "xml": {
                     "name": "Category"
+                }
+            },
+            "PetHeader": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "xml": {
+                    "name": "PetHeader"
                 }
             },
             "Tag": {

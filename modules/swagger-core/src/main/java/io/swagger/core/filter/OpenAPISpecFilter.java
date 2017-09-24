@@ -6,22 +6,17 @@ import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
+import io.swagger.oas.models.parameters.RequestBody;
+import io.swagger.oas.models.responses.ApiResponse;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public interface OpenAPISpecFilter {
-    Optional<Operation> filterOperation(
-            Operation operation,
-            ApiDescription api,
-            Map<String, List<String>> params,
-            Map<String, String> cookies,
-            Map<String, List<String>> headers);
 
     Optional<OpenAPI> filterOpenAPI(
             OpenAPI openAPI,
-            ApiDescription api,
             Map<String, List<String>> params,
             Map<String, String> cookies,
             Map<String, List<String>> headers);
@@ -33,9 +28,34 @@ public interface OpenAPISpecFilter {
             Map<String, String> cookies,
             Map<String, List<String>> headers);
 
-    Optional<Parameter> filterParameter(
+
+    Optional<Operation> filterOperation(
             Operation operation,
+            ApiDescription api,
+            Map<String, List<String>> params,
+            Map<String, String> cookies,
+            Map<String, List<String>> headers);
+
+
+    Optional<Parameter> filterParameter(
             Parameter parameter,
+            Operation operation,
+            ApiDescription api,
+            Map<String, List<String>> params,
+            Map<String, String> cookies,
+            Map<String, List<String>> headers);
+
+    Optional<RequestBody> filterRequestBody(
+            RequestBody requestBody,
+            Operation operation,
+            ApiDescription api,
+            Map<String, List<String>> params,
+            Map<String, String> cookies,
+            Map<String, List<String>> headers);
+
+    Optional<ApiResponse> filterResponse(
+            ApiResponse response,
+            Operation operation,
             ApiDescription api,
             Map<String, List<String>> params,
             Map<String, String> cookies,
@@ -49,6 +69,8 @@ public interface OpenAPISpecFilter {
 
     Optional<Schema> filterSchemaProperty(
             Schema property,
+            Schema schema,
+            String propName,
             Map<String, List<String>> params,
             Map<String, String> cookies,
             Map<String, List<String>> headers);

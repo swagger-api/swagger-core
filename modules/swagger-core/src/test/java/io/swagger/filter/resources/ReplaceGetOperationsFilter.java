@@ -12,7 +12,7 @@ import java.util.Optional;
  * Sample filter to avoid all get operations for the resource
  **/
 public class ReplaceGetOperationsFilter extends AbstractSpecFilter {
-    private static final String GET = "get";
+    private static final String GET = "GET";
     private static final String NEW_OPERATION_ID = "New Operation";
     private static final String NEW_OPERATION_DESCRIPTION = "Replaced Operation";
 
