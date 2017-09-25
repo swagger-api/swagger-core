@@ -12,6 +12,7 @@ import io.swagger.filter.resources.NoParametersWithoutQueryInFilter;
 import io.swagger.filter.resources.NoPathItemFilter;
 import io.swagger.filter.resources.NoPetOperationsFilter;
 import io.swagger.filter.resources.NoPetRefSchemaFilter;
+import io.swagger.filter.resources.NoTagRefSchemaPropertyFilter;
 import io.swagger.filter.resources.RemoveInternalParamsFilter;
 import io.swagger.filter.resources.RemoveUnreferencedDefinitionsFilter;
 import io.swagger.filter.resources.ReplaceGetOperationsFilter;
@@ -28,7 +29,9 @@ import io.swagger.util.ResourceUtils;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,6 +53,7 @@ public class SpecFilterTest {
     private static final String NEW_OPERATION_DESCRIPTION = "Replaced Operation";
     private static final String QUERY = "query";
     private static final String PET_REF = "#/components/schemas/Pet";
+    public static final String TAG_REF = "/Tag";
 
     @Test(description = "it should clone everything")
     public void cloneEverything() throws IOException {
@@ -167,23 +171,41 @@ public class SpecFilterTest {
         final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoPetRefSchemaFilter(), null, null, null);
         if (filtered.getPaths() != null) {
             for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
-                validateSchemasInOperations(entry.getValue().getGet());
-                validateSchemasInOperations(entry.getValue().getPost());
-                validateSchemasInOperations(entry.getValue().getPut());
-                validateSchemasInOperations(entry.getValue().getPatch());
-                validateSchemasInOperations(entry.getValue().getHead());
-                validateSchemasInOperations(entry.getValue().getDelete());
-                validateSchemasInOperations(entry.getValue().getOptions());
+                validateSchemasInSchemasList(extractSchemasFromOperation(entry.getValue().getGet()), PET_REF);
+                validateSchemasInSchemasList(extractSchemasFromOperation(entry.getValue().getPost()), PET_REF);
+                validateSchemasInSchemasList(extractSchemasFromOperation(entry.getValue().getPut()), PET_REF);
+                validateSchemasInSchemasList(extractSchemasFromOperation(entry.getValue().getPatch()), PET_REF);
+                validateSchemasInSchemasList(extractSchemasFromOperation(entry.getValue().getHead()), PET_REF);
+                validateSchemasInSchemasList(extractSchemasFromOperation(entry.getValue().getDelete()), PET_REF);
+                validateSchemasInSchemasList(extractSchemasFromOperation(entry.getValue().getOptions()), PET_REF);
+            }
+        }
+
+    }
+
+    @Test(description = "it should filter any Pet Ref in Schemas")
+    public void filterAwayTagRefInProperties() throws IOException {
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoTagRefSchemaPropertyFilter(), null, null, null);
+        if (filtered.getPaths() != null) {
+            for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
+                validateSchemasPropertiesInSchemasList(extractSchemasFromOperation(entry.getValue().getPost()), TAG_REF);
+                validateSchemasPropertiesInSchemasList(extractSchemasFromOperation(entry.getValue().getPut()), TAG_REF);
+                validateSchemasPropertiesInSchemasList(extractSchemasFromOperation(entry.getValue().getPatch()), TAG_REF);
+                validateSchemasPropertiesInSchemasList(extractSchemasFromOperation(entry.getValue().getHead()), TAG_REF);
+                validateSchemasPropertiesInSchemasList(extractSchemasFromOperation(entry.getValue().getDelete()), TAG_REF);
+                validateSchemasPropertiesInSchemasList(extractSchemasFromOperation(entry.getValue().getOptions()), TAG_REF);
             }
         }
     }
 
-    private void validateSchemasInOperations(Operation operation) {
+    private List<Schema> extractSchemasFromOperation(Operation operation) {
+        List<Schema> schemas = new ArrayList<>();
         if (operation != null) {
             for (Parameter parameter : operation.getParameters()) {
                 Schema schema = parameter.getSchema();
                 if (schema != null) {
-                    assertNotEquals(PET_REF, schema.get$ref());
+                    schemas.add(schema);
                 }
             }
 
@@ -192,7 +214,7 @@ public class SpecFilterTest {
                 requestBody.getContent().forEach((key, content) -> {
                     Schema schema = content.getSchema();
                     if (schema != null) {
-                        assertNotEquals(PET_REF, schema.get$ref());
+                        schemas.add(schema);
                     }
                 });
             }
@@ -202,11 +224,28 @@ public class SpecFilterTest {
                     response.getContent().forEach((contentKey, content) -> {
                         Schema schema = content.getSchema();
                         if (schema != null) {
-                            assertNotEquals(PET_REF, schema.get$ref());
+                            schemas.add(schema);
                         }
                     });
                 }
             });
+        }
+        return schemas;
+    }
+
+    public void validateSchemasInSchemasList(List<Schema> schemas, String model) {
+        for (Schema schema : schemas) {
+            assertNotEquals(model, schema.get$ref());
+        }
+    }
+
+    public void validateSchemasPropertiesInSchemasList(List<Schema> schemas, String model) {
+        for (Schema schema : schemas) {
+            if (schema.getProperties() != null) {
+                schema.getProperties().forEach((key, property) -> {
+                    assertNotEquals(PET_REF, ((Schema) property).get$ref());
+                });
+            }
         }
     }
 

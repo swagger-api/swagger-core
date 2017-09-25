@@ -182,7 +182,7 @@ public class SpecFilter {
 
     private Schema filterSchemaProperty(OpenAPISpecFilter filter, Schema property, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         if (property != null) {
-            Optional<Schema> filteredSchema = filter.filterSchema(property, params, cookies, headers);
+            Optional<Schema> filteredSchema = filter.filterSchemaProperty(property, params, cookies, headers);
             if (filteredSchema.isPresent()) {
                 definedSchemas.put(extractStringTypeFromSchema(filteredSchema.get()), filteredSchema.get());
                 return filteredSchema.get();
