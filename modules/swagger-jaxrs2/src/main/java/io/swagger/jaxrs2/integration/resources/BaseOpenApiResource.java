@@ -1,7 +1,7 @@
 package io.swagger.jaxrs2.integration.resources;
 
+import io.swagger.core.filter.OpenAPISpecFilter;
 import io.swagger.core.filter.SpecFilter;
-import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.oas.integration.api.OpenApiContext;
@@ -52,11 +52,10 @@ public abstract class BaseOpenApiResource {
             pretty = true;
         }
 
-
         if (oas != null) {
             if (ctx.getOpenApiConfiguration() != null && ctx.getOpenApiConfiguration().getFilterClass() != null) {
                 try {
-                    SwaggerSpecFilter filterImpl = (SwaggerSpecFilter) Class.forName(ctx.getOpenApiConfiguration().getFilterClass()).newInstance();
+                    OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) Class.forName(ctx.getOpenApiConfiguration().getFilterClass()).newInstance();
                     SpecFilter f = new SpecFilter();
                     oas = f.filter(oas, filterImpl, getQueryParams(uriInfo.getQueryParameters()), getCookies(headers),
                             getHeaders(headers));
@@ -121,7 +120,8 @@ public abstract class BaseOpenApiResource {
     public String getConfigLocation() {
         return configLocation;
     }
-    public void setConfigLocation (String configLocation) {
+
+    public void setConfigLocation(String configLocation) {
         this.configLocation = configLocation;
     }
 
@@ -135,6 +135,7 @@ public abstract class BaseOpenApiResource {
     public Set<String> getResourcePackages() {
         return resourcePackages;
     }
+
     public void setResourcePackages(Set<String> resourcePackages) {
         this.resourcePackages = resourcePackages;
     }
@@ -149,7 +150,8 @@ public abstract class BaseOpenApiResource {
     public OpenAPIConfiguration getOpenApiConfiguration() {
         return openApiConfiguration;
     }
-    public void setOpenApiConfiguration (OpenAPIConfiguration openApiConfiguration) {
+
+    public void setOpenApiConfiguration(OpenAPIConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
     }
 

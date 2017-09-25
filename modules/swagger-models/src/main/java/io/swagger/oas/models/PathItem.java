@@ -269,6 +269,36 @@ public class PathItem {
         return allOperations;
     }
 
+    public void operation(HttpMethod method, Operation operation) {
+        switch (method) {
+            case PATCH:
+                this.patch = operation;
+                break;
+            case POST:
+                this.post = operation;
+                break;
+            case PUT:
+                this.put = operation;
+                break;
+            case GET:
+                this.get = operation;
+                break;
+            case OPTIONS:
+                this.options = operation;
+                break;
+            case TRACE:
+                this.trace = operation;
+                break;
+            case HEAD:
+                this.head = operation;
+                break;
+            case DELETE:
+                this.delete = operation;
+                break;
+            default:
+        }
+    }
+
     public enum HttpMethod {
         POST,
         GET,
