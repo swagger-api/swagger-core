@@ -6,8 +6,10 @@ import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
 import org.testng.annotations.Test;
 
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.MatrixParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -49,6 +51,13 @@ public class MergedOperationTest extends AbstractAnnotationTest {
                         "        in: query\n" +
                         "        schema:\n" +
                         "          type: string\n" +
+                        "      - name: matrix\n" +
+                        "        in: matrix\n" +
+                        "        schema:\n" +
+                        "          type: string\n" +
+                        "      - in: bean\n" +
+                        "        schema:\n" +
+                        "          type: string\n" +
                         "      - name: x-authorized-by\n" +
                         "        in: header\n" +
                         "        schema:\n" +
@@ -74,6 +83,8 @@ public class MergedOperationTest extends AbstractAnnotationTest {
         @Path("/findAll")
         public SimpleResponse getSimpleResponseWithParameters(
                 @QueryParam("id") String id,
+                @MatrixParam("matrix") String matrix,
+                @BeanParam() String bean,
                 @HeaderParam("x-authorized-by") String[] auth) {
             return null;
         }
