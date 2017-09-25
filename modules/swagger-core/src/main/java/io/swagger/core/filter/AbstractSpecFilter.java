@@ -1,44 +1,50 @@
 package io.swagger.core.filter;
 
 import io.swagger.model.ApiDescription;
+import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
+import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-public abstract class AbstractSpecFilter implements SwaggerSpecFilter {
-    public boolean isOperationAllowed(
-            Operation operation,
-            ApiDescription api,
-            Map<String, List<String>> params,
-            Map<String, String> cookies,
-            Map<String, List<String>> headers) {
-        return true;
+public abstract class AbstractSpecFilter implements OpenAPISpecFilter {
+    @Override
+    public Optional<Operation> filterOperation(Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        return Optional.of(operation);
     }
 
-    public boolean isParamAllowed(
-            Parameter parameter,
-            Operation operation,
-            ApiDescription api,
-            Map<String, List<String>> params,
-            Map<String, String> cookies,
-            Map<String, List<String>> headers) {
-        return true;
+    @Override
+    public Optional<OpenAPI> filterOpenAPI(OpenAPI openAPI, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        return Optional.of(openAPI);
     }
 
-    public boolean isPropertyAllowed(
-            Schema model,
-            Schema property,
-            String propertyName,
-            Map<String, List<String>> params,
-            Map<String, String> cookies,
-            Map<String, List<String>> headers) {
-        return true;
+    @Override
+    public Optional<Parameter> filterParameter(Operation operation, Parameter parameter, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        return Optional.of(parameter);
     }
 
+    @Override
+    public Optional<PathItem> filterPathItem(PathItem pathItem, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        return Optional.of(pathItem);
+    }
+
+    @Override
+    public Optional<Schema> filterSchema(Schema schema, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        return Optional.of(schema);
+    }
+
+    @Override
+    public Optional<Schema> filterSchemaProperty(Schema property, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        return Optional.of(property);
+    }
+
+    @Override
     public boolean isRemovingUnreferencedDefinitions() {
         return false;
     }
+
 }
