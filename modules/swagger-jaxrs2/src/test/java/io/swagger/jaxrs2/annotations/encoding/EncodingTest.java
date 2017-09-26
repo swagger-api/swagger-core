@@ -49,7 +49,7 @@ public class EncodingTest extends AbstractAnnotationTest {
                               "              encoding:\n" +
                               "                test:\n" +
                               "                  contentType: text/plain\n" +
-                              "                  style: UTF-8\n" +
+                              "                  style: form\n" +
                               "                  explode: true\n" +
                               "                  allowReserved: true";
 
@@ -74,7 +74,7 @@ public class EncodingTest extends AbstractAnnotationTest {
                                                                  encoding = @Encoding(
                                                                                       name = "test",
                                                                                       contentType = "text/plain",
-                                                                                      style = "UTF-8",
+                                                                                      style = "FORM",
                                                                                       allowReserved = true,
                                                                                       explode = true)))
                    })
@@ -104,7 +104,7 @@ public class EncodingTest extends AbstractAnnotationTest {
                               "          application/json:\n" +
                               "            encoding:\n" +
                               "              testingParam:\n" +
-                              "                style: UTF-8\n" +
+                              "                style: form\n" +
                               "                allowReserved: true\n" +
                               "      responses:\n" +
                               "        200:\n" +
@@ -132,7 +132,7 @@ public class EncodingTest extends AbstractAnnotationTest {
                                                                                  name = "testingParam"),
                                                                 encoding = @Encoding(
                                                                                      name = "testingParam",
-                                                                                     style = "UTF-8",
+                                                                                     style = "FORM",
                                                                                      allowReserved = true,
                                                                                      explode = false))
 
@@ -169,14 +169,14 @@ public class EncodingTest extends AbstractAnnotationTest {
                               "          application/json:\n" +
                               "            encoding:\n" +
                               "              testEncoding:\n" +
-                              "                style: UTF-8\n" +
+                              "                style: form\n" +
                               "                allowReserved: true\n" +
                               "              testEncoding2:\n" +
                               "                headers:\n" +
                               "                  testHeader:\n" +
                               "                    required: true\n" +
                               "                    style: simple\n" +
-                              "                style: UTF-8\n" +
+                              "                style: form\n" +
                               "                allowReserved: true\n" +
                               "      responses:\n" +
                               "        200:\n" +
@@ -206,12 +206,12 @@ public class EncodingTest extends AbstractAnnotationTest {
                                                                 encoding = {
                                                                              @Encoding(
                                                                                        name = "testEncoding",
-                                                                                       style = "UTF-8",
+                                                                                       style = "FORM",
                                                                                        allowReserved = true,
                                                                                        explode = false),
                                                                              @Encoding(
                                                                                        name = "testEncoding2",
-                                                                                       style = "UTF-8",
+                                                                                       style = "FORM",
                                                                                        allowReserved = true,
                                                                                        explode = false,
                                                                                        headers = @Header(
@@ -240,7 +240,7 @@ public class EncodingTest extends AbstractAnnotationTest {
 
         String expectedYAML = "get:\n" +
                               "      summary: Simple get operation\n" +
-                              "      description: Defines a simple get operation with a requestBody and encoding of content\n" +
+                              "      description: Defines a simple get operation with encoding in requestBody\n" +
                               "      operationId: getWithEncodingInRequestBody\n" +
                               "      requestBody:\n" +
                               "        description: Test requestBody with encoding.\n" +
@@ -249,7 +249,7 @@ public class EncodingTest extends AbstractAnnotationTest {
                               "            encoding:\n" +
                               "              testRequestBody:\n" +
                               "                contentType: text/plain\n" +
-                              "                style: UTF-8\n" +
+                              "                style: form\n" +
                               "                explode: true\n" +
                               "        required: true\n" +
                               "      responses:\n" +
@@ -263,7 +263,7 @@ public class EncodingTest extends AbstractAnnotationTest {
     static class GetOperationWithEncodingInRequestBody {
         @Operation(
                    summary = "Simple get operation",
-                   description = "Defines a simple get operation with a requestBody and encoding of content",
+                   description = "Defines a simple get operation with encoding in requestBody",
                    operationId = "getWithEncodingInRequestBody",
                    requestBody = @RequestBody(
                                               description = "Test requestBody with encoding.",
@@ -275,7 +275,7 @@ public class EncodingTest extends AbstractAnnotationTest {
                                                                  encoding = @Encoding(
                                                                                       name = "testRequestBody",
                                                                                       contentType = "text/plain",
-                                                                                      style = "UTF-8",
+                                                                                      style = "FORM",
                                                                                       explode = true))),
                    responses = {
                                  @ApiResponse(

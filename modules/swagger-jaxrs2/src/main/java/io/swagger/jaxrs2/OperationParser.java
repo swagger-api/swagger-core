@@ -510,6 +510,36 @@ public class OperationParser {
         return Optional.of(headerObject);
     }
 
+    public static void addEncodingToMediaType(MediaType mediaType, io.swagger.oas.annotations.media.Encoding encoding, Components components) {
+        if (encoding == null) {
+            return;
+        }
+        if (StringUtils.isNotBlank(encoding.name())) {
+
+            Encoding encodingObject = new Encoding();
+
+            if (StringUtils.isNotBlank(encoding.contentType())) {
+                encodingObject.setContentType(encoding.contentType());
+            }
+            if (StringUtils.isNotBlank(encoding.style())) {
+                encodingObject.setStyle(StyleEnum.valueOf(encoding.style()));
+            }
+            if (encoding.explode()) {
+                encodingObject.setExplode(encoding.explode());
+            }
+            if (encoding.allowReserved()) {
+                encodingObject.setAllowReserved(encoding.allowReserved());
+            }
+
+            if (encoding.headers() != null) {
+                getHeaders(encoding.headers(), components).ifPresent(encodingObject::headers);
+            }
+
+            mediaType.addEncoding(encoding.name(), encodingObject);
+        }
+
+    }
+
     public static Optional<Schema> getSchema(io.swagger.oas.annotations.media.Content annotationContent, Components components) {
         Class<?> schemaImplementation = annotationContent.schema().implementation();
         Map<String, Schema> schemaMap;
@@ -546,36 +576,6 @@ public class OperationParser {
             }
         } else {
             content.addMediaType(MEDIA_TYPE, mediaType);
-        }
-
-    }
-
-    public static void addEncodingToMediaType(MediaType mediaType, io.swagger.oas.annotations.media.Encoding encoding, Components components) {
-        if (encoding == null) {
-            return;
-        }
-        if (StringUtils.isNotBlank(encoding.name())) {
-
-            Encoding encodingObject = new Encoding();
-
-            if (StringUtils.isNotBlank(encoding.contentType())) {
-                encodingObject.setContentType(encoding.contentType());
-            }
-            if (StringUtils.isNotBlank(encoding.style())) {
-                encodingObject.setStyle(StyleEnum.valueOf(encoding.style()));
-            }
-            if (encoding.explode()) {
-                encodingObject.setExplode(encoding.explode());
-            }
-            if (encoding.allowReserved()) {
-                encodingObject.setAllowReserved(encoding.allowReserved());
-            }
-
-            if (encoding.headers() != null) {
-                getHeaders(encoding.headers(), components).ifPresent(encodingObject::headers);
-            }
-
-            mediaType.addEncoding(encoding.name(), encodingObject);
         }
 
     }
