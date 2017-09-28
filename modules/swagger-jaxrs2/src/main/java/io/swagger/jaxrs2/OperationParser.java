@@ -15,6 +15,8 @@ import io.swagger.oas.models.info.License;
 import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.media.ArraySchema;
 import io.swagger.oas.models.media.Content;
+import io.swagger.oas.models.media.Encoding;
+import io.swagger.oas.models.media.Encoding.StyleEnum;
 import io.swagger.oas.models.media.MediaType;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
@@ -429,6 +431,10 @@ public class OperationParser {
             for (ExampleObject example : examples) {
                 ParameterProcessor.getExample(example).ifPresent(exampleObject -> mediaType.addExamples(example.name(), exampleObject));
             }
+            io.swagger.oas.annotations.media.Encoding[] encodings = annotationContent.encoding();
+            for (io.swagger.oas.annotations.media.Encoding encoding : encodings) {
+                addEncodingToMediaType(mediaType, encoding, components);
+            }
             if (StringUtils.isNotBlank(annotationContent.mediaType())) {
                 content.addMediaType(annotationContent.mediaType(), mediaType);
             } else {
@@ -502,6 +508,36 @@ public class OperationParser {
         }
 
         return Optional.of(headerObject);
+    }
+
+    public static void addEncodingToMediaType(MediaType mediaType, io.swagger.oas.annotations.media.Encoding encoding, Components components) {
+        if (encoding == null) {
+            return;
+        }
+        if (StringUtils.isNotBlank(encoding.name())) {
+
+            Encoding encodingObject = new Encoding();
+
+            if (StringUtils.isNotBlank(encoding.contentType())) {
+                encodingObject.setContentType(encoding.contentType());
+            }
+            if (StringUtils.isNotBlank(encoding.style())) {
+                encodingObject.setStyle(StyleEnum.valueOf(encoding.style()));
+            }
+            if (encoding.explode()) {
+                encodingObject.setExplode(encoding.explode());
+            }
+            if (encoding.allowReserved()) {
+                encodingObject.setAllowReserved(encoding.allowReserved());
+            }
+
+            if (encoding.headers() != null) {
+                getHeaders(encoding.headers(), components).ifPresent(encodingObject::headers);
+            }
+
+            mediaType.addEncoding(encoding.name(), encodingObject);
+        }
+
     }
 
     public static Optional<Schema> getSchema(io.swagger.oas.annotations.media.Content annotationContent, Components components) {
