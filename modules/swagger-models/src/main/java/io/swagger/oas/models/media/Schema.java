@@ -800,6 +800,9 @@ public class Schema<T> {
     }
 
     public void addExtension(String name, Object value) {
+        if (name == null || name.isEmpty() || !name.startsWith("x-")) {
+            return;
+        }
         if (this.extensions == null) {
             this.extensions = new java.util.HashMap<>();
         }
