@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-@Path("/openApi.{type:json|yaml}")
+@Path("/openapi.{type:json|yaml}")
 public class OpenApiResource extends BaseOpenApiResource {
     @Context
     ServletConfig config;
