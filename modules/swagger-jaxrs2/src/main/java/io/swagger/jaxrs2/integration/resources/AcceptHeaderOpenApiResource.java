@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-@Path("/openApi")
+@Path("/openapi")
 public class AcceptHeaderOpenApiResource extends BaseOpenApiResource {
     @Context
     ServletConfig config;
