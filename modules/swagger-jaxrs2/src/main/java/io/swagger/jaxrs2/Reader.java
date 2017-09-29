@@ -66,8 +66,7 @@ public class Reader implements OpenApiReader {
     private Paths paths;
     private Set<Tag> openApiTags;
     javax.ws.rs.Consumes classConsumes;
-    javax.ws.rs.Consumes methodConsumes;
-    
+
     javax.ws.rs.Produces classProduces;
     javax.ws.rs.Produces methodProduces;
 
@@ -525,7 +524,6 @@ public class Reader implements OpenApiReader {
         OperationParser.getTags(apiOperation.tags()).ifPresent(tag -> openApiTags.addAll(tag));
         OperationParser.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(operation::setExternalDocs);
         OperationParser.getApiResponses(apiOperation.responses(), classProduces, methodProduces, components).ifPresent(operation::setResponses);
-        OperationParser.getRequestBody(apiOperation.requestBody(), classConsumes, methodConsumes, components).ifPresent(operation::setRequestBody);
         OperationParser.getServers(apiOperation.servers()).ifPresent(operation::setServers);
         OperationParser.getParametersList(apiOperation.parameters(), classProduces, methodProduces, components).ifPresent(operation::setParameters);
     

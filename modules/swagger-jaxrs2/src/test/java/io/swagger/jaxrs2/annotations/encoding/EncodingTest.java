@@ -265,18 +265,6 @@ public class EncodingTest extends AbstractAnnotationTest {
                    summary = "Simple get operation",
                    description = "Defines a simple get operation with encoding in requestBody",
                    operationId = "getWithEncodingInRequestBody",
-                   requestBody = @RequestBody(
-                                              description = "Test requestBody with encoding.",
-                                              required = true,
-                                              content = @Content(
-                                                                 mediaType = "application/json",
-                                                                 schema = @Schema(
-                                                                                  name = "testRequestBody"),
-                                                                 encoding = @Encoding(
-                                                                                      name = "testRequestBody",
-                                                                                      contentType = "text/plain",
-                                                                                      style = "FORM",
-                                                                                      explode = true))),
                    responses = {
                                  @ApiResponse(
                                               responseCode = "200",
@@ -285,7 +273,18 @@ public class EncodingTest extends AbstractAnnotationTest {
 
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet(@RequestBody(
+                description = "Test requestBody with encoding.",
+                required = true,
+                content = @Content(
+                        mediaType = "application/json",
+                        schema = @Schema(
+                                name = "testRequestBody"),
+                        encoding = @Encoding(
+                                name = "testRequestBody",
+                                contentType = "text/plain",
+                                style = "FORM",
+                                explode = true))) String testRequestBody) {}
     }
 
     //Test an operation with ApiResponse but no Content/Encoding in it
