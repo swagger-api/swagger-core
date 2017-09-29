@@ -17,9 +17,8 @@
 package io.swagger.oas.annotations;
 
 import io.swagger.oas.annotations.extensions.Extension;
-import io.swagger.oas.annotations.extensions.ExtensionProperty;
-import io.swagger.oas.annotations.parameters.RequestBody;
 import io.swagger.oas.annotations.responses.ApiResponse;
+import io.swagger.oas.annotations.security.SecurityRequirement;
 import io.swagger.oas.annotations.servers.Server;
 
 import java.lang.annotation.ElementType;
@@ -29,74 +28,81 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Operation Annotation
- *
- * TODO: longer description
+ * Describes a single API operation on a path.
  **/
-
-
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Operation {
     /**
-     * the HTTP method for this operation
+     * The HTTP method for this operation.
+     * @return the HTTP method of this operation
      **/
     String method() default "";
 
     /**
      * Tags can be used for logical grouping of operations by resources or any other qualifier.
+     * @return the list of tags associated with this operation
      **/
-    String[] tags() default "";
+    String[] tags() default {};
 
     /**
      * Provides a brief description of this operation. Should be 120 characters or less for proper visibility in Swagger-UI.
+     * @return a summary of this operation
      **/
     String summary() default "";
 
     /**
      * A verbose description of the operation.
+     * @return a description of this operation
      **/
     String description() default "";
 
     /**
-     *
+     * Additional external documentation for this operation.
+     * @return additional documentation about this operation
      **/
     ExternalDocumentation externalDocs() default @ExternalDocumentation();
 
     /**
      * The operationId is used by third-party tools to uniquely identify this operation.
+     * @return the ID of this operation
      **/
     String operationId() default "";
 
     /**
-     * An optional array of parameters which will be added to any automatically detected parameters in the method itself
+     * An optional array of parameters which will be added to any automatically detected parameters in the method itself.
+     * @return the list of parameters for this operation
      **/
-    Parameter[] parameters() default @Parameter();
+    Parameter[] parameters() default {};
 
     /**
-     *
+     * The list of possible responses as they are returned from executing this operation.
+     * @return the list of responses for this operation
      **/
-    RequestBody requestBody() default @RequestBody();
+    ApiResponse[] responses() default {};
 
     /**
-     *
-     **/
-    ApiResponse[] responses() default @ApiResponse();
-
-    /**
-     * allows an operation to be marked as deprecated.  Alternatively use the @Deprecated annotation
+     * Allows an operation to be marked as deprecated.  Alternatively use the @Deprecated annotation
+     * @return whether or not this operation is deprecated
      **/
     boolean deprecated() default false;
 
     /**
-     *
-     **/
-    Server[] servers() default @Server();
+     * A declaration of which security mechanisms can be used for this operation.
+     * @return the array of security requirements for this Operation
+     */
+    SecurityRequirement[] security() default {};
 
     /**
+     * An alternative server array to service this operation.
+     * @return the list of servers hosting this operation
+     **/
+    Server[] servers() default {};
+
+    /**
+     * The list of optional extensions
      * @return an optional array of extensions
      */
-    Extension[] extensions() default @Extension(properties = @ExtensionProperty(name = "", value = ""));
-
+    Extension[] extensions() default {};
 }

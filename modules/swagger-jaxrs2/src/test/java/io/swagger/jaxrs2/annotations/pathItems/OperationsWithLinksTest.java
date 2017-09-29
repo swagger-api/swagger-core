@@ -3,7 +3,7 @@ package io.swagger.jaxrs2.annotations.pathItems;
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.links.Link;
-import io.swagger.oas.annotations.links.LinkParameters;
+import io.swagger.oas.annotations.links.LinkParameter;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
@@ -122,7 +122,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                                         @Link(
                                                 name = "address",
                                                 operationId = "getAddress",
-                                                parameters = @LinkParameters(
+                                                parameters = @LinkParameter(
                                                         name = "userId",
                                                         expression = "$request.query.userId"))
                                 })}
@@ -220,7 +220,6 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "                $ref: '#/components/schemas/User'\n" +
                 "          links:\n" +
                 "            user:\n" +
-                "              operationRef: '#/components/links/MyLink'\n" +
                 "              operationId: getUser\n" +
                 "              parameters:\n" +
                 "                userId: $request.query.userId\n" +
@@ -247,7 +246,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                                                 name = "user",
                                                 operationId = "getUser",
                                                 operationRef = "#/components/links/MyLink",
-                                                parameters = @LinkParameters(
+                                                parameters = @LinkParameter(
                                                         name = "userId",
                                                         expression = "$request.query.userId"))
                                 })}

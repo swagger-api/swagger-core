@@ -23,34 +23,38 @@ import java.lang.annotation.Target;
 
 
 /**
- * 
- *
- * 
+ * Configuration details for a supported OAuth Flow.
  **/
-
-
 @Target({  })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface OAuthFlow {
   /**
+   * The authorization URL to be used for this flow. This must be in the form of a URL.  Applies to oauth2 ("implicit", "authorizationCode") type.
    * 
+   * @return the authorization url
    **/
   String authorizationUrl() default "";
 
   /**
+   * The token URL to be used for this flow. This must be in the form of a URL.  Applies to oauth2 ("password", "clientCredentials", "authorizationCode") type.
    * 
+   * @return the token url
    **/
   String tokenUrl() default "";
 
   /**
+   * The URL to be used for obtaining refresh tokens. This must be in the form of a URL.  Applies to oauth2 type.
    * 
+   * @return the refresh url
    **/
   String refreshUrl() default "";
 
   /**
+   * The available scopes for the OAuth2 security scheme.  Applies to oauth2 type.
    * 
+   * @return array of scopes
    **/
-  Scopes scopes() default @Scopes;
+  OAuthScope[] scopes() default {};
 
 }

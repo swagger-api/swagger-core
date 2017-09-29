@@ -16,6 +16,7 @@
 
 package io.swagger.oas.annotations.responses;
 
+import io.swagger.oas.annotations.headers.Header;
 import io.swagger.oas.annotations.links.Link;
 import io.swagger.oas.annotations.media.Content;
 
@@ -26,35 +27,46 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- *
- *
- *
+ * Describes a single response from an API Operation, including design-time, static links to operations based on the response.
  **/
-
-
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ApiResponse {
     /**
-     *
+     * A short description of the response.
+     * 
+     * @return description of the response 
      **/
     String description() default "";
 
     /**
-     * the HTTP response code, or default, for the supplied response
+     * The HTTP response code, or 'default', for the supplied response. May only have 1 default entry. 
+     * 
+     * @return response code 
      **/
-    String responseCode() default "";
+    String responseCode() default "default";
 
     /**
-     *
+     * An array of response headers. Allows additional information to be included with response.
+     * 
+     * @return array of headers
      **/
-    Link[] links() default @Link();
+    Header[] headers() default {};
+
+    /**
+     * An array of operation links that can be followed from the response.
+     * 
+     * @return array of links
+     **/
+    Link[] links() default {};
 
     // TODO #2312 as array, according to spec
     /**
-     *
+     * An array containing descriptions of potential response payloads, for different media types.
+     * 
+     * @return array of content
      **/
-    Content content() default @Content();
+    Content[] content() default {};
 
 }

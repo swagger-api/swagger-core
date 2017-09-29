@@ -26,6 +26,7 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.responses.ApiResponses;
+import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
 import io.swagger.util.Json;
@@ -65,6 +66,7 @@ public class Reader implements OpenApiReader {
     private Paths paths;
     private Set<Tag> openApiTags;
     javax.ws.rs.Consumes classConsumes;
+
     javax.ws.rs.Produces classProduces;
     javax.ws.rs.Produces methodProduces;
 
@@ -130,10 +132,37 @@ public class Reader implements OpenApiReader {
         });
         sortedClasses.addAll(classes);
 
+        Map<Class<?>, ReaderListener> listeners = new HashMap<>();
+
+        for (Class<?> cls : sortedClasses) {
+            if (ReaderListener.class.isAssignableFrom(cls) && !listeners.containsKey(cls)) {
+                try {
+                    listeners.put(cls, (ReaderListener) cls.newInstance());
+                } catch (Exception e) {
+                    LOGGER.error("Failed to create ReaderListener", e);
+                }
+            }
+        }
+
+        for (ReaderListener listener : listeners.values()) {
+            try {
+                listener.beforeScan(this, openAPI);
+            } catch (Exception e) {
+                LOGGER.error("Unexpected error invoking beforeScan listener [" + listener.getClass().getName() + "]", e);
+            }
+        }
+
         for (Class<?> cls : sortedClasses) {
             read(cls, "");
         }
 
+        for (ReaderListener listener : listeners.values()) {
+            try {
+                listener.afterScan(this, openAPI);
+            } catch (Exception e) {
+                LOGGER.error("Unexpected error invoking afterScan listener [" + listener.getClass().getName() + "]", e);
+            }
+        }
         return openAPI;
     }
 
@@ -220,65 +249,19 @@ public class Reader implements OpenApiReader {
                     }
                     List<Parameter> operationParameters = new ArrayList<>();
                     Annotation[][] paramAnnotations = ReflectionUtils.getParameterAnnotations(method);
-                    if (annotatedMethod == null) {
+                    if (annotatedMethod == null) { // annotatedMethod not null only when method with 0-2 parameters
                         Type[] genericParameterTypes = method.getGenericParameterTypes();
                         for (int i = 0; i < genericParameterTypes.length; i++) {
                             final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
-                            operationParameters.addAll(getParameters(type, Arrays.asList(paramAnnotations[i])));
+                            List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]), operation);
+                            processParameter(parameters, operation, requestBody, operationParameters, methodConsumes, paramAnnotations[i], type);
                         }
                     } else {
                         for (int i = 0; i < annotatedMethod.getParameterCount(); i++) {
                             AnnotatedParameter param = annotatedMethod.getParameter(i);
                             final Type type = TypeFactory.defaultInstance().constructType(param.getParameterType(), cls);
-                            List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]));
-                            for (Parameter parameter : parameters) {
-                                Schema parameterSchema = parameter.getSchema();
-                                if (StringUtils.isNotBlank(parameter.getIn())) {
-                                    operationParameters.add(parameter);
-                                } else {
-                                    boolean isRequestBodyEmpty = true;
-                                    if (StringUtils.isNotBlank(parameter.get$ref())) {
-                                        requestBody.set$ref(parameter.get$ref());
-                                        isRequestBodyEmpty = false;
-                                    }
-                                    if (StringUtils.isNotBlank(parameter.getDescription())) {
-                                        requestBody.setDescription(parameter.getDescription());
-                                        isRequestBodyEmpty = false;
-                                    }
-                                    if (Boolean.TRUE.equals(parameter.getRequired())) {
-                                        requestBody.setRequired(parameter.getRequired());
-                                        isRequestBodyEmpty = false;
-                                    }
-
-                                    if (parameter.getSchema() != null) {
-                                        Content content = new Content();
-                                        if (methodConsumes != null) {
-                                            for (String value : methodConsumes.value()) {
-                                                setMediaTypeToContent(parameter.getSchema(), content, value);
-                                            }
-                                        } else if (classConsumes != null) {
-                                            for (String value : classConsumes.value()) {
-                                                setMediaTypeToContent(parameter.getSchema(), content, value);
-                                            }
-                                        } else {
-                                            setMediaTypeToContent(parameter.getSchema(), content, DEFAULT_MEDIA_TYPE_VALUE);
-                                        }
-
-                                        requestBody.setContent(content);
-                                        isRequestBodyEmpty = false;
-                                    }
-                                    if (!isRequestBodyEmpty) {
-                                        if (parameterSchema != null) {
-                                            Map<String, Schema> schemaMap = ModelConverters.getInstance().readAll(type);
-                                            schemaMap.forEach((key, schema) -> {
-                                                components.addSchemas(key, schema);
-                                            });
-                                        }
-                                        operation.setRequestBody(requestBody);
-                                    }
-
-                                }
-                            }
+                            List<Parameter> parameters = getParameters(type, Arrays.asList(paramAnnotations[i]), operation);
+                            processParameter(parameters, operation, requestBody, operationParameters, methodConsumes, paramAnnotations[i], type);
                         }
                     }
                     if (operationParameters.size() > 0) {
@@ -315,6 +298,106 @@ public class Reader implements OpenApiReader {
         return openAPI;
     }
 
+    protected void processParameter(List<Parameter> parameters, Operation operation, RequestBody requestBody,
+                                    List<Parameter> operationParameters, javax.ws.rs.Consumes methodConsumes,
+                                    Annotation[] paramAnnotations, Type type) {
+        for (Parameter parameter : parameters) {
+            Schema parameterSchema = parameter.getSchema();
+            if (StringUtils.isNotBlank(parameter.getIn())) {
+                operationParameters.add(parameter);
+            } else {
+                if (operation.getRequestBody() == null) {
+                    io.swagger.oas.annotations.parameters.RequestBody requestBodyAnnotation = getRequestBody(Arrays.asList(paramAnnotations));
+                    if (requestBodyAnnotation != null) {
+                        Optional<RequestBody> optionalRequestBody = OperationParser.getRequestBody(requestBodyAnnotation, classConsumes, methodConsumes, components);
+                        if (optionalRequestBody.isPresent()) {
+                            requestBody = optionalRequestBody.get();
+                            if (StringUtils.isBlank(requestBody.get$ref()) &&
+                                    (requestBody.getContent() == null || requestBody.getContent().isEmpty())) {
+                                if (parameter.getSchema() != null) {
+                                    Content content = new Content();
+                                    if (methodConsumes != null) {
+                                        for (String value : methodConsumes.value()) {
+                                            setMediaTypeToContent(parameter.getSchema(), content, value);
+                                        }
+                                    } else if (classConsumes != null) {
+                                        for (String value : classConsumes.value()) {
+                                            setMediaTypeToContent(parameter.getSchema(), content, value);
+                                        }
+                                    } else {
+                                        setMediaTypeToContent(parameter.getSchema(), content, DEFAULT_MEDIA_TYPE_VALUE);
+                                    }
+
+                                    requestBody.setContent(content);
+                                }
+                                if (parameter.getSchema() != null) {
+                                    Map<String, Schema> schemaMap = ModelConverters.getInstance().readAll(type);
+                                    schemaMap.forEach((key, schema) -> {
+                                        components.addSchemas(key, schema);
+                                    });
+                                }
+
+                            }
+                            operation.setRequestBody(requestBody);
+                        }
+                    } else {
+                        boolean isRequestBodyEmpty = true;
+                        if (StringUtils.isNotBlank(parameter.get$ref())) {
+                            requestBody.set$ref(parameter.get$ref());
+                            isRequestBodyEmpty = false;
+                        }
+                        if (StringUtils.isNotBlank(parameter.getDescription())) {
+                            requestBody.setDescription(parameter.getDescription());
+                            isRequestBodyEmpty = false;
+                        }
+                        if (Boolean.TRUE.equals(parameter.getRequired())) {
+                            requestBody.setRequired(parameter.getRequired());
+                            isRequestBodyEmpty = false;
+                        }
+
+                        if (parameter.getSchema() != null) {
+                            Content content = new Content();
+                            if (methodConsumes != null) {
+                                for (String value : methodConsumes.value()) {
+                                    setMediaTypeToContent(parameter.getSchema(), content, value);
+                                }
+                            } else if (classConsumes != null) {
+                                for (String value : classConsumes.value()) {
+                                    setMediaTypeToContent(parameter.getSchema(), content, value);
+                                }
+                            } else {
+                                setMediaTypeToContent(parameter.getSchema(), content, DEFAULT_MEDIA_TYPE_VALUE);
+                            }
+                            requestBody.setContent(content);
+                            isRequestBodyEmpty = false;
+                        }
+                        if (!isRequestBodyEmpty) {
+                            if (parameterSchema != null) {
+                                Map<String, Schema> schemaMap = ModelConverters.getInstance().readAll(type);
+                                schemaMap.forEach((key, schema) -> {
+                                    components.addSchemas(key, schema);
+                                });
+                            }
+                            operation.setRequestBody(requestBody);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private io.swagger.oas.annotations.parameters.RequestBody getRequestBody(List<Annotation> annotations) {
+        if (annotations == null) {
+            return null;
+        }
+        for (Annotation a : annotations) {
+            if (a instanceof io.swagger.oas.annotations.parameters.RequestBody) {
+                return (io.swagger.oas.annotations.parameters.RequestBody) a;
+            }
+        }
+        return null;
+    }
+
     private void setMediaTypeToContent(Schema schema, Content content, String value) {
         MediaType mediaTypeObject = new MediaType();
         mediaTypeObject.setSchema(schema);
@@ -339,7 +422,7 @@ public class Reader implements OpenApiReader {
             if (callbacks.size() > 0) {
                 operation.setCallbacks(callbacks);
             }
-            SecurityParser.getSecurityRequirement(apiSecurity).ifPresent(operation::setSecurity);
+            SecurityParser.getSecurityRequirements(apiSecurity).ifPresent(operation::setSecurity);
 
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
             if (StringUtils.isBlank(operation.getOperationId())) {
@@ -353,7 +436,7 @@ public class Reader implements OpenApiReader {
         if (!shouldIgnoreClass(returnType.getTypeName())) {
             // TODO #2312 also add content to existing responses (from annotation) if it is not specified in annotation
             Map<String, Schema> schemaMap = ModelConverters.getInstance().read(returnType);
-            if (schemaMap != null  && !schemaMap.values().isEmpty()) {
+            if (schemaMap != null && !schemaMap.values().isEmpty()) {
                 Schema returnTypeSchema = schemaMap.values().iterator().next();
                 if (operation.getResponses() == null) {
                     operation.responses(
@@ -361,11 +444,11 @@ public class Reader implements OpenApiReader {
                                     new ApiResponse()
                                             .content(
                                                     new Content()
-                                                        .addMediaType("*/*",
-                                                                new MediaType()
-                                                                .schema(new Schema().$ref(returnTypeSchema.getName())
-                                                        )
-                                                    )
+                                                            .addMediaType("*/*",
+                                                                    new MediaType()
+                                                                            .schema(new Schema().$ref(returnTypeSchema.getName())
+                                                                            )
+                                                            )
                                             )
                             )
                     );
@@ -467,10 +550,29 @@ public class Reader implements OpenApiReader {
         ReaderUtils.getStringListFromStringArray(apiOperation.tags()).ifPresent(operation::setTags);
         OperationParser.getTags(apiOperation.tags()).ifPresent(tag -> openApiTags.addAll(tag));
         OperationParser.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(operation::setExternalDocs);
-        OperationParser.getRequestBody(apiOperation.requestBody(), components).ifPresent(operation::setRequestBody);
         OperationParser.getApiResponses(apiOperation.responses(), classProduces, methodProduces, components).ifPresent(operation::setResponses);
         OperationParser.getServers(apiOperation.servers()).ifPresent(operation::setServers);
-        OperationParser.getParametersList(apiOperation.parameters(), components).ifPresent(operation::setParameters);
+        OperationParser.getParametersList(apiOperation.parameters(), classProduces, methodProduces, components).ifPresent(operation::setParameters);
+    
+        // security
+        List<SecurityRequirement> securityRequirements = operation.getSecurity();
+
+        // TODO logic within `if` below is only needed because we also resolve method level single @SecurityRequirement annotation, which must be merged
+        if (securityRequirements != null && securityRequirements.size() > 0) {
+            Optional<List<SecurityRequirement>> requirementsObject = SecurityParser.getSecurityRequirements(apiOperation.security());
+            if (requirementsObject.isPresent()) {
+                List<SecurityRequirement> requirements = requirementsObject.get();
+                for (SecurityRequirement secReq : requirements) {
+                    if (!securityRequirements.contains(secReq)) {
+                        securityRequirements.add(secReq);
+                    }
+                }
+                operation.setSecurity(securityRequirements);
+            }
+        } else {
+            SecurityParser.getSecurityRequirements(apiOperation.security()).ifPresent(operation::setSecurity);
+        }
+    
     }
 
     protected String getOperationId(String operationId) {
@@ -504,7 +606,7 @@ public class Reader implements OpenApiReader {
         return false;
     }
 
-    private List<Parameter> getParameters(Type type, List<Annotation> annotations) {
+    private List<Parameter> getParameters(Type type, List<Annotation> annotations, Operation operation) {
         final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
         if (!chain.hasNext()) {
             return Collections.emptyList();
@@ -535,43 +637,6 @@ public class Reader implements OpenApiReader {
                 }
             }
             return body;
-        }
-    }
-
-    private void mergeComponents(OpenAPI openAPI, boolean isComponentEmpty) {
-        Components openAPIComponent = openAPI.getComponents();
-        if (!isComponentEmpty) {
-            if (openAPIComponent != null) {
-                if (components.getCallbacks() != null) {
-                    components.getCallbacks().putAll(openAPIComponent.getCallbacks());
-                }
-                if (components.getExamples() != null) {
-                    components.getExamples().putAll(openAPIComponent.getExamples());
-                }
-                if (components.getExtensions() != null) {
-                    components.getExtensions().putAll(openAPIComponent.getExtensions());
-                }
-                if (components.getHeaders() != null) {
-                    components.getHeaders().putAll(openAPIComponent.getHeaders());
-                }
-                if (components.getLinks() != null) {
-                    components.getLinks().putAll(openAPIComponent.getLinks());
-                }
-                if (components.getParameters() != null) {
-                    components.getParameters().putAll(openAPIComponent.getParameters());
-                }
-                if (components.getRequestBodies() != null) {
-                    components.getRequestBodies().putAll(openAPIComponent.getRequestBodies());
-                }
-                if (components.getResponses() != null) {
-                    components.getResponses().putAll(openAPIComponent.getResponses());
-                }
-                if (components.getSchemas() != null) {
-                    components.getSchemas().putAll(openAPIComponent.getSchemas());
-                }
-
-            }
-            openAPI.setComponents(components);
         }
     }
 

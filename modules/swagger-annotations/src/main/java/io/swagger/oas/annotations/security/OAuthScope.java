@@ -22,17 +22,23 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 
- *
- * 
+ * Represents an OAuth scope.
  **/
-
-
 @Target({  })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface Scopes {
+public @interface OAuthScope {
+	/**
+	 * Name of the scope.
+     * 
+     * @return String name
+	 */
     String name() default "";
 
+    /**
+     * Short description of the scope.
+     * 
+     * @return String description
+     */
     String description() default "";
 }

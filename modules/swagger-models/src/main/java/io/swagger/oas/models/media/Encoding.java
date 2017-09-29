@@ -19,6 +19,7 @@ package io.swagger.oas.models.media;
 import io.swagger.oas.models.headers.Header;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Encoding
@@ -30,7 +31,7 @@ import java.util.Map;
 public class Encoding {
     private String contentType;
     private Map<String, Header> headers;
-    private String style;
+    private StyleEnum style;
     private Boolean explode;
     private Boolean allowReserved;
     private java.util.Map<String, Object> extensions = null;
@@ -82,16 +83,16 @@ public class Encoding {
         this.headers = headers;
     }
 
-    public Encoding style(String style) {
+    public Encoding style(StyleEnum style) {
         this.style = style;
         return this;
     }
 
-    public String getStyle() {
+    public StyleEnum getStyle() {
         return style;
     }
 
-    public void setStyle(String style) {
+    public void setStyle(StyleEnum style) {
         this.style = style;
     }
 
@@ -126,6 +127,9 @@ public class Encoding {
     }
 
     public void addExtension(String name, Object value) {
+        if (name == null || name.isEmpty() || !name.startsWith("x-")) {
+            return;
+        }
         if(this.extensions == null) {
             this.extensions = new java.util.HashMap<>();
         }
@@ -137,6 +141,28 @@ public class Encoding {
     }
 
     @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Encoding encoding = (Encoding) o;
+        return Objects.equals(this.contentType, encoding.contentType) &&
+            Objects.equals(this.headers, encoding.headers) &&
+            Objects.equals(this.style, encoding.style) &&
+            Objects.equals(this.explode, encoding.explode) &&
+            Objects.equals(this.extensions, encoding.extensions) &&
+            Objects.equals(this.allowReserved, encoding.allowReserved);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(contentType, headers, style, explode, allowReserved, extensions);
+    }
+
+    @Override
     public String toString() {
         return "Encoding{" +
                 "contentType='" + contentType + '\'' +
@@ -144,7 +170,7 @@ public class Encoding {
                 ", style='" + style + '\'' +
                 ", explode=" + explode +
                 ", allowReserved=" + allowReserved +
+                ", extensions=" + extensions +
                 '}';
     }
 }
-

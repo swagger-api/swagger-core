@@ -3,7 +3,7 @@ package io.swagger.jaxrs2.annotations.security;
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.oas.annotations.security.OAuthFlow;
 import io.swagger.oas.annotations.security.OAuthFlows;
-import io.swagger.oas.annotations.security.Scopes;
+import io.swagger.oas.annotations.security.OAuthScope;
 import io.swagger.oas.annotations.security.SecurityRequirement;
 import io.swagger.oas.annotations.security.SecurityScheme;
 import org.testng.annotations.Test;
@@ -19,25 +19,14 @@ public class SecurityTests extends AbstractAnnotationTest {
         String expectedYAML = "components:\n" +
                 "  securitySchemes:\n" +
                 "    myOauth2Security:\n" +
-                "      name: \"myOauth2Security\"\n" +
+                "      type: oauth2\n" +
+                "      name: myOauth2Security\n" +
+                "      in: header\n" +
                 "      flows:\n" +
                 "        implicit:\n" +
-                "          authorizationUrl: \"http://url.com/auth\"\n" +
+                "          authorizationUrl: http://url.com/auth\n" +
                 "          scopes:\n" +
-                "            name: \"write:pets\"\n" +
-                "            description: \"modify pets in your account\"\n" +
-                "        password:\n" +
-                "          scopes:\n" +
-                "            name: \"\"\n" +
-                "            description: \"\"\n" +
-                "        clientCredentials:\n" +
-                "          scopes:\n" +
-                "            name: \"\"\n" +
-                "            description: \"\"\n" +
-                "        authorizationCode:\n" +
-                "          scopes:\n" +
-                "            name: \"\"\n" +
-                "            description: \"\"";
+                "            write:pets: modify pets in your account";
         assertEquals(extractedYAML, expectedYAML);
 
     }
@@ -88,7 +77,7 @@ public class SecurityTests extends AbstractAnnotationTest {
             in = "header",
             flows = @OAuthFlows(
                     implicit = @OAuthFlow(authorizationUrl = "http://url.com/auth",
-                            scopes = @Scopes(name = "write:pets", description = "modify pets in your account"))))
+                            scopes = @OAuthScope(name = "write:pets", description = "modify pets in your account"))))
     static class OAuth2SchemeOnClass {
 
     }

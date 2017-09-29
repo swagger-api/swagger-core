@@ -69,7 +69,7 @@ public class Parameter {
     private Boolean allowReserved = null;
     private Schema schema = null;
     private Map<String, Example> examples = null;
-    private String example = null;
+    private Object example = null;
     private Content content = null;
     private java.util.Map<String, Object> extensions = null;
 
@@ -285,7 +285,7 @@ public class Parameter {
         return this;
     }
 
-    public Parameter addExamples(String key, Example examplesItem) {
+    public Parameter addExample(String key, Example examplesItem) {
         if (this.examples == null) {
             this.examples = new HashMap<String, Example>();
         }
@@ -299,15 +299,15 @@ public class Parameter {
      * @return String example
      **/
 
-    public String getExample() {
+    public Object getExample() {
         return example;
     }
 
-    public void setExample(String example) {
+    public void setExample(Object example) {
         this.example = example;
     }
 
-    public Parameter example(String example) {
+    public Parameter example(Object example) {
         this.example = example;
         return this;
     }
@@ -369,12 +369,13 @@ public class Parameter {
                 Objects.equals(this.examples, parameter.examples) &&
                 Objects.equals(this.example, parameter.example) &&
                 Objects.equals(this.content, parameter.content) &&
+                Objects.equals(this.$ref, parameter.$ref) &&
                 Objects.equals(this.extensions, parameter.extensions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, in, description, required, deprecated, allowEmptyValue, style, explode, allowReserved, schema, examples, example, content, extensions);
+        return Objects.hash(name, in, description, required, deprecated, allowEmptyValue, style, explode, allowReserved, schema, examples, example, content, $ref, extensions);
     }
 
 
@@ -383,6 +384,9 @@ public class Parameter {
     }
 
     public void addExtension(String name, Object value) {
+        if (name == null || name.isEmpty() || !name.startsWith("x-")) {
+            return;
+        }
         if (this.extensions == null) {
             this.extensions = new java.util.HashMap<>();
         }

@@ -5,6 +5,7 @@ import io.swagger.oas.models.security.OAuthFlows;
 import io.swagger.oas.models.security.Scopes;
 import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.security.SecurityScheme;
+import io.swagger.oas.annotations.security.OAuthScope;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -16,23 +17,34 @@ import java.util.Optional;
  * Created by RafaelLopez on 5/26/17.
  */
 public class SecurityParser {
-	public static final String SCOPE_NAME = "name";
-	public static final String SCOPE_DESCRIPTION = "description";
 
-	public static Optional<List<SecurityRequirement>> getSecurityRequirement(io.swagger.oas.annotations.security.SecurityRequirement securityRequirement) {
-		if (securityRequirement == null) {
+	public static Optional<List<SecurityRequirement>> getSecurityRequirements(io.swagger.oas.annotations.security.SecurityRequirement[] securityRequirementsApi) {
+		if (securityRequirementsApi == null || securityRequirementsApi.length == 0) {
 			return Optional.empty();
 		}
 		List<SecurityRequirement> securityRequirements = new ArrayList<>();
-		SecurityRequirement securityRequirementObject = new SecurityRequirement();
-		if (securityRequirement.scopes().length > 0) {
-			securityRequirementObject.addList(securityRequirement.name(), Arrays.asList(securityRequirement.scopes()));
-		} else {
-			securityRequirementObject.addList(securityRequirement.name());
+		for (io.swagger.oas.annotations.security.SecurityRequirement securityRequirementApi: securityRequirementsApi) {
+			if (StringUtils.isBlank(securityRequirementApi.name())) {
+				continue;
+			}
+			SecurityRequirement securityRequirement = new SecurityRequirement();
+			if (securityRequirementApi.scopes().length > 0) {
+				securityRequirement.addList(securityRequirementApi.name(), Arrays.asList(securityRequirementApi.scopes()));
+			} else {
+				securityRequirement.addList(securityRequirementApi.name());
+			}
+			securityRequirements.add(securityRequirement);
 		}
-		securityRequirements.add(securityRequirementObject);
-
+		if (securityRequirements.isEmpty()) {
+			return Optional.empty();
+		}
 		return Optional.of(securityRequirements);
+	}
+	public static Optional<List<SecurityRequirement>> getSecurityRequirements(io.swagger.oas.annotations.security.SecurityRequirement securityRequirementApi) {
+		if (securityRequirementApi == null) {
+			return Optional.empty();
+		}
+		return getSecurityRequirements(new io.swagger.oas.annotations.security.SecurityRequirement[] {securityRequirementApi});
 	}
 
 	public static Optional<SecurityScheme> getSecurityScheme(io.swagger.oas.annotations.security.SecurityScheme securityScheme) {
@@ -98,13 +110,15 @@ public class SecurityParser {
 		return Optional.of(oAuthFlowObject);
 	}
 
-	public static Optional<Scopes> getScopes(io.swagger.oas.annotations.security.Scopes scopes) {
+	public static Optional<Scopes> getScopes(OAuthScope[] scopes) {
 		if (isEmpty(scopes)) {
 			return Optional.empty();
 		}
 		Scopes scopesObject = new Scopes();
-		scopesObject.addString(SCOPE_NAME, scopes.name());
-		scopesObject.addString(SCOPE_DESCRIPTION, scopes.description());
+		
+		for (OAuthScope scope : scopes) {
+			scopesObject.addString(scope.name(), scope.description());
+		}
 		return Optional.of(scopesObject);
 	}
 
@@ -155,17 +169,11 @@ public class SecurityParser {
 		return true;
 	}
 
-	private static boolean isEmpty(io.swagger.oas.annotations.security.Scopes scopes) {
-		if (scopes == null) {
+	private static boolean isEmpty(OAuthScope[] scopes) {
+		if (scopes == null || scopes.length == 0) {
 			return true;
 		}
-		if (!StringUtils.isBlank(scopes.description())) {
-			return false;
-		}
-		if (!StringUtils.isBlank(scopes.name())) {
-			return false;
-		}
-		return true;
+		return false;
 	}
 
 }

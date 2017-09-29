@@ -14,7 +14,42 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import io.swagger.jackson.SchemaSerializer;
+import io.swagger.jackson.mixin.ExtensionsMixin;
+import io.swagger.oas.models.Components;
+import io.swagger.oas.models.ExternalDocumentation;
+import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.Operation;
+import io.swagger.oas.models.PathItem;
+import io.swagger.oas.models.Paths;
+import io.swagger.oas.models.callbacks.Callback;
+import io.swagger.oas.models.examples.Example;
+import io.swagger.oas.models.headers.Header;
+import io.swagger.oas.models.info.Contact;
+import io.swagger.oas.models.info.Info;
+import io.swagger.oas.models.info.License;
+import io.swagger.oas.models.links.Link;
+import io.swagger.oas.models.links.LinkParameter;
+import io.swagger.oas.models.media.Encoding;
+import io.swagger.oas.models.media.EncodingProperty;
+import io.swagger.oas.models.media.MediaType;
 import io.swagger.oas.models.media.Schema;
+import io.swagger.oas.models.media.XML;
+import io.swagger.oas.models.parameters.Parameter;
+import io.swagger.oas.models.parameters.RequestBody;
+import io.swagger.oas.models.responses.ApiResponse;
+import io.swagger.oas.models.security.OAuthFlow;
+import io.swagger.oas.models.security.OAuthFlows;
+import io.swagger.oas.models.security.Scopes;
+import io.swagger.oas.models.security.SecurityScheme;
+import io.swagger.oas.models.servers.Server;
+import io.swagger.oas.models.servers.ServerVariable;
+import io.swagger.oas.models.servers.ServerVariables;
+import io.swagger.oas.models.tags.Tag;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ObjectMapperFactory {
 
@@ -64,6 +99,41 @@ public class ObjectMapperFactory {
         Module deserializerModule = new DeserializationModule(includePathDeserializer, includeResponseDeserializer);
         mapper.registerModule(deserializerModule);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        List<Class<?>> mixinTargets = Arrays.asList(
+                ApiResponse.class,
+                Callback.class,
+                Components.class,
+                Contact.class,
+                Encoding.class,
+                EncodingProperty.class,
+                Example.class,
+                ExternalDocumentation.class,
+                Header.class,
+                Info.class,
+                License.class,
+                Link.class,
+                LinkParameter.class,
+                MediaType.class,
+                OAuthFlow.class,
+                OAuthFlows.class,
+                OpenAPI.class,
+                Operation.class,
+                Parameter.class,
+                PathItem.class,
+                Paths.class,
+                RequestBody.class,
+                Scopes.class,
+                SecurityScheme.class,
+                Server.class,
+                ServerVariable.class,
+                ServerVariables.class,
+                Tag.class,
+                XML.class,
+                Schema.class
+                );
+        mapper.setMixIns(mixinTargets.stream().collect(Collectors.toMap(Function.identity(), c -> ExtensionsMixin.class)));
+
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);

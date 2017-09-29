@@ -200,10 +200,16 @@ public class Link {
         if (parameters != null ? !parameters.equals(link.parameters) : link.parameters != null) {
             return false;
         }
+        if (requestBody != null ? !requestBody.equals(link.requestBody) : link.requestBody != null) {
+            return false;
+        }
         if (headers != null ? !headers.equals(link.headers) : link.headers != null) {
             return false;
         }
         if (description != null ? !description.equals(link.description) : link.description != null) {
+            return false;
+        }
+        if ($ref != null ? !$ref.equals(link.$ref) : link.$ref != null) {
             return false;
         }
         if (extensions != null ? !extensions.equals(link.extensions) : link.extensions != null) {
@@ -218,8 +224,10 @@ public class Link {
         int result = operationRef != null ? operationRef.hashCode() : 0;
         result = 31 * result + (operationId != null ? operationId.hashCode() : 0);
         result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
+        result = 31 * result + (requestBody != null ? requestBody.hashCode() : 0);
         result = 31 * result + (headers != null ? headers.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + ($ref != null ? $ref.hashCode() : 0);
         result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
         result = 31 * result + (server != null ? server.hashCode() : 0);
         return result;
@@ -246,6 +254,9 @@ public class Link {
     }
 
     public void addExtension(String name, Object value) {
+        if (name == null || name.isEmpty() || !name.startsWith("x-")) {
+            return;
+        }
         if (this.extensions == null) {
             this.extensions = new java.util.HashMap<>();
         }
@@ -264,6 +275,7 @@ public class Link {
         sb.append("    operationRef: ").append(toIndentedString(operationRef)).append("\n");
         sb.append("    operationId: ").append(toIndentedString(operationId)).append("\n");
         sb.append("    parameters: ").append(toIndentedString(parameters)).append("\n");
+        sb.append("    requestBody: ").append(toIndentedString(requestBody)).append("\n");
         sb.append("    headers: ").append(toIndentedString(headers)).append("\n");
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
         sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
