@@ -17,8 +17,6 @@
 package io.swagger.oas.annotations;
 
 import io.swagger.oas.annotations.extensions.Extension;
-import io.swagger.oas.annotations.extensions.ExtensionProperty;
-import io.swagger.oas.annotations.parameters.RequestBody;
 import io.swagger.oas.annotations.responses.ApiResponse;
 import io.swagger.oas.annotations.security.SecurityRequirement;
 import io.swagger.oas.annotations.servers.Server;
@@ -77,12 +75,6 @@ public @interface Operation {
      * @return the list of parameters for this operation
      **/
     Parameter[] parameters() default {};
-
-    /**
-     * The request body applicable for this operation.
-     * @return the requesty body of this operation
-     **/
-    RequestBody requestBody() default @RequestBody();
 
     /**
      * The list of possible responses as they are returned from executing this operation.

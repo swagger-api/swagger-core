@@ -66,6 +66,7 @@ public class Reader implements OpenApiReader {
     private Paths paths;
     private Set<Tag> openApiTags;
     javax.ws.rs.Consumes classConsumes;
+
     javax.ws.rs.Produces classProduces;
     javax.ws.rs.Produces methodProduces;
 
