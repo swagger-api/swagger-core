@@ -132,10 +132,37 @@ public class Reader implements OpenApiReader {
         });
         sortedClasses.addAll(classes);
 
+        Map<Class<?>, ReaderListener> listeners = new HashMap<>();
+
+        for (Class<?> cls : sortedClasses) {
+            if (ReaderListener.class.isAssignableFrom(cls) && !listeners.containsKey(cls)) {
+                try {
+                    listeners.put(cls, (ReaderListener) cls.newInstance());
+                } catch (Exception e) {
+                    LOGGER.error("Failed to create ReaderListener", e);
+                }
+            }
+        }
+
+        for (ReaderListener listener : listeners.values()) {
+            try {
+                listener.beforeScan(this, openAPI);
+            } catch (Exception e) {
+                LOGGER.error("Unexpected error invoking beforeScan listener [" + listener.getClass().getName() + "]", e);
+            }
+        }
+
         for (Class<?> cls : sortedClasses) {
             read(cls, "");
         }
 
+        for (ReaderListener listener : listeners.values()) {
+            try {
+                listener.afterScan(this, openAPI);
+            } catch (Exception e) {
+                LOGGER.error("Unexpected error invoking afterScan listener [" + listener.getClass().getName() + "]", e);
+            }
+        }
         return openAPI;
     }
 
