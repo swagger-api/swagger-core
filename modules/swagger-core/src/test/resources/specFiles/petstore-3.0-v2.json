@@ -14,8 +14,26 @@
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int64"
+                            "format": "int64",
+                            "properties": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Tag"
+                                }
+                            }
                         }
+                    }, {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "ID of user to fetch",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "includeSecretDetails",
+                        "in": "query",
+                        "description": "secret: it's a secret",
+                        "required": false,
+                        "type": "boolean"
                     }
                 ],
                 "responses": {
@@ -30,7 +48,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "#/components/schemas/Pet"
+                                    "type": "string"
                                 }
                             },
                             "application/xml": {
@@ -72,7 +90,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Pet"
+                                "$ref": "#/components/schemas/Category"
                             }
                         }
                     },
@@ -103,7 +121,7 @@
                         },
                         "application/xml": {
                             "schema": {
-                                "$ref": "#/components/schemas/Pet"
+                                "$ref": "#/components/schemas/Tag"
                             }
                         }
                     },
