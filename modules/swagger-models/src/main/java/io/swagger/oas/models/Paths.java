@@ -16,8 +16,8 @@
 
 package io.swagger.oas.models;
 
-import java.util.Objects;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 /**
  * Paths
@@ -70,6 +70,11 @@ public class Paths extends LinkedHashMap<String, PathItem> {
 
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
+  }
+
+  public Paths extensions(java.util.Map<String, Object> extensions) {
+    this.extensions = extensions;
+    return this;
   }
 
   @Override

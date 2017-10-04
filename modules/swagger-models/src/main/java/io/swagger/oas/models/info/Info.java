@@ -190,6 +190,11 @@ public class Info {
     this.extensions = extensions;
   }
 
+  public Info extensions(java.util.Map<String, Object> extensions) {
+    this.extensions = extensions;
+    return this;
+  }
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

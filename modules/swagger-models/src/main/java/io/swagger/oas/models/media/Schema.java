@@ -813,6 +813,11 @@ public class Schema<T> {
         this.extensions = extensions;
     }
 
+    public Schema<T> extensions(java.util.Map<String, Object> extensions) {
+        this.extensions = extensions;
+        return this;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

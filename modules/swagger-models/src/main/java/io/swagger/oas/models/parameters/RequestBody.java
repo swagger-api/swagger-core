@@ -107,6 +107,11 @@ public class RequestBody {
     this.extensions = extensions;
   }
 
+  public RequestBody extensions(java.util.Map<String, Object> extensions) {
+    this.extensions = extensions;
+    return this;
+  }
+
   public String get$ref() {
     return $ref;
   }

@@ -16,8 +16,8 @@
 
 package io.swagger.oas.models.security;
 
-import java.util.Objects;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 /**
  * Scopes
@@ -70,6 +70,11 @@ public class Scopes extends LinkedHashMap<String, String> {
 
   public void setExtensions(java.util.Map<String, Object> extensions) {
     this.extensions = extensions;
+  }
+
+  public Scopes extensions(java.util.Map<String, Object> extensions) {
+    this.extensions = extensions;
+    return this;
   }
 
   @Override

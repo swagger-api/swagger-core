@@ -338,6 +338,11 @@ public class Components {
     this.extensions = extensions;
   }
 
+  public Components extensions(java.util.Map<String, Object> extensions) {
+    this.extensions = extensions;
+    return this;
+  }
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

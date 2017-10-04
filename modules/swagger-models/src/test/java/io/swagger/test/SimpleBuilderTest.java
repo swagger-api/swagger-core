@@ -46,7 +46,8 @@ public class SimpleBuilderTest {
                                 .url("http://swagger.io"))
                         .addTagsItem(new Tag()
                                 .name("funky dunky")
-                                .description("all about neat things"));
+                                .description("all about neat things"))
+                        .extensions(new HashMap<String, Object>() {{ put("x-fancy-extension", "something"); }});
 
         Map<String, Schema> schemas = new HashMap<>();
 
