@@ -273,10 +273,6 @@ public class OperationParser {
             schemaObject.setTitle(schema.title());
             isEmpty = false;
         }
-        if (StringUtils.isNotBlank(schema.name())) {
-            schemaObject.setName(schema.name());
-            isEmpty = false;
-        }
         if (schema.writeOnly()) {
             schemaObject.setWriteOnly(schema.writeOnly());
             isEmpty = false;

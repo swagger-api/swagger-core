@@ -167,6 +167,8 @@ public class EncodingTest extends AbstractAnnotationTest {
                               "        required: true\n" +
                               "        content:\n" +
                               "          application/json:\n" +
+                              "            schema:\n" +
+                              "              title: testEncoding2\n" +
                               "            encoding:\n" +
                               "              testEncoding:\n" +
                               "                style: form\n" +
