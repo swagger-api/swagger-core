@@ -11,7 +11,6 @@ import io.swagger.filter.resources.NoParametersWithoutQueryInFilter;
 import io.swagger.filter.resources.NoPathItemFilter;
 import io.swagger.filter.resources.NoPetOperationsFilter;
 import io.swagger.filter.resources.NoPetRefSchemaFilter;
-import io.swagger.filter.resources.NoTagRefSchemaPropertyFilter;
 import io.swagger.filter.resources.RemoveInternalParamsFilter;
 import io.swagger.filter.resources.RemoveUnreferencedDefinitionsFilter;
 import io.swagger.filter.resources.ReplaceGetOperationsFilter;
@@ -22,7 +21,6 @@ import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
-import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.tags.Tag;
 import io.swagger.util.Json;
 import io.swagger.util.ResourceUtils;
@@ -30,9 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -172,81 +168,6 @@ public class SpecFilterTest {
         }
     }
 
-    @Test(description = "it should filter any Pet Ref in Schemas")
-    public void filterAwayPetRefInSchemas() throws IOException {
-        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
-        final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoPetRefSchemaFilter(), null, null, null);
-        validateSchemasInComponents(filtered.getComponents(), PET_MODEL);
-    }
-
-    @Test(description = "it should filter any Pet Ref in Schemas")
-    public void filterAwayTagRefInProperties() throws IOException {
-        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
-        final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoTagRefSchemaPropertyFilter(), null, null, null);
-        if (filtered.getPaths() != null) {
-            for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
-                validateSchemasPropertiesInSchemasList(extractSchemasFromOperation(entry.getValue().getPost()), TAG_MODEL);
-                validateSchemasPropertiesInSchemasList(extractSchemasFromOperation(entry.getValue().getPut()), TAG_MODEL);
-                validateSchemasPropertiesInSchemasList(extractSchemasFromOperation(entry.getValue().getPatch()), TAG_MODEL);
-                validateSchemasPropertiesInSchemasList(extractSchemasFromOperation(entry.getValue().getHead()), TAG_MODEL);
-                validateSchemasPropertiesInSchemasList(extractSchemasFromOperation(entry.getValue().getDelete()), TAG_MODEL);
-                validateSchemasPropertiesInSchemasList(extractSchemasFromOperation(entry.getValue().getOptions()), TAG_MODEL);
-            }
-        }
-    }
-
-    private List<Schema> extractSchemasFromOperation(Operation operation) {
-        List<Schema> schemas = new ArrayList<>();
-        if (operation != null) {
-            for (Parameter parameter : operation.getParameters()) {
-                Schema schema = parameter.getSchema();
-                if (schema != null) {
-                    schemas.add(schema);
-                }
-            }
-
-            RequestBody requestBody = operation.getRequestBody();
-            if (requestBody != null) {
-                requestBody.getContent().forEach((key, content) -> {
-                    Schema schema = content.getSchema();
-                    if (schema != null) {
-                        schemas.add(schema);
-                    }
-                });
-            }
-
-            operation.getResponses().forEach((key, response) -> {
-                if (response != null && response.getContent() != null) {
-                    response.getContent().forEach((contentKey, content) -> {
-                        Schema schema = content.getSchema();
-                        if (schema != null) {
-                            schemas.add(schema);
-                        }
-                    });
-                }
-            });
-        }
-        return schemas;
-    }
-
-    private void validateSchemasInComponents(Components components, String model) {
-        if (components != null) {
-            if (components.getSchemas() != null) {
-                components.getSchemas().forEach((k, v) -> assertNotEquals(model, k));
-            }
-        }
-    }
-
-    private void validateSchemasPropertiesInSchemasList(List<Schema> schemas, String model) {
-        for (Schema schema : schemas) {
-            if (schema.getProperties() != null) {
-                schema.getProperties().forEach((key, property) -> {
-                    assertNotEquals(model, ((Schema) property).get$ref());
-                });
-            }
-        }
-    }
-
     @Test(description = "it should clone everything concurrently")
     public void cloneEverythingConcurrent() throws IOException {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
@@ -332,6 +253,23 @@ public class SpecFilterTest {
         assertNotNull(filtered.getComponents().getSchemas().get("Category"));
     }
 
+
+    @Test(description = "it should filter any Pet Ref in Schemas")
+    public void filterAwayPetRefInSchemas() throws IOException {
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoPetRefSchemaFilter(), null, null, null);
+        validateSchemasInComponents(filtered.getComponents(), PET_MODEL);
+    }
+
+
+    private void validateSchemasInComponents(Components components, String model) {
+        if (components != null) {
+            if (components.getSchemas() != null) {
+                components.getSchemas().forEach((k, v) -> assertNotEquals(model, k));
+            }
+        }
+    }
+
     @Test(description = "it should filter away secret parameters")
     public void filterAwaySecretParameters() throws IOException {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
@@ -387,7 +325,7 @@ public class SpecFilterTest {
 
     }
 
-    @Test(enabled = false, description = "recursive models, e.g. A-> A or A-> B and B -> A should not result in stack overflow")
+    @Test(description = "recursive models, e.g. A-> A or A-> B and B -> A should not result in stack overflow")
     public void removeUnreferencedDefinitionsOfRecuriveModels() throws IOException {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_RECURSIVE_MODELS);
         final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
@@ -438,7 +376,7 @@ public class SpecFilterTest {
         assertEquals(getTagNames(filtered), Sets.newHashSet(PET_TAG, USER_TAG, STORE_TAG));
     }
 
-    @Test(enabled = false, description = "it should not contain user tags in the top level OpenAPI object")
+    @Test(description = "it should not contain user tags in the top level OpenAPI object")
     public void shouldNotContainTopLevelUserTags() throws IOException {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_REFERRED_SCHEMAS);
         final NoPetOperationsFilter filter = new NoPetOperationsFilter();

@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * Does nothing
- **/
 public class NoPetRefSchemaFilter extends AbstractSpecFilter {
     private static final String MODEL = "Pet";
 

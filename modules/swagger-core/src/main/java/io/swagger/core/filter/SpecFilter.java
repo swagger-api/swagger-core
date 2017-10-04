@@ -51,8 +51,8 @@ public class SpecFilter {
         clone.setServers(openAPI.getServers());
         clone.tags(filteredOpenAPI.getTags() == null ? null : new ArrayList<>(openAPI.getTags()));
 
-        final Set<String> filteredTags = new HashSet<>();
         final Set<String> allowedTags = new HashSet<>();
+        final Set<String> filteredTags = new HashSet<>();
 
         Paths clonedPaths = new Paths();
         for (String resourcePath : openAPI.getPaths().keySet()) {
@@ -75,17 +75,25 @@ public class SpecFilter {
 
                 for (PathItem.HttpMethod key : ops.keySet()) {
                     Operation op = ops.get(key);
-                    final Set<String> tags;
+                    List<String> opTagsBeforeFilter = null;
+                    if (op.getTags() != null) {
+                        opTagsBeforeFilter = new ArrayList<>(op.getTags());
+                    } else {
+                        opTagsBeforeFilter = new ArrayList<>();
+                    }
                     op = filterOperation(filter, op, resourcePath, key.toString(), params, cookies, headers);
                     clonedPathItem.operation(key, op);
-                    if (op != null) {
-                        tags = allowedTags;
-                    } else {
-                        tags = filteredTags;
+                    if (op == null) {
+                        filteredTags.addAll(opTagsBeforeFilter);
                     }
-                    if (op != null && op.getTags() != null) {
-                        tags.addAll(op.getTags());
+                    else {
+                        if (op.getTags() != null) {
+                            opTagsBeforeFilter.removeAll(op.getTags());
+                            allowedTags.addAll(op.getTags());
+                        }
+                        filteredTags.addAll(opTagsBeforeFilter);
                     }
+
                 }
                 if (!clonedPathItem.readOperations().isEmpty()) {
                     clonedPaths.addPathItem(resourcePath, clonedPathItem);
@@ -93,8 +101,10 @@ public class SpecFilter {
             }
         }
         clone.paths(clonedPaths);
-        final List<Tag> tags = clone.getTags();
+
         filteredTags.removeAll(allowedTags);
+
+        final List<Tag> tags = clone.getTags();
         if (tags != null && !filteredTags.isEmpty()) {
             for (Iterator<Tag> it = tags.iterator(); it.hasNext(); ) {
                 if (filteredTags.contains(it.next().getName())) {
@@ -105,6 +115,7 @@ public class SpecFilter {
                 clone.setTags(null);
             }
         }
+
         if (filteredOpenAPI.getComponents() != null) {
             clone.components(new Components());
             clone.getComponents().setSchemas(filterComponentsSchema(filter, filteredOpenAPI.getComponents().getSchemas(), params, cookies, headers));

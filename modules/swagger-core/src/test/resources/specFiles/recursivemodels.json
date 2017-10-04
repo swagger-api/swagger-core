@@ -15,8 +15,17 @@
                 "responses": {
                     "200": {
                         "description": "successful operation",
-                        "schema": {
-                            "$ref": "#/components/schemas/IndirectRecursiveModelA"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndirectRecursiveModelA"
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndirectRecursiveModelA"
+                                }
+                            }
                         }
                     }
                 }
@@ -32,8 +41,17 @@
                 "responses": {
                     "200": {
                         "description": "successful operation",
-                        "schema": {
-                            "$ref": "#/components/schemas/SelfReferencingModel"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SelfReferencingModel"
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SelfReferencingModel"
+                                }
+                            }
                         }
                     }
                 }
