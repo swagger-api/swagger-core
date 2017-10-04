@@ -10,10 +10,12 @@ import io.swagger.filter.resources.NoOpenAPIFilter;
 import io.swagger.filter.resources.NoParametersWithoutQueryInFilter;
 import io.swagger.filter.resources.NoPathItemFilter;
 import io.swagger.filter.resources.NoPetOperationsFilter;
+import io.swagger.filter.resources.NoPetRefSchemaFilter;
 import io.swagger.filter.resources.RemoveInternalParamsFilter;
 import io.swagger.filter.resources.RemoveUnreferencedDefinitionsFilter;
 import io.swagger.filter.resources.ReplaceGetOperationsFilter;
 import io.swagger.matchers.SerializationMatchers;
+import io.swagger.oas.models.Components;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
@@ -22,6 +24,7 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.tags.Tag;
 import io.swagger.util.Json;
 import io.swagger.util.ResourceUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -39,14 +42,21 @@ import static org.testng.Assert.fail;
 
 public class SpecFilterTest {
 
+    private static final String RESOURCE_RECURSIVE_MODELS = "specFiles/recursivemodels.json";
     private static final String RESOURCE_PATH = "specFiles/petstore-3.0-v2.json";
+    private static final String RESOURCE_REFERRED_SCHEMAS = "specFiles/petstore-3.0-referred-schemas.json";
     private static final String RESOURCE_PATH_WITHOUT_MODELS = "specFiles/petstore-3.0-v2_withoutModels.json";
+    private static final String RESOURCE_DEPRECATED_OPERATIONS = "specFiles/deprecatedoperationmodel.json";
     private static final String CHANGED_OPERATION_ID = "Changed Operation";
     private static final String CHANGED_OPERATION_DESCRIPTION = "Changing some attributes of the operation";
     private static final String NEW_OPERATION_ID = "New Operation";
     private static final String NEW_OPERATION_DESCRIPTION = "Replaced Operation";
     private static final String QUERY = "query";
-    private static final String PET_REF = "#/components/schemas/Pet";
+    private static final String PET_MODEL = "Pet";
+    private static final String TAG_MODEL = "/Tag";
+    private static final String PET_TAG = "pet";
+    private static final String STORE_TAG = "store";
+    private static final String USER_TAG = "user";
 
     @Test(description = "it should clone everything")
     public void cloneEverything() throws IOException {
@@ -185,7 +195,7 @@ public class SpecFilterTest {
         Map<String, OpenAPI> filteredMap;
         private OpenAPI openAPI;
 
-        public FailureHandler(ThreadGroup tg, Map<String, OpenAPI> filteredMap, OpenAPI openAPI) {
+        private FailureHandler(ThreadGroup tg, Map<String, OpenAPI> filteredMap, OpenAPI openAPI) {
             this.tg = tg;
             this.filteredMap = filteredMap;
             this.openAPI = openAPI;
@@ -244,20 +254,38 @@ public class SpecFilterTest {
     }
 
 
-    @Test(enabled = false, description = "it should filter away secret parameters")
-    public void filterAwaySecretParameters() throws IOException {
-        final OpenAPI openAPI = getOpenAPI("specFiles/sampleSpec.json");
-        final RemoveInternalParamsFilter filter = new RemoveInternalParamsFilter();
+    @Test(description = "it should filter any Pet Ref in Schemas")
+    public void filterAwayPetRefInSchemas() throws IOException {
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoPetRefSchemaFilter(), null, null, null);
+        validateSchemasInComponents(filtered.getComponents(), PET_MODEL);
+    }
 
+
+    private void validateSchemasInComponents(Components components, String model) {
+        if (components != null) {
+            if (components.getSchemas() != null) {
+                components.getSchemas().forEach((k, v) -> assertNotEquals(model, k));
+            }
+        }
+    }
+
+    @Test(description = "it should filter away secret parameters")
+    public void filterAwaySecretParameters() throws IOException {
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
+        final RemoveInternalParamsFilter filter = new RemoveInternalParamsFilter();
         final OpenAPI filtered = new SpecFilter().filter(openAPI, filter, null, null, null);
 
         if (filtered.getPaths() != null) {
             for (Map.Entry<String, PathItem> entry : filtered.getPaths().entrySet()) {
                 final Operation get = entry.getValue().getGet();
-                for (Parameter param : get.getParameters()) {
-                    final String description = param.getDescription();
-                    assertNotNull(description);
-                    assertFalse(description.startsWith("secret"));
+                if (get != null) {
+                    for (Parameter param : get.getParameters()) {
+                        final String description = param.getDescription();
+                        if (StringUtils.isNotBlank(description)) {
+                            assertFalse(description.startsWith("secret"));
+                        }
+                    }
                 }
             }
         } else {
@@ -265,9 +293,9 @@ public class SpecFilterTest {
         }
     }
 
-    @Test(enabled = false, description = "it should filter away internal model properties")
+    @Test(description = "it should filter away internal model properties")
     public void filterAwayInternalModelProperties() throws IOException {
-        final OpenAPI openAPI = getOpenAPI("specFiles/sampleSpec.json");
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
         final InternalModelPropertiesRemoverFilter filter = new InternalModelPropertiesRemoverFilter();
 
         final OpenAPI filtered = new SpecFilter().filter(openAPI, filter, null, null, null);
@@ -278,14 +306,14 @@ public class SpecFilterTest {
         }
     }
 
-    @Test(enabled = false, description = "it should retain non-broken reference model composed properties")
+    @Test(description = "it should retain non-broken reference model composed properties")
     public void retainNonBrokenReferenceModelComposedProperties() throws IOException {
-        final OpenAPI openAPI = getOpenAPI("specFiles/paramAndResponseRefComposed.json");
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_REFERRED_SCHEMAS);
 
         assertNotNull(openAPI.getComponents().getSchemas().get("User"));
 
-        final NoOpOperationsFilter noOpfilter = new NoOpOperationsFilter();
-        OpenAPI filtered = new SpecFilter().filter(openAPI, noOpfilter, null, null, null);
+        final NoOpOperationsFilter noOperationsFilter = new NoOpOperationsFilter();
+        OpenAPI filtered = new SpecFilter().filter(openAPI, noOperationsFilter, null, null, null);
 
         assertNotNull(filtered.getComponents().getSchemas().get("User"));
 
@@ -297,9 +325,9 @@ public class SpecFilterTest {
 
     }
 
-    @Test(enabled = false, description = "recursive models, e.g. A-> A or A-> B and B -> A should not result in stack overflow")
+    @Test(description = "recursive models, e.g. A-> A or A-> B and B -> A should not result in stack overflow")
     public void removeUnreferencedDefinitionsOfRecuriveModels() throws IOException {
-        final OpenAPI openAPI = getOpenAPI("specFiles/recursivemodels.json");
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_RECURSIVE_MODELS);
         final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
         final OpenAPI filtered = new SpecFilter().filter(openAPI, remover, null, null, null);
 
@@ -308,28 +336,28 @@ public class SpecFilterTest {
         assertNotNull(filtered.getComponents().getSchemas().get("IndirectRecursiveModelB"));
     }
 
-    @Test(enabled = false, description = "broken references should not result in NPE")
+    @Test(description = "broken references should not result in NPE")
     public void removeUnreferencedModelOverride() throws IOException {
-        final OpenAPI openAPI = getOpenAPI("specFiles/brokenrefmodel.json");
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_REFERRED_SCHEMAS);
         final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
         final OpenAPI filtered = new SpecFilter().filter(openAPI, remover, null, null, null);
 
-        assertNotNull(filtered.getComponents().getSchemas().get("RootModel"));
+        assertNotNull(filtered.getComponents().getSchemas().get("Order"));
     }
 
-    @Test(enabled = false, description = "Retain models referenced from additonalProperties")
+    @Test(description = "Retain models referenced from additonalProperties")
     public void retainModelsReferencesFromAdditionalProperties() throws IOException {
-        final OpenAPI openAPI = getOpenAPI("specFiles/additionalpropsmodel.json");
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_REFERRED_SCHEMAS);
         final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
         final OpenAPI filtered = new SpecFilter().filter(openAPI, remover, null, null, null);
 
-        assertNotNull(filtered.getComponents().getSchemas().get("A"));
-        assertNotNull(filtered.getComponents().getSchemas().get("B"));
+        assertNotNull(filtered.getComponents().getSchemas().get("Order"));
+        assertNotNull(filtered.getComponents().getSchemas().get("ReferredOrder"));
     }
 
-    @Test(enabled = false, description = "Clone should retain any 'deperecated' flags present on operations")
+    @Test(description = "Clone should retain any 'deperecated' flags present on operations")
     public void cloneRetainDeperecatedFlags() throws IOException {
-        final OpenAPI openAPI = getOpenAPI("specFiles/deprecatedoperationmodel.json");
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_DEPRECATED_OPERATIONS);
         final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
         final OpenAPI filtered = new SpecFilter().filter(openAPI, remover, null, null, null);
 
@@ -340,25 +368,26 @@ public class SpecFilterTest {
         assertEquals(deprectedFlag, Boolean.TRUE);
     }
 
-    @Test(enabled = false, description = "it should contain all tags in the top level Swagger object")
+    @Test(description = "it should contain all tags in the top level OpenAPI object")
     public void shouldContainAllTopLevelTags() throws IOException {
-        final OpenAPI openAPI = getOpenAPI("specFiles/petstore.json");
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_REFERRED_SCHEMAS);
         final NoOpOperationsFilter filter = new NoOpOperationsFilter();
         final OpenAPI filtered = new SpecFilter().filter(openAPI, filter, null, null, null);
-        assertEquals(getTagNames(filtered), Sets.newHashSet("pet", "user", "store"));
+        assertEquals(getTagNames(filtered), Sets.newHashSet(PET_TAG, USER_TAG, STORE_TAG));
     }
 
-    @Test(enabled = false, description = "it should not contain user tags in the top level Swagger object")
+    @Test(description = "it should not contain user tags in the top level OpenAPI object")
     public void shouldNotContainTopLevelUserTags() throws IOException {
-        final OpenAPI openAPI = getOpenAPI("specFiles/petstore.json");
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_REFERRED_SCHEMAS);
         final NoPetOperationsFilter filter = new NoPetOperationsFilter();
         final OpenAPI filtered = new SpecFilter().filter(openAPI, filter, null, null, null);
-        assertEquals(getTagNames(filtered), Sets.newHashSet("pet", "store"));
+        assertEquals(getTagNames(filtered), Sets.newHashSet(USER_TAG, STORE_TAG));
+
     }
 
-    @Test(enabled = false, description = "it should filter with null definitions")
+    @Test(description = "it should filter with null definitions")
     public void filterWithNullDefinitions() throws IOException {
-        final OpenAPI openAPI = getOpenAPI("specFiles/petstore.json");
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
         openAPI.getComponents().setSchemas(null);
 
         final InternalModelPropertiesRemoverFilter filter = new InternalModelPropertiesRemoverFilter();
@@ -368,8 +397,10 @@ public class SpecFilterTest {
 
     private Set getTagNames(OpenAPI openAPI) {
         Set<String> result = new HashSet<>();
-        for (Tag item : openAPI.getTags()) {
-            result.add(item.getName());
+        if (openAPI.getTags() != null) {
+            for (Tag item : openAPI.getTags()) {
+                result.add(item.getName());
+            }
         }
         return result;
     }

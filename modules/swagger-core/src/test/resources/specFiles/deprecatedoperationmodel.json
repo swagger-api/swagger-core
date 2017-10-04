@@ -1,5 +1,5 @@
 {
-  "swagger" : "2.0",
+  "openapi": "3.0.0-rc2",
   "tags" : [ {
     "name" : "Test Api"
   } ],
@@ -22,7 +22,7 @@
       }
     }
   },
-  "definitions" : {
+  "components" : {
     "EmptyModel" : {
       "type" : "object"
     }
