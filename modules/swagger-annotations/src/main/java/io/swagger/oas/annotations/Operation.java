@@ -17,9 +17,8 @@
 package io.swagger.oas.annotations;
 
 import io.swagger.oas.annotations.extensions.Extension;
-import io.swagger.oas.annotations.extensions.ExtensionProperty;
-import io.swagger.oas.annotations.parameters.RequestBody;
 import io.swagger.oas.annotations.responses.ApiResponse;
+import io.swagger.oas.annotations.security.SecurityRequirement;
 import io.swagger.oas.annotations.servers.Server;
 
 import java.lang.annotation.ElementType;
@@ -78,12 +77,6 @@ public @interface Operation {
     Parameter[] parameters() default {};
 
     /**
-     * The request body applicable for this operation.
-     * @return the requesty body of this operation
-     **/
-    RequestBody requestBody() default @RequestBody();
-
-    /**
      * The list of possible responses as they are returned from executing this operation.
      * @return the list of responses for this operation
      **/
@@ -94,6 +87,12 @@ public @interface Operation {
      * @return whether or not this operation is deprecated
      **/
     boolean deprecated() default false;
+
+    /**
+     * A declaration of which security mechanisms can be used for this operation.
+     * @return the array of security requirements for this Operation
+     */
+    SecurityRequirement[] security() default {};
 
     /**
      * An alternative server array to service this operation.

@@ -26,6 +26,7 @@ import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.parameters.RequestBody;
 import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.responses.ApiResponses;
+import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.security.SecurityScheme;
 import io.swagger.oas.models.tags.Tag;
 import io.swagger.util.Json;
@@ -65,6 +66,7 @@ public class Reader implements OpenApiReader {
     private Paths paths;
     private Set<Tag> openApiTags;
     javax.ws.rs.Consumes classConsumes;
+
     javax.ws.rs.Produces classProduces;
     javax.ws.rs.Produces methodProduces;
 
@@ -130,10 +132,37 @@ public class Reader implements OpenApiReader {
         });
         sortedClasses.addAll(classes);
 
+        Map<Class<?>, ReaderListener> listeners = new HashMap<>();
+
+        for (Class<?> cls : sortedClasses) {
+            if (ReaderListener.class.isAssignableFrom(cls) && !listeners.containsKey(cls)) {
+                try {
+                    listeners.put(cls, (ReaderListener) cls.newInstance());
+                } catch (Exception e) {
+                    LOGGER.error("Failed to create ReaderListener", e);
+                }
+            }
+        }
+
+        for (ReaderListener listener : listeners.values()) {
+            try {
+                listener.beforeScan(this, openAPI);
+            } catch (Exception e) {
+                LOGGER.error("Unexpected error invoking beforeScan listener [" + listener.getClass().getName() + "]", e);
+            }
+        }
+
         for (Class<?> cls : sortedClasses) {
             read(cls, "");
         }
 
+        for (ReaderListener listener : listeners.values()) {
+            try {
+                listener.afterScan(this, openAPI);
+            } catch (Exception e) {
+                LOGGER.error("Unexpected error invoking afterScan listener [" + listener.getClass().getName() + "]", e);
+            }
+        }
         return openAPI;
     }
 
@@ -393,7 +422,7 @@ public class Reader implements OpenApiReader {
             if (callbacks.size() > 0) {
                 operation.setCallbacks(callbacks);
             }
-            SecurityParser.getSecurityRequirement(apiSecurity).ifPresent(operation::setSecurity);
+            SecurityParser.getSecurityRequirements(apiSecurity).ifPresent(operation::setSecurity);
 
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
             if (StringUtils.isBlank(operation.getOperationId())) {
@@ -524,6 +553,26 @@ public class Reader implements OpenApiReader {
         OperationParser.getApiResponses(apiOperation.responses(), classProduces, methodProduces, components).ifPresent(operation::setResponses);
         OperationParser.getServers(apiOperation.servers()).ifPresent(operation::setServers);
         OperationParser.getParametersList(apiOperation.parameters(), classProduces, methodProduces, components).ifPresent(operation::setParameters);
+    
+        // security
+        List<SecurityRequirement> securityRequirements = operation.getSecurity();
+
+        // TODO logic within `if` below is only needed because we also resolve method level single @SecurityRequirement annotation, which must be merged
+        if (securityRequirements != null && securityRequirements.size() > 0) {
+            Optional<List<SecurityRequirement>> requirementsObject = SecurityParser.getSecurityRequirements(apiOperation.security());
+            if (requirementsObject.isPresent()) {
+                List<SecurityRequirement> requirements = requirementsObject.get();
+                for (SecurityRequirement secReq : requirements) {
+                    if (!securityRequirements.contains(secReq)) {
+                        securityRequirements.add(secReq);
+                    }
+                }
+                operation.setSecurity(securityRequirements);
+            }
+        } else {
+            SecurityParser.getSecurityRequirements(apiOperation.security()).ifPresent(operation::setSecurity);
+        }
+    
     }
 
     protected String getOperationId(String operationId) {

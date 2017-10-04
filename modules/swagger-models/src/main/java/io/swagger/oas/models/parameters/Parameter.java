@@ -69,7 +69,7 @@ public class Parameter {
     private Boolean allowReserved = null;
     private Schema schema = null;
     private Map<String, Example> examples = null;
-    private String example = null;
+    private Object example = null;
     private Content content = null;
     private java.util.Map<String, Object> extensions = null;
 
@@ -299,15 +299,15 @@ public class Parameter {
      * @return String example
      **/
 
-    public String getExample() {
+    public Object getExample() {
         return example;
     }
 
-    public void setExample(String example) {
+    public void setExample(Object example) {
         this.example = example;
     }
 
-    public Parameter example(String example) {
+    public Parameter example(Object example) {
         this.example = example;
         return this;
     }
@@ -384,6 +384,9 @@ public class Parameter {
     }
 
     public void addExtension(String name, Object value) {
+        if (name == null || name.isEmpty() || !name.startsWith("x-")) {
+            return;
+        }
         if (this.extensions == null) {
             this.extensions = new java.util.HashMap<>();
         }

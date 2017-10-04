@@ -32,7 +32,7 @@ import java.util.Objects;
 public class MediaType {
   private Schema schema = null;
   private Map<String, Example> examples = null;
-  private String example = null;
+  private Object example = null;
   private Map<String, Encoding> encoding = null;
   private java.util.Map<String, Object> extensions = null;
 
@@ -88,15 +88,15 @@ public class MediaType {
    * @return String example
    **/
 
-  public String getExample() {
+  public Object getExample() {
     return example;
   }
 
-  public void setExample(String example) {
+  public void setExample(Object example) {
     this.example = example;
   }
 
-  public MediaType example(String example) {
+  public MediaType example(Object example) {
     this.example = example;
     return this;
   }
@@ -156,6 +156,9 @@ public class MediaType {
   }
 
   public void addExtension(String name, Object value) {
+    if (name == null || name.isEmpty() || !name.startsWith("x-")) {
+      return;
+    }
     if(this.extensions == null) {
       this.extensions = new java.util.HashMap<>();
     }

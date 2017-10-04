@@ -1,5 +1,18 @@
 {
     "swagger": "2.0",
+    "x-string-value": "Hello World",
+    "x-null-value": null,
+    "x-map-value": {
+        "hello": "world",
+        "foo": "bar"
+    },
+    "x-list-value": [
+        "Hello",
+        "World"
+    ],
+    "x-number-value": 123,
+    "x-boolean-value": true,
+    "not-an-extension": "foobar",
     "paths": {
         "/health": {
             "get": {

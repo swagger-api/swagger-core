@@ -1,5 +1,6 @@
 package io.swagger.deserialization.properties;
 
+import io.swagger.util.Json;
 import io.swagger.util.TestUtils;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.media.ArraySchema;
@@ -69,8 +70,21 @@ public class JsonPropertiesDeserializationTest {
 
         OpenAPI oas = TestUtils.deserializeJsonFileFromClasspath("specFiles/propertyWithVendorExtensions.json", OpenAPI.class);
 
+        Map<String, Object> oasVendorExtensions = oas.getExtensions();
         Map<String, Object> vendorExtensions = ((Schema)oas.getComponents().getSchemas().get("Health").getProperties().get("status")).getExtensions();
 
+        assertVendorExtensions(oasVendorExtensions);
+        assertVendorExtensions(vendorExtensions);
+
+        //check for vendor extensions in array property types
+        vendorExtensions = ((Schema)oas.getComponents().getSchemas().get("Health").getProperties().get("array")).getExtensions();
+
+        String xStringValue = (String) vendorExtensions.get("x-string-value");
+        assertNotNull(xStringValue);
+        assertEquals(xStringValue, "string_value");
+    }
+
+    private void assertVendorExtensions(Map<String, Object> vendorExtensions) {
         assertNotNull(vendorExtensions);
         assertEquals(6, vendorExtensions.size());
 
@@ -101,12 +115,6 @@ public class JsonPropertiesDeserializationTest {
 
         assertFalse(vendorExtensions.containsKey("not-an-extension"));
 
-        //check for vendor extensions in array property types
-        vendorExtensions = ((Schema)oas.getComponents().getSchemas().get("Health").getProperties().get("array")).getExtensions();
-
-        xStringValue = (String) vendorExtensions.get("x-string-value");
-        assertNotNull(xStringValue);
-        assertEquals(xStringValue, "string_value");
     }
 
     @Test
