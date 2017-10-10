@@ -183,7 +183,13 @@ public class Reader implements OpenApiReader {
     public OpenAPI read(Class<?> cls, String parentPath) {
         io.swagger.oas.annotations.security.SecurityScheme apiSecurityScheme = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.security.SecurityScheme.class);
         io.swagger.oas.annotations.ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.ExternalDocumentation.class);
-        io.swagger.oas.annotations.info.Info apiInfo = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.info.Info.class);
+        // TODO process full @OpenAPIDefinition
+        io.swagger.oas.annotations.OpenAPIDefinition openAPIDefinition = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.OpenAPIDefinition.class);
+        io.swagger.oas.annotations.info.Info apiInfo = null;
+        if (openAPIDefinition != null) {
+            apiInfo = openAPIDefinition.info();
+        }
+        //io.swagger.oas.annotations.info.Info apiInfo = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.info.Info.class);
         classConsumes = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Consumes.class);
         classProduces = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Produces.class);
 
