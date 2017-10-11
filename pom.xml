@@ -436,7 +436,7 @@
         <joda-version>1.2</joda-version>
         <joda-time-version>2.7</joda-time-version>
         <snakeyaml-version>1.18</snakeyaml-version>
-        <javax.ws-version>2.0.1</javax.ws-version>
+        <javax.ws-version>2.1</javax.ws-version>
         <felix-version>2.4.0</felix-version>
         <servlet-api-version>3.1.0</servlet-api-version>
         <jersey2-version>2.26</jersey2-version>
