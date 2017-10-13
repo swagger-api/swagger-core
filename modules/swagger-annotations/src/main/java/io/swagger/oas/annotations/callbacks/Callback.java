@@ -18,6 +18,7 @@ package io.swagger.oas.annotations.callbacks;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -32,6 +33,7 @@ import io.swagger.oas.annotations.Operation;
           ElementType.PARAMETER,
           ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(Callbacks.class)
 @Inherited
 public @interface Callback {
   /**

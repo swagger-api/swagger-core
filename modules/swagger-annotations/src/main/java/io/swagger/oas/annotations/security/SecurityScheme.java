@@ -18,6 +18,7 @@ package io.swagger.oas.annotations.security;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -26,9 +27,9 @@ import java.lang.annotation.Target;
 /**
  * Defines a security scheme that can be used by the operations. Supported schemes are HTTP authentication, an API key (either as a header or as a query parameter), OAuth2's common flows (implicit, password, application and access code) as defined in RFC6749, and OpenID Connect Discovery.
  **/
-@Target({ ElementType.METHOD,
-        ElementType.TYPE })
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(SecuritySchemes.class)
 @Inherited
 public @interface SecurityScheme {
   /**

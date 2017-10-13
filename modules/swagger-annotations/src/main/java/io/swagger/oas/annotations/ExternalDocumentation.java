@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 /**
  * Allows referencing an external resource for extended documentation.
  **/
-@Target({ ElementType.FIELD })
+@Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ExternalDocumentation {
