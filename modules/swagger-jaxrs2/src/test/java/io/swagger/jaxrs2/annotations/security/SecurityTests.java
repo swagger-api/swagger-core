@@ -1,6 +1,8 @@
 package io.swagger.jaxrs2.annotations.security;
 
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
+import io.swagger.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.oas.annotations.security.OAuthFlow;
 import io.swagger.oas.annotations.security.OAuthFlows;
 import io.swagger.oas.annotations.security.OAuthScope;
@@ -67,14 +69,14 @@ public class SecurityTests extends AbstractAnnotationTest {
 
     }
 
-    @SecurityScheme(name = "apiKey", type = "apiKey", in = "header")
+    @SecurityScheme(name = "apiKey", type = SecuritySchemeType.APIKEY, in = SecuritySchemeIn.HEADER)
     static class ApiKeySchemeOnClass {
 
     }
 
     @SecurityScheme(name = "myOauth2Security",
-            type = "oauth2",
-            in = "header",
+            type = SecuritySchemeType.OAUTH2,
+            in = SecuritySchemeIn.HEADER,
             flows = @OAuthFlows(
                     implicit = @OAuthFlow(authorizationUrl = "http://url.com/auth",
                             scopes = @OAuthScope(name = "write:pets", description = "modify pets in your account"))))

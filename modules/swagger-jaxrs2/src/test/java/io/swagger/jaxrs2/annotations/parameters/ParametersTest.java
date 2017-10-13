@@ -4,6 +4,8 @@ import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
 import io.swagger.oas.annotations.enums.Explode;
+import io.swagger.oas.annotations.enums.ParameterIn;
+import io.swagger.oas.annotations.enums.ParameterStyle;
 import io.swagger.oas.annotations.media.ArraySchema;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
@@ -98,23 +100,23 @@ public class ParametersTest extends AbstractAnnotationTest {
                 description = "subscribes a client to updates relevant to the requestor's account, as " +
                         "identified by the input token.  The supplied url will be used as the delivery address for response payloads",
                 parameters = {
-                        @Parameter(in = "path", name = "subscriptionId", required = true,
-                                schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class), style = "simple"),
-                        @Parameter(in = "query", name = "formId", required = true,
+                        @Parameter(in = ParameterIn.PATH, name = "subscriptionId", required = true,
+                                schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class), style = ParameterStyle.SIMPLE),
+                        @Parameter(in = ParameterIn.QUERY, name = "formId", required = true,
                                 schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class),
                                 example = "Example"),
-                        @Parameter(in = "query", name = "explodeFalse", required = true, explode = Explode.FALSE,
+                        @Parameter(in = ParameterIn.QUERY, name = "explodeFalse", required = true, explode = Explode.FALSE,
                                 schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class)),
-                        @Parameter(in = "query", name = "explodeTrue", required = true, explode = Explode.TRUE,
+                        @Parameter(in = ParameterIn.QUERY, name = "explodeTrue", required = true, explode = Explode.TRUE,
                                 schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class)),
-                        @Parameter(in = "query", name = "explodeAvoiding", required = true, explode = Explode.TRUE,
+                        @Parameter(in = ParameterIn.QUERY, name = "explodeAvoiding", required = true, explode = Explode.TRUE,
                                 schema = @Schema(
                                         type = "int",
                                         format = "id",
                                         description = "the generated id",
                                         readOnly = true
                                 )),
-                        @Parameter(in = "query", name = "arrayParameter", required = true, explode = Explode.TRUE,
+                        @Parameter(in = ParameterIn.QUERY, name = "arrayParameter", required = true, explode = Explode.TRUE,
                                 array = @ArraySchema(maxItems = 10, minItems = 1,
                                         schema = @Schema(implementation = ParametersTest.SubscriptionResponse.class),
                                         uniqueItems = true

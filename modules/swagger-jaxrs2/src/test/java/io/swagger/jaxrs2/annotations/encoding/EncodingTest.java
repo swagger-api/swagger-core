@@ -16,6 +16,7 @@ import static org.testng.Assert.assertEquals;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
+import io.swagger.oas.annotations.enums.ParameterIn;
 import org.testng.annotations.Test;
 
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
@@ -123,7 +124,7 @@ public class EncodingTest extends AbstractAnnotationTest {
                    parameters = {
                                   @Parameter(
                                              name = "testParam",
-                                             in = "query",
+                                             in = ParameterIn.QUERY,
                                              description = "A parameter for testing encoding annotation.",
                                              required = true,
                                              content = @Content(
@@ -197,7 +198,7 @@ public class EncodingTest extends AbstractAnnotationTest {
                    parameters = {
                                   @Parameter(
                                              name = "testParam",
-                                             in = "query",
+                                             in = ParameterIn.QUERY,
                                              description = "A parameter for testing encoding annotation.",
                                              required = true,
                                              content = @Content(

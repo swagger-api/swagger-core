@@ -6,6 +6,7 @@ import io.swagger.jaxrs2.resources.SimpleUserResource;
 import io.swagger.jaxrs2.resources.UserResource;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
+import io.swagger.oas.annotations.enums.ParameterIn;
 import io.swagger.oas.annotations.headers.Header;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.ExampleObject;
@@ -283,7 +284,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         )
         @GET
         @Path("/path")
-        public void simpleGet(@Parameter(in = "query", example = "{\"id\": 19877734}") String exParam) {
+        public void simpleGet(@Parameter(in = ParameterIn.QUERY, example = "{\"id\": 19877734}") String exParam) {
         }
     }
 

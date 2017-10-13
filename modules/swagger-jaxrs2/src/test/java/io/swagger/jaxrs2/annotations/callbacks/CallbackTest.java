@@ -4,6 +4,7 @@ import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
 import io.swagger.oas.annotations.callbacks.Callback;
+import io.swagger.oas.annotations.enums.ParameterIn;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
@@ -104,7 +105,7 @@ public class CallbackTest extends AbstractAnnotationTest {
                         method = "post",
                         description = "payload data will be sent",
                         parameters = {
-                                @Parameter(in = "path", name = "subscriptionId", required = true,
+                                @Parameter(in = ParameterIn.PATH, name = "subscriptionId", required = true,
                                         schema = @Schema(
                                                 type = "string",
                                                 format = "uuid",
