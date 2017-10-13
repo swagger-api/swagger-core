@@ -321,7 +321,7 @@ public class CallbackTest extends AbstractAnnotationTest {
     }
 
     @Test
-    public void CallbackCallbacksAnnotationTest() {
+    public void callbackCallbacksAnnotationTest() {
         String openApiYAML = readIntoYaml(CallbackCallbacksAnnotationTest.class);
         int start = openApiYAML.indexOf("get:");
         int end = openApiYAML.length() - 1;
@@ -355,6 +355,41 @@ public class CallbackTest extends AbstractAnnotationTest {
         assertEquals(expectedYAML, extractedYAML);
     }
 
+    @Test
+    public void repeatableCallbackCallbacksAnnotationTest() {
+        String openApiYAML = readIntoYaml(RepeatableCallbackAnnotationTest.class);
+        int start = openApiYAML.indexOf("get:");
+        int end = openApiYAML.length() - 1;
+
+        String expectedYAML = "get:\n" +
+                "      summary: Simple get operation\n" +
+                "      operationId: getWithNoParameters\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "      callbacks:\n" +
+                "        testCallback:\n" +
+                "          http://$requests.query.url: {}\n" +
+                "        testCallback1:\n" +
+                "          http://www.url.com:\n" +
+                "            get:\n" +
+                "              summary: get all the reviews\n" +
+                "              operationId: getAllReviews\n" +
+                "              responses:\n" +
+                "                200:\n" +
+                "                  description: successful operation\n" +
+                "                  content:\n" +
+                "                    application/json:\n" +
+                "                      schema:\n" +
+                "                        type: integer\n" +
+                "                        format: int32\n" +
+                "        testCallback2:\n" +
+                "          http://$request.query.url: {}";
+        String extractedYAML = openApiYAML.substring(start, end);
+
+        assertEquals(expectedYAML, extractedYAML);
+    }
+
     static class CallbackCallbacksAnnotationTest {
         @Callback(name = "testCallback", operation = @Operation(), callbackUrlExpression = "http://$requests.query.url")
         @Callbacks({
@@ -383,6 +418,37 @@ public class CallbackTest extends AbstractAnnotationTest {
                                               responseCode = "200",
                                               description = "voila!")
                    })
+        @GET
+        @Path("/path")
+        public void simpleGet() {}
+    }
+
+    static class RepeatableCallbackAnnotationTest {
+        @Callback(name = "testCallback", operation = @Operation(), callbackUrlExpression = "http://$requests.query.url")
+        @Callback(
+                name = "testCallback1",
+                operation = @Operation(
+                        operationId = "getAllReviews",
+                        summary = "get all the reviews",
+                        method = "get",
+                        responses = @ApiResponse(
+                                responseCode = "200",
+                                description = "successful operation",
+                                content = @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(
+                                                type = "integer",
+                                                format = "int32")))),
+                callbackUrlExpression = "http://www.url.com")
+        @Callback(name = "testCallback2", operation = @Operation(), callbackUrlExpression = "http://$request.query.url")
+        @Operation(
+                summary = "Simple get operation",
+                operationId = "getWithNoParameters",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!")
+                })
         @GET
         @Path("/path")
         public void simpleGet() {}

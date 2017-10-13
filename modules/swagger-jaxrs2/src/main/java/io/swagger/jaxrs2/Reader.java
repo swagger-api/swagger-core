@@ -418,17 +418,16 @@ public class Reader implements OpenApiReader {
     private Operation parseMethod(Class<?> cls, Method method) {
         Operation operation = new Operation();
         io.swagger.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.Operation.class);
-        io.swagger.oas.annotations.callbacks.Callback apiCallback = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.callbacks.Callback.class);
         io.swagger.oas.annotations.security.SecurityRequirement apiSecurity = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.security.SecurityRequirement.class);
-        io.swagger.oas.annotations.callbacks.Callbacks apiCallbacks = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.callbacks.Callbacks.class);
-        
+
+        List<io.swagger.oas.annotations.callbacks.Callback> apiCallbacks = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.oas.annotations.callbacks.Callback.class);
+
         if (apiOperation != null) {
 
-            Map<String, Callback> callbacks = getCallbacks(apiCallback);
+            Map<String, Callback> callbacks = new LinkedHashMap<>();
 
             if (apiCallbacks != null) {
-                io.swagger.oas.annotations.callbacks.Callback[] containerCallbacks = apiCallbacks.value();
-                for (io.swagger.oas.annotations.callbacks.Callback methodCallback : containerCallbacks) {
+                for (io.swagger.oas.annotations.callbacks.Callback methodCallback : apiCallbacks) {
                     Map<String, Callback> currentCallbacks = getCallbacks(methodCallback);
                     callbacks.putAll(currentCallbacks);
                 }
