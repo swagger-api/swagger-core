@@ -420,11 +420,19 @@ public class Reader implements OpenApiReader {
         io.swagger.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.Operation.class);
         io.swagger.oas.annotations.callbacks.Callback apiCallback = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.callbacks.Callback.class);
         io.swagger.oas.annotations.security.SecurityRequirement apiSecurity = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.security.SecurityRequirement.class);
-
+        io.swagger.oas.annotations.callbacks.Callbacks apiCallbacks = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.callbacks.Callbacks.class);
+        
         if (apiOperation != null) {
 
             Map<String, Callback> callbacks = getCallbacks(apiCallback);
 
+            if (apiCallbacks != null) {
+                io.swagger.oas.annotations.callbacks.Callback[] containerCallbacks = apiCallbacks.value();
+                for (io.swagger.oas.annotations.callbacks.Callback methodCallback : containerCallbacks) {
+                    Map<String, Callback> currentCallbacks = getCallbacks(methodCallback);
+                    callbacks.putAll(currentCallbacks);
+                }
+            }
             if (callbacks.size() > 0) {
                 operation.setCallbacks(callbacks);
             }
