@@ -122,7 +122,7 @@ public enum PrimitiveType {
     OBJECT(Object.class) {
         @Override
         public Schema createProperty() {
-            return new Schema();
+            return new Schema().type("object");
         }
     };
 
