@@ -4,6 +4,8 @@ import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.jaxrs2.resources.model.User;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
+import io.swagger.oas.annotations.enums.ParameterIn;
+import io.swagger.oas.annotations.enums.ParameterStyle;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.annotations.media.Schema;
@@ -102,9 +104,9 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 description = "subscribes a client to updates relevant to the requestor's account, as " +
                         "identified by the input token.  The supplied url will be used as the delivery address for response payloads",
                 parameters = {
-                        @Parameter(in = "path", name = "subscriptionId", required = true,
+                        @Parameter(in = ParameterIn.PATH, name = "subscriptionId", required = true,
                                 schema = @Schema(implementation = ExamplesTest.SubscriptionResponse.class),
-                                style = "simple", example = "example",
+                                style = ParameterStyle.SIMPLE, example = "example",
                                 examples = {
                                         @ExampleObject(name = "subscriptionId_1", value = "12345",
                                                 summary = "Subscription number 12345", externalValue = "Subscription external value 1"),

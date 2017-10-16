@@ -85,8 +85,8 @@ public class OperationParser {
             parameterObject.setName(parameter.name());
             isEmpty = false;
         }
-        if (StringUtils.isNotBlank(parameter.in())) {
-            parameterObject.setIn(parameter.in());
+        if (StringUtils.isNotBlank(parameter.in().toString())) {
+            parameterObject.setIn(parameter.in().toString());
             isEmpty = false;
         }
         if (StringUtils.isNotBlank(parameter.example())) {

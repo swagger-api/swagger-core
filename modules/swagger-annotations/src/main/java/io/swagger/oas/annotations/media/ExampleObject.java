@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 /**
  * This object illustrates an example of a particular content
  **/
-@Target({ ElementType.METHOD })
+@Target({ ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ExampleObject {

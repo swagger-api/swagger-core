@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 /**
  * This object provides schema and examples for a particular media type.
  **/
-@Target({ ElementType.FIELD })
+@Target({ ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Content {

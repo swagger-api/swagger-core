@@ -53,11 +53,11 @@ public class SecurityParser {
 		}
 		SecurityScheme securitySchemeObject = new SecurityScheme();
 
-		if (StringUtils.isNotBlank(securityScheme.in())) {
-			securitySchemeObject.setIn(getIn(securityScheme.in()));
+		if (StringUtils.isNotBlank(securityScheme.in().toString())) {
+			securitySchemeObject.setIn(getIn(securityScheme.in().toString()));
 		}
-		if (StringUtils.isNotBlank(securityScheme.type())) {
-			securitySchemeObject.setType(getType(securityScheme.type()));
+		if (StringUtils.isNotBlank(securityScheme.type().toString())) {
+			securitySchemeObject.setType(getType(securityScheme.type().toString()));
 		}
 
 		if (StringUtils.isNotBlank(securityScheme.openIdConnectUrl())) {

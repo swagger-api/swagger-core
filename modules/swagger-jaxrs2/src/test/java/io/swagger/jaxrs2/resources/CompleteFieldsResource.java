@@ -3,6 +3,7 @@ package io.swagger.jaxrs2.resources;
 import io.swagger.oas.annotations.ExternalDocumentation;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
+import io.swagger.oas.annotations.enums.ParameterIn;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.parameters.RequestBody;
@@ -29,7 +30,7 @@ public class CompleteFieldsResource {
                     url = "http://url.com"
             ),
             parameters = {
-                    @Parameter(in = "path", name = "subscriptionId",
+                    @Parameter(in = ParameterIn.PATH, name = "subscriptionId",
                             required = true, description = "parameter description",
                             allowEmptyValue = true, allowReserved = true,
                             schema = @Schema(

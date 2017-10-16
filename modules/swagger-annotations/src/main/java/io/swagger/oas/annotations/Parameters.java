@@ -13,42 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.swagger.oas.annotations;
 
-package io.swagger.oas.annotations.tags;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import io.swagger.oas.annotations.ExternalDocumentation;
-
-@Target({ ElementType.TYPE,  ElementType.METHOD })
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(Tags.class)
 @Inherited
-public @interface Tag {
-
+public @interface Parameters {
     /**
-     * The name of this tag.
+     * An array of Parameters Objects for the operation
      *
-     * @return the name of this tag
+     * @return the parameters
      */
-    String name();
-
-    /**
-     * A short description for this tag.
-     *
-     * @return the description of this tag
-     */
-    String description() default "";
-
-    /**
-     * Additional external documentation for this tag.
-     *
-     * @return the external documentation for this tag
-     */
-    ExternalDocumentation externalDocs() default @ExternalDocumentation();
+    Parameter[] value() default {};
 }

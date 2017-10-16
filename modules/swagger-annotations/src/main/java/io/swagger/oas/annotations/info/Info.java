@@ -26,8 +26,7 @@ import java.lang.annotation.Target;
 /**
  * This annotation provides metadata about the API, and maps to the Info object in OpenAPI Specification 3.
  **/
-@Target({ ElementType.METHOD,
-          ElementType.TYPE })
+@Target({ ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Info {
@@ -35,7 +34,7 @@ public @interface Info {
    * The title of the application.
    * @return the application's title
    **/
-  String title();
+  String title() default "";
 
   /**
    * A short description of the application. CommonMark syntax can be used for rich text representation.
@@ -65,6 +64,6 @@ public @interface Info {
    * The version of the API definition.
    * @return the application's version
    **/
-  String version();
+  String version() default "";
 
 }

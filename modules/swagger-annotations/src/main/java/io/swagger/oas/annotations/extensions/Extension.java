@@ -1,6 +1,7 @@
 package io.swagger.oas.annotations.extensions;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -9,8 +10,12 @@ import java.lang.annotation.Target;
  * An optionally named list of extension properties.
  *
  */
-@Target(ElementType.ANNOTATION_TYPE)
+@Target({ ElementType.FIELD,
+        ElementType.METHOD,
+        ElementType.PARAMETER,
+        ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(Extensions.class)
 public @interface Extension {
 
     /**

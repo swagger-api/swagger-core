@@ -14,41 +14,26 @@
  * limitations under the License.
  */
 
-package io.swagger.oas.annotations.tags;
+package io.swagger.oas.annotations.callbacks;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import io.swagger.oas.annotations.ExternalDocumentation;
-
-@Target({ ElementType.TYPE,  ElementType.METHOD })
+/**
+ * This object represents an array of Callback URLs that can be invoked.
+ **/
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(Tags.class)
 @Inherited
-public @interface Tag {
-
+public @interface Callbacks {
     /**
-     * The name of this tag.
+     * An array of Callback annotations which are a map of possible out-of band callbacks related to the parent operation
      *
-     * @return the name of this tag
-     */
-    String name();
+     * @return the array of the callbacks
+     **/
+    Callback[] value() default {};
 
-    /**
-     * A short description for this tag.
-     *
-     * @return the description of this tag
-     */
-    String description() default "";
-
-    /**
-     * Additional external documentation for this tag.
-     *
-     * @return the external documentation for this tag
-     */
-    ExternalDocumentation externalDocs() default @ExternalDocumentation();
 }

@@ -249,6 +249,69 @@ public class ReflectionUtils {
         return annotation;
     }
 
+    /**
+     * Returns a List of repeatable annotations by type from a method.
+     *
+     * @param method          is the method to find
+     * @param annotationClass is the type of annotation
+     * @param <A>             is the type of annotation
+     * @return List of repeatable annotations if it is found
+     */
+    public static <A extends Annotation> List<A> getRepeatableAnnotations(Method method, Class<A> annotationClass) {
+        A[] annotations = method.getAnnotationsByType(annotationClass);
+        if (annotations == null || annotations.length == 0) {
+            for (Annotation metaAnnotation : method.getAnnotations()) {
+                annotations = metaAnnotation.annotationType().getAnnotationsByType(annotationClass);
+                if (annotations != null && annotations.length > 0) {
+                    return Arrays.asList(annotations);
+                }
+            }
+            Method superclassMethod = getOverriddenMethod(method);
+            if (superclassMethod != null) {
+                return getRepeatableAnnotations(superclassMethod, annotationClass);
+            }
+        }
+        if (annotations == null) {
+            return null;
+        }
+        return Arrays.asList(annotations);
+    }
+
+    public static <A extends Annotation> List<A> getRepeatableAnnotations(Class<?> cls, Class<A> annotationClass) {
+        A[] annotations = cls.getAnnotationsByType(annotationClass);
+        List<A> result = new ArrayList<>();
+        if (annotations == null || annotations.length == 0) {
+            for (Annotation metaAnnotation : cls.getAnnotations()) {
+                annotations = metaAnnotation.annotationType().getAnnotationsByType(annotationClass);
+                if (annotations != null && annotations.length > 0) {
+                    return Arrays.asList(annotations);
+                }
+            }
+            Class<?> superClass = cls.getSuperclass();
+            if (superClass != null && !(superClass.equals(Object.class))) {
+                result = getRepeatableAnnotations(superClass, annotationClass);
+            }
+        }
+        if (result == null) {
+            for (Class<?> anInterface : cls.getInterfaces()) {
+                for (Annotation metaAnnotation : anInterface.getAnnotations()) {
+                    annotations = metaAnnotation.annotationType().getAnnotationsByType(annotationClass);
+                    if (annotations != null && annotations.length > 0) {
+                        return Arrays.asList(annotations);
+                    }
+                }
+                result = getRepeatableAnnotations(anInterface, annotationClass);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        if (annotations == null) {
+            return null;
+        }
+        return Arrays.asList(annotations);
+    }
+
     public static Annotation[][] getParameterAnnotations(Method method) {
         Annotation[][] methodAnnotations = method.getParameterAnnotations();
         Method overriddenmethod = getOverriddenMethod(method);

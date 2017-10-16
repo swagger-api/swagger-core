@@ -22,21 +22,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ ElementType.TYPE })
+@Target({ ElementType.TYPE,  ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Tags {
     /**
-     * An array of Tag names
-     *
-     * @return an array of Tag names
-     */
-    String[] value() default {};
-
-    /**
      * An array of Tag annotation objects which hold metadata for the API
      *
-     * @return an array of Tags
+     * @return rray of Tags
      */
-    Tag[] tags() default {};
+    Tag[] value() default {};
+
 }

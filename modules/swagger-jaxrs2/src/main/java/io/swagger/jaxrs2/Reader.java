@@ -183,7 +183,13 @@ public class Reader implements OpenApiReader {
     public OpenAPI read(Class<?> cls, String parentPath) {
         io.swagger.oas.annotations.security.SecurityScheme apiSecurityScheme = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.security.SecurityScheme.class);
         io.swagger.oas.annotations.ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.ExternalDocumentation.class);
-        io.swagger.oas.annotations.info.Info apiInfo = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.info.Info.class);
+        // TODO process full @OpenAPIDefinition
+        io.swagger.oas.annotations.OpenAPIDefinition openAPIDefinition = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.OpenAPIDefinition.class);
+        io.swagger.oas.annotations.info.Info apiInfo = null;
+        if (openAPIDefinition != null) {
+            apiInfo = openAPIDefinition.info();
+        }
+        //io.swagger.oas.annotations.info.Info apiInfo = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.info.Info.class);
         classConsumes = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Consumes.class);
         classProduces = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Produces.class);
 
@@ -412,13 +418,20 @@ public class Reader implements OpenApiReader {
     private Operation parseMethod(Class<?> cls, Method method) {
         Operation operation = new Operation();
         io.swagger.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.Operation.class);
-        io.swagger.oas.annotations.callbacks.Callback apiCallback = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.callbacks.Callback.class);
         io.swagger.oas.annotations.security.SecurityRequirement apiSecurity = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.security.SecurityRequirement.class);
+
+        List<io.swagger.oas.annotations.callbacks.Callback> apiCallbacks = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.oas.annotations.callbacks.Callback.class);
 
         if (apiOperation != null) {
 
-            Map<String, Callback> callbacks = getCallbacks(apiCallback);
+            Map<String, Callback> callbacks = new LinkedHashMap<>();
 
+            if (apiCallbacks != null) {
+                for (io.swagger.oas.annotations.callbacks.Callback methodCallback : apiCallbacks) {
+                    Map<String, Callback> currentCallbacks = getCallbacks(methodCallback);
+                    callbacks.putAll(currentCallbacks);
+                }
+            }
             if (callbacks.size() > 0) {
                 operation.setCallbacks(callbacks);
             }

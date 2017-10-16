@@ -64,8 +64,8 @@ public class ParameterProcessor {
                 if (StringUtils.isNotBlank(p.name())) {
                     parameter.setName(p.name());
                 }
-                if (StringUtils.isNotBlank(p.in())) {
-                    parameter.setIn(p.in());
+                if (StringUtils.isNotBlank(p.in().toString())) {
+                    parameter.setIn(p.in().toString());
                 }
                 if (StringUtils.isNotBlank(p.example())) {
                     try {
@@ -237,8 +237,8 @@ public class ParameterProcessor {
     }
 
     public static void setParameterStyle(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
-        if (StringUtils.isNotBlank(p.style())) {
-            parameter.setStyle(Parameter.StyleEnum.valueOf(p.style().toUpperCase()));
+        if (StringUtils.isNotBlank(p.style().toString())) {
+            parameter.setStyle(Parameter.StyleEnum.valueOf(p.style().toString().toUpperCase()));
         }
     }
 
