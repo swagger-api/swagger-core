@@ -49,8 +49,8 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 
     @Override
     public void defineModel(String name, Schema model, Type type, String prevName) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("defineModel %s %s", name, model));
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace(String.format("defineModel %s %s", name, model));
         }
         modelByName.put(name, model);
 

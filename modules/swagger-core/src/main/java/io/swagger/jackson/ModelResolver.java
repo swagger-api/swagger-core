@@ -284,7 +284,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          */
         Schema resolvedModel = context.resolve(type.getRawClass());
         if (resolvedModel != null) {
-            return resolvedModel;
+            if(name.equals(resolvedModel.getName())) {
+                return resolvedModel;
+            }
         }
         // uses raw class, as it does not consider super class while handling schema annotation for composed model props
         List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass());
