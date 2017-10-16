@@ -25,14 +25,18 @@ import io.swagger.oas.models.responses.ApiResponse;
 import io.swagger.oas.models.responses.ApiResponses;
 import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.security.SecurityScheme;
+
 import org.testng.annotations.Test;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -312,4 +316,49 @@ public class ReaderTest {
         }
         return false;
     }
+
+    @Test
+    public void testClassWithGenericType() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(ClassWithGenericType.class);
+        assertNotNull(openAPI);
+
+        assertNotNull(openAPI.getComponents().getSchemas().get("IssueTemplateRet"));
+        assertNotNull(openAPI.getComponents().getSchemas().get("B"));
+        assertNotNull(openAPI.getComponents().getSchemas().get("B").getProperties().get("test"));
+        assertEquals(((Schema)openAPI.getComponents().getSchemas().get("B").getProperties().get("test")).get$ref(), "#/components/schemas/IssueTemplateRet");
+
+        //Yaml.prettyPrint(openAPI);
+    }
+
+
+    public static class A{
+        public B b;
+    }
+    public static class IssueTemplate<T>{
+
+        public T getTemplateTest(){return null;}
+        public String getTemplateTestString(){return null;}
+    }
+    public static class B{
+        public IssueTemplate<Ret> getTest(){return null;}
+    }
+
+    public static class Ret{
+        public String c;
+
+    }
+
+
+    static class ClassWithGenericType {
+        @Path("/test")
+        @Produces("application/json")
+        @Consumes("application/json")
+        @GET
+        @io.swagger.oas.annotations.Operation(tags="/receiver/rest")
+        //public void test1(@QueryParam("aa") String a) {
+        public void test1(A a) {
+        }
+    }
+
 }
