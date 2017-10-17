@@ -38,6 +38,7 @@ import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.media.StringSchema;
 import io.swagger.oas.models.media.UUIDSchema;
 import io.swagger.oas.models.media.XML;
+import io.swagger.util.Json;
 import io.swagger.util.PrimitiveType;
 import io.swagger.util.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +55,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -402,6 +404,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             Boolean allowEmptyValue = null;
             String minimum = null, maximum = null;
             boolean exclusiveMinimum = false, exclusiveMaximum = false;
+            Object example = null;
 
             if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore)) {
                 List<Annotation> annotationList = new ArrayList<Annotation>();
@@ -441,6 +444,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     }
                     if(mp.exclusiveMaximum()) {
                         exclusiveMaximum = true;
+                    }
+                    if (!mp.example().isEmpty()) {
+                        try {
+                            example = Json.mapper().readTree(mp.example());
+                        } catch (IOException e) {
+                            example = mp.example();
+                        }
                     }
                 }
 
@@ -510,7 +520,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             property.setDescription(description);
                         }
 
-                        Integer index = _intr.findPropertyIndex(member);
                         String _defaultValue = _findDefaultValue(member);
                         property.setDefault(_defaultValue);
                         if(minimum != null) {

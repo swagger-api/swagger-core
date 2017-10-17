@@ -12,8 +12,10 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.oas.models.media.Schema;
+import io.swagger.util.Json;
 
 import javax.xml.bind.annotation.XmlElement;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.Map;
@@ -109,12 +111,16 @@ public abstract class AbstractModelConverter implements ModelConverter {
         return null;
     }
 
-    protected String _findExampleValue(Annotated a) {
+    protected Object _findExampleValue(Annotated a) {
 
         io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
         if (schema != null) {
             if (!schema.example().isEmpty()) {
-                return schema.example();
+                try {
+                    return Json.mapper().readTree(schema.example());
+                } catch (IOException e) {
+                    return schema.example();
+                }
             }
         }
 

@@ -210,7 +210,11 @@ public class OperationParser {
             isEmpty = false;
         }
         if (StringUtils.isNotBlank(schema.example())) {
-            schemaObject.setExample(schema.example());
+            try {
+                schemaObject.setExample(Json.mapper().readTree(schema.example()));
+            } catch (IOException e) {
+                schemaObject.setExample(schema.example());
+            }
             isEmpty = false;
         }
         if (StringUtils.isNotBlank(schema.format())) {
