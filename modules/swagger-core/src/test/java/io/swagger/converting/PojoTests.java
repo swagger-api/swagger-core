@@ -106,8 +106,7 @@ public class PojoTests {
         }
     }
 
-    // TODO #2312 resolved doesn' handle this at the moment
-    @Test(enabled = false, description = "The @Schema annotation will override the type of the actual parameter")
+    @Test(description = "The @Schema annotation will override the type of the actual parameter")
     public void testModelWithOverriddenMemberType() {
 
         String yaml = "ClassWithOverriddenMemberType:\n" +
@@ -135,10 +134,9 @@ public class PojoTests {
         }
     }
 
-    // TODO #2312 resolved doesn' handle this at the moment, only at property level
-    @Test(enabled = false, description = "@Schema is completely overriding the type for this model")
+    @Test(description = "@Schema is completely overriding the type for this model")
     public void testModelWithAlternateRepresentation () {
-        String yaml = "ClassWithAlternateRepresentation:\n" +
+        String yaml = "ClassWithAnnotatedMethod:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
                 "    id:\n" +
@@ -481,7 +479,7 @@ public class PojoTests {
 
     static class modelWithPropertyStringExampleOverrideJson {
 
-        @Schema(example = "{\"id\": 19877734}", minimum = "2")
+        @Schema(example = "{\"id\": 19877734}", minimum = "2", description = "dsfsdsdfdsf")
         private String exampleJson;
 
         public String getExampleJson() {

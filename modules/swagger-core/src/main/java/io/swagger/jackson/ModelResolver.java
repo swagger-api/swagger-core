@@ -22,26 +22,23 @@ import com.google.common.collect.Iterables;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.oas.annotations.media.DiscriminatorMapping;
+import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.media.ArraySchema;
-import io.swagger.oas.models.media.BinarySchema;
-import io.swagger.oas.models.media.ByteArraySchema;
 import io.swagger.oas.models.media.ComposedSchema;
-import io.swagger.oas.models.media.DateSchema;
-import io.swagger.oas.models.media.DateTimeSchema;
 import io.swagger.oas.models.media.Discriminator;
-import io.swagger.oas.models.media.EmailSchema;
 import io.swagger.oas.models.media.IntegerSchema;
 import io.swagger.oas.models.media.MapSchema;
 import io.swagger.oas.models.media.NumberSchema;
-import io.swagger.oas.models.media.PasswordSchema;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.media.StringSchema;
 import io.swagger.oas.models.media.UUIDSchema;
 import io.swagger.oas.models.media.XML;
+import io.swagger.util.Constants;
 import io.swagger.util.Json;
 import io.swagger.util.PrimitiveType;
 import io.swagger.util.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,28 +159,28 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 property = arrayProperty;
             }
         } else {
-            // handle strings with format
             io.swagger.oas.annotations.media.Schema schemaAnnotation = getSchemaAnnotation(annotations);
-            if (schemaAnnotation != null &&
-                    !StringUtils.isBlank(schemaAnnotation.format()) &&
+            if (schemaAnnotation != null) {
+                String format = schemaAnnotation.format();
+                String type = schemaAnnotation.type();
+                // handle strings with format
+                if (!StringUtils.isBlank(schemaAnnotation.format()) &&
                     propType.getRawClass().isAssignableFrom(String.class)) {
-                if ("password".equals(schemaAnnotation.format())) {
-                    property = new PasswordSchema();
-                } else if ("binary".equals(schemaAnnotation.format())) {
-                    property = new BinarySchema();
-                } else if ("byte".equals(schemaAnnotation.format())) {
-                    property = new ByteArraySchema();
-                } else if ("date".equals(schemaAnnotation.format())) {
-                    property = new DateSchema();
-                } else if ("date-time".equals(schemaAnnotation.format())) {
-                    property = new DateTimeSchema();
-                } else if ("email".equals(schemaAnnotation.format())) {
-                    property = new EmailSchema();
-                } else if ("uuid".equals(schemaAnnotation.format())) {
-                    property = new UUIDSchema();
+                    type = "string";
+                }
+                if (StringUtils.isNotBlank(type)) {
+                    PrimitiveType primitiveType = PrimitiveType.fromTypeAndFormat(type, format);
+                    if (primitiveType == null) {
+                        primitiveType = PrimitiveType.fromType(propType);
+                    }
+                    if (primitiveType != null) {
+                        property = primitiveType.createProperty();
+                    }
                 } else {
-                    property = new StringSchema();
-                    property.format(schemaAnnotation.format());
+                    PrimitiveType primitiveType = PrimitiveType.fromType(propType);
+                    if (primitiveType != null) {
+                        property = primitiveType.createProperty();
+                    }
                 }
             } else {
                 property = PrimitiveType.createProperty(propType);
@@ -258,16 +255,66 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     public Schema resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
         if (type.isEnumType()) {
-            // We don't build models for primitive types
+            // We don't build models for enum types
             return null;
         }
         else if(PrimitiveType.fromType(type) != null) {
             return PrimitiveType.fromType(type).createProperty();
         }
 
+        final io.swagger.oas.annotations.media.Schema directSchemaAnnotation = type.getRawClass().getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+
+
         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
-        // Couple of possibilities for defining
+
+        if (directSchemaAnnotation != null &&
+                StringUtils.isNotEmpty(directSchemaAnnotation.type()) &&
+                !directSchemaAnnotation.type().equals("object")) {
+            if (PrimitiveType.fromName(directSchemaAnnotation.type()) != null) {
+                Schema primitive =  PrimitiveType.fromName(directSchemaAnnotation.type()).createProperty();
+                resolveSchemaMembers(primitive, beanDesc.getClassInfo());
+                XML xml = resolveXml(beanDesc.getClassInfo());
+                if (xml != null) {
+                    primitive.xml(xml);
+                }
+
+                return primitive;
+            }
+        }
+        io.swagger.oas.annotations.media.Schema schemaAnnotationReference = null;
+        io.swagger.oas.annotations.media.ArraySchema directArraySchemaAnnotation = type.getRawClass().getAnnotation(io.swagger.oas.annotations.media.ArraySchema.class);
+        if (directArraySchemaAnnotation != null) {
+            schemaAnnotationReference = directArraySchemaAnnotation.schema();
+        } else {
+            schemaAnnotationReference = directSchemaAnnotation;
+        }
+
+
+        if (schemaAnnotationReference != null && !Void.class.equals(schemaAnnotationReference.implementation())) {
+            Class<?> cls = schemaAnnotationReference.implementation();
+
+            LOGGER.debug("overriding datatype from {} to {}", type, cls.getName());
+
+            if (directArraySchemaAnnotation != null) {
+                ArraySchema schema = new ArraySchema();
+                Schema innerSchema = null;
+
+                Schema primitive = PrimitiveType.createProperty(cls);
+                if (primitive != null) {
+                    innerSchema = primitive;
+                } else {
+                    innerSchema = context.resolve(cls);
+                }
+                schema.setItems(innerSchema);
+                return schema;
+            }
+            else {
+                return context.resolve(cls);
+            }
+        }
+
         String name = _typeName(type, beanDesc);
+
         if ("Object".equals(name)) {
             return new Schema();
         }
@@ -297,20 +344,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (isComposedSchema) {
             model = new ComposedSchema()
                     .type("object")
-                    .name(name)
-                    .description(_description(beanDesc.getClassInfo()));
+                    .name(name);
         } else {
             model = new Schema()
                     .type("object")
-                    .name(name)
-                    .description(_description(beanDesc.getClassInfo()));
-        }
-
-        // handle title, only set if present in class annotation (not superclass)
-        final io.swagger.oas.annotations.media.Schema schemaAnnotationForTitle = type.getRawClass().getAnnotation(io.swagger.oas.annotations.media.Schema.class);
-        final String title = schemaAnnotationForTitle == null ? null : StringUtils.trimToNull(schemaAnnotationForTitle.title());
-        if (!StringUtils.isBlank(title)) {
-            model.title(title);
+                    .name(name);
         }
 
 
@@ -324,16 +362,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             context.resolve(type.getContentType());
             return null;
         }
-        // if XmlRootElement annotation, construct an Xml object and attach it to the model
-        XmlRootElement rootAnnotation = beanDesc.getClassAnnotations().get(XmlRootElement.class);
-        if (rootAnnotation != null && !"".equals(rootAnnotation.name()) && !"##default".equals(rootAnnotation.name())) {
-            LOGGER.debug("{}", rootAnnotation);
-            XML xml = new XML().name(rootAnnotation.name());
-            if (rootAnnotation.namespace() != null && !"".equals(rootAnnotation.namespace()) && !"##default".equals(rootAnnotation.namespace())) {
-                xml.namespace(rootAnnotation.namespace());
-            }
+        XML xml = resolveXml(beanDesc.getClassInfo());
+        if (xml != null) {
             model.xml(xml);
         }
+
+        resolveSchemaMembers(model, beanDesc.getClassInfo());
+
         final XmlAccessorType xmlAccessorTypeAnnotation = beanDesc.getClassAnnotations().get(XmlAccessorType.class);
 
         // see if @JsonIgnoreProperties exist
@@ -401,11 +436,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
 
             final AnnotatedMember member = propDef.getPrimaryMember();
-            Boolean allowEmptyValue = null;
-            String minimum = null, maximum = null;
-            boolean exclusiveMinimum = false, exclusiveMaximum = false;
-            Object example = null;
-
             if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore)) {
                 List<Annotation> annotationList = new ArrayList<Annotation>();
                 for (Annotation a : member.annotations()) {
@@ -416,43 +446,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 io.swagger.oas.annotations.media.Schema mp = null;
                 
-                io.swagger.oas.annotations.media.ArraySchema as = null;
-                as = member.getAnnotation(io.swagger.oas.annotations.media.ArraySchema.class);
+                io.swagger.oas.annotations.media.ArraySchema as = member.getAnnotation(io.swagger.oas.annotations.media.ArraySchema.class);
                 if (as != null) {
                     mp = as.schema();
                 } else {
                     mp = member.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
                 }                
 
-                if(mp != null) {
-                    if (mp.readOnly()) {
-                        isReadOnly = mp.readOnly();
-                    }
-                    if (mp.nullable()) {
-                        allowEmptyValue = mp.nullable();
-                    } else {
-                        allowEmptyValue = null;
-                    }
-                    if (StringUtils.isNotBlank(mp.minimum()) && !String.valueOf(Integer.MAX_VALUE).equals(mp.minimum())) {
-                        minimum = mp.minimum();
-                    }
-                    if (StringUtils.isNotBlank(mp.maximum()) && !String.valueOf(Integer.MIN_VALUE).equals(mp.maximum())) {
-                        maximum = mp.maximum();
-                    }
-                    if(mp.exclusiveMinimum()) {
-                        exclusiveMinimum = true;
-                    }
-                    if(mp.exclusiveMaximum()) {
-                        exclusiveMaximum = true;
-                    }
-                    if (!mp.example().isEmpty()) {
-                        try {
-                            example = Json.mapper().readTree(mp.example());
-                        } catch (IOException e) {
-                            example = mp.example();
-                        }
-                    }
-                }
 
                 JavaType propType = member.getType(beanDesc.bindingsForBeanType());
 
@@ -482,7 +482,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     else {
                         property = context.resolve(cls, annotations);
                     }
-                    // TODO #2312 possibly consider also type or remove from annotation and use only "implementation"
                 }
 
                 // no property from override, construct from propType
@@ -498,11 +497,27 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 */
                     }
                     if (property == null) {
-                        JsonUnwrapped uw = member.getAnnotation(JsonUnwrapped.class);
-                        if (uw != null && uw.enabled()) {
-                            handleUnwrapped(props, context.resolve(propType), uw.prefix(), uw.suffix());
+                        if (mp != null && StringUtils.isNotEmpty(mp.type())) {
+                            PrimitiveType primitiveType = PrimitiveType.fromTypeAndFormat(mp.type(), mp.format());
+                            if (primitiveType == null) {
+                                primitiveType = PrimitiveType.fromType(propType);
+                            }
+                            if (primitiveType != null) {
+                                property = primitiveType.createProperty();
+                            }
                         } else {
-                            property = context.resolve(propType, annotations);
+                            PrimitiveType primitiveType = PrimitiveType.fromType(propType);
+                            if (primitiveType != null) {
+                                property = primitiveType.createProperty();
+                            }
+                        }
+                        if (property == null) {
+                            JsonUnwrapped uw = member.getAnnotation(JsonUnwrapped.class);
+                            if (uw != null && uw.enabled()) {
+                                handleUnwrapped(props, context.resolve(propType), uw.prefix(), uw.suffix());
+                            } else {
+                                property = context.resolve(propType, annotations);
+                            }
                         }
                     }
                 }
@@ -510,61 +525,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (property != null) {
                     property.setName(propName);
                     if (property.get$ref() == null) {
+                        // TODO also check annotation?
                         Boolean required = md.getRequired();
                         if (required != null && !Boolean.FALSE.equals(required)) {
                             model.addRequiredItem(propName);
                         }
 
-                        String description = _intr.findPropertyDescription(member);
-                        if (description != null && !"".equals(description)) {
-                            property.setDescription(description);
-                        }
-
-                        String _defaultValue = _findDefaultValue(member);
-                        property.setDefault(_defaultValue);
-                        if(minimum != null) {
-                            property.minimum(new BigDecimal(minimum));
-                        }
-                        if(maximum != null) {
-                            property.maximum(new BigDecimal(maximum));
-                        }
-                        if(exclusiveMaximum) {
-                            property.exclusiveMaximum(true);
-                        }
-                        if(exclusiveMinimum) {
-                            property.exclusiveMinimum(true);
-                        }
-
-                        property.setExample(_findExampleValue(member));
-                        property.setReadOnly(_findReadOnly(member));
-                        if (allowEmptyValue != null) {
-                            property.setNullable(allowEmptyValue);
-                        }
+                        resolveSchemaMembers(property, member);
 
                         if (property.getReadOnly() == null) {
                             if (isReadOnly) {
-                                property.setReadOnly(isReadOnly);
-                            }
-                        }
-                        if (mp != null) {
-                            // TODO maybe only for string-like props (String, Email..Password..)
-                            if(!StringUtils.isBlank(mp.pattern())) {
-                                property.setPattern(mp.pattern());
-                            }
-							if(mp.allowableValues().length > 0) {
-							    for(String _enum : mp.allowableValues()) {
-                                    if(StringUtils.isNotBlank(_enum)) {
-                                        property.addEnumItemObject(_enum);
-                                    }
-                                }
+                                property.readOnly(isReadOnly);
                             }
                         }
                         JAXBAnnotationsHelper.apply(member, property);
                         applyBeanValidatorAnnotations(property, annotations, model);
                     }
-                }
-
-                if(property != null) {
                     props.add(property);
                     modelProps.put(propName, property);
                 }
@@ -600,53 +576,26 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (!resolveSubtypes(model, beanDesc, context)) {
              model.setDiscriminator(null);
         }
-        // uses raw class, as it does not consider super class while handling schema annotation for composed model props
-        final io.swagger.oas.annotations.media.Schema schemaAnnotation = type.getRawClass().getAnnotation(io.swagger.oas.annotations.media.Schema.class);
 
-        String disc = (schemaAnnotation == null) ? "" : schemaAnnotation.discriminatorProperty();
-
-
-        if (disc.isEmpty()) {
-            // longer method would involve AnnotationIntrospector.findTypeResolver(...) but:
-            // uses raw class, as it does not consider super class while handling schema annotation for composed model props
-            JsonTypeInfo typeInfo = type.getRawClass().getAnnotation(JsonTypeInfo.class);
-            if (typeInfo != null) {
-                disc = typeInfo.property();
-            }
-        }
-        if (!disc.isEmpty()) {
-            Discriminator discriminator = new Discriminator()
-                    .propertyName(disc);
-            if (schemaAnnotation != null) {
-                DiscriminatorMapping mappings[] = schemaAnnotation.discriminatorMapping();
-                if (mappings != null && mappings.length > 0) {
-                    for (DiscriminatorMapping mapping : mappings) {
-                        if (!mapping.value().isEmpty() && !mapping.schema().equals(Void.class)) {
-                            discriminator.mapping(mapping.value(), constructRef(context.resolve(mapping.schema()).getName()));
-                        }
-                    }
-                }
-            }
-
+        Discriminator discriminator = resolveDiscriminator(type, context);
+        if (discriminator != null) {
             model.setDiscriminator(discriminator);
         }
 
-
-
-        if (schemaAnnotation != null) {
-            String ref = schemaAnnotation.ref();
+        if (directSchemaAnnotation != null) {
+            String ref = directSchemaAnnotation.ref();
             // consider ref as is
             if (!StringUtils.isBlank(ref)) {
                 model.$ref(ref);
             }
-            Class<?> not = schemaAnnotation.not();
+            Class<?> not = directSchemaAnnotation.not();
             if (!Void.class.equals(not)) {
                 model.not((new Schema().$ref(context.resolve(not).getName())));
             }
-            if (schemaAnnotation.requiredProperties() != null &&
-                    schemaAnnotation.requiredProperties().length > 0 &&
-                    StringUtils.isNotBlank(schemaAnnotation.requiredProperties()[0])) {
-                for (String prop: schemaAnnotation.requiredProperties()) {
+            if (directSchemaAnnotation.requiredProperties() != null &&
+                    directSchemaAnnotation.requiredProperties().length > 0 &&
+                    StringUtils.isNotBlank(directSchemaAnnotation.requiredProperties()[0])) {
+                for (String prop: directSchemaAnnotation.requiredProperties()) {
                     model.addRequiredItem(prop);
                 }
             }
@@ -657,9 +606,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             ComposedSchema composedSchema = (ComposedSchema)model;
 
 
-            Class<?>[] allOf = schemaAnnotation.allOf();
-            Class<?>[] anyOf = schemaAnnotation.anyOf();
-            Class<?>[] oneOf = schemaAnnotation.oneOf();
+            Class<?>[] allOf = directSchemaAnnotation.allOf();
+            Class<?>[] anyOf = directSchemaAnnotation.anyOf();
+            Class<?>[] oneOf = directSchemaAnnotation.oneOf();
 
 
             List<Class<?>> allOfFiltered = Stream.of(allOf)
@@ -1063,7 +1012,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    private List<Class<?>> getComposedSchemaReferencedClasses(Class<?> clazz) {
+    protected List<Class<?>> getComposedSchemaReferencedClasses(Class<?> clazz) {
         final io.swagger.oas.annotations.media.Schema schemaAnnotation = clazz.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
         if (schemaAnnotation != null) {
             Class<?>[] allOf = schemaAnnotation.allOf();
@@ -1083,5 +1032,361 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return null;
+    }
+
+    protected String resolveDescription(Annotated ann) {
+        // while name suggests it's only for properties, should work for any Annotated thing.
+        // also; with Swagger introspector's help, should get it from @Schema
+        return _intr.findPropertyDescription(ann);
+    }
+
+    protected String resolveTitle(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && StringUtils.isNotBlank(schema.title())) {
+            return schema.title();
+        }
+        return null;
+    }
+
+    protected String resolveDefaultValue(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null) {
+            if (!schema.defaultValue().isEmpty()) {
+                return schema.defaultValue();
+            }
+        }
+        XmlElement elem = a.getAnnotation(XmlElement.class);
+        if (elem != null) {
+            if (!elem.defaultValue().isEmpty() && !"\u0000".equals(elem.defaultValue())) {
+                return elem.defaultValue();
+            }
+        }
+        return null;
+    }
+
+    protected Object resolveExample(Annotated a) {
+
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null) {
+            if (!schema.example().isEmpty()) {
+                try {
+                    return Json.mapper().readTree(schema.example());
+                } catch (IOException e) {
+                    return schema.example();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    protected Boolean resolveReadOnly(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        // TODO possibly set schema.readOnly to be Boolean object
+        if (schema != null && schema.readOnly()) {
+            return schema.readOnly();
+        }
+        return null;
+    }
+
+    protected Boolean resolveNullable(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && schema.nullable()) {
+            return schema.nullable();
+        }
+        return null;
+    }
+
+    protected BigDecimal resolveMultipleOf(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && schema.multipleOf() != 0) {
+            return new BigDecimal(schema.multipleOf());
+        }
+        return null;
+    }
+
+    protected Integer resolveMaxLength(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && schema.maxLength() != Integer.MAX_VALUE && schema.maxLength() > 0) {
+            return schema.maxLength();
+        }
+        return null;
+    }
+
+    protected Integer resolveMinLength(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && schema.minLength() > 0) {
+            return schema.minLength();
+        }
+        return null;
+    }
+
+    protected BigDecimal resolveMinimum(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && NumberUtils.isCreatable(schema.minimum())) {
+            String filteredMinimum = schema.minimum().replaceAll(Constants.COMMA, StringUtils.EMPTY);
+            return new BigDecimal(filteredMinimum);
+        }
+        return null;
+    }
+
+    protected BigDecimal resolveMaximum(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && NumberUtils.isCreatable(schema.maximum())) {
+            String filteredMaximum = schema.maximum().replaceAll(Constants.COMMA, StringUtils.EMPTY);
+            return new BigDecimal(filteredMaximum);
+        }
+        return null;
+    }
+
+    protected Boolean resolveExclusiveMinimum(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && schema.exclusiveMinimum()) {
+            return schema.exclusiveMinimum();
+        }
+        return null;
+    }
+    protected Boolean resolveExclusiveMaximum(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && schema.exclusiveMaximum()) {
+            return schema.exclusiveMaximum();
+        }
+        return null;
+    }
+
+    protected String resolvePattern(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && StringUtils.isNotBlank(schema.pattern())) {
+            return schema.pattern();
+        }
+        return null;
+    }
+
+    protected Integer resolveMinProperties(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && schema.minProperties() > 0) {
+            return schema.minProperties();
+        }
+        return null;
+    }
+
+    protected Integer resolveMaxProperties(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && schema.maxProperties() > 0) {
+            return schema.maxProperties();
+        }
+        return null;
+    }
+
+    protected List<String> resolveRequiredProperties(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (    schema != null &&
+                schema.requiredProperties() != null &&
+                schema.requiredProperties().length > 0 &&
+                StringUtils.isNotBlank(schema.requiredProperties()[0])) {
+
+            return Arrays.asList(schema.requiredProperties());
+        }
+        return null;
+    }
+
+    protected Boolean resolveWriteOnly(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && schema.writeOnly()) {
+            return schema.writeOnly();
+        }
+        return null;
+    }
+
+    protected ExternalDocumentation resolveExternalDocumentation(Annotated a) {
+
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        io.swagger.oas.annotations.ExternalDocumentation externalDocumentation = a.getAnnotation(io.swagger.oas.annotations.ExternalDocumentation.class);
+
+        ExternalDocumentation external = resolveExternalDocumentation(externalDocumentation);
+        if (external == null) {
+            if (schema != null) {
+                external = resolveExternalDocumentation(schema.externalDocs());
+            }
+        }
+        return external;
+    }
+
+    protected ExternalDocumentation resolveExternalDocumentation(io.swagger.oas.annotations.ExternalDocumentation externalDocumentation) {
+
+        if (externalDocumentation == null) {
+            return null;
+        }
+        boolean isEmpty = true;
+        ExternalDocumentation external = new ExternalDocumentation();
+        if (StringUtils.isNotBlank(externalDocumentation.description())) {
+            isEmpty = false;
+            external.setDescription(externalDocumentation.description());
+        }
+        if (StringUtils.isNotBlank(externalDocumentation.url())) {
+            isEmpty = false;
+            external.setUrl(externalDocumentation.url());
+        }
+        if (isEmpty) {
+            return null;
+        }
+        return external;
+    }
+
+    protected Boolean resolveDeprecated(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && schema.deprecated()) {
+            return schema.deprecated();
+        }
+        return null;
+    }
+
+    protected List<String> resolveAllowableValues(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (    schema != null &&
+                schema.allowableValues() != null &&
+                schema.allowableValues().length > 0) {
+            return Arrays.asList(schema.allowableValues());
+        }
+        return null;
+    }
+
+    protected Discriminator resolveDiscriminator(JavaType type, ModelConverterContext context) {
+
+        io.swagger.oas.annotations.media.Schema directSchemaAnnotation = type.getRawClass().getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+
+        // uses raw class, as it does not consider super class while handling schema annotation for composed model props
+        String disc = (directSchemaAnnotation == null) ? "" : directSchemaAnnotation.discriminatorProperty();
+
+
+        if (disc.isEmpty()) {
+            // longer method would involve AnnotationIntrospector.findTypeResolver(...) but:
+            // uses raw class, as it does not consider super class while handling schema annotation for composed model props
+            JsonTypeInfo typeInfo = type.getRawClass().getAnnotation(JsonTypeInfo.class);
+            if (typeInfo != null) {
+                disc = typeInfo.property();
+            }
+        }
+        if (!disc.isEmpty()) {
+            Discriminator discriminator = new Discriminator()
+                    .propertyName(disc);
+            if (directSchemaAnnotation != null) {
+                DiscriminatorMapping mappings[] = directSchemaAnnotation.discriminatorMapping();
+                if (mappings != null && mappings.length > 0) {
+                    for (DiscriminatorMapping mapping : mappings) {
+                        if (!mapping.value().isEmpty() && !mapping.schema().equals(Void.class)) {
+                            discriminator.mapping(mapping.value(), constructRef(context.resolve(mapping.schema()).getName()));
+                        }
+                    }
+                }
+            }
+
+            return discriminator;
+        }
+        return null;
+    }
+
+    protected XML resolveXml(Annotated a) {
+        // if XmlRootElement annotation, construct an Xml object and attach it to the model
+        XmlRootElement rootAnnotation = a.getAnnotation(XmlRootElement.class);
+        if (rootAnnotation != null && !"".equals(rootAnnotation.name()) && !"##default".equals(rootAnnotation.name())) {
+            XML xml = new XML().name(rootAnnotation.name());
+            if (rootAnnotation.namespace() != null && !"".equals(rootAnnotation.namespace()) && !"##default".equals(rootAnnotation.namespace())) {
+                xml.namespace(rootAnnotation.namespace());
+            }
+            return xml;
+        }
+        return null;
+    }
+
+    protected void resolveSchemaMembers(Schema schema, Annotated a) {
+        String description = resolveDescription(a);
+        if (StringUtils.isNotBlank(description)) {
+            schema.description(description);
+        }
+        String title = resolveTitle(a);
+        if (StringUtils.isNotBlank(title)) {
+            schema.title(title);
+        }
+        String defaultValue = resolveDefaultValue(a);
+        if (StringUtils.isNotBlank(defaultValue)) {
+            schema.setDefault(defaultValue);
+        }
+        Object example = resolveExample(a);
+        if (example != null) {
+            schema.example(example);
+        }
+        Boolean readOnly = resolveReadOnly(a);
+        if (readOnly != null) {
+            schema.readOnly(readOnly);
+        }
+        Boolean nullable = resolveNullable(a);
+        if (nullable != null) {
+            schema.nullable(nullable);
+        }
+        BigDecimal multipleOf = resolveMultipleOf(a);
+        if (multipleOf != null) {
+            schema.multipleOf(multipleOf);
+        }
+        Integer maxLength = resolveMaxLength(a);
+        if (maxLength != null) {
+            schema.maxLength(maxLength);
+        }
+        Integer minLength = resolveMinLength(a);
+        if (minLength != null) {
+            schema.minLength(minLength);
+        }
+        BigDecimal minimum = resolveMinimum(a);
+        if (minimum != null) {
+            schema.minimum(minimum);
+        }
+        BigDecimal maximum = resolveMaximum(a);
+        if (maximum != null) {
+            schema.maximum(maximum);
+        }
+        Boolean exclusiveMinimum = resolveExclusiveMinimum(a);
+        if (exclusiveMinimum != null) {
+            schema.exclusiveMinimum(exclusiveMinimum);
+        }
+        Boolean exclusiveMaximum = resolveExclusiveMaximum(a);
+        if (exclusiveMaximum != null) {
+            schema.exclusiveMaximum(exclusiveMaximum);
+        }
+        String pattern = resolvePattern(a);
+        if (StringUtils.isNotBlank(pattern)) {
+            schema.pattern(pattern);
+        }
+        Integer minProperties = resolveMinProperties(a);
+        if (minProperties != null) {
+            schema.minProperties(minProperties);
+        }
+        Integer maxProperties = resolveMaxProperties(a);
+        if (maxProperties != null) {
+            schema.maxProperties(maxProperties);
+        }
+        List<String> requiredProperties = resolveRequiredProperties(a);
+        if (requiredProperties != null) {
+            for (String prop: requiredProperties) {
+                schema.addRequiredItem(prop);
+            }
+        }
+        Boolean writeOnly = resolveWriteOnly(a);
+        if (writeOnly != null) {
+            schema.writeOnly(writeOnly);
+        }
+        ExternalDocumentation externalDocs = resolveExternalDocumentation(a);
+        if (externalDocs != null) {
+            schema.externalDocs(externalDocs);
+        }
+        Boolean deprecated = resolveDeprecated(a);
+        if (deprecated != null) {
+            schema.deprecated(deprecated);
+        }
+        List<String> allowableValues = resolveAllowableValues(a);
+        if (allowableValues != null) {
+            for (String prop: allowableValues) {
+                schema.addEnumItemObject(prop);
+            }
+        }
     }
 }

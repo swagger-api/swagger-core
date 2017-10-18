@@ -27,6 +27,7 @@ import io.swagger.oas.models.servers.Server;
 import io.swagger.oas.models.servers.ServerVariable;
 import io.swagger.oas.models.servers.ServerVariables;
 import io.swagger.oas.models.tags.Tag;
+import io.swagger.util.Constants;
 import io.swagger.util.Json;
 import io.swagger.util.ParameterProcessor;
 import org.apache.commons.lang3.StringUtils;
@@ -55,7 +56,6 @@ public class OperationParser {
     public static final String MEDIA_TYPE = "*/*";
     public static final String COMPONENTS_REF = "#/components/schemas/";
     public static final String DEFAULT_DESCRIPTION = "no description";
-    public static final String COMMA = ",";
 
     public static Optional<List<Parameter>> getParametersList(io.swagger.oas.annotations.Parameter[] parameters, Produces classProduces, Produces methodProduces, Components components) {
         if (parameters == null) {
@@ -262,11 +262,11 @@ public class OperationParser {
             isEmpty = false;
         }
         if (NumberUtils.isCreatable(schema.maximum())) {
-            String filteredMaximum = schema.maximum().replaceAll(COMMA, StringUtils.EMPTY);
+            String filteredMaximum = schema.maximum().replaceAll(Constants.COMMA, StringUtils.EMPTY);
             schemaObject.setMaximum(new BigDecimal(filteredMaximum));
         }
         if (NumberUtils.isCreatable(schema.minimum())) {
-            String filteredMinimum = schema.minimum().replaceAll(COMMA, StringUtils.EMPTY);
+            String filteredMinimum = schema.minimum().replaceAll(Constants.COMMA, StringUtils.EMPTY);
             schemaObject.setMinimum(new BigDecimal(filteredMinimum));
         }
         if (schema.nullable()) {

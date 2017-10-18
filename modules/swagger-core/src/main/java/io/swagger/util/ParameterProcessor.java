@@ -6,18 +6,10 @@ import io.swagger.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.media.ArraySchema;
-import io.swagger.oas.models.media.BinarySchema;
-import io.swagger.oas.models.media.ByteArraySchema;
-import io.swagger.oas.models.media.DateSchema;
-import io.swagger.oas.models.media.DateTimeSchema;
-import io.swagger.oas.models.media.EmailSchema;
-import io.swagger.oas.models.media.IntegerSchema;
-import io.swagger.oas.models.media.PasswordSchema;
 import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.media.StringSchema;
-import io.swagger.oas.models.media.UUIDSchema;
 import io.swagger.oas.models.parameters.Parameter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -383,34 +375,12 @@ public class ParameterProcessor {
     private static Schema processSchema(io.swagger.oas.annotations.media.Schema schema) {
         Schema output = null;
         if (schema.type() != null) {
-            if ("integer".equals(schema.type())) {
-                output = new IntegerSchema();
-                if (StringUtils.isNotBlank(schema.format())) {
-                    output.format(schema.format());
-                }
-            } else if ("string".equals(schema.type())) {
-                if ("password".equals(schema.format())) {
-                    output = new PasswordSchema();
-                } else if ("binary".equals(schema.format())) {
-                    output = new BinarySchema();
-                } else if ("byte".equals(schema.format())) {
-                    output = new ByteArraySchema();
-                } else if ("date".equals(schema.format())) {
-                    output = new DateSchema();
-                } else if ("date-time".equals(schema.format())) {
-                    output = new DateTimeSchema();
-                } else if ("email".equals(schema.format())) {
-                    output = new EmailSchema();
-                } else if ("uuid".equals(schema.format())) {
-                    output = new UUIDSchema();
-                } else {
-                    output = new StringSchema();
-                }
+            PrimitiveType primitiveType = PrimitiveType.fromTypeAndFormat(schema.type(), schema.format());
+            if (primitiveType != null) {
+                output = primitiveType.createProperty();
             } else {
                 output = new Schema();
             }
-
-            // TODO: #2312 other types
         }
         if (output != null) {
             if (StringUtils.isNotBlank(schema.defaultValue())) {
@@ -442,11 +412,13 @@ public class ParameterProcessor {
             if (schema.readOnly()) {
                 output.readOnly(true);
             }
-            if (StringUtils.isNotBlank(schema.minimum())) {
-                output.minimum(new BigDecimal(schema.minimum()));
+            if (NumberUtils.isCreatable(schema.maximum())) {
+                String filteredMaximum = schema.maximum().replaceAll(Constants.COMMA, StringUtils.EMPTY);
+                output.setMaximum(new BigDecimal(filteredMaximum));
             }
-            if (StringUtils.isNotBlank(schema.maximum())) {
-                output.maximum(new BigDecimal(schema.maximum()));
+            if (NumberUtils.isCreatable(schema.minimum())) {
+                String filteredMinimum = schema.minimum().replaceAll(Constants.COMMA, StringUtils.EMPTY);
+                output.setMinimum(new BigDecimal(filteredMinimum));
             }
             if (schema.minProperties() > 0) {
                 output.minProperties(schema.minProperties());
