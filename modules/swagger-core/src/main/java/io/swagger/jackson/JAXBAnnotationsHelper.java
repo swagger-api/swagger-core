@@ -1,5 +1,6 @@
 package io.swagger.jackson;
 
+import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import io.swagger.oas.models.media.ArraySchema;
 import io.swagger.oas.models.media.MapSchema;
@@ -28,7 +29,7 @@ class JAXBAnnotationsHelper {
      * @param member   annotations provider
      * @param property property instance to be updated
      */
-    public static void apply(AnnotatedMember member, Schema property) {
+    public static void apply(Annotated member, Schema property) {
         if (member.hasAnnotation(XmlElementWrapper.class) || member.hasAnnotation(XmlElement.class)) {
             applyElement(member, property);
         } else if (member.hasAnnotation(XmlAttribute.class) && isAttributeAllowed(property)) {
@@ -42,7 +43,7 @@ class JAXBAnnotationsHelper {
      * @param member   annotations provider
      * @param property property instance to be updated
      */
-    private static void applyElement(AnnotatedMember member, Schema property) {
+    private static void applyElement(Annotated member, Schema property) {
         final XmlElementWrapper wrapper = member.getAnnotation(XmlElementWrapper.class);
         if (wrapper != null) {
             final XML xml = getXml(property);
@@ -66,7 +67,7 @@ class JAXBAnnotationsHelper {
      * @param member   annotations provider
      * @param property property instance to be updated
      */
-    private static void applyAttribute(AnnotatedMember member, Schema property) {
+    private static void applyAttribute(Annotated member, Schema property) {
         final XmlAttribute attribute = member.getAnnotation(XmlAttribute.class);
         if (attribute != null) {
             final XML xml = getXml(property);

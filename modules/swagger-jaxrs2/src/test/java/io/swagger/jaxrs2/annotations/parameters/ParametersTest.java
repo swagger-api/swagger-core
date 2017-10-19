@@ -1,6 +1,8 @@
 package io.swagger.jaxrs2.annotations.parameters;
 
+import io.swagger.jaxrs2.Reader;
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
+import io.swagger.jaxrs2.resources.ResourceWithKnownInjections;
 import io.swagger.oas.annotations.Operation;
 import io.swagger.oas.annotations.Parameter;
 import io.swagger.oas.annotations.enums.Explode;
@@ -10,21 +12,39 @@ import io.swagger.oas.annotations.media.ArraySchema;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
 import io.swagger.oas.annotations.responses.ApiResponse;
+import io.swagger.oas.models.OpenAPI;
+
+import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import static org.testng.Assert.assertEquals;
+import java.util.List;
 
-/**
- * Created by rafaellopez on 7/10/17.
- */
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
 public class ParametersTest extends AbstractAnnotationTest {
 
+
+    @Test(description = "scan class level and field level annotations")
+    public void scanClassAndFieldLevelAnnotations() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(ResourceWithKnownInjections.class);
+        Yaml.prettyPrint(openAPI);
+        List<io.swagger.oas.models.parameters.Parameter> resourceParameters = openAPI.getPaths().get("/resource/{id}").getGet().getParameters();
+        assertNotNull(resourceParameters);
+        assertEquals(resourceParameters.size(), 3);
+        assertEquals(resourceParameters.get(0).getName(), "id");
+        assertEquals(resourceParameters.get(1).getName(), "fieldParam");
+        assertEquals(resourceParameters.get(2).getName(), "methodParam");
+    }
+
+
     @Test
-    public void testSimpleCallback() {
+    public void testParameters() {
         String openApiYAML = readIntoYaml(ParametersTest.SimpleOperations.class);
         int start = openApiYAML.indexOf("/test:");
         int end = openApiYAML.length() - 1;

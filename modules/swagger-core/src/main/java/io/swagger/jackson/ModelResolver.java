@@ -195,10 +195,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 property = context.resolve(propType.containedType(0), null);
             } else {
                 // complex type
-                Schema innerModel = context.resolve(propType);
-                if (innerModel instanceof Schema) {
-                    Schema mi = (Schema) innerModel;
-
+                Schema mi = context.resolve(propType);
+                if (mi != null) {
                     if("object".equals(mi.getType())) {
                         // create a reference for the property
                         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(propType);
@@ -209,7 +207,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         property = new Schema().$ref(StringUtils.isNotEmpty(mi.get$ref()) ? mi.get$ref() : mi.getTitle());
                     }
                     else {
-                        property = innerModel;
+                        property = mi;
                     }
                 }
             }
@@ -546,7 +544,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
-
+        for (Schema prop : props) {
+            modelProps.put(prop.getName(), prop);
+        }
         if(modelProps.size() > 0) {
             model.setProperties(modelProps);
         }
@@ -817,7 +817,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 annos.put(anno.annotationType().getName(), anno);
             }
         }
-        if (annos.containsKey("javax.validation.constraints.NotNull")) {
+        if (parent != null && annos.containsKey("javax.validation.constraints.NotNull")) {
             parent.addRequiredItem(property.getName());
         }
         if (annos.containsKey("javax.validation.constraints.Min")) {
@@ -1388,5 +1388,127 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 schema.addEnumItemObject(prop);
             }
         }
+    }
+
+
+    protected Schema resolveAnnotatedType(JavaType type, Annotated member, String elementName, ModelConverterContext context) {
+
+        String name = elementName;
+
+        Schema property = null;
+        Annotation[] annotations = null;
+
+        List<Annotation> annotationList = new ArrayList<Annotation>();
+        for (Annotation a : member.annotations()) {
+            annotationList.add(a);
+        }
+
+        annotations = annotationList.toArray(new Annotation[annotationList.size()]);
+
+        io.swagger.oas.annotations.media.Schema mp = null;
+
+        io.swagger.oas.annotations.media.ArraySchema as = member.getAnnotation(io.swagger.oas.annotations.media.ArraySchema.class);
+        if (as != null) {
+            mp = as.schema();
+        } else {
+            mp = member.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        }
+
+        // allow override of name from annotation
+        if (mp != null && !mp.name().isEmpty()) {
+            name = mp.name();
+        }
+
+        if (mp != null && !Void.class.equals(mp.implementation())) {
+            Class<?> cls = mp.implementation();
+
+            LOGGER.debug("overriding datatype from {} to {}", type, cls.getName());
+
+            if (as != null) {
+                ArraySchema propertySchema = new ArraySchema();
+                Schema innerSchema = null;
+
+                Schema primitiveProperty = PrimitiveType.createProperty(cls);
+                if (primitiveProperty != null) {
+                    innerSchema = primitiveProperty;
+                } else {
+                    innerSchema = context.resolve(cls, annotations);
+                }
+                propertySchema.setItems(innerSchema);
+                property = propertySchema;
+            } else {
+                property = context.resolve(cls, annotations);
+            }
+        }
+
+        // no property from override, construct from propType
+        if (property == null) {
+            if (mp != null && StringUtils.isNotEmpty(mp.ref())) {
+                property = new Schema().$ref(mp.ref());
+/*
+                    } else if (member.getAnnotation(JsonIdentityInfo.class) != null) {
+                        // TODO #2312
+                        property = GeneratorWrapper.processJsonIdentity(propType, context, _mapper,
+                                member.getAnnotation(JsonIdentityInfo.class),
+                                member.getAnnotation(JsonIdentityReference.class));
+*/
+            }
+            if (property == null) {
+                if (mp != null && StringUtils.isNotEmpty(mp.type())) {
+                    PrimitiveType primitiveType = PrimitiveType.fromTypeAndFormat(mp.type(), mp.format());
+                    if (primitiveType == null) {
+                        primitiveType = PrimitiveType.fromType(type);
+                    }
+                    if (primitiveType != null) {
+                        property = primitiveType.createProperty();
+                    }
+                } else {
+                    PrimitiveType primitiveType = PrimitiveType.fromType(type);
+                    if (primitiveType != null) {
+                        property = primitiveType.createProperty();
+                    }
+                }
+            }
+        }
+
+        if (property != null) {
+            property.setName(name);
+            if (property.get$ref() == null) {
+                resolveSchemaMembers(property, member);
+
+                JAXBAnnotationsHelper.apply(member, property);
+                applyBeanValidatorAnnotations(property, annotations, null);
+            }
+        }
+
+/*
+        if (property == null) {
+            JsonUnwrapped uw = member.getAnnotation(JsonUnwrapped.class);
+            if (uw != null && uw.enabled()) {
+                handleUnwrapped(props, context.resolve(type), uw.prefix(), uw.suffix());
+            } else {
+                property = context.resolve(type, annotations);
+            }
+        }
+
+        if (property != null) {
+            if (property.get$ref() == null) {
+                // TODO also check annotation?
+                Boolean required = md.getRequired();
+                if (required != null && !Boolean.FALSE.equals(required)) {
+                    model.addRequiredItem(type);
+                }
+                if (property.getReadOnly() == null) {
+                    if (isReadOnly) {
+                        property.readOnly(isReadOnly);
+                    }
+                }
+
+            }
+            props.add(property);
+            modelProps.put(type, property);
+        }
+*/
+        return property;
     }
 }

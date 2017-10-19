@@ -253,6 +253,10 @@ public class Reader implements OpenApiReader {
                     if (StringUtils.isNotBlank(httpMethod)) {
                         setPathItemOperation(pathItemObject, httpMethod, operation);
                     }
+                    for (Parameter globalParameter : globalParameters) {
+                        operation.addParametersItem(globalParameter);
+                    }
+
                     List<Parameter> operationParameters = new ArrayList<>();
                     Annotation[][] paramAnnotations = ReflectionUtils.getParameterAnnotations(method);
                     if (annotatedMethod == null) { // annotatedMethod not null only when method with 0-2 parameters
@@ -270,8 +274,11 @@ public class Reader implements OpenApiReader {
                             processParameter(parameters, operation, requestBody, operationParameters, methodConsumes, paramAnnotations[i], type);
                         }
                     }
+
                     if (operationParameters.size() > 0) {
-                        operation.setParameters(operationParameters);
+                        for (Parameter operationParameter : operationParameters) {
+                            operation.addParametersItem(operationParameter);
+                        }
                     }
 
                     paths.addPathItem(operationPath, pathItemObject);
@@ -619,7 +626,7 @@ public class Reader implements OpenApiReader {
         return false;
     }
 
-    private List<Parameter> getParameters(Type type, List<Annotation> annotations, Operation operation) {
+    protected List<Parameter> getParameters(Type type, List<Annotation> annotations, Operation operation) {
         final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
         if (!chain.hasNext()) {
             return Collections.emptyList();

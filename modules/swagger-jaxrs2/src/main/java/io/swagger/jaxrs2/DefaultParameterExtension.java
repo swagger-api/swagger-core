@@ -74,8 +74,13 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 pp.setName(param.value());
                 parameter = pp;
             } else if (annotation instanceof io.swagger.oas.annotations.Parameter) {
-                Parameter pp = new Parameter();
-                parameter = pp;
+                if (((io.swagger.oas.annotations.Parameter)annotation).hidden()) {
+                    return parameters;
+                }
+                if (parameter == null) {
+                    Parameter pp = new Parameter();
+                    parameter = pp;
+                }
             } else {
                 handleAdditionalAnnotation(parameters, annotation, type, typesToSkip);
             }
@@ -174,23 +179,4 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
     protected boolean shouldIgnoreClass(Class<?> cls) {
         return cls.getName().startsWith("javax.ws.rs.");
     }
-
-    /*private Property createProperty(Type type) {
-        return enforcePrimitive(ModelConverters.getInstance().readAsProperty(type), 0);
-    }
-
-    private Property enforcePrimitive(Property in, int level) {
-        if (in instanceof RefProperty) {
-            return new StringProperty();
-        }
-        if (in instanceof ArrayProperty) {
-            if (level == 0) {
-                final ArrayProperty array = (ArrayProperty) in;
-                array.setItems(enforcePrimitive(array.getItems(), level + 1));
-            } else {
-                return new StringProperty();
-            }
-        }
-        return in;
-    }*/
 }

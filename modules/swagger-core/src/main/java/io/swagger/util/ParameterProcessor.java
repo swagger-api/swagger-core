@@ -48,8 +48,18 @@ public class ParameterProcessor {
                     parameter.setSchema(schema);
                 }
             }
+            if (annotation instanceof io.swagger.oas.annotations.media.ArraySchema) {
+                Schema arraySchema = processArraySchema((io.swagger.oas.annotations.media.ArraySchema) annotation);
+                if (arraySchema != null) {
+                    parameter.setSchema(arraySchema);
+                }
+            }
+
             if (annotation instanceof io.swagger.oas.annotations.Parameter) {
                 io.swagger.oas.annotations.Parameter p = (io.swagger.oas.annotations.Parameter) annotation;
+                if (p.hidden()) {
+                    return null;
+                }
                 if (StringUtils.isNotBlank(p.description())) {
                     parameter.setDescription(p.description());
                 }
@@ -90,12 +100,12 @@ public class ParameterProcessor {
                 setParameterStyle(parameter, p);
                 setParameterExplode(parameter, p);
 
-                if (hasSchemaAnnotation(p.schema())) {
+                if (hasSchemaAnnotation(p.schema()) && parameter.getSchema() == null) {
                     Schema schema = processSchema(p.schema());
                     if (schema != null) {
                         parameter.setSchema(schema);
                     }
-                } else if (hasArrayAnnotation(p.array())) {
+                } else if (hasArrayAnnotation(p.array()) && parameter.getSchema() == null) {
                     Schema arraySchema = processArraySchema(p.array());
                     if (arraySchema != null) {
                         parameter.setSchema(arraySchema);

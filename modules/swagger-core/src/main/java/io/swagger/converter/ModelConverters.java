@@ -7,6 +7,7 @@ import io.swagger.util.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,6 +57,16 @@ public class ModelConverters {
             ModelConverterContextImpl context = new ModelConverterContextImpl(
                     converters);
             return context.resolve(type, null);
+
+        }
+        return null;
+    }
+
+    public Schema resolveProperty(Type type, Annotation[] annotations) {
+        if (shouldProcess(type)) {
+            ModelConverterContextImpl context = new ModelConverterContextImpl(
+                    converters);
+            return context.resolve(type, annotations);
 
         }
         return null;
