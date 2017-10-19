@@ -114,7 +114,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     @Override
-    public Schema resolve(Type type,
+    public Schema resolveAnnotatedType(Type type,
                           Annotated member,
                           String elementName,
                           ModelConverterContext context,
@@ -984,6 +984,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return null;
     }
 
+    protected String resolveFormat(Annotated a) {
+        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        if (schema != null && StringUtils.isNotBlank(schema.format())) {
+            return schema.format();
+        }
+        return null;
+    }
+
     protected String resolveDefaultValue(Annotated a) {
         io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
         if (schema != null) {
@@ -1059,7 +1067,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected BigDecimal resolveMinimum(Annotated a) {
         io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
-        if (schema != null && NumberUtils.isCreatable(schema.minimum())) {
+        if (schema != null && NumberUtils.isNumber(schema.minimum())) {
             String filteredMinimum = schema.minimum().replaceAll(Constants.COMMA, StringUtils.EMPTY);
             return new BigDecimal(filteredMinimum);
         }
@@ -1068,7 +1076,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected BigDecimal resolveMaximum(Annotated a) {
         io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
-        if (schema != null && NumberUtils.isCreatable(schema.maximum())) {
+        if (schema != null && NumberUtils.isNumber(schema.maximum())) {
             String filteredMaximum = schema.maximum().replaceAll(Constants.COMMA, StringUtils.EMPTY);
             return new BigDecimal(filteredMaximum);
         }
@@ -1243,6 +1251,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         String title = resolveTitle(a);
         if (StringUtils.isNotBlank(title)) {
             schema.title(title);
+        }
+        String format = resolveFormat(a);
+        if (StringUtils.isNotBlank(format) && StringUtils.isBlank(schema.getFormat())) {
+            schema.format(format);
         }
         String defaultValue = resolveDefaultValue(a);
         if (StringUtils.isNotBlank(defaultValue)) {

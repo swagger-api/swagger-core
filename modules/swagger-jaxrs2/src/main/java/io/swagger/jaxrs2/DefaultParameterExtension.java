@@ -21,6 +21,7 @@ import javax.ws.rs.QueryParam;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -178,5 +179,10 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
     @Override
     protected boolean shouldIgnoreClass(Class<?> cls) {
         return cls.getName().startsWith("javax.ws.rs.");
+    }
+
+    @Override
+    public List<Class<? extends Annotation>> fullyHandledAnnotation() {
+        return Collections.singletonList(BeanParam.class);
     }
 }

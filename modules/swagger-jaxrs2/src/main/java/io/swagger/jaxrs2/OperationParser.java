@@ -261,11 +261,11 @@ public class OperationParser {
             schemaObject.setMultipleOf(new BigDecimal(schema.multipleOf()));
             isEmpty = false;
         }
-        if (NumberUtils.isCreatable(schema.maximum())) {
+        if (NumberUtils.isNumber(schema.maximum())) {
             String filteredMaximum = schema.maximum().replaceAll(Constants.COMMA, StringUtils.EMPTY);
             schemaObject.setMaximum(new BigDecimal(filteredMaximum));
         }
-        if (NumberUtils.isCreatable(schema.minimum())) {
+        if (NumberUtils.isNumber(schema.minimum())) {
             String filteredMinimum = schema.minimum().replaceAll(Constants.COMMA, StringUtils.EMPTY);
             schemaObject.setMinimum(new BigDecimal(filteredMinimum));
         }

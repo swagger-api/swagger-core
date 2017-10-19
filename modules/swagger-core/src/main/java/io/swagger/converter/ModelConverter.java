@@ -31,11 +31,13 @@ public interface ModelConverter {
 
     /**
      * @param type
+     * @param member
+     * @param elementName
      * @param context
      * @param chain   the chain of model converters to try if this implementation cannot process
      * @return null if this ModelConverter cannot convert the given Type
      */
-    public Schema resolve(Type type,
+    public Schema resolveAnnotatedType(Type type,
                           Annotated member,
                           String elementName,
                           ModelConverterContext context,

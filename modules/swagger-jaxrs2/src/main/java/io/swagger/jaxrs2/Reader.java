@@ -640,11 +640,20 @@ public class Reader implements OpenApiReader {
         if (!parameters.isEmpty()) {
             final List<Parameter> processed = new ArrayList<>(parameters.size());
             for (Parameter parameter : parameters) {
-                if (ParameterProcessor.applyAnnotations(openAPI, parameter, type, annotations) != null) {
+                boolean doProcess = false;
+                if (hasAnnotation(extension.fullyHandledAnnotation(), annotations)) {
+                    doProcess = true;
+                } else {
+                    if (ParameterProcessor.applyAnnotations(openAPI, parameter, type, annotations) != null) {
+                        doProcess = true;
+                    }
+                }
+                if (doProcess) {
                     processed.add(parameter);
                     Map<String, Schema> schemaMap = ModelConverters.getInstance().readAll(type);
                     schemaMap.forEach((key, schema) -> components.addSchemas(key, schema));
                 }
+
             }
             return processed;
         } else {
@@ -658,6 +667,19 @@ public class Reader implements OpenApiReader {
             }
             return body;
         }
+    }
+
+    private boolean hasAnnotation(List<Class<? extends Annotation>> aClasses, List<Annotation> list) {
+
+        if (list == null) {
+            return false;
+        }
+        for (Annotation a: list) {
+            if (aClasses.contains(a.annotationType())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String extractOperationIdFromPathItem(PathItem path) {

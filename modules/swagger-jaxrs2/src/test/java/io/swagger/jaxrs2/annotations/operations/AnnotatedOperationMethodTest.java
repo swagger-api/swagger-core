@@ -385,55 +385,27 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     public void testCompletePetResource() throws IOException {
         String expectedYAML = "openapi: 3.0.0\n" +
                 "paths:\n" +
-                "  /pet:\n" +
-                "    put:\n" +
-                "      summary: Update an existing pet\n" +
-                "      operationId: updatePet\n" +
-                "      requestBody:\n" +
-                "        description: Pet object that needs to be added to the store\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "  /pet/findByTags:\n" +
+                "    get:\n" +
+                "      summary: Finds Pets by tags\n" +
+                "      description: Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.\n" +
+                "      operationId: findPetsByTags\n" +
+                "      parameters:\n" +
+                "      - name: tags\n" +
+                "        in: query\n" +
+                "        description: Tags to filter by\n" +
                 "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
                 "      responses:\n" +
+                "        default:\n" +
+                "          description: Pets matching criteria\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
                 "        400:\n" +
-                "          description: Invalid ID supplied\n" +
-                "        404:\n" +
-                "          description: Pet not found\n" +
-                "        405:\n" +
-                "          description: Validation exception\n" +
-                "    post:\n" +
-                "      summary: Add a new pet to the store\n" +
-                "      operationId: addPet\n" +
-                "      requestBody:\n" +
-                "        description: Pet object that needs to be added to the store\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
-                "          application/xml:\n" +
-                "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
-                "        required: true\n" +
-                "      responses:\n" +
-                "        405:\n" +
-                "          description: Invalid input\n" +
-                "  /pet/bodynoannotation:\n" +
-                "    post:\n" +
-                "      summary: Add a new pet to the store no annotation\n" +
-                "      operationId: addPetNoAnnotation\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
-                "          application/xml:\n" +
-                "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
-                "      responses:\n" +
-                "        405:\n" +
-                "          description: Invalid input\n" +
+                "          description: Invalid tag value\n" +
                 "  /pet/{petId}:\n" +
                 "    get:\n" +
                 "      summary: Find pet by ID\n" +
@@ -461,6 +433,21 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          description: Invalid ID supplied\n" +
                 "        404:\n" +
                 "          description: Pet not found\n" +
+                "  /pet/bodynoannotation:\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store no annotation\n" +
+                "      operationId: addPetNoAnnotation\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "      responses:\n" +
+                "        405:\n" +
+                "          description: Invalid input\n" +
                 "  /pet/bodyid:\n" +
                 "    post:\n" +
                 "      summary: Add a new pet to the store passing an integer with generic parameter annotation\n" +
@@ -497,6 +484,40 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        405:\n" +
                 "          description: Invalid input\n" +
+                "  /pet:\n" +
+                "    put:\n" +
+                "      summary: Update an existing pet\n" +
+                "      operationId: updatePet\n" +
+                "      requestBody:\n" +
+                "        description: Pet object that needs to be added to the store\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        400:\n" +
+                "          description: Invalid ID supplied\n" +
+                "        404:\n" +
+                "          description: Pet not found\n" +
+                "        405:\n" +
+                "          description: Validation exception\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store\n" +
+                "      operationId: addPet\n" +
+                "      requestBody:\n" +
+                "        description: Pet object that needs to be added to the store\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        405:\n" +
+                "          description: Invalid input\n" +
                 "  /pet/findByStatus:\n" +
                 "    get:\n" +
                 "      summary: Finds Pets by status\n" +
@@ -527,27 +548,6 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "                $ref: '#/components/schemas/Pet'\n" +
                 "        400:\n" +
                 "          description: Invalid status value\n" +
-                "  /pet/findByTags:\n" +
-                "    get:\n" +
-                "      summary: Finds Pets by tags\n" +
-                "      description: Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.\n" +
-                "      operationId: findPetsByTags\n" +
-                "      parameters:\n" +
-                "      - name: tags\n" +
-                "        in: query\n" +
-                "        description: Tags to filter by\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: Pets matching criteria\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
-                "        400:\n" +
-                "          description: Invalid tag value\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    Category:\n" +

@@ -112,9 +112,9 @@ public class SnakeCaseConverterTest {
         }
 
         @Override
-        public Schema resolve(Type type, Annotated member, String elementName, ModelConverterContext context, Iterator<ModelConverter> chain) {
+        public Schema resolveAnnotatedType(Type type, Annotated member, String elementName, ModelConverterContext context, Iterator<ModelConverter> chain) {
             if (chain.hasNext()) {
-                return chain.next().resolve(type, member, elementName,context, chain);
+                return chain.next().resolveAnnotatedType(type, member, elementName,context, chain);
             } else {
                 return null;
             }

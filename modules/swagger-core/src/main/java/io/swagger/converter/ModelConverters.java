@@ -62,14 +62,10 @@ public class ModelConverters {
         return null;
     }
 
-    public Schema resolveProperty(Type type, Annotation[] annotations) {
-        if (shouldProcess(type)) {
-            ModelConverterContextImpl context = new ModelConverterContextImpl(
-                    converters);
-            return context.resolve(type, annotations);
-
-        }
-        return null;
+    public Schema resolveAnnotatedType(Type type, List<Annotation> annotations, String elementName) {
+        ModelConverterContextImpl context = new ModelConverterContextImpl(
+                converters);
+        return context.resolveAnnotatedType(type, annotations, elementName);
     }
 
     public Map<String, Schema> read(Type type) {
