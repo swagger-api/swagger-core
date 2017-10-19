@@ -113,6 +113,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return resolveProperty(_mapper.constructType(type), context, annotations, next);
     }
 
+    @Override
+    public Schema resolve(Type type,
+                          Annotated member,
+                          String elementName,
+                          ModelConverterContext context,
+                          Iterator<ModelConverter> next) {
+
+        if (this.shouldIgnoreClass(type)) {
+            return null;
+        }
+
+        return resolveAnnotatedType(_mapper.constructType(type), member, elementName, context, null, null);
+    }
+
     private io.swagger.oas.annotations.media.Schema getSchemaAnnotation(Annotation... annotations) {
         if (annotations == null) {
             return null;

@@ -6,11 +6,14 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyName;
+import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.oas.models.media.Schema;
+
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.Map;
@@ -44,6 +47,24 @@ public abstract class AbstractModelConverter implements ModelConverter {
     public Schema resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
         if (chain.hasNext()) {
             return chain.next().resolve(type, context, chain);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Schema resolve(Type type, Annotated member, String elementName, ModelConverterContext context, Iterator<ModelConverter> chain) {
+        if (chain.hasNext()) {
+            return chain.next().resolve(type, member, elementName,context, chain);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Schema resolve(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {
+        if (chain.hasNext()) {
+            return chain.next().resolve(type, context, annotations, chain);
         } else {
             return null;
         }
