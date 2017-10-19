@@ -7,7 +7,6 @@ public class ModelWithAltPropertyName {
     protected int id;
 
     @Schema(
-//            access = "public",
             name = "the_id",
             description = "Note, this is server generated.",
             title = "Read-only")
