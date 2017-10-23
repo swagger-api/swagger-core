@@ -13,9 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by RafaelLopez on 5/26/17.
- */
 public class SecurityParser {
 
 	public static Optional<List<SecurityRequirement>> getSecurityRequirements(io.swagger.oas.annotations.security.SecurityRequirement[] securityRequirementsApi) {
@@ -39,12 +36,6 @@ public class SecurityParser {
 			return Optional.empty();
 		}
 		return Optional.of(securityRequirements);
-	}
-	public static Optional<List<SecurityRequirement>> getSecurityRequirements(io.swagger.oas.annotations.security.SecurityRequirement securityRequirementApi) {
-		if (securityRequirementApi == null) {
-			return Optional.empty();
-		}
-		return getSecurityRequirements(new io.swagger.oas.annotations.security.SecurityRequirement[] {securityRequirementApi});
 	}
 
 	public static Optional<SecurityScheme> getSecurityScheme(io.swagger.oas.annotations.security.SecurityScheme securityScheme) {

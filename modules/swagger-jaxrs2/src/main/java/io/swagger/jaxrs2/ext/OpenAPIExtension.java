@@ -1,7 +1,8 @@
 package io.swagger.jaxrs2.ext;
 
+import io.swagger.jaxrs2.ResolvedParameter;
+import io.swagger.oas.models.Components;
 import io.swagger.oas.models.Operation;
-import io.swagger.oas.models.parameters.Parameter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -14,7 +15,8 @@ public interface OpenAPIExtension {
 
     String extractOperationMethod(Operation apiOperation, Method method, Iterator<OpenAPIExtension> chain);
 
-    List<Parameter> extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip, Iterator<OpenAPIExtension> chain);
+    ResolvedParameter extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip, Components components,
+                                        javax.ws.rs.Consumes classConsumes, javax.ws.rs.Consumes methodConsumes, boolean includeRequestBody, Iterator<OpenAPIExtension> chain);
 
     /**
      * Decorates operation with additional vendor based extensions.

@@ -1,37 +1,25 @@
 package io.swagger.util;
 
 import io.swagger.converter.ModelConverters;
+import io.swagger.converter.ResolvedSchema;
 import io.swagger.oas.annotations.enums.Explode;
 import io.swagger.oas.annotations.media.ExampleObject;
-import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.Components;
 import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.media.ArraySchema;
-import io.swagger.oas.models.media.BinarySchema;
-import io.swagger.oas.models.media.ByteArraySchema;
-import io.swagger.oas.models.media.DateSchema;
-import io.swagger.oas.models.media.DateTimeSchema;
-import io.swagger.oas.models.media.EmailSchema;
-import io.swagger.oas.models.media.IntegerSchema;
-import io.swagger.oas.models.media.PasswordSchema;
+import io.swagger.oas.models.media.Content;
+import io.swagger.oas.models.media.MediaType;
 import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.media.StringSchema;
-import io.swagger.oas.models.media.UUIDSchema;
 import io.swagger.oas.models.parameters.Parameter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +28,10 @@ import java.util.Optional;
 public class ParameterProcessor {
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
-    public static Parameter applyAnnotations(OpenAPI openAPI, Parameter parameter, Type type, List<Annotation> annotations) {
+
+    public static Parameter applyAnnotations(Parameter parameter, Type type, List<Annotation> annotations, Components components, String[] classTypes, String[] methodTypes) {
+
+
         final AnnotationsHelper helper = new AnnotationsHelper(annotations, type);
         if (helper.isContext()) {
             return null;
@@ -49,15 +40,26 @@ public class ParameterProcessor {
             // consider it to be body param
             parameter = new Parameter();
         }
+
+        // first handle schema
+        List<Annotation> reworkedAnnotations = new ArrayList<>(annotations);
+        Annotation paramSchemaOrArrayAnnotation = getParamSchemaAnnotation(annotations);
+        if (paramSchemaOrArrayAnnotation != null) {
+            reworkedAnnotations.add(paramSchemaOrArrayAnnotation);
+        }
+        ResolvedSchema resolvedSchema = ModelConverters.getInstance().resolveAnnotatedType(type, reworkedAnnotations, "");
+
+        if (resolvedSchema.schema != null) {
+            parameter.setSchema(resolvedSchema.schema);
+        }
+        resolvedSchema.referencedSchemas.forEach((key, schema) -> components.addSchemas(key, schema));
+
         for (Annotation annotation : annotations) {
-            if (annotation instanceof io.swagger.oas.annotations.media.Schema) {
-                Schema schema = processSchema((io.swagger.oas.annotations.media.Schema) annotation);
-                if (schema != null) {
-                    parameter.setSchema(schema);
-                }
-            }
             if (annotation instanceof io.swagger.oas.annotations.Parameter) {
                 io.swagger.oas.annotations.Parameter p = (io.swagger.oas.annotations.Parameter) annotation;
+                if (p.hidden()) {
+                    return null;
+                }
                 if (StringUtils.isNotBlank(p.description())) {
                     parameter.setDescription(p.description());
                 }
@@ -89,26 +91,20 @@ public class ParameterProcessor {
 
                 Map<String, Example> exampleMap = new HashMap<>();
                 for (ExampleObject exampleObject : p.examples()) {
-                    getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
+                    AnnotationsUtils.getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
                 }
                 if (exampleMap.size() > 0) {
                     parameter.setExamples(exampleMap);
                 }
 
+                Optional<Content> content = getContent(p.content(), classTypes, methodTypes, parameter.getSchema());
+                if (content.isPresent()) {
+                    parameter.setContent(content.get());
+                    parameter.setSchema(null);
+                }
                 setParameterStyle(parameter, p);
                 setParameterExplode(parameter, p);
 
-                if (hasSchemaAnnotation(p.schema())) {
-                    Schema schema = processSchema(p.schema());
-                    if (schema != null) {
-                        parameter.setSchema(schema);
-                    }
-                } else if (hasArrayAnnotation(p.array())) {
-                    Schema arraySchema = processArraySchema(p.array());
-                    if (arraySchema != null) {
-                        parameter.setSchema(arraySchema);
-                    }
-                }
             } else if (annotation.annotationType().getName().equals("javax.ws.rs.PathParam")) {
                 try {
                     String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
@@ -139,16 +135,14 @@ public class ParameterProcessor {
                 }
             }
         }
-        if (type != null) {
-            Schema filled = fillSchema(parameter.getSchema(), type);
-            if (filled != null) {
-                parameter.setSchema(filled);
-            }
-        }
         final String defaultValue = helper.getDefaultValue();
 
         Schema paramSchema = parameter.getSchema();
-
+        if (paramSchema == null) {
+            if (parameter.getContent() != null && parameter.getContent().values().size() > 0) {
+                paramSchema = parameter.getContent().values().iterator().next().getSchema();
+            }
+        }
         if (paramSchema != null) {
             if (paramSchema instanceof ArraySchema) {
                 ArraySchema as = (ArraySchema) paramSchema;
@@ -162,54 +156,6 @@ public class ParameterProcessor {
             }
         }
         return parameter;
-    }
-
-    public static Optional<Example> getExample(ExampleObject example) {
-        if (example == null) {
-            return Optional.empty();
-        }
-        if (StringUtils.isNotBlank(example.name())) {
-            Example exampleObject = new Example();
-            if (StringUtils.isNotBlank(example.name())) {
-                exampleObject.setDescription(example.name());
-            }
-            if (StringUtils.isNotBlank(example.summary())) {
-                exampleObject.setSummary(example.summary());
-            }
-            if (StringUtils.isNotBlank(example.externalValue())) {
-                exampleObject.setExternalValue(example.externalValue());
-            }
-            if (StringUtils.isNotBlank(example.value())) {
-                try {
-                    exampleObject.setValue(Json.mapper().readTree(example.value()));
-                } catch (IOException e) {
-                    exampleObject.setValue(example.value());
-                }
-            }
-            return Optional.of(exampleObject);
-        }
-        return Optional.empty();
-    }
-
-    private static boolean hasArrayAnnotation(io.swagger.oas.annotations.media.ArraySchema array) {
-        if (array.uniqueItems() == false
-                && array.maxItems() == Integer.MIN_VALUE
-                && array.minItems() == Integer.MAX_VALUE
-                && !hasSchemaAnnotation(array.schema())
-                ) {
-            return false;
-        }
-        return true;
-    }
-
-    private static Schema processArraySchema(io.swagger.oas.annotations.media.ArraySchema array) {
-        ArraySchema output = new ArraySchema();
-
-        Schema schema = processSchema(array.schema());
-
-        output.setItems(schema);
-
-        return output;
     }
 
     public static void setParameterExplode(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
@@ -242,221 +188,157 @@ public class ParameterProcessor {
         }
     }
 
-    public static Schema fillSchema(Schema schema, Type type) {
-        if (schema != null) {
-            if (schema != null && StringUtils.isBlank(schema.getType())) {
-                PrimitiveType pt = PrimitiveType.fromType(type);
-                if (pt != null) {
-                    Schema inner = pt.createProperty();
-                    return merge(schema, inner);
-                } else {
-                    return merge(schema, ModelConverters.getInstance().resolveProperty(type));
-                }
-            } else if ("array".equals(schema.getType())) {
-                Schema inner = fillSchema(((ArraySchema) schema).getItems(), type);
-                ArraySchema as = (ArraySchema) schema;
-                as.setItems(inner);
-                as.setMinItems(schema.getMinItems());
-                as.setMaxItems(schema.getMaxItems());
-                return as;
-            }
-        } else {
-            PrimitiveType pt = PrimitiveType.fromType(type);
-            if (pt != null) {
-                Schema inner = pt.createProperty();
-                return merge(schema, inner);
-            } else {
-                return ModelConverters.getInstance().resolveProperty(type);
-            }
-        }
-        return schema;
-    }
 
-    public static Schema merge(Schema from, Schema to) {
-        if (from == null) {
-            return to;
+    public static Annotation getParamSchemaAnnotation(List<Annotation> annotations) {
+        if (annotations == null) {
+            return null;
         }
-        if (to.getDefault() == null) {
-            to.setDefault(from.getDefault());
-        }
-        if (to.getDeprecated() == null) {
-            to.setDeprecated(from.getDeprecated());
-        }
-        if (to.getDescription() == null) {
-            to.setDescription(from.getDescription());
-        }
-        if (to.getEnum() == null) {
-            to.setEnum(from.getEnum());
-        }
-        if (to.getExample() == null) {
-            to.setExample(from.getExample());
-        }
-        if (to.getExclusiveMaximum() == null) {
-            to.setExclusiveMaximum(from.getExclusiveMaximum());
-        }
-        if (to.getExclusiveMinimum() == null) {
-            to.setExclusiveMinimum(from.getExclusiveMinimum());
-        }
-        if (to.getExtensions() == null) {
-            to.setExtensions(from.getExtensions());
-        }
-        if (to.getExternalDocs() == null) {
-            to.setExternalDocs(from.getExternalDocs());
-        }
-        if (to.getFormat() == null) {
-            to.setFormat(from.getFormat());
-        }
-        if (to.getMaximum() == null) {
-            to.setMaximum(from.getMaximum());
-        }
-        if (to.getMaxLength() == null) {
-            to.setMaxLength(from.getMaxLength());
-        }
-        if (to.getMinimum() == null) {
-            to.setMinimum(from.getMinimum());
-        }
-        if (to.getMinLength() == null) {
-            to.setMinLength(from.getMinLength());
-        }
-        if (to.getMultipleOf() == null) {
-            to.setMultipleOf(from.getMultipleOf());
-        }
-        if (to.getNullable() == null) {
-            to.setNullable(from.getNullable());
-        }
-        if (to.getPattern() == null) {
-            to.setPattern(from.getPattern());
-        }
-        if (to.getReadOnly() == null) {
-            to.setReadOnly(from.getReadOnly());
-        }
-        if (to.getRequired() == null) {
-            to.setRequired(from.getRequired());
-        }
-        if (to.getTitle() == null) {
-            to.setTitle(from.getTitle());
-        }
-        if (to.getXml() == null) {
-            to.setXml(from.getXml());
-        }
-        if (to.getWriteOnly() == null) {
-            to.setWriteOnly(from.getWriteOnly());
-        }
-        return to;
-    }
-
-    private static boolean hasSchemaAnnotation(io.swagger.oas.annotations.media.Schema schema) {
-        if (StringUtils.isBlank(schema.type())
-                && StringUtils.isBlank(schema.format())
-                && StringUtils.isBlank(schema.title())
-                && StringUtils.isBlank(schema.description())
-                && StringUtils.isBlank(schema.ref())
-                && StringUtils.isBlank(schema.name())
-                && schema.multipleOf() == 0
-                && StringUtils.isBlank(schema.maximum())
-                && StringUtils.isBlank(schema.minimum())
-                && !schema.exclusiveMinimum()
-                && !schema.exclusiveMaximum()
-                && schema.maxLength() == Integer.MIN_VALUE
-                && schema.minLength() == Integer.MAX_VALUE
-                && schema.minProperties() == 0
-                && schema.maxProperties() == 0
-                && schema.requiredProperties().length == 1 && StringUtils.isBlank(schema.requiredProperties()[0])
-                && !schema.required()
-                && !schema.nullable()
-                && !schema.readOnly()
-                && !schema.writeOnly()
-                && !schema.deprecated()
-                && schema.allowableValues().length == 1 && StringUtils.isBlank(schema.allowableValues()[0])
-                && StringUtils.isBlank(schema.defaultValue())
-                && StringUtils.isBlank(schema.example())
-                && StringUtils.isBlank(schema.pattern())
-                && schema.not().equals(Void.class)
-                && schema.oneOf().length == 1 && schema.oneOf()[0].equals(Void.class)
-                && schema.anyOf().length == 1 && schema.anyOf()[0].equals(Void.class)
-                ) {
-            return false;
-        }
-        return true;
-    }
-
-    private static Schema processSchema(io.swagger.oas.annotations.media.Schema schema) {
-        Schema output = null;
-        if (schema.type() != null) {
-            if ("integer".equals(schema.type())) {
-                output = new IntegerSchema();
-                if (StringUtils.isNotBlank(schema.format())) {
-                    output.format(schema.format());
-                }
-            } else if ("string".equals(schema.type())) {
-                if ("password".equals(schema.format())) {
-                    output = new PasswordSchema();
-                } else if ("binary".equals(schema.format())) {
-                    output = new BinarySchema();
-                } else if ("byte".equals(schema.format())) {
-                    output = new ByteArraySchema();
-                } else if ("date".equals(schema.format())) {
-                    output = new DateSchema();
-                } else if ("date-time".equals(schema.format())) {
-                    output = new DateTimeSchema();
-                } else if ("email".equals(schema.format())) {
-                    output = new EmailSchema();
-                } else if ("uuid".equals(schema.format())) {
-                    output = new UUIDSchema();
-                } else {
-                    output = new StringSchema();
-                }
-            } else {
-                output = new Schema();
+        io.swagger.oas.annotations.media.Schema rootSchema = null;
+        io.swagger.oas.annotations.media.ArraySchema rootArraySchema = null;
+        io.swagger.oas.annotations.media.Schema contentSchema = null;
+        io.swagger.oas.annotations.media.Schema paramSchema = null;
+        io.swagger.oas.annotations.media.ArraySchema paramArraySchema = null;
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof io.swagger.oas.annotations.media.Schema) {
+                rootSchema = (io.swagger.oas.annotations.media.Schema) annotation;
             }
-
-            // TODO: #2312 other types
-        }
-        if (output != null) {
-            if (StringUtils.isNotBlank(schema.defaultValue())) {
-                output.setDefault(schema.defaultValue());
+            else if (annotation instanceof io.swagger.oas.annotations.media.ArraySchema) {
+                rootArraySchema = (io.swagger.oas.annotations.media.ArraySchema) annotation;
             }
-
-            if (StringUtils.isNotBlank(schema.pattern())) {
-                output.setPattern(schema.pattern());
-            }
-            if (StringUtils.isNotBlank(schema.format())) {
-                output.setFormat(schema.format());
-            }
-            if (StringUtils.isNotBlank(schema.description())) {
-                output.setDescription(schema.description());
-            }
-            if (schema.allowableValues() != null) {
-                for (String v : schema.allowableValues()) {
-                    if (StringUtils.isNotBlank(v)) {
-                        output.addEnumItemObject(v);
+            else if (annotation instanceof io.swagger.oas.annotations.Parameter) {
+                io.swagger.oas.annotations.Parameter paramAnnotation = (io.swagger.oas.annotations.Parameter)annotation;
+                if (paramAnnotation.content().length > 0) {
+                    if (AnnotationsUtils.hasSchemaAnnotation(paramAnnotation.content()[0].schema())) {
+                        contentSchema = paramAnnotation.content()[0].schema();
                     }
                 }
-            }
-            if (schema.exclusiveMinimum()) {
-                output.exclusiveMinimum(true);
-            }
-            if (schema.exclusiveMaximum()) {
-                output.exclusiveMaximum(true);
-            }
-            if (schema.readOnly()) {
-                output.readOnly(true);
-            }
-            if (StringUtils.isNotBlank(schema.minimum())) {
-                output.minimum(new BigDecimal(schema.minimum()));
-            }
-            if (StringUtils.isNotBlank(schema.maximum())) {
-                output.maximum(new BigDecimal(schema.maximum()));
-            }
-            if (schema.minProperties() > 0) {
-                output.minProperties(schema.minProperties());
-            }
-            if (schema.maxProperties() > 0) {
-                output.maxProperties(schema.maxProperties());
+                if (AnnotationsUtils.hasSchemaAnnotation(paramAnnotation.schema())) {
+                    paramSchema = paramAnnotation.schema();
+                }
+                if (AnnotationsUtils.hasArrayAnnotation(paramAnnotation.array())) {
+                    paramArraySchema = paramAnnotation.array();
+                }
             }
         }
+        if (rootSchema != null || rootArraySchema != null) {
+            return null;
+        }
+        if (contentSchema != null) {
+            return contentSchema;
+        }
+        if (paramSchema != null) {
+            return paramSchema;
+        }
+        if (paramArraySchema != null) {
+            return paramArraySchema;
+        }
+        return null;
+    }
 
-        return output;
+    public static Type getParameterType(io.swagger.oas.annotations.Parameter paramAnnotation) {
+        if (paramAnnotation == null) {
+            return null;
+        }
+        io.swagger.oas.annotations.media.Schema contentSchema = null;
+        io.swagger.oas.annotations.media.Schema paramSchema = null;
+        io.swagger.oas.annotations.media.ArraySchema paramArraySchema = null;
+
+        if (paramAnnotation.content().length > 0) {
+            if (AnnotationsUtils.hasSchemaAnnotation(paramAnnotation.content()[0].schema())) {
+                contentSchema = paramAnnotation.content()[0].schema();
+            }
+        }
+        if (AnnotationsUtils.hasSchemaAnnotation(paramAnnotation.schema())) {
+            paramSchema = paramAnnotation.schema();
+        }
+        if (AnnotationsUtils.hasArrayAnnotation(paramAnnotation.array())) {
+            paramArraySchema = paramAnnotation.array();
+        }
+        if (contentSchema != null) {
+            return getSchemaType(contentSchema);
+        }
+        if (paramSchema != null) {
+            return getSchemaType(paramSchema);
+        }
+        if (paramArraySchema != null) {
+            return getSchemaType(paramArraySchema.schema());
+        }
+        return String.class;
+    }
+
+    public static Type getSchemaType(io.swagger.oas.annotations.media.Schema schema) {
+        if (schema == null) {
+            return String.class;
+        }
+        String schemaType = schema.type();
+        Class schemaImplementation = schema.implementation();
+
+        if (!schemaImplementation.equals(Void.class)) {
+            return schemaImplementation;
+        } else if (StringUtils.isBlank(schemaType)) {
+            return String.class;
+        }
+        switch (schemaType) {
+            case "number":
+                return BigDecimal.class;
+            case "integer":
+                return Long.class;
+            case "boolean":
+                return Boolean.class;
+            default:
+                return String.class;
+        }
+    }
+
+
+    public static Optional<Content> getContent(io.swagger.oas.annotations.media.Content[] annotationContents, String[] classTypes, String[] methodTypes, Schema schema) {
+        if (annotationContents == null || annotationContents.length == 0) {
+            return Optional.empty();
+        }
+
+        //Encapsulating Content model
+        Content content = new Content();
+
+        io.swagger.oas.annotations.media.Content annotationContent = annotationContents[0];
+        MediaType mediaType = new MediaType();
+        mediaType.setSchema(schema);
+
+        ExampleObject[] examples = annotationContent.examples();
+        for (ExampleObject example : examples) {
+            AnnotationsUtils.getExample(example).ifPresent(exampleObject -> mediaType.addExamples(example.name(), exampleObject));
+        }
+        io.swagger.oas.annotations.media.Encoding[] encodings = annotationContent.encoding();
+        for (io.swagger.oas.annotations.media.Encoding encoding : encodings) {
+            AnnotationsUtils.addEncodingToMediaType(mediaType, encoding);
+        }
+        if (StringUtils.isNotBlank(annotationContent.mediaType())) {
+            content.addMediaType(annotationContent.mediaType(), mediaType);
+        } else {
+            if (mediaType.getSchema() != null) {
+                applyTypes(classTypes, methodTypes, content, mediaType);
+            }
+        }
+        if (content.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(content);
+    }
+
+    public static final String MEDIA_TYPE = "*/*";
+
+    public static void applyTypes(String[] classTypes, String[] methodTypes, Content content, MediaType mediaType) {
+        if (methodTypes != null && methodTypes.length > 0) {
+            for (String value : methodTypes) {
+                content.addMediaType(value, mediaType);
+            }
+        } else if (classTypes != null && classTypes.length > 0) {
+            for (String value : classTypes) {
+                content.addMediaType(value, mediaType);
+            }
+        } else {
+            content.addMediaType(MEDIA_TYPE, mediaType);
+        }
+
     }
 
     /**
@@ -464,24 +346,8 @@ public class ParameterProcessor {
      * accessing supported parameter annotations.
      */
     private static class AnnotationsHelper {
-        //        private static final ApiParam DEFAULT_API_PARAM = getDefaultApiParam(null);
         private boolean context;
-        //        private ParamWrapper<?> apiParam = new ApiParamWrapper(DEFAULT_API_PARAM);
-        private String type;
-        private String format;
         private String defaultValue;
-        private Integer minItems;
-        private Integer maxItems;
-        private Boolean required;
-        private BigDecimal min;
-        private boolean minExclusive = false;
-        private BigDecimal max;
-        private boolean maxExclusive = false;
-        private Integer minLength;
-        private Integer maxLength;
-        private String pattern;
-        private Boolean allowEmptyValue;
-        private String collectionFormat;
 
         /**
          * Constructs an instance.
@@ -490,7 +356,6 @@ public class ParameterProcessor {
          */
         public AnnotationsHelper(List<Annotation> annotations, Type _type) {
             String rsDefault = null;
-            Size size = null;
             if (annotations != null) {
                 for (Annotation item : annotations) {
                     if ("javax.ws.rs.core.Context".equals(item.annotationType().getName())) {
@@ -501,43 +366,12 @@ public class ParameterProcessor {
                         } catch (Exception ex) {
                             LOGGER.error("Invocation of value method failed", ex);
                         }
-                    } else if (item instanceof Size) {
-                        size = (Size) item;
-                        /**
-                         * This annotation is handled after the loop, as the allow multiple field of the
-                         * ApiParam annotation can affect how the Size annotation is translated
-                         * Swagger property constraints
-                         */
-                    } else if (item instanceof NotNull) {
-                        required = true;
-                    } else if (item instanceof Min) {
-                        min = new BigDecimal(((Min) item).value());
-                    } else if (item instanceof Max) {
-                        max = new BigDecimal(((Max) item).value());
-                    } else if (item instanceof DecimalMin) {
-                        DecimalMin decimalMinAnnotation = (DecimalMin) item;
-                        min = new BigDecimal(decimalMinAnnotation.value());
-                        minExclusive = !decimalMinAnnotation.inclusive();
-                    } else if (item instanceof DecimalMax) {
-                        DecimalMax decimalMaxAnnotation = (DecimalMax) item;
-                        max = new BigDecimal(decimalMaxAnnotation.value());
-                        maxExclusive = !decimalMaxAnnotation.inclusive();
-                    } else if (item instanceof Pattern) {
-                        pattern = ((Pattern) item).regexp();
+                        // TODO verify if resolved correctly by resolver
                     }
                 }
             }
             defaultValue = rsDefault;
 
-        }
-
-        private boolean isAssignableToNumber(Class<?> clazz) {
-            return Number.class.isAssignableFrom(clazz)
-                    || int.class.isAssignableFrom(clazz)
-                    || short.class.isAssignableFrom(clazz)
-                    || long.class.isAssignableFrom(clazz)
-                    || float.class.isAssignableFrom(clazz)
-                    || double.class.isAssignableFrom(clazz);
         }
 
         /**
@@ -554,62 +388,5 @@ public class ParameterProcessor {
         public String getDefaultValue() {
             return defaultValue;
         }
-
-        public Integer getMinItems() {
-            return minItems;
-        }
-
-        public Integer getMaxItems() {
-            return maxItems;
-        }
-
-        public Boolean isRequired() {
-            return required;
-        }
-
-        public BigDecimal getMax() {
-            return max;
-        }
-
-        public boolean isMaxExclusive() {
-            return maxExclusive;
-        }
-
-        public BigDecimal getMin() {
-            return min;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public String getFormat() {
-            return format;
-        }
-
-        public boolean isMinExclusive() {
-            return minExclusive;
-        }
-
-        public Integer getMinLength() {
-            return minLength;
-        }
-
-        public Integer getMaxLength() {
-            return maxLength;
-        }
-
-        public String getPattern() {
-            return pattern;
-        }
-
-        public Boolean getAllowEmptyValue() {
-            return allowEmptyValue;
-        }
-
-        public String getCollectionFormat() {
-            return collectionFormat;
-        }
     }
-
 }

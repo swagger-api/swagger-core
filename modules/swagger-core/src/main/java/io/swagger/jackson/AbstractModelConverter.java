@@ -13,7 +13,7 @@ import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.oas.models.media.Schema;
 
-import javax.xml.bind.annotation.XmlElement;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.Map;
@@ -43,10 +43,31 @@ public abstract class AbstractModelConverter implements ModelConverter {
 
     }
 
-    protected String _description(Annotated ann) {
-        // while name suggests it's only for properties, should work for any Annotated thing.
-        // also; with Swagger introspector's help, should get it from ApiModel/ApiModelProperty
-        return _intr.findPropertyDescription(ann);
+    @Override
+    public Schema resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+        if (chain.hasNext()) {
+            return chain.next().resolve(type, context, chain);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Schema resolveAnnotatedType(Type type, Annotated member, String elementName, ModelConverterContext context, Iterator<ModelConverter> chain) {
+        if (chain.hasNext()) {
+            return chain.next().resolveAnnotatedType(type, member, elementName,context, chain);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Schema resolve(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {
+        if (chain.hasNext()) {
+            return chain.next().resolve(type, context, annotations, chain);
+        } else {
+            return null;
+        }
     }
 
     protected String _typeName(JavaType type) {
@@ -99,37 +120,6 @@ public abstract class AbstractModelConverter implements ModelConverter {
         return type.getType().getName();
     }
 
-    protected String _findDefaultValue(Annotated a) {
-        XmlElement elem = a.getAnnotation(XmlElement.class);
-        if (elem != null) {
-            if (!elem.defaultValue().isEmpty() && !"\u0000".equals(elem.defaultValue())) {
-                return elem.defaultValue();
-            }
-        }
-        return null;
-    }
-
-    protected String _findExampleValue(Annotated a) {
-
-        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
-        if (schema != null) {
-            if (!schema.example().isEmpty()) {
-                return schema.example();
-            }
-        }
-
-        return null;
-    }
-
-    protected Boolean _findReadOnly(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
-        // TODO possibly set schema.readOnly to be Boolean object
-        if (schema != null && schema.readOnly()) {
-            return schema.readOnly();
-        }
-        return null;
-    }
-
     protected boolean _isSetType(Class<?> cls) {
         if (cls != null) {
 
@@ -145,14 +135,5 @@ public abstract class AbstractModelConverter implements ModelConverter {
             }
         }
         return false;
-    }
-
-    @Override
-    public Schema resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
-        if (chain.hasNext()) {
-            return chain.next().resolve(type, context, chain);
-        } else {
-            return null;
-        }
     }
 }

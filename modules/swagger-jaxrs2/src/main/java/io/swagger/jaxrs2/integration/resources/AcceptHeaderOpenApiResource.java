@@ -1,5 +1,7 @@
 package io.swagger.jaxrs2.integration.resources;
 
+import io.swagger.oas.annotations.Operation;
+
 import javax.servlet.ServletConfig;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -21,6 +23,7 @@ public class AcceptHeaderOpenApiResource extends BaseOpenApiResource {
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
+    @Operation(hidden = true)
     public Response getOpenApiJson( @Context HttpHeaders headers,
                                 @Context UriInfo uriInfo) throws Exception {
 
@@ -29,6 +32,7 @@ public class AcceptHeaderOpenApiResource extends BaseOpenApiResource {
 
     @GET
     @Produces({"application/yaml"})
+    @Operation(hidden = true)
     public Response getOpenApiYaml( @Context HttpHeaders headers,
                                 @Context UriInfo uriInfo) throws Exception {
 

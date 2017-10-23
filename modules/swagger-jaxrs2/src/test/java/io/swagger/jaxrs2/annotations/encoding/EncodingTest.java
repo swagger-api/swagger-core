@@ -47,6 +47,8 @@ public class EncodingTest extends AbstractAnnotationTest {
                               "          description: voila!\n" +
                               "          content:\n" +
                               "            application/json:\n" +
+                              "              schema:\n" +
+                              "                type: string\n" +
                               "              encoding:\n" +
                               "                test:\n" +
                               "                  contentType: text/plain\n" +
@@ -56,7 +58,7 @@ public class EncodingTest extends AbstractAnnotationTest {
 
         String extractedYAML = openApiYAML.substring(start, end);
 
-        assertEquals(expectedYAML, extractedYAML);
+        assertEquals(extractedYAML, expectedYAML);
     }
 
     static class SimpleGetOperationWithEncodingInApiResponse {
@@ -103,6 +105,8 @@ public class EncodingTest extends AbstractAnnotationTest {
                               "        required: true\n" +
                               "        content:\n" +
                               "          application/json:\n" +
+                              "            schema:\n" +
+                              "              type: string\n" +
                               "            encoding:\n" +
                               "              testingParam:\n" +
                               "                style: form\n" +
@@ -170,6 +174,7 @@ public class EncodingTest extends AbstractAnnotationTest {
                               "          application/json:\n" +
                               "            schema:\n" +
                               "              title: testEncoding2\n" +
+                              "              type: string\n" +
                               "            encoding:\n" +
                               "              testEncoding:\n" +
                               "                style: form\n" +
@@ -249,6 +254,8 @@ public class EncodingTest extends AbstractAnnotationTest {
                               "        description: Test requestBody with encoding.\n" +
                               "        content:\n" +
                               "          application/json:\n" +
+                              "            schema:\n" +
+                              "              type: string\n" +
                               "            encoding:\n" +
                               "              testRequestBody:\n" +
                               "                contentType: text/plain\n" +
@@ -337,7 +344,7 @@ public class EncodingTest extends AbstractAnnotationTest {
                               "      operationId: getWithNoParametersAndNoResponses\n" +
                               "      responses:\n" +
                               "        default:\n" +
-                              "          description: no description";
+                              "          description: default response";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(extractedYAML, expectedYAML);

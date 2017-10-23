@@ -57,7 +57,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
                         "            type: string\n" +
                         "      responses:\n" +
                         "        default:\n" +
-                        "          description: no description\n" +
+                        "          description: default response\n" +
                         "          content:\n" +
                         "            '*/*':\n" +
                         "              schema:\n" +
@@ -104,7 +104,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
                 "            type: string\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +

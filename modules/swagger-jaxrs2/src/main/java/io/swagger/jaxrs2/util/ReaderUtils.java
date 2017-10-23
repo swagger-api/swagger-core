@@ -5,7 +5,7 @@ import com.google.common.collect.Iterables;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.Components;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.util.ParameterProcessor;
@@ -36,10 +36,10 @@ public class ReaderUtils {
      * Collects constructor-level parameters from class.
      *
      * @param cls     is a class for collecting
-     * @param openAPI is the instance of the OpenAPI
+     * @param components
      * @return the collection of supported parameters
      */
-    public static List<Parameter> collectConstructorParameters(Class<?> cls, OpenAPI openAPI) {
+    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes) {
         if (cls.isLocalClass() || (cls.isMemberClass() && !Modifier.isStatic(cls.getModifiers()))) {
             return Collections.emptyList();
         }
@@ -64,10 +64,16 @@ public class ReaderUtils {
                     paramsCount++;
                 } else {
                     final Type genericParameterType = genericParameterTypes[i];
-                    final List<Parameter> tmpParameters = collectParameters(genericParameterType, tmpAnnotations);
+                    final List<Parameter> tmpParameters = collectParameters(genericParameterType, tmpAnnotations, components, classConsumes);
                     if (tmpParameters.size() >= 1) {
                         for (Parameter tmpParameter : tmpParameters) {
-                            if (ParameterProcessor.applyAnnotations(openAPI, tmpParameter, genericParameterType, tmpAnnotations) != null) {
+                            if (ParameterProcessor.applyAnnotations(
+                                    tmpParameter,
+                                    genericParameterType,
+                                    tmpAnnotations,
+                                    components,
+                                    classConsumes == null ? new String[0] : classConsumes.value(),
+                                    null) != null) {
                                 parameters.add(tmpParameter);
                             }
                         }
@@ -89,26 +95,22 @@ public class ReaderUtils {
      * Collects field-level parameters from class.
      *
      * @param cls     is a class for collecting
-     * @param openAPI is the instance of the Swagger
+     * @param components
      * @return the collection of supported parameters
      */
-    public static List<Parameter> collectFieldParameters(Class<?> cls, OpenAPI openAPI) {
+    public static List<Parameter> collectFieldParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes) {
         final List<Parameter> parameters = new ArrayList<Parameter>();
         for (Field field : ReflectionUtils.getDeclaredFields(cls)) {
             final List<Annotation> annotations = Arrays.asList(field.getAnnotations());
             final Type genericType = field.getGenericType();
-            for (Parameter parameter : collectParameters(genericType, annotations)) {
-                if (ParameterProcessor.applyAnnotations(openAPI, parameter, genericType, annotations) != null) {
-                    parameters.add(parameter);
-                }
-            }
+            parameters.addAll(collectParameters(genericType, annotations, components, classConsumes));
         }
         return parameters;
     }
 
-    private static List<Parameter> collectParameters(Type type, List<Annotation> annotations) {
+    private static List<Parameter> collectParameters(Type type, List<Annotation> annotations, Components components, javax.ws.rs.Consumes classConsumes) {
         final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
-        return chain.hasNext() ? chain.next().extractParameters(annotations, type, new HashSet<>(), chain) :
+        return chain.hasNext() ? chain.next().extractParameters(annotations, type, new HashSet<>(), components, classConsumes, null, false, chain).parameters :
                 Collections.emptyList();
     }
 

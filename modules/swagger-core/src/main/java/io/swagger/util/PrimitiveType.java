@@ -1,6 +1,7 @@
 package io.swagger.util;
 
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.google.common.collect.ImmutableMap;
 import io.swagger.oas.models.media.BinarySchema;
 import io.swagger.oas.models.media.BooleanSchema;
 import io.swagger.oas.models.media.ByteArraySchema;
@@ -12,6 +13,7 @@ import io.swagger.oas.models.media.NumberSchema;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.media.StringSchema;
 import io.swagger.oas.models.media.UUIDSchema;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -47,19 +49,25 @@ public enum PrimitiveType {
             return new BinarySchema();
         }
     },
-    URI(java.net.URI.class) {
+    URI(java.net.URI.class, "uri") {
         @Override
         public Schema createProperty() {
             return new StringSchema().format("uri");
         }
     },
-    URL(java.net.URL.class) {
+    URL(java.net.URL.class, "url") {
         @Override
         public Schema createProperty() {
             return new StringSchema().format("url");
         }
     },
-    UUID(java.util.UUID.class) {
+    EMAIL(String.class, "email") {
+        @Override
+        public Schema createProperty() {
+            return new StringSchema().format("email");
+        }
+    },
+    UUID(java.util.UUID.class, "uuid") {
         @Override
         public UUIDSchema createProperty() {
             return new UUIDSchema();
@@ -141,6 +149,28 @@ public enum PrimitiveType {
     private final Class<?> keyClass;
     private final String commonName;
 
+    public static final Map<String, String> datatypeMappings = ImmutableMap.<String, String>builder()
+            .put("integer_int32", "integer")
+            .put("integer_", "integer")
+            .put("integer_int64", "long")
+            .put("number_", "number")
+            .put("number_float", "float")
+            .put("number_double", "double")
+            .put("string_", "string")
+            .put("string_byte", "byte")
+            .put("string_email", "email")
+            .put("string_binary", "binary")
+            .put("string_uri", "uri")
+            .put("string_url", "url")
+            .put("string_uuid", "uuid")
+            .put("string_date", "date")
+            .put("string_date-time", "date-time")
+            .put("string_password", "password")
+            .put("boolean", "boolean")
+            .put("object_", "object")
+            .build();
+
+
     static {
         final Map<Class<?>, PrimitiveType> keyClasses = new HashMap<Class<?>, PrimitiveType>();
         addKeys(keyClasses, BOOLEAN, Boolean.class, Boolean.TYPE);
@@ -221,6 +251,13 @@ public enum PrimitiveType {
             fromName = EXTERNAL_CLASSES.get(name);
         }
         return fromName;
+    }
+
+    public static PrimitiveType fromTypeAndFormat(String type, String format) {
+        if ( StringUtils.isNotBlank(type) && type.equals("object")) {
+            return null;
+        }
+        return fromName(datatypeMappings.get(String.format("%s_%s", StringUtils.isBlank(type) ? "" : type, StringUtils.isBlank(format) ? "" : format)));
     }
 
     public static Schema createProperty(Type type) {

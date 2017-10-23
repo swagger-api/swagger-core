@@ -1,6 +1,7 @@
 package io.swagger.converting.override;
 
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.introspect.Annotated;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.converter.ModelConverters;
@@ -55,6 +56,15 @@ public class CustomConverterTest {
         @Override
         public Schema resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
             return chain.next().resolve(type, context, chain);
+        }
+
+        @Override
+        public Schema resolveAnnotatedType(Type type, Annotated member, String elementName, ModelConverterContext context, Iterator<ModelConverter> chain) {
+            if (chain.hasNext()) {
+                return chain.next().resolveAnnotatedType(type, member, elementName,context, chain);
+            } else {
+                return null;
+            }
         }
     }
 

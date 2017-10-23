@@ -1,6 +1,7 @@
 package io.swagger.jaxrs2.annotations.operations;
 
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
+import io.swagger.jaxrs2.resources.HiddenUserResource;
 import io.swagger.jaxrs2.resources.PetResource;
 import io.swagger.jaxrs2.resources.SimpleUserResource;
 import io.swagger.jaxrs2.resources.UserResource;
@@ -18,7 +19,6 @@ import org.testng.annotations.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
@@ -73,7 +73,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      operationId: getWithNoParametersAndNoResponses\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "      deprecated: true";
         String extractedYAML = openApiYAML.substring(start, end);
 
@@ -385,55 +385,27 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     public void testCompletePetResource() throws IOException {
         String expectedYAML = "openapi: 3.0.0\n" +
                 "paths:\n" +
-                "  /pet:\n" +
-                "    put:\n" +
-                "      summary: Update an existing pet\n" +
-                "      operationId: updatePet\n" +
-                "      requestBody:\n" +
-                "        description: Pet object that needs to be added to the store\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "  /pet/findByTags:\n" +
+                "    get:\n" +
+                "      summary: Finds Pets by tags\n" +
+                "      description: Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.\n" +
+                "      operationId: findPetsByTags\n" +
+                "      parameters:\n" +
+                "      - name: tags\n" +
+                "        in: query\n" +
+                "        description: Tags to filter by\n" +
                 "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
                 "      responses:\n" +
+                "        default:\n" +
+                "          description: Pets matching criteria\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
                 "        400:\n" +
-                "          description: Invalid ID supplied\n" +
-                "        404:\n" +
-                "          description: Pet not found\n" +
-                "        405:\n" +
-                "          description: Validation exception\n" +
-                "    post:\n" +
-                "      summary: Add a new pet to the store\n" +
-                "      operationId: addPet\n" +
-                "      requestBody:\n" +
-                "        description: Pet object that needs to be added to the store\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
-                "          application/xml:\n" +
-                "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
-                "        required: true\n" +
-                "      responses:\n" +
-                "        405:\n" +
-                "          description: Invalid input\n" +
-                "  /pet/bodynoannotation:\n" +
-                "    post:\n" +
-                "      summary: Add a new pet to the store no annotation\n" +
-                "      operationId: addPetNoAnnotation\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
-                "          application/xml:\n" +
-                "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
-                "      responses:\n" +
-                "        405:\n" +
-                "          description: Invalid input\n" +
+                "          description: Invalid tag value\n" +
                 "  /pet/{petId}:\n" +
                 "    get:\n" +
                 "      summary: Find pet by ID\n" +
@@ -461,6 +433,21 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          description: Invalid ID supplied\n" +
                 "        404:\n" +
                 "          description: Pet not found\n" +
+                "  /pet/bodynoannotation:\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store no annotation\n" +
+                "      operationId: addPetNoAnnotation\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "      responses:\n" +
+                "        405:\n" +
+                "          description: Invalid input\n" +
                 "  /pet/bodyid:\n" +
                 "    post:\n" +
                 "      summary: Add a new pet to the store passing an integer with generic parameter annotation\n" +
@@ -497,6 +484,40 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        405:\n" +
                 "          description: Invalid input\n" +
+                "  /pet:\n" +
+                "    put:\n" +
+                "      summary: Update an existing pet\n" +
+                "      operationId: updatePet\n" +
+                "      requestBody:\n" +
+                "        description: Pet object that needs to be added to the store\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        400:\n" +
+                "          description: Invalid ID supplied\n" +
+                "        404:\n" +
+                "          description: Pet not found\n" +
+                "        405:\n" +
+                "          description: Validation exception\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store\n" +
+                "      operationId: addPet\n" +
+                "      requestBody:\n" +
+                "        description: Pet object that needs to be added to the store\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        405:\n" +
+                "          description: Invalid input\n" +
                 "  /pet/findByStatus:\n" +
                 "    get:\n" +
                 "      summary: Finds Pets by status\n" +
@@ -527,27 +548,6 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "                $ref: '#/components/schemas/Pet'\n" +
                 "        400:\n" +
                 "          description: Invalid status value\n" +
-                "  /pet/findByTags:\n" +
-                "    get:\n" +
-                "      summary: Finds Pets by tags\n" +
-                "      description: Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.\n" +
-                "      operationId: findPetsByTags\n" +
-                "      parameters:\n" +
-                "      - name: tags\n" +
-                "        in: query\n" +
-                "        description: Tags to filter by\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: Pets matching criteria\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
-                "        400:\n" +
-                "          description: Invalid tag value\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    Category:\n" +
@@ -560,15 +560,6 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          type: string\n" +
                 "      xml:\n" +
                 "        name: Category\n" +
-                "    QueryResultBean:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        skip:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        limit:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
                 "    Tag:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -633,7 +624,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "  /user/createWithArray:\n" +
                 "    post:\n" +
                 "      summary: Creates list of users with given input array\n" +
@@ -649,7 +640,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "  /user/createWithList:\n" +
                 "    post:\n" +
                 "      summary: Creates list of users with given input array\n" +
@@ -665,7 +656,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "  /user/{username}:\n" +
                 "    get:\n" +
                 "      summary: Get user by user name\n" +
@@ -775,7 +766,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      operationId: logoutUser\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    User:\n" +
@@ -829,7 +820,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    User:\n" +
@@ -859,6 +850,12 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      xml:\n" +
                 "        name: User";
         assertEquals(extractedYAML, expectedYAML);
+    }
+
+    @Test(description = "reads and skips the hidden user resource")
+    public void testHiddenUserResource() {
+        String openApiYAML = readIntoYaml(HiddenUserResource.class);
+        assertEquals(openApiYAML, "openapi: 3.0.0\n");
     }
 
     @Test

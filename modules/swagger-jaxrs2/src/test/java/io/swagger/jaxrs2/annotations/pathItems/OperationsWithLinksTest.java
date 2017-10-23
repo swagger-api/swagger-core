@@ -34,7 +34,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "          type: string\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: test description\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
@@ -54,7 +54,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "          type: string\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: test description\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
@@ -94,7 +94,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "          type: string\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
@@ -116,7 +116,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
         @Path("/users")
         @Operation(operationId = "getUser",
                 responses = {
-                        @ApiResponse(description = "no description",
+                        @ApiResponse(description = "test description",
                                 content = @Content(mediaType = "*/*", schema = @Schema(ref = "#/components/schemas/User")),
                                 links = {
                                         @Link(
@@ -138,7 +138,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 responses = {
                         @ApiResponse(content = @Content(mediaType = "*/*",
                                 schema = @Schema(ref = "#/components/schemas/Address")),
-                                description = "no description")
+                                description = "test description")
                 })
         @GET
         public Address getAddress(@QueryParam("userId") String userId) {
@@ -213,7 +213,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "          type: string\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: test description\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
@@ -240,7 +240,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
         @Path("/users")
         @Operation(operationId = "getUser",
                 responses = {
-                        @ApiResponse(description = "no description",
+                        @ApiResponse(description = "test description",
                                 links = {
                                         @Link(
                                                 name = "user",

@@ -35,7 +35,8 @@ import io.swagger.oas.annotations.media.Schema;
  * Describes a single operation parameter
  **/
 @Target({ ElementType.PARAMETER,
-          ElementType.METHOD })
+          ElementType.METHOD,
+          ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(Parameters.class)
 @Inherited

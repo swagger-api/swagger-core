@@ -12,9 +12,7 @@ import io.swagger.oas.annotations.security.SecurityScheme;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-/**
- * Created by RafaelLopez on 5/20/17.
- */
+
 @SecurityScheme(name = "myOauth2Security2",
         type = SecuritySchemeType.OAUTH2,
         in = SecuritySchemeIn.HEADER,

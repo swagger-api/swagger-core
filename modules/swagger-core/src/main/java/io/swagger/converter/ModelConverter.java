@@ -1,5 +1,6 @@
 package io.swagger.converter;
 
+import com.fasterxml.jackson.databind.introspect.Annotated;
 import io.swagger.oas.models.media.Schema;
 
 import java.lang.annotation.Annotation;
@@ -27,4 +28,19 @@ public interface ModelConverter {
      * @return null if this ModelConverter cannot convert the given Type
      */
     public Schema resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain);
+
+    /**
+     * @param type
+     * @param member
+     * @param elementName
+     * @param context
+     * @param chain   the chain of model converters to try if this implementation cannot process
+     * @return null if this ModelConverter cannot convert the given Type
+     */
+    public Schema resolveAnnotatedType(Type type,
+                          Annotated member,
+                          String elementName,
+                          ModelConverterContext context,
+                          Iterator<ModelConverter> chain);
+
 }
