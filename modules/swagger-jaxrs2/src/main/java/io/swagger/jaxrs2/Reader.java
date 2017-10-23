@@ -233,6 +233,9 @@ public class Reader implements OpenApiReader {
 
         Method methods[] = cls.getMethods();
         for (Method method : methods) {
+            if (isOperationHidden(method)) {
+                continue;
+            }
             AnnotatedMethod annotatedMethod = bd.findMethod(method.getName(), method.getParameterTypes());
             methodProduces = ReflectionUtils.getAnnotation(method, javax.ws.rs.Produces.class);
             methodConsumes = ReflectionUtils.getAnnotation(method, javax.ws.rs.Consumes.class);
@@ -773,5 +776,13 @@ public class Reader implements OpenApiReader {
             return path.getPatch().getOperationId();
         }
         return "";
+    }
+
+    protected boolean isOperationHidden(Method method) {
+        io.swagger.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.Operation.class);
+        if (apiOperation != null && apiOperation.hidden()) {
+            return true;
+        }
+        return false;
     }
 }

@@ -1,6 +1,7 @@
 package io.swagger.jaxrs2.annotations.operations;
 
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
+import io.swagger.jaxrs2.resources.HiddenUserResource;
 import io.swagger.jaxrs2.resources.PetResource;
 import io.swagger.jaxrs2.resources.SimpleUserResource;
 import io.swagger.jaxrs2.resources.UserResource;
@@ -849,6 +850,12 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      xml:\n" +
                 "        name: User";
         assertEquals(extractedYAML, expectedYAML);
+    }
+
+    @Test(description = "reads and skips the hidden user resource")
+    public void testHiddenUserResource() {
+        String openApiYAML = readIntoYaml(HiddenUserResource.class);
+        assertEquals(openApiYAML, "openapi: 3.0.0\n");
     }
 
     @Test

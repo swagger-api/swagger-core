@@ -105,4 +105,10 @@ public @interface Operation {
      * @return an optional array of extensions
      */
     Extension[] extensions() default {};
+
+    /**
+     * Allows this operation to be marked as hidden
+     * @return whether or not this operation is hidden
+     */
+    boolean hidden() default false;
 }
