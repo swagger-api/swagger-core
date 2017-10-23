@@ -413,12 +413,19 @@ public class PojoTests {
     @Test(description = "Shows how to provide model examples as json")
     public void testModelPropertyExampleJson () {
 
-        String yaml = "modelWithPropertyExampleOverrideJson:\n" +
+        String yaml = "ExampleJson:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
                 "    id:\n" +
                 "      type: string\n" +
-                "      example = \"{\\\"id\\\": 19877734}\"";
+                "modelWithPropertyExampleOverrideJson:\n" +
+                "  minimum: 2\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    exampleJson:\n" +
+                "      $ref: '#/components/schemas/ExampleJson'\n" +
+                "  example:\n" +
+                "    id: 19877734";
         SerializationMatchers.assertEqualsToYaml(readAll(modelWithPropertyExampleOverrideJson.class), yaml);
     }
 
@@ -441,12 +448,16 @@ public class PojoTests {
     @Test(description = "Shows how to provide model examples as json")
     public void testModelPropertyImplExampleJson () {
 
-        String yaml = "modelWithPropertyImplExampleOverrideJson:\n" +
+        String yaml = "ExampleJson:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
                 "    id:\n" +
                 "      type: string\n" +
-                "      example = \"{\\\"id\\\": 19877734}\"";
+                "modelWithPropertyImplExampleOverrideJson:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    exampleJson:\n" +
+                "      $ref: '#/components/schemas/ExampleJson'\n";
         SerializationMatchers.assertEqualsToYaml(readAll(modelWithPropertyImplExampleOverrideJson.class), yaml);
     }
 
@@ -472,14 +483,16 @@ public class PojoTests {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    id:\n" +
+                "      minimum: 2\n" +
                 "      type: string\n" +
-                "      example = \"{\\\"id\\\": 19877734}\"";
+                "      description: dsfsdsdfdsf\n" +
+                "      example: '{\"id\":19877734}'";
         SerializationMatchers.assertEqualsToYaml(readAll(modelWithPropertyStringExampleOverrideJson.class), yaml);
     }
 
     static class modelWithPropertyStringExampleOverrideJson {
 
-        @Schema(example = "{\"id\": 19877734}", minimum = "2", description = "dsfsdsdfdsf")
+        @Schema(type = "string", name = "id", example = "{\"id\": 19877734}", minimum = "2", description = "dsfsdsdfdsf")
         private String exampleJson;
 
         public String getExampleJson() {

@@ -469,7 +469,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         // TODO also check annotation?
                         Boolean required = md.getRequired();
                         if (required != null && !Boolean.FALSE.equals(required)) {
-                            model.addRequiredItem(propName);
+                            addRequiredItem(model, propName);
                         }
                         if (property.getReadOnly() == null) {
                             if (isReadOnly) {
@@ -534,7 +534,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     directSchemaAnnotation.requiredProperties().length > 0 &&
                     StringUtils.isNotBlank(directSchemaAnnotation.requiredProperties()[0])) {
                 for (String prop: directSchemaAnnotation.requiredProperties()) {
-                    model.addRequiredItem(prop);
+                    addRequiredItem(model, prop);
                 }
             }
         }
@@ -756,7 +756,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         if (parent != null && annos.containsKey("javax.validation.constraints.NotNull")) {
-            parent.addRequiredItem(property.getName());
+            addRequiredItem(parent, property.getName());
         }
         if (annos.containsKey("javax.validation.constraints.Min")) {
             if ("integer".equals(property.getType()) || "number". equals(property.getType())) {
@@ -1317,7 +1317,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         List<String> requiredProperties = resolveRequiredProperties(a);
         if (requiredProperties != null) {
             for (String prop: requiredProperties) {
-                schema.addRequiredItem(prop);
+                addRequiredItem(schema, prop);
             }
         }
         Boolean writeOnly = resolveWriteOnly(a);
@@ -1451,6 +1451,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return arraySchema.schema();
         } else {
             return a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        }
+    }
+
+    private void addRequiredItem(Schema model, String propName) {
+        if (model == null || propName == null || StringUtils.isBlank(propName)) {
+            return;
+        }
+        if (model.getRequired() == null || model.getRequired().isEmpty()) {
+            model.addRequiredItem(propName);
+        }
+        if (model.getRequired().stream().noneMatch(s -> propName.equals(s))) {
+            model.addRequiredItem(propName);
         }
     }
 }
