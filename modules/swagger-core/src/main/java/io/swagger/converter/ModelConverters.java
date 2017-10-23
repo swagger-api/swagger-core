@@ -62,10 +62,13 @@ public class ModelConverters {
         return null;
     }
 
-    public Schema resolveAnnotatedType(Type type, List<Annotation> annotations, String elementName) {
+    public ResolvedSchema resolveAnnotatedType(Type type, List<Annotation> annotations, String elementName) {
         ModelConverterContextImpl context = new ModelConverterContextImpl(
                 converters);
-        return context.resolveAnnotatedType(type, annotations, elementName);
+        ResolvedSchema resolvedSchema = new ResolvedSchema();
+        resolvedSchema.schema = context.resolveAnnotatedType(type, annotations, elementName);
+        resolvedSchema.referencedSchemas = context.getDefinedModels();
+        return resolvedSchema;
     }
 
     public Map<String, Schema> read(Type type) {

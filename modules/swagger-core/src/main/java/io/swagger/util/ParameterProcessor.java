@@ -1,11 +1,14 @@
 package io.swagger.util;
 
 import io.swagger.converter.ModelConverters;
+import io.swagger.converter.ResolvedSchema;
 import io.swagger.oas.annotations.enums.Explode;
 import io.swagger.oas.annotations.media.ExampleObject;
-import io.swagger.oas.models.OpenAPI;
+import io.swagger.oas.models.Components;
 import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.media.ArraySchema;
+import io.swagger.oas.models.media.Content;
+import io.swagger.oas.models.media.MediaType;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.parameters.Parameter;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +28,8 @@ import java.util.Optional;
 public class ParameterProcessor {
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
-    public static Parameter applyAnnotations(OpenAPI openAPI, Parameter parameter, Type type, List<Annotation> annotations) {
+
+    public static Parameter applyAnnotations(Parameter parameter, Type type, List<Annotation> annotations, Components components, String[] classTypes, String[] methodTypes) {
 
 
         final AnnotationsHelper helper = new AnnotationsHelper(annotations, type);
@@ -42,11 +47,12 @@ public class ParameterProcessor {
         if (paramSchemaOrArrayAnnotation != null) {
             reworkedAnnotations.add(paramSchemaOrArrayAnnotation);
         }
-        Schema resolvedSchema = ModelConverters.getInstance().resolveAnnotatedType(type, reworkedAnnotations, "");
+        ResolvedSchema resolvedSchema = ModelConverters.getInstance().resolveAnnotatedType(type, reworkedAnnotations, "");
 
-        if (resolvedSchema != null) {
-            parameter.setSchema(resolvedSchema);
+        if (resolvedSchema.schema != null) {
+            parameter.setSchema(resolvedSchema.schema);
         }
+        resolvedSchema.referencedSchemas.forEach((key, schema) -> components.addSchemas(key, schema));
 
         for (Annotation annotation : annotations) {
             if (annotation instanceof io.swagger.oas.annotations.Parameter) {
@@ -85,12 +91,17 @@ public class ParameterProcessor {
 
                 Map<String, Example> exampleMap = new HashMap<>();
                 for (ExampleObject exampleObject : p.examples()) {
-                    getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
+                    AnnotationsUtils.getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
                 }
                 if (exampleMap.size() > 0) {
                     parameter.setExamples(exampleMap);
                 }
 
+                Optional<Content> content = getContent(p.content(), classTypes, methodTypes, parameter.getSchema());
+                if (content.isPresent()) {
+                    parameter.setContent(content.get());
+                    parameter.setSchema(null);
+                }
                 setParameterStyle(parameter, p);
                 setParameterExplode(parameter, p);
 
@@ -127,7 +138,11 @@ public class ParameterProcessor {
         final String defaultValue = helper.getDefaultValue();
 
         Schema paramSchema = parameter.getSchema();
-
+        if (paramSchema == null) {
+            if (parameter.getContent() != null && parameter.getContent().values().size() > 0) {
+                paramSchema = parameter.getContent().values().iterator().next().getSchema();
+            }
+        }
         if (paramSchema != null) {
             if (paramSchema instanceof ArraySchema) {
                 ArraySchema as = (ArraySchema) paramSchema;
@@ -141,44 +156,6 @@ public class ParameterProcessor {
             }
         }
         return parameter;
-    }
-
-    public static Optional<Example> getExample(ExampleObject example) {
-        if (example == null) {
-            return Optional.empty();
-        }
-        if (StringUtils.isNotBlank(example.name())) {
-            Example exampleObject = new Example();
-            if (StringUtils.isNotBlank(example.name())) {
-                exampleObject.setDescription(example.name());
-            }
-            if (StringUtils.isNotBlank(example.summary())) {
-                exampleObject.setSummary(example.summary());
-            }
-            if (StringUtils.isNotBlank(example.externalValue())) {
-                exampleObject.setExternalValue(example.externalValue());
-            }
-            if (StringUtils.isNotBlank(example.value())) {
-                try {
-                    exampleObject.setValue(Json.mapper().readTree(example.value()));
-                } catch (IOException e) {
-                    exampleObject.setValue(example.value());
-                }
-            }
-            return Optional.of(exampleObject);
-        }
-        return Optional.empty();
-    }
-
-    private static boolean hasArrayAnnotation(io.swagger.oas.annotations.media.ArraySchema array) {
-        if (array.uniqueItems() == false
-                && array.maxItems() == Integer.MIN_VALUE
-                && array.minItems() == Integer.MAX_VALUE
-                && !hasSchemaAnnotation(array.schema())
-                ) {
-            return false;
-        }
-        return true;
     }
 
     public static void setParameterExplode(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
@@ -211,43 +188,6 @@ public class ParameterProcessor {
         }
     }
 
-    private static boolean hasSchemaAnnotation(io.swagger.oas.annotations.media.Schema schema) {
-        if (schema == null) {
-            return false;
-        }
-        if (StringUtils.isBlank(schema.type())
-                && StringUtils.isBlank(schema.format())
-                && StringUtils.isBlank(schema.title())
-                && StringUtils.isBlank(schema.description())
-                && StringUtils.isBlank(schema.ref())
-                && StringUtils.isBlank(schema.name())
-                && schema.multipleOf() == 0
-                && StringUtils.isBlank(schema.maximum())
-                && StringUtils.isBlank(schema.minimum())
-                && !schema.exclusiveMinimum()
-                && !schema.exclusiveMaximum()
-                && schema.maxLength() == Integer.MIN_VALUE
-                && schema.minLength() == Integer.MAX_VALUE
-                && schema.minProperties() == 0
-                && schema.maxProperties() == 0
-                && schema.requiredProperties().length == 1 && StringUtils.isBlank(schema.requiredProperties()[0])
-                && !schema.required()
-                && !schema.nullable()
-                && !schema.readOnly()
-                && !schema.writeOnly()
-                && !schema.deprecated()
-                && schema.allowableValues().length == 1 && StringUtils.isBlank(schema.allowableValues()[0])
-                && StringUtils.isBlank(schema.defaultValue())
-                && StringUtils.isBlank(schema.example())
-                && StringUtils.isBlank(schema.pattern())
-                && schema.not().equals(Void.class)
-                && schema.oneOf().length == 1 && schema.oneOf()[0].equals(Void.class)
-                && schema.anyOf().length == 1 && schema.anyOf()[0].equals(Void.class)
-                ) {
-            return false;
-        }
-        return true;
-    }
 
     public static Annotation getParamSchemaAnnotation(List<Annotation> annotations) {
         if (annotations == null) {
@@ -255,6 +195,7 @@ public class ParameterProcessor {
         }
         io.swagger.oas.annotations.media.Schema rootSchema = null;
         io.swagger.oas.annotations.media.ArraySchema rootArraySchema = null;
+        io.swagger.oas.annotations.media.Schema contentSchema = null;
         io.swagger.oas.annotations.media.Schema paramSchema = null;
         io.swagger.oas.annotations.media.ArraySchema paramArraySchema = null;
         for (Annotation annotation : annotations) {
@@ -266,16 +207,24 @@ public class ParameterProcessor {
             }
             else if (annotation instanceof io.swagger.oas.annotations.Parameter) {
                 io.swagger.oas.annotations.Parameter paramAnnotation = (io.swagger.oas.annotations.Parameter)annotation;
-                if(hasSchemaAnnotation(paramAnnotation.schema())) {
+                if (paramAnnotation.content().length > 0) {
+                    if (AnnotationsUtils.hasSchemaAnnotation(paramAnnotation.content()[0].schema())) {
+                        contentSchema = paramAnnotation.content()[0].schema();
+                    }
+                }
+                if (AnnotationsUtils.hasSchemaAnnotation(paramAnnotation.schema())) {
                     paramSchema = paramAnnotation.schema();
                 }
-                else if(hasArrayAnnotation(paramAnnotation.array())) {
+                if (AnnotationsUtils.hasArrayAnnotation(paramAnnotation.array())) {
                     paramArraySchema = paramAnnotation.array();
                 }
             }
         }
         if (rootSchema != null || rootArraySchema != null) {
             return null;
+        }
+        if (contentSchema != null) {
+            return contentSchema;
         }
         if (paramSchema != null) {
             return paramSchema;
@@ -284,6 +233,112 @@ public class ParameterProcessor {
             return paramArraySchema;
         }
         return null;
+    }
+
+    public static Type getParameterType(io.swagger.oas.annotations.Parameter paramAnnotation) {
+        if (paramAnnotation == null) {
+            return null;
+        }
+        io.swagger.oas.annotations.media.Schema contentSchema = null;
+        io.swagger.oas.annotations.media.Schema paramSchema = null;
+        io.swagger.oas.annotations.media.ArraySchema paramArraySchema = null;
+
+        if (paramAnnotation.content().length > 0) {
+            if (AnnotationsUtils.hasSchemaAnnotation(paramAnnotation.content()[0].schema())) {
+                contentSchema = paramAnnotation.content()[0].schema();
+            }
+        }
+        if (AnnotationsUtils.hasSchemaAnnotation(paramAnnotation.schema())) {
+            paramSchema = paramAnnotation.schema();
+        }
+        if (AnnotationsUtils.hasArrayAnnotation(paramAnnotation.array())) {
+            paramArraySchema = paramAnnotation.array();
+        }
+        if (contentSchema != null) {
+            return getSchemaType(contentSchema);
+        }
+        if (paramSchema != null) {
+            return getSchemaType(paramSchema);
+        }
+        if (paramArraySchema != null) {
+            return getSchemaType(paramArraySchema.schema());
+        }
+        return String.class;
+    }
+
+    public static Type getSchemaType(io.swagger.oas.annotations.media.Schema schema) {
+        if (schema == null) {
+            return String.class;
+        }
+        String schemaType = schema.type();
+        Class schemaImplementation = schema.implementation();
+
+        if (!schemaImplementation.equals(Void.class)) {
+            return schemaImplementation;
+        } else if (StringUtils.isBlank(schemaType)) {
+            return String.class;
+        }
+        switch (schemaType) {
+            case "number":
+                return BigDecimal.class;
+            case "integer":
+                return Long.class;
+            case "boolean":
+                return Boolean.class;
+            default:
+                return String.class;
+        }
+    }
+
+
+    public static Optional<Content> getContent(io.swagger.oas.annotations.media.Content[] annotationContents, String[] classTypes, String[] methodTypes, Schema schema) {
+        if (annotationContents == null || annotationContents.length == 0) {
+            return Optional.empty();
+        }
+
+        //Encapsulating Content model
+        Content content = new Content();
+
+        io.swagger.oas.annotations.media.Content annotationContent = annotationContents[0];
+        MediaType mediaType = new MediaType();
+        mediaType.setSchema(schema);
+
+        ExampleObject[] examples = annotationContent.examples();
+        for (ExampleObject example : examples) {
+            AnnotationsUtils.getExample(example).ifPresent(exampleObject -> mediaType.addExamples(example.name(), exampleObject));
+        }
+        io.swagger.oas.annotations.media.Encoding[] encodings = annotationContent.encoding();
+        for (io.swagger.oas.annotations.media.Encoding encoding : encodings) {
+            AnnotationsUtils.addEncodingToMediaType(mediaType, encoding);
+        }
+        if (StringUtils.isNotBlank(annotationContent.mediaType())) {
+            content.addMediaType(annotationContent.mediaType(), mediaType);
+        } else {
+            if (mediaType.getSchema() != null) {
+                applyTypes(classTypes, methodTypes, content, mediaType);
+            }
+        }
+        if (content.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(content);
+    }
+
+    public static final String MEDIA_TYPE = "*/*";
+
+    public static void applyTypes(String[] classTypes, String[] methodTypes, Content content, MediaType mediaType) {
+        if (methodTypes != null && methodTypes.length > 0) {
+            for (String value : methodTypes) {
+                content.addMediaType(value, mediaType);
+            }
+        } else if (classTypes != null && classTypes.length > 0) {
+            for (String value : classTypes) {
+                content.addMediaType(value, mediaType);
+            }
+        } else {
+            content.addMediaType(MEDIA_TYPE, mediaType);
+        }
+
     }
 
     /**

@@ -18,7 +18,6 @@ import org.testng.annotations.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
@@ -73,7 +72,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      operationId: getWithNoParametersAndNoResponses\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "      deprecated: true";
         String extractedYAML = openApiYAML.substring(start, end);
 
@@ -560,15 +559,6 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          type: string\n" +
                 "      xml:\n" +
                 "        name: Category\n" +
-                "    QueryResultBean:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        skip:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        limit:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
                 "    Tag:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -633,7 +623,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "  /user/createWithArray:\n" +
                 "    post:\n" +
                 "      summary: Creates list of users with given input array\n" +
@@ -649,7 +639,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "  /user/createWithList:\n" +
                 "    post:\n" +
                 "      summary: Creates list of users with given input array\n" +
@@ -665,7 +655,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "  /user/{username}:\n" +
                 "    get:\n" +
                 "      summary: Get user by user name\n" +
@@ -775,7 +765,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      operationId: logoutUser\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    User:\n" +
@@ -829,7 +819,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    User:\n" +

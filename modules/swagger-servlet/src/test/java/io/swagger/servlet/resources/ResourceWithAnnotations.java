@@ -62,7 +62,7 @@ import io.swagger.servlet.models.SampleData;
                 @Tag(name = "tests", description = "tests"),
                 @Tag(name = "tests", description = "tests",
                         externalDocs = @ExternalDocs(value = "tag_docs", url = "url_to_tag_docs")),
-                @Tag(name = "", description = "")},
+                @Tag(name = "", description = "default response")},
         externalDocs = @ExternalDocs(value = "docs", url = "url_to_docs")
 )
 @Api(
@@ -184,7 +184,7 @@ public class ResourceWithAnnotations {
                             scopes = {
                                     @AuthorizationScope(
                                             scope = "",
-                                            description = "")})},
+                                            description = "default response")})},
             code = 0,
             response = Class.class,
             responseContainer = "",

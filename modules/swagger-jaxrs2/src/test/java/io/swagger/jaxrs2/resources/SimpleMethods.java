@@ -5,6 +5,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
 public class SimpleMethods {
+
+    @GET
+    @Path("/object")
+    public TestBean getTestBean() {
+        return new TestBean();
+    }
+
+
     @GET
     @Path("/int")
     public int getInt() {
@@ -26,5 +34,13 @@ public class SimpleMethods {
     @GET
     @Path("/stringArray")
     public void getWithIntArrayInput(@QueryParam("ids") int[] inputs) {
+    }
+
+    static class TestBean {
+        public String foo;
+        public TestChild testChild;
+    }
+    static class TestChild {
+        public String foo;
     }
 }

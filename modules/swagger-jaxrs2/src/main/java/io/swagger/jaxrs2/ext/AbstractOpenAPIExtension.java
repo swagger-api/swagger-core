@@ -2,13 +2,13 @@ package io.swagger.jaxrs2.ext;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import io.swagger.jaxrs2.ResolvedParameter;
+import io.swagger.oas.models.Components;
 import io.swagger.oas.models.Operation;
-import io.swagger.oas.models.parameters.Parameter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -25,12 +25,13 @@ public abstract class AbstractOpenAPIExtension implements OpenAPIExtension {
     }
 
     @Override
-    public List<Parameter> extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip,
-                                             Iterator<OpenAPIExtension> chain) {
+    public ResolvedParameter extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip,
+                                               Components components, javax.ws.rs.Consumes classConsumes,
+                                               javax.ws.rs.Consumes methodConsumes, boolean includeRequestBody, Iterator<OpenAPIExtension> chain) {
         if (chain.hasNext()) {
-            return chain.next().extractParameters(annotations, type, typesToSkip, chain);
+            return chain.next().extractParameters(annotations, type, typesToSkip, components, classConsumes, methodConsumes, includeRequestBody, chain);
         } else {
-            return Collections.emptyList();
+            return new ResolvedParameter();
         }
     }
 

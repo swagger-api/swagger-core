@@ -48,7 +48,7 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "          readOnly: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: test description\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
@@ -80,13 +80,6 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "                    subscription\n" +
                 "components:\n" +
                 "  schemas:\n" +
-                "    string:\n" +
-                "      maximum: 34\n" +
-                "      minimum: 2\n" +
-                "      type: string\n" +
-                "      description: the generated UUID\n" +
-                "      format: uuid\n" +
-                "      readOnly: true\n" +
                 "    SubscriptionResponse:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -138,7 +131,7 @@ public class CallbackTest extends AbstractAnnotationTest {
                 responses = {
                         @ApiResponse(
                                 responseCode = "default",
-                                description = "no description", content = @Content(
+                                description = "test description", content = @Content(
                                 mediaType = "*/*",
                                 schema =
                                 @Schema(

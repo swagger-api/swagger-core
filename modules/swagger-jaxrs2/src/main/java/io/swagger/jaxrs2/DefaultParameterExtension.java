@@ -8,9 +8,11 @@ import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import io.swagger.jaxrs2.ext.AbstractOpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
+import io.swagger.oas.models.Components;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.util.Json;
 import io.swagger.util.ParameterProcessor;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.CookieParam;
@@ -21,7 +23,6 @@ import javax.ws.rs.QueryParam;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -36,13 +37,21 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
     final ObjectMapper mapper = Json.mapper();
 
     @Override
-    public List<Parameter> extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip, Iterator<OpenAPIExtension> chain) {
+    public ResolvedParameter extractParameters(List<Annotation> annotations,
+                                               Type type,
+                                               Set<Type> typesToSkip,
+                                               Components components,
+                                               javax.ws.rs.Consumes classConsumes,
+                                               javax.ws.rs.Consumes methodConsumes,
+                                               boolean includeRequestBody,
+                                               Iterator<OpenAPIExtension> chain) {
         if (shouldIgnoreType(type, typesToSkip)) {
-            return new ArrayList<>();
+            return new ResolvedParameter();
         }
 
         List<Parameter> parameters = new ArrayList<>();
         Parameter parameter = null;
+        ResolvedParameter extractParametersResult = new ResolvedParameter();
         for (Annotation annotation : annotations) {
             if (annotation instanceof QueryParam) {
                 QueryParam param = (QueryParam) annotation;
@@ -76,22 +85,51 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 parameter = pp;
             } else if (annotation instanceof io.swagger.oas.annotations.Parameter) {
                 if (((io.swagger.oas.annotations.Parameter)annotation).hidden()) {
-                    return parameters;
+                    extractParametersResult.parameters = parameters;
+                    return extractParametersResult;
                 }
                 if (parameter == null) {
                     Parameter pp = new Parameter();
                     parameter = pp;
                 }
             } else {
-                handleAdditionalAnnotation(parameters, annotation, type, typesToSkip);
+                if (handleAdditionalAnnotation(parameters, annotation, type, typesToSkip, classConsumes, methodConsumes, components, includeRequestBody)) {
+                    extractParametersResult.parameters.addAll(parameters);
+                    return extractParametersResult;
+                }
             }
         }
 
-        if (parameter != null) {
+        if (parameter != null && StringUtils.isNotBlank(parameter.getIn())) {
             parameters.add(parameter);
+        } else if (includeRequestBody){
+            Parameter unknownParameter = ParameterProcessor.applyAnnotations(
+                    null,
+                    type,
+                    annotations,
+                    components,
+                    classConsumes == null ? new String[0] : classConsumes.value(),
+                    methodConsumes == null ? new String[0] : methodConsumes.value());
+            if (unknownParameter != null) {
+                if (StringUtils.isNotBlank(unknownParameter.getIn())) {
+                    extractParametersResult.parameters.add(unknownParameter);
+                } else {            // return as request body
+                    extractParametersResult.requestBody = unknownParameter;
+                }
+            }
         }
-
-        return parameters;
+        for (Parameter p : parameters) {
+            if (ParameterProcessor.applyAnnotations(
+                    p,
+                    type,
+                    annotations,
+                    components,
+                    classConsumes == null ? new String[0] : classConsumes.value(),
+                    methodConsumes == null ? new String[0] : methodConsumes.value()) != null) {
+                extractParametersResult.parameters.add(p);
+            }
+        }
+        return extractParametersResult;
     }
 
     /**
@@ -103,8 +141,10 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
      * @param typesToSkip
      */
 
-    private void handleAdditionalAnnotation(List<Parameter> parameters, Annotation annotation,
-                                            final Type type, Set<Type> typesToSkip) {
+    private boolean handleAdditionalAnnotation(List<Parameter> parameters, Annotation annotation,
+                                            final Type type, Set<Type> typesToSkip, javax.ws.rs.Consumes classConsumes,
+                                               javax.ws.rs.Consumes methodConsumes, Components components, boolean includeRequestBody) {
+        boolean processed = false;
         if (BeanParam.class.isAssignableFrom(annotation.getClass())) {
             // Use Jackson's logic for processing Beans
             final BeanDescription beanDesc = mapper.getSerializationConfig().introspect(constructType(type));
@@ -164,16 +204,32 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
 
                 // Re-process all Bean fields and let the default swagger-jaxrs/swagger-jersey-jaxrs processors do their thing
                 List<Parameter> extracted =
-                        extensions.next().extractParameters(paramAnnotations, paramType, typesToSkip, extensions);
+                        extensions.next().extractParameters(
+                                paramAnnotations,
+                                paramType,
+                                typesToSkip,
+                                components,
+                                classConsumes,
+                                methodConsumes,
+                                includeRequestBody,
+                                extensions).parameters;
 
-                // since downstream processors won't know how to introspect @BeanParam, process here
-                for (Parameter param : extracted) {
-                    if (ParameterProcessor.applyAnnotations(null, param, paramType, paramAnnotations) != null) {
-                        parameters.add(param);
+                for (Parameter p: extracted) {
+                    if (ParameterProcessor.applyAnnotations(
+                            p,
+                            paramType,
+                            paramAnnotations,
+                            components,
+                            classConsumes == null ? new String[0] : classConsumes.value(),
+                            methodConsumes == null ? new String[0] : methodConsumes.value()) != null) {
+                        parameters.add(p);
                     }
                 }
+
+                processed = true;
             }
         }
+        return processed;
     }
 
     @Override
@@ -181,8 +237,4 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
         return cls.getName().startsWith("javax.ws.rs.");
     }
 
-    @Override
-    public List<Class<? extends Annotation>> fullyHandledAnnotation() {
-        return Collections.singletonList(BeanParam.class);
-    }
 }

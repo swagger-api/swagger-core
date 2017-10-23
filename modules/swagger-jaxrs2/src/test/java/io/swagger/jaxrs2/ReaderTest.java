@@ -74,6 +74,7 @@ public class ReaderTest {
     private static final String SCOPE_VALUE1 = "write:pets";
     private static final String SCOPE_VALUE2 = "read:pets";
     private static final String PATH_REF = "/";
+    private static final String PATH_1_REF = "/1";
     private static final String PATH_2_REF = "/path";
     private static final String SCHEMA_TYPE = "string";
     private static final String SCHEMA_FORMAT = "uuid";
@@ -82,7 +83,7 @@ public class ReaderTest {
     private static final int RESPONSES_NUMBER = 2;
     private static final int TAG_NUMBER = 2;
     private static final int SECURITY_SCHEMAS = 2;
-    private static final int PARAMETER_NUMBER = 2;
+    private static final int PARAMETER_NUMBER = 1;
     private static final int SECURITY_REQUIREMENT_NUMBER = 1;
     private static final int SCOPE_NUMBER = 2;
     private static final int PATHS_NUMBER = 1;
@@ -92,8 +93,8 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(BasicFieldsResource.class);
         Paths paths = openAPI.getPaths();
-        assertEquals(PATHS_NUMBER, paths.size());
-        PathItem pathItem = paths.get(PATH_REF);
+        assertEquals(paths.size(), 6);
+        PathItem pathItem = paths.get(PATH_1_REF);
         assertNotNull(pathItem);
         assertNull(pathItem.getPost());
         Operation operation = pathItem.getGet();
@@ -128,11 +129,12 @@ public class ReaderTest {
     @Test(description = "scan methods")
     public void testScanMethods() {
         Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(SimpleMethods.class);
         Method[] methods = SimpleMethods.class.getMethods();
         for (final Method method : methods) {
             if (isValidRestPath(method)) {
-                Operation operation = reader.parseMethod(method);
-                assertNull(operation);
+                Operation operation = reader.parseMethod(method, null);
+                assertNotNull(operation);
             }
         }
     }
@@ -141,18 +143,10 @@ public class ReaderTest {
     public void testGetSummaryAndDescription() {
         Reader reader = new Reader(new OpenAPI());
         Method[] methods = BasicFieldsResource.class.getMethods();
-        Operation operation = reader.parseMethod(methods[0]);
+        Operation operation = reader.parseMethod(methods[0], null);
         assertNotNull(operation);
         assertEquals(OPERATION_SUMMARY, operation.getSummary());
         assertEquals(OPERATION_DESCRIPTION, operation.getDescription());
-    }
-
-    @Test(description = "Do nothing because there aren't Operation Annotations")
-    public void testBasicEmptyOperation() {
-        Reader reader = new Reader(new OpenAPI());
-        Method[] methods = BasicClass.class.getMethods();
-        Operation operation = reader.parseMethod(methods[0]);
-        assertNull(operation);
     }
 
     @Test(description = "Get a Duplicated Operation Id")
@@ -189,7 +183,7 @@ public class ReaderTest {
     public void testDeprecatedMethod() {
         Reader reader = new Reader(new OpenAPI());
         Method[] methods = DeprecatedFieldsResource.class.getMethods();
-        Operation deprecatedOperation = reader.parseMethod(methods[0]);
+        Operation deprecatedOperation = reader.parseMethod(methods[0], null);
         assertNotNull(deprecatedOperation);
         assertTrue(deprecatedOperation.getDeprecated());
     }
@@ -198,7 +192,7 @@ public class ReaderTest {
     public void testGetTags() {
         Reader reader = new Reader(new OpenAPI());
         Method[] methods = TagsResource.class.getMethods();
-        Operation operation = reader.parseMethod(methods[0]);
+        Operation operation = reader.parseMethod(methods[0], null);
         assertNotNull(operation);
         assertEquals(TAG_NUMBER, operation.getTags().size());
         assertEquals(EXAMPLE_TAG, operation.getTags().get(0));
@@ -211,7 +205,7 @@ public class ReaderTest {
 
         Method[] methods = ResponsesResource.class.getMethods();
 
-        Operation responseOperation = reader.parseMethod(methods[0]);
+        Operation responseOperation = reader.parseMethod(methods[0], null);
         assertNotNull(responseOperation);
 
         ApiResponses responses = responseOperation.getResponses();
@@ -227,7 +221,7 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         Method[] methods = ExternalDocsReference.class.getMethods();
-        Operation externalDocsOperation = reader.parseMethod(methods[0]);
+        Operation externalDocsOperation = reader.parseMethod(methods[0], null);
         assertNotNull(externalDocsOperation);
         ExternalDocumentation externalDocs = externalDocsOperation.getExternalDocs();
         assertEquals(EXTERNAL_DOCS_DESCRIPTION, externalDocs.getDescription());
@@ -239,7 +233,7 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
         Method[] methods = SecurityResource.class.getMethods();
 
-        Operation securityOperation = reader.parseMethod(methods[0]);
+        Operation securityOperation = reader.parseMethod(methods[0], null);
         assertNotNull(securityOperation);
         List<SecurityRequirement> securityRequirements = securityOperation.getSecurity();
         assertNotNull(securityRequirements);
@@ -255,7 +249,7 @@ public class ReaderTest {
     public void testGetCallbacks() {
         Reader reader = new Reader(new OpenAPI());
         Method[] methods = SimpleCallbackResource.class.getMethods();
-        Operation callbackOperation = reader.parseMethod(methods[0]);
+        Operation callbackOperation = reader.parseMethod(methods[0], null);
         assertNotNull(callbackOperation);
         Map<String, Callback> callbacks = callbackOperation.getCallbacks();
         assertNotNull(callbacks);
@@ -283,7 +277,7 @@ public class ReaderTest {
         assertNotNull(openAPI);
         Paths openAPIPaths = openAPI.getPaths();
         assertNotNull(openAPIPaths);
-        PathItem pathItem = openAPIPaths.get(PATH_REF);
+        PathItem pathItem = openAPIPaths.get(PATH_1_REF);
         assertNotNull(pathItem);
         Operation operation = pathItem.getGet();
         assertNotNull(operation);

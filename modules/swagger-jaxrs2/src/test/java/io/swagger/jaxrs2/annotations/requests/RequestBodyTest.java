@@ -18,9 +18,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
-/**
- * Created by rafaellopez on 8/17/17.
- */
+
 public class RequestBodyTest extends AbstractAnnotationTest {
 
     @Test(description = "Returns a request with one RequestBody and multiple parameters")
@@ -40,7 +38,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "              $ref: '#/components/schemas/User'\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "    post:\n" +
                 "      summary: Create user\n" +
                 "      description: This can only be done by the logged in user.\n" +
@@ -63,7 +61,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "    delete:\n" +
                 "      summary: Delete user\n" +
                 "      description: This can only be done by the logged in user.\n" +
@@ -79,7 +77,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "          type: string\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "  /pet:\n" +
                 "    put:\n" +
                 "      summary: Modify pet\n" +
@@ -95,7 +93,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "              $ref: '#/components/schemas/User'\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "    post:\n" +
                 "      summary: Create pet\n" +
                 "      description: Creating pet.\n" +
@@ -110,7 +108,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "              $ref: '#/components/schemas/Pet'\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: default response\n" +
                 "    delete:\n" +
                 "        summary: Delete pet\n" +
                 "        description: Deleting pet.\n" +
@@ -127,7 +125,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "                format: int32\n" +
                 "        responses:\n" +
                 "          default:\n" +
-                "            description: no description\n" +
+                "            description: default response\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    User:\n" +

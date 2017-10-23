@@ -18,9 +18,7 @@ import javax.ws.rs.Path;
 
 import static org.testng.Assert.assertEquals;
 
-/**
- * Created by rafaellopez on 9/8/17.
- */
+
 public class ExamplesTest extends AbstractAnnotationTest {
 
     @Test
@@ -40,6 +38,8 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "        in: path\n" +
                 "        required: true\n" +
                 "        style: simple\n" +
+                "        schema:\n" +
+                "          $ref: '#/components/schemas/SubscriptionResponse'\n" +
                 "        examples:\n" +
                 "          subscriptionId_2:\n" +
                 "            summary: Subscription number 54321\n" +
@@ -71,7 +71,7 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: no description\n" +
+                "          description: test description\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
@@ -88,6 +88,32 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "                  externalValue: Subscription Response value 1\n" +
                 "components:\n" +
                 "  schemas:\n" +
+                "    User:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "        username:\n" +
+                "          type: string\n" +
+                "        firstName:\n" +
+                "          type: string\n" +
+                "        lastName:\n" +
+                "          type: string\n" +
+                "        email:\n" +
+                "          type: string\n" +
+                "        password:\n" +
+                "          type: string\n" +
+                "        phone:\n" +
+                "          type: string\n" +
+                "        userStatus:\n" +
+                "          type: integer\n" +
+                "          description: User Status\n" +
+                "          format: int32\n" +
+                "          enum:\n" +
+                "          - null\n" +
+                "      xml:\n" +
+                "        name: User\n" +
                 "    SubscriptionResponse:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -116,7 +142,7 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 },
                 responses = {
                         @ApiResponse(
-                                description = "no description",
+                                description = "test description",
                                 content = @Content(
                                         mediaType = "*/*",
                                         schema = @Schema(
