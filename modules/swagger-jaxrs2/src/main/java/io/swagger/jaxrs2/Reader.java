@@ -189,7 +189,8 @@ public class Reader implements OpenApiReader {
     }
 
     public OpenAPI read(Class<?> cls, String parentPath) {
-        io.swagger.oas.annotations.security.SecurityScheme apiSecurityScheme = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.security.SecurityScheme.class);
+
+        List<io.swagger.oas.annotations.security.SecurityScheme> apiSecurityScheme = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.oas.annotations.security.SecurityScheme.class);
         io.swagger.oas.annotations.ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.ExternalDocumentation.class);
         // TODO process full @OpenAPIDefinition
         io.swagger.oas.annotations.OpenAPIDefinition openAPIDefinition = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.OpenAPIDefinition.class);
@@ -200,15 +201,19 @@ public class Reader implements OpenApiReader {
         classConsumes = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Consumes.class);
         classProduces = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Produces.class);
 
-        Optional<SecurityScheme> securityScheme = SecurityParser.getSecurityScheme(apiSecurityScheme);
-        if (securityScheme.isPresent()) {
-            Map<String, SecurityScheme> securitySchemeMap = new HashMap<>();
-            if (StringUtils.isNotBlank(securityScheme.get().getName())) {
-                securitySchemeMap.put(securityScheme.get().getName(), securityScheme.get());
-                if (components.getSecuritySchemes() != null && components.getSecuritySchemes().size() != 0) {
-                    components.getSecuritySchemes().putAll(securitySchemeMap);
-                } else {
-                    components.setSecuritySchemes(securitySchemeMap);
+        if (apiSecurityScheme != null) {
+            for (io.swagger.oas.annotations.security.SecurityScheme securitySchemeAnnotation: apiSecurityScheme) {
+                Optional<SecurityScheme> securityScheme = SecurityParser.getSecurityScheme(securitySchemeAnnotation);
+                if (securityScheme.isPresent()) {
+                    Map<String, SecurityScheme> securitySchemeMap = new HashMap<>();
+                    if (StringUtils.isNotBlank(securityScheme.get().getName())) {
+                        securitySchemeMap.put(securityScheme.get().getName(), securityScheme.get());
+                        if (components.getSecuritySchemes() != null && components.getSecuritySchemes().size() != 0) {
+                            components.getSecuritySchemes().putAll(securitySchemeMap);
+                        } else {
+                            components.setSecuritySchemes(securitySchemeMap);
+                        }
+                    }
                 }
             }
         }
@@ -656,10 +661,8 @@ public class Reader implements OpenApiReader {
                 operation).ifPresent(p -> p.forEach(operation::addParametersItem));
 
         // security
-        // TODO change this
         List<SecurityRequirement> securityRequirements = operation.getSecurity();
 
-        // TODO logic within `if` below is only needed because we also resolve method level single @SecurityRequirement annotation, which must be merged
         if (securityRequirements != null && securityRequirements.size() > 0) {
             Optional<List<SecurityRequirement>> requirementsObject = SecurityParser.getSecurityRequirements(apiOperation.security());
             if (requirementsObject.isPresent()) {

@@ -64,6 +64,30 @@ public class SecurityTests extends AbstractAnnotationTest {
 
     }
 
+    @Test
+    public void testMultipleSecurityShemes() {
+        String openApiYAML = readIntoYaml(SecurityTests.MultipleSchemesOnClass.class);
+        int start = openApiYAML.indexOf("components:");
+        String extractedYAML = openApiYAML.substring(start, openApiYAML.length() - 1);
+        String expectedYAML = "components:\n" +
+                "  securitySchemes:\n" +
+                "    apiKey:\n" +
+                "      type: apiKey\n" +
+                "      name: apiKey\n" +
+                "      in: header\n" +
+                "    myOauth2Security:\n" +
+                "      type: oauth2\n" +
+                "      name: myOauth2Security\n" +
+                "      in: header\n" +
+                "      flows:\n" +
+                "        implicit:\n" +
+                "          authorizationUrl: http://url.com/auth\n" +
+                "          scopes:\n" +
+                "            write:pets: modify pets in your account";
+        assertEquals(extractedYAML, expectedYAML);
+
+    }
+
     @SecurityRequirement(name = "apiKey")
     static class SecurityRequirementOnClass {
 
@@ -81,6 +105,17 @@ public class SecurityTests extends AbstractAnnotationTest {
                     implicit = @OAuthFlow(authorizationUrl = "http://url.com/auth",
                             scopes = @OAuthScope(name = "write:pets", description = "modify pets in your account"))))
     static class OAuth2SchemeOnClass {
+
+    }
+
+    @SecurityScheme(name = "myOauth2Security",
+            type = SecuritySchemeType.OAUTH2,
+            in = SecuritySchemeIn.HEADER,
+            flows = @OAuthFlows(
+                    implicit = @OAuthFlow(authorizationUrl = "http://url.com/auth",
+                            scopes = @OAuthScope(name = "write:pets", description = "modify pets in your account"))))
+    @SecurityScheme(name = "apiKey", type = SecuritySchemeType.APIKEY, in = SecuritySchemeIn.HEADER)
+    static class MultipleSchemesOnClass {
 
     }
 }
