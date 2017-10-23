@@ -6,16 +6,13 @@ import io.swagger.oas.annotations.Parameter;
 import io.swagger.oas.annotations.enums.ParameterIn;
 import io.swagger.oas.annotations.media.Content;
 import io.swagger.oas.annotations.media.Schema;
-import io.swagger.oas.annotations.parameters.RequestBody;
 import io.swagger.oas.annotations.responses.ApiResponse;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
-/**
- * Created by RafaelLopez on 5/19/17.
- */
+
 public class CompleteFieldsResource {
 
     @GET

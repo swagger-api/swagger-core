@@ -9,9 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
-/**
- * Created by RafaelLopez on 5/20/17.
- */
+
 public class ParametersResource {
 
     @GET
