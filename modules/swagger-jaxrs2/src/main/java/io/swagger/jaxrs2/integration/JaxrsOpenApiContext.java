@@ -33,6 +33,9 @@ public class JaxrsOpenApiContext<T extends JaxrsOpenApiContext> extends GenericO
         } else {
             reader = new Reader();
         }
+        if (reader instanceof Reader) {
+            ((Reader)reader).setApplication(app);
+        }
         reader.setConfiguration(openApiConfiguration);
         return reader;
     }

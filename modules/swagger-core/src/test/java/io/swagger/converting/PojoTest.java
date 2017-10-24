@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
-public class PojoTests {
+public class PojoTest {
 
     private Map<String, io.swagger.oas.models.media.Schema> read(Type type) {
         return ModelConverters.getInstance().read(type);
@@ -485,14 +485,14 @@ public class PojoTests {
                 "    id:\n" +
                 "      minimum: 2\n" +
                 "      type: string\n" +
-                "      description: dsfsdsdfdsf\n" +
+                "      description: testdesc\n" +
                 "      example: '{\"id\":19877734}'";
         SerializationMatchers.assertEqualsToYaml(readAll(modelWithPropertyStringExampleOverrideJson.class), yaml);
     }
 
     static class modelWithPropertyStringExampleOverrideJson {
 
-        @Schema(type = "string", name = "id", example = "{\"id\": 19877734}", minimum = "2", description = "dsfsdsdfdsf")
+        @Schema(type = "string", name = "id", example = "{\"id\": 19877734}", minimum = "2", description = "testdesc")
         private String exampleJson;
 
         public String getExampleJson() {

@@ -41,7 +41,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.core.Application;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -68,6 +70,7 @@ public class Reader implements OpenApiReader {
 
     protected OpenAPIConfiguration config;
 
+    private Application application;
     private OpenAPI openAPI;
     private Components components;
     private Paths paths;
@@ -113,7 +116,7 @@ public class Reader implements OpenApiReader {
      * Scans a single class for Swagger annotations - does not invoke ReaderListeners
      */
     public OpenAPI read(Class<?> cls) {
-        return read(cls, "");
+        return read(cls, resolveApplicationPath());
     }
 
     /**
@@ -161,7 +164,7 @@ public class Reader implements OpenApiReader {
         }
 
         for (Class<?> cls : sortedClasses) {
-            read(cls, "");
+            read(cls, resolveApplicationPath());
         }
 
         for (ReaderListener listener : listeners.values()) {
@@ -186,6 +189,33 @@ public class Reader implements OpenApiReader {
 
     public OpenAPI read(Set<Class<?>> classes, Map<String, Object> resources) {
         return read(classes);
+    }
+
+    protected String resolveApplicationPath() {
+        if (application != null) {
+            ApplicationPath applicationPath = application.getClass().getAnnotation(ApplicationPath.class);
+            if (applicationPath != null) {
+                if (StringUtils.isNotBlank(applicationPath.value())) {
+                    return applicationPath.value();
+                }
+            }
+            // look for inner application, e.g. ResourceConfig
+            try {
+                Method m = application.getClass().getMethod("getApplication", null);
+                Application innerApplication  = (Application) m.invoke(application, null);
+                applicationPath = innerApplication.getClass().getAnnotation(ApplicationPath.class);
+                if (applicationPath != null) {
+                    if (StringUtils.isNotBlank(applicationPath.value())) {
+                        return applicationPath.value();
+                    }
+                }
+            } catch (NoSuchMethodException e) {
+                // no inner application found
+            } catch (Exception e) {
+                // no inner application found
+            }
+        }
+        return "";
     }
 
     public OpenAPI read(Class<?> cls, String parentPath) {
@@ -784,5 +814,9 @@ public class Reader implements OpenApiReader {
             return true;
         }
         return false;
+    }
+
+    public void setApplication (Application application) {
+        this.application = application;
     }
 }
