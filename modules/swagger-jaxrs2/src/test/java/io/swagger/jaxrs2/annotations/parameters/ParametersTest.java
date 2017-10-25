@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.models.OpenAPI;
 
-import io.swagger.util.Yaml;
+import io.swagger.v3.core.util.Yaml;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;

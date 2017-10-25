@@ -4,8 +4,8 @@ import io.swagger.oas.integration.OpenApiConfigurationException;
 import io.swagger.oas.integration.api.OpenApiContext;
 import io.swagger.oas.integration.OpenApiContextLocator;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.util.Json;
-import io.swagger.util.Yaml;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Yaml;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletConfig;
