@@ -15,8 +15,6 @@ import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.Set;
 
-//import io.swagger.oas.annotations.media.Schema;
-
 public class ModelWithTuple2 {
     @io.swagger.oas.annotations.media.Schema(description = "Possible values for state property of timesheet or timesheet entry", required = true)
     public Pair<String, String> timesheetStates;
