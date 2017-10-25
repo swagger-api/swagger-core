@@ -1,8 +1,8 @@
 package io.swagger.deserialization;
 
-import io.swagger.oas.models.media.ObjectSchema;
-import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.ObjectSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.util.Json;
 import org.testng.annotations.Test;
 

@@ -1,10 +1,10 @@
 package io.swagger.jaxrs2;
 
-import io.swagger.oas.models.security.OAuthFlow;
-import io.swagger.oas.models.security.OAuthFlows;
-import io.swagger.oas.models.security.Scopes;
-import io.swagger.oas.models.security.SecurityRequirement;
-import io.swagger.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.security.OAuthFlow;
+import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.Scopes;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.security.OAuthScope;
 import org.apache.commons.lang3.StringUtils;
 

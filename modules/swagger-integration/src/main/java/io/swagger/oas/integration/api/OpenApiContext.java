@@ -2,7 +2,7 @@ package io.swagger.oas.integration.api;
 
 
 import io.swagger.oas.integration.OpenApiConfigurationException;
-import io.swagger.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.OpenAPI;
 
 public interface OpenApiContext {
 

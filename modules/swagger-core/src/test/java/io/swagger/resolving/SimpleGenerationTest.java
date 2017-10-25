@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.jackson.ModelResolver;
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;

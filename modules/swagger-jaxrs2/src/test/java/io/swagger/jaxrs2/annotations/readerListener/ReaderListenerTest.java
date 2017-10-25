@@ -2,7 +2,7 @@ package io.swagger.jaxrs2.annotations.readerListener;
 
 import io.swagger.jaxrs2.Reader;
 import io.swagger.jaxrs2.resources.ReaderListenerResource;
-import io.swagger.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.testng.annotations.Test;
 
 import java.util.Collections;

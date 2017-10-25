@@ -15,11 +15,11 @@ import static org.testng.Assert.assertEquals;
 
 public class PojoTest {
 
-    private Map<String, io.swagger.oas.models.media.Schema> read(Type type) {
+    private Map<String, io.swagger.v3.oas.models.media.Schema> read(Type type) {
         return ModelConverters.getInstance().read(type);
     }
 
-    private Map<String, io.swagger.oas.models.media.Schema> readAll(Type type) {
+    private Map<String, io.swagger.v3.oas.models.media.Schema> readAll(Type type) {
         return ModelConverters.getInstance().readAll(type);
     }
 
@@ -198,7 +198,7 @@ public class PojoTest {
                 "  department:\n" +
                 "    type: string";
 
-        final Map<String, io.swagger.oas.models.media.Schema> schemas = readAll(UberObject.class);
+        final Map<String, io.swagger.v3.oas.models.media.Schema> schemas = readAll(UberObject.class);
         assertEquals(schemas.size(), 3);
         SerializationMatchers.assertEqualsToYaml(schemas.get("UberObject"), yaml);
         SerializationMatchers.assertEqualsToYaml(schemas.get("UserObject"), yamlUser);
@@ -284,7 +284,7 @@ public class PojoTest {
                 "    type: string\n" +
                 "    description: 'A valid user social security'\n" +
                 "    pattern: '^\\d{3}-?\\d{2}-?\\d{4}$'";
-        Map<String, io.swagger.oas.models.media.Schema> map = readAll(ArbitraryDataReceiver.class);
+        Map<String, io.swagger.v3.oas.models.media.Schema> map = readAll(ArbitraryDataReceiver.class);
         SerializationMatchers.assertEqualsToYaml(map.get("ArbitraryDataReceiver"), yaml);
         SerializationMatchers.assertEqualsToYaml(map.get("AuthorizedUser"), yamlUser);
 

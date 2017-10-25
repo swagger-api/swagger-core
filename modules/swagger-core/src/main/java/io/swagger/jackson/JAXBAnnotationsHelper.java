@@ -1,12 +1,11 @@
 package io.swagger.jackson;
 
 import com.fasterxml.jackson.databind.introspect.Annotated;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import io.swagger.oas.models.media.ArraySchema;
-import io.swagger.oas.models.media.MapSchema;
-import io.swagger.oas.models.media.ObjectSchema;
-import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.media.XML;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.MapSchema;
+import io.swagger.v3.oas.models.media.ObjectSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.XML;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +23,7 @@ class JAXBAnnotationsHelper {
     }
 
     /**
-     * Applies annotations to property's {@link io.swagger.oas.models.media.XML} definition.
+     * Applies annotations to property's {@link XML} definition.
      *
      * @param member   annotations provider
      * @param property property instance to be updated

@@ -1,6 +1,6 @@
 package io.swagger.oas.integration;
 
-import io.swagger.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.oas.integration.api.OpenAPIConfiguration;
 
 import java.util.Collection;

@@ -4,8 +4,8 @@ import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.oas.models.ModelWithEnumField;
 import io.swagger.oas.models.ModelWithEnumProperty;
-import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;

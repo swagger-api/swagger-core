@@ -3,7 +3,7 @@ package io.swagger.converting;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.oas.models.GuavaModel;
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.util.ResourceUtils;
 import org.testng.annotations.Test;
 

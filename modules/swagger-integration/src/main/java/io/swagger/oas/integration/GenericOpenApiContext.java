@@ -2,7 +2,7 @@ package io.swagger.oas.integration;
 
 import io.swagger.oas.integration.api.OpenApiConfigurationLoader;
 import io.swagger.oas.integration.api.OpenApiContext;
-import io.swagger.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.oas.integration.api.OpenApiReader;
 import io.swagger.oas.integration.api.OpenApiScanner;

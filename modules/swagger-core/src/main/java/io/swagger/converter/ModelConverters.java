@@ -2,7 +2,7 @@ package io.swagger.converter;
 
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.jackson.ModelResolver;
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.util.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

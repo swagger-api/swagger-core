@@ -1,7 +1,7 @@
 package io.swagger.converting;
 
 import io.swagger.converter.ModelConverters;
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.util.Json;
 import org.testng.annotations.Test;
 

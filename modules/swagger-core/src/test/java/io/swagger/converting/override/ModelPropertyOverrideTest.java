@@ -3,7 +3,7 @@ package io.swagger.converting.override;
 import io.swagger.converter.ModelConverters;
 import io.swagger.converting.override.resources.MyCustomClass;
 import io.swagger.matchers.SerializationMatchers;
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
 import java.util.Map;

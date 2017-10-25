@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.OpenAPI;
 
 import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
@@ -34,7 +34,7 @@ public class ParametersTest extends AbstractAnnotationTest {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(ResourceWithKnownInjections.class);
         Yaml.prettyPrint(openAPI);
-        List<io.swagger.oas.models.parameters.Parameter> resourceParameters = openAPI.getPaths().get("/resource/{id}").getGet().getParameters();
+        List<io.swagger.v3.oas.models.parameters.Parameter> resourceParameters = openAPI.getPaths().get("/resource/{id}").getGet().getParameters();
         assertNotNull(resourceParameters);
         assertEquals(resourceParameters.size(), 3);
         assertEquals(resourceParameters.get(0).getName(), "id");

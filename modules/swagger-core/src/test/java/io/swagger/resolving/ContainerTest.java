@@ -3,8 +3,8 @@ package io.swagger.resolving;
 import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.resolving.resources.InnerType;
 import io.swagger.jackson.ModelResolver;
-import io.swagger.oas.models.media.ArraySchema;
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
 import java.util.Map;

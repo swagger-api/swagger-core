@@ -1,6 +1,6 @@
 package io.swagger.jaxrs2;
 
-import io.swagger.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 

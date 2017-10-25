@@ -2,7 +2,7 @@ package io.swagger.resolving;
 
 import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.jackson.ModelResolver;
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertNotNull;

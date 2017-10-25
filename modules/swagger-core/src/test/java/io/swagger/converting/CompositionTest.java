@@ -7,7 +7,7 @@ import io.swagger.oas.models.composition.Animal;
 import io.swagger.oas.models.composition.AnimalClass;
 import io.swagger.oas.models.composition.Human;
 import io.swagger.oas.models.composition.ModelWithFieldWithSubTypes;
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.util.Json;
 import io.swagger.util.ResourceUtils;
 

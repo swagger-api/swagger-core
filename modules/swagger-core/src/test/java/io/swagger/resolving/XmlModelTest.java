@@ -11,8 +11,8 @@ import io.swagger.converter.ModelConverters;
 import io.swagger.oas.models.Address;
 import io.swagger.oas.models.Issue534;
 import io.swagger.oas.models.ModelWithJAXBAnnotations;
-import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.media.XML;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.XML;
 import org.testng.annotations.Test;
 
 import java.io.IOException;

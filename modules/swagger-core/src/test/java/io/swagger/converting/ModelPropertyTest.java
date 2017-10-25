@@ -7,11 +7,11 @@ import io.swagger.oas.models.ModelWithBooleanProperty;
 import io.swagger.oas.models.ModelWithModelPropertyOverrides;
 import io.swagger.oas.models.ModelWithPrimitiveArray;
 import io.swagger.oas.models.ReadOnlyFields;
-import io.swagger.oas.models.media.ArraySchema;
-import io.swagger.oas.models.media.BooleanSchema;
-import io.swagger.oas.models.media.IntegerSchema;
-import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.BooleanSchema;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import org.testng.annotations.Test;
 
 import java.util.Date;

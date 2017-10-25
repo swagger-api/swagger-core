@@ -4,8 +4,8 @@ import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.jackson.ModelResolver;
-import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import org.testng.annotations.Test;
 
 import java.lang.annotation.Annotation;

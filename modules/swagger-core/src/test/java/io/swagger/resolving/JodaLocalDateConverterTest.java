@@ -1,9 +1,9 @@
 package io.swagger.resolving;
 
 import io.swagger.converter.ModelConverters;
-import io.swagger.oas.models.media.DateSchema;
-import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import org.joda.time.LocalDate;
 import org.testng.annotations.Test;
 

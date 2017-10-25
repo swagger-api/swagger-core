@@ -2,10 +2,10 @@ package io.swagger.converting;
 
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
-import io.swagger.oas.models.media.ArraySchema;
-import io.swagger.oas.models.media.BinarySchema;
-import io.swagger.oas.models.media.ByteArraySchema;
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.BinarySchema;
+import io.swagger.v3.oas.models.media.ByteArraySchema;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.util.Json;
 import org.testng.annotations.Test;
 

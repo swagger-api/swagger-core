@@ -1,14 +1,14 @@
 package io.swagger.util;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import io.swagger.oas.models.PathItem;
-import io.swagger.oas.models.headers.Header;
-import io.swagger.oas.models.media.Encoding;
-import io.swagger.oas.models.media.EncodingProperty;
-import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.parameters.Parameter;
-import io.swagger.oas.models.responses.ApiResponse;
-import io.swagger.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.headers.Header;
+import io.swagger.v3.oas.models.media.Encoding;
+import io.swagger.v3.oas.models.media.EncodingProperty;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 
 public class DeserializationModule extends SimpleModule {
 

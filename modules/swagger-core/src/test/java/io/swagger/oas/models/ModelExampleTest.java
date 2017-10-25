@@ -1,8 +1,8 @@
 package io.swagger.oas.models;
 
-import io.swagger.oas.models.media.IntegerSchema;
-import io.swagger.oas.models.media.ObjectSchema;
-import io.swagger.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.ObjectSchema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;

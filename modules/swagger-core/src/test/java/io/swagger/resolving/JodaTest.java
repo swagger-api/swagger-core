@@ -2,7 +2,7 @@ package io.swagger.resolving;
 
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContextImpl;
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.Schema;
 import org.joda.time.DateTime;
 import org.testng.annotations.Test;
 

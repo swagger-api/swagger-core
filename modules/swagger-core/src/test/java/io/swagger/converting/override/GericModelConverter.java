@@ -4,7 +4,7 @@ import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.converting.override.resources.GenericModel;
 import io.swagger.jackson.AbstractModelConverter;
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.util.Json;
 
 import java.lang.annotation.Annotation;

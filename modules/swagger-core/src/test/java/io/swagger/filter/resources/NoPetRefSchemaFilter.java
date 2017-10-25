@@ -1,7 +1,7 @@
 package io.swagger.filter.resources;
 
 import io.swagger.core.filter.AbstractSpecFilter;
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;

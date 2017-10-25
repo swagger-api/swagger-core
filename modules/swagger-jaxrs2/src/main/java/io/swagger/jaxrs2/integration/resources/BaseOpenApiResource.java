@@ -5,7 +5,7 @@ import io.swagger.core.filter.SpecFilter;
 import io.swagger.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.oas.integration.api.OpenApiContext;
-import io.swagger.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.apache.commons.lang3.StringUtils;

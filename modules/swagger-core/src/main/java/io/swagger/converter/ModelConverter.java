@@ -1,7 +1,7 @@
 package io.swagger.converter;
 
 import com.fasterxml.jackson.databind.introspect.Annotated;
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.Schema;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

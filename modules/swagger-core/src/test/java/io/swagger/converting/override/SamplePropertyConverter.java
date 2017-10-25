@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.introspect.Annotated;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.converting.override.resources.MyCustomClass;
-import io.swagger.oas.models.media.DateTimeSchema;
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.util.Json;
 
 import java.lang.annotation.Annotation;

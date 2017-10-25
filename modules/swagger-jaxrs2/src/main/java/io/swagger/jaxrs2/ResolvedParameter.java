@@ -1,6 +1,6 @@
 package io.swagger.jaxrs2;
 
-import io.swagger.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;

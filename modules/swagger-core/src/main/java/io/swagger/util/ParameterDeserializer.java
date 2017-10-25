@@ -7,11 +7,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectReader;
-import io.swagger.oas.models.parameters.CookieParameter;
-import io.swagger.oas.models.parameters.HeaderParameter;
-import io.swagger.oas.models.parameters.Parameter;
-import io.swagger.oas.models.parameters.PathParameter;
-import io.swagger.oas.models.parameters.QueryParameter;
+import io.swagger.v3.oas.models.parameters.CookieParameter;
+import io.swagger.v3.oas.models.parameters.HeaderParameter;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.PathParameter;
+import io.swagger.v3.oas.models.parameters.QueryParameter;
 
 import java.io.IOException;
 

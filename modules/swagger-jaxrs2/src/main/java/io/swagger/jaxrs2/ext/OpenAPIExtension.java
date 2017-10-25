@@ -1,8 +1,8 @@
 package io.swagger.jaxrs2.ext;
 
 import io.swagger.jaxrs2.ResolvedParameter;
-import io.swagger.oas.models.Components;
-import io.swagger.oas.models.Operation;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.Operation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

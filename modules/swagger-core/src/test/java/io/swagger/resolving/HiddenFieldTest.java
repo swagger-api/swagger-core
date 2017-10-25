@@ -1,9 +1,9 @@
 package io.swagger.resolving;
 
 import io.swagger.converter.ModelConverters;
-import io.swagger.oas.models.media.IntegerSchema;
-import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import org.testng.annotations.Test;
 
 import java.util.Map;

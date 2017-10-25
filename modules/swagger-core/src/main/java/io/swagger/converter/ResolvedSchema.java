@@ -1,6 +1,6 @@
 package io.swagger.converter;
 
-import io.swagger.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.Schema;
 
 import java.util.Map;
 

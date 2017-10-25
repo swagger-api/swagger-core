@@ -1,6 +1,6 @@
 package io.swagger.jaxrs2;
 
-import io.swagger.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.OpenAPI;
 
 /**
  * Listener providing hooks for customizing automatically generated OpenAPI definitions in a JAX-RS

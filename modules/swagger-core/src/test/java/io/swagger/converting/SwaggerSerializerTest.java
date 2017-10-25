@@ -3,26 +3,26 @@ package io.swagger.converting;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
-import io.swagger.oas.models.Components;
-import io.swagger.oas.models.OpenAPI;
-import io.swagger.oas.models.Operation;
-import io.swagger.oas.models.PathItem;
-import io.swagger.oas.models.Paths;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.Paths;
 import io.swagger.oas.models.Person;
-import io.swagger.oas.models.info.Contact;
-import io.swagger.oas.models.info.Info;
-import io.swagger.oas.models.links.Link;
-import io.swagger.oas.models.media.Content;
-import io.swagger.oas.models.media.IntegerSchema;
-import io.swagger.oas.models.media.MediaType;
-import io.swagger.oas.models.media.Schema;
-import io.swagger.oas.models.media.StringSchema;
-import io.swagger.oas.models.parameters.Parameter;
-import io.swagger.oas.models.parameters.QueryParameter;
-import io.swagger.oas.models.parameters.RequestBody;
-import io.swagger.oas.models.responses.ApiResponse;
-import io.swagger.oas.models.responses.ApiResponses;
-import io.swagger.oas.models.servers.Server;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.links.Link;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.QueryParameter;
+import io.swagger.v3.oas.models.parameters.RequestBody;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.util.Json;
 import io.swagger.util.OutputReplacer;
 import io.swagger.util.ResourceUtils;
@@ -96,7 +96,7 @@ public class SwaggerSerializerTest {
         final ApiResponse response = new ApiResponse()
                 .description("pets returned")
                 .content(new Content()
-                    .addMediaType("application/json", new io.swagger.oas.models.media.MediaType()
+                    .addMediaType("application/json", new MediaType()
                     .schema(new Schema().$ref("Person"))
                     .example("fun")));
 
@@ -108,7 +108,7 @@ public class SwaggerSerializerTest {
                         .parameters("userId", "gah")
                 )
                 .content(new Content()
-                        .addMediaType("application/json", new io.swagger.oas.models.media.MediaType()
+                        .addMediaType("application/json", new MediaType()
                         .schema(new Schema().$ref("Error"))));
 
         get.responses(new ApiResponses()

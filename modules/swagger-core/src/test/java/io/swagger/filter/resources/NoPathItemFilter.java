@@ -2,7 +2,7 @@ package io.swagger.filter.resources;
 
 import io.swagger.core.filter.AbstractSpecFilter;
 import io.swagger.model.ApiDescription;
-import io.swagger.oas.models.PathItem;
+import io.swagger.v3.oas.models.PathItem;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;

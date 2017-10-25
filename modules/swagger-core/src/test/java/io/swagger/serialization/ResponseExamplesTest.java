@@ -1,10 +1,10 @@
 package io.swagger.serialization;
 
 import io.swagger.matchers.SerializationMatchers;
-import io.swagger.oas.models.examples.Example;
-import io.swagger.oas.models.media.Content;
-import io.swagger.oas.models.media.MediaType;
-import io.swagger.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.examples.Example;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.responses.ApiResponse;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
