@@ -1,8 +1,8 @@
 package io.swagger.v3.core.deserialization.properties;
 
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.core.util.Json;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;

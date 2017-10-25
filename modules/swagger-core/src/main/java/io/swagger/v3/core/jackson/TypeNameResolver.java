@@ -3,8 +3,8 @@ package io.swagger.v3.core.jackson;
 //import io.swagger.annotations.ApiModel;
 
 import com.fasterxml.jackson.databind.JavaType;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.core.util.PrimitiveType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 

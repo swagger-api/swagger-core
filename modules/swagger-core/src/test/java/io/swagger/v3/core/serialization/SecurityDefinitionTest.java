@@ -2,10 +2,12 @@ package io.swagger.v3.core.serialization;
 
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
+import io.swagger.v3.core.oas.models.Person;
+import io.swagger.v3.core.util.ResourceUtils;
+import io.swagger.v3.core.util.TestUtils;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
-import io.swagger.v3.core.oas.models.Person;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Content;
@@ -22,8 +24,6 @@ import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
-import io.swagger.v3.core.util.ResourceUtils;
-import io.swagger.v3.core.util.TestUtils;
 import org.testng.annotations.Test;
 
 import java.io.IOException;

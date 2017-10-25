@@ -1,11 +1,11 @@
 package io.swagger.v3.core.util.reflection;
 
+import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.core.util.reflection.resources.Child;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.core.util.reflection.resources.IParent;
 import io.swagger.v3.core.util.reflection.resources.Parent;
-import io.swagger.v3.core.util.ReflectionUtils;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

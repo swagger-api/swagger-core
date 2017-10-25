@@ -5,16 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.oas.models.Car;
-import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.core.oas.models.Manufacturers;
 import io.swagger.v3.core.oas.models.ReadOnlyModel;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
-import io.swagger.v3.core.util.Json;
 import org.testng.annotations.Test;
 
 import java.io.IOException;

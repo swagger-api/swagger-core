@@ -1,6 +1,6 @@
 package io.swagger.jaxrs2.integration;
 
-import io.swagger.oas.integration.api.OpenApiContext;
+import io.swagger.v3.oas.integration.api.OpenApiContext;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletConfig;

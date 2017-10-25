@@ -1,6 +1,8 @@
 package io.swagger.v3.core.filter;
 
 import io.swagger.v3.core.model.ApiDescription;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.RefUtils;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -18,8 +20,6 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.tags.Tag;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.RefUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;

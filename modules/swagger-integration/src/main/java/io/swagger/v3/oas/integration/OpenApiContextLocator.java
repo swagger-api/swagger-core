@@ -1,6 +1,6 @@
-package io.swagger.oas.integration;
+package io.swagger.v3.oas.integration;
 
-import io.swagger.oas.integration.api.OpenApiContext;
+import io.swagger.v3.oas.integration.api.OpenApiContext;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

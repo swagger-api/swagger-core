@@ -1,8 +1,8 @@
 package io.swagger.jaxrs2;
 
-import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.oas.models.OpenAPI;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;

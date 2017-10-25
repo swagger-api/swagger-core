@@ -14,6 +14,8 @@ import io.swagger.v3.core.filter.resources.RemoveInternalParamsFilter;
 import io.swagger.v3.core.filter.resources.RemoveUnreferencedDefinitionsFilter;
 import io.swagger.v3.core.filter.resources.ReplaceGetOperationsFilter;
 import io.swagger.v3.core.matchers.SerializationMatchers;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -21,8 +23,6 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.tags.Tag;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.ResourceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.testng.annotations.Test;
 

@@ -1,13 +1,11 @@
 package io.swagger.v3.core.util;
 
-import static org.testng.Assert.assertEquals;
-
-import io.swagger.v3.core.util.PathUtils;
-
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.testng.Assert.assertEquals;
 
 public class PathUtilsTest {
 

@@ -2,6 +2,8 @@ package io.swagger.v3.core.serialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.matchers.SerializationMatchers;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Content;
@@ -15,8 +17,6 @@ import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.PathParameter;
 import io.swagger.v3.oas.models.parameters.QueryParameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.Yaml;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;

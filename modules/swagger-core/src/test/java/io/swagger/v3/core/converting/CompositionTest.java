@@ -7,10 +7,9 @@ import io.swagger.v3.core.oas.models.composition.Animal;
 import io.swagger.v3.core.oas.models.composition.AnimalClass;
 import io.swagger.v3.core.oas.models.composition.Human;
 import io.swagger.v3.core.oas.models.composition.ModelWithFieldWithSubTypes;
-import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ResourceUtils;
-
+import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
 import java.io.IOException;

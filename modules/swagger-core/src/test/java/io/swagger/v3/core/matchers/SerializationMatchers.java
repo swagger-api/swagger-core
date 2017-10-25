@@ -1,20 +1,18 @@
 package io.swagger.v3.core.matchers;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.Yaml;
-
-import java.io.IOException;
-import java.util.Comparator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Yaml;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Comparator;
+
+import static org.testng.Assert.assertEquals;
 
 public class SerializationMatchers {
     private static final Logger LOGGER = LoggerFactory.getLogger(SerializationMatchers.class);

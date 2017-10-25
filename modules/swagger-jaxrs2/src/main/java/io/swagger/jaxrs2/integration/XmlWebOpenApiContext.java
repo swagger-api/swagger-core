@@ -1,14 +1,13 @@
 package io.swagger.jaxrs2.integration;
 
 import io.swagger.jaxrs2.integration.api.WebOpenApiContext;
-import io.swagger.oas.integration.api.OpenApiConfigurationLoader;
+import io.swagger.v3.oas.integration.api.OpenApiConfigurationLoader;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;

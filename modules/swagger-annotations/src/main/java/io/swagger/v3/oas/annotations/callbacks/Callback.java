@@ -16,14 +16,14 @@
 
 package io.swagger.v3.oas.annotations.callbacks;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import io.swagger.v3.oas.annotations.Operation;
 
 /**
  * This object represents a callback URL that will be invoked.

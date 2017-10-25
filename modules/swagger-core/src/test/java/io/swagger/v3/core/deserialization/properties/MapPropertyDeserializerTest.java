@@ -1,12 +1,12 @@
 package io.swagger.v3.core.deserialization.properties;
 
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.Yaml;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;

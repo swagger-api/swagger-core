@@ -4,12 +4,12 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.v3.core.util.ParameterProcessor;
+import io.swagger.v3.core.util.ReflectionUtils;
+import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.parameters.Parameter;
-import io.swagger.v3.core.util.ParameterProcessor;
-import io.swagger.v3.core.util.ReflectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.DELETE;
@@ -21,7 +21,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public class ReaderUtils {
     private static final String GET_METHOD = "get";

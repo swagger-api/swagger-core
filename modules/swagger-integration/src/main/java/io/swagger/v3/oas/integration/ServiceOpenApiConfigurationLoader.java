@@ -1,8 +1,8 @@
-package io.swagger.oas.integration;
+package io.swagger.v3.oas.integration;
 
-import io.swagger.oas.integration.api.OpenAPIConfigBuilder;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.integration.api.OpenApiConfigurationLoader;
+import io.swagger.v3.oas.integration.api.OpenAPIConfigBuilder;
+import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.v3.oas.integration.api.OpenApiConfigurationLoader;
 
 import java.io.IOException;
 import java.util.ServiceLoader;

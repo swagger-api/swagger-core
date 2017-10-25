@@ -2,14 +2,14 @@ package io.swagger.v3.core.deserialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.matchers.SerializationMatchers;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.Yaml;
 import org.testng.annotations.Test;
 
 import java.io.IOException;

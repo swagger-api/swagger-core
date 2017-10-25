@@ -1,4 +1,4 @@
-package io.swagger.oas.integration;
+package io.swagger.v3.oas.integration;
 
 public class OpenApiConfigurationException extends Exception {
 

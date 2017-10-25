@@ -1,13 +1,13 @@
 package io.swagger.jaxrs2.integration.resources;
 
+import io.swagger.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
-import io.swagger.jaxrs2.integration.JaxrsOpenApiContextBuilder;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.integration.api.OpenApiContext;
-import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.v3.oas.integration.api.OpenApiContext;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

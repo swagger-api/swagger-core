@@ -8,10 +8,10 @@ import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import io.swagger.jaxrs2.ext.AbstractOpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ParameterProcessor;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.parameters.Parameter;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.BeanParam;

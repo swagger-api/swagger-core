@@ -1,4 +1,4 @@
-package io.swagger.oas.integration.api;
+package io.swagger.v3.oas.integration.api;
 
 import io.swagger.v3.oas.models.OpenAPI;
 

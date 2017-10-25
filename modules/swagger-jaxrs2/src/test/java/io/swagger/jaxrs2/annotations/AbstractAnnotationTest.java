@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.jaxrs2.Reader;
 import io.swagger.jaxrs2.matchers.SerializationMatchers;
-import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.oas.models.OpenAPI;
 
 import java.io.IOException;
 

@@ -1,7 +1,7 @@
-package io.swagger.oas.integration;
+package io.swagger.v3.oas.integration;
 
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -16,14 +16,14 @@
 
 package io.swagger.v3.oas.annotations.tags;
 
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
 
 @Target({ ElementType.TYPE,  ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

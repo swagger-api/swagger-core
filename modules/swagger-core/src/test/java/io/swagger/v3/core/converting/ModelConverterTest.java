@@ -22,14 +22,14 @@ import io.swagger.v3.core.oas.models.Person;
 import io.swagger.v3.core.oas.models.composition.AbstractModelWithApiModel;
 import io.swagger.v3.core.oas.models.composition.ModelWithUrlProperty;
 import io.swagger.v3.core.oas.models.composition.Pet;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.ResourceUtils;
 import org.testng.annotations.Test;
 
 import java.io.IOException;

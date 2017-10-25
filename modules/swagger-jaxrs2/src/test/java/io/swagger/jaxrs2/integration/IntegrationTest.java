@@ -1,9 +1,9 @@
 package io.swagger.jaxrs2.integration;
 
 import io.swagger.jaxrs2.Reader;
-import io.swagger.oas.integration.GenericOpenApiContext;
-import io.swagger.oas.integration.SwaggerConfiguration;
-import io.swagger.oas.integration.api.OpenApiContext;
+import io.swagger.v3.oas.integration.GenericOpenApiContext;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
+import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.testng.annotations.Test;
@@ -14,8 +14,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 public class IntegrationTest {
 

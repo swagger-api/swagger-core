@@ -16,12 +16,12 @@
 
 package io.swagger.v3.oas.annotations.headers;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Describes a single header object

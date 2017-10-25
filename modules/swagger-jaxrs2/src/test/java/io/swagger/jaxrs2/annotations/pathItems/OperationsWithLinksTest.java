@@ -12,7 +12,6 @@ import org.testng.annotations.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
-
 import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;

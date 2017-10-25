@@ -1,6 +1,8 @@
 package io.swagger.jaxrs2;
 
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.util.AnnotationsUtils;
+import io.swagger.v3.core.util.ParameterProcessor;
 import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.models.Components;
@@ -11,8 +13,6 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
-import io.swagger.v3.core.util.AnnotationsUtils;
-import io.swagger.v3.core.util.ParameterProcessor;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.Consumes;

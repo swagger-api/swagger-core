@@ -1,9 +1,9 @@
 package io.swagger.v3.core.deserialization;
 
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
-import io.swagger.v3.core.util.Json;
 import org.testng.annotations.Test;
 
 import java.io.IOException;

@@ -2,11 +2,11 @@ package io.swagger.jaxrs2.integration;
 
 import io.swagger.jaxrs2.Reader;
 import io.swagger.jaxrs2.integration.api.JaxrsOpenApiScanner;
-import io.swagger.oas.integration.GenericOpenApiContext;
-import io.swagger.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.oas.integration.api.OpenApiContext;
-import io.swagger.oas.integration.api.OpenApiReader;
-import io.swagger.oas.integration.api.OpenApiScanner;
+import io.swagger.v3.oas.integration.GenericOpenApiContext;
+import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.v3.oas.integration.api.OpenApiContext;
+import io.swagger.v3.oas.integration.api.OpenApiReader;
+import io.swagger.v3.oas.integration.api.OpenApiScanner;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

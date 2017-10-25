@@ -1,11 +1,10 @@
 package io.swagger.v3.core.resolving;
 
+import com.google.common.collect.ImmutableMap;
+import io.swagger.v3.core.util.BaseReaderUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
-import io.swagger.v3.core.util.BaseReaderUtils;
-
-import com.google.common.collect.ImmutableMap;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
