@@ -1,7 +1,8 @@
 package io.swagger.jaxrs2;
 
 import io.swagger.converter.ModelConverters;
-import io.swagger.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Encoding;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.links.Link;
 import io.swagger.oas.models.media.Content;
@@ -24,7 +25,7 @@ public class OperationParser {
 
     public static final String COMPONENTS_REF = "#/components/schemas/";
 
-    public static Optional<RequestBody> getRequestBody(io.swagger.oas.annotations.parameters.RequestBody requestBody, Consumes classConsumes, Consumes methodConsumes, Components components) {
+    public static Optional<RequestBody> getRequestBody(io.swagger.v3.oas.annotations.parameters.RequestBody requestBody, Consumes classConsumes, Consumes methodConsumes, Components components) {
         if (requestBody == null) {
             return Optional.empty();
         }
@@ -46,12 +47,12 @@ public class OperationParser {
         return Optional.of(requestBodyObject);
     }
 
-    public static Optional<ApiResponses> getApiResponses(final io.swagger.oas.annotations.responses.ApiResponse[] responses, Produces classProduces, Produces methodProduces, Components components) {
+    public static Optional<ApiResponses> getApiResponses(final io.swagger.v3.oas.annotations.responses.ApiResponse[] responses, Produces classProduces, Produces methodProduces, Components components) {
         if (responses == null) {
             return Optional.empty();
         }
         ApiResponses apiResponsesObject = new ApiResponses();
-        for (io.swagger.oas.annotations.responses.ApiResponse response : responses) {
+        for (io.swagger.v3.oas.annotations.responses.ApiResponse response : responses) {
             ApiResponse apiResponseObject = new ApiResponse();
             if (StringUtils.isNotBlank(response.description())) {
                 apiResponseObject.setDescription(response.description());
@@ -78,7 +79,7 @@ public class OperationParser {
         return Optional.of(apiResponsesObject);
     }
 
-    public static Optional<Content> getContent(io.swagger.oas.annotations.media.Content[] annotationContents, String[] classTypes, String[] methodTypes, Components components) {
+    public static Optional<Content> getContent(io.swagger.v3.oas.annotations.media.Content[] annotationContents, String[] classTypes, String[] methodTypes, Components components) {
         if (annotationContents == null) {
             return Optional.empty();
         }
@@ -86,7 +87,7 @@ public class OperationParser {
         //Encapsulating Content model
         Content content = new Content();
 
-        for (io.swagger.oas.annotations.media.Content annotationContent : annotationContents) {
+        for (io.swagger.v3.oas.annotations.media.Content annotationContent : annotationContents) {
             MediaType mediaType = new MediaType();
             getSchema(annotationContent, components).ifPresent(mediaType::setSchema);
 
@@ -94,8 +95,8 @@ public class OperationParser {
             for (ExampleObject example : examples) {
                 AnnotationsUtils.getExample(example).ifPresent(exampleObject -> mediaType.addExamples(example.name(), exampleObject));
             }
-            io.swagger.oas.annotations.media.Encoding[] encodings = annotationContent.encoding();
-            for (io.swagger.oas.annotations.media.Encoding encoding : encodings) {
+            Encoding[] encodings = annotationContent.encoding();
+            for (Encoding encoding : encodings) {
                 AnnotationsUtils.addEncodingToMediaType(mediaType, encoding);
             }
             if (StringUtils.isNotBlank(annotationContent.mediaType())) {
@@ -112,7 +113,7 @@ public class OperationParser {
         return Optional.of(content);
     }
 
-    public static Optional<Schema> getSchema(io.swagger.oas.annotations.media.Content annotationContent, Components components) {
+    public static Optional<Schema> getSchema(io.swagger.v3.oas.annotations.media.Content annotationContent, Components components) {
         Class<?> schemaImplementation = annotationContent.schema().implementation();
         Map<String, Schema> schemaMap;
         if (schemaImplementation != Void.class) {

@@ -1,13 +1,13 @@
 package io.swagger.jaxrs2.annotations.security;
 
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
-import io.swagger.oas.annotations.enums.SecuritySchemeIn;
-import io.swagger.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.oas.annotations.security.OAuthFlow;
-import io.swagger.oas.annotations.security.OAuthFlows;
-import io.swagger.oas.annotations.security.OAuthScope;
-import io.swagger.oas.annotations.security.SecurityRequirement;
-import io.swagger.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.OAuthFlow;
+import io.swagger.v3.oas.annotations.security.OAuthFlows;
+import io.swagger.v3.oas.annotations.security.OAuthScope;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;

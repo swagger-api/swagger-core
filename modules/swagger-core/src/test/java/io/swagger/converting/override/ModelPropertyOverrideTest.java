@@ -39,7 +39,7 @@ public class ModelPropertyOverrideTest {
         public void setId(String id) {
         }
 
-        @io.swagger.oas.annotations.media.Schema(required= false, description = "instead of modeling this class in the documentation, we will model a string")
+        @io.swagger.v3.oas.annotations.media.Schema(required= false, description = "instead of modeling this class in the documentation, we will model a string")
         public MyCustomClass getMyCustomClass() {
             return null;
         }

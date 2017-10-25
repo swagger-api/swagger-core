@@ -1,6 +1,6 @@
 package io.swagger.oas.models.composition;
 
-import io.swagger.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Thing3", allOf = {AbstractBaseModelWithoutFields.class})
 public class Thing3 extends AbstractBaseModelWithoutFields {

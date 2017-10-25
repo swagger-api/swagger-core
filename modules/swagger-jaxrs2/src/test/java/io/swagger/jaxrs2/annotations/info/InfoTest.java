@@ -1,10 +1,10 @@
 package io.swagger.jaxrs2.annotations.info;
 
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
-import io.swagger.oas.annotations.OpenAPIDefinition;
-import io.swagger.oas.annotations.info.Contact;
-import io.swagger.oas.annotations.info.Info;
-import io.swagger.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;

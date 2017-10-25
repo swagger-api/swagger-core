@@ -1,7 +1,7 @@
 package io.swagger.oas.models.composition;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
-import io.swagger.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(title = "MyProperty")
 @JsonSubTypes({@JsonSubTypes.Type(value = ModelWithUrlProperty.class), @JsonSubTypes.Type(value = ModelWithValueProperty.class)})

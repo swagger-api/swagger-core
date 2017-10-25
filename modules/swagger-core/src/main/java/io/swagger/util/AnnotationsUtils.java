@@ -1,7 +1,7 @@
 package io.swagger.util;
 
-import io.swagger.oas.annotations.links.LinkParameter;
-import io.swagger.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.links.LinkParameter;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.headers.Header;
@@ -37,7 +37,7 @@ public abstract class AnnotationsUtils {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AnnotationsUtils.class);
 
-    public static boolean hasSchemaAnnotation(io.swagger.oas.annotations.media.Schema schema) {
+    public static boolean hasSchemaAnnotation(io.swagger.v3.oas.annotations.media.Schema schema) {
         if (schema == null) {
             return false;
         }
@@ -76,7 +76,7 @@ public abstract class AnnotationsUtils {
         return true;
     }
 
-    public static boolean hasArrayAnnotation(io.swagger.oas.annotations.media.ArraySchema array) {
+    public static boolean hasArrayAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema array) {
         if (array == null) {
             return false;
         }
@@ -117,7 +117,7 @@ public abstract class AnnotationsUtils {
         return Optional.empty();
     }
 
-    public static Optional<ArraySchema> getArraySchema(io.swagger.oas.annotations.media.ArraySchema arraySchema) {
+    public static Optional<ArraySchema> getArraySchema(io.swagger.v3.oas.annotations.media.ArraySchema arraySchema) {
         if (arraySchema == null || !hasArrayAnnotation(arraySchema)) {
             return Optional.empty();
         }
@@ -146,7 +146,7 @@ public abstract class AnnotationsUtils {
         return Optional.of(arraySchemaObject);
     }
 
-    public static Optional<Schema> getSchemaFromAnnotation(io.swagger.oas.annotations.media.Schema schema) {
+    public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema) {
         if (schema == null || !hasSchemaAnnotation(schema)) {
             return Optional.empty();
         }
@@ -253,13 +253,13 @@ public abstract class AnnotationsUtils {
         return Optional.of(tagsList);
     }
 
-    public static Optional<Set<Tag>> getTags(io.swagger.oas.annotations.tags.Tag[] tags) {
+    public static Optional<Set<Tag>> getTags(io.swagger.v3.oas.annotations.tags.Tag[] tags) {
         if (tags == null) {
             return Optional.empty();
         }
         Set<Tag> tagsList = new LinkedHashSet<>();
         boolean isEmpty = true;
-        for (io.swagger.oas.annotations.tags.Tag tag : tags) {
+        for (io.swagger.v3.oas.annotations.tags.Tag tag : tags) {
             Tag tagObject = new Tag();
             if (StringUtils.isNotBlank(tag.name())) {
                 isEmpty = false;
@@ -275,12 +275,12 @@ public abstract class AnnotationsUtils {
         return Optional.of(tagsList);
     }
 
-    public static Optional<List<Server>> getServers(io.swagger.oas.annotations.servers.Server[] servers) {
+    public static Optional<List<Server>> getServers(io.swagger.v3.oas.annotations.servers.Server[] servers) {
         if (servers == null) {
             return Optional.empty();
         }
         List<Server> serverObjects = new ArrayList<>();
-        for (io.swagger.oas.annotations.servers.Server server : servers) {
+        for (io.swagger.v3.oas.annotations.servers.Server server : servers) {
             getServer(server).ifPresent(serverObjects::add);
         }
         if (serverObjects.size() == 0) {
@@ -289,7 +289,7 @@ public abstract class AnnotationsUtils {
         return Optional.of(serverObjects);
     }
 
-    public static Optional<Server> getServer(io.swagger.oas.annotations.servers.Server server) {
+    public static Optional<Server> getServer(io.swagger.v3.oas.annotations.servers.Server server) {
         if (server == null) {
             return Optional.empty();
         }
@@ -307,9 +307,9 @@ public abstract class AnnotationsUtils {
         if (isEmpty) {
             return Optional.empty();
         }
-        io.swagger.oas.annotations.servers.ServerVariable[] serverVariables = server.variables();
+        io.swagger.v3.oas.annotations.servers.ServerVariable[] serverVariables = server.variables();
         ServerVariables serverVariablesObject = new ServerVariables();
-        for (io.swagger.oas.annotations.servers.ServerVariable serverVariable : serverVariables) {
+        for (io.swagger.v3.oas.annotations.servers.ServerVariable serverVariable : serverVariables) {
             ServerVariable serverVariableObject = new ServerVariable();
             if (StringUtils.isNotBlank(serverVariable.description())) {
                 serverVariableObject.setDescription(serverVariable.description());
@@ -321,7 +321,7 @@ public abstract class AnnotationsUtils {
         return Optional.of(serverObject);
     }
 
-    public static Optional<ExternalDocumentation> getExternalDocumentation(io.swagger.oas.annotations.ExternalDocumentation externalDocumentation) {
+    public static Optional<ExternalDocumentation> getExternalDocumentation(io.swagger.v3.oas.annotations.ExternalDocumentation externalDocumentation) {
         if (externalDocumentation == null) {
             return Optional.empty();
         }
@@ -340,7 +340,7 @@ public abstract class AnnotationsUtils {
         }
         return Optional.of(external);
     }
-    public static Optional<Info> getInfo(io.swagger.oas.annotations.info.Info info) {
+    public static Optional<Info> getInfo(io.swagger.v3.oas.annotations.info.Info info) {
         if (info == null) {
             return Optional.empty();
         }
@@ -371,7 +371,7 @@ public abstract class AnnotationsUtils {
         return Optional.of(infoObject);
     }
 
-    public static Optional<Contact> getContact(io.swagger.oas.annotations.info.Contact contact) {
+    public static Optional<Contact> getContact(io.swagger.v3.oas.annotations.info.Contact contact) {
         if (contact == null) {
             return Optional.empty();
         }
@@ -395,7 +395,7 @@ public abstract class AnnotationsUtils {
         return Optional.of(contactObject);
     }
 
-    public static Optional<License> getLicense(io.swagger.oas.annotations.info.License license) {
+    public static Optional<License> getLicense(io.swagger.v3.oas.annotations.info.License license) {
         if (license == null) {
             return Optional.empty();
         }
@@ -415,18 +415,18 @@ public abstract class AnnotationsUtils {
         return Optional.of(licenseObject);
     }
 
-    public static Map<String, Link> getLinks(io.swagger.oas.annotations.links.Link[] links) {
+    public static Map<String, Link> getLinks(io.swagger.v3.oas.annotations.links.Link[] links) {
         Map<String, Link> linkMap = new HashMap<>();
         if (links == null) {
             return linkMap;
         }
-        for (io.swagger.oas.annotations.links.Link link : links) {
+        for (io.swagger.v3.oas.annotations.links.Link link : links) {
             getLink(link).ifPresent(linkResult -> linkMap.put(link.name(), linkResult));
         }
         return linkMap;
     }
 
-    public static Optional<Link> getLink(io.swagger.oas.annotations.links.Link link) {
+    public static Optional<Link> getLink(io.swagger.v3.oas.annotations.links.Link link) {
         if (link == null) {
             return Optional.empty();
         }
@@ -473,13 +473,13 @@ public abstract class AnnotationsUtils {
         return linkParametersMap;
     }
 
-    public static Optional<Map<String, Header>> getHeaders(io.swagger.oas.annotations.headers.Header[] annotationHeaders) {
+    public static Optional<Map<String, Header>> getHeaders(io.swagger.v3.oas.annotations.headers.Header[] annotationHeaders) {
         if (annotationHeaders == null) {
             return Optional.empty();
         }
 
         Map<String, Header> headers = new HashMap<>();
-        for (io.swagger.oas.annotations.headers.Header header : annotationHeaders) {
+        for (io.swagger.v3.oas.annotations.headers.Header header : annotationHeaders) {
             getHeader(header).ifPresent(headerResult -> headers.put(header.name(), headerResult));
         }
 
@@ -489,7 +489,7 @@ public abstract class AnnotationsUtils {
         return Optional.of(headers);
     }
 
-    public static Optional<Header> getHeader(io.swagger.oas.annotations.headers.Header header) {
+    public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header) {
 
         if (header == null) {
             return Optional.empty();
@@ -534,7 +534,7 @@ public abstract class AnnotationsUtils {
         return Optional.of(headerObject);
     }
 
-    public static void addEncodingToMediaType(MediaType mediaType, io.swagger.oas.annotations.media.Encoding encoding) {
+    public static void addEncodingToMediaType(MediaType mediaType, io.swagger.v3.oas.annotations.media.Encoding encoding) {
         if (encoding == null) {
             return;
         }

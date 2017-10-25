@@ -16,18 +16,18 @@ import static org.testng.Assert.assertEquals;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import io.swagger.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import org.testng.annotations.Test;
 
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
-import io.swagger.oas.annotations.Operation;
-import io.swagger.oas.annotations.Parameter;
-import io.swagger.oas.annotations.headers.Header;
-import io.swagger.oas.annotations.media.Content;
-import io.swagger.oas.annotations.media.Encoding;
-import io.swagger.oas.annotations.media.Schema;
-import io.swagger.oas.annotations.parameters.RequestBody;
-import io.swagger.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 public class EncodingTest extends AbstractAnnotationTest {
     //Test encoding inside ApiResponse/Content

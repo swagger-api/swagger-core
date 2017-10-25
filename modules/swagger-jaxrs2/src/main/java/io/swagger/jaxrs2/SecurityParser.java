@@ -5,7 +5,7 @@ import io.swagger.oas.models.security.OAuthFlows;
 import io.swagger.oas.models.security.Scopes;
 import io.swagger.oas.models.security.SecurityRequirement;
 import io.swagger.oas.models.security.SecurityScheme;
-import io.swagger.oas.annotations.security.OAuthScope;
+import io.swagger.v3.oas.annotations.security.OAuthScope;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -15,12 +15,12 @@ import java.util.Optional;
 
 public class SecurityParser {
 
-	public static Optional<List<SecurityRequirement>> getSecurityRequirements(io.swagger.oas.annotations.security.SecurityRequirement[] securityRequirementsApi) {
+	public static Optional<List<SecurityRequirement>> getSecurityRequirements(io.swagger.v3.oas.annotations.security.SecurityRequirement[] securityRequirementsApi) {
 		if (securityRequirementsApi == null || securityRequirementsApi.length == 0) {
 			return Optional.empty();
 		}
 		List<SecurityRequirement> securityRequirements = new ArrayList<>();
-		for (io.swagger.oas.annotations.security.SecurityRequirement securityRequirementApi: securityRequirementsApi) {
+		for (io.swagger.v3.oas.annotations.security.SecurityRequirement securityRequirementApi: securityRequirementsApi) {
 			if (StringUtils.isBlank(securityRequirementApi.name())) {
 				continue;
 			}
@@ -38,7 +38,7 @@ public class SecurityParser {
 		return Optional.of(securityRequirements);
 	}
 
-	public static Optional<SecurityScheme> getSecurityScheme(io.swagger.oas.annotations.security.SecurityScheme securityScheme) {
+	public static Optional<SecurityScheme> getSecurityScheme(io.swagger.v3.oas.annotations.security.SecurityScheme securityScheme) {
 		if (securityScheme == null) {
 			return Optional.empty();
 		}
@@ -71,7 +71,7 @@ public class SecurityParser {
 		return Optional.of(securitySchemeObject);
 	}
 
-	public static Optional<OAuthFlows> getOAuthFlows(io.swagger.oas.annotations.security.OAuthFlows oAuthFlows) {
+	public static Optional<OAuthFlows> getOAuthFlows(io.swagger.v3.oas.annotations.security.OAuthFlows oAuthFlows) {
 		if (isEmpty(oAuthFlows)) {
 			return Optional.empty();
 		}
@@ -83,7 +83,7 @@ public class SecurityParser {
 		return Optional.of(oAuthFlowsObject);
 	}
 
-	public static Optional<OAuthFlow> getOAuthFlow(io.swagger.oas.annotations.security.OAuthFlow oAuthFlow) {
+	public static Optional<OAuthFlow> getOAuthFlow(io.swagger.v3.oas.annotations.security.OAuthFlow oAuthFlow) {
 		if (isEmpty(oAuthFlow)) {
 			return Optional.empty();
 		}
@@ -122,7 +122,7 @@ public class SecurityParser {
 		return Arrays.stream(SecurityScheme.Type.values()).filter(i -> i.toString().equals(value)).findFirst().orElse(null);
 	}
 
-	private static boolean isEmpty(io.swagger.oas.annotations.security.OAuthFlows oAuthFlows) {
+	private static boolean isEmpty(io.swagger.v3.oas.annotations.security.OAuthFlows oAuthFlows) {
 		if (oAuthFlows == null) {
 			return true;
 		}
@@ -141,7 +141,7 @@ public class SecurityParser {
 		return true;
 	}
 
-	private static boolean isEmpty(io.swagger.oas.annotations.security.OAuthFlow oAuthFlow) {
+	private static boolean isEmpty(io.swagger.v3.oas.annotations.security.OAuthFlow oAuthFlow) {
 		if (oAuthFlow == null) {
 			return true;
 		}

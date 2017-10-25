@@ -1,5 +1,7 @@
 package io.swagger.jaxrs2.resources;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -7,7 +9,7 @@ import javax.ws.rs.core.Response;
 public class DeprecatedFieldsResource {
     @GET
     @Path("/")
-    @io.swagger.oas.annotations.Operation(deprecated = true)
+    @Operation(deprecated = true)
     public Response deprecatedMethod() {
         return Response.ok().entity("ok").build();
     }

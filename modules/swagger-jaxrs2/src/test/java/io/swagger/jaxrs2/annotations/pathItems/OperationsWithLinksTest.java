@@ -1,12 +1,12 @@
 package io.swagger.jaxrs2.annotations.pathItems;
 
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
-import io.swagger.oas.annotations.Operation;
-import io.swagger.oas.annotations.links.Link;
-import io.swagger.oas.annotations.links.LinkParameter;
-import io.swagger.oas.annotations.media.Content;
-import io.swagger.oas.annotations.media.Schema;
-import io.swagger.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.links.Link;
+import io.swagger.v3.oas.annotations.links.LinkParameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.GET;

@@ -5,15 +5,15 @@ import io.swagger.jaxrs2.resources.HiddenUserResource;
 import io.swagger.jaxrs2.resources.PetResource;
 import io.swagger.jaxrs2.resources.SimpleUserResource;
 import io.swagger.jaxrs2.resources.UserResource;
-import io.swagger.oas.annotations.Operation;
-import io.swagger.oas.annotations.Parameter;
-import io.swagger.oas.annotations.enums.ParameterIn;
-import io.swagger.oas.annotations.headers.Header;
-import io.swagger.oas.annotations.media.Content;
-import io.swagger.oas.annotations.media.ExampleObject;
-import io.swagger.oas.annotations.media.Schema;
-import io.swagger.oas.annotations.responses.ApiResponse;
-import io.swagger.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import org.testng.annotations.Test;
 

@@ -39,10 +39,10 @@ public class JodaTest extends SwaggerTestBase {
     }
 
     static class ModelWithJodaDateTime {
-        @io.swagger.oas.annotations.media.Schema(description = "Name!")
+        @io.swagger.v3.oas.annotations.media.Schema(description = "Name!")
         public String name;
 
-        @io.swagger.oas.annotations.media.Schema(description = "creation timestamp", required = true)
+        @io.swagger.v3.oas.annotations.media.Schema(description = "creation timestamp", required = true)
         public DateTime createdAt;
     }
 }

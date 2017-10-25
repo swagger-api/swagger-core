@@ -1,6 +1,6 @@
 package io.swagger.oas.models.composition;
 
-import io.swagger.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "and Thing2", allOf = {AbstractBaseModelWithSubTypes.class})
 public class Thing2 extends AbstractBaseModelWithSubTypes {

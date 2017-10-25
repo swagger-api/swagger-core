@@ -2,8 +2,9 @@ package io.swagger.util;
 
 import io.swagger.converter.ModelConverters;
 import io.swagger.converter.ResolvedSchema;
-import io.swagger.oas.annotations.enums.Explode;
-import io.swagger.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.enums.Explode;
+import io.swagger.v3.oas.annotations.media.Encoding;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.oas.models.Components;
 import io.swagger.oas.models.examples.Example;
 import io.swagger.oas.models.media.ArraySchema;
@@ -55,8 +56,8 @@ public class ParameterProcessor {
         resolvedSchema.referencedSchemas.forEach((key, schema) -> components.addSchemas(key, schema));
 
         for (Annotation annotation : annotations) {
-            if (annotation instanceof io.swagger.oas.annotations.Parameter) {
-                io.swagger.oas.annotations.Parameter p = (io.swagger.oas.annotations.Parameter) annotation;
+            if (annotation instanceof io.swagger.v3.oas.annotations.Parameter) {
+                io.swagger.v3.oas.annotations.Parameter p = (io.swagger.v3.oas.annotations.Parameter) annotation;
                 if (p.hidden()) {
                     return null;
                 }
@@ -158,7 +159,7 @@ public class ParameterProcessor {
         return parameter;
     }
 
-    public static void setParameterExplode(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
+    public static void setParameterExplode(Parameter parameter, io.swagger.v3.oas.annotations.Parameter p) {
         if (isExplodable(p)) {
             if (Explode.TRUE.equals(p.explode())) {
                 parameter.setExplode(Boolean.TRUE);
@@ -168,8 +169,8 @@ public class ParameterProcessor {
         }
     }
 
-    private static boolean isExplodable(io.swagger.oas.annotations.Parameter p) {
-        io.swagger.oas.annotations.media.Schema schema = p.schema();
+    private static boolean isExplodable(io.swagger.v3.oas.annotations.Parameter p) {
+        io.swagger.v3.oas.annotations.media.Schema schema = p.schema();
         boolean explode = true;
         if (schema != null) {
             Class implementation = schema.implementation();
@@ -182,7 +183,7 @@ public class ParameterProcessor {
         return explode;
     }
 
-    public static void setParameterStyle(Parameter parameter, io.swagger.oas.annotations.Parameter p) {
+    public static void setParameterStyle(Parameter parameter, io.swagger.v3.oas.annotations.Parameter p) {
         if (StringUtils.isNotBlank(p.style().toString())) {
             parameter.setStyle(Parameter.StyleEnum.valueOf(p.style().toString().toUpperCase()));
         }
@@ -193,20 +194,20 @@ public class ParameterProcessor {
         if (annotations == null) {
             return null;
         }
-        io.swagger.oas.annotations.media.Schema rootSchema = null;
-        io.swagger.oas.annotations.media.ArraySchema rootArraySchema = null;
-        io.swagger.oas.annotations.media.Schema contentSchema = null;
-        io.swagger.oas.annotations.media.Schema paramSchema = null;
-        io.swagger.oas.annotations.media.ArraySchema paramArraySchema = null;
+        io.swagger.v3.oas.annotations.media.Schema rootSchema = null;
+        io.swagger.v3.oas.annotations.media.ArraySchema rootArraySchema = null;
+        io.swagger.v3.oas.annotations.media.Schema contentSchema = null;
+        io.swagger.v3.oas.annotations.media.Schema paramSchema = null;
+        io.swagger.v3.oas.annotations.media.ArraySchema paramArraySchema = null;
         for (Annotation annotation : annotations) {
-            if (annotation instanceof io.swagger.oas.annotations.media.Schema) {
-                rootSchema = (io.swagger.oas.annotations.media.Schema) annotation;
+            if (annotation instanceof io.swagger.v3.oas.annotations.media.Schema) {
+                rootSchema = (io.swagger.v3.oas.annotations.media.Schema) annotation;
             }
-            else if (annotation instanceof io.swagger.oas.annotations.media.ArraySchema) {
-                rootArraySchema = (io.swagger.oas.annotations.media.ArraySchema) annotation;
+            else if (annotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema) {
+                rootArraySchema = (io.swagger.v3.oas.annotations.media.ArraySchema) annotation;
             }
-            else if (annotation instanceof io.swagger.oas.annotations.Parameter) {
-                io.swagger.oas.annotations.Parameter paramAnnotation = (io.swagger.oas.annotations.Parameter)annotation;
+            else if (annotation instanceof io.swagger.v3.oas.annotations.Parameter) {
+                io.swagger.v3.oas.annotations.Parameter paramAnnotation = (io.swagger.v3.oas.annotations.Parameter)annotation;
                 if (paramAnnotation.content().length > 0) {
                     if (AnnotationsUtils.hasSchemaAnnotation(paramAnnotation.content()[0].schema())) {
                         contentSchema = paramAnnotation.content()[0].schema();
@@ -235,13 +236,13 @@ public class ParameterProcessor {
         return null;
     }
 
-    public static Type getParameterType(io.swagger.oas.annotations.Parameter paramAnnotation) {
+    public static Type getParameterType(io.swagger.v3.oas.annotations.Parameter paramAnnotation) {
         if (paramAnnotation == null) {
             return null;
         }
-        io.swagger.oas.annotations.media.Schema contentSchema = null;
-        io.swagger.oas.annotations.media.Schema paramSchema = null;
-        io.swagger.oas.annotations.media.ArraySchema paramArraySchema = null;
+        io.swagger.v3.oas.annotations.media.Schema contentSchema = null;
+        io.swagger.v3.oas.annotations.media.Schema paramSchema = null;
+        io.swagger.v3.oas.annotations.media.ArraySchema paramArraySchema = null;
 
         if (paramAnnotation.content().length > 0) {
             if (AnnotationsUtils.hasSchemaAnnotation(paramAnnotation.content()[0].schema())) {
@@ -266,7 +267,7 @@ public class ParameterProcessor {
         return String.class;
     }
 
-    public static Type getSchemaType(io.swagger.oas.annotations.media.Schema schema) {
+    public static Type getSchemaType(io.swagger.v3.oas.annotations.media.Schema schema) {
         if (schema == null) {
             return String.class;
         }
@@ -291,7 +292,7 @@ public class ParameterProcessor {
     }
 
 
-    public static Optional<Content> getContent(io.swagger.oas.annotations.media.Content[] annotationContents, String[] classTypes, String[] methodTypes, Schema schema) {
+    public static Optional<Content> getContent(io.swagger.v3.oas.annotations.media.Content[] annotationContents, String[] classTypes, String[] methodTypes, Schema schema) {
         if (annotationContents == null || annotationContents.length == 0) {
             return Optional.empty();
         }
@@ -299,7 +300,7 @@ public class ParameterProcessor {
         //Encapsulating Content model
         Content content = new Content();
 
-        io.swagger.oas.annotations.media.Content annotationContent = annotationContents[0];
+        io.swagger.v3.oas.annotations.media.Content annotationContent = annotationContents[0];
         MediaType mediaType = new MediaType();
         mediaType.setSchema(schema);
 
@@ -307,8 +308,8 @@ public class ParameterProcessor {
         for (ExampleObject example : examples) {
             AnnotationsUtils.getExample(example).ifPresent(exampleObject -> mediaType.addExamples(example.name(), exampleObject));
         }
-        io.swagger.oas.annotations.media.Encoding[] encodings = annotationContent.encoding();
-        for (io.swagger.oas.annotations.media.Encoding encoding : encodings) {
+        Encoding[] encodings = annotationContent.encoding();
+        for (Encoding encoding : encodings) {
             AnnotationsUtils.addEncodingToMediaType(mediaType, encoding);
         }
         if (StringUtils.isNotBlank(annotationContent.mediaType())) {

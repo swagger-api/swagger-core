@@ -82,19 +82,19 @@ public class NumericFormatTest {
 
     }
     static class ModelWithIntegerFields {
-        @io.swagger.oas.annotations.media.Schema
+        @io.swagger.v3.oas.annotations.media.Schema
         @Min(value = 3)
         public Integer id;
     }
 
     static class ModelWithDecimalFields {
-        @io.swagger.oas.annotations.media.Schema
+        @io.swagger.v3.oas.annotations.media.Schema
         @DecimalMin(value = "3.3")
         public Double id;
     }
 
     static class ModelWithoutScientificFields {
-        @io.swagger.oas.annotations.media.Schema
+        @io.swagger.v3.oas.annotations.media.Schema
         @DecimalMin(value = "-9999999999999999.99")
         @DecimalMax(value = "9999999999999999.99")
         public BigDecimal id;

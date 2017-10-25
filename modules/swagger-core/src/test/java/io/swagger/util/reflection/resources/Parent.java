@@ -1,6 +1,6 @@
 package io.swagger.util.reflection.resources;
 
-import io.swagger.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @IndirectAnnotation
 public class Parent<T extends Number> {

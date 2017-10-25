@@ -1,7 +1,7 @@
 package io.swagger.oas.models.composition;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
-import io.swagger.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonSubTypes({@JsonSubTypes.Type(value = Thing1.class, name = "thing3"), @JsonSubTypes.Type(value = Thing2.class, name = "thing2")})
 @Schema(description = "I am an Abstract Base Model with Sub-Types", discriminatorProperty = "_type")

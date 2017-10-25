@@ -1,6 +1,6 @@
 package io.swagger.oas.models;
 
-import io.swagger.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class ModelWithRanges {
     @Schema(description = "values with include range", minimum = "1", maximum = "5")

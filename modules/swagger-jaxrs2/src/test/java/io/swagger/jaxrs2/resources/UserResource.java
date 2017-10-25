@@ -20,12 +20,12 @@ import io.swagger.jaxrs2.resources.data.UserData;
 import io.swagger.jaxrs2.resources.exception.ApiException;
 import io.swagger.jaxrs2.resources.exception.NotFoundException;
 import io.swagger.jaxrs2.resources.model.User;
-import io.swagger.oas.annotations.Operation;
-import io.swagger.oas.annotations.Parameter;
-import io.swagger.oas.annotations.media.Content;
-import io.swagger.oas.annotations.media.ExampleObject;
-import io.swagger.oas.annotations.media.Schema;
-import io.swagger.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;

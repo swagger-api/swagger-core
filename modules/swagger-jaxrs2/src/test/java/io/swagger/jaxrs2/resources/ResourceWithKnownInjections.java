@@ -2,8 +2,8 @@ package io.swagger.jaxrs2.resources;
 
 import javax.ws.rs.Path;
 
-import io.swagger.oas.annotations.Operation;
-import io.swagger.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 
 import javax.servlet.ServletConfig;
 import javax.ws.rs.GET;

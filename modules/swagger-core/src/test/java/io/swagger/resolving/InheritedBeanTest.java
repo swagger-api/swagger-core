@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.jackson.ModelResolver;
-import io.swagger.oas.annotations.media.DiscriminatorMapping;
+import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.oas.models.media.ComposedSchema;
 import io.swagger.oas.models.media.Schema;
 import org.testng.annotations.BeforeTest;
@@ -196,7 +196,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
 
     @JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
     @JsonSubTypes({@JsonSubTypes.Type(value = Sub1Bean.class, name = "sub1")})
-    @io.swagger.oas.annotations.media.Schema(description = "BaseBean"
+    @io.swagger.v3.oas.annotations.media.Schema(description = "BaseBean"
            , discriminatorProperty = "type", discriminatorMapping = {@DiscriminatorMapping(value = "Sub1BeanMapped", schema = Sub1Bean.class)}
     )
     static class BaseBean {
@@ -205,14 +205,14 @@ public class InheritedBeanTest extends SwaggerTestBase {
         public String b;
     }
 
-    @io.swagger.oas.annotations.media.Schema(description = "Sub1Bean", allOf = {BaseBean.class})
+    @io.swagger.v3.oas.annotations.media.Schema(description = "Sub1Bean", allOf = {BaseBean.class})
     static class Sub1Bean extends BaseBean {
         public int c;
     }
 
     @JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
     @JsonSubTypes({@JsonSubTypes.Type(value = Sub2Bean.class, name = "sub2")})
-    @io.swagger.oas.annotations.media.Schema(description = "BaseBean2"
+    @io.swagger.v3.oas.annotations.media.Schema(description = "BaseBean2"
 //            , discriminator = "type", subTypes = {Sub1Bean.class}
     )
     static class BaseBean2 {
@@ -231,14 +231,14 @@ public class InheritedBeanTest extends SwaggerTestBase {
         private int d;
     }
 
-    @io.swagger.oas.annotations.media.Schema(description = "Sub2Bean", allOf = {BaseBean2.class}, anyOf = {BaseBean.class})
+    @io.swagger.v3.oas.annotations.media.Schema(description = "Sub2Bean", allOf = {BaseBean2.class}, anyOf = {BaseBean.class})
     static class Sub2Bean extends BaseBean2 {
         public int a;
         public int c;
     }
 
     @JsonSubTypes({@JsonSubTypes.Type(value = ChildBean3.class, name = "childBean3")})
-    @io.swagger.oas.annotations.media.Schema(description = "BaseBean3"
+    @io.swagger.v3.oas.annotations.media.Schema(description = "BaseBean3"
             , discriminatorProperty = "type", discriminatorMapping = {@DiscriminatorMapping(value = "ChildBean3Mapped", schema = ChildBean3.class)}
     )
     static class BaseBean3 {
@@ -248,18 +248,18 @@ public class InheritedBeanTest extends SwaggerTestBase {
     }
 
     @JsonSubTypes({@JsonSubTypes.Type(value = GrandChildBean3.class, name = "grandChildBean3")})
-    @io.swagger.oas.annotations.media.Schema(description = "ChildBean3", allOf = {BaseBean3.class})
+    @io.swagger.v3.oas.annotations.media.Schema(description = "ChildBean3", allOf = {BaseBean3.class})
     static class ChildBean3 extends BaseBean3 {
         public int c;
     }
 
-    @io.swagger.oas.annotations.media.Schema(description = "GrandChildBean3", allOf = {ChildBean3.class})
+    @io.swagger.v3.oas.annotations.media.Schema(description = "GrandChildBean3", allOf = {ChildBean3.class})
     static class GrandChildBean3 extends ChildBean3 {
         public int d;
     }
 
 
-    @io.swagger.oas.annotations.media.Schema(anyOf = {UserObject.class, EmployeeObject.class})
+    @io.swagger.v3.oas.annotations.media.Schema(anyOf = {UserObject.class, EmployeeObject.class})
     static class UberObject implements UserObject, EmployeeObject {
         private String id;
         private String name;
@@ -279,16 +279,16 @@ public class InheritedBeanTest extends SwaggerTestBase {
         }
     }
 
-    @io.swagger.oas.annotations.media.Schema(description = "A User Object")
+    @io.swagger.v3.oas.annotations.media.Schema(description = "A User Object")
     interface UserObject {
-        @io.swagger.oas.annotations.media.Schema(format = "uuid", required = true)
+        @io.swagger.v3.oas.annotations.media.Schema(format = "uuid", required = true)
         String getId();
         String getName();
     }
 
-    @io.swagger.oas.annotations.media.Schema(description = "An Employee Object", requiredProperties = {"department"})
+    @io.swagger.v3.oas.annotations.media.Schema(description = "An Employee Object", requiredProperties = {"department"})
     interface EmployeeObject {
-        @io.swagger.oas.annotations.media.Schema(format = "email")
+        @io.swagger.v3.oas.annotations.media.Schema(format = "email")
         String getId();
         String getDepartment();
     }
@@ -368,7 +368,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
             @JsonSubTypes.Type(value = MultipleSub1Bean.class, name = "multipleSub1"),
             @JsonSubTypes.Type(value = MultipleSub2Bean.class, name = "multipleSub2")
     })
-    @io.swagger.oas.annotations.media.Schema(description = "MultipleBaseBean"
+    @io.swagger.v3.oas.annotations.media.Schema(description = "MultipleBaseBean"
 //            , discriminator = "type", subTypes = {MultipleSub1Bean.class, MultipleSub2Bean.class}
     )
     static class MultipleBaseBean {
@@ -377,12 +377,12 @@ public class InheritedBeanTest extends SwaggerTestBase {
         public String b;
     }
 
-    @io.swagger.oas.annotations.media.Schema(description = "MultipleSub1Bean", allOf = {MultipleBaseBean.class})
+    @io.swagger.v3.oas.annotations.media.Schema(description = "MultipleSub1Bean", allOf = {MultipleBaseBean.class})
     static class MultipleSub1Bean extends MultipleBaseBean {
         public int c;
     }
 
-    @io.swagger.oas.annotations.media.Schema(description = "MultipleSub2Bean", allOf = {MultipleBaseBean.class})
+    @io.swagger.v3.oas.annotations.media.Schema(description = "MultipleSub2Bean", allOf = {MultipleBaseBean.class})
     static class MultipleSub2Bean extends MultipleBaseBean {
         public int d;
     }

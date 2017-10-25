@@ -32,13 +32,13 @@ public class HiddenFieldTest {
     }
 
     class ModelWithHiddenFields {
-        @io.swagger.oas.annotations.media.Schema(required = true)
+        @io.swagger.v3.oas.annotations.media.Schema(required = true)
         public Long id = null;
 
-        @io.swagger.oas.annotations.media.Schema(required = true, hidden = false)
+        @io.swagger.v3.oas.annotations.media.Schema(required = true, hidden = false)
         public String name = null;
 
-        @io.swagger.oas.annotations.media.Schema(hidden = true)
+        @io.swagger.v3.oas.annotations.media.Schema(hidden = true)
         public String password = null;
     }
 }

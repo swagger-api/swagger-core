@@ -1,7 +1,7 @@
 package io.swagger.oas.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.swagger.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class ClientOptInput {
     private String opts;

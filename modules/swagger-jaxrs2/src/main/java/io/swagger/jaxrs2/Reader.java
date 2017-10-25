@@ -10,8 +10,9 @@ import io.swagger.converter.ResolvedSchema;
 import io.swagger.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.jaxrs2.util.ReaderUtils;
-import io.swagger.oas.annotations.ExternalDocumentation;
-import io.swagger.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.oas.integration.ContextUtils;
 import io.swagger.oas.integration.SwaggerConfiguration;
 import io.swagger.oas.integration.api.OpenAPIConfiguration;
@@ -37,6 +38,8 @@ import io.swagger.util.Json;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,11 +223,11 @@ public class Reader implements OpenApiReader {
 
     public OpenAPI read(Class<?> cls, String parentPath) {
 
-        List<io.swagger.oas.annotations.security.SecurityScheme> apiSecurityScheme = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.oas.annotations.security.SecurityScheme.class);
-        io.swagger.oas.annotations.ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.ExternalDocumentation.class);
+        List<io.swagger.v3.oas.annotations.security.SecurityScheme> apiSecurityScheme = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.v3.oas.annotations.security.SecurityScheme.class);
+        ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, ExternalDocumentation.class);
         // TODO process full @OpenAPIDefinition
-        io.swagger.oas.annotations.OpenAPIDefinition openAPIDefinition = ReflectionUtils.getAnnotation(cls, io.swagger.oas.annotations.OpenAPIDefinition.class);
-        io.swagger.oas.annotations.info.Info apiInfo = null;
+        OpenAPIDefinition openAPIDefinition = ReflectionUtils.getAnnotation(cls, OpenAPIDefinition.class);
+        Info apiInfo = null;
         if (openAPIDefinition != null) {
             apiInfo = openAPIDefinition.info();
         }
@@ -232,7 +235,7 @@ public class Reader implements OpenApiReader {
         classProduces = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Produces.class);
 
         if (apiSecurityScheme != null) {
-            for (io.swagger.oas.annotations.security.SecurityScheme securitySchemeAnnotation: apiSecurityScheme) {
+            for (io.swagger.v3.oas.annotations.security.SecurityScheme securitySchemeAnnotation: apiSecurityScheme) {
                 Optional<SecurityScheme> securityScheme = SecurityParser.getSecurityScheme(securitySchemeAnnotation);
                 if (securityScheme.isPresent()) {
                     Map<String, SecurityScheme> securitySchemeMap = new HashMap<>();
@@ -385,7 +388,7 @@ public class Reader implements OpenApiReader {
                                     List<Parameter> operationParameters,
                                     Annotation[] paramAnnotations, Type type) {
                 if (operation.getRequestBody() == null) {
-                    io.swagger.oas.annotations.parameters.RequestBody requestBodyAnnotation = getRequestBody(Arrays.asList(paramAnnotations));
+                    io.swagger.v3.oas.annotations.parameters.RequestBody requestBodyAnnotation = getRequestBody(Arrays.asList(paramAnnotations));
                     if (requestBodyAnnotation != null) {
                         Optional<RequestBody> optionalRequestBody = OperationParser.getRequestBody(requestBodyAnnotation, classConsumes, methodConsumes, components);
                         if (optionalRequestBody.isPresent()) {
@@ -438,13 +441,13 @@ public class Reader implements OpenApiReader {
                 }
     }
 
-    private io.swagger.oas.annotations.parameters.RequestBody getRequestBody(List<Annotation> annotations) {
+    private io.swagger.v3.oas.annotations.parameters.RequestBody getRequestBody(List<Annotation> annotations) {
         if (annotations == null) {
             return null;
         }
         for (Annotation a : annotations) {
-            if (a instanceof io.swagger.oas.annotations.parameters.RequestBody) {
-                return (io.swagger.oas.annotations.parameters.RequestBody) a;
+            if (a instanceof io.swagger.v3.oas.annotations.parameters.RequestBody) {
+                return (io.swagger.v3.oas.annotations.parameters.RequestBody) a;
             }
         }
         return null;
@@ -464,14 +467,14 @@ public class Reader implements OpenApiReader {
     private Operation parseMethod(Class<?> cls, Method method, List<Parameter> globalParameters) {
         Operation operation = new Operation();
 
-        io.swagger.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.Operation.class);
+        io.swagger.v3.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.Operation.class);
 
-        List<io.swagger.oas.annotations.security.SecurityRequirement> apiSecurity = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.oas.annotations.security.SecurityRequirement.class);
-        List<io.swagger.oas.annotations.callbacks.Callback> apiCallbacks = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.oas.annotations.callbacks.Callback.class);
-        List<io.swagger.oas.annotations.servers.Server> apiServers = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.oas.annotations.servers.Server.class);
-        List<io.swagger.oas.annotations.tags.Tag> apiTags = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.oas.annotations.tags.Tag.class);
-        List<io.swagger.oas.annotations.Parameter> apiParameters = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.oas.annotations.Parameter.class);
-        List<io.swagger.oas.annotations.responses.ApiResponse> apiResponses = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.oas.annotations.responses.ApiResponse .class);
+        List<io.swagger.v3.oas.annotations.security.SecurityRequirement> apiSecurity = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.security.SecurityRequirement.class);
+        List<io.swagger.v3.oas.annotations.callbacks.Callback> apiCallbacks = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.callbacks.Callback.class);
+        List<Server> apiServers = ReflectionUtils.getRepeatableAnnotations(method, Server.class);
+        List<io.swagger.v3.oas.annotations.tags.Tag> apiTags = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.tags.Tag.class);
+        List<io.swagger.v3.oas.annotations.Parameter> apiParameters = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.Parameter.class);
+        List<io.swagger.v3.oas.annotations.responses.ApiResponse> apiResponses = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.responses.ApiResponse.class);
         // TODO extensions and external docs
         List<Extension> apiExtensions = ReflectionUtils.getRepeatableAnnotations(method, Extension.class);
         ExternalDocumentation apiExternalDocumentation = ReflectionUtils.getAnnotation(method, ExternalDocumentation .class);
@@ -480,7 +483,7 @@ public class Reader implements OpenApiReader {
         Map<String, Callback> callbacks = new LinkedHashMap<>();
 
         if (apiCallbacks != null) {
-            for (io.swagger.oas.annotations.callbacks.Callback methodCallback : apiCallbacks) {
+            for (io.swagger.v3.oas.annotations.callbacks.Callback methodCallback : apiCallbacks) {
                 Map<String, Callback> currentCallbacks = getCallbacks(methodCallback);
                 callbacks.putAll(currentCallbacks);
             }
@@ -491,12 +494,12 @@ public class Reader implements OpenApiReader {
 
         // security
         if (apiSecurity != null) {
-            SecurityParser.getSecurityRequirements(apiSecurity.toArray(new io.swagger.oas.annotations.security.SecurityRequirement[apiSecurity.size()])).ifPresent(operation::setSecurity);
+            SecurityParser.getSecurityRequirements(apiSecurity.toArray(new io.swagger.v3.oas.annotations.security.SecurityRequirement[apiSecurity.size()])).ifPresent(operation::setSecurity);
         }
 
         // servers
         if (apiServers != null) {
-            AnnotationsUtils.getServers(apiServers.toArray(new io.swagger.oas.annotations.servers.Server[apiServers.size()])).ifPresent(servers -> servers.forEach(operation::addServersItem));
+            AnnotationsUtils.getServers(apiServers.toArray(new Server[apiServers.size()])).ifPresent(servers -> servers.forEach(operation::addServersItem));
         }
 
         // tags
@@ -505,7 +508,7 @@ public class Reader implements OpenApiReader {
                 .filter(t -> operation.getTags() == null || (operation.getTags() != null && !operation.getTags().contains(t.name())))
                 .map(t -> t.name())
                 .forEach(operation::addTagsItem);
-            AnnotationsUtils.getTags(apiTags.toArray(new io.swagger.oas.annotations.tags.Tag[apiTags.size()])).ifPresent(tags -> openApiTags.addAll(tags));
+            AnnotationsUtils.getTags(apiTags.toArray(new io.swagger.v3.oas.annotations.tags.Tag[apiTags.size()])).ifPresent(tags -> openApiTags.addAll(tags));
         }
 
         // parameters
@@ -517,7 +520,7 @@ public class Reader implements OpenApiReader {
         if (apiParameters != null) {
             getParametersListFromAnnotation(
             //OperationParser.getParametersList(
-                    apiParameters.toArray(new io.swagger.oas.annotations.Parameter[apiParameters.size()]),
+                    apiParameters.toArray(new io.swagger.v3.oas.annotations.Parameter[apiParameters.size()]),
                     classConsumes,
                     methodConsumes,
                     operation).ifPresent(p -> p.forEach(operation::addParametersItem));
@@ -525,7 +528,7 @@ public class Reader implements OpenApiReader {
 
         // apiResponses
         if (apiResponses != null) {
-            OperationParser.getApiResponses(apiResponses.toArray(new io.swagger.oas.annotations.responses.ApiResponse[apiResponses.size()]), classProduces, methodProduces, components).ifPresent(responses -> {
+            OperationParser.getApiResponses(apiResponses.toArray(new io.swagger.v3.oas.annotations.responses.ApiResponse[apiResponses.size()]), classProduces, methodProduces, components).ifPresent(responses -> {
                 if (operation.getResponses() == null) {
                     operation.setResponses(responses);
                 } else {
@@ -602,14 +605,14 @@ public class Reader implements OpenApiReader {
         return ignore;
     }
 
-    private Map<String, Callback> getCallbacks(io.swagger.oas.annotations.callbacks.Callback apiCallback) {
+    private Map<String, Callback> getCallbacks(io.swagger.v3.oas.annotations.callbacks.Callback apiCallback) {
         Map<String, Callback> callbackMap = new HashMap<>();
         if (apiCallback == null) {
             return callbackMap;
         }
         Callback callbackObject = new Callback();
         PathItem pathItemObject = new PathItem();
-        for (io.swagger.oas.annotations.Operation callbackOperation : apiCallback.operation()) {
+        for (io.swagger.v3.oas.annotations.Operation callbackOperation : apiCallback.operation()) {
             Operation callbackNewOperation = new Operation();
             setOperationObjectFromApiOperationAnnotation(callbackNewOperation, callbackOperation);
             setPathItemOperation(pathItemObject, callbackOperation.method(), callbackNewOperation);
@@ -653,7 +656,7 @@ public class Reader implements OpenApiReader {
         }
     }
 
-    private void setOperationObjectFromApiOperationAnnotation(Operation operation, io.swagger.oas.annotations.Operation apiOperation) {
+    private void setOperationObjectFromApiOperationAnnotation(Operation operation, io.swagger.v3.oas.annotations.Operation apiOperation) {
         if (StringUtils.isNotBlank(apiOperation.summary())) {
             operation.setSummary(apiOperation.summary());
         }
@@ -744,12 +747,12 @@ public class Reader implements OpenApiReader {
         return false;
     }
 
-    protected Optional<List<Parameter>> getParametersListFromAnnotation(io.swagger.oas.annotations.Parameter[] parameters, Consumes classConsumes, Consumes methodConsumes, Operation operation) {
+    protected Optional<List<Parameter>> getParametersListFromAnnotation(io.swagger.v3.oas.annotations.Parameter[] parameters, Consumes classConsumes, Consumes methodConsumes, Operation operation) {
         if (parameters == null) {
             return Optional.empty();
         }
         List<Parameter> parametersObject = new ArrayList<>();
-        for (io.swagger.oas.annotations.Parameter parameter : parameters) {
+        for (io.swagger.v3.oas.annotations.Parameter parameter : parameters) {
 
             ResolvedParameter resolvedParameter = getParameters(ParameterProcessor.getParameterType(parameter), Collections.singletonList(parameter), operation, classConsumes, methodConsumes);
             parametersObject.addAll(resolvedParameter.parameters);
@@ -809,7 +812,7 @@ public class Reader implements OpenApiReader {
     }
 
     protected boolean isOperationHidden(Method method) {
-        io.swagger.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.Operation.class);
+        io.swagger.v3.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.Operation.class);
         if (apiOperation != null && apiOperation.hidden()) {
             return true;
         }

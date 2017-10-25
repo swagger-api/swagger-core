@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.collect.Iterables;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
-import io.swagger.oas.annotations.media.DiscriminatorMapping;
+import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.oas.models.ExternalDocumentation;
 import io.swagger.oas.models.media.ArraySchema;
 import io.swagger.oas.models.media.ComposedSchema;
@@ -128,13 +128,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return resolveAnnotatedType(_mapper.constructType(type), member, elementName, context, null, null);
     }
 
-    private io.swagger.oas.annotations.media.Schema getSchemaAnnotation(Annotation... annotations) {
+    private io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Annotation... annotations) {
         if (annotations == null) {
             return null;
         }
         for (Annotation annotation : annotations) {
-            if (annotation instanceof io.swagger.oas.annotations.media.Schema) {
-                return (io.swagger.oas.annotations.media.Schema) annotation;
+            if (annotation instanceof io.swagger.v3.oas.annotations.media.Schema) {
+                return (io.swagger.v3.oas.annotations.media.Schema) annotation;
             }
         }
         return null;
@@ -175,7 +175,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 property = arrayProperty;
             }
         } else {
-            io.swagger.oas.annotations.media.Schema schemaAnnotation = getSchemaAnnotation(annotations);
+            io.swagger.v3.oas.annotations.media.Schema schemaAnnotation = getSchemaAnnotation(annotations);
             if (schemaAnnotation != null) {
                 String format = schemaAnnotation.format();
                 String type = schemaAnnotation.type();
@@ -276,7 +276,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return PrimitiveType.fromType(type).createProperty();
         }
 
-        final io.swagger.oas.annotations.media.Schema directSchemaAnnotation = type.getRawClass().getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        final io.swagger.v3.oas.annotations.media.Schema directSchemaAnnotation = type.getRawClass().getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
 
         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
 
@@ -296,8 +296,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 return primitive;
             }
         }
-        io.swagger.oas.annotations.media.Schema schemaAnnotationReference = null;
-        io.swagger.oas.annotations.media.ArraySchema directArraySchemaAnnotation = type.getRawClass().getAnnotation(io.swagger.oas.annotations.media.ArraySchema.class);
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotationReference = null;
+        io.swagger.v3.oas.annotations.media.ArraySchema directArraySchemaAnnotation = type.getRawClass().getAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
         if (directArraySchemaAnnotation != null) {
             schemaAnnotationReference = directArraySchemaAnnotation.schema();
         } else {
@@ -951,7 +951,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected List<Class<?>> getComposedSchemaReferencedClasses(Class<?> clazz) {
-        final io.swagger.oas.annotations.media.Schema schemaAnnotation = clazz.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        final io.swagger.v3.oas.annotations.media.Schema schemaAnnotation = clazz.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
         if (schemaAnnotation != null) {
             Class<?>[] allOf = schemaAnnotation.allOf();
             Class<?>[] anyOf = schemaAnnotation.anyOf();
@@ -979,7 +979,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected String resolveTitle(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && StringUtils.isNotBlank(schema.title())) {
             return schema.title();
         }
@@ -987,7 +987,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected String resolveFormat(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && StringUtils.isNotBlank(schema.format())) {
             return schema.format();
         }
@@ -995,7 +995,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected String resolveDefaultValue(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null) {
             if (!schema.defaultValue().isEmpty()) {
                 return schema.defaultValue();
@@ -1012,7 +1012,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected Object resolveExample(Annotated a) {
 
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null) {
             if (!schema.example().isEmpty()) {
                 try {
@@ -1027,7 +1027,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Boolean resolveReadOnly(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         // TODO possibly set schema.readOnly to be Boolean object
         if (schema != null && schema.readOnly()) {
             return schema.readOnly();
@@ -1036,7 +1036,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Boolean resolveNullable(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && schema.nullable()) {
             return schema.nullable();
         }
@@ -1044,7 +1044,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected BigDecimal resolveMultipleOf(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && schema.multipleOf() != 0) {
             return new BigDecimal(schema.multipleOf());
         }
@@ -1052,7 +1052,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Integer resolveMaxLength(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && schema.maxLength() != Integer.MAX_VALUE && schema.maxLength() > 0) {
             return schema.maxLength();
         }
@@ -1060,7 +1060,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Integer resolveMinLength(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && schema.minLength() > 0) {
             return schema.minLength();
         }
@@ -1068,7 +1068,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected BigDecimal resolveMinimum(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && NumberUtils.isNumber(schema.minimum())) {
             String filteredMinimum = schema.minimum().replaceAll(Constants.COMMA, StringUtils.EMPTY);
             return new BigDecimal(filteredMinimum);
@@ -1077,7 +1077,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected BigDecimal resolveMaximum(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && NumberUtils.isNumber(schema.maximum())) {
             String filteredMaximum = schema.maximum().replaceAll(Constants.COMMA, StringUtils.EMPTY);
             return new BigDecimal(filteredMaximum);
@@ -1086,14 +1086,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Boolean resolveExclusiveMinimum(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && schema.exclusiveMinimum()) {
             return schema.exclusiveMinimum();
         }
         return null;
     }
     protected Boolean resolveExclusiveMaximum(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && schema.exclusiveMaximum()) {
             return schema.exclusiveMaximum();
         }
@@ -1101,7 +1101,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected String resolvePattern(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && StringUtils.isNotBlank(schema.pattern())) {
             return schema.pattern();
         }
@@ -1109,7 +1109,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Integer resolveMinProperties(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && schema.minProperties() > 0) {
             return schema.minProperties();
         }
@@ -1117,7 +1117,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Integer resolveMaxProperties(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && schema.maxProperties() > 0) {
             return schema.maxProperties();
         }
@@ -1125,7 +1125,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected List<String> resolveRequiredProperties(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (    schema != null &&
                 schema.requiredProperties() != null &&
                 schema.requiredProperties().length > 0 &&
@@ -1137,7 +1137,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Boolean resolveWriteOnly(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && schema.writeOnly()) {
             return schema.writeOnly();
         }
@@ -1146,8 +1146,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected ExternalDocumentation resolveExternalDocumentation(Annotated a) {
 
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
-        io.swagger.oas.annotations.ExternalDocumentation externalDocumentation = a.getAnnotation(io.swagger.oas.annotations.ExternalDocumentation.class);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.ExternalDocumentation externalDocumentation = a.getAnnotation(io.swagger.v3.oas.annotations.ExternalDocumentation.class);
 
         ExternalDocumentation external = resolveExternalDocumentation(externalDocumentation);
         if (external == null) {
@@ -1158,7 +1158,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return external;
     }
 
-    protected ExternalDocumentation resolveExternalDocumentation(io.swagger.oas.annotations.ExternalDocumentation externalDocumentation) {
+    protected ExternalDocumentation resolveExternalDocumentation(io.swagger.v3.oas.annotations.ExternalDocumentation externalDocumentation) {
 
         if (externalDocumentation == null) {
             return null;
@@ -1180,7 +1180,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Boolean resolveDeprecated(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (schema != null && schema.deprecated()) {
             return schema.deprecated();
         }
@@ -1188,7 +1188,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected List<String> resolveAllowableValues(Annotated a) {
-        io.swagger.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
         if (    schema != null &&
                 schema.allowableValues() != null &&
                 schema.allowableValues().length > 0) {
@@ -1199,7 +1199,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected Discriminator resolveDiscriminator(JavaType type, ModelConverterContext context) {
 
-        io.swagger.oas.annotations.media.Schema directSchemaAnnotation = type.getRawClass().getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+        io.swagger.v3.oas.annotations.media.Schema directSchemaAnnotation = type.getRawClass().getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
 
         // uses raw class, as it does not consider super class while handling schema annotation for composed model props
         String disc = (directSchemaAnnotation == null) ? "" : directSchemaAnnotation.discriminatorProperty();
@@ -1360,13 +1360,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         annotations = annotationList.toArray(new Annotation[annotationList.size()]);
 
-        io.swagger.oas.annotations.media.Schema mp = null;
+        io.swagger.v3.oas.annotations.media.Schema mp = null;
 
-        io.swagger.oas.annotations.media.ArraySchema as = member.getAnnotation(io.swagger.oas.annotations.media.ArraySchema.class);
+        io.swagger.v3.oas.annotations.media.ArraySchema as = member.getAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
         if (as != null) {
             mp = as.schema();
         } else {
-            mp = member.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+            mp = member.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
         }
 
         // allow override of name from annotation
@@ -1442,15 +1442,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         return property;
     }
-    protected io.swagger.oas.annotations.media.Schema getSchemaAnnotation(Annotated a) {
+    protected io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Annotated a) {
         if (a == null) {
             return null;
         }
-        io.swagger.oas.annotations.media.ArraySchema arraySchema = a.getAnnotation(io.swagger.oas.annotations.media.ArraySchema.class);
+        io.swagger.v3.oas.annotations.media.ArraySchema arraySchema = a.getAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
         if (arraySchema != null) {
             return arraySchema.schema();
         } else {
-            return a.getAnnotation(io.swagger.oas.annotations.media.Schema.class);
+            return a.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
         }
     }
 

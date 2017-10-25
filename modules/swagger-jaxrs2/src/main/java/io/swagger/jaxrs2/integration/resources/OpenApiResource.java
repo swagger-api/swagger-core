@@ -1,6 +1,6 @@
 package io.swagger.jaxrs2.integration.resources;
 
-import io.swagger.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Operation;
 
 import javax.servlet.ServletConfig;
 import javax.ws.rs.GET;

@@ -3,10 +3,10 @@ package io.swagger.jaxrs2.annotations.requests;
 import io.swagger.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.jaxrs2.resources.model.Pet;
 import io.swagger.jaxrs2.resources.model.User;
-import io.swagger.oas.annotations.Operation;
-import io.swagger.oas.annotations.media.Content;
-import io.swagger.oas.annotations.media.Schema;
-import io.swagger.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;

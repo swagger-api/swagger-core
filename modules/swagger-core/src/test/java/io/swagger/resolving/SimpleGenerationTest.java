@@ -117,7 +117,7 @@ public class SimpleGenerationTest extends SwaggerTestBase {
    */
 
     @JsonPropertyOrder({"a", "b"})
-    @io.swagger.oas.annotations.media.Schema(description = "DESC")
+    @io.swagger.v3.oas.annotations.media.Schema(description = "DESC")
     static class SimpleBean {
         public int b;
         public long c;

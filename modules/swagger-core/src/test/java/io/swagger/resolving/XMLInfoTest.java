@@ -6,7 +6,6 @@ import io.swagger.converter.ModelConverterContextImpl;
 import io.swagger.oas.models.media.ArraySchema;
 import io.swagger.oas.models.media.Schema;
 import io.swagger.oas.models.media.XML;
-import io.swagger.resolving.SwaggerTestBase;
 import org.testng.annotations.Test;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -48,7 +47,7 @@ public class XMLInfoTest extends SwaggerTestBase {
     }
 
     @XmlRootElement(name = "xmlDecoratedBean")
-    @io.swagger.oas.annotations.media.Schema(description = "DESC")
+    @io.swagger.v3.oas.annotations.media.Schema(description = "DESC")
     static class XmlDecoratedBean {
 
         @XmlElement(name = "elementB")
@@ -95,7 +94,7 @@ public class XMLInfoTest extends SwaggerTestBase {
 
     @XmlRootElement(name = "xmlDecoratedBean")
     @XmlAccessorType(XmlAccessType.NONE)
-    @io.swagger.oas.annotations.media.Schema
+    @io.swagger.v3.oas.annotations.media.Schema
     static class XmlDecoratedBeanXmlAccessorNone {
 
         @XmlElement
@@ -105,7 +104,7 @@ public class XMLInfoTest extends SwaggerTestBase {
     }
 
     @XmlRootElement(name = "xmlDecoratedBean")
-    @io.swagger.oas.annotations.media.Schema
+    @io.swagger.v3.oas.annotations.media.Schema
     static class XmlDecoratedBeanXmlAccessorPublic {
 
         @XmlElement

@@ -16,13 +16,13 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class ModelWithTuple2 {
-    @io.swagger.oas.annotations.media.Schema(description = "Possible values for state property of timesheet or timesheet entry", required = true)
+    @io.swagger.v3.oas.annotations.media.Schema(description = "Possible values for state property of timesheet or timesheet entry", required = true)
     public Pair<String, String> timesheetStates;
 
-    @io.swagger.oas.annotations.media.Schema(description = "set of pairs", required = true)
+    @io.swagger.v3.oas.annotations.media.Schema(description = "set of pairs", required = true)
     public Set<Pair<String, String>> manyPairs;
 
-    @io.swagger.oas.annotations.media.Schema(description = "set of pairs with complex left", required = true)
+    @io.swagger.v3.oas.annotations.media.Schema(description = "set of pairs with complex left", required = true)
     public Set<Pair<ComplexLeft, String>> complexLeft;
 
     static class ComplexLeft {

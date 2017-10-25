@@ -1,6 +1,5 @@
 package io.swagger.jaxrs2;
 
-import io.swagger.jaxrs2.resources.BasicClass;
 import io.swagger.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.jaxrs2.resources.CompleteFieldsResource;
 import io.swagger.jaxrs2.resources.DeprecatedFieldsResource;
@@ -349,7 +348,7 @@ public class ReaderTest {
         @Produces("application/json")
         @Consumes("application/json")
         @GET
-        @io.swagger.oas.annotations.Operation(tags="/receiver/rest")
+        @io.swagger.v3.oas.annotations.Operation(tags="/receiver/rest")
         //public void test1(@QueryParam("aa") String a) {
         public void test1(A a) {
         }

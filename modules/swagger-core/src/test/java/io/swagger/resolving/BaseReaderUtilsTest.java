@@ -1,8 +1,8 @@
 package io.swagger.resolving;
 
-import io.swagger.oas.annotations.Operation;
-import io.swagger.oas.annotations.extensions.Extension;
-import io.swagger.oas.annotations.extensions.ExtensionProperty;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.util.BaseReaderUtils;
 
 import com.google.common.collect.ImmutableMap;

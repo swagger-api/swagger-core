@@ -32,10 +32,10 @@ public class JodaLocalDateConverterTest {
     }
 
     class ModelWithJodaLocalDate {
-        @io.swagger.oas.annotations.media.Schema(description = "name of the model")
+        @io.swagger.v3.oas.annotations.media.Schema(description = "name of the model")
         public String name;
 
-        @io.swagger.oas.annotations.media.Schema(description = "creation localDate", required = true)
+        @io.swagger.v3.oas.annotations.media.Schema(description = "creation localDate", required = true)
         public LocalDate createdAt;
     }
 }

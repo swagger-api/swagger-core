@@ -1,7 +1,7 @@
 package io.swagger.util;
 
-import io.swagger.oas.annotations.extensions.Extension;
-import io.swagger.oas.annotations.extensions.ExtensionProperty;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;

@@ -1,6 +1,7 @@
 package io.swagger.util.reflection;
 
-import io.swagger.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.util.reflection.resources.Child;
 import io.swagger.util.reflection.resources.IParent;
 import io.swagger.util.reflection.resources.Parent;
@@ -108,7 +109,7 @@ public class ReflectionUtilsTest {
     @Test
     public void getAnnotationTest() throws NoSuchMethodException {
         final Method method = Child.class.getMethod("annotationHolder");
-        Assert.assertNotNull(ReflectionUtils.getAnnotation(method, io.swagger.oas.annotations.media.Schema.class));
+        Assert.assertNotNull(ReflectionUtils.getAnnotation(method, Schema.class));
         Assert.assertNull(ReflectionUtils.getAnnotation(method, ApiResponse.class));
     }
 

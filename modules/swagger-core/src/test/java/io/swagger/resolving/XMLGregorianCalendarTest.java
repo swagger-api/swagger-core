@@ -33,10 +33,10 @@ public class XMLGregorianCalendarTest {
     }
 
     class ModelWithCalendar {
-        @io.swagger.oas.annotations.media.Schema(description = "name of the model")
+        @io.swagger.v3.oas.annotations.media.Schema(description = "name of the model")
         public String name;
 
-        @io.swagger.oas.annotations.media.Schema(description = "creation timestamp", required = true)
+        @io.swagger.v3.oas.annotations.media.Schema(description = "creation timestamp", required = true)
         public XMLGregorianCalendar createdAt;
     }
 }
