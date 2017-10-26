@@ -262,6 +262,8 @@
         <module>modules/swagger-core</module>
         <module>modules/swagger-integration</module>
         <module>modules/swagger-jaxrs2</module>
+        <module>modules/swagger-jaxrs2-servlet-initializer</module>
+
     </modules>
     <reporting>
         <outputDirectory>target/site</outputDirectory>

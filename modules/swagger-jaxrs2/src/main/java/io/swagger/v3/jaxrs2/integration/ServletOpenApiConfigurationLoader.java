@@ -88,6 +88,33 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
         if (servletConfig == null) {
             return false;
         }
+        if (StringUtils.isBlank(path)) {
+            if (resolveResourcePackages(servletConfig) != null) {
+                return true;
+            }
+            if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_FILTER_KEY) != null) {
+                return true;
+            }
+            if (resolveResourceClasses(servletConfig) != null) {
+                return true;
+            }
+            if (getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_READALLRESOURCES_KEY) != null) {
+                return true;
+            }
+            if (getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_PRETTYPRINT_KEY) != null) {
+                return true;
+            }
+            if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_READER_KEY) != null) {
+                return true;
+            }
+            if (getLongInitParam(servletConfig, OPENAPI_CONFIGURATION_CACHE_TTL_KEY) != null) {
+                return true;
+            }
+            if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_SCANNER_KEY) != null) {
+                return true;
+            }
+            return false;
+        }
         String location = ServletConfigContextUtils.getInitParam(servletConfig, path);
         if (!StringUtils.isBlank(location)) {
             if (classpathOpenApiConfigurationLoader.exists(location)) {

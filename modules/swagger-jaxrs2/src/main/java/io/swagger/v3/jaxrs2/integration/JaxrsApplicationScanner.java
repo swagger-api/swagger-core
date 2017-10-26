@@ -9,18 +9,23 @@ public class JaxrsApplicationScanner extends JaxrsAnnotationScanner<JaxrsApplica
     public Set<Class<?>> classes() {
         Set<Class<?>> output = new HashSet<Class<?>>();
         if (application != null) {
-            Set<Class<?>> clz = application.getClasses();
-            if (clz != null) {
-                output.addAll(clz);
+            Set<Class<?>> clzs = application.getClasses();
+            if (clzs != null) {
+                for (Class<?> clz : clzs) {
+                    if (!isIgnored(clz.getName())) {
+                        output.add(clz);
+                    }
+                }
             }
             Set<Object> singletons = application.getSingletons();
             if (singletons != null) {
                 for (Object o : singletons) {
-                    output.add(o.getClass());
+                    if (!isIgnored(o.getClass().getName())) {
+                        output.add(o.getClass());
+                    }
                 }
             }
         }
         return output;
     }
-
 }

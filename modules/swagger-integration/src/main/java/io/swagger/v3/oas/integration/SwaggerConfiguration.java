@@ -20,7 +20,10 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
     private String scannerClass;
 
     private Boolean prettyPrint;
-    private Boolean readAllResources;
+
+    // read all operations also with no @Operation; set to false to read only methods annotated with @Operation
+    private Boolean readAllResources = Boolean.TRUE;
+
     private Collection<String> ignoredRoutes;
     private Long cacheTTL = -1L;
 

@@ -25,6 +25,7 @@ public class ServletOpenApiContextBuilder<T extends ServletOpenApiContextBuilder
             ctx = new XmlWebOpenApiContext()
                     .servletConfig(servletConfig)
                     .openApiConfiguration(openApiConfiguration)
+                    .id(ctxId)
                     .parent(rootCtx);
 
             if (ctx.getConfigLocation() == null && configLocation != null) {
