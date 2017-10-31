@@ -8,7 +8,6 @@ import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 import io.swagger.servlet.resources.ResourceWithAnnotations;
 import io.swagger.servlet.resources.ResourceWithoutApiAnnotation;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

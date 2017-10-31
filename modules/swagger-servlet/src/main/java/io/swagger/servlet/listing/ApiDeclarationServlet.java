@@ -1,10 +1,10 @@
 package io.swagger.servlet.listing;
 
+import io.swagger.config.SwaggerConfig;
 import io.swagger.models.Swagger;
 import io.swagger.servlet.Reader;
-
-import java.io.IOException;
-import java.util.Set;
+import io.swagger.util.Json;
+import io.swagger.util.Yaml;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -12,6 +12,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * The <code>ApiDeclarationServlet</code> class implements servlet which returns the Swagger definition.

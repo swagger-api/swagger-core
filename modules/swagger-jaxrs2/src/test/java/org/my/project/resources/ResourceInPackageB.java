@@ -1,7 +1,7 @@
 package org.my.project.resources;
 
-import io.swagger.oas.annotations.Operation;
-import io.swagger.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

@@ -22,7 +22,6 @@ import io.swagger.servlet.extensions.ReaderExtensions;
 import io.swagger.util.BaseReaderUtils;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;

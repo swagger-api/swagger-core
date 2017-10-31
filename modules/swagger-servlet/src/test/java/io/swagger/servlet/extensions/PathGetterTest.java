@@ -1,7 +1,6 @@
 package io.swagger.servlet.extensions;
 
 import io.swagger.servlet.ReaderContext;
-
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
