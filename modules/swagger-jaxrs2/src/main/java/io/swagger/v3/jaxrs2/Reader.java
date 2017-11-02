@@ -204,13 +204,24 @@ public class Reader implements OpenApiReader {
             }
             // look for inner application, e.g. ResourceConfig
             try {
+                Application innerApp = application;
                 Method m = application.getClass().getMethod("getApplication", null);
-                Application innerApplication  = (Application) m.invoke(application, null);
-                applicationPath = innerApplication.getClass().getAnnotation(ApplicationPath.class);
-                if (applicationPath != null) {
-                    if (StringUtils.isNotBlank(applicationPath.value())) {
-                        return applicationPath.value();
+                while (m != null) {
+                    Application retrievedApp  = (Application) m.invoke(innerApp, null);
+                    if (retrievedApp == null) {
+                        break;
                     }
+                    if (retrievedApp.getClass().equals(innerApp.getClass())) {
+                        break;
+                    }
+                    innerApp = retrievedApp;
+                    applicationPath = innerApp.getClass().getAnnotation(ApplicationPath.class);
+                    if (applicationPath != null) {
+                        if (StringUtils.isNotBlank(applicationPath.value())) {
+                            return applicationPath.value();
+                        }
+                    }
+                    m = innerApp.getClass().getMethod("getApplication", null);
                 }
             } catch (NoSuchMethodException e) {
                 // no inner application found
@@ -814,6 +825,9 @@ public class Reader implements OpenApiReader {
     protected boolean isOperationHidden(Method method) {
         io.swagger.v3.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.Operation.class);
         if (apiOperation != null && apiOperation.hidden()) {
+            return true;
+        }
+        if (!Boolean.TRUE.equals(config.isReadAllResources()) && apiOperation == null) {
             return true;
         }
         return false;

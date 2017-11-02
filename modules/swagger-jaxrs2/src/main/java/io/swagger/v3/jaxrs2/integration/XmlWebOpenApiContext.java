@@ -35,7 +35,6 @@ public class XmlWebOpenApiContext<T extends XmlWebOpenApiContext<T>> extends Jax
         if (!ServletConfigContextUtils.isServletConfigAvailable(servletConfig)) return (T)this;
         this.servletConfig = servletConfig;
         this.servletContext = servletConfig.getServletContext();
-        id(OPENAPI_CONTEXT_ID_PREFIX + "servlet." + servletConfig.getServletName());
         return (T)this;
     }
 

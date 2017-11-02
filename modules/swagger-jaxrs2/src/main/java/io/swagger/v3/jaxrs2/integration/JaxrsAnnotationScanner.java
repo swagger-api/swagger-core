@@ -1,8 +1,10 @@
 package io.swagger.v3.jaxrs2.integration;
 
 import io.swagger.v3.jaxrs2.integration.api.JaxrsOpenApiScanner;
+import io.swagger.v3.oas.integration.IgnoredPackages;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
+import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
@@ -19,6 +21,12 @@ import java.util.Map;
 import java.util.Set;
 
 public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> implements JaxrsOpenApiScanner {
+
+    static final Set<String> ignored = new HashSet();
+
+    static {
+        ignored.addAll(IgnoredPackages.ignored);
+    }
 
     protected OpenAPIConfiguration openApiConfiguration;
     protected Application application;
@@ -55,11 +63,26 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
 
         ConfigurationBuilder config = new ConfigurationBuilder();
         Set<String> acceptablePackages = new HashSet<String>();
+        Set<Class<?>> output = new HashSet<Class<?>>();
+
+        // if classes are passed, use them
+        if (openApiConfiguration.getResourceClasses() != null && !openApiConfiguration.getResourceClasses().isEmpty()) {
+            for (String className : openApiConfiguration.getResourceClasses()) {
+                if (!isIgnored(className)) {
+                    try {
+                        output.add(Class.forName(className));
+                    } catch (ClassNotFoundException e) {
+                        LOGGER.warn("error loading class from resourceClasses: " + e.getMessage(), e);
+                    }
+                }
+            }
+            return output;
+        }
 
         boolean allowAllPackages = false;
         if (openApiConfiguration.getResourcePackages() != null && !openApiConfiguration.getResourcePackages().isEmpty()) {
             for (String pkg : openApiConfiguration.getResourcePackages()) {
-                if (!"".equals(pkg)) {
+                if (!isIgnored(pkg)) {
                     acceptablePackages.add(pkg);
                     config.addUrls(ClasspathHelper.forPackage(pkg));
                 }
@@ -74,7 +97,6 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
         // TODO add if adding annotations
         //classes.addAll(reflections.getTypesAnnotatedWith(OpenApiDefinition.class));
 
-        Set<Class<?>> output = new HashSet<Class<?>>();
         for (Class<?> cls : classes) {
             if (allowAllPackages) {
                 output.add(cls);
@@ -88,6 +110,13 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
         }
         LOGGER.trace ("classes() - output size {}", output.size());
         return output;
+    }
+
+    protected boolean isIgnored(String classOrPackageName) {
+        if (StringUtils.isBlank(classOrPackageName)) {
+            return true;
+        }
+        return ignored.stream().anyMatch(i -> classOrPackageName.startsWith(i));
     }
 
     @Override

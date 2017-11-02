@@ -10,4 +10,6 @@ public interface OpenApiScanner {
     Set<Class<?>> classes();
 
     Map<String, Object> resources();
+
+
 }

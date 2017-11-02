@@ -2,6 +2,7 @@ package io.swagger.v3.oas.integration;
 
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiScanner;
+import org.apache.commons.lang3.StringUtils;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -16,6 +17,12 @@ import java.util.Map;
 import java.util.Set;
 
 public class GenericOpenApiScanner implements OpenApiScanner {
+
+    static final Set<String> ignored = new HashSet();
+
+    static {
+        ignored.addAll(IgnoredPackages.ignored);
+    }
 
     private static Logger LOGGER = LoggerFactory.getLogger(GenericOpenApiScanner.class);
 
@@ -39,7 +46,7 @@ public class GenericOpenApiScanner implements OpenApiScanner {
         // if classes are passed, use them
         if (openApiConfiguration.getResourceClasses() != null && !openApiConfiguration.getResourceClasses().isEmpty()) {
             for (String className : openApiConfiguration.getResourceClasses()) {
-                if (!"".equals(className)) {
+                if (!isIgnored(className)) {
                     try {
                         output.add(Class.forName(className));
                     } catch (ClassNotFoundException e) {
@@ -53,7 +60,7 @@ public class GenericOpenApiScanner implements OpenApiScanner {
 
         if (openApiConfiguration.getResourcePackages() != null && !openApiConfiguration.getResourcePackages().isEmpty()) {
             for (String pkg : openApiConfiguration.getResourcePackages()) {
-                if (!"".equals(pkg)) {
+                if (!isIgnored(pkg)) {
                     acceptablePackages.add(pkg);
                     config.addUrls(ClasspathHelper.forPackage(pkg));
                 }
@@ -91,4 +98,12 @@ public class GenericOpenApiScanner implements OpenApiScanner {
     public Map<String, Object> resources() {
         return new HashMap<>();
     }
+
+    protected boolean isIgnored(String classOrPackageName) {
+        if (StringUtils.isBlank(classOrPackageName)) {
+            return true;
+        }
+        return ignored.stream().anyMatch(i -> classOrPackageName.startsWith(i));
+    }
+
 }
