@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.links.Link;
+import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
@@ -113,8 +114,15 @@ public class OperationParser {
         return Optional.of(content);
     }
 
-    public static Optional<Schema> getSchema(io.swagger.v3.oas.annotations.media.Content annotationContent, Components components) {
+    public static Optional<? extends Schema> getSchema(io.swagger.v3.oas.annotations.media.Content annotationContent, Components components) {
         Class<?> schemaImplementation = annotationContent.schema().implementation();
+        boolean isArray = false;
+        if (schemaImplementation == Void.class) {
+            schemaImplementation = annotationContent.array().schema().implementation();
+            if (schemaImplementation != Void.class) {
+                isArray = true;
+            }
+        }
         Map<String, Schema> schemaMap;
         if (schemaImplementation != Void.class) {
             Schema schemaObject = new Schema();
@@ -131,7 +139,17 @@ public class OperationParser {
                 // default to string
                 schemaObject.setType("string");
             }
-            return Optional.of(schemaObject);
+            if (isArray) {
+                Optional<ArraySchema> arraySchema = AnnotationsUtils.getArraySchema(annotationContent.array());
+                if (arraySchema.isPresent()) {
+                    arraySchema.get().setItems(schemaObject);
+                    return arraySchema;
+                } else {
+                    return Optional.empty();
+                }
+            } else {
+                return Optional.of(schemaObject);
+            }
 
         } else {
             Optional<Schema> schemaFromAnnotation = AnnotationsUtils.getSchemaFromAnnotation(annotationContent.schema());
@@ -141,6 +159,15 @@ public class OperationParser {
                     schemaFromAnnotation.get().setType("string");
                 }
                 return Optional.of(schemaFromAnnotation.get());
+            } else {
+                Optional<ArraySchema> arraySchemaFromAnnotation = AnnotationsUtils.getArraySchema(annotationContent.array());
+                if (arraySchemaFromAnnotation.isPresent()) {
+                    if (StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().get$ref()) && StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().getType())) {
+                        // default to string
+                        arraySchemaFromAnnotation.get().getItems().setType("string");
+                    }
+                    return Optional.of(arraySchemaFromAnnotation.get());
+                }
             }
         }
         return Optional.empty();

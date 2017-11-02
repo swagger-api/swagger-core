@@ -6,6 +6,7 @@ import io.swagger.v3.jaxrs2.resources.DeprecatedFieldsResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedOperationIdResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedSecurityResource;
 import io.swagger.v3.jaxrs2.resources.ExternalDocsReference;
+import io.swagger.v3.jaxrs2.resources.ResponseContentWithArrayResource;
 import io.swagger.v3.jaxrs2.resources.ResponsesResource;
 import io.swagger.v3.jaxrs2.resources.SecurityResource;
 import io.swagger.v3.jaxrs2.resources.SimpleCallbackResource;
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.callbacks.Callback;
+import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.responses.ApiResponse;
@@ -353,4 +355,19 @@ public class ReaderTest {
         }
     }
 
+    @Test(description = "test resource with array in response content")
+    public void test2497() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(ResponseContentWithArrayResource.class);
+
+        Paths paths = openAPI.getPaths();
+        assertEquals(paths.size(), 1);
+        PathItem pathItem = paths.get("/user");
+        assertNotNull(pathItem);
+        Operation operation = pathItem.getGet();
+        assertNotNull(operation);
+        ArraySchema schema = (ArraySchema)operation.getResponses().get("200").getContent().values().iterator().next().getSchema();
+        assertNotNull(schema);
+        assertEquals(schema.getItems().get$ref(), "#/components/schemas/User");
+    }
 }
