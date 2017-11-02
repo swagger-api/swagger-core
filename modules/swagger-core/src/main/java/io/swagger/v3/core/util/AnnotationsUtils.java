@@ -140,7 +140,7 @@ public abstract class AnnotationsUtils {
                         arraySchemaObject.setItems(schema);
                     }
                 });
-            } // TODO else??
+            } // if present, schema implementation handled upstream
         }
 
         return Optional.of(arraySchemaObject);
