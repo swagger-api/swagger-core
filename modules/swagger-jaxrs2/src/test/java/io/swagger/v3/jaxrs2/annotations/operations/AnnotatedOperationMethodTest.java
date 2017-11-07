@@ -790,8 +790,6 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          type: integer\n" +
                 "          description: User Status\n" +
                 "          format: int32\n" +
-                "          enum:\n" +
-                "          - null\n" +
                 "      xml:\n" +
                 "        name: User";
         compareAsYaml(UserResource.class, expectedYAML);
@@ -844,8 +842,6 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          type: integer\n" +
                 "          description: User Status\n" +
                 "          format: int32\n" +
-                "          enum:\n" +
-                "          - null\n" +
                 "      xml:\n" +
                 "        name: User";
         assertEquals(extractedYAML, expectedYAML);

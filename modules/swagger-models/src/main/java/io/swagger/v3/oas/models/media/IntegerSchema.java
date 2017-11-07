@@ -16,6 +16,7 @@
 
 package io.swagger.v3.oas.models.media;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +26,7 @@ import java.util.Objects;
  */
 
 
-public class IntegerSchema extends Schema<Integer> {
+public class IntegerSchema extends Schema<Number> {
   private String type = "integer";
   private String format = "int32";
 
@@ -67,16 +68,21 @@ public class IntegerSchema extends Schema<Integer> {
     return this;
   }
 
-  public IntegerSchema _default(Integer _default) {
+  public IntegerSchema _default(Number _default) {
     super.setDefault(_default);
     return this;
   }
 
   @Override
-  protected Integer cast(Object value) {
+  protected Number cast(Object value) {
     if(value != null) {
       try {
-        return Integer.parseInt(value.toString());
+        Number casted = NumberFormat.getInstance().parse(value.toString());
+        if (casted.longValue() <= Integer.MAX_VALUE) {
+          return Integer.parseInt(value.toString());
+        } else {
+          return Long.parseLong(value.toString());
+        }
       }
       catch (Exception e) {
       }
@@ -84,14 +90,14 @@ public class IntegerSchema extends Schema<Integer> {
     return null;
   }
 
-  public IntegerSchema _enum(List<Integer> _enum) {
+  public IntegerSchema _enum(List<Number> _enum) {
     this._enum = _enum;
     return this;
   }
 
-  public IntegerSchema addEnumItem(Integer _enumItem) {
+  public IntegerSchema addEnumItem(Number _enumItem) {
     if(this._enum == null) {
-      this._enum = new ArrayList<Integer>();
+      this._enum = new ArrayList<>();
     }
     this._enum.add(_enumItem);
     return this;

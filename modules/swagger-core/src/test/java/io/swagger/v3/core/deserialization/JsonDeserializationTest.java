@@ -5,6 +5,7 @@ import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.core.util.TestUtils;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.headers.Header;
@@ -244,4 +245,15 @@ public class JsonDeserializationTest {
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
+    @Test(description = "it should desserialize Long schema correctly")
+    public void deserializeLongSchema() throws IOException {
+
+        final String jsonString = ResourceUtils.loadClassResource(getClass(), "specFiles/oas3_2.yaml");
+        final OpenAPI swagger = Yaml.mapper().readValue(jsonString, OpenAPI.class);
+        assertNotNull(swagger);
+        Schema s = swagger.getPaths().get("/withIntegerEnum/{stage}").getGet().getParameters().get(0).getSchema();
+        assertEquals(s.getEnum().get(0), 2147483647);
+        assertEquals(s.getEnum().get(1), 3147483647L);
+        assertEquals(s.getEnum().get(2), 31474836475505055L);
+    }
 }

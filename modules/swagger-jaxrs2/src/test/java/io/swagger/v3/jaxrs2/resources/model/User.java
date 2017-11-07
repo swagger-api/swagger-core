@@ -96,6 +96,7 @@ public class User {
   }
 
   @XmlElement(name = "userStatus")
+  //@Schema(description = "User Status", type = "string", allowableValues = {"1-registered", "2-active", "3-closed"})
   @Schema(description = "User Status", allowableValues = "1-registered,2-active,3-closed")
   public int getUserStatus() {
     return userStatus;
