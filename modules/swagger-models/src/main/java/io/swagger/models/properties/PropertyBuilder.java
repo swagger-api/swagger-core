@@ -557,6 +557,17 @@ public class PropertyBuilder {
                 return new ObjectProperty();
             }
         },
+        UNTYPED(UntypedProperty.class) {
+            @Override
+            protected boolean isType(String type, String format) {
+                return UntypedProperty.isType(type, format);
+            }
+
+            @Override
+            protected UntypedProperty create() {
+                return new UntypedProperty();
+            }
+        },
         ARRAY(ArrayProperty.class) {
             @Override
             protected boolean isType(String type, String format) {
