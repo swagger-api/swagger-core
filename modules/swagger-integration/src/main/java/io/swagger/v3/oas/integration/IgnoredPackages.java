@@ -12,6 +12,7 @@ public final class IgnoredPackages {
         ignored.add("org.glassfish.jersey");
         ignored.add("org.jboss.resteasy");
         ignored.add("com.sun.jersey");
+        ignored.add("com.fasterxml.jackson");
     }
 
 }

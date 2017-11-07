@@ -291,6 +291,12 @@ public class Reader implements OpenApiReader {
 
             String operationPath = ReaderUtils.getPath(apiPath, methodPath, parentPath);
 
+            // skip if path is the same as parent, e.g. for @ApplicationPath annotated application
+            // extending resource config.
+            if (ignoreOperationPath(operationPath, parentPath)) {
+                continue;
+            }
+
             Map<String, String> regexMap = new LinkedHashMap<>();
             operationPath = PathUtils.parsePath(operationPath, regexMap);
             if (operationPath != null) {
@@ -835,5 +841,36 @@ public class Reader implements OpenApiReader {
 
     public void setApplication (Application application) {
         this.application = application;
+    }
+
+    protected boolean ignoreOperationPath(String path, String parentPath) {
+
+        if (StringUtils.isBlank(path) && StringUtils.isBlank(parentPath)) {
+            return true;
+        } else if (StringUtils.isNotBlank(path) && StringUtils.isBlank(parentPath)) {
+            return false;
+        } else if (StringUtils.isBlank(path) && StringUtils.isNotBlank(parentPath)) {
+            return false;
+        }
+        if (parentPath != null && !"".equals(parentPath) && !"/".equals(parentPath)) {
+            if (!parentPath.startsWith("/")) {
+                parentPath = "/" + parentPath;
+            }
+            if (parentPath.endsWith("/")) {
+                parentPath = parentPath.substring(0, parentPath.length() - 1);
+            }
+        }
+        if (path != null && !"".equals(path) && !"/".equals(path)) {
+            if (!path.startsWith("/")) {
+                path = "/" + path;
+            }
+            if (path.endsWith("/")) {
+                path = path.substring(0, path.length() - 1);
+            }
+        }
+        if (path.equals(parentPath)) {
+            return true;
+        }
+        return false;
     }
 }
