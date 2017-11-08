@@ -5,6 +5,7 @@ import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.oas.models.composition.AbstractBaseModelWithoutFields;
 import io.swagger.v3.core.oas.models.composition.Animal;
 import io.swagger.v3.core.oas.models.composition.AnimalClass;
+import io.swagger.v3.core.oas.models.composition.AnimalWithSchemaSubtypes;
 import io.swagger.v3.core.oas.models.composition.Human;
 import io.swagger.v3.core.oas.models.composition.ModelWithFieldWithSubTypes;
 import io.swagger.v3.core.util.Json;
@@ -25,6 +26,11 @@ public class CompositionTest {
     @Test(description = "read a model with composition")
     public void readModelWithComposition() throws IOException {
         compareAsJson(Animal.class, "Animal.json");
+    }
+
+    @Test(description = "read a model with composition")
+    public void readModeWithSchemalWithComposition() throws IOException {
+        compareAsJson(AnimalWithSchemaSubtypes.class, "AnimalWithSchemaSubtypes.json");
     }
 
     @Test(description = "read a model with composition")
