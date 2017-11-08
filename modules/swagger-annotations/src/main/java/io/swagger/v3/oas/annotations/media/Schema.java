@@ -237,4 +237,9 @@ public @interface Schema {
    * @return whether or not this schema is hidden
    */
   boolean hidden() default false;
+
+  /**
+   * An array of the sub types inheriting from this model.
+   */
+  Class<?>[] subTypes() default {};
 }

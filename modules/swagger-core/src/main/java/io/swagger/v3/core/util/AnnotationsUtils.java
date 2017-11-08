@@ -70,6 +70,7 @@ public abstract class AnnotationsUtils {
                 && schema.not().equals(Void.class)
                 && schema.oneOf().length == 0
                 && schema.anyOf().length == 0
+                && schema.subTypes().length == 0
                 ) {
             return false;
         }

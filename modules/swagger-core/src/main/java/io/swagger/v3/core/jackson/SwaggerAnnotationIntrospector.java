@@ -6,9 +6,12 @@ import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import io.swagger.v3.core.util.AnnotationsUtils;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.xml.bind.annotation.XmlElement;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,18 +59,24 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
 
     @Override
     public List<NamedType> findSubtypes(Annotated a) {
-        // TODO #2312 remove if we are relying on JsonSubTypes only
-//        final ApiModel api = a.getAnnotation(ApiModel.class);
-//        if (api != null) {
-//            final Class<?>[] classes = api.subTypes();
-//            final List<NamedType> names = new ArrayList<NamedType>(classes.length);
-//            for (Class<?> subType : classes) {
-//                names.add(new NamedType(subType));
-//            }
-//            if (!names.isEmpty()) {
-//                return names;
-//            }
-//        }
+        Schema schema = a.getAnnotation(Schema.class);
+        if (schema == null ) {
+            final ArraySchema arraySchema = a.getAnnotation(ArraySchema.class);
+            if (arraySchema != null) {
+                schema = arraySchema.schema();
+            }
+        }
+
+        if (AnnotationsUtils.hasSchemaAnnotation(schema)) {
+            final Class<?>[] classes = schema.subTypes();
+            final List<NamedType> names = new ArrayList<>(classes.length);
+            for (Class<?> subType : classes) {
+                names.add(new NamedType(subType));
+            }
+            if (!names.isEmpty()) {
+                return names;
+            }
+        }
 
         return Collections.emptyList();
     }
