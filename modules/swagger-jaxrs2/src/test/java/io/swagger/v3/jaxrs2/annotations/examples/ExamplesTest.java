@@ -110,8 +110,6 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "          type: integer\n" +
                 "          description: User Status\n" +
                 "          format: int32\n" +
-                "          enum:\n" +
-                "          - null\n" +
                 "      xml:\n" +
                 "        name: User\n" +
                 "    SubscriptionResponse:\n" +

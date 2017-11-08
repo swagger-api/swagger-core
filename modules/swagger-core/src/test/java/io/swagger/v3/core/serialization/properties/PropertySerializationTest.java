@@ -261,7 +261,7 @@ public class PropertySerializationTest {
         final String json = "{\"type\":\"integer\",\"format\":\"int32\",\"enum\":[1,2]}";
         final Schema p = m.readValue(json, Schema.class);
         assertEquals(p.getType(), "integer");
-        List<Integer> _enum = ((IntegerSchema) p).getEnum();
+        List<Number> _enum = ((IntegerSchema) p).getEnum();
         assertNotNull(_enum);
         assertEquals(_enum, Arrays.asList(1, 2));
         assertEquals(p.getClass(), IntegerSchema.class);
