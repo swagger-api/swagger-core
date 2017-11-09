@@ -63,7 +63,6 @@ public @interface ApiResponse {
      **/
     Link[] links() default {};
 
-    // TODO #2312 as array, according to spec
     /**
      * An array containing descriptions of potential response payloads, for different media types.
      * 

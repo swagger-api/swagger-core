@@ -3,13 +3,11 @@ package io.swagger.v3.core.util;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.oas.annotations.enums.Explode;
-import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Content;
-import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -98,7 +95,7 @@ public class ParameterProcessor {
                     parameter.setExamples(exampleMap);
                 }
 
-                Optional<Content> content = getContent(p.content(), classTypes, methodTypes, parameter.getSchema());
+                Optional<Content> content = AnnotationsUtils.getContent(p.content(), classTypes, methodTypes, parameter.getSchema());
                 if (content.isPresent()) {
                     parameter.setContent(content.get());
                     parameter.setSchema(null);
@@ -256,91 +253,18 @@ public class ParameterProcessor {
             paramArraySchema = paramAnnotation.array();
         }
         if (contentSchema != null) {
-            return getSchemaType(contentSchema);
+            return AnnotationsUtils.getSchemaType(contentSchema);
         }
         if (paramSchema != null) {
-            return getSchemaType(paramSchema);
+            return AnnotationsUtils.getSchemaType(paramSchema);
         }
         if (paramArraySchema != null) {
-            return getSchemaType(paramArraySchema.schema());
+            return AnnotationsUtils.getSchemaType(paramArraySchema.schema());
         }
         return String.class;
     }
 
-    public static Type getSchemaType(io.swagger.v3.oas.annotations.media.Schema schema) {
-        if (schema == null) {
-            return String.class;
-        }
-        String schemaType = schema.type();
-        Class schemaImplementation = schema.implementation();
-
-        if (!schemaImplementation.equals(Void.class)) {
-            return schemaImplementation;
-        } else if (StringUtils.isBlank(schemaType)) {
-            return String.class;
-        }
-        switch (schemaType) {
-            case "number":
-                return BigDecimal.class;
-            case "integer":
-                return Long.class;
-            case "boolean":
-                return Boolean.class;
-            default:
-                return String.class;
-        }
-    }
-
-
-    public static Optional<Content> getContent(io.swagger.v3.oas.annotations.media.Content[] annotationContents, String[] classTypes, String[] methodTypes, Schema schema) {
-        if (annotationContents == null || annotationContents.length == 0) {
-            return Optional.empty();
-        }
-
-        //Encapsulating Content model
-        Content content = new Content();
-
-        io.swagger.v3.oas.annotations.media.Content annotationContent = annotationContents[0];
-        MediaType mediaType = new MediaType();
-        mediaType.setSchema(schema);
-
-        ExampleObject[] examples = annotationContent.examples();
-        for (ExampleObject example : examples) {
-            AnnotationsUtils.getExample(example).ifPresent(exampleObject -> mediaType.addExamples(example.name(), exampleObject));
-        }
-        Encoding[] encodings = annotationContent.encoding();
-        for (Encoding encoding : encodings) {
-            AnnotationsUtils.addEncodingToMediaType(mediaType, encoding);
-        }
-        if (StringUtils.isNotBlank(annotationContent.mediaType())) {
-            content.addMediaType(annotationContent.mediaType(), mediaType);
-        } else {
-            if (mediaType.getSchema() != null) {
-                applyTypes(classTypes, methodTypes, content, mediaType);
-            }
-        }
-        if (content.size() == 0) {
-            return Optional.empty();
-        }
-        return Optional.of(content);
-    }
-
     public static final String MEDIA_TYPE = "*/*";
-
-    public static void applyTypes(String[] classTypes, String[] methodTypes, Content content, MediaType mediaType) {
-        if (methodTypes != null && methodTypes.length > 0) {
-            for (String value : methodTypes) {
-                content.addMediaType(value, mediaType);
-            }
-        } else if (classTypes != null && classTypes.length > 0) {
-            for (String value : classTypes) {
-                content.addMediaType(value, mediaType);
-            }
-        } else {
-            content.addMediaType(MEDIA_TYPE, mediaType);
-        }
-
-    }
 
     /**
      * The <code>AnnotationsHelper</code> class defines helper methods for

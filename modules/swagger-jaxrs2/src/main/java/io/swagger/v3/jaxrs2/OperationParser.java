@@ -2,7 +2,6 @@ package io.swagger.v3.jaxrs2;
 
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.util.AnnotationsUtils;
-import io.swagger.v3.core.util.ParameterProcessor;
 import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.models.Components;
@@ -104,7 +103,7 @@ public class OperationParser {
                 content.addMediaType(annotationContent.mediaType(), mediaType);
             } else {
                 if (mediaType.getSchema() != null) {
-                    ParameterProcessor.applyTypes(classTypes, methodTypes, content, mediaType);
+                    AnnotationsUtils.applyTypes(classTypes, methodTypes, content, mediaType);
                 }
             }
         }

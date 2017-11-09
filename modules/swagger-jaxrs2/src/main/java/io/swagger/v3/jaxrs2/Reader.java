@@ -563,40 +563,30 @@ public class Reader implements OpenApiReader {
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation);
         }
 
-
-
         // handle return type, add as response in case.
         Type returnType = method.getGenericReturnType();
         if (!shouldIgnoreClass(returnType.getTypeName())) {
-            // TODO #2312 also add content to existing responses (from annotation) if it is not specified in annotation
             ResolvedSchema resolvedSchema = ModelConverters.getInstance().resolveAnnotatedType(returnType, new ArrayList<>(), "");
             if (resolvedSchema.schema != null) {
                 Schema returnTypeSchema = resolvedSchema.schema;
+                Content content = new Content();
+                MediaType mediaType = new MediaType().schema(returnTypeSchema);
+                AnnotationsUtils.applyTypes(classConsumes == null ? new String[0] : classConsumes.value(),
+                        methodConsumes == null ? new String[0] : methodConsumes.value(), content, mediaType);
                 if (operation.getResponses() == null) {
                     operation.responses(
                             new ApiResponses()._default(
                                     new ApiResponse().description(DEFAULT_DESCRIPTION)
-                                            .content(
-                                                    new Content()
-                                                            .addMediaType("*/*",
-                                                                    new MediaType()
-                                                                            .schema(returnTypeSchema)
-                                                            )
-                                            )
+                                            .content(content)
                             )
                     );
                 }
                 if (operation.getResponses().getDefault() != null &&
                         StringUtils.isBlank(operation.getResponses().getDefault().get$ref()) &&
                         operation.getResponses().getDefault().getContent() == null) {
-                    operation.getResponses().getDefault().content(new Content()
-                            .addMediaType("*/*",
-                                    new MediaType()
-                                            .schema(returnTypeSchema)
-                            )
-                    );
+                    operation.getResponses().getDefault().content(content);
                 }
-                Map<String, Schema> schemaMap = schemaMap = resolvedSchema.referencedSchemas;
+                Map<String, Schema> schemaMap = resolvedSchema.referencedSchemas;
                 if (schemaMap != null) {
                     schemaMap.forEach((key, schema) -> components.addSchemas(key, schema));
                 }

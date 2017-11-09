@@ -10,6 +10,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.links.Link;
 import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -565,4 +567,75 @@ public abstract class AnnotationsUtils {
 
     }
 
+    public static Type getSchemaType(io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema == null) {
+            return String.class;
+        }
+        String schemaType = schema.type();
+        Class schemaImplementation = schema.implementation();
+
+        if (!schemaImplementation.equals(Void.class)) {
+            return schemaImplementation;
+        } else if (StringUtils.isBlank(schemaType)) {
+            return String.class;
+        }
+        switch (schemaType) {
+            case "number":
+                return BigDecimal.class;
+            case "integer":
+                return Long.class;
+            case "boolean":
+                return Boolean.class;
+            default:
+                return String.class;
+        }
+    }
+
+    public static Optional<Content> getContent(io.swagger.v3.oas.annotations.media.Content[] annotationContents, String[] classTypes, String[] methodTypes, Schema schema) {
+        if (annotationContents == null || annotationContents.length == 0) {
+            return Optional.empty();
+        }
+
+        //Encapsulating Content model
+        Content content = new Content();
+
+        io.swagger.v3.oas.annotations.media.Content annotationContent = annotationContents[0];
+        MediaType mediaType = new MediaType();
+        mediaType.setSchema(schema);
+
+        ExampleObject[] examples = annotationContent.examples();
+        for (ExampleObject example : examples) {
+            getExample(example).ifPresent(exampleObject -> mediaType.addExamples(example.name(), exampleObject));
+        }
+        io.swagger.v3.oas.annotations.media.Encoding[] encodings = annotationContent.encoding();
+        for (io.swagger.v3.oas.annotations.media.Encoding encoding : encodings) {
+            addEncodingToMediaType(mediaType, encoding);
+        }
+        if (StringUtils.isNotBlank(annotationContent.mediaType())) {
+            content.addMediaType(annotationContent.mediaType(), mediaType);
+        } else {
+            if (mediaType.getSchema() != null) {
+                applyTypes(classTypes, methodTypes, content, mediaType);
+            }
+        }
+        if (content.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(content);
+    }
+
+    public static void applyTypes(String[] classTypes, String[] methodTypes, Content content, MediaType mediaType) {
+        if (methodTypes != null && methodTypes.length > 0) {
+            for (String value : methodTypes) {
+                content.addMediaType(value, mediaType);
+            }
+        } else if (classTypes != null && classTypes.length > 0) {
+            for (String value : classTypes) {
+                content.addMediaType(value, mediaType);
+            }
+        } else {
+            content.addMediaType(ParameterProcessor.MEDIA_TYPE, mediaType);
+        }
+
+    }
 }
