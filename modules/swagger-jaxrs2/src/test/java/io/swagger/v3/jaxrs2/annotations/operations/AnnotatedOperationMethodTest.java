@@ -796,11 +796,8 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     }
 
     @Test(description = "reads the simple user resource from sample")
-    public void testSimpleUserResource() {
-        String openApiYAML = readIntoYaml(SimpleUserResource.class);
-        int start = 0;
-        int end = openApiYAML.length() - 1;
-        String extractedYAML = openApiYAML.substring(start, end);
+    public void testSimpleUserResource() throws IOException {
+
         String expectedYAML = "openapi: 3.0.0\n" +
                 "paths:\n" +
                 "  /user:\n" +
@@ -915,7 +912,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          format: int32\n" +
                 "      xml:\n" +
                 "        name: User";
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(SimpleUserResource.class, expectedYAML);
     }
 
     @Test(description = "reads and skips the hidden user resource")
