@@ -13,10 +13,30 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 
+@SecurityScheme(name = "myOauth2Security",
+        type = SecuritySchemeType.OAUTH2,
+        in = SecuritySchemeIn.HEADER,
+        description = "myOauthSecurity Description",
+        flows = @OAuthFlows(implicit = @OAuthFlow(authorizationUrl = "http://x.com",
+                scopes = @OAuthScope(
+                        name = "write:pets",
+                        description = "modify pets in your account"))
+        )
+)
 @SecurityScheme(name = "myOauth2Security2",
         type = SecuritySchemeType.OAUTH2,
         in = SecuritySchemeIn.HEADER,
         description = "myOauthSecurity Description2",
+        flows = @OAuthFlows(implicit = @OAuthFlow(authorizationUrl = "http://x.com",
+                scopes = @OAuthScope(
+                        name = "write:pets",
+                        description = "modify pets in your account"))
+        )
+)
+@SecurityScheme(name = "myOauth2Security",
+        type = SecuritySchemeType.OAUTH2,
+        in = SecuritySchemeIn.HEADER,
+        description = "myOauthSecurity Description3",
         flows = @OAuthFlows(implicit = @OAuthFlow(authorizationUrl = "http://x.com",
                 scopes = @OAuthScope(
                         name = "write:pets",

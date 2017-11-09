@@ -172,6 +172,8 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(classes);
         assertNotNull(openAPI);
+        assertEquals(openAPI.getPaths().get("/").getGet().getSecurity().size(), 2);
+        assertEquals(openAPI.getPaths().get("/2").getGet().getSecurity().size(), 3);
         Components components = openAPI.getComponents();
         assertNotNull(components);
         Map<String, SecurityScheme> securitySchemes = components.getSecuritySchemes();
