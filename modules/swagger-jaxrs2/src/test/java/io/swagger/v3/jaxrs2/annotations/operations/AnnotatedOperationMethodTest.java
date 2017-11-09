@@ -811,13 +811,84 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      requestBody:\n" +
                 "        description: Created user object\n" +
                 "        content:\n" +
-                "          '*/*':\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/User'\n" +
+                "          application/xml:\n" +
                 "            schema:\n" +
                 "              $ref: '#/components/schemas/User'\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "  /user/createUserWithReturnType:\n" +
+                "    post:\n" +
+                "      summary: Create user with return type\n" +
+                "      description: This can only be done by the logged in user.\n" +
+                "      operationId: createUserWithReturnType\n" +
+                "      requestBody:\n" +
+                "        description: Created user object\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/User'\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/User'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/User'\n" +
+                "            application/xml:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/User'\n" +
+                "  /user/createUserWithResponseAnnotation:\n" +
+                "    post:\n" +
+                "      summary: Create user with response annotation\n" +
+                "      description: This can only be done by the logged in user.\n" +
+                "      operationId: createUserWithResponseAnnotation\n" +
+                "      requestBody:\n" +
+                "        description: Created user object\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/User'\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/User'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: aaa\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/User'\n" +
+                "            application/xml:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/User'\n" +
+                "  /user/createUserWithReturnTypeAndResponseAnnotation:\n" +
+                "    post:\n" +
+                "      summary: Create user with return type and response annotation\n" +
+                "      description: This can only be done by the logged in user.\n" +
+                "      operationId: createUserWithReturnTypeAndResponseAnnotation\n" +
+                "      requestBody:\n" +
+                "        description: Created user object\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/User'\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/User'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: aaa\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    User:\n" +
