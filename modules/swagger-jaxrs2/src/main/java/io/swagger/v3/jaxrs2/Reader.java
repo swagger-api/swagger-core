@@ -233,15 +233,36 @@ public class Reader implements OpenApiReader {
         List<io.swagger.v3.oas.annotations.security.SecurityScheme> apiSecurityScheme = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.v3.oas.annotations.security.SecurityScheme.class);
         List<io.swagger.v3.oas.annotations.security.SecurityRequirement> apiSecurityRequirements = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.v3.oas.annotations.security.SecurityRequirement.class);
         ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, ExternalDocumentation.class);
+        io.swagger.v3.oas.annotations.tags.Tag[] apiTags = ReflectionUtils.getRepeatableAnnotationsArray(cls, io.swagger.v3.oas.annotations.tags.Tag.class);
+
+        javax.ws.rs.Consumes classConsumes = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Consumes.class);
+        javax.ws.rs.Produces classProduces = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Produces.class);
+
         // TODO process full @OpenAPIDefinition
+        // OpenApiDefinition
         OpenAPIDefinition openAPIDefinition = ReflectionUtils.getAnnotation(cls, OpenAPIDefinition.class);
         Info apiInfo = null;
         if (openAPIDefinition != null) {
             apiInfo = openAPIDefinition.info();
-        }
-        javax.ws.rs.Consumes classConsumes = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Consumes.class);
-        javax.ws.rs.Produces classProduces = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Produces.class);
+            AnnotationsUtils.getInfo(apiInfo).ifPresent(info -> openAPI.setInfo(info));
 
+            // OpenApiDefinition security requirements
+            io.swagger.v3.oas.annotations.security.SecurityRequirement[] definitionSecurityRequirements = openAPIDefinition.security();
+            if (definitionSecurityRequirements != null && definitionSecurityRequirements.length > 0) {
+                SecurityParser
+                        .getSecurityRequirements(definitionSecurityRequirements)
+                        .ifPresent(s -> openAPI.setSecurity(s));
+            }
+            //
+            // OpenApiDefinition external docs
+            // OpenApiDefinition tags
+            // OpenApiDefinition servers
+
+
+
+        }
+
+        // class security schemes
         if (apiSecurityScheme != null) {
             for (io.swagger.v3.oas.annotations.security.SecurityScheme securitySchemeAnnotation: apiSecurityScheme) {
                 Optional<SecurityScheme> securityScheme = SecurityParser.getSecurityScheme(securitySchemeAnnotation);
@@ -259,6 +280,7 @@ public class Reader implements OpenApiReader {
             }
         }
 
+        // class security requirements
         List<SecurityRequirement> classSecurityRequirements = new ArrayList<>();
         if (apiSecurityRequirements != null) {
             Optional<List<SecurityRequirement>> requirementsObject = SecurityParser.getSecurityRequirements(
@@ -269,6 +291,22 @@ public class Reader implements OpenApiReader {
             }
         }
 
+        // class tags, consider only name to add to class operations
+        final Set<String> classTags = new LinkedHashSet<>();
+        if (apiTags != null) {
+            AnnotationsUtils
+                    .getTags(apiTags, false).ifPresent(tags ->
+                        tags
+                            .stream()
+                            .map(t -> t.getName())
+                            .forEach(t -> classTags.add(t))
+                    );
+        }
+
+        // class external docs
+        Optional<io.swagger.v3.oas.models.ExternalDocumentation> classExternalDocumentation = AnnotationsUtils.getExternalDocumentation(apiExternalDocs);
+
+        // class path
         final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
 
         JavaType classType = TypeFactory.defaultInstance().constructType(cls);
@@ -282,6 +320,7 @@ public class Reader implements OpenApiReader {
         // look for field-level annotated properties
         globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, components, classConsumes));
 
+        // iterate class methods
         Method methods[] = cls.getMethods();
         for (Method method : methods) {
             if (isOperationHidden(method)) {
@@ -318,7 +357,9 @@ public class Reader implements OpenApiReader {
                         classProduces,
                         methodConsumes,
                         classConsumes,
-                        classSecurityRequirements);
+                        classSecurityRequirements,
+                        classExternalDocumentation,
+                        classTags);
                 if (operation != null) {
                     PathItem pathItemObject;
                     if (openAPI.getPaths() != null && openAPI.getPaths().get(operationPath) != null) {
@@ -391,22 +432,32 @@ public class Reader implements OpenApiReader {
             }
         }
 
-        if (components.getSecuritySchemes() != null && components.getSecuritySchemes().size() > 0 ||
-                components.getSchemas() != null && components.getSchemas().size() > 0) {
+        if ((components.getSecuritySchemes() != null && components.getSecuritySchemes().size() > 0) ||
+                (components.getSchemas() != null && components.getSchemas().size() > 0)) {
             openAPI.setComponents(components);
         }
 
+        // add tags from class to definition tags
+        AnnotationsUtils
+                .getTags(apiTags, true).ifPresent(tags -> openApiTags.addAll(tags));
+
+
         if (!openApiTags.isEmpty()) {
             Set<Tag> tagsSet = new LinkedHashSet<>();
-            tagsSet.addAll(openApiTags);
             if (openAPI.getTags() != null) {
-                tagsSet.addAll(openAPI.getTags());
+                for (Tag tag : openAPI.getTags()) {
+                    if (tagsSet.stream().noneMatch(t -> t.getName().equals(tag.getName()))) {
+                        tagsSet.add(tag);
+                    }
+                }
+            }
+            for (Tag tag : openApiTags) {
+                if (tagsSet.stream().noneMatch(t -> t.getName().equals(tag.getName()))) {
+                    tagsSet.add(tag);
+                }
             }
             openAPI.setTags(new ArrayList<>(tagsSet));
         }
-
-        AnnotationsUtils.getExternalDocumentation(apiExternalDocs).ifPresent(externalDocumentation -> openAPI.setExternalDocs(externalDocumentation));
-        AnnotationsUtils.getInfo(apiInfo).ifPresent(info -> openAPI.setInfo(info));
 
         return openAPI;
     }
@@ -518,7 +569,9 @@ public class Reader implements OpenApiReader {
                 null,
                 null,
                 null,
-                new ArrayList<>());
+                new ArrayList<>(),
+                Optional.empty(),
+                new HashSet<>());
     }
 
     public Operation parseMethod(
@@ -528,9 +581,21 @@ public class Reader implements OpenApiReader {
             Produces classProduces,
             Consumes methodConsumes,
             Consumes classConsumes,
-            List<SecurityRequirement> classSecurityRequirements) {
+            List<SecurityRequirement> classSecurityRequirements,
+            Optional<io.swagger.v3.oas.models.ExternalDocumentation> classExternalDocs,
+            Set<String> classTags) {
         JavaType classType = TypeFactory.defaultInstance().constructType(method.getDeclaringClass());
-        return parseMethod(classType.getClass(), method, globalParameters, methodProduces, classProduces, methodConsumes, classConsumes, classSecurityRequirements);
+        return parseMethod(
+                classType.getClass(),
+                method,
+                globalParameters,
+                methodProduces,
+                classProduces,
+                methodConsumes,
+                classConsumes,
+                classSecurityRequirements,
+                classExternalDocs,
+                classTags);
     }
 
     private Operation parseMethod(
@@ -541,7 +606,9 @@ public class Reader implements OpenApiReader {
             Produces classProduces,
             Consumes methodConsumes,
             Consumes classConsumes,
-            List<SecurityRequirement> classSecurityRequirements) {
+            List<SecurityRequirement> classSecurityRequirements,
+            Optional<io.swagger.v3.oas.models.ExternalDocumentation> classExternalDocs,
+            Set<String> classTags) {
         Operation operation = new Operation();
 
         io.swagger.v3.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.Operation.class);
@@ -552,7 +619,7 @@ public class Reader implements OpenApiReader {
         List<io.swagger.v3.oas.annotations.tags.Tag> apiTags = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.tags.Tag.class);
         List<io.swagger.v3.oas.annotations.Parameter> apiParameters = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.Parameter.class);
         List<io.swagger.v3.oas.annotations.responses.ApiResponse> apiResponses = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.responses.ApiResponse.class);
-        // TODO extensions and external docs
+        // TODO extensions
         List<Extension> apiExtensions = ReflectionUtils.getRepeatableAnnotations(method, Extension.class);
         ExternalDocumentation apiExternalDocumentation = ReflectionUtils.getAnnotation(method, ExternalDocumentation .class);
 
@@ -585,13 +652,16 @@ public class Reader implements OpenApiReader {
             AnnotationsUtils.getServers(apiServers.toArray(new Server[apiServers.size()])).ifPresent(servers -> servers.forEach(operation::addServersItem));
         }
 
-        // tags
+        // external docs
+        AnnotationsUtils.getExternalDocumentation(apiExternalDocumentation).ifPresent(operation::setExternalDocs);
+
+        // method tags
         if (apiTags != null) {
             apiTags.stream()
                 .filter(t -> operation.getTags() == null || (operation.getTags() != null && !operation.getTags().contains(t.name())))
                 .map(t -> t.name())
                 .forEach(operation::addTagsItem);
-            AnnotationsUtils.getTags(apiTags.toArray(new io.swagger.v3.oas.annotations.tags.Tag[apiTags.size()])).ifPresent(tags -> openApiTags.addAll(tags));
+            AnnotationsUtils.getTags(apiTags.toArray(new io.swagger.v3.oas.annotations.tags.Tag[apiTags.size()]), true).ifPresent(tags -> openApiTags.addAll(tags));
         }
 
         // parameters
@@ -627,6 +697,18 @@ public class Reader implements OpenApiReader {
 
         if (apiOperation != null) {
             setOperationObjectFromApiOperationAnnotation(operation, apiOperation, methodProduces, classProduces, methodConsumes, classConsumes);
+        }
+
+        // class tags after tags defined as field of @Operation
+        if (classTags != null) {
+            classTags.stream()
+                    .filter(t -> operation.getTags() == null || (operation.getTags() != null && !operation.getTags().contains(t)))
+                    .forEach(operation::addTagsItem);
+        }
+
+        // external docs of class if not defined in annotation of method or as field of Operation annotation
+        if (operation.getExternalDocs() == null) {
+            classExternalDocs.ifPresent(operation::setExternalDocs);
         }
 
         // handle return type, add as response in case.
@@ -765,7 +847,6 @@ public class Reader implements OpenApiReader {
                     .filter(t -> operation.getTags() == null || (operation.getTags() != null && !operation.getTags().contains(t)))
                     .forEach(operation::addTagsItem);
         });
-        AnnotationsUtils.getTags(apiOperation.tags()).ifPresent(tag -> openApiTags.addAll(tag));
 
         if (operation.getExternalDocs() == null) { // if not set in root annotation
             AnnotationsUtils.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(operation::setExternalDocs);

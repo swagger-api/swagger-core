@@ -193,12 +193,13 @@ public class ReaderTest {
     @Test(description = "Get tags")
     public void testGetTags() {
         Reader reader = new Reader(new OpenAPI());
-        Method[] methods = TagsResource.class.getMethods();
-        Operation operation = reader.parseMethod(methods[0], null);
+        OpenAPI openAPI = reader.read(TagsResource.class);
+        Operation operation = openAPI.getPaths().get("/").getGet();
         assertNotNull(operation);
-        assertEquals(TAG_NUMBER, operation.getTags().size());
-        assertEquals(EXAMPLE_TAG, operation.getTags().get(0));
-        assertEquals(SECOND_TAG, operation.getTags().get(1));
+        assertEquals(6, operation.getTags().size());
+        assertEquals(operation.getTags().get(3), EXAMPLE_TAG);
+        assertEquals(operation.getTags().get(1), SECOND_TAG);
+        assertEquals(openAPI.getTags().get(0).getExternalDocs().getDescription(), "docs desc");
     }
 
     @Test(description = "Responses")
@@ -222,19 +223,21 @@ public class ReaderTest {
     public void testGetExternalDocs() {
         Reader reader = new Reader(new OpenAPI());
 
-        Method[] methods = ExternalDocsReference.class.getMethods();
-        Operation externalDocsOperation = reader.parseMethod(methods[0], null);
-        assertNotNull(externalDocsOperation);
+        OpenAPI openAPI = reader.read(ExternalDocsReference.class);
+        Operation externalDocsOperation = openAPI.getPaths().get("/").getGet();
+
         ExternalDocumentation externalDocs = externalDocsOperation.getExternalDocs();
-        assertEquals(EXTERNAL_DOCS_DESCRIPTION, externalDocs.getDescription());
-        assertEquals(EXTERNAL_DOCS_URL, externalDocs.getUrl());
+        assertEquals(externalDocs.getDescription(), "External documentation description in method");
+        assertEquals(externalDocs.getUrl(), EXTERNAL_DOCS_URL);
+        externalDocs = openAPI.getComponents().getSchemas().get("ExternalDocsSchema").getExternalDocs();
+        assertEquals("External documentation description in schema", externalDocs.getDescription());
+        assertEquals(externalDocs.getUrl(), EXTERNAL_DOCS_URL);
     }
 
     @Test(description = "Security Requirement")
     public void testSecurityRequirement() {
         Reader reader = new Reader(new OpenAPI());
         Method[] methods = SecurityResource.class.getMethods();
-
         Operation securityOperation = reader.parseMethod(methods[0], null);
         assertNotNull(securityOperation);
         List<SecurityRequirement> securityRequirements = securityOperation.getSecurity();
