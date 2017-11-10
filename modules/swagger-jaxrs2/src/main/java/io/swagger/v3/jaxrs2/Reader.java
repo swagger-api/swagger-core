@@ -238,26 +238,31 @@ public class Reader implements OpenApiReader {
         javax.ws.rs.Consumes classConsumes = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Consumes.class);
         javax.ws.rs.Produces classProduces = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Produces.class);
 
-        // TODO process full @OpenAPIDefinition
         // OpenApiDefinition
         OpenAPIDefinition openAPIDefinition = ReflectionUtils.getAnnotation(cls, OpenAPIDefinition.class);
-        Info apiInfo = null;
+
         if (openAPIDefinition != null) {
-            apiInfo = openAPIDefinition.info();
-            AnnotationsUtils.getInfo(apiInfo).ifPresent(info -> openAPI.setInfo(info));
+
+            // info
+            AnnotationsUtils.getInfo(openAPIDefinition.info()).ifPresent(info -> openAPI.setInfo(info));
 
             // OpenApiDefinition security requirements
-            io.swagger.v3.oas.annotations.security.SecurityRequirement[] definitionSecurityRequirements = openAPIDefinition.security();
-            if (definitionSecurityRequirements != null && definitionSecurityRequirements.length > 0) {
-                SecurityParser
-                        .getSecurityRequirements(definitionSecurityRequirements)
-                        .ifPresent(s -> openAPI.setSecurity(s));
-            }
+            SecurityParser
+                    .getSecurityRequirements(openAPIDefinition.security())
+                    .ifPresent(s -> openAPI.setSecurity(s));
             //
             // OpenApiDefinition external docs
-            // OpenApiDefinition tags
-            // OpenApiDefinition servers
+            AnnotationsUtils
+                    .getExternalDocumentation(openAPIDefinition.externalDocs())
+                    .ifPresent(docs -> openAPI.setExternalDocs(docs));
 
+            // OpenApiDefinition tags
+            AnnotationsUtils
+                    .getTags(openAPIDefinition.tags(), false)
+                    .ifPresent(tags -> openApiTags.addAll(tags));
+
+            // OpenApiDefinition servers
+            AnnotationsUtils.getServers(openAPIDefinition.servers()).ifPresent(servers -> openAPI.setServers(servers));
 
 
         }

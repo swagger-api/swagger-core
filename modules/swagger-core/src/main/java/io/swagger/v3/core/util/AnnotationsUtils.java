@@ -251,7 +251,9 @@ public abstract class AnnotationsUtils {
                 continue;
             }
             Tag tagObject = new Tag();
-            tagObject.setDescription(tag.description());
+            if (StringUtils.isNotBlank(tag.description())) {
+                tagObject.setDescription(tag.description());
+            }
             tagObject.setName(tag.name());
             getExternalDocumentation(tag.externalDocs()).ifPresent(tagObject::setExternalDocs);
             tagsList.add(tagObject);
@@ -301,6 +303,13 @@ public abstract class AnnotationsUtils {
             if (StringUtils.isNotBlank(serverVariable.description())) {
                 serverVariableObject.setDescription(serverVariable.description());
             }
+            if (StringUtils.isNotBlank(serverVariable.defaultValue())) {
+                serverVariableObject.setDefault(serverVariable.defaultValue());
+            }
+            if (serverVariable.allowableValues() != null && serverVariable.allowableValues().length > 0) {
+                serverVariableObject.setEnum(Arrays.asList(serverVariable.allowableValues()));
+            }
+            // TODO extensions
             serverVariablesObject.addServerVariable(serverVariable.name(), serverVariableObject);
         }
         serverObject.setVariables(serverVariablesObject);

@@ -199,7 +199,8 @@ public class ReaderTest {
         assertEquals(6, operation.getTags().size());
         assertEquals(operation.getTags().get(3), EXAMPLE_TAG);
         assertEquals(operation.getTags().get(1), SECOND_TAG);
-        assertEquals(openAPI.getTags().get(0).getExternalDocs().getDescription(), "docs desc");
+        assertEquals(openAPI.getTags().get(1).getDescription(), "desc definition");
+        assertEquals(openAPI.getTags().get(2).getExternalDocs().getDescription(), "docs desc");
     }
 
     @Test(description = "Responses")
