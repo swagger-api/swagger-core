@@ -36,7 +36,6 @@ public class ResponsesResource {
                             )
                     ),
                     @ApiResponse(
-                            responseCode = "default",
                             description = "boo",
                             content = @Content(
                                     mediaType = "*/*",

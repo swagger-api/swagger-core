@@ -1513,7 +1513,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         } else {
             if (type instanceof com.fasterxml.jackson.core.type.ResolvedType) {
                 com.fasterxml.jackson.core.type.ResolvedType rt = (com.fasterxml.jackson.core.type.ResolvedType) type;
-                LOGGER.debug("Can't check class {}, {}", type, rt.getRawClass().getName());
+                LOGGER.trace("Can't check class {}, {}", type, rt.getRawClass().getName());
                 if (rt.getRawClass().equals(Class.class)) {
                     return true;
                 }

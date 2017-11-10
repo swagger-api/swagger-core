@@ -6,11 +6,14 @@ import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.oas.models.OpenAPI;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public abstract class AbstractAnnotationTest {
-    public String readIntoYaml(Class<?> cls) {
+    public String readIntoYaml(final Class<?> cls) {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(cls);
 
@@ -25,17 +28,27 @@ public abstract class AbstractAnnotationTest {
         }
     }
 
-    public void compareAsYaml(Class<?> cls, String yaml) throws IOException {
+    public void compareAsYaml(final Class<?> cls, final String yaml) throws IOException {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(cls);
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
-    public void compareAsYaml(String actualYaml, String expectedYaml) throws IOException {
+    public void compareAsYaml(final String actualYaml, final String expectedYaml) throws IOException {
         SerializationMatchers.assertEqualsToYaml(Yaml.mapper().readValue(actualYaml, OpenAPI.class), expectedYaml);
     }
-    public void compareAsJson(String actualJson, String expectedJson) throws IOException {
+
+    public void compareAsJson(final String actualJson, final String expectedJson) throws IOException {
         SerializationMatchers.assertEqualsToJson(Yaml.mapper().readValue(actualJson, OpenAPI.class), expectedJson);
     }
 
+    protected String getOpenAPIAsString(final String file) throws IOException {
+        InputStream in = null;
+        try {
+            in = getClass().getClassLoader().getResourceAsStream(file);
+            return IOUtils.toString(in, StandardCharsets.UTF_8);
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+    }
 }
