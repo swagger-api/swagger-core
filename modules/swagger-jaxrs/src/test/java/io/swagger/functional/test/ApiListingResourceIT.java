@@ -1,6 +1,9 @@
 package io.swagger.functional.test;
 
 import com.jayway.restassured.http.ContentType;
+
+import org.testng.SkipException;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -51,9 +54,20 @@ public class ApiListingResourceIT {
             "      id:\n" +
             "        type: \"string\"\n";
 
+    private static final int jettyPort = System.getProperties().containsKey("jetty.port") ? Integer.parseInt(System.getProperty("jetty.port")): -1;
+
+    @BeforeMethod
+    public void checkJetty() {
+        if (jettyPort == -1) {
+            throw new SkipException("Jetty not configured");
+        }
+    }
+
     @Test
     public void testSwaggerJson() throws Exception {
+
         String actualBody = given()
+                .port(jettyPort)
                 .log().all()
                 .when()
                 .get("/swagger.json")
@@ -71,6 +85,7 @@ public class ApiListingResourceIT {
     @Test
     public void testSwaggerJsonUsingAcceptHeader() throws Exception {
         String actualBody = given()
+                .port(jettyPort)
                 .log().all()
                 .accept(ContentType.JSON)
                 .when()
@@ -88,6 +103,7 @@ public class ApiListingResourceIT {
     @Test
     public void testSwaggerYaml() throws Exception {
         String actualBody = given()
+                .port(jettyPort)
                 .log().all()
                 .when()
                 .get("/swagger.yaml")
@@ -104,6 +120,7 @@ public class ApiListingResourceIT {
     @Test
     public void testSwaggerYamlUsingAcceptHeader() throws Exception {
         String actualBody = given()
+                .port(jettyPort)
                 .log().all()
                 .accept("application/yaml")
                 .when()
