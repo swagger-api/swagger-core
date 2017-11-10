@@ -23,6 +23,12 @@ import javax.ws.rs.Path;
                         description = "modify pets in your account"))
         )
 )
+@SecurityRequirement(name = "security_key",
+        scopes = {"write:pets", "read:pets"}
+)
+@SecurityRequirement(name = "myOauth2Security",
+        scopes = {"write:pets"}
+)
 public class SecurityResource {
 
     @GET
@@ -33,5 +39,15 @@ public class SecurityResource {
             scopes = {"write:pets", "read:pets"}
     )
     public void getSecurity() {
+    }
+
+    @GET
+    @Path("/2")
+    @Operation(operationId = "Operation Id 2",
+            description = "description 2")
+    @SecurityRequirement(name = "security_key2",
+            scopes = {"write:pets", "read:pets"}
+    )
+    public void getSecurity2() {
     }
 }

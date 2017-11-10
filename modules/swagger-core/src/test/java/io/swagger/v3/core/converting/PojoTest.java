@@ -505,7 +505,6 @@ public class PojoTest {
 
     }
 
-    //@Schema(example = "{\"id\": 19877734}")
     static class ExampleJson {
         private String id;
         public String getId() {
@@ -518,46 +517,50 @@ public class PojoTest {
 
     }
 
-    // TODO #2312 examples and string array
-        /*
-    @Test(enabled = false, description = "Shows how to provide multiple property examples")
-    public void testMultipleModelPropertyExampleOverrides() {
-        String yaml = readIntoYaml(modelWithMultiplePropertyExamples.class);
+    @Test( description = "Shows how to provide an example array")
+    public void testExampleArray() {
 
-        assertEquals(yaml,
-            "type: object\n" +
-            "properties:\n" +
-            "  id:\n" +
-            "    type: string\n" +
-            "    examples:\n" +
-            "      - abc-123\n" +
-            "      - zz-aa-bb\n");
+        String yaml =
+            "modelExampleArray:\n" +
+                    "  type: object\n" +
+                    "  properties:\n" +
+                    "    ids:\n" +
+                    "      type: array\n" +
+                    "      example:\n" +
+                    "      - abc-123\n" +
+                    "      - zz-aa-bb\n" +
+                    "      items:\n" +
+                    "        type: string";
+        Map<String, io.swagger.v3.oas.models.media.Schema> schemaMap = readAll(modelExampleArray.class);
+        SerializationMatchers.assertEqualsToYaml(schemaMap, yaml);
     }
 
-    static class modelWithMultiplePropertyExamples {
-        @Schema(examples = {"abc-123", "zz-aa-bb"})
-        private String id;
-                public String getId() {
-                return id;
+    static class modelExampleArray {
+        @Schema(example = "[\"abc-123\", \"zz-aa-bb\"]")
+        private String[] ids;
+                public String[] getIds() {
+                return ids;
             }
 
-            public void setId(String id) {
-                this.id = id;
+            public void setIds(String[] ids) {
+                this.ids = ids;
             }
     }
 
-    @Test(enabled = false, description = "Show how to completely override an object example")
+    @Test(description = "Show how to completely override an object example")
     public void testModelExampleOverride() {
-        String yaml = readIntoYaml(modelWithExampleOverride.class);
 
-        assertEquals(yaml,
-            "type: object\n" +
-            "example: \n" +
-            "  foo: bar\n" +
-            "  baz: true\n" +
-            "properties:\n" +
-            "  id:\n" +
-            "    type: string");
+        String yaml =
+                "modelWithExampleOverride:\n" +
+                        "  type: object\n" +
+                        "  properties:\n" +
+                        "    id:\n" +
+                        "      type: string\n" +
+                        "  example:\n" +
+                        "    foo: bar\n" +
+                        "    baz: true";
+
+        SerializationMatchers.assertEqualsToYaml(readAll(modelWithExampleOverride.class), yaml);
     }
 
     @Schema(example = "{\"foo\": \"bar\",\"baz\": true}")
@@ -571,6 +574,5 @@ public class PojoTest {
                 this.id = id;
             }
     }
-    */
 
 }

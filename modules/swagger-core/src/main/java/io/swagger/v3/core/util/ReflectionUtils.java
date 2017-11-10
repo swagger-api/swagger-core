@@ -278,38 +278,45 @@ public class ReflectionUtils {
     }
 
     public static <A extends Annotation> List<A> getRepeatableAnnotations(Class<?> cls, Class<A> annotationClass) {
+        A[] annotations =  getRepeatableAnnotationsArray(cls, annotationClass);
+        if (annotations == null || annotations.length == 0) {
+            return null;
+        }
+        return Arrays.asList(annotations);
+    }
+
+    public static <A extends Annotation> A[] getRepeatableAnnotationsArray(Class<?> cls, Class<A> annotationClass) {
         A[] annotations = cls.getAnnotationsByType(annotationClass);
-        List<A> result = new ArrayList<>();
         if (annotations == null || annotations.length == 0) {
             for (Annotation metaAnnotation : cls.getAnnotations()) {
                 annotations = metaAnnotation.annotationType().getAnnotationsByType(annotationClass);
                 if (annotations != null && annotations.length > 0) {
-                    return Arrays.asList(annotations);
+                    return annotations;
                 }
             }
             Class<?> superClass = cls.getSuperclass();
             if (superClass != null && !(superClass.equals(Object.class))) {
-                result = getRepeatableAnnotations(superClass, annotationClass);
+                annotations = getRepeatableAnnotationsArray(superClass, annotationClass);
             }
         }
-        if (result == null) {
+        if (annotations == null) {
             for (Class<?> anInterface : cls.getInterfaces()) {
                 for (Annotation metaAnnotation : anInterface.getAnnotations()) {
                     annotations = metaAnnotation.annotationType().getAnnotationsByType(annotationClass);
                     if (annotations != null && annotations.length > 0) {
-                        return Arrays.asList(annotations);
+                        return annotations;
                     }
                 }
-                result = getRepeatableAnnotations(anInterface, annotationClass);
-                if (result != null) {
-                    return result;
+                annotations = getRepeatableAnnotationsArray(anInterface, annotationClass);
+                if (annotations != null) {
+                    return annotations;
                 }
             }
         }
         if (annotations == null) {
             return null;
         }
-        return Arrays.asList(annotations);
+        return annotations;
     }
 
     public static Annotation[][] getParameterAnnotations(Method method) {

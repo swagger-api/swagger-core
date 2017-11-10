@@ -54,28 +54,20 @@ import java.util.stream.Collectors;
 public class ObjectMapperFactory {
 
     protected static ObjectMapper createJson() {
-        return createJson(true, true);
-    }
-
-    protected static ObjectMapper createJson(boolean includePathDeserializer, boolean includeResponseDeserializer) {
-        return create(null, includePathDeserializer, includeResponseDeserializer);
+        return create(null );
     }
 
     protected static ObjectMapper createYaml() {
-        return createYaml(true, true);
-    }
-
-    protected static ObjectMapper createYaml(boolean includePathDeserializer, boolean includeResponseDeserializer) {
         YAMLFactory factory = new YAMLFactory();
         factory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
         factory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
         factory.enable(YAMLGenerator.Feature.SPLIT_LINES);
         factory.enable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS);
 
-        return create(factory, includePathDeserializer, includeResponseDeserializer);
+        return create(factory);
     }
 
-    private static ObjectMapper create(JsonFactory jsonFactory, boolean includePathDeserializer, boolean includeResponseDeserializer) {
+    private static ObjectMapper create(JsonFactory jsonFactory) {
         ObjectMapper mapper = jsonFactory == null ? new ObjectMapper() : new ObjectMapper(jsonFactory);
 
         // handle ref schema serialization skipping all other props
@@ -96,7 +88,7 @@ public class ObjectMapperFactory {
             }
         });
 
-        Module deserializerModule = new DeserializationModule(includePathDeserializer, includeResponseDeserializer);
+        Module deserializerModule = new DeserializationModule();
         mapper.registerModule(deserializerModule);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 

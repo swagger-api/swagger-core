@@ -1,14 +1,16 @@
 package io.swagger.v3.jaxrs2.annotations.security;
 
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
+import io.swagger.v3.jaxrs2.resources.SecurityResource;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.OAuthFlow;
 import io.swagger.v3.oas.annotations.security.OAuthFlows;
 import io.swagger.v3.oas.annotations.security.OAuthScope;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
 
@@ -33,34 +35,53 @@ public class SecurityTests extends AbstractAnnotationTest {
 
     }
 
-    @Test(enabled = false)
-    public void testSecurityRequirement() {
-        String openApiYAML = readIntoYaml(SecurityTests.SecurityRequirementOnClass.class);
-        int start = openApiYAML.indexOf("components:");
-        String extractedYAML = openApiYAML.substring(start, openApiYAML.length() - 1);
-        String expectedYAML = "components:\n" +
+    @Test
+    public void testSecurityRequirement() throws IOException {
+        String expectedYAML = "openapi: 3.0.0\n" +
+                "paths:\n" +
+                "  /2:\n" +
+                "    get:\n" +
+                "      description: description 2\n" +
+                "      operationId: Operation Id 2\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "      security:\n" +
+                "      - security_key:\n" +
+                "        - write:pets\n" +
+                "        - read:pets\n" +
+                "      - myOauth2Security:\n" +
+                "        - write:pets\n" +
+                "      - security_key2:\n" +
+                "        - write:pets\n" +
+                "        - read:pets\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      description: description\n" +
+                "      operationId: Operation Id\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "      security:\n" +
+                "      - security_key:\n" +
+                "        - write:pets\n" +
+                "        - read:pets\n" +
+                "      - myOauth2Security:\n" +
+                "        - write:pets\n" +
+                "components:\n" +
                 "  securitySchemes:\n" +
                 "    myOauth2Security:\n" +
-                "      name: \"myOauth2Security\"\n" +
+                "      type: oauth2\n" +
+                "      description: myOauthSecurity Description\n" +
+                "      name: myOauth2Security\n" +
+                "      in: header\n" +
                 "      flows:\n" +
                 "        implicit:\n" +
-                "          authorizationUrl: \"http://url.com/auth\"\n" +
+                "          authorizationUrl: http://x.com\n" +
                 "          scopes:\n" +
-                "            name: \"write:pets\"\n" +
-                "            description: \"modify pets in your account\"\n" +
-                "        password:\n" +
-                "          scopes:\n" +
-                "            name: \"\"\n" +
-                "            description: \"\"\n" +
-                "        clientCredentials:\n" +
-                "          scopes:\n" +
-                "            name: \"\"\n" +
-                "            description: \"\"\n" +
-                "        authorizationCode:\n" +
-                "          scopes:\n" +
-                "            name: \"\"\n" +
-                "            description: \"\"";
-        assertEquals(openApiYAML, expectedYAML);
+                "            write:pets: modify pets in your account";
+        compareAsYaml(SecurityResource.class, expectedYAML);
+
 
     }
 
@@ -88,15 +109,6 @@ public class SecurityTests extends AbstractAnnotationTest {
 
     }
 
-    @SecurityRequirement(name = "apiKey")
-    static class SecurityRequirementOnClass {
-
-    }
-
-    @SecurityScheme(name = "apiKey", type = SecuritySchemeType.APIKEY, in = SecuritySchemeIn.HEADER)
-    static class ApiKeySchemeOnClass {
-
-    }
 
     @SecurityScheme(name = "myOauth2Security",
             type = SecuritySchemeType.OAUTH2,

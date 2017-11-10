@@ -235,44 +235,30 @@ public abstract class AnnotationsUtils {
         return Optional.of(schemaObject);
     }
 
-    public static Optional<Set<Tag>> getTags(String[] tags) {
+    public static Optional<Set<Tag>> getTags(io.swagger.v3.oas.annotations.tags.Tag[] tags, boolean skipOnlyName) {
         if (tags == null) {
             return Optional.empty();
         }
         Set<Tag> tagsList = new LinkedHashSet<>();
-        boolean isEmpty = true;
-        for (String tag : tags) {
-            Tag tagObject = new Tag();
-            if (StringUtils.isNotBlank(tag)) {
-                isEmpty = false;
-            }
-            tagObject.setDescription(tag);
-            tagObject.setName(tag);
-            tagsList.add(tagObject);
-        }
-        if (isEmpty) {
-            return Optional.empty();
-        }
-        return Optional.of(tagsList);
-    }
-
-    public static Optional<Set<Tag>> getTags(io.swagger.v3.oas.annotations.tags.Tag[] tags) {
-        if (tags == null) {
-            return Optional.empty();
-        }
-        Set<Tag> tagsList = new LinkedHashSet<>();
-        boolean isEmpty = true;
         for (io.swagger.v3.oas.annotations.tags.Tag tag : tags) {
-            Tag tagObject = new Tag();
-            if (StringUtils.isNotBlank(tag.name())) {
-                isEmpty = false;
+            if (StringUtils.isBlank(tag.name())) {
+                continue;
             }
-            tagObject.setDescription(tag.description());
+            if (    skipOnlyName &&
+                    StringUtils.isBlank(tag.description()) &&
+                    StringUtils.isBlank(tag.externalDocs().description()) &&
+                    StringUtils.isBlank(tag.externalDocs().url())) {
+                continue;
+            }
+            Tag tagObject = new Tag();
+            if (StringUtils.isNotBlank(tag.description())) {
+                tagObject.setDescription(tag.description());
+            }
             tagObject.setName(tag.name());
             getExternalDocumentation(tag.externalDocs()).ifPresent(tagObject::setExternalDocs);
             tagsList.add(tagObject);
         }
-        if (isEmpty) {
+        if (tagsList.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(tagsList);
@@ -317,6 +303,13 @@ public abstract class AnnotationsUtils {
             if (StringUtils.isNotBlank(serverVariable.description())) {
                 serverVariableObject.setDescription(serverVariable.description());
             }
+            if (StringUtils.isNotBlank(serverVariable.defaultValue())) {
+                serverVariableObject.setDefault(serverVariable.defaultValue());
+            }
+            if (serverVariable.allowableValues() != null && serverVariable.allowableValues().length > 0) {
+                serverVariableObject.setEnum(Arrays.asList(serverVariable.allowableValues()));
+            }
+            // TODO extensions
             serverVariablesObject.addServerVariable(serverVariable.name(), serverVariableObject);
         }
         serverObject.setVariables(serverVariablesObject);
