@@ -182,6 +182,9 @@ public class Reader implements OpenApiReader {
             this.config = ContextUtils.deepCopy(openApiConfiguration);
             if (openApiConfiguration.getOpenAPI() != null) {
                 this.openAPI = this.config.getOpenAPI();
+                if (this.openAPI.getComponents() != null) {
+                    this.components = this.openAPI.getComponents();
+                }
             }
         }
     }
@@ -437,8 +440,8 @@ public class Reader implements OpenApiReader {
             }
         }
 
-        if ((components.getSecuritySchemes() != null && components.getSecuritySchemes().size() > 0) ||
-                (components.getSchemas() != null && components.getSchemas().size() > 0)) {
+        // if no components object is defined in openApi instance passed by client, set openAPI.components to resolved components (if not empty)
+        if (!isEmptyComponents(components) && openAPI.getComponents() == null) {
             openAPI.setComponents(components);
         }
 
@@ -944,19 +947,6 @@ public class Reader implements OpenApiReader {
         return extractParametersResult;
     }
 
-    private boolean hasAnnotation(List<Class<? extends Annotation>> aClasses, List<Annotation> list) {
-
-        if (list == null) {
-            return false;
-        }
-        for (Annotation a: list) {
-            if (aClasses.contains(a.annotationType())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private String extractOperationIdFromPathItem(PathItem path) {
         if (path.getGet() != null) {
             return path.getGet().getOperationId();
@@ -974,6 +964,43 @@ public class Reader implements OpenApiReader {
             return path.getPatch().getOperationId();
         }
         return "";
+    }
+
+    private boolean isEmptyComponents(Components components) {
+        if (components == null) {
+            return true;
+        }
+        if (components.getSchemas() != null && components.getSchemas().size() > 0) {
+            return false;
+        }
+        if (components.getSecuritySchemes() != null && components.getSecuritySchemes().size() > 0) {
+            return false;
+        }
+        if (components.getCallbacks() != null && components.getCallbacks().size() > 0) {
+            return false;
+        }
+        if (components.getExamples() != null && components.getExamples().size() > 0) {
+            return false;
+        }
+        if (components.getExtensions() != null && components.getExtensions().size() > 0) {
+            return false;
+        }
+        if (components.getHeaders() != null && components.getHeaders().size() > 0) {
+            return false;
+        }
+        if (components.getLinks() != null && components.getLinks().size() > 0) {
+            return false;
+        }
+        if (components.getParameters() != null && components.getParameters().size() > 0) {
+            return false;
+        }
+        if (components.getRequestBodies() != null && components.getRequestBodies().size() > 0) {
+            return false;
+        }
+        if (components.getResponses() != null && components.getResponses().size() > 0) {
+            return false;
+        }
+        return true;
     }
 
     protected boolean isOperationHidden(Method method) {
