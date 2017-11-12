@@ -45,8 +45,15 @@ public class TypeNameResolver {
             return cls.getSimpleName();
         }
 
-        final Schema model = cls.getAnnotation(Schema.class);
-        final String modelName = model == null ? null : StringUtils.trimToNull(model.title());
+        io.swagger.v3.oas.annotations.media.Schema mp = null;
+        io.swagger.v3.oas.annotations.media.ArraySchema as = cls.getAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
+        if (as != null) {
+            mp = as.schema();
+        } else {
+            mp = cls.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        }
+
+        final String modelName = mp == null ? null : StringUtils.trimToNull(mp.name());
         return modelName == null ? cls.getSimpleName() : modelName;
     }
 

@@ -49,7 +49,7 @@ public class ModelWithTuple2 {
                 final String name = "MapOf" + WordUtils.capitalize(_typeName(left));
 
                 return new MapSchema()
-                        .title(name)
+                        .name(name)
                         .additionalProperties(context.resolve(left, new Annotation[]{}));
             }
             return super.resolve(type, context, chain);

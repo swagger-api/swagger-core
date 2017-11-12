@@ -2,7 +2,7 @@ package io.swagger.v3.core.oas.models;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(title = "sample_model")
+@Schema(name = "sample_model")
 public class ModelWithAltPropertyName {
     protected int id;
 

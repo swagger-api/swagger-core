@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.oas.models.media.Schema;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -107,6 +108,10 @@ public abstract class AbstractModelConverter implements ModelConverter {
         PropertyName rootName = _intr.findRootName(beanDesc.getClassInfo());
         if (rootName != null && rootName.hasSimpleName()) {
             return rootName.getSimpleName();
+        }
+        String nameFromAnnotation = _intr.findTypeName(beanDesc.getClassInfo());
+        if (StringUtils.isNotBlank(nameFromAnnotation)) {
+            return nameFromAnnotation;
         }
         return _typeNameResolver.nameForType(type);
     }

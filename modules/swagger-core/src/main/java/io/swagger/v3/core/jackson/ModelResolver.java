@@ -220,7 +220,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         property = new Schema().$ref(constructRef(name));
                     }
                     else if(mi.get$ref() != null) {
-                        property = new Schema().$ref(StringUtils.isNotEmpty(mi.get$ref()) ? mi.get$ref() : mi.getTitle());
+                        property = new Schema().$ref(StringUtils.isNotEmpty(mi.get$ref()) ? mi.get$ref() : mi.getName());
                     }
                     else {
                         property = mi;

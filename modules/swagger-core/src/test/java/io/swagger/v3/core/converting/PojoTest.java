@@ -3,6 +3,7 @@ package io.swagger.v3.core.converting;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.ResourceUtils;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.testng.annotations.Test;
 
@@ -31,7 +32,7 @@ public class PojoTest {
     @Test
     public void testModelWithTitle() {
 
-        String yaml = "My Pojo:\n" +
+        String yaml = "ClassWithTitle:\n" +
             "  type: object\n" +
             "  title: 'My Pojo'\n" +
             "  properties:\n" +
@@ -246,7 +247,6 @@ public class PojoTest {
 
         String yaml = "AuthorizedUser:\n" +
                 "  type: object\n" +
-                "  title: AuthorizedUser\n" +
                 "  properties:\n" +
                 "    id:\n" +
                 "      type: string\n" +
@@ -255,7 +255,7 @@ public class PojoTest {
         SerializationMatchers.assertEqualsToYaml(read(ClassWithIdConstraints.class), yaml);
     }
 
-    @Schema(title = "AuthorizedUser")
+    @Schema(name = "AuthorizedUser")
     static class ClassWithIdConstraints {
         @Schema(pattern = "^\\d{3}-?\\d{2}-?\\d{4}$", description = "A valid user social security")
         private String id;
@@ -278,13 +278,13 @@ public class PojoTest {
                 "  $ref: \"#/components/schemas/AuthorizedUser\"";
 
         String yamlUser = "type: object\n" +
-                "title: AuthorizedUser\n" +
                 "properties:\n" +
                 "  id:\n" +
                 "    type: string\n" +
                 "    description: 'A valid user social security'\n" +
                 "    pattern: '^\\d{3}-?\\d{2}-?\\d{4}$'";
         Map<String, io.swagger.v3.oas.models.media.Schema> map = readAll(ArbitraryDataReceiver.class);
+        Yaml.prettyPrint(map);
         SerializationMatchers.assertEqualsToYaml(map.get("ArbitraryDataReceiver"), yaml);
         SerializationMatchers.assertEqualsToYaml(map.get("AuthorizedUser"), yamlUser);
 
@@ -363,7 +363,7 @@ public class PojoTest {
     @Test(description = "Shows how to override a model name")
     public void testModelNameOverride () {
 
-        String yaml = "ModelWithNameOverride:\n" +
+        String yaml = "Employee:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
                 "    id:\n" +
