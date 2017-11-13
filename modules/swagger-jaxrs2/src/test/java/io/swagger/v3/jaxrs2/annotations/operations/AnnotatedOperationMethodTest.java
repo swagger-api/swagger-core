@@ -1,6 +1,7 @@
 package io.swagger.v3.jaxrs2.annotations.operations;
 
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
+import io.swagger.v3.jaxrs2.resources.GenericResponsesResource;
 import io.swagger.v3.jaxrs2.resources.HiddenUserResource;
 import io.swagger.v3.jaxrs2.resources.PetResource;
 import io.swagger.v3.jaxrs2.resources.SimpleUserResource;
@@ -605,6 +606,48 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
 
     }
 
+    @Test(description = "reads the resource with generic response from sample")
+    public void testGenericResponseResource() throws IOException {
+        String yaml = "openapi: 3.0.0\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      summary: Returns a list of somethings\n" +
+                "      operationId: getSomethings\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/SomethingResponse'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    SomethingResponse:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        data:\n" +
+                "          $ref: '#/components/schemas/DataSomething'\n" +
+                "    DataSomething:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        items:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            $ref: '#/components/schemas/Something'\n" +
+                "    Data:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        items:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: object\n" +
+                "    Something:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: string\n";
+        compareAsYaml(GenericResponsesResource.class, yaml);
+    }
     @Test(description = "reads the user resource from sample")
     public void testCompleteUserResource() throws IOException {
         String expectedYAML = "openapi: 3.0.0\n" +

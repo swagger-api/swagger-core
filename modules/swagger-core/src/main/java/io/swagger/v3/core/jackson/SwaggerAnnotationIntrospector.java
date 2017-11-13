@@ -83,6 +83,20 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
 
     @Override
     public String findTypeName(AnnotatedClass ac) {
+        io.swagger.v3.oas.annotations.media.Schema mp = null;
+
+        io.swagger.v3.oas.annotations.media.ArraySchema as = ac.getAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
+        if (as != null) {
+            mp = as.schema();
+        } else {
+            mp = ac.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        }
+
+        // allow override of name from annotation
+        if (mp != null && !mp.name().isEmpty()) {
+            return mp.name();
+        }
+
         return null;
     }
 }

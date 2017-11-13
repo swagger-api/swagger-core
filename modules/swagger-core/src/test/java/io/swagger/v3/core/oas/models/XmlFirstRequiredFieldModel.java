@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@Schema(title = "aaa")
+@Schema(name = "aaa")
 public class XmlFirstRequiredFieldModel {
     @XmlElement(name = "a")
     @Schema(description = "bla", required = true)

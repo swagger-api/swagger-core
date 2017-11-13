@@ -93,8 +93,8 @@ public class ModelConverterContextImpl implements ModelConverterContext {
             modelByType.put(type, resolved);
 
             Schema resolvedImpl = resolved;
-            if(resolvedImpl.getTitle() != null) {
-                modelByName.put(resolvedImpl.getTitle(), resolved);
+            if(resolvedImpl.getName() != null) {
+                modelByName.put(resolvedImpl.getName(), resolved);
             }
         }
 
