@@ -3,6 +3,7 @@ package io.swagger.v3.core.jackson;
 //import io.swagger.annotations.ApiModel;
 
 import com.fasterxml.jackson.databind.JavaType;
+import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.StringUtils;
@@ -45,13 +46,7 @@ public class TypeNameResolver {
             return cls.getSimpleName();
         }
 
-        io.swagger.v3.oas.annotations.media.Schema mp = null;
-        io.swagger.v3.oas.annotations.media.ArraySchema as = cls.getAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
-        if (as != null) {
-            mp = as.schema();
-        } else {
-            mp = cls.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
-        }
+        io.swagger.v3.oas.annotations.media.Schema mp = AnnotationsUtils.getSchemaAnnotation(cls);
 
         final String modelName = mp == null ? null : StringUtils.trimToNull(mp.name());
         return modelName == null ? cls.getSimpleName() : modelName;

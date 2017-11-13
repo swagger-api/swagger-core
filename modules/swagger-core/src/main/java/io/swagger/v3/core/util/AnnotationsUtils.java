@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util;
 
+import com.fasterxml.jackson.databind.introspect.Annotated;
 import io.swagger.v3.oas.annotations.links.LinkParameter;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.models.ExternalDocumentation;
@@ -630,5 +631,30 @@ public abstract class AnnotationsUtils {
             content.addMediaType(ParameterProcessor.MEDIA_TYPE, mediaType);
         }
 
+    }
+
+    public static io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Annotated a) {
+        if (a == null) {
+            return null;
+        }
+        io.swagger.v3.oas.annotations.media.ArraySchema arraySchema = a.getAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
+        if (arraySchema != null) {
+            return arraySchema.schema();
+        } else {
+            return a.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        }
+    }
+    public static io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Class<?> cls) {
+        if (cls == null) {
+            return null;
+        }
+        io.swagger.v3.oas.annotations.media.Schema mp = null;
+        io.swagger.v3.oas.annotations.media.ArraySchema as = cls.getAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
+        if (as != null) {
+            mp = as.schema();
+        } else {
+            mp = cls.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        }
+        return mp;
     }
 }

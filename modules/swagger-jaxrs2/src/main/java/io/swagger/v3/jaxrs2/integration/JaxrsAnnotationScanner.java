@@ -1,6 +1,7 @@
 package io.swagger.v3.jaxrs2.integration;
 
 import io.swagger.v3.jaxrs2.integration.api.JaxrsOpenApiScanner;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.integration.IgnoredPackages;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
@@ -94,8 +95,7 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
         final Reflections reflections;
         reflections = new Reflections(config);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(javax.ws.rs.Path.class);
-        // TODO add if adding annotations
-        //classes.addAll(reflections.getTypesAnnotatedWith(OpenApiDefinition.class));
+        classes.addAll(reflections.getTypesAnnotatedWith(OpenAPIDefinition.class));
 
         for (Class<?> cls : classes) {
             if (allowAllPackages) {
