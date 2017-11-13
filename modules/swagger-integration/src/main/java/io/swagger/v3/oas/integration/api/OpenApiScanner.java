@@ -11,5 +11,4 @@ public interface OpenApiScanner {
 
     Map<String, Object> resources();
 
-
 }

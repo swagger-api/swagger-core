@@ -38,22 +38,22 @@ public class EncodingTest extends AbstractAnnotationTest {
         int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
-                              "      summary: Simple get operation\n" +
-                              "      description: Defines a simple get operation with no inputs and a complex\n" +
-                              "      operationId: simpleGet\n" +
-                              "      responses:\n" +
-                              "        200:\n" +
-                              "          description: voila!\n" +
-                              "          content:\n" +
-                              "            application/json:\n" +
-                              "              schema:\n" +
-                              "                type: string\n" +
-                              "              encoding:\n" +
-                              "                test:\n" +
-                              "                  contentType: text/plain\n" +
-                              "                  style: form\n" +
-                              "                  explode: true\n" +
-                              "                  allowReserved: true";
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex\n" +
+                "      operationId: simpleGet\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "              encoding:\n" +
+                "                test:\n" +
+                "                  contentType: text/plain\n" +
+                "                  style: form\n" +
+                "                  explode: true\n" +
+                "                  allowReserved: true";
 
         String extractedYAML = openApiYAML.substring(start, end);
 
@@ -62,27 +62,28 @@ public class EncodingTest extends AbstractAnnotationTest {
 
     static class SimpleGetOperationWithEncodingInApiResponse {
         @Operation(
-                   summary = "Simple get operation",
-                   description = "Defines a simple get operation with no inputs and a complex",
-                   operationId = "simpleGet",
-                   responses = {
-                                 @ApiResponse(
-                                              responseCode = "200",
-                                              description = "voila!",
-                                              content = @Content(
-                                                                 mediaType = "application/json",
-                                                                 schema = @Schema(
-                                                                                  name = "test"),
-                                                                 encoding = @Encoding(
-                                                                                      name = "test",
-                                                                                      contentType = "text/plain",
-                                                                                      style = "FORM",
-                                                                                      allowReserved = true,
-                                                                                      explode = true)))
-                   })
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex",
+                operationId = "simpleGet",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!",
+                                content = @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(
+                                                name = "test"),
+                                        encoding = @Encoding(
+                                                name = "test",
+                                                contentType = "text/plain",
+                                                style = "FORM",
+                                                allowReserved = true,
+                                                explode = true)))
+                })
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet() {
+        }
     }
 
     //Test encoding inside Parameter/Content
@@ -94,25 +95,25 @@ public class EncodingTest extends AbstractAnnotationTest {
         int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
-                              "      summary: Simple get operation\n" +
-                              "      description: Defines a simple get operation with no inputs and a complex\n" +
-                              "      operationId: getWithEncodingInParameter\n" +
-                              "      parameters:\n" +
-                              "      - name: testParam\n" +
-                              "        in: query\n" +
-                              "        description: A parameter for testing encoding annotation.\n" +
-                              "        required: true\n" +
-                              "        content:\n" +
-                              "          application/json:\n" +
-                              "            schema:\n" +
-                              "              type: string\n" +
-                              "            encoding:\n" +
-                              "              testingParam:\n" +
-                              "                style: form\n" +
-                              "                allowReserved: true\n" +
-                              "      responses:\n" +
-                              "        200:\n" +
-                              "          description: voila!";
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex\n" +
+                "      operationId: getWithEncodingInParameter\n" +
+                "      parameters:\n" +
+                "      - name: testParam\n" +
+                "        in: query\n" +
+                "        description: A parameter for testing encoding annotation.\n" +
+                "        required: true\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: string\n" +
+                "            encoding:\n" +
+                "              testingParam:\n" +
+                "                style: form\n" +
+                "                allowReserved: true\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!";
 
         String extractedYAML = openApiYAML.substring(start, end);
 
@@ -121,35 +122,36 @@ public class EncodingTest extends AbstractAnnotationTest {
 
     static class GetOperationWithEncodingInParameter {
         @Operation(
-                   summary = "Simple get operation",
-                   description = "Defines a simple get operation with no inputs and a complex",
-                   operationId = "getWithEncodingInParameter",
-                   parameters = {
-                                  @Parameter(
-                                             name = "testParam",
-                                             in = ParameterIn.QUERY,
-                                             description = "A parameter for testing encoding annotation.",
-                                             required = true,
-                                             content = @Content(
-                                                                mediaType = "application/json",
-                                                                schema = @Schema(
-                                                                                 name = "testingParam"),
-                                                                encoding = @Encoding(
-                                                                                     name = "testingParam",
-                                                                                     style = "FORM",
-                                                                                     allowReserved = true,
-                                                                                     explode = false))
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex",
+                operationId = "getWithEncodingInParameter",
+                parameters = {
+                        @Parameter(
+                                name = "testParam",
+                                in = ParameterIn.QUERY,
+                                description = "A parameter for testing encoding annotation.",
+                                required = true,
+                                content = @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(
+                                                name = "testingParam"),
+                                        encoding = @Encoding(
+                                                name = "testingParam",
+                                                style = "FORM",
+                                                allowReserved = true,
+                                                explode = false))
 
-                                  )
-                   },
-                   responses = {
-                                 @ApiResponse(
-                                              responseCode = "200",
-                                              description = "voila!")
-                   })
+                        )
+                },
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!")
+                })
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet() {
+        }
     }
 
     //Test encoding inside Parameter/Content
@@ -161,33 +163,33 @@ public class EncodingTest extends AbstractAnnotationTest {
         int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
-                              "      summary: Simple get operation\n" +
-                              "      description: Defines a simple get operation with no inputs and a complex\n" +
-                              "      operationId: getWithEncodingArrayInParameter\n" +
-                              "      parameters:\n" +
-                              "      - name: testParam\n" +
-                              "        in: query\n" +
-                              "        description: A parameter for testing encoding annotation.\n" +
-                              "        required: true\n" +
-                              "        content:\n" +
-                              "          application/json:\n" +
-                              "            schema:\n" +
-                              "              title: testEncoding2\n" +
-                              "              type: string\n" +
-                              "            encoding:\n" +
-                              "              testEncoding:\n" +
-                              "                style: form\n" +
-                              "                allowReserved: true\n" +
-                              "              testEncoding2:\n" +
-                              "                headers:\n" +
-                              "                  testHeader:\n" +
-                              "                    required: true\n" +
-                              "                    style: simple\n" +
-                              "                style: form\n" +
-                              "                allowReserved: true\n" +
-                              "      responses:\n" +
-                              "        200:\n" +
-                              "          description: voila!";
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex\n" +
+                "      operationId: getWithEncodingArrayInParameter\n" +
+                "      parameters:\n" +
+                "      - name: testParam\n" +
+                "        in: query\n" +
+                "        description: A parameter for testing encoding annotation.\n" +
+                "        required: true\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              title: testEncoding2\n" +
+                "              type: string\n" +
+                "            encoding:\n" +
+                "              testEncoding:\n" +
+                "                style: form\n" +
+                "                allowReserved: true\n" +
+                "              testEncoding2:\n" +
+                "                headers:\n" +
+                "                  testHeader:\n" +
+                "                    required: true\n" +
+                "                    style: simple\n" +
+                "                style: form\n" +
+                "                allowReserved: true\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!";
 
         String extractedYAML = openApiYAML.substring(start, end);
 
@@ -196,45 +198,46 @@ public class EncodingTest extends AbstractAnnotationTest {
 
     static class GetOperationWithEncodingArrayInParameter {
         @Operation(
-                   summary = "Simple get operation",
-                   description = "Defines a simple get operation with no inputs and a complex",
-                   operationId = "getWithEncodingArrayInParameter",
-                   parameters = {
-                                  @Parameter(
-                                             name = "testParam",
-                                             in = ParameterIn.QUERY,
-                                             description = "A parameter for testing encoding annotation.",
-                                             required = true,
-                                             content = @Content(
-                                                                mediaType = "application/json",
-                                                                schema = @Schema(
-                                                                                 name = "testEncoding",
-                                                                                 title = "testEncoding2"),
-                                                                encoding = {
-                                                                             @Encoding(
-                                                                                       name = "testEncoding",
-                                                                                       style = "FORM",
-                                                                                       allowReserved = true,
-                                                                                       explode = false),
-                                                                             @Encoding(
-                                                                                       name = "testEncoding2",
-                                                                                       style = "FORM",
-                                                                                       allowReserved = true,
-                                                                                       explode = false,
-                                                                                       headers = @Header(
-                                                                                                         name = "testHeader",
-                                                                                                         required = true)) })
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex",
+                operationId = "getWithEncodingArrayInParameter",
+                parameters = {
+                        @Parameter(
+                                name = "testParam",
+                                in = ParameterIn.QUERY,
+                                description = "A parameter for testing encoding annotation.",
+                                required = true,
+                                content = @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(
+                                                name = "testEncoding",
+                                                title = "testEncoding2"),
+                                        encoding = {
+                                                @Encoding(
+                                                        name = "testEncoding",
+                                                        style = "FORM",
+                                                        allowReserved = true,
+                                                        explode = false),
+                                                @Encoding(
+                                                        name = "testEncoding2",
+                                                        style = "FORM",
+                                                        allowReserved = true,
+                                                        explode = false,
+                                                        headers = @Header(
+                                                                name = "testHeader",
+                                                                required = true))})
 
-                                  )
-                   },
-                   responses = {
-                                 @ApiResponse(
-                                              responseCode = "200",
-                                              description = "voila!")
-                   })
+                        )
+                },
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!")
+                })
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet() {
+        }
     }
 
     //Test encoding inside RequestBody/Content
@@ -246,24 +249,24 @@ public class EncodingTest extends AbstractAnnotationTest {
         int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
-                              "      summary: Simple get operation\n" +
-                              "      description: Defines a simple get operation with encoding in requestBody\n" +
-                              "      operationId: getWithEncodingInRequestBody\n" +
-                              "      requestBody:\n" +
-                              "        description: Test requestBody with encoding.\n" +
-                              "        content:\n" +
-                              "          application/json:\n" +
-                              "            schema:\n" +
-                              "              type: string\n" +
-                              "            encoding:\n" +
-                              "              testRequestBody:\n" +
-                              "                contentType: text/plain\n" +
-                              "                style: form\n" +
-                              "                explode: true\n" +
-                              "        required: true\n" +
-                              "      responses:\n" +
-                              "        200:\n" +
-                              "          description: voila!";
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with encoding in requestBody\n" +
+                "      operationId: getWithEncodingInRequestBody\n" +
+                "      requestBody:\n" +
+                "        description: Test requestBody with encoding.\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: string\n" +
+                "            encoding:\n" +
+                "              testRequestBody:\n" +
+                "                contentType: text/plain\n" +
+                "                style: form\n" +
+                "                explode: true\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(extractedYAML, expectedYAML);
@@ -271,14 +274,14 @@ public class EncodingTest extends AbstractAnnotationTest {
 
     static class GetOperationWithEncodingInRequestBody {
         @Operation(
-                   summary = "Simple get operation",
-                   description = "Defines a simple get operation with encoding in requestBody",
-                   operationId = "getWithEncodingInRequestBody",
-                   responses = {
-                                 @ApiResponse(
-                                              responseCode = "200",
-                                              description = "voila!")
-                   })
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with encoding in requestBody",
+                operationId = "getWithEncodingInRequestBody",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!")
+                })
 
         @GET
         @Path("/path")
@@ -293,7 +296,8 @@ public class EncodingTest extends AbstractAnnotationTest {
                                 name = "testRequestBody",
                                 contentType = "text/plain",
                                 style = "FORM",
-                                explode = true))) String testRequestBody) {}
+                                explode = true))) String testRequestBody) {
+        }
     }
 
     //Test an operation with ApiResponse but no Content/Encoding in it
@@ -304,12 +308,12 @@ public class EncodingTest extends AbstractAnnotationTest {
         int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
-                              "      summary: Simple get operation\n" +
-                              "      description: Defines a simple get operation with no inputs and a complex\n" +
-                              "      operationId: getWithNoParameters\n" +
-                              "      responses:\n" +
-                              "        200:\n" +
-                              "          description: voila!";
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex\n" +
+                "      operationId: getWithNoParameters\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(extractedYAML, expectedYAML);
@@ -317,17 +321,18 @@ public class EncodingTest extends AbstractAnnotationTest {
 
     static class SimpleGetOperationTest {
         @Operation(
-                   summary = "Simple get operation",
-                   description = "Defines a simple get operation with no inputs and a complex",
-                   operationId = "getWithNoParameters",
-                   responses = {
-                                 @ApiResponse(
-                                              responseCode = "200",
-                                              description = "voila!")
-                   })
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex",
+                operationId = "getWithNoParameters",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!")
+                })
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet() {
+        }
     }
 
     //Test an operation with no response, parameters, or requestBody
@@ -338,12 +343,12 @@ public class EncodingTest extends AbstractAnnotationTest {
         int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
-                              "      summary: Simple get operation\n" +
-                              "      description: Defines a simple get operation with no inputs or responses\n" +
-                              "      operationId: getWithNoParametersAndNoResponses\n" +
-                              "      responses:\n" +
-                              "        default:\n" +
-                              "          description: default response";
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs or responses\n" +
+                "      operationId: getWithNoParametersAndNoResponses\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(extractedYAML, expectedYAML);
@@ -351,12 +356,13 @@ public class EncodingTest extends AbstractAnnotationTest {
 
     static class SimpleGetWithoutResponses {
         @Operation(
-                   summary = "Simple get operation",
-                   description = "Defines a simple get operation with no inputs or responses",
-                   operationId = "getWithNoParametersAndNoResponses")
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs or responses",
+                operationId = "getWithNoParametersAndNoResponses")
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet() {
+        }
     }
 
 }

@@ -16,6 +16,7 @@ public class AnimalClass {
 
     String type;
     String name;
+
     public String getName() {
         return name;
     }
@@ -24,11 +25,11 @@ public class AnimalClass {
         this.name = name;
     }
 
-    public String getType(){
+    public String getType() {
         return type;
     }
 
-    public void setType(String type){
+    public void setType(String type) {
         this.type = type;
     }
 }

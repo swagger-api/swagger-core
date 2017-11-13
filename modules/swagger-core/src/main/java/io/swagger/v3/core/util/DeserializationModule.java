@@ -18,7 +18,6 @@ public class DeserializationModule extends SimpleModule {
         this.addDeserializer(Encoding.StyleEnum.class, new EncodingStyleEnumDeserializer());
         this.addDeserializer(EncodingProperty.StyleEnum.class, new EncodingPropertyStyleEnumDeserializer());
 
-
         this.addDeserializer(SecurityScheme.class, new SecuritySchemeDeserializer());
     }
 }

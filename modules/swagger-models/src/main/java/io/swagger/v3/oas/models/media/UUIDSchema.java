@@ -25,133 +25,128 @@ import java.util.UUID;
  * UUIDSchema
  */
 
-
 public class UUIDSchema extends Schema<UUID> {
-  private String type = "string";
-  private String format = "uuid";
+    private String type = "string";
+    private String format = "uuid";
 
-  /**
-   * returns the type property from a UUIDSchema instance.
-   *
-   * @return String type
-   **/
+    /**
+     * returns the type property from a UUIDSchema instance.
+     *
+     * @return String type
+     **/
 
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public UUIDSchema type(String type) {
-    this.type = type;
-    return this;
-  }
-
-  /**
-   * returns the format property from a UUIDSchema instance.
-   *
-   * @return String format
-   **/
-
-  public String getFormat() {
-    return format;
-  }
-
-  public void setFormat(String format) {
-    this.format = format;
-  }
-
-  public UUIDSchema format(String format) {
-    this.format = format;
-    return this;
-  }
-
-  public UUIDSchema _default(UUID _default) {
-    super.setDefault(_default);
-    return this;
-  }
-
-  public UUIDSchema _default(String _default) {
-    if(_default != null) {
-      super.setDefault(UUID.fromString(_default));
+    public String getType() {
+        return type;
     }
-    return this;
-  }
 
-  @Override
-  protected UUID cast(Object value) {
-    if(value != null) {
-      try {
-        return UUID.fromString(value.toString());
-      }
-      catch (Exception e) {
-      }
+    public void setType(String type) {
+        this.type = type;
     }
-    return null;
-  }
 
-  public UUIDSchema _enum(List<UUID> _enum) {
-    this._enum = _enum;
-    return this;
-  }
-
-  public UUIDSchema addEnumItem(UUID _enumItem) {
-    if(this._enum == null) {
-      this._enum = new ArrayList<UUID>();
+    public UUIDSchema type(String type) {
+        this.type = type;
+        return this;
     }
-    this._enum.add(_enumItem);
-    return this;
-  }
 
+    /**
+     * returns the format property from a UUIDSchema instance.
+     *
+     * @return String format
+     **/
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
+    public String getFormat() {
+        return format;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    public void setFormat(String format) {
+        this.format = format;
     }
-    UUIDSchema uuIDSchema = (UUIDSchema) o;
-    return Objects.equals(this.type, uuIDSchema.type) &&
-        Objects.equals(this.format, uuIDSchema.format) &&
-        Objects.equals(this._default, uuIDSchema._default) &&
-        Objects.equals(this._enum, uuIDSchema._enum) &&
-        super.equals(o);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(type, format, _default, _enum, super.hashCode());
-  }
-
-
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class UUIDSchema {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    format: ").append(toIndentedString(format)).append("\n");
-    sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
-    sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+    public UUIDSchema format(String format) {
+        this.format = format;
+        return this;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
-  
+
+    public UUIDSchema _default(UUID _default) {
+        super.setDefault(_default);
+        return this;
+    }
+
+    public UUIDSchema _default(String _default) {
+        if (_default != null) {
+            super.setDefault(UUID.fromString(_default));
+        }
+        return this;
+    }
+
+    @Override
+    protected UUID cast(Object value) {
+        if (value != null) {
+            try {
+                return UUID.fromString(value.toString());
+            } catch (Exception e) {
+            }
+        }
+        return null;
+    }
+
+    public UUIDSchema _enum(List<UUID> _enum) {
+        this._enum = _enum;
+        return this;
+    }
+
+    public UUIDSchema addEnumItem(UUID _enumItem) {
+        if (this._enum == null) {
+            this._enum = new ArrayList<UUID>();
+        }
+        this._enum.add(_enumItem);
+        return this;
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UUIDSchema uuIDSchema = (UUIDSchema) o;
+        return Objects.equals(this.type, uuIDSchema.type) &&
+                Objects.equals(this.format, uuIDSchema.format) &&
+                Objects.equals(this._default, uuIDSchema._default) &&
+                Objects.equals(this._enum, uuIDSchema._enum) &&
+                super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, format, _default, _enum, super.hashCode());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class UUIDSchema {\n");
+        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+        sb.append("    type: ").append(toIndentedString(type)).append("\n");
+        sb.append("    format: ").append(toIndentedString(format)).append("\n");
+        sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
+        sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
+
 }
 

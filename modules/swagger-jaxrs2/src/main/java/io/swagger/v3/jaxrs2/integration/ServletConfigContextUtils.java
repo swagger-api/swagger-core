@@ -29,17 +29,17 @@ public class ServletConfigContextUtils {
         if (!isServletConfigAvailable(servletConfig)) {
             return null;
         }
-        String resourcePackage = getInitParam (servletConfig, OPENAPI_CONFIGURATION_RESOURCEPACKAGE_KEY);
+        String resourcePackage = getInitParam(servletConfig, OPENAPI_CONFIGURATION_RESOURCEPACKAGE_KEY);
         if (resourcePackage == null) {
             // jersey 1
-            resourcePackage = getInitParam (servletConfig, JERSEY1_PACKAGE_KEY);
+            resourcePackage = getInitParam(servletConfig, JERSEY1_PACKAGE_KEY);
             if (resourcePackage != null) {
                 resourcePackage = resourcePackage.replace(';', ',');
             }
         }
         if (resourcePackage == null) {
             // jersey 2
-            resourcePackage = getInitParam (servletConfig, JERSEY2_PACKAGE_KEY);
+            resourcePackage = getInitParam(servletConfig, JERSEY2_PACKAGE_KEY);
             if (resourcePackage != null) {
                 resourcePackage = resourcePackage.replace(';', ',');
             }
@@ -51,14 +51,14 @@ public class ServletConfigContextUtils {
 
     }
 
-    public static Set<String> resolveResourceClasses (ServletConfig servletConfig) {
+    public static Set<String> resolveResourceClasses(ServletConfig servletConfig) {
         if (!isServletConfigAvailable(servletConfig)) {
             return null;
         }
-        String resourceClasses = getInitParam (servletConfig, OPENAPI_CONFIGURATION_RESOURCECLASSES_KEY);
+        String resourceClasses = getInitParam(servletConfig, OPENAPI_CONFIGURATION_RESOURCECLASSES_KEY);
         if (resourceClasses == null) {
             // jersey 2
-            resourceClasses = getInitParam (servletConfig, JERSEY2_CLASSES_KEY);
+            resourceClasses = getInitParam(servletConfig, JERSEY2_CLASSES_KEY);
             if (resourceClasses != null) {
                 resourceClasses = resourceClasses.replace(';', ',');
             }
@@ -70,12 +70,11 @@ public class ServletConfigContextUtils {
 
     }
 
-
     public static String getInitParam(ServletConfig sc, String paramKey) {
         if (!isServletConfigAvailable(sc)) {
             return null;
         }
-        return sc.getInitParameter(paramKey) == null?
+        return sc.getInitParameter(paramKey) == null ?
                 sc.getInitParameter(paramKey) :
                 sc.getInitParameter(paramKey);
     }
@@ -115,8 +114,10 @@ public class ServletConfigContextUtils {
         return ctxId;
     }
 
-    public static boolean isServletConfigAvailable (ServletConfig sc) {
-        if (sc == null) return false;
+    public static boolean isServletConfigAvailable(ServletConfig sc) {
+        if (sc == null) {
+            return false;
+        }
         try {
             sc.getInitParameter("test");
         } catch (Exception e) {

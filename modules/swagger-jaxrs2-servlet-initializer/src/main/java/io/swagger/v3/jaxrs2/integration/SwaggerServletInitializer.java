@@ -24,28 +24,28 @@ public class SwaggerServletInitializer implements ServletContainerInitializer {
     }
 
     public SwaggerServletInitializer() {
-        }
+    }
 
-        public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
-            if (classes != null && classes.size() != 0) {
-                Set<Class<?>> resources = new LinkedHashSet();
-                classes.stream()
-                        .filter(c -> ignored.stream().noneMatch(i -> c.getName().startsWith(i)))
-                        .forEach(resources::add);
-                if (!resources.isEmpty()) {
-                    // init context
-                    try {
-                        SwaggerConfiguration oasConfig = new SwaggerConfiguration()
-                                .resourceClasses(resources.stream().map(c -> c.getName()).collect(Collectors.toSet()));
+    public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
+        if (classes != null && classes.size() != 0) {
+            Set<Class<?>> resources = new LinkedHashSet();
+            classes.stream()
+                    .filter(c -> ignored.stream().noneMatch(i -> c.getName().startsWith(i)))
+                    .forEach(resources::add);
+            if (!resources.isEmpty()) {
+                // init context
+                try {
+                    SwaggerConfiguration oasConfig = new SwaggerConfiguration()
+                            .resourceClasses(resources.stream().map(c -> c.getName()).collect(Collectors.toSet()));
 
-                        new JaxrsOpenApiContextBuilder()
-                                .openApiConfiguration(oasConfig)
-                                .buildContext(true);
-                    } catch (OpenApiConfigurationException e) {
-                        throw new RuntimeException(e.getMessage(), e);
-                    }
+                    new JaxrsOpenApiContextBuilder()
+                            .openApiConfiguration(oasConfig)
+                            .buildContext(true);
+                } catch (OpenApiConfigurationException e) {
+                    throw new RuntimeException(e.getMessage(), e);
                 }
             }
         }
-
     }
+
+}

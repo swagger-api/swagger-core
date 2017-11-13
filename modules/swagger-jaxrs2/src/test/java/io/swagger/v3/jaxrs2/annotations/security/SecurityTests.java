@@ -82,7 +82,6 @@ public class SecurityTests extends AbstractAnnotationTest {
                 "            write:pets: modify pets in your account";
         compareAsYaml(SecurityResource.class, expectedYAML);
 
-
     }
 
     @Test
@@ -108,7 +107,6 @@ public class SecurityTests extends AbstractAnnotationTest {
         assertEquals(extractedYAML, expectedYAML);
 
     }
-
 
     @SecurityScheme(name = "myOauth2Security",
             type = SecuritySchemeType.OAUTH2,

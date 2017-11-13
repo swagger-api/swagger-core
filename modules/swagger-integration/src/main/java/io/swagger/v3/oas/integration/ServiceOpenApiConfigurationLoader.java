@@ -11,7 +11,7 @@ import java.util.ServiceLoader;
 public class ServiceOpenApiConfigurationLoader implements OpenApiConfigurationLoader {
 
     @Override
-    public OpenAPIConfiguration load(String path)  throws IOException {
+    public OpenAPIConfiguration load(String path) throws IOException {
 
         ServiceLoader<OpenAPIConfigBuilder> loader = ServiceLoader.load(OpenAPIConfigBuilder.class);
         if (loader.iterator().hasNext()) {

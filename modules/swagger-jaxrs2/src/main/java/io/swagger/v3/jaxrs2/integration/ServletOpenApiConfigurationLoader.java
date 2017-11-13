@@ -40,7 +40,7 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
     }
 
     @Override
-    public OpenAPIConfiguration load(String path)  throws IOException {
+    public OpenAPIConfiguration load(String path) throws IOException {
         if (servletConfig == null) {
             return null;
         }
@@ -62,11 +62,10 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
         if (!StringUtils.isBlank(location)) {
             if (classpathOpenApiConfigurationLoader.exists(location)) {
                 return classpathOpenApiConfigurationLoader.load(location);
-            }else if (fileOpenApiConfigurationLoader.exists(location)) {
+            } else if (fileOpenApiConfigurationLoader.exists(location)) {
                 return fileOpenApiConfigurationLoader.load(location);
             }
         }
-
 
         String builderClassName = getInitParam(servletConfig, OPENAPI_CONFIGURATION_BUILDER_KEY);
         if (StringUtils.isNotBlank(builderClassName)) {

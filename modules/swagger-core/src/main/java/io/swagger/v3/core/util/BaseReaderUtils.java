@@ -40,8 +40,7 @@ public final class BaseReaderUtils {
                             value = new HashMap<String, Object>();
                             map.put(key, value);
                         }
-                        @SuppressWarnings("unchecked")
-                        final Map<String, Object> mapValue = (Map<String, Object>) value;
+                        @SuppressWarnings("unchecked") final Map<String, Object> mapValue = (Map<String, Object>) value;
                         mapValue.put(propertyName, propertyValue);
                     }
                 }

@@ -22,8 +22,8 @@ public interface OpenAPIExtension {
      * Decorates operation with additional vendor based extensions.
      *
      * @param operation the operation, build from swagger definition
-     * @param method the method for additional scan
-     * @param chain the chain with swagger extensions to process
+     * @param method    the method for additional scan
+     * @param chain     the chain with swagger extensions to process
      */
     void decorateOperation(Operation operation, Method method, Iterator<OpenAPIExtension> chain);
 }

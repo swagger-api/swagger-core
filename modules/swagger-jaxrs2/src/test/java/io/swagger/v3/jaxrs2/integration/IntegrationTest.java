@@ -22,7 +22,7 @@ public class IntegrationTest {
     private final Set expectedKeys = new HashSet<String>(Arrays.asList("/packageA", "/packageB"));
 
     @Test(description = "scan a simple resource")
-    public void shouldScanWithNewInitialization() throws Exception{
+    public void shouldScanWithNewInitialization() throws Exception {
         SwaggerConfiguration config = new SwaggerConfiguration()
                 .resourcePackages(Stream.of("com.my.project.resources", "org.my.project.resources").collect(Collectors.toSet()))
                 .openAPI(new OpenAPI().info(new Info().description("TEST INFO DESC")));

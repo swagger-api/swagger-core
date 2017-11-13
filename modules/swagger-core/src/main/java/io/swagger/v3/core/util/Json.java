@@ -9,11 +9,12 @@ public class Json {
     private static ObjectMapper mapper;
 
     public static ObjectMapper mapper() {
-        if(mapper == null) {
+        if (mapper == null) {
             mapper = ObjectMapperFactory.createJson();
         }
         return mapper;
     }
+
     public static ObjectWriter pretty() {
         return mapper().writer(new DefaultPrettyPrinter());
     }

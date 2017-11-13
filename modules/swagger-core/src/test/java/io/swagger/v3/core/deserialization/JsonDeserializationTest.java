@@ -42,10 +42,10 @@ public class JsonDeserializationTest {
         final String json = ResourceUtils.loadClassResource(getClass(), "specFiles/compositionTest-3.0.json");
         final Object deserialized = m.readValue(json, OpenAPI.class);
         assertTrue(deserialized instanceof OpenAPI);
-        OpenAPI openAPI = (OpenAPI)deserialized;
+        OpenAPI openAPI = (OpenAPI) deserialized;
         Schema lizardSchema = openAPI.getComponents().getSchemas().get("Lizard");
         assertTrue(lizardSchema instanceof ComposedSchema);
-        assertEquals(((ComposedSchema)lizardSchema).getAllOf().size(), 2);
+        assertEquals(((ComposedSchema) lizardSchema).getAllOf().size(), 2);
 
         Schema petSchema = openAPI.getComponents().getSchemas().get("Pet");
         assertEquals(petSchema.getDiscriminator().getPropertyName(), "pet_type");

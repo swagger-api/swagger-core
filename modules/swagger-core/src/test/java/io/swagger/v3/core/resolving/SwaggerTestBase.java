@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.v3.core.jackson.ModelResolver;
 
-public abstract class SwaggerTestBase{
+public abstract class SwaggerTestBase {
     static ObjectMapper mapper;
 
     public static ObjectMapper mapper() {

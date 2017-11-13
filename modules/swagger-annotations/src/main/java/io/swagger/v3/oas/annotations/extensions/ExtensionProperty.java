@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
  * A name/value property within a OpenApi extension
  *
  * @see Extension
- *
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)

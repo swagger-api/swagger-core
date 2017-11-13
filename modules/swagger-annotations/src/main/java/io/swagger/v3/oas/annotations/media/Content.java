@@ -25,42 +25,44 @@ import java.lang.annotation.Target;
 /**
  * This object provides schema and examples for a particular media type.
  **/
-@Target({ ElementType.ANNOTATION_TYPE})
+@Target({ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Content {
-  /**
-   * The media type that this object applies to.
-   * @return the media type value
-   **/
-  String mediaType() default "";
+    /**
+     * The media type that this object applies to.
+     *
+     * @return the media type value
+     **/
+    String mediaType() default "";
 
-  /**
-   * An array of examples used to show the use of the associated schema.
-   * @return the list of examples
-   **/
-  ExampleObject[] examples() default {};
+    /**
+     * An array of examples used to show the use of the associated schema.
+     *
+     * @return the list of examples
+     **/
+    ExampleObject[] examples() default {};
 
-  /**
-   * The schema defining the type used for the content.
-   * @return the schema of this media type
-   **/
-  Schema schema() default @Schema();
+    /**
+     * The schema defining the type used for the content.
+     *
+     * @return the schema of this media type
+     **/
+    Schema schema() default @Schema();
 
-  /**
-   * The schema of the array that defines the type used for the content.
-   *
-   * @return the schema of the array
-   */
-  ArraySchema array() default @ArraySchema();
+    /**
+     * The schema of the array that defines the type used for the content.
+     *
+     * @return the schema of the array
+     */
+    ArraySchema array() default @ArraySchema();
 
-
-  /**
-   * An array of encodings
-   * The key, being the property name, MUST exist in the schema as a property.
-   *
-   * @return the array of encodings
-   */
-  Encoding[] encoding() default {};
+    /**
+     * An array of encodings
+     * The key, being the property name, MUST exist in the schema as a property.
+     *
+     * @return the array of encodings
+     */
+    Encoding[] encoding() default {};
 
 }

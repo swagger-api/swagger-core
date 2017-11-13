@@ -36,13 +36,12 @@ public class XmlModelTest {
 
         assertNotNull(xml);
         assertEquals(xml.getName(), "monster");
-        final Schema property = (Schema)model.getProperties().get("children");
+        final Schema property = (Schema) model.getProperties().get("children");
         assertNotNull(property);
         xml = property.getXml();
         assertTrue(xml.getWrapped());
         assertNull(xml.getName());
     }
-
 
     @Test(description = "it should not create an xml object")
     public void itShouldNotCreateXmlObject() {
@@ -52,11 +51,12 @@ public class XmlModelTest {
         assertNotNull(model);
         assertTrue(model instanceof Schema);
 
-        final Schema property = (Schema)model.getProperties().get("streetNumber");
+        final Schema property = (Schema) model.getProperties().get("streetNumber");
         final XML xml = property.getXml();
 
         assertNull(xml);
     }
+
     @Test(description = "it should stay hidden per 534")
     public void stayHidden() {
         final Map<String, Schema> schemas = ModelConverters.getInstance().readAll(Issue534.class);
@@ -138,7 +138,7 @@ public class XmlModelTest {
                 "  name: \"rootName\"";
         final Schema model = Yaml.mapper().readValue(yaml, Schema.class);
 
-        final Schema wrappedList = (Schema)model.getProperties().get("wrappedList");
+        final Schema wrappedList = (Schema) model.getProperties().get("wrappedList");
         assertNotNull(wrappedList);
         assertNotNull(wrappedList.getXml());
         assertEquals(wrappedList.getXml().getName(), "wrappedListItems");

@@ -24,104 +24,99 @@ import java.util.Objects;
  * StringSchema
  */
 
-
 public class StringSchema extends Schema<String> {
-  private String type = "string";
+    private String type = "string";
 
-  /**
-   * returns the type property from a StringSchema instance.
-   *
-   * @return String type
-   **/
+    /**
+     * returns the type property from a StringSchema instance.
+     *
+     * @return String type
+     **/
 
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public StringSchema type(String type) {
-    this.type = type;
-    return this;
-  }
-
-  public StringSchema _default(String _default) {
-    super.setDefault(_default);
-    return this;
-  }
-
-  @Override
-  protected String cast(Object value) {
-    if(value != null) {
-      try {
-          return value.toString();
-      }
-      catch (Exception e) {
-      }
+    public String getType() {
+        return type;
     }
-    return null;
-  }
 
-  public StringSchema _enum(List<String> _enum) {
-    super.setEnum(_enum);
-    return this;
-  }
-
-  public StringSchema addEnumItem(String _enumItem) {
-    if(this._enum == null) {
-      this._enum = new ArrayList<String>();
+    public void setType(String type) {
+        this.type = type;
     }
-    this._enum.add(_enumItem);
-    return this;
-  }
 
-
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
+    public StringSchema type(String type) {
+        this.type = type;
+        return this;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    public StringSchema _default(String _default) {
+        super.setDefault(_default);
+        return this;
     }
-    StringSchema stringSchema = (StringSchema) o;
-    return Objects.equals(this.type, stringSchema.type) &&
-        Objects.equals(this._default, stringSchema._default) &&
-        Objects.equals(this._enum, stringSchema._enum) &&
-        super.equals(o);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(type, _default, _enum, super.hashCode());
-  }
-
-
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class StringSchema {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
-    sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+    @Override
+    protected String cast(Object value) {
+        if (value != null) {
+            try {
+                return value.toString();
+            } catch (Exception e) {
+            }
+        }
+        return null;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
-  
+
+    public StringSchema _enum(List<String> _enum) {
+        super.setEnum(_enum);
+        return this;
+    }
+
+    public StringSchema addEnumItem(String _enumItem) {
+        if (this._enum == null) {
+            this._enum = new ArrayList<String>();
+        }
+        this._enum.add(_enumItem);
+        return this;
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        StringSchema stringSchema = (StringSchema) o;
+        return Objects.equals(this.type, stringSchema.type) &&
+                Objects.equals(this._default, stringSchema._default) &&
+                Objects.equals(this._enum, stringSchema._enum) &&
+                super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, _default, _enum, super.hashCode());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class StringSchema {\n");
+        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+        sb.append("    type: ").append(toIndentedString(type)).append("\n");
+        sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
+        sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
+
 }
 

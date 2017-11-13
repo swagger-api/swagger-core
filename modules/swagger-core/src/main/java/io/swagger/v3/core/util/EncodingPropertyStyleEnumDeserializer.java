@@ -26,11 +26,11 @@ public class EncodingPropertyStyleEnumDeserializer extends JsonDeserializer<Enco
     private EncodingProperty.StyleEnum getStyleEnum(String value) {
         return Arrays.stream(
                 EncodingProperty.StyleEnum.values())
-                    .filter(i -> i.toString().equals(value))
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException(
-                            String.format("Can not deserialize value of type EncodingProperty.StyleEnum from String \"%s\": value not one of declared Enum instance names: %s",
-                                    value,
-                                    Arrays.stream(EncodingProperty.StyleEnum.values()).map(v -> v.toString()).collect(Collectors.joining(", ","[","]")))));
+                .filter(i -> i.toString().equals(value))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(
+                        String.format("Can not deserialize value of type EncodingProperty.StyleEnum from String \"%s\": value not one of declared Enum instance names: %s",
+                                value,
+                                Arrays.stream(EncodingProperty.StyleEnum.values()).map(v -> v.toString()).collect(Collectors.joining(", ", "[", "]")))));
     }
 }

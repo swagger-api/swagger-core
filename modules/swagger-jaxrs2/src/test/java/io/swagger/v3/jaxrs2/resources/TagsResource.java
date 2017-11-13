@@ -9,7 +9,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
-
 @OpenAPIDefinition(tags = {
         @Tag(name = "Definition First Tag"),
         @Tag(name = "Definition Second Tag full", description = "desc definition")

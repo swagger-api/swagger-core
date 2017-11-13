@@ -38,7 +38,7 @@ public class SecurityDefinitionTest {
     }
 
     @Test(description = "it should create a model with security requirements")
-    public void createModelWithSecurityRequirements() throws IOException{
+    public void createModelWithSecurityRequirements() throws IOException {
         final Schema personModel = ModelConverters.getInstance().read(Person.class).get("Person");
         final Schema errorModel = ModelConverters.getInstance().read(Error.class).get("Error");
 
@@ -61,9 +61,9 @@ public class SecurityDefinitionTest {
 
         oas.schemaRequirement("githubAccessCode",
                 new SecurityScheme()
-                    .flows(new OAuthFlows()
-                            .authorizationCode(new OAuthFlow()
-                            .scopes(new Scopes().addString("user:email", "Grants read access to a user’s email addresses.")))));
+                        .flows(new OAuthFlows()
+                                .authorizationCode(new OAuthFlow()
+                                        .scopes(new Scopes().addString("user:email", "Grants read access to a user’s email addresses.")))));
 
         final Operation get = new Operation()
                 .summary("finds pets in the system")
@@ -94,10 +94,10 @@ public class SecurityDefinitionTest {
         get.responses(new ApiResponses()
                 .addApiResponse("200", response)
                 .addApiResponse("default", errorResponse))
-        .addSecurityItem(new SecurityRequirement()
-                .addList("internal_oauth2", "user:email"))
-        .addSecurityItem(new SecurityRequirement()
-                .addList("api_key"));
+                .addSecurityItem(new SecurityRequirement()
+                        .addList("internal_oauth2", "user:email"))
+                .addSecurityItem(new SecurityRequirement()
+                        .addList("api_key"));
 
         oas.path("/pets", new PathItem().get(get));
 

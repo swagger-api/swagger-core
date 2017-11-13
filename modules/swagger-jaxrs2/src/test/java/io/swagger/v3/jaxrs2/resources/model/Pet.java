@@ -1,6 +1,5 @@
 package io.swagger.v3.jaxrs2.resources.model;
 
-
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.xml.bind.annotation.XmlElement;

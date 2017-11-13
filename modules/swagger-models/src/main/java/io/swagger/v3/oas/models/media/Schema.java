@@ -33,7 +33,6 @@ import java.util.Objects;
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#schemaObject"
  */
 
-
 public class Schema<T> {
     protected T _default;
 
@@ -611,7 +610,6 @@ public class Schema<T> {
         return this;
     }
 
-
     /**
      * returns the nullable property from a Schema instance.
      *
@@ -745,7 +743,6 @@ public class Schema<T> {
         return this;
     }
 
-
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -796,7 +793,6 @@ public class Schema<T> {
                 minItems, uniqueItems, maxProperties, minProperties, required, type, not, properties, additionalProperties, description, format, $ref,
                 nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions, discriminator, _enum, _default);
     }
-
 
     public java.util.Map<String, Object> getExtensions() {
         return extensions;

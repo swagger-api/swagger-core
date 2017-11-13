@@ -17,9 +17,9 @@ public interface ModelConverter {
      * @return null if this ModelConverter cannot convert the given Type
      */
     public Schema resolve(Type type,
-                                    ModelConverterContext context,
-                                    Annotation[] annotations,
-                                    Iterator<ModelConverter> chain);
+                          ModelConverterContext context,
+                          Annotation[] annotations,
+                          Iterator<ModelConverter> chain);
 
     /**
      * @param type
@@ -34,13 +34,13 @@ public interface ModelConverter {
      * @param member
      * @param elementName
      * @param context
-     * @param chain   the chain of model converters to try if this implementation cannot process
+     * @param chain       the chain of model converters to try if this implementation cannot process
      * @return null if this ModelConverter cannot convert the given Type
      */
     public Schema resolveAnnotatedType(Type type,
-                          Annotated member,
-                          String elementName,
-                          ModelConverterContext context,
-                          Iterator<ModelConverter> chain);
+                                       Annotated member,
+                                       String elementName,
+                                       ModelConverterContext context,
+                                       Iterator<ModelConverter> chain);
 
 }

@@ -21,7 +21,7 @@ public class Discriminator {
     }
 
     public Discriminator mapping(String name, String value) {
-        if(this.mapping == null) {
+        if (this.mapping == null) {
             this.mapping = new HashMap<>();
         }
         this.mapping.put(name, value);

@@ -17,10 +17,9 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-
 public class JsonPropertiesDeserializationTest {
 
-    @Test (description = "should deserialize a string property with constraints")
+    @Test(description = "should deserialize a string property with constraints")
     public void testDeserializeConstrainedStringProperty() throws Exception {
 
         OpenAPI oas = TestUtils.deserializeJsonFileFromClasspath("specFiles/propertiesWithConstraints.json", OpenAPI.class);
@@ -32,7 +31,7 @@ public class JsonPropertiesDeserializationTest {
         assertEquals(property.getPattern(), "apattern");
     }
 
-    @Test (description = "should deserialize an array property with constraints")
+    @Test(description = "should deserialize an array property with constraints")
     public void testDeserializeConstrainedArrayProperties() throws Exception {
 
         OpenAPI oas = TestUtils.deserializeJsonFileFromClasspath("specFiles/propertiesWithConstraints.json", OpenAPI.class);
@@ -64,19 +63,19 @@ public class JsonPropertiesDeserializationTest {
         assertEquals(withAll.getUniqueItems(), Boolean.TRUE);
     }
 
-    @Test (description = "should deserialize a property with vendor extensions of different types")
+    @Test(description = "should deserialize a property with vendor extensions of different types")
     public void testDeserializePropertyWithVendorExtensions() throws Exception {
 
         OpenAPI oas = TestUtils.deserializeJsonFileFromClasspath("specFiles/propertyWithVendorExtensions.json", OpenAPI.class);
 
         Map<String, Object> oasVendorExtensions = oas.getExtensions();
-        Map<String, Object> vendorExtensions = ((Schema)oas.getComponents().getSchemas().get("Health").getProperties().get("status")).getExtensions();
+        Map<String, Object> vendorExtensions = ((Schema) oas.getComponents().getSchemas().get("Health").getProperties().get("status")).getExtensions();
 
         assertVendorExtensions(oasVendorExtensions);
         assertVendorExtensions(vendorExtensions);
 
         //check for vendor extensions in array property types
-        vendorExtensions = ((Schema)oas.getComponents().getSchemas().get("Health").getProperties().get("array")).getExtensions();
+        vendorExtensions = ((Schema) oas.getComponents().getSchemas().get("Health").getProperties().get("array")).getExtensions();
 
         String xStringValue = (String) vendorExtensions.get("x-string-value");
         assertNotNull(xStringValue);
@@ -119,7 +118,7 @@ public class JsonPropertiesDeserializationTest {
     @Test
     public void shouldDeserializeArrayPropertyMinItems() throws Exception {
         String path = "json-schema-validation/array.json";
-        ArraySchema property = (ArraySchema)TestUtils.deserializeJsonFileFromClasspath(path, Schema.class);
+        ArraySchema property = (ArraySchema) TestUtils.deserializeJsonFileFromClasspath(path, Schema.class);
 
         assertNotNull(property.getMinItems());
         assertEquals(property.getMinItems().intValue(), 1);
@@ -128,7 +127,7 @@ public class JsonPropertiesDeserializationTest {
     @Test
     public void shouldDeserializeArrayPropertyMaxItems() throws Exception {
         String path = "json-schema-validation/array.json";
-        ArraySchema property = (ArraySchema)TestUtils.deserializeJsonFileFromClasspath(path, Schema.class);
+        ArraySchema property = (ArraySchema) TestUtils.deserializeJsonFileFromClasspath(path, Schema.class);
 
         assertNotNull(property.getMaxItems());
         assertEquals(property.getMaxItems().intValue(), 10);
@@ -137,7 +136,7 @@ public class JsonPropertiesDeserializationTest {
     @Test
     public void shouldDeserializeArrayPropertyUniqueItems() throws Exception {
         String path = "json-schema-validation/array.json";
-        ArraySchema property = (ArraySchema)TestUtils.deserializeJsonFileFromClasspath(path, Schema.class);
+        ArraySchema property = (ArraySchema) TestUtils.deserializeJsonFileFromClasspath(path, Schema.class);
 
         assertNotNull(property.getUniqueItems());
         assertTrue(property.getUniqueItems());
@@ -146,7 +145,7 @@ public class JsonPropertiesDeserializationTest {
     @Test
     public void givenMapProperty_shouldDeserializeMinProperties() {
         String path = "json-schema-validation/map.json";
-        MapSchema property = (MapSchema)TestUtils.deserializeJsonFileFromClasspath(path, Schema.class);
+        MapSchema property = (MapSchema) TestUtils.deserializeJsonFileFromClasspath(path, Schema.class);
 
         assertNotNull(property.getMinProperties());
         assertEquals(property.getMinProperties().intValue(), 1);
@@ -155,7 +154,7 @@ public class JsonPropertiesDeserializationTest {
     @Test
     public void givenMapProperty_shouldDeserializeMaxProperties() {
         String path = "json-schema-validation/map.json";
-        MapSchema property = (MapSchema)TestUtils.deserializeJsonFileFromClasspath(path, Schema.class);
+        MapSchema property = (MapSchema) TestUtils.deserializeJsonFileFromClasspath(path, Schema.class);
 
         assertNotNull(property.getMaxProperties());
         assertEquals(property.getMaxProperties().intValue(), 10);

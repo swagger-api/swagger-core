@@ -30,42 +30,42 @@ import java.lang.annotation.Target;
 /**
  * Describes a single response from an API Operation, including design-time, static links to operations based on the response.
  **/
-@Target({ ElementType.METHOD })
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Repeatable(ApiResponses.class)
 public @interface ApiResponse {
     /**
      * A short description of the response.
-     * 
-     * @return description of the response 
+     *
+     * @return description of the response
      **/
     String description() default "";
 
     /**
-     * The HTTP response code, or 'default', for the supplied response. May only have 1 default entry. 
-     * 
-     * @return response code 
+     * The HTTP response code, or 'default', for the supplied response. May only have 1 default entry.
+     *
+     * @return response code
      **/
     String responseCode() default "default";
 
     /**
      * An array of response headers. Allows additional information to be included with response.
-     * 
+     *
      * @return array of headers
      **/
     Header[] headers() default {};
 
     /**
      * An array of operation links that can be followed from the response.
-     * 
+     *
      * @return array of links
      **/
     Link[] links() default {};
 
     /**
      * An array containing descriptions of potential response payloads, for different media types.
-     * 
+     *
      * @return array of content
      **/
     Content[] content() default {};

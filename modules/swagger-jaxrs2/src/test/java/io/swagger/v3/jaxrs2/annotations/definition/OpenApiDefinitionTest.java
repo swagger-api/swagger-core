@@ -68,13 +68,14 @@ public class OpenApiDefinitionTest extends AbstractAnnotationTest {
 
         compareAsYaml(OpenApiDefinitionTest.ClassWithAnnotation.class, expectedYAML);
     }
+
     @OpenAPIDefinition(
             info = @Info(
-                title = "the title",
-                version = "0.0",
-                description = "My API",
-                license = @License(name = "Apache 2.0", url = "http://foo.bar"),
-                contact = @Contact(url = "http://gigantic-server.com", name = "Fred", email = "Fred@gigagantic-server.com")
+                    title = "the title",
+                    version = "0.0",
+                    description = "My API",
+                    license = @License(name = "Apache 2.0", url = "http://foo.bar"),
+                    contact = @Contact(url = "http://gigantic-server.com", name = "Fred", email = "Fred@gigagantic-server.com")
             ),
             tags = {
                     @Tag(name = "Tag 1", description = "desc 1", externalDocs = @ExternalDocumentation(description = "docs desc")),
@@ -98,9 +99,9 @@ public class OpenApiDefinitionTest extends AbstractAnnotationTest {
     )
     static class ClassWithAnnotation {
 
-        public void foo(){}
+        public void foo() {
+        }
 
     }
-
 
 }

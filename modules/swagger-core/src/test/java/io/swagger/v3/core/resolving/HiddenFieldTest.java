@@ -22,12 +22,12 @@ public class HiddenFieldTest {
         assertNotNull(model);
         assertEquals(model.getProperties().size(), 2);
 
-        final Schema idValue = (Schema)model.getProperties().get("id");
+        final Schema idValue = (Schema) model.getProperties().get("id");
         assertTrue(idValue instanceof IntegerSchema);
 
         assertTrue(model.getRequired().contains("id"));
 
-        final Schema nameValue = (Schema)model.getProperties().get("name");
+        final Schema nameValue = (Schema) model.getProperties().get("name");
         assertTrue(nameValue instanceof StringSchema);
     }
 

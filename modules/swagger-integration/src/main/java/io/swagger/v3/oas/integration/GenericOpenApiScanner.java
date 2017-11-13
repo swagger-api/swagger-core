@@ -59,7 +59,6 @@ public class GenericOpenApiScanner implements OpenApiScanner {
             return output;
         }
 
-
         if (openApiConfiguration.getResourcePackages() != null && !openApiConfiguration.getResourcePackages().isEmpty()) {
             for (String pkg : openApiConfiguration.getResourcePackages()) {
                 if (!isIgnored(pkg)) {

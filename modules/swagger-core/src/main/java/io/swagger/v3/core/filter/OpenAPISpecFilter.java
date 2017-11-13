@@ -28,14 +28,12 @@ public interface OpenAPISpecFilter {
             Map<String, String> cookies,
             Map<String, List<String>> headers);
 
-
     Optional<Operation> filterOperation(
             Operation operation,
             ApiDescription api,
             Map<String, List<String>> params,
             Map<String, String> cookies,
             Map<String, List<String>> headers);
-
 
     Optional<Parameter> filterParameter(
             Parameter parameter,

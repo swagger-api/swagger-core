@@ -101,9 +101,9 @@ public class ParameterDeSerializationTest {
 
         final String json =
                 "{\"content\":{" +
-                "  \"*/*\":{" +
-                "    \"schema\":{" +
-                "      \"type\":\"string\"}}}}";
+                        "  \"*/*\":{" +
+                        "    \"schema\":{" +
+                        "      \"type\":\"string\"}}}}";
         final RequestBody p = m.readValue(json, RequestBody.class);
         SerializationMatchers.assertEqualsToJson(p, json);
     }
@@ -112,7 +112,7 @@ public class ParameterDeSerializationTest {
     public void deserializeReadOnlyParameter() throws IOException {
         final String json =
                 "{\"in\":\"path\"," +
-                "\"content\":{" +
+                        "\"content\":{" +
                         "  \"*/*\":{" +
                         "    \"schema\":{" +
                         "      \"type\":\"string\"," +
@@ -127,7 +127,6 @@ public class ParameterDeSerializationTest {
         final RequestBody p = m.readValue(json, RequestBody.class);
         SerializationMatchers.assertEqualsToJson(p, json);
     }
-
 
     @Test(description = "it should deserialize a path parameter with enum")
     public void deserializeEnumPathParameter() throws IOException {
@@ -144,8 +143,8 @@ public class ParameterDeSerializationTest {
         final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
 
-        ArraySchema as = (ArraySchema)p.getSchema();
-        assertEquals(((StringSchema)as.getItems()).getEnum(), Arrays.asList("a", "b", "c"));
+        ArraySchema as = (ArraySchema) p.getSchema();
+        assertEquals(((StringSchema) as.getItems()).getEnum(), Arrays.asList("a", "b", "c"));
     }
 
     @Test(description = "it should deserialize a number path parameter with enum")
@@ -165,32 +164,32 @@ public class ParameterDeSerializationTest {
         final Parameter p = m.readValue(json, Parameter.class);
         SerializationMatchers.assertEqualsToJson(p, json);
 
-        assertEquals(((IntegerSchema)((ArraySchema) p.getSchema()).getItems()).getEnum(), Arrays.asList(1,2,3));
+        assertEquals(((IntegerSchema) ((ArraySchema) p.getSchema()).getItems()).getEnum(), Arrays.asList(1, 2, 3));
     }
 
     @Test(description = "should serialize correctly typed numeric enums")
     public void testIssue1765() throws Exception {
         String yaml =
                 "openapi: '3.0.0'\n" +
-                "paths:\n" +
-                "  /test:\n" +
-                "    get:\n" +
-                "      parameters:\n" +
-                "      - name: \"days\"\n" +
-                "        in: \"path\"\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: \"integer\"\n" +
-                "          format: \"int32\"\n" +
-                "          enum:\n" +
-                "          - 1\n" +
-                "          - 2\n" +
-                "          - 3\n" +
-                "          - 4\n" +
-                "          - 5\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: great";
+                        "paths:\n" +
+                        "  /test:\n" +
+                        "    get:\n" +
+                        "      parameters:\n" +
+                        "      - name: \"days\"\n" +
+                        "        in: \"path\"\n" +
+                        "        required: true\n" +
+                        "        schema:\n" +
+                        "          type: \"integer\"\n" +
+                        "          format: \"int32\"\n" +
+                        "          enum:\n" +
+                        "          - 1\n" +
+                        "          - 2\n" +
+                        "          - 3\n" +
+                        "          - 4\n" +
+                        "          - 5\n" +
+                        "      responses:\n" +
+                        "        default:\n" +
+                        "          description: great";
 
         OpenAPI swagger = Yaml.mapper().readValue(yaml, OpenAPI.class);
         SerializationMatchers.assertEqualsToYaml(swagger, yaml);

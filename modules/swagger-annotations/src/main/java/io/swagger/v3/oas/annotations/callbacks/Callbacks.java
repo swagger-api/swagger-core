@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 /**
  * This object represents an array of Callback URLs that can be invoked.
  **/
-@Target({ ElementType.METHOD })
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Callbacks {

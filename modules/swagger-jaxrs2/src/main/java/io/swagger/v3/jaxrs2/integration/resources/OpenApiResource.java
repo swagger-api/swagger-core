@@ -25,9 +25,9 @@ public class OpenApiResource extends BaseOpenApiResource {
     @GET
     @Produces({MediaType.APPLICATION_JSON, "application/yaml"})
     @Operation(hidden = true)
-    public Response getOpenApi( @Context HttpHeaders headers,
-                                @Context UriInfo uriInfo,
-                                @PathParam("type") String type) throws Exception {
+    public Response getOpenApi(@Context HttpHeaders headers,
+                               @Context UriInfo uriInfo,
+                               @PathParam("type") String type) throws Exception {
 
         return super.getOpenApi(headers, config, app, uriInfo, type);
     }

@@ -114,7 +114,7 @@ public class SnakeCaseConverterTest {
         @Override
         public Schema resolveAnnotatedType(Type type, Annotated member, String elementName, ModelConverterContext context, Iterator<ModelConverter> chain) {
             if (chain.hasNext()) {
-                return chain.next().resolveAnnotatedType(type, member, elementName,context, chain);
+                return chain.next().resolveAnnotatedType(type, member, elementName, context, chain);
             } else {
                 return null;
             }
@@ -124,7 +124,7 @@ public class SnakeCaseConverterTest {
             if (StringUtils.isBlank(str)) {
                 return str;
             }
-            String o = str.replaceAll("[A-Z\\d]", "_"+ "$0").toLowerCase();
+            String o = str.replaceAll("[A-Z\\d]", "_" + "$0").toLowerCase();
             if (o.startsWith("_")) {
                 return o.substring(1);
             } else {

@@ -16,7 +16,6 @@
 
 package io.swagger.v3.oas.models;
 
-
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.servers.Server;
 
@@ -30,7 +29,6 @@ import java.util.Map;
  *
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#pathItemObject"
  */
-
 
 public class PathItem {
     private String summary = null;
@@ -238,7 +236,6 @@ public class PathItem {
         return this;
     }
 
-
     public List<Operation> readOperations() {
         List<Operation> allOperations = new ArrayList<>();
         if (this.get != null) {
@@ -309,7 +306,6 @@ public class PathItem {
         OPTIONS,
         TRACE
     }
-
 
     public Map<HttpMethod, Operation> readOperationsMap() {
         Map<HttpMethod, Operation> result = new LinkedHashMap<>();
@@ -415,8 +411,8 @@ public class PathItem {
     }
 
     public PathItem extensions(java.util.Map<String, Object> extensions) {
-      this.extensions = extensions;
-      return this;
+        this.extensions = extensions;
+        return this;
     }
 
     /**

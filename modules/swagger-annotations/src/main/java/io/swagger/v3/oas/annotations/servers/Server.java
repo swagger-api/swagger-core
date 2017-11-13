@@ -26,32 +26,32 @@ import java.lang.annotation.Target;
 /**
  * An object representing a Server.
  **/
-@Target({ ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(Servers.class)
 @Inherited
 public @interface Server {
-  /**
-   * Required. A URL to the target host. 
-   * This URL supports Server Variables and may be relative, to indicate that the host location is relative to the location where the 
-   * OpenAPI definition is being served. Variable substitutions will be made when a variable is named in {brackets}.
-   * 
-   * @return String url
-   **/
-  String url() default "";
+    /**
+     * Required. A URL to the target host.
+     * This URL supports Server Variables and may be relative, to indicate that the host location is relative to the location where the
+     * OpenAPI definition is being served. Variable substitutions will be made when a variable is named in {brackets}.
+     *
+     * @return String url
+     **/
+    String url() default "";
 
-  /**
-   * An optional string describing the host designated by the URL. CommonMark syntax MAY be used for rich text representation.
-   * 
-   * @return String description
-   **/
-  String description() default "";
+    /**
+     * An optional string describing the host designated by the URL. CommonMark syntax MAY be used for rich text representation.
+     *
+     * @return String description
+     **/
+    String description() default "";
 
-  /**
-   * An array of variables used for substitution in the server's URL template.
-   * 
-   * @return array of ServerVariables
-   **/
-  ServerVariable[] variables() default {};
+    /**
+     * An array of variables used for substitution in the server's URL template.
+     *
+     * @return array of ServerVariables
+     **/
+    ServerVariable[] variables() default {};
 
 }

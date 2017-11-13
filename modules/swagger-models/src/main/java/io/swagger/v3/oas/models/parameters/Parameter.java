@@ -30,7 +30,6 @@ import java.util.Objects;
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#parameterObject"
  */
 
-
 public class Parameter {
     private String name = null;
     private String in = null;
@@ -377,7 +376,6 @@ public class Parameter {
     public int hashCode() {
         return Objects.hash(name, in, description, required, deprecated, allowEmptyValue, style, explode, allowReserved, schema, examples, example, content, $ref, extensions);
     }
-
 
     public java.util.Map<String, Object> getExtensions() {
         return extensions;

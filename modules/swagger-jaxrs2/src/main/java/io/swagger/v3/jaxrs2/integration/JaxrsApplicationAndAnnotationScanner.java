@@ -12,7 +12,7 @@ public class JaxrsApplicationAndAnnotationScanner extends JaxrsAnnotationScanner
         if (application != null) {
             Set<Class<?>> clzs = application.getClasses();
             if (clzs != null) {
-                for (Class<?> clz: clzs) {
+                for (Class<?> clz : clzs) {
                     if (!isIgnored(clz.getName())) {
                         output.add(clz);
                     }

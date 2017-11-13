@@ -12,7 +12,6 @@ public class SimpleMethods {
         return new TestBean();
     }
 
-
     @GET
     @Path("/int")
     public int getInt() {
@@ -40,6 +39,7 @@ public class SimpleMethods {
         public String foo;
         public TestChild testChild;
     }
+
     static class TestChild {
         public String foo;
     }

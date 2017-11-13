@@ -8,12 +8,11 @@ import java.lang.annotation.Target;
 
 /**
  * An optionally named list of extension properties.
- *
  */
-@Target({ ElementType.FIELD,
+@Target({ElementType.FIELD,
         ElementType.METHOD,
         ElementType.PARAMETER,
-        ElementType.TYPE })
+        ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(Extensions.class)
 public @interface Extension {

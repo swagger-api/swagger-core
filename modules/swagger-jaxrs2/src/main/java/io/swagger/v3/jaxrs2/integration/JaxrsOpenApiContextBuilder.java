@@ -15,7 +15,7 @@ public class JaxrsOpenApiContextBuilder<T extends JaxrsOpenApiContextBuilder> ex
     protected ServletConfig servletConfig;
 
     @Override
-    public OpenApiContext buildContext(boolean init) throws OpenApiConfigurationException{
+    public OpenApiContext buildContext(boolean init) throws OpenApiConfigurationException {
         if (StringUtils.isBlank(ctxId)) {
             ctxId = OpenApiContext.OPENAPI_CONTEXT_ID_DEFAULT;
         }
@@ -31,13 +31,13 @@ public class JaxrsOpenApiContextBuilder<T extends JaxrsOpenApiContextBuilder> ex
                     .parent(rootCtx);
 
             if (ctx.getConfigLocation() == null && configLocation != null) {
-                ((XmlWebOpenApiContext)ctx).configLocation(configLocation);
+                ((XmlWebOpenApiContext) ctx).configLocation(configLocation);
             }
-            if (((XmlWebOpenApiContext)ctx).getResourcePackages() == null && resourcePackages != null) {
-                ((XmlWebOpenApiContext)ctx).resourcePackages(resourcePackages);
+            if (((XmlWebOpenApiContext) ctx).getResourcePackages() == null && resourcePackages != null) {
+                ((XmlWebOpenApiContext) ctx).resourcePackages(resourcePackages);
             }
-            if (((XmlWebOpenApiContext)ctx).getResourceClasses() == null && resourceClasses != null) {
-                ((XmlWebOpenApiContext)ctx).resourceClasses(resourceClasses);
+            if (((XmlWebOpenApiContext) ctx).getResourceClasses() == null && resourceClasses != null) {
+                ((XmlWebOpenApiContext) ctx).resourceClasses(resourceClasses);
             }
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator
@@ -61,7 +61,6 @@ public class JaxrsOpenApiContextBuilder<T extends JaxrsOpenApiContextBuilder> ex
     public void setServletConfig(ServletConfig servletConfig) {
         this.servletConfig = servletConfig;
     }
-
 
     public T application(Application application) {
         this.application = application;

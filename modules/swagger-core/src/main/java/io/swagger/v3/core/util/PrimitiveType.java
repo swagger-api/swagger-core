@@ -170,7 +170,6 @@ public enum PrimitiveType {
             .put("object_", "object")
             .build();
 
-
     static {
         final Map<Class<?>, PrimitiveType> keyClasses = new HashMap<Class<?>, PrimitiveType>();
         addKeys(keyClasses, BOOLEAN, Boolean.class, Boolean.TYPE);
@@ -243,18 +242,18 @@ public enum PrimitiveType {
     }
 
     public static PrimitiveType fromName(String name) {
-        if(name == null) {
+        if (name == null) {
             return null;
         }
         PrimitiveType fromName = NAMES.get(name);
-        if(fromName == null) {
+        if (fromName == null) {
             fromName = EXTERNAL_CLASSES.get(name);
         }
         return fromName;
     }
 
     public static PrimitiveType fromTypeAndFormat(String type, String format) {
-        if ( StringUtils.isNotBlank(type) && type.equals("object")) {
+        if (StringUtils.isNotBlank(type) && type.equals("object")) {
             return null;
         }
         return fromName(datatypeMappings.get(String.format("%s_%s", StringUtils.isBlank(type) ? "" : type, StringUtils.isBlank(format) ? "" : format)));

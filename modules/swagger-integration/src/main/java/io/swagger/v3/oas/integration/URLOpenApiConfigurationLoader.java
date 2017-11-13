@@ -9,7 +9,7 @@ import java.io.IOException;
 public class URLOpenApiConfigurationLoader implements OpenApiConfigurationLoader {
 
     @Override
-    public OpenAPIConfiguration load(String path)  throws IOException {
+    public OpenAPIConfiguration load(String path) throws IOException {
         return null;
     }
 

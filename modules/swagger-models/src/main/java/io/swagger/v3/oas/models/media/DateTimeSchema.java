@@ -25,127 +25,123 @@ import java.util.Objects;
  * DateTimeSchema
  */
 
-
 public class DateTimeSchema extends Schema<Date> {
-  private String type = "string";
-  private String format = "date-time";
+    private String type = "string";
+    private String format = "date-time";
 
-  /**
-   * returns the type property from a DateTimeSchema instance.
-   *
-   * @return String type
-   **/
+    /**
+     * returns the type property from a DateTimeSchema instance.
+     *
+     * @return String type
+     **/
 
-  public String getType() {
-    return type;
-  }
+    public String getType() {
+        return type;
+    }
 
-  public void setType(String type) {
-    this.type = type;
-  }
+    public void setType(String type) {
+        this.type = type;
+    }
 
-  public DateTimeSchema type(String type) {
-    this.type = type;
-    return this;
-  }
+    public DateTimeSchema type(String type) {
+        this.type = type;
+        return this;
+    }
 
-  /**
-   * returns the format property from a DateTimeSchema instance.
-   *
-   * @return String format
-   **/
+    /**
+     * returns the format property from a DateTimeSchema instance.
+     *
+     * @return String format
+     **/
 
-  public String getFormat() {
-    return format;
-  }
+    public String getFormat() {
+        return format;
+    }
 
-  public void setFormat(String format) {
-    this.format = format;
-  }
+    public void setFormat(String format) {
+        this.format = format;
+    }
 
-  public DateTimeSchema format(String format) {
-    this.format = format;
-    return this;
-  }
+    public DateTimeSchema format(String format) {
+        this.format = format;
+        return this;
+    }
 
-  public DateTimeSchema _default(Date _default) {
-    super.setDefault(_default);
-    return this;
-  }
+    public DateTimeSchema _default(Date _default) {
+        super.setDefault(_default);
+        return this;
+    }
 
-  @Override
-  protected Date cast(Object value) {
-    if(value != null) {
-      try {
-        if(value instanceof Date) {
-          return (Date) value;
+    @Override
+    protected Date cast(Object value) {
+        if (value != null) {
+            try {
+                if (value instanceof Date) {
+                    return (Date) value;
+                }
+            } catch (Exception e) {
+            }
         }
-      }
-      catch (Exception e) {
-      }
+        return null;
     }
-    return null;
-  }
 
-  public DateTimeSchema _enum(List<Date> _enum) {
-    this._enum = _enum;
-    return this;
-  }
-
-  public DateTimeSchema addEnumItem(Date _enumItem) {
-    if(this._enum == null) {
-      this._enum = new ArrayList<Date>();
+    public DateTimeSchema _enum(List<Date> _enum) {
+        this._enum = _enum;
+        return this;
     }
-    this._enum.add(_enumItem);
-    return this;
-  }
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
+    public DateTimeSchema addEnumItem(Date _enumItem) {
+        if (this._enum == null) {
+            this._enum = new ArrayList<Date>();
+        }
+        this._enum.add(_enumItem);
+        return this;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DateTimeSchema dateTimeSchema = (DateTimeSchema) o;
+        return Objects.equals(this.type, dateTimeSchema.type) &&
+                Objects.equals(this.format, dateTimeSchema.format) &&
+                Objects.equals(this._default, dateTimeSchema._default) &&
+                Objects.equals(this._enum, dateTimeSchema._enum) &&
+                super.equals(o);
     }
-    DateTimeSchema dateTimeSchema = (DateTimeSchema) o;
-    return Objects.equals(this.type, dateTimeSchema.type) &&
-        Objects.equals(this.format, dateTimeSchema.format) &&
-        Objects.equals(this._default, dateTimeSchema._default) &&
-        Objects.equals(this._enum, dateTimeSchema._enum) &&
-        super.equals(o);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(type, format, _default, _enum, super.hashCode());
-  }
-
-
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class DateTimeSchema {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    format: ").append(toIndentedString(format)).append("\n");
-    sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
-    sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, format, _default, _enum, super.hashCode());
     }
-    return o.toString().replace("\n", "\n    ");
-  }
-  
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class DateTimeSchema {\n");
+        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+        sb.append("    type: ").append(toIndentedString(type)).append("\n");
+        sb.append("    format: ").append(toIndentedString(format)).append("\n");
+        sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
+        sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
+
 }
 

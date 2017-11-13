@@ -7,7 +7,7 @@ import java.io.IOException;
 public class ClasspathOpenApiConfigurationLoader implements StringOpenApiConfigurationLoader {
 
     @Override
-    public OpenAPIConfiguration load(String path)  throws IOException {
+    public OpenAPIConfiguration load(String path) throws IOException {
         String sanitized = (path.startsWith("/") ? path : "/" + path);
         String configString = readInputStreamToString(this.getClass().getResource(sanitized).openStream());
         return deserializeConfig(path, configString);

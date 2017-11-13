@@ -41,20 +41,21 @@ public class EnumPropertyTest {
     public void testExtractEnumFields() {
         final Map<String, Schema> models = ModelConverters.getInstance().read(ModelWithEnumField.class);
         final Schema model = models.get("ModelWithEnumField");
-        final Schema enumProperty = (Schema)model.getProperties().get("enumValue");
+        final Schema enumProperty = (Schema) model.getProperties().get("enumValue");
         assertTrue(enumProperty instanceof StringSchema);
 
-        final StringSchema stringProperty = (StringSchema)enumProperty;
+        final StringSchema stringProperty = (StringSchema) enumProperty;
         assertEquals(stringProperty.getEnum(), Arrays.asList("PRIVATE", "PUBLIC", "SYSTEM", "INVITE_ONLY"));
     }
+
     @Test(description = "it should extract enum values from method return types")
     public void testExtractEnumReturnType() {
         final Map<String, Schema> models = ModelConverters.getInstance().read(ModelWithEnumProperty.class);
         final Schema model = models.get("ModelWithEnumProperty");
-        final Schema enumProperty = (Schema)model.getProperties().get("enumValue");
+        final Schema enumProperty = (Schema) model.getProperties().get("enumValue");
         assertTrue(enumProperty instanceof StringSchema);
 
-        final StringSchema stringProperty = (StringSchema)enumProperty;
+        final StringSchema stringProperty = (StringSchema) enumProperty;
         assertEquals(stringProperty.getEnum(), Arrays.asList("PRIVATE", "PUBLIC", "SYSTEM", "INVITE_ONLY"));
     }
 }

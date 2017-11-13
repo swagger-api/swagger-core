@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-
 public class ModelConverterContextImpl implements ModelConverterContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(ModelConverterContextImpl.class);
 
@@ -93,13 +92,14 @@ public class ModelConverterContextImpl implements ModelConverterContext {
             modelByType.put(type, resolved);
 
             Schema resolvedImpl = resolved;
-            if(resolvedImpl.getName() != null) {
+            if (resolvedImpl.getName() != null) {
                 modelByName.put(resolvedImpl.getName(), resolved);
             }
         }
 
         return resolved;
     }
+
     @Override
     public Schema resolve(Type type, Annotation[] annotations) {
         if (LOGGER.isDebugEnabled()) {
@@ -186,7 +186,6 @@ public class ModelConverterContextImpl implements ModelConverterContext {
                 return null;
             }
         };
-
 
         Iterator<ModelConverter> converters = this.getConverters();
         if (converters.hasNext()) {

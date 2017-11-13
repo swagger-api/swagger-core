@@ -16,14 +16,14 @@ public class TestUtils {
 
         String contents;
 
-        if(resource == null) {
+        if (resource == null) {
             throw new RuntimeException("Could not find file on the classpath: " + path);
         }
 
         try {
-            contents= IOUtils.toString(resource);
+            contents = IOUtils.toString(resource);
         } catch (IOException e) {
-            throw new RuntimeException("could not read from file " + path,  e);
+            throw new RuntimeException("could not read from file " + path, e);
         }
 
         try {

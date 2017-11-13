@@ -96,9 +96,9 @@ public class SwaggerSerializerTest {
         final ApiResponse response = new ApiResponse()
                 .description("pets returned")
                 .content(new Content()
-                    .addMediaType("application/json", new MediaType()
-                    .schema(new Schema().$ref("Person"))
-                    .example("fun")));
+                        .addMediaType("application/json", new MediaType()
+                                .schema(new Schema().$ref("Person"))
+                                .example("fun")));
 
         final ApiResponse errorResponse = new ApiResponse()
                 .description("error response")
@@ -109,7 +109,7 @@ public class SwaggerSerializerTest {
                 )
                 .content(new Content()
                         .addMediaType("application/json", new MediaType()
-                        .schema(new Schema().$ref("Error"))));
+                                .schema(new Schema().$ref("Error"))));
 
         get.responses(new ApiResponses()
                 .addApiResponse("200", response)
@@ -121,11 +121,11 @@ public class SwaggerSerializerTest {
                 .addTagsItem("Pet Operations")
                 .operationId("add pet")
                 .responses(new ApiResponses()
-                        .addApiResponse("default",errorResponse))
+                        .addApiResponse("default", errorResponse))
                 .requestBody(new RequestBody()
                         .description("the pet to add")
                         .content(new Content().addMediaType("*/*", new MediaType()
-                        .schema(new Schema().$ref("Person")))));
+                                .schema(new Schema().$ref("Person")))));
 
         swagger.paths(new Paths().addPathItem("/pets", new PathItem()
                 .get(get).post(post)));
@@ -134,13 +134,13 @@ public class SwaggerSerializerTest {
         final OpenAPI rebuilt = Json.mapper().readValue(swaggerJson, OpenAPI.class);
         SerializationMatchers.assertEqualsToJson(rebuilt, swaggerJson);
     }
+
     @Test(description = "it should read the uber api")
     public void readUberApi() throws IOException {
         final String jsonString = ResourceUtils.loadClassResource(getClass(), "uber.json");
         final OpenAPI swagger = Json.mapper().readValue(jsonString, OpenAPI.class);
         assertNotNull(swagger);
     }
-
 
     @Test(description = "it should write a spec with parameter references")
     public void writeSpecWithParameterReferences() throws IOException {
@@ -163,7 +163,7 @@ public class SwaggerSerializerTest {
                 //.produces("application/json")
                 .schema("Person", personModel);
 
-        final QueryParameter parameter = (QueryParameter)new QueryParameter()
+        final QueryParameter parameter = (QueryParameter) new QueryParameter()
                 .name("id")
                 .description("a common get parameter")
                 .schema(new IntegerSchema());
@@ -175,7 +175,6 @@ public class SwaggerSerializerTest {
                 //.tag("Pet Operations")
                 .operationId("get pet by id")
                 .addParametersItem(new Parameter().$ref("#/parameters/Foo"));
-
 
         swagger
                 .components(new Components().addParameters("Foo", parameter))

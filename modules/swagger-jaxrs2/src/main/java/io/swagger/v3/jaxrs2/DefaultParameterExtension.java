@@ -84,7 +84,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 pp.setName(param.value());
                 parameter = pp;
             } else if (annotation instanceof io.swagger.v3.oas.annotations.Parameter) {
-                if (((io.swagger.v3.oas.annotations.Parameter)annotation).hidden()) {
+                if (((io.swagger.v3.oas.annotations.Parameter) annotation).hidden()) {
                     extractParametersResult.parameters = parameters;
                     return extractParametersResult;
                 }
@@ -102,7 +102,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
 
         if (parameter != null && StringUtils.isNotBlank(parameter.getIn())) {
             parameters.add(parameter);
-        } else if (includeRequestBody){
+        } else if (includeRequestBody) {
             Parameter unknownParameter = ParameterProcessor.applyAnnotations(
                     null,
                     type,
@@ -142,7 +142,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
      */
 
     private boolean handleAdditionalAnnotation(List<Parameter> parameters, Annotation annotation,
-                                            final Type type, Set<Type> typesToSkip, javax.ws.rs.Consumes classConsumes,
+                                               final Type type, Set<Type> typesToSkip, javax.ws.rs.Consumes classConsumes,
                                                javax.ws.rs.Consumes methodConsumes, Components components, boolean includeRequestBody) {
         boolean processed = false;
         if (BeanParam.class.isAssignableFrom(annotation.getClass())) {
@@ -160,7 +160,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
 
                 // Gather the field's details
                 if (field != null) {
-                	paramType = field.getType();
+                    paramType = field.getType();
 
                     for (final Annotation fieldAnnotation : field.annotations()) {
                         if (!paramAnnotations.contains(fieldAnnotation)) {
@@ -173,8 +173,8 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 if (setter != null) {
                     // Do not set the param class/type from the setter if the values are already identified
                     if (paramType == null) {
-                    	// paramType will stay null if there is no parameter
-                    	paramType = setter.getParameterType(0); 
+                        // paramType will stay null if there is no parameter
+                        paramType = setter.getParameterType(0);
                     }
 
                     for (final Annotation fieldAnnotation : setter.annotations()) {
@@ -214,7 +214,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                                 includeRequestBody,
                                 extensions).parameters;
 
-                for (Parameter p: extracted) {
+                for (Parameter p : extracted) {
                     if (ParameterProcessor.applyAnnotations(
                             p,
                             paramType,

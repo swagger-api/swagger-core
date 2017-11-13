@@ -24,20 +24,20 @@ import java.lang.annotation.Target;
 /**
  * Represents an OAuth scope.
  **/
-@Target({  })
+@Target({})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface OAuthScope {
-	/**
-	 * Name of the scope.
-     * 
+    /**
+     * Name of the scope.
+     *
      * @return String name
-	 */
+     */
     String name() default "";
 
     /**
      * Short description of the scope.
-     * 
+     *
      * @return String description
      */
     String description() default "";

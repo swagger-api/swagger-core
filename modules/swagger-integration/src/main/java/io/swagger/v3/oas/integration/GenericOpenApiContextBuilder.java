@@ -16,9 +16,8 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
     protected Set<String> resourceClasses;
     protected OpenAPIConfiguration openApiConfiguration;
 
-
     @Override
-    public OpenApiContext buildContext(boolean init) throws OpenApiConfigurationException{
+    public OpenApiContext buildContext(boolean init) throws OpenApiConfigurationException {
         if (StringUtils.isBlank(ctxId)) {
             ctxId = OpenApiContext.OPENAPI_CONTEXT_ID_DEFAULT;
         }
@@ -32,13 +31,13 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
                     .parent(rootCtx);
 
             if (ctx.getConfigLocation() == null && configLocation != null) {
-                ((GenericOpenApiContext)ctx).configLocation(configLocation);
+                ((GenericOpenApiContext) ctx).configLocation(configLocation);
             }
-            if (((GenericOpenApiContext)ctx).getResourcePackages() == null && resourcePackages != null) {
-                ((GenericOpenApiContext)ctx).resourcePackages(resourcePackages);
+            if (((GenericOpenApiContext) ctx).getResourcePackages() == null && resourcePackages != null) {
+                ((GenericOpenApiContext) ctx).resourcePackages(resourcePackages);
             }
-            if (((GenericOpenApiContext)ctx).getResourceClasses() == null && resourceClasses != null) {
-                ((GenericOpenApiContext)ctx).resourceClasses(resourceClasses);
+            if (((GenericOpenApiContext) ctx).getResourceClasses() == null && resourceClasses != null) {
+                ((GenericOpenApiContext) ctx).resourceClasses(resourceClasses);
             }
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator
@@ -78,7 +77,6 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
     public void setOpenApiConfiguration(OpenAPIConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
     }
-
 
     public T ctxId(String ctxId) {
         this.ctxId = ctxId;

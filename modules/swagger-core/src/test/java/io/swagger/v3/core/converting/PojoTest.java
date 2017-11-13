@@ -24,7 +24,7 @@ public class PojoTest {
         return ModelConverters.getInstance().readAll(type);
     }
 
-    private void assertEqualsToJson( Object objectToSerialize, String fileName)  throws IOException {
+    private void assertEqualsToJson(Object objectToSerialize, String fileName) throws IOException {
         final String json = ResourceUtils.loadClassResource(getClass(), fileName);
         SerializationMatchers.assertEqualsToJson(objectToSerialize, json);
     }
@@ -33,11 +33,11 @@ public class PojoTest {
     public void testModelWithTitle() {
 
         String yaml = "ClassWithTitle:\n" +
-            "  type: object\n" +
-            "  title: 'My Pojo'\n" +
-            "  properties:\n" +
-            "    id:\n" +
-            "      type: string";
+                "  type: object\n" +
+                "  title: 'My Pojo'\n" +
+                "  properties:\n" +
+                "    id:\n" +
+                "      type: string";
         SerializationMatchers.assertEqualsToYaml(read(ClassWithTitle.class), yaml);
 
     }
@@ -55,7 +55,6 @@ public class PojoTest {
         }
     }
 
-
     @Test(description = "The @Schema annotation will only be adding additional sugar on the property")
     public void testModelWithAnnotatedPrivateMember() {
         String yaml = "ClassWithAnnotatedProperty:\n" +
@@ -65,7 +64,6 @@ public class PojoTest {
                 "      description: 'a long description for this property'\n" +
                 "      type: string";
         SerializationMatchers.assertEqualsToYaml(read(ClassWithAnnotatedProperty.class), yaml);
-
 
     }
 
@@ -81,7 +79,6 @@ public class PojoTest {
             this.id = id;
         }
     }
-
 
     @Test(description = "The @Schema annotation will only be adding additional sugar on the property")
     public void testModelWithAnnotatedPublicMethod() {
@@ -136,7 +133,7 @@ public class PojoTest {
     }
 
     @Test(description = "@Schema is completely overriding the type for this model")
-    public void testModelWithAlternateRepresentation () {
+    public void testModelWithAlternateRepresentation() {
         String yaml = "ClassWithAnnotatedMethod:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
@@ -159,9 +156,8 @@ public class PojoTest {
         }
     }
 
-
     @Test(description = "@Schema is allowing multiple definition interfaces to represent this model")
-    public void testModelWithMultipleRepresentations () {
+    public void testModelWithMultipleRepresentations() {
 
         String yaml = "anyOf:\n" +
                 "- $ref: \"#/components/schemas/UserObject\"\n" +
@@ -217,10 +213,12 @@ public class PojoTest {
         public String getDepartment() {
             return department;
         }
+
         @Override
         public String getId() {
             return id;
         }
+
         @Override
         public String getName() {
             return name;
@@ -231,19 +229,20 @@ public class PojoTest {
     interface UserObject {
         @Schema(format = "uuid", required = true)
         String getId();
+
         String getName();
     }
 
-    @Schema(description = "An Employee Object",  requiredProperties = {"department"})
+    @Schema(description = "An Employee Object", requiredProperties = {"department"})
     interface EmployeeObject {
         @Schema(format = "email")
         String getId();
+
         String getDepartment();
     }
 
-
     @Test(description = "Shows how @Schema can be used to allow only certain data formats")
-    public void testModelWithSpecificFormat () {
+    public void testModelWithSpecificFormat() {
 
         String yaml = "AuthorizedUser:\n" +
                 "  type: object\n" +
@@ -270,7 +269,7 @@ public class PojoTest {
     }
 
     @Test(description = "Shows how to restrict a particular schema")
-    public void testExcludeSchema () {
+    public void testExcludeSchema() {
 
         String yaml = "type: object\n" +
                 "description: We don't store social security numbers here!\n" +
@@ -291,10 +290,11 @@ public class PojoTest {
     }
 
     @Schema(not = ClassWithIdConstraints.class, description = "We don't store social security numbers here!")
-    static class ArbitraryDataReceiver {}
+    static class ArbitraryDataReceiver {
+    }
 
     @Test(description = "Shows how to override a definition with a schema reference")
-    public void testSchemaReference () {
+    public void testSchemaReference() {
 
         String yaml = "NotAPet:\n" +
                 "  $ref: http://petstore.swagger.io/v2/swagger.json#/definitions/Tag";
@@ -303,11 +303,11 @@ public class PojoTest {
     }
 
     @Schema(ref = "http://petstore.swagger.io/v2/swagger.json#/definitions/Tag")
-    static class NotAPet {}
-
+    static class NotAPet {
+    }
 
     @Test(description = "Shows how to add a reference on a property")
-    public void testPropertySchemaReference () {
+    public void testPropertySchemaReference() {
 
         String yaml = "ModelWithSchemaPropertyReference:\n" +
                 "  type: object\n" +
@@ -334,7 +334,7 @@ public class PojoTest {
     }
 
     @Test(description = "Shows how to override a property name")
-    public void testPropertyNameOverride () {
+    public void testPropertyNameOverride() {
 
         String yaml = "ModelWithPropertyNameOverride:\n" +
                 "  type: object\n" +
@@ -358,10 +358,8 @@ public class PojoTest {
         private String definitelyNotCalledUsername;
     }
 
-
-
     @Test(description = "Shows how to override a model name")
-    public void testModelNameOverride () {
+    public void testModelNameOverride() {
 
         String yaml = "Employee:\n" +
                 "  type: object\n" +
@@ -375,6 +373,7 @@ public class PojoTest {
     @Schema(name = "Employee")
     static class ModelWithNameOverride {
         private String id;
+
         public String getId() {
             return id;
         }
@@ -384,9 +383,8 @@ public class PojoTest {
         }
     }
 
-
     @Test(description = "Shows how to provide model examples")
-    public void testModelPropertyExampleOverride () {
+    public void testModelPropertyExampleOverride() {
 
         String yaml = "modelWithPropertyExampleOverride:\n" +
                 "  type: object\n" +
@@ -400,6 +398,7 @@ public class PojoTest {
     static class modelWithPropertyExampleOverride {
         @Schema(example = "abc-123")
         private String id;
+
         public String getId() {
             return id;
         }
@@ -411,7 +410,7 @@ public class PojoTest {
     }
 
     @Test(description = "Shows how to provide model examples as json")
-    public void testModelPropertyExampleJson () {
+    public void testModelPropertyExampleJson() {
 
         String yaml = "ExampleJson:\n" +
                 "  type: object\n" +
@@ -446,7 +445,7 @@ public class PojoTest {
     }
 
     @Test(description = "Shows how to provide model examples as json")
-    public void testModelPropertyImplExampleJson () {
+    public void testModelPropertyImplExampleJson() {
 
         String yaml = "ExampleJson:\n" +
                 "  type: object\n" +
@@ -477,7 +476,7 @@ public class PojoTest {
     }
 
     @Test(description = "Shows how to provide model examples as json")
-    public void testModelPropertyStringExampleJson () {
+    public void testModelPropertyStringExampleJson() {
 
         String yaml = "modelWithPropertyStringExampleOverrideJson:\n" +
                 "  type: object\n" +
@@ -507,6 +506,7 @@ public class PojoTest {
 
     static class ExampleJson {
         private String id;
+
         public String getId() {
             return id;
         }
@@ -517,20 +517,20 @@ public class PojoTest {
 
     }
 
-    @Test( description = "Shows how to provide an example array")
+    @Test(description = "Shows how to provide an example array")
     public void testExampleArray() {
 
         String yaml =
-            "modelExampleArray:\n" +
-                    "  type: object\n" +
-                    "  properties:\n" +
-                    "    ids:\n" +
-                    "      type: array\n" +
-                    "      example:\n" +
-                    "      - abc-123\n" +
-                    "      - zz-aa-bb\n" +
-                    "      items:\n" +
-                    "        type: string";
+                "modelExampleArray:\n" +
+                        "  type: object\n" +
+                        "  properties:\n" +
+                        "    ids:\n" +
+                        "      type: array\n" +
+                        "      example:\n" +
+                        "      - abc-123\n" +
+                        "      - zz-aa-bb\n" +
+                        "      items:\n" +
+                        "        type: string";
         Map<String, io.swagger.v3.oas.models.media.Schema> schemaMap = readAll(modelExampleArray.class);
         SerializationMatchers.assertEqualsToYaml(schemaMap, yaml);
     }
@@ -538,13 +538,14 @@ public class PojoTest {
     static class modelExampleArray {
         @Schema(example = "[\"abc-123\", \"zz-aa-bb\"]")
         private String[] ids;
-                public String[] getIds() {
-                return ids;
-            }
 
-            public void setIds(String[] ids) {
-                this.ids = ids;
-            }
+        public String[] getIds() {
+            return ids;
+        }
+
+        public void setIds(String[] ids) {
+            this.ids = ids;
+        }
     }
 
     @Test(description = "Show how to completely override an object example")
@@ -566,13 +567,14 @@ public class PojoTest {
     @Schema(example = "{\"foo\": \"bar\",\"baz\": true}")
     static class modelWithExampleOverride {
         private String id;
-                public String getId() {
-                return id;
-            }
 
-            public void setId(String id) {
-                this.id = id;
-            }
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
     }
 
 }

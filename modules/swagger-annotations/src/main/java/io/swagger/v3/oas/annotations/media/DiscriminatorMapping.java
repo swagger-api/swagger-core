@@ -24,21 +24,23 @@ import java.lang.annotation.Target;
 /**
  * This object maps payload values to a particular Schema.
  **/
-@Target({  })
+@Target({})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface DiscriminatorMapping {
 
-  /**
-   * The property value that will be mapped to a Schema
-   * @return the property value
-   **/
-  String value() default "";
+    /**
+     * The property value that will be mapped to a Schema
+     *
+     * @return the property value
+     **/
+    String value() default "";
 
-  /**
-   * The schema that is being mapped to a property value
-   * @return the Schema reference
-   **/
-  Class<?> schema() default Void.class;
+    /**
+     * The schema that is being mapped to a property value
+     *
+     * @return the Schema reference
+     **/
+    Class<?> schema() default Void.class;
 
 }

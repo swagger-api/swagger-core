@@ -290,22 +290,23 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
 
     static class GetOperationWithResponseSingleHeader {
         @Operation(
-                   summary = "Simple get operation",
-                   description = "Defines a simple get operation with no inputs and a complex output",
-                   operationId = "getWithPayloadResponse",
-                   deprecated = true,
-                   responses = {
-                                 @ApiResponse(
-                                              responseCode = "200",
-                                              description = "voila!",
-                                              headers = { @Header(
-                                                                  name = "Rate-Limit-Limit",
-                                                                  description = "The number of allowed requests in the current period",
-                                                                  schema = @Schema(type = "integer")) })
-                   })
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex output",
+                operationId = "getWithPayloadResponse",
+                deprecated = true,
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!",
+                                headers = {@Header(
+                                        name = "Rate-Limit-Limit",
+                                        description = "The number of allowed requests in the current period",
+                                        schema = @Schema(type = "integer"))})
+                })
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet() {
+        }
     }
 
     @Test
@@ -314,44 +315,45 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         int start = openApiYAML.indexOf("get:");
         String extractedYAML = openApiYAML.substring(start);
         String expectedYAML = "get:\n" +
-                              "      summary: Simple get operation\n" +
-                              "      description: Defines a simple get operation with no inputs and a complex output\n" +
-                              "      operationId: getWithPayloadResponse\n" +
-                              "      responses:\n" +
-                              "        200:\n" +
-                              "          description: voila!\n" +
-                              "          headers:\n" +
-                              "            Rate-Limit-Limit:\n" +
-                              "              description: The number of allowed requests in the current period\n" +
-                              "              style: simple\n" +
-                              "              schema:\n" +
-                              "                type: integer\n" +
-                              "      deprecated: true\n";
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "          headers:\n" +
+                "            Rate-Limit-Limit:\n" +
+                "              description: The number of allowed requests in the current period\n" +
+                "              style: simple\n" +
+                "              schema:\n" +
+                "                type: integer\n" +
+                "      deprecated: true\n";
         assertEquals(expectedYAML, extractedYAML);
     }
 
     static class GetOperationWithResponseMultipleHeaders {
         @Operation(
-                   summary = "Simple get operation",
-                   description = "Defines a simple get operation with no inputs and a complex output",
-                   operationId = "getWithPayloadResponse",
-                   deprecated = true,
-                   responses = {
-                                 @ApiResponse(
-                                              responseCode = "200",
-                                              description = "voila!",
-                                              headers = { @Header(
-                                                                  name = "Rate-Limit-Limit",
-                                                                  description = "The number of allowed requests in the current period",
-                                                                  schema = @Schema(type = "integer")),
-                                                          @Header(
-                                                                  name = "X-Rate-Limit-Desc",
-                                                                  description = "The description of rate limit",
-                                                                  schema = @Schema(type = "string")) })
-                   })
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex output",
+                operationId = "getWithPayloadResponse",
+                deprecated = true,
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!",
+                                headers = {@Header(
+                                        name = "Rate-Limit-Limit",
+                                        description = "The number of allowed requests in the current period",
+                                        schema = @Schema(type = "integer")),
+                                        @Header(
+                                                name = "X-Rate-Limit-Desc",
+                                                description = "The description of rate limit",
+                                                schema = @Schema(type = "string"))})
+                })
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet() {
+        }
     }
 
     @Test
@@ -360,24 +362,24 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         int start = openApiYAML.indexOf("get:");
         String extractedYAML = openApiYAML.substring(start);
         String expectedYAML = "get:\n" +
-                              "      summary: Simple get operation\n" +
-                              "      description: Defines a simple get operation with no inputs and a complex output\n" +
-                              "      operationId: getWithPayloadResponse\n" +
-                              "      responses:\n" +
-                              "        200:\n" +
-                              "          description: voila!\n" +
-                              "          headers:\n" +
-                              "            X-Rate-Limit-Desc:\n" +
-                              "              description: The description of rate limit\n" +
-                              "              style: simple\n" +
-                              "              schema:\n" +
-                              "                type: string\n" +
-                              "            Rate-Limit-Limit:\n" +
-                              "              description: The number of allowed requests in the current period\n" +
-                              "              style: simple\n" +
-                              "              schema:\n" +
-                              "                type: integer\n" +
-                              "      deprecated: true\n";
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "          headers:\n" +
+                "            X-Rate-Limit-Desc:\n" +
+                "              description: The description of rate limit\n" +
+                "              style: simple\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "            Rate-Limit-Limit:\n" +
+                "              description: The number of allowed requests in the current period\n" +
+                "              style: simple\n" +
+                "              schema:\n" +
+                "                type: integer\n" +
+                "      deprecated: true\n";
         assertEquals(expectedYAML, extractedYAML);
     }
 
@@ -648,6 +650,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          type: string\n";
         compareAsYaml(GenericResponsesResource.class, yaml);
     }
+
     @Test(description = "reads the user resource from sample")
     public void testCompleteUserResource() throws IOException {
         String expectedYAML = "openapi: 3.0.0\n" +
@@ -966,26 +969,26 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
 
     @Test
     public void testSimpleGetOperationWithSecurity() {
-        
+
         String openApiYAML = readIntoYaml(SimpleGetOperationWithSecurity.class);
         int start = openApiYAML.indexOf("get:");
         int end = openApiYAML.length() - 1;
-        
+
         String expectedYAML = "get:\n" +
-                                "      summary: Simple get operation\n" +
-                                "      description: Defines a simple get operation with no inputs and a complex\n" +
-                                "      operationId: getWithNoParameters\n" +
-                                "      responses:\n" +
-                                "        200:\n" +
-                                "          description: voila!\n" +
-                                "      security:\n" +
-                                "      - petstore-auth:\n" +
-                                "        - write:pets";
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex\n" +
+                "      operationId: getWithNoParameters\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "      security:\n" +
+                "      - petstore-auth:\n" +
+                "        - write:pets";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(expectedYAML, extractedYAML);
     }
-        
+
     static class SimpleGetOperationWithSecurity {
         @Operation(
                 summary = "Simple get operation",
@@ -995,15 +998,15 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                         @ApiResponse(
                                 responseCode = "200",
                                 description = "voila!")
-                        },
+                },
                 security = @SecurityRequirement(
-                                            name = "petstore-auth",
-                                            scopes = "write:pets"))
-                @GET
-                @Path("/path")
-                public void simpleGet() {}
-                }
-
+                        name = "petstore-auth",
+                        scopes = "write:pets"))
+        @GET
+        @Path("/path")
+        public void simpleGet() {
+        }
+    }
 
     @Test
     public void testSimpleGetOperationWithMultipleSecurity() {
@@ -1013,21 +1016,21 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
-                                "      summary: Simple get operation\n" +
-                                "      description: Defines a simple get operation with no inputs and a complex\n" +
-                                "      operationId: getWithNoParameters\n" +
-                                "      responses:\n" +
-                                "        200:\n" +
-                                "          description: voila!\n" +
-                                "      security:\n" +
-                                "      - petstore-auth:\n" +
-                                "        - write:pets\n" +
-                                "        - read:pets";
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex\n" +
+                "      operationId: getWithNoParameters\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "      security:\n" +
+                "      - petstore-auth:\n" +
+                "        - write:pets\n" +
+                "        - read:pets";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(extractedYAML, expectedYAML);
     }
-    
+
     static class SimpleGetOperationWithMultipleSecurityScopes {
         @Operation(
                 summary = "Simple get operation",
@@ -1037,60 +1040,62 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                         @ApiResponse(
                                 responseCode = "200",
                                 description = "voila!")
-                        },
+                },
                 security = @SecurityRequirement(
-                                        name = "petstore-auth",
-                                        scopes = { "write:pets", "read:pets" }))
+                        name = "petstore-auth",
+                        scopes = {"write:pets", "read:pets"}))
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet() {
+        }
     }
 
     @Test
     public void testSimpleGetOperationWithMultipleSecurityAnnotations() {
-    
+
         String openApiYAML = readIntoYaml(SimpleGetOperationWithMultipleSecurityAnnotations.class);
         int start = openApiYAML.indexOf("get:");
         int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
-                                "      summary: Simple get operation\n" +
-                                "      description: Defines a simple get operation with no inputs and a complex\n" +
-                                "      operationId: getWithNoParameters\n" +
-                                "      responses:\n" +
-                                "        200:\n" +
-                                "          description: voila!\n" +
-                                "      security:\n" +
-                                "      - review-auth:\n" +
-                                "        - write:review\n" +
-                                "      - petstore-auth:\n" +
-                                "        - write:pets\n" +
-                                "        - read:pets\n" +
-                                "      - api_key: []";
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex\n" +
+                "      operationId: getWithNoParameters\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "      security:\n" +
+                "      - review-auth:\n" +
+                "        - write:review\n" +
+                "      - petstore-auth:\n" +
+                "        - write:pets\n" +
+                "        - read:pets\n" +
+                "      - api_key: []";
         String extractedYAML = openApiYAML.substring(start, end);
-    
+
         assertEquals(extractedYAML, expectedYAML);
     }
-    
+
     static class SimpleGetOperationWithMultipleSecurityAnnotations {
-        @SecurityRequirement(name = "review-auth", scopes = { "write:review" })
+        @SecurityRequirement(name = "review-auth", scopes = {"write:review"})
         @Operation(
                 summary = "Simple get operation",
                 description = "Defines a simple get operation with no inputs and a complex",
                 operationId = "getWithNoParameters",
                 responses = {
                         @ApiResponse(
-                                        responseCode = "200",
-                                        description = "voila!")
-                       },
-                security = { @SecurityRequirement(
-                                            name = "petstore-auth",
-                                            scopes = { "write:pets", "read:pets" }),
-                             @SecurityRequirement(
-                                            name = "api_key",
-                                            scopes = {}), })
+                                responseCode = "200",
+                                description = "voila!")
+                },
+                security = {@SecurityRequirement(
+                        name = "petstore-auth",
+                        scopes = {"write:pets", "read:pets"}),
+                        @SecurityRequirement(
+                                name = "api_key",
+                                scopes = {}),})
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet() {
+        }
     }
 }

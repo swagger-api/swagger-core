@@ -5,10 +5,9 @@ import io.swagger.v3.oas.integration.api.OpenApiScanner;
 import javax.ws.rs.core.Application;
 import java.util.Map;
 
-public interface JaxrsOpenApiScanner extends OpenApiScanner{
+public interface JaxrsOpenApiScanner extends OpenApiScanner {
 
-
-    void setApplication (Application application);
+    void setApplication(Application application);
 
     Map<String, Object> resources();
 }

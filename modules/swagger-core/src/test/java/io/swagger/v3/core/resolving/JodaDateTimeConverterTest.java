@@ -21,17 +21,17 @@ public class JodaDateTimeConverterTest {
 
         final Schema model = models.get("ModelWithJodaDateTime");
 
-        final Schema dateTimeProperty = (Schema)model.getProperties().get("createdAt");
+        final Schema dateTimeProperty = (Schema) model.getProperties().get("createdAt");
         assertTrue(dateTimeProperty instanceof DateTimeSchema);
         assertTrue(model.getRequired().contains("createdAt"));
         assertEquals(dateTimeProperty.getDescription(), "creation timestamp");
 
-        final Schema nameProperty = (Schema)model.getProperties().get("name");
+        final Schema nameProperty = (Schema) model.getProperties().get("name");
         assertTrue(nameProperty instanceof StringSchema);
         assertEquals(nameProperty.getDescription(), "name of the model");
     }
 
-    class ModelWithJodaDateTime{
+    class ModelWithJodaDateTime {
 
         @io.swagger.v3.oas.annotations.media.Schema(description = "name of the model")
         public String name;

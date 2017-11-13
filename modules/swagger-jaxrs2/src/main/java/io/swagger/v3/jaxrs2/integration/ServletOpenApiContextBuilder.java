@@ -13,7 +13,7 @@ public class ServletOpenApiContextBuilder<T extends ServletOpenApiContextBuilder
     protected ServletConfig servletConfig;
 
     @Override
-    public OpenApiContext buildContext(boolean init) throws OpenApiConfigurationException{
+    public OpenApiContext buildContext(boolean init) throws OpenApiConfigurationException {
         if (StringUtils.isBlank(ctxId)) {
             ctxId = OpenApiContext.OPENAPI_CONTEXT_ID_DEFAULT;
         }
@@ -29,13 +29,13 @@ public class ServletOpenApiContextBuilder<T extends ServletOpenApiContextBuilder
                     .parent(rootCtx);
 
             if (ctx.getConfigLocation() == null && configLocation != null) {
-                ((XmlWebOpenApiContext)ctx).configLocation(configLocation);
+                ((XmlWebOpenApiContext) ctx).configLocation(configLocation);
             }
-            if (((XmlWebOpenApiContext)ctx).getResourcePackages() == null && resourcePackages != null) {
-                ((XmlWebOpenApiContext)ctx).resourcePackages(resourcePackages);
+            if (((XmlWebOpenApiContext) ctx).getResourcePackages() == null && resourcePackages != null) {
+                ((XmlWebOpenApiContext) ctx).resourcePackages(resourcePackages);
             }
-            if (((XmlWebOpenApiContext)ctx).getResourceClasses() == null && resourceClasses != null) {
-                ((XmlWebOpenApiContext)ctx).resourceClasses(resourceClasses);
+            if (((XmlWebOpenApiContext) ctx).getResourceClasses() == null && resourceClasses != null) {
+                ((XmlWebOpenApiContext) ctx).resourceClasses(resourceClasses);
             }
             if (init) {
                 ctx.init(); // includes registering itself with OpenApiContextLocator

@@ -9,7 +9,7 @@ import java.io.IOException;
 public class FileOpenApiConfigurationLoader implements StringOpenApiConfigurationLoader {
 
     @Override
-    public OpenAPIConfiguration load(String path)  throws IOException {
+    public OpenAPIConfiguration load(String path) throws IOException {
         File file = new File(path);
         return deserializeConfig(path, readInputStreamToString(new FileInputStream(file)));
     }

@@ -149,6 +149,7 @@ public class CallbackTest extends AbstractAnnotationTest {
     static class SubscriptionResponse {
         public String subscriptionId;
     }
+
     @Test
     public void simpleCallbacksWithOneCallbackTest() {
         String openApiYAML = readIntoYaml(SimpleCallbacksTest.class);
@@ -156,14 +157,14 @@ public class CallbackTest extends AbstractAnnotationTest {
         int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
-                              "      summary: Simple get operation\n" +
-                              "      operationId: getWithNoParameters\n" +
-                              "      responses:\n" +
-                              "        200:\n" +
-                              "          description: voila!\n" +
-                              "      callbacks:\n" +
-                              "        testCallback1:\n" +
-                              "          localhost:9080/airlines/reviews/{id}/1: {}";
+                "      summary: Simple get operation\n" +
+                "      operationId: getWithNoParameters\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "      callbacks:\n" +
+                "        testCallback1:\n" +
+                "          localhost:9080/airlines/reviews/{id}/1: {}";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(expectedYAML, extractedYAML);
@@ -171,19 +172,20 @@ public class CallbackTest extends AbstractAnnotationTest {
 
     static class SimpleCallbacksTest {
         @Callbacks({
-                     @Callback(name = "testCallback1", operation = @Operation(), callbackUrlExpression = "localhost:9080/airlines/reviews/{id}/1")
+                @Callback(name = "testCallback1", operation = @Operation(), callbackUrlExpression = "localhost:9080/airlines/reviews/{id}/1")
         })
         @Operation(
-                   summary = "Simple get operation",
-                   operationId = "getWithNoParameters",
-                   responses = {
-                                 @ApiResponse(
-                                              responseCode = "200",
-                                              description = "voila!")
-                   })
+                summary = "Simple get operation",
+                operationId = "getWithNoParameters",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!")
+                })
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet() {
+        }
     }
 
     @Test
@@ -193,25 +195,25 @@ public class CallbackTest extends AbstractAnnotationTest {
         int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
-                              "      summary: Simple get operation\n" +
-                              "      operationId: getWithNoParameters\n" +
-                              "      responses:\n" +
-                              "        200:\n" +
-                              "          description: voila!\n" +
-                              "      callbacks:\n" +
-                              "        testCallback1:\n" +
-                              "          http://www.url.com:\n" +
-                              "            get:\n" +
-                              "              summary: get all the reviews\n" +
-                              "              operationId: getAllReviews\n" +
-                              "              responses:\n" +
-                              "                200:\n" +
-                              "                  description: successful operation\n" +
-                              "                  content:\n" +
-                              "                    application/json:\n" +
-                              "                      schema:\n" +
-                              "                        type: integer\n" +
-                              "                        format: int32";
+                "      summary: Simple get operation\n" +
+                "      operationId: getWithNoParameters\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "      callbacks:\n" +
+                "        testCallback1:\n" +
+                "          http://www.url.com:\n" +
+                "            get:\n" +
+                "              summary: get all the reviews\n" +
+                "              operationId: getAllReviews\n" +
+                "              responses:\n" +
+                "                200:\n" +
+                "                  description: successful operation\n" +
+                "                  content:\n" +
+                "                    application/json:\n" +
+                "                      schema:\n" +
+                "                        type: integer\n" +
+                "                        format: int32";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(expectedYAML, extractedYAML);
@@ -219,33 +221,34 @@ public class CallbackTest extends AbstractAnnotationTest {
 
     static class SimpleCallbacksTestWithOperation {
         @Callbacks({
-                     @Callback(
-                               name = "testCallback1",
-                               operation = @Operation(
-                                                      operationId = "getAllReviews",
-                                                      summary = "get all the reviews",
-                                                      method = "get",
-                                                      responses = @ApiResponse(
-                                                                               responseCode = "200",
-                                                                               description = "successful operation",
-                                                                               content = @Content(
-                                                                                                  mediaType = "application/json",
-                                                                                                  schema = @Schema(
-                                                                                                                   type = "integer",
-                                                                                                                   format = "int32")))),
-                               callbackUrlExpression = "http://www.url.com")
+                @Callback(
+                        name = "testCallback1",
+                        operation = @Operation(
+                                operationId = "getAllReviews",
+                                summary = "get all the reviews",
+                                method = "get",
+                                responses = @ApiResponse(
+                                        responseCode = "200",
+                                        description = "successful operation",
+                                        content = @Content(
+                                                mediaType = "application/json",
+                                                schema = @Schema(
+                                                        type = "integer",
+                                                        format = "int32")))),
+                        callbackUrlExpression = "http://www.url.com")
         })
         @Operation(
-                   summary = "Simple get operation",
-                   operationId = "getWithNoParameters",
-                   responses = {
-                                 @ApiResponse(
-                                              responseCode = "200",
-                                              description = "voila!")
-                   })
+                summary = "Simple get operation",
+                operationId = "getWithNoParameters",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!")
+                })
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet() {
+        }
     }
 
     @Test
@@ -255,27 +258,27 @@ public class CallbackTest extends AbstractAnnotationTest {
         int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
-                              "      summary: Simple get operation\n" +
-                              "      operationId: getWithNoParameters\n" +
-                              "      responses:\n" +
-                              "        200:\n" +
-                              "          description: voila!\n" +
-                              "      callbacks:\n" +
-                              "        testCallback1:\n" +
-                              "          http://www.url.com:\n" +
-                              "            get:\n" +
-                              "              summary: get all the reviews\n" +
-                              "              operationId: getAllReviews\n" +
-                              "              responses:\n" +
-                              "                200:\n" +
-                              "                  description: successful operation\n" +
-                              "                  content:\n" +
-                              "                    application/json:\n" +
-                              "                      schema:\n" +
-                              "                        type: integer\n" +
-                              "                        format: int32\n" +
-                              "        testCallback2:\n" +
-                              "          http://$request.query.url: {}";
+                "      summary: Simple get operation\n" +
+                "      operationId: getWithNoParameters\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "      callbacks:\n" +
+                "        testCallback1:\n" +
+                "          http://www.url.com:\n" +
+                "            get:\n" +
+                "              summary: get all the reviews\n" +
+                "              operationId: getAllReviews\n" +
+                "              responses:\n" +
+                "                200:\n" +
+                "                  description: successful operation\n" +
+                "                  content:\n" +
+                "                    application/json:\n" +
+                "                      schema:\n" +
+                "                        type: integer\n" +
+                "                        format: int32\n" +
+                "        testCallback2:\n" +
+                "          http://$request.query.url: {}";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(expectedYAML, extractedYAML);
@@ -283,34 +286,35 @@ public class CallbackTest extends AbstractAnnotationTest {
 
     static class MultipleCallbacksTestWithOperation {
         @Callbacks({
-                     @Callback(
-                               name = "testCallback1",
-                               operation = @Operation(
-                                                      operationId = "getAllReviews",
-                                                      summary = "get all the reviews",
-                                                      method = "get",
-                                                      responses = @ApiResponse(
-                                                                               responseCode = "200",
-                                                                               description = "successful operation",
-                                                                               content = @Content(
-                                                                                                  mediaType = "application/json",
-                                                                                                  schema = @Schema(
-                                                                                                                   type = "integer",
-                                                                                                                   format = "int32")))),
-                               callbackUrlExpression = "http://www.url.com"),
-                     @Callback(name = "testCallback2", operation = @Operation(), callbackUrlExpression = "http://$request.query.url")
+                @Callback(
+                        name = "testCallback1",
+                        operation = @Operation(
+                                operationId = "getAllReviews",
+                                summary = "get all the reviews",
+                                method = "get",
+                                responses = @ApiResponse(
+                                        responseCode = "200",
+                                        description = "successful operation",
+                                        content = @Content(
+                                                mediaType = "application/json",
+                                                schema = @Schema(
+                                                        type = "integer",
+                                                        format = "int32")))),
+                        callbackUrlExpression = "http://www.url.com"),
+                @Callback(name = "testCallback2", operation = @Operation(), callbackUrlExpression = "http://$request.query.url")
         })
         @Operation(
-                   summary = "Simple get operation",
-                   operationId = "getWithNoParameters",
-                   responses = {
-                                 @ApiResponse(
-                                              responseCode = "200",
-                                              description = "voila!")
-                   })
+                summary = "Simple get operation",
+                operationId = "getWithNoParameters",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!")
+                })
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet() {
+        }
     }
 
     @Test
@@ -320,29 +324,29 @@ public class CallbackTest extends AbstractAnnotationTest {
         int end = openApiYAML.length() - 1;
 
         String expectedYAML = "get:\n" +
-                              "      summary: Simple get operation\n" +
-                              "      operationId: getWithNoParameters\n" +
-                              "      responses:\n" +
-                              "        200:\n" +
-                              "          description: voila!\n" +
-                              "      callbacks:\n" +
-                              "        testCallback:\n" +
-                              "          http://$requests.query.url: {}\n" +
-                              "        testCallback1:\n" +
-                              "          http://www.url.com:\n" +
-                              "            get:\n" +
-                              "              summary: get all the reviews\n" +
-                              "              operationId: getAllReviews\n" +
-                              "              responses:\n" +
-                              "                200:\n" +
-                              "                  description: successful operation\n" +
-                              "                  content:\n" +
-                              "                    application/json:\n" +
-                              "                      schema:\n" +
-                              "                        type: integer\n" +
-                              "                        format: int32\n" +
-                              "        testCallback2:\n" +
-                              "          http://$request.query.url: {}";
+                "      summary: Simple get operation\n" +
+                "      operationId: getWithNoParameters\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "      callbacks:\n" +
+                "        testCallback:\n" +
+                "          http://$requests.query.url: {}\n" +
+                "        testCallback1:\n" +
+                "          http://www.url.com:\n" +
+                "            get:\n" +
+                "              summary: get all the reviews\n" +
+                "              operationId: getAllReviews\n" +
+                "              responses:\n" +
+                "                200:\n" +
+                "                  description: successful operation\n" +
+                "                  content:\n" +
+                "                    application/json:\n" +
+                "                      schema:\n" +
+                "                        type: integer\n" +
+                "                        format: int32\n" +
+                "        testCallback2:\n" +
+                "          http://$request.query.url: {}";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(expectedYAML, extractedYAML);
@@ -386,34 +390,35 @@ public class CallbackTest extends AbstractAnnotationTest {
     static class CallbackCallbacksAnnotationTest {
         @Callback(name = "testCallback", operation = @Operation(), callbackUrlExpression = "http://$requests.query.url")
         @Callbacks({
-                     @Callback(
-                               name = "testCallback1",
-                               operation = @Operation(
-                                                      operationId = "getAllReviews",
-                                                      summary = "get all the reviews",
-                                                      method = "get",
-                                                      responses = @ApiResponse(
-                                                                               responseCode = "200",
-                                                                               description = "successful operation",
-                                                                               content = @Content(
-                                                                                                  mediaType = "application/json",
-                                                                                                  schema = @Schema(
-                                                                                                                   type = "integer",
-                                                                                                                   format = "int32")))),
-                               callbackUrlExpression = "http://www.url.com"),
-                     @Callback(name = "testCallback2", operation = @Operation(), callbackUrlExpression = "http://$request.query.url")
+                @Callback(
+                        name = "testCallback1",
+                        operation = @Operation(
+                                operationId = "getAllReviews",
+                                summary = "get all the reviews",
+                                method = "get",
+                                responses = @ApiResponse(
+                                        responseCode = "200",
+                                        description = "successful operation",
+                                        content = @Content(
+                                                mediaType = "application/json",
+                                                schema = @Schema(
+                                                        type = "integer",
+                                                        format = "int32")))),
+                        callbackUrlExpression = "http://www.url.com"),
+                @Callback(name = "testCallback2", operation = @Operation(), callbackUrlExpression = "http://$request.query.url")
         })
         @Operation(
-                   summary = "Simple get operation",
-                   operationId = "getWithNoParameters",
-                   responses = {
-                                 @ApiResponse(
-                                              responseCode = "200",
-                                              description = "voila!")
-                   })
+                summary = "Simple get operation",
+                operationId = "getWithNoParameters",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!")
+                })
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet() {
+        }
     }
 
     static class RepeatableCallbackAnnotationTest {
@@ -444,6 +449,7 @@ public class CallbackTest extends AbstractAnnotationTest {
                 })
         @GET
         @Path("/path")
-        public void simpleGet() {}
+        public void simpleGet() {
+        }
     }
 }

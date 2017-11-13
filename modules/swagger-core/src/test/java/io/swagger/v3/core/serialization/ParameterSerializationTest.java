@@ -38,7 +38,7 @@ public class ParameterSerializationTest {
     public void serializeArrayQueryParameter() {
         final Parameter p = new QueryParameter()
                 .schema(new ArraySchema()
-                    .items(new StringSchema()));
+                        .items(new StringSchema()));
         final String json = "{" +
                 "   \"in\":\"query\"," +
                 "   \"schema\":{" +
@@ -61,7 +61,7 @@ public class ParameterSerializationTest {
     public void serializeStringArrayPathParameter() {
         Parameter p = new PathParameter()
                 .schema(new ArraySchema()
-                    .items(new StringSchema()));
+                        .items(new StringSchema()));
         final String json = "{\"in\":\"path\",\"required\":true,\"schema\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}";
         SerializationMatchers.assertEqualsToJson(p, json);
 
@@ -181,25 +181,25 @@ public class ParameterSerializationTest {
     public void testIssue1765() throws Exception {
         String yaml =
                 "openapi: '3.0.0'\n" +
-                "paths:\n" +
-                "  /test:\n" +
-                "    get:\n" +
-                "      parameters:\n" +
-                "      - name: \"days\"\n" +
-                "        in: \"path\"\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: \"integer\"\n" +
-                "          format: \"int32\"\n" +
-                "          enum:\n" +
-                "          - 1\n" +
-                "          - 2\n" +
-                "          - 3\n" +
-                "          - 4\n" +
-                "          - 5\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: great";
+                        "paths:\n" +
+                        "  /test:\n" +
+                        "    get:\n" +
+                        "      parameters:\n" +
+                        "      - name: \"days\"\n" +
+                        "        in: \"path\"\n" +
+                        "        required: true\n" +
+                        "        schema:\n" +
+                        "          type: \"integer\"\n" +
+                        "          format: \"int32\"\n" +
+                        "          enum:\n" +
+                        "          - 1\n" +
+                        "          - 2\n" +
+                        "          - 3\n" +
+                        "          - 4\n" +
+                        "          - 5\n" +
+                        "      responses:\n" +
+                        "        default:\n" +
+                        "          description: great";
 
         OpenAPI swagger = Yaml.mapper().readValue(yaml, OpenAPI.class);
         SerializationMatchers.assertEqualsToYaml(swagger, yaml);

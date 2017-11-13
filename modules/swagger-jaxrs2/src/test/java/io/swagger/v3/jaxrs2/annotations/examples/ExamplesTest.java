@@ -18,7 +18,6 @@ import javax.ws.rs.Path;
 
 import static org.testng.Assert.assertEquals;
 
-
 public class ExamplesTest extends AbstractAnnotationTest {
 
     @Test
