@@ -1,8 +1,10 @@
 package io.swagger.v3.oas.integration;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiScanner;
 import org.apache.commons.lang3.StringUtils;
+import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -71,14 +73,10 @@ public class GenericOpenApiScanner implements OpenApiScanner {
 
         config.setScanners(new ResourcesScanner(), new TypeAnnotationsScanner(), new SubTypesScanner());
 
-        //final Reflections reflections = new Reflections(config);
-        // TODO if we add an @Api annotation scan for that, same for defintion
+        final Reflections reflections = new Reflections(config);
         // this is generic, specific Jaxrs scanner will also look for @Path
-/*
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Api.class);
-        classes.addAll(reflections.getTypesAnnotatedWith(OpenApiDefinition.class));
+        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(OpenAPIDefinition.class);
 
-        Set<Class<?>> output = new HashSet<Class<?>>();
         for (Class<?> cls : classes) {
             if (allowAllPackages) {
                 output.add(cls);
@@ -90,7 +88,7 @@ public class GenericOpenApiScanner implements OpenApiScanner {
                 }
             }
         }
-*/
+
         return output;
     }
 

@@ -7,7 +7,7 @@ import io.swagger.v3.oas.integration.api.OpenApiConfigurationLoader;
 import java.io.IOException;
 import java.util.ServiceLoader;
 
-// TODO doesn't support multiple configs
+// doesn't support multiple configs
 public class ServiceOpenApiConfigurationLoader implements OpenApiConfigurationLoader {
 
     @Override

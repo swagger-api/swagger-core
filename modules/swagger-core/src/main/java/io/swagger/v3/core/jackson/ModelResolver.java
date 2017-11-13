@@ -466,7 +466,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 if (property != null) {
                     if (property.get$ref() == null) {
-                        // TODO also check annotation?
                         Boolean required = md.getRequired();
                         if (required != null && !Boolean.FALSE.equals(required)) {
                             addRequiredItem(model, propName);
@@ -1028,7 +1027,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected Boolean resolveReadOnly(Annotated a) {
         io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
-        // TODO possibly set schema.readOnly to be Boolean object
         if (schema != null && schema.readOnly()) {
             return schema.readOnly();
         }
@@ -1443,15 +1441,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return property;
     }
     protected io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Annotated a) {
-        if (a == null) {
-            return null;
-        }
-        io.swagger.v3.oas.annotations.media.ArraySchema arraySchema = a.getAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
-        if (arraySchema != null) {
-            return arraySchema.schema();
-        } else {
-            return a.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
-        }
+        return AnnotationsUtils.getSchemaAnnotation(a);
     }
 
     private void addRequiredItem(Schema model, String propName) {

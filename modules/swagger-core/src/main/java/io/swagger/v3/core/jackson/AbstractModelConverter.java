@@ -109,10 +109,6 @@ public abstract class AbstractModelConverter implements ModelConverter {
         if (rootName != null && rootName.hasSimpleName()) {
             return rootName.getSimpleName();
         }
-        String nameFromAnnotation = _intr.findTypeName(beanDesc.getClassInfo());
-        if (StringUtils.isNotBlank(nameFromAnnotation)) {
-            return nameFromAnnotation;
-        }
         return _typeNameResolver.nameForType(type);
     }
 
@@ -121,7 +117,6 @@ public abstract class AbstractModelConverter implements ModelConverter {
     }
 
     protected String _subTypeName(NamedType type) {
-        // !!! TODO: should this use 'name' instead?
         return type.getType().getName();
     }
 

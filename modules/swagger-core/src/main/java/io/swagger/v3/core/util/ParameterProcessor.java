@@ -291,7 +291,6 @@ public class ParameterProcessor {
                         } catch (Exception ex) {
                             LOGGER.error("Invocation of value method failed", ex);
                         }
-                        // TODO verify if resolved correctly by resolver
                     }
                 }
             }
