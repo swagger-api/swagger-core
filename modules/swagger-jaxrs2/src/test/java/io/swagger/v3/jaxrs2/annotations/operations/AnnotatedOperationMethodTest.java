@@ -2,6 +2,7 @@ package io.swagger.v3.jaxrs2.annotations.operations;
 
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.v3.jaxrs2.resources.GenericResponsesResource;
+import io.swagger.v3.jaxrs2.resources.HiddenAnnotatedUserResource;
 import io.swagger.v3.jaxrs2.resources.HiddenUserResource;
 import io.swagger.v3.jaxrs2.resources.PetResource;
 import io.swagger.v3.jaxrs2.resources.SimpleUserResource;
@@ -965,6 +966,37 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     public void testHiddenUserResource() {
         String openApiYAML = readIntoYaml(HiddenUserResource.class);
         assertEquals(openApiYAML, "openapi: 3.0.0\n");
+    }
+
+    @Test(description = "reads and skips the hidden user resource")
+    public void testHiddenAnnotatedUserResource() throws IOException {
+        String openApiYAML = readIntoYaml(HiddenAnnotatedUserResource.class);
+        assertEquals(openApiYAML, "openapi: 3.0.0\n");
+        compareAsYaml(HiddenAnnotatedUserResource.HiddenAnnotatedUserResourceMethodAndData.class, "openapi: 3.0.0\n" +
+                "paths:\n" +
+                "  /user/2:\n" +
+                "    post:\n" +
+                "      summary: Create user\n" +
+                "      description: This can only be done by the logged in user.\n" +
+                "      operationId: createUserWithHiddenBeanProperty\n" +
+                "      requestBody:\n" +
+                "        description: Created user object\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/UserResourceBean'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    UserResourceBean:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string");
+
     }
 
     @Test
