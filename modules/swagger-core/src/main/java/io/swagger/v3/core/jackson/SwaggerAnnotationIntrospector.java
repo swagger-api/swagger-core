@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import io.swagger.v3.core.util.AnnotationsUtils;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -27,6 +28,10 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
     public boolean hasIgnoreMarker(AnnotatedMember m) {
         Schema ann = m.getAnnotation(Schema.class);
         if (ann != null && ann.hidden()) {
+            return true;
+        }
+        Hidden hidden = m.getAnnotation(Hidden.class);
+        if (hidden != null) {
             return true;
         }
         return false;

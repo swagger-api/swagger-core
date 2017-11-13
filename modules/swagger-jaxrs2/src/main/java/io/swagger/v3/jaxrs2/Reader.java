@@ -16,6 +16,7 @@ import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.v3.jaxrs2.util.ReaderUtils;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.servers.Server;
@@ -231,6 +232,11 @@ public class Reader implements OpenApiReader {
     }
 
     public OpenAPI read(Class<?> cls, String parentPath) {
+
+        Hidden hidden = cls.getAnnotation(Hidden.class);
+        if (hidden != null) {
+            return openAPI;
+        }
 
         List<io.swagger.v3.oas.annotations.security.SecurityScheme> apiSecurityScheme = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.v3.oas.annotations.security.SecurityScheme.class);
         List<io.swagger.v3.oas.annotations.security.SecurityRequirement> apiSecurityRequirements = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.v3.oas.annotations.security.SecurityRequirement.class);
@@ -1001,6 +1007,10 @@ public class Reader implements OpenApiReader {
     protected boolean isOperationHidden(Method method) {
         io.swagger.v3.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.Operation.class);
         if (apiOperation != null && apiOperation.hidden()) {
+            return true;
+        }
+        Hidden hidden = method.getAnnotation(Hidden.class);
+        if (hidden != null) {
             return true;
         }
         if (!Boolean.TRUE.equals(config.isReadAllResources()) && apiOperation == null) {
