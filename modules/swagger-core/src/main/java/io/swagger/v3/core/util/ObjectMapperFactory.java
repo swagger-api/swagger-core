@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 public class ObjectMapperFactory {
 
     protected static ObjectMapper createJson() {
-        return create(null );
+        return create(null);
     }
 
     protected static ObjectMapper createYaml() {
@@ -123,7 +123,7 @@ public class ObjectMapperFactory {
                 Tag.class,
                 XML.class,
                 Schema.class
-                );
+        );
         mapper.setMixIns(mixinTargets.stream().collect(Collectors.toMap(Function.identity(), c -> ExtensionsMixin.class)));
 
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);

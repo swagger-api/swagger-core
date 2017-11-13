@@ -252,14 +252,12 @@ public class SpecFilterTest {
         assertNotNull(filtered.getComponents().getSchemas().get("Category"));
     }
 
-
     @Test(description = "it should filter any Pet Ref in Schemas")
     public void filterAwayPetRefInSchemas() throws IOException {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
         final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoPetRefSchemaFilter(), null, null, null);
         validateSchemasInComponents(filtered.getComponents(), PET_MODEL);
     }
-
 
     private void validateSchemasInComponents(Components components, String model) {
         if (components != null) {

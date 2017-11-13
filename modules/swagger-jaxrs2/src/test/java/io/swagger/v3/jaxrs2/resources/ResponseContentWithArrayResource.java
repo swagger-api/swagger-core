@@ -13,28 +13,28 @@ import java.util.List;
 
 public class ResponseContentWithArrayResource {
 
-	@Operation(
-			summary = "Get a list of users",
-			description = "Get a list of users registered in the system",
-			responses = { @ApiResponse (
-							responseCode = "200",
-							description = "The response for the user request",
-							content = {
-									@Content(
-										mediaType = "application/json",
-										array = @ArraySchema(schema = @Schema(implementation = User.class))
-									)
-							})
-						}
-	)
-	@GET
-	@SecurityRequirement(name = "JWT")
-	@Path("/user")
-	public List<User> getUsers() {
-		return null;
-	}
+    @Operation(
+            summary = "Get a list of users",
+            description = "Get a list of users registered in the system",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    description = "The response for the user request",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = User.class))
+                            )
+                    })
+            }
+    )
+    @GET
+    @SecurityRequirement(name = "JWT")
+    @Path("/user")
+    public List<User> getUsers() {
+        return null;
+    }
 
-	class User {
-		public String foo;
-	}
+    class User {
+        public String foo;
+    }
 }

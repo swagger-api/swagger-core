@@ -22,25 +22,26 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
  * Allows referencing an external resource for extended documentation.
  **/
-@Target({ ElementType.METHOD, ElementType.TYPE })
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ExternalDocumentation {
-	
-  /**
-   * A short description of the target documentation.
-   * @return the documentation description
-   **/
-  String description() default "";
 
-  /**
-   * The URL for the target documentation. Value must be in the format of a URL.
-   * @return the documentation URL
-   **/
-  String url() default "";
+    /**
+     * A short description of the target documentation.
+     *
+     * @return the documentation description
+     **/
+    String description() default "";
+
+    /**
+     * The URL for the target documentation. Value must be in the format of a URL.
+     *
+     * @return the documentation URL
+     **/
+    String url() default "";
 
 }

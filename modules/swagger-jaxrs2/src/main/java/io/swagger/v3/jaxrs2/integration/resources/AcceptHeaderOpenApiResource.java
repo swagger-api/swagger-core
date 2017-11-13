@@ -24,8 +24,8 @@ public class AcceptHeaderOpenApiResource extends BaseOpenApiResource {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     @Operation(hidden = true)
-    public Response getOpenApiJson( @Context HttpHeaders headers,
-                                @Context UriInfo uriInfo) throws Exception {
+    public Response getOpenApiJson(@Context HttpHeaders headers,
+                                   @Context UriInfo uriInfo) throws Exception {
 
         return super.getOpenApi(headers, config, app, uriInfo, "json");
     }
@@ -33,8 +33,8 @@ public class AcceptHeaderOpenApiResource extends BaseOpenApiResource {
     @GET
     @Produces({"application/yaml"})
     @Operation(hidden = true)
-    public Response getOpenApiYaml( @Context HttpHeaders headers,
-                                @Context UriInfo uriInfo) throws Exception {
+    public Response getOpenApiYaml(@Context HttpHeaders headers,
+                                   @Context UriInfo uriInfo) throws Exception {
 
         return super.getOpenApi(headers, config, app, uriInfo, "yaml");
     }

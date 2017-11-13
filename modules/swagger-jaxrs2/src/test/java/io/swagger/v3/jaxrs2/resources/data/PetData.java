@@ -87,8 +87,9 @@ public class PetData {
             if (null != pet.getTags()) {
                 for (Tag tag : pet.getTags()) {
                     for (String tagListString : tagList) {
-                        if (tagListString.equals(tag.getName()))
+                        if (tagListString.equals(tag.getName())) {
                             result.add(pet);
+                        }
                     }
                 }
             }

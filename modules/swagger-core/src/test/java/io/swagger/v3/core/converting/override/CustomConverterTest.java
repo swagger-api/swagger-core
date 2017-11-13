@@ -29,17 +29,17 @@ public class CustomConverterTest {
         assertNotNull(model);
         assertEquals(model.getProperties().size(), 1);
 
-        final Schema barProperty = (Schema)model.getProperties().get("bar");
+        final Schema barProperty = (Schema) model.getProperties().get("bar");
         assertNull(barProperty);
 
-        final Schema titleProperty = (Schema)model.getProperties().get("title");
+        final Schema titleProperty = (Schema) model.getProperties().get("title");
         assertNotNull(titleProperty);
     }
 
     class CustomConverter implements ModelConverter {
         @Override
         public Schema resolve(Type type, ModelConverterContext context, Annotation[] annotations,
-                                        Iterator<ModelConverter> chain) {
+                              Iterator<ModelConverter> chain) {
             final JavaType jType = Json.mapper().constructType(type);
             if (jType != null) {
                 final Class<?> cls = jType.getRawClass();
@@ -61,7 +61,7 @@ public class CustomConverterTest {
         @Override
         public Schema resolveAnnotatedType(Type type, Annotated member, String elementName, ModelConverterContext context, Iterator<ModelConverter> chain) {
             if (chain.hasNext()) {
-                return chain.next().resolveAnnotatedType(type, member, elementName,context, chain);
+                return chain.next().resolveAnnotatedType(type, member, elementName, context, chain);
             } else {
                 return null;
             }

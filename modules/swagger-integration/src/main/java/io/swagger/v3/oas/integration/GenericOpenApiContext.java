@@ -51,6 +51,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         this.cacheTTL = cacheTTL;
         return (T) this;
     }
+
     public OpenApiReader getOpenApiReader() {
         return openApiReader;
     }
@@ -78,7 +79,6 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         this.openApiScanner = openApiScanner;
         return (T) this;
     }
-
 
     public Set<String> getResourcePackages() {
         return resourcePackages;
@@ -174,6 +174,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             reader = new OpenApiReader() {
 
                 OpenAPIConfiguration openApiConfiguration;
+
                 @Override
                 public void setConfiguration(OpenAPIConfiguration openApiConfiguration) {
                     this.openApiConfiguration = openApiConfiguration;
@@ -221,7 +222,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return map;
     }
 
-    protected OpenAPIConfiguration loadConfiguration() throws OpenApiConfigurationException{
+    protected OpenAPIConfiguration loadConfiguration() throws OpenApiConfigurationException {
 
         Map<String, OpenApiConfigurationLoader> loaders = getLocationLoaders();
         try {
@@ -235,8 +236,8 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
                 }
             }
             // check known locations
-            List<ImmutablePair<String, String>> knownLocations  = getKnownLocations();
-            for (ImmutablePair<String, String> location: knownLocations) {
+            List<ImmutablePair<String, String>> knownLocations = getKnownLocations();
+            for (ImmutablePair<String, String> location : knownLocations) {
                 if (loaders.get(location.left).exists(location.right)) {
                     try {
                         return loaders.get(location.left).load(location.right);
@@ -252,7 +253,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     }
 
     @Override
-    public T init() throws OpenApiConfigurationException{
+    public T init() throws OpenApiConfigurationException {
 
         if (openApiConfiguration == null) {
             openApiConfiguration = loadConfiguration();
@@ -260,7 +261,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
         if (openApiConfiguration == null) {
             openApiConfiguration = new SwaggerConfiguration().resourcePackages(resourcePackages).resourceClasses(resourceClasses);
-            ((SwaggerConfiguration)openApiConfiguration).setId(id);
+            ((SwaggerConfiguration) openApiConfiguration).setId(id);
         }
 
         openApiConfiguration = mergeParentConfiguration(openApiConfiguration, parent);
@@ -285,7 +286,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return (T) this;
     }
 
-    private OpenAPIConfiguration mergeParentConfiguration (OpenAPIConfiguration config, OpenApiContext parent) {
+    private OpenAPIConfiguration mergeParentConfiguration(OpenAPIConfiguration config, OpenApiContext parent) {
         if (parent == null || parent.getOpenApiConfiguration() == null) {
             return config;
         }
@@ -294,9 +295,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         SwaggerConfiguration merged = null;
 
         if (config instanceof SwaggerConfiguration) {
-            merged = (SwaggerConfiguration)config;
+            merged = (SwaggerConfiguration) config;
         } else {
-            merged = (SwaggerConfiguration)ContextUtils.deepCopy(config);
+            merged = (SwaggerConfiguration) ContextUtils.deepCopy(config);
         }
 
         if (merged.getResourceClasses() == null) {
@@ -359,7 +360,5 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             return (cacheTTL > 0 && System.currentTimeMillis() - createdAt > cacheTTL);
         }
     }
-
-
 
 }

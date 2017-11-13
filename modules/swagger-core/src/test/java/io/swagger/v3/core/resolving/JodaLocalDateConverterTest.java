@@ -21,12 +21,12 @@ public class JodaLocalDateConverterTest {
 
         final Schema model = models.get("ModelWithJodaLocalDate");
 
-        final Schema dateTimeProperty = (Schema)model.getProperties().get("createdAt");
+        final Schema dateTimeProperty = (Schema) model.getProperties().get("createdAt");
         assertTrue(dateTimeProperty instanceof DateSchema);
         assertTrue(model.getRequired().contains("createdAt"));
         assertEquals(dateTimeProperty.getDescription(), "creation localDate");
 
-        final Schema nameProperty = (Schema)model.getProperties().get("name");
+        final Schema nameProperty = (Schema) model.getProperties().get("name");
         assertTrue(nameProperty instanceof StringSchema);
         assertEquals(nameProperty.getDescription(), "name of the model");
     }

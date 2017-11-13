@@ -278,7 +278,7 @@ public class ReflectionUtils {
     }
 
     public static <A extends Annotation> List<A> getRepeatableAnnotations(Class<?> cls, Class<A> annotationClass) {
-        A[] annotations =  getRepeatableAnnotationsArray(cls, annotationClass);
+        A[] annotations = getRepeatableAnnotationsArray(cls, annotationClass);
         if (annotations == null || annotations.length == 0) {
             return null;
         }

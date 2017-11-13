@@ -32,7 +32,7 @@ public class XMLInfoTest extends SwaggerTestBase {
         assertEquals(xml.getName(), "xmlDecoratedBean");
 
         // Cast it to an array property
-        final ArraySchema property = (ArraySchema)model.getProperties().get("elements");
+        final ArraySchema property = (ArraySchema) model.getProperties().get("elements");
         assertNotNull(property);
         final XML propertyXml = property.getXml();
         assertNotNull(propertyXml);
@@ -70,7 +70,7 @@ public class XMLInfoTest extends SwaggerTestBase {
         assertNotNull(xml);
         assertEquals(xml.getName(), "xmlDecoratedBean");
 
-        final Schema property = (Schema)model.getProperties().get("a");
+        final Schema property = (Schema) model.getProperties().get("a");
         assertNotNull(property);
 
         assertNull(model.getProperties().get("b"));
@@ -85,10 +85,10 @@ public class XMLInfoTest extends SwaggerTestBase {
         assertNotNull(xml);
         assertEquals(xml.getName(), "xmlDecoratedBean");
 
-        final Schema propertyA = (Schema)model.getProperties().get("a");
+        final Schema propertyA = (Schema) model.getProperties().get("a");
         assertNotNull(propertyA);
 
-        Schema propertyB = (Schema)model.getProperties().get("b");
+        Schema propertyB = (Schema) model.getProperties().get("b");
         assertNotNull(propertyB);
     }
 

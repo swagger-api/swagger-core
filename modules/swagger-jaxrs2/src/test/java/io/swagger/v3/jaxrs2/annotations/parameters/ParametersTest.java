@@ -26,7 +26,6 @@ import static org.testng.Assert.assertNotNull;
 
 public class ParametersTest extends AbstractAnnotationTest {
 
-
     @Test(description = "scan class level and field level annotations")
     public void scanClassAndFieldLevelAnnotations() {
         Reader reader = new Reader(new OpenAPI());
@@ -39,7 +38,6 @@ public class ParametersTest extends AbstractAnnotationTest {
         assertEquals(resourceParameters.get(1).getName(), "fieldParam");
         assertEquals(resourceParameters.get(2).getName(), "methodParam");
     }
-
 
     @Test
     public void testParameters() {
@@ -417,6 +415,7 @@ public class ParametersTest extends AbstractAnnotationTest {
             return null;
         }
     }
+
     static class SubscriptionResponse {
         public String subscriptionId;
     }

@@ -32,12 +32,13 @@ public class XmlWebOpenApiContext<T extends XmlWebOpenApiContext<T>> extends Jax
 
     public T servletConfig(ServletConfig servletConfig) {
 
-        if (!ServletConfigContextUtils.isServletConfigAvailable(servletConfig)) return (T)this;
+        if (!ServletConfigContextUtils.isServletConfigAvailable(servletConfig)) {
+            return (T) this;
+        }
         this.servletConfig = servletConfig;
         this.servletContext = servletConfig.getServletContext();
-        return (T)this;
+        return (T) this;
     }
-
 
     @Override
     protected List<ImmutablePair<String, String>> getKnownLocations() {

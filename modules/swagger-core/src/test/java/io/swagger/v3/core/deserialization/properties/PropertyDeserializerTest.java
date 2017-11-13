@@ -14,13 +14,13 @@ public class PropertyDeserializerTest {
     @Test
     public void deserializeParameterWithMinimumMaximumValues() throws Exception {
         String json =
-            "{\n" +
-            "  \"in\": \"query\",\n" +
-            "  \"type\": \"integer\",\n" +
-            "  \"format\": \"int32\",\n" +
-            "  \"minimum\": 32,\n" +
-            "  \"maximum\": 100\n" +
-            "}";
+                "{\n" +
+                        "  \"in\": \"query\",\n" +
+                        "  \"type\": \"integer\",\n" +
+                        "  \"format\": \"int32\",\n" +
+                        "  \"minimum\": 32,\n" +
+                        "  \"maximum\": 100\n" +
+                        "}";
 
         Schema property = Json.mapper().readValue(json, Schema.class);
 
@@ -33,12 +33,12 @@ public class PropertyDeserializerTest {
     @Test
     public void deserializePropertyWithMinimumMaximumValues() throws Exception {
         String json =
-            "{\n" +
-            "  \"type\": \"integer\",\n" +
-            "  \"format\": \"int32\",\n" +
-            "  \"minimum\": 32,\n" +
-            "  \"maximum\": 100\n" +
-            "}";
+                "{\n" +
+                        "  \"type\": \"integer\",\n" +
+                        "  \"format\": \"int32\",\n" +
+                        "  \"minimum\": 32,\n" +
+                        "  \"maximum\": 100\n" +
+                        "}";
 
         Schema param = Json.mapper().readValue(json, Schema.class);
         IntegerSchema ip = (IntegerSchema) param;

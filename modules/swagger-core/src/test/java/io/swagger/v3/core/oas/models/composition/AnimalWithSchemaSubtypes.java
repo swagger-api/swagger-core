@@ -12,6 +12,7 @@ public class AnimalWithSchemaSubtypes {
 
     String type;
     String name;
+
     public String getName() {
         return name;
     }
@@ -20,11 +21,11 @@ public class AnimalWithSchemaSubtypes {
         this.name = name;
     }
 
-    public String getType(){
+    public String getType() {
         return type;
     }
 
-    public void setType(String type){
+    public void setType(String type) {
         this.type = type;
     }
 }

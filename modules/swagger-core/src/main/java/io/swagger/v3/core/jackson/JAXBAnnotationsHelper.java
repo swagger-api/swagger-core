@@ -51,8 +51,7 @@ class JAXBAnnotationsHelper {
             if (!"##default".equals(wrapper.name()) && !wrapper.name().isEmpty() && !wrapper.name().equals(property.getName())) {
                 xml.setName(wrapper.name());
             }
-        }
-        else {
+        } else {
             final XmlElement element = member.getAnnotation(XmlElement.class);
             if (element != null) {
                 setName(element.namespace(), element.name(), property);
@@ -131,7 +130,7 @@ class JAXBAnnotationsHelper {
                 return false;
             }
         }
-        if (!StringUtils.isBlank(property.get$ref()))  {
+        if (!StringUtils.isBlank(property.get$ref())) {
             return false;
         }
         return true;

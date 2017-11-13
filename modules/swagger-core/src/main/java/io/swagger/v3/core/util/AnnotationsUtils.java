@@ -245,7 +245,7 @@ public abstract class AnnotationsUtils {
             if (StringUtils.isBlank(tag.name())) {
                 continue;
             }
-            if (    skipOnlyName &&
+            if (skipOnlyName &&
                     StringUtils.isBlank(tag.description()) &&
                     StringUtils.isBlank(tag.externalDocs().description()) &&
                     StringUtils.isBlank(tag.externalDocs().url())) {
@@ -337,6 +337,7 @@ public abstract class AnnotationsUtils {
         }
         return Optional.of(external);
     }
+
     public static Optional<Info> getInfo(io.swagger.v3.oas.annotations.info.Info info) {
         if (info == null) {
             return Optional.empty();
@@ -644,6 +645,7 @@ public abstract class AnnotationsUtils {
             return a.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
         }
     }
+
     public static io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Class<?> cls) {
         if (cls == null) {
             return null;

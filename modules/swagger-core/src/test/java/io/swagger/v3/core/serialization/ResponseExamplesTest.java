@@ -14,8 +14,8 @@ public class ResponseExamplesTest {
     public void createResponse() throws IOException {
         final ApiResponse response = new ApiResponse()
                 .content(new Content()
-                .addMediaType("application/json", new MediaType()
-                .addExamples("test", new Example().value("{\"name\":\"Fred\",\"id\":123456\"}"))));
+                        .addMediaType("application/json", new MediaType()
+                                .addExamples("test", new Example().value("{\"name\":\"Fred\",\"id\":123456\"}"))));
 
         final String json = "{\n" +
                 "  \"content\" : {\n" +

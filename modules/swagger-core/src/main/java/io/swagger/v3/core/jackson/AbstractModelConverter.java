@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.oas.models.media.Schema;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -56,7 +55,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
     @Override
     public Schema resolveAnnotatedType(Type type, Annotated member, String elementName, ModelConverterContext context, Iterator<ModelConverter> chain) {
         if (chain.hasNext()) {
-            return chain.next().resolveAnnotatedType(type, member, elementName,context, chain);
+            return chain.next().resolveAnnotatedType(type, member, elementName, context, chain);
         } else {
             return null;
         }

@@ -11,9 +11,9 @@ public class YamlSerializerTest {
     public void testMultiLineYaml() throws Exception {
         final String yaml =
                 "multiLineString: |\n" +
-                "  \"hello multiple lines\n" +
-                "  in my content without\n" +
-                "  any problem\"\n";
+                        "  \"hello multiple lines\n" +
+                        "  in my content without\n" +
+                        "  any problem\"\n";
 
         JsonNode node = Yaml.mapper().readValue(yaml, JsonNode.class);
 

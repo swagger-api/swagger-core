@@ -29,7 +29,6 @@ import java.util.Map;
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#linkObject"
  */
 
-
 public class Link {
     private String operationRef = null;
     private String operationId = null;

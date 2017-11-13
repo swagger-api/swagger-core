@@ -33,7 +33,7 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
     protected Application application;
     protected static Logger LOGGER = LoggerFactory.getLogger(JaxrsAnnotationScanner.class);
 
-    public JaxrsAnnotationScanner application (Application application) {
+    public JaxrsAnnotationScanner application(Application application) {
         this.application = application;
         return this;
     }
@@ -43,11 +43,9 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
         this.application = application;
     }
 
-
-
-    public T openApiConfiguration (OpenAPIConfiguration openApiConfiguration) {
+    public T openApiConfiguration(OpenAPIConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
-        return (T)this;
+        return (T) this;
     }
 
     @Override
@@ -108,7 +106,7 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
                 }
             }
         }
-        LOGGER.trace ("classes() - output size {}", output.size());
+        LOGGER.trace("classes() - output size {}", output.size());
         return output;
     }
 

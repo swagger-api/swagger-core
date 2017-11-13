@@ -27,8 +27,8 @@ public class OverrideTest {
 
         final Schema model = read.get(GenericModel.class.getSimpleName());
         assertTrue(model.getProperties().containsKey(NAME));
-        assertEquals(((Schema)model.getProperties().get(NAME)).getType(), "string");
+        assertEquals(((Schema) model.getProperties().get(NAME)).getType(), "string");
         assertTrue(model.getProperties().containsKey(COUNT));
-        assertEquals(((Schema)model.getProperties().get(COUNT)).getType(), "integer");
+        assertEquals(((Schema) model.getProperties().get(COUNT)).getType(), "integer");
     }
 }

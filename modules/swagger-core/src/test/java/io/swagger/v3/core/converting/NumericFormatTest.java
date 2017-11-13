@@ -21,18 +21,18 @@ public class NumericFormatTest {
 
         String json = Json.pretty(models);
         assertEquals(json,
-            "{\n" +
-            "  \"ModelWithIntegerFields\" : {\n" +
-            "    \"type\" : \"object\",\n" +
-            "    \"properties\" : {\n" +
-            "      \"id\" : {\n" +
-            "        \"minimum\" : 3,\n" +
-            "        \"type\" : \"integer\",\n" +
-            "        \"format\" : \"int32\"\n" +
-            "      }\n" +
-            "    }\n" +
-            "  }\n" +
-            "}");
+                "{\n" +
+                        "  \"ModelWithIntegerFields\" : {\n" +
+                        "    \"type\" : \"object\",\n" +
+                        "    \"properties\" : {\n" +
+                        "      \"id\" : {\n" +
+                        "        \"minimum\" : 3,\n" +
+                        "        \"type\" : \"integer\",\n" +
+                        "        \"format\" : \"int32\"\n" +
+                        "      }\n" +
+                        "    }\n" +
+                        "  }\n" +
+                        "}");
     }
 
     @Test
@@ -42,19 +42,19 @@ public class NumericFormatTest {
 
         String json = Json.pretty(models);
         assertEquals(json,
-            "{\n" +
-            "  \"ModelWithDecimalFields\" : {\n" +
-            "    \"type\" : \"object\",\n" +
-            "    \"properties\" : {\n" +
-            "      \"id\" : {\n" +
-            "        \"minimum\" : 3.3,\n" +
-            "        \"exclusiveMinimum\" : false,\n" +
-            "        \"type\" : \"number\",\n" +
-            "        \"format\" : \"double\"\n" +
-            "      }\n" +
-            "    }\n" +
-            "  }\n" +
-            "}");
+                "{\n" +
+                        "  \"ModelWithDecimalFields\" : {\n" +
+                        "    \"type\" : \"object\",\n" +
+                        "    \"properties\" : {\n" +
+                        "      \"id\" : {\n" +
+                        "        \"minimum\" : 3.3,\n" +
+                        "        \"exclusiveMinimum\" : false,\n" +
+                        "        \"type\" : \"number\",\n" +
+                        "        \"format\" : \"double\"\n" +
+                        "      }\n" +
+                        "    }\n" +
+                        "  }\n" +
+                        "}");
     }
 
     @Test
@@ -65,22 +65,23 @@ public class NumericFormatTest {
         String json = Json.pretty(models);
 
         assertEquals(json,
-            "{\n" +
-            "  \"ModelWithoutScientificFields\" : {\n" +
-            "    \"type\" : \"object\",\n" +
-            "    \"properties\" : {\n" +
-            "      \"id\" : {\n" +
-            "        \"maximum\" : 9999999999999999.99,\n" +
-            "        \"exclusiveMaximum\" : false,\n" +
-            "        \"minimum\" : -9999999999999999.99,\n" +
-            "        \"exclusiveMinimum\" : false,\n" +
-            "        \"type\" : \"number\"\n" +
-            "      }\n" +
-            "    }\n" +
-            "  }\n" +
-            "}");
+                "{\n" +
+                        "  \"ModelWithoutScientificFields\" : {\n" +
+                        "    \"type\" : \"object\",\n" +
+                        "    \"properties\" : {\n" +
+                        "      \"id\" : {\n" +
+                        "        \"maximum\" : 9999999999999999.99,\n" +
+                        "        \"exclusiveMaximum\" : false,\n" +
+                        "        \"minimum\" : -9999999999999999.99,\n" +
+                        "        \"exclusiveMinimum\" : false,\n" +
+                        "        \"type\" : \"number\"\n" +
+                        "      }\n" +
+                        "    }\n" +
+                        "  }\n" +
+                        "}");
 
     }
+
     static class ModelWithIntegerFields {
         @io.swagger.v3.oas.annotations.media.Schema
         @Min(value = 3)

@@ -326,36 +326,43 @@ public class ReaderTest {
         assertNotNull(openAPI.getComponents().getSchemas().get("IssueTemplateRet"));
         assertNotNull(openAPI.getComponents().getSchemas().get("B"));
         assertNotNull(openAPI.getComponents().getSchemas().get("B").getProperties().get("test"));
-        assertEquals(((Schema)openAPI.getComponents().getSchemas().get("B").getProperties().get("test")).get$ref(), "#/components/schemas/IssueTemplateRet");
+        assertEquals(((Schema) openAPI.getComponents().getSchemas().get("B").getProperties().get("test")).get$ref(), "#/components/schemas/IssueTemplateRet");
 
         //Yaml.prettyPrint(openAPI);
     }
 
-
-    public static class A{
+    public static class A {
         public B b;
     }
-    public static class IssueTemplate<T>{
 
-        public T getTemplateTest(){return null;}
-        public String getTemplateTestString(){return null;}
-    }
-    public static class B{
-        public IssueTemplate<Ret> getTest(){return null;}
+    public static class IssueTemplate<T> {
+
+        public T getTemplateTest() {
+            return null;
+        }
+
+        public String getTemplateTestString() {
+            return null;
+        }
     }
 
-    public static class Ret{
+    public static class B {
+        public IssueTemplate<Ret> getTest() {
+            return null;
+        }
+    }
+
+    public static class Ret {
         public String c;
 
     }
-
 
     static class ClassWithGenericType {
         @Path("/test")
         @Produces("application/json")
         @Consumes("application/json")
         @GET
-        @io.swagger.v3.oas.annotations.Operation(tags="/receiver/rest")
+        @io.swagger.v3.oas.annotations.Operation(tags = "/receiver/rest")
         //public void test1(@QueryParam("aa") String a) {
         public void test1(A a) {
         }
@@ -372,7 +379,7 @@ public class ReaderTest {
         assertNotNull(pathItem);
         Operation operation = pathItem.getGet();
         assertNotNull(operation);
-        ArraySchema schema = (ArraySchema)operation.getResponses().get("200").getContent().values().iterator().next().getSchema();
+        ArraySchema schema = (ArraySchema) operation.getResponses().get("200").getContent().values().iterator().next().getSchema();
         assertNotNull(schema);
         assertEquals(schema.getItems().get$ref(), "#/components/schemas/User");
     }

@@ -1,6 +1,5 @@
 package io.swagger.v3.oas.integration.api;
 
-
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.models.OpenAPI;
 

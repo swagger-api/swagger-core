@@ -49,12 +49,12 @@ public class ReflectionUtilsTest {
             }
         }
 
-        for (Method method: IParent.class.getMethods()){
-            if("parametrizedMethod5".equals(method.getName())){
+        for (Method method : IParent.class.getMethods()) {
+            if ("parametrizedMethod5".equals(method.getName())) {
                 Assert.assertTrue(ReflectionUtils.isOverriddenMethod(method, IParent.class));
-            }else if("parametrizedMethod2".equals(method.getName())){
+            } else if ("parametrizedMethod2".equals(method.getName())) {
                 Assert.assertFalse(ReflectionUtils.isOverriddenMethod(method, IParent.class));
-            }else{
+            } else {
                 Assert.fail("Method not expected");
             }
         }

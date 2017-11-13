@@ -84,10 +84,10 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
         return openAPI;
     }
 
-
-    public void setOpenAPI (OpenAPI openAPI) {
+    public void setOpenAPI(OpenAPI openAPI) {
         this.openAPI = openAPI;
     }
+
     public SwaggerConfiguration openAPI(OpenAPI openAPI) {
         this.openAPI = openAPI;
         return this;
@@ -159,7 +159,6 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
         return this;
     }
 
-
     public String getFilterClass() {
         return filterClass;
     }
@@ -177,6 +176,7 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
         this.id = id;
         return this;
     }
+
     public String getId() {
         return id;
     }

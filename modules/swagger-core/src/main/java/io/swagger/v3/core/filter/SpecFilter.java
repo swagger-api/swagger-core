@@ -72,7 +72,6 @@ public class SpecFilter {
 
                 Map<PathItem.HttpMethod, Operation> ops = filteredPathItem.readOperationsMap();
 
-
                 for (PathItem.HttpMethod key : ops.keySet()) {
                     Operation op = ops.get(key);
                     List<String> opTagsBeforeFilter = null;
@@ -85,8 +84,7 @@ public class SpecFilter {
                     clonedPathItem.operation(key, op);
                     if (op == null) {
                         filteredTags.addAll(opTagsBeforeFilter);
-                    }
-                    else {
+                    } else {
                         if (op.getTags() != null) {
                             opTagsBeforeFilter.removeAll(op.getTags());
                             allowedTags.addAll(op.getTags());
@@ -241,11 +239,11 @@ public class SpecFilter {
                 Map<String, Schema> clonedProperties = new LinkedHashMap<>();
                 if (filteredDefinition.get().getProperties() != null) {
                     for (Object propName : filteredDefinition.get().getProperties().keySet()) {
-                        Schema property = (Schema)filteredDefinition.get().getProperties().get((String)propName);
+                        Schema property = (Schema) filteredDefinition.get().getProperties().get((String) propName);
                         if (property != null) {
-                            Optional<Schema> filteredProperty = filter.filterSchemaProperty(property, definition, (String)propName, params, cookies, headers);
+                            Optional<Schema> filteredProperty = filter.filterSchemaProperty(property, definition, (String) propName, params, cookies, headers);
                             if (filteredProperty.isPresent()) {
-                                clonedProperties.put((String)propName, property);
+                                clonedProperties.put((String) propName, property);
                             }
                         }
                     }
@@ -293,25 +291,24 @@ public class SpecFilter {
                 ((ArraySchema) schema).getItems() != null) {
             addSchemaRef(((ArraySchema) schema).getItems(), referencedDefinitions);
         } else if (schema instanceof ComposedSchema) {
-            ComposedSchema composedSchema = (ComposedSchema)schema;
+            ComposedSchema composedSchema = (ComposedSchema) schema;
             if (composedSchema.getAllOf() != null) {
-                for (Schema ref: composedSchema.getAllOf()) {
+                for (Schema ref : composedSchema.getAllOf()) {
                     addSchemaRef(ref, referencedDefinitions);
                 }
             }
             if (composedSchema.getAnyOf() != null) {
-                for (Schema ref: composedSchema.getAnyOf()) {
+                for (Schema ref : composedSchema.getAnyOf()) {
                     addSchemaRef(ref, referencedDefinitions);
                 }
             }
             if (composedSchema.getOneOf() != null) {
-                for (Schema ref: composedSchema.getOneOf()) {
+                for (Schema ref : composedSchema.getOneOf()) {
                     addSchemaRef(ref, referencedDefinitions);
                 }
             }
         }
     }
-
 
     private void addContentSchemaRef(Content content, Set<String> referencedDefinitions) {
         if (content != null) {
@@ -324,7 +321,7 @@ public class SpecFilter {
 
     private void addPathItemSchemaRef(PathItem pathItem, Set<String> referencedDefinitions) {
         if (pathItem.getParameters() != null) {
-            for (Parameter parameter: pathItem.getParameters()) {
+            for (Parameter parameter : pathItem.getParameters()) {
                 addSchemaRef(parameter.getSchema(), referencedDefinitions);
                 addContentSchemaRef(parameter.getContent(), referencedDefinitions);
             }
@@ -366,12 +363,12 @@ public class SpecFilter {
         }
     }
 
-    protected OpenAPI removeBrokenReferenceDefinitions (OpenAPI openApi) {
+    protected OpenAPI removeBrokenReferenceDefinitions(OpenAPI openApi) {
 
         if (openApi == null || openApi.getComponents() == null || openApi.getComponents().getSchemas() == null) {
             return openApi;
         }
-        Set<String> referencedDefinitions =  new TreeSet<>();
+        Set<String> referencedDefinitions = new TreeSet<>();
 
         if (openApi.getPaths() != null) {
             for (String resourcePath : openApi.getPaths().keySet()) {
@@ -380,12 +377,12 @@ public class SpecFilter {
             }
         }
 
-        Set<String> nestedReferencedDefinitions =  new TreeSet<>();
-        for (String ref : referencedDefinitions){
+        Set<String> nestedReferencedDefinitions = new TreeSet<>();
+        for (String ref : referencedDefinitions) {
             locateReferencedDefinitions(ref, nestedReferencedDefinitions, openApi);
         }
         referencedDefinitions.addAll(nestedReferencedDefinitions);
-        openApi.getComponents().getSchemas().keySet().retainAll(referencedDefinitions.stream().map(s -> (String)RefUtils.extractSimpleName(s).getLeft()).collect(Collectors.toSet()));
+        openApi.getComponents().getSchemas().keySet().retainAll(referencedDefinitions.stream().map(s -> (String) RefUtils.extractSimpleName(s).getLeft()).collect(Collectors.toSet()));
         return openApi;
     }
 
@@ -393,7 +390,7 @@ public class SpecFilter {
         // if not already processed so as to avoid infinite loops
         if (!nestedReferencedDefinitions.contains(ref)) {
             nestedReferencedDefinitions.add(ref);
-            String simpleName = (String)RefUtils.extractSimpleName(ref).getLeft();
+            String simpleName = (String) RefUtils.extractSimpleName(ref).getLeft();
             Schema model = openAPI.getComponents().getSchemas().get(simpleName);
             if (model != null) {
                 addSchemaRef(model, nestedReferencedDefinitions);

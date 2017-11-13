@@ -73,33 +73,33 @@ public class ModelSerializerTest {
     public void deserializeModel() throws IOException {
         final String json =
                 "{\n" +
-                "   \"required\":[\n" +
-                "      \"intValue\"\n" +
-                "   ],\n" +
-                "   \"type\":\"object\",\n" +
-                "   \"properties\":{\n" +
-                "      \"dateValue\":{\n" +
-                "         \"type\":\"string\",\n" +
-                "         \"format\":\"date\"\n" +
-                "      },\n" +
-                "      \"longValue\":{\n" +
-                "         \"type\":\"integer\",\n" +
-                "         \"format\":\"int64\"\n" +
-                "      },\n" +
-                "      \"dateTimeValue\":{\n" +
-                "         \"type\":\"string\",\n" +
-                "         \"format\":\"date-time\"\n" +
-                "      },\n" +
-                "      \"intValue\":{\n" +
-                "         \"type\":\"integer\",\n" +
-                "         \"format\":\"int32\"\n" +
-                "      },\n" +
-                "      \"byteArrayValue\":{\n" +
-                "         \"type\":\"string\",\n" +
-                "         \"format\":\"binary\"\n" +
-                "      }\n" +
-                "   }\n" +
-                "}";
+                        "   \"required\":[\n" +
+                        "      \"intValue\"\n" +
+                        "   ],\n" +
+                        "   \"type\":\"object\",\n" +
+                        "   \"properties\":{\n" +
+                        "      \"dateValue\":{\n" +
+                        "         \"type\":\"string\",\n" +
+                        "         \"format\":\"date\"\n" +
+                        "      },\n" +
+                        "      \"longValue\":{\n" +
+                        "         \"type\":\"integer\",\n" +
+                        "         \"format\":\"int64\"\n" +
+                        "      },\n" +
+                        "      \"dateTimeValue\":{\n" +
+                        "         \"type\":\"string\",\n" +
+                        "         \"format\":\"date-time\"\n" +
+                        "      },\n" +
+                        "      \"intValue\":{\n" +
+                        "         \"type\":\"integer\",\n" +
+                        "         \"format\":\"int32\"\n" +
+                        "      },\n" +
+                        "      \"byteArrayValue\":{\n" +
+                        "         \"type\":\"string\",\n" +
+                        "         \"format\":\"binary\"\n" +
+                        "      }\n" +
+                        "   }\n" +
+                        "}";
 
         final Schema p = m.readValue(json, Schema.class);
         SerializationMatchers.assertEqualsToJson(p, json);
@@ -135,17 +135,17 @@ public class ModelSerializerTest {
         final Map<String, Schema> schemas = ModelConverters.getInstance().read(Car.class);
         final String json =
                 "{\n" +
-                "   \"Car\":{\n" +
-                "      \"type\":\"object\",\n" +
-                "      \"properties\":{\n" +
-                "         \"wheelCount\":{\n" +
-                "            \"type\":\"integer\",\n" +
-                "            \"format\":\"int32\",\n" +
-                "            \"readOnly\":true\n" +
-                "         }\n" +
-                "      }\n" +
-                "   }\n" +
-                "}";
+                        "   \"Car\":{\n" +
+                        "      \"type\":\"object\",\n" +
+                        "      \"properties\":{\n" +
+                        "         \"wheelCount\":{\n" +
+                        "            \"type\":\"integer\",\n" +
+                        "            \"format\":\"int32\",\n" +
+                        "            \"readOnly\":true\n" +
+                        "         }\n" +
+                        "      }\n" +
+                        "   }\n" +
+                        "}";
         SerializationMatchers.assertEqualsToJson(schemas, json);
     }
 
@@ -209,7 +209,7 @@ public class ModelSerializerTest {
                 "   }\n" +
                 "}";
         final Schema model = Json.mapper().readValue(json, Schema.class);
-        Schema property = (Schema)model.getProperties().get("id");
+        Schema property = (Schema) model.getProperties().get("id");
         assertTrue(property.getReadOnly());
     }
 
@@ -219,16 +219,16 @@ public class ModelSerializerTest {
 
         Schema model = models.get("ReadOnlyModel");
 
-        Schema id = (Schema)model.getProperties().get("id");
+        Schema id = (Schema) model.getProperties().get("id");
         assertTrue(id.getReadOnly());
 
-        Schema readWriteId = (Schema)model.getProperties().get("readWriteId");
+        Schema readWriteId = (Schema) model.getProperties().get("readWriteId");
         assertNull(readWriteId.getReadOnly());
     }
 
     @Test(description = "it should generate an integer field with enum")
     public void integerEnumGeneration() throws IOException {
-            final String json = "{\n" +
+        final String json = "{\n" +
                 "   \"properties\":{\n" +
                 "      \"id\":{\n" +
                 "         \"description\":\"fun!\",\n" +
@@ -240,7 +240,7 @@ public class ModelSerializerTest {
                 "   }\n" +
                 "}";
         final Schema model = Json.mapper().readValue(json, Schema.class);
-        IntegerSchema p = (IntegerSchema)model.getProperties().get("id");
+        IntegerSchema p = (IntegerSchema) model.getProperties().get("id");
 
         assertNotNull(p.getEnum());
         assertEquals(p.getEnum().get(0), new Integer(0));
@@ -262,7 +262,7 @@ public class ModelSerializerTest {
                 "  }\n" +
                 "}";
         final Schema model = Json.mapper().readValue(json, Schema.class);
-        StringSchema p = (StringSchema)model.getProperties().get("AdvStateType");
+        StringSchema p = (StringSchema) model.getProperties().get("AdvStateType");
 
         assertNotNull(p.getEnum());
         assertEquals(p.getEnum().get(0), "off");
@@ -289,11 +289,11 @@ public class ModelSerializerTest {
     @Test
     public void testIssue1852() throws Exception {
         String json = "{\n" +
-            "  \"type\": \"integer\",\n" +
-            "  \"minimum\": 10,\n" +
-            "  \"maximum\": 20,\n" +
-            "  \"default\": 15\n" +
-            "}";
+                "  \"type\": \"integer\",\n" +
+                "  \"minimum\": 10,\n" +
+                "  \"maximum\": 20,\n" +
+                "  \"default\": 15\n" +
+                "}";
 
         final Schema model = Json.mapper().readValue(json, Schema.class);
 
@@ -305,10 +305,10 @@ public class ModelSerializerTest {
     @Test
     public void testIssue2064Neg() throws Exception {
         String json =
-            "{\n" +
-            "  \"type\": \"string\",\n" +
-            "  \"uniqueItems\": false\n" +
-            "}";
+                "{\n" +
+                        "  \"type\": \"string\",\n" +
+                        "  \"uniqueItems\": false\n" +
+                        "}";
 
         final Schema model = Json.mapper().readValue(json, Schema.class);
 
@@ -318,10 +318,10 @@ public class ModelSerializerTest {
     @Test
     public void testIssue2064() throws Exception {
         String json =
-            "{\n" +
-            "  \"type\": \"string\",\n" +
-            "  \"uniqueItems\": true\n" +
-            "}";
+                "{\n" +
+                        "  \"type\": \"string\",\n" +
+                        "  \"uniqueItems\": true\n" +
+                        "}";
 
         final Schema model = Json.mapper().readValue(json, Schema.class);
 
@@ -331,16 +331,16 @@ public class ModelSerializerTest {
     @Test
     public void testIssue2064Ip() throws Exception {
         String json =
-            "{\n" +
-            "  \"type\": \"object\",\n" +
-            "  \"properties\": {\n" +
-            "    \"id\": {\n" +
-            "      \"type\": \"integer\",\n" +
-            "      \"format\": \"int32\",\n" +
-            "      \"multipleOf\": 3.0\n" +
-            "    }\n" +
-            "  }\n" +
-            "}";
+                "{\n" +
+                        "  \"type\": \"object\",\n" +
+                        "  \"properties\": {\n" +
+                        "    \"id\": {\n" +
+                        "      \"type\": \"integer\",\n" +
+                        "      \"format\": \"int32\",\n" +
+                        "      \"multipleOf\": 3.0\n" +
+                        "    }\n" +
+                        "  }\n" +
+                        "}";
 
         final Schema model = Json.mapper().readValue(json, Schema.class);
 

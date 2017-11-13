@@ -101,7 +101,6 @@ public class InheritedBeanTest extends SwaggerTestBase {
 
     }
 
-
     @Test
     public void testHierarchy() throws Exception {
         final Schema baseModel = context.resolve(BaseBean3.class);
@@ -193,11 +192,10 @@ public class InheritedBeanTest extends SwaggerTestBase {
         }
     }
 
-
     @JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
     @JsonSubTypes({@JsonSubTypes.Type(value = Sub1Bean.class, name = "sub1")})
     @io.swagger.v3.oas.annotations.media.Schema(description = "BaseBean"
-           , discriminatorProperty = "type", discriminatorMapping = {@DiscriminatorMapping(value = "Sub1BeanMapped", schema = Sub1Bean.class)}
+            , discriminatorProperty = "type", discriminatorMapping = {@DiscriminatorMapping(value = "Sub1BeanMapped", schema = Sub1Bean.class)}
     )
     static class BaseBean {
         public String type;
@@ -258,7 +256,6 @@ public class InheritedBeanTest extends SwaggerTestBase {
         public int d;
     }
 
-
     @io.swagger.v3.oas.annotations.media.Schema(anyOf = {UserObject.class, EmployeeObject.class})
     static class UberObject implements UserObject, EmployeeObject {
         private String id;
@@ -269,10 +266,12 @@ public class InheritedBeanTest extends SwaggerTestBase {
         public String getDepartment() {
             return department;
         }
+
         @Override
         public String getId() {
             return id;
         }
+
         @Override
         public String getName() {
             return name;
@@ -283,6 +282,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
     interface UserObject {
         @io.swagger.v3.oas.annotations.media.Schema(format = "uuid", required = true)
         String getId();
+
         String getName();
     }
 
@@ -290,6 +290,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
     interface EmployeeObject {
         @io.swagger.v3.oas.annotations.media.Schema(format = "email")
         String getId();
+
         String getDepartment();
     }
 
@@ -315,7 +316,8 @@ public class InheritedBeanTest extends SwaggerTestBase {
         ComposedSchema cm2 = (ComposedSchema) sub2Model;
         assertEquals(cm2.getAllOf().get(0).get$ref(), "#/components/schemas/MultipleBaseBean");
         // make sure parent properties are filtered out of subclass
-        assertSub2PropertiesValid(cm2.getProperties());    }
+        assertSub2PropertiesValid(cm2.getProperties());
+    }
 
     @Test
     public void testMultipleInheritedChildBean() throws Exception {
@@ -349,7 +351,6 @@ public class InheritedBeanTest extends SwaggerTestBase {
         // make sure parent properties are filtered out of subclass
         assertSub2PropertiesValid(cm2.getProperties());
     }
-
 
     private void assertSub2PropertiesValid(Map<String, Schema> subProperties) {
         assertEquals(subProperties.size(), 1);

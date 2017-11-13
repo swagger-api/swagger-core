@@ -26,9 +26,7 @@ import java.util.Optional;
 public class ParameterProcessor {
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
-
     public static Parameter applyAnnotations(Parameter parameter, Type type, List<Annotation> annotations, Components components, String[] classTypes, String[] methodTypes) {
-
 
         final AnnotationsHelper helper = new AnnotationsHelper(annotations, type);
         if (helper.isContext()) {
@@ -186,7 +184,6 @@ public class ParameterProcessor {
         }
     }
 
-
     public static Annotation getParamSchemaAnnotation(List<Annotation> annotations) {
         if (annotations == null) {
             return null;
@@ -199,12 +196,10 @@ public class ParameterProcessor {
         for (Annotation annotation : annotations) {
             if (annotation instanceof io.swagger.v3.oas.annotations.media.Schema) {
                 rootSchema = (io.swagger.v3.oas.annotations.media.Schema) annotation;
-            }
-            else if (annotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema) {
+            } else if (annotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema) {
                 rootArraySchema = (io.swagger.v3.oas.annotations.media.ArraySchema) annotation;
-            }
-            else if (annotation instanceof io.swagger.v3.oas.annotations.Parameter) {
-                io.swagger.v3.oas.annotations.Parameter paramAnnotation = (io.swagger.v3.oas.annotations.Parameter)annotation;
+            } else if (annotation instanceof io.swagger.v3.oas.annotations.Parameter) {
+                io.swagger.v3.oas.annotations.Parameter paramAnnotation = (io.swagger.v3.oas.annotations.Parameter) annotation;
                 if (paramAnnotation.content().length > 0) {
                     if (AnnotationsUtils.hasSchemaAnnotation(paramAnnotation.content()[0].schema())) {
                         contentSchema = paramAnnotation.content()[0].schema();

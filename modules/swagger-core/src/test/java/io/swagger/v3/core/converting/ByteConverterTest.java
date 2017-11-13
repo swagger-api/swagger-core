@@ -16,7 +16,7 @@ import static org.testng.Assert.assertNotNull;
 
 public class ByteConverterTest {
     private static final String NEWLINE = System.getProperty("line.separator");
-    
+
     @Test
     public void testByte() {
         final Map<String, Schema> models = ModelConverters.getInstance().read(ByteConverterModel.class);
@@ -56,13 +56,13 @@ public class ByteConverterTest {
     public void testDeserializeByteProperty() throws Exception {
         String json =
                 "{\n" +
-                "  \"properties\" : {\n" +
-                "    \"byteProperty\" : {\n" +
-                "      \"type\" : \"string\",\n" +
-                "      \"format\" : \"byte\"\n" +
-                "    }\n" +
-                "  }\n" +
-                "}";
+                        "  \"properties\" : {\n" +
+                        "    \"byteProperty\" : {\n" +
+                        "      \"type\" : \"string\",\n" +
+                        "      \"format\" : \"byte\"\n" +
+                        "    }\n" +
+                        "  }\n" +
+                        "}";
 
         Schema model = Json.mapper().readValue(json, Schema.class);
         assertNotNull(model);

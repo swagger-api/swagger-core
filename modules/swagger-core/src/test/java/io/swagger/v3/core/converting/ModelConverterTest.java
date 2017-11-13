@@ -60,7 +60,7 @@ public class ModelConverterTest {
         return ModelConverters.getInstance().readAll(type);
     }
 
-    private void assertEqualsToJson( Object objectToSerialize, String fileName)  throws IOException {
+    private void assertEqualsToJson(Object objectToSerialize, String fileName) throws IOException {
         final String json = ResourceUtils.loadClassResource(getClass(), fileName);
         SerializationMatchers.assertEqualsToJson(objectToSerialize, json);
     }
@@ -166,7 +166,7 @@ public class ModelConverterTest {
     public void setReadOnly() {
         final Map<String, Schema> schemas = readAll(JacksonReadonlyModel.class);
         final Schema model = (Schema) schemas.get("JacksonReadonlyModel");
-        final Schema prop = (Schema)model.getProperties().get("count");
+        final Schema prop = (Schema) model.getProperties().get("count");
         assertTrue(prop.getReadOnly());
     }
 
@@ -294,7 +294,7 @@ public class ModelConverterTest {
         assertEquals(models.size(), 1);
 
         final Schema model = models.get("ModelWithOffset");
-        Schema property = (Schema)model.getProperties().get("offset");
+        Schema property = (Schema) model.getProperties().get("offset");
         assertEquals(property.getType(), "string");
         assertEquals(property.getFormat(), "date-time");
     }
@@ -302,10 +302,9 @@ public class ModelConverterTest {
     private void checkType(Schema property, Class<?> cls, String type, String format) {
         assertTrue(cls.isInstance(property));
         assertEquals(property.getType(), type);
-        if(format == null) {
+        if (format == null) {
             assertNull(property.getFormat());
-        }
-        else {
+        } else {
             assertEquals(property.getFormat(), format);
         }
     }
@@ -340,30 +339,30 @@ public class ModelConverterTest {
         assertEquals(model.getProperties().size(), 5);
         final String json =
                 "{" +
-                "   \"type\":\"object\"," +
-                "   \"properties\":{" +
-                "      \"date\":{" +
-                "         \"type\":\"string\"," +
-                "         \"format\":\"date-time\"" +
-                "      }," +
-                "      \"intValue\":{" +
-                "         \"type\":\"integer\"," +
-                "         \"format\":\"int32\"" +
-                "      }," +
-                "      \"longValue\":{" +
-                "         \"type\":\"integer\"," +
-                "         \"format\":\"int64\"" +
-                "      }," +
-                "      \"floatValue\":{" +
-                "         \"type\":\"number\"," +
-                "         \"format\":\"float\"" +
-                "      }," +
-                "      \"doubleValue\":{" +
-                "         \"type\":\"number\"," +
-                "         \"format\":\"double\"" +
-                "      }" +
-                "   }" +
-                "}";
+                        "   \"type\":\"object\"," +
+                        "   \"properties\":{" +
+                        "      \"date\":{" +
+                        "         \"type\":\"string\"," +
+                        "         \"format\":\"date-time\"" +
+                        "      }," +
+                        "      \"intValue\":{" +
+                        "         \"type\":\"integer\"," +
+                        "         \"format\":\"int32\"" +
+                        "      }," +
+                        "      \"longValue\":{" +
+                        "         \"type\":\"integer\"," +
+                        "         \"format\":\"int64\"" +
+                        "      }," +
+                        "      \"floatValue\":{" +
+                        "         \"type\":\"number\"," +
+                        "         \"format\":\"float\"" +
+                        "      }," +
+                        "      \"doubleValue\":{" +
+                        "         \"type\":\"number\"," +
+                        "         \"format\":\"double\"" +
+                        "      }" +
+                        "   }" +
+                        "}";
         SerializationMatchers.assertEqualsToJson(model, json);
     }
 

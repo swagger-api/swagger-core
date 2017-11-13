@@ -16,7 +16,7 @@ public class RefUtils {
 
     public static Pair extractSimpleName(String ref) {
         int idx = ref.lastIndexOf("/");
-        if(idx > 0) {
+        if (idx > 0) {
             String simple = ref.substring(idx + 1);
             if (!StringUtils.isBlank(simple)) {
                 return new ImmutablePair<>(simple, ref.substring(0, idx + 1));

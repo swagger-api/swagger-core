@@ -13,7 +13,7 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 public class ObjectPropertyTest {
-    @Test (description = "convert a model with object properties")
+    @Test(description = "convert a model with object properties")
     public void readModelWithObjectProperty() throws IOException {
         String json = "{" +
                 "   \"properties\":{" +

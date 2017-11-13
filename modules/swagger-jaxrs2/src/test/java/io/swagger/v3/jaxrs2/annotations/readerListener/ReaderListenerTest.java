@@ -13,7 +13,7 @@ import static org.testng.Assert.assertNotNull;
 public class ReaderListenerTest {
 
     @Test(description = "test a readerListener resource")
-    public void testReaderListener() throws Exception{
+    public void testReaderListener() throws Exception {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(Collections.singleton(ReaderListenerResource.class));
         assertNotNull(openAPI);

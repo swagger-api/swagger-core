@@ -47,17 +47,19 @@ public class SimpleBuilderTest {
                         .addTagsItem(new Tag()
                                 .name("funky dunky")
                                 .description("all about neat things"))
-                        .extensions(new HashMap<String, Object>() {{ put("x-fancy-extension", "something"); }});
+                        .extensions(new HashMap<String, Object>() {{
+                            put("x-fancy-extension", "something");
+                        }});
 
         Map<String, Schema> schemas = new HashMap<>();
 
         schemas
-            .put("StringSchema", new StringSchema()
-                .description("simple string schema")
-                .minLength(3)
-                .maxLength(100)
-                .example("it works")
-        );
+                .put("StringSchema", new StringSchema()
+                        .description("simple string schema")
+                        .minLength(3)
+                        .maxLength(100)
+                        .example("it works")
+                );
 
         schemas.put("IntegerSchema", new IntegerSchema()
                 .description("simple integer schema")
@@ -84,16 +86,14 @@ public class SimpleBuilderTest {
                         .minLength(2)
                         .maxLength(2))
                 .addProperties("country", new StringSchema()
-                        ._enum(new ArrayList<String>(){{
+                        ._enum(new ArrayList<String>() {{
                             this.add("US");
                         }}))
-                        .description("2-digit country code")
-                        .minLength(2)
-                        .maxLength(2)
-
+                .description("2-digit country code")
+                .minLength(2)
+                .maxLength(2)
 
         );
-
 
         oai.paths(new Paths()
                 .addPathItem("/foo", new PathItem()
@@ -103,7 +103,7 @@ public class SimpleBuilderTest {
                                         .description("Records to skip")
                                         .required(false)
                                         .schema(new IntegerSchema()
-                                ))
+                                        ))
                                 .responses(new ApiResponses()
                                         .addApiResponse("200", new ApiResponse()
                                                 .description("it worked")
@@ -119,10 +119,8 @@ public class SimpleBuilderTest {
                 )
         );
 
-
         System.out.println(writeJson(oai));
     }
-
 
     public static String writeJson(Object value) throws Exception {
         ObjectMapper mapper = new ObjectMapper();

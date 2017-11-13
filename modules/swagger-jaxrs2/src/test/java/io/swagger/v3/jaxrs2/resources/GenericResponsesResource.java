@@ -1,6 +1,5 @@
 package io.swagger.v3.jaxrs2.resources;
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,7 +24,8 @@ public class GenericResponsesResource {
     public void getResponses() {
     }
 
-    class SomethingResponse extends JsonResponse<SomethingDTO> {}
+    class SomethingResponse extends JsonResponse<SomethingDTO> {
+    }
 
     public class JsonResponse<T> {
         private DataWithCursor<T> data;
@@ -86,7 +86,6 @@ public class GenericResponsesResource {
             return items;
         }
     }
-
 
     @Schema(name = "Something")
     public class SomethingDTO {

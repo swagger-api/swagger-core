@@ -16,10 +16,10 @@ public class ExternalDocsReference {
     @GET
     @Path("/")
     @Operation(externalDocs =
-        @ExternalDocumentation(
+    @ExternalDocumentation(
             description = "External documentation description in @Operation",
             url = "http://url.com"
-        )
+    )
     )
     @ExternalDocumentation(
             description = "External documentation description in method",

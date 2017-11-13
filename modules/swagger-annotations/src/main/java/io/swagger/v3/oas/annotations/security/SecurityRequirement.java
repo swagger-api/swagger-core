@@ -24,25 +24,25 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specifies a security requirement for an operation. 
+ * Specifies a security requirement for an operation.
  **/
-@Target({ ElementType.METHOD,
-          ElementType.TYPE })
+@Target({ElementType.METHOD,
+        ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(SecurityRequirements.class)
 @Inherited
 public @interface SecurityRequirement {
-	/**
-	 * This name must correspond to a declared SecurityRequirement. 
-     * 
-     * @return String name 
-	 */
+    /**
+     * This name must correspond to a declared SecurityRequirement.
+     *
+     * @return String name
+     */
     String name();
 
     /**
-     * If the security scheme is of type "oauth2" or "openIdConnect", then the value is a list of scope names required for the execution.  
+     * If the security scheme is of type "oauth2" or "openIdConnect", then the value is a list of scope names required for the execution.
      * For other security scheme types, the array must be empty.
-     * 
+     *
      * @return String array of scopes
      */
     String[] scopes() default {};

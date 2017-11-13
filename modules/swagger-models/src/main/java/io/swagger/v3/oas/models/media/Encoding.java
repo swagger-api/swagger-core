@@ -27,7 +27,6 @@ import java.util.Objects;
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#encodingObject"
  */
 
-
 public class Encoding {
     private String contentType;
     private Map<String, Header> headers;
@@ -130,7 +129,7 @@ public class Encoding {
         if (name == null || name.isEmpty() || !name.startsWith("x-")) {
             return;
         }
-        if(this.extensions == null) {
+        if (this.extensions == null) {
             this.extensions = new java.util.HashMap<>();
         }
         this.extensions.put(name, value);
@@ -155,11 +154,11 @@ public class Encoding {
         }
         Encoding encoding = (Encoding) o;
         return Objects.equals(this.contentType, encoding.contentType) &&
-            Objects.equals(this.headers, encoding.headers) &&
-            Objects.equals(this.style, encoding.style) &&
-            Objects.equals(this.explode, encoding.explode) &&
-            Objects.equals(this.extensions, encoding.extensions) &&
-            Objects.equals(this.allowReserved, encoding.allowReserved);
+                Objects.equals(this.headers, encoding.headers) &&
+                Objects.equals(this.style, encoding.style) &&
+                Objects.equals(this.explode, encoding.explode) &&
+                Objects.equals(this.extensions, encoding.extensions) &&
+                Objects.equals(this.allowReserved, encoding.allowReserved);
     }
 
     @Override

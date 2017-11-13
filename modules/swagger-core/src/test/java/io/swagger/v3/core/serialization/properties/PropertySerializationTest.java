@@ -239,7 +239,10 @@ public class PropertySerializationTest {
     @Test(description = "it should serialize a StringProperty with enums")
     public void serializeEnumStringProperty() throws IOException {
         final StringSchema p = new StringSchema();
-        p._enum(new ArrayList<String>() {{this.add("a");this.add("b");}});
+        p._enum(new ArrayList<String>() {{
+            this.add("a");
+            this.add("b");
+        }});
         final String json = "{\"type\":\"string\",\"enum\":[\"a\",\"b\"]}";
         assertEquals(m.writeValueAsString(p), json);
     }
@@ -249,7 +252,7 @@ public class PropertySerializationTest {
         final String json = "{\"type\":\"string\",\"enum\":[\"a\",\"b\"]}";
         final Schema p = m.readValue(json, Schema.class);
         assertEquals(p.getType(), "string");
-        List<String> _enum = ((StringSchema)p).getEnum();
+        List<String> _enum = ((StringSchema) p).getEnum();
         assertNotNull(_enum);
         assertEquals(_enum, Arrays.asList("a", "b"));
         assertEquals(p.getClass(), StringSchema.class);

@@ -31,7 +31,7 @@ public class BeanValidatorTest {
         Assert.assertEquals((int) password.getMinLength(), 6);
         Assert.assertEquals((int) password.getMaxLength(), 20);
 
-        final StringSchema email= (StringSchema) properties.get("email");
+        final StringSchema email = (StringSchema) properties.get("email");
         Assert.assertEquals((String) email.getPattern(), "(.+?)@(.+?)");
 
         final NumberSchema minBalance = (NumberSchema) properties.get("minBalance");

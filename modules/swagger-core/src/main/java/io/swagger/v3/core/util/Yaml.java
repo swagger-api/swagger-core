@@ -8,7 +8,7 @@ public class Yaml {
     static ObjectMapper mapper;
 
     public static ObjectMapper mapper() {
-        if(mapper == null) {
+        if (mapper == null) {
             mapper = ObjectMapperFactory.createYaml();
         }
         return mapper;

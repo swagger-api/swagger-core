@@ -30,7 +30,6 @@ import java.util.Objects;
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#responseObject"
  */
 
-
 public class ApiResponse {
     private String description = null;
     private Map<String, Header> headers = null;
@@ -63,7 +62,6 @@ public class ApiResponse {
      *
      * @return headers
      **/
-
 
     public Map<String, Header> getHeaders() {
         return headers;
@@ -170,7 +168,6 @@ public class ApiResponse {
     public int hashCode() {
         return Objects.hash(description, headers, content, links, extensions, $ref);
     }
-
 
     public java.util.Map<String, Object> getExtensions() {
         return extensions;

@@ -20,7 +20,6 @@ import javax.ws.rs.Produces;
 import java.util.Map;
 import java.util.Optional;
 
-
 public class OperationParser {
 
     public static final String COMPONENTS_REF = "#/components/schemas/";

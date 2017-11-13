@@ -60,7 +60,7 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
     @Override
     public List<NamedType> findSubtypes(Annotated a) {
         Schema schema = a.getAnnotation(Schema.class);
-        if (schema == null ) {
+        if (schema == null) {
             final ArraySchema arraySchema = a.getAnnotation(ArraySchema.class);
             if (arraySchema != null) {
                 schema = arraySchema.schema();

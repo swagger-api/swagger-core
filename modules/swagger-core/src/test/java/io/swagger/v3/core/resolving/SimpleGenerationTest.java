@@ -160,7 +160,6 @@ public class SimpleGenerationTest extends SwaggerTestBase {
         public int[] b;
     }
 
-
     static class ComplexBean {
         public String j;
         @JsonIgnore
@@ -168,8 +167,8 @@ public class SimpleGenerationTest extends SwaggerTestBase {
 
         @JsonCreator
         public ComplexBean(@JsonProperty("b") int b,
-                   @JsonProperty("c") long c, @JsonProperty("d") float d, @JsonProperty("e") double e,
-                   @JsonProperty("j") String j) {
+                           @JsonProperty("c") long c, @JsonProperty("d") float d, @JsonProperty("e") double e,
+                           @JsonProperty("j") String j) {
             simpleBean = new SimpleBean();
             simpleBean.b = b;
             simpleBean.c = c;
@@ -185,22 +184,26 @@ public class SimpleGenerationTest extends SwaggerTestBase {
         public String getA() {
             return simpleBean.getA();
         }
+
         public int getB() {
             return simpleBean.b;
         }
+
         public long getC() {
             return simpleBean.c;
         }
+
         public float getD() {
             return simpleBean.d;
         }
+
         public double getE() {
             return simpleBean.e;
         }
+
         public String getJ() {
             return j;
         }
     }
-
 
 }

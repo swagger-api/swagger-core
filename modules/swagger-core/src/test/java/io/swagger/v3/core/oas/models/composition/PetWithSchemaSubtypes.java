@@ -7,12 +7,10 @@ public class PetWithSchemaSubtypes extends AnimalWithSchemaSubtypes {
     private String type;
     private Boolean isDomestic;
 
-
     @Schema(required = true, description = "The pet type")
     public String getType() {
         return type;
     }
-
 
     public void setType(String type) {
         this.type = type;

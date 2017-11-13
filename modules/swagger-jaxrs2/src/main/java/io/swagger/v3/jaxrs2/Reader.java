@@ -18,7 +18,6 @@ import io.swagger.v3.jaxrs2.util.ReaderUtils;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.extensions.Extension;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.integration.ContextUtils;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
@@ -206,7 +205,7 @@ public class Reader implements OpenApiReader {
                 Application innerApp = application;
                 Method m = application.getClass().getMethod("getApplication", null);
                 while (m != null) {
-                    Application retrievedApp  = (Application) m.invoke(innerApp, null);
+                    Application retrievedApp = (Application) m.invoke(innerApp, null);
                     if (retrievedApp == null) {
                         break;
                     }
@@ -267,12 +266,11 @@ public class Reader implements OpenApiReader {
             // OpenApiDefinition servers
             AnnotationsUtils.getServers(openAPIDefinition.servers()).ifPresent(servers -> openAPI.setServers(servers));
 
-
         }
 
         // class security schemes
         if (apiSecurityScheme != null) {
-            for (io.swagger.v3.oas.annotations.security.SecurityScheme securitySchemeAnnotation: apiSecurityScheme) {
+            for (io.swagger.v3.oas.annotations.security.SecurityScheme securitySchemeAnnotation : apiSecurityScheme) {
                 Optional<SecurityScheme> securityScheme = SecurityParser.getSecurityScheme(securitySchemeAnnotation);
                 if (securityScheme.isPresent()) {
                     Map<String, SecurityScheme> securitySchemeMap = new HashMap<>();
@@ -304,11 +302,11 @@ public class Reader implements OpenApiReader {
         if (apiTags != null) {
             AnnotationsUtils
                     .getTags(apiTags, false).ifPresent(tags ->
-                        tags
+                    tags
                             .stream()
                             .map(t -> t.getName())
                             .forEach(t -> classTags.add(t))
-                    );
+            );
         }
 
         // class external docs
@@ -389,10 +387,10 @@ public class Reader implements OpenApiReader {
                         for (int i = 0; i < genericParameterTypes.length; i++) {
                             final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
                             ResolvedParameter resolvedParameter = getParameters(type, Arrays.asList(paramAnnotations[i]), operation, classConsumes, methodConsumes);
-                            for (Parameter p: resolvedParameter.parameters) {
+                            for (Parameter p : resolvedParameter.parameters) {
                                 operationParameters.add(p);
                             }
-                            if (resolvedParameter.requestBody != null)  {
+                            if (resolvedParameter.requestBody != null) {
                                 processRequestBody(
                                         resolvedParameter.requestBody,
                                         operation,
@@ -408,10 +406,10 @@ public class Reader implements OpenApiReader {
                             AnnotatedParameter param = annotatedMethod.getParameter(i);
                             final Type type = TypeFactory.defaultInstance().constructType(param.getParameterType(), cls);
                             ResolvedParameter resolvedParameter = getParameters(type, Arrays.asList(paramAnnotations[i]), operation, classConsumes, methodConsumes);
-                            for (Parameter p: resolvedParameter.parameters) {
+                            for (Parameter p : resolvedParameter.parameters) {
                                 operationParameters.add(p);
                             }
-                            if (resolvedParameter.requestBody != null)  {
+                            if (resolvedParameter.requestBody != null) {
                                 processRequestBody(
                                         resolvedParameter.requestBody,
                                         operation,
@@ -448,7 +446,6 @@ public class Reader implements OpenApiReader {
         // add tags from class to definition tags
         AnnotationsUtils
                 .getTags(apiTags, true).ifPresent(tags -> openApiTags.addAll(tags));
-
 
         if (!openApiTags.isEmpty()) {
             Set<Tag> tagsSet = new LinkedHashSet<>();
@@ -489,61 +486,61 @@ public class Reader implements OpenApiReader {
     }
 
     protected void processRequestBody(Parameter requestBodyParameter, Operation operation,
-                                    Consumes methodConsumes, Consumes classConsumes,
-                                    List<Parameter> operationParameters,
-                                    Annotation[] paramAnnotations, Type type) {
-                if (operation.getRequestBody() == null) {
-                    io.swagger.v3.oas.annotations.parameters.RequestBody requestBodyAnnotation = getRequestBody(Arrays.asList(paramAnnotations));
-                    if (requestBodyAnnotation != null) {
-                        Optional<RequestBody> optionalRequestBody = OperationParser.getRequestBody(requestBodyAnnotation, classConsumes, methodConsumes, components);
-                        if (optionalRequestBody.isPresent()) {
-                            RequestBody requestBody = optionalRequestBody.get();
-                            if (StringUtils.isBlank(requestBody.get$ref()) &&
-                                    (requestBody.getContent() == null || requestBody.getContent().isEmpty())) {
-                                if (requestBodyParameter.getSchema() != null) {
-                                    Content content = processContent(requestBody.getContent(), requestBodyParameter.getSchema(), methodConsumes, classConsumes);
-                                    requestBody.setContent(content);
-                                }
-                            } else if (StringUtils.isBlank(requestBody.get$ref()) &&
-                                    requestBody.getContent() != null &&
-                                    !requestBody.getContent().isEmpty()) {
-                                if (requestBodyParameter.getSchema() != null) {
-                                    for (MediaType mediaType: requestBody.getContent().values()) {
-                                        if (StringUtils.isBlank(mediaType.getSchema().getType())) {
-                                            mediaType.getSchema().setType(requestBodyParameter.getSchema().getType());
-                                        }
-                                    }
+                                      Consumes methodConsumes, Consumes classConsumes,
+                                      List<Parameter> operationParameters,
+                                      Annotation[] paramAnnotations, Type type) {
+        if (operation.getRequestBody() == null) {
+            io.swagger.v3.oas.annotations.parameters.RequestBody requestBodyAnnotation = getRequestBody(Arrays.asList(paramAnnotations));
+            if (requestBodyAnnotation != null) {
+                Optional<RequestBody> optionalRequestBody = OperationParser.getRequestBody(requestBodyAnnotation, classConsumes, methodConsumes, components);
+                if (optionalRequestBody.isPresent()) {
+                    RequestBody requestBody = optionalRequestBody.get();
+                    if (StringUtils.isBlank(requestBody.get$ref()) &&
+                            (requestBody.getContent() == null || requestBody.getContent().isEmpty())) {
+                        if (requestBodyParameter.getSchema() != null) {
+                            Content content = processContent(requestBody.getContent(), requestBodyParameter.getSchema(), methodConsumes, classConsumes);
+                            requestBody.setContent(content);
+                        }
+                    } else if (StringUtils.isBlank(requestBody.get$ref()) &&
+                            requestBody.getContent() != null &&
+                            !requestBody.getContent().isEmpty()) {
+                        if (requestBodyParameter.getSchema() != null) {
+                            for (MediaType mediaType : requestBody.getContent().values()) {
+                                if (StringUtils.isBlank(mediaType.getSchema().getType())) {
+                                    mediaType.getSchema().setType(requestBodyParameter.getSchema().getType());
                                 }
                             }
-
-                            operation.setRequestBody(requestBody);
-                        }
-                    } else {
-                        boolean isRequestBodyEmpty = true;
-                        RequestBody requestBody = new RequestBody();
-                        if (StringUtils.isNotBlank(requestBodyParameter.get$ref())) {
-                            requestBody.set$ref(requestBodyParameter.get$ref());
-                            isRequestBodyEmpty = false;
-                        }
-                        if (StringUtils.isNotBlank(requestBodyParameter.getDescription())) {
-                            requestBody.setDescription(requestBodyParameter.getDescription());
-                            isRequestBodyEmpty = false;
-                        }
-                        if (Boolean.TRUE.equals(requestBodyParameter.getRequired())) {
-                            requestBody.setRequired(requestBodyParameter.getRequired());
-                            isRequestBodyEmpty = false;
-                        }
-
-                        if (requestBodyParameter.getSchema() != null) {
-                            Content content = processContent(null, requestBodyParameter.getSchema(), methodConsumes, classConsumes);
-                            requestBody.setContent(content);
-                            isRequestBodyEmpty = false;
-                        }
-                        if (!isRequestBodyEmpty) {
-                            operation.setRequestBody(requestBody);
                         }
                     }
+
+                    operation.setRequestBody(requestBody);
                 }
+            } else {
+                boolean isRequestBodyEmpty = true;
+                RequestBody requestBody = new RequestBody();
+                if (StringUtils.isNotBlank(requestBodyParameter.get$ref())) {
+                    requestBody.set$ref(requestBodyParameter.get$ref());
+                    isRequestBodyEmpty = false;
+                }
+                if (StringUtils.isNotBlank(requestBodyParameter.getDescription())) {
+                    requestBody.setDescription(requestBodyParameter.getDescription());
+                    isRequestBodyEmpty = false;
+                }
+                if (Boolean.TRUE.equals(requestBodyParameter.getRequired())) {
+                    requestBody.setRequired(requestBodyParameter.getRequired());
+                    isRequestBodyEmpty = false;
+                }
+
+                if (requestBodyParameter.getSchema() != null) {
+                    Content content = processContent(null, requestBodyParameter.getSchema(), methodConsumes, classConsumes);
+                    requestBody.setContent(content);
+                    isRequestBodyEmpty = false;
+                }
+                if (!isRequestBodyEmpty) {
+                    operation.setRequestBody(requestBody);
+                }
+            }
+        }
     }
 
     private io.swagger.v3.oas.annotations.parameters.RequestBody getRequestBody(List<Annotation> annotations) {
@@ -563,7 +560,6 @@ public class Reader implements OpenApiReader {
         mediaTypeObject.setSchema(schema);
         content.addMediaType(value, mediaTypeObject);
     }
-
 
     public Operation parseMethod(
             Method method,
@@ -629,7 +625,7 @@ public class Reader implements OpenApiReader {
         List<io.swagger.v3.oas.annotations.responses.ApiResponse> apiResponses = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.responses.ApiResponse.class);
         // TODO extensions
         List<Extension> apiExtensions = ReflectionUtils.getRepeatableAnnotations(method, Extension.class);
-        ExternalDocumentation apiExternalDocumentation = ReflectionUtils.getAnnotation(method, ExternalDocumentation .class);
+        ExternalDocumentation apiExternalDocumentation = ReflectionUtils.getAnnotation(method, ExternalDocumentation.class);
 
         // callbacks
         Map<String, Callback> callbacks = new LinkedHashMap<>();
@@ -666,9 +662,9 @@ public class Reader implements OpenApiReader {
         // method tags
         if (apiTags != null) {
             apiTags.stream()
-                .filter(t -> operation.getTags() == null || (operation.getTags() != null && !operation.getTags().contains(t.name())))
-                .map(t -> t.name())
-                .forEach(operation::addTagsItem);
+                    .filter(t -> operation.getTags() == null || (operation.getTags() != null && !operation.getTags().contains(t.name())))
+                    .map(t -> t.name())
+                    .forEach(operation::addTagsItem);
             AnnotationsUtils.getTags(apiTags.toArray(new io.swagger.v3.oas.annotations.tags.Tag[apiTags.size()]), true).ifPresent(tags -> openApiTags.addAll(tags));
         }
 
@@ -680,7 +676,7 @@ public class Reader implements OpenApiReader {
         }
         if (apiParameters != null) {
             getParametersListFromAnnotation(
-            //OperationParser.getParametersList(
+                    //OperationParser.getParametersList(
                     apiParameters.toArray(new io.swagger.v3.oas.annotations.Parameter[apiParameters.size()]),
                     classConsumes,
                     methodConsumes,
@@ -931,7 +927,6 @@ public class Reader implements OpenApiReader {
         return Optional.of(parametersObject);
     }
 
-
     protected ResolvedParameter getParameters(Type type, List<Annotation> annotations, Operation operation, javax.ws.rs.Consumes classConsumes,
                                               javax.ws.rs.Consumes methodConsumes) {
         final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
@@ -1014,7 +1009,7 @@ public class Reader implements OpenApiReader {
         return false;
     }
 
-    public void setApplication (Application application) {
+    public void setApplication(Application application) {
         this.application = application;
     }
 

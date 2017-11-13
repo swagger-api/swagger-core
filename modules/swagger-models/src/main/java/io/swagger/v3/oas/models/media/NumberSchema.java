@@ -25,103 +25,99 @@ import java.util.Objects;
  * NumberSchema
  */
 
-
 public class NumberSchema extends Schema<BigDecimal> {
-  private String type = "number";
+    private String type = "number";
 
-  /**
-   * returns the type property from a NumberSchema instance.
-   *
-   * @return String type
-   **/
+    /**
+     * returns the type property from a NumberSchema instance.
+     *
+     * @return String type
+     **/
 
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public NumberSchema type(String type) {
-    this.type = type;
-    return this;
-  }
-
-  public NumberSchema _default(BigDecimal _default) {
-    super.setDefault(_default);
-    return this;
-  }
-
-  @Override
-  protected BigDecimal cast(Object value) {
-    if(value != null) {
-      try {
-        return new BigDecimal(value.toString());
-      }
-      catch (Exception e) {
-      }
+    public String getType() {
+        return type;
     }
-    return null;
-  }
 
-  public NumberSchema _enum(List<BigDecimal> _enum) {
-    this._enum = _enum;
-    return this;
-  }
-
-  public NumberSchema addEnumItem(BigDecimal _enumItem) {
-    if(this._enum == null) {
-      this._enum = new ArrayList<BigDecimal>();
+    public void setType(String type) {
+        this.type = type;
     }
-    this._enum.add(_enumItem);
-    return this;
-  }
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
+    public NumberSchema type(String type) {
+        this.type = type;
+        return this;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    public NumberSchema _default(BigDecimal _default) {
+        super.setDefault(_default);
+        return this;
     }
-    NumberSchema numberSchema = (NumberSchema) o;
-    return Objects.equals(this.type, numberSchema.type) &&
-        Objects.equals(this._default, numberSchema._default) &&
-        Objects.equals(this._enum, numberSchema._enum) &&
-        super.equals(o);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(type, _default, _enum, super.hashCode());
-  }
-
-
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class NumberSchema {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
-    sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+    @Override
+    protected BigDecimal cast(Object value) {
+        if (value != null) {
+            try {
+                return new BigDecimal(value.toString());
+            } catch (Exception e) {
+            }
+        }
+        return null;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
-  
+
+    public NumberSchema _enum(List<BigDecimal> _enum) {
+        this._enum = _enum;
+        return this;
+    }
+
+    public NumberSchema addEnumItem(BigDecimal _enumItem) {
+        if (this._enum == null) {
+            this._enum = new ArrayList<BigDecimal>();
+        }
+        this._enum.add(_enumItem);
+        return this;
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        NumberSchema numberSchema = (NumberSchema) o;
+        return Objects.equals(this.type, numberSchema.type) &&
+                Objects.equals(this._default, numberSchema._default) &&
+                Objects.equals(this._enum, numberSchema._enum) &&
+                super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, _default, _enum, super.hashCode());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class NumberSchema {\n");
+        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+        sb.append("    type: ").append(toIndentedString(type)).append("\n");
+        sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
+        sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
+
 }
 

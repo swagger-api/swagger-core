@@ -20,9 +20,8 @@ public class JaxrsOpenApiContext<T extends JaxrsOpenApiContext> extends GenericO
 
     public T app(Application app) {
         this.app = app;
-        return (T)this;
+        return (T) this;
     }
-
 
     @Override
     protected OpenApiReader buildReader(OpenAPIConfiguration openApiConfiguration) throws Exception {
@@ -34,7 +33,7 @@ public class JaxrsOpenApiContext<T extends JaxrsOpenApiContext> extends GenericO
             reader = new Reader();
         }
         if (reader instanceof Reader) {
-            ((Reader)reader).setApplication(app);
+            ((Reader) reader).setApplication(app);
         }
         reader.setConfiguration(openApiConfiguration);
         return reader;
@@ -52,7 +51,7 @@ public class JaxrsOpenApiContext<T extends JaxrsOpenApiContext> extends GenericO
         }
         scanner.setConfiguration(openApiConfiguration);
         if (scanner instanceof JaxrsOpenApiScanner) {
-            ((JaxrsOpenApiScanner)scanner).setApplication(app);
+            ((JaxrsOpenApiScanner) scanner).setApplication(app);
         }
         return scanner;
     }

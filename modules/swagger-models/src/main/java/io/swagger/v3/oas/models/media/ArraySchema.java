@@ -22,92 +22,88 @@ import java.util.Objects;
  * ArraySchema
  */
 
-
 public class ArraySchema extends Schema {
-  private String type = "array";
-  private Schema items = null;
+    private String type = "array";
+    private Schema items = null;
 
-  /**
-   * returns the type property from a ArraySchema instance.
-   *
-   * @return String type
-   **/
+    /**
+     * returns the type property from a ArraySchema instance.
+     *
+     * @return String type
+     **/
 
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public ArraySchema type(String type) {
-    this.type = type;
-    return this;
-  }
-
-  /**
-   * returns the items property from a ArraySchema instance.
-   *
-   * @return Schema items
-   **/
-
-  public Schema getItems() {
-    return items;
-  }
-
-  public void setItems(Schema items) {
-    this.items = items;
-  }
-
-  public ArraySchema items(Schema items) {
-    this.items = items;
-    return this;
-  }
-
-
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
+    public String getType() {
+        return type;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    public void setType(String type) {
+        this.type = type;
     }
-    ArraySchema arraySchema = (ArraySchema) o;
-    return Objects.equals(this.type, arraySchema.type) &&
-        Objects.equals(this.items, arraySchema.items) &&
-        super.equals(o);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(type, items, super.hashCode());
-  }
-
-
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class ArraySchema {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    items: ").append(toIndentedString(items)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+    public ArraySchema type(String type) {
+        this.type = type;
+        return this;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
-  
+
+    /**
+     * returns the items property from a ArraySchema instance.
+     *
+     * @return Schema items
+     **/
+
+    public Schema getItems() {
+        return items;
+    }
+
+    public void setItems(Schema items) {
+        this.items = items;
+    }
+
+    public ArraySchema items(Schema items) {
+        this.items = items;
+        return this;
+    }
+
+    @Override
+    public boolean equals(java.lang.Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ArraySchema arraySchema = (ArraySchema) o;
+        return Objects.equals(this.type, arraySchema.type) &&
+                Objects.equals(this.items, arraySchema.items) &&
+                super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, items, super.hashCode());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class ArraySchema {\n");
+        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+        sb.append("    type: ").append(toIndentedString(type)).append("\n");
+        sb.append("    items: ").append(toIndentedString(items)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(java.lang.Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
+
 }
 

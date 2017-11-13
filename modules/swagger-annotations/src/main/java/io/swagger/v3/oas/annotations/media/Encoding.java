@@ -24,8 +24,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- *
- *
  * Single encoding definition to be applied to single Schema Object
  **/
 
@@ -38,47 +36,45 @@ public @interface Encoding {
      * The name of this encoding object instance.
      * This property is a key in encoding map of MediaType object and
      * MUST exist in a schema as a property.
-     * 
+     *
      * @return name of the encoding
      **/
     String name() default "";
 
     /**
      * The Content-Type for encoding a specific property.
-     * 
+     *
      * @return content type of the encoding
      **/
     String contentType() default "";
 
     /**
      * Describes how a specific property value will be serialized depending on its type
-     * 
+     *
      * @return style of the encoding
      **/
     String style() default "";
 
     /**
-     *
      * When this is true, property values of type array or object generate separate parameters for each value of the array,
      * or key-value-pair of the map.
-     * 
-     *@return boolean
+     *
+     * @return boolean
      **/
     boolean explode() default false;
 
     /**
-     *
      * Determines whether the parameter value SHOULD allow reserved characters,
      * as defined by RFC3986 to be included without percent-encoding.
-     * 
-     *@return boolean
+     *
+     * @return boolean
      **/
     boolean allowReserved() default false;
 
     /**
      * An array of header objects
-     * 
-     *@return array of headers
+     *
+     * @return array of headers
      */
     Header[] headers() default {};
 

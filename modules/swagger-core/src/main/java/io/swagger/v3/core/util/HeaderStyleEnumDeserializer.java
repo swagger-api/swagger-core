@@ -26,11 +26,11 @@ public class HeaderStyleEnumDeserializer extends JsonDeserializer<Header.StyleEn
     private Header.StyleEnum getStyleEnum(String value) {
         return Arrays.stream(
                 Header.StyleEnum.values())
-                    .filter(i -> i.toString().equals(value))
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException(
-                            String.format("Can not deserialize value of type Header.StyleEnum from String \"%s\": value not one of declared Enum instance names: %s",
-                                    value,
-                                    Arrays.stream(Header.StyleEnum.values()).map(v -> v.toString()).collect(Collectors.joining(", ","[","]")))));
+                .filter(i -> i.toString().equals(value))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(
+                        String.format("Can not deserialize value of type Header.StyleEnum from String \"%s\": value not one of declared Enum instance names: %s",
+                                value,
+                                Arrays.stream(Header.StyleEnum.values()).map(v -> v.toString()).collect(Collectors.joining(", ", "[", "]")))));
     }
 }

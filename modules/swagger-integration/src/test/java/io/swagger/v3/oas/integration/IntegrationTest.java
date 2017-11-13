@@ -20,7 +20,7 @@ public class IntegrationTest {
     private final Set expectedKeys = new HashSet<String>(Arrays.asList("/packageA", "/packageB"));
 
     @Test(description = "initialize a context and read")
-    public void shouldInitialize() throws Exception{
+    public void shouldInitialize() throws Exception {
 
         OpenAPIConfiguration config = new SwaggerConfiguration()
                 .resourcePackages(Stream.of("com.my.project.resources", "org.my.project.resources").collect(Collectors.toSet()))

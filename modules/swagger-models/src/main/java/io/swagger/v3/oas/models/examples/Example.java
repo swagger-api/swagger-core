@@ -20,7 +20,6 @@ package io.swagger.v3.oas.models.examples;
  * Example
  */
 
-
 public class Example {
     private String summary = null;
     private String description = null;

@@ -18,14 +18,13 @@ public class SecuritySchemeDeserializer extends JsonDeserializer<SecurityScheme>
             throws IOException, JsonProcessingException {
         SecurityScheme result = null;
 
-
         JsonNode node = jp.getCodec().readTree(jp);
 
         JsonNode inNode = node.get("type");
 
         if (inNode != null) {
             String type = inNode.asText();
-            if (Arrays.stream(SecurityScheme.Type.values()).noneMatch(t -> t.toString().equals(type))){
+            if (Arrays.stream(SecurityScheme.Type.values()).noneMatch(t -> t.toString().equals(type))) {
                 // wrong type, throw exception
                 throw new JsonParseException(jp, String.format("SecurityScheme type %s not allowed", type));
             }
@@ -34,22 +33,22 @@ public class SecuritySchemeDeserializer extends JsonDeserializer<SecurityScheme>
 
             if ("http".equals(type)) {
                 result
-                    .type(SecurityScheme.Type.HTTP)
-                    .scheme(getFieldText("scheme", node))
-                    .bearerFormat(getFieldText("bearerFormat", node));
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme(getFieldText("scheme", node))
+                        .bearerFormat(getFieldText("bearerFormat", node));
             } else if ("apiKey".equals(type)) {
                 result
-                    .type(SecurityScheme.Type.APIKEY)
-                    .name(getFieldText("name", node))
-                    .in(getIn(getFieldText("in", node)));
+                        .type(SecurityScheme.Type.APIKEY)
+                        .name(getFieldText("name", node))
+                        .in(getIn(getFieldText("in", node)));
             } else if ("openIdConnect".equals(type)) {
                 result
-                    .type(SecurityScheme.Type.OPENIDCONNECT)
-                    .openIdConnectUrl(getFieldText("openIdConnectUrl", node));
+                        .type(SecurityScheme.Type.OPENIDCONNECT)
+                        .openIdConnectUrl(getFieldText("openIdConnectUrl", node));
             } else if ("oauth2".equals(type)) {
                 result
-                    .type(SecurityScheme.Type.OAUTH2)
-                    .flows(Json.mapper().convertValue(node.get("flows"), OAuthFlows.class));
+                        .type(SecurityScheme.Type.OAUTH2)
+                        .flows(Json.mapper().convertValue(node.get("flows"), OAuthFlows.class));
             }
         }
 

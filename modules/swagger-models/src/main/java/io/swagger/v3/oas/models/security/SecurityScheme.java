@@ -22,7 +22,6 @@ package io.swagger.v3.oas.models.security;
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#securitySchemeObject"
  */
 
-
 public class SecurityScheme {
     /**
      * Gets or Sets type

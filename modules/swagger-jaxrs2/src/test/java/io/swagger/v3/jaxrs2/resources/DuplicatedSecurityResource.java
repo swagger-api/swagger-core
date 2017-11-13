@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-
 @SecurityScheme(name = "myOauth2Security",
         type = SecuritySchemeType.OAUTH2,
         in = SecuritySchemeIn.HEADER,

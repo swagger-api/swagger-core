@@ -14,8 +14,8 @@ public class RequiredFieldModelTest {
     @Test(description = "it should apply read only flag when ApiProperty annotation first")
     public void testApiModelPropertyFirstPosition() {
         final Map<String, Schema> models = ModelConverters.getInstance().readAll(ApiFirstRequiredFieldModel.class);
-        final Schema  model = models.get("aaa");
-        final Schema prop = (Schema)model.getProperties().get("a");
+        final Schema model = models.get("aaa");
+        final Schema prop = (Schema) model.getProperties().get("a");
         assertTrue(model.getRequired().contains("a"));
     }
 
@@ -23,7 +23,7 @@ public class RequiredFieldModelTest {
     public void testApiModelPropertySecondPosition() {
         final Map<String, Schema> models = ModelConverters.getInstance().readAll(XmlFirstRequiredFieldModel.class);
         final Schema model = models.get("aaa");
-        final Schema prop = (Schema)model.getProperties().get("a");
+        final Schema prop = (Schema) model.getProperties().get("a");
         assertTrue(model.getRequired().contains("a"));
     }
 }

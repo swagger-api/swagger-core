@@ -29,7 +29,7 @@ public class ModelPropertyTest {
         assertEquals(models.size(), 3);
 
         final Schema person = models.get("Person");
-        final Schema employer = (Schema)person.getProperties().get("employer");
+        final Schema employer = (Schema) person.getProperties().get("employer");
 
         assertTrue(employer instanceof ArraySchema);
         final ArraySchema employerProperty = (ArraySchema) employer;
@@ -37,7 +37,7 @@ public class ModelPropertyTest {
         final Schema items = employerProperty.getItems();
         assertEquals(items.get$ref(), "#/components/schemas/Employer");
 
-        final Schema awards = (Schema)person.getProperties().get("awards");
+        final Schema awards = (Schema) person.getProperties().get("awards");
         assertTrue(awards instanceof ArraySchema);
         assertTrue(((ArraySchema) awards).getItems() instanceof StringSchema);
     }
@@ -94,16 +94,15 @@ public class ModelPropertyTest {
     public void testReadOnlyProperty() {
         final Map<String, Schema> models = ModelConverters.getInstance().readAll(ReadOnlyFields.class);
         Schema model = models.get("ReadOnlyFields");
-        assertTrue(((Schema)model.getProperties().get("id")).getReadOnly());
+        assertTrue(((Schema) model.getProperties().get("id")).getReadOnly());
     }
 
     @Test
     public void modelAllowEmptyTest() {
         final Map<String, Schema> models = ModelConverters.getInstance().readAll(Model1979.class);
         Schema model = models.get("Model1979");
-        assertTrue(((Schema)model.getProperties().get("id")).getNullable());
+        assertTrue(((Schema) model.getProperties().get("id")).getNullable());
     }
-
 
     @Test
     public void testIssue1743() {

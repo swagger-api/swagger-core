@@ -43,7 +43,7 @@ public class ReaderUtils {
     /**
      * Collects constructor-level parameters from class.
      *
-     * @param cls     is a class for collecting
+     * @param cls        is a class for collecting
      * @param components
      * @return the collection of supported parameters
      */
@@ -102,7 +102,7 @@ public class ReaderUtils {
     /**
      * Collects field-level parameters from class.
      *
-     * @param cls     is a class for collecting
+     * @param cls        is a class for collecting
      * @param components
      * @return the collection of supported parameters
      */
@@ -147,7 +147,6 @@ public class ReaderUtils {
 
         return result.toArray(new String[result.size()]);
     }
-
 
     public static Optional<List<String>> getStringListFromStringArray(String[] array) {
         if (array == null) {

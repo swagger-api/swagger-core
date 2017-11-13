@@ -8,7 +8,7 @@ import javax.servlet.ServletContext;
 public interface WebOpenApiContext extends OpenApiContext {
 
     ServletContext getServletContext();
-    ServletConfig getServletConfig();
 
+    ServletConfig getServletConfig();
 
 }
