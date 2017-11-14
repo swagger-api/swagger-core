@@ -1,6 +1,7 @@
 package io.swagger.v3.jaxrs2;
 
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -127,11 +128,14 @@ public class OperationParser {
             if (schemaImplementation.getName().startsWith("java.lang")) {
                 schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
             } else {
-                schemaMap = ModelConverters.getInstance().readAll(schemaImplementation);
-                schemaMap.forEach((key, schema) -> {
-                    components.addSchemas(key, schema);
-                });
-                schemaObject.set$ref(COMPONENTS_REF + schemaImplementation.getSimpleName());
+                ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(schemaImplementation);
+                if (resolvedSchema != null) {
+                    schemaMap = resolvedSchema.referencedSchemas;
+                    schemaMap.forEach((key, schema) -> {
+                        components.addSchemas(key, schema);
+                    });
+                    schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
+                }
             }
             if (StringUtils.isBlank(schemaObject.get$ref()) && StringUtils.isBlank(schemaObject.getType())) {
                 // default to string

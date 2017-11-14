@@ -99,6 +99,20 @@ public class ModelConverters {
         return new HashMap<String, Schema>();
     }
 
+    public ResolvedSchema readAllAsResolvedSchema(Type type) {
+        if (shouldProcess(type)) {
+            ModelConverterContextImpl context = new ModelConverterContextImpl(
+                    converters);
+
+            ResolvedSchema resolvedSchema = new ResolvedSchema();
+            resolvedSchema.schema = context.resolve(type);
+            resolvedSchema.referencedSchemas = context.getDefinedModels();
+
+            return resolvedSchema;
+        }
+        return null;
+    }
+
     private boolean shouldProcess(Type type) {
         final Class<?> cls = TypeFactory.defaultInstance().constructType(type).getRawClass();
         if (cls.isPrimitive()) {

@@ -24,6 +24,18 @@ public class GenericResponsesResource {
     public void getResponses() {
     }
 
+    @GET
+    @Path("/overridden")
+    @Operation(
+            operationId = "getSomethingsOverridden",
+            summary = "Returns a list of somethings",
+            responses = {
+                    @ApiResponse(content = @Content(schema = @Schema(implementation = SomethingDTO.class)))
+            }
+    )
+    public void getResponsesWithOverriddenName() {
+    }
+
     class SomethingResponse extends JsonResponse<SomethingDTO> {
     }
 

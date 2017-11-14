@@ -623,6 +623,16 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "            '*/*':\n" +
                 "              schema:\n" +
                 "                $ref: '#/components/schemas/SomethingResponse'\n" +
+                "  /overridden:\n" +
+                "    get:\n" +
+                "      summary: Returns a list of somethings\n" +
+                "      operationId: getSomethingsOverridden\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Something'\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    SomethingResponse:\n" +
