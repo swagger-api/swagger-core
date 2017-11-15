@@ -204,6 +204,52 @@
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
                     <version>${jetty-version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.glassfish.jersey.core</groupId>
+                            <artifactId>jersey-server</artifactId>
+                            <version>${jersey2-version}</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>org.javassist</groupId>
+                                    <artifactId>javassist</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.glassfish.jersey.containers</groupId>
+                            <artifactId>jersey-container-servlet</artifactId>
+                            <version>${jersey2-version}</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>org.javassist</groupId>
+                                    <artifactId>javassist</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.glassfish.jersey.media</groupId>
+                            <artifactId>jersey-media-multipart</artifactId>
+                            <version>${jersey2-version}</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>org.javassist</groupId>
+                                    <artifactId>javassist</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.glassfish.jersey.inject</groupId>
+                            <artifactId>jersey-hk2</artifactId>
+                            <version>${jersey2-version}</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>org.javassist</groupId>
+                                    <artifactId>javassist</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

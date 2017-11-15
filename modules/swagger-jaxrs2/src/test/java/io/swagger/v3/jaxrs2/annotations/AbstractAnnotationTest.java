@@ -30,4 +30,12 @@ public abstract class AbstractAnnotationTest {
         OpenAPI openAPI = reader.read(cls);
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
+
+    public void compareAsYaml(String actualYaml, String expectedYaml) throws IOException {
+        SerializationMatchers.assertEqualsToYaml(Yaml.mapper().readValue(actualYaml, OpenAPI.class), expectedYaml);
+    }
+    public void compareAsJson(String actualJson, String expectedJson) throws IOException {
+        SerializationMatchers.assertEqualsToJson(Yaml.mapper().readValue(actualJson, OpenAPI.class), expectedJson);
+    }
+
 }
