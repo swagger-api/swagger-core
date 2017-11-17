@@ -23,8 +23,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This object represents an array of ApiResponse that can be specified for the operation.
- **/
+ * Container for repeatable {@link ApiResponse} annotation
+ *
+ * @see ApiResponse
+ */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited

@@ -24,7 +24,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Describes a single header object
+ * The annotation may be used to add one or more headers to the definition of a response or as attribute of content
+ * encoding by definining it as field {@link io.swagger.v3.oas.annotations.responses.ApiResponse#headers()} or {@link io.swagger.v3.oas.annotations.media.Content#encoding()}.
+ * <p>Please note that request headers are defined as Header {@link io.swagger.v3.oas.annotations.Parameter}.</p>
+ *
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#headerObject">Header (OpenAPI specification)</a>
+ * @see io.swagger.v3.oas.annotations.responses.ApiResponse
+ * @see io.swagger.v3.oas.annotations.Parameter
+ * @see io.swagger.v3.oas.annotations.media.Encoding
  **/
 @Target({})
 @Retention(RetentionPolicy.RUNTIME)

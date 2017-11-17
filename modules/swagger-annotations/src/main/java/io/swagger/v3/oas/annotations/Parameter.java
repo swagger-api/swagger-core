@@ -32,7 +32,19 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Describes a single operation parameter
+ * The annotation may be used on a method parameter to define it as a parameter for the operation, and/or to define
+ * additional properties for the Parameter. It can also be used independently in {@link Operation#parameters()} or at
+ * method level to add a parameter to the operation, even if not bound to any method parameter.
+ *
+ * <p>swagger-jaxrs2 reader engine considers this annotation along with JAX-RS annotations, parameter type and context
+ * as input to resolve a method parameter into an OpenAPI Operation parameter.</p>
+ *
+ * <p>For method parameters bound to the request body, see {@link io.swagger.v3.oas.annotations.parameters.RequestBody}</p>
+ *
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#parameterObject">Parameter (OpenAPI specification)</a>
+ * @see io.swagger.v3.oas.annotations.parameters.RequestBody
+ * @see Operation
+ * @see Schema
  **/
 @Target({ElementType.PARAMETER,
         ElementType.METHOD,

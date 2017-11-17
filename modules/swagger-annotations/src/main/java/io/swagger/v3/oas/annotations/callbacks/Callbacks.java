@@ -23,8 +23,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This object represents an array of Callback URLs that can be invoked.
- **/
+ * Container for repeatable {@link Callback} annotation
+ *
+ * @see Callback
+ */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited

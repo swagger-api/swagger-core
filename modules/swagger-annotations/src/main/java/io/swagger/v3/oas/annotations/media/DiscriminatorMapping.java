@@ -22,7 +22,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This object maps payload values to a particular Schema.
+ * The annotation may be used in {@link Schema#discriminatorMapping()} to define an optional mapping definition
+ * in scenarios involving composition / inheritance where the value of the discriminator field does not match the schema
+ * name or implicit mapping is not possible.
+ *
+ * <p>Use {@link Schema#discriminatorProperty()} to define a discriminator property.</p>
+ *
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#discriminatorObject">Discriminator (OpenAPI specification)</a>
+ * @see Schema
  **/
 @Target({})
 @Retention(RetentionPolicy.RUNTIME)

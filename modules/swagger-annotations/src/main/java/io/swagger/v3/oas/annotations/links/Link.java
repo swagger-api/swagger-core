@@ -25,7 +25,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The Link object represents a possible design-time link for a response. The presence of a link does not guarantee the caller's ability to successfully invoke it, rather it provides a known relationship and traversal mechanism between responses and other operations.
+ * The annotation may be applied in {@link io.swagger.v3.oas.annotations.responses.ApiResponse#links()} to add OpenAPI links to a response.
+ *
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#linkObject">Link (OpenAPI specification)</a>
+ * @see io.swagger.v3.oas.annotations.responses.ApiResponse
  **/
 @Target({ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

@@ -28,7 +28,30 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Describes a single API operation on a path.
+ * The annotation may be used to define a resource method as an OpenAPI Operation, and/or to define additional
+ * properties for the Operation.
+ *
+ * <p>Note: swagger-jaxrs2 reader engine includes by default also methods of scanned resources which are not annotated
+ * with @Operation, as long as a jax-rs @Path is defined at class and/or method level, together with the http method
+ * annotation (@GET, @POST, etc).</p>
+ * <p>This behaviour is controlled by configuration property `scanAllResources` which defaults to true. By setting this
+ * flag to false only @{@link Operation} annotated methods are considered.</p>
+ *
+ * <p>The following fields can also alternatively be defined at method level (as repeatable annotations in case of arrays),
+ * in this case method level annotations take precedence over @{@link Operation} annotation fields:</p>
+ *
+ * <ul>
+ * <li>tags: @{@link io.swagger.v3.oas.annotations.tags.Tag}</li>
+ * <li>externalDocs: @{@link ExternalDocumentation}</li>
+ * <li>parameters: @{@link Parameter}</li>
+ * <li>responses: @{@link ApiResponse}</li>
+ * <li>security: @{@link SecurityRequirement}</li>
+ * <li>servers: @{@link Server}</li>
+ * <li>extensions: @{@link Extension}</li>
+ * <li>hidden: @{@link Hidden}</li>
+ * </ul>
+ *
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#operationObject">Operation (OpenAPI specification)</a>
  **/
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

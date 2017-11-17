@@ -25,6 +25,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * The annotation may be applied at class or method level, or in {@link io.swagger.v3.oas.annotations.Operation#tags()} to define tags for the
+ * single operation (when applied at method level) or for all operations of a class (when applied at class level).
+ * <p>It can also be used in {@link io.swagger.v3.oas.annotations.OpenAPIDefinition#tags()} to define spec level tags.</p>
+ * <p>When applied at method or class level, if only a name is provided, the tag will be added to operation only;
+ * if additional fields are also defined, like description or externalDocs, the Tag will also be added to openAPI.tags
+ * field</p>
+ *
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#tagObject">Tag (OpenAPI specification)</a>
+ * @see io.swagger.v3.oas.annotations.OpenAPIDefinition
+ **/
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(Tags.class)
