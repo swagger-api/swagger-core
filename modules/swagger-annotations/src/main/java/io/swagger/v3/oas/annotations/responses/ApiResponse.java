@@ -28,7 +28,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Describes a single response from an API Operation, including design-time, static links to operations based on the response.
+ * The annotation may be used at method level or as field of {@link io.swagger.v3.oas.annotations.Operation} to define one or more responses of the
+ * Operation.
+ *
+ * <p>swagger-jaxrs2 reader engine considers this annotation along with method return type and context as input to
+ * resolve the OpenAPI Operation responses.</p>
+ *
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#responseObject">Response (OpenAPI specification)</a>
+ * @see io.swagger.v3.oas.annotations.Operation
  **/
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

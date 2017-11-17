@@ -27,6 +27,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * The annotation that may be used to populate OpenAPI Object fields info, tags, servers, security and externalDocs
+ * If more than one class is annotated with {@link OpenAPIDefinition}, with the same fields defined, behaviour is inconsistent.
+ *
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#oasObject">OpenAPI (OpenAPI specification)</a>
+ */
 @Target({ElementType.TYPE, ElementType.PACKAGE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited

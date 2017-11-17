@@ -23,8 +23,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This object represents an array of extensions that can be added to the element.
- **/
+ * Container for repeatable {@link Extension} annotation
+ *
+ * @see Extension
+ */
 @Target({ElementType.FIELD,
         ElementType.METHOD,
         ElementType.PARAMETER,

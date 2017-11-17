@@ -23,7 +23,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This object provides schema and examples for a particular media type.
+ * The annotation may be used to define the content/media type  of a parameter, request or response, by definining it as
+ * field {@link io.swagger.v3.oas.annotations.Parameter#content()}, {@link io.swagger.v3.oas.annotations.parameters.RequestBody#content()} or {@link io.swagger.v3.oas.annotations.responses.ApiResponse#content()}.
+ * <p>If {@link Content#schema()} is defined, swagger-jaxrs2 reader engine will consider it along with
+ * JAX-RS annotations, element type and context as input to resolve the annotated element into an OpenAPI schema
+ * definition for such element.</p>
+ *
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#exampleObject">Example (OpenAPI specification)</a>
+ * @see Schema
+ * @see io.swagger.v3.oas.annotations.Parameter
+ * @see io.swagger.v3.oas.annotations.responses.ApiResponse
+ * @see io.swagger.v3.oas.annotations.parameters.RequestBody
  **/
 @Target({ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

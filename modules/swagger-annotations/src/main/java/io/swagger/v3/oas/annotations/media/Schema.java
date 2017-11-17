@@ -25,7 +25,21 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The Schema Object allows the definition of input and output data types. These types can be objects, but also primitives and arrays. This object is an extended subset of the JSON Schema Specification Wright Draft 00.
+ * The annotation may be used to define a Schema for a set of elements of the OpenAPI spec, and/or to define additional
+ * properties for the schema. It is applicable e.g. to parameters, schema classes (aka "models"), properties of such
+ * models, request and response content, header.
+ *
+ * <p>swagger-core resolver and swagger-jaxrs2 reader engine consider this annotation along with JAX-RS annotations,
+ * element type and context as input to resolve the annotated element into an OpenAPI schema definition for such element.</p>
+ * <p>The annotation may be used also to override partly (e.g. the name) or fully (e.g providing a completely different
+ * representation) the schema of an element; for example if a specific class is provided as value of {@link Schema#implementation()},
+ * it will override the element type</p>
+ *
+ * <p>The annotation {@link ArraySchema} shall be used for array elements; {@link ArraySchema} and {@link Schema} cannot
+ * coexist</p>
+ *
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#schemaObject">Schema (OpenAPI specification)</a>
+ * @see ArraySchema
  **/
 @Target({ElementType.FIELD,
         ElementType.METHOD,

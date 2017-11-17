@@ -23,8 +23,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This object represents an array of SecurityScheme that can be specified at definition level.
- **/
+ * Container for repeatable {@link SecurityScheme} annotation
+ *
+ * @see SecurityScheme
+ */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited

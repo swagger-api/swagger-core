@@ -24,9 +24,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Single encoding definition to be applied to single Schema Object
+ * The annotation may be used to add encoding details to the definition of a parameter, request or response content,
+ * by definining it as field {@link Content#encoding()}
+ *
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#encodingObject">Encoding (OpenAPI specification)</a>
+ * @see Content
  **/
-
 @Target({})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited

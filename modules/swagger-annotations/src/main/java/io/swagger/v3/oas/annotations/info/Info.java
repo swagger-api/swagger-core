@@ -23,7 +23,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation provides metadata about the API, and maps to the Info object in OpenAPI Specification 3.
+ * The annotation may be used in {@link io.swagger.v3.oas.annotations.OpenAPIDefinition#info()} to populate the Info section of the OpenAPI document.
+ *
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#infoObject">Info (OpenAPI specification)</a>
+ * @see io.swagger.v3.oas.annotations.OpenAPIDefinition
  **/
 @Target({ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
