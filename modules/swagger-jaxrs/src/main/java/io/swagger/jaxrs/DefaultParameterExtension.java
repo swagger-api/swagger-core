@@ -27,14 +27,12 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import com.fasterxml.jackson.databind.introspect.AnnotationMap;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class DefaultParameterExtension extends AbstractSwaggerExtension {
     // make jaxrs 2.0 classes optional
@@ -142,7 +140,7 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension {
                 if (field != null) {
                     paramType = field.getRawType();
 
-                    for (final Annotation fieldAnnotation : field.annotations()) {
+                    for (final Annotation fieldAnnotation : annotations(field.getAllAnnotations())) {
                         if (!paramAnnotations.contains(fieldAnnotation)) {
                             paramAnnotations.add(fieldAnnotation);
                         }
@@ -156,7 +154,7 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension {
                         paramType = setter.getRawParameterTypes() != null ? setter.getRawParameterTypes()[0] : null;
                     }
 
-                    for (final Annotation fieldAnnotation : setter.annotations()) {
+                    for (final Annotation fieldAnnotation : annotations(setter.getAllAnnotations())) {
                         if (!paramAnnotations.contains(fieldAnnotation)) {
                             paramAnnotations.add(fieldAnnotation);
                         }
@@ -170,7 +168,7 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension {
                         paramType = getter.getRawReturnType();
                     }
 
-                    for (final Annotation fieldAnnotation : getter.annotations()) {
+                    for (final Annotation fieldAnnotation : annotations(getter.getAllAnnotations())) {
                         if (!paramAnnotations.contains(fieldAnnotation)) {
                             paramAnnotations.add(fieldAnnotation);
                         }
@@ -217,5 +215,13 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension {
             }
         }
         return in;
+    }
+
+    private static Iterable<Annotation> annotations(AnnotationMap annotationMap) {
+        if (annotationMap == null) {
+            return Collections.emptyList();
+        } else {
+            return annotationMap.annotations();
+        }
     }
 }
