@@ -2,5 +2,5 @@ sudo: false
 language: java
 script: ./mvnw clean verify
 jdk:
-  - openjdk6
   - openjdk7
+  - openjdk8
