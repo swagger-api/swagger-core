@@ -125,7 +125,7 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension {
      */
     private void handleAdditionalAnnotation(List<Parameter> parameters, Annotation annotation, 
         final Type type, Set<Type> typesToSkip) {
-        if (CLASS_BEAN_PARAM != null && CLASS_BEAN_PARAM.isAssignableFrom(annotation.getClass())) {
+        if (shouldHandleAdditionalAnnotation(annotation)) {
             // Use Jackson's logic for processing Beans
             final BeanDescription beanDesc = mapper.getSerializationConfig().introspect(constructType(type));
             final List<BeanPropertyDefinition> properties = beanDesc.findProperties();
@@ -194,6 +194,10 @@ public class DefaultParameterExtension extends AbstractSwaggerExtension {
                 }
             }
         }
+    }
+    
+    protected boolean shouldHandleAdditionalAnnotation(Annotation annotation) {
+        return CLASS_BEAN_PARAM != null && CLASS_BEAN_PARAM.isAssignableFrom(annotation.getClass());
     }
 
     @Override
