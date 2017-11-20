@@ -8,6 +8,9 @@ Swagger-core is the Java implementation of Swagger. Current version supports *JA
 
 Check out the [OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification) for additional information about the Swagger project.
 
+## See the Wiki!
+The [github wiki](https://github.com/swagger-api/swagger-core/wiki) contains documentation, samples, contributions, etc. Start there.
+
 ## Support
 The following methods are available to obtain support for Swagger:
 
@@ -15,15 +18,20 @@ The following methods are available to obtain support for Swagger:
 - The [Issues tab](https://github.com/swagger-api/swagger-core/issues?state=open) - Please open feature requests and bugs here. If you're not sure you encountered a bug, or if it's a general usage question, please use the Google Group mentioned above.
 - IRC! you can find us on [freenode](http://webchat.freenode.net/?channels=swagger) in the channel #Swagger. You can talk with us directly there.
 
+## Get started with Swagger!
+See the guide on [getting started with swagger](https://github.com/swagger-api/swagger-core/wiki/Swagger-Core-JAX-RS-Project-Setup-2.0.X) to get started with adding swagger to your API.
+
 ## Compatibility
 The OpenAPI Specification has undergone several revisions since initial creation in 2010.  The swagger-core project has the following compatibilities with the OpenAPI Specification:
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-2.0.0-rc2                 | 2017-09-29   | 3.0           | [tag v2.0.0-rc2](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc2) | Under Development
-2.0.0-rc1                 | 2017-08-17   | 3.0           | [tag v2.0.0-rc1](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc1) | Under Development
-1.5.16 (**current stable**)| 2017-07-05  | 2.0           | [tag v1.5.16](https://github.com/swagger-api/swagger-core/tree/v1.5.16) | Supported
-1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Deprecated
+2.0.0-rc3                 | 2017-11-21   | 3.0           | [tag v2.0.0-rc3](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc3) | Supported
+2.0.0-rc2                 | 2017-09-29   | 3.0           | [tag v2.0.0-rc2](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc2) | Supported
+2.0.0-rc1                 | 2017-08-17   | 3.0           | [tag v2.0.0-rc1](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc1) | Supported
+1.5.17 (**current stable**)| 2017-11-21  | 2.0           | [tag v1.5.17](https://github.com/swagger-api/swagger-core/tree/v1.5.17) | Supported
+1.5.16                    | 2017-07-15   | 2.0           | [tag v1.5.16](https://github.com/swagger-api/swagger-core/tree/v1.5.16) | Supported
+1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Supported
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4) | Deprecated
 1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0) | Deprecated
 
@@ -78,6 +86,38 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+## v2.0.0-rc3 
+
+### Notable Features:
+
+- See also [rc1 and rc2 release notes]([v2.0.0-rc1](https://github.com/swagger-api/swagger-core/releases/tag/v2.0.0-rc1), [v2.0.0-rc2](https://github.com/swagger-api/swagger-core/releases/tag/v2.0.0-rc2))
+- Third official release candidate of OpenAPI 3.0 support. swagger-core now produces OpenAPI 3.0 specs only. swagger-core 2.0 version is not backward compatible with previous 1.x versions.
+- Available on Maven central, and the sources are in the 2.0 branch. PRs should be submitted against the 2.0 branch.
+- **Project `groupId` and package naming change! (#2485, see also above)**
+- Enhanced and stable annotations (#2481) 
+- Repeatable annotations support (#2481) 
+- Swagger `ServletContainerInitializer` based startup scanning (#2504, see related samples in [samples](https://github.com/swagger-api/swagger-samples/tree/2.0/java), [jersey sample](https://github.com/swagger-api/swagger-samples/tree/2.0/java/java-jersey2-initializer-configfile), [RESTEasy sample](https://github.com/swagger-api/swagger-samples/tree/2.0/java/java-resteasy-initializer-configfile))
+- `@OpenAPIDefinition` support (#2517)
+- `@ApplicationPath` support (#2489)
+- Full `@Schema` elements resolving (#2476)
+- `@Hidden` support (#2528)
+- `@Schema.subTypes` support (#2511)
+- Better generics support in schema resolution (#2483)
+- Enhanced `@ArraySchema` support (#2501)
+- Enhanced Response schema resolving (#2513)
+- Extended set of [samples](https://github.com/swagger-api/swagger-samples/tree/2.0/java)
+- Improved [2.0 Wiki](https://github.com/swagger-api/swagger-core/wiki)
+- Improved Annotation javadocs (#2541)
+- Various bug fixes and improvements
+
+### Limitations
+
+- Reader sub-resources support _(swagger-jaxrs2)_  
+- Reader extensions full support  _(swagger-jaxrs2)_ 
+- Integration layer enhancements:config file location enhanced loading, additional loaders, etc. _(swagger-integration, swagger-jaxrs)_ 
+- JsonIdentity support _(swagger-core)_ 
+- `MatrixParam` annotation support
 
 ## v2.0.0-rc2 
 
