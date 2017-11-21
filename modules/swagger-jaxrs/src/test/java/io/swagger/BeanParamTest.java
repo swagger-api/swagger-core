@@ -47,7 +47,7 @@ public class BeanParamTest {
 
     private final SwaggerExtension myDefaultParameterExtension = new DefaultParameterExtension() {
         @Override
-        protected boolean shouldHandleAdditionalAnnotation(Annotation annotation) {
+        protected boolean isBeanParametersAggregatorAnnotation(Annotation annotation) {
             return annotation instanceof MyBeanParam;
         }
     };
