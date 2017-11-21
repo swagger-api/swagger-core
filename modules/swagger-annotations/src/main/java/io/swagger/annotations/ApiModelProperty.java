@@ -111,4 +111,9 @@ public @interface ApiModelProperty {
      * @since 1.5.11
      */
     boolean allowEmptyValue() default false;
+
+    /**
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default @Extension(properties = @ExtensionProperty(name = "", value = ""));
 }
