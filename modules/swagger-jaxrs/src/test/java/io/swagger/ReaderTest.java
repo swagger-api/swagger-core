@@ -36,12 +36,7 @@ import io.swagger.resources.RsMultipleConsumesProducesResource;
 import io.swagger.resources.SimpleMethods;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -228,7 +223,7 @@ public class ReaderTest {
         Swagger swagger = getSwagger(ResourceWithImplicitParams.class);
         List<Parameter> params = swagger.getPath("/testString").getPost().getParameters();
         assertNotNull(params);
-        assertEquals(params.size(), 7);
+        assertEquals(params.size(), 9);
 
         assertEquals(params.get(0).getName(), "sort");
         assertEquals(params.get(0).getIn(), "query");
@@ -262,6 +257,16 @@ public class ReaderTest {
         assertEquals(bodyParam.getName(), "body");
         assertEquals(bodyParam.getIn(), "body");
         assertTrue(bodyParam.getRequired());
+
+        QueryParameter selectByParam = (QueryParameter) params.get(7);
+        assertEquals(selectByParam.getName(), "select");
+        assertEquals(selectByParam.getIn(), "query");
+        assertEquals(selectByParam.getCollectionFormat(), "multi");
+
+        QueryParameter orderByParam = (QueryParameter) params.get(8);
+        assertEquals(orderByParam.getName(), "orderby");
+        assertEquals(orderByParam.getIn(), "query");
+        assertEquals(orderByParam.getCollectionFormat(), "csv");
     }
 
     @Test(description = "scan implicit params with file objct")
