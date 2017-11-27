@@ -9,6 +9,7 @@ import io.swagger.v3.jaxrs2.resources.ExternalDocsReference;
 import io.swagger.v3.jaxrs2.resources.ResponseContentWithArrayResource;
 import io.swagger.v3.jaxrs2.resources.ResponsesResource;
 import io.swagger.v3.jaxrs2.resources.SecurityResource;
+import io.swagger.v3.jaxrs2.resources.ServersResource;
 import io.swagger.v3.jaxrs2.resources.SimpleCallbackResource;
 import io.swagger.v3.jaxrs2.resources.SimpleMethods;
 import io.swagger.v3.jaxrs2.resources.TagsResource;
@@ -201,6 +202,26 @@ public class ReaderTest {
         assertEquals(operation.getTags().get(1), SECOND_TAG);
         assertEquals(openAPI.getTags().get(1).getDescription(), "desc definition");
         assertEquals(openAPI.getTags().get(2).getExternalDocs().getDescription(), "docs desc");
+    }
+
+    @Test(description = "Get servers")
+    public void testGetServers() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(ServersResource.class);
+        Operation operation = openAPI.getPaths().get("/").getGet();
+        assertNotNull(operation);
+        assertEquals(5, operation.getServers().size());
+        assertEquals(operation.getServers().get(0).getUrl(), "http://class1");
+        assertEquals(operation.getServers().get(1).getUrl(), "http://class2");
+        assertEquals(operation.getServers().get(2).getUrl(), "http://method1");
+        assertEquals(operation.getServers().get(3).getUrl(), "http://method2");
+        assertEquals(operation.getServers().get(4).getUrl(), "http://op1");
+
+        assertEquals(operation.getServers().get(0).getVariables().size(), 2);
+        assertEquals(operation.getServers().get(0).getVariables().get("var1").getDescription(), "var 1");
+        assertEquals(operation.getServers().get(0).getVariables().get("var1").getEnum().size(), 2);
+
+        assertEquals(openAPI.getServers().get(0).getDescription(), "definition server 1");
     }
 
     @Test(description = "Responses")
