@@ -242,6 +242,8 @@ public class Reader implements OpenApiReader {
         List<io.swagger.v3.oas.annotations.security.SecurityRequirement> apiSecurityRequirements = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.v3.oas.annotations.security.SecurityRequirement.class);
         ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, ExternalDocumentation.class);
         io.swagger.v3.oas.annotations.tags.Tag[] apiTags = ReflectionUtils.getRepeatableAnnotationsArray(cls, io.swagger.v3.oas.annotations.tags.Tag.class);
+        io.swagger.v3.oas.annotations.servers.Server[] apiServers = ReflectionUtils.getRepeatableAnnotationsArray(cls, io.swagger.v3.oas.annotations.servers.Server.class);
+
 
         javax.ws.rs.Consumes classConsumes = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Consumes.class);
         javax.ws.rs.Produces classProduces = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Produces.class);
@@ -315,6 +317,12 @@ public class Reader implements OpenApiReader {
             );
         }
 
+        // servers
+        final List<io.swagger.v3.oas.models.servers.Server> classServers = new ArrayList<>();
+        if (apiServers != null) {
+            AnnotationsUtils.getServers(apiServers).ifPresent(servers -> classServers.addAll(servers));
+        }
+
         // class external docs
         Optional<io.swagger.v3.oas.models.ExternalDocumentation> classExternalDocumentation = AnnotationsUtils.getExternalDocumentation(apiExternalDocs);
 
@@ -371,7 +379,8 @@ public class Reader implements OpenApiReader {
                         classConsumes,
                         classSecurityRequirements,
                         classExternalDocumentation,
-                        classTags);
+                        classTags,
+                        classServers);
                 if (operation != null) {
                     PathItem pathItemObject;
                     if (openAPI.getPaths() != null && openAPI.getPaths().get(operationPath) != null) {
@@ -581,7 +590,8 @@ public class Reader implements OpenApiReader {
                 null,
                 new ArrayList<>(),
                 Optional.empty(),
-                new HashSet<>());
+                new HashSet<>(),
+                new ArrayList<>());
     }
 
     public Operation parseMethod(
@@ -593,7 +603,8 @@ public class Reader implements OpenApiReader {
             Consumes classConsumes,
             List<SecurityRequirement> classSecurityRequirements,
             Optional<io.swagger.v3.oas.models.ExternalDocumentation> classExternalDocs,
-            Set<String> classTags) {
+            Set<String> classTags,
+            List<io.swagger.v3.oas.models.servers.Server> classServers) {
         JavaType classType = TypeFactory.defaultInstance().constructType(method.getDeclaringClass());
         return parseMethod(
                 classType.getClass(),
@@ -605,7 +616,8 @@ public class Reader implements OpenApiReader {
                 classConsumes,
                 classSecurityRequirements,
                 classExternalDocs,
-                classTags);
+                classTags,
+                classServers);
     }
 
     private Operation parseMethod(
@@ -618,7 +630,8 @@ public class Reader implements OpenApiReader {
             Consumes classConsumes,
             List<SecurityRequirement> classSecurityRequirements,
             Optional<io.swagger.v3.oas.models.ExternalDocumentation> classExternalDocs,
-            Set<String> classTags) {
+            Set<String> classTags,
+            List<io.swagger.v3.oas.models.servers.Server> classServers) {
         Operation operation = new Operation();
 
         io.swagger.v3.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.Operation.class);
@@ -658,6 +671,10 @@ public class Reader implements OpenApiReader {
         }
 
         // servers
+        if (classServers != null) {
+            classServers.forEach(operation::addServersItem);
+        }
+
         if (apiServers != null) {
             AnnotationsUtils.getServers(apiServers.toArray(new Server[apiServers.size()])).ifPresent(servers -> servers.forEach(operation::addServersItem));
         }
