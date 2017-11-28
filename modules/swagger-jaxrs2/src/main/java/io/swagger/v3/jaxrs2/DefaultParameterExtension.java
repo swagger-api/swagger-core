@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import com.fasterxml.jackson.databind.introspect.AnnotationMap;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ParameterProcessor;
@@ -23,6 +24,7 @@ import javax.ws.rs.QueryParam;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -162,7 +164,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 if (field != null) {
                     paramType = field.getType();
 
-                    for (final Annotation fieldAnnotation : field.annotations()) {
+                    for (final Annotation fieldAnnotation : annotations(field.getAllAnnotations())) {
                         if (!paramAnnotations.contains(fieldAnnotation)) {
                             paramAnnotations.add(fieldAnnotation);
                         }
@@ -177,7 +179,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                         paramType = setter.getParameterType(0);
                     }
 
-                    for (final Annotation fieldAnnotation : setter.annotations()) {
+                    for (final Annotation fieldAnnotation : annotations(setter.getAllAnnotations())) {
                         if (!paramAnnotations.contains(fieldAnnotation)) {
                             paramAnnotations.add(fieldAnnotation);
                         }
@@ -191,7 +193,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                         paramType = getter.getType();
                     }
 
-                    for (final Annotation fieldAnnotation : getter.annotations()) {
+                    for (final Annotation fieldAnnotation : annotations(getter.getAllAnnotations())) {
                         if (!paramAnnotations.contains(fieldAnnotation)) {
                             paramAnnotations.add(fieldAnnotation);
                         }
@@ -235,6 +237,14 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
     @Override
     protected boolean shouldIgnoreClass(Class<?> cls) {
         return cls.getName().startsWith("javax.ws.rs.");
+    }
+
+    private static Iterable<Annotation> annotations(AnnotationMap annotationMap) {
+        if (annotationMap == null) {
+            return Collections.emptyList();
+        } else {
+            return annotationMap.annotations();
+        }
     }
 
 }

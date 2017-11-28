@@ -60,6 +60,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -445,7 +446,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             final AnnotatedMember member = propDef.getPrimaryMember();
             if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore)) {
 
-                JavaType propType = member.getType(beanDesc.bindingsForBeanType());
+                JavaType propType = member.getType();
                 property = resolveAnnotatedType(propType, member, propName, context, model, (t, a) -> {
                     JsonUnwrapped uw = member.getAnnotation(JsonUnwrapped.class);
                     if (uw != null && uw.enabled()) {
@@ -636,12 +637,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     final String name = def.getName();
                     if (name != null && name.equals(propertyName)) {
                         final AnnotatedMember propMember = def.getPrimaryMember();
-                        final JavaType propType = propMember.getType(beanDesc.bindingsForBeanType());
+                        final JavaType propType = propMember.getType();
                         if (PrimitiveType.fromType(propType) != null) {
                             return PrimitiveType.createProperty(propType);
                         } else {
                             return context.resolve(propType,
-                                    Iterables.toArray(propMember.annotations(), Annotation.class));
+                                    Iterables.toArray(annotations(propMember), Annotation.class));
                         }
                     }
                 }
@@ -1441,6 +1442,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         if (model.getRequired().stream().noneMatch(s -> propName.equals(s))) {
             model.addRequiredItem(propName);
+        }
+    }
+
+    private static Iterable<Annotation> annotations(AnnotatedMember member) {
+        if (member == null || member.getAllAnnotations() == null) {
+            return Collections.emptyList();
+        } else {
+            return member.getAllAnnotations().annotations();
         }
     }
 }
