@@ -21,6 +21,11 @@ public class Response {
         return this;
     }
 
+    public Response model(Model model) {
+        this.setModel(model);
+        return this;
+    }
+
     public Response description(String description) {
         this.setDescription(description);
         return this;
@@ -130,6 +135,9 @@ public class Response {
         if (description != null ? !description.equals(response.description) : response.description != null) {
             return false;
         }
+        if (model != null ? !model.equals(response.model) : response.model != null) {
+            return false;
+        }
         if (schema != null ? !schema.equals(response.schema) : response.schema != null) {
             return false;
         }
@@ -146,6 +154,7 @@ public class Response {
     @Override
     public int hashCode() {
         int result = description != null ? description.hashCode() : 0;
+        result = 31 * result + (model != null ? model.hashCode() : 0);
         result = 31 * result + (schema != null ? schema.hashCode() : 0);
         result = 31 * result + (examples != null ? examples.hashCode() : 0);
         result = 31 * result + (headers != null ? headers.hashCode() : 0);
