@@ -642,7 +642,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             return PrimitiveType.createProperty(propType);
                         } else {
                             return context.resolve(propType,
-                                    Iterables.toArray(annotations(propMember), Annotation.class));
+                                    Iterables.toArray(propMember.annotations(), Annotation.class));
                         }
                     }
                 }
@@ -1442,14 +1442,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         if (model.getRequired().stream().noneMatch(s -> propName.equals(s))) {
             model.addRequiredItem(propName);
-        }
-    }
-
-    private static Iterable<Annotation> annotations(AnnotatedMember member) {
-        if (member == null || member.getAllAnnotations() == null) {
-            return Collections.emptyList();
-        } else {
-            return member.getAllAnnotations().annotations();
         }
     }
 }
