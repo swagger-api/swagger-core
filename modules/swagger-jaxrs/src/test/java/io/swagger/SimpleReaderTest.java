@@ -192,8 +192,10 @@ public class SimpleReaderTest {
         Response response = get.getResponses().get("200");
         assertNotNull(response);
 
-        Property schema = response.getSchema();
-        assertEquals(schema.getClass(), MapProperty.class);
+        Model schema = response.getResponseSchema();
+        assertEquals(schema.getClass(), ModelImpl.class);
+        ModelImpl model = (ModelImpl) schema;
+        assertTrue(model.getAdditionalProperties() != null);
     }
 
     @Test(description = "scan a resource with generics per 653")
@@ -207,7 +209,7 @@ public class SimpleReaderTest {
 
         Response response = responses.get("default");
         assertNotNull(response);
-        assertNull(response.getSchema());
+        assertNull(response.getResponseSchema());
     }
 
     @Test(description = "scan a resource with javax.ws.core.Response ")
@@ -410,41 +412,44 @@ public class SimpleReaderTest {
         Swagger swagger = getSwagger(ResourceWithApiResponseResponseContainer.class);
         Path paths = swagger.getPaths().get("/{id}");
         Map<String, Response> responses1 = paths.getGet().getResponses();
-        assertEquals(responses1.get("200").getSchema().getClass(), MapProperty.class);
-        assertEquals(responses1.get("400").getSchema().getClass(), ArrayProperty.class);
+
+        assertEquals(responses1.get("200").getResponseSchema().getClass(), ModelImpl.class);
+        assertTrue(((ModelImpl)responses1.get("200").getResponseSchema()).getAdditionalProperties() != null);
+
+        assertEquals(responses1.get("400").getResponseSchema().getClass(), ArrayModel.class);
 
         Map<String, Response> responses2 = paths.getPut().getResponses();
-        assertEquals(responses2.get("201").getSchema().getClass(), RefProperty.class);
-        assertEquals(responses2.get("401").getSchema().getClass(), ArrayProperty.class);
+        assertEquals(responses2.get("201").getResponseSchema().getClass(), RefModel.class);
+        assertEquals(responses2.get("401").getResponseSchema().getClass(), ArrayModel.class);
 
         Map<String, Response> responses3 = paths.getPost().getResponses();
-        assertEquals(responses3.get("202").getSchema().getClass(), RefProperty.class);
-        assertEquals(responses3.get("402").getSchema().getClass(), RefProperty.class);
+        assertEquals(responses3.get("202").getResponseSchema().getClass(), RefModel.class);
+        assertEquals(responses3.get("402").getResponseSchema().getClass(), RefModel.class);
 
         Map<String, Response> responses4 = paths.getDelete().getResponses();
-        assertEquals(responses4.get("203").getSchema().getClass(), RefProperty.class);
-        assertEquals(responses4.get("403").getSchema().getClass(), RefProperty.class);
+        assertEquals(responses4.get("203").getResponseSchema().getClass(), RefModel.class);
+        assertEquals(responses4.get("403").getResponseSchema().getClass(), RefModel.class);
 
         Path paths2 = swagger.getPaths().get("/{id}/name");
         Map<String, Response> responses5 = paths2.getGet().getResponses();
-        assertEquals(responses5.get("203").getSchema().getClass(), ArrayProperty.class);
-        assertNull(((ArrayProperty) responses5.get("203").getSchema()).getUniqueItems());
+        assertEquals(responses5.get("203").getResponseSchema().getClass(), ArrayModel.class);
+        assertNull(((ArrayModel) responses5.get("203").getResponseSchema()).getUniqueItems());
         assertNotEquals(responses5.get("203").getHeaders().get("foo").getClass(), MapProperty.class);
-        assertEquals(responses5.get("403").getSchema().getClass(), ArrayProperty.class);
-        assertEquals(((ArrayProperty) responses5.get("403").getSchema()).getUniqueItems(), Boolean.TRUE);
+        assertEquals(responses5.get("403").getResponseSchema().getClass(), ArrayModel.class);
+        assertEquals(((ArrayModel) responses5.get("403").getResponseSchema()).getUniqueItems(), Boolean.TRUE);
 
         Map<String, Response> responses6 = paths2.getPut().getResponses();
-        assertEquals(responses6.get("203").getSchema().getClass(), ArrayProperty.class);
-        assertEquals(((ArrayProperty) responses6.get("203").getSchema()).getUniqueItems(), Boolean.TRUE);
+        assertEquals(responses6.get("203").getResponseSchema().getClass(), ArrayModel.class);
+        assertEquals(((ArrayModel) responses6.get("203").getResponseSchema()).getUniqueItems(), Boolean.TRUE);
         assertEquals(responses6.get("203").getHeaders().get("foo").getClass(), ArrayProperty.class);
         assertEquals(((ArrayProperty) responses6.get("203").getHeaders().get("foo")).getUniqueItems(), Boolean.TRUE);
-        assertEquals(responses6.get("403").getSchema().getClass(), ArrayProperty.class);
+        assertEquals(responses6.get("403").getResponseSchema().getClass(), ArrayModel.class);
     }
 
     @Test(description = "scan a resource with inner class")
     public void scanResourceWithInnerClass() {
         Swagger swagger = getSwagger(ResourceWithInnerClass.class);
-        assertEquals(((RefProperty) ((ArrayProperty) getGetResponses(swagger, "/description").get("200").getSchema()).
+        assertEquals(((RefProperty) ((ArrayModel) getGetResponses(swagger, "/description").get("200").getResponseSchema()).
                 getItems()).get$ref(), "#/definitions/Description");
         assertTrue(swagger.getDefinitions().containsKey("Description"));
     }
@@ -546,30 +551,31 @@ public class SimpleReaderTest {
                 assertEquals(entry.getValue().getGet().getResponses().size(), expected.size());
                 for (Map.Entry<String, Response> responseEntry : entry.getValue().getGet().getResponses().entrySet()) {
                     String[] expectedProp = expected.get(responseEntry.getKey());
-                    Property property = responseEntry.getValue().getSchema();
-                    assertEquals(property.getType(), expectedProp[0]);
-                    assertEquals(property.getFormat(), expectedProp[1]);
+                    Model model = responseEntry.getValue().getResponseSchema();
+                    ModelImpl modelImpl = (ModelImpl) model;
+                    assertEquals(modelImpl.getType(), expectedProp[0]);
+                    assertEquals(modelImpl.getFormat(), expectedProp[1]);
                 }
             } else {
                 Operation op = entry.getValue().getGet();
-                Property response = op.getResponses().get("200").getSchema();
+                Model response = op.getResponses().get("200").getResponseSchema();
                 Model model = ((BodyParameter) op.getParameters().get(0)).getSchema();
                 assertEquals(op.getParameters().size(), 1);
 
                 if ("testObjectResponse".equals(name)) {
-                    assertEquals(((RefProperty) response).getSimpleRef(), "Tag");
+                    assertEquals(((RefModel) response).getSimpleRef(), "Tag");
                     assertEquals(((RefModel) model).getSimpleRef(), "Tag");
                 } else if ("testObjectsResponse".equals(name)) {
-                    assertEquals(((RefProperty) ((ArrayProperty) response).getItems()).getSimpleRef(), "Tag");
+                    assertEquals(((RefProperty) ((ArrayModel) response).getItems()).getSimpleRef(), "Tag");
                     assertEquals(((RefProperty) ((ArrayModel) model).getItems()).getSimpleRef(), "Tag");
                 } else if ("testStringResponse".equals(name)) {
-                    assertEquals(response.getClass(), StringProperty.class);
+                    assertEquals(response.getClass(), ModelImpl.class);
                     assertEquals(((ModelImpl) model).getType(), "string");
                 } else if ("testStringsResponse".equals(name)) {
-                    assertEquals(((ArrayProperty) response).getItems().getClass(), StringProperty.class);
+                    assertEquals(((ArrayModel) response).getItems().getClass(), StringProperty.class);
                     assertEquals(((ArrayModel) model).getItems().getClass(), StringProperty.class);
                 } else if ("testMapResponse".equals(name)) {
-                    assertEquals(((RefProperty) ((MapProperty) response).getAdditionalProperties()).getSimpleRef(), "Tag");
+                    assertEquals(((RefProperty) ((ModelImpl) response).getAdditionalProperties()).getSimpleRef(), "Tag");
                     assertNull(model.getProperties());
                     assertEquals(((RefProperty) ((ModelImpl) model).getAdditionalProperties()).getSimpleRef(), "Tag");
                 } else {

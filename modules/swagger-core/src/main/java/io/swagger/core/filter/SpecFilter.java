@@ -113,9 +113,9 @@ public class SpecFilter {
 
         if (swagger.getResponses() != null) {
             for (Response response: swagger.getResponses().values()) {
-                String propertyRef = getPropertyRef(response.getSchema());
-                if (propertyRef != null) {
-                    referencedDefinitions.add(propertyRef);
+                Set<String> modelRef = getModelRef(response.getResponseSchema());
+                if (modelRef != null) {
+                    referencedDefinitions.addAll(modelRef);
                 }
             }
         }
@@ -147,9 +147,9 @@ public class SpecFilter {
                     for (Operation op: path.getOperations()) {
                         if (op.getResponses() != null) {
                             for (Response response: op.getResponses().values()) {
-                                String propertyRef = getPropertyRef(response.getSchema());
-                                if (propertyRef != null) {
-                                    referencedDefinitions.add(propertyRef);
+                                Set<String> modelRef = getModelRef(response.getResponseSchema());
+                                if (modelRef != null) {
+                                    referencedDefinitions.addAll(modelRef);
                                 }
                             }
                         }

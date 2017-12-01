@@ -26,17 +26,17 @@ public class ChildTypeTest {
     @Test(description = "Tests child type response schema ref is correctly set up")
     public void testChildTypeResponse() {
         Operation op = swagger.getPath("/childType/testChildTypeResponse").getGet();
-        Property schema = op.getResponses().get("200").getSchema();
-        assertEquals(schema.getClass().getName(), RefProperty.class.getName());
-        assertEquals(((RefProperty) schema).getSimpleRef(), "Sub1Bean");
+        Model schema = op.getResponses().get("200").getResponseSchema();
+        assertEquals(schema.getClass().getName(), RefModel.class.getName());
+        assertEquals(((RefModel) schema).getSimpleRef(), "Sub1Bean");
     }
 
     @Test(description = "Tests child type response schema ref is correctly set up when specified on the operation")
     public void testChildTypeResponseOnOperation() {
         Operation op = swagger.getPath("/childType/testChildTypeResponseOnOperation").getGet();
-        Property schema = op.getResponses().get("200").getSchema();
-        assertEquals(schema.getClass().getName(), RefProperty.class.getName());
-        assertEquals(((RefProperty) schema).getSimpleRef(), "Sub1Bean");
+        Model schema = op.getResponses().get("200").getResponseSchema();
+        assertEquals(schema.getClass().getName(), RefModel.class.getName());
+        assertEquals(((RefModel) schema).getSimpleRef(), "Sub1Bean");
     }
 
     @Test(description = "Tests schema ref is correctly set up for child type parameter")

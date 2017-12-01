@@ -1,6 +1,8 @@
 package io.swagger.properties;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.swagger.matchers.SerializationMatchers;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
 import io.swagger.models.Response;
 import io.swagger.models.properties.IntegerProperty;
@@ -9,6 +11,8 @@ import io.swagger.models.properties.Property;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
+
+import java.util.LinkedHashMap;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -47,12 +51,12 @@ public class MapPropertyDeserializerTest {
       Response response = operation.getResponses().get("200");
       assertNotNull(response);
       
-      Property responseSchema = response.getSchema();
+      Model responseSchema = response.getResponseSchema();
       assertNotNull(responseSchema);
-      assertTrue(responseSchema instanceof MapProperty);
-      
-      MapProperty mp = (MapProperty) responseSchema;
-      assertTrue(mp.getAdditionalProperties() instanceof IntegerProperty);
+      assertTrue(responseSchema instanceof ModelImpl);
+
+      ModelImpl modelImpl = (ModelImpl) responseSchema;
+      assertTrue(modelImpl.getAdditionalProperties() instanceof IntegerProperty);
   }
 
   @Test(description = "vendor extensions should be included with object type")
@@ -61,43 +65,47 @@ public class MapPropertyDeserializerTest {
     Response response = operation.getResponses().get("200");
     assertNotNull(response);
 
-    Property responseSchema = response.getSchema();
+    Model responseSchema = response.getResponseSchema();
     assertNotNull(responseSchema);
 
-    MapProperty mp = (MapProperty) responseSchema;
-    assertTrue(mp.getVendorExtensions().size() > 0);
-    assertNotNull(mp.getVendorExtensions().get("x-foo"));
-    assertEquals(mp.getVendorExtensions().get("x-foo"), "vendor x");
+    ModelImpl modelImpl = (ModelImpl) responseSchema;
+    assertTrue(modelImpl.getVendorExtensions().size() > 0);
+    assertNotNull(modelImpl.getVendorExtensions().get("x-foo"));
+    assertEquals(modelImpl.getVendorExtensions().get("x-foo"), "vendor x");
   }
 
     @Test(description = "it should read an example within an inlined schema")
     public void testIssue1261InlineSchemaExample() throws Exception {
-        Operation operation = Yaml.mapper().readValue("      produces:\n" +
-                "        - application/json\n" +
-                "      responses:\n" +
-                "        200:\n" +
-                "          description: OK\n" +
-                "          schema:\n" +
-                "            type: object\n" +
-                "            properties:\n" +
-                "              id:\n" +
-                "                type: integer\n" +
-                "                format: int32\n" +
-                "              name:\n" +
-                "                type: string\n" +
-                "            required: [id, name]\n" +
-                "            example:\n" +
-                "              id: 42\n" +
-                "              name: Arthur Dent\n", Operation.class);
+        String yaml = "      produces:\n" +
+               "        - application/json\n" +
+               "      parameters:\n" +
+               "        []\n" +
+               "      responses:\n" +
+               "        200:\n" +
+               "          description: OK\n" +
+               "          schema:\n" +
+               "            type: object\n" +
+               "            properties:\n" +
+               "              id:\n" +
+               "                type: integer\n" +
+               "                format: int32\n" +
+               "              name:\n" +
+               "                type: string\n" +
+               "            required: [id, name]\n" +
+               "            example:\n" +
+               "              id: 42\n" +
+               "              name: Arthur Dent\n";
 
+        Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
         Response response = operation.getResponses().get("200");
         assertNotNull(response);
-        Property schema = response.getSchema();
+        Model schema = response.getResponseSchema();
         Object example = schema.getExample();
         assertNotNull(example);
-        assertTrue(example instanceof ObjectNode);
-        ObjectNode objectNode = (ObjectNode) example;
-        assertEquals(objectNode.get("id").intValue(), 42);
-        assertEquals(objectNode.get("name").textValue(), "Arthur Dent");
+        assertTrue(example instanceof LinkedHashMap);
+        LinkedHashMap exampleMap = (LinkedHashMap) example;
+        assertEquals(exampleMap.get("id"), 42);
+        assertEquals(exampleMap.get("name"), "Arthur Dent");
+        SerializationMatchers.assertEqualsToYaml(operation, yaml);
     }
 }

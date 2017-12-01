@@ -1,0 +1,192 @@
+swagger: '2.0'
+info:
+  version: 0.0.0
+  title: Response schema test
+produces:
+  - application/json
+paths:
+  /string:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+            example: Hello
+  /stringRef:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DayOfWeekAsString'
+  /integer:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            type: integer
+            example: 42
+  /integerRef:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/DayOfWeekAsInt'
+  /boolean:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            type: boolean
+            example: true
+  /booleanRef:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ABoolean'
+  /number:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            type: number
+            example: 1.5
+  /numberRef:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ANumber'
+  /arrayOfInt:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              type: integer
+  /arrayOfRef:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+  /arrayRef:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ArrayOfint'
+  /object:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              name:
+                type: string
+            required:
+              - id
+              - name
+  /objectRef:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+  /anything:
+    get:
+      responses:
+        200:
+          description: OK
+          schema: {}
+  /anythingRef:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/AnyValue'
+  /user:
+    get:
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int32
+              name:
+                type: string
+            required: [id, name]
+            example:
+              obj: {b: ho, a: hey}
+              arr: [hey, ho]
+              double: 1.2
+              int: 42
+              biginteger: 118059162071741130342442
+              long: 1099511627776
+              boolean: yes
+              string: Arthur Dent
+definitions:
+  DayOfWeekAsString:
+    type: string
+    enum:
+      - Monday
+      - Tuesday
+      - Wednesday
+      - Thursday
+      - Friday
+      - Saturday
+      - Sunday
+  ABoolean:
+    type: boolean
+    example: true
+  DayOfWeekAsInt:
+    type: integer
+    minimum: 1
+    maximum: 7
+    example: 3
+  ANumber:
+    type: number
+    example: 42
+  ArrayOfint:
+    type: array
+    items:
+      type: integer
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    required:
+      - id
+      - name
+  AnyValue:
+    description: Can be anything (except `null`)

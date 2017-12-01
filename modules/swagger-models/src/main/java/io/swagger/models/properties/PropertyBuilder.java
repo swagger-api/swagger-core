@@ -808,7 +808,7 @@ public class PropertyBuilder {
                     resolved.setDescription(value);
                 }
                 if (args.containsKey(PropertyId.EXAMPLE)) {
-                    final String value = PropertyId.EXAMPLE.findValue(args);
+                    final Object value = PropertyId.EXAMPLE.findValue(args);
                     resolved.setExample(value);
                 }
                 if(args.containsKey(PropertyId.VENDOR_EXTENSIONS)) {
