@@ -90,7 +90,6 @@ public class ObjectMapperFactory {
 
         Module deserializerModule = new DeserializationModule();
         mapper.registerModule(deserializerModule);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         List<Class<?>> mixinTargets = Arrays.asList(
                 ApiResponse.class,
@@ -130,6 +129,8 @@ public class ObjectMapperFactory {
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         return mapper;
     }
