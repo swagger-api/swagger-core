@@ -9,6 +9,8 @@ import java.util.Map;
 
 public class Response {
     private String description;
+    private Model model;
+    @Deprecated
     private Property schema;
     private Map<String, Object> examples;
     private Map<String, Property> headers;
@@ -55,10 +57,22 @@ public class Response {
         this.description = description;
     }
 
+
+    public Model getModel() {
+        return model;
+    }
+
+
+    public void setModel(Model model) {
+        this.model = model;
+    }
+
+    @Deprecated
     public Property getSchema() {
         return schema;
     }
 
+    @Deprecated
     public void setSchema(Property schema) {
         this.schema = schema;
     }
