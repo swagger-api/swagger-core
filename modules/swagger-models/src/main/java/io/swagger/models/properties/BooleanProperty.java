@@ -41,7 +41,9 @@ public class BooleanProperty extends AbstractProperty implements Property {
     @Override
     public void setExample(Object example) {
         if (example instanceof String) {
-            this.example = Boolean.parseBoolean((String)example);
+            if (!((String) example).isEmpty()) {
+                this.example = Boolean.parseBoolean((String) example);
+            }
         } else {
             this.example = example;
         }
