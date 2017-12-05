@@ -4,6 +4,7 @@ import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.CompleteFieldsResource;
 import io.swagger.v3.jaxrs2.resources.DeprecatedFieldsResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedOperationIdResource;
+import io.swagger.v3.jaxrs2.resources.DuplicatedOperationMethodNameResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedSecurityResource;
 import io.swagger.v3.jaxrs2.resources.ExternalDocsReference;
 import io.swagger.v3.jaxrs2.resources.ResponseContentWithArrayResource;
@@ -130,7 +131,6 @@ public class ReaderTest {
     @Test(description = "scan methods")
     public void testScanMethods() {
         Reader reader = new Reader(new OpenAPI());
-        OpenAPI openAPI = reader.read(SimpleMethods.class);
         Method[] methods = SimpleMethods.class.getMethods();
         for (final Method method : methods) {
             if (isValidRestPath(method)) {
@@ -163,6 +163,27 @@ public class ReaderTest {
         assertNotNull(secondOperation);
         assertNotEquals(firstOperation.getOperationId(), secondOperation.getOperationId());
     }
+
+    @Test(description = "Get a Duplicated Operation Id with same id as method name")
+    public void testResolveDuplicatedOperationIdMethodName() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(DuplicatedOperationMethodNameResource.class);
+
+        Paths paths = openAPI.getPaths();
+        assertNotNull(paths);
+        Operation firstOperation = paths.get("/1").getGet();
+        Operation secondOperation = paths.get("/2").getGet();
+        assertNotNull(firstOperation);
+        assertNotNull(secondOperation);
+        assertNotEquals(firstOperation.getOperationId(), secondOperation.getOperationId());
+        Operation thirdOperation = paths.get("/3").getGet();
+        Operation fourthOperation = paths.get("/4").getGet();
+        assertNotNull(thirdOperation);
+        assertNotNull(fourthOperation);
+        assertNotEquals(thirdOperation.getOperationId(), fourthOperation.getOperationId());
+
+    }
+
 
     @Test(description = "Test a Set of classes")
     public void testSetOfClasses() {
@@ -259,8 +280,9 @@ public class ReaderTest {
     @Test(description = "Security Requirement")
     public void testSecurityRequirement() {
         Reader reader = new Reader(new OpenAPI());
-        Method[] methods = SecurityResource.class.getMethods();
-        Operation securityOperation = reader.parseMethod(methods[0], null);
+        Method[] methods = SecurityResource.class.getDeclaredMethods();
+        Operation securityOperation = reader.parseMethod(Arrays.stream(methods).filter(
+                (method -> method.getName().equals("getSecurity"))).findFirst().get(), null);
         assertNotNull(securityOperation);
         List<SecurityRequirement> securityRequirements = securityOperation.getSecurity();
         assertNotNull(securityRequirements);

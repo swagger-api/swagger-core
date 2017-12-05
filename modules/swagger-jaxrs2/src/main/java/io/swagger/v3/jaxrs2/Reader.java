@@ -719,7 +719,7 @@ public class Reader implements OpenApiReader {
 
         // operation id
         if (StringUtils.isBlank(operation.getOperationId())) {
-            operation.setOperationId(method.getName());
+            operation.setOperationId(getOperationId(method.getName()));
         }
 
         if (apiOperation != null) {
