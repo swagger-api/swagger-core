@@ -113,7 +113,11 @@ public class OpenAPI {
     }
 
     public void setServers(List<Server> servers) {
-        this.servers = new ArrayList<>(servers);
+        if (servers == null) {
+            this.servers = null;
+        } else {
+            this.servers = new ArrayList<>(servers);
+        }
     }
 
     public OpenAPI servers(List<Server> servers) {
@@ -140,7 +144,11 @@ public class OpenAPI {
     }
 
     public void setSecurity(List<SecurityRequirement> security) {
-        this.security = new ArrayList<>(security);
+        if (security == null) {
+            this.security = null;
+        } else {
+            this.security = new ArrayList<>(security);
+        }
     }
 
     public OpenAPI security(List<SecurityRequirement> security) {
@@ -167,7 +175,11 @@ public class OpenAPI {
     }
 
     public void setTags(List<Tag> tags) {
-        this.tags = new ArrayList<>(tags);
+        if (tags == null) {
+            this.tags = null;
+        } else {
+            this.tags = new ArrayList<>(tags);
+        }
     }
 
     public OpenAPI tags(List<Tag> tags) {
@@ -287,7 +299,11 @@ public class OpenAPI {
     }
 
     public void setExtensions(java.util.Map<String, Object> extensions) {
-        this.extensions = new HashMap<>(extensions);
+        if (extensions == null) {
+            this.extensions = null;
+        } else {
+            this.extensions = new HashMap<>(extensions);
+        }
     }
 
     public OpenAPI extensions(java.util.Map<String, Object> extensions) {
