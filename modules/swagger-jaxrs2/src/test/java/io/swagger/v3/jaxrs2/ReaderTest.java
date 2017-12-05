@@ -130,7 +130,6 @@ public class ReaderTest {
     @Test(description = "scan methods")
     public void testScanMethods() {
         Reader reader = new Reader(new OpenAPI());
-        OpenAPI openAPI = reader.read(SimpleMethods.class);
         Method[] methods = SimpleMethods.class.getMethods();
         for (final Method method : methods) {
             if (isValidRestPath(method)) {
@@ -259,8 +258,9 @@ public class ReaderTest {
     @Test(description = "Security Requirement")
     public void testSecurityRequirement() {
         Reader reader = new Reader(new OpenAPI());
-        Method[] methods = SecurityResource.class.getMethods();
-        Operation securityOperation = reader.parseMethod(methods[0], null);
+        Method[] methods = SecurityResource.class.getDeclaredMethods();
+        Operation securityOperation = reader.parseMethod(Arrays.stream(methods).filter(
+                (method -> method.getName().equals("getSecurity"))).findFirst().get(), null);
         assertNotNull(securityOperation);
         List<SecurityRequirement> securityRequirements = securityOperation.getSecurity();
         assertNotNull(securityRequirements);
