@@ -4,6 +4,7 @@ import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.CompleteFieldsResource;
 import io.swagger.v3.jaxrs2.resources.DeprecatedFieldsResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedOperationIdResource;
+import io.swagger.v3.jaxrs2.resources.DuplicatedOperationMethodNameResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedSecurityResource;
 import io.swagger.v3.jaxrs2.resources.ExternalDocsReference;
 import io.swagger.v3.jaxrs2.resources.ResponseContentWithArrayResource;
@@ -162,6 +163,27 @@ public class ReaderTest {
         assertNotNull(secondOperation);
         assertNotEquals(firstOperation.getOperationId(), secondOperation.getOperationId());
     }
+
+    @Test(description = "Get a Duplicated Operation Id with same id as method name")
+    public void testResolveDuplicatedOperationIdMethodName() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(DuplicatedOperationMethodNameResource.class);
+
+        Paths paths = openAPI.getPaths();
+        assertNotNull(paths);
+        Operation firstOperation = paths.get("/1").getGet();
+        Operation secondOperation = paths.get("/2").getGet();
+        assertNotNull(firstOperation);
+        assertNotNull(secondOperation);
+        assertNotEquals(firstOperation.getOperationId(), secondOperation.getOperationId());
+        Operation thirdOperation = paths.get("/3").getGet();
+        Operation fourthOperation = paths.get("/4").getGet();
+        assertNotNull(thirdOperation);
+        assertNotNull(fourthOperation);
+        assertNotEquals(thirdOperation.getOperationId(), fourthOperation.getOperationId());
+
+    }
+
 
     @Test(description = "Test a Set of classes")
     public void testSetOfClasses() {
