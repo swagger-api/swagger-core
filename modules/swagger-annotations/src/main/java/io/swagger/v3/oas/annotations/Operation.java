@@ -17,6 +17,7 @@
 package io.swagger.v3.oas.annotations;
 
 import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.servers.Server;
@@ -30,16 +31,16 @@ import java.lang.annotation.Target;
 /**
  * The annotation may be used to define a resource method as an OpenAPI Operation, and/or to define additional
  * properties for the Operation.
- *
+ * <p>
  * <p>Note: swagger-jaxrs2 reader engine includes by default also methods of scanned resources which are not annotated
  * with @Operation, as long as a jax-rs @Path is defined at class and/or method level, together with the http method
  * annotation (@GET, @POST, etc).</p>
  * <p>This behaviour is controlled by configuration property `scanAllResources` which defaults to true. By setting this
  * flag to false only @{@link Operation} annotated methods are considered.</p>
- *
+ * <p>
  * <p>The following fields can also alternatively be defined at method level (as repeatable annotations in case of arrays),
  * in this case method level annotations take precedence over @{@link Operation} annotation fields:</p>
- *
+ * <p>
  * <ul>
  * <li>tags: @{@link io.swagger.v3.oas.annotations.tags.Tag}</li>
  * <li>externalDocs: @{@link ExternalDocumentation}</li>
@@ -84,6 +85,13 @@ public @interface Operation {
      * @return a description of this operation
      **/
     String description() default "";
+
+    /**
+     * Request body associated to the operation.
+     *
+     * @return a rquest body.
+     */
+    RequestBody reqquestBody() default @RequestBody();
 
     /**
      * Additional external documentation for this operation.

@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * @see io.swagger.v3.oas.annotations.Parameter
  * @see Content
  **/
-@Target({ElementType.PARAMETER})
+@Target({ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface RequestBody {
