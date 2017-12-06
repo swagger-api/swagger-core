@@ -244,7 +244,6 @@ public class Reader implements OpenApiReader {
         io.swagger.v3.oas.annotations.tags.Tag[] apiTags = ReflectionUtils.getRepeatableAnnotationsArray(cls, io.swagger.v3.oas.annotations.tags.Tag.class);
         io.swagger.v3.oas.annotations.servers.Server[] apiServers = ReflectionUtils.getRepeatableAnnotationsArray(cls, io.swagger.v3.oas.annotations.servers.Server.class);
 
-
         javax.ws.rs.Consumes classConsumes = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Consumes.class);
         javax.ws.rs.Produces classProduces = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Produces.class);
 
@@ -645,6 +644,8 @@ public class Reader implements OpenApiReader {
         List<io.swagger.v3.oas.annotations.tags.Tag> apiTags = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.tags.Tag.class);
         List<io.swagger.v3.oas.annotations.Parameter> apiParameters = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.Parameter.class);
         List<io.swagger.v3.oas.annotations.responses.ApiResponse> apiResponses = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.responses.ApiResponse.class);
+        io.swagger.v3.oas.annotations.parameters.RequestBody requestBody = ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.parameters.RequestBody.class);
+
         // TODO extensions
         List<Extension> apiExtensions = ReflectionUtils.getRepeatableAnnotations(method, Extension.class);
         ExternalDocumentation apiExternalDocumentation = ReflectionUtils.getAnnotation(method, ExternalDocumentation.class);
@@ -711,13 +712,20 @@ public class Reader implements OpenApiReader {
 
         // apiResponses
         if (apiResponses != null) {
-            OperationParser.getApiResponses(apiResponses.toArray(new io.swagger.v3.oas.annotations.responses.ApiResponse[apiResponses.size()]), classProduces, methodProduces, components).ifPresent(responses -> {
+            OperationParser.getApiResponses(apiResponses.toArray(new io.swagger.v3.oas.annotations.responses.ApiResponse[apiResponses.size()]),
+                    classProduces, methodProduces, components).ifPresent(responses -> {
                 if (operation.getResponses() == null) {
                     operation.setResponses(responses);
                 } else {
                     responses.forEach(operation.getResponses()::addApiResponse);
                 }
             });
+        }
+
+        // requestBody
+        if (requestBody != null) {
+            OperationParser.getRequestBody(requestBody, classConsumes, methodConsumes, components).ifPresent(
+                    requestBodyObject -> operation.setRequestBody(requestBodyObject));
         }
 
         // operation id
