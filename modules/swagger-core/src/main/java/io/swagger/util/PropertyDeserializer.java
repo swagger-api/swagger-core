@@ -206,14 +206,17 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         final String type = getString(node, PropertyBuilder.PropertyId.TYPE);
         final String title = getString(node, PropertyBuilder.PropertyId.TITLE);
         final String format = getString(node, PropertyBuilder.PropertyId.FORMAT);
+        final Boolean readOnly = getBoolean(node, PropertyBuilder.PropertyId.READ_ONLY);
 
         String description = getString(node, PropertyBuilder.PropertyId.DESCRIPTION);
 
         JsonNode detailNode = node.get("$ref");
         if (detailNode != null) {
-            return new RefProperty(detailNode.asText())
-                    .description(description)
-                    .title(title);
+            RefProperty refProperty = new RefProperty(detailNode.asText());
+            refProperty.setDescription(description);
+            refProperty.setTitle(title);
+            refProperty.setReadOnly(readOnly);
+            return refProperty;
         }
 
         if (ObjectProperty.isType(type) || node.get("properties") != null) {
@@ -229,6 +232,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                     mapProperty.setMinProperties(getInteger(node, PropertyBuilder.PropertyId.MIN_PROPERTIES));
                     mapProperty.setMaxProperties(getInteger(node, PropertyBuilder.PropertyId.MAX_PROPERTIES));
                     mapProperty.setVendorExtensionMap(getVendorExtensions(node));
+                    mapProperty.setReadOnly(readOnly);
                     return mapProperty;
                 }
             } else {
@@ -271,6 +275,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                 ObjectProperty objectProperty = new ObjectProperty(properties)
                         .description(description)
                         .title(title);
+                objectProperty.setReadOnly(readOnly);
                 objectProperty.setExample(example);
                 objectProperty.setVendorExtensionMap(getVendorExtensions(node));
 
@@ -288,6 +293,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                         .items(subProperty)
                         .description(description)
                         .title(title);
+                arrayProperty.setReadOnly(readOnly);
                 arrayProperty.setMinItems(getInteger(node, PropertyBuilder.PropertyId.MIN_ITEMS));
                 arrayProperty.setMaxItems(getInteger(node, PropertyBuilder.PropertyId.MAX_ITEMS));
                 arrayProperty.setUniqueItems(getBoolean(node, PropertyBuilder.PropertyId.UNIQUE_ITEMS));
