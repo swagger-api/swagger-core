@@ -5,6 +5,8 @@ import static org.testng.Assert.assertTrue;
 
 import io.swagger.models.Swagger;
 import io.swagger.models.properties.ObjectProperty;
+import io.swagger.models.properties.MapProperty;
+import io.swagger.models.properties.UntypedProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.util.Json;
 import io.swagger.util.ResourceUtils;
@@ -97,5 +99,22 @@ public class JsonDeserializationTest {
 
         final Map<String, Property> secondLevelProperties = ((ObjectProperty) property3).getProperties();
         assertEquals(secondLevelProperties.size(), 1);
+    }
+
+    @Test(description = "it should deserialize untyped additionalProperties")
+    public void testNestedUntypedProperty() throws IOException {
+        final String json = "{\n" +
+                "   \"type\":\"object\",\n" +
+                "   \"description\":\"top level object\",\n" +
+                "   \"additionalProperties\":{\n" +
+                "      \"description\":\"map value\"\n" +
+                "   }\n" +
+                "}";
+        final Property result = m.readValue(json, Property.class);
+        assertTrue(result instanceof MapProperty);
+
+        final Property additionalProperties = ((MapProperty) result).getAdditionalProperties();
+        assertTrue(additionalProperties instanceof UntypedProperty);
+        assertEquals(additionalProperties.getDescription(), "map value");
     }
 }

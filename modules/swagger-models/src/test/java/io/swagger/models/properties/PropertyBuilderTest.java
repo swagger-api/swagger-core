@@ -40,7 +40,7 @@ public class PropertyBuilderTest {
                 new BaseIntegerProperty(), new IntegerProperty(), new LongProperty(), new StringProperty(),
                 new UUIDProperty(), new BooleanProperty(), new ByteArrayProperty(), new ArrayProperty(),
                 new ObjectProperty(), new DateTimeProperty(), new DateProperty(), new RefProperty(),
-                new EmailProperty(),
+                new EmailProperty(), new UntypedProperty()
                 // new MapProperty() // MapProperty can't be distinguished from
                 // ObjectProperty
         };
@@ -87,12 +87,14 @@ public class PropertyBuilderTest {
         // these are the types without formats (as long as not already in the
         // table in the spec), and a "custom" format for each of the types.
         // we expect to get the same Property class back in both cases.
-        return new Object[][]{{"integer", null, BaseIntegerProperty.class},
-                {"integer", "custom", BaseIntegerProperty.class}, {"number", null, DecimalProperty.class},
-                {"number", "custom", DecimalProperty.class}, {"string", "custom", StringProperty.class},
-                {"boolean", "custom", BooleanProperty.class}, {"object", null, ObjectProperty.class},
-                {"object", "custom", ObjectProperty.class}, {"array", null, ArrayProperty.class},
-                {"array", "custom", ArrayProperty.class}};
+        return new Object[][]{
+                {"integer", null, BaseIntegerProperty.class}, {"integer", "custom", BaseIntegerProperty.class},
+                {"number", null, DecimalProperty.class}, {"number", "custom", DecimalProperty.class},
+                {"string", "custom", StringProperty.class}, {"boolean", "custom", BooleanProperty.class},
+                {"object", null, ObjectProperty.class}, {"object", "custom", ObjectProperty.class},
+                {"array", null, ArrayProperty.class}, {"array", "custom", ArrayProperty.class},
+                {null, null, UntypedProperty.class}, {null, "custom", UntypedProperty.class}
+        };
     }
 
     @Test(dataProvider = BY_IMPLEMENTATION)
