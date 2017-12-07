@@ -70,6 +70,12 @@ public class PropertyModelConverterTest {
     @Test
     public void convertPropertyToModel(){
 
+        String yaml = "\"schema\": {\n" +
+        "              \"type\": \"array\",\n" +
+        "              \"items\": {\n" +
+        "                \"$ref\": \"#/definitions/User\"\n" +
+        "              }";
+
 
         IntegerProperty integerProperty = new IntegerProperty();
         MapProperty mapProperty = new MapProperty();

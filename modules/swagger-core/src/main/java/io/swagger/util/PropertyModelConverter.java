@@ -113,19 +113,22 @@ public class PropertyModelConverter {
 
         //List<String> required = property.getRequired();
 
-        //Boolean uniqueItems = property.getUniqueItems();
+        //Boolean uniqueItems = property.getUniqueItems(); ArrayProperty not in ArrayModel but yes in ModelImpl
 
         //boolean isSimple = property.getSimple();
 
         //String discriminator = property.getDiscriminator();
 
-        //String defaultValue = property.getDefaultValue();
+        //String defaultValue = property.getDefaultValue(); UUIDProperty StringProperty BinaryProperty
+        // BooleanProperty(Boolean) - all numberProperties has a number default value
 
         //List<String> _enum = property.getEnum();
+        // UUIDProperty StringProperty BinaryProperty DateProperty DateTimeProperty
+        // BooleanProperty(Boolean) DoubleProperty(Double) - all numberProperties has a number enum
 
-        //BigDecimal minimum = property.getMinimum;
+        //BigDecimal minimum = property.getMinimum; AbstractNumericProperty
 
-        //BigDecimal maximum = property.getMaximum;
+        //BigDecimal maximum = property.getMaximum; AbstractNumericProperty
 
         //ExternalDocs externalDocs = property.getExternalDocs();
 
