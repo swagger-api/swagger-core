@@ -18,7 +18,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
     @Test(description = "shows a response when no annotation is present")
     public void testUnannotatedMethod() {
         String yaml = readIntoYaml(UnannotatedMethodClass.class);
-        String expectedYaml = "openapi: 3.0.0\n";
+        String expectedYaml = "openapi: 3.0.1\n";
         assertEquals(yaml, expectedYaml);
     }
 
@@ -38,7 +38,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
         String yaml = readIntoYaml(MethodWithParameters.class);
 
         assertEquals(yaml,
-                "openapi: 3.0.0\n" +
+                "openapi: 3.0.1\n" +
                         "paths:\n" +
                         "  /findAll:\n" +
                         "    get:\n" +
@@ -82,7 +82,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
     @Test(description = "shows how annotations can decorate an operation")
     public void testPartiallyAnnotatedMethod() {
         String yaml = readIntoYaml(MethodWithPartialAnnotation.class);
-        String expectedYaml = "openapi: 3.0.0\n" +
+        String expectedYaml = "openapi: 3.0.1\n" +
                 "paths:\n" +
                 "  /findAll:\n" +
                 "    get:\n" +
@@ -136,7 +136,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
     @Test(description = "shows how a request body is passed")
     public void testRequestBody() {
         String yaml = readIntoYaml(MethodWithRequestBody.class);
-        String expectedYaml = "openapi: 3.0.0\n" +
+        String expectedYaml = "openapi: 3.0.1\n" +
                 "paths:\n" +
                 "  /add:\n" +
                 "    post:\n" +

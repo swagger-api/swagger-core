@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  * <p>swagger-jaxrs2 reader engine considers this annotation along with method return type and context as input to
  * resolve the OpenAPI Operation responses.</p>
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#responseObject">Response (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#responseObject">Response (OpenAPI specification)</a>
  * @see io.swagger.v3.oas.annotations.Operation
  **/
 @Target({ElementType.METHOD})

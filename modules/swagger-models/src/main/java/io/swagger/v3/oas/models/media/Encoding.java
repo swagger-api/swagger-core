@@ -24,7 +24,7 @@ import java.util.Objects;
 /**
  * Encoding
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#encodingObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#encodingObject"
  */
 
 public class Encoding {

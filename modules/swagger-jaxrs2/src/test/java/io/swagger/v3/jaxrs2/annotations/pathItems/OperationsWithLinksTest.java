@@ -21,7 +21,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
     @Test(description = "Shows creating simple links")
     public void createOperationWithLinks() throws IOException {
 
-        String expectedYAML = "openapi: 3.0.0\n" +
+        String expectedYAML = "openapi: 3.0.1\n" +
                 "paths:\n" +
                 "  /users:\n" +
                 "    get:\n" +
@@ -81,7 +81,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
     @Test(description = "Shows creating operation response without annotation")
     public void createOperationWithResponseNoAnnotation() throws IOException {
 
-        String expectedYAML = "openapi: 3.0.0\n" +
+        String expectedYAML = "openapi: 3.0.1\n" +
                 "paths:\n" +
                 "  /users:\n" +
                 "    get:\n" +

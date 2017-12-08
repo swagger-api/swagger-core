@@ -22,7 +22,7 @@ import java.util.Objects;
 /**
  * Content
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#contentObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#contentObject"
  */
 
 public class Content extends LinkedHashMap<String, MediaType> {

@@ -18,7 +18,7 @@ public class OpenApiDefinitionTest extends AbstractAnnotationTest {
     @Test
     public void testSimpleInfoGet() throws IOException {
 
-        String expectedYAML = "openapi: 3.0.0\n" +
+        String expectedYAML = "openapi: 3.0.1\n" +
                 "info:\n" +
                 "  title: the title\n" +
                 "  description: My API\n" +

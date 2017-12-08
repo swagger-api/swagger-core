@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * The annotation may be used to add one or more examples to the definition of a parameter, request or response content,
  * by definining it as field {@link io.swagger.v3.oas.annotations.Parameter#examples()} or {@link Content#examples()}
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#exampleObject">Example (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#exampleObject">Example (OpenAPI specification)</a>
  **/
 @Target({ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

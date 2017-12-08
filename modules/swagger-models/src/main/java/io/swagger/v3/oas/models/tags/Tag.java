@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * Tag
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#tagObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#tagObject"
  */
 
 public class Tag {

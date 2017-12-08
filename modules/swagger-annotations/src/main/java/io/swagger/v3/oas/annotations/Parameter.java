@@ -41,7 +41,7 @@ import java.lang.annotation.Target;
  *
  * <p>For method parameters bound to the request body, see {@link io.swagger.v3.oas.annotations.parameters.RequestBody}</p>
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#parameterObject">Parameter (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#parameterObject">Parameter (OpenAPI specification)</a>
  * @see io.swagger.v3.oas.annotations.parameters.RequestBody
  * @see Operation
  * @see Schema

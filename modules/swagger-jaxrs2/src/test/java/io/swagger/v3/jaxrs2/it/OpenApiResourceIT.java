@@ -17,7 +17,7 @@ import static com.jayway.restassured.RestAssured.given;
  */
 public class OpenApiResourceIT extends AbstractAnnotationTest {
     private static final String EXPECTED_JSON = "{\n" +
-            "    \"openapi\": \"3.0.0\",\n" +
+            "    \"openapi\": \"3.0.1\",\n" +
             "    \"paths\": {\n" +
             "        \"/widgets/{widgetId}\": {\n" +
             "            \"get\": {\n" +
@@ -71,7 +71,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "        }\n" +
             "    }\n" +
             "}";
-    private static final String EXPECTED_YAML = "openapi: 3.0.0\n" +
+    private static final String EXPECTED_YAML = "openapi: 3.0.1\n" +
             "paths:\n" +
             "  /widgets/{widgetId}:\n" +
             "    get:\n" +

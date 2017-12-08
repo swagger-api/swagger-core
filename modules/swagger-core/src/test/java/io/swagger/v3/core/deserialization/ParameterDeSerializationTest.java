@@ -170,7 +170,7 @@ public class ParameterDeSerializationTest {
     @Test(description = "should serialize correctly typed numeric enums")
     public void testIssue1765() throws Exception {
         String yaml =
-                "openapi: '3.0.0'\n" +
+                "openapi: '3.0.1'\n" +
                         "paths:\n" +
                         "  /test:\n" +
                         "    get:\n" +

@@ -1,5 +1,5 @@
 {
-    "openapi": "3.0.0-rc2",
+    "openapi": "3.0.1",
     "tags": [
         {
             "name": "Recursive Model Resource"

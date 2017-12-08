@@ -19,7 +19,7 @@ package io.swagger.v3.oas.models.info;
 import java.util.Objects;
 
 /**
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#infoObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#infoObject"
  */
 
 public class Info {

@@ -27,7 +27,7 @@ import java.util.Objects;
 /**
  * ApiResponse
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#responseObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#responseObject"
  */
 
 public class ApiResponse {

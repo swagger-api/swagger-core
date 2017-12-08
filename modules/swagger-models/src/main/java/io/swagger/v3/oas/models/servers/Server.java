@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * Server
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#serverObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#serverObject"
  */
 
 public class Server {

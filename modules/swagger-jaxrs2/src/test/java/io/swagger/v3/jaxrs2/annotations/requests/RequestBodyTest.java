@@ -23,7 +23,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
     @Test(description = "Returns a request with one RequestBody and multiple parameters")
     public void oneRequestBodyMultipleParameters() throws IOException {
 
-        String expectedYAML = "openapi: 3.0.0\n" +
+        String expectedYAML = "openapi: 3.0.1\n" +
                 "paths:\n" +
                 "  /user:\n" +
                 "    put:\n" +

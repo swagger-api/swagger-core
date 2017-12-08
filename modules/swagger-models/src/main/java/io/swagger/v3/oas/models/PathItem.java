@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * PathItem
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#pathItemObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#pathItemObject"
  */
 
 public class PathItem {

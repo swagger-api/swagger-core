@@ -30,8 +30,8 @@ import java.lang.annotation.Target;
  * The annotation may be used at class level (also on multiple classes) to add securitySchemes to spec
  * components section.
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#securitySchemeObject">Security Scheme (OpenAPI specification)</a>
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#componentsObject">Components (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#securitySchemeObject">Security Scheme (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#componentsObject">Components (OpenAPI specification)</a>
  **/
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

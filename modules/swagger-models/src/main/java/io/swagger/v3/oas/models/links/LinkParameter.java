@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * LinkParameter
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#linkOParametersbject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#linkOParametersbject"
  */
 
 public class LinkParameter {

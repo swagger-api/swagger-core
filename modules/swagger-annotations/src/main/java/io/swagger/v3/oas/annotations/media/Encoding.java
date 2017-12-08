@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * The annotation may be used to add encoding details to the definition of a parameter, request or response content,
  * by definining it as field {@link Content#encoding()}
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#encodingObject">Encoding (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#encodingObject">Encoding (OpenAPI specification)</a>
  * @see Content
  **/
 @Target({})
