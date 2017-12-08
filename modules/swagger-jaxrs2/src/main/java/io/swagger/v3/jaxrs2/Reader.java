@@ -448,6 +448,14 @@ public class Reader implements OpenApiReader {
                     }
 
                     openAPI.setPaths(this.paths);
+
+                    io.swagger.v3.oas.annotations.Operation apiOperation =
+                            ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.Operation.class);
+                    // requestBody
+                    if (apiOperation != null && apiOperation.requestBody() != null && operation.getRequestBody() == null) {
+                        OperationParser.getRequestBody(apiOperation.requestBody(), classConsumes, methodConsumes, components).ifPresent(
+                                requestBodyObject -> operation.setRequestBody(requestBodyObject));
+                    }
                 }
             }
         }
@@ -644,7 +652,6 @@ public class Reader implements OpenApiReader {
         List<io.swagger.v3.oas.annotations.tags.Tag> apiTags = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.tags.Tag.class);
         List<io.swagger.v3.oas.annotations.Parameter> apiParameters = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.Parameter.class);
         List<io.swagger.v3.oas.annotations.responses.ApiResponse> apiResponses = ReflectionUtils.getRepeatableAnnotations(method, io.swagger.v3.oas.annotations.responses.ApiResponse.class);
-        io.swagger.v3.oas.annotations.parameters.RequestBody requestBody = ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.parameters.RequestBody.class);
 
         // TODO extensions
         List<Extension> apiExtensions = ReflectionUtils.getRepeatableAnnotations(method, Extension.class);
@@ -720,12 +727,6 @@ public class Reader implements OpenApiReader {
                     responses.forEach(operation.getResponses()::addApiResponse);
                 }
             });
-        }
-
-        // requestBody
-        if (requestBody != null) {
-            OperationParser.getRequestBody(requestBody, classConsumes, methodConsumes, components).ifPresent(
-                    requestBodyObject -> operation.setRequestBody(requestBodyObject));
         }
 
         // operation id

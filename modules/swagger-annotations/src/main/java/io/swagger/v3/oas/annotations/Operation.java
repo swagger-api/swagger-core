@@ -89,9 +89,9 @@ public @interface Operation {
     /**
      * Request body associated to the operation.
      *
-     * @return a rquest body.
+     * @return a request body.
      */
-    RequestBody reqquestBody() default @RequestBody();
+    RequestBody requestBody() default @RequestBody();
 
     /**
      * Additional external documentation for this operation.
