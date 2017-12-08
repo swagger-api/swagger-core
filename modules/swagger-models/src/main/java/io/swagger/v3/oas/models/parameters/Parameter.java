@@ -27,7 +27,7 @@ import java.util.Objects;
 /**
  * Parameter
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#parameterObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#parameterObject"
  */
 
 public class Parameter {

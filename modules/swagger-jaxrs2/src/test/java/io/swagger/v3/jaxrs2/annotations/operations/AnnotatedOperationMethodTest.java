@@ -386,7 +386,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
 
     @Test(description = "reads the pet resource from sample")
     public void testCompletePetResource() throws IOException {
-        String expectedYAML = "openapi: 3.0.0\n" +
+        String expectedYAML = "openapi: 3.0.1\n" +
                 "paths:\n" +
                 "  /pet/findByTags:\n" +
                 "    get:\n" +
@@ -611,7 +611,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
 
     @Test(description = "reads the resource with generic response from sample")
     public void testGenericResponseResource() throws IOException {
-        String yaml = "openapi: 3.0.0\n" +
+        String yaml = "openapi: 3.0.1\n" +
                 "paths:\n" +
                 "  /:\n" +
                 "    get:\n" +
@@ -664,7 +664,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
 
     @Test(description = "reads the user resource from sample")
     public void testCompleteUserResource() throws IOException {
-        String expectedYAML = "openapi: 3.0.0\n" +
+        String expectedYAML = "openapi: 3.0.1\n" +
                 "paths:\n" +
                 "  /user:\n" +
                 "    post:\n" +
@@ -855,7 +855,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     @Test(description = "reads the simple user resource from sample")
     public void testSimpleUserResource() throws IOException {
 
-        String expectedYAML = "openapi: 3.0.0\n" +
+        String expectedYAML = "openapi: 3.0.1\n" +
                 "paths:\n" +
                 "  /user:\n" +
                 "    post:\n" +
@@ -975,14 +975,14 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     @Test(description = "reads and skips the hidden user resource")
     public void testHiddenUserResource() {
         String openApiYAML = readIntoYaml(HiddenUserResource.class);
-        assertEquals(openApiYAML, "openapi: 3.0.0\n");
+        assertEquals(openApiYAML, "openapi: 3.0.1\n");
     }
 
     @Test(description = "reads and skips the hidden user resource")
     public void testHiddenAnnotatedUserResource() throws IOException {
         String openApiYAML = readIntoYaml(HiddenAnnotatedUserResource.class);
-        assertEquals(openApiYAML, "openapi: 3.0.0\n");
-        compareAsYaml(HiddenAnnotatedUserResource.HiddenAnnotatedUserResourceMethodAndData.class, "openapi: 3.0.0\n" +
+        assertEquals(openApiYAML, "openapi: 3.0.1\n");
+        compareAsYaml(HiddenAnnotatedUserResource.HiddenAnnotatedUserResourceMethodAndData.class, "openapi: 3.0.1\n" +
                 "paths:\n" +
                 "  /user/2:\n" +
                 "    post:\n" +

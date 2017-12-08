@@ -12,7 +12,7 @@ import java.util.Optional;
  **/
 public class NoOpenAPIFilter extends AbstractSpecFilter {
 
-    public static final String VERSION = "3.0.0-rc2";
+    public static final String VERSION = "3.0.1";
 
     @Override
     public Optional<OpenAPI> filterOpenAPI(OpenAPI openAPI, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {

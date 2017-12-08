@@ -37,7 +37,7 @@ public class SecurityTests extends AbstractAnnotationTest {
 
     @Test
     public void testSecurityRequirement() throws IOException {
-        String expectedYAML = "openapi: 3.0.0\n" +
+        String expectedYAML = "openapi: 3.0.1\n" +
                 "paths:\n" +
                 "  /2:\n" +
                 "    get:\n" +

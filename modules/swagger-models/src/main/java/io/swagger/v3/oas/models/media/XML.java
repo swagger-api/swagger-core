@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * XML
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#xmlObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#xmlObject"
  */
 
 public class XML {

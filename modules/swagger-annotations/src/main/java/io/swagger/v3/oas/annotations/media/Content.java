@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * JAX-RS annotations, element type and context as input to resolve the annotated element into an OpenAPI schema
  * definition for such element.</p>
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#exampleObject">Example (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#exampleObject">Example (OpenAPI specification)</a>
  * @see Schema
  * @see io.swagger.v3.oas.annotations.Parameter
  * @see io.swagger.v3.oas.annotations.responses.ApiResponse

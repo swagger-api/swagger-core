@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * ExternalDocumentation
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.md#externalDocumentationObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#externalDocumentationObject"
  */
 
 public class ExternalDocumentation {

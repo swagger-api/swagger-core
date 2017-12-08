@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * single operation (when applied at method level) or for all operations of a class (when applied at class level).
  * <p>It can also be used in {@link io.swagger.v3.oas.annotations.OpenAPIDefinition#servers()} to define spec level servers.</p>
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#serverObject">Server (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#serverObject">Server (OpenAPI specification)</a>
  * @see io.swagger.v3.oas.annotations.OpenAPIDefinition
  * @see io.swagger.v3.oas.annotations.Operation
  **/
