@@ -36,6 +36,7 @@ public class PropertyModelConverter {
                 property.setDefault(m.getDefaultValue().toString());
             }
             property.setDescription(m.getDescription());
+            property.setTitle(m.getTitle());
             property.setXml(m.getXml());
 
             if(m.getExample() != null) {
@@ -50,6 +51,7 @@ public class PropertyModelConverter {
             Property inner = m.getItems();
             property.setItems(inner);
             property.setDescription(m.getDescription());
+            property.setTitle(m.getTitle());
 
             return property;
         }
@@ -62,6 +64,7 @@ public class PropertyModelConverter {
         if(model instanceof ComposedModel) {
             ObjectProperty objectProperty = new ObjectProperty();
             objectProperty.setDescription(model.getDescription());
+            objectProperty.setTitle(model.getTitle());
             objectProperty.setExample(model.getExample());
             ComposedModel cm = (ComposedModel) model;
             Set<String> requiredProperties = new HashSet<>();

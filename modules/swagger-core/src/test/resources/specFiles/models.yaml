@@ -1,0 +1,103 @@
+swagger: '2.0'
+info:
+  version: 0.0.0
+  title: Response schema test
+produces:
+  - application/json
+paths:
+  /string:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+            example: Hello
+definitions:
+  User:
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    description: 'the name!'
+    example: |
+      {
+        "foo":"bar"
+      }
+  Address:
+    type: object
+    x-swagger-router-model: io.swagger.test.models.Address
+    required:
+      - street
+    properties:
+      street:
+        type: string
+        example: 12345 El Monte Road
+      city:
+        type: string
+        example: Los Altos Hills
+      state:
+        type: string
+        example: CA
+      zip:
+        type: string
+        example: '94022'
+  Water:
+    properties:
+      clear:
+        type: boolean
+      name:
+        type: string
+      prices:
+        type: array
+        items:
+          type: number
+          format: float
+      id:
+        type: string
+        format: uuid
+  Animal:
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      address:
+        $ref: '#/definitions/Address'
+    description: 'the name!'
+  Dog:
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      dogType:
+        type: string
+  UnmappedModel:
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+  ExtendedAddress:
+    type: object
+    x-swagger-router-model: io.swagger.test.models.ExtendedAddress
+    allOf:
+      - $ref: '#/definitions/Address'
+      - type: object
+        required:
+        - gps
+        properties:
+          gps:
+            type: string
+  InstructionSequence:
+      title: InstructionSequence
+      description: The sequence of steps that make up the Instructions
+      type: array
+      items:
+          type: string
