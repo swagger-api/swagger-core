@@ -24,6 +24,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -112,11 +113,15 @@ public class OpenAPI {
     }
 
     public void setServers(List<Server> servers) {
-        this.servers = servers;
+        if (servers == null) {
+            this.servers = null;
+        } else {
+            this.servers = new ArrayList<>(servers);
+        }
     }
 
     public OpenAPI servers(List<Server> servers) {
-        this.servers = servers;
+        setServers(servers);
         return this;
     }
 
@@ -139,11 +144,15 @@ public class OpenAPI {
     }
 
     public void setSecurity(List<SecurityRequirement> security) {
-        this.security = security;
+        if (security == null) {
+            this.security = null;
+        } else {
+            this.security = new ArrayList<>(security);
+        }
     }
 
     public OpenAPI security(List<SecurityRequirement> security) {
-        this.security = security;
+        setSecurity(security);
         return this;
     }
 
@@ -166,11 +175,15 @@ public class OpenAPI {
     }
 
     public void setTags(List<Tag> tags) {
-        this.tags = tags;
+        if (tags == null) {
+            this.tags = null;
+        } else {
+            this.tags = new ArrayList<>(tags);
+        }
     }
 
     public OpenAPI tags(List<Tag> tags) {
-        this.tags = tags;
+        setTags(tags);
         return this;
     }
 
@@ -192,9 +205,7 @@ public class OpenAPI {
         return paths;
     }
 
-    public void setPaths(Paths paths) {
-        this.paths = paths;
-    }
+    public void setPaths(Paths paths) { this.paths = paths; }
 
     public OpenAPI paths(Paths paths) {
         this.paths = paths;
@@ -216,19 +227,18 @@ public class OpenAPI {
     }
 
     public OpenAPI components(Components components) {
-        this.components = components;
+        setComponents(components);
         return this;
     }
 
-  /*
-   * helpers
-   */
+   /*
+    * helpers
+    */
 
     public OpenAPI path(String name, PathItem path) {
         if (this.paths == null) {
             this.paths = new Paths();
         }
-
         this.paths.addPathItem(name, path);
         return this;
     }
@@ -237,7 +247,7 @@ public class OpenAPI {
         if (components == null) {
             this.components = new Components();
         }
-        components.addSchemas(name, schema);
+        this.components.addSchemas(name, schema);
         return this;
     }
 
@@ -245,7 +255,7 @@ public class OpenAPI {
         if (components == null) {
             this.components = new Components();
         }
-        components.addSecuritySchemes(name, securityScheme);
+        this.components.addSecuritySchemes(name, securityScheme);
         return this;
     }
 
@@ -283,17 +293,21 @@ public class OpenAPI {
             return;
         }
         if (this.extensions == null) {
-            this.extensions = new java.util.HashMap<>();
+            this.extensions = new HashMap<>();
         }
         this.extensions.put(name, value);
     }
 
     public void setExtensions(java.util.Map<String, Object> extensions) {
-        this.extensions = extensions;
+        if (extensions == null) {
+            this.extensions = null;
+        } else {
+            this.extensions = new HashMap<>(extensions);
+        }
     }
 
     public OpenAPI extensions(java.util.Map<String, Object> extensions) {
-        this.extensions = extensions;
+        setExtensions(extensions);
         return this;
     }
 
