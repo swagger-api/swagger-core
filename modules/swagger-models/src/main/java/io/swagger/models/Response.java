@@ -3,26 +3,27 @@ package io.swagger.models;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import io.swagger.models.properties.Property;
+import io.swagger.util.PropertyModelConverter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Response {
     private String description;
-    private Model model;
-    @Deprecated
-    private Property schema;
+    private Model schemaAsModel;
+    private Property schemaAsProperty;
     private Map<String, Object> examples;
     private Map<String, Property> headers;
     private Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
 
+    @Deprecated
     public Response schema(Property property) {
         this.setSchema(property);
         return this;
     }
 
-    public Response model(Model model) {
-        this.setModel(model);
+    public Response responseSchema(Model model) {
+        this.setResponseSchema(model);
         return this;
     }
 
@@ -63,23 +64,31 @@ public class Response {
     }
 
 
-    public Model getModel() {
-        return model;
+    public Model getResponseSchema() {
+        if(schemaAsModel == null){
+            PropertyModelConverter converter = new PropertyModelConverter();
+            schemaAsModel = converter.propertyToModel(schemaAsProperty);
+        }
+        return schemaAsModel;
     }
 
 
-    public void setModel(Model model) {
-        this.model = model;
+    public void setResponseSchema(Model model) {
+        this.schemaAsModel = model;
     }
 
     @Deprecated
     public Property getSchema() {
-        return schema;
+        if (schemaAsProperty == null) {
+            PropertyModelConverter converter = new PropertyModelConverter();
+            schemaAsProperty = converter.modelToProperty(schemaAsModel);
+        }
+        return schemaAsProperty;
     }
 
     @Deprecated
     public void setSchema(Property schema) {
-        this.schema = schema;
+        this.schemaAsProperty = schema;
     }
 
     public Map<String, Object> getExamples() {
@@ -135,10 +144,10 @@ public class Response {
         if (description != null ? !description.equals(response.description) : response.description != null) {
             return false;
         }
-        if (model != null ? !model.equals(response.model) : response.model != null) {
+        if (schemaAsModel != null ? !schemaAsModel.equals(response.schemaAsModel) : response.schemaAsModel != null) {
             return false;
         }
-        if (schema != null ? !schema.equals(response.schema) : response.schema != null) {
+        if (schemaAsProperty != null ? !schemaAsProperty.equals(response.schemaAsProperty) : response.schemaAsProperty != null) {
             return false;
         }
         if (examples != null ? !examples.equals(response.examples) : response.examples != null) {
@@ -154,8 +163,8 @@ public class Response {
     @Override
     public int hashCode() {
         int result = description != null ? description.hashCode() : 0;
-        result = 31 * result + (model != null ? model.hashCode() : 0);
-        result = 31 * result + (schema != null ? schema.hashCode() : 0);
+        result = 31 * result + (schemaAsModel != null ? schemaAsModel.hashCode() : 0);
+        result = 31 * result + (schemaAsProperty != null ? schemaAsProperty.hashCode() : 0);
         result = 31 * result + (examples != null ? examples.hashCode() : 0);
         result = 31 * result + (headers != null ? headers.hashCode() : 0);
         result = 31 * result + (vendorExtensions != null ? vendorExtensions.hashCode() : 0);
