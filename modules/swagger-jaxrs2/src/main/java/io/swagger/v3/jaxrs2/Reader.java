@@ -449,9 +449,17 @@ public class Reader implements OpenApiReader {
 
                     openAPI.setPaths(this.paths);
 
+                    // RequestBody in Method
+                    io.swagger.v3.oas.annotations.parameters.RequestBody apiRequestBody =
+                            ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.parameters.RequestBody.class);
+                    if (apiRequestBody != null && operation.getRequestBody() == null){
+                        OperationParser.getRequestBody(apiRequestBody, classConsumes, methodConsumes, components).ifPresent(
+                                operation::setRequestBody);
+                    }
+
+                    // RequestBody in Operation
                     io.swagger.v3.oas.annotations.Operation apiOperation =
                             ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.Operation.class);
-                    // requestBody
                     if (apiOperation != null && apiOperation.requestBody() != null && operation.getRequestBody() == null) {
                         OperationParser.getRequestBody(apiOperation.requestBody(), classConsumes, methodConsumes, components).ifPresent(
                                 requestBodyObject -> operation.setRequestBody(requestBodyObject));

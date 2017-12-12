@@ -1,12 +1,17 @@
 package io.swagger.v3.jaxrs2.annotations.requests;
 
+import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
+import io.swagger.v3.jaxrs2.resources.RequestBodyResource;
 import io.swagger.v3.jaxrs2.resources.model.Pet;
 import io.swagger.v3.jaxrs2.resources.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.PathItem;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;
@@ -18,7 +23,15 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
 public class RequestBodyTest extends AbstractAnnotationTest {
+
+    private static final String REQUEST_BODY_IN_METHOD = "RequestBody in Method";
+    private static final String REQUEST_BODY_IN_PARAMETER = "RequestBody in Parameter";
+    private static final String REQUEST_BODY_IN_ANNOTATION = "RequestBody in Annotation";
+    private static final String USER_PATH = "/user";
 
     @Test(description = "Returns a request with one RequestBody and multiple parameters")
     public void oneRequestBodyMultipleParameters() throws IOException {
@@ -265,5 +278,28 @@ public class RequestBodyTest extends AbstractAnnotationTest {
         public Response methodWithOneSimpleRequestBody(int id) {
             return Response.ok().entity("").build();
         }
+    }
+
+    @Test(description = "scan class with requesbody annotation")
+    public void testRequestBodyAnnotationPriority() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(RequestBodyResource.class);
+        Yaml.prettyPrint(openAPI);
+        PathItem userPathItem = openAPI.getPaths().get(USER_PATH);
+        io.swagger.v3.oas.models.parameters.RequestBody getRequestBody = userPathItem.getGet().getRequestBody();
+        assertNotNull(getRequestBody);
+        assertEquals(getRequestBody.getDescription(), REQUEST_BODY_IN_ANNOTATION);
+        io.swagger.v3.oas.models.parameters.RequestBody postRequestBody = userPathItem.getPost().getRequestBody();
+        assertNotNull(postRequestBody);
+        assertEquals(postRequestBody.getDescription(), REQUEST_BODY_IN_PARAMETER);
+        io.swagger.v3.oas.models.parameters.RequestBody putRequestBody = userPathItem.getPut().getRequestBody();
+        assertNotNull(putRequestBody);
+        assertEquals(putRequestBody.getDescription(), REQUEST_BODY_IN_METHOD);
+        io.swagger.v3.oas.models.parameters.RequestBody deleteRequestBody = userPathItem.getDelete().getRequestBody();
+        assertNotNull(deleteRequestBody);
+        assertEquals(deleteRequestBody.getDescription(), REQUEST_BODY_IN_PARAMETER);
+        io.swagger.v3.oas.models.parameters.RequestBody patchRequestBody = userPathItem.getPatch().getRequestBody();
+        assertNotNull(patchRequestBody);
+        assertEquals(patchRequestBody.getDescription(), REQUEST_BODY_IN_METHOD);
     }
 }
