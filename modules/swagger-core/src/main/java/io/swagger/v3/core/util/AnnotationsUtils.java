@@ -1,8 +1,11 @@
 package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.databind.introspect.Annotated;
+import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.oas.annotations.links.LinkParameter;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
@@ -11,6 +14,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.links.Link;
 import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.MediaType;
@@ -39,6 +43,7 @@ import java.util.Set;
 public abstract class AnnotationsUtils {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AnnotationsUtils.class);
+    public static final String COMPONENTS_REF = "#/components/schemas/";
 
     public static boolean hasSchemaAnnotation(io.swagger.v3.oas.annotations.media.Schema schema) {
         if (schema == null) {
@@ -71,9 +76,14 @@ public abstract class AnnotationsUtils {
                 && StringUtils.isBlank(schema.example())
                 && StringUtils.isBlank(schema.pattern())
                 && schema.not().equals(Void.class)
+                && schema.allOf().length == 0
                 && schema.oneOf().length == 0
                 && schema.anyOf().length == 0
                 && schema.subTypes().length == 0
+                && !getExternalDocumentation(schema.externalDocs()).isPresent()
+                && StringUtils.isBlank(schema.discriminatorProperty())
+                && schema.discriminatorMapping().length == 0
+                && !schema.hidden()
                 ) {
             return false;
         }
@@ -122,6 +132,9 @@ public abstract class AnnotationsUtils {
     }
 
     public static Optional<ArraySchema> getArraySchema(io.swagger.v3.oas.annotations.media.ArraySchema arraySchema) {
+        return getArraySchema(arraySchema, null);
+    }
+    public static Optional<ArraySchema> getArraySchema(io.swagger.v3.oas.annotations.media.ArraySchema arraySchema, Components components) {
         if (arraySchema == null || !hasArrayAnnotation(arraySchema)) {
             return Optional.empty();
         }
@@ -139,7 +152,7 @@ public abstract class AnnotationsUtils {
 
         if (arraySchema.schema() != null) {
             if (arraySchema.schema().implementation().equals(Void.class)) {
-                getSchemaFromAnnotation(arraySchema.schema()).ifPresent(schema -> {
+                getSchemaFromAnnotation(arraySchema.schema(), components).ifPresent(schema -> {
                     if (StringUtils.isNotBlank(schema.getType())) {
                         arraySchemaObject.setItems(schema);
                     }
@@ -151,10 +164,20 @@ public abstract class AnnotationsUtils {
     }
 
     public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema) {
+        return getSchemaFromAnnotation(schema, null);
+    }
+    public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema, Components components) {
         if (schema == null || !hasSchemaAnnotation(schema)) {
             return Optional.empty();
         }
-        Schema schemaObject = new Schema();
+        Schema schemaObject = null;
+        if (schema.oneOf().length > 0 ||
+            schema.allOf().length > 0 ||
+            schema.anyOf().length > 0) {
+            schemaObject = new ComposedSchema();
+        } else {
+            schemaObject = new Schema();
+        }
         if (StringUtils.isNotBlank(schema.description())) {
             schemaObject.setDescription(schema.description());
         }
@@ -233,7 +256,59 @@ public abstract class AnnotationsUtils {
 
         getExternalDocumentation(schema.externalDocs()).ifPresent(schemaObject::setExternalDocs);
 
+        if (!schema.not().equals(Void.class)) {
+            Class<?> schemaImplementation = schema.not();
+            Schema notSchemaObject = resolveSchemaFromType(schemaImplementation, components);
+            schemaObject.setNot(notSchemaObject);
+        }
+        if (schema.oneOf().length > 0) {
+            Class<?>[] schemaImplementations = schema.oneOf();
+            for (Class<?> schemaImplementation : schemaImplementations) {
+                Schema oneOfSchemaObject = resolveSchemaFromType(schemaImplementation, components);
+                ((ComposedSchema) schemaObject).addOneOfItem(oneOfSchemaObject);
+            }
+        }
+        if (schema.anyOf().length > 0) {
+            Class<?>[] schemaImplementations = schema.anyOf();
+            for (Class<?> schemaImplementation : schemaImplementations) {
+                Schema anyOfSchemaObject = resolveSchemaFromType(schemaImplementation, components);
+                ((ComposedSchema) schemaObject).addAnyOfItem(anyOfSchemaObject);
+            }
+        }
+        if (schema.allOf().length > 0) {
+            Class<?>[] schemaImplementations = schema.allOf();
+            for (Class<?> schemaImplementation : schemaImplementations) {
+                Schema allOfSchemaObject = resolveSchemaFromType(schemaImplementation, components);
+                ((ComposedSchema) schemaObject).addAllOfItem(allOfSchemaObject);
+            }
+        }
+
+
         return Optional.of(schemaObject);
+    }
+
+    public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components) {
+        Schema schemaObject = new Schema();
+        if (schemaImplementation.getName().startsWith("java.lang")) {
+            schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
+        } else {
+            ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(schemaImplementation);
+            Map<String, Schema> schemaMap;
+            if (resolvedSchema != null) {
+                schemaMap = resolvedSchema.referencedSchemas;
+                schemaMap.forEach((key, referencedSchema) -> {
+                    if (components != null) {
+                        components.addSchemas(key, referencedSchema);
+                    }
+                });
+                schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
+            }
+        }
+        if (StringUtils.isBlank(schemaObject.get$ref()) && StringUtils.isBlank(schemaObject.getType())) {
+            // default to string
+            schemaObject.setType("string");
+        }
+        return schemaObject;
     }
 
     public static Optional<Set<Tag>> getTags(io.swagger.v3.oas.annotations.tags.Tag[] tags, boolean skipOnlyName) {

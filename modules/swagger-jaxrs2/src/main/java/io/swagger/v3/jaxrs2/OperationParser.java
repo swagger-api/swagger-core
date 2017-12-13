@@ -122,6 +122,14 @@ public class OperationParser {
                 isArray = true;
             }
         }
+        return getSchema(annotationContent.schema(), annotationContent.array(), isArray, schemaImplementation, components);
+    }
+
+    public static Optional<? extends Schema> getSchema(io.swagger.v3.oas.annotations.media.Schema schemaAnnotation,
+                                                        io.swagger.v3.oas.annotations.media.ArraySchema arrayAnnotation,
+                                                        boolean isArray,
+                                                        Class<?> schemaImplementation,
+                                                        Components components) {
         Map<String, Schema> schemaMap;
         if (schemaImplementation != Void.class) {
             Schema schemaObject = new Schema();
@@ -142,7 +150,7 @@ public class OperationParser {
                 schemaObject.setType("string");
             }
             if (isArray) {
-                Optional<ArraySchema> arraySchema = AnnotationsUtils.getArraySchema(annotationContent.array());
+                Optional<ArraySchema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components);
                 if (arraySchema.isPresent()) {
                     arraySchema.get().setItems(schemaObject);
                     return arraySchema;
@@ -154,7 +162,7 @@ public class OperationParser {
             }
 
         } else {
-            Optional<Schema> schemaFromAnnotation = AnnotationsUtils.getSchemaFromAnnotation(annotationContent.schema());
+            Optional<Schema> schemaFromAnnotation = AnnotationsUtils.getSchemaFromAnnotation(schemaAnnotation, components);
             if (schemaFromAnnotation.isPresent()) {
                 if (StringUtils.isBlank(schemaFromAnnotation.get().get$ref()) && StringUtils.isBlank(schemaFromAnnotation.get().getType())) {
                     // default to string
@@ -162,7 +170,7 @@ public class OperationParser {
                 }
                 return Optional.of(schemaFromAnnotation.get());
             } else {
-                Optional<ArraySchema> arraySchemaFromAnnotation = AnnotationsUtils.getArraySchema(annotationContent.array());
+                Optional<ArraySchema> arraySchemaFromAnnotation = AnnotationsUtils.getArraySchema(arrayAnnotation, components);
                 if (arraySchemaFromAnnotation.isPresent()) {
                     if (StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().get$ref()) && StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().getType())) {
                         // default to string
