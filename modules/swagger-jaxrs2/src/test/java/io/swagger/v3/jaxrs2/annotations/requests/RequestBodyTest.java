@@ -1,16 +1,22 @@
 package io.swagger.v3.jaxrs2.annotations.requests;
 
+import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.v3.jaxrs2.resources.model.Pet;
 import io.swagger.v3.jaxrs2.resources.model.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.PathItem;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -18,7 +24,16 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
 public class RequestBodyTest extends AbstractAnnotationTest {
+
+    private static final String REQUEST_BODY_IN_METHOD = "RequestBody in Method";
+    private static final String REQUEST_BODY_IN_PARAMETER = "Request Body in Param";
+    private static final String NO_IN_PARAMETER = "Parameter with no IN";
+    private static final String REQUEST_BODY_IN_ANNOTATION = "RequestBody in Annotation";
+    private static final String USER_PATH = "/user";
 
     @Test(description = "Returns a request with one RequestBody and multiple parameters")
     public void oneRequestBodyMultipleParameters() throws IOException {
@@ -266,4 +281,148 @@ public class RequestBodyTest extends AbstractAnnotationTest {
             return Response.ok().entity("").build();
         }
     }
+
+    @Test(description = "scan class with requesbody annotation")
+    public void testRequestBodyAnnotationPriority() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(RequestBodyResource.class);
+        PathItem userPathItem = openAPI.getPaths().get(USER_PATH);
+        io.swagger.v3.oas.models.parameters.RequestBody getRequestBody = userPathItem.getGet().getRequestBody();
+        assertNotNull(getRequestBody);
+        assertEquals(getRequestBody.getDescription(), REQUEST_BODY_IN_ANNOTATION);
+        io.swagger.v3.oas.models.parameters.RequestBody postRequestBody = userPathItem.getPost().getRequestBody();
+        assertNotNull(postRequestBody);
+        assertEquals(postRequestBody.getDescription(), REQUEST_BODY_IN_ANNOTATION);
+        io.swagger.v3.oas.models.parameters.RequestBody putRequestBody = userPathItem.getPut().getRequestBody();
+        assertNotNull(putRequestBody);
+        assertEquals(putRequestBody.getDescription(), REQUEST_BODY_IN_METHOD);
+        io.swagger.v3.oas.models.parameters.RequestBody deleteRequestBody = userPathItem.getDelete().getRequestBody();
+        assertNotNull(deleteRequestBody);
+        assertEquals(deleteRequestBody.getDescription(), REQUEST_BODY_IN_METHOD);
+        io.swagger.v3.oas.models.parameters.RequestBody patchRequestBody = userPathItem.getPatch().getRequestBody();
+        assertNotNull(patchRequestBody);
+        assertEquals(patchRequestBody.getDescription(), REQUEST_BODY_IN_METHOD);
+
+        userPathItem = openAPI.getPaths().get(USER_PATH + "/deleteUserMethod_Param_RequestBody");
+        deleteRequestBody = userPathItem.getDelete().getRequestBody();
+        assertNotNull(deleteRequestBody);
+        assertEquals(deleteRequestBody.getDescription(), REQUEST_BODY_IN_PARAMETER);
+
+        userPathItem = openAPI.getPaths().get(USER_PATH + "/deleteUserOperation_Method_Param_RequestBody");
+        deleteRequestBody = userPathItem.getDelete().getRequestBody();
+        assertNotNull(deleteRequestBody);
+        assertEquals(deleteRequestBody.getDescription(), REQUEST_BODY_IN_PARAMETER);
+
+        userPathItem = openAPI.getPaths().get(USER_PATH + "/deleteUserOperation_RequestBody");
+        deleteRequestBody = userPathItem.getDelete().getRequestBody();
+        assertNotNull(deleteRequestBody);
+        assertEquals(deleteRequestBody.getDescription(), REQUEST_BODY_IN_PARAMETER);
+
+        userPathItem = openAPI.getPaths().get(USER_PATH + "/deleteUserOperation_Method_Param");
+        deleteRequestBody = userPathItem.getDelete().getRequestBody();
+        assertNotNull(deleteRequestBody);
+        assertEquals(deleteRequestBody.getDescription(), REQUEST_BODY_IN_METHOD);
+
+    }
+
+    @Path("/user")
+    static class RequestBodyResource {
+        @GET
+        @Operation(requestBody = @RequestBody(description = "RequestBody in Annotation", required = true,
+                content = @Content(schema = @Schema(implementation = User.class))))
+        public User getUser() {
+            return new User();
+        }
+
+        @POST
+        @Operation(summary = "Create user",
+                description = "This can only be done by the logged in user.",
+                requestBody = @RequestBody(description = "RequestBody in Annotation", required = true,
+                        content = @Content(schema = @Schema(implementation = User.class))))
+        public Response createUser(
+                @Parameter(description = "Parameter with no IN", required = true) User user) {
+            return Response.ok().entity("").build();
+        }
+
+        @PUT
+        @Operation(summary = "Update user",
+                description = "This can only be done by the logged in user.")
+        @RequestBody(description = "RequestBody in Method", required = true,
+                content = @Content(schema = @Schema(implementation = User.class)))
+        public Response updateUser() {
+            return Response.ok().entity("").build();
+        }
+
+        @DELETE
+        @Operation(summary = "Delete user",
+                description = "This can only be done by the logged in user.")
+        @RequestBody(description = "RequestBody in Method", required = true,
+                content = @Content(schema = @Schema(implementation = User.class)))
+        public Response deleteUser(@Parameter(description = "Parameter with no IN", required = true) User user) {
+            return Response.ok().entity("").build();
+        }
+
+        @DELETE
+        @Path("/deleteUserMethod_Param_RequestBody")
+        @Operation(summary = "Delete user",
+                description = "This can only be done by the logged in user.")
+        @RequestBody(description = "RequestBody in Method", required = true,
+                content = @Content(schema = @Schema(implementation = User.class)))
+        public Response deleteUserMethod_Param_RequestBody(
+                @Parameter(description = "Parameter with no IN", required = true)
+                @RequestBody(description = "Request Body in Param") User user) {
+            return Response.ok().entity("").build();
+        }
+
+        @DELETE
+        @Path("/deleteUserOperation_Method_Param_RequestBody")
+        @Operation(summary = "Delete user",
+                description = "This can only be done by the logged in user.",
+                requestBody = @RequestBody(description = "RequestBody in Annotation", required = true,
+                        content = @Content(schema = @Schema(implementation = User.class))))
+        @RequestBody(description = "RequestBody in Method", required = true,
+                content = @Content(schema = @Schema(implementation = User.class)))
+        public Response deleteUserOperation_Method_Param_RequestBody(
+                @Parameter(description = "Parameter with no IN", required = true)
+                @RequestBody(description = "Request Body in Param") User user) {
+            return Response.ok().entity("").build();
+        }
+
+        @DELETE
+        @Path("/deleteUserOperation_Method_Param")
+        @Operation(summary = "Delete user",
+                description = "This can only be done by the logged in user.",
+                requestBody = @RequestBody(description = "RequestBody in Annotation", required = true,
+                        content = @Content(schema = @Schema(implementation = User.class))))
+        @RequestBody(description = "RequestBody in Method", required = true,
+                content = @Content(schema = @Schema(implementation = User.class)))
+        public Response deleteUserOperation_Method_Param(
+                @Parameter(description = "Parameter with no IN", required = true) User user) {
+            return Response.ok().entity("").build();
+        }
+
+        @DELETE
+        @Path("/deleteUserOperation_RequestBody")
+        @Operation(summary = "Delete user",
+                description = "This can only be done by the logged in user.",
+                requestBody = @RequestBody(description = "RequestBody in Annotation", required = true,
+                        content = @Content(schema = @Schema(implementation = User.class))))
+        public Response deleteUserOperation_RequestBody(
+                @RequestBody(description = "Request Body in Param") User user) {
+            return Response.ok().entity("").build();
+        }
+
+        @PATCH
+        @Operation(summary = "Modify user",
+                description = "This can only be done by the logged in user.",
+                requestBody = @RequestBody(description = "RequestBody in Annotation", required = true,
+                        content = @Content(schema = @Schema(implementation = User.class))))
+        @RequestBody(description = "RequestBody in Method", required = true,
+                content = @Content(schema = @Schema(implementation = User.class)))
+        public Response modifyUser() {
+            return Response.ok().entity("").build();
+        }
+
+    }
+
 }
