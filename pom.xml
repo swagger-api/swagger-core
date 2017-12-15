@@ -416,6 +416,12 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb-version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>${testng-version}</version>
@@ -502,6 +508,7 @@
         <reflections-version>0.9.11</reflections-version>
         <guava-version>20.0</guava-version>
         <javassist-version>3.21.0-GA</javassist-version>
+        <jaxb-version>2.3.0</jaxb-version>
 
         <testng-version>6.10</testng-version>
         <mockito-version>1.9.5</mockito-version>
