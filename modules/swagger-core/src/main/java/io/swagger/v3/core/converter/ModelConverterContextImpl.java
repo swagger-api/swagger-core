@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.BiFunction;
 
 public class ModelConverterContextImpl implements ModelConverterContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(ModelConverterContextImpl.class);
@@ -116,10 +117,12 @@ public class ModelConverterContextImpl implements ModelConverterContext {
     @Override
     public Schema resolveAnnotatedType(Type type, List<Annotation> annotations, String elementName) {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("resolveProperty %s", type));
+            LOGGER.debug(String.format("resolveAnnotatedType %s", type));
         }
         AnnotationMap map = new AnnotationMap();
-        annotations.forEach(a -> map.add(a));
+        if (annotations != null) {
+            annotations.forEach(a -> map.add(a));
+        }
         Annotated annotated = new AnnotatedMember(null, map) {
             @Override
             public Annotated withAnnotations(AnnotationMap annotationMap) {
@@ -190,8 +193,26 @@ public class ModelConverterContextImpl implements ModelConverterContext {
         Iterator<ModelConverter> converters = this.getConverters();
         if (converters.hasNext()) {
             ModelConverter converter = converters.next();
-            return converter.resolveAnnotatedType(type, annotated, elementName, this, converters);
+            return converter.resolveAnnotatedType(type, annotated, elementName, null, null, this, converters);
         }
         return null;
+    }
+
+    @Override
+    public Schema resolveAnnotatedType(
+            Type type,
+            Annotated member,
+            String elementName,
+            Schema parent,
+            BiFunction<JavaType, Annotation[], Schema> jsonUnwrappedHandler,
+            ModelConverterContext context,
+            Iterator<ModelConverter> chain) {
+        Iterator<ModelConverter> converters = this.getConverters();
+        if (converters.hasNext()) {
+            ModelConverter converter = converters.next();
+            return converter.resolveAnnotatedType(type, member, elementName, parent, jsonUnwrappedHandler, this, converters);
+        }
+        return null;
+
     }
 }

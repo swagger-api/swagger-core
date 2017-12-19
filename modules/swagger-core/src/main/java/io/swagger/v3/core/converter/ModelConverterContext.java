@@ -1,11 +1,14 @@
 package io.swagger.v3.core.converter;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.introspect.Annotated;
 import io.swagger.v3.oas.models.media.Schema;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiFunction;
 
 public interface ModelConverterContext {
 
@@ -38,6 +41,16 @@ public interface ModelConverterContext {
     Schema resolve(Type type, Annotation[] annotations);
 
     Schema resolveAnnotatedType(Type type, List<Annotation> annotations, String elementName);
+
+    Schema resolveAnnotatedType(
+            Type type,
+            Annotated member,
+            String elementName,
+            Schema parent,
+            BiFunction<JavaType, Annotation[], Schema> jsonUnwrappedHandler,
+            ModelConverterContext context,
+            Iterator<ModelConverter> chain
+    );
 
     /**
      * @return an Iterator of ModelConverters.  This iterator is not reused

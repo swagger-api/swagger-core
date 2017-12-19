@@ -84,24 +84,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return _mapper;
     }
 
-    protected boolean shouldIgnoreClass(Type type) {
-        if (type instanceof Class) {
-            Class<?> cls = (Class<?>) type;
-            if (cls.getName().equals("javax.ws.rs.Response")) {
-                return true;
-            }
-        } else {
-            if (type instanceof com.fasterxml.jackson.core.type.ResolvedType) {
-                com.fasterxml.jackson.core.type.ResolvedType rt = (com.fasterxml.jackson.core.type.ResolvedType) type;
-                LOGGER.debug("Can't check class {}, {}", type, rt.getRawClass().getName());
-                if (rt.getRawClass().equals(Class.class)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     @Override
     public Schema resolve(Type type,
                           ModelConverterContext context,
@@ -115,126 +97,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     @Override
-    public Schema resolveAnnotatedType(Type type,
-                                       Annotated member,
-                                       String elementName,
-                                       ModelConverterContext context,
-                                       Iterator<ModelConverter> next) {
-
-        if (this.shouldIgnoreClass(type)) {
-            return null;
-        }
-
-        return resolveAnnotatedType(_mapper.constructType(type), member, elementName, context, null, null);
-    }
-
-    private io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Annotation... annotations) {
-        if (annotations == null) {
-            return null;
-        }
-        for (Annotation annotation : annotations) {
-            if (annotation instanceof io.swagger.v3.oas.annotations.media.Schema) {
-                return (io.swagger.v3.oas.annotations.media.Schema) annotation;
-            }
-        }
-        return null;
-    }
-
-    public Schema resolveProperty(JavaType propType,
-                                  ModelConverterContext context,
-                                  Annotation[] annotations,
-                                  Iterator<ModelConverter> next) {
-        LOGGER.debug("resolveProperty {}", propType);
-
-        Schema property = null;
-        if (propType.isContainerType()) {
-            JavaType keyType = propType.getKeyType();
-            JavaType valueType = propType.getContentType();
-            if (keyType != null && valueType != null) {
-                property = new MapSchema().additionalProperties(context.resolve(valueType, new Annotation[]{}));
-            } else if (valueType != null) {
-                Schema items = context.resolve(valueType, new Annotation[]{});
-                // If property is XmlElement annotated, then use the name provided by annotation | https://github.com/swagger-api/swagger-core/issues/2047
-                if (annotations != null && annotations.length > 0) {
-                    for (Annotation annotation : annotations) {
-                        if (annotation instanceof XmlElement) {
-                            XmlElement xmlElement = (XmlElement) annotation;
-                            if (xmlElement != null && xmlElement.name() != null && !"".equals(xmlElement.name()) && !"##default".equals(xmlElement.name())) {
-                                XML xml = items.getXml() != null ? items.getXml() : new XML();
-                                xml.setName(xmlElement.name());
-                                items.setXml(xml);
-                            }
-                        }
-                    }
-                }
-                Schema arrayProperty =
-                        new ArraySchema().items(items);
-                if (_isSetType(propType.getRawClass())) {
-                    arrayProperty.setUniqueItems(true);
-                }
-                property = arrayProperty;
-            }
-        } else {
-            io.swagger.v3.oas.annotations.media.Schema schemaAnnotation = getSchemaAnnotation(annotations);
-            if (schemaAnnotation != null) {
-                String format = schemaAnnotation.format();
-                String type = schemaAnnotation.type();
-                // handle strings with format
-                if (!StringUtils.isBlank(schemaAnnotation.format()) &&
-                        propType.getRawClass().isAssignableFrom(String.class)) {
-                    type = "string";
-                }
-                if (StringUtils.isNotBlank(type)) {
-                    PrimitiveType primitiveType = PrimitiveType.fromTypeAndFormat(type, format);
-                    if (primitiveType == null) {
-                        primitiveType = PrimitiveType.fromType(propType);
-                    }
-                    if (primitiveType != null) {
-                        property = primitiveType.createProperty();
-                    }
-                } else {
-                    PrimitiveType primitiveType = PrimitiveType.fromType(propType);
-                    if (primitiveType != null) {
-                        property = primitiveType.createProperty();
-                    }
-                }
-            } else {
-                property = PrimitiveType.createProperty(propType);
-            }
-        }
-
-        if (property == null) {
-            if (propType.isEnumType()) {
-                property = new StringSchema();
-                _addEnumProps(propType.getRawClass(), property);
-            } else if (_isOptionalType(propType)) {
-                property = context.resolve(propType.containedType(0), null);
-            } else {
-                // complex type
-                Schema mi = context.resolve(propType);
-                if (mi != null) {
-                    if ("object".equals(mi.getType())) {
-                        // create a reference for the property
-                        final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(propType);
-                        String name = _typeName(propType, beanDesc);
-                        property = new Schema().$ref(constructRef(name));
-                    } else if (mi.get$ref() != null) {
-                        property = new Schema().$ref(StringUtils.isNotEmpty(mi.get$ref()) ? mi.get$ref() : mi.getName());
-                    } else {
-                        property = mi;
-                    }
-                }
-            }
-        }
-        return property;
-    }
-
-    private boolean _isOptionalType(JavaType propType) {
-        return Arrays.asList("com.google.common.base.Optional", "java.util.Optional")
-                .contains(propType.getRawClass().getCanonicalName());
-    }
-
-    @Override
     public Schema resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> next) {
         if (this.shouldIgnoreClass(type)) {
             return null;
@@ -243,26 +105,115 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return resolve(_mapper.constructType(type), context, next);
     }
 
-    protected void _addEnumProps(Class<?> propClass, Schema property) {
-        final boolean useIndex = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
-        final boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    @Override
+    public Schema resolveAnnotatedType(
+            Type type,
+            Annotated member,
+            String elementName,
+            Schema parent,
+            BiFunction<JavaType, Annotation[], Schema> jsonUnwrappedHandler,
+            ModelConverterContext context,
+            Iterator<ModelConverter> next) {
 
-        @SuppressWarnings("unchecked")
-        Class<Enum<?>> enumClass = (Class<Enum<?>>) propClass;
-        for (Enum<?> en : enumClass.getEnumConstants()) {
-            String n;
-            if (useIndex) {
-                n = String.valueOf(en.ordinal());
-            } else if (useToString) {
-                n = en.toString();
+        final JavaType javaType;
+        if (type instanceof JavaType) {
+            javaType = (JavaType)type;
+        } else {
+            javaType = _mapper.constructType(type);
+        }
+
+        String name = elementName;
+        Schema property = null;
+        Annotation[] annotations = null;
+
+        List<Annotation> annotationList = new ArrayList<Annotation>();
+        for (Annotation a : member.annotations()) {
+            annotationList.add(a);
+        }
+
+        annotations = annotationList.toArray(new Annotation[annotationList.size()]);
+
+        io.swagger.v3.oas.annotations.media.Schema mp = null;
+
+        io.swagger.v3.oas.annotations.media.ArraySchema as = member.getAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
+        if (as != null) {
+            mp = as.schema();
+        } else {
+            mp = member.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        }
+
+        // allow override of name from annotation
+        if (mp != null && !mp.name().isEmpty()) {
+            name = mp.name();
+        }
+
+        if (mp != null && !Void.class.equals(mp.implementation())) {
+            Class<?> cls = mp.implementation();
+
+            LOGGER.debug("overriding datatype from {} to {}", javaType, cls.getName());
+
+            Schema primitiveProperty = PrimitiveType.createProperty(cls);
+            if (primitiveProperty != null) {
+                property = primitiveProperty;
             } else {
-                n = _intr.findEnumValue(en);
-            }
-            if (property instanceof StringSchema) {
-                StringSchema sp = (StringSchema) property;
-                sp.addEnumItem(n);
+                property = context.resolve(cls, annotations);
             }
         }
+
+        // no property from override, construct from propType
+        if (property == null) {
+            if (mp != null && StringUtils.isNotEmpty(mp.ref())) {
+                property = new Schema().$ref(mp.ref());
+/*
+                    } else if (member.getAnnotation(JsonIdentityInfo.class) != null) {
+                        // TODO #2312
+                        property = GeneratorWrapper.processJsonIdentity(propType, context, _mapper,
+                                member.getAnnotation(JsonIdentityInfo.class),
+                                member.getAnnotation(JsonIdentityReference.class));
+*/
+            }
+            if (property == null) {
+                if (mp != null && StringUtils.isNotEmpty(mp.type())) {
+                    PrimitiveType primitiveType = PrimitiveType.fromTypeAndFormat(mp.type(), mp.format());
+                    if (primitiveType == null) {
+                        primitiveType = PrimitiveType.fromType(javaType);
+                    }
+                    if (primitiveType != null) {
+                        property = primitiveType.createProperty();
+                    }
+                } else {
+                    PrimitiveType primitiveType = PrimitiveType.fromType(javaType);
+                    if (primitiveType != null) {
+                        property = primitiveType.createProperty();
+                    }
+                }
+                if (property == null) {
+                    if (jsonUnwrappedHandler != null) {
+                        property = jsonUnwrappedHandler.apply(javaType, annotations);
+                    } else {
+                        property = context.resolve(javaType, annotations);
+                    }
+                }
+            }
+        }
+
+        if (property != null) {
+            property.setName(name);
+            if (property.get$ref() == null) {
+                resolveSchemaMembers(property, member);
+
+                JAXBAnnotationsHelper.apply(member, property);
+                applyBeanValidatorAnnotations(property, annotations, parent);
+            }
+        }
+        if (AnnotationsUtils.hasArrayAnnotation(as)) {
+            ArraySchema arraySchema = AnnotationsUtils.getArraySchema(as).get();
+            arraySchema.setName(name);
+            arraySchema.setItems(property);
+            return arraySchema;
+        }
+
+        return property;
     }
 
     public Schema resolve(JavaType type, ModelConverterContext context, Iterator<ModelConverter> next) {
@@ -446,7 +397,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore)) {
 
                 JavaType propType = member.getType();
-                property = resolveAnnotatedType(propType, member, propName, context, model, (t, a) -> {
+                property = context.resolveAnnotatedType(propType, member, propName, model, (t, a) -> {
                     JsonUnwrapped uw = member.getAnnotation(JsonUnwrapped.class);
                     if (uw != null && uw.enabled()) {
                         handleUnwrapped(props, context.resolve(t), uw.prefix(), uw.suffix());
@@ -454,7 +405,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     } else {
                         return context.resolve(t, a);
                     }
-                });
+                }, context, next);
 
                 if (property != null) {
                     if (property.get$ref() == null) {
@@ -581,6 +532,122 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         return model;
+    }
+
+    public Schema resolveProperty(JavaType propType,
+                                  ModelConverterContext context,
+                                  Annotation[] annotations,
+                                  Iterator<ModelConverter> next) {
+        LOGGER.debug("resolveProperty {}", propType);
+
+        Schema property = null;
+        if (propType.isContainerType()) {
+            JavaType keyType = propType.getKeyType();
+            JavaType valueType = propType.getContentType();
+            if (keyType != null && valueType != null) {
+                property = new MapSchema().additionalProperties(context.resolve(valueType, new Annotation[]{}));
+            } else if (valueType != null) {
+                Schema items = context.resolve(valueType, new Annotation[]{});
+                // If property is XmlElement annotated, then use the name provided by annotation | https://github.com/swagger-api/swagger-core/issues/2047
+                if (annotations != null && annotations.length > 0) {
+                    for (Annotation annotation : annotations) {
+                        if (annotation instanceof XmlElement) {
+                            XmlElement xmlElement = (XmlElement) annotation;
+                            if (xmlElement != null && xmlElement.name() != null && !"".equals(xmlElement.name()) && !"##default".equals(xmlElement.name())) {
+                                XML xml = items.getXml() != null ? items.getXml() : new XML();
+                                xml.setName(xmlElement.name());
+                                items.setXml(xml);
+                            }
+                        }
+                    }
+                }
+                Schema arrayProperty =
+                        new ArraySchema().items(items);
+                if (_isSetType(propType.getRawClass())) {
+                    arrayProperty.setUniqueItems(true);
+                }
+                property = arrayProperty;
+            }
+        } else {
+            io.swagger.v3.oas.annotations.media.Schema schemaAnnotation = getSchemaAnnotation(annotations);
+            if (schemaAnnotation != null) {
+                String format = schemaAnnotation.format();
+                String type = schemaAnnotation.type();
+                // handle strings with format
+                if (!StringUtils.isBlank(schemaAnnotation.format()) &&
+                        propType.getRawClass().isAssignableFrom(String.class)) {
+                    type = "string";
+                }
+                if (StringUtils.isNotBlank(type)) {
+                    PrimitiveType primitiveType = PrimitiveType.fromTypeAndFormat(type, format);
+                    if (primitiveType == null) {
+                        primitiveType = PrimitiveType.fromType(propType);
+                    }
+                    if (primitiveType != null) {
+                        property = primitiveType.createProperty();
+                    }
+                } else {
+                    PrimitiveType primitiveType = PrimitiveType.fromType(propType);
+                    if (primitiveType != null) {
+                        property = primitiveType.createProperty();
+                    }
+                }
+            } else {
+                property = PrimitiveType.createProperty(propType);
+            }
+        }
+
+        if (property == null) {
+            if (propType.isEnumType()) {
+                property = new StringSchema();
+                _addEnumProps(propType.getRawClass(), property);
+            } else if (_isOptionalType(propType)) {
+                property = context.resolve(propType.containedType(0), null);
+            } else {
+                // complex type
+                Schema mi = context.resolve(propType);
+                if (mi != null) {
+                    if ("object".equals(mi.getType())) {
+                        // create a reference for the property
+                        final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(propType);
+                        String name = _typeName(propType, beanDesc);
+                        property = new Schema().$ref(constructRef(name));
+                    } else if (mi.get$ref() != null) {
+                        property = new Schema().$ref(StringUtils.isNotEmpty(mi.get$ref()) ? mi.get$ref() : mi.getName());
+                    } else {
+                        property = mi;
+                    }
+                }
+            }
+        }
+        return property;
+    }
+
+    private boolean _isOptionalType(JavaType propType) {
+        return Arrays.asList("com.google.common.base.Optional", "java.util.Optional")
+                .contains(propType.getRawClass().getCanonicalName());
+    }
+
+    protected void _addEnumProps(Class<?> propClass, Schema property) {
+        final boolean useIndex = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
+        final boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+
+        @SuppressWarnings("unchecked")
+        Class<Enum<?>> enumClass = (Class<Enum<?>>) propClass;
+        for (Enum<?> en : enumClass.getEnumConstants()) {
+            String n;
+            if (useIndex) {
+                n = String.valueOf(en.ordinal());
+            } else if (useToString) {
+                n = en.toString();
+            } else {
+                n = _intr.findEnumValue(en);
+            }
+            if (property instanceof StringSchema) {
+                StringSchema sp = (StringSchema) property;
+                sp.addEnumItem(n);
+            }
+        }
     }
 
     protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore) {
@@ -1326,108 +1393,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    protected Schema resolveAnnotatedType(
-            JavaType type,
-            Annotated member,
-            String elementName,
-            ModelConverterContext context,
-            Schema parent,
-            BiFunction<JavaType, Annotation[], Schema> jsonUnwrappedHandler) {
-
-        String name = elementName;
-        Schema property = null;
-        Annotation[] annotations = null;
-
-        List<Annotation> annotationList = new ArrayList<Annotation>();
-        for (Annotation a : member.annotations()) {
-            annotationList.add(a);
-        }
-
-        annotations = annotationList.toArray(new Annotation[annotationList.size()]);
-
-        io.swagger.v3.oas.annotations.media.Schema mp = null;
-
-        io.swagger.v3.oas.annotations.media.ArraySchema as = member.getAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
-        if (as != null) {
-            mp = as.schema();
-        } else {
-            mp = member.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
-        }
-
-        // allow override of name from annotation
-        if (mp != null && !mp.name().isEmpty()) {
-            name = mp.name();
-        }
-
-        if (mp != null && !Void.class.equals(mp.implementation())) {
-            Class<?> cls = mp.implementation();
-
-            LOGGER.debug("overriding datatype from {} to {}", type, cls.getName());
-
-            Schema primitiveProperty = PrimitiveType.createProperty(cls);
-            if (primitiveProperty != null) {
-                property = primitiveProperty;
-            } else {
-                property = context.resolve(cls, annotations);
-            }
-        }
-
-        // no property from override, construct from propType
-        if (property == null) {
-            if (mp != null && StringUtils.isNotEmpty(mp.ref())) {
-                property = new Schema().$ref(mp.ref());
-/*
-                    } else if (member.getAnnotation(JsonIdentityInfo.class) != null) {
-                        // TODO #2312
-                        property = GeneratorWrapper.processJsonIdentity(propType, context, _mapper,
-                                member.getAnnotation(JsonIdentityInfo.class),
-                                member.getAnnotation(JsonIdentityReference.class));
-*/
-            }
-            if (property == null) {
-                if (mp != null && StringUtils.isNotEmpty(mp.type())) {
-                    PrimitiveType primitiveType = PrimitiveType.fromTypeAndFormat(mp.type(), mp.format());
-                    if (primitiveType == null) {
-                        primitiveType = PrimitiveType.fromType(type);
-                    }
-                    if (primitiveType != null) {
-                        property = primitiveType.createProperty();
-                    }
-                } else {
-                    PrimitiveType primitiveType = PrimitiveType.fromType(type);
-                    if (primitiveType != null) {
-                        property = primitiveType.createProperty();
-                    }
-                }
-                if (property == null) {
-                    if (jsonUnwrappedHandler != null) {
-                        property = jsonUnwrappedHandler.apply(type, annotations);
-                    } else {
-                        property = context.resolve(type, annotations);
-                    }
-                }
-            }
-        }
-
-        if (property != null) {
-            property.setName(name);
-            if (property.get$ref() == null) {
-                resolveSchemaMembers(property, member);
-
-                JAXBAnnotationsHelper.apply(member, property);
-                applyBeanValidatorAnnotations(property, annotations, parent);
-            }
-        }
-        if (AnnotationsUtils.hasArrayAnnotation(as)) {
-            ArraySchema arraySchema = AnnotationsUtils.getArraySchema(as).get();
-            arraySchema.setName(name);
-            arraySchema.setItems(property);
-            return arraySchema;
-        }
-
-        return property;
-    }
-
     protected io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Annotated a) {
         return AnnotationsUtils.getSchemaAnnotation(a);
     }
@@ -1443,4 +1408,35 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             model.addRequiredItem(propName);
         }
     }
+
+    protected boolean shouldIgnoreClass(Type type) {
+        if (type instanceof Class) {
+            Class<?> cls = (Class<?>) type;
+            if (cls.getName().equals("javax.ws.rs.Response")) {
+                return true;
+            }
+        } else {
+            if (type instanceof com.fasterxml.jackson.core.type.ResolvedType) {
+                com.fasterxml.jackson.core.type.ResolvedType rt = (com.fasterxml.jackson.core.type.ResolvedType) type;
+                LOGGER.debug("Can't check class {}, {}", type, rt.getRawClass().getName());
+                if (rt.getRawClass().equals(Class.class)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Annotation... annotations) {
+        if (annotations == null) {
+            return null;
+        }
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof io.swagger.v3.oas.annotations.media.Schema) {
+                return (io.swagger.v3.oas.annotations.media.Schema) annotation;
+            }
+        }
+        return null;
+    }
+
 }
