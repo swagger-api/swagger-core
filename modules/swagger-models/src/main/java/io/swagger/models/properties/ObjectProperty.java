@@ -135,7 +135,7 @@ public class ObjectProperty extends AbstractProperty implements Property {
         return this;
     }
 
-    public ObjectProperty example(String example) {
+    public ObjectProperty example(Object example) {
         this.setExample(example);
         return this;
     }

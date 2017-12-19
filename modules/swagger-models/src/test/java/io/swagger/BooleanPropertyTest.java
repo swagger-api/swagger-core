@@ -2,6 +2,7 @@ package io.swagger;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNull;
 
 import io.swagger.models.properties.BooleanProperty;
 
@@ -24,5 +25,12 @@ public class BooleanPropertyTest {
         prop2.setName(PROP_1);
         prop2.setRequired(true);
         assertEquals(prop1, prop2);
+    }
+
+    @Test void testEmptyExample() {
+        final BooleanProperty prop = new BooleanProperty();
+        prop.setExample("");
+
+        assertNull(prop.getExample());
     }
 }

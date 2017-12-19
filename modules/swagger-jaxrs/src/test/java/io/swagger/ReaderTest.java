@@ -228,7 +228,7 @@ public class ReaderTest {
         Swagger swagger = getSwagger(ResourceWithImplicitParams.class);
         List<Parameter> params = swagger.getPath("/testString").getPost().getParameters();
         assertNotNull(params);
-        assertEquals(params.size(), 7);
+        assertEquals(params.size(), 8);
 
         assertEquals(params.get(0).getName(), "sort");
         assertEquals(params.get(0).getIn(), "query");
@@ -262,6 +262,13 @@ public class ReaderTest {
         assertEquals(bodyParam.getName(), "body");
         assertEquals(bodyParam.getIn(), "body");
         assertTrue(bodyParam.getRequired());
+
+        queryParam = (QueryParameter) params.get(7);
+        assertEquals(queryParam.getName(), "description");
+        assertEquals(queryParam.getIn(), "query");
+        // see https://github.com/swagger-api/swagger-core/issues/2556. should be not null
+        assertNull(queryParam.getType());
+
     }
 
     @Test(description = "scan implicit params with file objct")

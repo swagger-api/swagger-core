@@ -474,6 +474,9 @@ public class Reader {
         }
         final Type type = param.dataTypeClass() == Void.class ? ReflectionUtils.typeFromString(param.dataType())
                 : param.dataTypeClass();
+        if (type == null) {
+            LOGGER.error("no dataType defined for implicit param `{}`! resolved parameter will not have a type defined, and will therefore be not compliant with spec. see https://github.com/swagger-api/swagger-core/issues/2556.", param.name());
+        }
         return ParameterProcessor.applyAnnotations(swagger, p, (type == null) ? String.class : type,
                 Arrays.<Annotation>asList(param));
     }

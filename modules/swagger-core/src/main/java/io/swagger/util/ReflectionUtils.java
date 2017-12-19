@@ -15,6 +15,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -26,6 +27,9 @@ public class ReflectionUtils {
         final PrimitiveType primitive = PrimitiveType.fromName(type);
         if (primitive != null) {
             return primitive.getKeyClass();
+        }
+        if (StringUtils.isBlank(type)) {
+            return null;
         }
         try {
             return loadClassByName(type);

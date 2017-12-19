@@ -131,6 +131,10 @@ public class Info {
             vendorExtensions.put(name, value);
         }
     }
+	
+	public void setVendorExtensions(Map<String, Object> vendorExtensions) {
+        this.vendorExtensions = vendorExtensions;
+    }
 
     @Override
     public int hashCode() {
