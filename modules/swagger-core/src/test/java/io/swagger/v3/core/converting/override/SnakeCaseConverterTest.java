@@ -1,5 +1,6 @@
 package io.swagger.v3.core.converting.override;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.google.common.collect.Sets;
 import io.swagger.v3.core.converter.ModelConverter;
@@ -19,6 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 import static io.swagger.v3.core.util.RefUtils.constructRef;
 import static io.swagger.v3.core.util.RefUtils.extractSimpleName;
@@ -112,9 +114,9 @@ public class SnakeCaseConverterTest {
         }
 
         @Override
-        public Schema resolveAnnotatedType(Type type, Annotated member, String elementName, ModelConverterContext context, Iterator<ModelConverter> chain) {
+        public Schema resolveAnnotatedType(Type type, Annotated member, String elementName, Schema parent, BiFunction<JavaType, Annotation[], Schema> jsonUnwrappedHandler, ModelConverterContext context, Iterator<ModelConverter> chain) {
             if (chain.hasNext()) {
-                return chain.next().resolveAnnotatedType(type, member, elementName, context, chain);
+                return chain.next().resolveAnnotatedType(type, member, elementName, parent, jsonUnwrappedHandler, context, chain);
             } else {
                 return null;
             }

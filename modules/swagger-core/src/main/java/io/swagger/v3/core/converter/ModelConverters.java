@@ -52,16 +52,6 @@ public class ModelConverters {
         this.skippedClasses.add(cls);
     }
 
-    public Schema resolveProperty(Type type) {
-        if (shouldProcess(type)) {
-            ModelConverterContextImpl context = new ModelConverterContextImpl(
-                    converters);
-            return context.resolve(type, null);
-
-        }
-        return null;
-    }
-
     public ResolvedSchema resolveAnnotatedType(Type type, List<Annotation> annotations, String elementName) {
         ModelConverterContextImpl context = new ModelConverterContextImpl(
                 converters);
