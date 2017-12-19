@@ -51,7 +51,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>${jackson-version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -72,7 +71,6 @@
         <dependency>
             <groupId>com.openpojo</groupId>
             <artifactId>openpojo</artifactId>
-            <version>0.8.0</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -84,13 +82,11 @@
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-testng</artifactId>
-            <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito</artifactId>
-            <version>${powermock.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>junit</groupId>
@@ -106,20 +102,17 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>asm</groupId>
             <artifactId>asm</artifactId>
-            <version>3.3.1</version>
             <scope>test</scope>
         </dependency>
 
     </dependencies>
     <properties>
         <!-- TODO increase coverage -->
-        <validation-api-version>1.1.0.Final</validation-api-version>
         <coverage.complexity.minimum>0.07</coverage.complexity.minimum>
         <coverage.line.minimum>0.0</coverage.line.minimum>
         <!-- Setting this to a really high number since this module has almost no coverage -->
