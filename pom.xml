@@ -94,7 +94,7 @@
                     </configuration>
                   </execution>
                 </executions>
-            </plugin>              
+            </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -290,7 +290,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.7.2.201409121644</version>
+                    <version>0.7.9</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -429,7 +429,7 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
+                <artifactId>mockito-core</artifactId>
                 <version>${mockito-version}</version>
                 <scope>test</scope>
             </dependency>
@@ -487,6 +487,52 @@
                 <artifactId>javassist</artifactId>
                 <version>${javassist-version}</version>
             </dependency>
+            <!-- needed for Java 9 -->
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-testng</artifactId>
+                <version>${powermock.version}</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.mockito</groupId>
+                        <artifactId>mockito-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>net.bytebuddy</groupId>
+                        <artifactId>byte-buddy</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>net.bytebuddy</groupId>
+                        <artifactId>byte-buddy-agent</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-api-mockito2</artifactId>
+                <version>${powermock.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.mockito</groupId>
+                        <artifactId>mockito-core</artifactId>
+                    </exclusion>
+                </exclusions>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
@@ -504,7 +550,8 @@
         <javassist-version>3.21.0-GA</javassist-version>
 
         <testng-version>6.10</testng-version>
-        <mockito-version>1.9.5</mockito-version>
+        <mockito-version>2.13.0</mockito-version>
+        <powermock.version>2.0.0-beta.5</powermock.version>
         <rest-assured-version>2.8.0</rest-assured-version>
         <surefire-version>2.18.1</surefire-version>
         <maven-plugin-version>1.0.0</maven-plugin-version>
@@ -518,5 +565,6 @@
         <commons-io-version>2.5</commons-io-version>
         <enforcer-plugin-version>1.4</enforcer-plugin-version>
         <failsafe-plugin-version>2.19.1</failsafe-plugin-version>
+        <jaxb-version>2.3.0</jaxb-version>
     </properties>
 </project>

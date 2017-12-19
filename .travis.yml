@@ -3,6 +3,8 @@ language: java
 script: ./mvnw clean verify
 jdk:
   - openjdk7
+  - oraclejdk8
+  - oraclejdk9
 after_success:
   - if [ $SONATYPE_USERNAME ] && [ -z $TRAVIS_TAG ] && [ $TRAVIS_PULL_REQUEST == false ]; then
       ./mvnw clean deploy --settings .travis/settings.xml;
