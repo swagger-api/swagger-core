@@ -1,6 +1,5 @@
 package io.swagger.jaxrs.listing;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,7 +25,7 @@ public class ApiListingResource extends BaseApiListingResource {
             @Context ServletConfig sc,
             @Context HttpHeaders headers,
             @Context UriInfo uriInfo,
-            @PathParam("type") String type) throws JsonProcessingException {
+            @PathParam("type") String type) {
         if (StringUtils.isNotBlank(type) && type.trim().equalsIgnoreCase("yaml")) {
             return getListingYamlResponse(app, context, sc, headers, uriInfo);
         } else {

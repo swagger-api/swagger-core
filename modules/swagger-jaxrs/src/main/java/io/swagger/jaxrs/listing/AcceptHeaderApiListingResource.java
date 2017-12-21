@@ -1,6 +1,5 @@
 package io.swagger.jaxrs.listing;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.ApiOperation;
 
 import javax.servlet.ServletConfig;
@@ -26,7 +25,7 @@ public class AcceptHeaderApiListingResource extends BaseApiListingResource {
             @Context Application app,
             @Context ServletConfig sc,
             @Context HttpHeaders headers,
-            @Context UriInfo uriInfo) throws JsonProcessingException {
+            @Context UriInfo uriInfo) {
         return getListingJsonResponse(app, context, sc, headers, uriInfo);
     }
 

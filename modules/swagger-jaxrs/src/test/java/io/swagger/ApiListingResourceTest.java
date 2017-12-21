@@ -1,6 +1,5 @@
 package io.swagger;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.models.Swagger;
@@ -25,7 +24,7 @@ public class ApiListingResourceTest {
     }
 
     @Test
-    public void shouldHandleNullServletConfig_issue1689() throws JsonProcessingException {
+    public void shouldHandleNullServletConfig_issue1689() {
         ApiListingResource a = new ApiListingResource();
         try {
             a.getListing(null, null, null, null, "json");
@@ -39,7 +38,7 @@ public class ApiListingResourceTest {
 
     }
     @Test
-    public void shouldHandleErrorServletConfig_issue1691() throws JsonProcessingException {
+    public void shouldHandleErrorServletConfig_issue1691() {
 
         ServletConfig sc = new ServletConfig() {
             @Override

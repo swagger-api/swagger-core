@@ -1,6 +1,5 @@
 package io.swagger.jaxrs.listing;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.config.FilterFactory;
 import io.swagger.config.Scanner;
 import io.swagger.config.SwaggerConfig;
@@ -11,7 +10,6 @@ import io.swagger.jaxrs.config.JaxrsScanner;
 import io.swagger.jaxrs.config.ReaderConfigUtils;
 import io.swagger.jaxrs.config.SwaggerContextService;
 import io.swagger.models.Swagger;
-import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,19 +139,9 @@ public abstract class BaseApiListingResource {
             HttpHeaders headers,
             UriInfo uriInfo) {
         Swagger swagger = process(app, servletContext, servletConfig, headers, uriInfo);
-        try {
-            if (swagger != null) {
-                String yaml = Yaml.mapper().writeValueAsString(swagger);
-                StringBuilder b = new StringBuilder();
-                String[] parts = yaml.split("\n");
-                for (String part : parts) {
-                    b.append(part);
-                    b.append("\n");
-                }
-                return Response.ok().entity(b.toString()).type("application/yaml").build();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        
+        if (swagger != null) {
+            return Response.ok().entity(swagger).type("application/yaml").build();
         }
         return Response.status(404).build();
     }
@@ -163,14 +151,13 @@ public abstract class BaseApiListingResource {
             ServletContext servletContext,
             ServletConfig servletConfig,
             HttpHeaders headers,
-            UriInfo uriInfo) throws JsonProcessingException {
+            UriInfo uriInfo) {
         Swagger swagger = process(app, servletContext, servletConfig, headers, uriInfo);
 
         if (swagger != null) {
-            return Response.ok().entity(Json.mapper().writeValueAsString(swagger)).type(MediaType.APPLICATION_JSON_TYPE).build();
-        } else {
-            return Response.status(404).build();
+            return Response.ok().entity(swagger).type(MediaType.APPLICATION_JSON).build();
         }
+        return Response.status(404).build();
     }
 
     private static Map<String, List<String>> getQueryParams(MultivaluedMap<String, String> params) {
