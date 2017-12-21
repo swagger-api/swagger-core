@@ -12,6 +12,7 @@ import io.swagger.models.properties.Property;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -77,10 +78,25 @@ public class XMLInfoTest extends SwaggerTestBase {
         assertNotNull(xml);
         assertEquals(xml.getName(), "xmlDecoratedBean");
 
-        final Property property = impl.getProperties().get("a");
-        assertNotNull(property);
+        assertNotNull(impl.getProperties().get("a"));
 
         assertNull(impl.getProperties().get("b"));
+
+        assertNotNull(impl.getProperties().get("c"));
+    }
+
+    @XmlRootElement(name = "xmlDecoratedBean")
+    @XmlAccessorType(XmlAccessType.NONE)
+    @ApiModel
+    static class XmlDecoratedBeanXmlAccessorNone {
+
+        @XmlElement
+        public int a;
+
+        public String b;
+
+        @XmlAttribute
+        public String c;
     }
 
     @Test
@@ -100,17 +116,6 @@ public class XMLInfoTest extends SwaggerTestBase {
 
         Property propertyB = impl.getProperties().get("b");
         assertNotNull(propertyB);
-    }
-
-    @XmlRootElement(name = "xmlDecoratedBean")
-    @XmlAccessorType(XmlAccessType.NONE)
-    @ApiModel
-    static class XmlDecoratedBeanXmlAccessorNone {
-
-        @XmlElement
-        public int a;
-
-        public String b;
     }
 
     @XmlRootElement(name = "xmlDecoratedBean")
