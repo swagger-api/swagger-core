@@ -35,9 +35,9 @@ import io.swagger.models.Swagger;
 public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(BeanConfig.class);
 
-    Reader reader = new Reader(new Swagger());
+    protected Reader reader = new Reader(new Swagger());
 
-    ServletConfig servletConfig;
+    protected ServletConfig servletConfig;
 
     String resourcePackage;
     String[] schemes;
