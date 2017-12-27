@@ -185,7 +185,6 @@ public class ReaderTest {
 
     }
 
-
     @Test(description = "Test a Set of classes")
     public void testSetOfClasses() {
         Set<Class<?>> classes = new HashSet<>();
@@ -252,7 +251,8 @@ public class ReaderTest {
 
         Method[] methods = ResponsesResource.class.getMethods();
 
-        Operation responseOperation = reader.parseMethod(methods[0], null);
+        Operation responseOperation = reader.parseMethod(Arrays.stream(methods).filter(
+                (method -> method.getName().equals("getResponses"))).findFirst().get(), null);
         assertNotNull(responseOperation);
 
         ApiResponses responses = responseOperation.getResponses();
