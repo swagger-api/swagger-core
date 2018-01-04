@@ -1,5 +1,7 @@
 package io.swagger.models;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.List;
 
 import javax.validation.constraints.DecimalMax;
@@ -34,6 +36,8 @@ public class BeanValidationsModel {
     @DecimalMax(value = "1000000", inclusive = false)
     protected Double maxBalance;
 
+    @NotNull(groups = Adult.class)
+    @ApiModelProperty(required = false) // required value is optional here, as false is default
     protected Integer birthYear;
 
     @Size(min = 2, max = 10)
@@ -117,5 +121,9 @@ public class BeanValidationsModel {
 
     public void setItems(List<String> items) {
         this.items = items;
+    }
+
+    /** Validation group. */
+    interface Adult {
     }
 }

@@ -472,6 +472,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
 
                 if (property != null) {
+                    // apply properties from bean validation annotations first,
+                    // so they could be overriden by Swagger annotation values
+                    // (see https://github.com/swagger-api/swagger-core/issues/1857)
+                    applyBeanValidatorAnnotations(property, annotations);
+
                     property.setName(propName);
 
                     if (mp != null && !mp.access().isEmpty()) {
@@ -518,7 +523,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     }
 
                     JAXBAnnotationsHelper.apply(member, property);
-                    applyBeanValidatorAnnotations(property, annotations);
                     props.add(property);
                 }
             }

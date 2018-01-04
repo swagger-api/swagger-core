@@ -48,4 +48,14 @@ public class BeanValidatorTest {
         Assert.assertEquals((int) items.getMinItems(), 2);
         Assert.assertEquals((int) items.getMaxItems(), 10);
     }
+
+    @Test(description = "it should use require settings from @ApiModelProperty")
+    public void overrideRequiredSettings() {
+        final Map<String, Model> schemas = ModelConverters.getInstance().readAll(BeanValidationsModel.class);
+        final Model model = schemas.get("BeanValidationsModel");
+        final Map<String, Property> properties = model.getProperties();
+
+        final IntegerProperty birthYear = (IntegerProperty) properties.get("birthYear");
+        Assert.assertFalse(birthYear.getRequired());
+    }
 }
