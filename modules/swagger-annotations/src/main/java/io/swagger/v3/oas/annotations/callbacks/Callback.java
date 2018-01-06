@@ -17,6 +17,7 @@
 package io.swagger.v3.oas.annotations.callbacks;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.extensions.Extension;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -58,5 +59,12 @@ public @interface Callback {
      * @return the callback operations
      **/
     Operation[] operation() default {};
+
+    /**
+     * The list of optional extensions
+     *
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default {};
 
 }

@@ -1003,7 +1003,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .type(subtypeModel.getType())
                         .uniqueItems(subtypeModel.getUniqueItems())
                         .writeOnly(subtypeModel.getWriteOnly())
-                        .xml(subtypeModel.getXml());
+                        .xml(subtypeModel.getXml())
+                        .extensions(subtypeModel.getExtensions());
 
             } else {
                 composedSchema = (ComposedSchema) subtypeModel;
@@ -1312,6 +1313,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return null;
     }
 
+    protected Map<String, Object> resolveExtensions(Annotated a) {
+        io.swagger.v3.oas.annotations.media.Schema schema = getSchemaAnnotation(a);
+        if (schema != null &&
+                schema.extensions() != null &&
+                schema.extensions().length > 0) {
+            return AnnotationsUtils.getExtensions(schema.extensions());
+        }
+        return null;
+    }
+
     protected Discriminator resolveDiscriminator(JavaType type, ModelConverterContext context) {
 
         io.swagger.v3.oas.annotations.media.Schema declaredSchemaAnnotation = AnnotationsUtils.getSchemaDeclaredAnnotation(type.getRawClass());
@@ -1448,6 +1459,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (allowableValues != null) {
             for (String prop : allowableValues) {
                 schema.addEnumItemObject(prop);
+            }
+        }
+
+        Map<String, Object> extensions = resolveExtensions(a);
+        if (extensions != null) {
+            for (String ext : extensions.keySet()) {
+                schema.addExtension(ext, extensions.get(ext));
             }
         }
     }

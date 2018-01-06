@@ -1,6 +1,5 @@
 package io.swagger.v3.jaxrs2;
 
-import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.CompleteFieldsResource;
@@ -20,7 +19,10 @@ import io.swagger.v3.jaxrs2.resources.SubResourceHead;
 import io.swagger.v3.jaxrs2.resources.TagsResource;
 import io.swagger.v3.jaxrs2.resources.Test2607;
 import io.swagger.v3.jaxrs2.resources.TestResource;
-import io.swagger.v3.jaxrs2.resources.extensions.ClassExtensionsResource;
+import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
+import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
+import io.swagger.v3.jaxrs2.resources.extensions.ParameterExtensionsResource;
+import io.swagger.v3.jaxrs2.resources.extensions.RequestBodyExtensionsResource;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -419,12 +421,48 @@ public class ReaderTest {
         assertEquals(externalDocs.getUrl(), EXTERNAL_DOCS_URL);
     }
 
+    @Test(description = "OperationExtensions Tests")
+    public void testOperationExtensions() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(OperationExtensionsResource.class);
+        assertNotNull(openAPI);
+        Map<String, Object> extensions = openAPI.getPaths().get("/").getGet().getExtensions();
+        assertEquals(extensions.size(), 2);
+        assertNotNull(extensions.get("x-operation"));
+        assertNotNull(extensions.get("x-operation-extensions"));
+    }
+
+    @Test(description = "ParameterExtensions Tests")
+    public void testParameterExtensions() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(ParameterExtensionsResource.class);
+        assertNotNull(openAPI);
+        Map<String, Object> extensions = openAPI.getPaths().get("/").getGet().getParameters().get(0).getExtensions();
+        assertNotNull(extensions);
+        assertEquals(1, extensions.size());
+        assertNotNull(extensions.get("x-parameter"));
+
+    }
+
+    @Test(description = "RequestBody Tests")
+    public void testRequestBodyExtensions() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(RequestBodyExtensionsResource.class);
+        assertNotNull(openAPI);
+        Map<String, Object> extensions = openAPI.getPaths().get("/user").getGet().
+                getRequestBody().getExtensions();
+        assertNotNull(extensions);
+        assertEquals(extensions.size(), 2);
+        assertNotNull(extensions.get("x-extension"));
+        assertNotNull(extensions.get("x-extension2"));
+    }
+
     @Test(description = "Extensions Tests")
     public void testExtensions() {
         Reader reader = new Reader(new OpenAPI());
-        OpenAPI openAPI = reader.read(ClassExtensionsResource.class);
+        OpenAPI openAPI = reader.read(ExtensionsResource.class);
         assertNotNull(openAPI);
-        assertEquals(2, openAPI.getExtensions().size());
+        SerializationMatchers.assertEqualsToYaml(openAPI, ExtensionsResource.YAML);
     }
 
     @Test(description = "Security Requirement")

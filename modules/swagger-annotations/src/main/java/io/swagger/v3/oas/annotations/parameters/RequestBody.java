@@ -16,6 +16,7 @@
 
 package io.swagger.v3.oas.annotations.parameters;
 
+import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.media.Content;
 
 import java.lang.annotation.ElementType;
@@ -56,5 +57,12 @@ public @interface RequestBody {
      * @return boolean
      **/
     boolean required() default false;
+
+    /**
+     * The list of optional extensions
+     *
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default {};
 
 }

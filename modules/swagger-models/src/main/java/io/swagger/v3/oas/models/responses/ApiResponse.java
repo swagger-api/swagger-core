@@ -201,6 +201,7 @@ public class ApiResponse {
         sb.append("    headers: ").append(toIndentedString(headers)).append("\n");
         sb.append("    content: ").append(toIndentedString(content)).append("\n");
         sb.append("    links: ").append(toIndentedString(links)).append("\n");
+        sb.append("    extensions: ").append(toIndentedString(extensions)).append("\n");
         sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
         sb.append("}");
         return sb.toString();

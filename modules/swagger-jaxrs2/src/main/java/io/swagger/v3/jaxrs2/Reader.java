@@ -18,7 +18,6 @@ import io.swagger.v3.jaxrs2.util.ReaderUtils;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.integration.ContextUtils;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
@@ -252,8 +251,6 @@ public class Reader implements OpenApiReader {
 
         List<io.swagger.v3.oas.annotations.security.SecurityScheme> apiSecurityScheme = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.v3.oas.annotations.security.SecurityScheme.class);
         List<io.swagger.v3.oas.annotations.security.SecurityRequirement> apiSecurityRequirements = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.v3.oas.annotations.security.SecurityRequirement.class);
-        List<Extension> apiClassExtensions = ReflectionUtils.getRepeatableAnnotations(cls, Extension.class);
-        openAPI.setExtensions(getExtensions(apiClassExtensions));
 
         ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, ExternalDocumentation.class);
         io.swagger.v3.oas.annotations.tags.Tag[] apiTags = ReflectionUtils.getRepeatableAnnotationsArray(cls, io.swagger.v3.oas.annotations.tags.Tag.class);
@@ -287,6 +284,12 @@ public class Reader implements OpenApiReader {
 
             // OpenApiDefinition servers
             AnnotationsUtils.getServers(openAPIDefinition.servers()).ifPresent(servers -> openAPI.setServers(servers));
+
+            // OpenApiDefinition extensions
+            if (openAPIDefinition.extensions().length > 0) {
+                openAPI.setExtensions(AnnotationsUtils
+                        .getExtensions(openAPIDefinition.extensions()));
+            }
 
         }
 
@@ -577,7 +580,7 @@ public class Reader implements OpenApiReader {
                         }
                     }
                 }
-
+                //requestBody.setExtensions(extensions);
                 operation.setRequestBody(requestBody);
             }
         } else {
@@ -603,6 +606,7 @@ public class Reader implements OpenApiReader {
                     isRequestBodyEmpty = false;
                 }
                 if (!isRequestBodyEmpty) {
+                    //requestBody.setExtensions(extensions);
                     operation.setRequestBody(requestBody);
                 }
             }
@@ -708,8 +712,6 @@ public class Reader implements OpenApiReader {
         io.swagger.v3.oas.annotations.parameters.RequestBody apiRequestBody =
                 ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.parameters.RequestBody.class);
 
-        // TODO extensions
-        List<Extension> apiExtensions = ReflectionUtils.getRepeatableAnnotations(method, Extension.class);
         ExternalDocumentation apiExternalDocumentation = ReflectionUtils.getAnnotation(method, ExternalDocumentation.class);
 
         // callbacks
@@ -1005,6 +1007,15 @@ public class Reader implements OpenApiReader {
                     requestBodyObject -> operation.setRequestBody(requestBodyObject));
         }
 
+        // Extensions in Operation
+        if (apiOperation.extensions().length > 0) {
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(apiOperation.extensions());
+            if (extensions != null) {
+                for (String ext : extensions.keySet()) {
+                    operation.addExtension(ext, extensions.get(ext));
+                }
+            }
+        }
     }
 
     protected String getOperationId(String operationId) {
@@ -1122,6 +1133,7 @@ public class Reader implements OpenApiReader {
         if (components.getResponses() != null && components.getResponses().size() > 0) {
             return false;
         }
+
         return true;
     }
 
@@ -1213,15 +1225,5 @@ public class Reader implements OpenApiReader {
             LOGGER.error("Unknown class definition: {}", cls);
             return null;
         }
-    }
-
-    private Map<String, Object> getExtensions(final List<Extension> apiExtensions) {
-        final Map<String, Object> extensions = new HashMap<>();
-        if (apiExtensions != null) {
-            apiExtensions.forEach(extension -> {
-                extensions.put(extension.name(), extension.properties());
-            });
-        }
-        return extensions;
     }
 }

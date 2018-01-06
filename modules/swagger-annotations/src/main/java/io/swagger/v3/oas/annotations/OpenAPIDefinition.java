@@ -16,6 +16,7 @@
 
 package io.swagger.v3.oas.annotations;
 
+import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.servers.Server;
@@ -73,4 +74,11 @@ public @interface OpenAPIDefinition {
      * @return the external documentation for this API.
      */
     ExternalDocumentation externalDocs() default @ExternalDocumentation;
+
+    /**
+     * The list of optional extensions
+     *
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default {};
 }

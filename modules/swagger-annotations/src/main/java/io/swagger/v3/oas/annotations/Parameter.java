@@ -19,6 +19,7 @@ package io.swagger.v3.oas.annotations;
 import io.swagger.v3.oas.annotations.enums.Explode;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.enums.ParameterStyle;
+import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -157,4 +158,11 @@ public @interface Parameter {
      * @return an example of the parameter
      **/
     String example() default "";
+
+    /**
+     * The list of optional extensions
+     *
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default {};
 }

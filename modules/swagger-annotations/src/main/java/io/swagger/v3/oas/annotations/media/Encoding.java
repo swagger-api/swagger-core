@@ -16,6 +16,7 @@
 
 package io.swagger.v3.oas.annotations.media;
 
+import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.headers.Header;
 
 import java.lang.annotation.Inherited;
@@ -80,5 +81,12 @@ public @interface Encoding {
      * @return array of headers
      */
     Header[] headers() default {};
+
+    /**
+     * The list of optional extensions
+     *
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default {};
 
 }

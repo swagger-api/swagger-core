@@ -16,6 +16,8 @@
 
 package io.swagger.v3.oas.annotations.info;
 
+import io.swagger.v3.oas.annotations.extensions.Extension;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -50,5 +52,12 @@ public @interface Contact {
      * @return the email address of the contact
      **/
     String email() default "";
+
+    /**
+     * The list of optional extensions
+     *
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default {};
 
 }

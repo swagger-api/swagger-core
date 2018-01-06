@@ -3,6 +3,8 @@ package io.swagger.v3.core.util;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.links.LinkParameter;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.models.Components;
@@ -83,6 +85,7 @@ public abstract class AnnotationsUtils {
                 && !getExternalDocumentation(schema.externalDocs()).isPresent()
                 && StringUtils.isBlank(schema.discriminatorProperty())
                 && schema.discriminatorMapping().length == 0
+                && schema.extensions().length == 0
                 && !schema.hidden()
                 ) {
             return false;
@@ -126,6 +129,15 @@ public abstract class AnnotationsUtils {
                     exampleObject.setValue(example.value());
                 }
             }
+            if (example.extensions().length > 0) {
+                Map<String, Object> extensions = AnnotationsUtils.getExtensions(example.extensions());
+                if (extensions != null) {
+                    for (String ext : extensions.keySet()) {
+                        exampleObject.addExtension(ext, extensions.get(ext));
+                    }
+                }
+            }
+
             return Optional.of(exampleObject);
         }
         return Optional.empty();
@@ -148,6 +160,14 @@ public abstract class AnnotationsUtils {
 
         if (arraySchema.minItems() < Integer.MAX_VALUE) {
             arraySchemaObject.setMinItems(arraySchema.minItems());
+        }
+        if (arraySchema.extensions().length > 0) {
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(arraySchema.extensions());
+            if (extensions != null) {
+                for (String ext : extensions.keySet()) {
+                    arraySchemaObject.addExtension(ext, extensions.get(ext));
+                }
+            }
         }
 
         if (arraySchema.schema() != null) {
@@ -254,6 +274,15 @@ public abstract class AnnotationsUtils {
             schemaObject.setEnum(Arrays.asList(schema.allowableValues()));
         }
 
+        if (schema.extensions().length > 0) {
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(schema.extensions());
+            if (extensions != null) {
+                for (String ext : extensions.keySet()) {
+                    schemaObject.addExtension(ext, extensions.get(ext));
+                }
+            }
+        }
+
         getExternalDocumentation(schema.externalDocs()).ifPresent(schemaObject::setExternalDocs);
 
         if (!schema.not().equals(Void.class)) {
@@ -332,6 +361,14 @@ public abstract class AnnotationsUtils {
             }
             tagObject.setName(tag.name());
             getExternalDocumentation(tag.externalDocs()).ifPresent(tagObject::setExternalDocs);
+            if (tag.extensions().length > 0) {
+                Map<String, Object> extensions = AnnotationsUtils.getExtensions(tag.extensions());
+                if (extensions != null) {
+                    for (String ext : extensions.keySet()) {
+                        tagObject.addExtension(ext, extensions.get(ext));
+                    }
+                }
+            }
             tagsList.add(tagObject);
         }
         if (tagsList.isEmpty()) {
@@ -369,6 +406,15 @@ public abstract class AnnotationsUtils {
             serverObject.setDescription(server.description());
             isEmpty = false;
         }
+        if (server.extensions().length > 0) {
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(server.extensions());
+            if (extensions != null) {
+                for (String ext : extensions.keySet()) {
+                    serverObject.addExtension(ext, extensions.get(ext));
+                }
+            }
+            isEmpty = false;
+        }
         if (isEmpty) {
             return Optional.empty();
         }
@@ -385,7 +431,14 @@ public abstract class AnnotationsUtils {
             if (serverVariable.allowableValues() != null && serverVariable.allowableValues().length > 0) {
                 serverVariableObject.setEnum(Arrays.asList(serverVariable.allowableValues()));
             }
-            // TODO extensions
+            if (serverVariable.extensions() != null && serverVariable.extensions().length > 0) {
+                Map<String, Object> extensions = AnnotationsUtils.getExtensions(serverVariable.extensions());
+                if (extensions != null) {
+                    for (String ext : extensions.keySet()) {
+                        serverVariableObject.addExtension(ext, extensions.get(ext));
+                    }
+                }
+            }
             serverVariablesObject.addServerVariable(serverVariable.name(), serverVariableObject);
         }
         serverObject.setVariables(serverVariablesObject);
@@ -407,6 +460,16 @@ public abstract class AnnotationsUtils {
             isEmpty = false;
             external.setUrl(externalDocumentation.url());
         }
+        if (externalDocumentation.extensions() != null && externalDocumentation.extensions().length > 0) {
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(externalDocumentation.extensions());
+            if (extensions != null) {
+                for (String ext : extensions.keySet()) {
+                    external.addExtension(ext, extensions.get(ext));
+                }
+                isEmpty = false;
+            }
+        }
+
         if (isEmpty) {
             return Optional.empty();
         }
@@ -435,6 +498,15 @@ public abstract class AnnotationsUtils {
             infoObject.setVersion(info.version());
             isEmpty = false;
         }
+        if (info.extensions() != null && info.extensions().length > 0) {
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(info.extensions());
+            if (extensions != null) {
+                for (String ext : extensions.keySet()) {
+                    infoObject.addExtension(ext, extensions.get(ext));
+                }
+                isEmpty = false;
+            }
+        }
         if (isEmpty) {
             return Optional.empty();
         }
@@ -462,6 +534,16 @@ public abstract class AnnotationsUtils {
             contactObject.setUrl(contact.url());
             isEmpty = false;
         }
+        if (contact.extensions() != null && contact.extensions().length > 0) {
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(contact.extensions());
+            if (extensions != null) {
+                for (String ext : extensions.keySet()) {
+                    contactObject.addExtension(ext, extensions.get(ext));
+                }
+                isEmpty = false;
+            }
+        }
+
         if (isEmpty) {
             return Optional.empty();
         }
@@ -481,6 +563,15 @@ public abstract class AnnotationsUtils {
         if (StringUtils.isNotBlank(license.url())) {
             licenseObject.setUrl(license.url());
             isEmpty = false;
+        }
+        if (license.extensions() != null && license.extensions().length > 0) {
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(license.extensions());
+            if (extensions != null) {
+                for (String ext : extensions.keySet()) {
+                    licenseObject.addExtension(ext, extensions.get(ext));
+                }
+                isEmpty = false;
+            }
         }
         if (isEmpty) {
             return Optional.empty();
@@ -518,6 +609,15 @@ public abstract class AnnotationsUtils {
         } else {
             if (StringUtils.isNotBlank(link.operationRef())) {
                 linkObject.setOperationRef(link.operationRef());
+                isEmpty = false;
+            }
+        }
+        if (link.extensions() != null && link.extensions().length > 0) {
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(link.extensions());
+            if (extensions != null) {
+                for (String ext : extensions.keySet()) {
+                    linkObject.addExtension(ext, extensions.get(ext));
+                }
                 isEmpty = false;
             }
         }
@@ -585,7 +685,6 @@ public abstract class AnnotationsUtils {
             headerObject.setAllowEmptyValue(header.allowEmptyValue());
             isEmpty = false;
         }
-
         headerObject.setStyle(Header.StyleEnum.SIMPLE);
 
         if (header.schema() != null) {
@@ -631,6 +730,14 @@ public abstract class AnnotationsUtils {
             if (encoding.headers() != null) {
                 getHeaders(encoding.headers()).ifPresent(encodingObject::headers);
             }
+            if (encoding.extensions() != null && encoding.extensions().length > 0) {
+                Map<String, Object> extensions = AnnotationsUtils.getExtensions(encoding.extensions());
+                if (extensions != null) {
+                    for (String ext : extensions.keySet()) {
+                        encodingObject.addExtension(ext, extensions.get(ext));
+                    }
+                }
+            }
 
             mediaType.addEncoding(encoding.name(), encodingObject);
         }
@@ -661,7 +768,7 @@ public abstract class AnnotationsUtils {
         }
     }
 
-    public static Optional<Content> getContent(io.swagger.v3.oas.annotations.media.Content[] annotationContents, String[] classTypes, String[] methodTypes, Schema schema) {
+    public static Optional<Content> getContent(io.swagger.v3.oas.annotations.media.Content[] annotationContents, String[] classTypes, String[] methodTypes, Schema schema, Components components) {
         if (annotationContents == null || annotationContents.length == 0) {
             return Optional.empty();
         }
@@ -669,30 +776,118 @@ public abstract class AnnotationsUtils {
         //Encapsulating Content model
         Content content = new Content();
 
-        io.swagger.v3.oas.annotations.media.Content annotationContent = annotationContents[0];
-        MediaType mediaType = new MediaType();
-        mediaType.setSchema(schema);
+        for (io.swagger.v3.oas.annotations.media.Content annotationContent : annotationContents) {
+            MediaType mediaType = new MediaType();
+            if (components != null) {
+                getSchema(annotationContent, components).ifPresent(mediaType::setSchema);
+            } else {
+                mediaType.setSchema(schema);
+            }
 
-        ExampleObject[] examples = annotationContent.examples();
-        for (ExampleObject example : examples) {
-            getExample(example).ifPresent(exampleObject -> mediaType.addExamples(example.name(), exampleObject));
-        }
-        io.swagger.v3.oas.annotations.media.Encoding[] encodings = annotationContent.encoding();
-        for (io.swagger.v3.oas.annotations.media.Encoding encoding : encodings) {
-            addEncodingToMediaType(mediaType, encoding);
-        }
-        if (StringUtils.isNotBlank(annotationContent.mediaType())) {
-            content.addMediaType(annotationContent.mediaType(), mediaType);
-        } else {
-            if (mediaType.getSchema() != null) {
-                applyTypes(classTypes, methodTypes, content, mediaType);
+            ExampleObject[] examples = annotationContent.examples();
+            for (ExampleObject example : examples) {
+                getExample(example).ifPresent(exampleObject -> mediaType.addExamples(example.name(), exampleObject));
+            }
+            if (annotationContent.extensions() != null && annotationContent.extensions().length > 0) {
+                Map<String, Object> extensions = AnnotationsUtils.getExtensions(annotationContent.extensions());
+                if (extensions != null) {
+                    for (String ext : extensions.keySet()) {
+                        mediaType.addExtension(ext, extensions.get(ext));
+                    }
+                }
+            }
+
+            io.swagger.v3.oas.annotations.media.Encoding[] encodings = annotationContent.encoding();
+            for (io.swagger.v3.oas.annotations.media.Encoding encoding : encodings) {
+                addEncodingToMediaType(mediaType, encoding);
+            }
+            if (StringUtils.isNotBlank(annotationContent.mediaType())) {
+                content.addMediaType(annotationContent.mediaType(), mediaType);
+            } else {
+                if (mediaType.getSchema() != null) {
+                    applyTypes(classTypes, methodTypes, content, mediaType);
+                }
             }
         }
+
         if (content.size() == 0) {
             return Optional.empty();
         }
         return Optional.of(content);
     }
+
+    public static Optional<? extends Schema> getSchema(io.swagger.v3.oas.annotations.media.Content annotationContent, Components components) {
+        Class<?> schemaImplementation = annotationContent.schema().implementation();
+        boolean isArray = false;
+        if (schemaImplementation == Void.class) {
+            schemaImplementation = annotationContent.array().schema().implementation();
+            if (schemaImplementation != Void.class) {
+                isArray = true;
+            }
+        }
+        return getSchema(annotationContent.schema(), annotationContent.array(), isArray, schemaImplementation, components);
+    }
+
+    public static Optional<? extends Schema> getSchema(io.swagger.v3.oas.annotations.media.Schema schemaAnnotation,
+                                                       io.swagger.v3.oas.annotations.media.ArraySchema arrayAnnotation,
+                                                       boolean isArray,
+                                                       Class<?> schemaImplementation,
+                                                       Components components) {
+        Map<String, Schema> schemaMap;
+        if (schemaImplementation != Void.class) {
+            Schema schemaObject = new Schema();
+            if (schemaImplementation.getName().startsWith("java.lang")) {
+                schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
+            } else {
+                ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(schemaImplementation);
+                if (resolvedSchema != null) {
+                    schemaMap = resolvedSchema.referencedSchemas;
+                    schemaMap.forEach((key, schema) -> {
+                        components.addSchemas(key, schema);
+                    });
+                    if (resolvedSchema.schema != null) {
+                        schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
+                    }
+                }
+            }
+            if (StringUtils.isBlank(schemaObject.get$ref()) && StringUtils.isBlank(schemaObject.getType())) {
+                // default to string
+                schemaObject.setType("string");
+            }
+            if (isArray) {
+                Optional<ArraySchema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components);
+                if (arraySchema.isPresent()) {
+                    arraySchema.get().setItems(schemaObject);
+                    return arraySchema;
+                } else {
+                    return Optional.empty();
+                }
+            } else {
+                return Optional.of(schemaObject);
+            }
+
+        } else {
+            Optional<Schema> schemaFromAnnotation = AnnotationsUtils.getSchemaFromAnnotation(schemaAnnotation, components);
+            if (schemaFromAnnotation.isPresent()) {
+                if (StringUtils.isBlank(schemaFromAnnotation.get().get$ref()) && StringUtils.isBlank(schemaFromAnnotation.get().getType())) {
+                    // default to string
+                    schemaFromAnnotation.get().setType("string");
+                }
+                return Optional.of(schemaFromAnnotation.get());
+            } else {
+                Optional<ArraySchema> arraySchemaFromAnnotation = AnnotationsUtils.getArraySchema(arrayAnnotation, components);
+                if (arraySchemaFromAnnotation.isPresent()) {
+                    if (StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().get$ref()) && StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().getType())) {
+                        // default to string
+                        arraySchemaFromAnnotation.get().getItems().setType("string");
+                    }
+                    return Optional.of(arraySchemaFromAnnotation.get());
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
 
     public static void applyTypes(String[] classTypes, String[] methodTypes, Content content, MediaType mediaType) {
         if (methodTypes != null && methodTypes.length > 0) {
@@ -759,5 +954,33 @@ public abstract class AnnotationsUtils {
             mp = cls.getDeclaredAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
         }
         return mp;
+    }
+
+    public static Map<String, Object> getExtensions(Extension... extensions) {
+        final Map<String, Object> map = new HashMap<>();
+        for (Extension extension : extensions) {
+            final String name = extension.name();
+            final String key = name.length() > 0 ? StringUtils.prependIfMissing(name, "x-") : name;
+
+            for (ExtensionProperty property : extension.properties()) {
+                final String propertyName = property.name();
+                final String propertyValue = property.value();
+                if (StringUtils.isNotBlank(propertyName) && StringUtils.isNotBlank(propertyValue)) {
+                    if (key.isEmpty()) {
+                        map.put(StringUtils.prependIfMissing(propertyName, "x-"), propertyValue);
+                    } else {
+                        Object value = map.get(key);
+                        if (value == null || !(value instanceof Map)) {
+                            value = new HashMap<String, Object>();
+                            map.put(key, value);
+                        }
+                        @SuppressWarnings("unchecked") final Map<String, Object> mapValue = (Map<String, Object>) value;
+                        mapValue.put(propertyName, propertyValue);
+                    }
+                }
+            }
+        }
+
+        return map;
     }
 }

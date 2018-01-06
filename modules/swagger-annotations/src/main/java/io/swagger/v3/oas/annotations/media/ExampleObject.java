@@ -16,6 +16,8 @@
 
 package io.swagger.v3.oas.annotations.media;
 
+import io.swagger.v3.oas.annotations.extensions.Extension;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -59,5 +61,12 @@ public @interface ExampleObject {
      * @return an external URL of the example
      **/
     String externalValue() default "";
+
+    /**
+     * The list of optional extensions
+     *
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default {};
 
 }

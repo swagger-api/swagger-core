@@ -16,6 +16,7 @@
 
 package io.swagger.v3.oas.annotations.responses;
 
+import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.links.Link;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -76,5 +77,12 @@ public @interface ApiResponse {
      * @return array of content
      **/
     Content[] content() default {};
+
+    /**
+     * The list of optional extensions
+     *
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default {};
 
 }

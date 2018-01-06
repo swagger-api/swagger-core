@@ -1,7 +1,7 @@
 package io.swagger.v3.core.resolving;
 
 import com.google.common.collect.ImmutableMap;
-import io.swagger.v3.core.util.BaseReaderUtils;
+import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
 
-public class BaseReaderUtilsTest {
+public class AnnotationsUtilsExtensionsTest {
 
     @DataProvider
     private Object[][] expectedData() {
@@ -39,7 +39,7 @@ public class BaseReaderUtilsTest {
     public void extensionsTest(String methodName, Map<String, Object> expected) throws NoSuchMethodException {
         final Method method = getClass().getDeclaredMethod(methodName);
         final Extension[] extensions = method.getAnnotation(Operation.class).extensions();
-        final Map<String, Object> map = BaseReaderUtils.parseExtensions(extensions);
+        final Map<String, Object> map = AnnotationsUtils.getExtensions(extensions);
 
         Assert.assertEquals(map, expected);
     }

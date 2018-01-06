@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2;
 
+import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.oas.annotations.security.OAuthScope;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class SecurityParser {
@@ -67,6 +69,15 @@ public class SecurityParser {
         if (StringUtils.isNotBlank(securityScheme.name())) {
             securitySchemeObject.setName(securityScheme.name());
         }
+        if (securityScheme.extensions().length > 0) {
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(securityScheme.extensions());
+            if (extensions != null) {
+                for (String ext : extensions.keySet()) {
+                    securitySchemeObject.addExtension(ext, extensions.get(ext));
+                }
+            }
+        }
+
         getOAuthFlows(securityScheme.flows()).ifPresent(securitySchemeObject::setFlows);
         return Optional.of(securitySchemeObject);
     }
@@ -76,6 +87,15 @@ public class SecurityParser {
             return Optional.empty();
         }
         OAuthFlows oAuthFlowsObject = new OAuthFlows();
+        if (oAuthFlows.extensions().length > 0) {
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(oAuthFlows.extensions());
+            if (extensions != null) {
+                for (String ext : extensions.keySet()) {
+                    oAuthFlowsObject.addExtension(ext, extensions.get(ext));
+                }
+            }
+        }
+
         getOAuthFlow(oAuthFlows.authorizationCode()).ifPresent(oAuthFlowsObject::setAuthorizationCode);
         getOAuthFlow(oAuthFlows.clientCredentials()).ifPresent(oAuthFlowsObject::setClientCredentials);
         getOAuthFlow(oAuthFlows.implicit()).ifPresent(oAuthFlowsObject::setImplicit);
@@ -97,6 +117,15 @@ public class SecurityParser {
         if (StringUtils.isNotBlank(oAuthFlow.tokenUrl())) {
             oAuthFlowObject.setTokenUrl(oAuthFlow.tokenUrl());
         }
+        if (oAuthFlow.extensions().length > 0) {
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(oAuthFlow.extensions());
+            if (extensions != null) {
+                for (String ext : extensions.keySet()) {
+                    oAuthFlowObject.addExtension(ext, extensions.get(ext));
+                }
+            }
+        }
+
         getScopes(oAuthFlow.scopes()).ifPresent(oAuthFlowObject::setScopes);
         return Optional.of(oAuthFlowObject);
     }
@@ -137,6 +166,9 @@ public class SecurityParser {
         if (!isEmpty(oAuthFlows.password())) {
             return false;
         }
+        if (oAuthFlows.extensions().length > 0) {
+            return false;
+        }
         return true;
     }
 
@@ -154,6 +186,9 @@ public class SecurityParser {
             return false;
         }
         if (!isEmpty(oAuthFlow.scopes())) {
+            return false;
+        }
+        if (oAuthFlow.extensions().length > 0) {
             return false;
         }
         return true;
