@@ -252,6 +252,9 @@ public class Reader implements OpenApiReader {
 
         List<io.swagger.v3.oas.annotations.security.SecurityScheme> apiSecurityScheme = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.v3.oas.annotations.security.SecurityScheme.class);
         List<io.swagger.v3.oas.annotations.security.SecurityRequirement> apiSecurityRequirements = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.v3.oas.annotations.security.SecurityRequirement.class);
+        List<Extension> apiClassExtensions = ReflectionUtils.getRepeatableAnnotations(cls, Extension.class);
+        openAPI.setExtensions(getExtensions(apiClassExtensions));
+
         ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, ExternalDocumentation.class);
         io.swagger.v3.oas.annotations.tags.Tag[] apiTags = ReflectionUtils.getRepeatableAnnotationsArray(cls, io.swagger.v3.oas.annotations.tags.Tag.class);
         io.swagger.v3.oas.annotations.servers.Server[] apiServers = ReflectionUtils.getRepeatableAnnotationsArray(cls, io.swagger.v3.oas.annotations.servers.Server.class);
@@ -705,7 +708,6 @@ public class Reader implements OpenApiReader {
         io.swagger.v3.oas.annotations.parameters.RequestBody apiRequestBody =
                 ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.parameters.RequestBody.class);
 
-
         // TODO extensions
         List<Extension> apiExtensions = ReflectionUtils.getRepeatableAnnotations(method, Extension.class);
         ExternalDocumentation apiExternalDocumentation = ReflectionUtils.getAnnotation(method, ExternalDocumentation.class);
@@ -786,7 +788,7 @@ public class Reader implements OpenApiReader {
         }
 
         // RequestBody in Method
-        if (apiRequestBody != null && operation.getRequestBody() == null){
+        if (apiRequestBody != null && operation.getRequestBody() == null) {
             OperationParser.getRequestBody(apiRequestBody, classConsumes, methodConsumes, components).ifPresent(
                     operation::setRequestBody);
         }
@@ -1211,5 +1213,15 @@ public class Reader implements OpenApiReader {
             LOGGER.error("Unknown class definition: {}", cls);
             return null;
         }
+    }
+
+    private Map<String, Object> getExtensions(final List<Extension> apiExtensions) {
+        final Map<String, Object> extensions = new HashMap<>();
+        if (apiExtensions != null) {
+            apiExtensions.forEach(extension -> {
+                extensions.put(extension.name(), extension.properties());
+            });
+        }
+        return extensions;
     }
 }
