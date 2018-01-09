@@ -999,7 +999,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
-        if (subtypeProps.isEmpty()) {
+        if (subtypeProps == null || subtypeProps.isEmpty()) {
             child.setProperties(null);
         }
     }
