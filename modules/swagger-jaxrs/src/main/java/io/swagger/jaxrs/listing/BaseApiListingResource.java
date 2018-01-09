@@ -139,19 +139,9 @@ public abstract class BaseApiListingResource {
             HttpHeaders headers,
             UriInfo uriInfo) {
         Swagger swagger = process(app, servletContext, servletConfig, headers, uriInfo);
-        try {
-            if (swagger != null) {
-                String yaml = Yaml.mapper().writeValueAsString(swagger);
-                StringBuilder b = new StringBuilder();
-                String[] parts = yaml.split("\n");
-                for (String part : parts) {
-                    b.append(part);
-                    b.append("\n");
-                }
-                return Response.ok().entity(b.toString()).type("application/yaml").build();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        
+        if (swagger != null) {
+            return Response.ok().entity(swagger).type("application/yaml").build();
         }
         return Response.status(404).build();
     }
@@ -165,10 +155,9 @@ public abstract class BaseApiListingResource {
         Swagger swagger = process(app, servletContext, servletConfig, headers, uriInfo);
 
         if (swagger != null) {
-            return Response.ok().entity(swagger).build();
-        } else {
-            return Response.status(404).build();
+            return Response.ok().entity(swagger).type(MediaType.APPLICATION_JSON).build();
         }
+        return Response.status(404).build();
     }
 
     private static Map<String, List<String>> getQueryParams(MultivaluedMap<String, String> params) {

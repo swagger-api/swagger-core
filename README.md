@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/swagger-api/swagger-core.svg?branch=master)](https://travis-ci.org/swagger-api/swagger-core)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project)
-[![PR Stats](http://issuestats.com/github/swagger-api/swagger-core/badge/pr)](http://issuestats.com/github/swagger-api/swagger-core) [![Issue Stats](http://issuestats.com/github/swagger-api/swagger-core/badge/issue)](http://issuestats.com/github/swagger-api/swagger-core)
 
 Javadocs for annotations with the current release are [available online](http://docs.swagger.io/swagger-core/current/apidocs/index.html).
 
@@ -33,8 +32,11 @@ The OpenAPI Specification has undergone 3 revisions since initial creation in 20
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-1.5.11-SNAPSHOT            |              | 2.0           | [master](https://github.com/swagger-api/swagger-core) | Under Development
-1.5.10 (**current stable**)| 2016-08-19   | 2.0           | [tag v1.5.10](https://github.com/swagger-api/swagger-core/tree/v1.5.10) | Supported
+2.0.0-rc3                 | 2017-11-21   | 3.0           | [tag v2.0.0-rc3](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc3) | Supported
+2.0.0-rc2                 | 2017-09-29   | 3.0           | [tag v2.0.0-rc2](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc2) | Supported
+2.0.0-rc1                 | 2017-08-17   | 3.0           | [tag v2.0.0-rc1](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc1) | Supported
+1.5.17 (**current stable**)| 2017-11-21  | 2.0           | [tag v1.5.17](https://github.com/swagger-api/swagger-core/tree/v1.5.17) | Supported
+1.5.16                    | 2017-07-15   | 2.0           | [tag v1.5.16](https://github.com/swagger-api/swagger-core/tree/v1.5.16) | Supported
 1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Supported
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4) | Deprecated
 1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0) | Deprecated
@@ -53,10 +55,15 @@ You need the following installed and available in your $PATH:
 
 * Java 7 (http://java.oracle.com)
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
-* Jackson 2.4.5 or greater
+
+### Prerequisites 2.X
+You need the following installed and available in your $PATH:
+
+* Java 8 (http://java.oracle.com)
+* Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
 
-### To build from source (currently 1.5.11-SNAPSHOT)
+### To build from source (currently 1.5.18-SNAPSHOT)
 ```
 # first time building locally
 mvn -N

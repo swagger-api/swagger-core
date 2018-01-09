@@ -8,6 +8,7 @@ import io.swagger.models.RefModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
@@ -97,6 +98,7 @@ public class PropertyBuilder {
         READ_ONLY("readOnly"),
         REQUIRED("required"),
         VENDOR_EXTENSIONS("vendorExtensions"),
+        ALLOW_EMPTY_VALUE("allowEmptyValue"),
         MULTIPLE_OF("multipleOf");
 
         private String propertyName;
@@ -155,6 +157,30 @@ public class PropertyBuilder {
             @Override
             protected ByteArrayProperty create() {
                 return new ByteArrayProperty();
+            }
+
+            @Override
+            public Property merge(final Property property, final Map<PropertyId, Object> args) {
+                super.merge(property, args);
+                if (property instanceof ByteArrayProperty) {
+                    final ByteArrayProperty resolved = (ByteArrayProperty) property;
+                    mergeString(resolved, args);
+                    // the string properties for pattern and enum will be ignored, they doesn't make sense for
+                    // base64 encoded strings - instead an appropriate base64 pattern is set
+                    resolved.setEnum(null);
+                    resolved.setPattern("^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$");
+                }
+
+                return property;
+            }
+
+            @Override
+            public Model toModel(final Property property) {
+                if (isType(property)) {
+                    return createStringModel((StringProperty) property);
+                }
+
+                return null;
             }
         },
         BINARY(BinaryProperty.class) {
@@ -531,6 +557,17 @@ public class PropertyBuilder {
                 return new ObjectProperty();
             }
         },
+        UNTYPED(UntypedProperty.class) {
+            @Override
+            protected boolean isType(String type, String format) {
+                return UntypedProperty.isType(type, format);
+            }
+
+            @Override
+            protected UntypedProperty create() {
+                return new UntypedProperty();
+            }
+        },
         ARRAY(ArrayProperty.class) {
             @Override
             protected boolean isType(String type, String format) {
@@ -668,12 +705,16 @@ public class PropertyBuilder {
 
         protected <N extends AbstractNumericProperty> N mergeNumeric(N property, Map<PropertyId, Object> args) {
             if (args.containsKey(PropertyId.MINIMUM)) {
-                final Double value = PropertyId.MINIMUM.findValue(args);
-                property.setMinimum(value);
+                final BigDecimal value = PropertyId.MINIMUM.findValue(args);
+                if(value != null) {
+                    property.setMinimum(value);
+                }
             }
             if (args.containsKey(PropertyId.MAXIMUM)) {
-                final Double value = PropertyId.MAXIMUM.findValue(args);
-                property.setMaximum(value);
+                final BigDecimal value = PropertyId.MAXIMUM.findValue(args);
+                if(value != null) {
+                    property.setMaximum(value);
+                }
             }
             if (args.containsKey(PropertyId.EXCLUSIVE_MINIMUM)) {
                 final Boolean value = PropertyId.EXCLUSIVE_MINIMUM.findValue(args);
@@ -684,8 +725,10 @@ public class PropertyBuilder {
                 property.setExclusiveMaximum(value);
             }
             if (args.containsKey(PropertyId.MULTIPLE_OF)) {
-                final Double value = PropertyId.MULTIPLE_OF.findValue(args);
-                property.setMultipleOf(value);
+                final BigDecimal value = PropertyId.MULTIPLE_OF.findValue(args);
+                if(value != null) {
+                    property.setMultipleOf(value);
+                }
             }
             return property;
         }
@@ -752,6 +795,10 @@ public class PropertyBuilder {
                 if (resolved.getFormat() == null) {
                     resolved.setFormat(PropertyId.FORMAT.<String>findValue(args));
                 }
+                if(args.containsKey(PropertyId.ALLOW_EMPTY_VALUE)) {
+                    final Boolean value = PropertyId.ALLOW_EMPTY_VALUE.findValue(args);
+                    resolved.setAllowEmptyValue(value);
+                }
                 if (args.containsKey(PropertyId.TITLE)) {
                     final String value = PropertyId.TITLE.findValue(args);
                     resolved.setTitle(value);
@@ -771,6 +818,17 @@ public class PropertyBuilder {
                 if(args.containsKey(PropertyId.ENUM)) {
                     final List<String> values = PropertyId.ENUM.findValue(args);
                     if(values != null) {
+                        if(property instanceof BooleanProperty) {
+                            BooleanProperty p = (BooleanProperty) property;
+                            for(String value : values) {
+                                try {
+                                    p._enum(Boolean.parseBoolean(value));
+                                }
+                                catch(Exception e) {
+                                    // continue
+                                }
+                            }
+                        }
                         if(property instanceof IntegerProperty) {
                             IntegerProperty p = (IntegerProperty) property;
                             for(String value : values) {

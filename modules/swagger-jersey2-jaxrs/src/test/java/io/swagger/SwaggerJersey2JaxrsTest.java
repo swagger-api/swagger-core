@@ -17,6 +17,7 @@ import io.swagger.params.BaseBean;
 import io.swagger.params.ChildBean;
 import io.swagger.params.EnumBean;
 import io.swagger.params.RefBean;
+import io.swagger.resources.Resource2031;
 import io.swagger.resources.ResourceWithFormData;
 import io.swagger.resources.ResourceWithJacksonBean;
 import io.swagger.resources.ResourceWithKnownInjections;
@@ -189,6 +190,13 @@ public class SwaggerJersey2JaxrsTest {
 
         assertEquals(o.getProperties().keySet(), Sets.newHashSet("identity", "bean", "code", "message",
                 "precodesuf", "premessagesuf"));
+    }
+
+    @Test(description = "Tests issue 2031")
+    public void testIssue2031() {
+        final Swagger swagger = new Reader(new Swagger()).read(Resource2031.class);
+        assertNotNull(swagger);
+
     }
 
     private String getName(List<Parameter> resourceParameters, int i) {

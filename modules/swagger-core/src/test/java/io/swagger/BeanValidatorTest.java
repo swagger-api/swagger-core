@@ -12,6 +12,7 @@ import io.swagger.models.properties.StringProperty;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 public class BeanValidatorTest {
@@ -23,8 +24,8 @@ public class BeanValidatorTest {
         final Map<String, Property> properties = model.getProperties();
 
         final IntegerProperty age = (IntegerProperty) properties.get("age");
-        Assert.assertEquals(age.getMinimum(), 13.0);
-        Assert.assertEquals(age.getMaximum(), 99.0);
+        Assert.assertEquals(age.getMinimum(), new BigDecimal(13.0));
+        Assert.assertEquals(age.getMaximum(), new BigDecimal(99.0));
 
         final StringProperty password = (StringProperty) properties.get("password");
         Assert.assertEquals((int) password.getMinLength(), 6);

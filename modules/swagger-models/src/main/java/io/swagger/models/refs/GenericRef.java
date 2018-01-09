@@ -4,11 +4,12 @@ package io.swagger.models.refs;
  * A class the encapsulates logic that is common to RefModel, RefParameter, and RefProperty.
  */
 public class GenericRef {
+    private RefFormat format;
+    private RefType type;
+    private String ref;
+    private String simpleRef;
 
-    private final RefFormat format;
-    private final RefType type;
-    private final String ref;
-    private final String simpleRef;
+    public GenericRef(){}
 
     public GenericRef(RefType type, String ref) {
         this.format = computeRefFormat(ref);
@@ -49,7 +50,7 @@ public class GenericRef {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof GenericRef)) {
             return false;
         }
 
@@ -64,7 +65,7 @@ public class GenericRef {
         if (ref != null ? !ref.equals(that.ref) : that.ref != null) {
             return false;
         }
-        return !(simpleRef != null ? !simpleRef.equals(that.simpleRef) : that.simpleRef != null);
+        return simpleRef != null ? simpleRef.equals(that.simpleRef) : that.simpleRef == null;
 
     }
 
@@ -82,7 +83,7 @@ public class GenericRef {
         //simple refs really only apply to internal refs
         if (format == RefFormat.INTERNAL) {
             String prefix = type.getInternalPrefix();
-            result = ref.substring(prefix.length());
+            result = ref.substring(ref.lastIndexOf("/") + 1);
         }
 
         return result;
@@ -90,7 +91,7 @@ public class GenericRef {
 
     private static RefFormat computeRefFormat(String ref) {
         RefFormat result = RefFormat.INTERNAL;
-        if (ref.startsWith("http")) {
+        if (ref.startsWith("http:") || ref.startsWith("https:")) {
             result = RefFormat.URL;
         } else if (ref.startsWith("#/")) {
             result = RefFormat.INTERNAL;

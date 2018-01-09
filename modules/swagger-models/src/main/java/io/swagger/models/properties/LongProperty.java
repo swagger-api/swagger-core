@@ -64,6 +64,11 @@ public class LongProperty extends BaseIntegerProperty {
         return this;
     }
 
+    public LongProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
+
     public Long getDefault() {
         return _default;
     }

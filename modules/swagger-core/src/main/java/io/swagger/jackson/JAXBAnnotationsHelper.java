@@ -48,13 +48,16 @@ class JAXBAnnotationsHelper {
         if (wrapper != null) {
             final Xml xml = getXml(property);
             xml.setWrapped(true);
-            if (!"##default".equals(wrapper.name()) && !wrapper.name().isEmpty()) {
+            // No need to set the xml name if the name provided by xmlelementwrapper annotation is ##default or equal to the property name | https://github.com/swagger-api/swagger-core/pull/2050
+            if (!"##default".equals(wrapper.name()) && !wrapper.name().isEmpty() && !wrapper.name().equals(property.getName())) {
                 xml.setName(wrapper.name());
             }
         }
-        final XmlElement element = member.getAnnotation(XmlElement.class);
-        if (element != null) {
-            setName(element.namespace(), element.name(), property);
+        else {
+            final XmlElement element = member.getAnnotation(XmlElement.class);
+            if (element != null) {
+                setName(element.namespace(), element.name(), property);
+            }
         }
     }
 

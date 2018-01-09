@@ -1,5 +1,7 @@
 package io.swagger.models.properties;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import io.swagger.models.Xml;
 
 import java.util.ArrayList;
@@ -7,9 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonSetter;
 
 public class ObjectProperty extends AbstractProperty implements Property {
     public static final String TYPE = "object";
@@ -87,6 +86,11 @@ public class ObjectProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public ObjectProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
+
     public Map<String, Property> getProperties(){
       return this.properties;
     }
@@ -131,7 +135,7 @@ public class ObjectProperty extends AbstractProperty implements Property {
         return this;
     }
 
-    public ObjectProperty example(String example) {
+    public ObjectProperty example(Object example) {
         this.setExample(example);
         return this;
     }

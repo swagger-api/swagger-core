@@ -10,7 +10,7 @@
     <artifactId>swagger-project</artifactId>
     <packaging>pom</packaging>
     <name>swagger-project</name>
-    <version>1.5.11-SNAPSHOT</version>
+    <version>1.5.18-SNAPSHOT</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
@@ -481,35 +481,41 @@
                 <artifactId>guava</artifactId>
                 <version>${guava-version}</version>
             </dependency>
+            <dependency>
+                <!-- resolve reflections 0.9.11 vs jersey-common 2.25.1 conflict -->
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist-version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
-        <joda-version>1.2</joda-version>
-        <joda-time-version>2.2</joda-time-version>
+        <joda-version>1.8.1</joda-version>
+        <joda-time-version>2.9.1</joda-time-version>
 
-        <felix-version>2.3.7</felix-version>
+        <felix-version>3.3.0</felix-version>
         <servlet-api-version>2.5</servlet-api-version>
         <jersey-version>1.13</jersey-version>
-        <jersey2-version>2.1</jersey2-version>
-        <jackson-version>2.4.5</jackson-version>
-        <jackson-guava-version>2.4.5</jackson-guava-version>
-        <logback-version>1.0.1</logback-version>
-        <reflections-version>0.9.10</reflections-version>
-        <guava-version>18.0</guava-version>
+        <jersey2-version>2.25.1</jersey2-version>
+        <jackson-version>2.9.3</jackson-version>
+        <logback-version>1.2.3</logback-version>
+        <reflections-version>0.9.11</reflections-version>
+        <guava-version>20.0</guava-version>
+        <javassist-version>3.21.0-GA</javassist-version>
 
-        <testng-version>6.9.4</testng-version>
+        <testng-version>6.10</testng-version>
         <mockito-version>1.9.5</mockito-version>
         <rest-assured-version>2.8.0</rest-assured-version>
         <surefire-version>2.18.1</surefire-version>
         <maven-plugin-version>1.0.0</maven-plugin-version>
         <commons-lang-version>3.2.1</commons-lang-version>
-        <slf4j-version>1.6.3</slf4j-version>
+        <slf4j-version>1.7.22</slf4j-version>
         <jetty-version>9.2.14.v20151106</jetty-version>
         <servlet-api-version>2.5</servlet-api-version>
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
-        <commons-io-version>2.4</commons-io-version>
+        <commons-io-version>2.5</commons-io-version>
         <enforcer-plugin-version>1.4</enforcer-plugin-version>
         <failsafe-plugin-version>2.19.1</failsafe-plugin-version>
     </properties>

@@ -5,18 +5,54 @@ import io.swagger.models.ExternalDocs;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
-import io.swagger.models.parameters.*;
-import io.swagger.resources.*;
+import io.swagger.models.parameters.BodyParameter;
+import io.swagger.models.parameters.FormParameter;
+import io.swagger.models.parameters.HeaderParameter;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.PathParameter;
+import io.swagger.models.parameters.QueryParameter;
+import io.swagger.resources.AnnotatedInterfaceImpl;
+import io.swagger.resources.ApiConsumesProducesResource;
+import io.swagger.resources.ApiMultipleConsumesProducesResource;
+import io.swagger.resources.BookResource;
+import io.swagger.resources.BothConsumesProducesResource;
+import io.swagger.resources.DescendantResource;
+import io.swagger.resources.IndirectImplicitParamsImpl;
+import io.swagger.resources.NoConsumesProducesResource;
+import io.swagger.resources.Resource1970;
+import io.swagger.resources.ResourceWithAnnotationsOnlyInInterfaceImpl;
+import io.swagger.resources.ResourceWithClassLevelApiResourceNoMethodLevelApiResources;
+import io.swagger.resources.ResourceWithCustomException;
+import io.swagger.resources.ResourceWithCustomExceptionAndClassLevelApiResource;
+import io.swagger.resources.ResourceWithDeprecatedMethod;
+import io.swagger.resources.ResourceWithEmptyPath;
+import io.swagger.resources.ResourceWithExternalDocs;
+import io.swagger.resources.ResourceWithImplicitFileParam;
+import io.swagger.resources.ResourceWithImplicitParams;
+import io.swagger.resources.ResourceWithKnownInjections;
+import io.swagger.resources.ResourceWithValidation;
+import io.swagger.resources.RsConsumesProducesResource;
+import io.swagger.resources.RsMultipleConsumesProducesResource;
+import io.swagger.resources.SimpleMethods;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.*;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 public class ReaderTest {
     private static final String APPLICATION_XML = "application/xml";
@@ -190,10 +226,10 @@ public class ReaderTest {
     @Test(description = "scan implicit params")
     public void scanImplicitParam() {
         Swagger swagger = getSwagger(ResourceWithImplicitParams.class);
-
         List<Parameter> params = swagger.getPath("/testString").getPost().getParameters();
         assertNotNull(params);
-        assertEquals(params.size(), 7);
+        assertEquals(params.size(), 8);
+
         assertEquals(params.get(0).getName(), "sort");
         assertEquals(params.get(0).getIn(), "query");
 
@@ -206,12 +242,12 @@ public class ReaderTest {
         HeaderParameter headerParam = (HeaderParameter) params.get(2);
         assertEquals(headerParam.getName(), "size");
         assertEquals(headerParam.getIn(), "header");
-        assertEquals(headerParam.getMinimum(), 1.0);
+        assertEquals(headerParam.getMinimum(), new BigDecimal(1.0));
 
         FormParameter formParam = (FormParameter) params.get(3);
         assertEquals(formParam.getName(), "width");
         assertEquals(formParam.getIn(), "formData");
-        assertEquals(formParam.getMaximum(), 1.0);
+        assertEquals(formParam.getMaximum(), new BigDecimal(1.0));
 
         assertEquals(params.get(4).getName(), "width");
         assertEquals(params.get(4).getIn(), "formData");
@@ -219,13 +255,20 @@ public class ReaderTest {
         QueryParameter queryParam = (QueryParameter) params.get(5);
         assertEquals(queryParam.getName(), "height");
         assertEquals(queryParam.getIn(), "query");
-        assertEquals(queryParam.getMinimum(), 3.0);
-        assertEquals(queryParam.getMaximum(), 4.0);
+        assertEquals(queryParam.getMinimum(), new BigDecimal(3.0));
+        assertEquals(queryParam.getMaximum(), new BigDecimal(4.0));
 
         BodyParameter bodyParam = (BodyParameter) params.get(6);
         assertEquals(bodyParam.getName(), "body");
         assertEquals(bodyParam.getIn(), "body");
         assertTrue(bodyParam.getRequired());
+
+        queryParam = (QueryParameter) params.get(7);
+        assertEquals(queryParam.getName(), "description");
+        assertEquals(queryParam.getIn(), "query");
+        // see https://github.com/swagger-api/swagger-core/issues/2556. should be not null
+        assertNull(queryParam.getType());
+
     }
 
     @Test(description = "scan implicit params with file objct")
@@ -287,15 +330,15 @@ public class ReaderTest {
 
         QueryParameter par = (QueryParameter) swagger.getPaths().get("/303").getOperations().get(0).getParameters().get(0);
         assertTrue(par.getRequired());
-        assertEquals(par.getMinimum(), 10D);
+        assertEquals(par.getMinimum(), new BigDecimal(10));
 
         par = (QueryParameter) swagger.getPaths().get("/swagger-and-303").getOperations().get(0).getParameters().get(0);
         assertTrue(par.getRequired());
-        assertEquals(par.getMinimum(), 7D);
+        assertEquals(par.getMinimum(), new BigDecimal(7));
 
         par = (QueryParameter) swagger.getPaths().get("/swagger").getOperations().get(0).getParameters().get(0);
         assertTrue(par.getRequired());
-        assertEquals(par.getMinimum(), 7D);
+        assertEquals(par.getMinimum(), new BigDecimal(7));
     }
 
     @Test(description = "scan resource with annotated exception")

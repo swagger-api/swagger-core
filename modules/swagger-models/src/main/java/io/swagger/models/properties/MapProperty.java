@@ -72,6 +72,11 @@ public class MapProperty extends AbstractProperty implements Property {
         this.maxProperties = maxProperties;
     }
 
+    public MapProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

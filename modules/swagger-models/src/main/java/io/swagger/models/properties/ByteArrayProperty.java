@@ -2,7 +2,7 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
-public class ByteArrayProperty extends AbstractProperty implements Property {
+public class ByteArrayProperty extends StringProperty implements Property {
 
 
     public ByteArrayProperty() {
@@ -28,6 +28,11 @@ public class ByteArrayProperty extends AbstractProperty implements Property {
 
     public ByteArrayProperty vendorExtension(String key, Object obj) {
         this.setVendorExtension(key, obj);
+        return this;
+    }
+
+    public ByteArrayProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
         return this;
     }
 }

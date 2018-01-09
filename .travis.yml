@@ -1,6 +1,13 @@
 sudo: false
 language: java
-script: mvn clean verify
+script: ./mvnw clean verify
 jdk:
-  - oraclejdk7
-
+  - openjdk7
+after_success:
+  - if [ $SONATYPE_USERNAME ] && [ -z $TRAVIS_TAG ] && [ $TRAVIS_PULL_REQUEST == false ]; then
+      ./mvnw clean deploy --settings .travis/settings.xml;
+    fi;
+branches:
+  only:
+  - master
+  - 2.0

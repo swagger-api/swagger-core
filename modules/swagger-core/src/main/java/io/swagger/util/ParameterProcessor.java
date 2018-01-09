@@ -31,6 +31,7 @@ import javax.validation.constraints.Size;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,12 @@ public class ParameterProcessor {
             if (param.isRequired()) {
                 p.setRequired(true);
             }
+            if(param.getReadOnly()) {
+                p.readOnly(param.getReadOnly());
+            }
+            if(param.getAllowEmptyValue()) {
+                p.allowEmptyValue(param.getAllowEmptyValue());
+            }
             if (StringUtils.isNotEmpty(param.getName())) {
                 p.setName(param.getName());
             }
@@ -66,6 +73,9 @@ public class ParameterProcessor {
             if (StringUtils.isNotEmpty(param.getAccess())) {
                 p.setAccess(param.getAccess());
             }
+            if(StringUtils.isNoneEmpty(param.getCollectionFormat())) {
+                p.setCollectionFormat(param.getCollectionFormat());
+            }
             if (StringUtils.isNotEmpty(param.getDataType())) {
                 if ("java.io.File".equalsIgnoreCase(param.getDataType())) {
                     p.setProperty(new FileProperty());
@@ -75,15 +85,15 @@ public class ParameterProcessor {
                     p.setType(param.getDataType());
                 }
             }
-            if (helper.getMin() != null || helper.getDecimalMin() != null) {
-                p.setMinimum(helper.getMin() != null ? new Double(helper.getMin()) : helper.getDecimalMin());
+            if (helper.getMin() != null) {
+                p.setMinimum(helper.getMin());
                 if (helper.isMinExclusive()) {
                     p.setExclusiveMinimum(true);
                 }
             }
 
-            if (helper.getMax() != null || helper.getDecimalMax() != null) {
-                p.setMaximum(helper.getMax() != null ? new Double(helper.getMax()) : helper.getDecimalMax());
+            if (helper.getMax() != null) {
+                p.setMaximum(helper.getMax());
                 if (helper.isMaxExclusive()) {
                     p.setExclusiveMaximum(true);
                 }
@@ -162,17 +172,17 @@ public class ParameterProcessor {
                  * a validator themselves.
                  */
 
-                if (helper.getMin() != null || helper.getDecimalMin() != null) {
+                if (helper.getMin() != null) {
                     args.put(PropertyBuilder.PropertyId.MINIMUM,
-                            helper.getMin() != null ? new Double(helper.getMin()) : helper.getDecimalMin());
+                            helper.getMin());
                     if (helper.isMinExclusive()) {
                         args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM, true);
                     }
                 }
 
-                if (helper.getMax() != null || helper.getDecimalMax() != null) {
+                if (helper.getMax() != null) {
                     args.put(PropertyBuilder.PropertyId.MAXIMUM,
-                            helper.getMax() != null ? new Double(helper.getMax()) : helper.getDecimalMax());
+                            helper.getMax());
                     if (helper.isMaxExclusive()) {
                         args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM, true);
                     }
@@ -275,10 +285,10 @@ public class ParameterProcessor {
             p.setEnum((List<String>) args.get(PropertyBuilder.PropertyId.ENUM));
         } else {
             if (args.containsKey(PropertyBuilder.PropertyId.MINIMUM)) {
-                p.setMinimum((Double) args.get(PropertyBuilder.PropertyId.MINIMUM));
+                p.setMinimum((BigDecimal) args.get(PropertyBuilder.PropertyId.MINIMUM));
             }
             if (args.containsKey(PropertyBuilder.PropertyId.MAXIMUM)) {
-                p.setMaximum((Double) args.get(PropertyBuilder.PropertyId.MAXIMUM));
+                p.setMaximum((BigDecimal) args.get(PropertyBuilder.PropertyId.MAXIMUM));
             }
             if (args.containsKey(PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM)) {
                 p.setExclusiveMinimum((Boolean) args.get(PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM) ? true : null);
@@ -294,10 +304,10 @@ public class ParameterProcessor {
             return;
         }
         if (helper.getMin() != null) {
-            p.setMinimum((Double) helper.getMin().doubleValue());
+            p.setMinimum(helper.getMin());
         }
         if (helper.getMax() != null) {
-            p.setMaximum((Double) helper.getMax().doubleValue());
+            p.setMaximum(helper.getMax());
         }
     }
 
@@ -333,6 +343,12 @@ public class ParameterProcessor {
         String getType();
 
         String getFormat();
+
+        boolean getReadOnly();
+
+        boolean getAllowEmptyValue();
+
+        String getCollectionFormat();
     }
 
     /**
@@ -349,15 +365,15 @@ public class ParameterProcessor {
         private Integer minItems;
         private Integer maxItems;
         private Boolean required;
-        private Long min;
-        private Double decimalMin;
+        private BigDecimal min;
         private boolean minExclusive = false;
-        private Long max;
-        private Double decimalMax;
+        private BigDecimal max;
         private boolean maxExclusive = false;
         private Integer minLength;
         private Integer maxLength;
         private String pattern;
+        private Boolean allowEmptyValue;
+        private String collectionFormat;
 
         /**
          * Constructs an instance.
@@ -376,7 +392,7 @@ public class ParameterProcessor {
                     apiParam = new ApiImplicitParamWrapper((ApiImplicitParam) item);
                 } else if ("javax.ws.rs.DefaultValue".equals(item.annotationType().getName())) {
                     try {
-                        rsDefault = (String) item.getClass().getMethod("value").invoke(item);
+                        rsDefault = (String) item.annotationType().getMethod("value").invoke(item);
                     } catch (Exception ex) {
                         LOGGER.error("Invocation of value method failed", ex);
                     }
@@ -390,16 +406,16 @@ public class ParameterProcessor {
                 } else if (item instanceof NotNull) {
                     required = true;
                 } else if (item instanceof Min) {
-                    min = ((Min) item).value();
+                    min = new BigDecimal(((Min) item).value());
                 } else if (item instanceof Max) {
-                    max = ((Max) item).value();
+                    max = new BigDecimal(((Max) item).value());
                 } else if (item instanceof DecimalMin) {
                     DecimalMin decimalMinAnnotation = (DecimalMin) item;
-                    decimalMin = new Double(decimalMinAnnotation.value());
+                    min = new BigDecimal(decimalMinAnnotation.value());
                     minExclusive = !decimalMinAnnotation.inclusive();
                 } else if (item instanceof DecimalMax) {
                     DecimalMax decimalMaxAnnotation = (DecimalMax) item;
-                    decimalMax = new Double(decimalMaxAnnotation.value());
+                    max = new BigDecimal(decimalMaxAnnotation.value());
                     maxExclusive = !decimalMaxAnnotation.inclusive();
                 } else if (item instanceof Pattern) {
                     pattern = ((Pattern) item).regexp();
@@ -409,8 +425,8 @@ public class ParameterProcessor {
                 Property property = ModelConverters.getInstance().readAsProperty(_type);
                 boolean defaultToArray = apiParam != null && apiParam.isAllowMultiple();
                 if (!defaultToArray && property instanceof AbstractNumericProperty) {
-                    min = (long) size.min();
-                    max = (long) size.max();
+                    min = new BigDecimal(size.min());
+                    max = new BigDecimal(size.max());
                 } else if (!defaultToArray && property instanceof StringProperty) {
                     minLength = size.min();
                     maxLength = size.max();
@@ -422,6 +438,8 @@ public class ParameterProcessor {
             defaultValue = StringUtils.isNotEmpty(apiParam.getDefaultValue()) ? apiParam.getDefaultValue() : rsDefault;
             type = StringUtils.isNotEmpty(apiParam.getType()) ? apiParam.getType() : null;
             format = StringUtils.isNotEmpty(apiParam.getFormat()) ? apiParam.getFormat() : null;
+            allowEmptyValue = apiParam.isAllowMultiple() ? true : null;
+            collectionFormat = StringUtils.isNoneEmpty(apiParam.getCollectionFormat()) ? apiParam.getCollectionFormat() : null;
         }
 
         private boolean isAssignableToNumber(Class<?> clazz) {
@@ -489,19 +507,15 @@ public class ParameterProcessor {
             return required;
         }
 
-        public Long getMax() {
+        public BigDecimal getMax() {
             return max;
-        }
-
-        public Double getDecimalMax() {
-            return decimalMax;
         }
 
         public boolean isMaxExclusive() {
             return maxExclusive;
         }
 
-        public Long getMin() {
+        public BigDecimal getMin() {
             return min;
         }
 
@@ -511,10 +525,6 @@ public class ParameterProcessor {
 
         public String getFormat() {
             return format;
-        }
-
-        public Double getDecimalMin() {
-            return decimalMin;
         }
 
         public boolean isMinExclusive() {
@@ -531,6 +541,14 @@ public class ParameterProcessor {
 
         public String getPattern() {
             return pattern;
+        }
+
+        public Boolean getAllowEmptyValue() {
+            return allowEmptyValue;
+        }
+
+        public String getCollectionFormat() {
+            return collectionFormat;
         }
     }
 
@@ -617,6 +635,18 @@ public class ParameterProcessor {
         public String getFormat() {
             return apiParam.format();
         }
+
+        public boolean getReadOnly() {
+            return apiParam.readOnly();
+        }
+
+        public boolean getAllowEmptyValue() {
+            return apiParam.allowEmptyValue();
+        }
+
+        public String getCollectionFormat() {
+            return apiParam.collectionFormat();
+        }
     }
 
     /**
@@ -700,6 +730,18 @@ public class ParameterProcessor {
 
         public String getFormat() {
             return apiParam.format();
+        }
+
+        public boolean getReadOnly() {
+            return apiParam.readOnly();
+        }
+
+        public boolean getAllowEmptyValue() {
+            return apiParam.allowEmptyValue();
+        }
+
+        public String getCollectionFormat() {
+            return apiParam.collectionFormat();
         }
     }
 }

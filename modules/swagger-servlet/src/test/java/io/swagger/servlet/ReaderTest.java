@@ -43,12 +43,12 @@ public class ReaderTest {
 
         Assert.assertEquals(swagger.getHost(), "host");
         Assert.assertEquals(swagger.getBasePath(), "/api");
-        Assert.assertNotNull(swagger.getPath("/resources/testMethod3"));
+        Assert.assertNotNull(swagger.getPath("/resources/users"));
         Assert.assertNotNull(swagger.getDefinitions().get("SampleData"));
         Assert.assertEquals(swagger.getExternalDocs().getDescription(), "docs");
         Assert.assertEquals(swagger.getExternalDocs().getUrl(), "url_to_docs");
 
-        Path path = swagger.getPath("/resources/testMethod3");
+        Path path = swagger.getPath("/resources/users");
         Assert.assertNotNull(path);
         Operation get = path.getGet();
         Assert.assertNotNull( get );

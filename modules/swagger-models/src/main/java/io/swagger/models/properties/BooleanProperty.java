@@ -2,9 +2,13 @@ package io.swagger.models.properties;
 
 import io.swagger.models.Xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BooleanProperty extends AbstractProperty implements Property {
     public static final String TYPE = "boolean";
     protected Boolean _default;
+    protected List<Boolean> _enum;
 
     public BooleanProperty() {
         super.type = TYPE;
@@ -12,6 +16,16 @@ public class BooleanProperty extends AbstractProperty implements Property {
 
     public static boolean isType(String type, String format) {
         return TYPE.equals(type);
+    }
+
+    public BooleanProperty _enum(Boolean value) {
+        if (this._enum == null) {
+            this._enum = new ArrayList<Boolean>();
+        }
+        if (!_enum.contains(value)) {
+            _enum.add(value);
+        }
+        return this;
     }
 
     public BooleanProperty xml(Xml xml) {
@@ -27,7 +41,9 @@ public class BooleanProperty extends AbstractProperty implements Property {
     @Override
     public void setExample(Object example) {
         if (example instanceof String) {
-            this.example = Boolean.parseBoolean((String)example);
+            if (!((String) example).isEmpty()) {
+                this.example = Boolean.parseBoolean((String) example);
+            }
         } else {
             this.example = example;
         }
@@ -54,6 +70,41 @@ public class BooleanProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof BooleanProperty)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        BooleanProperty that = (BooleanProperty) o;
+
+        if (_default != null ? !_default.equals(that._default) : that._default != null) {
+            return false;
+        }
+        return _enum != null ? _enum.equals(that._enum) : that._enum == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (_default != null ? _default.hashCode() : 0);
+        result = 31 * result + (_enum != null ? _enum.hashCode() : 0);
+        return result;
+    }
+
+    public BooleanProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+
+    }
+
     public Boolean getDefault() {
         return _default;
     }
@@ -66,30 +117,12 @@ public class BooleanProperty extends AbstractProperty implements Property {
         this._default = _default;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((_default == null) ? 0 : _default.hashCode());
-        return result;
+    public List<Boolean> getEnum() {
+        return _enum;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (!(obj instanceof BooleanProperty)) {
-            return false;
-        }
-        BooleanProperty other = (BooleanProperty) obj;
-        if (_default == null) {
-            if (other._default != null) {
-                return false;
-            }
-        } else if (!_default.equals(other._default)) {
-            return false;
-        }
-        return true;
+    public void setEnum(List<Boolean> _enum) {
+        this._enum = _enum;
     }
+
 }

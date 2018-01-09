@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -51,6 +52,11 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
     private static Double getDouble(JsonNode node, PropertyBuilder.PropertyId type) {
         final JsonNode detailNode = getDetailNode(node, type);
         return detailNode == null ? null : detailNode.doubleValue();
+    }
+
+    private static BigDecimal getBigDecimal(JsonNode node, PropertyBuilder.PropertyId type) {
+        final JsonNode detailNode = getDetailNode(node, type);
+        return detailNode == null ? null : new BigDecimal(detailNode.toString());
     }
 
     private static Boolean getBoolean(JsonNode node, PropertyBuilder.PropertyId type) {
@@ -185,8 +191,9 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         args.put(PropertyBuilder.PropertyId.MAX_PROPERTIES, getInteger(node, PropertyBuilder.PropertyId.MAX_PROPERTIES));
         args.put(PropertyBuilder.PropertyId.MIN_LENGTH, getInteger(node, PropertyBuilder.PropertyId.MIN_LENGTH));
         args.put(PropertyBuilder.PropertyId.MAX_LENGTH, getInteger(node, PropertyBuilder.PropertyId.MAX_LENGTH));
-        args.put(PropertyBuilder.PropertyId.MINIMUM, getDouble(node, PropertyBuilder.PropertyId.MINIMUM));
-        args.put(PropertyBuilder.PropertyId.MAXIMUM, getDouble(node, PropertyBuilder.PropertyId.MAXIMUM));
+        args.put(PropertyBuilder.PropertyId.MINIMUM, getBigDecimal(node, PropertyBuilder.PropertyId.MINIMUM));
+        args.put(PropertyBuilder.PropertyId.MAXIMUM, getBigDecimal(node, PropertyBuilder.PropertyId.MAXIMUM));
+        args.put(PropertyBuilder.PropertyId.MULTIPLE_OF, getBigDecimal(node, PropertyBuilder.PropertyId.MULTIPLE_OF));
         args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM, getBoolean(node, PropertyBuilder.PropertyId.EXCLUSIVE_MINIMUM));
         args.put(PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM, getBoolean(node, PropertyBuilder.PropertyId.EXCLUSIVE_MAXIMUM));
         args.put(PropertyBuilder.PropertyId.UNIQUE_ITEMS, getBoolean(node, PropertyBuilder.PropertyId.UNIQUE_ITEMS));
@@ -199,17 +206,21 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         final String type = getString(node, PropertyBuilder.PropertyId.TYPE);
         final String title = getString(node, PropertyBuilder.PropertyId.TITLE);
         final String format = getString(node, PropertyBuilder.PropertyId.FORMAT);
+        final Boolean readOnly = getBoolean(node, PropertyBuilder.PropertyId.READ_ONLY);
 
         String description = getString(node, PropertyBuilder.PropertyId.DESCRIPTION);
 
         JsonNode detailNode = node.get("$ref");
         if (detailNode != null) {
-            return new RefProperty(detailNode.asText())
-                    .description(description)
-                    .title(title);
+            RefProperty refProperty = new RefProperty(detailNode.asText());
+            refProperty.setDescription(description);
+            refProperty.setTitle(title);
+            refProperty.setReadOnly(readOnly);
+            return refProperty;
         }
 
         if (ObjectProperty.isType(type) || node.get("properties") != null) {
+            JsonNode example = getDetailNode(node, PropertyBuilder.PropertyId.EXAMPLE);
             detailNode = node.get("additionalProperties");
             if (detailNode != null && detailNode.getNodeType().equals(JsonNodeType.OBJECT)) {
                 Property items = propertyFromNode(detailNode);
@@ -217,9 +228,11 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                     MapProperty mapProperty = new MapProperty(items)
                             .description(description)
                             .title(title);
+                    mapProperty.setExample(example);
                     mapProperty.setMinProperties(getInteger(node, PropertyBuilder.PropertyId.MIN_PROPERTIES));
                     mapProperty.setMaxProperties(getInteger(node, PropertyBuilder.PropertyId.MAX_PROPERTIES));
                     mapProperty.setVendorExtensionMap(getVendorExtensions(node));
+                    mapProperty.setReadOnly(readOnly);
                     return mapProperty;
                 }
             } else {
@@ -248,6 +261,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                     ArrayProperty ap = new ArrayProperty()
                             .description(description)
                             .title(title);
+                    ap.setExample(example);
                     PropertyBuilder.merge(ap, argsFromNode(detailNode));
                     ap.setDescription(description);
 
@@ -261,6 +275,8 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                 ObjectProperty objectProperty = new ObjectProperty(properties)
                         .description(description)
                         .title(title);
+                objectProperty.setReadOnly(readOnly);
+                objectProperty.setExample(example);
                 objectProperty.setVendorExtensionMap(getVendorExtensions(node));
 
                 List<String> required = getRequired(node, PropertyBuilder.PropertyId.REQUIRED);
@@ -277,14 +293,13 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                         .items(subProperty)
                         .description(description)
                         .title(title);
+                arrayProperty.setReadOnly(readOnly);
                 arrayProperty.setMinItems(getInteger(node, PropertyBuilder.PropertyId.MIN_ITEMS));
                 arrayProperty.setMaxItems(getInteger(node, PropertyBuilder.PropertyId.MAX_ITEMS));
                 arrayProperty.setUniqueItems(getBoolean(node, PropertyBuilder.PropertyId.UNIQUE_ITEMS));
 
                 JsonNode example = getDetailNode( node, PropertyBuilder.PropertyId.EXAMPLE);
-                if( example != null ) {
-                    arrayProperty.setExample( Json.mapper().convertValue(example, Object.class));
-                }
+                arrayProperty.setExample(example);
 
                 arrayProperty.setVendorExtensionMap(getVendorExtensions(node));
                 return arrayProperty;

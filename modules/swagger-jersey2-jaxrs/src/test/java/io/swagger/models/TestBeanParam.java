@@ -22,8 +22,8 @@ public class TestBeanParam {
     private Integer priority1;
 
     @QueryParam("priority2")
-    @ApiParam(name = "test priority 2", defaultValue = "overridden")
-    @DefaultValue("default")
+    @ApiParam(name = "test priority 2", defaultValue = "4")
+    @DefaultValue("3")
     private Integer priority2;
 
     public Integer getOrder1() {

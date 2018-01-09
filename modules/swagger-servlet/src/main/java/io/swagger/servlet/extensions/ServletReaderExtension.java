@@ -222,7 +222,7 @@ public class ServletReaderExtension implements ReaderExtension {
         final String operationPath = apiOperation == null ? null : apiOperation.nickname();
         return PathUtils.collectPath(context.getParentPath(),
                 apiAnnotation == null ? null : apiAnnotation.value(),
-                method.getName());
+                StringUtils.isBlank(operationPath) ? method.getName() : operationPath);
     }
 
     @Override

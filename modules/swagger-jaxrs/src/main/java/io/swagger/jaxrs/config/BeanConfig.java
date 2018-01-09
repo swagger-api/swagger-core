@@ -35,9 +35,9 @@ import io.swagger.models.Swagger;
 public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(BeanConfig.class);
 
-    Reader reader = new Reader(new Swagger());
+    protected Reader reader = new Reader(new Swagger());
 
-    ServletConfig servletConfig;
+    protected ServletConfig servletConfig;
 
     String resourcePackage;
     String[] schemes;
@@ -299,8 +299,11 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
                 output.add(cls);
             } else {
                 for (String pkg : acceptablePackages) {
-                    if (cls.getPackage().getName().startsWith(pkg)) {
+                    // startsWith allows everything within a package
+                    // the dots ensures that package siblings are not considered
+                    if ((cls.getPackage().getName() + ".").startsWith(pkg + ".")) {
                         output.add(cls);
+			break;
                     }
                 }
             }

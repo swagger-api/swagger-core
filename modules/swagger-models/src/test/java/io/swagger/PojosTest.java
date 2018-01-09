@@ -8,13 +8,11 @@ import com.openpojo.validation.ValidatorBuilder;
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
 import io.swagger.models.ComposedModel;
-import io.swagger.models.License;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
 import io.swagger.models.RefModel;
 import io.swagger.models.RefResponse;
 import io.swagger.models.Swagger;
-import io.swagger.models.Tag;
 import io.swagger.models.auth.ApiKeyAuthDefinition;
 import io.swagger.models.auth.In;
 import io.swagger.models.parameters.BodyParameter;
@@ -93,15 +91,12 @@ public class PojosTest extends PowerMockTestCase {
         classesExclusions.put(DateTimeProperty.class, new HashSet<String>(Arrays.asList("_enum")));
         classesExclusions.put(FloatProperty.class, new HashSet<String>(Arrays.asList("_enum")));
         classesExclusions.put(IntegerProperty.class, new HashSet<String>(Arrays.asList("_enum")));
-        classesExclusions.put(License.class, new HashSet<String>(Arrays.asList("vendorExtensions")));
         classesExclusions.put(LongProperty.class, new HashSet<String>(Arrays.asList("_enum")));
         classesExclusions.put(ModelImpl.class, new HashSet<String>(Arrays.asList("_enum")));
         classesExclusions.put(ObjectProperty.class, new HashSet<String>(Arrays.asList("properties")));
         classesExclusions.put(RefModel.class, new HashSet<String>(Arrays.asList("title")));
         classesExclusions.put(RefResponse.class,
-                new HashSet<String>(Arrays.asList("headers", "schema", "vendorExtensions")));
-        classesExclusions.put(Swagger.class, new HashSet<String>(Arrays.asList("vendorExtensions", "responses")));
-        classesExclusions.put(Tag.class, new HashSet<String>(Arrays.asList("vendorExtensions")));
+                new HashSet<String>(Arrays.asList("headers", "schema")));
 
         Set<Class<?>> classesUsingInheritedFields = new HashSet<Class<?>>(Arrays.asList(ApiKeyAuthDefinition.class,
                 BodyParameter.class, ArrayProperty.class, BaseIntegerProperty.class, CookieParameter.class));

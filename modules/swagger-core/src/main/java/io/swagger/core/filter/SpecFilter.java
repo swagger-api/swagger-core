@@ -48,6 +48,7 @@ public class SpecFilter {
             Path path = swagger.getPaths().get(resourcePath);
             Map<String, Operation> ops = new HashMap<String, Operation>();
             ops.put("get", path.getGet());
+            ops.put("head", path.getHead());
             ops.put("put", path.getPut());
             ops.put("post", path.getPost());
             ops.put("delete", path.getDelete());

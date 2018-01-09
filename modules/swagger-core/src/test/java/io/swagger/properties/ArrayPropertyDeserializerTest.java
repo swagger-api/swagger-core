@@ -1,4 +1,4 @@
-package io.swagger;
+package io.swagger.properties;
 
 import io.swagger.models.Operation;
 import io.swagger.models.Response;
@@ -7,6 +7,7 @@ import io.swagger.models.properties.Property;
 import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -18,6 +19,8 @@ public class ArrayPropertyDeserializerTest {
           "          description: OK\n" +
           "          schema:\n" +
           "            type: array\n" +
+          "            minItems: 3\n" +
+          "            maxItems: 100\n" +
           "            items:\n" +
           "              type: string\n" +
           "            example:\n" +
@@ -37,5 +40,7 @@ public class ArrayPropertyDeserializerTest {
       
       ArrayProperty mp = (ArrayProperty) responseSchema;
       assertNotNull( mp.getExample() );
+      assertEquals(mp.getMinItems(), new Integer(3));
+      assertEquals(mp.getMaxItems(), new Integer(100));
   }
 }

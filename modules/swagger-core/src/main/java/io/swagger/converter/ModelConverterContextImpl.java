@@ -1,5 +1,6 @@
 package io.swagger.converter;
 
+import io.swagger.models.ComposedModel;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.Property;
@@ -100,8 +101,13 @@ public class ModelConverterContextImpl implements ModelConverterContext {
         }
         if (resolved != null) {
             modelByType.put(type, resolved);
-            if (resolved instanceof ModelImpl) {
-                ModelImpl impl = (ModelImpl) resolved;
+
+            Model resolvedImpl = resolved;
+            if (resolvedImpl instanceof ComposedModel) {
+                resolvedImpl = ((ComposedModel) resolved).getChild();
+            }
+            if (resolvedImpl instanceof ModelImpl) {
+                ModelImpl impl = (ModelImpl) resolvedImpl;
                 if (impl.getName() != null) {
                     modelByName.put(impl.getName(), resolved);
                 }

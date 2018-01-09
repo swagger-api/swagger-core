@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DefaultJaxrsScanner extends AbstractScanner implements JaxrsScanner {
-    private boolean prettyPrint = false;
-
     @Override
     public Set<Class<?>> classesFromContext(Application app, ServletConfig sc) {
         Set<Class<?>> output = new HashSet<Class<?>>();
@@ -32,11 +30,6 @@ public class DefaultJaxrsScanner extends AbstractScanner implements JaxrsScanner
     }
 
     public boolean prettyPrint() {
-        return prettyPrint;
-    }
-
-    @Override
-    public void setPrettyPrint(boolean shouldPrettyPrint) {
-        this.prettyPrint = shouldPrettyPrint;
+        return getPrettyPrint();
     }
 }

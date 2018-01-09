@@ -14,6 +14,7 @@ import org.testng.annotations.Test;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 public class ByteConverterTest {
     private static final String NEWLINE = System.getProperty("line.separator");
@@ -65,7 +66,7 @@ public class ByteConverterTest {
                 "}";
 
         Model model = Json.mapper().readValue(json, Model.class);
-        Json.prettyPrint(model);
+        assertNotNull(model);
     }
 
     @Test
@@ -84,6 +85,28 @@ public class ByteConverterTest {
                 "    }" + NEWLINE +
                 "  }" + NEWLINE +
                      "}");
+    }
+
+
+    @Test
+    public void testReadOnlyByteArray() {
+        Model model = new ModelImpl()
+                .property("byteArray",
+                        new ArrayProperty(new BinaryProperty())
+                        .readOnly());
+
+        assertEquals(Json.pretty(model), "{" + NEWLINE +
+                "  \"properties\" : {" + NEWLINE +
+                "    \"byteArray\" : {" + NEWLINE +
+                "      \"type\" : \"array\"," + NEWLINE +
+                "      \"readOnly\" : true," + NEWLINE +
+                "      \"items\" : {" + NEWLINE +
+                "        \"type\" : \"string\"," + NEWLINE +
+                "        \"format\" : \"binary\"" + NEWLINE +
+                "      }" + NEWLINE +
+                "    }" + NEWLINE +
+                "  }" + NEWLINE +
+                "}");
     }
 
     class ByteConverterModel {

@@ -57,6 +57,11 @@ public class ArrayProperty extends AbstractProperty implements Property {
         return this;
     }
 
+    public ArrayProperty readOnly() {
+        this.setReadOnly(Boolean.TRUE);
+        return this;
+    }
+
     public Property getItems() {
         return items;
     }
@@ -90,53 +95,39 @@ public class ArrayProperty extends AbstractProperty implements Property {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((items == null) ? 0 : items.hashCode());
-        result = prime * result + ((uniqueItems == null) ? 0 : uniqueItems.hashCode());
-        result = prime * result + ((maxItems == null) ? 0 : maxItems.hashCode());
-        result = prime * result + ((minItems == null) ? 0 : minItems.hashCode());
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ArrayProperty)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        ArrayProperty that = (ArrayProperty) o;
+
+        if (uniqueItems != null ? !uniqueItems.equals(that.uniqueItems) : that.uniqueItems != null) {
+            return false;
+        }
+        if (items != null ? !items.equals(that.items) : that.items != null) {
+            return false;
+        }
+        if (maxItems != null ? !maxItems.equals(that.maxItems) : that.maxItems != null) {
+            return false;
+        }
+        return minItems != null ? minItems.equals(that.minItems) : that.minItems == null;
+
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (!(obj instanceof ArrayProperty)) {
-            return false;
-        }
-        ArrayProperty other = (ArrayProperty) obj;
-        if (items == null) {
-            if (other.items != null) {
-                return false;
-            }
-        } else if (!items.equals(other.items)) {
-            return false;
-        }
-        if (uniqueItems == null) {
-            if (other.uniqueItems != null) {
-                return false;
-            }
-        } else if (!uniqueItems.equals(other.uniqueItems)) {
-            return false;
-        }
-        if (maxItems == null) {
-            if (other.maxItems != null) {
-                return false;
-            }
-        } else if (!maxItems.equals(other.maxItems)) {
-            return false;
-        }
-        if (minItems == null) {
-            if (other.minItems != null) {
-                return false;
-            }
-        } else if (!minItems.equals(other.minItems)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (uniqueItems != null ? uniqueItems.hashCode() : 0);
+        result = 31 * result + (items != null ? items.hashCode() : 0);
+        result = 31 * result + (maxItems != null ? maxItems.hashCode() : 0);
+        result = 31 * result + (minItems != null ? minItems.hashCode() : 0);
+        return result;
     }
 }
