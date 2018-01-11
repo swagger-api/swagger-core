@@ -13,7 +13,7 @@ import java.util.Set;
 
 public interface OpenAPIExtension {
 
-    String extractOperationMethod(Operation apiOperation, Method method, Iterator<OpenAPIExtension> chain);
+    String extractOperationMethod(Method method, Iterator<OpenAPIExtension> chain);
 
     ResolvedParameter extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip, Components components,
                                         javax.ws.rs.Consumes classConsumes, javax.ws.rs.Consumes methodConsumes, boolean includeRequestBody, Iterator<OpenAPIExtension> chain);

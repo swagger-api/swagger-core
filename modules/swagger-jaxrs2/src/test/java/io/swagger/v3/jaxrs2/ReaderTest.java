@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2;
 
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.CompleteFieldsResource;
@@ -8,13 +9,17 @@ import io.swagger.v3.jaxrs2.resources.DuplicatedOperationIdResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedOperationMethodNameResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedSecurityResource;
 import io.swagger.v3.jaxrs2.resources.ExternalDocsReference;
+import io.swagger.v3.jaxrs2.resources.ResourceWithSubResource;
 import io.swagger.v3.jaxrs2.resources.ResponseContentWithArrayResource;
 import io.swagger.v3.jaxrs2.resources.ResponsesResource;
 import io.swagger.v3.jaxrs2.resources.SecurityResource;
 import io.swagger.v3.jaxrs2.resources.ServersResource;
 import io.swagger.v3.jaxrs2.resources.SimpleCallbackResource;
 import io.swagger.v3.jaxrs2.resources.SimpleMethods;
+import io.swagger.v3.jaxrs2.resources.SubResourceHead;
 import io.swagger.v3.jaxrs2.resources.TagsResource;
+import io.swagger.v3.jaxrs2.resources.Test2607;
+import io.swagger.v3.jaxrs2.resources.TestResource;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -49,6 +54,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -561,4 +567,139 @@ public class ReaderTest {
         assertNotNull(schema);
         assertEquals(schema.getItems().get$ref(), "#/components/schemas/User");
     }
+
+    @Test(description = "test resource with subresources")
+    public void testResourceWithSubresources() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(ResourceWithSubResource.class);
+
+        Paths paths = openAPI.getPaths();
+        assertEquals(paths.size(), 3);
+        PathItem pathItem = paths.get("/employees/{id}");
+        assertNotNull(pathItem);
+        Operation operation = pathItem.getGet();
+        assertNotNull(operation);
+        ArraySchema arraySchema = (ArraySchema) operation.getResponses().get("200").getContent().values().iterator().next().getSchema();
+        assertNotNull(arraySchema);
+        assertEquals(arraySchema.getItems().get$ref(), "#/components/schemas/Pet");
+
+        pathItem = paths.get("/employees/{id}/{id}");
+        assertNotNull(pathItem);
+        operation = pathItem.getGet();
+        assertNotNull(operation);
+        Schema schema = operation.getResponses().get("200").getContent().values().iterator().next().getSchema();
+        assertNotNull(schema);
+        assertEquals(schema.get$ref(), "#/components/schemas/Pet");
+
+        pathItem = paths.get("/employees/noPath");
+        assertNotNull(pathItem);
+        operation = pathItem.getGet();
+        assertNotNull(operation);
+        schema = operation.getResponses().getDefault().getContent().values().iterator().next().getSchema();
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+    }
+
+    @Test(description = "test another resource with subresources")
+    public void testAnotherResourceWithSubresources() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(TestResource.class);
+
+        Paths paths = openAPI.getPaths();
+        assertEquals(paths.size(), 3);
+        PathItem pathItem = paths.get("/test/status");
+        assertNotNull(pathItem);
+        Operation operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("application/json"));
+        Schema schema = operation.getResponses().getDefault().getContent().values().iterator().next().getSchema();
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+
+
+        pathItem = paths.get("/test/more/otherStatus");
+        assertNotNull(pathItem);
+        operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("application/json"));
+        assertFalse(operation.getResponses().getDefault().getContent().keySet().contains("application/xml"));
+        schema = operation.getResponses().getDefault().getContent().values().iterator().next().getSchema();
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+
+        pathItem = paths.get("/test/evenmore/otherStatus");
+        assertNotNull(pathItem);
+        operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("application/json"));
+        assertFalse(operation.getResponses().getDefault().getContent().keySet().contains("application/xml"));
+        schema = operation.getResponses().getDefault().getContent().values().iterator().next().getSchema();
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+        assertEquals(operation.getRequestBody().getContent().get("application/json").getSchema().get$ref(), "#/components/schemas/Pet");
+    }
+
+    @Test(description = "scan resource with class-based sub-resources")
+    public void testResourceWithClassBasedSubresources() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(SubResourceHead.class);
+
+        Paths paths = openAPI.getPaths();
+        assertEquals(paths.size(), 3);
+        PathItem pathItem = paths.get("/head/tail/hello");
+        assertNotNull(pathItem);
+        Operation operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("*/*"));
+        Schema schema = operation.getResponses().getDefault().getContent().values().iterator().next().getSchema();
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+
+
+        pathItem = paths.get("/head/tail/{string}");
+        assertNotNull(pathItem);
+        operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("*/*"));
+        schema = operation.getResponses().getDefault().getContent().values().iterator().next().getSchema();
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+
+        pathItem = paths.get("/head/noPath");
+        assertNotNull(pathItem);
+        operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("*/*"));
+        schema = operation.getResponses().getDefault().getContent().values().iterator().next().getSchema();
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+    }
+
+    @Test(description = "test ticket #2607 resource with subresources")
+    public void test2607() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(Test2607.class);
+
+        Paths paths = openAPI.getPaths();
+        assertEquals(paths.size(), 2);
+        PathItem pathItem = paths.get("/swaggertest/name");
+        assertNotNull(pathItem);
+        Operation operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("text/plain"));
+        Schema schema = operation.getResponses().getDefault().getContent().values().iterator().next().getSchema();
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+
+
+        pathItem = paths.get("/swaggertest/subresource/version");
+        assertNotNull(pathItem);
+        operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("text/plain"));
+        schema = operation.getResponses().getDefault().getContent().values().iterator().next().getSchema();
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+    }
+
 }

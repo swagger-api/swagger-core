@@ -218,7 +218,7 @@ public class ReaderUtils {
         }
     }
 
-    public static String extractOperationMethod(Operation operation, Method method, Iterator<OpenAPIExtension> chain) {
+    public static String extractOperationMethod(Method method, Iterator<OpenAPIExtension> chain) {
         if (method.getAnnotation(javax.ws.rs.GET.class) != null) {
             return GET_METHOD;
         } else if (method.getAnnotation(javax.ws.rs.PUT.class) != null) {
@@ -239,9 +239,9 @@ public class ReaderUtils {
         } else if (!StringUtils.isEmpty(getHttpMethodFromCustomAnnotations(method))) {
             return getHttpMethodFromCustomAnnotations(method);
         } else if ((ReflectionUtils.getOverriddenMethod(method)) != null) {
-            return extractOperationMethod(operation, ReflectionUtils.getOverriddenMethod(method), chain);
+            return extractOperationMethod(ReflectionUtils.getOverriddenMethod(method), chain);
         } else if (chain != null && chain.hasNext()) {
-            return chain.next().extractOperationMethod(operation, method, chain);
+            return chain.next().extractOperationMethod(method, chain);
         } else {
             return null;
         }

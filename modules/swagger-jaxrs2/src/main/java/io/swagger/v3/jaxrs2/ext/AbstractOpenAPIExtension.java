@@ -16,9 +16,9 @@ import java.util.Set;
 public abstract class AbstractOpenAPIExtension implements OpenAPIExtension {
 
     @Override
-    public String extractOperationMethod(Operation operation, Method method, Iterator<OpenAPIExtension> chain) {
+    public String extractOperationMethod(Method method, Iterator<OpenAPIExtension> chain) {
         if (chain.hasNext()) {
-            return chain.next().extractOperationMethod(operation, method, chain);
+            return chain.next().extractOperationMethod(method, chain);
         } else {
             return null;
         }
