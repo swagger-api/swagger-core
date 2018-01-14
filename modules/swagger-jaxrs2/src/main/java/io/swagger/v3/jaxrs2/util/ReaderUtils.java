@@ -1,7 +1,5 @@
 package io.swagger.v3.jaxrs2.util;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 import io.swagger.v3.core.util.ParameterProcessor;
 import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;
@@ -141,7 +139,9 @@ public class ReaderUtils {
         final Set<String> result = new LinkedHashSet<String>();
 
         for (String string : strings) {
-            Iterables.addAll(result, Splitter.on(",").trimResults().omitEmptyStrings().split(string));
+            for (String split : string.split("\\s*,\\s*")) {
+                if (!split.isEmpty()) result.add(split);
+            }
         }
 
         return result.toArray(new String[result.size()]);
