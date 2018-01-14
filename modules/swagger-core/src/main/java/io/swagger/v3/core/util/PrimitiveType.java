@@ -1,7 +1,6 @@
 package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.google.common.collect.ImmutableMap;
 import io.swagger.v3.oas.models.media.BinarySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.ByteArraySchema;
@@ -149,28 +148,30 @@ public enum PrimitiveType {
     private final Class<?> keyClass;
     private final String commonName;
 
-    public static final Map<String, String> datatypeMappings = ImmutableMap.<String, String>builder()
-            .put("integer_int32", "integer")
-            .put("integer_", "integer")
-            .put("integer_int64", "long")
-            .put("number_", "number")
-            .put("number_float", "float")
-            .put("number_double", "double")
-            .put("string_", "string")
-            .put("string_byte", "byte")
-            .put("string_email", "email")
-            .put("string_binary", "binary")
-            .put("string_uri", "uri")
-            .put("string_url", "url")
-            .put("string_uuid", "uuid")
-            .put("string_date", "date")
-            .put("string_date-time", "date-time")
-            .put("string_password", "password")
-            .put("boolean", "boolean")
-            .put("object_", "object")
-            .build();
+    public static final Map<String, String> datatypeMappings;
 
     static {
+        final Map<String, String> dms = new HashMap<>();
+        dms.put("integer_int32", "integer");
+        dms.put("integer_", "integer");
+        dms.put("integer_int64", "long");
+        dms.put("number_", "number");
+        dms.put("number_float", "float");
+        dms.put("number_double", "double");
+        dms.put("string_", "string");
+        dms.put("string_byte", "byte");
+        dms.put("string_email", "email");
+        dms.put("string_binary", "binary");
+        dms.put("string_uri", "uri");
+        dms.put("string_url", "url");
+        dms.put("string_uuid", "uuid");
+        dms.put("string_date", "date");
+        dms.put("string_date-time", "date-time");
+        dms.put("string_password", "password");
+        dms.put("boolean", "boolean");
+        dms.put("object_", "object");
+        datatypeMappings = Collections.unmodifiableMap(dms);
+
         final Map<Class<?>, PrimitiveType> keyClasses = new HashMap<Class<?>, PrimitiveType>();
         addKeys(keyClasses, BOOLEAN, Boolean.class, Boolean.TYPE);
         addKeys(keyClasses, STRING, String.class, Character.class, Character.TYPE);

@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.google.common.collect.Iterables;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.util.AnnotationsUtils;
@@ -707,8 +706,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         if (PrimitiveType.fromType(propType) != null) {
                             return PrimitiveType.createProperty(propType);
                         } else {
-                            return context.resolve(propType,
-                                    Iterables.toArray(propMember.annotations(), Annotation.class));
+                            List<Annotation> list = new ArrayList<>();
+                            for (Annotation a : propMember.annotations()) {
+                                list.add(a);
+                            }
+                            return context.resolve(propType, list.toArray(new Annotation[list.size()]));
                         }
                     }
                 }
