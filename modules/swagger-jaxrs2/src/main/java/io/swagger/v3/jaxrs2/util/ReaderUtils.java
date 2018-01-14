@@ -23,10 +23,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public class ReaderUtils {
     private static final String GET_METHOD = "get";
@@ -126,25 +124,6 @@ public class ReaderUtils {
             }
         }
         return false;
-    }
-
-    /**
-     * Splits the provided array of strings into an array, using comma as the separator.
-     * Also removes leading and trailing whitespace and omits empty strings from the results.
-     *
-     * @param strings is the provided array of strings
-     * @return the resulted array of strings
-     */
-    public static String[] splitContentValues(String[] strings) {
-        final Set<String> result = new LinkedHashSet<String>();
-
-        for (String string : strings) {
-            for (String split : string.split("\\s*,\\s*")) {
-                if (!split.isEmpty()) result.add(split);
-            }
-        }
-
-        return result.toArray(new String[result.size()]);
     }
 
     public static Optional<List<String>> getStringListFromStringArray(String[] array) {
