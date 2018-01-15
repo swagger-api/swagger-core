@@ -48,7 +48,7 @@ public class ContainerTest extends SwaggerTestBase {
         assertNotNull(prop);
         assertEquals(prop.getType(), "object");
 
-        final Schema items = ((Schema) prop).getAdditionalProperties();
+        final Schema items = (Schema)prop.getAdditionalProperties();
         assertNotNull(items);
         assertEquals(items.getType(), "string");
         assertEquals(items.getFormat(), "date-time");

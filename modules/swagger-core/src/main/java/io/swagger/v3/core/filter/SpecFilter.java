@@ -283,8 +283,8 @@ public class SpecFilter {
             }
         }
 
-        if (schema.getAdditionalProperties() != null) {
-            addSchemaRef(schema.getAdditionalProperties(), referencedDefinitions);
+        if (schema.getAdditionalProperties() != null && (schema.getAdditionalProperties() instanceof Schema)) {
+            addSchemaRef((Schema)schema.getAdditionalProperties(), referencedDefinitions);
         }
 
         if (schema instanceof ArraySchema &&

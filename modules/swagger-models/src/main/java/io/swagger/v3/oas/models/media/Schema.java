@@ -55,7 +55,7 @@ public class Schema<T> {
     private String type = null;
     private Schema not = null;
     private Map<String, Schema> properties = null;
-    private Schema additionalProperties = null;
+    private Object additionalProperties = null;
     private String description = null;
     private String format = null;
     private String $ref = null;
@@ -532,21 +532,24 @@ public class Schema<T> {
     }
 
     /**
-     * returns the additionalProperties property from a Schema instance.
+     * returns the additionalProperties property from a Schema instance. Can be either a Boolean or a Schema
      *
-     * @return Schema additionalProperties
+     * @return Object additionalProperties
      **/
 
-    public Schema getAdditionalProperties() {
+    public Object getAdditionalProperties() {
         return additionalProperties;
     }
 
-    public void setAdditionalProperties(Schema additionalProperties) {
+    public void setAdditionalProperties(Object additionalProperties) {
+        if (additionalProperties != null && !(additionalProperties instanceof Boolean) && !(additionalProperties instanceof Schema)) {
+            throw new IllegalArgumentException("additionalProperties must be either a Boolean or a Schema instance");
+        }
         this.additionalProperties = additionalProperties;
     }
 
-    public Schema additionalProperties(Schema additionalProperties) {
-        this.additionalProperties = additionalProperties;
+    public Schema additionalProperties(Object additionalProperties) {
+        setAdditionalProperties(additionalProperties);
         return this;
     }
 

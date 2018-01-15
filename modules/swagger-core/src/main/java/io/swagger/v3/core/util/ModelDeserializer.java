@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
@@ -72,23 +73,38 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
                         schema = Json.mapper().convertValue(node, StringSchema.class);
                     }
                 } else if (type.textValue().equals("object")) {
-                    JsonNode additionalProperties = node.get("additionalProperties");
-                    if (additionalProperties != null) {
-                        Schema innerSchema = Json.mapper().convertValue(additionalProperties, Schema.class);
-                        MapSchema ms = Json.mapper().convertValue(node, MapSchema.class);
-                        ms.setAdditionalProperties(innerSchema);
-                        schema = ms;
-                    } else {
-                        schema = Json.mapper().convertValue(node, ObjectSchema.class);
-                    }
+                    schema = deserializeObjectSchema(node);
                 }
             } else if (node.get("$ref") != null) {
                 schema = new Schema().$ref(node.get("$ref").asText());
             } else { // assume object
-                schema = Json.mapper().convertValue(node, ObjectSchema.class);
+                schema = deserializeObjectSchema(node);
             }
         }
 
+        return schema;
+    }
+
+    private Schema deserializeObjectSchema(JsonNode node) {
+        JsonNode additionalProperties = node.get("additionalProperties");
+        Schema schema = null;
+        if (additionalProperties != null) {
+            // try first to convert to Schema, if it fails it must be a boolean
+            try {
+                Schema innerSchema = Json.mapper().convertValue(additionalProperties, Schema.class);
+                ((ObjectNode)node).remove("additionalProperties");
+                MapSchema ms = Json.mapper().convertValue(node, MapSchema.class);
+                ms.setAdditionalProperties(innerSchema);
+                schema = ms;
+            } catch (Exception e) {
+                schema = Json.mapper().convertValue(node, ObjectSchema.class);
+                Boolean additionalPropsBoolean = Json.mapper().convertValue(additionalProperties, Boolean.class);
+                schema.setAdditionalProperties(additionalPropsBoolean);
+            }
+
+        } else {
+            schema = Json.mapper().convertValue(node, ObjectSchema.class);
+        }
         return schema;
     }
 }
