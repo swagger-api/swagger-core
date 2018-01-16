@@ -1,7 +1,6 @@
 package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +57,10 @@ public class ReflectionUtils {
      * @return true if the method is overridden method
      */
     public static boolean isOverriddenMethod(Method methodToFind, Class<?> cls) {
-        Set<Class<?>> superClasses = Sets.newHashSet(cls.getInterfaces());
+        Set<Class<?>> superClasses = new HashSet<>();
+        for (Class c : cls.getInterfaces()) {
+            superClasses.add(c);
+        }
 
         if (cls.getSuperclass() != null) {
             superClasses.add(cls.getSuperclass());
