@@ -7,7 +7,7 @@ public class Thing3 extends AbstractBaseModelWithoutFields {
 
     @Schema(description = "Additional field a")
     String a;
-    @Schema(description = "Additional field a")
+    @Schema(description = "Additional field x")
     int x;
 
     public String getA() {

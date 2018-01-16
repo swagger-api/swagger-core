@@ -163,15 +163,16 @@ public class PojoTest {
                 "- $ref: \"#/components/schemas/UserObject\"\n" +
                 "- $ref: \"#/components/schemas/EmployeeObject\"\n" +
                 "type: object\n" +
+                "properties:\n" +
+                "  id:\n" +
+                "    type: string\n" +
+                "    format: uuid\n" +
+                "  name:\n" +
+                "    type: string\n" +
+                "  department:\n" +
+                "    type: string\n" +
                 "required:\n" +
                 "  - id";
-
-        final String json = "{\"UberObject\": {" +
-                "   \"anyOf\":[" +
-                "   {\"$ref\": \"#/components/schemas/UserObject\"}," +
-                "   {\"$ref\": \"#/components/schemas/EmployeeObject\"}" +
-                "   ]" +
-                "}}";
 
         String yamlUser = "type: object\n" +
                 "description: 'A User Object'\n" +

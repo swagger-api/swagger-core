@@ -721,6 +721,18 @@ public abstract class AnnotationsUtils {
         }
     }
 
+    public static io.swagger.v3.oas.annotations.media.Schema getSchemaDeclaredAnnotation(Annotated a) {
+        if (a == null) {
+            return null;
+        }
+        io.swagger.v3.oas.annotations.media.ArraySchema arraySchema = a.getRawType().getDeclaredAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
+        if (arraySchema != null) {
+            return arraySchema.schema();
+        } else {
+            return a.getRawType().getDeclaredAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        }
+    }
+
     public static io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Class<?> cls) {
         if (cls == null) {
             return null;
@@ -731,6 +743,20 @@ public abstract class AnnotationsUtils {
             mp = as.schema();
         } else {
             mp = cls.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        }
+        return mp;
+    }
+
+    public static io.swagger.v3.oas.annotations.media.Schema getSchemaDeclaredAnnotation(Class<?> cls) {
+        if (cls == null) {
+            return null;
+        }
+        io.swagger.v3.oas.annotations.media.Schema mp = null;
+        io.swagger.v3.oas.annotations.media.ArraySchema as = cls.getDeclaredAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
+        if (as != null) {
+            mp = as.schema();
+        } else {
+            mp = cls.getDeclaredAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
         }
         return mp;
     }

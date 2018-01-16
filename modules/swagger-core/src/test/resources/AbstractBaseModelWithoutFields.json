@@ -18,7 +18,7 @@
             "x": {
                 "type": "integer",
                 "format": "int32",
-                "description": "Additional field a"
+                "description": "Additional field x"
             }
         },
         "description": "Thing3"

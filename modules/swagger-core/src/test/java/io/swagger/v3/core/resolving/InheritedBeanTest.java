@@ -92,8 +92,9 @@ public class InheritedBeanTest extends SwaggerTestBase {
         ComposedSchema cm = (ComposedSchema) uberModel;
         assertEquals(cm.getAnyOf().size(), 2);
         assertEquals(cm.getAnyOf().get(0).get$ref(), "#/components/schemas/UserObject");
-        // make sure parent properties are filtered out of subclass
-        assertNull(cm.getProperties());
+        // parent properties are filtered out of subclass when parent doesn't define subtypes
+        assertNotNull(cm.getProperties());
+        assertEquals(cm.getProperties().size(), 3);
 
         final Schema interfaceModel = context.getDefinedModels().get("UserObject");
         assertNotNull(interfaceModel);
