@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.introspect.Annotated;
+import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
@@ -223,17 +224,17 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return PrimitiveType.fromType(type).createProperty();
         }
 
-        final io.swagger.v3.oas.annotations.media.Schema directSchemaAnnotation = type.getRawClass().getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        final io.swagger.v3.oas.annotations.media.Schema declaredSchemaAnnotation = type.getRawClass().getDeclaredAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
 
         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
 
         String name = _typeName(type, beanDesc);
 
-        if (directSchemaAnnotation != null &&
-                StringUtils.isNotEmpty(directSchemaAnnotation.type()) &&
-                !directSchemaAnnotation.type().equals("object")) {
-            if (PrimitiveType.fromName(directSchemaAnnotation.type()) != null) {
-                Schema primitive = PrimitiveType.fromName(directSchemaAnnotation.type()).createProperty();
+        if (declaredSchemaAnnotation != null &&
+                StringUtils.isNotEmpty(declaredSchemaAnnotation.type()) &&
+                !declaredSchemaAnnotation.type().equals("object")) {
+            if (PrimitiveType.fromName(declaredSchemaAnnotation.type()) != null) {
+                Schema primitive = PrimitiveType.fromName(declaredSchemaAnnotation.type()).createProperty();
                 resolveSchemaMembers(primitive, beanDesc.getClassInfo());
                 XML xml = resolveXml(beanDesc.getClassInfo());
                 if (xml != null) {
@@ -244,11 +245,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         io.swagger.v3.oas.annotations.media.Schema schemaAnnotationReference = null;
-        io.swagger.v3.oas.annotations.media.ArraySchema directArraySchemaAnnotation = type.getRawClass().getAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
-        if (directArraySchemaAnnotation != null) {
-            schemaAnnotationReference = directArraySchemaAnnotation.schema();
+        io.swagger.v3.oas.annotations.media.ArraySchema declaredArraySchemaAnnotation = type.getRawClass().getDeclaredAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
+        if (declaredArraySchemaAnnotation != null) {
+            schemaAnnotationReference = declaredArraySchemaAnnotation.schema();
         } else {
-            schemaAnnotationReference = directSchemaAnnotation;
+            schemaAnnotationReference = declaredSchemaAnnotation;
         }
 
         if (schemaAnnotationReference != null && !Void.class.equals(schemaAnnotationReference.implementation())) {
@@ -256,7 +257,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             LOGGER.debug("overriding datatype from {} to {}", type, cls.getName());
 
-            if (directArraySchemaAnnotation != null) {
+            if (declaredArraySchemaAnnotation != null) {
                 ArraySchema schema = new ArraySchema();
                 Schema innerSchema = null;
 
@@ -295,7 +296,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 return resolvedModel;
             }
         }
-        // uses raw class, as it does not consider super class while handling schema annotation for composed model props
+
         List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass());
         boolean isComposedSchema = composedSchemaReferencedClasses != null;
         final Schema model;
@@ -461,20 +462,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             model.setDiscriminator(discriminator);
         }
 
-        if (directSchemaAnnotation != null) {
-            String ref = directSchemaAnnotation.ref();
+        if (schemaAnnotationReference != null) {
+            String ref = schemaAnnotationReference.ref();
             // consider ref as is
             if (!StringUtils.isBlank(ref)) {
                 model.$ref(ref);
             }
-            Class<?> not = directSchemaAnnotation.not();
+            Class<?> not = schemaAnnotationReference.not();
             if (!Void.class.equals(not)) {
                 model.not((new Schema().$ref(context.resolve(not).getName())));
             }
-            if (directSchemaAnnotation.requiredProperties() != null &&
-                    directSchemaAnnotation.requiredProperties().length > 0 &&
-                    StringUtils.isNotBlank(directSchemaAnnotation.requiredProperties()[0])) {
-                for (String prop : directSchemaAnnotation.requiredProperties()) {
+            if (schemaAnnotationReference.requiredProperties() != null &&
+                    schemaAnnotationReference.requiredProperties().length > 0 &&
+                    StringUtils.isNotBlank(schemaAnnotationReference.requiredProperties()[0])) {
+                for (String prop : schemaAnnotationReference.requiredProperties()) {
                     addRequiredItem(model, prop);
                 }
             }
@@ -484,9 +485,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             ComposedSchema composedSchema = (ComposedSchema) model;
 
-            Class<?>[] allOf = directSchemaAnnotation.allOf();
-            Class<?>[] anyOf = directSchemaAnnotation.anyOf();
-            Class<?>[] oneOf = directSchemaAnnotation.oneOf();
+            Class<?>[] allOf = schemaAnnotationReference.allOf();
+            Class<?>[] anyOf = schemaAnnotationReference.anyOf();
+            Class<?>[] oneOf = schemaAnnotationReference.oneOf();
 
             List<Class<?>> allOfFiltered = Stream.of(allOf)
                     .distinct()
@@ -500,7 +501,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (composedSchema.getAllOf() == null || !composedSchema.getAllOf().contains(refSchema)) {
                     composedSchema.addAllOfItem(refSchema);
                 }
-                removeParentProperties(composedSchema, allOfRef);
+                // remove shared properties defined in the parent
+                if (isSubtype(beanDesc.getClassInfo(), c)) {
+                    removeParentProperties(composedSchema, allOfRef);
+                }
             });
 
             List<Class<?>> anyOfFiltered = Stream.of(anyOf)
@@ -510,10 +514,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .collect(Collectors.toList());
             anyOfFiltered.forEach(c -> {
                 Schema anyOfRef = context.resolve(c);
-                //composedSchema.addAnyOfItem(new Schema().$ref(anyOfRef.getName()));
                 composedSchema.addAnyOfItem(new Schema().$ref(anyOfRef.getName()));
                 // remove shared properties defined in the parent
-                removeParentProperties(composedSchema, anyOfRef);
+                if (isSubtype(beanDesc.getClassInfo(), c)) {
+                    removeParentProperties(composedSchema, anyOfRef);
+                }
+
             });
 
             List<Class<?>> oneOfFiltered = Stream.of(oneOf)
@@ -525,12 +531,30 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 Schema oneOfRef = context.resolve(c);
                 composedSchema.addOneOfItem(new Schema().$ref(oneOfRef.getName()));
                 // remove shared properties defined in the parent
-                removeParentProperties(composedSchema, oneOfRef);
+                if (isSubtype(beanDesc.getClassInfo(), c)) {
+                    removeParentProperties(composedSchema, oneOfRef);
+                }
+
             });
 
         }
 
         return model;
+    }
+
+    private boolean isSubtype(AnnotatedClass childClass, Class<?> parentClass) {
+        final BeanDescription parentDesc = _mapper.getSerializationConfig().introspectClassAnnotations(parentClass);
+        List<NamedType> subTypes =_intr.findSubtypes(parentDesc.getClassInfo());
+        if (subTypes == null) {
+            return false;
+        }
+        for (NamedType subtype : subTypes) {
+            final Class<?> subtypeType = subtype.getType();
+            if (childClass.getRawType().isAssignableFrom(subtypeType)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Schema resolveProperty(JavaType propType,
@@ -621,6 +645,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         return property;
     }
+
+
 
     private boolean _isOptionalType(JavaType propType) {
         return Arrays.asList("com.google.common.base.Optional", "java.util.Optional")
@@ -1007,7 +1033,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected List<Class<?>> getComposedSchemaReferencedClasses(Class<?> clazz) {
-        final io.swagger.v3.oas.annotations.media.Schema schemaAnnotation = clazz.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        final io.swagger.v3.oas.annotations.media.Schema schemaAnnotation = AnnotationsUtils.getSchemaDeclaredAnnotation(clazz);
         if (schemaAnnotation != null) {
             Class<?>[] allOf = schemaAnnotation.allOf();
             Class<?>[] anyOf = schemaAnnotation.anyOf();
@@ -1255,15 +1282,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected Discriminator resolveDiscriminator(JavaType type, ModelConverterContext context) {
 
-        io.swagger.v3.oas.annotations.media.Schema directSchemaAnnotation = type.getRawClass().getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        io.swagger.v3.oas.annotations.media.Schema declaredSchemaAnnotation = AnnotationsUtils.getSchemaDeclaredAnnotation(type.getRawClass());
 
-        // uses raw class, as it does not consider super class while handling schema annotation for composed model props
-        String disc = (directSchemaAnnotation == null) ? "" : directSchemaAnnotation.discriminatorProperty();
+        String disc = (declaredSchemaAnnotation == null) ? "" : declaredSchemaAnnotation.discriminatorProperty();
 
         if (disc.isEmpty()) {
             // longer method would involve AnnotationIntrospector.findTypeResolver(...) but:
-            // uses raw class, as it does not consider super class while handling schema annotation for composed model props
-            JsonTypeInfo typeInfo = type.getRawClass().getAnnotation(JsonTypeInfo.class);
+            JsonTypeInfo typeInfo = type.getRawClass().getDeclaredAnnotation(JsonTypeInfo.class);
             if (typeInfo != null) {
                 disc = typeInfo.property();
             }
@@ -1271,8 +1296,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (!disc.isEmpty()) {
             Discriminator discriminator = new Discriminator()
                     .propertyName(disc);
-            if (directSchemaAnnotation != null) {
-                DiscriminatorMapping mappings[] = directSchemaAnnotation.discriminatorMapping();
+            if (declaredSchemaAnnotation != null) {
+                DiscriminatorMapping mappings[] = declaredSchemaAnnotation.discriminatorMapping();
                 if (mappings != null && mappings.length > 0) {
                     for (DiscriminatorMapping mapping : mappings) {
                         if (!mapping.value().isEmpty() && !mapping.schema().equals(Void.class)) {
@@ -1396,7 +1421,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Annotated a) {
-        return AnnotationsUtils.getSchemaAnnotation(a);
+        boolean useDeclared = false;
+        List<NamedType> subTypes =_intr.findSubtypes(a);
+        if (subTypes == null) {
+            return AnnotationsUtils.getSchemaAnnotation(a);
+        }
+        // if subtypes are defined, including the current class, we assume they are defined in super class.
+        for (NamedType subtype : subTypes) {
+            final Class<?> subtypeType = subtype.getType();
+            if (a.getRawType().isAssignableFrom(subtypeType)) {
+                useDeclared = true;
+                break;
+            }
+        }
+        if (useDeclared) {
+            return AnnotationsUtils.getSchemaDeclaredAnnotation(a);
+        } else {
+            return AnnotationsUtils.getSchemaAnnotation(a);
+        }
+
     }
 
     private void addRequiredItem(Schema model, String propName) {

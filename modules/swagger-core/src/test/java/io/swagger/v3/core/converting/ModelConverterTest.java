@@ -103,7 +103,8 @@ public class ModelConverterTest {
 
         final Map<String, Schema> nestedSchemas = readAll(ModelWithUrlProperty.class);
         assertEquals(nestedSchemas.size(), 1);
-        assertTrue(nestedSchemas.containsKey("MyProperty"));
+        assertTrue(nestedSchemas.containsKey("ModelWithUrlProperty"));
+        assertFalse(nestedSchemas.containsKey("MyProperties"));
     }
 
     @Test(description = "it should maintain property names")

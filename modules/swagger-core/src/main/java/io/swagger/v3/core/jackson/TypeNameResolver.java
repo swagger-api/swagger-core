@@ -45,7 +45,7 @@ public class TypeNameResolver {
             return cls.getSimpleName();
         }
 
-        io.swagger.v3.oas.annotations.media.Schema mp = AnnotationsUtils.getSchemaAnnotation(cls);
+        io.swagger.v3.oas.annotations.media.Schema mp = AnnotationsUtils.getSchemaDeclaredAnnotation(cls);
 
         final String modelName = mp == null ? null : StringUtils.trimToNull(mp.name());
         return modelName == null ? cls.getSimpleName() : modelName;
