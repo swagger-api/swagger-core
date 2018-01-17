@@ -1,11 +1,14 @@
 package io.swagger.v3.core.util;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.introspect.Annotated;
+import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.links.LinkParameter;
+import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
@@ -31,6 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -92,6 +97,186 @@ public abstract class AnnotationsUtils {
         }
         return true;
     }
+
+    public static boolean equals(Annotation thisAnnotation, Annotation thatAnnotation) {
+        if (thisAnnotation == null && thatAnnotation == null) {
+            return true;
+        }
+        else if (thisAnnotation == null || thatAnnotation == null) {
+            return false;
+        }
+        if (!thisAnnotation.annotationType().equals(thatAnnotation.annotationType())) {
+            return false;
+        }
+        if (thisAnnotation instanceof io.swagger.v3.oas.annotations.media.Schema) {
+            return equals((io.swagger.v3.oas.annotations.media.Schema) thisAnnotation, (io.swagger.v3.oas.annotations.media.Schema) thatAnnotation);
+        } else if (thisAnnotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema) {
+            return equals((io.swagger.v3.oas.annotations.media.ArraySchema)thisAnnotation, (io.swagger.v3.oas.annotations.media.ArraySchema)thatAnnotation);
+        }
+        return true;
+    }
+
+    public static boolean equals(io.swagger.v3.oas.annotations.media.ArraySchema thisArraySchema, io.swagger.v3.oas.annotations.media.ArraySchema thatArraySchema) {
+        if (thisArraySchema == null && thatArraySchema == null) {
+            return true;
+        }
+        else if (thisArraySchema == null || thatArraySchema == null) {
+            return false;
+        }
+
+        if (thisArraySchema.maxItems() != thatArraySchema.maxItems()) {
+            return false;
+        }
+        if (thisArraySchema.minItems() != thatArraySchema.minItems()) {
+            return false;
+        }
+        if (thisArraySchema.uniqueItems() != thatArraySchema.uniqueItems()) {
+            return false;
+        }
+
+        if (!Arrays.equals(thisArraySchema.extensions(), thatArraySchema.extensions())) {
+            return false;
+        }
+
+        if (!equals(thisArraySchema.schema(), thatArraySchema.schema())) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean equals(io.swagger.v3.oas.annotations.media.Schema thisSchema, io.swagger.v3.oas.annotations.media.Schema thatSchema) {
+        if (thisSchema == null && thatSchema == null) {
+            return true;
+        }
+        else if (thisSchema == null || thatSchema == null) {
+            return false;
+        }
+
+        if (!StringUtils.equals(thisSchema.type(), thatSchema.type())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.format(), thatSchema.format())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.title(), thatSchema.title())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.description(), thatSchema.description())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.ref(), thatSchema.ref())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.name(), thatSchema.name())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.defaultValue(), thatSchema.defaultValue())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.maximum(), thatSchema.maximum())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.minimum(), thatSchema.minimum())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.example(), thatSchema.example())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.pattern(), thatSchema.pattern())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.discriminatorProperty(), thatSchema.discriminatorProperty())) {
+            return false;
+        }
+
+        if (thisSchema.multipleOf() != thatSchema.multipleOf()) {
+            return false;
+        }
+        if (thisSchema.minLength() != thatSchema.minLength()) {
+            return false;
+        }
+        if (thisSchema.minProperties() != thatSchema.minProperties()) {
+            return false;
+        }
+        if (thisSchema.maxProperties() != thatSchema.maxProperties()) {
+            return false;
+        }
+        if (thisSchema.maxLength() != thatSchema.maxLength()) {
+            return false;
+        }
+
+        if (!Arrays.equals(thisSchema.allOf(), thatSchema.allOf())) {
+            return false;
+        }
+        if (!Arrays.equals(thisSchema.oneOf(), thatSchema.oneOf())) {
+            return false;
+        }
+        if (!Arrays.equals(thisSchema.anyOf(), thatSchema.anyOf())) {
+            return false;
+        }
+        if (!Arrays.equals(thisSchema.subTypes(), thatSchema.subTypes())) {
+            return false;
+        }
+        if (!Arrays.equals(thisSchema.discriminatorMapping(), thatSchema.discriminatorMapping())) {
+            return false;
+        }
+        if (!Arrays.equals(thisSchema.extensions(), thatSchema.extensions())) {
+            return false;
+        }
+        if (!Arrays.equals(thisSchema.allowableValues(), thatSchema.allowableValues())) {
+            return false;
+        }
+        if (!Arrays.equals(thisSchema.requiredProperties(), thatSchema.requiredProperties())) {
+            return false;
+        }
+
+        if (thisSchema.exclusiveMinimum() != thatSchema.exclusiveMinimum()) {
+            return false;
+        }
+        if (thisSchema.exclusiveMaximum() != thatSchema.exclusiveMaximum()) {
+            return false;
+        }
+        if (thisSchema.required() != thatSchema.required()) {
+            return false;
+        }
+        if (thisSchema.nullable() != thatSchema.nullable()) {
+            return false;
+        }
+        if (thisSchema.readOnly() != thatSchema.readOnly()) {
+            return false;
+        }
+        if (thisSchema.writeOnly() != thatSchema.writeOnly()) {
+            return false;
+        }
+        if (thisSchema.deprecated() != thatSchema.deprecated()) {
+            return false;
+        }
+        if (thisSchema.hidden() != thatSchema.hidden()) {
+            return false;
+        }
+
+        if (!thisSchema.implementation().equals(thatSchema.implementation())) {
+            return false;
+        }
+        if (!thisSchema.not().equals(thatSchema.not())) {
+            return false;
+        }
+
+        if (!StringUtils.equals(thisSchema.externalDocs().description(), thatSchema.externalDocs().description())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.externalDocs().url(), thatSchema.externalDocs().url())) {
+            return false;
+        }
+        if (thisSchema.externalDocs().extensions().length !=  thatSchema.externalDocs().extensions().length) {
+            return false;
+        }
+        if (!Arrays.equals(thisSchema.extensions(), thatSchema.extensions())) {
+            return false;
+        }
+        return true;
+    }
+
 
     public static boolean hasArrayAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema array) {
         if (array == null) {
@@ -321,7 +506,7 @@ public abstract class AnnotationsUtils {
         if (schemaImplementation.getName().startsWith("java.lang")) {
             schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
         } else {
-            ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(schemaImplementation);
+            ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation));
             Map<String, Schema> schemaMap;
             if (resolvedSchema != null) {
                 schemaMap = resolvedSchema.referencedSchemas;
@@ -839,7 +1024,7 @@ public abstract class AnnotationsUtils {
             if (schemaImplementation.getName().startsWith("java.lang")) {
                 schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
             } else {
-                ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(schemaImplementation);
+                ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation));
                 if (resolvedSchema != null) {
                     schemaMap = resolvedSchema.referencedSchemas;
                     schemaMap.forEach((key, schema) -> {
@@ -982,5 +1167,560 @@ public abstract class AnnotationsUtils {
         }
 
         return map;
+    }
+
+    public static io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Annotation... annotations) {
+        if (annotations == null) {
+            return null;
+        }
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof io.swagger.v3.oas.annotations.media.Schema) {
+                return (io.swagger.v3.oas.annotations.media.Schema) annotation;
+            }
+        }
+        return null;
+    }
+
+    public static io.swagger.v3.oas.annotations.media.ArraySchema getArraySchemaAnnotation(Annotation... annotations) {
+        if (annotations == null) {
+            return null;
+        }
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema) {
+                return (io.swagger.v3.oas.annotations.media.ArraySchema) annotation;
+            }
+        }
+        return null;
+    }
+
+    public static <T> T getAnnotation(Class<T> cls, Annotation... annotations) {
+        if (annotations == null) {
+            return null;
+        }
+        for (Annotation annotation : annotations) {
+            if (cls.isAssignableFrom(annotation.getClass())) {
+                return (T)annotation;
+            }
+        }
+        return null;
+    }
+
+
+    public static void updateAnnotation(Class<?> clazz, io.swagger.v3.oas.annotations.media.Schema newAnnotation) {
+        try {
+            Field field = Class.class.getDeclaredField("annotations");
+            field.setAccessible(true);
+            Map<Class<? extends Annotation>, Annotation> annotations = (Map<Class<? extends Annotation>, Annotation>) field.get(clazz);
+            annotations.put(io.swagger.v3.oas.annotations.media.Schema.class, newAnnotation);
+        } catch (NoSuchFieldException e) {
+            //
+        } catch (IllegalAccessException e) {
+            //
+        }
+
+    }
+
+    /*
+     * returns null if no annotations, otherwise either ArraySchema or Schema
+     */
+    public static Annotation mergeSchemaAnnotations(
+            Annotation[] ctxAnnotations, JavaType type) {
+        // get type array and schema
+        io.swagger.v3.oas.annotations.media.Schema tS = type.getRawClass().getDeclaredAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        if (!hasSchemaAnnotation(tS)) {
+            tS = null;
+        }
+        io.swagger.v3.oas.annotations.media.ArraySchema tA = type.getRawClass().getDeclaredAnnotation(io.swagger.v3.oas.annotations.media.ArraySchema.class);
+        if (!hasArrayAnnotation(tA)) {
+            tA = null;
+        }
+
+        io.swagger.v3.oas.annotations.media.Schema tAs = tA == null ? null : tA.schema();
+        if (!hasSchemaAnnotation(tAs)) {
+            tAs = null;
+        }
+        // get ctx array and schema
+        io.swagger.v3.oas.annotations.media.Schema cS = getSchemaAnnotation(ctxAnnotations);
+        if (!hasSchemaAnnotation(cS)) {
+            cS = null;
+        }
+        io.swagger.v3.oas.annotations.media.ArraySchema cA = getArraySchemaAnnotation(ctxAnnotations);
+        if (!hasArrayAnnotation(cA)) {
+            cA = null;
+        }
+        io.swagger.v3.oas.annotations.media.Schema cAs = cA == null ? null : cA.schema();
+        if (!hasSchemaAnnotation(cAs)) {
+            cAs = null;
+        }
+
+        if (tS == null && tA == null && cS == null && cA == null) {
+            return null;
+        }
+
+        else if (tS == null && tA == null && cS != null) {
+            return cS;
+        }
+
+        else if (tS == null && tA == null && cS == null && cA != null) {
+            return cA;
+        }
+
+        else if (tS == null && tA != null && cS == null && cA == null) {
+            return tA;
+        }
+
+        else if (tS == null && tA != null && cS != null && cA == null) {
+            if (tAs != null) {
+                return tA;
+            }
+            return mergeArrayWithSchemaAnnotation(tA, cS);
+        }
+
+        else if (tS != null && tA == null && cS == null && cA != null) {
+            if (cAs != null) {
+                return cA;
+            }
+            return mergeArrayWithSchemaAnnotation(cA, tS);
+        }
+
+        else if (tA != null && cA != null) {
+            return mergeArraySchemaAnnotations(cA, tA);
+        }
+
+        else if (tS != null && cS == null && cA == null) {
+            return tS;
+        }
+
+        else if (tS != null && cS != null) {
+            //return mergeSchemaAnnotations(cS, tS);
+            return mergeSchemaAnnotations(tS, cS);
+        }
+
+        else {
+            return tS;
+        }
+
+
+    }
+    public static io.swagger.v3.oas.annotations.media.Schema mergeSchemaAnnotations(
+            io.swagger.v3.oas.annotations.media.Schema master,
+            io.swagger.v3.oas.annotations.media.Schema patch) {
+        if (master == null) {
+            return patch;
+        } else if (patch == null) {
+            return master;
+        } else if (!hasSchemaAnnotation(patch)) {
+            return master;
+        }
+        Annotation schema = new io.swagger.v3.oas.annotations.media.Schema() {
+            @Override
+            public Class<?> implementation() {
+                if (!master.implementation().equals(Void.class) || patch.implementation().equals(Void.class)) {
+                    return master.implementation();
+                }
+                return patch.implementation();
+            }
+
+            @Override
+            public Class<?> not() {
+                if (!master.not().equals(Void.class) || patch.not().equals(Void.class)) {
+                    return master.not();
+                }
+                return patch.not();
+            }
+
+            @Override
+            public Class<?>[] oneOf() {
+                if (master.oneOf().length > 0 || patch.oneOf().length == 0) {
+                    return master.oneOf();
+                }
+                return patch.oneOf();
+            }
+
+            @Override
+            public Class<?>[] anyOf() {
+                if (master.anyOf().length > 0 || patch.anyOf().length == 0) {
+                    return master.anyOf();
+                }
+                return patch.anyOf();
+            }
+
+            @Override
+            public Class<?>[] allOf() {
+                if (master.allOf().length > 0 || patch.allOf().length == 0) {
+                    return master.allOf();
+                }
+                return patch.allOf();
+            }
+
+            @Override
+            public String name() {
+                if (StringUtils.isNotBlank(master.name()) || StringUtils.isBlank(patch.name())) {
+                    return master.name();
+                }
+                return patch.name();
+            }
+
+            @Override
+            public String title() {
+                if (StringUtils.isNotBlank(master.title()) || StringUtils.isBlank(patch.title())) {
+                    return master.title();
+                }
+                return patch.title();
+            }
+
+            @Override
+            public double multipleOf() {
+                if (master.multipleOf() != 0 || patch.multipleOf() == 0) {
+                    return master.multipleOf();
+                }
+                return patch.multipleOf();
+
+            }
+
+            @Override
+            public String maximum() {
+                if (StringUtils.isNotBlank(master.maximum()) || StringUtils.isBlank(patch.maximum())) {
+                    return master.maximum();
+                }
+                return patch.maximum();
+            }
+
+            @Override
+            public boolean exclusiveMaximum() {
+                if (master.exclusiveMaximum() || !patch.exclusiveMaximum()) {
+                    return master.exclusiveMaximum();
+                }
+                return patch.exclusiveMaximum();
+            }
+
+            @Override
+            public String minimum() {
+                if (StringUtils.isNotBlank(master.minimum()) || StringUtils.isBlank(patch.minimum())) {
+                    return master.minimum();
+                }
+                return patch.minimum();
+            }
+
+            @Override
+            public boolean exclusiveMinimum() {
+                if (master.exclusiveMinimum() || !patch.exclusiveMinimum()) {
+                    return master.exclusiveMinimum();
+                }
+                return patch.exclusiveMinimum();
+            }
+
+            @Override
+            public int maxLength() {
+                if ((   master.maxLength() != Integer.MAX_VALUE && master.maxLength() > 0) ||
+                        (patch.maxLength() == Integer.MAX_VALUE || patch.maxLength() == 0)   ) {
+                    return master.maxLength();
+                }
+                return patch.maxLength();
+            }
+
+            @Override
+            public int minLength() {
+                if (master.minLength() != 0 || patch.minLength() == 0) {
+                    return master.minLength();
+                }
+                return patch.minLength();
+            }
+
+            @Override
+            public String pattern() {
+                if (StringUtils.isNotBlank(master.pattern()) || StringUtils.isBlank(patch.pattern())) {
+                    return master.pattern();
+                }
+                return patch.pattern();
+            }
+
+            @Override
+            public int maxProperties() {
+                if (master.maxProperties() != 0 || patch.maxProperties() == 0) {
+                    return master.maxProperties();
+                }
+                return patch.maxProperties();
+            }
+
+            @Override
+            public int minProperties() {
+                if (master.minProperties() != 0 || patch.minProperties() == 0) {
+                    return master.minProperties();
+                }
+                return patch.minProperties();
+            }
+
+            @Override
+            public String[] requiredProperties() {
+                if (master.requiredProperties().length > 0 || patch.requiredProperties().length == 0) {
+                    return master.requiredProperties();
+                }
+                return patch.requiredProperties();
+            }
+
+            @Override
+            public boolean required() {
+                if (master.required() || !patch.required()) {
+                    return master.required();
+                }
+                return patch.required();
+            }
+
+            @Override
+            public String description() {
+                if (StringUtils.isNotBlank(master.description()) || StringUtils.isBlank(patch.description())) {
+                    return master.description();
+                }
+                return patch.description();
+            }
+
+            @Override
+            public String format() {
+                if (StringUtils.isNotBlank(master.format()) || StringUtils.isBlank(patch.format())) {
+                    return master.format();
+                }
+                return patch.format();
+            }
+
+            @Override
+            public String ref() {
+                if (StringUtils.isNotBlank(master.ref()) || StringUtils.isBlank(patch.ref())) {
+                    return master.ref();
+                }
+                return patch.ref();
+            }
+
+            @Override
+            public boolean nullable() {
+                if (master.nullable() || !patch.nullable()) {
+                    return master.nullable();
+                }
+                return patch.nullable();
+            }
+
+            @Override
+            public boolean readOnly() {
+                if (master.readOnly() || !patch.readOnly()) {
+                    return master.readOnly();
+                }
+                return patch.readOnly();
+            }
+
+            @Override
+            public boolean writeOnly() {
+                if (master.writeOnly() || !patch.writeOnly()) {
+                    return master.writeOnly();
+                }
+                return patch.writeOnly();
+            }
+
+            @Override
+            public String example() {
+                if (StringUtils.isNotBlank(master.example()) || StringUtils.isBlank(patch.example())) {
+                    return master.example();
+                }
+                return patch.example();
+            }
+
+            @Override
+            public io.swagger.v3.oas.annotations.ExternalDocumentation externalDocs() {
+                if (getExternalDocumentation(master.externalDocs()).isPresent() || !getExternalDocumentation(patch.externalDocs()).isPresent()) {
+                    return master.externalDocs();
+                }
+                return patch.externalDocs();
+            }
+
+            @Override
+            public boolean deprecated() {
+                if (master.deprecated() || !patch.deprecated()) {
+                    return master.deprecated();
+                }
+                return patch.deprecated();
+            }
+
+            @Override
+            public String type() {
+                if (StringUtils.isNotBlank(master.type()) || StringUtils.isBlank(patch.type())) {
+                    return master.type();
+                }
+                return patch.type();
+            }
+
+            @Override
+            public String[] allowableValues() {
+                if (master.requiredProperties().length > 0 || patch.requiredProperties().length == 0) {
+                    return master.requiredProperties();
+                }
+                return patch.requiredProperties();
+            }
+
+            @Override
+            public String defaultValue() {
+                if (StringUtils.isNotBlank(master.defaultValue()) || StringUtils.isBlank(patch.defaultValue())) {
+                    return master.defaultValue();
+                }
+                return patch.defaultValue();
+            }
+
+            @Override
+            public String discriminatorProperty() {
+                if (StringUtils.isNotBlank(master.defaultValue()) || StringUtils.isBlank(patch.defaultValue())) {
+                    return master.defaultValue();
+                }
+                return patch.defaultValue();
+            }
+
+            @Override
+            public DiscriminatorMapping[] discriminatorMapping() {
+                if (master.discriminatorMapping().length > 0 || patch.discriminatorMapping().length == 0) {
+                    return master.discriminatorMapping();
+                }
+                return patch.discriminatorMapping();
+            }
+
+            @Override
+            public boolean hidden() {
+                if (master.hidden() || !patch.hidden()) {
+                    return master.hidden();
+                }
+                return patch.hidden();
+            }
+
+            @Override
+            public Class<?>[] subTypes() {
+                if (master.subTypes().length > 0 || patch.subTypes().length == 0) {
+                    return master.subTypes();
+                }
+                return patch.subTypes();
+            }
+
+            @Override
+            public Extension[] extensions() {
+                if (master.extensions().length > 0 || patch.extensions().length == 0) {
+                    return master.extensions();
+                }
+                return patch.extensions();
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return io.swagger.v3.oas.annotations.media.Schema.class;
+            }
+        };
+
+        return (io.swagger.v3.oas.annotations.media.Schema)schema;
+    }
+
+    public static io.swagger.v3.oas.annotations.media.ArraySchema mergeArraySchemaAnnotations(
+            io.swagger.v3.oas.annotations.media.ArraySchema master,
+            io.swagger.v3.oas.annotations.media.ArraySchema patch) {
+        if (master == null) {
+            return patch;
+        } else if (patch == null) {
+            return master;
+        } else if (!hasArrayAnnotation(patch)) {
+            return master;
+        }
+        Annotation newArraySchema = new io.swagger.v3.oas.annotations.media.ArraySchema() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return io.swagger.v3.oas.annotations.media.ArraySchema.class;
+            }
+
+            @Override
+            public io.swagger.v3.oas.annotations.media.Schema schema() {
+                io.swagger.v3.oas.annotations.media.Schema patchSchema = patch.schema();
+                if (!hasSchemaAnnotation(patchSchema)) {
+                    patchSchema = null;
+                }
+
+                if (patchSchema == null) {
+                    return master.schema();
+                } else {
+                    return mergeSchemaAnnotations(master.schema(), patch.schema());
+                }
+            }
+
+            @Override
+            public int maxItems() {
+                if (master.maxItems() != 0 || patch.maxItems() == 0) {
+                    return master.maxItems();
+                }
+                return patch.maxItems();
+            }
+
+            @Override
+            public int minItems() {
+                if (master.maxItems() != 0 || patch.maxItems() == 0) {
+                    return master.maxItems();
+                }
+                return patch.maxItems();
+            }
+
+            @Override
+            public boolean uniqueItems() {
+                if (master.uniqueItems() || !patch.uniqueItems()) {
+                    return master.uniqueItems();
+                }
+                return patch.uniqueItems();
+            }
+
+            @Override
+            public Extension[] extensions() {
+                if (master.extensions().length > 0 || patch.extensions().length == 0) {
+                    return master.extensions();
+                }
+                return patch.extensions();
+            }
+        };
+
+        return (io.swagger.v3.oas.annotations.media.ArraySchema)newArraySchema;
+    }
+
+    public static io.swagger.v3.oas.annotations.media.ArraySchema mergeArrayWithSchemaAnnotation(
+            io.swagger.v3.oas.annotations.media.ArraySchema arraySchema,
+            io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (arraySchema == null || schema == null) {
+            return arraySchema;
+        }
+        if (!hasSchemaAnnotation(schema)) {
+            return arraySchema;
+        }
+        Annotation newArraySchema = new io.swagger.v3.oas.annotations.media.ArraySchema() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return io.swagger.v3.oas.annotations.media.ArraySchema.class;
+            }
+
+            @Override
+            public io.swagger.v3.oas.annotations.media.Schema schema() {
+                return schema;
+            }
+
+            @Override
+            public int maxItems() {
+                return arraySchema.maxItems();
+            }
+
+            @Override
+            public int minItems() {
+                return arraySchema.minItems();
+            }
+
+            @Override
+            public boolean uniqueItems() {
+                return arraySchema.uniqueItems();
+            }
+
+            @Override
+            public Extension[] extensions() {
+                return arraySchema.extensions();
+            }
+        };
+
+        return (io.swagger.v3.oas.annotations.media.ArraySchema)newArraySchema;
     }
 }

@@ -3,6 +3,7 @@ package io.swagger.v3.core.resolving;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
@@ -31,7 +32,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
 
     @Test
     public void testInheritedBean() throws Exception {
-        final Schema baseModel = context.resolve(BaseBean.class);
+        final Schema baseModel = context.resolve(new AnnotatedType(BaseBean.class));
         assertNotNull(baseModel);
         assertBasePropertiesValid(baseModel.getProperties());
 
@@ -51,7 +52,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
 
     @Test
     public void testInheritedChildBean() throws Exception {
-        final Schema subModel = context.resolve(Sub1Bean.class);
+        final Schema subModel = context.resolve(new AnnotatedType(Sub1Bean.class));
         assertNotNull(subModel);
         // make sure child points at parent
         assertTrue(subModel instanceof ComposedSchema);
@@ -68,7 +69,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
 
     @Test
     public void testComposedChildBean() throws Exception {
-        final Schema subModel = context.resolve(Sub2Bean.class);
+        final Schema subModel = context.resolve(new AnnotatedType(Sub2Bean.class));
         assertNotNull(subModel);
         // make sure child points at parent
         assertTrue(subModel instanceof ComposedSchema);
@@ -85,7 +86,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
 
     @Test
     public void testComposedUberObject() throws Exception {
-        final Schema uberModel = context.resolve(UberObject.class);
+        final Schema uberModel = context.resolve(new AnnotatedType(UberObject.class));
         assertNotNull(uberModel);
         // make sure child points at parent
         assertTrue(uberModel instanceof ComposedSchema);
@@ -104,7 +105,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
 
     @Test
     public void testHierarchy() throws Exception {
-        final Schema baseModel = context.resolve(BaseBean3.class);
+        final Schema baseModel = context.resolve(new AnnotatedType(BaseBean3.class));
         assertNotNull(baseModel);
         assertBasePropertiesValid(baseModel.getProperties());
 
@@ -297,7 +298,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
 
     @Test
     public void testMultipleInheritedBean() throws Exception {
-        final Schema baseModel = context.resolve(MultipleBaseBean.class);
+        final Schema baseModel = context.resolve(new AnnotatedType(MultipleBaseBean.class));
 
         assertNotNull(baseModel);
         assertBasePropertiesValid(baseModel.getProperties());
@@ -322,7 +323,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
 
     @Test
     public void testMultipleInheritedChildBean() throws Exception {
-        final Schema subModel = context.resolve(MultipleSub1Bean.class);
+        final Schema subModel = context.resolve(new AnnotatedType(MultipleSub1Bean.class));
         assertNotNull(subModel);
         // make sure child points at parent
         assertTrue(subModel instanceof ComposedSchema);

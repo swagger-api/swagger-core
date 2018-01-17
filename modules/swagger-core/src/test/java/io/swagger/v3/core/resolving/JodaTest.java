@@ -1,5 +1,6 @@
 package io.swagger.v3.core.resolving;
 
+import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.oas.models.media.Schema;
@@ -17,7 +18,7 @@ public class JodaTest extends SwaggerTestBase {
     @Test
     public void testSimple() throws Exception {
         final ModelConverter mr = modelResolver();
-        final Schema model = mr.resolve(ModelWithJodaDateTime.class, new ModelConverterContextImpl(mr), null);
+        final Schema model = mr.resolve(new AnnotatedType(ModelWithJodaDateTime.class), new ModelConverterContextImpl(mr), null);
         assertNotNull(model);
 
         final Map<String, Schema> props = model.getProperties();

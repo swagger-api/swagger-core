@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.media.Schema;
@@ -25,7 +26,7 @@ public class SimpleGenerationTest extends SwaggerTestBase {
 
     @Test
     public void testSimple() throws Exception {
-        final Schema model = context.resolve(SimpleBean.class);
+        final Schema model = context.resolve(new AnnotatedType(SimpleBean.class));
         assertNotNull(model);
         assertEquals(model.getDescription(), "DESC");
 
@@ -61,14 +62,14 @@ public class SimpleGenerationTest extends SwaggerTestBase {
 
     @Test
     public void testOrdering() throws Exception {
-        final Schema jsonOrderBean = context.resolve(JsonOrderBean.class);
+        final Schema jsonOrderBean = context.resolve(new AnnotatedType(JsonOrderBean.class));
         final Map<String, Schema> props = jsonOrderBean.getProperties();
         assertEquals(new ArrayList<String>(props.keySet()), Arrays.asList("a", "b", "c", "d"));
     }
 
     @Test
     public void testTheCountBean() throws Exception {
-        final Schema model = context.resolve(TheCount.class);
+        final Schema model = context.resolve(new AnnotatedType(TheCount.class));
         final Map<String, Schema> props = model.getProperties();
         assertEquals(props.size(), 1);
 
@@ -80,7 +81,7 @@ public class SimpleGenerationTest extends SwaggerTestBase {
 
     @Test
     public void testStringDateMap() throws Exception {
-        final Schema model = context.resolve(StringDateMapBean.class);
+        final Schema model = context.resolve(new AnnotatedType(StringDateMapBean.class));
         final Map<String, Schema> props = model.getProperties();
         assertEquals(props.size(), 1);
 
@@ -92,7 +93,7 @@ public class SimpleGenerationTest extends SwaggerTestBase {
 
     @Test
     public void testIntArray() throws Exception {
-        final Schema model = context.resolve(IntArrayBean.class);
+        final Schema model = context.resolve(new AnnotatedType(IntArrayBean.class));
         final Map<String, Schema> props = model.getProperties();
         assertEquals(props.size(), 1);
 
@@ -104,7 +105,7 @@ public class SimpleGenerationTest extends SwaggerTestBase {
 
     @Test
     public void testComplex() throws Exception {
-        final Schema model = context.resolve(ComplexBean.class);
+        final Schema model = context.resolve(new AnnotatedType(ComplexBean.class));
         assertNotNull(model);
         final Map<String, Schema> props = model.getProperties();
         assertEquals(props.size(), 6);

@@ -6,21 +6,18 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyName;
-import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.oas.models.media.Schema;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 
 public abstract class AbstractModelConverter implements ModelConverter {
     protected final ObjectMapper _mapper;
@@ -46,35 +43,9 @@ public abstract class AbstractModelConverter implements ModelConverter {
     }
 
     @Override
-    public Schema resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+    public Schema resolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain) {
         if (chain.hasNext()) {
             return chain.next().resolve(type, context, chain);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public Schema resolveAnnotatedType(
-            Type type,
-            Annotated member,
-            String elementName,
-            Schema parent,
-            BiFunction<JavaType, Annotation[], Schema> jsonUnwrappedHandler,
-            ModelConverterContext context,
-            Iterator<ModelConverter> chain
-    ) {
-        if (chain.hasNext()) {
-            return chain.next().resolveAnnotatedType(type, member, elementName, parent, jsonUnwrappedHandler, context, chain);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public Schema resolve(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {
-        if (chain.hasNext()) {
-            return chain.next().resolve(type, context, annotations, chain);
         } else {
             return null;
         }

@@ -1,8 +1,7 @@
 package io.swagger.v3.core.converting.override;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.google.common.collect.Sets;
+import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.converter.ModelConverters;
@@ -72,54 +71,40 @@ public class SnakeCaseConverterTest {
     class SnakeCaseConverter implements ModelConverter {
         final Set<String> primitives = Sets.newHashSet("string", "integer", "number", "boolean", "long");
 
-        @Override
-        public Schema resolve(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {
-            if (chain.hasNext()) {
-                final ModelConverter converter = chain.next();
-                return converter.resolve(type, context, annotations, chain);
-            }
-            return null;
-        }
 
         @Override
-        public Schema resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+        public Schema resolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain) {
             if (chain.hasNext()) {
                 final ModelConverter converter = chain.next();
                 final Schema model = converter.resolve(type, context, chain);
                 if (model != null) {
                     final Map<String, Schema> properties = model.getProperties();
                     final Map<String, Schema> updatedProperties = new LinkedHashMap<String, Schema>();
-                    for (String key : properties.keySet()) {
-                        String convertedKey = toSnakeCase(key);
-                        Schema prop = properties.get(key);
-                        if (prop.get$ref() != null) {
-                            Pair<String, String> refName = extractSimpleName(prop.get$ref());
-                            if (!StringUtils.isBlank(refName.getRight())) { // skip if didn't resolve simple name
-                                prop.set$ref(constructRef(toSnakeCase(refName.getLeft()), refName.getRight()));
+                    if (properties != null) {
+                        for (String key : properties.keySet()) {
+                            String convertedKey = toSnakeCase(key);
+                            Schema prop = properties.get(key);
+                            if (prop.get$ref() != null) {
+                                Pair<String, String> refName = extractSimpleName(prop.get$ref());
+                                if (!StringUtils.isBlank(refName.getRight())) { // skip if didn't resolve simple name
+                                    prop.set$ref(constructRef(toSnakeCase(refName.getLeft()), refName.getRight()));
+                                }
                             }
+                            updatedProperties.put(convertedKey, prop);
                         }
-                        updatedProperties.put(convertedKey, prop);
+                        model.getProperties().clear();
+                        model.setProperties(updatedProperties);
                     }
-                    model.getProperties().clear();
-                    model.setProperties(updatedProperties);
-
-                    String prevName = model.getName();
-                    model.setName(toSnakeCase(model.getName()));
-                    context.defineModel(model.getName(), model, type, prevName);
+                    if (model.getName() != null) {
+                        String prevName = model.getName();
+                        model.setName(toSnakeCase(model.getName()));
+                        context.defineModel(model.getName(), model, type, prevName);
+                    }
 
                     return model;
                 }
             }
             return null;
-        }
-
-        @Override
-        public Schema resolveAnnotatedType(Type type, Annotated member, String elementName, Schema parent, BiFunction<JavaType, Annotation[], Schema> jsonUnwrappedHandler, ModelConverterContext context, Iterator<ModelConverter> chain) {
-            if (chain.hasNext()) {
-                return chain.next().resolveAnnotatedType(type, member, elementName, parent, jsonUnwrappedHandler, context, chain);
-            } else {
-                return null;
-            }
         }
 
         private String toSnakeCase(String str) {
