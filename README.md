@@ -26,6 +26,7 @@ The OpenAPI Specification has undergone several revisions since initial creation
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
+2.0.0-rc4                 | 2018-01-22   | 3.0           | [tag v2.0.0-rc4](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc4) | Supported
 2.0.0-rc3                 | 2017-11-21   | 3.0           | [tag v2.0.0-rc3](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc3) | Supported
 2.0.0-rc2                 | 2017-09-29   | 3.0           | [tag v2.0.0-rc2](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc2) | Supported
 2.0.0-rc1                 | 2017-08-17   | 3.0           | [tag v2.0.0-rc1](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc1) | Supported
@@ -86,6 +87,30 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+## v2.0.0-rc4 
+
+### Notable Features:
+
+* See also rc1, r2, and rc3 release notes ([v2.0.0-rc1](https://github.com/swagger-api/swagger-core/releases/tag/v2.0.0-rc1), [v2.0.0-rc2](https://github.com/swagger-api/swagger-core/releases/tag/v2.0.0-rc2), [v2.0.0-rc3](https://github.com/swagger-api/swagger-core/releases/tag/v2.0.0-rc3))
+* Fourth official release candidate of OpenAPI 3.0 support. Swagger-core now produces OpenAPI 3.0 specs only. swagger-core 2.0 version is not backward compatible with previous 1.x versions.
+* Available on Maven central, and the sources are in the 2.0 branch. PRs should be submitted against the 2.0 branch.
+* Enhanced polymorphic schemas resolving (#2620)
+* Remove guava dependency from core code (#2618)
+* Subresource resolving (#2607)
+* Additional properties as `Boolean` or `Schema` (#2461)
+* Versions updates
+* Enhanced `RequestBody` and other annotations support (#2562)
+* Extended set of [samples](https://github.com/swagger-api/swagger-samples/tree/2.0/java)
+* Various bug fixes and improvements
+
+### Limitations
+
+- Reader extensions full support  _(swagger-jaxrs2)_ 
+- Integration layer enhancements:config file location enhanced loading, additional loaders, etc. _(swagger-integration, swagger-jaxrs)_ 
+- JsonIdentity support _(swagger-core)_ 
+- `MatrixParam` annotation support
+
 
 ## v2.0.0-rc3 
 
