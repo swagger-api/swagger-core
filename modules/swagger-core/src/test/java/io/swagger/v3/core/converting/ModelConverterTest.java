@@ -24,6 +24,7 @@ import io.swagger.v3.core.oas.models.composition.ModelWithUrlProperty;
 import io.swagger.v3.core.oas.models.composition.Pet;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ResourceUtils;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.MapSchema;
@@ -176,6 +177,7 @@ public class ModelConverterTest {
         final ModelWithTuple2.TupleAsMapModelConverter asMapConverter = new ModelWithTuple2.TupleAsMapModelConverter(Json.mapper());
         ModelConverters.getInstance().addConverter(asMapConverter);
         final Map<String, Schema> asMap = readAll(ModelWithTuple2.class);
+        Yaml.prettyPrint(asMap);
         ModelConverters.getInstance().removeConverter(asMapConverter);
         assertEquals(asMap.size(), 4);
         for (String item : Arrays.asList("MapOfString", "MapOfComplexLeft")) {

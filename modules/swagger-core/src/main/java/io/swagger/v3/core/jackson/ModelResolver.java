@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,6 +61,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -304,6 +306,38 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             model = new ComposedSchema()
                     .type("object")
                     .name(name);
+        } else if (type.isContainerType()) {
+            JavaType keyType = type.getKeyType();
+            JavaType valueType = type.getContentType();
+            if (keyType != null && valueType != null) {
+                if (ReflectionUtils.isSystemType(type)) {
+                    context.resolve(valueType);
+                    return null;
+                }
+                Schema mapModel = new MapSchema().additionalProperties(context.resolve(valueType, new Annotation[]{}));
+                mapModel.name(name);
+                model = mapModel;
+            } else if (valueType != null) {
+                if (ReflectionUtils.isSystemType(type)) {
+                    context.resolve(valueType);
+                    return null;
+                }
+                Schema items = context.resolve(valueType, new Annotation[]{});
+                Schema arrayModel =
+                        new ArraySchema().items(items);
+                if (_isSetType(type.getRawClass())) {
+                    arrayModel.setUniqueItems(true);
+                }
+                arrayModel.name(name);
+                model = arrayModel;
+            } else {
+                if (ReflectionUtils.isSystemType(type)) {
+                    return null;
+                }
+                model = new Schema()
+                        .type("object")
+                        .name(name);
+            }
         } else {
             model = new Schema()
                     .type("object")
@@ -315,11 +349,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             context.defineModel(name, model, type, null);
         }
 
-        if (type.isContainerType()) {
-            // We treat collections as primitive types, just need to add models for values (if any)
-            context.resolve(type.getContentType());
-            return null;
-        }
         XML xml = resolveXml(beanDesc.getClassInfo());
         if (xml != null) {
             model.xml(xml);
@@ -339,7 +368,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         List<Schema> props = new ArrayList<Schema>();
         Map<String, Schema> modelProps = new LinkedHashMap<String, Schema>();
 
-        for (BeanPropertyDefinition propDef : beanDesc.findProperties()) {
+        List<BeanPropertyDefinition> properties = beanDesc.findProperties();
+        List<String> ignoredProps = getIgnoredProperties(beanDesc);
+        properties.removeIf(p -> ignoredProps.contains(p.getName()));
+        for (BeanPropertyDefinition propDef : properties) {
             Schema property = null;
             String propName = propDef.getName();
             Annotation[] annotations = null;
@@ -1482,6 +1514,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return null;
+    }
+
+    private List<String> getIgnoredProperties(BeanDescription beanDescription) {
+        AnnotationIntrospector introspector = _mapper.getSerializationConfig().getAnnotationIntrospector();
+        String[] ignored = introspector.findPropertiesToIgnore(beanDescription.getClassInfo(), true);
+        return ignored == null ? Collections.emptyList() : Arrays.asList(ignored);
     }
 
 }
