@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
+import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.oas.models.media.Schema;
 
 import java.lang.annotation.Annotation;
@@ -99,11 +100,11 @@ public abstract class AbstractModelConverter implements ModelConverter {
             return "Array";
         }
 
-        if (type.isMapLikeType()) {
+        if (type.isMapLikeType() && ReflectionUtils.isSystemType(type)) {
             return "Map";
         }
 
-        if (type.isContainerType()) {
+        if (type.isContainerType() && ReflectionUtils.isSystemType(type)) {
             if (Set.class.isAssignableFrom(type.getRawClass())) {
                 return "Set";
             }

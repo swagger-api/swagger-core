@@ -142,7 +142,9 @@ public class OperationParser {
                     schemaMap.forEach((key, schema) -> {
                         components.addSchemas(key, schema);
                     });
-                    schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
+                    if (resolvedSchema.schema != null) {
+                        schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
+                    }
                 }
             }
             if (StringUtils.isBlank(schemaObject.get$ref()) && StringUtils.isBlank(schemaObject.getType())) {

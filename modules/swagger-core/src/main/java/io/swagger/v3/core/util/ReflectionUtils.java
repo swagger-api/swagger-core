@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
@@ -357,5 +358,14 @@ public class ReflectionUtils {
     public static boolean isVoid(Type type) {
         final Class<?> cls = TypeFactory.defaultInstance().constructType(type).getRawClass();
         return Void.class.isAssignableFrom(cls) || Void.TYPE.isAssignableFrom(cls);
+    }
+
+    public static boolean isSystemType(JavaType type) {
+        // used while resolving containter types to skip resolving system types; possibly extend by checking classloader
+        // and/or other packages
+        if (type.getRawClass().getName().startsWith("java")) {
+            return true;
+        }
+        return false;
     }
 }
