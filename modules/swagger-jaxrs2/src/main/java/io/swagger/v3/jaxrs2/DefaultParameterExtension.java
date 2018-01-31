@@ -21,6 +21,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.MatrixParam;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -65,6 +66,13 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 PathParam param = (PathParam) annotation;
                 Parameter pp = new Parameter();
                 pp.setIn(PATH_PARAM);
+                pp.setName(param.value());
+                parameter = pp;
+            } else if (annotation instanceof MatrixParam) {
+                MatrixParam param = (MatrixParam) annotation;
+                Parameter pp = new Parameter();
+                pp.setIn(PATH_PARAM);
+                pp.setStyle(Parameter.StyleEnum.MATRIX);
                 pp.setName(param.value());
                 parameter = pp;
             } else if (annotation instanceof HeaderParam) {

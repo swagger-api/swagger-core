@@ -18,6 +18,7 @@ package io.swagger.v3.jaxrs2.resources;
 
 import io.swagger.v3.jaxrs2.resources.data.PetData;
 import io.swagger.v3.jaxrs2.resources.exception.NotFoundException;
+import io.swagger.v3.jaxrs2.resources.model.Category;
 import io.swagger.v3.jaxrs2.resources.model.Pet;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,6 +29,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.MatrixParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -143,6 +145,25 @@ public class PetResource {
             @BeanParam QueryResultBean qr
     ) {
         return Response.ok(petData.findPetByStatus(status)).build();
+    }
+
+    @GET
+    @Path("/findByCategory/{category}")
+    @Produces("application/xml")
+    @Operation(summary = "Finds Pets by category",
+            responses = {
+                    @ApiResponse(
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Pet.class))),
+                    @ApiResponse(
+                            responseCode = "400", description = "Invalid category value"
+                    )}
+    )
+    public Response findPetsByCategory(
+            @Parameter(description = "Category value that need to be considered for filter", required = true) @MatrixParam("category") Category category,
+            @BeanParam QueryResultBean qr
+    ) {
+        return Response.ok(petData.findPetByCategory(category)).build();
     }
 
     @GET
