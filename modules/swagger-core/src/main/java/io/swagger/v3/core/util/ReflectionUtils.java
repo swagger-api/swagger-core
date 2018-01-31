@@ -302,7 +302,7 @@ public class ReflectionUtils {
                 annotations = getRepeatableAnnotationsArray(superClass, annotationClass);
             }
         }
-        if (annotations == null) {
+        if (annotations == null || annotations.length == 0) {
             for (Class<?> anInterface : cls.getInterfaces()) {
                 for (Annotation metaAnnotation : anInterface.getAnnotations()) {
                     annotations = metaAnnotation.annotationType().getAnnotationsByType(annotationClass);
@@ -315,9 +315,6 @@ public class ReflectionUtils {
                     return annotations;
                 }
             }
-        }
-        if (annotations == null) {
-            return null;
         }
         return annotations;
     }
