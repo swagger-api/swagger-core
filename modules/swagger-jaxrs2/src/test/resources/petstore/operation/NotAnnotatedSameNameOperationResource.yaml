@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.1
 paths:
   /notannotatedoperation:
     get:
@@ -12,7 +12,7 @@ paths:
                 type: string
   /notannotatedoperationduplicated:
     get:
-      operationId: getUser
+      operationId: getUser_1
       requestBody:
         content:
           '*/*':
