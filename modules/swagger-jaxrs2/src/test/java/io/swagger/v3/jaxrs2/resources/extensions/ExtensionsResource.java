@@ -429,6 +429,8 @@ public class ExtensionsResource {
                     "      responses:\n" +
                     "        default:\n" +
                     "          description: default response\n" +
+                    "          content:\n" +
+                    "            '*/*': {}\n" +
                     "      security:\n" +
                     "      - security_key:\n" +
                     "        - write:pets\n" +
@@ -473,6 +475,8 @@ public class ExtensionsResource {
                     "      responses:\n" +
                     "        default:\n" +
                     "          description: default response\n" +
+                    "          content:\n" +
+                    "            '*/*': {}\n" +
                     "      callbacks:\n" +
                     "        subscription:\n" +
                     "          http://$request.query.url:\n" +

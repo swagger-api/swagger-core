@@ -7,6 +7,8 @@ paths:
       responses:
         default:
           description: default response
+          content:
+            '*/*': {}
       security:
       - security_key:
         - write:pets
@@ -24,6 +26,8 @@ paths:
       responses:
         default:
           description: default response
+          content:
+            '*/*': {}
       security:
       - security_key:
         - write:pets
@@ -39,6 +43,8 @@ paths:
       responses:
         default:
           description: default response
+          content:
+            '*/*': {}
       security:
       - security_key:
         - write:pets

@@ -11,3 +11,5 @@ paths:
       responses:
         default:
           description: default response
+          content:
+            '*/*': {}

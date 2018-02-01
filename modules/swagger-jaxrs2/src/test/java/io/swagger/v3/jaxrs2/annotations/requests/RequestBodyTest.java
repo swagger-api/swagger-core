@@ -53,6 +53,8 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
                 "    post:\n" +
                 "      summary: Create user\n" +
                 "      description: This can only be done by the logged in user.\n" +
@@ -76,6 +78,8 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
                 "    delete:\n" +
                 "      summary: Delete user\n" +
                 "      description: This can only be done by the logged in user.\n" +
@@ -92,6 +96,8 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
                 "  /pet:\n" +
                 "    put:\n" +
                 "      summary: Modify pet\n" +
@@ -108,6 +114,8 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
                 "    post:\n" +
                 "      summary: Create pet\n" +
                 "      description: Creating pet.\n" +
@@ -123,6 +131,8 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
                 "    delete:\n" +
                 "        summary: Delete pet\n" +
                 "        description: Deleting pet.\n" +
@@ -140,6 +150,8 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "        responses:\n" +
                 "          default:\n" +
                 "            description: default response\n" +
+                "            content:\n" +
+                "              '*/*': {}\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    User:\n" +

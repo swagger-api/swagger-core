@@ -14,10 +14,10 @@ import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
 
-public class SecurityTests extends AbstractAnnotationTest {
+public class SecurityTest extends AbstractAnnotationTest {
     @Test
     public void testSecuritySheme() {
-        String openApiYAML = readIntoYaml(SecurityTests.OAuth2SchemeOnClass.class);
+        String openApiYAML = readIntoYaml(SecurityTest.OAuth2SchemeOnClass.class);
         int start = openApiYAML.indexOf("components:");
         String extractedYAML = openApiYAML.substring(start, openApiYAML.length() - 1);
         String expectedYAML = "components:\n" +
@@ -46,6 +46,8 @@ public class SecurityTests extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
                 "      security:\n" +
                 "      - security_key:\n" +
                 "        - write:pets\n" +
@@ -62,6 +64,8 @@ public class SecurityTests extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
                 "      security:\n" +
                 "      - security_key:\n" +
                 "        - write:pets\n" +
@@ -86,7 +90,7 @@ public class SecurityTests extends AbstractAnnotationTest {
 
     @Test
     public void testMultipleSecurityShemes() {
-        String openApiYAML = readIntoYaml(SecurityTests.MultipleSchemesOnClass.class);
+        String openApiYAML = readIntoYaml(SecurityTest.MultipleSchemesOnClass.class);
         int start = openApiYAML.indexOf("components:");
         String extractedYAML = openApiYAML.substring(start, openApiYAML.length() - 1);
         String expectedYAML = "components:\n" +

@@ -348,7 +348,9 @@ public class EncodingTest extends AbstractAnnotationTest {
                 "      operationId: getWithNoParametersAndNoResponses\n" +
                 "      responses:\n" +
                 "        default:\n" +
-                "          description: default response";
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(extractedYAML, expectedYAML);

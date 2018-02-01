@@ -75,6 +75,8 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
                 "      deprecated: true";
         String extractedYAML = openApiYAML.substring(start, end);
 
@@ -681,6 +683,9 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "          content:\n" +
+                "            'application/json': {}\n" +
+                "            'application/xml': {}\n" +
                 "  /user/createWithArray:\n" +
                 "    post:\n" +
                 "      summary: Creates list of users with given input array\n" +
@@ -697,6 +702,9 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "          content:\n" +
+                "            'application/json': {}\n" +
+                "            'application/xml': {}\n" +
                 "  /user/createWithList:\n" +
                 "    post:\n" +
                 "      summary: Creates list of users with given input array\n" +
@@ -713,6 +721,9 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "          content:\n" +
+                "            'application/json': {}\n" +
+                "            'application/xml': {}\n" +
                 "  /user/{username}:\n" +
                 "    get:\n" +
                 "      summary: Get user by user name\n" +
@@ -823,6 +834,9 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "          content:\n" +
+                "            'application/json': {}\n" +
+                "            'application/xml': {}\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    User:\n" +
@@ -875,6 +889,9 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "          content:\n" +
+                "            'application/json': {}\n" +
+                "            'application/xml': {}\n" +
                 "  /user/createUserWithReturnType:\n" +
                 "    post:\n" +
                 "      summary: Create user with return type\n" +
@@ -999,6 +1016,9 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
+                "          content:\n" +
+                "            'application/json': {}\n" +
+                "            'application/xml': {}\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    UserResourceBean:\n" +
