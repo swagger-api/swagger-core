@@ -20,6 +20,7 @@ import io.swagger.v3.jaxrs2.resources.SubResourceHead;
 import io.swagger.v3.jaxrs2.resources.TagsResource;
 import io.swagger.v3.jaxrs2.resources.Test2607;
 import io.swagger.v3.jaxrs2.resources.TestResource;
+import io.swagger.v3.jaxrs2.resources.Ticket2644ConcreteImplementation;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ParameterExtensionsResource;
@@ -766,6 +767,20 @@ public class ReaderTest {
         pathItem = paths.get("/bookstore/{id}");
         assertNotNull(pathItem);
         operation = pathItem.getDelete();
+        assertNotNull(operation);
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("*/*"));
+
+    }
+
+    @Test(description = "test ticket #2644 annotated interface")
+    public void test2644() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(Ticket2644ConcreteImplementation.class);
+        Paths paths = openAPI.getPaths();
+        assertEquals(paths.size(), 1);
+        PathItem pathItem = paths.get("/resources");
+        assertNotNull(pathItem);
+        Operation operation = pathItem.getGet();
         assertNotNull(operation);
         assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("*/*"));
 
