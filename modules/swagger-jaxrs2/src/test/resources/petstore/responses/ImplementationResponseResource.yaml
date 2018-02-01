@@ -1,0 +1,30 @@
+openapi: 3.0.1
+paths:
+  /implementationresponse:
+    get:
+      summary: Simple get operation
+      description: Defines a simple get operation with no inputs and a complex output
+        object
+      operationId: getWithPayloadResponse
+      responses:
+        200:
+          description: voila!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecondSampleResponseSchema'
+        400:
+          description: boo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GenericError'
+      deprecated: true
+components:
+  schemas:
+    SecondSampleResponseSchema:
+      type: object
+    GenericError:
+      type: object
+    SampleResponseSchema:
+      type: object

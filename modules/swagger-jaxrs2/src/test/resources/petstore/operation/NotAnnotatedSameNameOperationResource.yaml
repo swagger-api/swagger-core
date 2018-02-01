@@ -1,0 +1,27 @@
+openapi: 3.0.1
+paths:
+  /notannotatedoperation:
+    get:
+      operationId: getUser
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string
+  /notannotatedoperationduplicated:
+    get:
+      operationId: getUser_1
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string

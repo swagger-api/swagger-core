@@ -1,0 +1,92 @@
+openapi: 3.0.1
+paths:
+  /example:
+    post:
+      description: subscribes a client to updates relevant to the requestor's account
+      operationId: subscribe
+      parameters:
+      - name: subscriptionId
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+          description: Schema
+          example: Subscription example
+        examples:
+          subscriptionId_2:
+            summary: Subscription number 54321
+            description: subscriptionId_2
+            value: 54321
+            externalValue: Subscription external value 2
+          subscriptionId_1:
+            summary: Subscription number 12345
+            description: subscriptionId_1
+            value: 12345
+            externalValue: Subscription external value 1
+        example: example
+      requestBody:
+        description: Created user object
+        content:
+          '*/*':
+            schema:
+              type: string
+              description: the generated UUID
+              format: uuid
+              readOnly: true
+              example: Schema example
+            examples:
+              Default Request:
+                summary: Subscription Request Example
+                description: Default Request
+                value: SubscriptionRequest
+                externalValue: Subscription Request Value
+        required: true
+      responses:
+        default:
+          description: test description
+          content:
+            '*/*':
+              schema:
+                type: string
+                description: the generated UUID
+                format: uuid
+                readOnly: true
+                example: Schema example
+              examples:
+                Default Response:
+                  summary: Subscription Response Example
+                  description: Default Response
+                  value: SubscriptionResponse
+                  externalValue: Subscription Response value 1
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        userStatus:
+          type: integer
+          description: User Status
+          format: int32
+      xml:
+        name: User
+    SubscriptionResponse:
+      type: object
+      properties:
+        subscriptionId:
+          type: string

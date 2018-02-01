@@ -1,0 +1,28 @@
+openapi: 3.0.1
+paths:
+  /sameOperationName:
+    get:
+      description: Same Operation Name
+      operationId: getUser
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      description: Same Operation Name Duplicated
+      operationId: getUser_1
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string

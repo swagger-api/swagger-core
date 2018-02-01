@@ -1,0 +1,27 @@
+openapi: 3.0.1
+paths:
+  /repeatablecallback:
+    get:
+      summary: Simple get operation
+      operationId: getWithNoParameters
+      responses:
+        200:
+          description: voila!
+      callbacks:
+        testCallback:
+          http://$requests.query.url: {}
+        testCallback1:
+          http://www.url.com:
+            get:
+              summary: get all the reviews
+              operationId: getAllReviews
+              responses:
+                200:
+                  description: successful operation
+                  content:
+                    application/json:
+                      schema:
+                        type: integer
+                        format: int32
+        testCallback2:
+          http://$request.query.url: {}

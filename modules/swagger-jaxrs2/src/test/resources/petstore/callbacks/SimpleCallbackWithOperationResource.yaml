@@ -1,0 +1,23 @@
+openapi: 3.0.1
+paths:
+  /simplecallback:
+    get:
+      summary: Simple get operation
+      operationId: getWithNoParameters
+      responses:
+        200:
+          description: voila!
+      callbacks:
+        testCallback1:
+          http://www.url.com:
+            get:
+              summary: get all the reviews
+              operationId: getAllReviews
+              responses:
+                200:
+                  description: successful operation
+                  content:
+                    application/json:
+                      schema:
+                        type: integer
+                        format: int32

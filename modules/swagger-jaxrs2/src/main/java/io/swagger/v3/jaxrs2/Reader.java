@@ -773,6 +773,21 @@ public class Reader implements OpenApiReader {
                     operation).ifPresent(p -> p.forEach(operation::addParametersItem));
         }
 
+        // RequestBody in Method
+        if (apiRequestBody != null && operation.getRequestBody() == null){
+            OperationParser.getRequestBody(apiRequestBody, classConsumes, methodConsumes, components).ifPresent(
+                    operation::setRequestBody);
+        }
+
+        // operation id
+        if (StringUtils.isBlank(operation.getOperationId())) {
+            operation.setOperationId(getOperationId(method.getName()));
+        }
+
+        if (apiOperation != null) {
+            setOperationObjectFromApiOperationAnnotation(operation, apiOperation, methodProduces, classProduces, methodConsumes, classConsumes);
+        }
+
         // apiResponses
         if (apiResponses != null && apiResponses.size() > 0) {
             OperationParser.getApiResponses(
@@ -787,21 +802,6 @@ public class Reader implements OpenApiReader {
                     responses.forEach(operation.getResponses()::addApiResponse);
                 }
             });
-        }
-
-        // RequestBody in Method
-        if (apiRequestBody != null && operation.getRequestBody() == null) {
-            OperationParser.getRequestBody(apiRequestBody, classConsumes, methodConsumes, components).ifPresent(
-                    operation::setRequestBody);
-        }
-
-        // operation id
-        if (StringUtils.isBlank(operation.getOperationId())) {
-            operation.setOperationId(getOperationId(method.getName()));
-        }
-
-        if (apiOperation != null) {
-            setOperationObjectFromApiOperationAnnotation(operation, apiOperation, methodProduces, classProduces, methodConsumes, classConsumes);
         }
 
         // class tags after tags defined as field of @Operation
