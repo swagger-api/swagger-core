@@ -29,6 +29,8 @@ public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
 
     public static final String DEFAULT = "default";
 
+    private java.util.Map<String, Object> extensions = null;
+
     public ApiResponses addApiResponse(String name, ApiResponse item) {
         this.put(name, item);
         return this;
@@ -53,6 +55,30 @@ public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
         return this;
     }
 
+    public java.util.Map<String, Object> getExtensions() {
+        return extensions;
+    }
+
+    public void addExtension(String name, Object value) {
+        if (name == null || name.isEmpty() || !name.startsWith("x-")) {
+            return;
+        }
+        if (this.extensions == null) {
+            this.extensions = new java.util.HashMap<>();
+        }
+        this.extensions.put(name, value);
+    }
+
+    public void setExtensions(java.util.Map<String, Object> extensions) {
+        this.extensions = extensions;
+    }
+
+    public ApiResponses extensions(java.util.Map<String, Object> extensions) {
+        this.extensions = extensions;
+        return this;
+    }
+
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -61,13 +87,16 @@ public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+        if (!super.equals(o)) {
+            return false;
+        }
         ApiResponses apiResponses = (ApiResponses) o;
-        return super.equals(o);
+        return Objects.equals(this.extensions, apiResponses.extensions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode());
+        return Objects.hash(super.hashCode(), extensions);
     }
 
     @Override
@@ -75,6 +104,7 @@ public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
         StringBuilder sb = new StringBuilder();
         sb.append("class ApiResponses {\n");
         sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+        sb.append("    extensions: ").append(toIndentedString(extensions)).append("\n");
         sb.append("}");
         return sb.toString();
     }

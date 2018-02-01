@@ -17,6 +17,7 @@
 package io.swagger.v3.oas.annotations.tags;
 
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.extensions.Extension;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -62,4 +63,11 @@ public @interface Tag {
      * @return the external documentation for this tag
      */
     ExternalDocumentation externalDocs() default @ExternalDocumentation();
+
+    /**
+     * The list of optional extensions
+     *
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default {};
 }

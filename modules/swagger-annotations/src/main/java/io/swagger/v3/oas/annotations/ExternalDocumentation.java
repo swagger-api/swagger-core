@@ -16,6 +16,8 @@
 
 package io.swagger.v3.oas.annotations;
 
+import io.swagger.v3.oas.annotations.extensions.Extension;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -50,5 +52,12 @@ public @interface ExternalDocumentation {
      * @return the documentation URL
      **/
     String url() default "";
+
+    /**
+     * The list of optional extensions
+     *
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default {};
 
 }

@@ -16,6 +16,8 @@
 
 package io.swagger.v3.oas.annotations.info;
 
+import io.swagger.v3.oas.annotations.extensions.Extension;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -43,5 +45,12 @@ public @interface License {
      * @return the URL of the license
      **/
     String url() default "";
+
+    /**
+     * The list of optional extensions
+     *
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default {};
 
 }

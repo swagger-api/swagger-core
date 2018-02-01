@@ -18,6 +18,7 @@ package io.swagger.v3.oas.annotations.security;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.extensions.Extension;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -94,5 +95,12 @@ public @interface SecurityScheme {
      * @return String openIdConnectUrl
      **/
     String openIdConnectUrl() default "";
+
+    /**
+     * The list of optional extensions
+     *
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default {};
 
 }

@@ -40,6 +40,7 @@ public class ParameterProcessor {
         // first handle schema
         List<Annotation> reworkedAnnotations = new ArrayList<>(annotations);
         Annotation paramSchemaOrArrayAnnotation = getParamSchemaAnnotation(annotations);
+
         if (paramSchemaOrArrayAnnotation != null) {
             reworkedAnnotations.add(paramSchemaOrArrayAnnotation);
         }
@@ -93,7 +94,16 @@ public class ParameterProcessor {
                     parameter.setExamples(exampleMap);
                 }
 
-                Optional<Content> content = AnnotationsUtils.getContent(p.content(), classTypes, methodTypes, parameter.getSchema());
+                if (p.extensions().length > 0) {
+                    Map<String, Object> extensionMap = AnnotationsUtils.getExtensions(p.extensions());
+                    if (extensionMap != null && extensionMap.size() > 0) {
+                        for (String ext : extensionMap.keySet()) {
+                            parameter.addExtension(ext, extensionMap.get(ext));
+                        }
+                    }
+                }
+
+                Optional<Content> content = AnnotationsUtils.getContent(p.content(), classTypes, methodTypes, parameter.getSchema(), null);
                 if (content.isPresent()) {
                     parameter.setContent(content.get());
                     parameter.setSchema(null);

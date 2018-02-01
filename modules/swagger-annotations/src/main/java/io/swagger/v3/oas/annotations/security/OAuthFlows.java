@@ -16,6 +16,8 @@
 
 package io.swagger.v3.oas.annotations.security;
 
+import io.swagger.v3.oas.annotations.extensions.Extension;
+
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -55,5 +57,12 @@ public @interface OAuthFlows {
      * @return OAuthFloe authorizationCode
      **/
     OAuthFlow authorizationCode() default @OAuthFlow();
+
+    /**
+     * The list of optional extensions
+     *
+     * @return an optional array of extensions
+     */
+    Extension[] extensions() default {};
 
 }
