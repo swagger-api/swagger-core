@@ -6,6 +6,7 @@ import io.swagger.v3.core.util.reflection.resources.IParent;
 import io.swagger.v3.core.util.reflection.resources.Parent;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -138,4 +139,18 @@ public class ReflectionUtilsTest {
         Method method = ReflectionUtilsTest.class.getMethod("testFindMethodForNullClass", (Class<?>[]) null);
         assertNull(ReflectionUtils.findMethod(method, null));
     }
+
+    @Test
+    public void getRepeatableAnnotationsArrayTest() {
+        Tag[] annotations = ReflectionUtils.getRepeatableAnnotationsArray(InheritingClass.class, Tag.class);
+        Assert.assertNotNull(annotations);
+        Assert.assertTrue(annotations.length == 1);
+        Assert.assertNotNull(annotations[0]);
+        Assert.assertEquals("inherited tag", annotations[0].name());
+    }
+
+    @Tag(name = "inherited tag")
+    private interface AnnotatedInterface {}
+
+    private class InheritingClass implements AnnotatedInterface {}
 }
