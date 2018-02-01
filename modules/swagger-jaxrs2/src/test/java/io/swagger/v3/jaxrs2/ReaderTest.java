@@ -2,6 +2,7 @@ package io.swagger.v3.jaxrs2;
 
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
+import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
 import io.swagger.v3.jaxrs2.resources.CompleteFieldsResource;
 import io.swagger.v3.jaxrs2.resources.DeprecatedFieldsResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedOperationIdResource;
@@ -749,4 +750,24 @@ public class ReaderTest {
         assertEquals(schema.getType(), "string");
     }
 
+    @Test(description = "test ticket #2646 method annotated with @Produce")
+    public void test2646() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(BookStoreTicket2646.class);
+        Paths paths = openAPI.getPaths();
+        assertEquals(paths.size(), 2);
+        PathItem pathItem = paths.get("/bookstore");
+        assertNotNull(pathItem);
+        Operation operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("application/json"));
+
+
+        pathItem = paths.get("/bookstore/{id}");
+        assertNotNull(pathItem);
+        operation = pathItem.getDelete();
+        assertNotNull(operation);
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("*/*"));
+
+    }
 }

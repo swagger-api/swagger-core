@@ -94,6 +94,8 @@ paths:
       responses:
         default:
           description: default response
+          content:
+            '*/*': {}
 components:
   schemas:
     Category:
