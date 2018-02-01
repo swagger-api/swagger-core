@@ -866,11 +866,14 @@ public class Reader implements OpenApiReader {
 
             }
         }
-        if (operation.getResponses() == null || operation.getResponses().size() == 0) {
-            ApiResponse apiResponseObject = new ApiResponse();
-            apiResponseObject.setDescription(DEFAULT_DESCRIPTION);
-            operation.setResponses(new ApiResponses()._default(apiResponseObject));
+        if (operation.getResponses() == null || operation.getResponses().isEmpty()) {
+            Content content = new Content();
+            MediaType mediaType = new MediaType();
+            AnnotationsUtils.applyTypes(classProduces == null ? new String[0] : classProduces.value(),
+                    methodProduces == null ? new String[0] : methodProduces.value(), content, mediaType);
 
+            ApiResponse apiResponseObject = new ApiResponse().description(DEFAULT_DESCRIPTION).content(content);
+            operation.setResponses(new ApiResponses()._default(apiResponseObject));
         }
 
         return operation;
