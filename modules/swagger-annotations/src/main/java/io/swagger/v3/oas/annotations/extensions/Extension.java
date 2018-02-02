@@ -1,20 +1,22 @@
 package io.swagger.v3.oas.annotations.extensions;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 
 /**
  * An optionally named list of extension properties.
  *
  * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#specificationExtensions">Specification extensions (OpenAPI specification)</a>
  */
-@Target({ElementType.FIELD,
-        ElementType.METHOD,
-        ElementType.PARAMETER,
-        ElementType.TYPE})
+@Target({FIELD, METHOD, PARAMETER, TYPE, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(Extensions.class)
 public @interface Extension {

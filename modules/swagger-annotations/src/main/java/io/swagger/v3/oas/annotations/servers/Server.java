@@ -18,12 +18,15 @@ package io.swagger.v3.oas.annotations.servers;
 
 import io.swagger.v3.oas.annotations.extensions.Extension;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.ElementType.METHOD;
 
 /**
  * The annotation may be applied at class or method level, or in {@link io.swagger.v3.oas.annotations.Operation#servers()} to define servers for the
@@ -34,7 +37,7 @@ import java.lang.annotation.Target;
  * @see io.swagger.v3.oas.annotations.OpenAPIDefinition
  * @see io.swagger.v3.oas.annotations.Operation
  **/
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({METHOD, TYPE, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(Servers.class)
 @Inherited
