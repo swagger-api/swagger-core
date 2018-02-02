@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2;
 
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
@@ -19,6 +20,7 @@ import io.swagger.v3.jaxrs2.resources.SimpleMethods;
 import io.swagger.v3.jaxrs2.resources.SubResourceHead;
 import io.swagger.v3.jaxrs2.resources.TagsResource;
 import io.swagger.v3.jaxrs2.resources.Test2607;
+import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.TestResource;
 import io.swagger.v3.jaxrs2.resources.Ticket2644ConcreteImplementation;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
@@ -686,6 +688,25 @@ public class ReaderTest {
         assertNotNull(schema);
         assertEquals(schema.getType(), "string");
         assertEquals(operation.getRequestBody().getContent().get("application/json").getSchema().get$ref(), "#/components/schemas/Pet");
+    }
+
+    @Test(description = "test user annotation")
+    public void testUserAnnotation() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(UserAnnotationResource.class);
+        Yaml.prettyPrint(openAPI);
+        Paths paths = openAPI.getPaths();
+        assertEquals(paths.size(), 1);
+        PathItem pathItem = paths.get("/test/status");
+        assertNotNull(pathItem);
+        Operation operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertTrue(operation.getTags().contains("test"));
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("application/json"));
+        Schema schema = operation.getResponses().getDefault().getContent().values().iterator().next().getSchema();
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+
     }
 
     @Test(description = "scan resource with class-based sub-resources")

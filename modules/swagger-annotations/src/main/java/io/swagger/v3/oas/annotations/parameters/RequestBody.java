@@ -19,11 +19,14 @@ package io.swagger.v3.oas.annotations.parameters;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.media.Content;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 
 /**
  * The annotation may be used on a method parameter to define it as the Request Body of the operation, and/or to define
@@ -33,7 +36,7 @@ import java.lang.annotation.Target;
  * @see io.swagger.v3.oas.annotations.Parameter
  * @see Content
  **/
-@Target({ElementType.PARAMETER, ElementType.METHOD})
+@Target({METHOD, PARAMETER, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface RequestBody {

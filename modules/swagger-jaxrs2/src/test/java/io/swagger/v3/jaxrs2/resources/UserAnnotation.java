@@ -14,30 +14,24 @@
  * limitations under the License.
  */
 
-package io.swagger.v3.oas.annotations.security;
+package io.swagger.v3.jaxrs2.resources;
 
-import java.lang.annotation.Inherited;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.info.Info;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.TYPE;
-
-/**
- * Container for repeatable {@link SecurityScheme} annotation
- *
- * @see SecurityScheme
- */
-@Target({TYPE, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Inherited
-public @interface SecuritySchemes {
+@Operation(tags = {"test"})
+public @interface UserAnnotation {
     /**
-     * An array of SecurityScheme annotations
+     * The identifying name of the contact person/organization.
      *
-     * @return the array of the SecurityScheme
+     * @return the name of the contact
      **/
-    SecurityScheme[] value() default {};
+    String name() default "";
 
 }
