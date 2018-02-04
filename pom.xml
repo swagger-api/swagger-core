@@ -490,7 +490,7 @@
         <felix-version>2.4.0</felix-version>
         <servlet-api-version>3.1.0</servlet-api-version>
         <jersey2-version>2.26</jersey2-version>
-        <jackson-version>2.9.3</jackson-version>
+        <jackson-version>2.9.4</jackson-version>
         <logback-version>1.2.3</logback-version>
         <reflections-version>0.9.11</reflections-version>
         <guava-version>23.0</guava-version>
