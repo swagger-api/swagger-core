@@ -392,7 +392,18 @@ public class Reader implements OpenApiReader {
                     continue;
                 }
 
+                final Class<?> subResource = getSubResourceWithJaxRsSubresourceLocatorSpecs(method);
+
                 String httpMethod = ReaderUtils.extractOperationMethod(method, OpenAPIExtensions.chain());
+                httpMethod = (httpMethod == null && isSubresource) ? parentMethod : httpMethod;
+
+                if (StringUtils.isBlank(httpMethod)) {
+                    Type returnType = method.getGenericReturnType();
+                    if (shouldIgnoreClass(returnType.getTypeName()) && !returnType.equals(subResource)) {
+                        continue;
+                    }
+                }
+
 
                 Operation operation = parseMethod(
                         method,
@@ -466,7 +477,6 @@ public class Reader implements OpenApiReader {
                         }
                     }
 
-                    final Class<?> subResource = getSubResourceWithJaxRsSubresourceLocatorSpecs(method);
                     if (subResource != null && !scannedResources.contains(subResource)) {
                         scannedResources.add(subResource);
                         read(subResource, operationPath, httpMethod, true, operation.getRequestBody(), operation.getResponses(), classTags, operation.getParameters(), scannedResources);
@@ -486,7 +496,6 @@ public class Reader implements OpenApiReader {
                         pathItemObject = new PathItem();
                     }
 
-                    httpMethod = (httpMethod == null && isSubresource) ? parentMethod : httpMethod;
                     if (StringUtils.isBlank(httpMethod)) {
                         continue;
                     }
