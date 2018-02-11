@@ -432,8 +432,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
 
     @Test
     public void testSwaggerJson() throws Exception {
-
-        String actualBody = given()
+        final String actualBody = given()
                 .port(jettyPort)
                 .log().all()
                 .when()
@@ -441,7 +440,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .then()
                 .log().all()
                 .assertThat()
-                .statusCode(200)
+                .statusCode(503)
                 .contentType(ContentType.JSON)
                 .extract()
                 .response().body().asString();
@@ -452,7 +451,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
 
     @Test
     public void testSwaggerJsonUsingAcceptHeader() throws Exception {
-        String actualBody = given()
+        final String actualBody = given()
                 .port(jettyPort)
                 .log().all()
                 .accept(ContentType.JSON)
@@ -470,7 +469,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
 
     @Test
     public void testSwaggerYaml() throws Exception {
-        String actualBody = given()
+        final String actualBody = given()
                 .port(jettyPort)
                 .log().all()
                 .when()
@@ -478,7 +477,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .then()
                 .log().all()
                 .assertThat()
-                .statusCode(200)
+                .statusCode(503)
                 .contentType("application/yaml")
                 .extract().response().body().asString();
 
@@ -488,7 +487,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
 
     @Test
     public void testSwaggerYamlUsingAcceptHeader() throws Exception {
-        String actualBody = given()
+        final String actualBody = given()
                 .port(jettyPort)
                 .log().all()
                 .accept("application/yaml")
@@ -497,7 +496,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .then()
                 .log().all()
                 .assertThat()
-                .statusCode(200)
+                .statusCode(503)
                 .contentType("application/yaml")
                 .extract().response().body().asString();
 

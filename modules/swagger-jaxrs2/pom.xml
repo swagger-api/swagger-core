@@ -123,6 +123,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-multipart</artifactId>
+            <version>${multipart-version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
@@ -208,5 +214,6 @@
         <annotations.version>2.0.0-SNAPSHOT</annotations.version>
         <core.version>2.0.0-SNAPSHOT</core.version>
         <integration.version>2.0.0-SNAPSHOT</integration.version>
+        <multipart-version>1.19.4</multipart-version>
     </properties>
 </project>
