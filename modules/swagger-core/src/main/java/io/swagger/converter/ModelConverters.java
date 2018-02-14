@@ -1,5 +1,6 @@
 package io.swagger.converter;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.jackson.ModelResolver;
 import io.swagger.models.Model;
@@ -52,6 +53,12 @@ public class ModelConverters {
         this.skippedClasses.add(cls);
     }
 
+    public Property readAsProperty(Type type, JsonView jsonView) {
+        ModelConverterContextImpl context = new ModelConverterContextImpl(converters);
+        context.setJsonView(jsonView);
+        return context.resolveProperty(type, null);
+    }
+
     public Property readAsProperty(Type type) {
         ModelConverterContextImpl context = new ModelConverterContextImpl(
                 converters);
@@ -74,12 +81,42 @@ public class ModelConverters {
         return modelMap;
     }
 
+    public Map<String, Model> read(Type type, JsonView jsonView) {
+        Map<String, Model> modelMap = new HashMap<String, Model>();
+        if (shouldProcess(type)) {
+            ModelConverterContextImpl context = new ModelConverterContextImpl(
+                    converters);
+            context.setJsonView(jsonView);
+            Model resolve = context.resolve(type);
+            for (Entry<String, Model> entry : context.getDefinedModels()
+                    .entrySet()) {
+                if (entry.getValue().equals(resolve)) {
+                    modelMap.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        return modelMap;
+    }
+
     public Map<String, Model> readAll(Type type) {
         if (shouldProcess(type)) {
             ModelConverterContextImpl context = new ModelConverterContextImpl(
                     converters);
 
             LOGGER.debug("ModelConverters readAll from " + type);
+            context.resolve(type);
+            return context.getDefinedModels();
+        }
+        return new HashMap<String, Model>();
+    }
+
+    public Map<String, Model> readAll(Type type, JsonView annotation) {
+        if (shouldProcess(type)) {
+            ModelConverterContextImpl context = new ModelConverterContextImpl(
+                    converters);
+            context.setJsonView(annotation);
+
+            LOGGER.debug("ModelConverters readAll with JsonView annotation from " + type);
             context.resolve(type);
             return context.getDefinedModels();
         }

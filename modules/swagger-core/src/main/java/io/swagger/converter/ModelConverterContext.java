@@ -1,5 +1,6 @@
 package io.swagger.converter;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.models.Model;
 import io.swagger.models.properties.Property;
 
@@ -45,4 +46,17 @@ public interface ModelConverterContext {
      * @return an Iterator of ModelConverters.  This iterator is not reused
      */
     public Iterator<ModelConverter> getConverters();
+
+    /**
+     *
+     * @return A nullable JsonView annotation.
+     */
+    public JsonView getJsonView();
+
+    /**
+     *
+     * @param view A nullable JsonView annotation, which is normally added to the annotated method
+     *             to filter the response.
+     */
+    public void setJsonView(JsonView view);
 }
