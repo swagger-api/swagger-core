@@ -28,18 +28,18 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            io.swagger.oas.models,
-                            io.swagger.oas.models.callbacks,
-                            io.swagger.oas.models.examples,
-                            io.swagger.oas.models.headers,
-                            io.swagger.oas.models.info,
-                            io.swagger.oas.models.links,
-                            io.swagger.oas.models.media,
-                            io.swagger.oas.models.parameters,
-                            io.swagger.oas.models.responses,
-                            io.swagger.oas.models.security,
-                            io.swagger.oas.models.servers,
-                            io.swagger.oas.models.tags
+                            io.swagger.v3.oas.models,
+                            io.swagger.v3.oas.models.callbacks,
+                            io.swagger.v3.oas.models.examples,
+                            io.swagger.v3.oas.models.headers,
+                            io.swagger.v3.oas.models.info,
+                            io.swagger.v3.oas.models.links,
+                            io.swagger.v3.oas.models.media,
+                            io.swagger.v3.oas.models.parameters,
+                            io.swagger.v3.oas.models.responses,
+                            io.swagger.v3.oas.models.security,
+                            io.swagger.v3.oas.models.servers,
+                            io.swagger.v3.oas.models.tags
                         </Export-Package>
                     </instructions>
                 </configuration>
