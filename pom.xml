@@ -151,6 +151,10 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.0</version>
                 <configuration>
+                    <compilerArgs>
+                      <arg>--add-module</arg>
+                      <arg>java.xml.bind</arg>
+                    </compilerArgs>
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
