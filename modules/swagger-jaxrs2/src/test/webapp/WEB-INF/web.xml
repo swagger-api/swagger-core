@@ -20,6 +20,10 @@
             <param-name>openApi.configuration.prettyPrint</param-name>
             <param-value>true</param-value>
         </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 

@@ -42,6 +42,10 @@ public class OperationParser {
             isEmpty = false;
         }
 
+        if (requestBody.content().length > 0) {
+            isEmpty = false;
+        }
+
         if (isEmpty) {
             return Optional.empty();
         }

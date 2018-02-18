@@ -47,6 +47,29 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "                }\n" +
             "            }\n" +
             "        },\n" +
+            "        \"/cars/summary\": {\n" +
+            "            \"get\": {\n" +
+            "                \"tags\": [\n" +
+            "                    \"cars\"\n" +
+            "                ],\n" +
+            "                \"description\": \"Return car summaries\",\n" +
+            "                \"operationId\": \"getSummaries\",\n" +
+            "                \"responses\": {\n" +
+            "                    \"200\": {\n" +
+            "                        \"content\": {\n" +
+            "                            \"application/json\": {\n" +
+            "                                \"schema\": {\n" +
+            "                                    \"type\": \"array\",\n" +
+            "                                    \"items\": {\n" +
+            "                                        \"$ref\": \"#/components/schemas/Car_Summary\"\n" +
+            "                                    }\n" +
+            "                                }\n" +
+            "                            }\n" +
+            "                        }\n" +
+            "                    }\n" +
+            "                }\n" +
+            "            }\n" +
+            "        },\n" +
             "        \"/cars/detail\": {\n" +
             "            \"get\": {\n" +
             "                \"tags\": [\n" +
@@ -93,23 +116,93 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "                }\n" +
             "            }\n" +
             "        },\n" +
-            "        \"/cars/summary\": {\n" +
-            "            \"get\": {\n" +
-            "                \"tags\": [\n" +
-            "                    \"cars\"\n" +
-            "                ],\n" +
-            "                \"description\": \"Return car summaries\",\n" +
-            "                \"operationId\": \"getSummaries\",\n" +
-            "                \"responses\": {\n" +
-            "                    \"200\": {\n" +
-            "                        \"content\": {\n" +
-            "                            \"application/json\": {\n" +
-            "                                \"schema\": {\n" +
-            "                                    \"type\": \"array\",\n" +
-            "                                    \"items\": {\n" +
-            "                                        \"$ref\": \"#/components/schemas/Car_Summary\"\n" +
+            "        \"/files/upload\": {\n" +
+            "            \"post\": {\n" +
+            "                \"operationId\": \"uploadFile\",\n" +
+            "                \"requestBody\": {\n" +
+            "                    \"content\": {\n" +
+            "                        \"multipart/form-data\": {\n" +
+            "                            \"schema\": {\n" +
+            "                                \"type\": \"object\",\n" +
+            "                                \"properties\": {\n" +
+            "                                    \"fileIdRenamed\": {\n" +
+            "                                        \"type\": \"string\"\n" +
+            "                                    },\n" +
+            "                                    \"fileRenamed\": {\n" +
+            "                                        \"type\": \"string\",\n" +
+            "                                        \"format\": \"binary\"\n" +
             "                                    }\n" +
             "                                }\n" +
+            "                            }\n" +
+            "                        }\n" +
+            "                    }\n" +
+            "                },\n" +
+            "                \"responses\": {\n" +
+            "                    \"default\": {\n" +
+            "                        \"description\": \"default response\",\n" +
+            "                        \"content\": {\n" +
+            "                            \"application/json\": {\n" +
+            "                                \n" +
+            "                            }\n" +
+            "                        }\n" +
+            "                    }\n" +
+            "                }\n" +
+            "            }\n" +
+            "        },\n" +
+            "        \"/files/attach\": {\n" +
+            "            \"put\": {\n" +
+            "                \"operationId\": \"putFile\",\n" +
+            "                \"requestBody\": {\n" +
+            "                    \"content\": {\n" +
+            "                        \"application/octet-stream\": {\n" +
+            "                            \"schema\": {\n" +
+            "                                \"type\": \"string\",\n" +
+            "                                \"format\": \"binary\"\n" +
+            "                            }\n" +
+            "                        }\n" +
+            "                    }\n" +
+            "                },\n" +
+            "                \"responses\": {\n" +
+            "                    \"default\": {\n" +
+            "                        \"description\": \"default response\",\n" +
+            "                        \"content\": {\n" +
+            "                            \"application/json\": {\n" +
+            "                                \n" +
+            "                            }\n" +
+            "                        }\n" +
+            "                    }\n" +
+            "                }\n" +
+            "            }\n" +
+            "        },\n" +
+            "        \"/users/add\": {\n" +
+            "            \"post\": {\n" +
+            "                \"operationId\": \"addUser\",\n" +
+            "                \"requestBody\": {\n" +
+            "                    \"content\": {\n" +
+            "                        \"application/x-www-form-urlencoded\": {\n" +
+            "                            \"schema\": {\n" +
+            "                                \"type\": \"object\",\n" +
+            "                                \"properties\": {\n" +
+            "                                    \"id\": {\n" +
+            "                                        \"type\": \"string\"\n" +
+            "                                    },\n" +
+            "                                    \"name\": {\n" +
+            "                                        \"type\": \"string\"\n" +
+            "                                    },\n" +
+            "                                    \"gender\": {\n" +
+            "                                        \"type\": \"string\"\n" +
+            "                                    }\n" +
+            "                                }\n" +
+            "                            }\n" +
+            "                        }\n" +
+            "                    }\n" +
+            "                },\n" +
+            "                \"responses\": {\n" +
+            "                    \"default\": {\n" +
+            "                        \"description\": \"default response\",\n" +
+            "                        \"content\": {\n" +
+            "                            \"application/json\": {\n" +
+            "                                \n" +
             "                            }\n" +
             "                        }\n" +
             "                    }\n" +
@@ -324,6 +417,59 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "                type: array\n" +
             "                items:\n" +
             "                  $ref: '#/components/schemas/Car_Summary'\n" +
+            "  /files/attach:\n" +
+            "    put:\n" +
+            "      operationId: putFile\n" +
+            "      requestBody:\n" +
+            "        content:\n" +
+            "          application/octet-stream:\n" +
+            "            schema:\n" +
+            "              type: string\n" +
+            "              format: binary\n" +
+            "      responses:\n" +
+            "        default:\n" +
+            "          description: default response\n" +
+            "          content:\n" +
+            "            application/json: {}\n" +
+            "  /files/upload:\n" +
+            "    post:\n" +
+            "      operationId: uploadFile\n" +
+            "      requestBody:\n" +
+            "        content:\n" +
+            "          multipart/form-data:\n" +
+            "            schema:\n" +
+            "              type: object\n" +
+            "              properties:\n" +
+            "                fileIdRenamed:\n" +
+            "                  type: string\n" +
+            "                fileRenamed:\n" +
+            "                  type: string\n" +
+            "                  format: binary\n" +
+            "      responses:\n" +
+            "        default:\n" +
+            "          description: default response\n" +
+            "          content:\n" +
+            "            application/json: {}\n" +
+            "  /users/add:\n" +
+            "    post:\n" +
+            "      operationId: addUser\n" +
+            "      requestBody:\n" +
+            "        content:\n" +
+            "          application/x-www-form-urlencoded:\n" +
+            "            schema:\n" +
+            "              type: object\n" +
+            "              properties:\n" +
+            "                gender:\n" +
+            "                  type: string\n" +
+            "                id:\n" +
+            "                  type: string\n" +
+            "                name:\n" +
+            "                  type: string\n" +
+            "      responses:\n" +
+            "        default:\n" +
+            "          description: default response\n" +
+            "          content:\n" +
+            "            application/json: {}\n" +
             "  /widgets/{widgetId}:\n" +
             "    get:\n" +
             "      tags:\n" +
@@ -432,6 +578,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
 
     @Test
     public void testSwaggerJson() throws Exception {
+
         final String actualBody = given()
                 .port(jettyPort)
                 .log().all()
@@ -440,7 +587,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .then()
                 .log().all()
                 .assertThat()
-                .statusCode(503)
+                .statusCode(200)
                 .contentType(ContentType.JSON)
                 .extract()
                 .response().body().asString();
@@ -477,7 +624,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .then()
                 .log().all()
                 .assertThat()
-                .statusCode(503)
+                .statusCode(200)
                 .contentType("application/yaml")
                 .extract().response().body().asString();
 
@@ -496,7 +643,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .then()
                 .log().all()
                 .assertThat()
-                .statusCode(503)
+                .statusCode(200)
                 .contentType("application/yaml")
                 .extract().response().body().asString();
 

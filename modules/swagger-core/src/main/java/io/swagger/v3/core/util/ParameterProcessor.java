@@ -154,6 +154,26 @@ public class ParameterProcessor {
                 } catch (Exception e) {
                     LOGGER.error("failed on " + annotation.annotationType().getName(), e);
                 }
+            } else if (annotation.annotationType().getName().equals("javax.ws.rs.FormParam")) {
+                try {
+                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
+                    if (StringUtils.isNotBlank(name)) {
+                        parameter.setName(name);
+                    }
+                } catch (Exception e) {
+                }
+                // set temporarely to "form" to inform caller that we need to further process along other form parameters
+                parameter.setIn("form");
+            } else if (annotation.annotationType().getName().endsWith("FormDataParam")) {
+                try {
+                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
+                    if (StringUtils.isNotBlank(name)) {
+                        parameter.setName(name);
+                    }
+                } catch (Exception e) {
+                }
+                // set temporarely to "form" to inform caller that we need to further process along other form parameters
+                parameter.setIn("form");
             }
         }
         final String defaultValue = helper.getDefaultValue();
@@ -254,6 +274,9 @@ public class ParameterProcessor {
     }
 
     public static Type getParameterType(io.swagger.v3.oas.annotations.Parameter paramAnnotation) {
+        return getParameterType(paramAnnotation, false);
+    }
+    public static Type getParameterType(io.swagger.v3.oas.annotations.Parameter paramAnnotation, boolean nullIfNotFound) {
         if (paramAnnotation == null) {
             return null;
         }
@@ -273,13 +296,16 @@ public class ParameterProcessor {
             paramArraySchema = paramAnnotation.array();
         }
         if (contentSchema != null) {
-            return AnnotationsUtils.getSchemaType(contentSchema);
+            return AnnotationsUtils.getSchemaType(contentSchema, nullIfNotFound);
         }
         if (paramSchema != null) {
-            return AnnotationsUtils.getSchemaType(paramSchema);
+            return AnnotationsUtils.getSchemaType(paramSchema, nullIfNotFound);
         }
         if (paramArraySchema != null) {
-            return AnnotationsUtils.getSchemaType(paramArraySchema.schema());
+            return AnnotationsUtils.getSchemaType(paramArraySchema.schema(), nullIfNotFound);
+        }
+        if (nullIfNotFound) {
+            return null;
         }
         return String.class;
     }

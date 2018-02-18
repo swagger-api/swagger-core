@@ -2,6 +2,9 @@ package io.swagger.v3.jaxrs2.annotations.requests;
 
 import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
+import io.swagger.v3.jaxrs2.it.resources.MultiPartFileResource;
+import io.swagger.v3.jaxrs2.it.resources.OctetStreamResource;
+import io.swagger.v3.jaxrs2.it.resources.UrlEncodedResource;
 import io.swagger.v3.jaxrs2.resources.model.Pet;
 import io.swagger.v3.jaxrs2.resources.model.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -435,6 +438,86 @@ public class RequestBodyTest extends AbstractAnnotationTest {
             return Response.ok().entity("").build();
         }
 
+    }
+
+    @Test(description = "Test file upload")
+    public void testFileUploadOctetStream() throws IOException {
+
+        String expectedYAML = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /files/attach:\n" +
+                "    put:\n" +
+                "      operationId: putFile\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/octet-stream:\n" +
+                "            schema:\n" +
+                "              type: string\n" +
+                "              format: binary\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}";
+
+        compareAsYaml(OctetStreamResource.class, expectedYAML);
+    }
+
+    @Test(description = "Test urlencoded")
+    public void testUrlEncoded() throws IOException {
+
+        String expectedYAML = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /users/add:\n" +
+                "    post:\n" +
+                "      operationId: addUser\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/x-www-form-urlencoded:\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                id:\n" +
+                "                  type: string\n" +
+                "                name:\n" +
+                "                  type: string\n" +
+                "                gender:\n" +
+                "                  type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}";
+
+        compareAsYaml(UrlEncodedResource.class, expectedYAML);
+    }
+
+    @Test(description = "Test multipart")
+    public void testMultiPart() throws IOException {
+
+        String expectedYAML = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /files/upload:\n" +
+                "    post:\n" +
+                "      operationId: uploadFile\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          multipart/form-data:\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                fileIdRenamed:\n" +
+                "                  type: string\n" +
+                "                fileRenamed:\n" +
+                "                  type: string\n" +
+                "                  format: binary\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n";
+
+        compareAsYaml(MultiPartFileResource.class, expectedYAML);
     }
 
 }

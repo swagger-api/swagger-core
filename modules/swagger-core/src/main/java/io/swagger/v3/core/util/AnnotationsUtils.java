@@ -946,7 +946,14 @@ public abstract class AnnotationsUtils {
     }
 
     public static Type getSchemaType(io.swagger.v3.oas.annotations.media.Schema schema) {
+        return getSchemaType(schema, false);
+    }
+
+    public static Type getSchemaType(io.swagger.v3.oas.annotations.media.Schema schema, boolean nullIfNotFound) {
         if (schema == null) {
+            if (nullIfNotFound) {
+                return null;
+            }
             return String.class;
         }
         String schemaType = schema.type();
@@ -955,6 +962,9 @@ public abstract class AnnotationsUtils {
         if (!schemaImplementation.equals(Void.class)) {
             return schemaImplementation;
         } else if (StringUtils.isBlank(schemaType)) {
+            if (nullIfNotFound) {
+                return null;
+            }
             return String.class;
         }
         switch (schemaType) {
@@ -964,7 +974,12 @@ public abstract class AnnotationsUtils {
                 return Long.class;
             case "boolean":
                 return Boolean.class;
+            case "string":
+                return String.class;
             default:
+                if (nullIfNotFound) {
+                    return null;
+                }
                 return String.class;
         }
     }
