@@ -45,8 +45,10 @@ public class SubResourceReaderTest {
     public void readResourceWithClassBasedSubresources() {
         final Swagger swagger = getSwagger(SubResourceHead.class);
         assertEquals(swagger.getPaths().size(), 3);
-        assertEquals(getOperationId(swagger, "/head/noPath"), "getGreeting");
-        assertEquals(getOperationId(swagger, "/head/tail/hello"), "getGreeting_1");
+        assertTrue(getOperationId(swagger, "/head/noPath").equals("getGreeting") ||
+                getOperationId(swagger, "/head/noPath").equals("getGreeting_1"));
+        assertTrue(getOperationId(swagger, "/head/tail/hello").equals("getGreeting") ||
+                getOperationId(swagger, "/head/tail/hello").equals("getGreeting_1"));
 
         final Operation echo = getGet(swagger, "/head/tail/{string}");
         assertEquals(echo.getOperationId(), "getEcho");
