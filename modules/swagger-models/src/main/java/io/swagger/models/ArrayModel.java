@@ -12,6 +12,7 @@ public class ArrayModel extends AbstractModel {
     private Object example;
     private Integer minItems;
     private Integer maxItems;
+    private Xml xml;
 
     public ArrayModel() {
         this.type = "array";
@@ -34,6 +35,11 @@ public class ArrayModel extends AbstractModel {
 
     public ArrayModel maxItems(int maxItems) {
         this.setMaxItems(maxItems);
+        return this;
+    }
+
+    public ArrayModel xml(Xml xml) {
+        this.setXml(xml);
         return this;
     }
 
@@ -93,6 +99,14 @@ public class ArrayModel extends AbstractModel {
         this.maxItems = maxItems;
     }
 
+    public Xml getXml() {
+        return xml;
+    }
+
+    public void setXml(Xml xml) {
+        this.xml = xml;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -125,7 +139,10 @@ public class ArrayModel extends AbstractModel {
         if (minItems != null ? !minItems.equals(that.minItems) : that.minItems != null) {
             return false;
         }
-        return maxItems != null ? maxItems.equals(that.maxItems) : that.maxItems == null;
+        if (maxItems != null ? !maxItems.equals(that.maxItems) : that.maxItems != null) {
+            return false;
+        }
+        return xml != null ? xml.equals(that.xml) : that.xml == null;
 
     }
 
@@ -139,6 +156,7 @@ public class ArrayModel extends AbstractModel {
         result = 31 * result + (example != null ? example.hashCode() : 0);
         result = 31 * result + (minItems != null ? minItems.hashCode() : 0);
         result = 31 * result + (maxItems != null ? maxItems.hashCode() : 0);
+        result = 31 * result + (xml != null ? xml.hashCode() : 0);
         return result;
     }
 
@@ -151,6 +169,9 @@ public class ArrayModel extends AbstractModel {
         cloned.description = this.description;
         cloned.items = this.items;
         cloned.example = this.example;
+        cloned.minItems = this.minItems;
+        cloned.maxItems = this.maxItems;
+        cloned.xml = this.xml;
 
         return cloned;
 
