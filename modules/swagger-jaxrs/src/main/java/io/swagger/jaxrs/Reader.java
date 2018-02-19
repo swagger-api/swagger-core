@@ -828,11 +828,7 @@ public class Reader {
                 }
             }
         }
-        if (!methodInSuperType) {
-            operationId = method.getName();
-        } else {
-            operationId = this.getOperationId(method.getName());
-        }
+        operationId = this.getOperationId(method.getName());
         String responseContainer = null;
 
         Type responseType = null;
