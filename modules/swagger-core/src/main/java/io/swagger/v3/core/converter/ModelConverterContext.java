@@ -1,14 +1,10 @@
 package io.swagger.v3.core.converter;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.introspect.Annotated;
 import io.swagger.v3.oas.models.media.Schema;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Iterator;
-import java.util.List;
-import java.util.function.BiFunction;
+import java.util.Map;
 
 public interface ModelConverterContext {
 
@@ -27,6 +23,17 @@ public interface ModelConverterContext {
      *
      * @param name     the name of the model
      * @param model    the Model
+     * @param type     the AnnotatedType
+     * @param prevName the (optional) previous name
+     */
+    void defineModel(String name, Schema model, AnnotatedType type, String prevName);
+
+    /**
+     * needs to be called whenever a Schema is defined which can be referenced from another
+     * Model or Property
+     *
+     * @param name     the name of the model
+     * @param model    the Model
      * @param type     the Type
      * @param prevName the (optional) previous name
      */
@@ -36,21 +43,9 @@ public interface ModelConverterContext {
      * @param type The Schema
      * @return a Model representation of the Class. Any referenced models will be defined already.
      */
-    Schema resolve(Type type);
+    Schema resolve(AnnotatedType type);
 
-    Schema resolve(Type type, Annotation[] annotations);
-
-    Schema resolveAnnotatedType(Type type, List<Annotation> annotations, String elementName);
-
-    Schema resolveAnnotatedType(
-            Type type,
-            Annotated member,
-            String elementName,
-            Schema parent,
-            BiFunction<JavaType, Annotation[], Schema> jsonUnwrappedHandler,
-            ModelConverterContext context,
-            Iterator<ModelConverter> chain
-    );
+    Map<String, Schema> getDefinedModels();
 
     /**
      * @return an Iterator of ModelConverters.  This iterator is not reused

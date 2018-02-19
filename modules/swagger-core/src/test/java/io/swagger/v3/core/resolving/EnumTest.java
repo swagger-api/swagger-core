@@ -2,13 +2,13 @@ package io.swagger.v3.core.resolving;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
+import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import org.testng.annotations.Test;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,10 +25,10 @@ public class EnumTest extends SwaggerTestBase {
         final ModelResolver modelResolver = new ModelResolver(mapper());
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
-        final Schema model = context.resolve(Currency.class);
+        final Schema model = context.resolve((new AnnotatedType().type(Currency.class)));
         assertNull(model);
 
-        final Schema property = context.resolve(Currency.class, new Annotation[]{});
+        final Schema property = context.resolve(new AnnotatedType().type(Currency.class).schemaProperty(true));
         assertNotNull(property);
         assertTrue(property instanceof StringSchema);
         final StringSchema strProperty = (StringSchema) property;

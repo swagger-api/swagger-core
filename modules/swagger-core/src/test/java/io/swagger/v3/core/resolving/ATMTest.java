@@ -1,5 +1,6 @@
 package io.swagger.v3.core.resolving;
 
+import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.media.Schema;
@@ -15,7 +16,7 @@ public class ATMTest extends SwaggerTestBase {
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
         final Schema model = context
-                .resolve(ATM.class);
+                .resolve(new AnnotatedType(ATM.class));
         assertNotNull(model);
     }
 

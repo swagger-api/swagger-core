@@ -117,7 +117,7 @@ components:
         name:
           type: string
       xml:
-        name: Tag
+        name: tag
     Pet:
       type: object
       properties:

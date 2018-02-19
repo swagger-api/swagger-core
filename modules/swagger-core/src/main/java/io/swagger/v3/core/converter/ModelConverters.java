@@ -7,7 +7,6 @@ import io.swagger.v3.oas.models.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,18 +51,13 @@ public class ModelConverters {
         this.skippedClasses.add(cls);
     }
 
-    public ResolvedSchema resolveAnnotatedType(Type type, List<Annotation> annotations, String elementName) {
-        ModelConverterContextImpl context = new ModelConverterContextImpl(
-                converters);
-        ResolvedSchema resolvedSchema = new ResolvedSchema();
-        resolvedSchema.schema = context.resolveAnnotatedType(type, annotations, elementName);
-        resolvedSchema.referencedSchemas = context.getDefinedModels();
-        return resolvedSchema;
+    public Map<String, Schema> read(Type type) {
+        return read(new AnnotatedType().type(type));
     }
 
-    public Map<String, Schema> read(Type type) {
+    public Map<String, Schema> read(AnnotatedType type) {
         Map<String, Schema> modelMap = new HashMap<String, Schema>();
-        if (shouldProcess(type)) {
+        if (shouldProcess(type.getType())) {
             ModelConverterContextImpl context = new ModelConverterContextImpl(
                     converters);
             Schema resolve = context.resolve(type);
@@ -78,7 +72,11 @@ public class ModelConverters {
     }
 
     public Map<String, Schema> readAll(Type type) {
-        if (shouldProcess(type)) {
+        return readAll(new AnnotatedType().type(type));
+    }
+
+    public Map<String, Schema> readAll(AnnotatedType type) {
+        if (shouldProcess(type.getType())) {
             ModelConverterContextImpl context = new ModelConverterContextImpl(
                     converters);
 
@@ -90,7 +88,10 @@ public class ModelConverters {
     }
 
     public ResolvedSchema readAllAsResolvedSchema(Type type) {
-        if (shouldProcess(type)) {
+        return readAllAsResolvedSchema(new AnnotatedType().type(type));
+    }
+    public ResolvedSchema readAllAsResolvedSchema(AnnotatedType type) {
+        if (shouldProcess(type.getType())) {
             ModelConverterContextImpl context = new ModelConverterContextImpl(
                     converters);
 
@@ -101,6 +102,17 @@ public class ModelConverters {
             return resolvedSchema;
         }
         return null;
+    }
+
+    public ResolvedSchema resolveAsResolvedSchema(AnnotatedType type) {
+        ModelConverterContextImpl context = new ModelConverterContextImpl(
+                converters);
+
+        ResolvedSchema resolvedSchema = new ResolvedSchema();
+        resolvedSchema.schema = context.resolve(type);
+        resolvedSchema.referencedSchemas = context.getDefinedModels();
+
+        return resolvedSchema;
     }
 
     private boolean shouldProcess(Type type) {

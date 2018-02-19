@@ -4,6 +4,7 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.testng.annotations.Test;
 
@@ -418,6 +419,9 @@ public class PojoTest {
                 "  properties:\n" +
                 "    id:\n" +
                 "      type: string\n" +
+                "  minimum: 2\n" +
+                "  example:\n" +
+                "    id: 19877734\n" +
                 "modelWithPropertyExampleOverrideJson:\n" +
                 "  minimum: 2\n" +
                 "  type: object\n" +
@@ -453,6 +457,8 @@ public class PojoTest {
                 "  properties:\n" +
                 "    id:\n" +
                 "      type: string\n" +
+                "  example:\n" +
+                "    id: 19877734\n" +
                 "modelWithPropertyImplExampleOverrideJson:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
@@ -537,7 +543,7 @@ public class PojoTest {
     }
 
     static class modelExampleArray {
-        @Schema(example = "[\"abc-123\", \"zz-aa-bb\"]")
+        @ArraySchema(schema = @Schema(example = "[\"abc-123\", \"zz-aa-bb\"]"))
         private String[] ids;
 
         public String[] getIds() {

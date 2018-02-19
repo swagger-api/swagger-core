@@ -1,5 +1,6 @@
 package io.swagger.v3.core.resolving;
 
+import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.media.Schema;
@@ -14,7 +15,7 @@ public class ComplexPropertyTest extends SwaggerTestBase {
         final ModelResolver modelResolver = modelResolver();
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
         final Schema model = context
-                .resolve(OuterBean.class);
+                .resolve(new AnnotatedType(OuterBean.class));
         assertNotNull(model);
     }
 

@@ -1,6 +1,7 @@
 package io.swagger.v3.core.resolving;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -25,7 +26,8 @@ public class XMLInfoTest extends SwaggerTestBase {
     @Test
     public void testSimple() throws Exception {
         final ModelConverter mr = modelResolver();
-        final Schema model = mr.resolve(XmlDecoratedBean.class, new ModelConverterContextImpl(mr), null);
+        ModelConverterContextImpl ctx = new ModelConverterContextImpl(mr);
+        final Schema model = mr.resolve(new AnnotatedType(XmlDecoratedBean.class), ctx, null);
 
         final XML xml = model.getXml();
         assertNotNull(xml);
@@ -64,7 +66,7 @@ public class XMLInfoTest extends SwaggerTestBase {
     @Test
     public void testReadingXmlAccessorTypeNone() throws Exception {
         final ModelConverter mr = modelResolver();
-        final Schema model = mr.resolve(XmlDecoratedBeanXmlAccessorNone.class, new ModelConverterContextImpl(mr), null);
+        final Schema model = mr.resolve(new AnnotatedType(XmlDecoratedBeanXmlAccessorNone.class), new ModelConverterContextImpl(mr), null);
 
         final XML xml = model.getXml();
         assertNotNull(xml);
@@ -79,7 +81,7 @@ public class XMLInfoTest extends SwaggerTestBase {
     @Test
     public void testReadingXmlAccessorTypePublic() throws Exception {
         final ModelConverter mr = modelResolver();
-        final Schema model = mr.resolve(XmlDecoratedBeanXmlAccessorPublic.class, new ModelConverterContextImpl(mr), null);
+        final Schema model = mr.resolve(new AnnotatedType(XmlDecoratedBeanXmlAccessorPublic.class), new ModelConverterContextImpl(mr), null);
 
         final XML xml = model.getXml();
         assertNotNull(xml);

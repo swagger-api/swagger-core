@@ -12,6 +12,7 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,6 +90,8 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
         } else {
             allowAllPackages = true;
         }
+        config.filterInputsBy(new FilterBuilder().exclude(".*json").exclude(".*yaml"));
+        //config.filterInputsBy(new FilterBuilder().exclude(".*yaml"));
         config.setScanners(new ResourcesScanner(), new TypeAnnotationsScanner(), new SubTypesScanner());
         final Reflections reflections;
         reflections = new Reflections(config);

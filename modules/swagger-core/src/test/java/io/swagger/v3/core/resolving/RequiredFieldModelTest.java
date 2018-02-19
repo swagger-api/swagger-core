@@ -8,22 +8,25 @@ import org.testng.annotations.Test;
 
 import java.util.Map;
 
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 public class RequiredFieldModelTest {
-    @Test(description = "it should apply read only flag when ApiProperty annotation first")
+    @Test(description = "it should apply required flag when ApiProperty annotation first")
     public void testApiModelPropertyFirstPosition() {
         final Map<String, Schema> models = ModelConverters.getInstance().readAll(ApiFirstRequiredFieldModel.class);
         final Schema model = models.get("aaa");
-        final Schema prop = (Schema) model.getProperties().get("a");
-        assertTrue(model.getRequired().contains("a"));
+        final Schema prop = (Schema) model.getProperties().get("bla");
+        assertNotNull(prop);
+        assertTrue(model.getRequired().contains("bla"));
     }
 
-    @Test(description = "it should apply read only flag when XmlElement annotation first")
+    @Test(description = "it should apply required flag when XmlElement annotation first")
     public void testApiModelPropertySecondPosition() {
         final Map<String, Schema> models = ModelConverters.getInstance().readAll(XmlFirstRequiredFieldModel.class);
         final Schema model = models.get("aaa");
         final Schema prop = (Schema) model.getProperties().get("a");
+        assertNotNull(prop);
         assertTrue(model.getRequired().contains("a"));
     }
 }

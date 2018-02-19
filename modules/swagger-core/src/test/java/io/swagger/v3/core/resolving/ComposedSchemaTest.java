@@ -1,8 +1,10 @@
 package io.swagger.v3.core.resolving;
 
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.resolving.resources.TestObject2616;
 import io.swagger.v3.core.resolving.resources.TestObjectTicket2620;
 import io.swagger.v3.core.resolving.resources.TestObjectTicket2620Subtypes;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.Assert;
@@ -53,4 +55,11 @@ public class ComposedSchemaTest {
         Assert.assertTrue(model instanceof ComposedSchema);
         Assert.assertTrue(((ComposedSchema)model).getOneOf().size() == 2);
     }
+
+    @Test(description = "read composed schem refs #2616")
+    public void readArrayComposedSchema_ticket2616() {
+        Map<String, Schema> schemas = ModelConverters.getInstance().readAll(TestObject2616.class);
+        Yaml.prettyPrint(schemas);
+    }
+
 }

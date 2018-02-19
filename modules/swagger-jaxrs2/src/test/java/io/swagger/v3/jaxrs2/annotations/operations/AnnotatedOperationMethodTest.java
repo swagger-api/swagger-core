@@ -574,7 +574,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        name:\n" +
                 "          type: string\n" +
                 "      xml:\n" +
-                "        name: Tag\n" +
+                "        name: tag\n" +
                 "    Pet:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -649,13 +649,6 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          type: array\n" +
                 "          items:\n" +
                 "            $ref: '#/components/schemas/Something'\n" +
-                "    Data:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        items:\n" +
-                "          type: array\n" +
-                "          items:\n" +
-                "            type: object\n" +
                 "    Something:\n" +
                 "      type: object\n" +
                 "      properties:\n" +

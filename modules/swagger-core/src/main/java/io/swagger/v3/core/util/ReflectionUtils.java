@@ -363,6 +363,9 @@ public class ReflectionUtils {
         if (type.getRawClass().getName().startsWith("java")) {
             return true;
         }
+        if (type.isArrayType()) {
+            return true;
+        }
         return false;
     }
 }

@@ -1,6 +1,7 @@
 package io.swagger.v3.core.jackson;
 
 import com.fasterxml.jackson.databind.introspect.Annotated;
+import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import java.lang.annotation.Annotation;
 
 /**
  * The <code>JAXBAnnotationsHelper</code> class defines helper methods for
@@ -28,22 +30,37 @@ class JAXBAnnotationsHelper {
      * @param member   annotations provider
      * @param property property instance to be updated
      */
-    public static void apply(Annotated member, Schema property) {
-        if (member.hasAnnotation(XmlElementWrapper.class) || member.hasAnnotation(XmlElement.class)) {
-            applyElement(member, property);
-        } else if (member.hasAnnotation(XmlAttribute.class) && isAttributeAllowed(property)) {
-            applyAttribute(member, property);
+    public static void apply(Annotated member, Annotation[] annotations, Schema property) {
+
+        XmlElementWrapper wrapper = member.getAnnotation(XmlElementWrapper.class);
+        if (wrapper == null) {
+            wrapper = AnnotationsUtils.getAnnotation(XmlElementWrapper.class, annotations);
+        }
+        XmlAttribute attr = member.getAnnotation(XmlAttribute.class);
+        if (attr == null) {
+            attr = AnnotationsUtils.getAnnotation(XmlAttribute.class, annotations);
+        }
+        XmlElement elem = member.getAnnotation(XmlElement.class);
+        if (elem == null) {
+            elem = AnnotationsUtils.getAnnotation(XmlElement.class, annotations);
+        }
+
+        if (wrapper != null) {
+            applyElement(wrapper, property);
+        } else if (elem != null) {
+            applyElement(elem, property);
+        } else if (attr != null && isAttributeAllowed(property)) {
+            applyAttribute(attr, property);
         }
     }
 
     /**
-     * Puts definitions for XML element.
+     * Puts definitions for XML wrapper.
      *
-     * @param member   annotations provider
+     * @param wrapper   XmlElementWrapper
      * @param property property instance to be updated
      */
-    private static void applyElement(Annotated member, Schema property) {
-        final XmlElementWrapper wrapper = member.getAnnotation(XmlElementWrapper.class);
+    private static void applyElement(XmlElementWrapper wrapper, Schema property) {
         if (wrapper != null) {
             final XML xml = getXml(property);
             xml.setWrapped(true);
@@ -51,22 +68,28 @@ class JAXBAnnotationsHelper {
             if (!"##default".equals(wrapper.name()) && !wrapper.name().isEmpty() && !wrapper.name().equals(property.getName())) {
                 xml.setName(wrapper.name());
             }
-        } else {
-            final XmlElement element = member.getAnnotation(XmlElement.class);
-            if (element != null) {
-                setName(element.namespace(), element.name(), property);
-            }
+        }
+    }
+
+    /**
+     * Puts definitions for XML element.
+     *
+     * @param element   XmlElement
+     * @param property property instance to be updated
+     */
+    private static void applyElement(XmlElement element, Schema property) {
+        if (element != null) {
+            setName(element.namespace(), element.name(), property);
         }
     }
 
     /**
      * Puts definitions for XML attribute.
      *
-     * @param member   annotations provider
+     * @param attribute   XmlAttribute
      * @param property property instance to be updated
      */
-    private static void applyAttribute(Annotated member, Schema property) {
-        final XmlAttribute attribute = member.getAnnotation(XmlAttribute.class);
+    private static void applyAttribute(XmlAttribute attribute, Schema property) {
         if (attribute != null) {
             final XML xml = getXml(property);
             xml.setAttribute(true);

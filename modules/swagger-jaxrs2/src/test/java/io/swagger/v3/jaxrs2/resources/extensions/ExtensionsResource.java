@@ -579,6 +579,7 @@ public class ExtensionsResource {
                     "            lastName: Hart\n" +
                     "            address: House\n" +
                     "      description: User\n" +
+                    "      readOnly: true\n" +
                     "      xml:\n" +
                     "        name: User\n" +
                     "      x-user-extensions:\n" +

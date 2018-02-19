@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.core.util.AnnotationsUtils;
@@ -428,7 +429,20 @@ public class Reader implements OpenApiReader {
                         Type[] genericParameterTypes = method.getGenericParameterTypes();
                         for (int i = 0; i < genericParameterTypes.length; i++) {
                             final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
-                            ResolvedParameter resolvedParameter = getParameters(type, Arrays.asList(paramAnnotations[i]), operation, classConsumes, methodConsumes);
+                            io.swagger.v3.oas.annotations.Parameter paramAnnotation = AnnotationsUtils.getAnnotation(io.swagger.v3.oas.annotations.Parameter.class, paramAnnotations[i]);
+                            Type paramType = ParameterProcessor.getParameterType(paramAnnotation);
+                            if (paramType == null) {
+                                paramType = type;
+                            } else {
+                                if (paramType instanceof Class) {
+                                    if (((Class)paramType).isAssignableFrom(String.class)) {
+                                        paramType = type;
+                                    }
+                                } else {
+                                    paramType = type;
+                                }
+                            }
+                            ResolvedParameter resolvedParameter = getParameters(paramType, Arrays.asList(paramAnnotations[i]), operation, classConsumes, methodConsumes);
                             for (Parameter p : resolvedParameter.parameters) {
                                 operationParameters.add(p);
                             }
@@ -447,7 +461,20 @@ public class Reader implements OpenApiReader {
                         for (int i = 0; i < annotatedMethod.getParameterCount(); i++) {
                             AnnotatedParameter param = annotatedMethod.getParameter(i);
                             final Type type = TypeFactory.defaultInstance().constructType(param.getParameterType(), cls);
-                            ResolvedParameter resolvedParameter = getParameters(type, Arrays.asList(paramAnnotations[i]), operation, classConsumes, methodConsumes);
+                            io.swagger.v3.oas.annotations.Parameter paramAnnotation = AnnotationsUtils.getAnnotation(io.swagger.v3.oas.annotations.Parameter.class, paramAnnotations[i]);
+                            Type paramType = ParameterProcessor.getParameterType(paramAnnotation);
+                            if (paramType == null) {
+                                paramType = type;
+                            } else {
+                                if (paramType instanceof Class) {
+                                    if (((Class)paramType).isAssignableFrom(String.class)) {
+                                        paramType = type;
+                                    }
+                                } else {
+                                    paramType = type;
+                                }
+                            }
+                            ResolvedParameter resolvedParameter = getParameters(paramType, Arrays.asList(paramAnnotations[i]), operation, classConsumes, methodConsumes);
                             for (Parameter p : resolvedParameter.parameters) {
                                 operationParameters.add(p);
                             }
@@ -848,7 +875,7 @@ public class Reader implements OpenApiReader {
         Type returnType = method.getGenericReturnType();
         final Class<?> subResource = getSubResourceWithJaxRsSubresourceLocatorSpecs(method);
         if (!shouldIgnoreClass(returnType.getTypeName()) && !returnType.equals(subResource)) {
-            ResolvedSchema resolvedSchema = ModelConverters.getInstance().resolveAnnotatedType(returnType, new ArrayList<>(), "");
+            ResolvedSchema resolvedSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(returnType).resolveAsRef(true));
             if (resolvedSchema.schema != null) {
                 Schema returnTypeSchema = resolvedSchema.schema;
                 Content content = new Content();
