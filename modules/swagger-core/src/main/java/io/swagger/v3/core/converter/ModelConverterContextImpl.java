@@ -86,7 +86,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
         Schema resolved = null;
         if (converters.hasNext()) {
             ModelConverter converter = converters.next();
-            LOGGER.debug("trying extension " + converter);
+            LOGGER.trace("trying extension " + converter);
             resolved = converter.resolve(type, this, converters);
         }
         if (resolved != null) {
