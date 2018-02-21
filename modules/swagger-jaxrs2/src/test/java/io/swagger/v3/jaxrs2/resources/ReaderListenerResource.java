@@ -28,7 +28,7 @@ public class ReaderListenerResource implements ReaderListener {
                     type = "string",
                     format = "uuid",
                     description = "the generated UUID",
-                    readOnly = true)
+                    accessMode = Schema.AccessMode.READ_ONLY)
     ) String subscriptionId,
                                              @QueryParam("description") String description) {
         return Response.ok().entity("ok").build();

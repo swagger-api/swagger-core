@@ -27,7 +27,7 @@ public class BasicFieldsResource {
                     description = "the generated UUID",
                     type = "string",
                     format = "uuid",
-                    readOnly = true)
+                    accessMode = Schema.AccessMode.READ_ONLY)
     ) String subscriptionId) {
         return Response.ok().entity("ok").build();
     }
@@ -59,7 +59,7 @@ public class BasicFieldsResource {
             schema = @Schema(
                     implementation = Category.class,
                     description = "the generated UUID",
-                    readOnly = true)
+                    accessMode = Schema.AccessMode.READ_ONLY)
     ) String subscriptionId) {
         return Response.ok().entity("ok").build();
     }

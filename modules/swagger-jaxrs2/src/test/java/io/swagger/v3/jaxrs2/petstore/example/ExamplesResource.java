@@ -43,7 +43,7 @@ public class ExamplesResource {
                                             type = "string",
                                             format = "uuid",
                                             description = "the generated UUID",
-                                            readOnly = true,
+                                            accessMode = Schema.AccessMode.READ_ONLY,
                                             example = "Schema example"
                                     ),
                                     examples = {
@@ -58,7 +58,7 @@ public class ExamplesResource {
                             type = "string",
                             format = "uuid",
                             description = "the generated UUID",
-                            readOnly = true,
+                            accessMode = Schema.AccessMode.READ_ONLY,
                             example = "Schema example"),
                     examples = {
                             @ExampleObject(name = "Default Request", value = "SubscriptionRequest",

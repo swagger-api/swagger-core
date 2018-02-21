@@ -33,7 +33,7 @@ public class CompleteFieldsResource {
                                     type = "string",
                                     format = "uuid",
                                     description = "the generated UUID",
-                                    readOnly = true)
+                                    accessMode = Schema.AccessMode.READ_ONLY)
                     )},
             responses = {
                     @ApiResponse(

@@ -39,7 +39,7 @@ public class ParametersResource {
                                     type = "int",
                                     format = "id",
                                     description = "the generated id",
-                                    readOnly = true
+                                    accessMode = Schema.AccessMode.READ_ONLY
                             )),
                     @Parameter(in = ParameterIn.QUERY, name = "arrayParameter", required = true, explode = Explode.TRUE,
                             array = @ArraySchema(maxItems = 10, minItems = 1,
@@ -51,10 +51,10 @@ public class ParametersResource {
                                     type = "int",
                                     format = "id",
                                     description = "the generated id",
-                                    readOnly = true),
+                                    accessMode = Schema.AccessMode.READ_ONLY),
                             content = @Content(schema = @Schema(type = "number",
                                     description = "the generated id",
-                                    readOnly = true))
+                                    accessMode = Schema.AccessMode.READ_ONLY))
                     ),
                     @Parameter(in = ParameterIn.QUERY, name = "arrayParameterImplementation", required = true, explode = Explode.TRUE,
                             array = @ArraySchema(maxItems = 10, minItems = 1,

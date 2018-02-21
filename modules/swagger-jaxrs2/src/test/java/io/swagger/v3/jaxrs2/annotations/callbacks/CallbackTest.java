@@ -105,7 +105,7 @@ public class CallbackTest extends AbstractAnnotationTest {
                                                 type = "string",
                                                 format = "uuid",
                                                 description = "the generated UUID",
-                                                readOnly = true,
+                                                accessMode = Schema.AccessMode.READ_ONLY,
                                                 minimum = "2",
                                                 maximum = "34"
                                         ))
@@ -138,9 +138,9 @@ public class CallbackTest extends AbstractAnnotationTest {
                                         implementation = CallbackTest.SubscriptionResponse.class)
                         ))
                 })
-        public SubscriptionResponse subscribe(@Schema(readOnly = true, description = "the authentication token " +
+        public SubscriptionResponse subscribe(@Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "the authentication token " +
                 "provided after initially authenticating to the application", type = "string") @HeaderParam("x-auth-token") String token,
-                                              @Schema(readOnly = true, description = "the URL to call with response " +
+                                              @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "the URL to call with response " +
                                                       "data") @QueryParam("url") String url) {
             return null;
         }

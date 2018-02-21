@@ -1212,7 +1212,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Boolean resolveReadOnly(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
-        if (schema != null && schema.readOnly()) {
+        if (schema != null && schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY)) {
+            return true;
+        } else if (schema != null && schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY)) {
+            return null;
+        } else if (schema != null && schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE)) {
+            return null;
+        } else if (schema != null && schema.readOnly()) {
             return schema.readOnly();
         }
         return null;
@@ -1309,7 +1315,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Boolean resolveWriteOnly(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
-        if (schema != null && schema.writeOnly()) {
+        if (schema != null && schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY)) {
+            return null;
+        } else if (schema != null && schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY)) {
+            return true;
+        } else if (schema != null && schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE)) {
+            return null;
+        } else if (schema != null && schema.writeOnly()) {
             return schema.writeOnly();
         }
         return null;

@@ -21,7 +21,7 @@ public class ParametersResource {
                             type = "string",
                             format = "uuid",
                             description = "the generated UUID",
-                            readOnly = true)
+                            accessMode = Schema.AccessMode.READ_ONLY)
             )}
     )
     public void getParameters(@QueryParam("subscriptionId") String subscriptionId) {

@@ -220,7 +220,7 @@ public class ExtensionsResource {
                                             type = "string",
                                             format = "uuid",
                                             description = "the generated UUID",
-                                            readOnly = true
+                                            accessMode = Schema.AccessMode.READ_ONLY
                                     ))
                             },
                             responses = {
@@ -337,7 +337,7 @@ public class ExtensionsResource {
                     required = true,
                     schema = @Schema(
                             description = "the user",
-                            readOnly = true,
+                            accessMode = Schema.AccessMode.READ_ONLY,
                             extensions = {
                                     @Extension(name = "x-schema", properties = {
                                             @ExtensionProperty(name = "name", value = "Josh")}),
