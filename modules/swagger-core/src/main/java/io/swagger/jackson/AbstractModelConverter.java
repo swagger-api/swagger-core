@@ -161,6 +161,19 @@ public abstract class AbstractModelConverter implements ModelConverter {
         return null;
     }
 
+    protected Boolean _findReadOnlyFromAccessMode(Annotated a) {
+        ApiModelProperty prop = a.getAnnotation(ApiModelProperty.class);
+        if (prop != null) {
+            if (prop.accessMode().equals(ApiModelProperty.AccessMode.AUTO)) {
+                return null;
+            } else if(prop.accessMode().equals(ApiModelProperty.AccessMode.READ_ONLY)) {
+                return true;
+            }
+            return false;
+        }
+        return null;
+    }
+
     protected boolean _isSetType(Class<?> cls) {
         if (cls != null) {
 

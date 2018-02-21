@@ -504,6 +504,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             property.setReadOnly(isReadOnly);
                         }
                     }
+
+                    // keep read-only handling code unaltered to maintain backward compatibility/behaviour,
+                    // but also process new (since 1.5.19) ApiModelProperty.accessMode annotation field.
+                    Boolean readOnlyFromAccessMode = _findReadOnlyFromAccessMode(member);
+                    if (readOnlyFromAccessMode != null) {
+                        property.setReadOnly(readOnlyFromAccessMode);
+                    }
+
                     if (mp != null) {
                         final AllowableValues allowableValues = AllowableValuesUtils.create(mp.allowableValues());
                         if (allowableValues != null) {

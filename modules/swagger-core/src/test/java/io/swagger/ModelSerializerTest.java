@@ -240,6 +240,22 @@ public class ModelSerializerTest {
         assertNull(readWriteId.getReadOnly());
     }
 
+    @Test(description = "it should generate a JSON with read-only from pojo with accessMode annotation field, #2379")
+    public void readOnlyAccessModeJsonGeneration() throws IOException {
+        Map<String, Model> models = ModelConverters.getInstance().read(io.swagger.models.ReadOnlyModelUpdated.class);
+
+        Model model = models.get("ReadOnlyModelUpdated");
+
+        Property id = model.getProperties().get("id");
+        assertTrue(id.getReadOnly());
+
+        Property readWriteId = model.getProperties().get("readWriteId");
+        assertNull(readWriteId.getReadOnly());
+
+        Property autoId = model.getProperties().get("autoId");
+        assertTrue(autoId.getReadOnly());
+    }
+
     @Test(description = "it should generate an integer field with enum")
     public void integerEnumGeneration() throws IOException {
             final String json = "{\n" +
