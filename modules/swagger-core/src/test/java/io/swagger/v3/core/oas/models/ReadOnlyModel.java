@@ -6,7 +6,7 @@ public class ReadOnlyModel {
     private Integer id;
     private Integer readWriteId;
 
-    @Schema(readOnly = true)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     public Integer getId() {
         return id;
     }
@@ -15,7 +15,7 @@ public class ReadOnlyModel {
         this.id = id;
     }
 
-    @Schema(readOnly = false)
+    @Schema(accessMode = Schema.AccessMode.READ_WRITE)
     public Integer getReadWriteId() {
         return readWriteId;
     }

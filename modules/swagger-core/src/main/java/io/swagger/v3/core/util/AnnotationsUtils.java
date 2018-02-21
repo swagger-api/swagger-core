@@ -76,6 +76,7 @@ public abstract class AnnotationsUtils {
                 && !schema.nullable()
                 && !schema.readOnly()
                 && !schema.writeOnly()
+                && schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.AUTO)
                 && !schema.deprecated()
                 && schema.allowableValues().length == 0
                 && StringUtils.isBlank(schema.defaultValue())
@@ -246,6 +247,9 @@ public abstract class AnnotationsUtils {
             return false;
         }
         if (thisSchema.writeOnly() != thatSchema.writeOnly()) {
+            return false;
+        }
+        if (!thisSchema.accessMode().equals(thatSchema.accessMode())) {
             return false;
         }
         if (thisSchema.deprecated() != thatSchema.deprecated()) {
@@ -451,6 +455,17 @@ public abstract class AnnotationsUtils {
         }
         if (schema.writeOnly()) {
             schemaObject.setWriteOnly(schema.writeOnly());
+        }
+        // process after readOnly and writeOnly
+        if (schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY)) {
+            schemaObject.setReadOnly(true);
+            schemaObject.setWriteOnly(null);
+        } else if (schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY)) {
+            schemaObject.setReadOnly(false);
+            schemaObject.setWriteOnly(null);
+        } else if (schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE)) {
+            schemaObject.setReadOnly(null);
+            schemaObject.setWriteOnly(null);
         }
         if (schema.requiredProperties().length > 0) {
             schemaObject.setRequired(Arrays.asList(schema.requiredProperties()));
@@ -1513,6 +1528,14 @@ public abstract class AnnotationsUtils {
                     return master.writeOnly();
                 }
                 return patch.writeOnly();
+            }
+
+            @Override
+            public AccessMode accessMode() {
+                if (!master.accessMode().equals(AccessMode.AUTO) || patch.accessMode().equals(AccessMode.AUTO)) {
+                    return master.accessMode();
+                }
+                return patch.accessMode();
             }
 
             @Override

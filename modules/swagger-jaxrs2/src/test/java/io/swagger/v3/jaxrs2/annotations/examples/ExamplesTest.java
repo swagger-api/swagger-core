@@ -146,7 +146,7 @@ public class ExamplesTest extends AbstractAnnotationTest {
                                                 type = "string",
                                                 format = "uuid",
                                                 description = "the generated UUID",
-                                                readOnly = true,
+                                                accessMode = Schema.AccessMode.READ_ONLY,
                                                 example = "Schema example"
                                         ),
                                         examples = {
@@ -161,7 +161,7 @@ public class ExamplesTest extends AbstractAnnotationTest {
                                 type = "string",
                                 format = "uuid",
                                 description = "the generated UUID",
-                                readOnly = true,
+                                accessMode = Schema.AccessMode.READ_ONLY,
                                 example = "Schema example"),
                         examples = {
                                 @ExampleObject(name = "Default Response", value = "SubscriptionResponse",

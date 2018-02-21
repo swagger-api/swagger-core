@@ -23,6 +23,7 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.nio.file.AccessMode;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.TYPE;
@@ -213,18 +214,37 @@ public @interface Schema {
     boolean nullable() default false;
 
     /**
-     * Sets whether the value should only be read during a response but not written to during a request.
+     * Sets whether the value should only be read during a response but not read to during a request.
+     *
+     * @deprecated As of 2.0.0, replaced by {@link #accessMode()}
      *
      * @return whether or not this schema is read only
+     *
      **/
+    @Deprecated
     boolean readOnly() default false;
 
     /**
      * Sets whether a value should only be written to during a request but not returned during a response.
      *
+     * @deprecated As of 2.0.0, replaced by {@link #accessMode()}
+     *
      * @return whether or not this schema is write only
      **/
+    @Deprecated
     boolean writeOnly() default false;
+
+    /**
+     * Allows to specify the access mode (AccessMode.READ_ONLY, READ_WRITE)
+     *
+     * AccessMode.READ_ONLY: value will only be written to during a request but not returned during a response.
+     * AccessMode.WRITE_ONLY: value will only be written to during a request but not returned during a response.
+     * AccessMode.READ_WRITE: value will be written to during a request and returned during a response.
+     *
+     * @return the accessMode for this schema (property)
+     *
+     */
+     AccessMode accessMode() default AccessMode.AUTO;
 
     /**
      * Provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
@@ -300,4 +320,11 @@ public @interface Schema {
      * @return an optional array of extensions
      */
     Extension[] extensions() default {};
+
+    enum AccessMode {
+        AUTO,
+        READ_ONLY,
+        WRITE_ONLY,
+        READ_WRITE;
+    }
 }
