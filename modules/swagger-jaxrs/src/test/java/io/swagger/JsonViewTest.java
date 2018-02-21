@@ -112,7 +112,6 @@ public class JsonViewTest {
   public void shouldSerializeTypeParameter() throws JsonProcessingException {
     Swagger swagger = getSwagger(CarSummaryApi.class);
     String swaggerJson = Json.mapper().writeValueAsString(swagger);
-    System.out.println(swaggerJson);
     Assert.assertTrue(swaggerJson.contains("manufacture"));
     Assert.assertTrue(swaggerJson.contains("model"));
     Assert.assertTrue(swaggerJson.contains("color"));
@@ -122,7 +121,6 @@ public class JsonViewTest {
 
     swagger = getSwagger(CarDetailApi.class);
     swaggerJson = Json.mapper().writeValueAsString(swagger);
-    System.out.println(swaggerJson);
     Assert.assertTrue(swaggerJson.contains("manufacture"));
     Assert.assertTrue(swaggerJson.contains("model"));
     Assert.assertTrue(swaggerJson.contains("color"));
@@ -133,7 +131,6 @@ public class JsonViewTest {
 
     swagger = getSwagger(CarSaleSummaryApi.class);
     swaggerJson = Json.mapper().writeValueAsString(swagger);
-    System.out.println(swaggerJson);
     Assert.assertTrue(swaggerJson.contains("manufacture"));
     Assert.assertTrue(swaggerJson.contains("model"));
     Assert.assertTrue(swaggerJson.contains("color"));
