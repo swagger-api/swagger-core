@@ -96,8 +96,20 @@ public @interface ApiModelProperty {
 
     /**
      * Allows a model property to be designated as read only.
+     *
+     * @deprecated As of 1.5.19, replaced by {@link #accessMode()}
+     *
      */
+    @Deprecated
     boolean readOnly() default false;
+
+    /**
+     * Allows to specify the access mode of a model property (AccessMode.READ_ONLY, READ_WRITE)
+     *
+     * @since 1.5.19
+     */
+    AccessMode accessMode() default AccessMode.AUTO;
+
 
     /**
      * Specifies a reference to the corresponding type definition, overrides any other metadata specified
@@ -116,4 +128,10 @@ public @interface ApiModelProperty {
      * @return an optional array of extensions
      */
     Extension[] extensions() default @Extension(properties = @ExtensionProperty(name = "", value = ""));
+
+    enum AccessMode {
+        AUTO,
+        READ_ONLY,
+        READ_WRITE;
+    }
 }
