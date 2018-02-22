@@ -180,4 +180,10 @@ public @interface ApiOperation {
      */
 
     Extension[] extensions() default @Extension(properties = @ExtensionProperty(name = "", value = ""));
+
+    /**
+     * Ignores JsonView annotations while resolving operations and types. For backward compatibility
+     *
+     */
+    boolean ignoreJsonView() default false;
 }

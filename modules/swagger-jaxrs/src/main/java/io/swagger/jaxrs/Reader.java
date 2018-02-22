@@ -841,6 +841,9 @@ public class Reader {
             if (apiOperation.hidden()) {
                 return null;
             }
+            if (apiOperation.ignoreJsonView()) {
+                jsonViewAnnotation = null;
+            }
             if (!apiOperation.nickname().isEmpty()) {
                 operationId = apiOperation.nickname();
             }

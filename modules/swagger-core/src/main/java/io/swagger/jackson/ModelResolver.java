@@ -389,7 +389,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
 
                 annotations = annotationList.toArray(new Annotation[annotationList.size()]);
-                if(hidenByJsonView(annotations, context)) {
+                if(hiddenByJsonView(annotations, context)) {
                     continue;
                 }
 
@@ -639,7 +639,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
      */
     private String decorateModelName(ModelConverterContext context, String originalName) {
         String name = originalName;
-        if (context.getJsonView() != null) {
+        if (context.getJsonView() != null && context.getJsonView().value().length > 0) {
             String COMBINER = "-or-";
             StringBuffer sb = new StringBuffer();
             for (Class<?> view : context.getJsonView().value()) {
@@ -651,7 +651,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return name;
     }
 
-    private boolean hidenByJsonView(Annotation[] annotations,
+    private boolean hiddenByJsonView(Annotation[] annotations,
         ModelConverterContext context) {
         JsonView jsonView = context.getJsonView();
         if (jsonView == null)
