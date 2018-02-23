@@ -157,4 +157,11 @@ public @interface Operation {
      * @return whether or not this operation is hidden
      */
     boolean hidden() default false;
+
+    /**
+     * Ignores JsonView annotations while resolving operations and types.
+     *
+     * @return whether or not to ignore JsonView annotations
+     */
+    boolean ignoreJsonView() default false;
 }

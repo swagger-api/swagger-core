@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.links.Link;
@@ -17,7 +18,7 @@ public class OperationParser {
 
     public static final String COMPONENTS_REF = "#/components/schemas/";
 
-    public static Optional<RequestBody> getRequestBody(io.swagger.v3.oas.annotations.parameters.RequestBody requestBody, Consumes classConsumes, Consumes methodConsumes, Components components) {
+    public static Optional<RequestBody> getRequestBody(io.swagger.v3.oas.annotations.parameters.RequestBody requestBody, Consumes classConsumes, Consumes methodConsumes, Components components, JsonView jsonViewAnnotation) {
         if (requestBody == null) {
             return Optional.empty();
         }
@@ -45,11 +46,11 @@ public class OperationParser {
             return Optional.empty();
         }
         AnnotationsUtils.getContent(requestBody.content(), classConsumes == null ? new String[0] : classConsumes.value(),
-                methodConsumes == null ? new String[0] : methodConsumes.value(), null, components).ifPresent(requestBodyObject::setContent);
+                methodConsumes == null ? new String[0] : methodConsumes.value(), null, components, jsonViewAnnotation).ifPresent(requestBodyObject::setContent);
         return Optional.of(requestBodyObject);
     }
 
-    public static Optional<ApiResponses> getApiResponses(final io.swagger.v3.oas.annotations.responses.ApiResponse[] responses, Produces classProduces, Produces methodProduces, Components components) {
+    public static Optional<ApiResponses> getApiResponses(final io.swagger.v3.oas.annotations.responses.ApiResponse[] responses, Produces classProduces, Produces methodProduces, Components components, JsonView jsonViewAnnotation) {
         if (responses == null) {
             return Optional.empty();
         }
@@ -69,8 +70,8 @@ public class OperationParser {
             }
 
             AnnotationsUtils.getContent(response.content(), classProduces == null ? new String[0] : classProduces.value(),
-                    methodProduces == null ? new String[0] : methodProduces.value(), null, components).ifPresent(apiResponseObject::content);
-            AnnotationsUtils.getHeaders(response.headers()).ifPresent(apiResponseObject::headers);
+                    methodProduces == null ? new String[0] : methodProduces.value(), null, components, jsonViewAnnotation).ifPresent(apiResponseObject::content);
+            AnnotationsUtils.getHeaders(response.headers(), jsonViewAnnotation).ifPresent(apiResponseObject::headers);
             if (StringUtils.isNotBlank(apiResponseObject.getDescription()) || apiResponseObject.getContent() != null || apiResponseObject.getHeaders() != null) {
 
                 Map<String, Link> links = AnnotationsUtils.getLinks(response.links());

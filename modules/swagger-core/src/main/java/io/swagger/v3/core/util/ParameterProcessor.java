@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
@@ -27,7 +28,14 @@ import java.util.Optional;
 public class ParameterProcessor {
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
-    public static Parameter applyAnnotations(Parameter parameter, Type type, List<Annotation> annotations, Components components, String[] classTypes, String[] methodTypes) {
+    public static Parameter applyAnnotations(
+            Parameter parameter,
+            Type type,
+            List<Annotation> annotations,
+            Components components,
+            String[] classTypes,
+            String[] methodTypes,
+            JsonView jsonViewAnnotation) {
 
         final AnnotationsHelper helper = new AnnotationsHelper(annotations, type);
         if (helper.isContext()) {
@@ -49,6 +57,7 @@ public class ParameterProcessor {
                 .type(type)
                 .resolveAsRef(true)
                 .skipOverride(true)
+                .jsonViewAnnotation(jsonViewAnnotation)
                 .ctxAnnotations(reworkedAnnotations.toArray(new Annotation[reworkedAnnotations.size()]));
         ResolvedSchema resolvedSchema = ModelConverters.getInstance().resolveAsResolvedSchema(annotatedType);
 
@@ -109,7 +118,7 @@ public class ParameterProcessor {
                     }
                 }
 
-                Optional<Content> content = AnnotationsUtils.getContent(p.content(), classTypes, methodTypes, parameter.getSchema(), null);
+                Optional<Content> content = AnnotationsUtils.getContent(p.content(), classTypes, methodTypes, parameter.getSchema(), null, jsonViewAnnotation);
                 if (content.isPresent()) {
                     parameter.setContent(content.get());
                     parameter.setSchema(null);

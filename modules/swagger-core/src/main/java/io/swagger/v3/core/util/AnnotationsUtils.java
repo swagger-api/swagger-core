@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import io.swagger.v3.core.converter.AnnotatedType;
@@ -332,10 +333,10 @@ public abstract class AnnotationsUtils {
         return Optional.empty();
     }
 
-    public static Optional<ArraySchema> getArraySchema(io.swagger.v3.oas.annotations.media.ArraySchema arraySchema) {
-        return getArraySchema(arraySchema, null);
+    public static Optional<ArraySchema> getArraySchema(io.swagger.v3.oas.annotations.media.ArraySchema arraySchema, JsonView jsonViewAnnotation) {
+        return getArraySchema(arraySchema, null, jsonViewAnnotation);
     }
-    public static Optional<ArraySchema> getArraySchema(io.swagger.v3.oas.annotations.media.ArraySchema arraySchema, Components components) {
+    public static Optional<ArraySchema> getArraySchema(io.swagger.v3.oas.annotations.media.ArraySchema arraySchema, Components components, JsonView jsonViewAnnotation) {
         if (arraySchema == null || !hasArrayAnnotation(arraySchema)) {
             return Optional.empty();
         }
@@ -361,7 +362,7 @@ public abstract class AnnotationsUtils {
 
         if (arraySchema.schema() != null) {
             if (arraySchema.schema().implementation().equals(Void.class)) {
-                getSchemaFromAnnotation(arraySchema.schema(), components).ifPresent(schema -> {
+                getSchemaFromAnnotation(arraySchema.schema(), components, jsonViewAnnotation).ifPresent(schema -> {
                     if (StringUtils.isNotBlank(schema.getType())) {
                         arraySchemaObject.setItems(schema);
                     }
@@ -372,10 +373,10 @@ public abstract class AnnotationsUtils {
         return Optional.of(arraySchemaObject);
     }
 
-    public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema) {
-        return getSchemaFromAnnotation(schema, null);
+    public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema, JsonView jsonViewAnnotation) {
+        return getSchemaFromAnnotation(schema, null, jsonViewAnnotation);
     }
-    public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema, Components components) {
+    public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema, Components components, JsonView jsonViewAnnotation) {
         if (schema == null || !hasSchemaAnnotation(schema)) {
             return Optional.empty();
         }
@@ -487,27 +488,27 @@ public abstract class AnnotationsUtils {
 
         if (!schema.not().equals(Void.class)) {
             Class<?> schemaImplementation = schema.not();
-            Schema notSchemaObject = resolveSchemaFromType(schemaImplementation, components);
+            Schema notSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation);
             schemaObject.setNot(notSchemaObject);
         }
         if (schema.oneOf().length > 0) {
             Class<?>[] schemaImplementations = schema.oneOf();
             for (Class<?> schemaImplementation : schemaImplementations) {
-                Schema oneOfSchemaObject = resolveSchemaFromType(schemaImplementation, components);
+                Schema oneOfSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation);
                 ((ComposedSchema) schemaObject).addOneOfItem(oneOfSchemaObject);
             }
         }
         if (schema.anyOf().length > 0) {
             Class<?>[] schemaImplementations = schema.anyOf();
             for (Class<?> schemaImplementation : schemaImplementations) {
-                Schema anyOfSchemaObject = resolveSchemaFromType(schemaImplementation, components);
+                Schema anyOfSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation);
                 ((ComposedSchema) schemaObject).addAnyOfItem(anyOfSchemaObject);
             }
         }
         if (schema.allOf().length > 0) {
             Class<?>[] schemaImplementations = schema.allOf();
             for (Class<?> schemaImplementation : schemaImplementations) {
-                Schema allOfSchemaObject = resolveSchemaFromType(schemaImplementation, components);
+                Schema allOfSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation);
                 ((ComposedSchema) schemaObject).addAllOfItem(allOfSchemaObject);
             }
         }
@@ -516,12 +517,12 @@ public abstract class AnnotationsUtils {
         return Optional.of(schemaObject);
     }
 
-    public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components) {
+    public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation) {
         Schema schemaObject = new Schema();
         if (schemaImplementation.getName().startsWith("java.lang")) {
             schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
         } else {
-            ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation));
+            ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
             Map<String, Schema> schemaMap;
             if (resolvedSchema != null) {
                 schemaMap = resolvedSchema.referencedSchemas;
@@ -846,14 +847,14 @@ public abstract class AnnotationsUtils {
         return linkParametersMap;
     }
 
-    public static Optional<Map<String, Header>> getHeaders(io.swagger.v3.oas.annotations.headers.Header[] annotationHeaders) {
+    public static Optional<Map<String, Header>> getHeaders(io.swagger.v3.oas.annotations.headers.Header[] annotationHeaders, JsonView jsonViewAnnotation) {
         if (annotationHeaders == null) {
             return Optional.empty();
         }
 
         Map<String, Header> headers = new HashMap<>();
         for (io.swagger.v3.oas.annotations.headers.Header header : annotationHeaders) {
-            getHeader(header).ifPresent(headerResult -> headers.put(header.name(), headerResult));
+            getHeader(header, jsonViewAnnotation).ifPresent(headerResult -> headers.put(header.name(), headerResult));
         }
 
         if (headers.size() == 0) {
@@ -862,7 +863,7 @@ public abstract class AnnotationsUtils {
         return Optional.of(headers);
     }
 
-    public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header) {
+    public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header, JsonView jsonViewAnnotation) {
 
         if (header == null) {
             return Optional.empty();
@@ -889,7 +890,7 @@ public abstract class AnnotationsUtils {
 
         if (header.schema() != null) {
             if (header.schema().implementation().equals(Void.class)) {
-                AnnotationsUtils.getSchemaFromAnnotation(header.schema()).ifPresent(schema -> {
+                AnnotationsUtils.getSchemaFromAnnotation(header.schema(), jsonViewAnnotation).ifPresent(schema -> {
                     if (StringUtils.isNotBlank(schema.getType())) {
                         headerObject.setSchema(schema);
                         //schema inline no need to add to components
@@ -906,7 +907,7 @@ public abstract class AnnotationsUtils {
         return Optional.of(headerObject);
     }
 
-    public static void addEncodingToMediaType(MediaType mediaType, io.swagger.v3.oas.annotations.media.Encoding encoding) {
+    public static void addEncodingToMediaType(MediaType mediaType, io.swagger.v3.oas.annotations.media.Encoding encoding, JsonView jsonViewAnnotation) {
         if (encoding == null) {
             return;
         }
@@ -928,7 +929,7 @@ public abstract class AnnotationsUtils {
             }
 
             if (encoding.headers() != null) {
-                getHeaders(encoding.headers()).ifPresent(encodingObject::headers);
+                getHeaders(encoding.headers(), jsonViewAnnotation).ifPresent(encodingObject::headers);
             }
             if (encoding.extensions() != null && encoding.extensions().length > 0) {
                 Map<String, Object> extensions = AnnotationsUtils.getExtensions(encoding.extensions());
@@ -968,7 +969,7 @@ public abstract class AnnotationsUtils {
         }
     }
 
-    public static Optional<Content> getContent(io.swagger.v3.oas.annotations.media.Content[] annotationContents, String[] classTypes, String[] methodTypes, Schema schema, Components components) {
+    public static Optional<Content> getContent(io.swagger.v3.oas.annotations.media.Content[] annotationContents, String[] classTypes, String[] methodTypes, Schema schema, Components components, JsonView jsonViewAnnotation) {
         if (annotationContents == null || annotationContents.length == 0) {
             return Optional.empty();
         }
@@ -979,7 +980,7 @@ public abstract class AnnotationsUtils {
         for (io.swagger.v3.oas.annotations.media.Content annotationContent : annotationContents) {
             MediaType mediaType = new MediaType();
             if (components != null) {
-                getSchema(annotationContent, components).ifPresent(mediaType::setSchema);
+                getSchema(annotationContent, components, jsonViewAnnotation).ifPresent(mediaType::setSchema);
             } else {
                 mediaType.setSchema(schema);
             }
@@ -999,7 +1000,7 @@ public abstract class AnnotationsUtils {
 
             io.swagger.v3.oas.annotations.media.Encoding[] encodings = annotationContent.encoding();
             for (io.swagger.v3.oas.annotations.media.Encoding encoding : encodings) {
-                addEncodingToMediaType(mediaType, encoding);
+                addEncodingToMediaType(mediaType, encoding, jsonViewAnnotation);
             }
             if (StringUtils.isNotBlank(annotationContent.mediaType())) {
                 content.addMediaType(annotationContent.mediaType(), mediaType);
@@ -1016,7 +1017,7 @@ public abstract class AnnotationsUtils {
         return Optional.of(content);
     }
 
-    public static Optional<? extends Schema> getSchema(io.swagger.v3.oas.annotations.media.Content annotationContent, Components components) {
+    public static Optional<? extends Schema> getSchema(io.swagger.v3.oas.annotations.media.Content annotationContent, Components components, JsonView jsonViewAnnotation) {
         Class<?> schemaImplementation = annotationContent.schema().implementation();
         boolean isArray = false;
         if (schemaImplementation == Void.class) {
@@ -1025,21 +1026,22 @@ public abstract class AnnotationsUtils {
                 isArray = true;
             }
         }
-        return getSchema(annotationContent.schema(), annotationContent.array(), isArray, schemaImplementation, components);
+        return getSchema(annotationContent.schema(), annotationContent.array(), isArray, schemaImplementation, components, jsonViewAnnotation);
     }
 
     public static Optional<? extends Schema> getSchema(io.swagger.v3.oas.annotations.media.Schema schemaAnnotation,
                                                        io.swagger.v3.oas.annotations.media.ArraySchema arrayAnnotation,
                                                        boolean isArray,
                                                        Class<?> schemaImplementation,
-                                                       Components components) {
+                                                       Components components,
+                                                       JsonView jsonViewAnnotation) {
         Map<String, Schema> schemaMap;
         if (schemaImplementation != Void.class) {
             Schema schemaObject = new Schema();
             if (schemaImplementation.getName().startsWith("java.lang")) {
                 schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
             } else {
-                ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation));
+                ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
                 if (resolvedSchema != null) {
                     schemaMap = resolvedSchema.referencedSchemas;
                     schemaMap.forEach((key, schema) -> {
@@ -1055,7 +1057,7 @@ public abstract class AnnotationsUtils {
                 schemaObject.setType("string");
             }
             if (isArray) {
-                Optional<ArraySchema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components);
+                Optional<ArraySchema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation);
                 if (arraySchema.isPresent()) {
                     arraySchema.get().setItems(schemaObject);
                     return arraySchema;
@@ -1067,7 +1069,7 @@ public abstract class AnnotationsUtils {
             }
 
         } else {
-            Optional<Schema> schemaFromAnnotation = AnnotationsUtils.getSchemaFromAnnotation(schemaAnnotation, components);
+            Optional<Schema> schemaFromAnnotation = AnnotationsUtils.getSchemaFromAnnotation(schemaAnnotation, components, jsonViewAnnotation);
             if (schemaFromAnnotation.isPresent()) {
                 if (StringUtils.isBlank(schemaFromAnnotation.get().get$ref()) && StringUtils.isBlank(schemaFromAnnotation.get().getType())) {
                     // default to string
@@ -1075,7 +1077,7 @@ public abstract class AnnotationsUtils {
                 }
                 return Optional.of(schemaFromAnnotation.get());
             } else {
-                Optional<ArraySchema> arraySchemaFromAnnotation = AnnotationsUtils.getArraySchema(arrayAnnotation, components);
+                Optional<ArraySchema> arraySchemaFromAnnotation = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation);
                 if (arraySchemaFromAnnotation.isPresent()) {
                     if (StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().get$ref()) && StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().getType())) {
                         // default to string

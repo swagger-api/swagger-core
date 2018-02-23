@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2.ext;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.v3.jaxrs2.ResolvedParameter;
@@ -27,9 +28,9 @@ public abstract class AbstractOpenAPIExtension implements OpenAPIExtension {
     @Override
     public ResolvedParameter extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip,
                                                Components components, javax.ws.rs.Consumes classConsumes,
-                                               javax.ws.rs.Consumes methodConsumes, boolean includeRequestBody, Iterator<OpenAPIExtension> chain) {
+                                               javax.ws.rs.Consumes methodConsumes, boolean includeRequestBody, JsonView jsonViewAnnotation, Iterator<OpenAPIExtension> chain) {
         if (chain.hasNext()) {
-            return chain.next().extractParameters(annotations, type, typesToSkip, components, classConsumes, methodConsumes, includeRequestBody, chain);
+            return chain.next().extractParameters(annotations, type, typesToSkip, components, classConsumes, methodConsumes, includeRequestBody, jsonViewAnnotation, chain);
         } else {
             return new ResolvedParameter();
         }

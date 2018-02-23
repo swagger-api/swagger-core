@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2.util;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.core.util.ParameterProcessor;
 import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;
@@ -42,7 +43,7 @@ public class ReaderUtils {
      * @param components
      * @return the collection of supported parameters
      */
-    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes) {
+    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
         if (cls.isLocalClass() || (cls.isMemberClass() && !Modifier.isStatic(cls.getModifiers()))) {
             return Collections.emptyList();
         }
@@ -67,7 +68,7 @@ public class ReaderUtils {
                     paramsCount++;
                 } else {
                     final Type genericParameterType = genericParameterTypes[i];
-                    final List<Parameter> tmpParameters = collectParameters(genericParameterType, tmpAnnotations, components, classConsumes);
+                    final List<Parameter> tmpParameters = collectParameters(genericParameterType, tmpAnnotations, components, classConsumes, jsonViewAnnotation);
                     if (tmpParameters.size() >= 1) {
                         for (Parameter tmpParameter : tmpParameters) {
                             if (ParameterProcessor.applyAnnotations(
@@ -76,7 +77,8 @@ public class ReaderUtils {
                                     tmpAnnotations,
                                     components,
                                     classConsumes == null ? new String[0] : classConsumes.value(),
-                                    null) != null) {
+                                    null,
+                                    jsonViewAnnotation) != null) {
                                 parameters.add(tmpParameter);
                             }
                         }
@@ -101,19 +103,19 @@ public class ReaderUtils {
      * @param components
      * @return the collection of supported parameters
      */
-    public static List<Parameter> collectFieldParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes) {
+    public static List<Parameter> collectFieldParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
         final List<Parameter> parameters = new ArrayList<Parameter>();
         for (Field field : ReflectionUtils.getDeclaredFields(cls)) {
             final List<Annotation> annotations = Arrays.asList(field.getAnnotations());
             final Type genericType = field.getGenericType();
-            parameters.addAll(collectParameters(genericType, annotations, components, classConsumes));
+            parameters.addAll(collectParameters(genericType, annotations, components, classConsumes, jsonViewAnnotation));
         }
         return parameters;
     }
 
-    private static List<Parameter> collectParameters(Type type, List<Annotation> annotations, Components components, javax.ws.rs.Consumes classConsumes) {
+    private static List<Parameter> collectParameters(Type type, List<Annotation> annotations, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
         final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
-        return chain.hasNext() ? chain.next().extractParameters(annotations, type, new HashSet<>(), components, classConsumes, null, false, chain).parameters :
+        return chain.hasNext() ? chain.next().extractParameters(annotations, type, new HashSet<>(), components, classConsumes, null, false, jsonViewAnnotation, chain).parameters :
                 Collections.emptyList();
     }
 

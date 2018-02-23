@@ -219,9 +219,7 @@ public class ExtensionsResource {
                                     @Parameter(in = ParameterIn.PATH, name = "subscriptionId", required = true, schema = @Schema(
                                             type = "string",
                                             format = "uuid",
-                                            description = "the generated UUID",
-                                            accessMode = Schema.AccessMode.READ_ONLY
-                                    ))
+                                            description = "the generated UUID"))
                             },
                             responses = {
                                     @ApiResponse(
@@ -337,7 +335,6 @@ public class ExtensionsResource {
                     required = true,
                     schema = @Schema(
                             description = "the user",
-                            accessMode = Schema.AccessMode.READ_ONLY,
                             extensions = {
                                     @Extension(name = "x-schema", properties = {
                                             @ExtensionProperty(name = "name", value = "Josh")}),
@@ -494,7 +491,6 @@ public class ExtensionsResource {
                     "                  type: string\n" +
                     "                  description: the generated UUID\n" +
                     "                  format: uuid\n" +
-                    "                  readOnly: true\n" +
                     "              responses:\n" +
                     "                200:\n" +
                     "                  description: Return this code if the callback was received and processed\n" +
@@ -579,7 +575,6 @@ public class ExtensionsResource {
                     "            lastName: Hart\n" +
                     "            address: House\n" +
                     "      description: User\n" +
-                    "      readOnly: true\n" +
                     "      xml:\n" +
                     "        name: User\n" +
                     "      x-user-extensions:\n" +

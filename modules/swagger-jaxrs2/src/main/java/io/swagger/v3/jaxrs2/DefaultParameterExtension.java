@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
@@ -44,6 +45,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                                                javax.ws.rs.Consumes classConsumes,
                                                javax.ws.rs.Consumes methodConsumes,
                                                boolean includeRequestBody,
+                                               JsonView jsonViewAnnotation,
                                                Iterator<OpenAPIExtension> chain) {
         if (shouldIgnoreType(type, typesToSkip)) {
             return new ResolvedParameter();
@@ -93,7 +95,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                     parameter = pp;
                 }
             } else {
-                if (handleAdditionalAnnotation(parameters, annotation, type, typesToSkip, classConsumes, methodConsumes, components, includeRequestBody)) {
+                if (handleAdditionalAnnotation(parameters, annotation, type, typesToSkip, classConsumes, methodConsumes, components, includeRequestBody, jsonViewAnnotation)) {
                     extractParametersResult.parameters.addAll(parameters);
                     return extractParametersResult;
                 }
@@ -109,7 +111,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                     annotations,
                     components,
                     classConsumes == null ? new String[0] : classConsumes.value(),
-                    methodConsumes == null ? new String[0] : methodConsumes.value());
+                    methodConsumes == null ? new String[0] : methodConsumes.value(), jsonViewAnnotation);
             if (unknownParameter != null) {
                 if (StringUtils.isNotBlank(unknownParameter.getIn())) {
                     extractParametersResult.parameters.add(unknownParameter);
@@ -125,7 +127,8 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                     annotations,
                     components,
                     classConsumes == null ? new String[0] : classConsumes.value(),
-                    methodConsumes == null ? new String[0] : methodConsumes.value()) != null) {
+                    methodConsumes == null ? new String[0] : methodConsumes.value(),
+                    jsonViewAnnotation) != null) {
                 extractParametersResult.parameters.add(p);
             }
         }
@@ -143,7 +146,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
 
     private boolean handleAdditionalAnnotation(List<Parameter> parameters, Annotation annotation,
                                                final Type type, Set<Type> typesToSkip, javax.ws.rs.Consumes classConsumes,
-                                               javax.ws.rs.Consumes methodConsumes, Components components, boolean includeRequestBody) {
+                                               javax.ws.rs.Consumes methodConsumes, Components components, boolean includeRequestBody, JsonView jsonViewAnnotation) {
         boolean processed = false;
         if (BeanParam.class.isAssignableFrom(annotation.getClass())) {
             // Use Jackson's logic for processing Beans
@@ -212,6 +215,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                                 classConsumes,
                                 methodConsumes,
                                 includeRequestBody,
+                                jsonViewAnnotation,
                                 extensions).parameters;
 
                 for (Parameter p : extracted) {
@@ -221,7 +225,8 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                             paramAnnotations,
                             components,
                             classConsumes == null ? new String[0] : classConsumes.value(),
-                            methodConsumes == null ? new String[0] : methodConsumes.value()) != null) {
+                            methodConsumes == null ? new String[0] : methodConsumes.value(),
+                            jsonViewAnnotation) != null) {
                         parameters.add(p);
                     }
                 }
